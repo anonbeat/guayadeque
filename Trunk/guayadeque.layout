@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="src/AlListBox.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="15546" topLine="445" />
+	</File>
+	<File name="src/AlListBox.h" open="0" top="0" tabpos="6">
+		<Cursor position="1803" topLine="17" />
+	</File>
+	<File name="src/ArListBox.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="2673" topLine="33" />
+	</File>
+	<File name="src/ArListBox.h" open="0" top="0" tabpos="0">
+		<Cursor position="1514" topLine="14" />
+	</File>
+	<File name="src/ArrayStringArray.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1041" topLine="0" />
+	</File>
+	<File name="src/ArrayStringArray.h" open="0" top="0" tabpos="0">
+		<Cursor position="1061" topLine="0" />
+	</File>
+	<File name="src/AudioScrobble.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="12540" topLine="284" />
+	</File>
+	<File name="src/AudioScrobble.h" open="0" top="0" tabpos="2">
+		<Cursor position="4555" topLine="98" />
+	</File>
+	<File name="src/Commands.h" open="0" top="0" tabpos="3">
+		<Cursor position="2149" topLine="20" />
+	</File>
+	<File name="src/Config.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="1141" topLine="0" />
+	</File>
+	<File name="src/Config.h" open="0" top="0" tabpos="0">
+		<Cursor position="2256" topLine="17" />
+	</File>
+	<File name="src/ConfirmExit.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="1536" topLine="20" />
+	</File>
+	<File name="src/ConfirmExit.h" open="0" top="0" tabpos="2">
+		<Cursor position="1534" topLine="24" />
+	</File>
+	<File name="src/CoverEdit.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="21645" topLine="545" />
+	</File>
+	<File name="src/CoverEdit.h" open="0" top="0" tabpos="4">
+		<Cursor position="3539" topLine="117" />
+	</File>
+	<File name="src/CoverFrame.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="1493" topLine="32" />
+	</File>
+	<File name="src/CoverFrame.h" open="0" top="0" tabpos="0">
+		<Cursor position="1287" topLine="15" />
+	</File>
+	<File name="src/DbLibrary.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="63845" topLine="1838" />
+	</File>
+	<File name="src/DbLibrary.h" open="1" top="0" tabpos="3">
+		<Cursor position="14601" topLine="333" />
+	</File>
+	<File name="src/GeListBox.cpp" open="0" top="0" tabpos="7">
+		<Cursor position="2171" topLine="22" />
+	</File>
+	<File name="src/GeListBox.h" open="0" top="0" tabpos="0">
+		<Cursor position="1662" topLine="13" />
+	</File>
+	<File name="src/Images.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="1420" topLine="15" />
+	</File>
+	<File name="src/Images.h" open="0" top="0" tabpos="3">
+		<Cursor position="1513" topLine="19" />
+	</File>
+	<File name="src/ItemListBox.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="10053" topLine="279" />
+	</File>
+	<File name="src/ItemListBox.h" open="0" top="0" tabpos="6">
+		<Cursor position="3079" topLine="51" />
+	</File>
+	<File name="src/LabelEditor.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="2343" topLine="40" />
+	</File>
+	<File name="src/LabelEditor.h" open="0" top="0" tabpos="6">
+		<Cursor position="1535" topLine="33" />
+	</File>
+	<File name="src/LastFM.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="60734" topLine="1481" />
+	</File>
+	<File name="src/LastFM.h" open="0" top="0" tabpos="2">
+		<Cursor position="5262" topLine="155" />
+	</File>
+	<File name="src/LastFMPanel.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="44652" topLine="1156" />
+	</File>
+	<File name="src/LastFMPanel.h" open="0" top="0" tabpos="1">
+		<Cursor position="14817" topLine="425" />
+	</File>
+	<File name="src/LibPanel.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="35296" topLine="763" />
+	</File>
+	<File name="src/LibPanel.h" open="0" top="0" tabpos="4">
+		<Cursor position="3458" topLine="72" />
+	</File>
+	<File name="src/LyricsPanel.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="6033" topLine="173" />
+	</File>
+	<File name="src/LyricsPanel.h" open="0" top="0" tabpos="2">
+		<Cursor position="2404" topLine="38" />
+	</File>
+	<File name="src/MD5.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="10319" topLine="279" />
+	</File>
+	<File name="src/MD5.h" open="0" top="0" tabpos="0">
+		<Cursor position="2136" topLine="35" />
+	</File>
+	<File name="src/MainApp.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="2399" topLine="73" />
+	</File>
+	<File name="src/MainApp.h" open="0" top="0" tabpos="5">
+		<Cursor position="1495" topLine="15" />
+	</File>
+	<File name="src/MainFrame.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="19449" topLine="459" />
+	</File>
+	<File name="src/MainFrame.h" open="1" top="0" tabpos="2">
+		<Cursor position="468" topLine="0" />
+	</File>
+	<File name="src/MediaCtrl.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="src/MediaCtrl.h" open="0" top="0" tabpos="2">
+		<Cursor position="2436" topLine="38" />
+	</File>
+	<File name="src/PlayList.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="28811" topLine="869" />
+	</File>
+	<File name="src/PlayList.h" open="0" top="0" tabpos="5">
+		<Cursor position="5608" topLine="121" />
+	</File>
+	<File name="src/PlayerPanel.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="35275" topLine="851" />
+	</File>
+	<File name="src/PlayerPanel.h" open="0" top="0" tabpos="4">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="src/Preferences.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="21432" topLine="381" />
+	</File>
+	<File name="src/Preferences.h" open="0" top="0" tabpos="4">
+		<Cursor position="4171" topLine="83" />
+	</File>
+	<File name="src/RadioGenreEditor.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="3866" topLine="87" />
+	</File>
+	<File name="src/RadioGenreEditor.h" open="0" top="0" tabpos="0">
+		<Cursor position="1785" topLine="29" />
+	</File>
+	<File name="src/RadioPanel.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="25500" topLine="640" />
+	</File>
+	<File name="src/RadioPanel.h" open="0" top="0" tabpos="0">
+		<Cursor position="3255" topLine="56" />
+	</File>
+	<File name="src/Shoutcast.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="12298" topLine="279" />
+	</File>
+	<File name="src/Shoutcast.h" open="0" top="0" tabpos="10">
+		<Cursor position="1773" topLine="29" />
+	</File>
+	<File name="src/SoListBox.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="8349" topLine="222" />
+	</File>
+	<File name="src/SoListBox.h" open="0" top="0" tabpos="0">
+		<Cursor position="2009" topLine="23" />
+	</File>
+	<File name="src/SplashWin.cpp" open="1" top="1" tabpos="7">
+		<Cursor position="4153" topLine="89" />
+	</File>
+	<File name="src/SplashWin.h" open="0" top="0" tabpos="5">
+		<Cursor position="1732" topLine="28" />
+	</File>
+	<File name="src/StatusBar.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="6515" topLine="176" />
+	</File>
+	<File name="src/StatusBar.h" open="0" top="0" tabpos="3">
+		<Cursor position="2428" topLine="38" />
+	</File>
+	<File name="src/TaListBox.cpp" open="0" top="0" tabpos="7">
+		<Cursor position="4269" topLine="77" />
+	</File>
+	<File name="src/TaListBox.h" open="0" top="0" tabpos="0">
+		<Cursor position="1733" topLine="16" />
+	</File>
+	<File name="src/TagInfo.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="9441" topLine="324" />
+	</File>
+	<File name="src/TagInfo.h" open="0" top="0" tabpos="5">
+		<Cursor position="2268" topLine="36" />
+	</File>
+	<File name="src/TaskBar.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="5002" topLine="97" />
+	</File>
+	<File name="src/TaskBar.h" open="0" top="0" tabpos="0">
+		<Cursor position="1837" topLine="19" />
+	</File>
+	<File name="src/ThreadArray.h" open="0" top="0" tabpos="0">
+		<Cursor position="1234" topLine="0" />
+	</File>
+	<File name="src/TrackEdit.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="16092" topLine="303" />
+	</File>
+	<File name="src/TrackEdit.h" open="0" top="0" tabpos="4">
+		<Cursor position="1661" topLine="21" />
+	</File>
+	<File name="src/Utils.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="145" topLine="0" />
+	</File>
+	<File name="src/Utils.h" open="0" top="0" tabpos="5">
+		<Cursor position="1880" topLine="16" />
+	</File>
+	<File name="src/VolumeFrame.h" open="0" top="0" tabpos="0">
+		<Cursor position="1355" topLine="12" />
+	</File>
+	<File name="src/curl/http.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="998" topLine="4" />
+	</File>
+	<File name="src/wx/curl/base.h" open="0" top="0" tabpos="0">
+		<Cursor position="1038" topLine="23" />
+	</File>
+	<File name="src/wx/curl/http.h" open="0" top="0" tabpos="0">
+		<Cursor position="3569" topLine="61" />
+	</File>
+	<File name="src/wx/wxsqlite3.h" open="0" top="0" tabpos="0">
+		<Cursor position="649" topLine="2" />
+	</File>
+	<File name="src/wxsqlite3/wxsqlite3.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="4543" topLine="114" />
+	</File>
+</CodeBlocks_layout_file>

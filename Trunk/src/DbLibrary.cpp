@@ -1,0 +1,2909 @@
+// -------------------------------------------------------------------------------- //
+//	Copyright (C) 2008-2009 J.Rios
+//	anonbeat@gmail.com
+//
+//    This Program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2, or (at your option)
+//    any later version.
+//
+//    This Program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; see the file LICENSE.  If not, write to
+//    the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+//    http://www.gnu.org/copyleft/gpl.html
+//
+// -------------------------------------------------------------------------------- //
+#include "DbLibrary.h"
+
+#include "Commands.h"
+#include "Config.h"
+#include "MD5.h"
+#include "TagInfo.h"
+#include "Utils.h"
+#include "MainFrame.h"
+
+#include <wx/mstream.h>
+
+//#define DBLIBRARY_SHOW_QUERIES          1
+
+WX_DEFINE_OBJARRAY(guTrackArray);
+WX_DEFINE_OBJARRAY(guListItems);
+WX_DEFINE_OBJARRAY(guArrayListItems);
+WX_DEFINE_OBJARRAY(guAlbumItems);
+WX_DEFINE_OBJARRAY(guRadioStations);
+WX_DEFINE_OBJARRAY(guCoverInfos);
+WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
+
+// -------------------------------------------------------------------------------- //
+// Various functions
+// -------------------------------------------------------------------------------- //
+
+// -------------------------------------------------------------------------------- //
+int guAlbumItemSearch( const guAlbumItems &items, int start, int end, int id )
+{
+    if( start >= end && items[ start ].m_Id != id )
+    {
+        return -1;
+    }
+    else
+    {
+        int MidPos = ( ( start + end ) / 2 );
+        if( items[ MidPos ].m_Id == id )
+            return MidPos;
+        else if( id > items[ MidPos ].m_Id )
+            return guAlbumItemSearch( items, MidPos + 1, end, id );
+        else
+            return guAlbumItemSearch( items, start, MidPos - 1, id );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guAlbumItemsGetName( const guAlbumItems &items, int id )
+{
+    int index;
+    int count = items.Count();
+    if( count )
+    {
+        index = guAlbumItemSearch( items, 0, count - 1, id );
+        if( index != wxNOT_FOUND )
+            return items[ index ].m_Name;
+        guLogError( wxT( "Could not find in cache the albumid : %i" ), id );
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+int guAlbumItemsGetCoverId( const guAlbumItems &items, int id )
+{
+    int index;
+    int count = items.Count();
+    if( count )
+    {
+        index = guAlbumItemSearch( items, 0, count - 1, id );
+        if( index != wxNOT_FOUND )
+            return items[ index ].m_CoverId;
+    }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int guListItemSearch( const guListItems &items, int start, int end, int id )
+{
+    if( start >= end && items[ start ].m_Id != id )
+    {
+        return -1;
+    }
+    else
+    {
+        int MidPos = ( ( start + end ) / 2 );
+        if( items[ MidPos ].m_Id == id )
+            return MidPos;
+        else if( id > items[ MidPos ].m_Id )
+            return guListItemSearch( items, MidPos + 1, end, id );
+        else
+            return guListItemSearch( items, start, MidPos - 1, id );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guListItemsGetName( const guListItems &items, int id )
+{
+    int index;
+    int count = items.Count();
+    if( count )
+    {
+        index = guListItemSearch( items, 0, count - 1, id );
+        if( index != wxNOT_FOUND )
+            return items[ index ].m_Name;
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayInt GetArraySameItems( const wxArrayInt &Source, const wxArrayInt &Oper )
+{
+  wxArrayInt RetVal = Source;
+  int index;
+  int count = RetVal.Count();
+  if( count )
+  {
+    for( index = count - 1; index >= 0; index-- )
+    {
+      if( Oper.Index( RetVal[ index ] ) == wxNOT_FOUND )
+      {
+        RetVal.RemoveAt( index );
+      }
+    }
+  }
+  return RetVal;
+};
+
+// -------------------------------------------------------------------------------- //
+wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper )
+{
+  wxArrayInt RetVal = Source;
+  int index;
+  int count = RetVal.Count();
+  if( count )
+  {
+    for( index = count - 1; index >= 0; index-- )
+    {
+      if( Oper.Index( RetVal[ index ] ) != wxNOT_FOUND )
+      {
+        RetVal.RemoveAt( index );
+      }
+    }
+  }
+  return RetVal;
+};
+
+// -------------------------------------------------------------------------------- //
+wxString GenerateRandomTag()
+{
+    guMD5 md5;
+    wxDateTime Now = wxDateTime::UNow();
+    return md5.MD5( Now.Format() ).SubString( 0, 7 );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline ArrayIntToStrList( const wxArrayInt &Data )
+{
+  int index;
+  int count;
+  wxString RetVal = wxT( "(" );
+  count = Data.Count();
+  for( index = 0; index < count; index++ )
+  {
+    RetVal += wxString::Format( wxT( "%u," ), Data[ index ]  );
+  }
+  RetVal = RetVal.RemoveLast() + wxT( ")" );
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline ArrayToFilter( const wxArrayInt &Filters, const wxString &VarName )
+{
+  return VarName + wxT( " IN " ) + ArrayIntToStrList( Filters );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString TextFilterToSQL( const wxArrayString &TeFilters )
+{
+  long count;
+  long index;
+  wxString RetVal = wxEmptyString;
+  if( ( count = TeFilters.Count() ) )
+  {
+    for( index = 0; index < count; index++ )
+    {
+        RetVal += wxT( "( song_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' OR " );
+        RetVal += wxT( " song_artistid IN ( SELECT artist_id FROM artists WHERE artist_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' ) OR " );
+        RetVal += wxT( " song_albumid IN ( SELECT album_id FROM albums WHERE album_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' ) ) " );
+        RetVal += wxT( "AND " );
+    }
+    RetVal = RetVal.RemoveLast( 4 );
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString LabelFilterToSQL( const wxArrayInt &LaFilters )
+{
+  long count;
+  long index;
+  wxString subquery;
+  wxString RetVal = wxEmptyString;
+  if( ( count = LaFilters.Count() ) )
+  {
+    subquery = wxT( "(" );
+    for( index = 0; index < count; index++ )
+    {
+        subquery += wxString::Format( wxT( "%u," ), LaFilters[ index ] );
+    }
+    subquery = subquery.RemoveLast( 1 ) + wxT( ")" );
+
+    RetVal += wxT( "( (song_artistid IN ( SELECT settag_artistid FROM settags WHERE " \
+                  "settag_tagid IN " ) + subquery + wxT( " and settag_artistid > 0 ) ) OR" );
+    RetVal += wxT( " (song_albumid IN ( SELECT settag_albumid FROM settags WHERE " \
+                  "settag_tagid IN " ) + subquery + wxT( " and settag_albumid > 0 ) ) OR" );
+    RetVal += wxT( " (song_id IN ( SELECT settag_songid FROM settags WHERE " \
+                  "settag_tagid IN " ) + subquery + wxT( " and settag_songid > 0 ) ) )" );
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+// DbLibrary
+// -------------------------------------------------------------------------------- //
+DbLibrary::DbLibrary()
+{
+    //
+    m_RaOrder = 0;
+
+    m_GeFilters.Empty();
+    m_LaFilters.Empty();
+    m_ArFilters.Empty();
+    m_AlFilters.Empty();
+    m_TeFilters.Empty();
+    m_RaTeFilters.Empty();
+    m_RaGeFilters.Empty();
+
+    m_UpTag = wxEmptyString;
+
+    LoadCache();
+}
+
+// -------------------------------------------------------------------------------- //
+DbLibrary::DbLibrary( const wxString &DbName )
+{
+    if( !wxFileExists( DbName ) )
+    {
+        // File dont exists. Create it!!
+        CreateStruct( DbName );
+    }
+    Open( DbName );
+
+    m_UpTag = wxEmptyString;
+    //
+    m_RaOrder = 0;
+
+    m_GeFilters.Empty();
+    m_LaFilters.Empty();
+    m_ArFilters.Empty();
+    m_AlFilters.Empty();
+    m_TeFilters.Empty();
+    m_RaTeFilters.Empty();
+    m_RaGeFilters.Empty();
+
+    LoadCache();
+}
+
+// -------------------------------------------------------------------------------- //
+DbLibrary::~DbLibrary()
+{
+  Close();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::LoadCache( void )
+{
+//    Labels.Empty();
+//    GetLabels( &Labels );
+    m_GenresCache.Empty();
+    GetGenres( &m_GenresCache, true );
+    m_ArtistsCache.Clear();
+    GetArtists( &m_ArtistsCache, true );
+    m_AlbumsCache.Clear();
+    GetAlbums( &m_AlbumsCache , true );
+    m_PathsCache.Clear();
+    GetPaths( &m_PathsCache, true );
+}
+
+// -------------------------------------------------------------------------------- //
+bool DbLibrary::CreateStruct( const wxString &DbName )
+{
+    wxArrayString query;
+    int Index;
+    int Count;
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS genres( genre_id INTEGER PRIMARY KEY AUTOINCREMENT,genre_name varchar(255),genre_uptag varchar(8) );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""genre_id"" on genres (genre_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""genre_name"" on genres (genre_name ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS albums( album_id INTEGER PRIMARY KEY AUTOINCREMENT, album_artistid INTEGER, album_pathid INTEGER, album_name varchar(255), album_coverid INTEGER, album_uptag varchar(8) );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""album_id"" on albums (album_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_artistid"" on albums (album_artistid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_pathid"" on albums (album_pathid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_name"" on albums (album_name ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS artists( artist_id INTEGER  PRIMARY KEY AUTOINCREMENT, artist_name varchar(255), artist_uptag varchar(8) );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""artist_id"" on artists (artist_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""artist_name"" on artists (artist_name ASC);" ) );
+    query.Add( wxT( "INSERT INTO artists( artist_id, artist_name ) VALUES( NULL, 'Various' );" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS paths( path_id INTEGER PRIMARY KEY AUTOINCREMENT,path_value varchar(1024),path_uptag varchar(8) );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""path_id"" on paths (path_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""path_value"" on paths (path_value ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS songs( song_id INTEGER PRIMARY KEY AUTOINCREMENT, song_name varchar(255), song_albumid INTEGER, song_artistid INTEGER, song_genreid INTEGER, song_filename varchar(255), song_pathid INTEGER, song_number int(3), song_year int(4), song_length int, song_uptag varchar(8) );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""song_id"" on songs (song_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_name"" on songs (song_name ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_albumid"" on songs (song_albumid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_artistid"" on songs (song_artistid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_genreid"" on songs (song_genreid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_pathid"" on songs (song_pathid ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS tags( tag_id INTEGER  PRIMARY KEY AUTOINCREMENT, tag_name varchar(100) );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""tag_id"" on tags (tag_id ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS settags( settag_tagid INTEGER, settag_artistid INTEGER, settag_albumid INTEGER, settag_songid INTEGER );" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_tagid"" on settags (settag_tagid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_artistid"" on settags (settag_artistid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_albumid"" on settags (settag_albumid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_songid"" on settags (settag_songid ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name varchar(100));" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""playlist_id"" on playlists (playlist_id ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsongs( plsong_id INTEGER PRIMARY KEY AUTOINCREMENT, plsong_plid INTEGER, plsong_songid INTEGER );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""plsong_id"" on plsongs (plsong_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plsong_plid"" on plsongs (plsong_plid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plsong_songid"" on plsongs (plsong_songid ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_uptag varchar(8) );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""cover_id"" on covers (cover_id ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS audioscs( audiosc_id INTEGER PRIMARY KEY AUTOINCREMENT, audiosc_artist VARCHAR(255), audiosc_album varchar(255), audiosc_track varchar(255), audiosc_playedtime INTEGER, audiosc_source char(1), audiosc_ratting char(1), audiosc_len INTEGER, audiosc_tracknum INTEGER, audiosc_mbtrackid INTEGER );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""audiosc_id"" on audioscs (audiosc_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""audiosc_playedtime"" on audioscs (audiosc_playedtime ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiogenres( radiogenre_id INTEGER PRIMARY KEY AUTOINCREMENT, radiogenre_name VARCHAR(255), radio_tunerbase VARCHAR(255) );" ) );
+    query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""radiogenre_id"" on radiogenres (radiogenre_id ASC);" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '60s' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '80s' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '90s' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Alternative' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Ambient' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Blues' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Chillout' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Classical' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Country' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Dance' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Downtempo' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Easy' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Electronic' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Funk' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'House' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Jazz' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'New Age' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Oldies' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Pop' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Reggae' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'RnB' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Rock' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Smooth Jazz' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Slow' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Soundtrack' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Techno' );" ) );
+    query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Top 40' );" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER, radiostation_genreid INTEGER, radiostation_name VARCHAR(255), radiostation_type VARCHAR(32), radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiostation_id"" on radiostations (radiostation_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiostation_genreid"" on radiostations (radiostation_genreid ASC);" ) );
+
+    Open( DbName );
+    Count = query.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+      ExecuteUpdate( query[ Index ] );
+    }
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::Open( const wxString &DbName )
+{
+  wxString query;
+
+  m_Db.Open( DbName );
+
+  if( m_Db.IsOpen() )
+  {
+    //query = wxT( "PRAGMA synchronous=OFF" );
+    query = wxT( "PRAGMA page_size=8192; PRAGMA cache_size=4096; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
+    ExecuteUpdate( query );
+    return true;
+  }
+  return false;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::Close()
+{
+  if( m_Db.IsOpen() )
+    m_Db.Close();
+  return 1;
+}
+
+// -------------------------------------------------------------------------------- //
+wxSQLite3ResultSet DbLibrary::ExecuteQuery( const wxString &query )
+{
+#ifdef  DBLIBRARY_SHOW_QUERIES
+  guLogMessage( query );
+#endif
+  wxSQLite3ResultSet RetVal;
+  try {
+    RetVal = m_Db.ExecuteQuery( query );
+  }
+  catch(...)
+  {
+      guLogError( wxT( "DbLibrary::ExecuteQuery exception '%s'" ), query.c_str() );
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int inline DbLibrary::ExecuteUpdate( const wxString &query )
+{
+#ifdef  DBLIBRARY_SHOW_QUERIES
+  guLogMessage( query );
+#endif
+  int RetVal = 0;
+  try {
+    RetVal = m_Db.ExecuteUpdate( query );
+  }
+  catch(...)
+  {
+    guLogError( wxT( "DbLibrary::ExecuteUpdate exception '%s'" ), query.c_str() );
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxSQLite3ResultSet DbLibrary::ExecuteQuery( const wxSQLite3StatementBuffer &query )
+{
+  return m_Db.ExecuteQuery( query );
+}
+
+// -------------------------------------------------------------------------------- //
+int inline DbLibrary::ExecuteUpdate( const wxSQLite3StatementBuffer &query )
+{
+  return m_Db.ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxASSERT( GenreId );
+  int RetVal = 0;
+
+  escape_query_str( &GenreName );
+
+  query = wxString::Format( wxT( "SELECT genre_id, genre_uptag FROM genres "\
+                                 "WHERE genre_name = '%s' LIMIT 1;" ), GenreName.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    * GenreId = dbRes.GetInt( 0 );
+    if( dbRes.GetString( 1 ) != m_UpTag )
+    {
+        query = wxString::Format( wxT( "UPDATE genres SET genre_uptag = '%s' "\
+                                       "WHERE genre_id = %i;" ), m_UpTag.c_str(), * GenreId );
+        ExecuteUpdate( query );
+    }
+    RetVal = 1;
+  }
+  else
+  {
+    query = wxString::Format( wxT( "INSERT INTO genres( genre_id, genre_name, genre_uptag ) "\
+                                   "VALUES( NULL, '%s', '%s' );" ), GenreName.c_str(), m_UpTag.c_str() );
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      * GenreId = m_Db.GetLastRowId().GetLo();
+      RetVal = 1;
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::FindCoverFile( const wxString &DirName )
+{
+    wxString query;
+    wxSQLite3ResultSet dbRes;
+    wxDir Dir;
+    wxString FileName;
+    wxString CurFile;
+    wxString SavedDir( wxGetCwd() );
+    int CoverId = 0;
+
+    Dir.Open( DirName );
+    wxSetWorkingDirectory( DirName );
+
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES ) )
+        {
+            do {
+                CurFile = FileName.Lower();
+                if( SearchCoverWords( CurFile, m_CoverSearchWords ) )
+                {
+                    if( CurFile.EndsWith( wxT( ".jpg" ) ) ||
+                        CurFile.EndsWith( wxT( ".png" ) ) ||
+                        CurFile.EndsWith( wxT( ".bmp" ) ) ||
+                        CurFile.EndsWith( wxT( ".gif" ) ) )
+                    {
+                        CurFile = DirName + wxT( '/' ) + FileName;
+                        //guLogMessage( wxT( "Found Cover: %s" ), CurFile.c_str() );
+                        escape_query_str( &CurFile );
+
+                        query = wxString::Format( wxT( "SELECT cover_id, cover_path, cover_uptag FROM covers " \
+                                    "WHERE cover_path = '%s' LIMIT 1;" ), CurFile.c_str() );
+
+                        dbRes = ExecuteQuery( query );
+
+                        if( dbRes.NextRow() )
+                        {
+                            CoverId = dbRes.GetInt( 0 );
+                            if( dbRes.GetString( 2 ) != m_UpTag )
+                            {
+                                query = wxString::Format( wxT( "UPDATE covers SET cover_uptag = '%s' " \
+                                                               "WHERE cover_id = %i;" ), m_UpTag.c_str(), CoverId );
+                                ExecuteUpdate( query );
+                            }
+                        }
+                        else
+                        {
+                            // Create the Thumb image
+                            wxImage TmpImg;
+                            //wxBitmap TmpBmp;
+                            TmpImg.LoadFile( DirName + wxT( '/' ) + FileName ); //CurFile ); Curfile is normalized for m_Db :/
+                            if( TmpImg.IsOk() )
+                            {
+                              //guLogWarning( _T( "Scaling image %i" ), n );
+                              TmpImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
+
+                              if( TmpImg.IsOk() )
+                              {
+                                  //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
+
+                                  wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_uptag ) "
+                                                   "VALUES( NULL, '%s', ?, '%s' );" ), CurFile.c_str(), m_UpTag.c_str() ) );
+
+                                  try {
+                                    stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+                                    //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
+                                    stmt.ExecuteQuery();
+                                  }
+                                  catch( wxSQLite3Exception& e )
+                                  {
+                                    guLogMessage( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+                                  }
+
+                                  CoverId = m_Db.GetLastRowId().GetLo();
+
+                              }
+                           }
+                        }
+                    }
+                    break;
+                }
+            } while( Dir.GetNext( &FileName ) );
+        }
+    }
+    wxSetWorkingDirectory( SavedDir );
+    return CoverId;
+}
+
+// -------------------------------------------------------------------------------- //
+// TODO : Add a litle cache
+wxString DbLibrary::GetCoverPath( const int CoverId )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString RetVal = wxEmptyString;
+  static int LastCoverId = wxNOT_FOUND;
+  static wxString LastCoverPath;
+  static guListItems LastItems;
+  int count;
+  int index;
+  if( LastCoverId != CoverId )
+  {
+    count = LastItems.Count();
+    if( count )
+    {
+      for( index = 0; index < count; index++ )
+      {
+        if( LastItems[ index ].m_Id == CoverId )
+        {
+          LastCoverId = CoverId;
+          LastCoverPath = LastItems[ index ].m_Name;
+          return LastCoverPath;
+        }
+      }
+    }
+
+    if( count > 25 ) // MAX_CACHE_ITEMS
+    {
+        LastItems.RemoveAt( 0 );
+    }
+
+    query = wxString::Format( wxT( "SELECT cover_path FROM covers "\
+                                   "WHERE cover_id = %u "\
+                                   "LIMIT 1;" ), CoverId );
+    dbRes = ExecuteQuery( query );
+    if( dbRes.NextRow() )
+    {
+      RetVal = dbRes.GetString( 0 );
+    }
+    LastCoverId = CoverId;
+    LastCoverPath = RetVal;
+    LastItems.Add( new guListItem( CoverId, LastCoverPath ) );
+    dbRes.Finalize();
+  }
+  else
+    RetVal = LastCoverPath;
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
+{
+  long CoverId = 0;
+  wxSQLite3ResultSet dbRes;
+  wxString query;
+  wxString FileName;
+
+  // Delete the actual assigned Cover
+  // Find the Cover assigned to the album
+  query = wxString::Format( wxT( "SELECT album_coverid FROM albums WHERE album_id = %i LIMIT 1;" ), AlbumId );
+  dbRes = ExecuteQuery( query );
+  if( dbRes.NextRow() )
+  {
+    CoverId = dbRes.GetInt( 0 );
+  }
+  dbRes.Finalize();
+
+  if( CoverId > 0 )
+  {
+/******* Dont need to remove old file. Maybe its the same as the new one.
+    query = wxString::Format( wxT( "SELECT cover_path FROM covers WHERE cover_id = %i LIMIT 1;" ), CoverId );
+    dbRes = ExecuteQuery( query );
+    if( dbRes.NextRow() )
+    {
+      FileName = dbRes.GetString( 0 );
+    }
+    dbRes.Finalize();
+    if( !FileName.IsEmpty() && wxFileExists( FileName ) )
+    {
+      if( !wxRemoveFile( FileName ) )
+      {
+        guLogWarning( wxT( "Could not delete the file %s" ), FileName.c_str() );
+      }
+    }
+*******/
+
+    query = wxString::Format( wxT( "DELETE FROM covers WHERE cover_id = %i;" ), CoverId );
+    ExecuteUpdate( query );
+
+    query = wxString::Format( wxT( "UPDATE albums SET album_coverid = 0 WHERE album_id = %i;" ), AlbumId );
+    ExecuteUpdate( query );
+  }
+
+  if( !CoverPath.IsEmpty() )
+  {
+    wxImage TmpImg;
+    //wxBitmap TmpBmp;
+    TmpImg.LoadFile( CoverPath );
+    if( TmpImg.IsOk() )
+    {
+      //guLogWarning( _T( "Scaling image %i" ), n );
+      TmpImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
+      wxString FileName = CoverPath;
+      escape_query_str( &FileName );
+
+      wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_uptag ) " \
+                                   "VALUES( NULL, '%s', ?, '' )" ), FileName.c_str() ) );
+
+      stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+
+      stmt.ExecuteQuery();
+      CoverId = m_Db.GetLastRowId().GetLo();
+      query = wxString::Format( wxT( "UPDATE albums SET album_coverid = %i WHERE album_id = %i;" ), CoverId, AlbumId );
+      return ExecuteUpdate( query );
+    }
+  }
+  return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, const int ArtistId, const int PathId )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int RetVal = 0;
+//  printf( "GetAlbumId\n" );
+
+  escape_query_str( &AlbumName );
+
+  query = wxString::Format( wxT( "SELECT album_id, album_coverid, album_uptag "\
+                                 "FROM albums "\
+                                 "WHERE album_name = '%s' "\
+                                 "AND album_pathid = %u LIMIT 1;" ), AlbumName.c_str(), PathId );
+  //printf( query.ToAscii() ); printf( "\n" );
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    * AlbumId = dbRes.GetInt( 0 );
+    * CoverId = dbRes.GetInt( 1 );
+    if( * CoverId )
+    {
+        // Check if the Actual Cover exists and
+        // If not exists then remove it and clear Album database
+        wxString CoverPath = GetCoverPath( * CoverId );
+        if( !CoverPath.Len() || !wxFileExists( CoverPath ) )
+        {
+            // Clears CoverId in album
+            query = wxString::Format( wxT( "UPDATE albums SET album_coverid = 0 "\
+                                       "WHERE album_id = %i;" ), * AlbumId );
+            ExecuteUpdate( query );
+            // The cover did not exist so clear it
+            * CoverId = 0;
+        }
+    }
+
+    if( !* CoverId )
+    {
+        * CoverId = FindCoverFile( wxGetCwd() );
+        if( * CoverId )
+        {
+            query = wxString::Format( wxT( "UPDATE albums SET album_coverid = %i "\
+                                       "WHERE album_id = %i;" ), * CoverId, * AlbumId );
+            ExecuteUpdate( query );
+        }
+    }
+
+    if( dbRes.GetString( 2 ) != m_UpTag )
+    {
+        query = wxString::Format( wxT( "UPDATE albums SET album_uptag = '%s' "\
+                                       "WHERE album_id = %i;" ), m_UpTag.c_str(), * AlbumId );
+        ExecuteUpdate( query );
+    }
+
+    if( * CoverId )
+    {
+        query = wxString::Format( wxT( "UPDATE covers SET cover_uptag = '%s' "\
+                                       "WHERE cover_id = %i;" ), m_UpTag.c_str(), * CoverId );
+        ExecuteUpdate( query );
+    }
+    RetVal = 1;
+  }
+  else
+  {
+    * CoverId = FindCoverFile( wxGetCwd() );
+
+    query = query.Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid, album_uptag ) "\
+                               "VALUES( NULL, %u, %u, '%s', %u, '%s' );" ), ArtistId, PathId,  AlbumName.c_str(), CoverId, m_UpTag.c_str() );
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      * AlbumId = m_Db.GetLastRowId().GetLo();
+      RetVal = 1;
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayInt DbLibrary::GetLabelIds( const wxArrayString &Labels )
+{
+  wxArrayInt RetVal;
+  wxString LabelName;
+  int      LabelId;
+  int index;
+  int count = Labels.Count();
+  for( index = 0; index < count; index++ )
+  {
+    LabelName = Labels[ index ];
+    if( GetLabelId( &LabelId, LabelName ) )
+        RetVal.Add( LabelId );
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetLabelId( int * LabelId, wxString &LabelName )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int RetVal = 0;
+//  printf( "GetLabelId\n" );
+
+  escape_query_str( &LabelName );
+  query = wxString::Format( wxT( "SELECT tag_id FROM tags "\
+                                 "WHERE tag_name = '%s' LIMIT 1;" ), LabelName.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    * LabelId = dbRes.GetInt( 0 );
+    RetVal = 1;
+  }
+  else
+  {
+    query = wxT( "INSERT INTO tags( tag_id, tag_name ) VALUES( NULL, '" ) +
+            LabelName + wxT( "');" );
+
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      * LabelId = m_Db.GetLastRowId().GetLo();
+      RetVal = 1;
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPathId( int * PathId, wxString &PathValue )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int RetVal = 0;
+//  printf( "GetPathId\n" );
+
+  if( !PathValue.EndsWith( wxT( "/" ) ) )
+    PathValue += '/';
+
+  escape_query_str( &PathValue );
+
+  query = wxString::Format( wxT( "SELECT path_id, path_uptag FROM paths "\
+                                 "WHERE path_value = '%s' LIMIT 1;" ), PathValue.c_str() );
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    * PathId = dbRes.GetInt( 0 );
+    if( dbRes.GetString( 1 ) != m_UpTag )
+    {
+        query = wxString::Format( wxT( "UPDATE paths SET path_uptag = '%s' "\
+                                       "WHERE path_id = %i;" ), m_UpTag.c_str(), * PathId );
+        ExecuteUpdate( query );
+    }
+    RetVal = 1;
+  }
+  else
+  {
+    query = wxString::Format( wxT( "INSERT INTO paths( path_id, path_value, path_uptag ) "\
+                                   "VALUES( NULL, '%s', '%s' );" ), PathValue.c_str(), m_UpTag.c_str() );
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      * PathId = m_Db.GetLastRowId().GetLo();
+      RetVal = 1;
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
+{
+  //wxSQLite3StatementBuffer query;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int RetVal = 0;
+
+//  printf( "GetSongId0\n" );
+
+  escape_query_str( &FileName );
+
+//  printf( "%u : %s\n", FileName.Length(), TextBuf );
+  query = query.Format( wxT( "SELECT song_id, song_uptag FROM songs "\
+                             "WHERE song_pathid = %u " \
+                             "AND song_filename = '%s' LIMIT 1;" ), PathId, FileName.c_str() );
+  //printf( query.ToAscii() );
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    * SongId = dbRes.GetInt( 0 );
+    if( dbRes.GetString( 1 ) != m_UpTag )
+    {
+        query = wxString::Format( wxT( "UPDATE songs SET song_uptag = '%s' "\
+                                       "WHERE song_id = %i;" ), m_UpTag.c_str(), * SongId );
+        ExecuteUpdate( query );
+    }
+    RetVal = 1;
+  }
+  else
+  {
+    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_uptag ) "\
+                               "VALUES( NULL, %u, '%s' )" ), PathId, m_UpTag.c_str() );
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      * SongId = m_Db.GetLastRowId().GetLo();
+      RetVal = 1;
+    }
+  }
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetSongId( int * SongId, wxString &FileName, wxString &FilePath )
+{
+  //wxString query;
+  //wxSQLite3ResultSet dbRes;
+  int PathId;
+//  printf( "GetGenreId1\n" );
+
+  if( !GetPathId( &PathId, FilePath ) )
+    return 0;
+
+  return GetSongId( SongId, FileName, PathId );
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::ReadFileTags( const wxString &FileName )
+{
+  TagInfo Info;
+  ID3_Tag tag;
+
+  // Try to read ID3V2 tags
+  if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V2 ) >= 0 )
+  {
+      Info.ReadID3Tags( &tag );
+  }
+  else
+  {
+      guLogWarning( wxT( "Not found ID3v2 Tags in file %s" ), FileName.c_str() );
+  }
+
+  // Try to fill empty field from ID3v1 tags
+  if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V1 ) >= 0 )
+  {
+      Info.ReadID3Tags( &tag );
+  }
+  else
+  {
+      guLogWarning( wxT( "Not found ID3v1 Tags in file %s" ), FileName.c_str() );
+  }
+
+  wxString PathName = wxGetCwd();
+  //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
+  if( !GetPathId( &m_CurSong.m_PathId, PathName ) )
+  {
+     guLogWarning( wxT( "Could not get the PathId\n" ) );
+     return 0;
+  }
+
+  if( !GetArtistId( &m_CurSong.m_ArtistId, Info.m_ArtistName ) )
+  {
+    guLogWarning( wxT( "Could not get the ArtistId" ) );
+    return 0;
+  }
+
+  if( !GetAlbumId( &m_CurSong.m_AlbumId, &m_CurSong.m_CoverId, Info.m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId ) )
+  {
+    guLogWarning( wxT( "Could not get the AlbumId" ) );
+    return 0;
+  }
+
+  if( !GetGenreId( &m_CurSong.m_GenreId, Info.m_GenreName ) )
+  {
+    guLogWarning( wxT( "Could not get the GenreId" ) );
+    return 0;
+  }
+
+  m_CurSong.m_FileName = FileName.AfterLast( '/' );
+  m_CurSong.m_SongName = Info.m_TrackName;
+
+  GetSongId( &m_CurSong.m_SongId, m_CurSong.m_FileName, m_CurSong.m_PathId );
+
+  m_CurSong.m_Number   = Info.m_Track;
+  m_CurSong.m_Year     = Info.m_Year;
+  m_CurSong.m_Length   = Info.m_Length;
+
+  wxArrayInt ArrayIds;
+  //
+  if( Info.m_TrackLabels.Count() )
+  {
+    ArrayIds.Add( m_CurSong.m_SongId );
+    wxArrayInt TrackLabelIds = GetLabelIds( Info.m_TrackLabels );
+    SetSongsLabels( ArrayIds, TrackLabelIds );
+  }
+
+  if( Info.m_ArtistLabels.Count() )
+  {
+    ArrayIds.Empty();
+    ArrayIds.Add( m_CurSong.m_ArtistId );
+    wxArrayInt ArtistLabelIds = GetLabelIds( Info.m_ArtistLabels );
+    SetArtistsLabels( ArrayIds, ArtistLabelIds );
+  }
+
+  if( Info.m_AlbumLabels.Count() )
+  {
+    ArrayIds.Empty();
+    ArrayIds.Add( m_CurSong.m_AlbumId );
+    wxArrayInt AlbumLabelIds = GetLabelIds( Info.m_AlbumLabels );
+    SetAlbumsLabels( ArrayIds, AlbumLabelIds );
+  }
+
+  UpdateSong();
+
+  return 1;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::UpdateSongs( guTrackArray * Songs )
+{
+  guTrack * Song;
+  int index;
+  int count = Songs->Count();
+
+  // Refresh the SearchCoverWords array
+  guConfig * Config = ( guConfig * ) guConfig::Get();
+  if( Config )
+  {
+      m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+  }
+
+  // Process each Track
+  for( index = 0; index < count; index++ )
+  {
+    Song = &( * Songs )[ index ];
+
+    if( wxFileExists( Song->m_FileName ) )
+    {
+        //guLogMessage( wxT( "Updating FileName '%s'" ), Song->FileName.c_str() );
+        // Update the File iD3Tags
+        ID3_Tag Tag;
+        Tag.Link( Song->m_FileName.ToUTF8() );
+        TagInfo info;
+
+        info.m_TrackName = Song->m_SongName;
+        info.m_ArtistName = Song->m_ArtistName;
+        info.m_AlbumName = Song->m_AlbumName;
+        info.m_GenreName = Song->m_GenreName;
+        info.m_Track = Song->m_Number;
+        info.m_Year = Song->m_Year;
+
+        info.WriteID3Tags( &Tag );
+
+        //Tag.Update();
+
+        // Update the Library
+    //////////////////////////
+
+        wxString PathName;
+        int      PathId;
+        int      ArtistId;
+        int      AlbumId;
+        int      CoverId;
+        int      GenreId;
+        //int      SongId;
+        //wxString FileName;
+
+        PathName = wxPathOnly( Song->m_FileName );
+        if( !GetPathId( &PathId, PathName ) )
+        {
+          guLogWarning( wxT( "Could not get the PathId" ) );
+          continue;
+        }
+
+        if( !GetArtistId( &ArtistId, Song->m_ArtistName ) )
+        {
+          guLogMessage( wxT( "Could not get the ArtistId" ) );
+          continue;
+        }
+
+        if( !GetAlbumId( &AlbumId, &CoverId, Song->m_AlbumName, ArtistId, PathId ) )
+        {
+          guLogMessage( wxT( "Could not get the AlbumId" ) );
+          continue;
+        }
+
+        if( !GetGenreId( &GenreId, Song->m_GenreName ) )
+        {
+          guLogMessage( wxT( "Could not get the GenreId" ) );
+          continue;
+        }
+
+        //FileName = Song->FileName.AfterLast( '/' );
+        //printf( ( wxT( "FileName: " ) + CurSong.FileName ).ToAscii() ); printf( "\n" );
+
+        //GetSongId( &SongId, FileName, PathId );
+
+        m_CurSong = * Song;
+        m_CurSong.m_GenreId = GenreId;
+        m_CurSong.m_ArtistId = ArtistId;
+        m_CurSong.m_AlbumId = AlbumId;
+        m_CurSong.m_PathId = PathId;
+        m_CurSong.m_FileName = Song->m_FileName.AfterLast( '/' );
+        escape_query_str( &m_CurSong.m_FileName );
+        //CurSong.SongId = SongId;
+        //CurSong.FileName.c_str(),
+        //CurSong.Number
+        //CurSong.Year,
+        //CurSong.Length,
+        UpdateSong();
+    }
+    else
+    {
+        guLogMessage( wxT( "The file %s was not found for edition." ), Song->m_FileName.c_str() );
+    }
+  }
+
+  wxString query;
+
+  // Delete all posible orphan entries
+  query = wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" );
+  ExecuteUpdate( query );
+  query = wxT( "DELETE FROM artists WHERE artist_id NOT IN ( SELECT DISTINCT song_artistid FROM songs );" );
+  ExecuteUpdate( query );
+  query = wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" );
+  ExecuteUpdate( query );
+  query = wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT album_coverid FROM albums );" );
+  ExecuteUpdate( query );
+  query = wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" );
+  ExecuteUpdate( query );
+
+  LoadCache();
+
+//////////////////////////
+  wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
+  event.SetEventObject( ( wxObject * ) this );
+  wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::UpdateSong()
+{
+  wxString query;
+//  printf( "UpdateSong\n" );
+
+  escape_query_str( &m_CurSong.m_SongName );
+  //escape_query_str( &CurSong.FileName ); // Was already escaped in GetSongId
+
+  query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', song_genreid = %u, "\
+                             "song_artistid = %u, song_albumid = %u, song_pathid = %u, "\
+                             "song_filename = '%s', song_number = %u, song_year = %u, "\
+                             "song_length = %u WHERE song_id = %u;" ),
+        m_CurSong.m_SongName.c_str(),
+        m_CurSong.m_GenreId,
+        m_CurSong.m_ArtistId,
+        m_CurSong.m_AlbumId,
+        m_CurSong.m_PathId,
+        m_CurSong.m_FileName.c_str(),
+        m_CurSong.m_Number,
+        m_CurSong.m_Year,
+        m_CurSong.m_Length,
+        m_CurSong.m_SongId );
+  //printf( query.ToAscii() ); printf( "\n" );
+  return ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::ScanDirectory( const wxString &DirName, int GaugeId )
+{
+  wxDir Dir;
+  wxString FileName;
+  wxString SavedDir( wxGetCwd() );
+
+  Dir.Open( DirName );
+  wxSetWorkingDirectory( DirName );
+//  guLogMessage( wxT( "Scanning dir (%i) '%s'" ), GaugeId, DirName.c_str() );
+
+  if( Dir.IsOpened() )
+  {
+    if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+    {
+      do {
+        if( ( FileName[ 0 ] != '.' ) )
+        {
+          if( Dir.Exists( FileName ) )
+          {
+            if( GaugeId != wxNOT_FOUND )
+            {
+              wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_PULSE );
+              event.SetInt( GaugeId );
+              wxPostEvent( wxTheApp->GetTopWindow(), event );
+            }
+            //guLogMessage( wxT( "Scanning dir '%s'" ), FileName.c_str() );
+            ScanDirectory( FileName, GaugeId );
+          }
+          else
+          {
+            //guLogMessage( wxT( "Scanning file '%s'" ), FileName.c_str() );
+            // TODO: add other file formats ?
+            if( FileName.EndsWith( wxT( ".mp3" ) ) )
+            {
+                ReadFileTags( FileName );
+            }
+          }
+        }
+      } while( Dir.GetNext( &FileName ) );
+    }
+  }
+  wxSetWorkingDirectory( SavedDir );
+  return 1;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::UpdateLibrary()
+{
+  // Refresh the SearchCoverWords array
+  // Its loaded here so only needed to load once for every update
+  guConfig * Config = ( guConfig * ) guConfig::Get();
+  if( Config )
+  {
+      m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+  }
+
+  guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+  int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge();
+  DbUpdateLibThread * UpdateLibThread = new DbUpdateLibThread( this, m_LibPaths, GaugeId );
+  if( UpdateLibThread )
+  {
+    m_UpTag = GenerateRandomTag();
+    guLogMessage( wxT( "Updating with Tag %s" ), m_UpTag.c_str() );
+    UpdateLibThread->Create();
+    UpdateLibThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+    UpdateLibThread->Run();
+  }
+  return 1;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::DeleteOldRecs()
+{
+  wxString query;
+
+  query = wxString::Format( wxT( "DELETE FROM songs WHERE song_uptag != '%s';" ), m_UpTag.c_str() );
+  ExecuteUpdate( query );
+
+  query = wxString::Format( wxT( "DELETE FROM genres WHERE genre_uptag != '%s';" ), m_UpTag.c_str() );
+  ExecuteUpdate( query );
+
+  query = wxString::Format( wxT( "DELETE FROM artists WHERE artist_uptag != '%s';" ), m_UpTag.c_str() );
+  ExecuteUpdate( query );
+
+  query = wxString::Format( wxT( "DELETE FROM albums WHERE album_uptag != '%s';" ), m_UpTag.c_str() );
+  ExecuteUpdate( query );
+
+  query = wxString::Format( wxT( "DELETE FROM paths WHERE path_uptag != '%s';" ), m_UpTag.c_str() );
+  ExecuteUpdate( query );
+
+  query = wxString::Format( wxT( "DELETE FROM covers WHERE cover_uptag != '%s';" ), m_UpTag.c_str() );
+  ExecuteUpdate( query );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetLibPath( const wxArrayString &NewPaths )
+{
+  m_LibPaths = NewPaths;
+  //
+  guLogMessage( wxT( "Library Paths: " ) );
+  for( unsigned int Index = 0; Index < m_LibPaths.Count(); Index++ )
+  {
+    guLogMessage( m_LibPaths[ Index ] );
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetFiltersCount() const
+{
+    return m_TeFilters.Count() + m_GeFilters.Count() + m_LaFilters.Count() + m_ArFilters.Count() + m_AlFilters.Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetTeFilters( const wxArrayString &NewTeFilters )
+{
+    //guLogMessage( wxT( "DbLibrary::SetTeFilters" ) );
+    m_TeFilters = NewTeFilters;
+    m_LaFilters.Empty();
+    m_GeFilters.Empty();
+    m_ArFilters.Empty();
+    m_AlFilters.Empty();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetTaFilters( const wxArrayInt &NewTaFilters )
+{
+    //guLogMessage( wxT( "DbLibrary::SetTaFilters" ) );
+    if( NewTaFilters.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_LaFilters.Empty();
+    }
+    else
+    {
+        m_LaFilters = NewTaFilters;
+    }
+    m_GeFilters.Empty();
+    m_ArFilters.Empty();
+    m_AlFilters.Empty();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters )
+{
+    //guLogMessage( wxT( "DbLibrary::SetGeFilters" ) );
+    if( NewGeFilters.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_GeFilters.Empty();
+    }
+    else
+    {
+        m_GeFilters = NewGeFilters;
+    }
+    m_ArFilters.Empty();
+    m_AlFilters.Empty();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetArFilters( const wxArrayInt &NewArFilters )
+{
+    //guLogMessage( wxT( "DbLibrary::SetArFilters" ) );
+    if( NewArFilters.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_ArFilters.Empty();
+    }
+    else
+    {
+        m_ArFilters = NewArFilters;
+    }
+    m_AlFilters.Empty();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters )
+{
+    //guLogMessage( wxT( "DbLibrary::SetAlFilters" ) );
+    if( NewAlFilters.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_AlFilters.Empty();
+    }
+    else
+    {
+        m_AlFilters = NewAlFilters;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString DbLibrary::FiltersSQL( int Level )
+{
+  wxString subquery;
+  wxString query;
+  wxString RetVal = wxEmptyString;
+
+  if( m_TeFilters.Count() )
+  {
+    RetVal += TextFilterToSQL( m_TeFilters );
+  }
+
+  if( Level > GULIBRARY_FILTER_LABELS )
+  {
+    if( m_LaFilters.Count() )
+    {
+      if( RetVal.Len() )
+        RetVal += wxT( " AND " );
+      RetVal += LabelFilterToSQL( m_LaFilters );
+    }
+
+    if( Level > GULIBRARY_FILTER_GENRES )
+    {
+      if( m_GeFilters.Count() )
+      {
+        if( RetVal.Len() )
+          RetVal += wxT( " AND " );
+        RetVal += ArrayToFilter( m_GeFilters, wxT( "song_genreid" ) );
+      }
+
+      if( Level > GULIBRARY_FILTER_ARTISTS )
+      {
+        if( m_ArFilters.Count() )
+        {
+          if( RetVal.Len() )
+            RetVal += wxT( " AND " );
+          RetVal += ArrayToFilter( m_ArFilters, wxT( "song_artistid" ) );
+        }
+
+        if( Level > GULIBRARY_FILTER_ALBUMS )
+        {
+          if( m_AlFilters.Count() )
+          {
+            if( RetVal.Len() )
+              RetVal += wxT( " AND " );
+            RetVal += ArrayToFilter( m_AlFilters, wxT( "song_albumid" ) );
+          }
+        }
+      }
+    }
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::AddLabel( wxString LabelName )
+{
+    wxString query;
+    escape_query_str( &LabelName );
+
+    query = wxT( "INSERT INTO tags( tag_id, tag_name ) VALUES( NULL, '" ) +
+            LabelName + wxT( "');" );
+
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      return m_Db.GetLastRowId().GetLo();
+    }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::SetLabelName( const int LabelId, wxString LabelName )
+{
+    wxString query;
+    escape_query_str( &LabelName );
+
+    query = query.Format( wxT( "UPDATE tags SET tag_name = '%s' WHERE tag_id = %u;" ), LabelName.c_str(), LabelId );
+
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      // TODO : Update the label name into the songs with this label
+      return m_Db.GetLastRowId().GetLo();
+    }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::DelLabel( const int LabelId )
+{
+  wxString query;
+
+  query = query.Format( wxT( "DELETE FROM tags WHERE tag_id = %u;" ), LabelId );
+  if( ExecuteUpdate( query ) )
+  {
+    query = query.Format( wxT( "DELETE FROM settags WHERE settag_tagid = %u;" ), LabelId );
+    if( ExecuteUpdate( query ) )
+      return 1;
+  }
+  return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayInt DbLibrary::GetLabels( void )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxArrayInt RetVal;
+
+  query = wxT( "SELECT tag_id FROM tags ORDER BY tag_id;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal.Add( dbRes.GetInt( 0 ) );
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::GetLabels( guListItems * Labels, bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+//  guListItems RetVal;
+  //guLogMessage( wxT( "DbLibrary::GetLabels" ) );
+
+  query = wxT( "SELECT tag_id, tag_name FROM tags ORDER BY " );
+  query += FullList ? wxT( "tag_id;" ) : wxT( "tag_name;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Labels->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+  }
+  dbRes.Finalize();
+//  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::GetGenres( guListItems * Genres, bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+//  guListItems RetVal;
+  //guLogMessage( wxT( "DbLibrary::GetGenres" ) );
+
+  //if( !GetFiltersCount() )
+  if( FullList )
+  {
+    query = wxT( "SELECT genre_id, genre_name FROM genres ORDER BY genre_id;" );
+  }
+  else if( !( m_TeFilters.Count() + m_LaFilters.Count() ) )
+  {
+    query = wxT( "SELECT genre_id, genre_name FROM genres ORDER BY genre_name;" );
+  }
+  else
+  {
+    query = wxT( "SELECT DISTINCT genre_id, genre_name FROM genres,songs " ) \
+            wxT( "WHERE genre_id = song_genreid AND " );
+    query += FiltersSQL( GULIBRARY_FILTER_GENRES );
+    query += wxT( " ORDER BY genre_name;" );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Genres->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+  }
+  dbRes.Finalize();
+//  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::GetArtists( guListItems * Artists, bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  //guLogMessage( wxT( "DbLibrary::GetArtists" ) );
+//  guListItems RetVal;
+
+  if( FullList )
+  {
+    query = wxT( "SELECT artist_id, artist_name FROM artists ORDER BY artist_id;" );
+  }
+  else if( !( m_LaFilters.Count() + m_GeFilters.Count() + m_TeFilters.Count() ) )
+  {
+    query = wxT( "SELECT artist_id, artist_name FROM artists ORDER BY artist_name;" );
+  }
+  else
+  {
+    query = wxT( "SELECT DISTINCT artist_id, artist_name FROM artists,songs " ) \
+            wxT( "WHERE artist_id = song_artistid AND " );
+    query += FiltersSQL( GULIBRARY_FILTER_ARTISTS );
+    query += wxT( " ORDER BY artist_name;" );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Artists->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+  }
+  dbRes.Finalize();
+//  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxBitmap * DbLibrary::GetCoverThumb( int CoverId )
+{
+  wxBitmap * RetVal;
+  wxImage * TmpImg;
+  //wxMemoryBuffer Buffer;
+  int len;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  query = wxString::Format( wxT( "SELECT cover_thumb FROM covers WHERE cover_id = %u LIMIT 1;" ), CoverId );
+  dbRes = m_Db.ExecuteQuery( query );
+  const unsigned char * tmpimgdata = dbRes.GetBlob( 0, len );
+
+  // if the blob field is empty
+  if( !len )
+    return NULL;
+
+  unsigned char * imgdata = ( unsigned char * ) malloc( len );
+  memcpy( imgdata, tmpimgdata, len );
+
+  TmpImg = new wxImage( 38, 38, imgdata );
+//  TmpImg->SetData( imgdata );
+  RetVal = new wxBitmap( * TmpImg );
+  delete TmpImg;
+
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::GetPaths( guListItems * Paths, bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString CoverPath;
+  //guLogMessage( wxT( "DbLibrary::GetPaths" ) );
+
+  query = wxT( "SELECT path_id, path_value FROM paths ORDER BY path_id;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Paths->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+//  guListItems RetVal;
+  wxString CoverPath;
+  //guLogMessage( wxT( "DbLibrary::GetAlbums" ) );
+
+  if( FullList )
+  {
+    query = wxT( "SELECT album_id, album_name, album_coverid FROM albums ORDER BY album_id;" );
+  }
+  else if( !( m_LaFilters.Count() + m_GeFilters.Count() + m_ArFilters.Count() + m_TeFilters.Count() ) )
+  {
+    query = wxT( "SELECT album_id, album_name, album_coverid FROM albums ORDER BY album_name;" );
+  }
+  else
+  {
+    query = wxT( "SELECT DISTINCT album_id, album_name, album_coverid FROM albums,songs " ) \
+            wxT( "WHERE album_id = song_albumid AND " );
+    query += FiltersSQL( GULIBRARY_FILTER_ALBUMS );
+    query += wxT( " ORDER BY album_name;" );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guAlbumItem * AlbumItem = new guAlbumItem();
+    AlbumItem->m_Id = dbRes.GetInt( 0 );
+    AlbumItem->m_Name = dbRes.GetString( 1 );
+    AlbumItem->m_CoverId = dbRes.GetInt( 2 );
+    AlbumItem->m_Thumb = GetCoverThumb( AlbumItem->m_CoverId );
+    Albums->Add( AlbumItem );
+  }
+  dbRes.Finalize();
+//  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::GetPlayLists( guListItems * PlayLists )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+//  guListItems RetVal;
+
+  query = wxT( "SELECT playlist_id, playlist_name FROM playlists;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    PlayLists->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+  }
+  dbRes.Finalize();
+//  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
+{
+  wxString subquery;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+
+  if( Labels.Count() )
+  {
+    subquery = ArrayIntToStrList( Labels );
+
+    query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
+            wxT( "FROM songs WHERE " );
+    query += wxT( "( (song_artistid IN ( SELECT settag_artistid FROM settags WHERE " \
+                  "settag_tagid IN " ) + subquery + wxT( " and settag_artistid > 0 ) ) OR" );
+    query += wxT( " (song_albumid IN ( SELECT settag_albumid FROM settags WHERE " \
+                  "settag_tagid IN " ) + subquery + wxT( " and settag_albumid > 0 ) ) OR" );
+    query += wxT( " (song_id IN ( SELECT settag_songid FROM settags WHERE " \
+                  "settag_tagid IN " ) + subquery + wxT( " and settag_songid > 0 ) ) )" );
+
+    query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Song = new guTrack();
+      Song->m_SongId = dbRes.GetInt( 0 );
+      Song->m_SongName = dbRes.GetString( 1 );
+      Song->m_ArtistName = guListItemsGetName( m_ArtistsCache, dbRes.GetInt( 3 ) );
+      Song->m_AlbumId = dbRes.GetInt( 4 );
+      Song->m_AlbumName = guAlbumItemsGetName( m_AlbumsCache, Song->m_AlbumId );
+      Song->m_Length = dbRes.GetInt( 5 );
+      Song->m_Number = dbRes.GetInt( 6 );
+      Song->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
+      Song->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, Song->m_AlbumId );
+      //Song->GenreName = dbRes->GetString( 10 );
+      Song->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
+      Song->m_Year = dbRes.GetInt( 9 );
+      Songs->Add( Song );
+    }
+    dbRes.Finalize();
+  }
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+
+  if( Genres.Count() )
+  {
+    query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
+            wxT( "FROM songs WHERE song_genreid IN " );
+    query += ArrayIntToStrList( Genres );
+    query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Song = new guTrack();
+      Song->m_SongId = dbRes.GetInt( 0 );
+      Song->m_SongName = dbRes.GetString( 1 );
+      Song->m_ArtistName = guListItemsGetName( m_ArtistsCache, dbRes.GetInt( 3 ) );
+      Song->m_AlbumId = dbRes.GetInt( 4 );
+      Song->m_AlbumName = guAlbumItemsGetName( m_AlbumsCache, Song->m_AlbumId );
+      Song->m_Length = dbRes.GetInt( 5 );
+      Song->m_Number = dbRes.GetInt( 6 );
+      Song->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
+      Song->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, Song->m_AlbumId );
+      //Song->GenreName = dbRes->GetString( 10 );
+      Song->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
+      Song->m_Year = dbRes.GetInt( 9 );
+      Songs->Add( Song );
+    }
+    dbRes.Finalize();
+  }
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+  if( Artists.Count() )
+  {
+    query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
+            wxT( "FROM songs WHERE song_artistid IN " );
+    query += ArrayIntToStrList( Artists );
+    query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Song = new guTrack();
+      Song->m_SongId = dbRes.GetInt( 0 );
+      Song->m_SongName = dbRes.GetString( 1 );
+      Song->m_ArtistName = guListItemsGetName( m_ArtistsCache, dbRes.GetInt( 3 ) );
+      Song->m_AlbumId = dbRes.GetInt( 4 );
+      Song->m_AlbumName = guAlbumItemsGetName( m_AlbumsCache, Song->m_AlbumId );
+      Song->m_Length = dbRes.GetInt( 5 );
+      Song->m_Number = dbRes.GetInt( 6 );
+      Song->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
+      Song->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, Song->m_AlbumId );
+      //Song->GenreName = dbRes->GetString( 10 );
+      Song->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
+      Song->m_Year = dbRes.GetInt( 9 );
+      Songs->Add( Song );
+    }
+    dbRes.Finalize();
+  }
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+  if( Albums.Count() )
+  {
+    query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
+            wxT( "FROM songs WHERE song_albumid IN " );
+    query += ArrayIntToStrList( Albums );
+    query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Song = new guTrack();
+      Song->m_SongId = dbRes.GetInt( 0 );
+      Song->m_SongName = dbRes.GetString( 1 );
+      Song->m_ArtistName = guListItemsGetName( m_ArtistsCache, dbRes.GetInt( 3 ) );
+      Song->m_AlbumId = dbRes.GetInt( 4 );
+      Song->m_AlbumName = guAlbumItemsGetName( m_AlbumsCache, Song->m_AlbumId );
+      Song->m_Length = dbRes.GetInt( 5 );
+      Song->m_Number = dbRes.GetInt( 6 );
+      Song->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
+      Song->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, Song->m_AlbumId );
+      //Song->GenreName = dbRes->GetString( 10 );
+      Song->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
+      Song->m_Year = dbRes.GetInt( 9 );
+      Songs->Add( Song );
+    }
+    dbRes.Finalize();
+  }
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+const wxString DbLibrary::GetArtistName( const int ArtistId )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString RetVal = wxEmptyString;
+
+  query = wxString::Format( wxT( "SELECT artist_name FROM artists "\
+                                 "WHERE artist_id = %u LIMIT 1;" ), ArtistId );
+
+  dbRes = ExecuteQuery( query );
+  if( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetString( 0 );
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  bool RetVal = false;
+//  printf( "GetArtistId\n" );
+
+  escape_query_str( &ArtistName );
+
+  query = wxString::Format( wxT( "SELECT artist_id, artist_uptag FROM artists "\
+                                 "WHERE artist_name = '%s' LIMIT 1;" ), ArtistName.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    * ArtistId = dbRes.GetInt( 0 );
+    if( dbRes.GetString( 1 ) != m_UpTag )
+    {
+        query = wxString::Format( wxT( "UPDATE artists SET artist_uptag = '%s' "\
+                                       "WHERE artist_id = %i;" ), m_UpTag.c_str(), * ArtistId );
+        ExecuteUpdate( query );
+    }
+    RetVal = true;
+  }
+  else if( Create )
+  {
+    query = wxString::Format( wxT( "INSERT INTO artists( artist_id, artist_name, artist_uptag ) "\
+                                   "VALUES( NULL, '%s', '%s');" ), ArtistName.c_str(), m_UpTag.c_str() );
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      * ArtistId = m_Db.GetLastRowId().GetLo();
+      RetVal = true;
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::FindArtist( const wxString &Artist )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  wxString Param = Artist.Lower();
+  escape_query_str( &Param );
+
+  query = wxString::Format( wxT( "SELECT artist_id FROM artists WHERE LOWER(artist_name) = '%s' LIMIT 1;" ), Param.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      return dbRes.GetInt( 0 );
+  }
+  return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::FindAlbum( const wxString &Artist, const wxString &Album )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString Param = Album.Lower();
+  escape_query_str( &Param );
+
+  int ArtistId = FindArtist( Artist );
+  if( ArtistId != wxNOT_FOUND )
+  {
+    query = wxString::Format( wxT( "SELECT album_id FROM albums WHERE " )\
+                wxT( "album_artistid = %d AND LOWER(album_name) = '%s' LIMIT 1;" ),
+                ArtistId, Param.c_str() );
+
+    dbRes = ExecuteQuery( query );
+
+    if( dbRes.NextRow() )
+    {
+      return dbRes.GetInt( 0 );
+    }
+  }
+  return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::FindTrack( const wxString &Artist, const wxString &Name )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString Param = Name.Lower();
+  escape_query_str( &Param );
+
+  int ArtistId = FindArtist( Artist );
+  if( ArtistId != wxNOT_FOUND )
+  {
+    query = wxString::Format( wxT( "SELECT song_id FROM songs WHERE " )\
+                wxT( "song_artistid = %d AND LOWER(song_name) = '%s' LIMIT 1;" ),
+                ArtistId, Param.c_str() );
+
+    dbRes = ExecuteQuery( query );
+
+    if( dbRes.NextRow() )
+    {
+      return dbRes.GetInt( 0 );
+    }
+  }
+  return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+guTrack * DbLibrary::FindSong( const wxString &Artist, const wxString &Track )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * RetVal = NULL;
+
+  wxString ArtistName = Artist.Upper();
+  wxString TrackName = Track.Upper();
+  escape_query_str( &ArtistName );
+  escape_query_str( &TrackName );
+
+  query = wxT( "SELECT song_id, song_name, song_artistid, artist_name, song_albumid, song_length, song_number, song_pathid, song_filename " ) \
+          wxT( "FROM songs, artists " );
+
+  query += wxString::Format( wxT( "WHERE artist_id = song_artistid AND UPPER(artist_name) = '%s' AND UPPER(song_name) = '%s' LIMIT 1;" ), ArtistName.c_str(), TrackName.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    RetVal = new guTrack();
+    if( RetVal )
+    {
+      RetVal->m_SongId = dbRes.GetInt( 0 );
+      RetVal->m_SongName = dbRes.GetString( 1 );
+      RetVal->m_ArtistId = dbRes.GetInt( 2 );
+      RetVal->m_ArtistName = dbRes.GetString( 3 ); //guListItemsGetName( &ArtistsCache, dbRes.GetInt( 2 ) );
+      RetVal->m_AlbumId = dbRes.GetInt( 4 );
+      RetVal->m_AlbumName = guAlbumItemsGetName( m_AlbumsCache, RetVal->m_AlbumId );
+      RetVal->m_Length = dbRes.GetInt( 5 );
+      RetVal->m_Number = dbRes.GetInt( 6 );
+      RetVal->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
+      RetVal->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, RetVal->m_AlbumId );
+      //RetVal->GenreName = dbRes.GetString( 10 );
+      // TODO : Read year from database
+      RetVal->m_Year = 0;
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetSongs( wxArrayInt SongIds, guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+
+  query = wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
+          wxT( "FROM songs " );
+  query += wxT( "WHERE song_id IN " ) + ArrayIntToStrList( SongIds );
+  query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Song = new guTrack();
+    Song->m_SongId = dbRes.GetInt( 0 );
+    Song->m_SongName = dbRes.GetString( 1 );
+    Song->m_ArtistName = guListItemsGetName( m_ArtistsCache, dbRes.GetInt( 3 ) );
+    Song->m_AlbumId = dbRes.GetInt( 4 );
+    Song->m_AlbumName = guAlbumItemsGetName( m_AlbumsCache, Song->m_AlbumId );
+    Song->m_Length = dbRes.GetInt( 5 );
+    Song->m_Number = dbRes.GetInt( 6 );
+    Song->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
+    Song->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, Song->m_AlbumId );
+    //Song->GenreName = dbRes->GetString( 10 );
+    Song->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
+    Song->m_Year = dbRes.GetInt( 9 );
+    Songs->Add( Song );
+  }
+  dbRes.Finalize();
+
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetSongs( guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+  //guLogMessage( wxT( "DbLibrary::GetSongs" ) );
+
+  query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
+          wxT( "FROM songs " );
+  if( GetFiltersCount() )
+    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+  query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+      Song = new guTrack();
+      Song->m_SongId = dbRes.GetInt( 0 );
+      Song->m_SongName = dbRes.GetString( 1 );
+      Song->m_ArtistName = guListItemsGetName( m_ArtistsCache, dbRes.GetInt( 3 ) );
+      Song->m_AlbumId = dbRes.GetInt( 4 );
+      Song->m_AlbumName = guAlbumItemsGetName( m_AlbumsCache, Song->m_AlbumId );
+      Song->m_Length = dbRes.GetInt( 5 );
+      Song->m_Number = dbRes.GetInt( 6 );
+      Song->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
+      Song->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, Song->m_AlbumId );
+      //Song->GenreName = dbRes->GetString( 10 );
+      Song->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
+      Song->m_Year = dbRes.GetInt( 9 );
+      Songs->Add( Song );
+  }
+  dbRes.Finalize();
+
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  bool RetVal = false;
+
+  query = wxString::Format ( wxT( "SELECT DISTINCT album_name, artist_name, path_value " ) \
+          wxT( "FROM albums, artists, paths " ) \
+          wxT( "WHERE album_id = %u AND album_artistid = artist_id AND album_pathid = path_id" ), AlbumId );
+
+  dbRes = ExecuteQuery( query );
+  if( dbRes.NextRow() )
+  {
+    * AlbumName = dbRes.GetString( 0 );
+    * ArtistName = dbRes.GetString( 1 );
+    * AlbumPath = dbRes.GetString( 2 );
+    RetVal = true;
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+guArrayListItems DbLibrary::GetArtistsLabels( const wxArrayInt &Artists )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guArrayListItems RetVal;
+  guArrayListItem * CurItem = NULL;
+  int Id;
+  int index;
+  int count = Artists.Count();
+  for( index = 0; index < count; index++ )
+  {
+      Id = Artists[ index ];
+      RetVal.Add( new guArrayListItem( Id ) );
+  }
+
+  query = wxT( "SELECT settag_artistid, settag_tagid FROM settags " ) \
+          wxT( "WHERE settag_artistid IN " ) + ArrayIntToStrList( Artists );
+  query += wxT( " ORDER BY settag_artistid,settag_tagid;" );
+
+  dbRes = ExecuteQuery( query );
+
+  index = 0;
+  CurItem = &RetVal[ index ];
+  while( dbRes.NextRow() )
+  {
+    Id = dbRes.GetInt( 0 );
+    if( CurItem->GetId() != Id )
+    {
+        index = 0;
+        while( CurItem->GetId() != Id )
+        {
+            CurItem = &RetVal[ index ];
+            index++;
+        }
+    }
+    CurItem->AddData( dbRes.GetInt( 1 ) );
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+guArrayListItems DbLibrary::GetAlbumsLabels( const wxArrayInt &Albums )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guArrayListItems RetVal;
+  guArrayListItem * CurItem = NULL;
+  int Id;
+  int index;
+  int count = Albums.Count();
+  for( index = 0; index < count; index++ )
+  {
+      Id = Albums[ index ];
+      RetVal.Add( new guArrayListItem( Id ) );
+  }
+
+  query = wxT( "SELECT settag_albumid, settag_tagid FROM settags " ) \
+          wxT( "WHERE settag_albumid IN " ) + ArrayIntToStrList( Albums );
+  query += wxT( " ORDER BY settag_albumid,settag_tagid;" );
+
+  dbRes = ExecuteQuery( query );
+
+  index = 0;
+  CurItem = &RetVal[ index ];
+  while( dbRes.NextRow() )
+  {
+    Id = dbRes.GetInt( 0 );
+    if( CurItem->GetId() != Id )
+    {
+        index = 0;
+        while( CurItem->GetId() != Id )
+        {
+            CurItem = &RetVal[ index ];
+            index++;
+        }
+    }
+    CurItem->AddData( dbRes.GetInt( 1 ) );
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+guArrayListItems DbLibrary::GetSongsLabels( const wxArrayInt &Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guArrayListItems RetVal;
+  guArrayListItem * CurItem = NULL;
+  int Id;
+  int index;
+  int count = Songs.Count();
+  for( index = 0; index < count; index++ )
+  {
+      Id = Songs[ index ];
+      RetVal.Add( new guArrayListItem( Id ) );
+  }
+
+  query = wxT( "SELECT settag_songid, settag_tagid FROM settags " ) \
+          wxT( "WHERE settag_songid IN " ) + ArrayIntToStrList( Songs );
+  query += wxT( " ORDER BY settag_songid,settag_tagid;" );
+
+  dbRes = ExecuteQuery( query );
+  //guLogMessage( query );
+
+  index = 0;
+  CurItem = &RetVal[ index ];
+  while( dbRes.NextRow() )
+  {
+    Id = dbRes.GetInt( 0 );
+    if( CurItem->GetId() != Id )
+    {
+        index = 0;
+        while( CurItem->GetId() != Id )
+        {
+            CurItem = &RetVal[ index ];
+            index++;
+        }
+    }
+    CurItem->AddData( dbRes.GetInt( 1 ) );
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels )
+{
+  wxString query;
+  int ArIndex;
+  int ArCount;
+  int LaIndex;
+  int LaCount;
+
+  query = wxT( "DELETE FROM settags " ) \
+          wxT( "WHERE settag_artistid IN " ) + ArrayIntToStrList( Artists );
+
+  ExecuteUpdate( query );
+
+  ArCount = Artists.Count();
+  LaCount = Labels.Count();
+  for( ArIndex = 0; ArIndex < ArCount; ArIndex++ )
+  {
+    for( LaIndex = 0; LaIndex < LaCount; LaIndex++ )
+    {
+      query = wxString::Format( wxT( "INSERT INTO settags( settag_tagid, settag_artistid ) "\
+                                   "VALUES( %u, %u );" ), Labels[ LaIndex ], Artists[ ArIndex ] );
+      ExecuteUpdate( query );
+    }
+  }
+
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels )
+{
+  wxString query;
+  int AlIndex;
+  int AlCount;
+  int TaIndex;
+  int TaCount;
+
+  query = wxT( "DELETE FROM settags " ) \
+          wxT( "WHERE settag_albumid IN " ) + ArrayIntToStrList( Albums );
+
+  ExecuteUpdate( query );
+
+  AlCount = Albums.Count();
+  for( AlIndex = 0; AlIndex < AlCount; AlIndex++ )
+  {
+    TaCount = Labels.Count();
+    for( TaIndex = 0; TaIndex < TaCount; TaIndex++ )
+    {
+      query = wxString::Format( wxT( "INSERT INTO settags( settag_tagid, settag_albumid ) "\
+                                   "VALUES( %u, %u );" ), Labels[ TaIndex ], Albums[ AlIndex ] );
+      ExecuteUpdate( query );
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Labels )
+{
+  wxString query;
+  int SoIndex;
+  int SoCount;
+  int LaIndex;
+  int LaCount;
+
+  query = wxT( "DELETE FROM settags " ) \
+          wxT( "WHERE settag_songid IN " ) + ArrayIntToStrList( Songs );
+
+  ExecuteUpdate( query );
+
+  SoCount = Songs.Count();
+  LaCount = Labels.Count();
+  for( SoIndex = 0; SoIndex < SoCount; SoIndex++ )
+  {
+    for( LaIndex = 0; LaIndex < LaCount; LaIndex++ )
+    {
+      query = wxString::Format( wxT( "INSERT INTO settags( settag_tagid, settag_songid ) "\
+                                   "VALUES( %u, %u );" ), Labels[ LaIndex ], Songs[ SoIndex ] );
+      ExecuteUpdate( query );
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels )
+{
+  guListItems   LaItems;
+  guTrackArray  Songs;
+  guTrack *     Song;
+  wxString      ArtistLabelStr = wxEmptyString;
+  int           index;
+  int           count;
+
+  // The ArtistLabels string is the same for all songs so done out of the loop
+  GetLabels( &LaItems, true );
+
+  count = Labels.Count();
+  for( index = 0; index < count; index++ )
+  {
+    ArtistLabelStr += guListItemsGetName( LaItems, Labels[ index ] );
+    ArtistLabelStr += wxT( "|" );
+  }
+  if( !ArtistLabelStr.IsEmpty() )
+    ArtistLabelStr.RemoveLast( 1 );
+
+  //guLogMessage( wxT( "Artist Labels : '%s'" ), ArtistLabelStr.c_str() );
+  // Update the Database
+  SetArtistsLabels( Artists, Labels );
+
+  // Get the affected tracks
+  GetArtistsSongs( Artists, &Songs );
+  count = Songs.Count();
+  for( index = 0; index < count; index++ )
+  {
+    Song = &Songs[ index ];
+
+    if( wxFileExists( Song->m_FileName ) )
+    {
+      ID3_Tag Tag;
+      Tag.Link( Song->m_FileName.ToUTF8() );
+      TagInfo info;
+      info.ReadID3Tags( &Tag );
+
+      info.m_ArtistLabelsStr = ArtistLabelStr;
+
+      info.WriteID3Tags( &Tag );
+    }
+    else
+    {
+        guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels )
+{
+  guListItems   AlItems;
+  guTrackArray  Songs;
+  guTrack *     Song;
+  wxString      AlbumLabelStr = wxEmptyString;
+  int           index;
+  int           count;
+
+  // The ArtistLabels string is the same for all songs so done out of the loop
+  GetLabels( &AlItems, true );
+
+  count = Labels.Count();
+  for( index = 0; index < count; index++ )
+  {
+    AlbumLabelStr += guListItemsGetName( AlItems, Labels[ index ] );
+    AlbumLabelStr += wxT( "|" );
+  }
+  if( !AlbumLabelStr.IsEmpty() )
+    AlbumLabelStr.RemoveLast( 1 );
+
+  // Update the Database
+  SetAlbumsLabels( Albums, Labels );
+
+  // Get the affected tracks
+  GetAlbumsSongs( Albums, &Songs );
+  count = Songs.Count();
+  for( index = 0; index < count; index++ )
+  {
+    Song = &Songs[ index ];
+
+    if( wxFileExists( Song->m_FileName ) )
+    {
+      ID3_Tag Tag;
+      Tag.Link( Song->m_FileName.ToUTF8() );
+      TagInfo info;
+      info.ReadID3Tags( &Tag );
+
+      info.m_AlbumLabelsStr = AlbumLabelStr;
+
+      info.WriteID3Tags( &Tag );
+    }
+    else
+    {
+        guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::UpdateSongsLabels( const wxArrayInt &SongIds, const wxArrayInt &Labels )
+{
+  guListItems   LaItems;
+  guTrackArray  Songs;
+  guTrack *     Song;
+  wxString      TrackLabelStr = wxEmptyString;
+  int           index;
+  int           count;
+
+  // The ArtistLabels string is the same for all songs so done out of the loop
+  GetLabels( &LaItems, true );
+
+  count = Labels.Count();
+  for( index = 0; index < count; index++ )
+  {
+    TrackLabelStr += guListItemsGetName( LaItems, Labels[ index ] );
+    TrackLabelStr += wxT( "|" );
+  }
+  if( !TrackLabelStr.IsEmpty() )
+    TrackLabelStr.RemoveLast( 1 );
+
+  // Update the Database
+  SetSongsLabels( SongIds, Labels );
+
+  // Get the affected tracks
+  GetSongs( SongIds, &Songs );
+  count = Songs.Count();
+  for( index = 0; index < count; index++ )
+  {
+    Song = &Songs[ index ];
+
+    //guLogMessage( wxT( "'%s' -> '%s'" ), Song->FileName.c_str(), TrackLabelStr.c_str() );
+    if( wxFileExists( Song->m_FileName ) )
+    {
+      ID3_Tag Tag;
+      Tag.Link( Song->m_FileName.ToUTF8() );
+      TagInfo info;
+      info.ReadID3Tags( &Tag );
+
+      info.m_TrackLabelsStr = TrackLabelStr;
+
+      info.WriteID3Tags( &Tag );
+    }
+    else
+    {
+        guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+guCoverInfos DbLibrary::GetEmptyCovers( void )
+{
+    wxString query;
+    wxSQLite3ResultSet dbRes;
+    guCoverInfos RetVal;
+
+    query = wxT( "SELECT DISTINCT album_id, album_name, artist_name, path_value " ) \
+            wxT( "FROM albums, artists, paths " ) \
+            wxT( "WHERE album_artistid = artist_id AND album_pathid = path_id AND album_coverid = 0" );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+        RetVal.Add( new guCoverInfo( dbRes.GetInt( 0 ), dbRes.GetString( 1 ), dbRes.GetString( 2 ), dbRes.GetString( 3 ) ) );
+    }
+    dbRes.Finalize();
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString RadioTextFilterToSQL( const wxArrayString &TeFilters )
+{
+  long count;
+  long index;
+  wxString RetVal = wxEmptyString;
+  if( ( count = TeFilters.Count() ) )
+  {
+    for( index = 0; index < count; index++ )
+    {
+        RetVal += wxT( "( radiogenre_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' OR " );
+        RetVal += wxT( " radiostation_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' ) AND " );
+    }
+    RetVal = RetVal.RemoveLast( 4 );
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetRadioFiltersCount( void ) const
+{
+    return m_RaTeFilters.Count() + m_RaGeFilters.Count();
+}
+
+// -------------------------------------------------------------------------------- //
+wxString DbLibrary::RadioFiltersSQL( void )
+{
+  wxString query;
+  wxString RetVal = wxEmptyString;
+
+  if( m_RaTeFilters.Count() )
+  {
+    RetVal += RadioTextFilterToSQL( m_RaTeFilters );
+  }
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  //if( !AllowFilter || !GetRadioFiltersCount() )
+  if( !AllowFilter || !m_RaTeFilters.Count() )
+  {
+    query = wxT( "SELECT radiogenre_id, radiogenre_name FROM radiogenres ORDER BY radiogenre_name;" );
+  }
+  else
+  {
+    query = wxT( "SELECT DISTINCT radiogenre_id, radiogenre_name FROM radiogenres, radiostations " ) \
+            wxT( "WHERE radiogenre_id = radiostation_genreid AND " ) + RadioFiltersSQL() + wxT( " ORDER BY radiogenre_name;" );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RadioGenres->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::AddRadioGenre( wxString GenreName )
+{
+    wxString query;
+    escape_query_str( &GenreName );
+
+    query = wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '" ) +
+            GenreName + wxT( "');" );
+
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      return m_Db.GetLastRowId().GetLo();
+    }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::SetRadioGenreName( const int GenreId, wxString GenreName )
+{
+    wxString query;
+    escape_query_str( &GenreName );
+
+    query = query.Format( wxT( "UPDATE radiogenres SET radiogenre_name = '%s' WHERE radiogenre_id = %u;" ), GenreName.c_str(), GenreId );
+
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      return m_Db.GetLastRowId().GetLo();
+    }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::DelRadioGenre( const int GenreId )
+{
+  wxString query;
+
+  query = query.Format( wxT( "DELETE FROM radiogenres WHERE radiogenre_id = %u;" ), GenreId );
+  if( ExecuteUpdate( query ) )
+  {
+    query = query.Format( wxT( "DELETE FROM radiostations WHERE radiostation_genreid = %u;" ), GenreId );
+    if( ExecuteUpdate( query ) )
+      return 1;
+  }
+  return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRaTeFilters( const wxArrayString &NewTeFilters )
+{
+    m_RaTeFilters = NewTeFilters;
+    m_RaGeFilters.Empty();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRadioGenresFilters( const wxArrayInt &NewFilters )
+{
+    m_RaGeFilters = NewFilters;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRadioGenres( const wxArrayString &Genres )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int index;
+  int count;
+  wxString GenreName;
+
+  query = wxT( "DELETE FROM radiogenres;" );
+  ExecuteUpdate( query );
+
+  count = Genres.Count();
+  for( index = 0; index < count; index++ )
+  {
+    GenreName = Genres[ index ];
+    escape_query_str( &GenreName );
+    query = wxString::Format( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) "\
+                                       "VALUES( NULL, '%s' );" ), GenreName.c_str() );
+    ExecuteUpdate( query );
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRadioStatonsOrder( int OrderValue )
+{
+    m_RaOrder = OrderValue;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetRadioStations( guRadioStations * Stations )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guRadioStation * Station;
+
+  if( !GetRadioFiltersCount() )
+  {
+    query = wxT( "SELECT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
+                 "FROM radiostations "\
+                 "ORDER BY " );
+    if( m_RaOrder )
+        query += wxT( "radiostation_br" );
+    else
+        query += wxT( "radiostation_lc" );
+    query += wxT( " DESC;" );
+  }
+ else
+  {
+    query = wxT( "SELECT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
+                 "FROM radiogenres, radiostations WHERE radiogenre_id = radiostation_genreid " );
+    if( m_RaGeFilters.Count() )
+    {
+      query += wxT( " AND " ) + ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
+    }
+    if( m_RaTeFilters.Count() )
+    {
+      query += wxT( " AND " ) + RadioFiltersSQL();
+    }
+    query += wxT( " ORDER BY " );
+    if( m_RaOrder )
+        query += wxT( "radiostation_br" );
+    else
+        query += wxT( "radiostation_lc" );
+    query += wxT( " DESC;" );
+  }
+  //guLogMessage( wxT( "GetRadioStations : RaOrder = %u" ), RaOrder );
+  //guLogMessage( wxT( "GetRadioStations : query = %s" ), query.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Station = new guRadioStation();
+    Station->m_Id         = dbRes.GetInt( 0 );
+    Station->m_GenreId    = dbRes.GetInt( 1 );
+    Station->m_Name       = dbRes.GetString( 2 );
+    Station->m_Type       = dbRes.GetString( 3 );
+    Station->m_BitRate    = dbRes.GetInt( 4 );
+    Station->m_Listeners  = dbRes.GetInt( 5 );
+    Stations->Add( Station );
+  }
+  dbRes.Finalize();
+  return Stations->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::DelRadioStations( void )
+{
+  wxString query;
+  query = wxT( "DELETE FROM radiostations;" );
+  return ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRadioStations( const guRadioStations &RadioStations )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int index;
+  int count;
+  wxString StationName;
+  wxString StationType;
+
+//  query = wxT( "DELETE FROM radiostations;" );
+//  ExecuteUpdate( query );
+
+  count = RadioStations.Count();
+  for( index = 0; index < count; index++ )
+  {
+    StationName = RadioStations[ index ].m_Name;
+    escape_query_str( &StationName );
+    StationType = RadioStations[ index ].m_Type;
+    escape_query_str( &StationType );
+    query = wxString::Format( wxT( "INSERT INTO radiostations( radiostation_id, radiostation_genreid, "\
+                                   "radiostation_name, radiostation_type, radiostation_br, radiostation_lc) "\
+                                   "VALUES( %u, %u, '%s', '%s', %u, %u );" ),
+                                   RadioStations[ index ].m_Id,
+                                   RadioStations[ index ].m_GenreId,
+                                   StationName.c_str(),
+                                   StationType.c_str(),
+                                   RadioStations[ index ].m_BitRate,
+                                   RadioStations[ index ].m_Listeners );
+    ExecuteUpdate( query );
+  }
+
+}
+
+// -------------------------------------------------------------------------------- //
+// AudioScrobbler Functions
+// -------------------------------------------------------------------------------- //
+//audioscs(
+//    audiosc_id INTEGER PRIMARY KEY AUTOINCREMENT,
+//    audiosc_artist VARCHAR(255),
+//    audiosc_album varchar(255),
+//    audiosc_track varchar(255),
+//    audiosc_playedtime INTEGER,
+//    audiosc_source char(1),
+//    audiosc_ratting char(1),
+//    audiosc_len INTEGER,
+//    audiosc_tracknum INTEGER,
+//    audiosc_mbtrackid INTEGER
+// -------------------------------------------------------------------------------- //
+bool DbLibrary::AddCachedPlayedSong( const guTrack &Song )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString Title = Song.m_SongName;
+  wxString Artist = Song.m_ArtistName;
+  wxString Album = Song.m_AlbumName;
+
+  escape_query_str( &Title );
+  escape_query_str( &Artist );
+  escape_query_str( &Album );
+
+  query = wxString::Format( wxT( "INSERT into audioscs( audiosc_id, audiosc_artist, "\
+          "audiosc_album, audiosc_track, audiosc_playedtime, audiosc_source, "\
+          "audiosc_ratting, audiosc_len, audiosc_tracknum, audiosc_mbtrackid) "\
+          "VALUES( NULL, '%s', '%s', '%s', %u, 'P', '', %u, %i, %u );" ),
+          Artist.c_str(),
+          Album.c_str(),
+          Title.c_str(),
+          wxGetUTCTime() - Song.m_Length,
+          Song.m_Length,
+          Song.m_Number,
+          0 );
+  //guLogMessage( query );
+  return ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+guAS_SubmitInfoArray DbLibrary::GetCachedPlayedSongs( int MaxCount )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guAS_SubmitInfoArray RetVal;
+  guAS_SubmitInfo * PlayedSong;
+
+  query = wxString::Format( wxT( "SELECT audiosc_id, audiosc_artist, audiosc_album, audiosc_track, "\
+                      "audiosc_playedtime, audiosc_source, audiosc_ratting, audiosc_len, "\
+                      "audiosc_tracknum, audiosc_mbtrackid "\
+                      "FROM audioscs ORDER BY audiosc_playedtime LIMIT %u" ), MaxCount );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    PlayedSong = new guAS_SubmitInfo();
+    PlayedSong->m_Id = dbRes.GetInt( 0 );
+    PlayedSong->m_ArtistName = dbRes.GetString( 1 );
+    PlayedSong->m_AlbumName = dbRes.GetString( 2 );
+    PlayedSong->m_TrackName = dbRes.GetString( 3 );
+    PlayedSong->m_PlayedTime = dbRes.GetInt( 4 );
+    PlayedSong->m_Source = dbRes.GetString( 5 )[ 0 ];
+    PlayedSong->m_Ratting = dbRes.GetString( 6 )[ 0 ];
+    PlayedSong->m_TrackLen = dbRes.GetInt( 7 );
+    PlayedSong->m_TrackNum = dbRes.GetInt( 8 );
+    PlayedSong->m_MBTrackId = dbRes.GetInt( 9 );
+    RetVal.Add( PlayedSong );
+  }
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool DbLibrary::DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo )
+{
+  wxString query;
+//  wxSQLite3ResultSet dbRes;
+  int index;
+  int count;
+
+  if( ( count = SubmitInfo.Count() ) )
+  {
+    query = wxT( "DELETE from audioscs WHERE audiosc_id IN (" );
+    for( index = 0; index < count; index++ )
+    {
+        query += wxString::Format( wxT( "%u," ), SubmitInfo[ index ].m_Id );
+    }
+    query.RemoveLast( 1 );
+    query += wxT( ");" );
+
+    if( ExecuteUpdate( query ) )
+        return true;
+  }
+  return false;
+}
+
+// -------------------------------------------------------------------------------- //
+// DbUpdateLibThread
+// -------------------------------------------------------------------------------- //
+DbUpdateLibThread::DbUpdateLibThread( DbLibrary * NewDb, const wxArrayString &NewPaths, int gaugeid ) : wxThread()
+{
+    m_Db = NewDb;
+    m_Paths = NewPaths;
+    m_GaugeId = gaugeid;
+}
+
+// -------------------------------------------------------------------------------- //
+DbUpdateLibThread::~DbUpdateLibThread()
+{
+//    printf( "DbUpdateLibThread Object destroyed\n" );
+};
+
+// -------------------------------------------------------------------------------- //
+DbUpdateLibThread::ExitCode DbUpdateLibThread::Entry()
+{
+    int index;
+    int Count = m_Paths.Count();
+    for( index = 0; index < Count; ++index )
+    {
+        guLogMessage( wxT( "Scanning Dir %s" ), m_Paths[ index ].c_str() );
+        m_Db->ScanDirectory( m_Paths[ index ], m_GaugeId );
+    }
+    m_Db->DeleteOldRecs();
+    guLogMessage( wxT( "Done UpdateLibrary Thread" ) );
+    //
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
+    event.SetEventObject( ( wxObject * ) this );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+    // Remove the Gauge from the MainFrame
+    event.SetId( ID_GAUGE_REMOVE );
+    event.SetInt( m_GaugeId );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
