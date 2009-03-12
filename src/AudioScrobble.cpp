@@ -77,11 +77,13 @@ int guAudioScrobble::ProcessError( const wxString &ErrorStr )
     {
         m_ErrorCode = guAS_ERROR_BANNED;
         guLogError( wxT( "This Client version have been banned. You should upgrade to the newest version" ) );
+        m_SessionId = wxEmptyString;
     }
     else if( ErrorStr.Contains( wxT( "BADAUTH" ) ) )
     {
         m_ErrorCode = guAS_ERROR_BADAUTH;
         guLogError( wxT( "The username or password is incorrect" ) );
+        m_SessionId = wxEmptyString;
     }
     else if( ErrorStr.Contains( wxT( "BADTIME" ) ) )
     {
@@ -96,8 +98,15 @@ int guAudioScrobble::ProcessError( const wxString &ErrorStr )
     else
     {
         m_ErrorCode = guAS_ERROR_UNKNOWN;
+        m_SessionId = wxEmptyString;
         guLogError( wxT( "Unknown Error autenticating to LastFM server " ) + ErrorStr );
     }
+
+    // Update the MainFrame AudioScrobble Status
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+    event.SetEventObject( ( wxObject * ) this );
+    event.SetInt( m_ErrorCode );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
     return m_ErrorCode;
 }
 
@@ -145,6 +154,12 @@ bool guAudioScrobble::GetSessionId( void )
                     m_ErrorCode = guAS_ERROR_NOERROR;
                     guLogMessage( wxT( "Loged in to lastfm AudioScrobble service." ) );
                     //return !SessionId.IsEmpty() && !SubmitUrl.IsEmpty() && !NowPlayUrl.IsEmpty();
+
+                    // Update the MainFrame AudioScrobble Status
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+                    event.SetEventObject( ( wxObject * ) this );
+                    event.SetInt( m_ErrorCode );
+                    wxPostEvent( wxTheApp->GetTopWindow(), event );
                 }
                 else
                 {
@@ -225,6 +240,9 @@ bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs
 
     if( ( count = PlayedSongs.Count() ) )
     {
+        if( m_SessionId.IsEmpty() && !GetSessionId() )
+            return false;
+
         PostData = wxT( "s=" ) + m_SessionId + wxT( "&" );
         for( index = 0; index < count; index++ )
         {
@@ -290,6 +308,10 @@ bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo &cursong )
     wxString    Album;
     wxString    Track;
 
+    // If we have not a session id try to get it and abort if not valid
+    if( m_SessionId.IsEmpty() && !GetSessionId() )
+        return false;
+
     PostData = wxT( "s=" ) + m_SessionId + wxT( "&" );
     Artist = guURLEncode( cursong.m_ArtistName );
     Track  = guURLEncode( cursong.m_TrackName );
@@ -353,15 +375,15 @@ guASNowPlayingThread::ExitCode guASNowPlayingThread::Entry()
 {
     int                     FailCnt;
 
-    // Retry 3 times to get a SessionId from server
-    FailCnt = 0;
-    while( !m_AudioScrobble->GetSessionId() )
-    {
-        FailCnt++;
-        if( FailCnt > 2 )
-            return 0;
-        Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
-    }
+//    // Retry 3 times to get a SessionId from server
+//    FailCnt = 0;
+//    while( !m_AudioScrobble->GetSessionId() )
+//    {
+//        FailCnt++;
+//        if( FailCnt > 2 )
+//            return 0;
+//        Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
+//    }
 
     FailCnt = 0;
     // While the Thread have not been destroyed
@@ -414,14 +436,14 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
     int                     FailCnt;
 
     // Retry 3 times to get a SessionId from server
-    FailCnt = 0;
-    while( !m_AudioScrobble->GetSessionId() )
-    {
-        FailCnt++;
-        if( FailCnt > 2 )
-            return 0;
-        Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
-    }
+//    FailCnt = 0;
+//    while( !m_AudioScrobble->GetSessionId() )
+//    {
+//        FailCnt++;
+//        if( FailCnt > 2 )
+//            return 0;
+//        Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
+//    }
 
     // While the Thread have not been destroyed
     while( !TestDestroy() )
@@ -436,11 +458,11 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
             FailCnt = 0;
             while( !( Submit = m_AudioScrobble->SubmitPlayedSongs( SubmitInfo ) ) && !TestDestroy() )
             {
-                // Update the MainFrame AudioScrobble Status
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-                event.SetEventObject( ( wxObject * ) m_AudioScrobble );
-                event.SetInt( m_AudioScrobble->GetErrorCode() );
-                wxPostEvent( wxTheApp->GetTopWindow(), event );
+//                // Update the MainFrame AudioScrobble Status
+//                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+//                event.SetEventObject( ( wxObject * ) m_AudioScrobble );
+//                event.SetInt( m_AudioScrobble->GetErrorCode() );
+//                wxPostEvent( wxTheApp->GetTopWindow(), event );
                 //
                 if( m_AudioScrobble->GetErrorCode() == guAS_ERROR_FAILED )
                 {

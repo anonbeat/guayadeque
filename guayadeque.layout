@@ -52,10 +52,10 @@
 	<File name="src/CoverFrame.h" open="0" top="0" tabpos="0">
 		<Cursor position="1287" topLine="15" />
 	</File>
-	<File name="src/DbLibrary.cpp" open="1" top="0" tabpos="4">
+	<File name="src/DbLibrary.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="63845" topLine="1838" />
 	</File>
-	<File name="src/DbLibrary.h" open="1" top="0" tabpos="3">
+	<File name="src/DbLibrary.h" open="0" top="0" tabpos="3">
 		<Cursor position="14601" topLine="333" />
 	</File>
 	<File name="src/GeListBox.cpp" open="0" top="0" tabpos="7">
@@ -94,7 +94,7 @@
 	<File name="src/LastFMPanel.h" open="0" top="0" tabpos="1">
 		<Cursor position="14817" topLine="425" />
 	</File>
-	<File name="src/LibPanel.cpp" open="1" top="0" tabpos="6">
+	<File name="src/LibPanel.cpp" open="0" top="0" tabpos="6">
 		<Cursor position="35296" topLine="763" />
 	</File>
 	<File name="src/LibPanel.h" open="0" top="0" tabpos="4">
@@ -118,10 +118,10 @@
 	<File name="src/MainApp.h" open="0" top="0" tabpos="5">
 		<Cursor position="1495" topLine="15" />
 	</File>
-	<File name="src/MainFrame.cpp" open="1" top="0" tabpos="1">
+	<File name="src/MainFrame.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="19449" topLine="459" />
 	</File>
-	<File name="src/MainFrame.h" open="1" top="0" tabpos="2">
+	<File name="src/MainFrame.h" open="0" top="0" tabpos="2">
 		<Cursor position="468" topLine="0" />
 	</File>
 	<File name="src/MediaCtrl.cpp" open="0" top="0" tabpos="1">
@@ -130,7 +130,7 @@
 	<File name="src/MediaCtrl.h" open="0" top="0" tabpos="2">
 		<Cursor position="2436" topLine="38" />
 	</File>
-	<File name="src/PlayList.cpp" open="1" top="0" tabpos="5">
+	<File name="src/PlayList.cpp" open="0" top="0" tabpos="5">
 		<Cursor position="28811" topLine="869" />
 	</File>
 	<File name="src/PlayList.h" open="0" top="0" tabpos="5">
@@ -172,8 +172,8 @@
 	<File name="src/SoListBox.h" open="0" top="0" tabpos="0">
 		<Cursor position="2009" topLine="23" />
 	</File>
-	<File name="src/SplashWin.cpp" open="1" top="1" tabpos="7">
-		<Cursor position="4153" topLine="89" />
+	<File name="src/SplashWin.cpp" open="0" top="0" tabpos="7">
+		<Cursor position="4153" topLine="62" />
 	</File>
 	<File name="src/SplashWin.h" open="0" top="0" tabpos="5">
 		<Cursor position="1732" topLine="28" />

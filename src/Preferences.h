@@ -102,7 +102,7 @@ class guPrefDialog : public wxDialog
 
 	wxPanel *                   m_CopyPanel;
 	wxTextCtrl *                m_CopyToFileName;
-
+	wxTextCtrl *                m_CopyToExampleTextCtrl;
 
     wxTextCtrl *                m_BrowserCmdTextCtrl;
 
@@ -134,6 +134,8 @@ class guPrefDialog : public wxDialog
 	void OnLinksDelBtnClick( wxCommandEvent& event );
 	void OnLinkMoveUpBtnClick( wxCommandEvent &event );
 	void OnLinkMoveDownBtnClick( wxCommandEvent &event );
+
+	void OnCopyToFileNameUpdated( wxCommandEvent &event );
 
   public:
     guPrefDialog( wxWindow * parent );
