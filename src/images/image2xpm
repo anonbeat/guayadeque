@@ -1,0 +1,17 @@
+#
+# Thanks wje_lf
+# http://www.linuxforums.org/forum/linux-programming-scripting/124359-batch-script-convert-png-xpm.html
+#
+echo "start xpm conversion"
+for pic in *.png
+do
+	echo "converting $pic"
+	convert $pic $(basename $pic .png).xpm
+done
+for pic in *.jpg
+do
+	echo "converting $pic"
+	convert $pic $(basename $pic .jpg).xpm
+done
+find * -type f -name "*.xpm" -exec sed -i 's/static char */const char * guImage_/g' {} \;
+echo "finished"
