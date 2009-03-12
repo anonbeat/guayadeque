@@ -57,7 +57,7 @@ class guPlayList : public wxVListBox
         wxColor         m_OddBgColor;
         wxColor         m_EveBgColor;
         wxColor         m_TextFgColor;
-        wxColor         m_SepColor;
+//        wxColor         m_SepColor;
 
         guTrack *       GetItem( size_t item );
         void            OnDragOver( const wxCoord x, const wxCoord y );

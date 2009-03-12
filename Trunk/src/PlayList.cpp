@@ -106,7 +106,7 @@ guPlayList::guPlayList( wxWindow * parent, wxWindowID id, const wxPoint &pos, co
     m_EveBgColor  = wxColor( 250, 250, 250 );
     m_OddBgColor  = wxColor( 240, 240, 240 );
     m_TextFgColor = wxColor( 0, 0, 0 );
-    m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
+    //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
 
     m_PlayBitmap = new wxBitmap( guImage_media_playback_start );
 
@@ -500,7 +500,8 @@ void guPlayList::UpdateView()
     {
         ScrollToLine( m_CurItem );
     }
-    RefreshLines( GetVisibleBegin(), GetVisibleEnd() );
+    //RefreshLines( GetVisibleBegin(), GetVisibleEnd() );
+    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //

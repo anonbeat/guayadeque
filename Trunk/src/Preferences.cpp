@@ -27,6 +27,8 @@
 #include <wx/statline.h>
 #include <wx/uri.h>
 
+wxString PatternToExample( const wxString &Pattern );
+
 // -------------------------------------------------------------------------------- //
 guPrefDialog::guPrefDialog( wxWindow* parent ) :
     wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 500, 470 ), wxDEFAULT_DIALOG_STYLE )
@@ -397,7 +399,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	wxStaticBoxSizer* CopyToFileNameSizer;
 	CopyToFileNameSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _( " FileName Pattern " ) ), wxVERTICAL );
 
-	m_CopyToFileName = new wxTextCtrl( m_CopyPanel, wxID_ANY, m_Config->ReadStr( wxT( "CopyToPattern" ), wxT("{g}/{a}/{b}/{n} - {a} - {t}"), wxT( "General" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    wxString CopyToPattern = m_Config->ReadStr( wxT( "CopyToPattern" ), wxT("{g}/{a}/{b}/{n} - {a} - {t}"), wxT( "General" ) );
+	m_CopyToFileName = new wxTextCtrl( m_CopyPanel, wxID_ANY, CopyToPattern, wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToFileNameSizer->Add( m_CopyToFileName, 1, wxEXPAND|wxALL, 5 );
 
 	CopyToMainSizer->Add( CopyToFileNameSizer, 0, wxALL|wxEXPAND, 5 );
@@ -406,9 +409,17 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
 
 	wxStaticText * CopyToHelpText;
-	CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "{a}\t- Artist\n{b}\t- Album\n{f}\t- Original Filename\n{g}\t- Genre\n{n}\t- Number\n{t}\t- Title\n{y}\t- Year\n" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "{a}\t- Artist\t\t\t('U2')\n{b}\t- Album\t\t\t('The Josua Tree')\n{f}\t- Original Filename\t( 'With or without you.mp3')\n{g}\t- Genre\t\t\t('Pop')\n{n}\t- Number\t\t\t('3')\n{t}\t- Title\t\t\t('With or Without You')\n{y}\t- Year\t\t\t('1987')\n" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToHelpText->Wrap( -1 );
 	CopyToHelpSizer->Add( CopyToHelpText, 0, wxALL, 5 );
+
+	wxStaticBoxSizer * CopyToExampleSizer;
+	CopyToExampleSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Example ") ), wxVERTICAL );
+
+	m_CopyToExampleTextCtrl = new wxTextCtrl( m_CopyPanel, wxID_ANY, PatternToExample( CopyToPattern ), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	CopyToExampleSizer->Add( m_CopyToExampleTextCtrl, 0, wxALL|wxEXPAND, 5 );
+
+	CopyToHelpSizer->Add( CopyToExampleSizer, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 
 	CopyToMainSizer->Add( CopyToHelpSizer, 1, wxEXPAND|wxALL, 5 );
 
@@ -462,6 +473,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	m_LinksMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
 	m_LinksMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
 
+	m_CopyToFileName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -562,6 +574,8 @@ guPrefDialog::~guPrefDialog()
 	m_LinksDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
 	m_LinksMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
 	m_LinksMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
+
+	m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -851,3 +865,22 @@ void guPrefDialog::OnLinkMoveDownBtnClick( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+wxString PatternToExample( const wxString &Pattern )
+{
+    wxString RetVal = Pattern;
+    RetVal.Replace( wxT( "{a}" ), wxT( "U2" ) );
+    RetVal.Replace( wxT( "{b}" ), wxT( "The Josua Tree" ) );
+    RetVal.Replace( wxT( "{f}" ), wxT( "With or without you.mp3" ) );
+    RetVal.Replace( wxT( "{g}" ), wxT( "Pop" ) );
+    RetVal.Replace( wxT( "{n}" ), wxT( "03" ) );
+    RetVal.Replace( wxT( "{t}" ), wxT( "With or Without You" ) );
+    RetVal.Replace( wxT( "{y}" ), wxT( "1987" ) );
+    RetVal.Append( wxT( ".mp3" ) );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToFileNameUpdated( wxCommandEvent &event )
+{
+    m_CopyToExampleTextCtrl->SetValue( PatternToExample( m_CopyToFileName->GetValue() ) );
+}
