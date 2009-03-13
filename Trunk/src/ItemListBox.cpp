@@ -46,6 +46,8 @@ guListBox::guListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
                               wxColor( 240, 240, 240 ),
                               wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
+    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+
     if( parent )
     {
         parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guListBox::OnChangedSize ), NULL, this );

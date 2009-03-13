@@ -225,6 +225,7 @@ guAlbumListBox::guAlbumListBox( wxWindow * parent, DbLibrary * db ) :
     m_EveBgColor  = wxColor( 250, 250, 250 );
     m_OddBgColor  = wxColor( 240, 240, 240 );
     m_TextFgColor = wxColor( 0, 0, 0 );
+    SetBackgroundColour( wxColor( 250, 250, 250 ) );
 
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumListBox::OnContextMenu ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guAlbumListBox::OnBeginDrag ), NULL, this );

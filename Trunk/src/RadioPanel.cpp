@@ -267,6 +267,8 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * New
                               wxColor( 240, 240, 240 ),
                               wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
+    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+
     ReloadItems();
 }
 
@@ -455,7 +457,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 	SearchSizer->Add( m_SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
 
 	m_InputTextPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
-	m_InputTextPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+	m_InputTextPanel->SetBackgroundColour( wxColor( 250, 250, 250 ) );
 
 	InputTextSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -463,6 +465,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 	InputTextSizer->Add( m_InputTextLeftBitmap, 0, wxALL, 0 );
 
 	m_InputTextCtrl = new wxTextCtrl( m_InputTextPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxNO_BORDER );
+    m_InputTextCtrl->SetBackgroundColour( wxColor( 250, 250, 250 ) );
 	InputTextSizer->Add( m_InputTextCtrl, 1, wxALL, 2 );
 
 	m_InputTextClearBitmap = new wxStaticBitmap( m_InputTextPanel, wxID_ANY, wxBitmap( guImage_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );

@@ -68,6 +68,8 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
                               wxColor( 240, 240, 240 ),
                               wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
+    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+
     ReloadItems();
 }
 

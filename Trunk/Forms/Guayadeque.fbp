@@ -1331,7 +1331,7 @@
                                                             <property name="flag">wxALL|wxEXPAND</property>
                                                             <property name="proportion">1</property>
                                                             <object class="wxListCtrl" expanded="1">
-                                                                <property name="bg"></property>
+                                                                <property name="bg">255,255,255</property>
                                                                 <property name="context_help"></property>
                                                                 <property name="enabled">1</property>
                                                                 <property name="fg"></property>
@@ -29301,7 +29301,7 @@
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="1">
+        <object class="Dialog" expanded="0">
             <property name="bg"></property>
             <property name="center"></property>
             <property name="context_help"></property>
