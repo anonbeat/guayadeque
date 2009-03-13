@@ -108,6 +108,8 @@ guPlayList::guPlayList( wxWindow * parent, wxWindowID id, const wxPoint &pos, co
     m_TextFgColor = wxColor( 0, 0, 0 );
     //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
 
+    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+
     m_PlayBitmap = new wxBitmap( guImage_media_playback_start );
 
 	Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
