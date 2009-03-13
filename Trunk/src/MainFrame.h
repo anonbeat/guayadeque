@@ -41,6 +41,7 @@ class guTaskBarIcon;
 class guMainFrame : public wxFrame
 {
     private:
+        wxNotebook *        m_CatNotebook;
         wxSplitterWindow *  m_PlayerSplitter;
 	    guPlayerPanel *     m_PlayerPanel;
         guLibPanel *        m_LibPanel;
@@ -71,6 +72,11 @@ class guMainFrame : public wxFrame
         void                OnRepeat( wxCommandEvent &event );
         void                OnAbout( wxCommandEvent &event );
         void                OnCopyTracksTo( wxCommandEvent &event );
+
+        void                OnViewLibrary( wxCommandEvent &event );
+        void                OnViewRadio( wxCommandEvent &event );
+        void                OnViewLastFM( wxCommandEvent &event );
+        void                OnViewLyrics( wxCommandEvent &event );
 
         void                OnGaugePulse( wxCommandEvent &event );
 		void                OnGaugeSetMax( wxCommandEvent &event );
