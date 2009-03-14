@@ -1,0 +1,18 @@
+
+FIND_PACKAGE( Gettext REQUIRED )
+
+MACRO(GETTEXT_PROCESS_POFILE _lang _moFile _poFile )
+   GET_FILENAME_COMPONENT(_moBasename ${_moFile} NAME_WE)
+   GET_FILENAME_COMPONENT(_absmoFile ${_moFile} ABSOLUTE)
+   GET_FILENAME_COMPONENT(_absFile ${_poFile} ABSOLUTE)
+   SET(_gmoFile ${_absmoFile})
+   ADD_CUSTOM_COMMAND(
+      OUTPUT ${_gmoFile}
+      COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o ${_absmoFile} ${_absFile}
+      DEPENDS ${_absmoFile} ${_absFile}
+   )
+   INSTALL(FILES ${_gmoFile} DESTINATION share/locale/${_lang}/LC_MESSAGES )
+ENDMACRO(GETTEXT_PROCESS_POFILE )
+
+# Current languages
+ADD_SUBDIRECTORY( es )
