@@ -1,11 +1,15 @@
-include_directories(
+IF( DEBUG )
+	ADD_DEFINITIONS( -g )
+ENDIF( DEBUG )
+
+INCLUDE_DIRECTORIES(
 	${guayadeque_SOURCE_DIR}
 	${guayadeque_SOURCE_DIR}/wx
 	${guayadeque_SOURCE_DIR}/wx/curl
 	${guayadeque_SOURCE_DIR}/wxsqlite3 
         ${GSTREAMER_INCLUDE_DIRS} )
 
-add_executable( guayadeque
+ADD_EXECUTABLE( guayadeque
 	AlListBox.cpp
 	AlListBox.h
 	ArListBox.cpp
@@ -88,7 +92,7 @@ add_executable( guayadeque
 	curl/base.cpp
 	curl/http.cpp )
 
-target_link_libraries( guayadeque
+TARGET_LINK_LIBRARIES( guayadeque
 	${wxWidgets_LIBRARIES}
 	${GSTREAMER_LIBRARIES}
 	${SQLITE3_LIBRARIES}
@@ -96,6 +100,6 @@ target_link_libraries( guayadeque
 	${LIBID3_LIBRARIES}
 	)
 
-install( TARGETS guayadeque
-	 RUNTIME DESTINATION bin )
+INSTALL( TARGETS guayadeque
+         RUNTIME DESTINATION bin )
 

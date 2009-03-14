@@ -47,15 +47,15 @@ IF( NOT LIBID3_LIBRARIES )
 	MESSAGE( FATAL_ERROR "Unable to locate libid3 library file!" )
 ENDIF( NOT LIBID3_LIBRARIES )
 
-    # Include wxWidgets macros
-    INCLUDE(${wxWidgets_USE_FILE})
+# Include wxWidgets macros
+INCLUDE(${wxWidgets_USE_FILE})
 
-    #    
-    ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
+#    
+ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
  
-    # We define the include paths here, our minimal source dir is one, 
-    # and also the include dirs defined by wxWidgets
-    INCLUDE_DIRECTORIES(${Guayadeque_SOURCE_DIR}
+# We define the include paths here, our minimal source dir is one, 
+# and also the include dirs defined by wxWidgets
+INCLUDE_DIRECTORIES(${Guayadeque_SOURCE_DIR}
 			${Guayadeque_SOURCE_DIR}/src
                         ${wxWidgets_INCLUDE_DIRS}
                         ${GSTREAMER_INCLUDE_DIRS}
@@ -63,5 +63,5 @@ ENDIF( NOT LIBID3_LIBRARIES )
 			${LIBCURL_INCLUDE_DIRS}
                          )
  
-    subdirs( src )
- 
+ADD_SUBDIRECTORY( src )
+ADD_SUBDIRECTORY( po )
