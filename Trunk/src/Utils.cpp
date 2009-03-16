@@ -113,7 +113,7 @@ bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings )
     int count = Strings.Count();
     for( index = 0; index < count; index++ )
     {
-        if( FileName.Find( Strings[ index ] ) )
+        if( FileName.Find( Strings[ index ] ) != wxNOT_FOUND )
             return true;
     }
     return false;
