@@ -537,13 +537,16 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
         {
             do {
                 CurFile = FileName.Lower();
+                //guLogMessage( wxT( "FindCoverFile: Found file %s" ), FileName.c_str() );
                 if( SearchCoverWords( CurFile, m_CoverSearchWords ) )
                 {
+                    //guLogMessage( wxT( "FindCoverFile: This file have been detected as a Cover" ) );
                     if( CurFile.EndsWith( wxT( ".jpg" ) ) ||
                         CurFile.EndsWith( wxT( ".png" ) ) ||
                         CurFile.EndsWith( wxT( ".bmp" ) ) ||
                         CurFile.EndsWith( wxT( ".gif" ) ) )
                     {
+                        //guLogMessage( wxT( "FindCoverFile: This file looks like an image file" ) );
                         CurFile = DirName + wxT( '/' ) + FileName;
                         //guLogMessage( wxT( "Found Cover: %s" ), CurFile.c_str() );
                         escape_query_str( &CurFile );
@@ -596,8 +599,8 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
                               }
                            }
                         }
+                        break;
                     }
-                    break;
                 }
             } while( Dir.GetNext( &FileName ) );
         }
@@ -792,10 +795,12 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
   }
   else
   {
+    guLogMessage( wxT( "AlbumName not found. Searching for covers in '%s'" ), wxGetCwd().c_str() );
     * CoverId = FindCoverFile( wxGetCwd() );
+    guLogMessage( wxT( "Found Cover with Id : %i" ), * CoverId );
 
     query = query.Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid, album_uptag ) "\
-                               "VALUES( NULL, %u, %u, '%s', %u, '%s' );" ), ArtistId, PathId,  AlbumName.c_str(), CoverId, m_UpTag.c_str() );
+                               "VALUES( NULL, %u, %u, '%s', %u, '%s' );" ), ArtistId, PathId,  AlbumName.c_str(), * CoverId, m_UpTag.c_str() );
     if( ExecuteUpdate( query ) == 1 )
     {
       * AlbumId = m_Db.GetLastRowId().GetLo();
@@ -1100,6 +1105,9 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
         //wxString FileName;
 
         PathName = wxPathOnly( Song->m_FileName );
+
+        wxSetWorkingDirectory( PathName );
+
         if( !GetPathId( &PathId, PathName ) )
         {
           guLogWarning( wxT( "Could not get the PathId" ) );

@@ -95,13 +95,13 @@
 		<Cursor position="14817" topLine="425" />
 	</File>
 	<File name="src/LibPanel.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="35296" topLine="763" />
+		<Cursor position="2635" topLine="68" />
 	</File>
 	<File name="src/LibPanel.h" open="0" top="0" tabpos="4">
 		<Cursor position="3458" topLine="72" />
 	</File>
 	<File name="src/LyricsPanel.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="6033" topLine="173" />
+		<Cursor position="4835" topLine="92" />
 	</File>
 	<File name="src/LyricsPanel.h" open="0" top="0" tabpos="2">
 		<Cursor position="2404" topLine="38" />
@@ -131,7 +131,7 @@
 		<Cursor position="2436" topLine="38" />
 	</File>
 	<File name="src/PlayList.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="3982" topLine="80" />
+		<Cursor position="16505" topLine="456" />
 	</File>
 	<File name="src/PlayList.h" open="0" top="0" tabpos="5">
 		<Cursor position="5608" topLine="121" />
@@ -155,7 +155,7 @@
 		<Cursor position="1785" topLine="29" />
 	</File>
 	<File name="src/RadioPanel.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="25500" topLine="640" />
+		<Cursor position="6964" topLine="146" />
 	</File>
 	<File name="src/RadioPanel.h" open="0" top="0" tabpos="0">
 		<Cursor position="3255" topLine="56" />
@@ -212,7 +212,7 @@
 		<Cursor position="1661" topLine="21" />
 	</File>
 	<File name="src/Utils.cpp" open="0" top="0" tabpos="8">
-		<Cursor position="145" topLine="0" />
+		<Cursor position="7058" topLine="208" />
 	</File>
 	<File name="src/Utils.h" open="0" top="0" tabpos="5">
 		<Cursor position="1880" topLine="16" />
