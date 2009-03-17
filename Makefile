@@ -152,6 +152,19 @@ guayadeque/fast:
 	$(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/build
 .PHONY : guayadeque/fast
 
+#=============================================================================
+# Target rules for targets named translations
+
+# Build rule for target.
+translations: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 translations
+.PHONY : translations
+
+# fast build rule for target.
+translations/fast:
+	$(MAKE) -f po/es/CMakeFiles/translations.dir/build.make po/es/CMakeFiles/translations.dir/build
+.PHONY : translations/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -165,6 +178,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... guayadeque"
+	@echo "... translations"
 .PHONY : help
 
 

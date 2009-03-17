@@ -53,7 +53,7 @@
 		<Cursor position="1287" topLine="15" />
 	</File>
 	<File name="src/DbLibrary.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="63845" topLine="1838" />
+		<Cursor position="21480" topLine="474" />
 	</File>
 	<File name="src/DbLibrary.h" open="0" top="0" tabpos="3">
 		<Cursor position="14601" topLine="333" />
@@ -95,7 +95,7 @@
 		<Cursor position="14817" topLine="425" />
 	</File>
 	<File name="src/LibPanel.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="2635" topLine="68" />
+		<Cursor position="0" topLine="0" />
 	</File>
 	<File name="src/LibPanel.h" open="0" top="0" tabpos="4">
 		<Cursor position="3458" topLine="72" />
@@ -212,7 +212,7 @@
 		<Cursor position="1661" topLine="21" />
 	</File>
 	<File name="src/Utils.cpp" open="0" top="0" tabpos="8">
-		<Cursor position="7058" topLine="208" />
+		<Cursor position="3593" topLine="92" />
 	</File>
 	<File name="src/Utils.h" open="0" top="0" tabpos="5">
 		<Cursor position="1880" topLine="16" />
