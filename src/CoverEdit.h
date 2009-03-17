@@ -32,7 +32,7 @@
 #include <wx/sizer.h>
 #include <wx/bmpbuttn.h>
 #include <wx/dialog.h>
-
+#include <wx/gauge.h>
 
 // -------------------------------------------------------------------------------- //
 class guCoverImage
@@ -79,7 +79,7 @@ class guFetchCoverLinksThread : public wxThread
     int                 ExtractImagesInfo( wxString &Content, int Count );
     wxArrayString       ExtractImageInfo( const wxString &Content );
   public:
-    guFetchCoverLinksThread( guCoverEditor * Owner, const wxChar * SearchStr );
+    guFetchCoverLinksThread( guCoverEditor * owner, const wxChar * searchstr );
     ~guFetchCoverLinksThread();
 
     virtual ExitCode Entry();
@@ -119,6 +119,8 @@ class guCoverEditor : public wxDialog
 	wxMutex             m_DownloadThreadMutex;
 	wxMutex             m_DownloadEventsMutex;
 
+    wxGauge *           m_Gauge;
+
 	wxString                    m_SearchString;
 	guCoverImageArray           m_AlbumCovers;
 	guFetchCoverLinksThread *   m_DownloadCoversThread;
@@ -133,7 +135,8 @@ class guCoverEditor : public wxDialog
 	void OnNextButtonClick( wxCommandEvent& event );
 	void OnAddCoverImage( wxCommandEvent &event );
 	void UpdateCoverBitmap();
-	void EndDownloadThread();
+	void EndDownloadLinksThread();
+	void EndDownloadCoverThread( guDownloadCoverThread * DownloadCoverThread );
 
   public:
 	guCoverEditor( wxWindow * parent, const wxString &Artist, const wxString &Album );// wxWindowID id = wxID_ANY, const wxString& title = wxT("Cover Editor"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
