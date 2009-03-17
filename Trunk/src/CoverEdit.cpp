@@ -22,14 +22,13 @@
 
 #include "Commands.h"
 #include "Config.h"
-//#include "HTTP.h"
 #include "Images.h"
+#include "MainFrame.h"
 #include "Utils.h"
 
-#include <wx/curl/http.h>
 #include <wx/arrimpl.cpp>
+#include <wx/curl/http.h>
 #include <wx/statline.h>
-//#include <wx/url.h>
 
 #define GOOGLE_IMAGES_SEARCH_STR wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
 #define COVERS_COUNTER_PER_PAGE 10
@@ -109,8 +108,14 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
 	MainSizer->Add( m_SizeSizer, 0, wxEXPAND, 5 );
 
-	BottomStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	MainSizer->Add( BottomStaticLine, 0, wxEXPAND | wxALL, 5 );
+	wxBoxSizer * GaugeSizer;
+	GaugeSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_Gauge = new wxGauge( this, wxID_ANY, MAX_COVERLINKS_ITEMS, wxDefaultPosition, wxSize( -1,7 ), wxGA_HORIZONTAL );
+	//m_Gauge->SetValue( 5 );
+	GaugeSizer->Add( m_Gauge, 1, wxALL|wxEXPAND, 5 );
+
+	MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
 
 	ButtonsSizer = new wxStdDialogButtonSizer();
 	m_ButtonsSizerOK = new wxButton( this, wxID_OK );
@@ -186,10 +191,24 @@ guCoverEditor::~guCoverEditor()
 }
 
 // -------------------------------------------------------------------------------- //
-void guCoverEditor::EndDownloadThread( void )
+void guCoverEditor::EndDownloadLinksThread( void )
 {
+    m_DownloadThreadMutex.Lock();
+    if( !m_DownloadThreads.Count() )
+        m_Gauge->SetValue( 30 );
+    m_DownloadThreadMutex.Unlock();
+    //m_Gauge->SetValue( 0 );
     //guLogMessage( wxT( "EndDownloadThread called" ) );
     m_DownloadCoversThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+void guCoverEditor::EndDownloadCoverThread( guDownloadCoverThread * DownloadCoverThread )
+{
+    m_Gauge->SetValue( m_Gauge->GetValue() + 1 );
+    m_DownloadThreadMutex.Lock();
+    m_DownloadThreads.Remove( DownloadCoverThread );
+    m_DownloadThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -305,6 +324,9 @@ void guCoverEditor::OnTextCtrlEnter( wxCommandEvent& event )
 	m_CurrentImage = 0;
 	// Set blank Cover Bitmap
 	UpdateCoverBitmap();
+
+    m_Gauge->SetValue( 0 );
+
     // Start again the cover fetcher thread
     m_DownloadCoversThread = new guFetchCoverLinksThread( this, m_SearchString.c_str() );
     if( m_DownloadCoversThread )
@@ -327,12 +349,14 @@ void guCoverEditor::OnSearchClear( wxMouseEvent& event )
 // -------------------------------------------------------------------------------- //
 // guFetchCoverLinksThread
 // -------------------------------------------------------------------------------- //
-guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * Owner, const wxChar * SearchStr ) : wxThread()
+guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * Owner, const wxChar * SearchStr ) :
+    wxThread()
 {
-    m_CoverEditor = Owner;
-    m_SearchString = wxString( SearchStr );
-    m_LastDownload = 0;
-    m_CurrentPage = 0;
+    m_CoverEditor   = Owner;
+    m_SearchString  = wxString( SearchStr );
+    m_LastDownload  = 0;
+    m_CurrentPage   = 0;
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -340,7 +364,7 @@ guFetchCoverLinksThread::~guFetchCoverLinksThread()
 {
     // Indicate the main object that the child thread has been deleted
     if( !TestDestroy() )
-        m_CoverEditor->EndDownloadThread();
+        m_CoverEditor->EndDownloadLinksThread();
 };
 
 // -------------------------------------------------------------------------------- //
@@ -504,9 +528,7 @@ guDownloadCoverThread::~guDownloadCoverThread()
 {
     if( !TestDestroy() )
     {
-        m_CoverEditor->m_DownloadThreadMutex.Lock();
-        m_CoverEditor->m_DownloadThreads.Remove( this );
-        m_CoverEditor->m_DownloadThreadMutex.Unlock();
+        m_CoverEditor->EndDownloadCoverThread( this );
     }
 }
 
