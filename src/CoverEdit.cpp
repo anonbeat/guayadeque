@@ -115,6 +115,10 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	//m_Gauge->SetValue( 5 );
 	GaugeSizer->Add( m_Gauge, 1, wxALL|wxEXPAND, 5 );
 
+	m_InfoTextCtrl = new wxStaticText( this, wxID_ANY, wxT("00/00"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_InfoTextCtrl->Wrap( -1 );
+	GaugeSizer->Add( m_InfoTextCtrl, 0, wxRIGHT, 5 );
+
 	MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
 
 	ButtonsSizer = new wxStdDialogButtonSizer();
@@ -252,11 +256,14 @@ void guCoverEditor::OnAddCoverImage( wxCommandEvent &event )
         UpdateCoverBitmap();
     if( ( m_CurrentImage < ( int ) ( m_AlbumCovers.Count() - 1 ) ) && !m_NextButton->IsEnabled() )
         m_NextButton->Enable();
+    m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ), m_CurrentImage + 1, m_AlbumCovers.Count() ) );
 }
 
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::UpdateCoverBitmap( void )
 {
+    m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ), m_CurrentImage + 1, m_AlbumCovers.Count() ) );
+
     wxBitmap * BlankCD = new wxBitmap( guImage_blank_cd_cover );
     if( BlankCD )
     {

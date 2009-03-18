@@ -35,13 +35,13 @@
 		<Cursor position="2256" topLine="17" />
 	</File>
 	<File name="src/ConfirmExit.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="1536" topLine="20" />
+		<Cursor position="370" topLine="0" />
 	</File>
 	<File name="src/ConfirmExit.h" open="0" top="0" tabpos="2">
 		<Cursor position="1534" topLine="24" />
 	</File>
 	<File name="src/CoverEdit.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="21645" topLine="545" />
+		<Cursor position="13277" topLine="332" />
 	</File>
 	<File name="src/CoverEdit.h" open="0" top="0" tabpos="4">
 		<Cursor position="3539" topLine="117" />
@@ -136,8 +136,8 @@
 	<File name="src/PlayList.h" open="0" top="0" tabpos="5">
 		<Cursor position="5608" topLine="121" />
 	</File>
-	<File name="src/PlayerPanel.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="35275" topLine="851" />
+	<File name="src/PlayerPanel.cpp" open="1" top="1" tabpos="1">
+		<Cursor position="922" topLine="0" />
 	</File>
 	<File name="src/PlayerPanel.h" open="0" top="0" tabpos="4">
 		<Cursor position="0" topLine="0" />

@@ -260,12 +260,6 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 // -------------------------------------------------------------------------------- //
 guPlayerPanel::~guPlayerPanel()
 {
-//    if( RadioProxy )
-//    {
-//        RadioProxy->Pause();
-//        RadioProxy->Delete();
-//    }
-
     if( m_SmartAddTracksThread )
     {
         m_SmartAddTracksThread->Pause();
@@ -403,37 +397,6 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
     }
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guPlayerPanel::OnUpdatedRadioTrack( wxCommandEvent &event )
-//{
-//    char * Buffer = ( char * ) event.GetClientData();
-//    if( Buffer )
-//    {
-//        wxString MetaStr = wxString( Buffer, wxConvLibc );
-//        free( Buffer );
-//
-//        wxArrayString MetaData = ExtractMetaData( MetaStr );
-//        if( MetaData.Count() )
-//        {
-//            m_MediaSong.ArtistName = MetaData[ 0 ];
-//            m_MediaSong.SongName = MetaData[ 1 ];
-//            m_MediaSong.AlbumName = MetaData[ 2 ];
-//
-//            SetTitleLabel( m_MediaSong.SongName );
-//            SetAlbumLabel( m_MediaSong.AlbumName );
-//            SetArtistLabel( m_MediaSong.ArtistName );
-//
-//            //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-//            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_TRACK );
-//            wxArrayString * Params = new wxArrayString();
-//            Params->Add( m_MediaSong.ArtistName );
-//            Params->Add( m_MediaSong.SongName );
-//            event.SetClientData( Params );
-//            wxPostEvent( wxTheApp->GetTopWindow(), event );
-//        }
-//    }
-//}
-
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::UpdateTotalLength( void )
 {
@@ -460,12 +423,6 @@ void guPlayerPanel::UpdateStatus()
         return;
 
     IsUpdatingStatus = true;
-
-//    CurItem = m_PlayListCtrl->GetCurrent();
-//    if( CurItem && ( CurItem->SongId != m_MediaSong.SongId ) )
-//    {
-//       m_MediaSong = * CurItem;
-//    }
 
     State = m_MediaCtrl->GetState();
     if( State != m_LastPlayState )
@@ -732,67 +689,6 @@ void guPlayerPanel::LoadMedia( const wxString &FileName )
         {
             guLogError( wxT( "ee: Failed load of file '%s'" ), UriPath.BuildUnescapedURI().c_str() );
         }
-
-//////
-//////        // If already Radio is enabled destroy the object
-//////        if( UriPath.IsReference() )
-//////        {
-////////            // If the radio was running stop it
-////////            if( RadioProxy && RadioProxy->ClientRunning() )
-////////            {
-////////                RadioProxy->StopClient();
-////////            }
-//////
-//////            //if( !m_MediaCtrl->Load( FileName ) )
-//////            if( !UriPath.HasScheme() )
-//////                UriPath.Create( wxT( "file:////" ) + FileName );
-//////            if( !m_MediaCtrl->Load( UriPath ) )
-//////            {
-//////                guLogError( wxT( "ee: Failed load of file '%s'" ), UriPath.BuildUnescapedURI().c_str() );
-//////            }
-//////        }
-//////        else
-//////        {
-//////            if( !RadioProxy )
-//////            {
-//////                RadioProxy = new guRadioProxyServer( this );
-//////            }
-//////
-//////            if( RadioProxy )
-//////            {
-//////                RadioProxy->SetRemoteAddr( FileName );
-//////
-//////                // http://127.0.0.1:1753/ + UriPath.GetPath() + UriPath.GetQuery()
-//////                wxString RadioUrl = wxT( "http://127.0.0.1:11752" );
-//////
-//////                if( UriPath.HasPath() )
-//////                    RadioUrl = RadioUrl + UriPath.GetPath();
-//////
-//////                if( UriPath.HasQuery() )
-//////                    RadioUrl = RadioUrl + UriPath.GetQuery();
-//////
-//////                UriPath.Create( RadioUrl );
-//////
-//////                //guLogMessage( wxT( "Openning Radio at url '%s'" ), RadioUrl.c_str() );
-//////
-//////                int RetryCnt = 0;
-//////                do {
-//////                    if( !m_MediaCtrl->Load( UriPath ) )
-//////                    {
-//////                        guLogError( wxT( "ee: Failed load of url try %i '%s'" ), RetryCnt, RadioUrl.c_str() );
-//////                        wxMilliSleep( 200 );
-//////                    }
-//////                    else
-//////                        break;
-//////                    RetryCnt++;
-//////                } while( RetryCnt < 4 );
-//////            }
-//////            else
-//////            {
-//////                guLogError( wxT( "Could not create the radio proxy object." ) );
-//////            }
-//////
-//////        }
     }
     catch(...)
     {
@@ -1185,12 +1081,6 @@ void guPlayerPanel::SetVolume( int Vol )
         m_MediaCtrl->SetVolume( ( ( double ) Vol ) / 100 );
 //    }
 }
-
-//// -------------------------------------------------------------------------------- //
-//void guPlayerPanel::ClearRadioProxy( void )
-//{
-//    RadioProxy = NULL;
-//}
 
 // -------------------------------------------------------------------------------- //
 // guPlayerPanelTimer
