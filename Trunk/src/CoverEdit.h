@@ -106,20 +106,21 @@ class guDownloadCoverThread : public wxThread
 class guCoverEditor : public wxDialog
 {
   private:
-	wxTextCtrl *        m_InputTextCtrl;
-	wxStaticBitmap *    m_ClearTextBitmap;
-	wxStaticBitmap *    m_CoverBitmap;
-	wxBitmapButton *    m_PrevButton;
-	wxBitmapButton *    m_NextButton;
-	wxButton *          m_ButtonsSizerOK;
-	wxButton *          m_ButtonsSizerCancel;
-	wxBoxSizer *        m_SizeSizer;
-	wxStaticText *      m_SizeStaticText;
+	wxTextCtrl *                m_InputTextCtrl;
+	wxStaticBitmap *            m_ClearTextBitmap;
+	wxStaticBitmap *            m_CoverBitmap;
+	wxBitmapButton *            m_PrevButton;
+	wxBitmapButton *            m_NextButton;
+	wxButton *                  m_ButtonsSizerOK;
+	wxButton *                  m_ButtonsSizerCancel;
+	wxBoxSizer *                m_SizeSizer;
+	wxStaticText *              m_SizeStaticText;
 
-	wxMutex             m_DownloadThreadMutex;
-	wxMutex             m_DownloadEventsMutex;
+	wxMutex                     m_DownloadThreadMutex;
+	wxMutex                     m_DownloadEventsMutex;
 
-    wxGauge *           m_Gauge;
+    wxGauge *                   m_Gauge;
+    wxStaticText *                m_InfoTextCtrl;
 
 	wxString                    m_SearchString;
 	guCoverImageArray           m_AlbumCovers;
