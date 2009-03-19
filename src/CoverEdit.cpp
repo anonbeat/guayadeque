@@ -111,7 +111,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	wxBoxSizer * GaugeSizer;
 	GaugeSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Gauge = new wxGauge( this, wxID_ANY, MAX_COVERLINKS_ITEMS, wxDefaultPosition, wxSize( -1,7 ), wxGA_HORIZONTAL );
+	m_Gauge = new guAutoPulseGauge( this, wxID_ANY, MAX_COVERLINKS_ITEMS, wxDefaultPosition, wxSize( -1,7 ), wxGA_HORIZONTAL );
 	//m_Gauge->SetValue( 5 );
 	GaugeSizer->Add( m_Gauge, 1, wxALL|wxEXPAND, 5 );
 
@@ -199,7 +199,12 @@ void guCoverEditor::EndDownloadLinksThread( void )
 {
     m_DownloadThreadMutex.Lock();
     if( !m_DownloadThreads.Count() )
-        m_Gauge->SetValue( 30 );
+    {
+        if( m_Gauge->IsPulsing() )
+            m_Gauge->StopPulse( MAX_COVERLINKS_ITEMS, MAX_COVERLINKS_ITEMS );
+        else
+            m_Gauge->SetValue( MAX_COVERLINKS_ITEMS );
+    }
     m_DownloadThreadMutex.Unlock();
     //m_Gauge->SetValue( 0 );
     //guLogMessage( wxT( "EndDownloadThread called" ) );
@@ -209,7 +214,12 @@ void guCoverEditor::EndDownloadLinksThread( void )
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::EndDownloadCoverThread( guDownloadCoverThread * DownloadCoverThread )
 {
-    m_Gauge->SetValue( m_Gauge->GetValue() + 1 );
+    if( m_Gauge->IsPulsing() )
+        m_Gauge->StopPulse( MAX_COVERLINKS_ITEMS, 1 );
+    else
+    {
+        m_Gauge->SetValue( m_Gauge->GetValue() + 1 );
+    }
     m_DownloadThreadMutex.Lock();
     m_DownloadThreads.Remove( DownloadCoverThread );
     m_DownloadThreadMutex.Unlock();
@@ -332,7 +342,7 @@ void guCoverEditor::OnTextCtrlEnter( wxCommandEvent& event )
 	// Set blank Cover Bitmap
 	UpdateCoverBitmap();
 
-    m_Gauge->SetValue( 0 );
+    m_Gauge->StartPulse();
 
     // Start again the cover fetcher thread
     m_DownloadCoversThread = new guFetchCoverLinksThread( this, m_SearchString.c_str() );
