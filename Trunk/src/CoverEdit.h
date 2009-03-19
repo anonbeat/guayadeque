@@ -21,8 +21,9 @@
 #ifndef COVEREDIT_H
 #define COVEREDIT_H
 
-#include "ThreadArray.h"
 #include "ArrayStringArray.h"
+#include "AutoPulseGauge.h"
+#include "ThreadArray.h"
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -119,7 +120,7 @@ class guCoverEditor : public wxDialog
 	wxMutex                     m_DownloadThreadMutex;
 	wxMutex                     m_DownloadEventsMutex;
 
-    wxGauge *                   m_Gauge;
+    guAutoPulseGauge *          m_Gauge;
     wxStaticText *                m_InfoTextCtrl;
 
 	wxString                    m_SearchString;

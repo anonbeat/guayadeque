@@ -31,6 +31,8 @@ ADD_EXECUTABLE( guayadeque
 	DbLibrary.h
 	DbListBox.cpp
 	DbListBox.h
+	AutoPulseGauge.cpp
+	AutoPulseGauge.h
 	GeListBox.cpp
 	GeListBox.h
 	Images.cpp

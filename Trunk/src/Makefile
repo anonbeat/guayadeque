@@ -214,6 +214,21 @@ AudioScrobble.s:
 .PHONY : AudioScrobble.s
 
 # target to build an object file
+AutoPulseGauge.o:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/AutoPulseGauge.o
+.PHONY : AutoPulseGauge.o
+
+# target to preprocess a source file
+AutoPulseGauge.i:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/AutoPulseGauge.i
+.PHONY : AutoPulseGauge.i
+
+# target to generate assembly for a file
+AutoPulseGauge.s:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/AutoPulseGauge.s
+.PHONY : AutoPulseGauge.s
+
+# target to build an object file
 Config.o:
 	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/Config.o
 .PHONY : Config.o
@@ -793,6 +808,9 @@ help:
 	@echo "... AudioScrobble.o"
 	@echo "... AudioScrobble.i"
 	@echo "... AudioScrobble.s"
+	@echo "... AutoPulseGauge.o"
+	@echo "... AutoPulseGauge.i"
+	@echo "... AutoPulseGauge.s"
 	@echo "... Config.o"
 	@echo "... Config.i"
 	@echo "... Config.s"
