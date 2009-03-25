@@ -25,6 +25,12 @@
 	<File name="src/AudioScrobble.h" open="0" top="0" tabpos="2">
 		<Cursor position="4555" topLine="98" />
 	</File>
+	<File name="src/AutoPulseGauge.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="1538" topLine="15" />
+	</File>
+	<File name="src/AutoPulseGauge.h" open="1" top="0" tabpos="4">
+		<Cursor position="1708" topLine="17" />
+	</File>
 	<File name="src/Commands.h" open="0" top="0" tabpos="3">
 		<Cursor position="2149" topLine="20" />
 	</File>
@@ -40,11 +46,11 @@
 	<File name="src/ConfirmExit.h" open="0" top="0" tabpos="2">
 		<Cursor position="1534" topLine="24" />
 	</File>
-	<File name="src/CoverEdit.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="13277" topLine="332" />
+	<File name="src/CoverEdit.cpp" open="1" top="1" tabpos="3">
+		<Cursor position="19848" topLine="491" />
 	</File>
-	<File name="src/CoverEdit.h" open="0" top="0" tabpos="4">
-		<Cursor position="3539" topLine="117" />
+	<File name="src/CoverEdit.h" open="1" top="0" tabpos="2">
+		<Cursor position="3839" topLine="110" />
 	</File>
 	<File name="src/CoverFrame.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="1493" topLine="32" />
@@ -83,7 +89,7 @@
 		<Cursor position="1535" topLine="33" />
 	</File>
 	<File name="src/LastFM.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="60734" topLine="1481" />
+		<Cursor position="1068" topLine="0" />
 	</File>
 	<File name="src/LastFM.h" open="0" top="0" tabpos="2">
 		<Cursor position="5262" topLine="155" />
@@ -136,11 +142,11 @@
 	<File name="src/PlayList.h" open="0" top="0" tabpos="5">
 		<Cursor position="5608" topLine="121" />
 	</File>
-	<File name="src/PlayerPanel.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="922" topLine="0" />
+	<File name="src/PlayerPanel.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="12536" topLine="242" />
 	</File>
-	<File name="src/PlayerPanel.h" open="0" top="0" tabpos="4">
-		<Cursor position="0" topLine="0" />
+	<File name="src/PlayerPanel.h" open="1" top="0" tabpos="1">
+		<Cursor position="7444" topLine="170" />
 	</File>
 	<File name="src/Preferences.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="21432" topLine="381" />
