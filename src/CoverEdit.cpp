@@ -215,7 +215,9 @@ void guCoverEditor::EndDownloadLinksThread( void )
 void guCoverEditor::EndDownloadCoverThread( guDownloadCoverThread * DownloadCoverThread )
 {
     if( m_Gauge->IsPulsing() )
+    {
         m_Gauge->StopPulse( MAX_COVERLINKS_ITEMS, 1 );
+    }
     else
     {
         m_Gauge->SetValue( m_Gauge->GetValue() + 1 );
@@ -427,13 +429,15 @@ int guFetchCoverLinksThread::ExtractImagesInfo( wxString &Content, int Count )
     wxArrayString CurImage;
     int ImageIndex = 0;
 
-    int StrPos = Content.Find( wxT( "dyn.Img(" ) );
+    int StrPos = Content.Find( wxT( "dyn.setResults([[" ) );
 
+    if( StrPos != wxNOT_FOUND )
+        StrPos += 14;
     //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
     while( ( StrPos != wxNOT_FOUND ) && !TestDestroy() )
     {
-        Content = Content.Mid( StrPos + 8 );
-        StrPos = Content.Find( wxT( ");dyn." ) );
+        Content = Content.Mid( StrPos + 3 );
+        StrPos = Content.Find( wxT( "],[" ) );
         if( StrPos == wxNOT_FOUND )
           break;
         //guLogMessage( wxT( "%s" ), Content.Mid( 0, StrPos ).c_str() );
@@ -444,8 +448,8 @@ int guFetchCoverLinksThread::ExtractImagesInfo( wxString &Content, int Count )
         if( ImageIndex == Count )
             break;
 
-        Content = Content.Mid( StrPos );
-        StrPos = Content.Find( wxT( "dyn.Img(" ) );
+        //Content = Content.Mid( StrPos );
+        //StrPos = Content.Find( wxT( "],[" ) );
     }
     return ImageIndex;
 }
@@ -458,7 +462,7 @@ int guFetchCoverLinksThread::ExtractImagesInfo( wxString &Content, int Count )
 bool guFetchCoverLinksThread::AddCoverLinks( void )
 {
     wxString SearchUrl = wxString::Format( GOOGLE_IMAGES_SEARCH_STR, guURLEncode( m_SearchString ).c_str(), ( m_CurrentPage * COVERS_COUNTER_PER_PAGE ) );
-    //guLogMessage( wxT( "URL: %u %s" ), CurrentPage, SearchUrl.c_str() );
+    //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, SearchUrl.c_str() );
     //guHTTP http;
     //http.SetHeader( wxT( "User-Agent" ), wxT( "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.0.2) Gecko/2008092313 Ubuntu/8.04 (hardy) Firefox/3.1" ) );
     char * Buffer = NULL;
@@ -489,6 +493,10 @@ bool guFetchCoverLinksThread::AddCoverLinks( void )
             }
         }
         free( Buffer );
+    }
+    else
+    {
+        guLogWarning( wxT( "No data received when searching for images" ) );
     }
     return false;
 }
