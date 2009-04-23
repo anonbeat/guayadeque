@@ -252,6 +252,7 @@ DbLibrary::DbLibrary()
     m_TeFilters.Empty();
     m_RaTeFilters.Empty();
     m_RaGeFilters.Empty();
+    m_RaLaFilters.Empty();
 
     m_UpTag = wxEmptyString;
 
@@ -279,6 +280,7 @@ DbLibrary::DbLibrary( const wxString &DbName )
     m_TeFilters.Empty();
     m_RaTeFilters.Empty();
     m_RaGeFilters.Empty();
+    m_RaLaFilters.Empty();
 
     LoadCache();
 }
@@ -396,10 +398,19 @@ bool DbLibrary::CreateStruct( const wxString &DbName )
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiostation_id"" on radiostations (radiostation_id ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiostation_genreid"" on radiostations (radiostation_genreid ASC);" ) );
 
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiolabels( radiolabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiolabel_name VARCHAR(255));" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiolabel_id"" on radiolabels (radiolabel_id ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiosetlabels( radiosetlabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiosetlabel_labelid INTEGER, radiosetlabel_stationid INTEGER);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiosetlabel_id"" on radiosetlabels (radiosetlabel_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiosetlabel_labelid"" on radiosetlabels (radiosetlabel_labelid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiosetlabel_stationidid"" on radiosetlabels (radiosetlabel_stationid ASC);" ) );
+
     Open( DbName );
     Count = query.Count();
     for( Index = 0; Index < Count; Index++ )
     {
+      //guLogMessage( query[ Index ] );
       ExecuteUpdate( query[ Index ] );
     }
 
@@ -1536,6 +1547,74 @@ void DbLibrary::GetLabels( guListItems * Labels, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
+void DbLibrary::GetRadioLabels( guListItems * Labels, bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT radiolabel_id, radiolabel_name FROM radiolabels ORDER BY " );
+  query += FullList ? wxT( "radiolabel_id;" ) : wxT( "radiolabel_name;" );
+
+  //guLogMessage( query );
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Labels->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+  }
+  dbRes.Finalize();
+//  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::AddRadioLabel( wxString LabelName )
+{
+    wxString query;
+    escape_query_str( &LabelName );
+
+    query = wxT( "INSERT INTO radiolabels( radiolabel_id, radiolabel_name ) VALUES( NULL, '" ) +
+            LabelName + wxT( "');" );
+
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      return m_Db.GetLastRowId().GetLo();
+    }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::SetRadioLabelName( const int LabelId, wxString LabelName )
+{
+    wxString query;
+    escape_query_str( &LabelName );
+
+    query = query.Format( wxT( "UPDATE radiolabels SET radiolabel_name = '%s' WHERE radiolabel_id = %u;" ), LabelName.c_str(), LabelId );
+
+    if( ExecuteUpdate( query ) == 1 )
+    {
+      return m_Db.GetLastRowId().GetLo();
+    }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::DelRadioLabel( const int labelid )
+{
+  wxString query;
+
+  query = query.Format( wxT( "DELETE FROM radiolabels WHERE radiolabel_id = %u;" ), labelid );
+  if( ExecuteUpdate( query ) )
+  {
+    query = query.Format( wxT( "DELETE FROM radiosetlabels WHERE radiosetlabel_labelid = %u;" ), labelid );
+    if( ExecuteUpdate( query ) )
+    {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+// -------------------------------------------------------------------------------- //
 void DbLibrary::GetGenres( guListItems * Genres, bool FullList )
 {
   wxString query;
@@ -2543,7 +2622,7 @@ wxString RadioTextFilterToSQL( const wxArrayString &TeFilters )
 // -------------------------------------------------------------------------------- //
 int DbLibrary::GetRadioFiltersCount( void ) const
 {
-    return m_RaTeFilters.Count() + m_RaGeFilters.Count();
+    return m_RaTeFilters.Count() + m_RaGeFilters.Count() + m_RaLaFilters.Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2567,16 +2646,31 @@ void DbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
   wxSQLite3ResultSet dbRes;
 
   //if( !AllowFilter || !GetRadioFiltersCount() )
-  if( !AllowFilter || !m_RaTeFilters.Count() )
+  if( !AllowFilter || ( !m_RaTeFilters.Count() && !m_RaLaFilters.Count() ) )
   {
     query = wxT( "SELECT radiogenre_id, radiogenre_name FROM radiogenres ORDER BY radiogenre_name;" );
   }
   else
   {
+//    query = wxT( "SELECT DISTINCT radiogenre_id, radiogenre_name FROM radiogenres, radiostations " ) \
+//            wxT( "WHERE radiogenre_id = radiostation_genreid AND " ) + RadioFiltersSQL() + wxT( " ORDER BY radiogenre_name;" );
     query = wxT( "SELECT DISTINCT radiogenre_id, radiogenre_name FROM radiogenres, radiostations " ) \
-            wxT( "WHERE radiogenre_id = radiostation_genreid AND " ) + RadioFiltersSQL() + wxT( " ORDER BY radiogenre_name;" );
+            wxT( "WHERE radiogenre_id = radiostation_genreid " );
+    if( m_RaTeFilters.Count() )
+    {
+        query += wxT( " AND " );
+        query += RadioFiltersSQL();
+    }
+    if( m_RaLaFilters.Count() )
+    {
+        query += wxT( " AND radiostation_id IN ( SELECT DISTINCT radiosetlabel_stationid FROM radiosetlabels WHERE " );
+        query += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
+        query += wxT( " )" );
+    }
+    query += wxT( " ORDER BY radiogenre_name;" );
   }
 
+  //guLogMessage( query );
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )
@@ -2636,13 +2730,35 @@ int DbLibrary::DelRadioGenre( const int GenreId )
 void DbLibrary::SetRaTeFilters( const wxArrayString &NewTeFilters )
 {
     m_RaTeFilters = NewTeFilters;
+    m_RaLaFilters.Empty();
     m_RaGeFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioGenresFilters( const wxArrayInt &NewFilters )
+void DbLibrary::SetRadioLabelsFilters( const wxArrayInt &filters )
 {
-    m_RaGeFilters = NewFilters;
+    if( filters.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_RaLaFilters.Empty();
+    }
+    else
+    {
+        m_RaLaFilters = filters;
+    }
+    m_RaGeFilters.Empty();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRadioGenresFilters( const wxArrayInt &filters )
+{
+    if( filters.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_RaGeFilters.Empty();
+    }
+    else
+    {
+        m_RaGeFilters = filters;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2683,7 +2799,7 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
 
   if( !GetRadioFiltersCount() )
   {
-    query = wxT( "SELECT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
+    query = wxT( "SELECT DISTINCT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations "\
                  "ORDER BY " );
     if( m_RaOrder )
@@ -2694,22 +2810,69 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
   }
  else
   {
-    query = wxT( "SELECT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
-                 "FROM radiogenres, radiostations WHERE radiogenre_id = radiostation_genreid " );
+    //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
+    query = wxT( "SELECT DISTINCT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
+                 "FROM radiostations" );
+
+    wxString subquery = wxEmptyString;
+    if( m_RaLaFilters.Count() )
+    {
+        query += wxT( ", radiosetlabels WHERE radiostation_id = radiosetlabel_stationid AND " );
+        subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
+    }
+    else
+    {
+        query += wxT( " WHERE " );
+    }
+
     if( m_RaGeFilters.Count() )
     {
-      query += wxT( " AND " ) + ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
+        if( !subquery.IsEmpty() )
+        {
+            subquery += wxT( " AND " );
+        }
+        subquery += ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
     }
+
     if( m_RaTeFilters.Count() )
     {
-      query += wxT( " AND " ) + RadioFiltersSQL();
+        if( !subquery.IsEmpty() )
+        {
+            subquery += wxT( " AND " );
+        }
+        subquery += RadioFiltersSQL();
     }
+
+    if( !subquery.IsEmpty() )
+    {
+        query = query + subquery;
+    }
+
     query += wxT( " ORDER BY " );
     if( m_RaOrder )
         query += wxT( "radiostation_br" );
     else
         query += wxT( "radiostation_lc" );
     query += wxT( " DESC;" );
+
+    //guLogMessage( query );
+
+//    query = wxT( "SELECT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
+//                 "FROM radiogenres, radiostations WHERE radiogenre_id = radiostation_genreid " );
+//    if( m_RaGeFilters.Count() )
+//    {
+//      query += wxT( " AND " ) + ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
+//    }
+//    if( m_RaTeFilters.Count() )
+//    {
+//      query += wxT( " AND " ) + RadioFiltersSQL();
+//    }
+//    query += wxT( " ORDER BY " );
+//    if( m_RaOrder )
+//        query += wxT( "radiostation_br" );
+//    else
+//        query += wxT( "radiostation_lc" );
+//    query += wxT( " DESC;" );
   }
   //guLogMessage( wxT( "GetRadioStations : RaOrder = %u" ), RaOrder );
   //guLogMessage( wxT( "GetRadioStations : query = %s" ), query.c_str() );
@@ -2772,6 +2935,95 @@ void DbLibrary::SetRadioStations( const guRadioStations &RadioStations )
   }
 
 }
+
+// -------------------------------------------------------------------------------- //
+guArrayListItems DbLibrary::GetStationsLabels( const wxArrayInt &Stations )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guArrayListItems RetVal;
+  guArrayListItem * CurItem = NULL;
+  int Id;
+  int index;
+  int count = Stations.Count();
+  for( index = 0; index < count; index++ )
+  {
+      Id = Stations[ index ];
+      RetVal.Add( new guArrayListItem( Id ) );
+  }
+
+  query = wxT( "SELECT radiosetlabel_stationid, radiosetlabel_labelid FROM radiosetlabels " ) \
+          wxT( "WHERE radiosetlabel_stationid IN " ) + ArrayIntToStrList( Stations );
+  query += wxT( " ORDER BY radiosetlabel_stationid, radiosetlabel_labelid;" );
+
+  //guLogMessage( query );
+  dbRes = ExecuteQuery( query );
+
+  index = 0;
+  CurItem = &RetVal[ index ];
+  while( dbRes.NextRow() )
+  {
+    Id = dbRes.GetInt( 0 );
+    if( CurItem->GetId() != Id )
+    {
+        index = 0;
+        while( CurItem->GetId() != Id )
+        {
+            CurItem = &RetVal[ index ];
+            index++;
+        }
+    }
+    CurItem->AddData( dbRes.GetInt( 1 ) );
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels )
+{
+  wxString query;
+  int StaIndex;
+  int StaCount;
+  int LaIndex;
+  int LaCount;
+
+  query = wxT( "DELETE FROM radiosetlabels " ) \
+          wxT( "WHERE radiosetlabel_stationid IN " ) + ArrayIntToStrList( Stations );
+
+  ExecuteUpdate( query );
+
+  StaCount = Stations.Count();
+  LaCount = Labels.Count();
+  for( StaIndex = 0; StaIndex < StaCount; StaIndex++ )
+  {
+    for( LaIndex = 0; LaIndex < LaCount; LaIndex++ )
+    {
+      query = wxString::Format( wxT( "INSERT INTO radiosetlabels( radiosetlabel_labelid, radiosetlabel_stationid ) "\
+                                   "VALUES( %u, %u );" ), Labels[ LaIndex ], Stations[ StaIndex ] );
+      ExecuteUpdate( query );
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
+{
+  wxString subquery;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+
+  if( Labels.Count() )
+  {
+    subquery = ArrayIntToStrList( Labels );
+
+
+    dbRes.Finalize();
+  }
+  return Songs->Count();
+}
+
 
 // -------------------------------------------------------------------------------- //
 // AudioScrobbler Functions

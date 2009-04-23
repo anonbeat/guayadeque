@@ -114,6 +114,8 @@
 		<Unit filename="src/ArrayStringArray.h" />
 		<Unit filename="src/AudioScrobble.cpp" />
 		<Unit filename="src/AudioScrobble.h" />
+		<Unit filename="src/AutoPulseGauge.cpp" />
+		<Unit filename="src/AutoPulseGauge.h" />
 		<Unit filename="src/Commands.h" />
 		<Unit filename="src/Config.cpp" />
 		<Unit filename="src/Config.h" />
