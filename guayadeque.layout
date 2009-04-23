@@ -20,13 +20,13 @@
 		<Cursor position="1061" topLine="0" />
 	</File>
 	<File name="src/AudioScrobble.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="12540" topLine="284" />
+		<Cursor position="12540" topLine="200" />
 	</File>
 	<File name="src/AudioScrobble.h" open="0" top="0" tabpos="2">
 		<Cursor position="4555" topLine="98" />
 	</File>
 	<File name="src/Commands.h" open="0" top="0" tabpos="3">
-		<Cursor position="2149" topLine="20" />
+		<Cursor position="3655" topLine="80" />
 	</File>
 	<File name="src/Config.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="1141" topLine="0" />
@@ -40,11 +40,11 @@
 	<File name="src/ConfirmExit.h" open="0" top="0" tabpos="2">
 		<Cursor position="1534" topLine="24" />
 	</File>
-	<File name="src/CoverEdit.cpp" open="1" top="1" tabpos="3">
-		<Cursor position="17468" topLine="441" />
+	<File name="src/CoverEdit.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="13653" topLine="331" />
 	</File>
-	<File name="src/CoverEdit.h" open="1" top="0" tabpos="2">
-		<Cursor position="5180" topLine="124" />
+	<File name="src/CoverEdit.h" open="0" top="0" tabpos="2">
+		<Cursor position="5180" topLine="106" />
 	</File>
 	<File name="src/CoverFrame.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="1493" topLine="32" />
@@ -52,11 +52,11 @@
 	<File name="src/CoverFrame.h" open="0" top="0" tabpos="0">
 		<Cursor position="1287" topLine="15" />
 	</File>
-	<File name="src/DbLibrary.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="21480" topLine="474" />
+	<File name="src/DbLibrary.cpp" open="1" top="1" tabpos="4">
+		<Cursor position="2636" topLine="59" />
 	</File>
-	<File name="src/DbLibrary.h" open="0" top="0" tabpos="3">
-		<Cursor position="14601" topLine="333" />
+	<File name="src/DbLibrary.h" open="1" top="0" tabpos="3">
+		<Cursor position="13397" topLine="317" />
 	</File>
 	<File name="src/GeListBox.cpp" open="0" top="0" tabpos="7">
 		<Cursor position="2171" topLine="22" />
@@ -70,8 +70,8 @@
 	<File name="src/Images.h" open="0" top="0" tabpos="3">
 		<Cursor position="1513" topLine="19" />
 	</File>
-	<File name="src/ItemListBox.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="2091" topLine="24" />
+	<File name="src/ItemListBox.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="6187" topLine="172" />
 	</File>
 	<File name="src/ItemListBox.h" open="0" top="0" tabpos="6">
 		<Cursor position="3079" topLine="51" />
@@ -94,8 +94,8 @@
 	<File name="src/LastFMPanel.h" open="0" top="0" tabpos="1">
 		<Cursor position="14817" topLine="425" />
 	</File>
-	<File name="src/LibPanel.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="0" topLine="0" />
+	<File name="src/LibPanel.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="22228" topLine="363" />
 	</File>
 	<File name="src/LibPanel.h" open="0" top="0" tabpos="4">
 		<Cursor position="3458" topLine="72" />
@@ -119,7 +119,7 @@
 		<Cursor position="1495" topLine="15" />
 	</File>
 	<File name="src/MainFrame.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="19449" topLine="459" />
+		<Cursor position="3697" topLine="85" />
 	</File>
 	<File name="src/MainFrame.h" open="0" top="0" tabpos="2">
 		<Cursor position="468" topLine="0" />
@@ -139,7 +139,7 @@
 	<File name="src/PlayerPanel.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="12536" topLine="242" />
 	</File>
-	<File name="src/PlayerPanel.h" open="1" top="0" tabpos="1">
+	<File name="src/PlayerPanel.h" open="0" top="0" tabpos="1">
 		<Cursor position="7444" topLine="170" />
 	</File>
 	<File name="src/Preferences.cpp" open="0" top="0" tabpos="3">
@@ -154,14 +154,14 @@
 	<File name="src/RadioGenreEditor.h" open="0" top="0" tabpos="0">
 		<Cursor position="1785" topLine="29" />
 	</File>
-	<File name="src/RadioPanel.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="6964" topLine="146" />
+	<File name="src/RadioPanel.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="4170" topLine="104" />
 	</File>
-	<File name="src/RadioPanel.h" open="0" top="0" tabpos="0">
-		<Cursor position="3255" topLine="56" />
+	<File name="src/RadioPanel.h" open="1" top="0" tabpos="2">
+		<Cursor position="2272" topLine="47" />
 	</File>
 	<File name="src/Shoutcast.cpp" open="0" top="0" tabpos="8">
-		<Cursor position="12298" topLine="279" />
+		<Cursor position="5984" topLine="144" />
 	</File>
 	<File name="src/Shoutcast.h" open="0" top="0" tabpos="10">
 		<Cursor position="1773" topLine="29" />
@@ -185,10 +185,10 @@
 		<Cursor position="2428" topLine="38" />
 	</File>
 	<File name="src/TaListBox.cpp" open="0" top="0" tabpos="7">
-		<Cursor position="4269" topLine="77" />
+		<Cursor position="6473" topLine="123" />
 	</File>
 	<File name="src/TaListBox.h" open="0" top="0" tabpos="0">
-		<Cursor position="1733" topLine="16" />
+		<Cursor position="1642" topLine="16" />
 	</File>
 	<File name="src/TagInfo.cpp" open="0" top="0" tabpos="5">
 		<Cursor position="9441" topLine="324" />
@@ -233,6 +233,6 @@
 		<Cursor position="649" topLine="2" />
 	</File>
 	<File name="src/wxsqlite3/wxsqlite3.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="4543" topLine="114" />
+		<Cursor position="61782" topLine="2478" />
 	</File>
 </CodeBlocks_layout_file>

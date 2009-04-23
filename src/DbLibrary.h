@@ -203,6 +203,7 @@ class DbLibrary {
 
     // Radio Filters Options
     wxArrayInt         m_RaGeFilters;
+    wxArrayInt         m_RaLaFilters;
     wxArrayString      m_RaTeFilters;
     int                m_RaOrder; // 0 -> Listeners, 1 -> BitRate
 
@@ -250,6 +251,7 @@ class DbLibrary {
 
     void                GetGenres( guListItems * Genres, bool FullList = false );
     void                GetLabels( guListItems * Labels, bool FullList = false );
+    void                GetRadioLabels( guListItems * Labels, bool FullList = false );
     void                GetArtists( guListItems * Artists, bool FullList = false );
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
     //void                GetAlbums( guListItems * Albums );
@@ -270,6 +272,12 @@ class DbLibrary {
     int                 SetLabelName( const int LabelId, wxString NewName );
     int                 DelLabel( const int LabelId );
     wxArrayInt          GetLabels( void );
+
+    int                 GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs );
+    int                 AddRadioLabel( wxString LabelName );
+    int                 SetRadioLabelName( const int LabelId, wxString NewName );
+    int                 DelRadioLabel( const int LabelId );
+    wxArrayInt          GetRadioLabels( void );
 
     int                 SongCount( void );
 
@@ -315,12 +323,15 @@ class DbLibrary {
     //
     // Radio support functions
     //
-    void                    SetRaTeFilters( const wxArrayString &NewTeFilters );
-    void                    SetRadioGenresFilters( const wxArrayInt &NewFilters );
+    void                    SetRaTeFilters( const wxArrayString &filters );
+    void                    SetRadioLabelsFilters( const wxArrayInt &filters );
+    void                    SetRadioGenresFilters( const wxArrayInt &filters );
     void                    GetRadioGenres( guListItems * RadioGenres, bool AllowFilter = true );
     void                    SetRadioGenres( const wxArrayString &Genres );
     int                     GetRadioStations( guRadioStations * RadioStations );
     void                    SetRadioStations( const guRadioStations &RadioStations );
+    guArrayListItems        GetStationsLabels( const wxArrayInt &Stations );
+    void                    SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels );
     int                     DelRadioStations( void );
     void                    SetRadioStatonsOrder( int OrderValue );
 

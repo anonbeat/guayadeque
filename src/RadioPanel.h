@@ -44,6 +44,7 @@
 
 class guRadioGenreListBox;
 class guRadioStationListBox;
+class guRadioLabelListBox;
 
 // -------------------------------------------------------------------------------- //
 // Class guRadioPanel
@@ -60,9 +61,13 @@ class guRadioPanel : public wxPanel
 	  void OnRadioGenreListSelected( wxListEvent &Event );
       void OnStationListActivated( wxListEvent &event );
       void OnStationListBoxColClick( wxListEvent &event );
-      void ListsSplitterOnIdle( wxIdleEvent& );
+      void OnStationsEditLabelsClicked( wxCommandEvent &event );
       void OnSearchActivated( wxCommandEvent& event );
       void OnSearchCancelled( wxMouseEvent &event );
+	  void OnRadioLabelListSelected( wxListEvent &Event );
+
+      void GenreSplitterOnIdle( wxIdleEvent& );
+      void StationsSplitterOnIdle( wxIdleEvent& );
 
 	protected:
 		wxStaticText*           m_SearchStaticText;
@@ -70,12 +75,11 @@ class guRadioPanel : public wxPanel
 		wxStaticBitmap*         m_InputTextLeftBitmap;
 		wxTextCtrl*             m_InputTextCtrl;
 		wxStaticBitmap*         m_InputTextClearBitmap;
-		wxStaticLine*           m_SearchStaticline;
-		wxSplitterWindow*       m_ListsSplitter;
-		wxPanel*                m_GenresPanel;
+		wxSplitterWindow*       m_GenreSplitter;
 		guRadioGenreListBox *   m_GenresListBox;
-		wxPanel*                m_RadiosPanel;
+		guRadioLabelListBox *   m_LabelsListBox;
 		guRadioStationListBox * m_StationsListBox;
+		wxSplitterWindow *      m_StationsSplitter;
 
 	public:
 		guRadioPanel( wxWindow* parent, DbLibrary * Db, guPlayerPanel * NewPlayerPanel ); //wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 579,465 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );

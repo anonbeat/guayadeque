@@ -94,6 +94,7 @@
 #define ID_RADIO_GENRE_ADD              1083
 #define ID_RADIO_GENRE_EDIT             1084
 #define ID_RADIO_GENRE_DELETE           1085
+#define ID_RADIO_EDIT_LABELS            1086
 
 //
 #define ID_PLAYERPANEL_PLAY             1090

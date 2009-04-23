@@ -1,3 +1,4 @@
+
 genres( 
   genre_id INTEGER PRIMARY KEY AUTOINCREMENT,
   genre_name varchar(255),
@@ -39,16 +40,16 @@ songs(
   song_uptag varchar(8)
 )
 
-tags( 
+tags(
   tag_id INTEGER  PRIMARY KEY AUTOINCREMENT, 
   tag_name varchar(100) 
 )
 
 settags( 
-  settag_tagid INTEGER, 
+  settag_tagid INTEGER,
   settag_artistid INTEGER, 
   settag_albumid INTEGER, 
-  settag_songid INTEGER 
+  settag_songid INTEGER
 )
 
 playlists( 
@@ -96,3 +97,16 @@ radiostations(
   radiostation_br INTEGER, 
   radiostation_lc INTEGER 
 )
+
+radiolabels(
+  radiolabel_id INTEGER,
+  radiolabel_name VARCHAR(255),
+)
+
+radiosetlabels(
+  radiosetlabel_id INTEGER,
+  radiosetlabel_labelid INTEGER,
+  radiosetlabel_radioid INTEGER
+)
+
+
