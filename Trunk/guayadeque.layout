@@ -25,8 +25,8 @@
 	<File name="src/AudioScrobble.h" open="0" top="0" tabpos="2">
 		<Cursor position="4555" topLine="98" />
 	</File>
-	<File name="src/Commands.h" open="0" top="0" tabpos="3">
-		<Cursor position="3655" topLine="80" />
+	<File name="src/Commands.h" open="1" top="0" tabpos="8">
+		<Cursor position="768" topLine="5" />
 	</File>
 	<File name="src/Config.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="1141" topLine="0" />
@@ -52,7 +52,7 @@
 	<File name="src/CoverFrame.h" open="0" top="0" tabpos="0">
 		<Cursor position="1287" topLine="15" />
 	</File>
-	<File name="src/DbLibrary.cpp" open="1" top="1" tabpos="4">
+	<File name="src/DbLibrary.cpp" open="1" top="0" tabpos="4">
 		<Cursor position="2636" topLine="59" />
 	</File>
 	<File name="src/DbLibrary.h" open="1" top="0" tabpos="3">
@@ -154,8 +154,8 @@
 	<File name="src/RadioGenreEditor.h" open="0" top="0" tabpos="0">
 		<Cursor position="1785" topLine="29" />
 	</File>
-	<File name="src/RadioPanel.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="4170" topLine="104" />
+	<File name="src/RadioPanel.cpp" open="1" top="1" tabpos="1">
+		<Cursor position="12933" topLine="364" />
 	</File>
 	<File name="src/RadioPanel.h" open="1" top="0" tabpos="2">
 		<Cursor position="2272" topLine="47" />
@@ -172,8 +172,8 @@
 	<File name="src/SoListBox.h" open="0" top="0" tabpos="0">
 		<Cursor position="2009" topLine="23" />
 	</File>
-	<File name="src/SplashWin.cpp" open="0" top="0" tabpos="7">
-		<Cursor position="4153" topLine="62" />
+	<File name="src/SplashWin.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="3730" topLine="7" />
 	</File>
 	<File name="src/SplashWin.h" open="0" top="0" tabpos="5">
 		<Cursor position="1732" topLine="28" />
