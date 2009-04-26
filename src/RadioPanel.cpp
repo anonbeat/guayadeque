@@ -488,8 +488,6 @@ int guRadioLabelListBox::GetSelectedSongs( guTrackArray * Songs ) const
 // -------------------------------------------------------------------------------- //
 void guRadioLabelListBox::GetContextMenu( wxMenu * Menu ) const
 {
-    //    menu->Append(Menu_Dummy_First, _T("&First item\tCtrl-F1"));
-    //    menu->AppendSeparator();
     wxMenuItem * MenuItem;
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_ADD, _( "Add Label" ), _( "Create a new label" ) );
@@ -506,28 +504,6 @@ void guRadioLabelListBox::GetContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( wxBitmap( guImage_edit_delete ) );
         Menu->Append( MenuItem );
     }
-
-    Menu->AppendSeparator();
-
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_CLEARSELECTION, _( "Clear selection" ), _( "Unselect all selected labels" ) );
-    //MenuItem->SetBitmap( wxBitmap( GU_CONFIG_IMAGES_DIR + wxT("/images/media-playback-start.png"), wxBITMAP_TYPE_ANY ) );
-    Menu->Append( MenuItem );
-
-    Menu->AppendSeparator();
-
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_PLAY, _( "Play" ), _( "Play current selected labels" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
-    Menu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_ENQUEUE, _( "Enqueue" ), _( "Add current selected labels to playlist" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
-    Menu->Append( MenuItem );
-
-    Menu->AppendSeparator();
-
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
-    Menu->Append( MenuItem );
 }
 
 // -------------------------------------------------------------------------------- //
