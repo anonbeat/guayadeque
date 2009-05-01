@@ -820,28 +820,12 @@ void guRadioPanel::OnStationListActivated( wxListEvent &event )
     int index;
     int count;
 
-//    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-//    int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge();
-//
-//    wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
-//    GaugeEvent.SetInt( GaugeId );
-//    GaugeEvent.SetExtraLong( 5 );
-//    MainFrame->AddPendingEvent( GaugeEvent );
-
     wxArrayInt Selected = m_StationsListBox->GetSelection();
     if( Selected.Count() )
     {
-//        GaugeEvent.SetId( ID_GAUGE_UPDATE );
-//        GaugeEvent.SetExtraLong( 1 );
-//        wxPostEvent( MainFrame, GaugeEvent );
-
         guStationPlayLists PlayList = ShoutCast.GetStationPlayList( Selected[ 0 ] );
         if( ( count = PlayList.Count() ) )
         {
-//            //GaugeEvent.SetId( ID_GAUGE_UPDATE );
-//            GaugeEvent.SetExtraLong( 2 );
-//            wxPostEvent( MainFrame, GaugeEvent );
-
             for( index = 0; index < count; index++ )
             {
                 NewSong = new guTrack;
@@ -857,17 +841,13 @@ void guRadioPanel::OnStationListActivated( wxListEvent &event )
                 }
             }
 
-//            //GaugeEvent.SetId( ID_GAUGE_UPDATE );
-//            GaugeEvent.SetExtraLong( 3 );
-//            wxPostEvent( MainFrame, GaugeEvent );
-
             if( Songs.Count() )
               m_PlayerPanel->SetPlayList( Songs );
 
-//            //GaugeEvent.SetId( ID_GAUGE_UPDATE );
-//            GaugeEvent.SetExtraLong( 4 );
-//            wxPostEvent( MainFrame, GaugeEvent );
-
+        }
+        else
+        {
+            wxMessageBox( _( "There are not entries for this Radio Station" ) );
         }
     }
 

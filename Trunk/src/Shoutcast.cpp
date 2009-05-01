@@ -219,6 +219,7 @@ guStationPlayLists guShoutCast::GetStationPlayList( int StationId ) const
         free( Buffer );
         if( Content.Length() )
         {
+            //guLogMessage( Content );
             wxStringInputStream ConfigData( Content );
             Config = new wxFileConfig( ConfigData );
             if( Config )
@@ -229,15 +230,22 @@ guStationPlayLists guShoutCast::GetStationPlayList( int StationId ) const
                     int count;
                     if( Config->Read( wxT( "numberofentries" ), &count ) )
                     {
-                        for( int index = 1; index <= count; index++ )
+                        if( !count )
                         {
-                            NewStation = new guStationPlayList();
+                            guLogMessage( wxT( "This station playlist is empty" ) );
+                        }
+                        else
+                        {
+                            for( int index = 1; index <= count; index++ )
+                            {
+                                NewStation = new guStationPlayList();
 
-                            wxASSERT( NewStation );
+                                wxASSERT( NewStation );
 
-                            Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Url );
-                            Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
-                            RetVal.Add( NewStation );
+                                Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Url );
+                                Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
+                                RetVal.Add( NewStation );
+                            }
                         }
                     }
                 }
@@ -250,6 +258,14 @@ guStationPlayLists guShoutCast::GetStationPlayList( int StationId ) const
             else
               guLogError( wxT( "ee: Station Playlist empty" ) );
         }
+        else
+        {
+            guLogError( wxT( "Retrieving station playlist empty response" ) );
+        }
+    }
+    else
+    {
+        guLogError( wxT( "No response from server retrieving the station playlist." ) );
     }
     return RetVal;
 }
