@@ -823,6 +823,7 @@ void guRadioPanel::OnStationListActivated( wxListEvent &event )
     wxArrayInt Selected = m_StationsListBox->GetSelection();
     if( Selected.Count() )
     {
+        //TODO: Download the station in a thread
         guStationPlayLists PlayList = ShoutCast.GetStationPlayList( Selected[ 0 ] );
         if( ( count = PlayList.Count() ) )
         {
@@ -850,11 +851,6 @@ void guRadioPanel::OnStationListActivated( wxListEvent &event )
             wxMessageBox( _( "There are not entries for this Radio Station" ) );
         }
     }
-
-//    GaugeEvent.SetId( ID_GAUGE_REMOVE );
-//    //GaugeEvent.SetExtraLong( 5 );
-//    wxPostEvent( MainFrame, GaugeEvent );
-
 }
 
 // -------------------------------------------------------------------------------- //
