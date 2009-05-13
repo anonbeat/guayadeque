@@ -30,8 +30,8 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
-#include <id3/tag.h>
-#include <id3/misc_support.h>
+//#include <id3/tag.h>
+//#include <id3/misc_support.h>
 
 #define GUPLAYLIST_ITEM_SIZE        40
 
@@ -729,10 +729,9 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
 // -------------------------------------------------------------------------------- //
 void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 {
-
     wxListItem ListItem;
     TagInfo Info;
-    ID3_Tag tag;
+//    ID3_Tag tag;
 //    char * pStr;
 
     //guTrack PlayListSong;
@@ -756,49 +755,54 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 
         Song.m_FileName +=  FileName; //.AfterLast( '/' );
 
-        // Try to read ID3V2 tags
-        if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V2 ) >= 0 )
-        {
-            Info.ReadID3Tags( &tag );
-        }
-        else
-        {
-            guLogWarning( wxT( "Not found ID3v2 Tags in file %s" ), FileName.c_str() );
-        }
+        Info.ReadID3Tags( FileName );
 
-        // Try to fill empty field from ID3v1 tags
-        if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V1 ) >= 0 )
-        {
-            Info.ReadID3Tags( &tag );
-        }
-        else
-        {
-            guLogWarning( wxT( "Not found ID3v1 Tags in file %s" ), FileName.c_str() );
-        }
-
-        tag.Link( FileName.ToUTF8() );
-
-        const Mp3_Headerinfo * mp3info;
-        mp3info = tag.GetMp3HeaderInfo();
-        if( mp3info )
-        {
-            //guLogMessage( wxT( "BitRate: %u Kbps" ), mp3info->bitrate/1000 );
-            //guLogMessage( wxT( "Freq.  : %u Khz" ), mp3info->frequency/1000 );
-            //guLogMessage( wxT( "Time   : %s" ), LenToString( mp3info->time ).c_str() );
-            Song.m_Length = mp3info->time;
-            m_TotalLen += mp3info->time;
-        }
-        else
-        {
-            guLogWarning( wxT( "Could not get length of the song" ) );
-            Song.m_Length = 0;
-        }
+//////
+//////        // Try to read ID3V2 tags
+//////        if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V2 ) >= 0 )
+//////        {
+//////            Info.ReadID3Tags( &tag );
+//////        }
+//////        else
+//////        {
+//////            guLogWarning( wxT( "Not found ID3v2 Tags in file %s" ), FileName.c_str() );
+//////        }
+//////
+//////        // Try to fill empty field from ID3v1 tags
+//////        if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V1 ) >= 0 )
+//////        {
+//////            Info.ReadID3Tags( &tag );
+//////        }
+//////        else
+//////        {
+//////            guLogWarning( wxT( "Not found ID3v1 Tags in file %s" ), FileName.c_str() );
+//////        }
+//////
+//////        tag.Link( FileName.ToUTF8() );
+//////
+//////        const Mp3_Headerinfo * mp3info;
+//////        mp3info = tag.GetMp3HeaderInfo();
+//////        if( mp3info )
+//////        {
+//////            //guLogMessage( wxT( "BitRate: %u Kbps" ), mp3info->bitrate/1000 );
+//////            //guLogMessage( wxT( "Freq.  : %u Khz" ), mp3info->frequency/1000 );
+//////            //guLogMessage( wxT( "Time   : %s" ), LenToString( mp3info->time ).c_str() );
+//////            Song.m_Length = mp3info->time;
+//////            m_TotalLen += mp3info->time;
+//////        }
+//////        else
+//////        {
+//////            guLogWarning( wxT( "Could not get length of the song" ) );
+//////            Song.m_Length = 0;
+//////        }
 
         Song.m_ArtistName = Info.m_ArtistName;
         Song.m_AlbumName = Info.m_AlbumName;
         Song.m_SongName = Info.m_TrackName;
         Song.m_Number = Info.m_Track;
         Song.m_GenreName = Info.m_GenreName;
+        Song.m_Length = Info.m_Length;
+        m_TotalLen += Info.m_Length;
 
         AddItem( Song );
     }

@@ -1,0 +1,14 @@
+  * Changed from libid3 to taglib as need id3 v2.4 support
+
+* 2009-05-12 v0.0.3 Beta
+  * Added Labels in Radio panel
+  * Fixed some minor bugs
+
+* 2009-04-06 v0.0.2 Beta
+
+  * Fixed manual cover downloader
+  * Added progress bar to cover editor  
+  * Added support to translations
+  * Fixed bug in ListBox colors
+
+* 2009-03-11 First Public release v0.0.1 Beta

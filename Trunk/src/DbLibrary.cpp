@@ -978,27 +978,30 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, wxString &FilePath )
 int DbLibrary::ReadFileTags( const wxString &FileName )
 {
   TagInfo Info;
-  ID3_Tag tag;
 
-  // Try to read ID3V2 tags
-  if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V2 ) >= 0 )
-  {
-      Info.ReadID3Tags( &tag );
-  }
-  else
-  {
-      guLogWarning( wxT( "Not found ID3v2 Tags in file %s" ), FileName.c_str() );
-  }
+  Info.ReadID3Tags( FileName );
 
-  // Try to fill empty field from ID3v1 tags
-  if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V1 ) >= 0 )
-  {
-      Info.ReadID3Tags( &tag );
-  }
-  else
-  {
-      guLogWarning( wxT( "Not found ID3v1 Tags in file %s" ), FileName.c_str() );
-  }
+//////  ID3_Tag tag;
+//////
+//////  // Try to read ID3V2 tags
+//////  if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V2 ) >= 0 )
+//////  {
+//////      Info.ReadID3Tags( &tag );
+//////  }
+//////  else
+//////  {
+//////      guLogWarning( wxT( "Not found ID3v2 Tags in file %s" ), FileName.c_str() );
+//////  }
+//////
+//////  // Try to fill empty field from ID3v1 tags
+//////  if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V1 ) >= 0 )
+//////  {
+//////      Info.ReadID3Tags( &tag );
+//////  }
+//////  else
+//////  {
+//////      guLogWarning( wxT( "Not found ID3v1 Tags in file %s" ), FileName.c_str() );
+//////  }
 
   wxString PathName = wxGetCwd();
   //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
@@ -1088,8 +1091,8 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
     {
         //guLogMessage( wxT( "Updating FileName '%s'" ), Song->FileName.c_str() );
         // Update the File iD3Tags
-        ID3_Tag Tag;
-        Tag.Link( Song->m_FileName.ToUTF8() );
+//////        ID3_Tag Tag;
+//////        Tag.Link( Song->m_FileName.ToUTF8() );
         TagInfo info;
 
         info.m_TrackName = Song->m_SongName;
@@ -1099,7 +1102,8 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
         info.m_Track = Song->m_Number;
         info.m_Year = Song->m_Year;
 
-        info.WriteID3Tags( &Tag );
+//////        info.WriteID3Tags( &Tag );
+        info.WriteID3Tags( Song->m_FileName );
 
         //Tag.Update();
 
@@ -2463,14 +2467,17 @@ void DbLibrary::UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt
 
     if( wxFileExists( Song->m_FileName ) )
     {
-      ID3_Tag Tag;
-      Tag.Link( Song->m_FileName.ToUTF8() );
+//////      ID3_Tag Tag;
+//////      Tag.Link( Song->m_FileName.ToUTF8() );
+//////      TagInfo info;
+//////      info.ReadID3Tags( &Tag );
       TagInfo info;
-      info.ReadID3Tags( &Tag );
+      info.ReadID3Tags( Song->m_FileName );
 
       info.m_ArtistLabelsStr = ArtistLabelStr;
 
-      info.WriteID3Tags( &Tag );
+//////      info.WriteID3Tags( &Tag );
+      info.WriteID3Tags( Song->m_FileName );
     }
     else
     {
@@ -2513,14 +2520,17 @@ void DbLibrary::UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &
 
     if( wxFileExists( Song->m_FileName ) )
     {
-      ID3_Tag Tag;
-      Tag.Link( Song->m_FileName.ToUTF8() );
+//////      ID3_Tag Tag;
+//////      Tag.Link( Song->m_FileName.ToUTF8() );
+//////      TagInfo info;
+//////      info.ReadID3Tags( &Tag );
       TagInfo info;
-      info.ReadID3Tags( &Tag );
+      info.ReadID3Tags( Song->m_FileName );
 
       info.m_AlbumLabelsStr = AlbumLabelStr;
 
-      info.WriteID3Tags( &Tag );
+//////      info.WriteID3Tags( &Tag );
+      info.WriteID3Tags( Song->m_FileName );
     }
     else
     {
@@ -2564,14 +2574,17 @@ void DbLibrary::UpdateSongsLabels( const wxArrayInt &SongIds, const wxArrayInt &
     //guLogMessage( wxT( "'%s' -> '%s'" ), Song->FileName.c_str(), TrackLabelStr.c_str() );
     if( wxFileExists( Song->m_FileName ) )
     {
-      ID3_Tag Tag;
-      Tag.Link( Song->m_FileName.ToUTF8() );
+//////      ID3_Tag Tag;
+//////      Tag.Link( Song->m_FileName.ToUTF8() );
+//////      TagInfo info;
+//////      info.ReadID3Tags( &Tag );
       TagInfo info;
-      info.ReadID3Tags( &Tag );
+      info.ReadID3Tags( Song->m_FileName );
 
       info.m_TrackLabelsStr = TrackLabelStr;
 
-      info.WriteID3Tags( &Tag );
+//////      info.WriteID3Tags( &Tag );
+      info.WriteID3Tags( Song->m_FileName );
     }
     else
     {

@@ -21,8 +21,8 @@
 #ifndef TAGINFO_H
 #define TAGINFO_H
 
-#include <id3/tag.h>
-#include <id3/misc_support.h>
+//#include <id3/tag.h>
+//#include <id3/misc_support.h>
 
 #include <wx/string.h>
 #include <wx/arrstr.h>
@@ -56,10 +56,10 @@ class TagInfo
         m_Length = 0;
     };
 
-    int         RemoveLabelFrame( ID3_Tag * tag, const char * Name );
-    ID3_Frame * Find( ID3_Tag * tag, const char * Name );
-    bool        ReadID3Tags( const ID3_Tag * tag );
-    bool        WriteID3Tags( ID3_Tag * tag );
+//    int         RemoveLabelFrame( ID3_Tag * tag, const char * Name );
+//    ID3_Frame * Find( ID3_Tag * tag, const char * Name );
+    bool        ReadID3Tags( const wxString &FileName );
+    bool        WriteID3Tags( const wxString &FileName );
 
 };
 
