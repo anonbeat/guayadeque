@@ -21,6 +21,7 @@
 #include "TrackEdit.h"
 #include "Config.h"
 #include "Images.h"
+#include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs ) :
@@ -258,7 +259,7 @@ void guTrackEditor::WriteItemData( void )
         if( m_GenreTextCtrl->IsModified() )
           ( * m_Items )[ m_CurItem ].m_GenreName = m_GenreTextCtrl->GetLineText( 0 );
         if( m_YearTextCtrl->IsModified() )
-           m_GenreTextCtrl->GetLineText( 0 ).ToLong( ( long * ) &( * m_Items )[ m_CurItem ].m_Year );
+           m_YearTextCtrl->GetLineText( 0 ).ToLong( ( long * ) &( * m_Items )[ m_CurItem ].m_Year );
     }
 }
 
@@ -319,7 +320,8 @@ void guTrackEditor::OnYeCopyButtonClicked( wxCommandEvent& event )
 {
     int index;
     long Year;
-    m_GenreTextCtrl->GetLineText( 0 ).ToLong( &Year );
+    m_YearTextCtrl->GetLineText( 0 ).ToLong( &Year );
+    //guLogMessage( wxT( "Year set to : %u" ), Year );
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_Year = Year;

@@ -54,6 +54,12 @@ class TagInfo
         m_Track = 0;
         m_Year = 0;
         m_Length = 0;
+        m_TrackLabels.Empty();
+        m_TrackLabelsStr = wxEmptyString;
+        m_ArtistLabels.Empty();
+        m_ArtistLabelsStr = wxEmptyString;
+        m_AlbumLabels.Empty();
+        m_AlbumLabelsStr = wxEmptyString;
     };
 
 //    int         RemoveLabelFrame( ID3_Tag * tag, const char * Name );
