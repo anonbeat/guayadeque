@@ -60,15 +60,30 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guSoListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guSoListBox::OnContextMenu ), NULL, this );
 
-    m_EveAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-                              wxColor( 250, 250, 250 ),
-                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//    m_EveAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
+//                              wxColor( 250, 250, 250 ),
+//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//
+//    m_OddAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
+//                              wxColor( 240, 240, 240 ),
+//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//
+//    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+    wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
+    m_EveAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
+                                ListBoxColor,
+                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
-    m_OddAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-                              wxColor( 240, 240, 240 ),
-                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+    SetBackgroundColour( ListBoxColor );
 
-    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+    ListBoxColor.Set( ListBoxColor.Red() - 0xA,
+                      ListBoxColor.Green() - 0xA,
+                      ListBoxColor.Blue() - 0xA );
+
+    m_OddAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
+                                ListBoxColor,
+                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+
 
     ReloadItems();
 }

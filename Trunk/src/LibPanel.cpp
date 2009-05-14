@@ -72,7 +72,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
 
 	InputTextPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
-	InputTextPanel->SetBackgroundColour( wxColor( 250, 250, 250 ) );
+	InputTextPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
 	InputTextSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -80,7 +80,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 	InputTextSizer->Add( m_InputTextLeftBitmap, 0, wxALL, 0 );
 
 	m_InputTextCtrl = new wxTextCtrl( InputTextPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxNO_BORDER );
-	m_InputTextCtrl->SetBackgroundColour( wxColor( 250, 250, 250 ) );
+	//m_InputTextCtrl->SetBackgroundColour( wxColor( 250, 250, 250 ) );
 	InputTextSizer->Add( m_InputTextCtrl, 1, wxALL, 2 );
 
 	m_InputTextClearBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, wxBitmap( guImage_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );

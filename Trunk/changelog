@@ -1,5 +1,9 @@
+
+  * ListBox colour now follow current theme
   * Removed bug in Track editor year field
-  * Changed from libid3 to taglib as need id3 v2.4 support
+  * Changed from libid3 to taglib as need id3 v2.4 support. Be aware that
+    not all program will read ID3 tags v2.4. For example if you use easytag
+    you should use the v2.1.1 or later
 
 * 2009-05-12 v0.0.3 Beta
   * Added Labels in Radio panel

@@ -38,15 +38,29 @@ guListBox::guListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
     ListItem.SetWidth( 200 );
     InsertColumn( 0, ListItem );
 
-    m_EveAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-                              wxColor( 250, 250, 250 ),
-                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//    m_EveAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
+//                              wxColor( 250, 250, 250 ),
+//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//
+//    m_OddAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
+//                              wxColor( 240, 240, 240 ),
+//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//
+//    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+    wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
+    m_EveAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
+                                ListBoxColor,
+                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
-    m_OddAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-                              wxColor( 240, 240, 240 ),
-                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+    SetBackgroundColour( ListBoxColor );
 
-    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+    ListBoxColor.Set( ListBoxColor.Red() - 0xA,
+                      ListBoxColor.Green() - 0xA,
+                      ListBoxColor.Blue() - 0xA );
+
+    m_OddAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
+                                ListBoxColor,
+                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
     if( parent )
     {
