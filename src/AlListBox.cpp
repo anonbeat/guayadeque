@@ -222,10 +222,10 @@ guAlbumListBox::guAlbumListBox( wxWindow * parent, DbLibrary * db ) :
 
     m_SelBgColor  = SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHT );
     m_SelFgColor  = SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
-    m_EveBgColor  = wxColor( 250, 250, 250 );
-    m_OddBgColor  = wxColor( 240, 240, 240 );
-    m_TextFgColor = wxColor( 0, 0, 0 );
-    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+    m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );;
+    m_OddBgColor.Set( m_EveBgColor.Red() - 0xA, m_EveBgColor.Green() - 0x0A, m_EveBgColor.Blue() - 0x0A );
+    m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT );
+    SetBackgroundColour( m_EveBgColor );
 
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumListBox::OnContextMenu ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guAlbumListBox::OnBeginDrag ), NULL, this );

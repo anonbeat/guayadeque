@@ -283,15 +283,29 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * New
     //Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guRadioStationListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guRadioStationListBox::OnContextMenu ), NULL, this );
 
-    m_EveAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-                              wxColor( 250, 250, 250 ),
-                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//    m_EveAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
+//                              wxColor( 250, 250, 250 ),
+//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//
+//    m_OddAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
+//                              wxColor( 240, 240, 240 ),
+//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+//
+//    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+    wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
+    m_EveAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
+                                ListBoxColor,
+                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
-    m_OddAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-                              wxColor( 240, 240, 240 ),
-                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
+    SetBackgroundColour( ListBoxColor );
 
-    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+    ListBoxColor.Set( ListBoxColor.Red() - 0xA,
+                      ListBoxColor.Green() - 0xA,
+                      ListBoxColor.Blue() - 0xA );
+
+    m_OddAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
+                                ListBoxColor,
+                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
     ReloadItems();
 }
@@ -630,7 +644,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 	GenreSizer = new wxBoxSizer( wxVERTICAL );
 
     m_GenresListBox = new guRadioGenreListBox( GenrePanel, m_Db, _( "Genres" ) );
-	m_GenresListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
+	//m_GenresListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
 
 	GenreSizer->Add( m_GenresListBox, 1, wxALL|wxEXPAND, 1 );
 
@@ -644,7 +658,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 	LabelsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_LabelsListBox = new guRadioLabelListBox( LabelsPanel, m_Db, _( "Labels" ) );
-	m_LabelsListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
+	//m_LabelsListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
 
 	LabelsSizer->Add( m_LabelsListBox, 1, wxALL|wxEXPAND, 5 );
 
@@ -666,7 +680,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 	StationsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_StationsListBox = new guRadioStationListBox( StationsPanel, m_Db );
-	m_StationsListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
+	//m_StationsListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
 
 	StationsSizer->Add( m_StationsListBox, 1, wxALL|wxEXPAND, 1 );
 

@@ -10,8 +10,7 @@ Need installed libid3, sqlite3, libcurl, gstreamer0.10 and wxWidgets 2.8
 Have been developed in Fedora core 9, 10 and Ubuntu 8.10
 
 To build run 
-cmake .
-make
+./build 
 sudo make install
 
 Please email with bugs and suggestions to anonbeat@gmail.com

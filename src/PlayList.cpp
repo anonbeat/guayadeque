@@ -54,7 +54,6 @@ guPlayList::guPlayList( wxWindow * parent, wxWindowID id, const wxPoint &pos, co
     m_TotalLen = 0;
     m_CurItem = wxNOT_FOUND;
 
-    wxSystemSettings SystemSettings;
     //CurItem = wxNOT_FOUND;
     m_DragOverItem = wxNOT_FOUND;
     m_DragOverAfter = false;
@@ -101,14 +100,14 @@ guPlayList::guPlayList( wxWindow * parent, wxWindowID id, const wxPoint &pos, co
     m_PlayBgColor  = wxColor( 0, 0, 0 ); //SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHT );
     m_PlayFgColor  = wxColor( 255, 255, 255 ); //SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
     m_DragBgColor  = * wxGREY_BRUSH;
-    m_SelBgColor  = SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHT );
-    m_SelFgColor  = SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
-    m_EveBgColor  = wxColor( 250, 250, 250 );
-    m_OddBgColor  = wxColor( 240, 240, 240 );
-    m_TextFgColor = wxColor( 0, 0, 0 );
+    m_SelBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
+    m_SelFgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
+    m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
+    m_OddBgColor.Set( m_EveBgColor.Red() - 0xA, m_EveBgColor.Green() - 0x0A, m_EveBgColor.Blue() - 0x0A );;
+    m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT );
     //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
 
-    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+    SetBackgroundColour( m_EveBgColor );
 
     m_PlayBitmap = new wxBitmap( guImage_media_playback_start );
 
