@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="src/AlListBox.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="8015" topLine="200" />
+	<File name="src/AlListBox.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="8259" topLine="210" />
 	</File>
 	<File name="src/AlListBox.h" open="0" top="0" tabpos="6">
 		<Cursor position="1803" topLine="17" />
@@ -29,7 +29,7 @@
 		<Cursor position="768" topLine="5" />
 	</File>
 	<File name="src/Config.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="1141" topLine="0" />
+		<Cursor position="1141" topLine="105" />
 	</File>
 	<File name="src/Config.h" open="0" top="0" tabpos="0">
 		<Cursor position="2256" topLine="17" />
@@ -52,8 +52,8 @@
 	<File name="src/CoverFrame.h" open="0" top="0" tabpos="0">
 		<Cursor position="1287" topLine="15" />
 	</File>
-	<File name="src/DbLibrary.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="10875" topLine="301" />
+	<File name="src/DbLibrary.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="84422" topLine="2459" />
 	</File>
 	<File name="src/DbLibrary.h" open="0" top="0" tabpos="3">
 		<Cursor position="13397" topLine="317" />
@@ -70,8 +70,8 @@
 	<File name="src/Images.h" open="0" top="0" tabpos="3">
 		<Cursor position="1513" topLine="19" />
 	</File>
-	<File name="src/ItemListBox.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="6187" topLine="172" />
+	<File name="src/ItemListBox.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="2456" topLine="44" />
 	</File>
 	<File name="src/ItemListBox.h" open="0" top="0" tabpos="6">
 		<Cursor position="3079" topLine="51" />
@@ -89,19 +89,19 @@
 		<Cursor position="5262" topLine="155" />
 	</File>
 	<File name="src/LastFMPanel.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="44652" topLine="1156" />
+		<Cursor position="10314" topLine="151" />
 	</File>
 	<File name="src/LastFMPanel.h" open="0" top="0" tabpos="1">
 		<Cursor position="14817" topLine="425" />
 	</File>
-	<File name="src/LibPanel.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="22228" topLine="363" />
+	<File name="src/LibPanel.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="28737" topLine="562" />
 	</File>
 	<File name="src/LibPanel.h" open="0" top="0" tabpos="4">
 		<Cursor position="3458" topLine="72" />
 	</File>
 	<File name="src/LyricsPanel.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="4835" topLine="92" />
+		<Cursor position="3420" topLine="62" />
 	</File>
 	<File name="src/LyricsPanel.h" open="0" top="0" tabpos="2">
 		<Cursor position="2404" topLine="38" />
@@ -130,8 +130,8 @@
 	<File name="src/MediaCtrl.h" open="0" top="0" tabpos="2">
 		<Cursor position="2436" topLine="38" />
 	</File>
-	<File name="src/PlayList.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="25402" topLine="464" />
+	<File name="src/PlayList.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="4380" topLine="84" />
 	</File>
 	<File name="src/PlayList.h" open="0" top="0" tabpos="5">
 		<Cursor position="5608" topLine="121" />
@@ -154,8 +154,8 @@
 	<File name="src/RadioGenreEditor.h" open="0" top="0" tabpos="0">
 		<Cursor position="1785" topLine="29" />
 	</File>
-	<File name="src/RadioPanel.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="33479" topLine="833" />
+	<File name="src/RadioPanel.cpp" open="1" top="1" tabpos="5">
+		<Cursor position="11641" topLine="288" />
 	</File>
 	<File name="src/RadioPanel.h" open="0" top="0" tabpos="2">
 		<Cursor position="2272" topLine="47" />
@@ -166,8 +166,8 @@
 	<File name="src/Shoutcast.h" open="0" top="0" tabpos="10">
 		<Cursor position="1773" topLine="29" />
 	</File>
-	<File name="src/SoListBox.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="3037" topLine="36" />
+	<File name="src/SoListBox.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="3880" topLine="61" />
 	</File>
 	<File name="src/SoListBox.h" open="0" top="0" tabpos="0">
 		<Cursor position="2009" topLine="23" />
@@ -190,8 +190,8 @@
 	<File name="src/TaListBox.h" open="0" top="0" tabpos="0">
 		<Cursor position="1642" topLine="16" />
 	</File>
-	<File name="src/TagInfo.cpp" open="1" top="1" tabpos="2">
-		<Cursor position="5231" topLine="116" />
+	<File name="src/TagInfo.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="4668" topLine="141" />
 	</File>
 	<File name="src/TagInfo.h" open="0" top="0" tabpos="5">
 		<Cursor position="2268" topLine="36" />

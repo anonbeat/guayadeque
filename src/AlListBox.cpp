@@ -222,8 +222,15 @@ guAlbumListBox::guAlbumListBox( wxWindow * parent, DbLibrary * db ) :
 
     m_SelBgColor  = SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHT );
     m_SelFgColor  = SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
-    m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );;
-    m_OddBgColor.Set( m_EveBgColor.Red() - 0xA, m_EveBgColor.Green() - 0x0A, m_EveBgColor.Blue() - 0x0A );
+    m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
+    if( m_EveBgColor.Red() > 0x0A && m_EveBgColor.Green() > 0x0A && m_EveBgColor.Blue() > 0x0A )
+    {
+        m_OddBgColor.Set( m_EveBgColor.Red() - 0xA, m_EveBgColor.Green() - 0x0A, m_EveBgColor.Blue() - 0x0A );
+    }
+    else
+    {
+        m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
+    }
     m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT );
     SetBackgroundColour( m_EveBgColor );
 

@@ -54,9 +54,18 @@ guListBox::guListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
 
     SetBackgroundColour( ListBoxColor );
 
-    ListBoxColor.Set( ListBoxColor.Red() - 0xA,
-                      ListBoxColor.Green() - 0xA,
-                      ListBoxColor.Blue() - 0xA );
+    if( ListBoxColor.Red() > 0x0A && ListBoxColor.Green() > 0x0A && ListBoxColor.Blue() > 0x0A )
+    {
+        ListBoxColor.Set( ListBoxColor.Red() - 0xA,
+                          ListBoxColor.Green() - 0xA,
+                          ListBoxColor.Blue() - 0xA );
+    }
+    else
+    {
+        ListBoxColor.Set( ListBoxColor.Red() + 0xA,
+                          ListBoxColor.Green() + 0xA,
+                          ListBoxColor.Blue() + 0xA );
+    }
 
     m_OddAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
                                 ListBoxColor,
