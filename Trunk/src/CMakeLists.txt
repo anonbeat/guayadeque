@@ -6,8 +6,14 @@ INCLUDE_DIRECTORIES(
 	${guayadeque_SOURCE_DIR}
 	${guayadeque_SOURCE_DIR}/wx
 	${guayadeque_SOURCE_DIR}/wx/curl
-	${guayadeque_SOURCE_DIR}/wxsqlite3 
-        ${GSTREAMER_INCLUDE_DIRS} )
+	${guayadeque_SOURCE_DIR}/wxsqlite3
+        ${guayadeque_SOURCE_DIR}/dbus
+        ${GSTREAMER_INCLUDE_DIRS}
+        ${SQLITE3_INCLUDE_DIRS}
+        ${LIBCURL_INCLUDE_DIRS}
+        ${LIBTAG_INCLUDE_DIRS}
+        ${LIBDBUS_INCLUDE_DIRS} )
+
 
 ADD_EXECUTABLE( guayadeque
 	AlListBox.cpp
@@ -92,15 +98,19 @@ ADD_EXECUTABLE( guayadeque
 	VolumeFrame.h 
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
-	curl/http.cpp )
+	curl/http.cpp 
+        dbus/wxdbusconnection.cpp
+        dbus/wxdbusconnection.h
+        dbus/wxdbusmessage.cpp
+        dbus/wxdbusmessage.h )
 
 TARGET_LINK_LIBRARIES( guayadeque
 	${wxWidgets_LIBRARIES}
 	${GSTREAMER_LIBRARIES}
 	${SQLITE3_LIBRARIES}
 	${LIBCURL_LIBRARIES}
-#	${LIBID3_LIBRARIES}
         ${LIBTAG_LIBRARIES}
+        ${LIBDBUS_LIBRARIES}
 	)
 
 INSTALL( TARGETS guayadeque

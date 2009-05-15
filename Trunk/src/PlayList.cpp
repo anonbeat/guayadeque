@@ -739,7 +739,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
     wxURI UriPath( FileName );
     if( UriPath.IsReference() )
     {
-        guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
+        //guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
         //
         Song.m_FileName = wxEmptyString;
         Song.m_CoverId = 0;
@@ -755,45 +755,6 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         Song.m_FileName +=  FileName; //.AfterLast( '/' );
 
         Info.ReadID3Tags( FileName );
-
-//////
-//////        // Try to read ID3V2 tags
-//////        if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V2 ) >= 0 )
-//////        {
-//////            Info.ReadID3Tags( &tag );
-//////        }
-//////        else
-//////        {
-//////            guLogWarning( wxT( "Not found ID3v2 Tags in file %s" ), FileName.c_str() );
-//////        }
-//////
-//////        // Try to fill empty field from ID3v1 tags
-//////        if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V1 ) >= 0 )
-//////        {
-//////            Info.ReadID3Tags( &tag );
-//////        }
-//////        else
-//////        {
-//////            guLogWarning( wxT( "Not found ID3v1 Tags in file %s" ), FileName.c_str() );
-//////        }
-//////
-//////        tag.Link( FileName.ToUTF8() );
-//////
-//////        const Mp3_Headerinfo * mp3info;
-//////        mp3info = tag.GetMp3HeaderInfo();
-//////        if( mp3info )
-//////        {
-//////            //guLogMessage( wxT( "BitRate: %u Kbps" ), mp3info->bitrate/1000 );
-//////            //guLogMessage( wxT( "Freq.  : %u Khz" ), mp3info->frequency/1000 );
-//////            //guLogMessage( wxT( "Time   : %s" ), LenToString( mp3info->time ).c_str() );
-//////            Song.m_Length = mp3info->time;
-//////            m_TotalLen += mp3info->time;
-//////        }
-//////        else
-//////        {
-//////            guLogWarning( wxT( "Could not get length of the song" ) );
-//////            Song.m_Length = 0;
-//////        }
 
         Song.m_ArtistName = Info.m_ArtistName;
         Song.m_AlbumName = Info.m_AlbumName;
