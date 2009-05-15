@@ -47,6 +47,11 @@ IF( NOT LIBTAG_LIBRARIES )
 	MESSAGE( FATAL_ERROR "taglib not found!" )
 ENDIF( NOT LIBTAG_LIBRARIES )
 
+PKG_CHECK_MODULES( LIBDBUS dbus-1 )
+IF( NOT LIBDBUS_LIBRARIES )
+	MESSAGE( FATAL_ERROR "dbus have not been found!" )
+ENDIF( NOT LIBDBUS_LIBRARIES )
+
 # Include wxWidgets macros
 INCLUDE(${wxWidgets_USE_FILE})
 
@@ -62,6 +67,7 @@ INCLUDE_DIRECTORIES(${Guayadeque_SOURCE_DIR}
 			${SQLITE3_INCLUDE_DIRS}
 			${LIBCURL_INCLUDE_DIRS}
 			${LIBTAG_INCLUDE_DIRS}
+              		${LIBDBUS_INCLUDE_DIRS}
                          )
  
 ADD_SUBDIRECTORY( src )

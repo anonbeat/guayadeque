@@ -769,6 +769,36 @@ curl/http.s:
 .PHONY : curl/http.s
 
 # target to build an object file
+dbus/wxdbusconnection.o:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusconnection.o
+.PHONY : dbus/wxdbusconnection.o
+
+# target to preprocess a source file
+dbus/wxdbusconnection.i:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusconnection.i
+.PHONY : dbus/wxdbusconnection.i
+
+# target to generate assembly for a file
+dbus/wxdbusconnection.s:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusconnection.s
+.PHONY : dbus/wxdbusconnection.s
+
+# target to build an object file
+dbus/wxdbusmessage.o:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusmessage.o
+.PHONY : dbus/wxdbusmessage.o
+
+# target to preprocess a source file
+dbus/wxdbusmessage.i:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusmessage.i
+.PHONY : dbus/wxdbusmessage.i
+
+# target to generate assembly for a file
+dbus/wxdbusmessage.s:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusmessage.s
+.PHONY : dbus/wxdbusmessage.s
+
+# target to build an object file
 wxsqlite3/wxsqlite3.o:
 	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/wxsqlite3/wxsqlite3.o
 .PHONY : wxsqlite3/wxsqlite3.o
@@ -919,6 +949,12 @@ help:
 	@echo "... curl/http.o"
 	@echo "... curl/http.i"
 	@echo "... curl/http.s"
+	@echo "... dbus/wxdbusconnection.o"
+	@echo "... dbus/wxdbusconnection.i"
+	@echo "... dbus/wxdbusconnection.s"
+	@echo "... dbus/wxdbusmessage.o"
+	@echo "... dbus/wxdbusmessage.i"
+	@echo "... dbus/wxdbusmessage.s"
 	@echo "... wxsqlite3/wxsqlite3.o"
 	@echo "... wxsqlite3/wxsqlite3.i"
 	@echo "... wxsqlite3/wxsqlite3.s"
