@@ -260,7 +260,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	m_DetailSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_ArtistDetails = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
-	m_ArtistDetails->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUBAR ) );
+	m_ArtistDetails->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
 	m_ArtistDetails->SetBorders( 0 );
 	m_DetailSizer->Add( m_ArtistDetails, 1, wxALL|wxEXPAND, 5 );
 
@@ -381,7 +381,7 @@ void guArtistInfoCtrl::UpdateArtistInfoText( void )
     Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
     m_ArtistDetails->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s>%s</body></html>" ),
-          wxSystemSettings::GetColour( wxSYS_COLOUR_MENUBAR ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           Content.c_str() ) );
 
     wxSize Size; // = wxDefaultSize; //ArtistDetails->GetSize();
