@@ -174,7 +174,7 @@ int DownloadFile( const wxString &Source, const wxString &Target )
     http.Get( Target, Source );
 
     long ResCode = http.GetResponseCode();
-    guLogMessage( wxT( "Code   : %u" ), ResCode );
+    //guLogMessage( wxT( "Code   : %u" ), ResCode );
     if( ResCode < 200 || ResCode > 299 )
     {
         if( ResCode == 301 || ResCode == 307 )
@@ -230,7 +230,7 @@ wxString guURLEncode( const wxString &Source )
       }
     }
   }
-  guLogMessage( wxT( "guURLEncode: %s -> %s" ), Source.c_str(), RetVal.c_str() );
+//  guLogMessage( wxT( "guURLEncode: %s -> %s" ), Source.c_str(), RetVal.c_str() );
   return RetVal;
 }
 
