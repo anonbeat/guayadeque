@@ -51,7 +51,8 @@ class guMediaCtrl : public wxEvtHandler
 
     static bool Init();
 
-    bool Load( const wxURI &uri );
+    //bool Load( const wxURI &uri );
+    bool Load( const wxString &uri );
     bool Stop();
     bool Play();
     bool Pause();

@@ -199,8 +199,41 @@ guMediaCtrl::~guMediaCtrl()
     }
 }
 
+//// -------------------------------------------------------------------------------- //
+//bool guMediaCtrl::Load( const wxURI &uri )
+//{
+//    // Reset positions & rate
+//    m_llPausedPos = 0;
+//
+//    // Set playbin to ready to stop the current media...
+//    if( gst_element_set_state( m_Playbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
+//    {
+//        return false;
+//    }
+//
+//    // free current media resources
+//    gst_element_set_state( m_Playbin, GST_STATE_NULL );
+//
+//    // Make sure the passed URI is valid and tell playbin to load it
+//    // non-file uris are encoded
+//    wxASSERT( gst_uri_protocol_is_valid( "file" ) );
+//    wxASSERT( gst_uri_is_valid( uri.BuildUnescapedURI().mb_str() ) );
+//
+//    g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.BuildUnescapedURI().mb_str(), NULL );
+//
+//    if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
+//    {
+//        return false; // no real error message needed here as this is
+//    }
+//
+//    wxMediaEvent event( wxEVT_MEDIA_LOADED );
+//    AddPendingEvent( event );
+//    return true;
+//}
+//
+
 // -------------------------------------------------------------------------------- //
-bool guMediaCtrl::Load( const wxURI &uri )
+bool guMediaCtrl::Load( const wxString &uri )
 {
     // Reset positions & rate
     m_llPausedPos = 0;
@@ -217,9 +250,9 @@ bool guMediaCtrl::Load( const wxURI &uri )
     // Make sure the passed URI is valid and tell playbin to load it
     // non-file uris are encoded
     wxASSERT( gst_uri_protocol_is_valid( "file" ) );
-    wxASSERT( gst_uri_is_valid( uri.BuildUnescapedURI().mb_str() ) );
+    wxASSERT( gst_uri_is_valid( uri.c_str() ) );
 
-    g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.BuildUnescapedURI().mb_str(), NULL );
+    g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str(), NULL );
 
     if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
     {
