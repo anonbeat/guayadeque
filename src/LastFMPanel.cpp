@@ -717,6 +717,20 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
     m_Db = db;
     m_UpdateTracks = true;
 
+    m_ShowArtistDetails = true;
+    m_ShowAlbums = true;
+    m_ShowArtists = true;
+    m_ShowTracks = true;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        m_ShowArtistDetails = Config->ReadBool( wxT( "LFMShowArtistInfo" ), true, wxT( "General" )  );
+        m_ShowAlbums = Config->ReadBool( wxT( "LFMShowAlbums" ), true, wxT( "General" )  );
+        m_ShowArtists = Config->ReadBool( wxT( "LFMShowArtists" ), true, wxT( "General" )  );
+        m_ShowTracks = Config->ReadBool( wxT( "LFMShowTracks" ), true, wxT( "General" )  );
+    }
+
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
     // Artist Info
@@ -746,6 +760,12 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
 
 	m_MainSizer->Add( m_ArtistInfoMainSizer, 0, wxEXPAND, 5 );
 
+    if( m_ShowArtistDetails )
+        m_MainSizer->Show( m_ArtistInfoMainSizer );
+    else
+        m_MainSizer->Hide( m_ArtistInfoMainSizer );
+
+    m_MainSizer->FitInside( this );
     // Top Albmus
 	wxBoxSizer* AlTitleSizer;
 	AlTitleSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -772,6 +792,11 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
 
     m_MainSizer->Add( m_AlbumsSizer, 0, wxEXPAND, 5 );
 
+    if( m_ShowAlbums )
+        m_MainSizer->Show( m_AlbumsSizer );
+    else
+        m_MainSizer->Hide( m_AlbumsSizer );
+
     // Similar Artists
 	wxBoxSizer* SimArTitleSizer;
 	SimArTitleSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -796,6 +821,11 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
     }
 
 	m_MainSizer->Add( m_ArtistsSizer, 0, wxEXPAND, 5 );
+
+    if( m_ShowArtists )
+        m_MainSizer->Show( m_ArtistsSizer );
+    else
+        m_MainSizer->Hide( m_ArtistsSizer );
 
     // Similar Tracks
 	wxBoxSizer* SimTrTItleSizer;
@@ -822,6 +852,10 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
 
 	m_MainSizer->Add( m_TracksSizer, 0, wxEXPAND, 5 );
 	//MainSizer->Add( new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL ), 0, wxEXPAND, 5 );
+    if( m_ShowTracks )
+        m_MainSizer->Show( m_TracksSizer );
+    else
+        m_MainSizer->Hide( m_TracksSizer );
 
 	this->SetSizer( m_MainSizer );
 	this->Layout();
@@ -831,10 +865,6 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
     m_AlbumsUpdateThread = NULL;
     m_ArtistsUpdateThread = NULL;
     m_TracksUpdateThread = NULL;
-    m_ShowAlbums = true;
-    m_ShowArtistDetails = true;
-    m_ShowArtists = true;
-    m_ShowTracks = true;
 
     Connect( ID_LASTFM_UPDATE_ALBUMINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateAlbumItem ) );
     Connect( ID_LASTFM_UPDATE_ARTISTINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistInfo ) );
@@ -878,6 +908,15 @@ guLastFMPanel::~guLastFMPanel()
     Disconnect( ID_LASTFM_UPDATE_SIMTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTrackItem ) );
 
 	m_AlbumsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        Config->WriteBool( wxT( "LFMShowArtistInfo" ), m_ShowArtistDetails, wxT( "General" ) );
+        Config->WriteBool( wxT( "LFMShowAlbums" ), m_ShowAlbums, wxT( "General" ) );
+        Config->WriteBool( wxT( "LFMShowArtists" ), m_ShowArtists, wxT( "General" ) );
+        Config->WriteBool( wxT( "LFMShowTracks" ), m_ShowTracks, wxT( "General" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -890,8 +929,7 @@ void guLastFMPanel::SetTrack( const wxString &artistname, const wxString &trackn
 
     m_ArtistName = artistname;
     m_TrackName = trackname;
-
-    guLogMessage( wxT( "LastFMPanel:SetTrack( '%s', '%s' )" ), artistname.c_str(), trackname.c_str() );
+    //guLogMessage( wxT( "LastFMPanel:SetTrack( '%s', '%s' )" ), artistname.c_str(), trackname.c_str() );
 
     if( m_LastArtistName != m_ArtistName )
     {
@@ -1335,7 +1373,7 @@ guFetchSimilarArtistInfoThread::guFetchSimilarArtistInfoThread( guLastFMPanel * 
                                                       const wxChar * artistname ) :
     guFetchLastFMInfoThread( lastfmpanel )
 {
-    guLogMessage( wxT( "guFetchSimilarArtistInfoThread : '%s'" ), artistname );
+    //guLogMessage( wxT( "guFetchSimilarArtistInfoThread : '%s'" ), artistname );
     m_ArtistName  = wxString( artistname );
     if( Create() == wxTHREAD_NO_ERROR )
     {

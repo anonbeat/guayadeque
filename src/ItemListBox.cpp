@@ -115,7 +115,7 @@ void guListBox::OnKeyDown( wxListEvent &event )
         {
             m_SearchStrTimer->Stop();
         }
-        m_SearchStrTimer->Start( 300, wxTIMER_ONE_SHOT );
+        m_SearchStrTimer->Start( 500, wxTIMER_ONE_SHOT );
         m_SearchStr.Append( KeyChar );
     }
 }
