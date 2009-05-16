@@ -117,6 +117,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
         http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
         http.AddHeader( wxT( "Accept: text/html" ) );
         http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+        guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
         http.Get( Buffer, UrlStr );
     }
     else
@@ -138,6 +139,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
 //                http.GetResponseHeader().c_str(),
 //                http.GetResponseBody().c_str() );
 //    }
+    //guLogMessage( wxT( "%s" ), RetVal.c_str() );
     return RetVal;
 }
 
@@ -659,6 +661,8 @@ guArtistInfo guLastFM::ArtistGetInfo( const wxString &Artist )
         Req.AddArgument( wxT( "lang" ), m_Language );
     }
     Res = Req.DoRequest( false );
+
+    guLogMessage( wxT( "ArtistGetInfo:\n%s" ), Res.c_str() );
 
     m_ErrorCode = wxNOT_FOUND;
     if( Res.Length() )

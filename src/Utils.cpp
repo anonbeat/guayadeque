@@ -203,10 +203,11 @@ wxString guURLEncode( const wxString &Source )
   wxString RetVal;
   wxString HexCode;
   size_t index;
+  wxCharBuffer CharBuffer = Source.ToUTF8();
 
-  for( index = 0; index < Source.Length(); index++ )
+  for( index = 0; index < strlen( CharBuffer ); index++ )
   {
-    wxChar C = Source.GetChar( index );
+    unsigned char C = CharBuffer[ index ];
     if( C == wxT(' '))
     {
       RetVal += wxT( "+" );
@@ -215,17 +216,21 @@ wxString guURLEncode( const wxString &Source )
     {
       static const wxChar marks[] = wxT( "-_.\"+!~*()'" );
 
-      if( !wxIsalnum( C ) && !wxStrchr( marks, C ) /*&& !wxStrchr( delims, C )*/ )
+      if( ( C >= 'a' && C <= 'z' ) ||
+          ( C >= 'A' && C <= 'Z' ) ||
+          ( C >= '0' && C <= '9' ) ||
+          wxStrchr( marks, C ) )
+      {
+        RetVal += C;
+      }
+      else //if( !wxIsalnum( C ) && !wxStrchr( marks, C ) /*&& !wxStrchr( delims, C )*/ )
       {
         HexCode.Printf( wxT( "%%%02X" ), C );
         RetVal += HexCode;
       }
-      else
-      {
-        RetVal += C;
-      }
     }
   }
+  guLogMessage( wxT( "guURLEncode: %s -> %s" ), Source.c_str(), RetVal.c_str() );
   return RetVal;
 }
 
