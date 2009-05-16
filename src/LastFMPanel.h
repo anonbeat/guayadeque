@@ -245,6 +245,8 @@ class guLastFMInfoCtrl : public wxPanel
     DbLibrary *         m_Db;
     wxStaticBitmap *    m_Bitmap;
 	wxStaticText *      m_Text;
+	wxColor             m_NormalColor;
+	wxColor             m_NotFoundColor;
 
     virtual void        OnContextMenu( wxContextMenuEvent& event );
     virtual void        CreateContextMenu( wxMenu * Menu );

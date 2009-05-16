@@ -42,6 +42,8 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, bool crea
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL )
 {
     m_Db = db;
+    m_NormalColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
+    m_NotFoundColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
 
     if( createcontrols )
         this->CreateControls( parent );
@@ -260,6 +262,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	m_DetailSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_ArtistDetails = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
+	m_ArtistDetails->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
 	m_ArtistDetails->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
 	m_ArtistDetails->SetBorders( 0 );
 	m_DetailSizer->Add( m_ArtistDetails, 1, wxALL|wxEXPAND, 5 );
@@ -284,8 +287,10 @@ void guArtistInfoCtrl::SetInfo( guLastFMArtistInfo * info )
     m_Info = info;
 
     m_Info->m_ArtistId = m_Db->FindArtist( m_Info->m_Artist->m_Name );
+//    m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
+//                                        wxColour( 255, 0, 0 ) : wxColour( 0, 0, 0 ) );
     m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
-                                        wxColour( 255, 0, 0 ) : wxColour( 0, 0, 0 ) );
+                                        m_NotFoundColor : m_NormalColor );
     SetBitmap( m_Info->m_Image );
     SetLabel( m_Info->m_Artist->m_Name );
 
@@ -380,8 +385,9 @@ void guArtistInfoCtrl::UpdateArtistInfoText( void )
     }
     Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
-    m_ArtistDetails->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s>%s</body></html>" ),
+    m_ArtistDetails->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s text=%s>%s</body></html>" ),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           Content.c_str() ) );
 
     wxSize Size; // = wxDefaultSize; //ArtistDetails->GetSize();
@@ -455,7 +461,7 @@ void guAlbumInfoCtrl::SetInfo( guLastFMAlbumInfo * info )
 
     m_Info->m_AlbumId = m_Db->FindAlbum( m_Info->m_Album->m_Artist, m_Info->m_Album->m_Name );
     m_Text->SetForegroundColour( m_Info->m_AlbumId == wxNOT_FOUND ?
-                                        wxColour( 255, 0, 0 ) : wxColour( 0, 0, 0 ) );
+                                        m_NotFoundColor : m_NormalColor );
 
     SetBitmap( m_Info->m_Image );
     SetLabel( m_Info->m_Album->m_Name );
@@ -548,7 +554,7 @@ void guSimilarArtistInfoCtrl::SetInfo( guLastFMSimilarArtistInfo * info )
     m_Info->m_ArtistId = m_Db->FindArtist( m_Info->m_Artist->m_Name );
     //guLogMessage( wxT("Artist '%s' id: %i"), Info->Artist->Name.c_str(), Info->ArtistId );
     m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
-                                       wxColour( 255, 0, 0 ) : wxColour( 0, 0, 0 ) );
+                                       m_NotFoundColor : m_NormalColor );
     SetBitmap( m_Info->m_Image );
     SetLabel( wxString::Format( wxT( "%s\n%s%%" ), m_Info->m_Artist->m_Name.c_str(), m_Info->m_Artist->m_Match.c_str() ) );
 }
@@ -638,7 +644,7 @@ void guTrackInfoCtrl::SetInfo( guLastFMTrackInfo * info )
 
     m_Info->m_TrackId = m_Db->FindTrack( m_Info->m_Track->m_ArtistName, m_Info->m_Track->m_TrackName );
     m_Text->SetForegroundColour( m_Info->m_TrackId == wxNOT_FOUND ?
-                                       wxColour( 255, 0, 0 ) : wxColour( 0, 0, 0 ) );
+                                       m_NotFoundColor : m_NormalColor );
 
     SetBitmap( m_Info->m_Image );
     SetLabel( wxString::Format( wxT( "%s\n%s\n%s%%" ),
