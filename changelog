@@ -1,4 +1,9 @@
 
+  * Fixed bug that prevented to get info (lastfm, lyrics) for some names
+    with special chars
+  * Now the hidden categories in LastFM Panel gets saved on close
+  * Fixed bug that prevented to load files with special chars
+  * Fixed colors in LastFM and Lyrics panel to follow theme
   * ListBox colour now follow current theme
   * Removed bug in Track editor year field
   * Changed from libid3 to taglib as need id3 v2.4 support. Be aware that
@@ -6,7 +11,8 @@
     you should use the v2.1.1 or later
 
 * 2009-05-12 v0.0.3 Beta
-  * Added Labels in Radio panel
+  * Added Labels in Radio panel. This change needed a database schema change
+  so if you had an older version you need to remove  ~/.guayadeque/guayadeque.db
   * Fixed some minor bugs
 
 * 2009-04-06 v0.0.2 Beta
