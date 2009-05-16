@@ -682,12 +682,16 @@ void guPlayerPanel::LoadMedia( const wxString &FileName )
 {
     //m_MediaCtrl->Load( NextItem->FileName );
     wxURI UriPath( FileName );
+    wxString Uri;
     try {
         if( !UriPath.HasScheme() )
-            UriPath.Create( wxT( "file:////" ) + FileName );
-        if( !m_MediaCtrl->Load( UriPath ) )
+            Uri = wxT( "file:////" ) + FileName;
+        else
+            Uri = FileName;
+        if( !m_MediaCtrl->Load( Uri ) )
         {
-            guLogError( wxT( "ee: Failed load of file '%s'" ), UriPath.BuildUnescapedURI().c_str() );
+            guLogError( wxT( "ee: Failed load of file '%s'" ), Uri.c_str() );
+            //guLogError( wxT( "ee: The filename was '%s'" ), FileName.c_str() );
         }
     }
     catch(...)
