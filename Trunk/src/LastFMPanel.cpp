@@ -268,6 +268,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	m_DetailSizer->Add( m_ArtistDetails, 1, wxALL|wxEXPAND, 5 );
 
 	m_ShowMoreHyperLink = new wxHyperlinkCtrl( this, wxID_ANY, _("More..."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_ShowMoreHyperLink->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
 	m_DetailSizer->Add( m_ShowMoreHyperLink, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	m_MainSizer->Add( m_DetailSizer, 1, wxEXPAND, 5 );
