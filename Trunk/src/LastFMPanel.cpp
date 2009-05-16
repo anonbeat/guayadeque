@@ -385,9 +385,10 @@ void guArtistInfoCtrl::UpdateArtistInfoText( void )
     }
     Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
-    m_ArtistDetails->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s text=%s>%s</body></html>" ),
+    m_ArtistDetails->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s text=%s link=%s>%s</body></html>" ),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+          wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           Content.c_str() ) );
 
     wxSize Size; // = wxDefaultSize; //ArtistDetails->GetSize();
