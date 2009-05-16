@@ -268,7 +268,9 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	m_DetailSizer->Add( m_ArtistDetails, 1, wxALL|wxEXPAND, 5 );
 
 	m_ShowMoreHyperLink = new wxHyperlinkCtrl( this, wxID_ANY, _("More..."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
-	m_ShowMoreHyperLink->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+	m_ShowMoreHyperLink->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+	m_ShowMoreHyperLink->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+	m_ShowMoreHyperLink->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
 	m_DetailSizer->Add( m_ShowMoreHyperLink, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	m_MainSizer->Add( m_DetailSizer, 1, wxEXPAND, 5 );
@@ -889,6 +891,8 @@ void guLastFMPanel::SetTrack( const wxString &artistname, const wxString &trackn
     m_ArtistName = artistname;
     m_TrackName = trackname;
 
+    guLogMessage( wxT( "LastFMPanel:SetTrack( '%s', '%s' )" ), artistname.c_str(), trackname.c_str() );
+
     if( m_LastArtistName != m_ArtistName )
     {
         m_ArtistsUpdateThreadMutex.Lock();
@@ -1331,6 +1335,7 @@ guFetchSimilarArtistInfoThread::guFetchSimilarArtistInfoThread( guLastFMPanel * 
                                                       const wxChar * artistname ) :
     guFetchLastFMInfoThread( lastfmpanel )
 {
+    guLogMessage( wxT( "guFetchSimilarArtistInfoThread : '%s'" ), artistname );
     m_ArtistName  = wxString( artistname );
     if( Create() == wxTHREAD_NO_ERROR )
     {
