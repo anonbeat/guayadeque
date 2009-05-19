@@ -231,7 +231,7 @@ guAlbumListBox::guAlbumListBox( wxWindow * parent, DbLibrary * db ) :
     {
         m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
     }
-    m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT );
+    m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
     SetBackgroundColour( m_EveBgColor );
 
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumListBox::OnContextMenu ), NULL, this );

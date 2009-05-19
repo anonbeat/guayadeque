@@ -111,7 +111,7 @@ guPlayList::guPlayList( wxWindow * parent, wxWindowID id, const wxPoint &pos, co
     {
         m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
     }
-    m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT );
+    m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
     //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
 
     SetBackgroundColour( m_EveBgColor );

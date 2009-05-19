@@ -216,6 +216,7 @@ wxString guURLEncode( const wxString &Source )
     {
       static const wxChar marks[] = wxT( "-_.\"+!~*()'" );
 
+      //if( !wxIsalnum( C ) && !wxStrchr( marks, C ) /*&& !wxStrchr( delims, C )*/ )
       if( ( C >= 'a' && C <= 'z' ) ||
           ( C >= 'A' && C <= 'Z' ) ||
           ( C >= '0' && C <= '9' ) ||
@@ -223,7 +224,7 @@ wxString guURLEncode( const wxString &Source )
       {
         RetVal += C;
       }
-      else //if( !wxIsalnum( C ) && !wxStrchr( marks, C ) /*&& !wxStrchr( delims, C )*/ )
+      else
       {
         HexCode.Printf( wxT( "%%%02X" ), C );
         RetVal += HexCode;
