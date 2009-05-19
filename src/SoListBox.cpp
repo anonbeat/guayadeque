@@ -70,7 +70,9 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
 //
 //    SetBackgroundColour( wxColor( 250, 250, 250 ) );
     wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
-    m_EveAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
+    wxColour ListBoxText;
+    ListBoxText.Set( ListBoxColor.Red() ^ 0xFF, ListBoxColor.Green() ^ 0xFF, ListBoxColor.Blue() ^ 0xFF );
+    m_EveAttr = wxListItemAttr( ListBoxText,
                                 ListBoxColor,
                                 wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
@@ -89,7 +91,7 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
                           ListBoxColor.Blue() + 0xA );
     }
 
-    m_OddAttr = wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_MENUTEXT ),
+    m_OddAttr = wxListItemAttr( ListBoxText,
                                 ListBoxColor,
                                 wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
