@@ -173,52 +173,52 @@ bool TagInfo::WriteID3Tags( const wxString &FileName )
             tagv2->removeFrames( "TRCK" );
             tagv2->setTrack( m_Track );
             // The Labels
-            if( m_ArtistLabelsStr.IsEmpty() )
-            {
-                if( m_ArtistLabels.Count() )
-                {
-                    int index;
-                    int count = m_ArtistLabels.Count();
-                    for( index = 0; index < count; index++ )
-                    {
-                        m_ArtistLabelsStr += m_ArtistLabels[ index ];
-                        m_ArtistLabelsStr += wxT( "|" );
-                    }
-                    m_ArtistLabelsStr.RemoveLast( 1 );
-                }
-            }
-
-
-            if( m_AlbumLabelsStr.IsEmpty() )
-            {
-                if( m_AlbumLabels.Count() )
-                {
-                    int index;
-                    int count = m_AlbumLabels.Count();
-                    for( index = 0; index < count; index++ )
-                    {
-                        m_AlbumLabelsStr += m_AlbumLabels[ index ];
-                        m_AlbumLabelsStr += wxT( "|" );
-                    }
-                    m_AlbumLabelsStr.RemoveLast( 1 );
-                }
-            }
-
-
-            if( m_TrackLabelsStr.IsEmpty() )
-            {
-                if( m_TrackLabels.Count() )
-                {
-                    int index;
-                    int count = m_TrackLabels.Count();
-                    for( index = 0; index < count; index++ )
-                    {
-                        m_TrackLabelsStr += m_TrackLabels[ index ];
-                        m_TrackLabelsStr += wxT( "|" );
-                    }
-                    m_TrackLabelsStr.RemoveLast( 1 );
-                }
-            }
+//            if( m_ArtistLabelsStr.IsEmpty() )
+//            {
+//                if( m_ArtistLabels.Count() )
+//                {
+//                    int index;
+//                    int count = m_ArtistLabels.Count();
+//                    for( index = 0; index < count; index++ )
+//                    {
+//                        m_ArtistLabelsStr += m_ArtistLabels[ index ];
+//                        m_ArtistLabelsStr += wxT( "|" );
+//                    }
+//                    m_ArtistLabelsStr.RemoveLast( 1 );
+//                }
+//            }
+//
+//
+//            if( m_AlbumLabelsStr.IsEmpty() )
+//            {
+//                if( m_AlbumLabels.Count() )
+//                {
+//                    int index;
+//                    int count = m_AlbumLabels.Count();
+//                    for( index = 0; index < count; index++ )
+//                    {
+//                        m_AlbumLabelsStr += m_AlbumLabels[ index ];
+//                        m_AlbumLabelsStr += wxT( "|" );
+//                    }
+//                    m_AlbumLabelsStr.RemoveLast( 1 );
+//                }
+//            }
+//
+//
+//            if( m_TrackLabelsStr.IsEmpty() )
+//            {
+//                if( m_TrackLabels.Count() )
+//                {
+//                    int index;
+//                    int count = m_TrackLabels.Count();
+//                    for( index = 0; index < count; index++ )
+//                    {
+//                        m_TrackLabelsStr += m_TrackLabels[ index ];
+//                        m_TrackLabelsStr += wxT( "|" );
+//                    }
+//                    m_TrackLabelsStr.RemoveLast( 1 );
+//                }
+//            }
 
             ID3v2_CheckLabelFrame( tagv2, "guARLABELS", m_ArtistLabelsStr );
             ID3v2_CheckLabelFrame( tagv2, "guALLABELS", m_AlbumLabelsStr );
