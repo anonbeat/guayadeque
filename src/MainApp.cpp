@@ -28,7 +28,7 @@
 #include <wx/curl/base.h>
 #include <wx/image.h>
 #include <wx/tooltip.h>
-
+#include <wx/stdpaths.h>
 
 IMPLEMENT_APP(guMainApp);
 
@@ -79,11 +79,28 @@ bool guMainApp::OnInit()
     // Init the wxCurl Lib
     wxCurlBase::Init();
 
+    //
     if( m_Locale.Init( wxLANGUAGE_DEFAULT,
-                     wxLOCALE_LOAD_DEFAULT | wxLOCALE_CONV_ENCODING ) )
+                     /*wxLOCALE_LOAD_DEFAULT |*/ wxLOCALE_CONV_ENCODING ) )
     {
-        m_Locale.AddCatalogLookupPathPrefix( wxT( "./intl" ) );
+        m_Locale.AddCatalogLookupPathPrefix( wxT( "/usr/share/locale" ) );
         m_Locale.AddCatalog( wxT( "guayadeque" ) );
+        guLogMessage( wxT( "Initialized locale ( %s )" ), m_Locale.GetName().c_str() );
+    }
+    else
+    {
+        int LangId = wxLocale::GetSystemLanguage();
+        const wxLanguageInfo * LangInfo = wxLocale::GetLanguageInfo( LangId );
+        if( LangInfo )
+        {
+            guLogError( wxT( "Could not initialize the translations engine for ( %s )" ), LangInfo->CanonicalName.c_str() );
+        }
+        else
+        {
+            guLogError( wxT( "Could not initialize the translations engine for (%d)" ), LangId );
+        }
+        wxStandardPaths StdPaths;
+        guLogError( wxT( "Locale directory '%s'" ), StdPaths.GetLocalizedResourcesDir( wxT( "es_ES" ), wxStandardPaths::ResourceCat_Messages).c_str() );
     }
 
     // Enable tooltips
