@@ -390,6 +390,7 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPlayerStatusChanged( wxCommandEvent &event )
 {
+    //guLogError( wxT( "Player Status Change Fired" ) );
     if( m_MPRIS )
     {
         m_MPRIS->OnPlayerStatusChange();
