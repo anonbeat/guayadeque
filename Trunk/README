@@ -5,7 +5,7 @@ see LICENSE
 This is the first public version of this mp3 music player for GTK based on 
 wxWidgets for linux.
 
-Need installed libid3, sqlite3, libcurl, gstreamer0.10 and wxWidgets 2.8
+Need installed libid3, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1
 
 Have been developed in Fedora core 9, 10 and Ubuntu 8.10
 

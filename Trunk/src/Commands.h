@@ -102,6 +102,9 @@
 #define ID_PLAYERPANEL_NEXTTRACK        1092
 #define ID_PLAYERPANEL_PREVTRACK        1093
 #define ID_PLAYERPANEL_UPDATERADIOTRACK 1094
+#define ID_PLAYERPANEL_TRACKCHANGED     1095
+#define ID_PLAYERPANEL_CAPSCHANGED      1096
+#define ID_PLAYERPANEL_STATUSCHANGED    1097
 
 //
 #define ID_AUDIOSCROBBLE_UPDATED        1100
@@ -110,7 +113,7 @@
 #define ID_COVEREDITOR_ADDCOVERIMAGE    1110
 
 // Commands for LastFM Panel
-#define ID_LASTFM_UPDATE_TRACK          1120    // The Player notifies the panel to update the content
+//#define ID_LASTFM_UPDATE_TRACK          1120    // The Player notifies the panel to update the content
 #define ID_LASTFM_UPDATE_ARTISTINFO     1121    // The thread update the Artist Info
 #define ID_LASTFM_UPDATE_ALBUMINFO      1122    // The thread update the top albums
 #define ID_LASTFM_UPDATE_SIMARTIST      1123    // The thread update the Similar artists
@@ -125,6 +128,8 @@
 #define ID_GAUGE_REMOVE                 1143
 
 #define ID_LYRICS_UPDATE_LYRICINFO      1150
+
+#define ID_MULTIMEDIAKEYS_DBUS          1160
 
 #endif
 // -------------------------------------------------------------------------------- //

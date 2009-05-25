@@ -3025,7 +3025,7 @@ int DbLibrary::GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * Son
   wxString subquery;
   wxString query;
   wxSQLite3ResultSet dbRes;
-  guTrack * Song;
+//  guTrack * Song;
 
   if( Labels.Count() )
   {

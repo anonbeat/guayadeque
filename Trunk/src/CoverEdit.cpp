@@ -49,7 +49,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	wxPanel *                   InputTextPanel;
 	wxStaticBitmap *            LogoTextBitmap;
 	wxStaticLine *              TopStaticLine;
-	wxStaticLine *              BottomStaticLine;
+//	wxStaticLine *              BottomStaticLine;
 	wxStdDialogButtonSizer *    ButtonsSizer;
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );

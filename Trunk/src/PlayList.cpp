@@ -876,6 +876,31 @@ void guPlayList::OnCopyToClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+int guPlayList::GetCaps()
+{
+//    NONE                  = 0x0000
+//    CAN_GO_NEXT           = 0x0001
+//    CAN_GO_PREV           = 0x0002
+//   *CAN_PAUSE             = 0x0004
+//   *CAN_PLAY              = 0x0008
+//   *CAN_SEEK              = 0x0010
+//    CAN_PROVIDE_METADATA  = 0x0020
+//    CAN_HAS_TRACKLIST     = 0x0040
+    // Use constants to avoid include mpris.h only for this
+    int Caps = 0x0000;
+    if( m_Items.Count() )
+    {
+        if( m_CurItem < m_Items.Count() )
+            Caps |= 0x0001;
+        if( m_CurItem > 0 )
+            Caps |= 0x0010;
+        Caps |= ( 0x0004 | 0x0008 | 0x0010 | 0x0020 );
+    }
+    Caps |= 0x0040;
+    return Caps;
+}
+
+// -------------------------------------------------------------------------------- //
 // guAddDropFilesThread
 // -------------------------------------------------------------------------------- //
 guAddDropFilesThread::guAddDropFilesThread( guPlayListDropTarget * playlistdroptarget,
