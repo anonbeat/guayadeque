@@ -437,11 +437,15 @@ void guPlayerPanel::UpdateStatus()
         }
         m_PlayButton->Refresh();
         m_LastPlayState = State;
+        //
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
+        wxPostEvent( wxTheApp->GetTopWindow(), event );
     }
 
     if( State == wxMEDIASTATE_PLAYING )
     {
-        CurPos = m_MediaCtrl->Tell();
+        //CurPos = m_MediaCtrl->Tell();
+        CurPos = GetPosition();
         if( ( CurPos != m_LastCurPos ) && !m_SliderIsDragged )
         {
             m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
@@ -561,6 +565,24 @@ void guPlayerPanel::SmartAddTracks( const guTrack &CurSong )
 }
 
 // -------------------------------------------------------------------------------- //
+const guTrack * guPlayerPanel::GetCurrentTrack()
+{
+    return m_PlayListCtrl->GetCurrent();
+}
+
+// -------------------------------------------------------------------------------- //
+const guTrack * guPlayerPanel::GetTrack( int index )
+{
+    return m_PlayListCtrl->GetItem( index );
+}
+
+// -------------------------------------------------------------------------------- //
+int guPlayerPanel::GetCaps()
+{
+    return m_PlayListCtrl->GetCaps();
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 {
     wxImage * CoverImage;
@@ -663,6 +685,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     {
         m_PlayerPositionSlider->Enable();
     }
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -790,7 +813,7 @@ void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
                 SetArtistLabel( m_MediaSong.m_ArtistName );
 
                 //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_TRACK );
+                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
                 wxArrayString * Params = new wxArrayString();
                 Params->Add( m_MediaSong.m_ArtistName );
                 Params->Add( m_MediaSong.m_SongName );
@@ -828,7 +851,7 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
         {
             // Send an event so the LastFMPanel update its content.
             //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_TRACK );
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
             wxArrayString * Params = new wxArrayString();
             Params->Add( m_MediaSong.m_ArtistName );
             Params->Add( m_MediaSong.m_SongName );
@@ -904,6 +927,12 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 const wxMediaState guPlayerPanel::GetState( void )
 {
     return m_MediaCtrl->GetState();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayerPanel::GetPlayLoop()
+{
+    return m_PlayLoop;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1065,7 +1094,8 @@ void guPlayerPanel::OnPlayerPositionSliderEndSeek( wxScrollEvent &event )
         NewPos = event.GetPosition();
         //guLogMessage( wxT( "Slider Set Pos to %i Of %i" ), ( int ) NewPos, 1000 );
         //printf( "SetPos: %llu\n", ( long long int ) NewPos * m_MediaSong.Length );
-        m_MediaCtrl->Seek( NewPos * m_MediaSong.m_Length );
+        //m_MediaCtrl->Seek( NewPos * m_MediaSong.m_Length );
+        SetPosition( NewPos * m_MediaSong.m_Length );
     }
     m_SliderIsDragged = false;
 }
@@ -1084,6 +1114,18 @@ void guPlayerPanel::SetVolume( int Vol )
 //    {
         m_MediaCtrl->SetVolume( ( ( double ) Vol ) / 100 );
 //    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayerPanel::SetPosition( int pos )
+{
+    return m_MediaCtrl->Seek( pos );
+}
+
+// -------------------------------------------------------------------------------- //
+int guPlayerPanel::GetPosition()
+{
+    return m_MediaCtrl->Tell();
 }
 
 // -------------------------------------------------------------------------------- //

@@ -769,34 +769,34 @@ curl/http.s:
 .PHONY : curl/http.s
 
 # target to build an object file
-dbus/wxdbusconnection.o:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusconnection.o
-.PHONY : dbus/wxdbusconnection.o
+dbus/gudbus.o:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/gudbus.o
+.PHONY : dbus/gudbus.o
 
 # target to preprocess a source file
-dbus/wxdbusconnection.i:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusconnection.i
-.PHONY : dbus/wxdbusconnection.i
+dbus/gudbus.i:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/gudbus.i
+.PHONY : dbus/gudbus.i
 
 # target to generate assembly for a file
-dbus/wxdbusconnection.s:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusconnection.s
-.PHONY : dbus/wxdbusconnection.s
+dbus/gudbus.s:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/gudbus.s
+.PHONY : dbus/gudbus.s
 
 # target to build an object file
-dbus/wxdbusmessage.o:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusmessage.o
-.PHONY : dbus/wxdbusmessage.o
+dbus/mpris.o:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mpris.o
+.PHONY : dbus/mpris.o
 
 # target to preprocess a source file
-dbus/wxdbusmessage.i:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusmessage.i
-.PHONY : dbus/wxdbusmessage.i
+dbus/mpris.i:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mpris.i
+.PHONY : dbus/mpris.i
 
 # target to generate assembly for a file
-dbus/wxdbusmessage.s:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/wxdbusmessage.s
-.PHONY : dbus/wxdbusmessage.s
+dbus/mpris.s:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mpris.s
+.PHONY : dbus/mpris.s
 
 # target to build an object file
 wxsqlite3/wxsqlite3.o:
@@ -949,12 +949,12 @@ help:
 	@echo "... curl/http.o"
 	@echo "... curl/http.i"
 	@echo "... curl/http.s"
-	@echo "... dbus/wxdbusconnection.o"
-	@echo "... dbus/wxdbusconnection.i"
-	@echo "... dbus/wxdbusconnection.s"
-	@echo "... dbus/wxdbusmessage.o"
-	@echo "... dbus/wxdbusmessage.i"
-	@echo "... dbus/wxdbusmessage.s"
+	@echo "... dbus/gudbus.o"
+	@echo "... dbus/gudbus.i"
+	@echo "... dbus/gudbus.s"
+	@echo "... dbus/mpris.o"
+	@echo "... dbus/mpris.i"
+	@echo "... dbus/mpris.s"
 	@echo "... wxsqlite3/wxsqlite3.o"
 	@echo "... wxsqlite3/wxsqlite3.i"
 	@echo "... wxsqlite3/wxsqlite3.s"

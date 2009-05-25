@@ -59,7 +59,6 @@ class guPlayList : public wxVListBox
         wxColor         m_TextFgColor;
 //        wxColor         m_SepColor;
 
-        guTrack *       GetItem( size_t item );
         void            OnDragOver( const wxCoord x, const wxCoord y );
         void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
         wxCoord         OnMeasureItem( size_t n ) const;
@@ -87,27 +86,29 @@ class guPlayList : public wxVListBox
                   long style = wxLB_MULTIPLE );
         ~guPlayList();
 
-        void        AddItem( const guTrack &NewItem );
-        void        AddItem( const guTrack * NewItem );
-        void        AddPlayListItem( const wxString &FileName, bool AddPath = false );
+        void            AddItem( const guTrack &NewItem );
+        void            AddItem( const guTrack * NewItem );
+        void            AddPlayListItem( const wxString &FileName, bool AddPath = false );
 
-        void        RefreshItems();
-        void        UpdateView();
+        void            RefreshItems();
+        void            UpdateView();
 
-        long        GetCount();
-        guTrack *  GetCurrent();
-        int         GetCurItem();
-        void        SetCurrent( const int NewCurItem );
-        guTrack *  GetNext( bool bLoop );
-        guTrack *  GetPrev( bool bLoop );
-        void        ClearItems();
-        long        GetLength( void ) const;
-        wxString    GetLengthStr( void ) const;
-        void        AddToPlayList( const guTrackArray &NewItems, const bool DeleteOld = false );
-        void        SetPlayList( const guTrackArray &NewItems );
-        wxArrayInt  GetSelectedItems();
-        wxString    FindCoverFile( const wxString &DirName );
-        void        Randomize( void );
+        guTrack *       GetItem( size_t item );
+        long            GetCount();
+        guTrack *       GetCurrent();
+        int             GetCurItem();
+        void            SetCurrent( const int NewCurItem );
+        guTrack *       GetNext( bool bLoop );
+        guTrack *       GetPrev( bool bLoop );
+        void            ClearItems();
+        long            GetLength( void ) const;
+        wxString        GetLengthStr( void ) const;
+        void            AddToPlayList( const guTrackArray &NewItems, const bool DeleteOld = false );
+        void            SetPlayList( const guTrackArray &NewItems );
+        wxArrayInt      GetSelectedItems();
+        wxString        FindCoverFile( const wxString &DirName );
+        void            Randomize( void );
+        int             GetCaps();
 
     friend class guAddDropFilesThread;
     friend class guPlayListDropTarget;

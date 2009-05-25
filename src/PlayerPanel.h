@@ -161,7 +161,13 @@ class guPlayerPanel : public wxPanel
     void                AddToPlayList( const guTrackArray &SongList );
     int                 GetVolume();
     void                SetVolume( int Vol );
+    bool                SetPosition( int pos );
+    int                 GetPosition();
     void                UpdateTotalLength( void );
+    const guTrack *     GetCurrentTrack();
+    const guTrack *     GetTrack( int index );
+    bool                GetPlayLoop();
+    int                 GetCaps();
 
     const wxMediaState  GetState( void );
     void                OnPrevTrackButtonClick( wxCommandEvent &event );

@@ -99,10 +99,11 @@ ADD_EXECUTABLE( guayadeque
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 
-        dbus/wxdbusconnection.cpp
-        dbus/wxdbusconnection.h
-        dbus/wxdbusmessage.cpp
-        dbus/wxdbusmessage.h )
+        dbus/gudbus.cpp
+        dbus/gudbus.h
+	dbus/mpris.cpp
+	dbus/mpris.h
+       )
 
 TARGET_LINK_LIBRARIES( guayadeque
 	${wxWidgets_LIBRARIES}

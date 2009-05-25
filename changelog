@@ -1,5 +1,6 @@
 
-  * Fixed load of translations
+  * Started support for mpris dbus protocol. See http://wiki.xmms2.xmms.se/wiki/MPRIS
+  * Fixed the load of translations
   * Fixed bug saving the labels to the mp3 files
   * Fixed bug that prevented to get info (lastfm, lyrics) for some names
     with special chars

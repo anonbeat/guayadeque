@@ -32,8 +32,11 @@
 #include "StatusBar.h"
 #include "SplashWin.h"
 
+#include "dbus/mpris.h"
+
 #include <wx/wx.h>
 #include <wx/splitter.h>
+
 
 class guTaskBarIcon;
 
@@ -53,9 +56,12 @@ class guMainFrame : public wxFrame
 
         DbLibrary *         m_Db;
 
+        guMPRIS *           m_MPRIS;
+
         void                OnUpdateLibrary( wxCommandEvent &event );
         void                OnUpdateCovers( wxCommandEvent &event );
         void                OnUpdateTrack( wxCommandEvent &event );
+        void                OnPlayerStatusChanged( wxCommandEvent &event );
         void                OnAudioScrobbleUpdate( wxCommandEvent &event );
 		void                PlayerSplitterOnIdle( wxIdleEvent &event );
 		void                CreateMenu();
@@ -82,6 +88,9 @@ class guMainFrame : public wxFrame
 		void                OnGaugeSetMax( wxCommandEvent &event );
 		void                OnGaugeUpdate( wxCommandEvent &event );
 		void                OnGaugeRemove( wxCommandEvent &event );
+
+		//void                OnMMKeysSignal( wxDBusConnectionEvent &event );
+		//void                OnMMKeysMsg( wxDBusConnectionEvent &event );
 
     public:
                             guMainFrame( wxWindow * parent );

@@ -135,6 +135,13 @@ guMainFrame::guMainFrame( wxWindow * parent )
         }
     }
 
+    // Init the MPRIS object
+    m_MPRIS = new guMPRIS( GUAYADEQUE_MPRIS_SERVICENAME, m_PlayerPanel );
+    if( !m_MPRIS )
+    {
+        guLogError( wxT( "Could not create the mpris object" ) );
+    }
+
     //
 	m_PlayerSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::PlayerSplitterOnIdle ), NULL, this );
 
@@ -143,7 +150,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ) );
     Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ) );
     Connect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ) );
-    Connect( ID_LASTFM_UPDATE_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ) );
+    Connect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ) );
+    Connect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ) );
     Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
     Connect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ) );
 
@@ -194,12 +202,18 @@ guMainFrame::~guMainFrame()
         delete m_Db;
     }
 
+    // destroy the mpris object
+    if( m_MPRIS )
+    {
+        delete m_MPRIS;
+    }
+
     Disconnect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ) );
     Disconnect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ) );
     Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ) );
     Disconnect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ) );
     Disconnect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ) );
-    Disconnect( ID_LASTFM_UPDATE_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ) );
+    Disconnect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ) );
     Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
     Disconnect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ) );
 
@@ -360,12 +374,25 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
     {
         m_LyricsPanel->OnUpdatedTrack( event );
     }
+    if( m_MPRIS )
+    {
+        m_MPRIS->OnPlayerTrackChange();
+    }
 
     if( event.GetClientData() )
     {
         wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
         //Params->Clear();
         delete Params;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPlayerStatusChanged( wxCommandEvent &event )
+{
+    if( m_MPRIS )
+    {
+        m_MPRIS->OnPlayerStatusChange();
     }
 }
 
@@ -629,6 +656,210 @@ void guMainFrame::PlayerSplitterOnIdle( wxIdleEvent& WXUNUSED( event ) )
     m_PlayerSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
     m_PlayerSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::PlayerSplitterOnIdle ), NULL, this );
 }
+
+#define DBUS_MPRIS_PLAYER_INTROSPECTION  "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \n"\
+        "\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n"\
+        "<node>\n"\
+        "  <interface name=\"org.freedesktop.MediaPlayer\">\n"\
+        "    <method name=\"Next\">\n"\
+        "    </method>\n"\
+        "    <method name=\"Prev\">\n"\
+        "    </method>\n"\
+        "    <method name=\"Pause\">\n"\
+        "    </method>\n"\
+        "    <method name=\"Stop\">\n"\
+        "    </method>\n"\
+        "    <method name=\"Play\">\n"\
+        "    </method>\n"\
+        "    <method name=\"Repeat\">\n"\
+        "        <arg type=\"b\" direction=\"in\"/>\n"\
+        "    </method>\n"\
+        "    <method name=\"GetStatus\">\n"\
+        "        <arg type=\"(iiii)\" direction=\"out\"/>\n"\
+        "    </method>\n"\
+        "    <method name=\"GetMetadata\">\n"\
+        "        <arg type=\"a{sv}\" direction=\"out\"/>\n"\
+        "    </method>\n"\
+        "    <method name=\"GetCaps\">\n"\
+        "        <arg type=\"i\" direction=\"out\" />\n"\
+        "    </method>\n"\
+        "    <method name=\"VolumeSet\">\n"\
+        "        <arg type=\"i\" direction=\"in\"/>\n"\
+        "    </method>\n"\
+        "    <method name=\"VolumeGet\">\n"\
+        "        <arg type=\"i\" direction=\"out\"/>\n"\
+        "    </method>\n"\
+        "    <method name=\"PositionSet\">\n"\
+        "        <arg type=\"i\" direction=\"in\"/>\n"\
+        "    </method>\n"\
+        "    <method name=\"PositionGet\">\n"\
+        "        <arg type=\"i\" direction=\"out\"/>\n"\
+        "    </method>\n"\
+        "    <signal name=\"TrackChange\">\n"\
+        "        <arg type=\"a{sv}\"/>\n"\
+        "    </signal>\n"\
+        "    <signal name=\"StatusChange\">\n"\
+        "        <arg type=\"(iiii)\"/>\n"\
+        "    </signal>\n"\
+        "    <signal name=\"CapsChange\">\n"\
+        "        <arg type=\"i\" />\n"\
+        "    </signal>\n"\
+        "  </interface>\n"\
+        "</node>\n"
+
+
+//#include "dbus-internals.h"
+
+//////// -------------------------------------------------------------------------------- //
+//////void guMainFrame::OnMMKeysSignal( wxDBusConnectionEvent &event )
+//////{
+//////    unsigned int serial = 0;
+//////	wxDBusMessage * msg = wxDBusMessage::ExtractFromEvent( &event );
+//////	wxASSERT( msg );
+//////
+//////	const char * resp = msg->GetString();
+//////	printf( "Signal: (%i) %s\n", msg->GetSerial(), resp );
+//////	printf( "Path  : %s\n", msg->GetPath() );
+//////	printf( "Iface : %s\n", msg->GetInterface() );
+//////	printf( "Member: %s\n", msg->GetMember() );
+//////	printf( "Type  : %i\n", msg->GetType() );
+//////	printf( "================================================\n" );
+//////
+//////	int MsgType = msg->GetType();
+//////    if( MsgType == DBUS_MESSAGE_TYPE_METHOD_CALL )
+//////    {
+//////        const char * MsgInterface = msg->GetInterface();
+//////        const char * MsgPath = msg->GetPath();
+//////        const char * MsgMember = msg->GetMember();
+//////        if( !strcmp( "org.freedesktop.MediaPlayer", MsgInterface ) )
+//////        {
+//////            if( !strcmp( "/Player", MsgPath ) )
+//////            {
+//////                if( !strcmp( "Next", MsgMember ) )
+//////                {
+//////                    wxCommandEvent event;
+//////                    OnNextTrack( event );
+//////                }
+//////                else if( !strcmp( "Prev", MsgMember ) )
+//////                {
+//////                    wxCommandEvent event;
+//////                    OnPrevTrack( event );
+//////                }
+//////                else if( !strcmp( "Pause", MsgMember ) )
+//////                {
+//////                    wxCommandEvent event;
+//////                    OnPlay( event );
+//////                }
+//////                else if( !strcmp( "Stop", MsgMember ) )
+//////                {
+//////                    wxCommandEvent event;
+//////                    OnStop( event );
+//////                }
+//////                else if( !strcmp( "Play", MsgMember ) )
+//////                {
+//////                    wxCommandEvent event;
+//////                    OnPlay( event );
+//////                }
+//////                else if( !strcmp( "PositionGet", MsgMember ) )
+//////                {
+//////                    int Pos = m_PlayerPanel->GetPosition();
+//////                    guLogMessage( wxT( "Position: %u" ), Pos );
+//////                    DBusMessage * reply = New_Method_Return( msg->GetMessage() );
+//////                    DBusMessageIter args;
+//////                    if( reply )
+//////                    {
+//////                        dbus_message_iter_init_append( reply, &args );
+//////                        dbus_message_iter_append_basic( &args, DBUS_TYPE_UINT32, &Pos );
+//////                        dbus_connection_send( m_MPRISConn->GetConnection(), reply, &serial );
+//////                        dbus_connection_flush( m_MPRISConn->GetConnection() );
+//////                        dbus_message_unref( reply );
+//////                    }
+////////                    wxDBusMethodReturn * reply = new wxDBusMethodReturn( msg );
+////////                    guLogMessage( wxT( "Reply msg created." ) );
+////////                    if( reply )
+////////                    {
+////////                        reply->AddInt( Pos );
+////////                        serial = 1;
+////////                        reply->Send( m_MPRISConn, &serial );
+////////                        m_MPRISConn->Flush();
+////////
+////////                        delete reply;
+////////                    }
+//////
+//////                }
+//////
+//////            }
+//////        }
+//////        else if( !strcmp( "org.freedesktop.DBus.Introspectable", MsgInterface ) )
+//////        {
+//////            if( !strcmp( "Introspect", MsgMember ) )
+//////            {
+//////                if( !strcmp( "/", MsgPath ) )
+//////                {
+//////
+//////                }
+//////                else if( !strcmp( "/Player", MsgPath ) )
+//////                {
+////////////                    //wxDBusMethodReturn * reply = new wxDBusMethodReturn( msg );
+////////////                    //wxDBusMessage * reply = new wxDBusMessage( dbus_message_new_method_return( msg->GetMessage() ) );
+////////////                    DBusMessage * dbusmsg = msg->GetMessage();
+////////////                    if( !dbusmsg )
+////////////                        printf( "The dbusmsg was NULL\n" );
+////////////                    else
+////////////                    {
+////////////                    wxDBusMessage * reply = new wxDBusMessage( dbusmsg );
+////////////                    if( reply )
+////////////                    {
+////////////                        reply->AddArg( DBUS_TYPE_STRING, ( void * ) DBUS_MPRIS_PLAYER_INTROSPECTION );
+////////////                        reply->Send( m_MPRISConn, &serial );
+////////////                        m_MPRISConn->Flush();
+////////////                        delete reply;
+////////////                    }
+////////////    //                else
+////////////    //                {
+////////////    //                    guLogError( wxT( "Could not create introspection response msg" ) );
+////////////    //                }
+////////////                    }
+//////                }
+//////                else if( !strcmp( "/Tracklist", MsgPath ) )
+//////                {
+//////
+//////                }
+//////            }
+//////        }
+//////    }
+//////
+//////    //
+//////
+//////
+//////	delete msg;
+//////}
+
+//////// -------------------------------------------------------------------------------- //
+//////void guMainFrame::OnMMKeysMsg( wxDBusConnectionEvent &event )
+//////{
+//////	wxDBusMessage * msg = wxDBusMessage::ExtractFromEvent(&event);
+//////	const char * resp;
+//////
+//////	guLogMessage( wxT( "MPRIS Message received:" ) );
+//////	printf( "MEMBER : %s\n", msg->GetMember() );
+//////	//printf( "MESSAGE: %s\n", msg->GetMessage() );
+//////
+////////	if( ( msg->GetType() == DBUS_MESSAGE_TYPE_METHOD_CALL ) &&
+////////		(wxString(msg->GetMember()) == wxString("Notify"))) {
+////////		// Yes, it is a method call, and it calls the Notify method.
+////////		// Start parsing arguments.
+////////		if (msg->MoveToNextArg())
+////////		{
+////////			msg->GetArgValue(&resp);
+////////			logViewer->SetDefaultStyle(wxTextAttr(*wxGREEN));
+////////			logViewer->AppendText("NOTIFICATION: ");
+////////			logViewer->AppendText(resp);
+////////			logViewer->AppendText("\n");
+////////		}
+////////	}
+//////	delete msg;
+//////}
 
 // -------------------------------------------------------------------------------- //
 // guUpdateCoversThread
