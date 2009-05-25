@@ -565,9 +565,10 @@ void guPlayerPanel::SmartAddTracks( const guTrack &CurSong )
 }
 
 // -------------------------------------------------------------------------------- //
-const guTrack * guPlayerPanel::GetCurrentTrack()
+const guCurrentTrack * guPlayerPanel::GetCurrentTrack()
 {
-    return m_PlayListCtrl->GetCurrent();
+    //return m_PlayListCtrl->GetCurrent();
+    return &m_MediaSong;
 }
 
 // -------------------------------------------------------------------------------- //

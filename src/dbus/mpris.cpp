@@ -19,6 +19,8 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "mpris.h"
+
+#include "Commands.h"
 #include "Utils.h"
 
 const char * Introspection_XML_Data_Root =
@@ -204,7 +206,7 @@ void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const int v
 }
 
 // -------------------------------------------------------------------------------- //
-void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
+void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
 {
     DBusMessageIter dict;
     DBusMessageIter args;
@@ -231,8 +233,8 @@ void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
     FillMetadataDetails( &dict, metadata_names[ 7 ], ( const char * ) CurTrack->m_GenreName.char_str() );
     if( CurTrack->m_Year )
         FillMetadataDetails( &dict, metadata_names[ 8 ], ( const int ) CurTrack->m_Year );
-////    if( CurTrack->
-////    FillMetadataDetails( &dict, metadata_names[ 9 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_FileName.c_str() ).char_str() );
+    if( !CurTrack->m_CoverPath.IsEmpty() )
+        FillMetadataDetails( &dict, metadata_names[ 9 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_CoverPath.c_str() ).char_str() );
 
     dbus_message_iter_close_container( &args, &dict );
 
@@ -310,32 +312,38 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
         {
             if( !strcmp( Member, "Next" ) )
             {
-                wxCommandEvent event;
-                m_PlayerPanel->OnNextTrackButtonClick( event );
+                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
+                wxPostEvent( m_PlayerPanel, event );
             }
             else if( !strcmp( Member, "Prev" ) )
             {
-                wxCommandEvent event;
-                m_PlayerPanel->OnPrevTrackButtonClick( event );
+                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PREVTRACK );
+                wxPostEvent( m_PlayerPanel, event );
             }
             else if( !strcmp( Member, "Pause" ) )
             {
-                wxCommandEvent event;
                 if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
-                    m_PlayerPanel->OnPlayButtonClick( event );
+                {
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                    wxPostEvent( m_PlayerPanel, event );
+                }
             }
             else if( !strcmp( Member, "Stop" ) )
             {
-                wxCommandEvent event;
-                m_PlayerPanel->OnStopButtonClick( event );
+                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+                wxPostEvent( m_PlayerPanel, event );
             }
             else if( !strcmp( Member, "Play" ) )
             {
                 wxCommandEvent event;
-                if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
-                    m_PlayerPanel->SetPosition( 0 );
-                else
-                    m_PlayerPanel->OnPlayButtonClick( event );
+// Need to add a command to jump to start
+//                if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
+//                    m_PlayerPanel->SetPosition( 0 );
+//                else
+                {
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                    wxPostEvent( m_PlayerPanel, event );
+                }
             }
             else if( !strcmp( Member, "Repeat" ) )
             {
@@ -355,39 +363,23 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                     PlayStatus = 0;
                 int PlayLoop = m_PlayerPanel->GetPlayLoop();
 
+                DBusMessageIter status;
                 DBusMessageIter args;
                 dbus_message_iter_init_append( reply->GetMessage(), &args );
 
-                if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &PlayStatus ) ||
-                    !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Dummy ) ||
-                    !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Dummy ) ||
-                    !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &PlayLoop ) )
-                {
-                    guLogError( wxT( "Failed to attach the GetStatus info" ) );
-                }
+                dbus_message_iter_open_container( &args, DBUS_TYPE_STRUCT, NULL, &status );
+                dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayStatus );
+                dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
+                dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
+                dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayLoop );
+                dbus_message_iter_close_container( &args, &status );
                 Send( reply );
                 Flush();
 
             }
             else if( !strcmp( Member, "GetMetadata" ) )
             {
-//                int TrackIndex;
-//                DBusMessageIter args;
-//                dbus_message_iter_init_append( msg->GetMessage(), &args );
-//
-//                if( dbus_message_iter_get_arg_type( &args ) != DBUS_TYPE_INT32 )
-//                {
-//                    guLogError( wxT( "Failed to get param for GetMetadata" ) );
-//                }
-//                else
-//                {
-//                    dbus_message_iter_get_basic( &args, &TrackIndex );
-//                    guTrack * CurTrack = m_PlayerPanel->GetTrack( TrackIndex );
-//                    FillMetadataArgs( reply, CurTrack );
-//                    Send( reply );
-//                    Flush();
-//                }
-                const guTrack * CurTrack = m_PlayerPanel->GetCurrentTrack();
+                const guCurrentTrack * CurTrack = m_PlayerPanel->GetCurrentTrack();
                 if( CurTrack )
                 {
                     FillMetadataArgs( reply, CurTrack );
@@ -484,10 +476,11 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 // -------------------------------------------------------------------------------- //
 void guMPRIS::OnPlayerTrackChange()
 {
+    guLogMessage( wxT( "OnPlayerTrackChange signal sent" ) );
     guDBusSignal * signal = new guDBusSignal( "/Player", "org.freedesktop.MediaPlayer", "TrackChange" );
     if( signal )
     {
-        const guTrack * CurTrack = m_PlayerPanel->GetCurrentTrack();
+        const guCurrentTrack * CurTrack = m_PlayerPanel->GetCurrentTrack();
         FillMetadataArgs( signal, CurTrack );
         Send( signal );
         Flush();
@@ -515,16 +508,17 @@ void guMPRIS::OnPlayerStatusChange()
             PlayStatus = 0;
         int PlayLoop = m_PlayerPanel->GetPlayLoop();
 
+        DBusMessageIter status;
         DBusMessageIter args;
         dbus_message_iter_init_append( signal->GetMessage(), &args );
 
-        if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &PlayStatus ) ||
-            !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Dummy ) ||
-            !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Dummy ) ||
-            !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &PlayLoop ) )
-        {
-            guLogError( wxT( "Failed to attach the GetStatus info" ) );
-        }
+        dbus_message_iter_open_container( &args, DBUS_TYPE_STRUCT, NULL, &status );
+        dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayStatus );
+        dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
+        dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
+        dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayLoop );
+        dbus_message_iter_close_container( &args, &status );
+
         Send( signal );
         Flush();
     }

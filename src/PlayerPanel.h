@@ -164,7 +164,7 @@ class guPlayerPanel : public wxPanel
     bool                SetPosition( int pos );
     int                 GetPosition();
     void                UpdateTotalLength( void );
-    const guTrack *     GetCurrentTrack();
+    const guCurrentTrack * GetCurrentTrack();
     const guTrack *     GetTrack( int index );
     bool                GetPlayLoop();
     int                 GetCaps();
