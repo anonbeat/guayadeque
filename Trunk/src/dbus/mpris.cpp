@@ -161,9 +161,9 @@ guMPRIS::guMPRIS( const char * name, guPlayerPanel * playerpanel ) : guDBus( NUL
     {
         RequestName( GUAYADEQUE_MPRIS_SERVICENAME );
     }
-    RegisterObjectPath( GUAYADEQUE_MPRIS_ROOT_PATH );
-    RegisterObjectPath( GUAYADEQUE_MPRIS_PLAYER_PATH );
-    RegisterObjectPath( GUAYADEQUE_MPRIS_TRACKLIST_PATH );
+//    RegisterObjectPath( GUAYADEQUE_MPRIS_ROOT_PATH );
+//    RegisterObjectPath( GUAYADEQUE_MPRIS_PLAYER_PATH );
+//    RegisterObjectPath( GUAYADEQUE_MPRIS_TRACKLIST_PATH );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -241,7 +241,7 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
+bool guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 {
     wxASSERT( msg );
     // Show the details of the msg
@@ -256,6 +256,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
     printf( "==============================\n" );
 
     //
+    bool RetVal = false;
     const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
     int             Type = msg->GetType();
@@ -279,6 +280,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
+                RetVal = true;
             }
             else if( !strcmp( Path, "/Player" ) )
             {
@@ -291,6 +293,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
+                RetVal = true;
             }
             else if( !strcmp( Path, "/Tracklist" ) )
             {
@@ -303,6 +306,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
+                RetVal = true;
             }
         }
 
@@ -314,11 +318,13 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
             {
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
                 wxPostEvent( m_PlayerPanel, event );
+                RetVal = true;
             }
             else if( !strcmp( Member, "Prev" ) )
             {
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PREVTRACK );
                 wxPostEvent( m_PlayerPanel, event );
+                RetVal = true;
             }
             else if( !strcmp( Member, "Pause" ) )
             {
@@ -327,11 +333,13 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
                     wxPostEvent( m_PlayerPanel, event );
                 }
+                RetVal = true;
             }
             else if( !strcmp( Member, "Stop" ) )
             {
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
                 wxPostEvent( m_PlayerPanel, event );
+                RetVal = true;
             }
             else if( !strcmp( Member, "Play" ) )
             {
@@ -344,11 +352,13 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
                     wxPostEvent( m_PlayerPanel, event );
                 }
+                RetVal = true;
             }
             else if( !strcmp( Member, "Repeat" ) )
             {
                 wxCommandEvent event;
                 m_PlayerPanel->OnRepeatPlayButtonClick( event );
+                RetVal = true;
             }
             else if( !strcmp( Member, "GetStatus" ) )
             {
@@ -375,7 +385,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 dbus_message_iter_close_container( &args, &status );
                 Send( reply );
                 Flush();
-
+                RetVal = true;
             }
             else if( !strcmp( Member, "GetMetadata" ) )
             {
@@ -386,6 +396,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
+                RetVal = true;
             }
             else if( !strcmp( Member, "GetCaps" ) )
             {
@@ -398,6 +409,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
+                RetVal = true;
             }
             else if( !strcmp( Member, "VolumeSet" ) )
             {
@@ -414,6 +426,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                     dbus_message_iter_get_basic( &args, &Volume );
                     m_PlayerPanel->SetVolume( Volume );
                 }
+                RetVal = true;
             }
             else if( !strcmp( Member, "VolumeGet" ) )
             {
@@ -428,6 +441,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
+                RetVal = true;
             }
             else if( !strcmp( Member, "PositionSet" ) )
             {
@@ -444,6 +458,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                     dbus_message_iter_get_basic( &args, &Position );
                     m_PlayerPanel->SetVolume( Position );
                 }
+                RetVal = true;
             }
             else if( !strcmp( Member, "PositionGet" ) )
             {
@@ -458,6 +473,7 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
+                RetVal = true;
             }
         }
 
@@ -471,6 +487,8 @@ void guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 
     // Call the inherited default processing
     guDBus::HandleMessages( msg, reply );
+
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //

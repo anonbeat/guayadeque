@@ -90,7 +90,7 @@ class guDBus
     ~guDBus();
 
     bool                RequestName( const char * name );
-    virtual void        HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
+    virtual bool        HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
     DBusConnection *    GetConnection();
     bool                RegisterObjectPath( const char * objname );
     bool                Send( guDBusMessage * msg );
