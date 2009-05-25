@@ -31,8 +31,9 @@ DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, voi
 	{
 	    Reply = new guDBusMethodReturn( msg );
 	}
-	DBusObj->HandleMessages( Msg, Reply );
-	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+	if( DBusObj->HandleMessages( Msg, Reply ) )
+        return DBUS_HANDLER_RESULT_HANDLED;
+    return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -99,7 +100,7 @@ bool guDBus::RequestName( const char * name )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDBus::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
+bool guDBus::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 {
     wxASSERT( msg );
 
@@ -107,6 +108,8 @@ void guDBus::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 
     if( reply )
         dbus_message_unref( reply->GetMessage() );
+
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
