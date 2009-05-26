@@ -52,11 +52,11 @@ class guMPRIS : public guDBus
     guMPRIS( const char * name, guPlayerPanel * playerpanel );
     ~guMPRIS();
 
-    virtual bool HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
+    virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
 
-    virtual void OnPlayerTrackChange();
-    virtual void OnPlayerStatusChange();
-    virtual void OnPlayerCapsChange();
+    virtual void                OnPlayerTrackChange();
+    virtual void                OnPlayerStatusChange();
+    virtual void                OnPlayerCapsChange();
 
 };
 

@@ -57,9 +57,6 @@ const char * Introspection_XML_Data_Player =
 "    </method>\n"
 "  </interface>\n"
 "  <interface name=\"org.freedesktop.MediaPlayer\">\n"
-"    <method name=\"GetStatus\">\n"
-"      <arg type=\"(iiii)\" direction=\"out\" />\n"
-"    </method>\n"
 "    <method name=\"Next\">\n"
 "    </method>\n"
 "    <method name=\"Prev\">\n"
@@ -241,7 +238,7 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
+DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 {
     wxASSERT( msg );
     // Show the details of the msg
@@ -256,7 +253,7 @@ bool guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
     printf( "==============================\n" );
 
     //
-    bool RetVal = false;
+    DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
     int             Type = msg->GetType();
@@ -280,7 +277,7 @@ bool guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
-                RetVal = true;
+                RetVal = DBUS_HANDLER_RESULT_HANDLED;
             }
             else if( !strcmp( Path, "/Player" ) )
             {
@@ -293,7 +290,7 @@ bool guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
-                RetVal = true;
+                RetVal = DBUS_HANDLER_RESULT_HANDLED;
             }
             else if( !strcmp( Path, "/Tracklist" ) )
             {
@@ -306,186 +303,250 @@ bool guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
                 }
                 Send( reply );
                 Flush();
-                RetVal = true;
+                RetVal = DBUS_HANDLER_RESULT_HANDLED;
             }
         }
 
-        // PLAYER
-        else if( !strcmp( Interface, "org.freedesktop.MediaPlayer" ) &&
-                 !strcmp( Path, "/Player" ) )
-        {
-            if( !strcmp( Member, "Next" ) )
-            {
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
-                wxPostEvent( m_PlayerPanel, event );
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "Prev" ) )
-            {
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PREVTRACK );
-                wxPostEvent( m_PlayerPanel, event );
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "Pause" ) )
-            {
-                if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
-                {
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
-                    wxPostEvent( m_PlayerPanel, event );
-                }
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "Stop" ) )
-            {
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
-                wxPostEvent( m_PlayerPanel, event );
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "Play" ) )
-            {
-                wxCommandEvent event;
-// Need to add a command to jump to start
-//                if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
-//                    m_PlayerPanel->SetPosition( 0 );
-//                else
-                {
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
-                    wxPostEvent( m_PlayerPanel, event );
-                }
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "Repeat" ) )
-            {
-                wxCommandEvent event;
-                m_PlayerPanel->OnRepeatPlayButtonClick( event );
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "GetStatus" ) )
-            {
-                int PlayStatus;
-                int Dummy = 0;
-                wxMediaState State = m_PlayerPanel->GetState();
-                if( State == wxMEDIASTATE_STOPPED )
-                    PlayStatus = 2;
-                else if( State == wxMEDIASTATE_PAUSED )
-                    PlayStatus = 1;
-                else if( State == wxMEDIASTATE_PLAYING )
-                    PlayStatus = 0;
-                int PlayLoop = m_PlayerPanel->GetPlayLoop();
 
-                DBusMessageIter status;
-                DBusMessageIter args;
-                dbus_message_iter_init_append( reply->GetMessage(), &args );
-
-                dbus_message_iter_open_container( &args, DBUS_TYPE_STRUCT, NULL, &status );
-                dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayStatus );
-                dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
-                dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
-                dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayLoop );
-                dbus_message_iter_close_container( &args, &status );
-                Send( reply );
-                Flush();
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "GetMetadata" ) )
-            {
-                const guCurrentTrack * CurTrack = m_PlayerPanel->GetCurrentTrack();
-                if( CurTrack )
-                {
-                    FillMetadataArgs( reply, CurTrack );
-                }
-                Send( reply );
-                Flush();
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "GetCaps" ) )
-            {
-                DBusMessageIter args;
-                dbus_message_iter_init_append( reply->GetMessage(), &args );
-                int Caps = m_PlayerPanel->GetCaps();
-                if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Caps ) )
-                {
-                    guLogError( wxT( "Failed to attach the player Caps" ) );
-                }
-                Send( reply );
-                Flush();
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "VolumeSet" ) )
-            {
-                int Volume;
-                DBusMessageIter args;
-                dbus_message_iter_init_append( msg->GetMessage(), &args );
-
-                if( dbus_message_iter_get_arg_type( &args ) != DBUS_TYPE_INT32 )
-                {
-                    guLogError( wxT( "Failed to get param for VolumeSet" ) );
-                }
-                else
-                {
-                    dbus_message_iter_get_basic( &args, &Volume );
-                    m_PlayerPanel->SetVolume( Volume );
-                }
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "VolumeGet" ) )
-            {
-                DBusMessageIter args;
-                dbus_message_iter_init_append( reply->GetMessage(), &args );
-
-                int Volume = m_PlayerPanel->GetVolume();
-
-                if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Volume ) )
-                {
-                    guLogError( wxT( "Failed to attach the Player volume" ) );
-                }
-                Send( reply );
-                Flush();
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "PositionSet" ) )
-            {
-                int Position;
-                DBusMessageIter args;
-                dbus_message_iter_init_append( msg->GetMessage(), &args );
-
-                if( dbus_message_iter_get_arg_type( &args ) != DBUS_TYPE_INT32 )
-                {
-                    guLogError( wxT( "Failed to get param for VolumeSet" ) );
-                }
-                else
-                {
-                    dbus_message_iter_get_basic( &args, &Position );
-                    m_PlayerPanel->SetVolume( Position );
-                }
-                RetVal = true;
-            }
-            else if( !strcmp( Member, "PositionGet" ) )
-            {
-                DBusMessageIter args;
-                dbus_message_iter_init_append( reply->GetMessage(), &args );
-
-                int Position = m_PlayerPanel->GetPosition();
-
-                if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Position ) )
-                {
-                    guLogError( wxT( "Failed to attach the Player position" ) );
-                }
-                Send( reply );
-                Flush();
-                RetVal = true;
-            }
-        }
-
-        // TRACKLIST
-        else if( !strcmp( Interface, "org.freedesktop.MediaPlayer" ) &&
-                 !strcmp( Path, "/TrackList" ) )
+        if( !strcmp( Interface, "org.freedesktop.MediaPlayer" ) )
         {
             //
+            // ROOT
+            //
+            if( !strcmp( Path, "/" ) )
+            {
+                if( !strcmp( Member, "Identity" ) )
+                {
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
+                    const char * VersionStr = "Guayadeque " ID_GUAYADEQUE_VERSION;
+                    if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_STRING, &VersionStr ) )
+                    {
+                        guLogError( wxT( "Failed to attach the root identity" ) );
+                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "Quit" ) )
+                {
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_QUIT );
+                    wxPostEvent( m_PlayerPanel, event );
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "MprisVersion" ) )
+                {
+                    dbus_uint16_t ver_major = GUAYADEQUE_MPRIS_VERSION_MAJOR;
+                    dbus_uint16_t ver_minor = GUAYADEQUE_MPRIS_VERSION_MINOR;
+
+                    DBusMessageIter verstruct;
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                    dbus_message_iter_open_container( &args, DBUS_TYPE_STRUCT, NULL, &verstruct );
+
+                    dbus_message_iter_append_basic( &verstruct, DBUS_TYPE_UINT16, &ver_major );
+                    dbus_message_iter_append_basic( &verstruct, DBUS_TYPE_UINT16, &ver_minor );
+
+                    dbus_message_iter_close_container( &args, &verstruct );
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+            }
+
+            //
+            // PLAYER
+            //
+            else if( !strcmp( Path, "/Player" ) )
+            {
+                if( !strcmp( Member, "Next" ) )
+                {
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
+                    wxPostEvent( m_PlayerPanel, event );
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "Prev" ) )
+                {
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PREVTRACK );
+                    wxPostEvent( m_PlayerPanel, event );
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "Pause" ) )
+                {
+                    if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
+                    {
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                        wxPostEvent( m_PlayerPanel, event );
+                    }
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "Stop" ) )
+                {
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+                    wxPostEvent( m_PlayerPanel, event );
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "Play" ) )
+                {
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                    wxPostEvent( m_PlayerPanel, event );
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "Repeat" ) )
+                {
+                    wxCommandEvent event;
+                    m_PlayerPanel->OnRepeatPlayButtonClick( event );
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "GetStatus" ) )
+                {
+                    int PlayStatus;
+                    int Dummy = 0;
+                    wxMediaState State = m_PlayerPanel->GetState();
+                    if( State == wxMEDIASTATE_STOPPED )
+                        PlayStatus = 2;
+                    else if( State == wxMEDIASTATE_PAUSED )
+                        PlayStatus = 1;
+                    else if( State == wxMEDIASTATE_PLAYING )
+                        PlayStatus = 0;
+                    int PlayLoop = m_PlayerPanel->GetPlayLoop();
+
+                    DBusMessageIter status;
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                    dbus_message_iter_open_container( &args, DBUS_TYPE_STRUCT, NULL, &status );
+                    dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayStatus );
+                    dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
+                    dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
+                    dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayLoop );
+                    dbus_message_iter_close_container( &args, &status );
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "GetMetadata" ) )
+                {
+                    const guCurrentTrack * CurTrack = m_PlayerPanel->GetCurrentTrack();
+                    if( CurTrack )
+                    {
+                        FillMetadataArgs( reply, CurTrack );
+                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "GetCaps" ) )
+                {
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
+                    int Caps = m_PlayerPanel->GetCaps();
+                    if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Caps ) )
+                    {
+                        guLogError( wxT( "Failed to attach the player Caps" ) );
+                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "VolumeSet" ) )
+                {
+                    int Volume;
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( msg->GetMessage(), &args );
+
+                    if( dbus_message_iter_get_arg_type( &args ) != DBUS_TYPE_INT32 )
+                    {
+                        guLogError( wxT( "Failed to get param for VolumeSet" ) );
+                    }
+                    else
+                    {
+                        dbus_message_iter_get_basic( &args, &Volume );
+                        m_PlayerPanel->SetVolume( Volume );
+                    }
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "VolumeGet" ) )
+                {
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                    int Volume = m_PlayerPanel->GetVolume();
+
+                    if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Volume ) )
+                    {
+                        guLogError( wxT( "Failed to attach the Player volume" ) );
+                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "PositionSet" ) )
+                {
+                    int Position;
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( msg->GetMessage(), &args );
+
+                    if( dbus_message_iter_get_arg_type( &args ) != DBUS_TYPE_INT32 )
+                    {
+                        guLogError( wxT( "Failed to get param for VolumeSet" ) );
+                    }
+                    else
+                    {
+                        dbus_message_iter_get_basic( &args, &Position );
+                        m_PlayerPanel->SetPosition( Position );
+                    }
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "PositionGet" ) )
+                {
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                    int Position = m_PlayerPanel->GetPosition();
+
+                    if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &Position ) )
+                    {
+                        guLogError( wxT( "Failed to attach the Player position" ) );
+                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+            }
+
+            //
+            // TRACKLIST
+            //
+            else if( !strcmp( Path, "/TrackList" ) )
+            {
+                if( !strcmp( Member, "GetMetadata" ) )
+                {
+                }
+                else if( !strcmp( Member, "GetCurrentTrack" ) )
+                {
+                }
+                else if( !strcmp( Member, "GetLength" ) )
+                {
+                }
+                else if( !strcmp( Member, "AddTrack" ) )
+                {
+                }
+                else if( !strcmp( Member, "DelTrack" ) )
+                {
+                }
+                else if( !strcmp( Member, "SetLoop" ) )
+                {
+                }
+                else if( !strcmp( Member, "SetRandom" ) )
+                {
+                }
+            }
         }
     }
 
-    // Call the inherited default processing
+    // Call the inherited default processing which destroys the msgs
     guDBus::HandleMessages( msg, reply );
 
     return RetVal;
