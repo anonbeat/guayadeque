@@ -184,9 +184,11 @@
 		<Unit filename="src/VolumeFrame.h" />
 		<Unit filename="src/curl/base.cpp" />
 		<Unit filename="src/curl/http.cpp" />
-		<Unit filename="src/dbus/wxdbusconnection.cpp" />
+		<Unit filename="src/dbus/gudbus.cpp" />
+		<Unit filename="src/dbus/gudbus.h" />
+		<Unit filename="src/dbus/mpris.cpp" />
+		<Unit filename="src/dbus/mpris.h" />
 		<Unit filename="src/dbus/wxdbusconnection.h" />
-		<Unit filename="src/dbus/wxdbusmessage.cpp" />
 		<Unit filename="src/dbus/wxdbusmessage.h" />
 		<Unit filename="src/wx/curl/base.h" />
 		<Unit filename="src/wx/curl/http.h" />
