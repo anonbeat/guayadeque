@@ -237,6 +237,17 @@ wxArrayInt guPlayList::GetSelectedItems()
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayList::RemoveItem( int itemnum )
+{
+    m_TotalLen -= m_Items[ itemnum ].m_Length;
+    m_Items.RemoveAt( itemnum );
+    if( itemnum == m_CurItem )
+        m_CurItem = wxNOT_FOUND;
+    else if( itemnum < m_CurItem )
+        m_CurItem--;
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::RemoveSelected()
 {
     int Index;
@@ -245,12 +256,7 @@ void guPlayList::RemoveSelected()
     for( Index = Selection.Count() - 1; Index >= 0; Index-- )
     {
         item = Selection[ Index ];
-        m_TotalLen -= m_Items[ item ].m_Length;
-        m_Items.RemoveAt( item );
-        if( item == m_CurItem )
-            m_CurItem = wxNOT_FOUND;
-        else if( item < m_CurItem )
-            m_CurItem--;
+        RemoveItem( item );
     }
     DoSelectAll( false );
 }

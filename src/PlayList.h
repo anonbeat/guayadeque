@@ -109,6 +109,7 @@ class guPlayList : public wxVListBox
         wxString        FindCoverFile( const wxString &DirName );
         void            Randomize( void );
         int             GetCaps();
+        void            RemoveItem( int itemnum );
 
     friend class guAddDropFilesThread;
     friend class guPlayListDropTarget;

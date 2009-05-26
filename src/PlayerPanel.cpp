@@ -372,6 +372,13 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::AddToPlayList( const wxString &FileName )
+{
+    m_PlayListCtrl->AddPlayListItem( FileName );
+    // TODO Need to add the track to the smart cache
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
 {
     m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart );
@@ -565,6 +572,18 @@ void guPlayerPanel::SmartAddTracks( const guTrack &CurSong )
 }
 
 // -------------------------------------------------------------------------------- //
+int guPlayerPanel::GetCurrentItem()
+{
+    return m_PlayListCtrl->GetCurItem();
+}
+
+// -------------------------------------------------------------------------------- //
+int guPlayerPanel::GetItemCount()
+{
+    return m_PlayListCtrl->GetItemCount();
+}
+
+// -------------------------------------------------------------------------------- //
 const guCurrentTrack * guPlayerPanel::GetCurrentTrack()
 {
     //return m_PlayListCtrl->GetCurrent();
@@ -575,6 +594,13 @@ const guCurrentTrack * guPlayerPanel::GetCurrentTrack()
 const guTrack * guPlayerPanel::GetTrack( int index )
 {
     return m_PlayListCtrl->GetItem( index );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::RemoveItem( int itemnum )
+{
+    m_PlayListCtrl->RemoveItem( itemnum );
+    m_PlayListCtrl->UpdateView();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -931,6 +957,34 @@ const wxMediaState guPlayerPanel::GetState( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetPlaySmart( bool playsmart )
+{
+    m_PlaySmart = playsmart;
+    m_SmartPlayButton->SetValue( m_PlaySmart );
+    if( m_PlaySmart && GetPlayLoop() )
+    {
+        SetPlayLoop( false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayerPanel::GetPlaySmart()
+{
+    return m_PlaySmart;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetPlayLoop( bool playloop )
+{
+    m_PlayLoop = playloop;
+    m_RepeatPlayButton->SetValue( m_PlayLoop );
+    if( m_PlayLoop && GetPlaySmart() )
+    {
+        SetPlaySmart( false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 bool guPlayerPanel::GetPlayLoop()
 {
     return m_PlayLoop;
@@ -1025,15 +1079,7 @@ void guPlayerPanel::OnVolumenButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnSmartPlayButtonClick( wxCommandEvent &event )
 {
-    m_PlaySmart = !m_PlaySmart; //m_SmartPlayButton->GetValue();
-    m_SmartPlayButton->SetValue( m_PlaySmart );
-    if( m_PlaySmart && m_RepeatPlayButton->GetValue() )
-    {
-        m_RepeatPlayButton->SetValue( false );
-        m_PlayLoop = false;
-    }
-    //guLogMessage( wxT( "PlaySmart set to %s" ), PlaySmart ? wxT( "true" ) : wxT( "false" ) );
-    //guLogMessage( wxT( "PlayLoop set to %s" ), PlayLoop ? wxT( "true" ) : wxT( "false" ) );
+    SetPlaySmart( !GetPlaySmart() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1045,15 +1091,7 @@ void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRepeatPlayButtonClick( wxCommandEvent &event )
 {
-    m_PlayLoop = !m_PlayLoop; //m_RepeatPlayButton->GetValue();
-    m_RepeatPlayButton->SetValue( m_PlayLoop );
-    if( m_PlayLoop && m_SmartPlayButton->GetValue() )
-    {
-        m_SmartPlayButton->SetValue( false );
-        m_PlaySmart = false;
-    }
-    //guLogMessage( wxT( "PlaySmart set to %s" ), PlaySmart ? wxT( "true" ) : wxT( "false" ) );
-    //guLogMessage( wxT( "PlayLoop set to %s" ), PlayLoop ? wxT( "true" ) : wxT( "false" ) );
+    SetPlayLoop( !GetPlayLoop() );
 }
 
 // -------------------------------------------------------------------------------- //
