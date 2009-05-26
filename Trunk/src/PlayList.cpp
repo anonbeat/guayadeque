@@ -769,6 +769,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         Song.m_Number = Info.m_Track;
         Song.m_GenreName = Info.m_GenreName;
         Song.m_Length = Info.m_Length;
+        Song.m_Year = Info.m_Year;
         m_TotalLen += Info.m_Length;
 
         AddItem( Song );
