@@ -364,12 +364,16 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 {
                     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
                     wxPostEvent( m_PlayerPanel, event );
+                    Send( reply );
+                    Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "Prev" ) )
                 {
                     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PREVTRACK );
                     wxPostEvent( m_PlayerPanel, event );
+                    Send( reply );
+                    Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "Pause" ) )

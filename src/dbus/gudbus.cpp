@@ -31,11 +31,11 @@ DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, voi
 	{
 	    Reply = new guDBusMethodReturn( msg );
 	}
-	//DBusHandlerResult RetVal = DBusObj->HandleMessages( Msg, Reply );
-	DBusObj->HandleMessages( Msg, Reply );
+	DBusHandlerResult RetVal = DBusObj->HandleMessages( Msg, Reply );
+//	DBusObj->HandleMessages( Msg, Reply );
 	//printf( "*** End of handle_messages ***\n" );
-	//return RetVal;
-	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+	return RetVal;
+//	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 }
 
 // -------------------------------------------------------------------------------- //
