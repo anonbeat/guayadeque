@@ -383,24 +383,32 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
                         wxPostEvent( m_PlayerPanel, event );
                     }
+                    Send( reply );
+                    Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "Stop" ) )
                 {
                     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
                     wxPostEvent( m_PlayerPanel, event );
+                    Send( reply );
+                    Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "Play" ) )
                 {
                     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
                     wxPostEvent( m_PlayerPanel, event );
+                    Send( reply );
+                    Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "Repeat" ) )
                 {
                     wxCommandEvent event;
                     m_PlayerPanel->OnRepeatPlayButtonClick( event );
+                    Send( reply );
+                    Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "GetStatus" ) )
