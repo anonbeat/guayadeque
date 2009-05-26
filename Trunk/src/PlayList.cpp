@@ -893,6 +893,8 @@ int guPlayList::GetCaps()
     {
         if( m_CurItem < m_Items.Count() )
             Caps |= 0x0001;
+        if( m_CurItem )
+            Caps |= 0x0002;
         if( m_CurItem > 0 )
             Caps |= 0x0010;
         Caps |= ( 0x0004 | 0x0008 | 0x0010 | 0x0020 );

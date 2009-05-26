@@ -452,20 +452,27 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 }
                 else if( !strcmp( Member, "VolumeSet" ) )
                 {
-                    int Volume;
-                    DBusMessageIter args;
-                    dbus_message_iter_init_append( msg->GetMessage(), &args );
+                    DBusError error;
+                    dbus_error_init( &error );
 
-                    if( dbus_message_iter_get_arg_type( &args ) != DBUS_TYPE_INT32 )
+                    dbus_int32_t Volume;
+
+                    dbus_message_get_args( msg->GetMessage(), &error, DBUS_TYPE_INT32, &Volume, DBUS_TYPE_INVALID );
+
+                    if( dbus_error_is_set( &error ) )
                     {
-                        guLogError( wxT( "Failed to get param for VolumeSet" ) );
+                        printf( "Could not read the Volume parameter : %s\n", error.message );
+                        dbus_error_free( &error );
+                        RetVal =  DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
                     }
                     else
                     {
-                        dbus_message_iter_get_basic( &args, &Volume );
                         m_PlayerPanel->SetVolume( Volume );
+
+                        Send( reply );
+                        Flush();
+                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
-                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "VolumeGet" ) )
                 {
@@ -484,20 +491,27 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 }
                 else if( !strcmp( Member, "PositionSet" ) )
                 {
-                    int Position;
-                    DBusMessageIter args;
-                    dbus_message_iter_init_append( msg->GetMessage(), &args );
+                    DBusError error;
+                    dbus_error_init( &error );
 
-                    if( dbus_message_iter_get_arg_type( &args ) != DBUS_TYPE_INT32 )
+                    dbus_int32_t Position;
+
+                    dbus_message_get_args( msg->GetMessage(), &error, DBUS_TYPE_INT32, &Position, DBUS_TYPE_INVALID );
+
+                    if( dbus_error_is_set( &error ) )
                     {
-                        guLogError( wxT( "Failed to get param for VolumeSet" ) );
+                        printf( "Could not read the Position parameter : %s\n", error.message );
+                        dbus_error_free( &error );
+                        RetVal =  DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
                     }
                     else
                     {
-                        dbus_message_iter_get_basic( &args, &Position );
                         m_PlayerPanel->SetPosition( Position );
+
+                        Send( reply );
+                        Flush();
+                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
-                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "PositionGet" ) )
                 {
