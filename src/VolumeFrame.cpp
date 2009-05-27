@@ -52,6 +52,8 @@ guVolumeFrame::guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindow
 	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guVolumeFrame::VolFrameActivate ) );
 	m_IncVolButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::IncVolButtonClick ), NULL, this );
 	m_VolSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
+	m_VolSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
+
 	m_DecVolButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::DecVolButtonClick ), NULL, this );
 }
 
