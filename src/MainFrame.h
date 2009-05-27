@@ -62,6 +62,7 @@ class guMainFrame : public wxFrame
         void                OnUpdateCovers( wxCommandEvent &event );
         void                OnUpdateTrack( wxCommandEvent &event );
         void                OnPlayerStatusChanged( wxCommandEvent &event );
+        void                OnPlayerTrackListChanged( wxCommandEvent &event );
         void                OnAudioScrobbleUpdate( wxCommandEvent &event );
 		void                PlayerSplitterOnIdle( wxIdleEvent &event );
 		void                CreateMenu();
@@ -88,9 +89,6 @@ class guMainFrame : public wxFrame
 		void                OnGaugeSetMax( wxCommandEvent &event );
 		void                OnGaugeUpdate( wxCommandEvent &event );
 		void                OnGaugeRemove( wxCommandEvent &event );
-
-		//void                OnMMKeysSignal( wxDBusConnectionEvent &event );
-		//void                OnMMKeysMsg( wxDBusConnectionEvent &event );
 
     public:
                             guMainFrame( wxWindow * parent );

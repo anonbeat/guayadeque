@@ -213,7 +213,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
     //
     m_PlayListCtrl->RefreshItems();
-    UpdateTotalLength();
+    TrackListChanged();
     SetVolume( m_CurVolume );
 
 	// Connect Events
@@ -352,7 +352,7 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
 
     OnStopButtonClick( event );
     OnPlayButtonClick( event );
-    UpdateTotalLength();
+    TrackListChanged();
 
     if( m_PlaySmart )
     {
@@ -375,6 +375,8 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
 void guPlayerPanel::AddToPlayList( const wxString &FileName )
 {
     m_PlayListCtrl->AddPlayListItem( FileName );
+    m_PlayListCtrl->RefreshItems();
+    TrackListChanged();
     // TODO Need to add the track to the smart cache
 }
 
@@ -382,7 +384,7 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
 void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
 {
     m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart );
-    UpdateTotalLength();
+    TrackListChanged();
 
     if( m_PlaySmart )
     {
@@ -405,17 +407,20 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::UpdateTotalLength( void )
+void guPlayerPanel::TrackListChanged( void )
 {
     m_PlayListLenStaticText->SetLabel( m_PlayListCtrl->GetLengthStr() );
    	m_PlayListLabelsSizer->Layout();
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKLISTCHANGED );
+    wxPostEvent( this, event );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
 {
     m_PlayListCtrl->RefreshItems();
-    UpdateTotalLength();
+    TrackListChanged();
     SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
 }
 
@@ -486,7 +491,7 @@ void guPlayerPanel::UpdateStatus()
     if( m_LastTotalLen != m_PlayListCtrl->GetLength() )
     {
         m_LastTotalLen = m_PlayListCtrl->GetLength();
-        UpdateTotalLength();
+        TrackListChanged();
     }
 
     IsUpdatingStatus = false;
@@ -600,7 +605,7 @@ const guTrack * guPlayerPanel::GetTrack( int index )
 void guPlayerPanel::RemoveItem( int itemnum )
 {
     m_PlayListCtrl->RemoveItem( itemnum );
-    m_PlayListCtrl->UpdateView();
+    m_PlayListCtrl->RefreshItems();
 }
 
 // -------------------------------------------------------------------------------- //
