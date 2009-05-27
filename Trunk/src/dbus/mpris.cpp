@@ -628,7 +628,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     DBusMessageIter args;
                     dbus_message_iter_init_append( reply->GetMessage(), &args );
 
-                    int TrackCnt = m_PlayerPanel->GetCurrentItem();
+                    int TrackCnt = m_PlayerPanel->GetItemCount();
 
                     if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &TrackCnt ) )
                     {
@@ -837,6 +837,26 @@ void guMPRIS::OnPlayerCapsChange()
     else
     {
         guLogError( wxT( "Could not create CapsChange signal object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMPRIS::OnTrackListChange()
+{
+    guDBusSignal * signal = new guDBusSignal( "/TrackList", "org.freedesktop.MediaPlayer", "TrackListChange" );
+    if( signal )
+    {
+        DBusMessageIter args;
+        dbus_message_iter_init_append( signal->GetMessage(), &args );
+
+        int TrackCnt = m_PlayerPanel->GetItemCount();
+
+        if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &TrackCnt ) )
+        {
+            guLogError( wxT( "Failed to attach the TrackCount" ) );
+        }
+        Send( signal );
+        Flush();
     }
 }
 

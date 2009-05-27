@@ -239,12 +239,16 @@ wxArrayInt guPlayList::GetSelectedItems()
 // -------------------------------------------------------------------------------- //
 void guPlayList::RemoveItem( int itemnum )
 {
-    m_TotalLen -= m_Items[ itemnum ].m_Length;
-    m_Items.RemoveAt( itemnum );
-    if( itemnum == m_CurItem )
-        m_CurItem = wxNOT_FOUND;
-    else if( itemnum < m_CurItem )
-        m_CurItem--;
+    int count = m_Items.Count();
+    if( count && ( itemnum < count ) )
+    {
+        m_TotalLen -= m_Items[ itemnum ].m_Length;
+        m_Items.RemoveAt( itemnum );
+        if( itemnum == m_CurItem )
+            m_CurItem = wxNOT_FOUND;
+        else if( itemnum < m_CurItem )
+            m_CurItem--;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -753,32 +757,42 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
     if( UriPath.IsReference() )
     {
         //guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
+
         //
         Song.m_FileName = wxEmptyString;
-        Song.m_CoverId = 0;
-        //Song.m_Number = -1;
-
-        Song.m_SongId = 1;
 
         if( AddPath )
         {
             Song.m_FileName = wxGetCwd() + wxT( "/" );
         }
 
-        Song.m_FileName +=  FileName; //.AfterLast( '/' );
+        Song.m_FileName +=  UriPath.Unescape( UriPath.GetPath() ); //.AfterLast( '/' );
 
-        Info.ReadID3Tags( FileName );
+        if( wxFileExists( Song.m_FileName ) )
+        {
 
-        Song.m_ArtistName = Info.m_ArtistName;
-        Song.m_AlbumName = Info.m_AlbumName;
-        Song.m_SongName = Info.m_TrackName;
-        Song.m_Number = Info.m_Track;
-        Song.m_GenreName = Info.m_GenreName;
-        Song.m_Length = Info.m_Length;
-        Song.m_Year = Info.m_Year;
-        m_TotalLen += Info.m_Length;
+            Song.m_CoverId = 0;
+            //Song.m_Number = -1;
 
-        AddItem( Song );
+            Song.m_SongId = 1;
+
+            Info.ReadID3Tags( Song.m_FileName );
+
+            Song.m_ArtistName = Info.m_ArtistName;
+            Song.m_AlbumName = Info.m_AlbumName;
+            Song.m_SongName = Info.m_TrackName;
+            Song.m_Number = Info.m_Track;
+            Song.m_GenreName = Info.m_GenreName;
+            Song.m_Length = Info.m_Length;
+            Song.m_Year = Info.m_Year;
+            m_TotalLen += Info.m_Length;
+
+            AddItem( Song );
+        }
+        else
+        {
+            guLogWarning( wxT( "Could not open the file '%s'" ), UriPath.GetPath().c_str() );
+        }
     }
     else
     {
@@ -899,10 +913,8 @@ int guPlayList::GetCaps()
     {
         if( m_CurItem < m_Items.Count() )
             Caps |= 0x0001;
-        if( m_CurItem )
-            Caps |= 0x0002;
         if( m_CurItem > 0 )
-            Caps |= 0x0010;
+            Caps |= 0x0002;
         Caps |= ( 0x0004 | 0x0008 | 0x0010 | 0x0020 );
     }
     Caps |= 0x0040;

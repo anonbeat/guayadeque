@@ -57,6 +57,7 @@ class guMPRIS : public guDBus
     virtual void                OnPlayerTrackChange();
     virtual void                OnPlayerStatusChange();
     virtual void                OnPlayerCapsChange();
+    virtual void                OnTrackListChange();
 
 };
 
