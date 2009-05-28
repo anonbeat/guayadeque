@@ -1,14 +1,16 @@
 
-  * Fixed the load of the year field of the saved songs
-  * Started support for mpris dbus protocol. See http://wiki.xmms2.xmms.se/wiki/MPRIS
-  * Fixed the load of translations
+  * Started support for multimedia keys
+  * Fixed a bug when pulsed random with only one track in playlist
+  * Fixed the load of the year field of the saved playlist tracks
+  * Added support for mpris dbus protocol. See http://wiki.xmms2.xmms.se/wiki/MPRIS
+  * Fixed support for translations
   * Fixed bug saving the labels to the mp3 files
   * Fixed bug that prevented to get info (lastfm, lyrics) for some names
     with special chars
   * Now the hidden categories in LastFM Panel gets saved on close
   * Fixed bug that prevented to load files with some special chars
   * Fixed colors in LastFM and Lyrics panel to follow theme
-  * ListBox colour now follow current theme
+  * ListBox colors now follow current theme
   * Removed bug in Track editor year field
   * Changed from libid3 to taglib as need id3 v2.4 support. Be aware that
     not all program will read ID3 v2.4 tags. For example if you use easytag

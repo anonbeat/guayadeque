@@ -93,6 +93,8 @@ class guDBus
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
     DBusConnection *            GetConnection();
     bool                        RegisterObjectPath( const char * objname );
+    bool                        UnRegisterObjectPath( const char * objname );
+    bool                        AddMatch( const char * rule );
     bool                        Send( guDBusMessage * msg );
     void                        Flush();
 

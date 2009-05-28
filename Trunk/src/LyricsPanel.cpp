@@ -87,11 +87,8 @@ void guLyricsPanel::SetTitle( const wxString &title )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::SetText( const wxString &text )
 {
-	wxColour BGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME );
-	BGColor.Set( BGColor.Red() - 5, BGColor.Green() - 5, BGColor.Blue() - 5 );
-
     m_LyricText->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\">%s</font></center></body></html>" ),
-          BGColor.GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           text.c_str() ) );
     Layout();
