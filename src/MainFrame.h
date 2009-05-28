@@ -63,6 +63,7 @@ class guMainFrame : public wxFrame
         void                OnUpdateTrack( wxCommandEvent &event );
         void                OnPlayerStatusChanged( wxCommandEvent &event );
         void                OnPlayerTrackListChanged( wxCommandEvent &event );
+        void                OnPlayerCapsChanged( wxCommandEvent &event );
         void                OnAudioScrobbleUpdate( wxCommandEvent &event );
 		void                PlayerSplitterOnIdle( wxIdleEvent &event );
 		void                CreateMenu();

@@ -26,6 +26,7 @@
 #include "Commands.h"
 #include "Images.h"
 #include "MainApp.h"
+#include "dbus/mpris.h"
 #include "Shoutcast.h"
 #include "TagInfo.h"
 #include "Utils.h"
@@ -672,7 +673,7 @@ void guPlayList::Randomize( void )
     int count = m_Items.Count();
     guTrack SavedItem;
 
-    if( count )
+    if( count > 2 )
     {
         for( index = 0; index < count; index++ )
         {
@@ -907,17 +908,16 @@ int guPlayList::GetCaps()
 //   *CAN_SEEK              = 0x0010
 //    CAN_PROVIDE_METADATA  = 0x0020
 //    CAN_HAS_TRACKLIST     = 0x0040
-    // Use constants to avoid include mpris.h only for this
-    int Caps = 0x0000;
+    int Caps = MPRIS_CAPS_NONE;
     if( m_Items.Count() )
     {
         if( m_CurItem < m_Items.Count() )
-            Caps |= 0x0001;
+            Caps |= MPRIS_CAPS_CAN_GO_NEXT;
         if( m_CurItem > 0 )
-            Caps |= 0x0002;
-        Caps |= ( 0x0004 | 0x0008 | 0x0010 | 0x0020 );
+            Caps |= MPRIS_CAPS_CAN_GO_PREV;
+        Caps |= ( MPRIS_CAPS_CAN_PAUSE | MPRIS_CAPS_CAN_PLAY | MPRIS_CAPS_CAN_SEEK | MPRIS_CAPS_CAN_PROVIDE_METADATA );
     }
-    Caps |= 0x0040;
+    Caps |= MPRIS_CAPS_CAN_HAS_TRACKLIST;
     return Caps;
 }
 

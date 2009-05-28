@@ -33,14 +33,14 @@
 #define GUAYADEQUE_MPRIS_VERSION_MAJOR      1
 #define GUAYADEQUE_MPRIS_VERSION_MINOR      0
 
-#define MPRIS_CAPS_NONE                  = 0
-#define MPRIS_CAPS_CAN_GO_NEXT           = 1 << 0
-#define MPRIS_CAPS_CAN_GO_PREV           = 1 << 1
-#define MPRIS_CAPS_CAN_PAUSE             = 1 << 2
-#define MPRIS_CAPS_CAN_PLAY              = 1 << 3
-#define MPRIS_CAPS_CAN_SEEK              = 1 << 4
-#define MPRIS_CAPS_CAN_PROVIDE_METADATA  = 1 << 5
-#define MPRIS_CAPS_CAN_HAS_TRACKLIST     = 1 << 6
+#define MPRIS_CAPS_NONE                  0
+#define MPRIS_CAPS_CAN_GO_NEXT           ( 1 << 0 )
+#define MPRIS_CAPS_CAN_GO_PREV           ( 1 << 1 )
+#define MPRIS_CAPS_CAN_PAUSE             ( 1 << 2 )
+#define MPRIS_CAPS_CAN_PLAY              ( 1 << 3 )
+#define MPRIS_CAPS_CAN_SEEK              ( 1 << 4 )
+#define MPRIS_CAPS_CAN_PROVIDE_METADATA  ( 1 << 5 )
+#define MPRIS_CAPS_CAN_HAS_TRACKLIST     ( 1 << 6 )
 
 // -------------------------------------------------------------------------------- //
 class guMPRIS : public guDBus

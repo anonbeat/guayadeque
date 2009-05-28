@@ -718,6 +718,10 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         m_PlayerPositionSlider->Enable();
     }
 
+    // Send the CapsChanged Event
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -987,6 +991,9 @@ void guPlayerPanel::SetPlayLoop( bool playloop )
     {
         SetPlaySmart( false );
     }
+    //
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1091,6 +1098,8 @@ void guPlayerPanel::OnSmartPlayButtonClick( wxCommandEvent &event )
 void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 {
     m_PlayListCtrl->Randomize();
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKLISTCHANGED );
+    wxPostEvent( this, evt );
 }
 
 // -------------------------------------------------------------------------------- //
