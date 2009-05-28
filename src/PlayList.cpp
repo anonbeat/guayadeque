@@ -681,7 +681,6 @@ void guPlayList::Randomize( void )
                 pos = guRandom( count );
                 newpos = guRandom( count );
             } while( pos == newpos );
-            //guLogMessage( wxT( "<--Current: %u  Pos : %u  NewPos : %u" ), CurItem, pos, newpos );
             SavedItem = m_Items[ pos ];
             m_Items[ pos ] = m_Items[ newpos ];
             m_Items[ newpos ] = SavedItem;
@@ -690,7 +689,6 @@ void guPlayList::Randomize( void )
             else if( newpos == m_CurItem )
                 m_CurItem = pos;
             //wxMilliSleep( 1 );
-            //guLogMessage( wxT( "-->Current: %u  Pos : %u  NewPos : %u" ), CurItem, pos, newpos );
         }
         DoSelectAll( false );
         UpdateView();

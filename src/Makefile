@@ -784,6 +784,21 @@ dbus/gudbus.s:
 .PHONY : dbus/gudbus.s
 
 # target to build an object file
+dbus/mmkeys.o:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mmkeys.o
+.PHONY : dbus/mmkeys.o
+
+# target to preprocess a source file
+dbus/mmkeys.i:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mmkeys.i
+.PHONY : dbus/mmkeys.i
+
+# target to generate assembly for a file
+dbus/mmkeys.s:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mmkeys.s
+.PHONY : dbus/mmkeys.s
+
+# target to build an object file
 dbus/mpris.o:
 	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mpris.o
 .PHONY : dbus/mpris.o
@@ -952,6 +967,9 @@ help:
 	@echo "... dbus/gudbus.o"
 	@echo "... dbus/gudbus.i"
 	@echo "... dbus/gudbus.s"
+	@echo "... dbus/mmkeys.o"
+	@echo "... dbus/mmkeys.i"
+	@echo "... dbus/mmkeys.s"
 	@echo "... dbus/mpris.o"
 	@echo "... dbus/mpris.i"
 	@echo "... dbus/mpris.s"

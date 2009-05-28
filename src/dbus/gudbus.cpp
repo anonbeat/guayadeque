@@ -32,10 +32,8 @@ DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, voi
 	    Reply = new guDBusMethodReturn( msg );
 	}
 	DBusHandlerResult RetVal = DBusObj->HandleMessages( Msg, Reply );
-//	DBusObj->HandleMessages( Msg, Reply );
 	//printf( "*** End of handle_messages ***\n" );
-	return RetVal;
-//	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+ 	return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -120,6 +118,30 @@ bool guDBus::RegisterObjectPath( const char * objname )
     DBusObjectPathVTable VTable = { NULL, Handle_Messages, NULL, NULL, NULL, NULL };
 
     return dbus_connection_register_object_path( m_DBusConn, objname, &VTable, this );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBus::UnRegisterObjectPath( const char * objname )
+{
+    return dbus_connection_unregister_object_path( m_DBusConn, objname );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBus::AddMatch( const char * rule )
+{
+    DBusError error;
+
+    dbus_error_init( &error );
+
+    dbus_bus_add_match( m_DBusConn, rule, &error );
+
+    if( dbus_error_is_set( &error ) )
+    {
+        printf( "Could not add the match %s : %s\n", rule, error.message );
+        dbus_error_free( &error );
+        return false;
+    }
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //

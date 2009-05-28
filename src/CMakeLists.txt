@@ -103,6 +103,8 @@ ADD_EXECUTABLE( guayadeque
         dbus/gudbus.h
 	dbus/mpris.cpp
 	dbus/mpris.h
+	dbus/mmkeys.cpp
+	dbus/mmkeys.h
        )
 
 TARGET_LINK_LIBRARIES( guayadeque

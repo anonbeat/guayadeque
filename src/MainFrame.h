@@ -33,6 +33,7 @@
 #include "SplashWin.h"
 
 #include "dbus/mpris.h"
+#include "dbus/mmkeys.h"
 
 #include <wx/wx.h>
 #include <wx/splitter.h>
@@ -57,6 +58,7 @@ class guMainFrame : public wxFrame
         DbLibrary *         m_Db;
 
         guMPRIS *           m_MPRIS;
+        guMMKeys *          m_MMKeys;
 
         void                OnUpdateLibrary( wxCommandEvent &event );
         void                OnUpdateCovers( wxCommandEvent &event );
