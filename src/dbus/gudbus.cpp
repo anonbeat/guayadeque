@@ -351,8 +351,7 @@ guDBusThread::ExitCode guDBusThread::Entry()
 {
     while( !TestDestroy() )
     {
-        if( !dbus_connection_read_write_dispatch( m_DBusOwner->GetConnection(), 0 ) )
-            break;
+        dbus_connection_read_write_dispatch( m_DBusOwner->GetConnection(), 0 );
         Sleep( DBUS_THREAD_IDLE_TIMEOUT );
     }
 }
