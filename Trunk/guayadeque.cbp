@@ -188,8 +188,6 @@
 		<Unit filename="src/dbus/gudbus.h" />
 		<Unit filename="src/dbus/mpris.cpp" />
 		<Unit filename="src/dbus/mpris.h" />
-		<Unit filename="src/dbus/wxdbusconnection.h" />
-		<Unit filename="src/dbus/wxdbusmessage.h" />
 		<Unit filename="src/wx/curl/base.h" />
 		<Unit filename="src/wx/curl/http.h" />
 		<Unit filename="src/wx/wxsqlite3.h" />
