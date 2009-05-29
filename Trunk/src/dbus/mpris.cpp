@@ -161,6 +161,10 @@ guMPRIS::guMPRIS( const char * name, guPlayerPanel * playerpanel ) : guDBus( NUL
 //    RegisterObjectPath( GUAYADEQUE_MPRIS_ROOT_PATH );
 //    RegisterObjectPath( GUAYADEQUE_MPRIS_PLAYER_PATH );
 //    RegisterObjectPath( GUAYADEQUE_MPRIS_TRACKLIST_PATH );
+
+    // Support for the MultimediaKeys
+    AddMatch( "type='signal',interface='org.gnome.SettingsDaemon'" );
+    AddMatch( "type='signal',interface='org.gnome.SettingsDaemon.MediaKeys'" );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -276,15 +280,16 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
 {
     wxASSERT( msg );
 //    // Show the details of the msg
-//    printf( "Type   : %i\n", msg->GetType() );
-//    printf( "Iface  : %s\n", msg->GetInterface() );
-//    printf( "Path   : %s\n", msg->GetPath() );
-//    printf( "Member : %s\n", msg->GetMember() );
-//    printf( "Sender : %s\n", msg->GetSender() );
-//    printf( "Reply  : %i\n", msg->NeedReply() );
-//    printf( "Serial : %i\n", msg->GetSerial() );
-//    printf( "RSerial: %i\n", msg->GetReplySerial() );
-//    printf( "==============================\n" );
+    printf( "Type   : %i\n", msg->GetType() );
+    printf( "Iface  : %s\n", msg->GetInterface() );
+    printf( "Path   : %s\n", msg->GetPath() );
+    printf( "Member : %s\n", msg->GetMember() );
+    printf( "Sender : %s\n", msg->GetSender() );
+    printf( "Reply  : %i\n", msg->NeedReply() );
+    printf( "Serial : %i\n", msg->GetSerial() );
+    if( reply )
+      printf( "RSerial: %i\n", reply->GetReplySerial() );
+    printf( "==MPRIS========================\n" );
 
     //
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
@@ -749,6 +754,69 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
 
                         Send( reply );
                         Flush();
+                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                    }
+                }
+            }
+        }
+    }
+    else if( Type == DBUS_MESSAGE_TYPE_SIGNAL )  // If its a Signal message
+    {
+        if( !strcmp( Path, "/org/gnome/SettingsDaemon" ) ||
+            !strcmp( Path, "/org/gnome/SettingsDaemon/MediaKeys" ) )
+        {
+            if( !strcmp( Member, "MediaPlayerKeyPressed" ) )
+            {
+                DBusError error;
+                dbus_error_init( &error );
+
+                const char * s = NULL;
+                const char * KeyName = NULL;
+
+                dbus_message_get_args( msg->GetMessage(), &error,
+                      DBUS_TYPE_STRING, &s,
+                      DBUS_TYPE_STRING, &KeyName,
+                      DBUS_TYPE_INVALID );
+
+                if( dbus_error_is_set( &error ) )
+                {
+                    printf( "Could not read the MediaPlayerKeyPressed parameters : %s\n", error.message );
+                    dbus_error_free( &error );
+                    //RetVal =  DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+                }
+                else
+                {
+                    if( !strcmp( KeyName, "Play" ) )
+                    {
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                        wxPostEvent( m_PlayerPanel, event );
+                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                    }
+                    else if( !strcmp( KeyName, "Stop" ) )
+                    {
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+                        wxPostEvent( m_PlayerPanel, event );
+                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                    }
+                    else if( !strcmp( KeyName, "Previous" ) )
+                    {
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PREVTRACK );
+                        wxPostEvent( m_PlayerPanel, event );
+                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                    }
+                    else if( !strcmp( KeyName, "Next" ) )
+                    {
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
+                        wxPostEvent( m_PlayerPanel, event );
+                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                    }
+                    else if( !strcmp( KeyName, "Pause" ) )
+                    {
+                        if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
+                        {
+                            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                            wxPostEvent( m_PlayerPanel, event );
+                        }
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
                 }

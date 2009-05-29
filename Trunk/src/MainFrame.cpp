@@ -143,7 +143,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     }
 
     // Init the MPRIS object
-    m_MMKeys = new guMMKeys( m_PlayerPanel );
+    m_MMKeys = NULL; //new guMMKeys( m_PlayerPanel );
     if( !m_MMKeys )
     {
         guLogError( wxT( "Could not create the mmkeys object" ) );

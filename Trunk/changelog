@@ -1,5 +1,5 @@
 
-  * Fixed a bug when searching text in radio panel
+  * Fixed a bug when searching text in radio panel introduced in v0.0.3
   * Started support for multimedia keys
   * Fixed a bug when pulsed random with only one track in playlist
   * Fixed the load of the year field of the saved playlist tracks

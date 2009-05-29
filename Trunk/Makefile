@@ -140,6 +140,32 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named debug
+
+# Build rule for target.
+debug: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 debug
+.PHONY : debug
+
+# fast build rule for target.
+debug/fast:
+	$(MAKE) -f CMakeFiles/debug.dir/build.make CMakeFiles/debug.dir/build
+.PHONY : debug/fast
+
+#=============================================================================
+# Target rules for targets named release
+
+# Build rule for target.
+release: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 release
+.PHONY : release
+
+# fast build rule for target.
+release/fast:
+	$(MAKE) -f CMakeFiles/release.dir/build.make CMakeFiles/release.dir/build
+.PHONY : release/fast
+
+#=============================================================================
 # Target rules for targets named uninstall
 
 # Build rule for target.
@@ -184,12 +210,14 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... debug"
 	@echo "... edit_cache"
 	@echo "... install"
 	@echo "... install/local"
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... release"
 	@echo "... uninstall"
 	@echo "... guayadeque"
 	@echo "... translations"

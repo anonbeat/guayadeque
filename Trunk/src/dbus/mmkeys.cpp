@@ -30,7 +30,7 @@ guMMKeys::guMMKeys( guPlayerPanel * playerpanel ) : guDBus( NULL, false )
 
     //RegisterObjectPath( "org/gnome/SettingsDaemon" );
     AddMatch( "type='signal',interface='org.gnome.SettingsDaemon'" );
-    AddMatch( "type='signal',interface='org.gnome.SettingsDaemon.MediaKeys'" );
+    //AddMatch( "type='signal',interface='org.gnome.SettingsDaemon.MediaKeys'" );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -43,16 +43,21 @@ guMMKeys::~guMMKeys()
 DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 {
     wxASSERT( msg );
+
+    if( !msg )
+        return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+
     // Show the details of the msg
-//    printf( "Type   : %i\n", msg->GetType() );
-//    printf( "Iface  : %s\n", msg->GetInterface() );
-//    printf( "Path   : %s\n", msg->GetPath() );
-//    printf( "Member : %s\n", msg->GetMember() );
-//    printf( "Sender : %s\n", msg->GetSender() );
-//    printf( "Reply  : %i\n", msg->NeedReply() );
-//    printf( "Serial : %i\n", msg->GetSerial() );
-//    printf( "RSerial: %i\n", msg->GetReplySerial() );
-//    printf( "==============================\n" );
+    printf( "Type   : %i\n", msg->GetType() );
+    printf( "Iface  : %s\n", msg->GetInterface() );
+    printf( "Path   : %s\n", msg->GetPath() );
+    printf( "Member : %s\n", msg->GetMember() );
+    printf( "Sender : %s\n", msg->GetSender() );
+    printf( "Reply  : %i\n", msg->NeedReply() );
+    printf( "Serial : %i\n", msg->GetSerial() );
+    if( reply )
+        printf( "RSerial: %i\n", reply->GetReplySerial() );
+    printf( "==MMKEYS=========================\n" );
 
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     const char *    Interface = msg->GetInterface();
@@ -60,7 +65,7 @@ DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage *
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();
 
-    // If its a method call
+    // If its a Signal message
     if( Type == DBUS_MESSAGE_TYPE_SIGNAL )
     {
         // INTROSPECT
@@ -125,6 +130,10 @@ DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage *
             }
         }
     }
+
+    // Call the inherited default processing which destroys the msgs
+    guDBus::HandleMessages( msg, reply );
+
     return RetVal;
 }
 
