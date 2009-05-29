@@ -2825,7 +2825,7 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
   {
     //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
     query = wxT( "SELECT DISTINCT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
-                 "FROM radiostations" );
+                 "FROM radiostations, radiogenres" );
 
     wxString subquery = wxEmptyString;
     if( m_RaLaFilters.Count() )
@@ -2844,6 +2844,7 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
         {
             subquery += wxT( " AND " );
         }
+        subquery += wxT( "radiostation_genreid = radiogenre_id AND " );
         subquery += ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
     }
 

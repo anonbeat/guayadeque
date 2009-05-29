@@ -760,6 +760,7 @@ void guRadioPanel::OnSearchActivated( wxCommandEvent& event )
 {
     wxArrayString Words = guSplitWords( m_InputTextCtrl->GetLineText( 0 ) );
     m_Db->SetRaTeFilters( Words );
+    m_LabelsListBox->ReloadItems();
     m_GenresListBox->ReloadItems();
     m_StationsListBox->ReloadItems();
     m_InputTextClearBitmap->Enable();
@@ -771,6 +772,7 @@ void guRadioPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
     wxArrayString Words;
     m_InputTextCtrl->Clear();
     m_Db->SetRaTeFilters( Words );
+    m_LabelsListBox->ReloadItems();
     m_GenresListBox->ReloadItems();
     m_StationsListBox->ReloadItems();
     m_InputTextClearBitmap->Disable();
