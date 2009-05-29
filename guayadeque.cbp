@@ -186,6 +186,8 @@
 		<Unit filename="src/curl/http.cpp" />
 		<Unit filename="src/dbus/gudbus.cpp" />
 		<Unit filename="src/dbus/gudbus.h" />
+		<Unit filename="src/dbus/mmkeys.cpp" />
+		<Unit filename="src/dbus/mmkeys.h" />
 		<Unit filename="src/dbus/mpris.cpp" />
 		<Unit filename="src/dbus/mpris.h" />
 		<Unit filename="src/wx/curl/base.h" />
