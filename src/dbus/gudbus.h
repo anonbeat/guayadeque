@@ -21,7 +21,7 @@
 #ifndef GUDBUS_H
 #define GUDBUS_H
 
-#define DBUS_THREAD_IDLE_TIMEOUT    25
+#define DBUS_THREAD_IDLE_TIMEOUT    50
 
 #include <dbus/dbus.h>
 #include <wx/thread.h>
