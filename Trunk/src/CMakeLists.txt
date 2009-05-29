@@ -73,8 +73,6 @@ ADD_EXECUTABLE( guayadeque
 	RadioGenreEditor.h
 	RadioPanel.cpp
 	RadioPanel.h
-	RadioProxy.cpp
-	RadioProxy.h
 	Shoutcast.cpp
 	Shoutcast.h
 	SoListBox.cpp
@@ -103,8 +101,6 @@ ADD_EXECUTABLE( guayadeque
         dbus/gudbus.h
 	dbus/mpris.cpp
 	dbus/mpris.h
-	dbus/mmkeys.cpp
-	dbus/mmkeys.h
        )
 
 TARGET_LINK_LIBRARIES( guayadeque

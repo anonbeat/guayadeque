@@ -574,21 +574,6 @@ RadioPanel.s:
 .PHONY : RadioPanel.s
 
 # target to build an object file
-RadioProxy.o:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/RadioProxy.o
-.PHONY : RadioProxy.o
-
-# target to preprocess a source file
-RadioProxy.i:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/RadioProxy.i
-.PHONY : RadioProxy.i
-
-# target to generate assembly for a file
-RadioProxy.s:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/RadioProxy.s
-.PHONY : RadioProxy.s
-
-# target to build an object file
 Shoutcast.o:
 	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/Shoutcast.o
 .PHONY : Shoutcast.o
@@ -784,21 +769,6 @@ dbus/gudbus.s:
 .PHONY : dbus/gudbus.s
 
 # target to build an object file
-dbus/mmkeys.o:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mmkeys.o
-.PHONY : dbus/mmkeys.o
-
-# target to preprocess a source file
-dbus/mmkeys.i:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mmkeys.i
-.PHONY : dbus/mmkeys.i
-
-# target to generate assembly for a file
-dbus/mmkeys.s:
-	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mmkeys.s
-.PHONY : dbus/mmkeys.s
-
-# target to build an object file
 dbus/mpris.o:
 	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/dbus/mpris.o
 .PHONY : dbus/mpris.o
@@ -925,9 +895,6 @@ help:
 	@echo "... RadioPanel.o"
 	@echo "... RadioPanel.i"
 	@echo "... RadioPanel.s"
-	@echo "... RadioProxy.o"
-	@echo "... RadioProxy.i"
-	@echo "... RadioProxy.s"
 	@echo "... Shoutcast.o"
 	@echo "... Shoutcast.i"
 	@echo "... Shoutcast.s"
@@ -967,9 +934,6 @@ help:
 	@echo "... dbus/gudbus.o"
 	@echo "... dbus/gudbus.i"
 	@echo "... dbus/gudbus.s"
-	@echo "... dbus/mmkeys.o"
-	@echo "... dbus/mmkeys.i"
-	@echo "... dbus/mmkeys.s"
 	@echo "... dbus/mpris.o"
 	@echo "... dbus/mpris.i"
 	@echo "... dbus/mpris.s"

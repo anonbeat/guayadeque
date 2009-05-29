@@ -280,16 +280,16 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
 {
     wxASSERT( msg );
 //    // Show the details of the msg
-    printf( "Type   : %i\n", msg->GetType() );
-    printf( "Iface  : %s\n", msg->GetInterface() );
-    printf( "Path   : %s\n", msg->GetPath() );
-    printf( "Member : %s\n", msg->GetMember() );
-    printf( "Sender : %s\n", msg->GetSender() );
-    printf( "Reply  : %i\n", msg->NeedReply() );
-    printf( "Serial : %i\n", msg->GetSerial() );
-    if( reply )
-      printf( "RSerial: %i\n", reply->GetReplySerial() );
-    printf( "==MPRIS========================\n" );
+//    printf( "Type   : %i\n", msg->GetType() );
+//    printf( "Iface  : %s\n", msg->GetInterface() );
+//    printf( "Path   : %s\n", msg->GetPath() );
+//    printf( "Member : %s\n", msg->GetMember() );
+//    printf( "Sender : %s\n", msg->GetSender() );
+//    printf( "Reply  : %i\n", msg->NeedReply() );
+//    printf( "Serial : %i\n", msg->GetSerial() );
+//    if( reply )
+//      printf( "RSerial: %i\n", reply->GetReplySerial() );
+//    printf( "==MPRIS========================\n" );
 
     //
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;

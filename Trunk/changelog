@@ -1,6 +1,7 @@
 
+  * Now can be updated only the selected RadioGenres and not all as before.
+  * Added support for Multimedia Keys (Play,Pause,Stop,Next,Prev)
   * Fixed a bug when searching text in radio panel introduced in v0.0.3
-  * Started support for multimedia keys
   * Fixed a bug when pulsed random with only one track in playlist
   * Fixed the load of the year field of the saved playlist tracks
   * Added support for mpris dbus protocol. See http://wiki.xmms2.xmms.se/wiki/MPRIS

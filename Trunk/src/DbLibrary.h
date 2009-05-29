@@ -326,13 +326,14 @@ class DbLibrary {
     void                    SetRaTeFilters( const wxArrayString &filters );
     void                    SetRadioLabelsFilters( const wxArrayInt &filters );
     void                    SetRadioGenresFilters( const wxArrayInt &filters );
+    void                    GetRadioGenresList( guListItems * RadioGenres, const wxArrayInt &GenreIds );
     void                    GetRadioGenres( guListItems * RadioGenres, bool AllowFilter = true );
     void                    SetRadioGenres( const wxArrayString &Genres );
     int                     GetRadioStations( guRadioStations * RadioStations );
     void                    SetRadioStations( const guRadioStations &RadioStations );
     guArrayListItems        GetStationsLabels( const wxArrayInt &Stations );
     void                    SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels );
-    int                     DelRadioStations( void );
+    int                     DelRadioStations( const wxArrayInt &RadioGenresIds );
     void                    SetRadioStatonsOrder( int OrderValue );
 
     int                     AddRadioGenre( wxString GenreName );

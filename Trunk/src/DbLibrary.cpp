@@ -29,7 +29,7 @@
 
 #include <wx/mstream.h>
 
-//#define DBLIBRARY_SHOW_QUERIES          1
+#define DBLIBRARY_SHOW_QUERIES          1
 
 WX_DEFINE_OBJARRAY(guTrackArray);
 WX_DEFINE_OBJARRAY(guListItems);
@@ -2653,6 +2653,30 @@ wxString DbLibrary::RadioFiltersSQL( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void DbLibrary::GetRadioGenresList( guListItems * RadioGenres, const wxArrayInt &GenreIds )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  //if( !AllowFilter || !GetRadioFiltersCount() )
+  if( GenreIds.Count() )
+  {
+    query = wxT( "SELECT radiogenre_id, radiogenre_name FROM radiogenres WHERE " );
+    query += ArrayToFilter( GenreIds, wxT( "radiogenre_id" ) );
+    query += wxT( " ORDER BY radiogenre_name;" );
+
+    //guLogMessage( query );
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      RadioGenres->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+    }
+    dbRes.Finalize();
+  }
+}
+
+// -------------------------------------------------------------------------------- //
 void DbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
 {
   wxString query;
@@ -2909,11 +2933,16 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::DelRadioStations( void )
+int DbLibrary::DelRadioStations( const wxArrayInt &RadioGenresIds )
 {
   wxString query;
-  query = wxT( "DELETE FROM radiostations;" );
-  return ExecuteUpdate( query );
+  if( RadioGenresIds.Count() )
+  {
+    query = wxT( "DELETE FROM radiostations WHERE " );
+    query += ArrayToFilter( RadioGenresIds, wxT( "radiostation_genreid" ) );
+    return ExecuteUpdate( query );
+  }
+  return 0;
 }
 
 // -------------------------------------------------------------------------------- //
