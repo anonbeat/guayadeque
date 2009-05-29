@@ -82,16 +82,21 @@ class guUpdateRadiosThread : public wxThread
     DbLibrary *     m_Db;
     guRadioPanel *  m_RadioPanel;
     int             m_GaugeId;
+    wxArrayInt      m_GenresIds;
 
   public:
-    guUpdateRadiosThread( DbLibrary * db, guRadioPanel * radiopanel, int gaugeid = wxNOT_FOUND )
+    guUpdateRadiosThread( DbLibrary * db, guRadioPanel * radiopanel,
+                                const wxArrayInt &genres, int gaugeid = wxNOT_FOUND )
     {
         m_Db = db;
         m_RadioPanel = radiopanel;
+        m_GenresIds = genres;
         m_GaugeId = gaugeid;
     };
 
-    ~guUpdateRadiosThread() {};
+    ~guUpdateRadiosThread()
+    {
+    };
 
     virtual ExitCode Entry();
 };
@@ -903,8 +908,9 @@ void guRadioPanel::OnRadioUpdate( wxCommandEvent &event )
 
     guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge();
+    wxArrayInt GenresIds = m_GenresListBox->GetSelection();
 
-    guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, GaugeId );
+    guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, GenresIds, GaugeId );
     if( UpdateRadiosThread )
     {
         UpdateRadiosThread->Create();
@@ -950,7 +956,7 @@ void guRadioPanel::StationsSplitterOnIdle( wxIdleEvent& )
 // -------------------------------------------------------------------------------- //
 guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
 {
-    guListItems Genres;
+//    guListItems Genres;
     int index;
     int count;
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
@@ -962,10 +968,13 @@ guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
         long MinBitRate;
         Config->ReadStr( wxT( "RadioMinBitRate" ), wxT( "128" ), wxT( "Radios" ) ).ToLong( &MinBitRate );
         //
-        m_Db->GetRadioGenres( &Genres, false );
-        guLogMessage( wxT ( "Loaded the genres" ) );
+//        m_Db->GetRadioGenres( &Genres, false );
+//        guLogMessage( wxT ( "Loaded the genres" ) );
+        guListItems Genres;
+        m_Db->GetRadioGenresList( &Genres, m_GenresIds );
+
         //
-        m_Db->DelRadioStations();
+        m_Db->DelRadioStations( m_GenresIds );
         guLogMessage( wxT( "Deleted all radio stations" ) );
         count = Genres.Count();
 

@@ -142,13 +142,6 @@ guMainFrame::guMainFrame( wxWindow * parent )
         guLogError( wxT( "Could not create the mpris object" ) );
     }
 
-    // Init the MPRIS object
-    m_MMKeys = NULL; //new guMMKeys( m_PlayerPanel );
-    if( !m_MMKeys )
-    {
-        guLogError( wxT( "Could not create the mmkeys object" ) );
-    }
-
     //
 	m_PlayerSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::PlayerSplitterOnIdle ), NULL, this );
 
@@ -215,12 +208,6 @@ guMainFrame::~guMainFrame()
     if( m_MPRIS )
     {
         delete m_MPRIS;
-    }
-
-    // destroy the mpris object
-    if( m_MMKeys )
-    {
-        delete m_MMKeys;
     }
 
     Disconnect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ) );
