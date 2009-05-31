@@ -29,7 +29,7 @@
 
 #include <wx/mstream.h>
 
-#define DBLIBRARY_SHOW_QUERIES          1
+//#define DBLIBRARY_SHOW_QUERIES          1
 
 WX_DEFINE_OBJARRAY(guTrackArray);
 WX_DEFINE_OBJARRAY(guListItems);
@@ -751,7 +751,7 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
 
   escape_query_str( &AlbumName );
 
-  query = wxString::Format( wxT( "SELECT album_id, album_coverid, album_uptag "\
+  query = wxString::Format( wxT( "SELECT album_id, album_coverid, album_uptag, album_artistid "\
                                  "FROM albums "\
                                  "WHERE album_name = '%s' "\
                                  "AND album_pathid = %u LIMIT 1;" ), AlbumName.c_str(), PathId );
@@ -802,6 +802,15 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
                                        "WHERE cover_id = %i;" ), m_UpTag.c_str(), * CoverId );
         ExecuteUpdate( query );
     }
+
+    // Now check if the artist id changed and if so update it
+    if( dbRes.GetInt( 3 ) != ArtistId )
+    {
+        query = wxString::Format( wxT( "UPDATE albums SET album_artistid = %u "\
+                                       "WHERE album_id = %i;" ), ArtistId, * AlbumId );
+        ExecuteUpdate( query );
+    }
+
     RetVal = 1;
   }
   else
@@ -2210,6 +2219,8 @@ bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString 
   query = wxString::Format ( wxT( "SELECT DISTINCT album_name, artist_name, path_value " ) \
           wxT( "FROM albums, artists, paths " ) \
           wxT( "WHERE album_id = %u AND album_artistid = artist_id AND album_pathid = path_id" ), AlbumId );
+
+  guLogMessage( query );
 
   dbRes = ExecuteQuery( query );
   if( dbRes.NextRow() )
