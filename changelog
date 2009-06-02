@@ -1,4 +1,6 @@
 
+  * If covers are updated it will be changed in database. If you had older version
+    you need to delete the old database ~/.guayadeque/guayadeque.db
   * Now can be updated only the selected RadioGenres and not all as before.
   * Added support for Multimedia Keys (Play,Pause,Stop,Next,Prev)
   * Fixed a bug when searching text in radio panel introduced in v0.0.3
