@@ -357,7 +357,7 @@ bool DbLibrary::CreateStruct( const wxString &DbName )
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plsong_plid"" on plsongs (plsong_plid ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plsong_songid"" on plsongs (plsong_songid ASC);" ) );
 
-    query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_uptag varchar(8) );" ) );
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_hash VARCHAR( 32 ), cover_uptag VARCHAR(8) );" ) );
     query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""cover_id"" on covers (cover_id ASC);" ) );
 
     query.Add( wxT( "CREATE TABLE IF NOT EXISTS audioscs( audiosc_id INTEGER PRIMARY KEY AUTOINCREMENT, audiosc_artist VARCHAR(255), audiosc_album varchar(255), audiosc_track varchar(255), audiosc_playedtime INTEGER, audiosc_source char(1), audiosc_ratting char(1), audiosc_len INTEGER, audiosc_tracknum INTEGER, audiosc_mbtrackid INTEGER );" ) );
@@ -560,17 +560,54 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
                         //guLogMessage( wxT( "FindCoverFile: This file looks like an image file" ) );
                         CurFile = DirName + wxT( '/' ) + FileName;
                         //guLogMessage( wxT( "Found Cover: %s" ), CurFile.c_str() );
+                        guMD5 md5;
+                        wxString CoverHash = md5.MD5File( CurFile );
+
                         escape_query_str( &CurFile );
 
-                        query = wxString::Format( wxT( "SELECT cover_id, cover_path, cover_uptag FROM covers " \
+                        query = wxString::Format( wxT( "SELECT cover_id, cover_path, cover_hash, cover_uptag FROM covers " \
                                     "WHERE cover_path = '%s' LIMIT 1;" ), CurFile.c_str() );
 
                         dbRes = ExecuteQuery( query );
 
-                        if( dbRes.NextRow() )
+                        if( dbRes.NextRow() ) // The cover is found in the database
                         {
                             CoverId = dbRes.GetInt( 0 );
-                            if( dbRes.GetString( 2 ) != m_UpTag )
+                            // Check if the file have been changed
+                            if( dbRes.GetString( 2 ) != CoverHash )
+                            {
+                                // The cover is different. Update the thumb is needed
+
+                                // Create the Thumb image
+                                wxImage TmpImg;
+                                //wxBitmap TmpBmp;
+                                TmpImg.LoadFile( DirName + wxT( '/' ) + FileName ); //CurFile ); Curfile is normalized for m_Db :/
+                                if( TmpImg.IsOk() )
+                                {
+                                  //guLogWarning( _T( "Scaling image %i" ), n );
+                                  TmpImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
+
+                                  if( TmpImg.IsOk() )
+                                  {
+                                      //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
+
+                                      wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format(
+                                          wxT( "UPDATE covers SET cover_thumb = ?, cover_hash = '%s', cover_uptag = '%s' WHERE cover_id = %u;" ), CoverHash.c_str(), m_UpTag.c_str(), CoverId ) );
+
+                                      try {
+                                        stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+                                        //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
+                                        stmt.ExecuteQuery();
+                                      }
+                                      catch( wxSQLite3Exception& e )
+                                      {
+                                        guLogMessage( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+                                      }
+                                  }
+                                }
+                            }
+
+                            if( dbRes.GetString( 3 ) != m_UpTag )
                             {
                                 query = wxString::Format( wxT( "UPDATE covers SET cover_uptag = '%s' " \
                                                                "WHERE cover_id = %i;" ), m_UpTag.c_str(), CoverId );
@@ -592,8 +629,8 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
                               {
                                   //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
 
-                                  wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_uptag ) "
-                                                   "VALUES( NULL, '%s', ?, '%s' );" ), CurFile.c_str(), m_UpTag.c_str() ) );
+                                  wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_hash, cover_uptag ) "
+                                                   "VALUES( NULL, '%s', ?, '%s', '%s' );" ), CurFile.c_str(), CoverHash.c_str(), m_UpTag.c_str() ) );
 
                                   try {
                                     stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
@@ -621,7 +658,6 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
 }
 
 // -------------------------------------------------------------------------------- //
-// TODO : Add a litle cache
 wxString DbLibrary::GetCoverPath( const int CoverId )
 {
   wxString query;
@@ -653,13 +689,46 @@ wxString DbLibrary::GetCoverPath( const int CoverId )
         LastItems.RemoveAt( 0 );
     }
 
-    query = wxString::Format( wxT( "SELECT cover_path FROM covers "\
+    query = wxString::Format( wxT( "SELECT cover_path, cover_hash FROM covers "\
                                    "WHERE cover_id = %u "\
                                    "LIMIT 1;" ), CoverId );
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
       RetVal = dbRes.GetString( 0 );
+      // Check if the cover have been updated
+      guMD5 md5;
+      wxString CoverHash = md5.MD5File( RetVal );
+      if( CoverHash != dbRes.GetString( 1 ) )
+      {
+        // Create the Thumb image
+        wxImage TmpImg;
+        //wxBitmap TmpBmp;
+        TmpImg.LoadFile( RetVal );
+        if( TmpImg.IsOk() )
+        {
+          //guLogWarning( _T( "Scaling image %i" ), n );
+          TmpImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
+
+          if( TmpImg.IsOk() )
+          {
+              //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
+
+              wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format(
+                  wxT( "UPDATE covers SET cover_thumb = ?, cover_hash = '%s' WHERE cover_id = %u;" ), CoverHash.c_str(), CoverId ) );
+
+              try {
+                stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+                //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
+                stmt.ExecuteQuery();
+              }
+              catch( wxSQLite3Exception& e )
+              {
+                guLogMessage( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+              }
+          }
+        }
+      }
     }
     LastCoverId = CoverId;
     LastCoverPath = RetVal;
@@ -691,23 +760,6 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
 
   if( CoverId > 0 )
   {
-/******* Dont need to remove old file. Maybe its the same as the new one.
-    query = wxString::Format( wxT( "SELECT cover_path FROM covers WHERE cover_id = %i LIMIT 1;" ), CoverId );
-    dbRes = ExecuteQuery( query );
-    if( dbRes.NextRow() )
-    {
-      FileName = dbRes.GetString( 0 );
-    }
-    dbRes.Finalize();
-    if( !FileName.IsEmpty() && wxFileExists( FileName ) )
-    {
-      if( !wxRemoveFile( FileName ) )
-      {
-        guLogWarning( wxT( "Could not delete the file %s" ), FileName.c_str() );
-      }
-    }
-*******/
-
     query = wxString::Format( wxT( "DELETE FROM covers WHERE cover_id = %i;" ), CoverId );
     ExecuteUpdate( query );
 
@@ -815,9 +867,9 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
   }
   else
   {
-    guLogMessage( wxT( "AlbumName not found. Searching for covers in '%s'" ), wxGetCwd().c_str() );
+    //guLogMessage( wxT( "AlbumName not found. Searching for covers in '%s'" ), wxGetCwd().c_str() );
     * CoverId = FindCoverFile( wxGetCwd() );
-    guLogMessage( wxT( "Found Cover with Id : %i" ), * CoverId );
+    //guLogMessage( wxT( "Found Cover with Id : %i" ), * CoverId );
 
     query = query.Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid, album_uptag ) "\
                                "VALUES( NULL, %u, %u, '%s', %u, '%s' );" ), ArtistId, PathId,  AlbumName.c_str(), * CoverId, m_UpTag.c_str() );
@@ -2220,7 +2272,7 @@ bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString 
           wxT( "FROM albums, artists, paths " ) \
           wxT( "WHERE album_id = %u AND album_artistid = artist_id AND album_pathid = path_id" ), AlbumId );
 
-  guLogMessage( query );
+  //guLogMessage( query );
 
   dbRes = ExecuteQuery( query );
   if( dbRes.NextRow() )
