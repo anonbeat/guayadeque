@@ -246,11 +246,9 @@ DbLibrary::DbLibrary()
   if( Config )
   {
     //
-    m_AlOrder = Config->ReadBool( wxT( "AlbumYearOrder" ), false, wxT( "General" ) );
+    m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
+    m_RaOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
   }
-  m_AlOrder = ALBUMS_ORDER_NAME;
-
-
 
   m_GeFilters.Empty();
   m_LaFilters.Empty();
@@ -277,14 +275,14 @@ DbLibrary::DbLibrary( const wxString &DbName )
 
   m_UpTag = wxEmptyString;
 
-    //
+  //
   guConfig * Config = ( guConfig * ) guConfig::Get();
   if( Config )
   {
     //
-    m_AlOrder = Config->ReadBool( wxT( "AlbumYearOrder" ), false, wxT( "General" ) );
+    m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
+    m_RaOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
   }
-  m_RaOrder = RADIOSTATIONS_ORDER_LISTENERS;
 
   m_GeFilters.Empty();
   m_LaFilters.Empty();
@@ -301,6 +299,14 @@ DbLibrary::DbLibrary( const wxString &DbName )
 // -------------------------------------------------------------------------------- //
 DbLibrary::~DbLibrary()
 {
+  guConfig * Config = ( guConfig * ) guConfig::Get();
+  if( Config )
+  {
+    //
+    //Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlOrder, wxT( "General" ) );
+    Config->WriteNum( wxT( "StationsOrder" ), m_RaOrder, wxT( "General" ) );
+  }
+
   Close();
 }
 
