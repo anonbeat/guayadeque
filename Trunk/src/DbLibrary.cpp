@@ -832,6 +832,9 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
 
   if( !CoverPath.IsEmpty() )
   {
+    guMD5 md5;
+    wxString CoverHash = md5.MD5File( CoverPath );
+
     wxImage TmpImg;
     //wxBitmap TmpBmp;
     TmpImg.LoadFile( CoverPath );
@@ -842,12 +845,27 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
       wxString FileName = CoverPath;
       escape_query_str( &FileName );
 
-      wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_uptag ) " \
-                                   "VALUES( NULL, '%s', ?, '' )" ), FileName.c_str() ) );
+//      wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_uptag ) " \
+//                                   "VALUES( NULL, '%s', ?, '' )" ), FileName.c_str() ) );
+//
+//      stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+//
+//      stmt.ExecuteQuery();
+      wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format(
+          wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_hash, cover_uptag ) " \
+               "VALUES( NULL, '%s', ?, '%s', '' )" ),
+          FileName.c_str(), CoverHash.c_str() ) );
 
-      stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+      try {
+        stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+        //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
+        stmt.ExecuteQuery();
+      }
+      catch( wxSQLite3Exception& e )
+      {
+        guLogMessage( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+      }
 
-      stmt.ExecuteQuery();
       CoverId = m_Db.GetLastRowId().GetLo();
       query = wxString::Format( wxT( "UPDATE albums SET album_coverid = %i WHERE album_id = %i;" ), CoverId, AlbumId );
       return ExecuteUpdate( query );
@@ -1198,6 +1216,7 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
   guTrack * Song;
   int index;
   int count = Songs->Count();
+  guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
 
   // Refresh the SearchCoverWords array
   guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -1213,6 +1232,7 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
 
     if( wxFileExists( Song->m_FileName ) )
     {
+        MainFrame->SetStatusText( wxString::Format( _( "Updating track %s" ), Song->m_FileName.c_str() ) );
         //guLogMessage( wxT( "Updating FileName '%s'" ), Song->FileName.c_str() );
         // Update the File iD3Tags
 //////        ID3_Tag Tag;
@@ -1295,6 +1315,7 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
         guLogMessage( wxT( "The file %s was not found for edition." ), Song->m_FileName.c_str() );
     }
   }
+  MainFrame->SetStatusText( _( "Done updating the tracks" ) );
 
   wxString query;
 

@@ -420,6 +420,7 @@ wxArrayString guFetchCoverLinksThread::ExtractImageInfo( const wxString &Content
     }
     if( !CurParam.IsEmpty() )
         RetVal.Add( CurParam );
+    guLogMessage( wxT( "ImageLink: %s" ), RetVal[ 3 ].c_str() );
     return RetVal;
 }
 
@@ -439,7 +440,7 @@ int guFetchCoverLinksThread::ExtractImagesInfo( wxString &Content, int Count )
         Content = Content.Mid( StrPos + 3 );
         StrPos = Content.Find( wxT( "],[" ) );
         if( StrPos == wxNOT_FOUND )
-          break;
+          return 0; //break;
         //guLogMessage( wxT( "%s" ), Content.Mid( 0, StrPos ).c_str() );
         CurImage = ExtractImageInfo( Content.Mid( 0, StrPos ) );
         //RetVal.Add( CurImage );
@@ -448,8 +449,7 @@ int guFetchCoverLinksThread::ExtractImagesInfo( wxString &Content, int Count )
         if( ImageIndex == Count )
             break;
 
-        //Content = Content.Mid( StrPos );
-        //StrPos = Content.Find( wxT( "],[" ) );
+        guLogMessage( wxT( "Pos: %u" ), StrPos );
     }
     return ImageIndex;
 }
@@ -461,8 +461,9 @@ int guFetchCoverLinksThread::ExtractImagesInfo( wxString &Content, int Count )
 // -------------------------------------------------------------------------------- //
 bool guFetchCoverLinksThread::AddCoverLinks( void )
 {
+    guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, m_SearchString.c_str() );
     wxString SearchUrl = wxString::Format( GOOGLE_IMAGES_SEARCH_STR, guURLEncode( m_SearchString ).c_str(), ( m_CurrentPage * COVERS_COUNTER_PER_PAGE ) );
-    //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, SearchUrl.c_str() );
+    guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, SearchUrl.c_str() );
     //guHTTP http;
     //http.SetHeader( wxT( "User-Agent" ), wxT( "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.0.2) Gecko/2008092313 Ubuntu/8.04 (hardy) Firefox/3.1" ) );
     char * Buffer = NULL;
@@ -504,6 +505,7 @@ bool guFetchCoverLinksThread::AddCoverLinks( void )
 // -------------------------------------------------------------------------------- //
 guFetchCoverLinksThread::ExitCode guFetchCoverLinksThread::Entry()
 {
+    bool NoMorePics = false;
     while( !TestDestroy() )
     {
         if( m_LastDownload < ( int ) m_CoverLinks.Count() )
@@ -526,10 +528,19 @@ guFetchCoverLinksThread::ExitCode guFetchCoverLinksThread::Entry()
         }
         else
         {
+            if( NoMorePics )
+                break;
             if( m_CoverLinks.Count() > MAX_COVERLINKS_ITEMS )
                 break;
             if( !AddCoverLinks() )
+            {
+                NoMorePics = true;
+                if( m_LastDownload < ( int ) m_CoverLinks.Count() )
+                {
+                    continue;
+                }
                 break;
+            }
             m_CurrentPage++;
         }
     }
