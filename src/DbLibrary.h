@@ -229,7 +229,8 @@ class DbLibrary {
     int                 Open( const wxString &DbPath );
     int                 Close();
 
-    bool                CreateStruct( const wxString &DbName );
+    unsigned long       GetDbVersion( void );
+    bool                CheckDbVersion( const wxString &DbName );
     void                LoadCache( void );
 
     int                 GetGenreId( int * GenreId, wxString &GenreName );
