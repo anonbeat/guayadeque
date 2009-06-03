@@ -1,4 +1,5 @@
 
+  * Fixed bug in manual cover downloader when the results where below 10
   * The order of radiostations preference are saved
   * Added an option to allow albums be ordered by Year
   * Now the database has version for future updates.
