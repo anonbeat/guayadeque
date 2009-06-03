@@ -1,4 +1,5 @@
 
+  * Now the database has version for future updates.
   * If covers are updated it will be changed in database. If you had older version
     you need to delete the old database ~/.guayadeque/guayadeque.db
   * Now can be updated only the selected RadioGenres and not all as before.
