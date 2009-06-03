@@ -242,47 +242,60 @@ wxString LabelFilterToSQL( const wxArrayInt &LaFilters )
 // -------------------------------------------------------------------------------- //
 DbLibrary::DbLibrary()
 {
+  guConfig * Config = ( guConfig * ) guConfig::Get();
+  if( Config )
+  {
     //
-    m_RaOrder = 0;
+    m_AlOrder = Config->ReadBool( wxT( "AlbumYearOrder" ), false, wxT( "General" ) );
+  }
+  m_AlOrder = ALBUMS_ORDER_NAME;
 
-    m_GeFilters.Empty();
-    m_LaFilters.Empty();
-    m_ArFilters.Empty();
-    m_AlFilters.Empty();
-    m_TeFilters.Empty();
-    m_RaTeFilters.Empty();
-    m_RaGeFilters.Empty();
-    m_RaLaFilters.Empty();
 
-    m_UpTag = wxEmptyString;
 
-    LoadCache();
+  m_GeFilters.Empty();
+  m_LaFilters.Empty();
+  m_ArFilters.Empty();
+  m_AlFilters.Empty();
+  m_TeFilters.Empty();
+  m_RaTeFilters.Empty();
+  m_RaGeFilters.Empty();
+  m_RaLaFilters.Empty();
+
+  m_UpTag = wxEmptyString;
+
+  LoadCache();
 }
 
 // -------------------------------------------------------------------------------- //
 DbLibrary::DbLibrary( const wxString &DbName )
 {
-    // Check the version and if needed update or create it
-    CheckDbVersion( DbName );
+  // Check the version and if needed update or create it
+  CheckDbVersion( DbName );
 
-    // Once its checked open it
-    Open( DbName );
+  // Once its checked open it
+  Open( DbName );
 
-    m_UpTag = wxEmptyString;
+  m_UpTag = wxEmptyString;
 
     //
-    m_RaOrder = 0;
+  guConfig * Config = ( guConfig * ) guConfig::Get();
+  if( Config )
+  {
+    //
+    m_AlOrder = Config->ReadBool( wxT( "AlbumYearOrder" ), false, wxT( "General" ) );
+  }
+  m_RaOrder = RADIOSTATIONS_ORDER_LISTENERS;
 
-    m_GeFilters.Empty();
-    m_LaFilters.Empty();
-    m_ArFilters.Empty();
-    m_AlFilters.Empty();
-    m_TeFilters.Empty();
-    m_RaTeFilters.Empty();
-    m_RaGeFilters.Empty();
-    m_RaLaFilters.Empty();
+  m_GeFilters.Empty();
+  m_LaFilters.Empty();
+  m_ArFilters.Empty();
+  m_AlFilters.Empty();
+  m_TeFilters.Empty();
+  m_RaTeFilters.Empty();
+  m_RaGeFilters.Empty();
+  m_RaLaFilters.Empty();
 
-    LoadCache();
+  LoadCache();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1856,15 +1869,27 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   }
   else if( !( m_LaFilters.Count() + m_GeFilters.Count() + m_ArFilters.Count() + m_TeFilters.Count() ) )
   {
-    query = wxT( "SELECT album_id, album_name, album_coverid FROM albums ORDER BY album_name;" );
+    query = wxT( "SELECT DISTINCT album_id, album_name, album_coverid FROM albums, songs WHERE album_id = song_albumid ORDER BY " );
+    if( m_AlOrder == ALBUMS_ORDER_YEAR )
+    {
+        query += wxT( "song_year," );
+    }
+    query += wxT( "song_name;" );
   }
   else
   {
     query = wxT( "SELECT DISTINCT album_id, album_name, album_coverid FROM albums,songs " ) \
             wxT( "WHERE album_id = song_albumid AND " );
     query += FiltersSQL( GULIBRARY_FILTER_ALBUMS );
-    query += wxT( " ORDER BY album_name;" );
+    query += wxT( " ORDER BY " );
+    if( m_AlOrder == ALBUMS_ORDER_YEAR )
+    {
+        query += wxT( "song_year," );
+    }
+    query += wxT( "song_name;" );
   }
+
+  //guLogMessage( query );
 
   dbRes = ExecuteQuery( query );
 
@@ -2946,7 +2971,7 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
     query = wxT( "SELECT DISTINCT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations "\
                  "ORDER BY " );
-    if( m_RaOrder )
+    if( m_RaOrder == RADIOSTATIONS_ORDER_BITRATE )
         query += wxT( "radiostation_br" );
     else
         query += wxT( "radiostation_lc" );
@@ -2994,7 +3019,7 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
     }
 
     query += wxT( " ORDER BY " );
-    if( m_RaOrder )
+    if( m_RaOrder == RADIOSTATIONS_ORDER_BITRATE )
         query += wxT( "radiostation_br" );
     else
         query += wxT( "radiostation_lc" );

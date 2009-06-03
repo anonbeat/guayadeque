@@ -155,6 +155,9 @@ WX_DECLARE_OBJARRAY(guRadioStation,guRadioStations);
 #define RADIOSTATIONS_ORDER_LISTENERS   0
 #define RADIOSTATIONS_ORDER_BITRATE     1
 
+#define ALBUMS_ORDER_NAME   0
+#define ALBUMS_ORDER_YEAR   1
+
 // -------------------------------------------------------------------------------- //
 class guAS_SubmitInfo //guAudioScrobbler_SubmitInfo
 {
@@ -205,7 +208,9 @@ class DbLibrary {
     wxArrayInt         m_RaGeFilters;
     wxArrayInt         m_RaLaFilters;
     wxArrayString      m_RaTeFilters;
+
     int                m_RaOrder; // 0 -> Listeners, 1 -> BitRate
+    int                m_AlOrder; // 0 ->
 
 //    guListItems         Labels;
     guListItems         m_GenresCache;

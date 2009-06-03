@@ -31,7 +31,7 @@ wxString PatternToExample( const wxString &Pattern );
 
 // -------------------------------------------------------------------------------- //
 guPrefDialog::guPrefDialog( wxWindow* parent ) :
-    wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 500, 470 ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 500, 515 ), wxDEFAULT_DIALOG_STYLE )
 {
 	wxBoxSizer *        MainSizer;
 	wxBoxSizer *        GenMainSizer;
@@ -117,6 +117,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	m_RndPlayChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Play random track when playlist is empty"), wxDefaultPosition, wxDefaultSize, 0 );
     m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
 	BehaviSizer->Add( m_RndPlayChkBox, 0, wxALL, 5 );
+
+	m_AlYearOrderChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Albums ordered by Year. Default is by Name"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_AlYearOrderChkBox->SetValue( m_Config->ReadBool( wxT( "AlbumYearOrder" ), false, wxT( "General" ) ) );
+	BehaviSizer->Add( m_AlYearOrderChkBox, 0, wxALL, 5 );
 
 	GenMainSizer->Add( BehaviSizer, 0, wxEXPAND|wxALL, 5 );
 
@@ -492,6 +496,7 @@ guPrefDialog::~guPrefDialog()
         m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "RndTrackOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "AlbumYearOrder" ), m_AlYearOrderChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "SavePlayListOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "General" ) );
