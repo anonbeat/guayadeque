@@ -271,17 +271,24 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * New
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     m_Db = NewDb;
+    int RaOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
 
     // Create the Columns
     ListItem.SetText( _( "Name" ) );
     ListItem.SetWidth( Config->ReadNum( wxT( "RadioColSize0" ), 400, wxT( "Positions" ) ) );
     InsertColumn( 0, ListItem );
 
-    ListItem.SetText( _( "BitRate" ) );
+    if( RaOrder == RADIOSTATIONS_ORDER_BITRATE )
+        ListItem.SetText( _( "BitRate*" ) );
+    else
+        ListItem.SetText( _( "BitRate" ) );
     ListItem.SetWidth( Config->ReadNum( wxT( "RadioColSize1" ), 100, wxT( "Positions" ) ) );
     InsertColumn( 1, ListItem );
 
-    ListItem.SetText( _( "Listeners*" ) );
+    if( RaOrder == RADIOSTATIONS_ORDER_LISTENERS )
+        ListItem.SetText( _( "Listeners*" ) );
+    else
+        ListItem.SetText( _( "Listeners" ) );
     ListItem.SetWidth( Config->ReadNum( wxT( "RadioColSize2" ), 100, wxT( "Positions" ) ) );
     InsertColumn( 2, ListItem );
 
