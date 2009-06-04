@@ -289,12 +289,19 @@ void guAlbumListBox::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
 
     guAlbumItem * Item = &m_Items[ n ];
 
-    dc.SetFont( Font  );
+    dc.SetFont( Font );
     dc.SetBackgroundMode( wxTRANSPARENT );
 
     dc.SetTextForeground( IsSelected( n ) ? m_SelFgColor : m_TextFgColor );
 
-    dc.DrawText( Item->m_Name, rect.x + 45, rect.y + 11 );
+    dc.DrawText( Item->m_Name, rect.x + 45, rect.y + 8 );
+
+    if( Item->m_Year > 0 )
+    {
+        Font.SetPointSize( 7 );
+        dc.SetFont( Font );
+        dc.DrawText( wxString::Format( wxT( "%04u" ), Item->m_Year ), rect.x + 45, rect.y + 26 );
+    }
 
     if( Item->m_Thumb && Item->m_Thumb->IsOk() )
     {
