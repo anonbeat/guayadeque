@@ -264,7 +264,15 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
     MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_SONG_PLAYALL, _( "Play All" ), _( "Play all songs" ) );
+    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
+    Menu.Append( MenuItem );
+
+    MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );
+    MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+    Menu.Append( MenuItem );
+
+    MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUEALL, _( "Enqueue All" ), _( "Add all songs to the playlist" ) );
     MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
     Menu.Append( MenuItem );
 

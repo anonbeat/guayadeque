@@ -123,6 +123,7 @@ class guAlbumItem //: public guListItem
     bool        m_CoverChk;
     wxString    m_CoverPath;
     wxBitmap *  m_Thumb;
+    int         m_Year;
 
     guAlbumItem()
     {
