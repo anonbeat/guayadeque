@@ -32,6 +32,7 @@
 #define guLogError      wxLogError
 #endif
 
+#define guRandomInit() (srand( time( NULL ) ))
 #define guRandom(x) (rand() % x)
 
 // -------------------------------------------------------------------------------- //

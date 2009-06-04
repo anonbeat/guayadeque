@@ -1123,28 +1123,6 @@ int DbLibrary::ReadFileTags( const wxString &FileName )
 
   Info.ReadID3Tags( FileName );
 
-//////  ID3_Tag tag;
-//////
-//////  // Try to read ID3V2 tags
-//////  if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V2 ) >= 0 )
-//////  {
-//////      Info.ReadID3Tags( &tag );
-//////  }
-//////  else
-//////  {
-//////      guLogWarning( wxT( "Not found ID3v2 Tags in file %s" ), FileName.c_str() );
-//////  }
-//////
-//////  // Try to fill empty field from ID3v1 tags
-//////  if( tag.Link( FileName.ToUTF8(), ID3TT_ID3V1 ) >= 0 )
-//////  {
-//////      Info.ReadID3Tags( &tag );
-//////  }
-//////  else
-//////  {
-//////      guLogWarning( wxT( "Not found ID3v1 Tags in file %s" ), FileName.c_str() );
-//////  }
-
   wxString PathName = wxGetCwd();
   //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
   if( !GetPathId( &m_CurSong.m_PathId, PathName ) )
@@ -2109,6 +2087,54 @@ int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs )
     dbRes.Finalize();
   }
   return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetRandomTracks( guTrackArray * Tracks )
+{
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+  guTrack *             Track;
+  int                   TrackCnt;
+
+  query = wxT( "SELECT COUNT(*) FROM songs" );
+  dbRes = ExecuteQuery( query );
+  if( dbRes.NextRow() )
+  {
+    TrackCnt = dbRes.GetInt( 0 );
+  }
+  dbRes.Finalize();
+
+  query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
+          wxT( "FROM songs " );
+  if( GetFiltersCount() )
+    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+  query += wxT( " LIMIT %u, 1;" );
+
+  query = wxString::Format( query, guRandom( TrackCnt ) );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Track = new guTrack();
+    Track->m_SongId = dbRes.GetInt( 0 );
+    Track->m_SongName = dbRes.GetString( 1 );
+    Track->m_ArtistName = guListItemsGetName( m_ArtistsCache, dbRes.GetInt( 3 ) );
+    Track->m_AlbumId = dbRes.GetInt( 4 );
+    Track->m_AlbumName = guAlbumItemsGetName( m_AlbumsCache, Track->m_AlbumId );
+    Track->m_Length = dbRes.GetInt( 5 );
+    Track->m_Number = dbRes.GetInt( 6 );
+    Track->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
+    Track->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, Track->m_AlbumId );
+    //Track->GenreName = dbRes->GetString( 10 );
+    Track->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
+    Track->m_Year = dbRes.GetInt( 9 );
+    Tracks->Add( Track );
+  }
+  dbRes.Finalize();
+
+  return Tracks->Count();
 }
 
 // -------------------------------------------------------------------------------- //

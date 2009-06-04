@@ -60,6 +60,8 @@ guMainApp::~guMainApp()
 // -------------------------------------------------------------------------------- //
 bool guMainApp::OnInit()
 {
+    guRandomInit();
+
     wxLog::SetActiveTarget( new wxLogStderr );
 
     const wxString AppName = wxString::Format( wxT( "guayadeque-%s" ), wxGetUserId().c_str() );

@@ -272,6 +272,7 @@ class DbLibrary {
     int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs );
     int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs );
     int                 GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs );
+    int                 GetRandomTracks( guTrackArray * Tracks );
 
     int                 GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs );
     int                 AddLabel( wxString LabelName );
