@@ -917,6 +917,24 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
         LoadMedia( NextItem->m_FileName );
         m_PlayListCtrl->UpdateView();
     }
+    else
+    {
+        // If the option to play a random track is set
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
+        {
+            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
+            {
+                guTrackArray Tracks;
+                if( m_Db->GetRandomTracks( &Tracks ) )
+                {
+                    AddToPlayList( Tracks );
+
+                    OnMediaFinished( event );
+                }
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
