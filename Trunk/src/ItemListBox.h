@@ -56,7 +56,7 @@ class guListBox : public wxListCtrl
       ~guListBox();
 
       virtual void              ReloadItems( bool reset = true );
-      wxArrayInt                GetSelection() const;
+      wxArrayInt                GetSelection( bool reallist = false ) const;
       void                      SetSelection( const wxArrayInt selection );
       void                      ClearSelection();
       virtual int               GetSelectedSongs( guTrackArray * songs ) const = 0;
