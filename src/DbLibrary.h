@@ -129,6 +129,7 @@ class guAlbumItem //: public guListItem
     {
       m_Thumb = NULL;
       m_CoverChk = false;
+      m_Year = 0;
     };
 
     ~guAlbumItem()

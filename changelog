@@ -1,4 +1,6 @@
 
+  * The year is shown in the albums list box
+  * Added to options to play or enqueue all tracks in the songs list box
   * Now from the label editor can be added or deleted the labels too
   * Fixed a bug when Start Minimized was enabled and not the TaskBar icon
   * Implemented the option to add a random track if the playlist is empty
