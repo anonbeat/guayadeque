@@ -19,6 +19,8 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "ItemListBox.h"
+//#include "Utils.h"
+
 #include <wx/dnd.h>
 
 // -------------------------------------------------------------------------------- //
@@ -198,7 +200,7 @@ int guListBox::GetItemData( long item ) const
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayInt guListBox::GetSelection() const
+wxArrayInt guListBox::GetSelection( bool reallist ) const
 {
     wxArrayInt  RetVal;
     int         index;
@@ -214,8 +216,9 @@ wxArrayInt guListBox::GetSelection() const
         if( Id == 0 )
             break;
     }
+
     // If All was selected
-    if( RetVal.Index( 0 ) != wxNOT_FOUND )
+    if( !reallist && ( RetVal.Index( 0 ) != wxNOT_FOUND ) )
     {
         RetVal.Empty();
         count = m_Items.Count();
@@ -234,7 +237,9 @@ void guListBox::SetSelection( const wxArrayInt selection )
     while( ( Item = GetNextItem( Item, wxLIST_NEXT_ALL ) ) != wxNOT_FOUND )
     {
         if( selection.Index( GetItemData( Item ) ) != wxNOT_FOUND )
+        {
           SetItemState( Item, wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED );
+        }
 
     }
 }
@@ -265,7 +270,7 @@ void guListBox::ReloadItems( bool reset )
     if( reset )
         ClearSelection();
     else
-        SelItems = GetSelection();
+        SelItems = GetSelection( true );
 
     if( m_Items.Count() )
         m_Items.Empty();
