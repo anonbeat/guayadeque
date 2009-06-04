@@ -71,10 +71,12 @@
 
 //
 #define ID_SONG_PLAY                    1060
-#define ID_SONG_ENQUEUE                 1061
-#define ID_SONG_EDITLABELS              1062
-#define ID_SONG_EDITTRACKS              1063
-#define ID_SONG_COPYTO                  1064
+#define ID_SONG_PLAYALL                 1061
+#define ID_SONG_ENQUEUE                 1062
+#define ID_SONG_ENQUEUEALL              1063
+#define ID_SONG_EDITLABELS              1064
+#define ID_SONG_EDITTRACKS              1065
+#define ID_SONG_COPYTO                  1066
 
 //
 #define ID_PLAYLIST_UPDATELIST          1070

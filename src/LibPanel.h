@@ -103,7 +103,9 @@ class guLibPanel : public wxPanel
     // SongsListBox Events
     void OnSongListActivated( wxListEvent &event );
     void OnSongPlayClicked( wxCommandEvent &event );
+    void OnSongPlayAllClicked( wxCommandEvent &event );
     void OnSongQueueClicked( wxCommandEvent &event );
+    void OnSongQueueAllClicked( wxCommandEvent &event );
     void OnSongsEditLabelsClicked( wxCommandEvent &event );
     void OnSongsEditTracksClicked( wxCommandEvent &event );
     void OnSongCopyToClicked( wxCommandEvent &event );
