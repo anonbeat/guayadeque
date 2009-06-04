@@ -569,7 +569,7 @@ void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
     m_Db->GetLabels( &Labels, true );
 
     Artists = m_ArtistListCtrl->GetSelection();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, _( "Artist Labels Editor" ), Labels, m_Db->GetArtistsLabels( Artists ) );
+    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Artist Labels Editor" ), Labels, m_Db->GetArtistsLabels( Artists ) );
     if( LabelEditor )
     {
         if( LabelEditor->ShowModal() == wxID_OK )
@@ -578,6 +578,7 @@ void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
             m_Db->UpdateArtistsLabels( Artists, LabelEditor->GetCheckedIds() );
         }
         LabelEditor->Destroy();
+        m_LabelsListCtrl->ReloadItems();
     }
 }
 
@@ -590,7 +591,7 @@ void guLibPanel::OnAlbumEditLabelsClicked( wxCommandEvent &event )
     m_Db->GetLabels( &Labels, true );
 
     Albums = m_AlbumListCtrl->GetSelection();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, _( "Albums Labels Editor" ),
+    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Albums Labels Editor" ),
                                          Labels, m_Db->GetAlbumsLabels( Albums ) );
     if( LabelEditor )
     {
@@ -599,6 +600,7 @@ void guLibPanel::OnAlbumEditLabelsClicked( wxCommandEvent &event )
             m_Db->UpdateAlbumsLabels( Albums, LabelEditor->GetCheckedIds() );
         }
         LabelEditor->Destroy();
+        m_LabelsListCtrl->ReloadItems();
     }
 }
 
@@ -611,7 +613,7 @@ void guLibPanel::OnSongsEditLabelsClicked( wxCommandEvent &event )
     m_Db->GetLabels( &Labels, true );
 
     SongIds = m_SongListCtrl->GetSelection();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, _( "Songs Labels Editor" ),
+    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ),
                          Labels, m_Db->GetSongsLabels( SongIds ) );
     if( LabelEditor )
     {
@@ -620,6 +622,7 @@ void guLibPanel::OnSongsEditLabelsClicked( wxCommandEvent &event )
             m_Db->UpdateSongsLabels( SongIds, LabelEditor->GetCheckedIds() );
         }
         LabelEditor->Destroy();
+        m_LabelsListCtrl->ReloadItems();
     }
 }
 

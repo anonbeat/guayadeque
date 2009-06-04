@@ -43,19 +43,26 @@ class guLabelEditor : public wxDialog
   private:
 
   protected:
+    DbLibrary *         m_Db;
     wxStaticText *      m_LabelsStaticText;
     wxCheckListBox *    m_CheckListBox;
+    wxBitmapButton *    m_AddLabelBtn;
+	wxBitmapButton *    m_DelLabelBtn;
 
     wxArrayInt          m_LabelIds;
+    int                 m_SelectedItem;
 
     wxStdDialogButtonSizer * m_LabelEditorBtnSizer;
     wxButton * m_LabelEditorBtnSizerOK;
     wxButton * m_LabelEditorBtnSizerCancel;
 
 	void SetCheckedItems( const wxArrayInt &Checked );
+    void OnAddLabelBtnClick( wxCommandEvent &event );
+	void OnDelLabelBtnClick( wxCommandEvent &event );
+	void OnCheckListBoxSelected( wxCommandEvent& event );
 
   public:
-	guLabelEditor( wxWindow * parent, const wxString &title, const guListItems &labels, const guArrayListItems &enabelditems );
+	guLabelEditor( wxWindow * parent, DbLibrary * db, const wxString &title, const guListItems &labels, const guArrayListItems &enabelditems );
 	~guLabelEditor();
     wxArrayInt GetCheckedIds( void );
 
