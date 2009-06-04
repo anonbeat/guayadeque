@@ -137,6 +137,7 @@ bool guMainApp::OnInit()
         }
         else
         {
+            Frame->Show();
             Frame->Iconize( true );
         }
     }
