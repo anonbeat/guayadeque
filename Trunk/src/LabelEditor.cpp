@@ -19,12 +19,16 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "LabelEditor.h"
+#include "Images.h"
 
 // -------------------------------------------------------------------------------- //
-guLabelEditor::guLabelEditor( wxWindow* parent, const wxString &Title,
+guLabelEditor::guLabelEditor( wxWindow* parent, DbLibrary * db, const wxString &Title,
                      const guListItems &listitems, const guArrayListItems &selitems ) :
              wxDialog( parent, wxID_ANY, Title, wxDefaultPosition, wxSize( 250,300 ), wxDEFAULT_DIALOG_STYLE )
 {
+    m_Db = db;
+    m_SelectedItem = wxNOT_FOUND;
+
 	wxBoxSizer *    LabelEditorSizer;
 	wxBoxSizer *    CheckListBoxSizer;
 	wxBoxSizer *    OptionsSizer;
@@ -44,7 +48,7 @@ guLabelEditor::guLabelEditor( wxWindow* parent, const wxString &Title,
 	m_LabelsStaticText->Wrap( -1 );
 	LabelEditorSizer->Add( m_LabelsStaticText, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
 
-	CheckListBoxSizer = new wxBoxSizer( wxVERTICAL );
+	CheckListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
     count = listitems.Count();
     for( index = 0; index < count; index++ )
@@ -55,6 +59,23 @@ guLabelEditor::guLabelEditor( wxWindow* parent, const wxString &Title,
 
 	m_CheckListBox = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, Choices, wxLB_MULTIPLE|wxLB_NEEDED_SB );
 	CheckListBoxSizer->Add( m_CheckListBox, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* ButtonsSizer;
+	ButtonsSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_AddLabelBtn = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddLabelBtn->SetToolTip( _( "Add a new label" ) );
+
+	ButtonsSizer->Add( m_AddLabelBtn, 0, wxALL, 5 );
+
+	m_DelLabelBtn = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelLabelBtn->SetToolTip( _( "Delete the selected labels" ) );
+	m_DelLabelBtn->Enable( false );
+
+	ButtonsSizer->Add( m_DelLabelBtn, 0, wxALL, 5 );
+
+	CheckListBoxSizer->Add( ButtonsSizer, 0, wxEXPAND, 5 );
+
 
 	LabelEditorSizer->Add( CheckListBoxSizer, 1, wxEXPAND, 5 );
 
@@ -92,11 +113,19 @@ guLabelEditor::guLabelEditor( wxWindow* parent, const wxString &Title,
         }
         SetCheckedItems( EnabledIndexs );
     }
+
+	m_CheckListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnCheckListBoxSelected ), NULL, this );
+	m_AddLabelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnAddLabelBtnClick ), NULL, this );
+	m_DelLabelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnDelLabelBtnClick ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
 guLabelEditor::~guLabelEditor()
 {
+	m_CheckListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnCheckListBoxSelected ), NULL, this );
+	m_AddLabelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnAddLabelBtnClick ), NULL, this );
+	m_DelLabelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnDelLabelBtnClick ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -122,6 +151,49 @@ wxArrayInt guLabelEditor::GetCheckedIds( void )
             RetVal.Add( m_LabelIds[ index ] );
     }
     return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLabelEditor::OnAddLabelBtnClick( wxCommandEvent &event )
+{
+    wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Please enter the label name" ) );
+    if( EntryDialog->ShowModal() == wxID_OK )
+    {
+        int AddedId = m_Db->AddLabel( EntryDialog->GetValue() );
+        m_CheckListBox->Append( EntryDialog->GetValue() );
+        m_LabelIds.Add( AddedId );
+    }
+    EntryDialog->Destroy();
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guLabelEditor::OnDelLabelBtnClick( wxCommandEvent &event )
+{
+    if( m_SelectedItem != wxNOT_FOUND )
+    {
+        if( wxMessageBox( _( "Are you sure to delete the selected labels?" ),
+                          _( "Confirm" ),
+                          wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+        {
+            m_Db->DelLabel( m_LabelIds[ m_SelectedItem ] );
+            m_CheckListBox->Delete( m_SelectedItem );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLabelEditor::OnCheckListBoxSelected( wxCommandEvent& event )
+{
+    m_SelectedItem = event.GetInt();
+    if( m_SelectedItem != wxNOT_FOUND )
+    {
+        m_DelLabelBtn->Enable();
+    }
+    else
+    {
+        m_DelLabelBtn->Disable();
+    }
 }
 
 // -------------------------------------------------------------------------------- //

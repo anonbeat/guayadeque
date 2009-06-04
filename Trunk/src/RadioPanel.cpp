@@ -838,7 +838,7 @@ void guRadioPanel::OnStationsEditLabelsClicked( wxCommandEvent &event )
     m_Db->GetRadioLabels( &Labels, true );
 
     Stations = m_StationsListBox->GetSelection();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, _( "Stations Labels Editor" ), Labels, m_Db->GetStationsLabels( Stations ) );
+    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Stations Labels Editor" ), Labels, m_Db->GetStationsLabels( Stations ) );
     if( LabelEditor )
     {
         if( LabelEditor->ShowModal() == wxID_OK )
