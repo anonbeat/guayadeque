@@ -1,11 +1,12 @@
 
+  * Added the links also to the library panel context menu
   * The year is shown in the albums list box
   * Added to options to play or enqueue all tracks in the songs list box
   * Now from the label editor can be added or deleted the labels too
   * Fixed a bug when Start Minimized was enabled and not the TaskBar icon
   * Implemented the option to add a random track if the playlist is empty
   * Fixed bug in manual cover downloader when the results where below 10
-  * The order of radiostations preference are saved
+  * The order of radiostations preference is saved
   * Added an option to allow albums be ordered by Year
   * Now the database has version for future updates.
   * If covers are updated it will be changed in database. If you had older version

@@ -119,6 +119,7 @@ class guAlbumItem //: public guListItem
   public:
     int         m_Id;
     wxString    m_Name;
+    int         m_ArtistId;
     int         m_CoverId;
     bool        m_CoverChk;
     wxString    m_CoverPath;

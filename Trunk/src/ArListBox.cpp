@@ -22,6 +22,23 @@
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
+#include "OnlineLinks.h"
+#include "MainApp.h"
+#include "Utils.h"
+
+// -------------------------------------------------------------------------------- //
+guArListBox::guArListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
+             guListBox( parent, db, label )
+{
+    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );
+    ReloadItems();
+};
+
+// -------------------------------------------------------------------------------- //
+guArListBox::~guArListBox()
+{
+    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );
+}
 
 // -------------------------------------------------------------------------------- //
 void guArListBox::GetItemsList( void )
@@ -64,6 +81,47 @@ void guArListBox::GetContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
     MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
     Menu->Append( MenuItem );
+
+    Menu->AppendSeparator();
+
+    AddOnlineLinksMenu( Menu );
+}
+
+// -------------------------------------------------------------------------------- //
+void guArListBox::OnSearchLinkClicked( wxCommandEvent &event )
+{
+    int Item = wxNOT_FOUND;
+    Item = GetNextItem( Item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+    if( Item != wxNOT_FOUND )
+    {
+
+        int index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
+            wxASSERT( Links.Count() > 0 );
+
+            index -= ID_LASTFM_SEARCH_LINK;
+            wxString SearchLink = Links[ index ];
+            wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
+            if( Lang.IsEmpty() )
+            {
+                Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
+                //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
+            }
+            SearchLink.Replace( wxT( "{lang}" ), Lang );
+            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
+            guWebExecute( SearchLink );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guArListBox::GetSearchText( int item )
+{
+    return GetItemText( item );
 }
 
 // -------------------------------------------------------------------------------- //

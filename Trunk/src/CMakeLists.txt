@@ -93,7 +93,9 @@ ADD_EXECUTABLE( guayadeque
 	Utils.cpp
 	Utils.h
 	VolumeFrame.cpp
-	VolumeFrame.h 
+	VolumeFrame.h
+        OnlineLinks.cpp
+ 	OnlineLinks.h
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 

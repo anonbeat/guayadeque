@@ -1870,12 +1870,12 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 
   if( FullList )
   {
-    query = wxT( "SELECT DISTINCT album_id, album_name, album_coverid, song_year FROM albums, songs "\
+    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums, songs "\
                  "WHERE song_albumid = album_id ORDER BY album_id;" );
   }
   else if( !( m_LaFilters.Count() + m_GeFilters.Count() + m_ArFilters.Count() + m_TeFilters.Count() ) )
   {
-    query = wxT( "SELECT DISTINCT album_id, album_name, album_coverid, song_year FROM albums, songs WHERE album_id = song_albumid ORDER BY " );
+    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums, songs WHERE album_id = song_albumid ORDER BY " );
     if( m_AlOrder == ALBUMS_ORDER_YEAR )
     {
         query += wxT( "song_year," );
@@ -1884,7 +1884,7 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   }
   else
   {
-    query = wxT( "SELECT DISTINCT album_id, album_name, album_coverid, song_year FROM albums,songs " ) \
+    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums,songs " ) \
             wxT( "WHERE album_id = song_albumid AND " );
     query += FiltersSQL( GULIBRARY_FILTER_ALBUMS );
     query += wxT( " ORDER BY " );
@@ -1904,9 +1904,10 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
     guAlbumItem * AlbumItem = new guAlbumItem();
     AlbumItem->m_Id = dbRes.GetInt( 0 );
     AlbumItem->m_Name = dbRes.GetString( 1 );
-    AlbumItem->m_CoverId = dbRes.GetInt( 2 );
+    AlbumItem->m_ArtistId = dbRes.GetInt( 2 );
+    AlbumItem->m_CoverId = dbRes.GetInt( 3 );
     AlbumItem->m_Thumb = GetCoverThumb( AlbumItem->m_CoverId );
-    AlbumItem->m_Year = dbRes.GetInt( 3 );
+    AlbumItem->m_Year = dbRes.GetInt( 4 );
     Albums->Add( AlbumItem );
   }
   dbRes.Finalize();
