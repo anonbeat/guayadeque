@@ -60,6 +60,7 @@ extern const char * guImage_default_lastfm_image[];
 extern const char * guImage_application_exit[];
 extern const char * guImage_splash[];
 extern const char * guImage_nophoto[];
+extern const char * guImage_tags[];
 
 #endif
 // -------------------------------------------------------------------------------- //

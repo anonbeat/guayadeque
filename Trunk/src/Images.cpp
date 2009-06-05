@@ -59,5 +59,6 @@
 #include "./images/application-exit.xpm"
 #include "./images/splash.xpm"
 #include "./images/nophoto.xpm"
+#include "./images/tags.xpm"
 
 // -------------------------------------------------------------------------------- //

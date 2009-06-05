@@ -467,7 +467,7 @@ void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUM_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected albums" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_tags ) );
         Menu.Append( MenuItem );
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUM_EDITTRACKS, _( "Edit Album songs" ), _( "Edit the selected albums songs" ) );

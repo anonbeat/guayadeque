@@ -831,7 +831,7 @@ void guPlayList::OnContextMenu( wxContextMenuEvent& event )
     int SelCount = SelectedItems.Count();
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+    MenuItem->SetBitmap( wxBitmap( guImage_tags ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );

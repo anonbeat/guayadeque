@@ -692,7 +692,7 @@ void guPrefDialog::OnCoverListBoxDClicked( wxCommandEvent &event )
     int index = event.GetInt();
     if( index != wxNOT_FOUND )
     {
-        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Word: " ), _( "Editr the text to find covers" ), m_CoversListBox->GetString( index ) );
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Word: " ), _( "Edit the text to find covers" ), m_CoversListBox->GetString( index ) );
         if( EntryDialog )
         {
             if( EntryDialog->ShowModal() == wxID_OK )
