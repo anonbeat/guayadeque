@@ -1220,7 +1220,7 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
     wxImage *       Image = NULL;
     long            ImageType;
 
-    wxASSERT( pImage );
+    //wxASSERT( pImage );
 
     if( !m_ImageUrl.IsEmpty() )
     {

@@ -99,6 +99,7 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_TitleLabel;
 	wxStaticText *          m_AlbumLabel;
 	wxStaticText *          m_ArtistLabel;
+	wxStaticText *          m_YearLabel;
 	wxStaticText *          m_PositionLabel;
 	wxBoxSizer *            m_PosLabelSizer;
 	wxSlider *              m_PlayerPositionSlider;
