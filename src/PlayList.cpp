@@ -25,11 +25,12 @@
 #include "Config.h"
 #include "Commands.h"
 #include "Images.h"
+#include "LabelEditor.h"
 #include "MainApp.h"
-#include "dbus/mpris.h"
 #include "Shoutcast.h"
 #include "TagInfo.h"
 #include "Utils.h"
+#include "dbus/mpris.h"
 
 //#include <id3/tag.h>
 //#include <id3/misc_support.h>
@@ -44,14 +45,15 @@ BEGIN_EVENT_TABLE(guPlayList,wxVListBox)
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
-guPlayList::guPlayList( wxWindow * parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style ) :
-            wxVListBox( parent, id, pos, size, style | wxLB_MULTIPLE )
+guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
+            wxVListBox( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_MULTIPLE )
 {
     wxArrayString Songs;
     int Count;
     int Index;
     guConfig * Config;
 
+    m_Db = db;
     m_TotalLen = 0;
     m_CurItem = wxNOT_FOUND;
 
@@ -126,6 +128,7 @@ guPlayList::guPlayList( wxWindow * parent, wxWindowID id, const wxPoint &pos, co
     Connect( ID_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
     Connect( ID_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
     Connect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
+    Connect( ID_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
 
 }
 
@@ -153,13 +156,14 @@ guPlayList::~guPlayList()
     if( m_PlayBitmap )
       delete m_PlayBitmap;
 
-    //Disconnect( wxID_ANY, EVT_UPDATEDPLAYLIST_EVENT, UpdatedPlayListEventHandler( guPlayList::OnUpdatedItems ), NULL, this );
 	Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guPlayList::OnContextMenu ), NULL, this );
     Disconnect( ID_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
     Disconnect( ID_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
     Disconnect( ID_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
+    Disconnect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
+    Disconnect( ID_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -519,7 +523,6 @@ void guPlayList::UpdateView()
     {
         ScrollToLine( m_CurItem );
     }
-    //RefreshLines( GetVisibleBegin(), GetVisibleEnd() );
     RefreshAll();
 }
 
@@ -746,10 +749,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 {
     wxListItem ListItem;
     TagInfo Info;
-//    ID3_Tag tag;
-//    char * pStr;
 
-    //guTrack PlayListSong;
     guTrack Song;
     wxString Len;
     wxURI UriPath( FileName );
@@ -769,11 +769,13 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 
         if( wxFileExists( Song.m_FileName ) )
         {
-
             Song.m_CoverId = 0;
             //Song.m_Number = -1;
 
-            Song.m_SongId = 1;
+            //Song.m_SongId = 1;
+            Song.m_SongId = m_Db->FindTrackFile( Song.m_FileName );
+            if( !Song.m_SongId )
+                Song.m_SongId = guPLAYLIST_NOTDBTRACK;
 
             Info.ReadID3Tags( Song.m_FileName );
 
@@ -790,7 +792,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         }
         else
         {
-            guLogWarning( wxT( "Could not open the file '%s'" ), UriPath.GetPath().c_str() );
+            guLogWarning( wxT( "Could not open the file '%s'" ), Song.m_FileName.c_str() );
         }
     }
     else
@@ -825,6 +827,13 @@ void guPlayList::OnContextMenu( wxContextMenuEvent& event )
         Point = ScreenToClient( Point );
     }
 
+    wxArrayInt SelectedItems = GetSelectedItems();
+    int SelCount = SelectedItems.Count();
+
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
+    MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+    Menu.Append( MenuItem );
+
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
     MenuItem->SetBitmap( wxBitmap( guImage_edit_clear ) );
     Menu.Append( MenuItem );
@@ -839,14 +848,14 @@ void guPlayList::OnContextMenu( wxContextMenuEvent& event )
 
     Menu.AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RANDOMPLAY, _( "Randomize PlayList" ), _( "Randomize the songs in the PlayList" ) );
+    MenuItem->SetBitmap( wxBitmap( guImage_media_playlist_shuffle ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RANDOMPLAY, _( "Randomize PlayList" ), _( "Randomize the songs in the PlayList" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playlist_shuffle ) );
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
+    MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
     Menu.Append( MenuItem );
 
     PopupMenu( &Menu, Point.x, Point.y );
@@ -894,6 +903,63 @@ void guPlayList::OnCopyToClicked( wxCommandEvent &event )
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
+{
+    guListItems Labels;
+    wxArrayInt SongIds;
+    //
+    guTrack * Track;
+    wxArrayInt SelectedItems = GetSelectedItems();
+    int index;
+
+    int count = SelectedItems.Count();
+    if( count )
+    {
+        for( index = 0; index < count; index++ )
+        {
+            Track = &m_Items[ SelectedItems[ index ] ];
+            if( Track->m_SongId > 0 )
+            {
+                SongIds.Add( Track->m_SongId );
+            }
+        }
+    }
+    else
+    {
+        // If there is no selection then use all songs that are
+        // recognized in the database.
+        count = m_Items.Count();
+        for( index = 0; index < count; index++ )
+        {
+            Track = &m_Items[ index ];
+            if( Track->m_SongId > 0 )
+            {
+                SongIds.Add( Track->m_SongId );
+            }
+        }
+    }
+
+    if( SongIds.Count() )
+    {
+        m_Db->GetLabels( &Labels, true );
+
+        //SongIds = m_SongListCtrl->GetSelection();
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ),
+                             Labels, m_Db->GetSongsLabels( SongIds ) );
+        if( LabelEditor )
+        {
+            if( LabelEditor->ShowModal() == wxID_OK )
+            {
+                m_Db->UpdateSongsLabels( SongIds, LabelEditor->GetCheckedIds() );
+            }
+            LabelEditor->Destroy();
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LABEL_UPDATELABELS );
+            wxPostEvent( wxTheApp->GetTopWindow(), event );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

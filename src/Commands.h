@@ -51,6 +51,7 @@
 #define ID_LABEL_ENQUEUE                1034
 #define ID_LABEL_CLEARSELECTION         1035
 #define ID_LABEL_COPYTO                 1036
+#define ID_LABEL_UPDATELABELS           1037
 
 //
 #define ID_ARTIST_PLAY                  1040
@@ -88,6 +89,7 @@
 #define ID_PLAYLIST_REPEATPLAY          1076
 #define ID_PLAYLIST_SMART_ADDTRACK      1077
 #define ID_PLAYLIST_COPYTO              1078
+#define ID_PLAYLIST_EDITLABELS          1079
 
 //
 #define ID_RADIO_DOUPDATE               1080

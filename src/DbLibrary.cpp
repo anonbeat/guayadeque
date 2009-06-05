@@ -1880,7 +1880,7 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
     {
         query += wxT( "song_year," );
     }
-    query += wxT( "song_name;" );
+    query += wxT( "album_name;" );
   }
   else
   {
@@ -1892,7 +1892,7 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
     {
         query += wxT( "song_year," );
     }
-    query += wxT( "song_name;" );
+    query += wxT( "album_name;" );
   }
 
   //guLogMessage( query );
@@ -2312,6 +2312,46 @@ guTrack * DbLibrary::FindSong( const wxString &Artist, const wxString &Track )
     }
   }
   dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::FindTrackFile( const wxString &filename )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int PathId = wxNOT_FOUND;
+  int RetVal = 0;
+
+  wxString Path = wxPathOnly( filename );
+  if( !Path.EndsWith( wxT( "/" ) ) )
+    Path += '/';
+  escape_query_str( &Path );
+
+  query = wxString::Format( wxT( "SELECT path_id FROM paths WHERE path_value = '%s' LIMIT 1" ), Path.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      PathId = dbRes.GetInt( 0 );
+  }
+  dbRes.Finalize();
+
+  if( PathId > 0 )
+  {
+    Path = filename.AfterLast( '/' );
+    escape_query_str( &Path );
+
+    query = wxString::Format( wxT( "SELECT song_id FROM songs WHERE song_pathid = %u AND song_filename = '%s' LIMIT 1;" ),
+        PathId, Path.c_str() );
+    dbRes = ExecuteQuery( query );
+    if( dbRes.NextRow() )
+    {
+      RetVal = dbRes.GetInt( 0 );
+    }
+    dbRes.Finalize();
+  }
   return RetVal;
 }
 

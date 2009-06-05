@@ -513,6 +513,14 @@ void guLibPanel::OnLabelCopyToClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::UpdateLabels( void )
+{
+    m_UpdateLock = true;
+    m_LabelsListCtrl->ReloadItems( false );
+    m_UpdateLock = false;
+}
+
+// -------------------------------------------------------------------------------- //
 // ArtistListBox Events
 // -------------------------------------------------------------------------------- //
 

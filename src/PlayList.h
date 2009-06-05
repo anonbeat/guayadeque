@@ -36,83 +36,81 @@ class guPlayerPanel;
 // -------------------------------------------------------------------------------- //
 class guPlayList : public wxVListBox
 {
-    private :
-        guTrackArray    m_Items;
-        long            m_CurItem;
-        long            m_TotalLen;
-        long            m_SmartPlayMaxPlayListTracks;
+  private :
+    DbLibrary *     m_Db;
+    guTrackArray    m_Items;
+    long            m_CurItem;
+    long            m_TotalLen;
+    long            m_SmartPlayMaxPlayListTracks;
 
-        size_t          m_DragOverItem;
-        bool            m_DragOverAfter;
-        bool            m_DragSelfItems;
-        wxPoint         m_DragStart;
-        int             m_DragCount;
-        wxBitmap *      m_PlayBitmap;
+    size_t          m_DragOverItem;
+    bool            m_DragOverAfter;
+    bool            m_DragSelfItems;
+    wxPoint         m_DragStart;
+    int             m_DragCount;
+    wxBitmap *      m_PlayBitmap;
 
-        wxColor         m_PlayBgColor;
-        wxColor         m_PlayFgColor;
-        wxBrush         m_DragBgColor;
-        wxColor         m_SelBgColor;
-        wxColor         m_SelFgColor;
-        wxColor         m_OddBgColor;
-        wxColor         m_EveBgColor;
-        wxColor         m_TextFgColor;
+    wxColor         m_PlayBgColor;
+    wxColor         m_PlayFgColor;
+    wxBrush         m_DragBgColor;
+    wxColor         m_SelBgColor;
+    wxColor         m_SelFgColor;
+    wxColor         m_OddBgColor;
+    wxColor         m_EveBgColor;
+    wxColor         m_TextFgColor;
 //        wxColor         m_SepColor;
 
-        void            OnDragOver( const wxCoord x, const wxCoord y );
-        void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
-        wxCoord         OnMeasureItem( size_t n ) const;
-        void            OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n ) const;
-        void            OnKeyDown( wxKeyEvent &event );
-        void            OnBeginDrag( wxMouseEvent &event );
-        void            OnMouse( wxMouseEvent &event );
-        void            RemoveSelected();
-        void            MoveSelected();
-        void            OnContextMenu( wxContextMenuEvent& event );
+    void            OnDragOver( const wxCoord x, const wxCoord y );
+    void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
+    wxCoord         OnMeasureItem( size_t n ) const;
+    void            OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n ) const;
+    void            OnKeyDown( wxKeyEvent &event );
+    void            OnBeginDrag( wxMouseEvent &event );
+    void            OnMouse( wxMouseEvent &event );
+    void            RemoveSelected();
+    void            MoveSelected();
+    void            OnContextMenu( wxContextMenuEvent& event );
 
 
-        void            OnClearClicked( wxCommandEvent &event );
-        void            OnRemoveClicked( wxCommandEvent &event );
-        void            OnSaveClicked( wxCommandEvent &event );
-        void            OnCopyToClicked( wxCommandEvent &event );
+    void            OnClearClicked( wxCommandEvent &event );
+    void            OnRemoveClicked( wxCommandEvent &event );
+    void            OnSaveClicked( wxCommandEvent &event );
+    void            OnCopyToClicked( wxCommandEvent &event );
+    void            OnEditLabelsClicked( wxCommandEvent &event );
 
-        DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 
-    public :
-        guPlayList( wxWindow * parent,
-                  wxWindowID id = wxID_ANY,
-                  const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxDefaultSize,
-                  long style = wxLB_MULTIPLE );
-        ~guPlayList();
+  public :
+    guPlayList( wxWindow * parent, DbLibrary * db );
+    ~guPlayList();
 
-        void            AddItem( const guTrack &NewItem );
-        void            AddItem( const guTrack * NewItem );
-        void            AddPlayListItem( const wxString &FileName, bool AddPath = false );
+    void            AddItem( const guTrack &NewItem );
+    void            AddItem( const guTrack * NewItem );
+    void            AddPlayListItem( const wxString &FileName, bool AddPath = false );
 
-        void            RefreshItems();
-        void            UpdateView();
+    void            RefreshItems();
+    void            UpdateView();
 
-        guTrack *       GetItem( size_t item );
-        long            GetCount();
-        guTrack *       GetCurrent();
-        int             GetCurItem();
-        void            SetCurrent( const int NewCurItem );
-        guTrack *       GetNext( bool bLoop );
-        guTrack *       GetPrev( bool bLoop );
-        void            ClearItems();
-        long            GetLength( void ) const;
-        wxString        GetLengthStr( void ) const;
-        void            AddToPlayList( const guTrackArray &NewItems, const bool DeleteOld = false );
-        void            SetPlayList( const guTrackArray &NewItems );
-        wxArrayInt      GetSelectedItems();
-        wxString        FindCoverFile( const wxString &DirName );
-        void            Randomize( void );
-        int             GetCaps();
-        void            RemoveItem( int itemnum );
+    guTrack *       GetItem( size_t item );
+    long            GetCount();
+    guTrack *       GetCurrent();
+    int             GetCurItem();
+    void            SetCurrent( const int NewCurItem );
+    guTrack *       GetNext( bool bLoop );
+    guTrack *       GetPrev( bool bLoop );
+    void            ClearItems();
+    long            GetLength( void ) const;
+    wxString        GetLengthStr( void ) const;
+    void            AddToPlayList( const guTrackArray &NewItems, const bool DeleteOld = false );
+    void            SetPlayList( const guTrackArray &NewItems );
+    wxArrayInt      GetSelectedItems();
+    wxString        FindCoverFile( const wxString &DirName );
+    void            Randomize( void );
+    int             GetCaps();
+    void            RemoveItem( int itemnum );
 
-    friend class guAddDropFilesThread;
-    friend class guPlayListDropTarget;
+  friend class guAddDropFilesThread;
+  friend class guPlayListDropTarget;
 
 };
 
