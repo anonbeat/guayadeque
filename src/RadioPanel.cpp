@@ -877,6 +877,7 @@ void guRadioPanel::OnStationListActivated( wxListEvent &event )
                     NewSong->m_Length = 0;
                     //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
                     NewSong->m_CoverId = 0;
+                    NewSong->m_Year = 0;
                     Songs.Add( NewSong );
                 }
             }

@@ -1,11 +1,8 @@
-Guayadeque Music Player 0.0.1 Beta
+Guayadeque Music Player 0.0.4 Beta
 J.Rios anonbeat@gmail.com
 see LICENSE
 
-This is the first public version of this mp3 music player for GTK based on 
-wxWidgets for linux.
-
-Need installed libid3, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1
+Need installed taglib, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1
 
 Have been developed in Fedora core 9, 10 and Ubuntu 8.10
 
