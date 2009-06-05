@@ -19,13 +19,16 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "AlListBox.h"
+
 #include "Commands.h"
-#include "MainFrame.h"
 #include "Config.h"
+#include "Images.h"
+#include "MainApp.h"
+#include "MainFrame.h"
+#include "OnlineLinks.h"
+#include "Utils.h"
 
 #include <wx/renderer.h>
-#include "Utils.h"
-#include "Images.h"
 
 #define ALLISTBOX_ITEM_SIZE  40
 
@@ -91,6 +94,9 @@ class guAlbumListBox : public wxVListBox
         void            OnMouse( wxMouseEvent &event );
         void            OnContextMenu( wxContextMenuEvent& event );
 
+        void            OnSearchLinkClicked( wxCommandEvent &event );
+        wxString        GetSearchText( int Item );
+
         DECLARE_EVENT_TABLE()
 
         friend class guAlbumListBoxTimer;
@@ -135,15 +141,13 @@ guAlListBox::guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &lab
     m_ListBox = new guAlbumListBox( this, db );
     m_Header = new guAlbumListBoxHeader( this, m_ListBox, label, wxPoint( 0, 0 ) );
 
-    if( parent )
-    {
-        parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guAlListBox::OnChangedSize ), NULL, this );
-    }
+    parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guAlListBox::OnChangedSize ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guAlListBox::~guAlListBox()
 {
+    GetParent()->Disconnect( wxEVT_SIZE, wxSizeEventHandler( guAlListBox::OnChangedSize ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -237,6 +241,7 @@ guAlbumListBox::guAlbumListBox( wxWindow * parent, DbLibrary * db ) :
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumListBox::OnContextMenu ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guAlbumListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumListBox::OnKeyDown ), NULL, this );
+    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumListBox::OnSearchLinkClicked ) );
 
     ReloadItems();
 }
@@ -249,6 +254,7 @@ guAlbumListBox::~guAlbumListBox()
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumListBox::OnContextMenu ), NULL, this );
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guAlbumListBox::OnBeginDrag ), NULL, this );
     Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumListBox::OnKeyDown ), NULL, this );
+    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumListBox::OnSearchLinkClicked ) );
 
     if( m_SearchStrTimer )
       delete m_SearchStrTimer;
@@ -468,7 +474,7 @@ void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
         MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
         Menu.Append( MenuItem );
 
-        if( GetSelectedCount() == 1 )
+        if( SelCount == 1 )
         {
             Menu.AppendSeparator();
 
@@ -480,13 +486,20 @@ void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
             MenuItem->SetBitmap( wxBitmap( guImage_edit_delete ) );
             Menu.Append( MenuItem );
         }
+
+        Menu.AppendSeparator();
+
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUM_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
+        Menu.Append( MenuItem );
+
+        if( SelCount == 1 )
+        {
+            Menu.AppendSeparator();
+
+            AddOnlineLinksMenu( &Menu );
+        }
     }
-
-    Menu.AppendSeparator();
-
-    MenuItem = new wxMenuItem( &Menu, ID_ALBUM_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
-    Menu.Append( MenuItem );
 
     PopupMenu( &Menu, Point.x, Point.y );
 }
@@ -592,6 +605,46 @@ long guAlbumListBox::FindItem( const long start, const long Id )
         }
     }
     return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumListBox::OnSearchLinkClicked( wxCommandEvent &event )
+{
+    int Item;
+    unsigned long cookie;
+    Item = GetFirstSelected( cookie );
+    if( Item != wxNOT_FOUND )
+    {
+
+        int index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
+            wxASSERT( Links.Count() > 0 );
+
+            index -= ID_LASTFM_SEARCH_LINK;
+            wxString SearchLink = Links[ index ];
+            wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
+            if( Lang.IsEmpty() )
+            {
+                Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
+                //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
+            }
+            SearchLink.Replace( wxT( "{lang}" ), Lang );
+            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
+            guWebExecute( SearchLink );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guAlbumListBox::GetSearchText( int item )
+{
+    return wxString::Format( wxT( "\"%s\" \"%s\"" ),
+        m_Db->GetArtistName( m_Items[ item ].m_ArtistId ).c_str(),
+        m_Items[ item ].m_Name.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //

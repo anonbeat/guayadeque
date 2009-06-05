@@ -28,21 +28,16 @@
 // -------------------------------------------------------------------------------- //
 class guArListBox : public guListBox
 {
+  protected :
+    virtual void    GetItemsList( void );
+    virtual void    GetContextMenu( wxMenu * menu ) const;
+    void            OnSearchLinkClicked( wxCommandEvent &event );
+    wxString        GetSearchText( int Item );
 
-    protected :
-
-      virtual void GetItemsList( void );
-      virtual void GetContextMenu( wxMenu * menu ) const;
-
-    public :
-
-      guArListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
-        guListBox( parent, db, label )
-      {
-          ReloadItems();
-      };
-
-      virtual int GetSelectedSongs( guTrackArray * songs ) const;
+  public :
+                    guArListBox( wxWindow * parent, DbLibrary * db, wxString label );
+                    ~guArListBox();
+    virtual int     GetSelectedSongs( guTrackArray * songs ) const;
 
 };
 

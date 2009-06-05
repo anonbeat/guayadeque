@@ -182,12 +182,6 @@ wxListItemAttr * guListBox::OnGetItemAttr( long item ) const
 }
 
 // -------------------------------------------------------------------------------- //
-//guListBoxItems guListBox::GetItemsList() const
-//{
-////    return NULL;
-//}
-
-// -------------------------------------------------------------------------------- //
 wxString guListBox::GetItemText( long item ) const
 {
     return m_Items[ item ].m_Name;

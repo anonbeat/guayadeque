@@ -19,11 +19,15 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "SoListBox.h"
-#include "PlayList.h" // LenToString
+
 #include "Config.h" // Configuration
 #include "Commands.h"
 #include "Images.h"
+#include "MainApp.h"
+#include "OnlineLinks.h"
+#include "PlayList.h" // LenToString
 #include "Utils.h"
+
 
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
@@ -59,16 +63,9 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
 
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guSoListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guSoListBox::OnContextMenu ), NULL, this );
+    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
 
-//    m_EveAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-//                              wxColor( 250, 250, 250 ),
-//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
-//
-//    m_OddAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-//                              wxColor( 240, 240, 240 ),
-//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
-//
-//    SetBackgroundColour( wxColor( 250, 250, 250 ) );
+
     wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
     wxColour ListBoxText;
     ListBoxText.Set( ListBoxColor.Red() ^ 0xFF, ListBoxColor.Green() ^ 0xFF, ListBoxColor.Blue() ^ 0xFF );
@@ -292,7 +289,49 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
     MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
     Menu.Append( MenuItem );
 
+    Menu.AppendSeparator();
+
+    AddOnlineLinksMenu( &Menu );
+
     PopupMenu( &Menu, Point.x, Point.y );
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::OnSearchLinkClicked( wxCommandEvent &event )
+{
+    int Item = wxNOT_FOUND;
+    Item = GetNextItem( Item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+    if( Item != wxNOT_FOUND )
+    {
+        int index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
+            wxASSERT( Links.Count() > 0 );
+
+            index -= ID_LASTFM_SEARCH_LINK;
+            wxString SearchLink = Links[ index ];
+            wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
+            if( Lang.IsEmpty() )
+            {
+                Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
+                //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
+            }
+            SearchLink.Replace( wxT( "{lang}" ), Lang );
+            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
+            guWebExecute( SearchLink );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guSoListBox::GetSearchText( int item )
+{
+    return wxString::Format( wxT( "\"%s\" \"%s\"" ),
+        m_Songs[ item ].m_ArtistName.c_str(),
+        m_Songs[ item ].m_SongName.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //

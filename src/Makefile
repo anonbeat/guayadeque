@@ -499,6 +499,21 @@ MediaCtrl.s:
 .PHONY : MediaCtrl.s
 
 # target to build an object file
+OnlineLinks.o:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/OnlineLinks.o
+.PHONY : OnlineLinks.o
+
+# target to preprocess a source file
+OnlineLinks.i:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/OnlineLinks.i
+.PHONY : OnlineLinks.i
+
+# target to generate assembly for a file
+OnlineLinks.s:
+	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/OnlineLinks.s
+.PHONY : OnlineLinks.s
+
+# target to build an object file
 PlayList.o:
 	cd /home/jrios/Projects/guayadeque && $(MAKE) -f src/CMakeFiles/guayadeque.dir/build.make src/CMakeFiles/guayadeque.dir/PlayList.o
 .PHONY : PlayList.o
@@ -880,6 +895,9 @@ help:
 	@echo "... MediaCtrl.o"
 	@echo "... MediaCtrl.i"
 	@echo "... MediaCtrl.s"
+	@echo "... OnlineLinks.o"
+	@echo "... OnlineLinks.i"
+	@echo "... OnlineLinks.s"
 	@echo "... PlayList.o"
 	@echo "... PlayList.i"
 	@echo "... PlayList.s"

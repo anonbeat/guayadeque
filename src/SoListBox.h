@@ -28,26 +28,27 @@
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public wxListCtrl
 {
-    protected :
-      DbLibrary *       m_Db;
-      guTrackArray      m_Songs;
-      wxListItemAttr    m_OddAttr;
-      wxListItemAttr    m_EveAttr;
+  protected :
+    DbLibrary *         m_Db;
+    guTrackArray        m_Songs;
+    wxListItemAttr      m_OddAttr;
+    wxListItemAttr      m_EveAttr;
 
-      wxString OnGetItemText( long item, long column ) const;
-      wxListItemAttr * OnGetItemAttr( long item ) const;
-      void OnBeginDrag( wxMouseEvent &event );
-      void    OnContextMenu( wxContextMenuEvent& event );
+    wxString            OnGetItemText( long item, long column ) const;
+    wxListItemAttr *    OnGetItemAttr( long item ) const;
+    void                OnBeginDrag( wxMouseEvent &event );
+    void                OnContextMenu( wxContextMenuEvent& event );
+    void                OnSearchLinkClicked( wxCommandEvent &event );
+    wxString            GetSearchText( int Item );
 
-    public :
-      guSoListBox( wxWindow * parent, DbLibrary * NewDb );
-      ~guSoListBox();
-
-      void          ReloadItems();
-      wxArrayInt    GetSelection( void ) const;
-      guTrackArray     GetSelectedSongs() const;
-      guTrackArray     GetAllSongs() const;
-      void          ClearSelection();
+  public :
+                        guSoListBox( wxWindow * parent, DbLibrary * NewDb );
+                        ~guSoListBox();
+    void                ReloadItems();
+    wxArrayInt          GetSelection( void ) const;
+    guTrackArray        GetSelectedSongs() const;
+    guTrackArray        GetAllSongs() const;
+    void                ClearSelection();
 
 };
 

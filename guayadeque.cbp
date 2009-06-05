@@ -151,6 +151,8 @@
 		<Unit filename="src/MainFrame.h" />
 		<Unit filename="src/MediaCtrl.cpp" />
 		<Unit filename="src/MediaCtrl.h" />
+		<Unit filename="src/OnlineLinks.cpp" />
+		<Unit filename="src/OnlineLinks.h" />
 		<Unit filename="src/PlayList.cpp" />
 		<Unit filename="src/PlayList.h" />
 		<Unit filename="src/PlayerPanel.cpp" />

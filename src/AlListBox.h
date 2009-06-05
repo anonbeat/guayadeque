@@ -41,11 +41,11 @@ class guAlListBox : public wxScrolledWindow
     void            OnAlbumListSelected( wxListEvent &event );
 
   public :
-                guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
-                ~guAlListBox();
-    void        ReloadItems( const bool reset = true );
-    wxArrayInt  GetSelection() const;
-    int         GetSelectedSongs( guTrackArray * tracks ) const;
+                    guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
+                    ~guAlListBox();
+    void            ReloadItems( const bool reset = true );
+    wxArrayInt      GetSelection() const;
+    int             GetSelectedSongs( guTrackArray * tracks ) const;
 
 };
 
