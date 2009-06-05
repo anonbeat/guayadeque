@@ -152,7 +152,10 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	PlayerLabelsSizer->Add( m_ArtistLabel, 0, wxALL, 2 );
 
 	m_PosLabelSizer = new wxBoxSizer( wxHORIZONTAL );
-	m_PosLabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	//m_PosLabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	m_YearLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_YearLabel->SetToolTip( _( "Show the year of the current track" ) );
+	m_PosLabelSizer->Add( m_YearLabel, 1, wxEXPAND, 5 );
 
 	m_PositionLabel = new wxStaticText( this, wxID_ANY, _("00:00 of 00:00"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PositionLabel->SetToolTip( _( "Show the current position and song length of the current track" ) );
@@ -650,6 +653,12 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     SetTitleLabel( m_MediaSong.m_SongName );
     SetAlbumLabel( m_MediaSong.m_AlbumName );
     SetArtistLabel( m_MediaSong.m_ArtistName );
+    if( m_MediaSong.m_Year > 0 )
+    {
+        m_YearLabel->SetLabel( wxString::Format( wxT( "%u" ), m_MediaSong.m_Year ) );
+    }
+    else
+        m_YearLabel->SetLabel( wxEmptyString );
 
     //guLogWarning( wxT( "SetCurrentTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
     CoverImage = NULL;
