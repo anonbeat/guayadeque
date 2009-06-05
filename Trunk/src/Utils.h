@@ -35,6 +35,10 @@
 #define guRandomInit() (srand( time( NULL ) ))
 #define guRandom(x) (rand() % x)
 
+#define guMin(X,Y) ((X) < (Y) ? (X) : (Y))
+#define guMax(X,Y) ((X) > (Y) ? (X) : (Y))
+
+
 // -------------------------------------------------------------------------------- //
 wxString LenToString( int Len );
 wxArrayString guSplitWords( const wxString &InputStr );

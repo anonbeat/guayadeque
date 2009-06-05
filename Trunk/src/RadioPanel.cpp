@@ -398,7 +398,8 @@ void guRadioStationListBox::ReloadItems( bool Reset )
     if( !Reset )
     {
         EnsureVisible( FirstVisible );
-        RefreshItems( FirstVisible, FirstVisible + GetCountPerPage() );
+        //RefreshItems( FirstVisible, FirstVisible + GetCountPerPage() );
+        RefreshItems( FirstVisible, guMin( ItemCount, FirstVisible + GetCountPerPage() ) - 1 );
     }
 
     wxListItem ListItem;
