@@ -80,6 +80,7 @@ class guMainFrame : public wxFrame
         void                OnRepeat( wxCommandEvent &event );
         void                OnAbout( wxCommandEvent &event );
         void                OnCopyTracksTo( wxCommandEvent &event );
+        void                OnUpdateLabels( wxCommandEvent &event );
 
         void                OnViewLibrary( wxCommandEvent &event );
         void                OnViewRadio( wxCommandEvent &event );

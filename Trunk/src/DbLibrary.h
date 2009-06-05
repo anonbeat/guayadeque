@@ -34,6 +34,8 @@
 #include "wx/wxsqlite3.h"
 
 #define guPLAYLIST_RADIOSTATION     wxNOT_FOUND
+#define guPLAYLIST_NOTDBTRACK       (-2)
+
 #define GU_MAX_QUERY_ROWS    100
 
 // -------------------------------------------------------------------------------- //
@@ -328,7 +330,8 @@ class DbLibrary {
     int                 FindArtist( const wxString &Artist );
     int                 FindAlbum( const wxString &Artist, const wxString &Album );
     int                 FindTrack( const wxString &Artist, const wxString &m_Name );
-    guTrack *          FindSong( const wxString &Artist, const wxString &Track );
+    guTrack *           FindSong( const wxString &Artist, const wxString &Track );
+    int                 FindTrackFile( const wxString &filename );
 
     //
     // Radio support functions

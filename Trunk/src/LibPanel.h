@@ -120,6 +120,7 @@ class guLibPanel : public wxPanel
     guLibPanel( wxWindow * parent, DbLibrary * NewDb, guPlayerPanel * NewPlayerPanel );
     ~guLibPanel();
     void ReloadControls( wxCommandEvent &event );
+    void UpdateLabels( void );
 
 };
 

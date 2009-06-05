@@ -52,6 +52,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
     m_Db = NewDb;
     m_BufferGaugeId = wxNOT_FOUND;
+    m_MediaSong.m_SongId = 0;
+    m_MediaSong.m_Length = 0;
 
     // For the Load configuration
     wxArrayString Songs;
@@ -196,7 +198,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	PlayListPanelSizer->Add( m_PlayListLabelsSizer, 0, wxEXPAND, 5 );
 
-	m_PlayListCtrl = new guPlayList( PlayListPanel, wxID_ANY ); //, wxDefaultPosition, wxDefaultSize, wxLC_NO_HEADER|wxLC_REPORT );
+	m_PlayListCtrl = new guPlayList( PlayListPanel, m_Db ); //, wxDefaultPosition, wxDefaultSize, wxLC_NO_HEADER|wxLC_REPORT );
 	PlayListPanelSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 1 );
 
 	PlayListPanel->SetSizer( PlayListPanelSizer );
