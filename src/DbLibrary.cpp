@@ -1954,7 +1954,8 @@ int DbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
     query += wxT( " (song_id IN ( SELECT settag_songid FROM settags WHERE " \
                   "settag_tagid IN " ) + subquery + wxT( " and settag_songid > 0 ) ) )" );
 
-    query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+    //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+    query += wxT( " ORDER BY song_albumid, song_number;" );
 
     dbRes = ExecuteQuery( query );
 
@@ -1992,7 +1993,8 @@ int DbLibrary::GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs )
     query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
             wxT( "FROM songs WHERE song_genreid IN " );
     query += ArrayIntToStrList( Genres );
-    query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+    //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+    query += wxT( " ORDER BY song_albumid, song_number;" );
 
     dbRes = ExecuteQuery( query );
 
@@ -2029,7 +2031,8 @@ int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs 
     query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
             wxT( "FROM songs WHERE song_artistid IN " );
     query += ArrayIntToStrList( Artists );
-    query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+    //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+    query += wxT( " ORDER BY song_albumid, song_number;" );
 
     dbRes = ExecuteQuery( query );
 
@@ -2066,7 +2069,8 @@ int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs )
     query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
             wxT( "FROM songs WHERE song_albumid IN " );
     query += ArrayIntToStrList( Albums );
-    query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+    //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+    query += wxT( " ORDER BY song_albumid, song_number;" );
 
     dbRes = ExecuteQuery( query );
 
@@ -2321,7 +2325,8 @@ int DbLibrary::GetSongs( wxArrayInt SongIds, guTrackArray * Songs )
   query = wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
           wxT( "FROM songs " );
   query += wxT( "WHERE song_id IN " ) + ArrayIntToStrList( SongIds );
-  query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+  //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+  query += wxT( " ORDER BY song_albumid, song_number;" );
 
   dbRes = ExecuteQuery( query );
 
@@ -2359,7 +2364,8 @@ int DbLibrary::GetSongs( guTrackArray * Songs )
           wxT( "FROM songs " );
   if( GetFiltersCount() )
     query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
-  query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+  //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
+  query += wxT( " ORDER BY song_albumid, song_number;" );
 
   dbRes = ExecuteQuery( query );
 
