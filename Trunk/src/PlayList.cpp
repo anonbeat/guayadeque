@@ -800,6 +800,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         Song.m_FileName = FileName;
         Song.m_SongName = FileName;
         Song.m_Length   = 0;
+        Song.m_Year     = 0;
         AddItem( Song );
         //guLogMessage( wxT( "Added a radio stream" ) );
     }
