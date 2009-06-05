@@ -2281,7 +2281,7 @@ guTrack * DbLibrary::FindSong( const wxString &Artist, const wxString &Track )
   escape_query_str( &ArtistName );
   escape_query_str( &TrackName );
 
-  query = wxT( "SELECT song_id, song_name, song_artistid, artist_name, song_albumid, song_length, song_number, song_pathid, song_filename " ) \
+  query = wxT( "SELECT song_id, song_name, song_artistid, artist_name, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
           wxT( "FROM songs, artists " );
 
   query += wxString::Format( wxT( "WHERE artist_id = song_artistid AND UPPER(artist_name) = '%s' AND UPPER(song_name) = '%s' LIMIT 1;" ), ArtistName.c_str(), TrackName.c_str() );
@@ -2304,8 +2304,7 @@ guTrack * DbLibrary::FindSong( const wxString &Artist, const wxString &Track )
       RetVal->m_FileName = guListItemsGetName( m_PathsCache, dbRes.GetInt( 7 ) ) + dbRes.GetString( 8 );
       RetVal->m_CoverId = guAlbumItemsGetCoverId( m_AlbumsCache, RetVal->m_AlbumId );
       //RetVal->GenreName = dbRes.GetString( 10 );
-      // TODO : Read year from database
-      RetVal->m_Year = 0;
+      RetVal->m_Year = dbRes.GetInt( 9 );
     }
   }
   dbRes.Finalize();

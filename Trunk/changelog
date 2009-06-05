@@ -1,4 +1,5 @@
 
+  * Added the year to the player information
   * Added the links also to the library panel context menu
   * The year is shown in the albums list box
   * Added to options to play or enqueue all tracks in the songs list box
