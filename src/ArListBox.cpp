@@ -69,7 +69,7 @@ void guArListBox::GetContextMenu( wxMenu * Menu ) const
     Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected artists" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+    MenuItem->SetBitmap( wxBitmap( guImage_tags ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs from the selected artists" ) );

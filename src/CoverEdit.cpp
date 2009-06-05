@@ -420,7 +420,7 @@ wxArrayString guFetchCoverLinksThread::ExtractImageInfo( const wxString &Content
     }
     if( !CurParam.IsEmpty() )
         RetVal.Add( CurParam );
-    //guLogMessage( wxT( "ImageLink: %s" ), RetVal[ 3 ].c_str() );
+    guLogMessage( wxT( "ImageLink: %s" ), RetVal[ 3 ].c_str() );
     return RetVal;
 }
 
@@ -449,7 +449,7 @@ int guFetchCoverLinksThread::ExtractImagesInfo( wxString &Content, int Count )
         if( ImageIndex == Count )
             break;
 
-        //guLogMessage( wxT( "Pos: %u" ), StrPos );
+        guLogMessage( wxT( "Pos: %u" ), StrPos );
     }
     return ImageIndex;
 }

@@ -276,7 +276,7 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected songs" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+    MenuItem->SetBitmap( wxBitmap( guImage_tags ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
