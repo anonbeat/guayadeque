@@ -23,6 +23,10 @@
 
 #include <wx/dnd.h>
 
+BEGIN_EVENT_TABLE(guListBox,wxListCtrl)
+    EVT_MOUSE_EVENTS( guListBox::OnMouse)
+END_EVENT_TABLE()
+
 // -------------------------------------------------------------------------------- //
 guListBox::guListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
              wxListCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_VIRTUAL|wxLC_AUTOARRANGE )
@@ -82,7 +86,8 @@ guListBox::guListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
 
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListBox::OnContextMenu ), NULL, this );
-    Connect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( guListBox::OnKeyDown ), NULL, this );
+    //Connect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( guListBox::OnKeyDown ), NULL, this );
+    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListBox::OnKeyDown ), NULL, this );
 
 }
 
@@ -95,7 +100,8 @@ guListBox::~guListBox()
 
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListBox::OnBeginDrag ), NULL, this );
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListBox::OnContextMenu ), NULL, this );
-    Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( guListBox::OnKeyDown ), NULL, this );
+    //Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( guListBox::OnKeyDown ), NULL, this );
+    Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListBox::OnKeyDown ), NULL, this );
 
     m_Items.Clear();
 
@@ -104,24 +110,48 @@ guListBox::~guListBox()
 }
 
 // -------------------------------------------------------------------------------- //
-void guListBox::OnKeyDown( wxListEvent &event )
+void guListBox::OnKeyDown( wxKeyEvent &event )
 {
     //event.Skip();
-    wxChar KeyChar = event.GetKeyCode();
+    int KeyCode = event.GetKeyCode();
 
     //printf( "KeyPressed %i\n", KeyChar );
     //if( wxIsalnum( KeyChar ) )
-    if( ( KeyChar >= 'a' && KeyChar <= 'z' ) ||
-        ( KeyChar >= 'A' && KeyChar <= 'Z' ) ||
-        ( KeyChar >= '0' && KeyChar <= '9' ) )
+    if( ( KeyCode >= 'a' && KeyCode <= 'z' ) ||
+        ( KeyCode >= 'A' && KeyCode <= 'Z' ) ||
+        ( KeyCode >= '0' && KeyCode <= '9' ) )
     {
         if( m_SearchStrTimer->IsRunning() )
         {
             m_SearchStrTimer->Stop();
         }
         m_SearchStrTimer->Start( 500, wxTIMER_ONE_SHOT );
-        m_SearchStr.Append( KeyChar );
+        m_SearchStr.Append( KeyCode );
     }
+    else if( event.ShiftDown() && ( ( KeyCode == WXK_UP ) || ( KeyCode == WXK_DOWN ) ) )
+    {
+        wxListEvent le( wxEVT_COMMAND_LIST_ITEM_SELECTED, GetId() );
+        le.SetEventObject( this );
+        wxPostEvent( this, le );
+    }
+    event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
+void guListBox::OnMouse( wxMouseEvent &event )
+{
+    if( event.LeftDown() && event.ShiftDown() )
+    {
+        wxPoint Where( event.GetX(), event.GetY() );
+        int Flags = wxLIST_HITTEST_ONITEM;
+        if( HitTest( Where, Flags, NULL ) != wxNOT_FOUND )
+        {
+            wxListEvent le( wxEVT_COMMAND_LIST_ITEM_SELECTED, GetId() );
+            le.SetEventObject( this );
+            wxPostEvent( this, le );
+        }
+    }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
