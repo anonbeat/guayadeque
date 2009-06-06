@@ -49,7 +49,9 @@ class guListBox : public wxListCtrl
       void                      OnContextMenu( wxContextMenuEvent& event );
       virtual void              GetContextMenu( wxMenu * menu ) const = 0;
       void                      ShowContextMenu( const wxPoint & pos );
-      void                      OnKeyDown( wxListEvent &event );
+      //void                      OnKeyDown( wxListEvent &event );
+      void                      OnKeyDown( wxKeyEvent &event );
+      void                      OnMouse( wxMouseEvent &event );
 
     public :
       guListBox( wxWindow * parent, DbLibrary * db, wxString label = wxEmptyString );
@@ -64,6 +66,8 @@ class guListBox : public wxListCtrl
       virtual int               GetItemData( long item ) const;
 
     friend class guItemListBoxTimer;
+    DECLARE_EVENT_TABLE()
+
 };
 
 // -------------------------------------------------------------------------------- //

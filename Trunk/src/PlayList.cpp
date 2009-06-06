@@ -765,7 +765,8 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
             Song.m_FileName = wxGetCwd() + wxT( "/" );
         }
 
-        Song.m_FileName +=  UriPath.Unescape( UriPath.GetPath() ); //.AfterLast( '/' );
+        //Song.m_FileName +=  UriPath.Unescape( UriPath.GetPath() ); //.AfterLast( '/' );
+        Song.m_FileName += FileName;
 
         if( wxFileExists( Song.m_FileName ) )
         {
