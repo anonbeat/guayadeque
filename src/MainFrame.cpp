@@ -621,7 +621,7 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        m_CatNotebook->InsertPage( 1, m_RadioPanel, _( "Radio" ), true );
+        m_CatNotebook->InsertPage( wxMin( 1, m_CatNotebook->GetPageCount() ), m_RadioPanel, _( "Radio" ), true );
     }
     else
     {
@@ -639,7 +639,7 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        m_CatNotebook->InsertPage( 2, m_LastFMPanel, _( "LastFM" ), true );
+        m_CatNotebook->InsertPage( wxMin( 2, m_CatNotebook->GetPageCount() ), m_LastFMPanel, _( "LastFM" ), true );
     }
     else
     {
@@ -657,7 +657,7 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        m_CatNotebook->InsertPage( 3, m_LyricsPanel, _( "Lyrics" ), true );
+        m_CatNotebook->InsertPage( wxMin( 3, m_CatNotebook->GetPageCount() ), m_LyricsPanel, _( "Lyrics" ), true );
     }
     else
     {
