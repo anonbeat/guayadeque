@@ -308,7 +308,7 @@ void guListBox::ReloadItems( bool reset )
         SetSelection( SelItems );
         EnsureVisible( FirstVisible );
         //RefreshItems( FirstVisible, FirstVisible + GetCountPerPage() );
-        RefreshItems( FirstVisible, guMin( ItemCount, FirstVisible + GetCountPerPage() ) - 1 );
+        RefreshItems( FirstVisible, wxMin( ItemCount, FirstVisible + GetCountPerPage() ) - 1 );
     }
     //guLogMessage( wxT( "ITEMLISTBOX: FirstVisible: %i" ), FirstVisible );
     //guLogMessage( wxT( "ITEMLISTBOX: ItemCount   : %i" ), ItemCount );

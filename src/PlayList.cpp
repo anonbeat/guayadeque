@@ -397,7 +397,7 @@ void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
     // to determine if will be inserted before or after
     if( ( int ) m_DragOverItem != wxNOT_FOUND )
     {
-        m_DragOverAfter = ( y > ( ( ( int ) m_DragOverItem + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) );
+        m_DragOverAfter = ( y > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
         RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetCount() ) );
     }
     //printf( "DragOverItem: %d ( %d, %d )\n", DragOverItem, x, y );
