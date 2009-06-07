@@ -77,7 +77,7 @@ class guLibPanel : public wxPanel
     void OnLabelListSelected( wxListEvent &event );
     void OnLabelPlayClicked( wxCommandEvent &event );
     void OnLabelQueueClicked( wxCommandEvent &event );
-    void OnLabelClearSelectClicked( wxCommandEvent &event );
+//    void OnLabelClearSelectClicked( wxCommandEvent &event );
     void OnLabelCopyToClicked( wxCommandEvent &event );
 
     // ArtistsListBox Events

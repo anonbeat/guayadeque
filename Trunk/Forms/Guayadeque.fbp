@@ -3851,7 +3851,7 @@
                         <event name="OnRightDClick"></event>
                         <event name="OnRightDown"></event>
                         <event name="OnRightUp"></event>
-                        <event name="OnScroll"></event>
+                        <event name="OnScroll">OnPlayerPositionSliderScrollChanged</event>
                         <event name="OnScrollBottom"></event>
                         <event name="OnScrollChanged">OnPlayerPositionSliderScrollChanged</event>
                         <event name="OnScrollLineDown"></event>
@@ -33711,7 +33711,7 @@
                 </object>
             </object>
         </object>
-        <object class="Dialog" expanded="1">
+        <object class="Dialog" expanded="0">
             <property name="bg"></property>
             <property name="center"></property>
             <property name="context_help"></property>
