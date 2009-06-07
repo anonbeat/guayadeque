@@ -1,4 +1,6 @@
 
+  * The Links now have names. So you can have multiple links with same host.
+    Edit the names in Preferences->Links
   * Added Edit Labels Option to Playlist tracks
   * Added the year to the player information
   * Added the links also to the library panel context menu

@@ -141,12 +141,13 @@ void guLastFMInfoCtrl::CreateContextMenu( wxMenu * Menu )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "SearchLinks" ) );
         if( ( count = Links.Count() ) )
         {
             for( index = 0; index < count; index++ )
             {
                 wxURI Uri( Links[ index ] );
-                MenuItem = new wxMenuItem( Menu, ID_LASTFM_SEARCH_LINK + index, Uri.GetServer(), Links[ index ] );
+                MenuItem = new wxMenuItem( Menu, ID_LASTFM_SEARCH_LINK + index, Names[ index ], Links[ index ] );
                 wxString IconFile = wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) + Uri.GetServer() + wxT( ".ico" );
                 if( wxFileExists( IconFile ) )
                 {
@@ -351,7 +352,7 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !m_Info->m_Artist->m_Url.IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "www.last.fm" ), _( "Visit last.fm page for this item" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
         MenuItem->SetBitmap( wxBitmap( guImage_lastfm_as_on ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
@@ -505,7 +506,7 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !m_Info->m_Album->m_Url.IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "www.last.fm" ), _( "Visit last.fm page for this item" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
         MenuItem->SetBitmap( wxBitmap( guImage_lastfm_as_on ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
@@ -597,7 +598,7 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !m_Info->m_Artist->m_Url.IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "www.last.fm" ), _( "Visit last.fm page for this item" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
         MenuItem->SetBitmap( wxBitmap( guImage_lastfm_as_on ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
@@ -691,7 +692,7 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !m_Info->m_Track->m_Url.IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "www.last.fm" ), _( "Visit last.fm page for this item" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
         MenuItem->SetBitmap( wxBitmap( guImage_lastfm_as_on ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
