@@ -408,10 +408,22 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	LinksListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_LinksListBox = new wxListBox( m_LinksPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	m_LinksListBox->Append( m_Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) ) );
+    wxArrayString SearchLinks = m_Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
+	m_LinksListBox->Append( SearchLinks );
 	m_LinksNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "SearchLinks" ) );
-	while( m_LinksNames.Count() < m_LinksListBox->GetCount() )
+    int count = m_LinksListBox->GetCount();
+	while( m_LinksNames.Count() < count )
         m_LinksNames.Add( wxEmptyString );
+    int index;
+    for( index = 0; index < count; index++ )
+    {
+        if( m_LinksNames[ index ].IsEmpty() )
+        {
+            wxURI Uri( SearchLinks[ index ] );
+            m_LinksNames[ index ] = Uri.GetServer();
+        }
+    }
+
 	LinksListBoxSizer->Add( m_LinksListBox, 1, wxALL|wxEXPAND, 5 );
 
 	wxBoxSizer* LinksBtnSizer;
@@ -979,6 +991,12 @@ void guPrefDialog::OnLinksSaveBtnClick( wxCommandEvent &event )
 {
     m_LinksListBox->SetString( m_LinkSelected, m_LinksUrlTextCtrl->GetValue() );
     m_LinksNames[ m_LinkSelected ] = m_LinksNameTextCtrl->GetValue();
+    if( m_LinksNames[ m_LinkSelected ].IsEmpty() )
+    {
+        wxURI Uri( m_LinksUrlTextCtrl->GetValue() );
+        m_LinksNames[ m_LinkSelected ] = Uri.GetServer();
+        m_LinksNameTextCtrl->SetValue( Uri.GetServer() );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

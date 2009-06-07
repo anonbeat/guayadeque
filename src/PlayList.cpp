@@ -517,9 +517,9 @@ long guPlayList::GetCount()
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::UpdateView()
+void guPlayList::UpdateView( bool Scroll )
 {
-    if( !IsVisible( m_CurItem ) )
+    if( Scroll && !IsVisible( m_CurItem ) )
     {
         ScrollToLine( m_CurItem );
     }
@@ -1106,7 +1106,7 @@ bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
     if( m_PlayList->m_DragSelfItems )
     {
         m_PlayList->MoveSelected();
-        m_PlayList->UpdateView();
+        m_PlayList->UpdateView( false );
     }
     else
     {

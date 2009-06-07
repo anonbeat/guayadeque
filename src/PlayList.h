@@ -89,7 +89,7 @@ class guPlayList : public wxVListBox
     void            AddPlayListItem( const wxString &FileName, bool AddPath = false );
 
     void            RefreshItems();
-    void            UpdateView();
+    void            UpdateView( bool Scroll = true );
 
     guTrack *       GetItem( size_t item );
     long            GetCount();
