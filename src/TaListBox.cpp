@@ -75,11 +75,11 @@ void guTaListBox::GetContextMenu( wxMenu * Menu ) const
         Menu->Append( MenuItem );
     }
 
-    Menu->AppendSeparator();
-
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_CLEARSELECTION, _( "Clear selection" ), _( "Unselect all selected labels" ) );
-    //MenuItem->SetBitmap( wxBitmap( GU_CONFIG_IMAGES_DIR + wxT("/images/media-playback-start.png"), wxBITMAP_TYPE_ANY ) );
-    Menu->Append( MenuItem );
+//    Menu->AppendSeparator();
+//
+//    MenuItem = new wxMenuItem( Menu, ID_LABEL_CLEARSELECTION, _( "Clear selection" ), _( "Unselect all selected labels" ) );
+//    //MenuItem->SetBitmap( wxBitmap( GU_CONFIG_IMAGES_DIR + wxT("/images/media-playback-start.png"), wxBITMAP_TYPE_ANY ) );
+//    Menu->Append( MenuItem );
 
     Menu->AppendSeparator();
 

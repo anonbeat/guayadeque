@@ -49,7 +49,7 @@
 #define ID_LABEL_EDIT                   1032
 #define ID_LABEL_PLAY                   1033
 #define ID_LABEL_ENQUEUE                1034
-#define ID_LABEL_CLEARSELECTION         1035
+//#define ID_LABEL_CLEARSELECTION         1035
 #define ID_LABEL_COPYTO                 1036
 #define ID_LABEL_UPDATELABELS           1037
 
