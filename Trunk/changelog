@@ -1,4 +1,6 @@
 
+  * Fixed a bug when dragging tracks in the playlist and the list were
+    scrolled down.
   * The Links now have names. So you can have multiple links with same host.
     Edit the names in Preferences->Links
   * Added Edit Labels Option to Playlist tracks

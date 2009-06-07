@@ -2114,8 +2114,8 @@ int DbLibrary::GetRandomTracks( guTrackArray * Tracks )
 
   query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
           wxT( "FROM songs " );
-  if( GetFiltersCount() )
-    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+//  if( GetFiltersCount() )
+//    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
   query += wxT( " LIMIT %u, 1;" );
 
   query = wxString::Format( query, guRandom( TrackCnt ) );
