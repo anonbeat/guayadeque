@@ -400,6 +400,20 @@ void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
         m_DragOverAfter = ( y > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
         RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetCount() ) );
     }
+    int Width;
+    int Height;
+    GetSize( &Width, &Height );
+    if( ( y > ( Height - 10 ) ) && GetLastVisibleLine() != ( GetCount() - 1 ) )
+    {
+        ScrollLines( 1 );
+    }
+    else
+    {
+        if( ( y < 10 ) && GetFirstVisibleLine() > 0 )
+        {
+            ScrollLines( -1 );
+        }
+    }
     //printf( "DragOverItem: %d ( %d, %d )\n", DragOverItem, x, y );
 }
 
