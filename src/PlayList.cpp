@@ -676,6 +676,13 @@ void guPlayList::Randomize( void )
     int count = m_Items.Count();
     guTrack SavedItem;
 
+    if( m_CurItem > 0 )
+    {
+        SavedItem = m_Items[ 0 ];
+        m_Items[ 0 ] = m_Items[ m_CurItem ];
+        m_Items[ m_CurItem ] = SavedItem;
+        m_CurItem = 0;
+    }
     if( count > 2 )
     {
         for( index = 0; index < count; index++ )
@@ -683,15 +690,16 @@ void guPlayList::Randomize( void )
             do {
                 pos = guRandom( count );
                 newpos = guRandom( count );
-            } while( pos == newpos );
+            } while( ( pos == newpos ) || !pos || !newpos );
             SavedItem = m_Items[ pos ];
             m_Items[ pos ] = m_Items[ newpos ];
             m_Items[ newpos ] = SavedItem;
-            if( pos == m_CurItem )
-                m_CurItem = newpos;
-            else if( newpos == m_CurItem )
-                m_CurItem = pos;
+//            if( pos == m_CurItem )
+//                m_CurItem = newpos;
+//            else if( newpos == m_CurItem )
+//                m_CurItem = pos;
             //wxMilliSleep( 1 );
+           //guLogMessage( wxT( "%u -> %u" ), pos, newpos );
         }
         DoSelectAll( false );
         UpdateView();
