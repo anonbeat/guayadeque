@@ -51,10 +51,12 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	wxStaticBoxSizer *  OnlineFiltersSizer;
 	wxBoxSizer *        OnlineBtnSizer;
 	wxStaticBoxSizer *  BrowserCmdSizer;
-	wxBoxSizer *        LinksMainSizer;
-	wxStaticBoxSizer *  LinksSizer;
-	wxBoxSizer *        LinksBtnSizer;
-	wxStaticBoxSizer *  LinksHelpSizer;
+//	wxBoxSizer *        LinksMainSizer;
+//	wxStaticBoxSizer *  LinksSizer;
+//	wxBoxSizer *        LinksBtnSizer;
+//	wxStaticBoxSizer *  LinksHelpSizer;
+
+    m_LinkSelected = wxNOT_FOUND;
 
     m_Config = ( guConfig * ) guConfig::Get();
     if( !m_Config )
@@ -351,18 +353,72 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 
 
     // Links
+//	m_LinksPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+//	LinksMainSizer = new wxBoxSizer( wxVERTICAL );
+//
+//	LinksSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, wxT(" Links ") ), wxHORIZONTAL );
+//
+//	m_LinksListBox = new wxListBox( m_LinksPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+//	m_LinksListBox->Append( m_Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) ) );
+//	LinksSizer->Add( m_LinksListBox, 1, wxALL|wxEXPAND, 5 );
+//
+//	LinksBtnSizer = new wxBoxSizer( wxVERTICAL );
+//
+//	m_LinksAddBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, 0 );
+//	LinksBtnSizer->Add( m_LinksAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+//
+//	m_LinksMoveUpBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_go_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_LinksMoveUpBtn->Enable( false );
+//	LinksBtnSizer->Add( m_LinksMoveUpBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+//
+//	m_LinksMoveDownBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_go_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_LinksMoveDownBtn->Enable( false );
+//	LinksBtnSizer->Add( m_LinksMoveDownBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+//
+//	m_LinksDelBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_LinksDelBtn->Enable( false );
+//	LinksBtnSizer->Add( m_LinksDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+//
+//	LinksSizer->Add( LinksBtnSizer, 0, wxEXPAND, 5 );
+//
+//	LinksMainSizer->Add( LinksSizer, 1, wxEXPAND|wxALL, 5 );
+//
+//	LinksHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
+//
+//	wxStaticText * LinksHelpText;
+//	LinksHelpText = new wxStaticText( m_LinksPanel, wxID_ANY, _( "Add urls using :\n{lang} : 2 lettes language code.\n{text} : Text to search." ), wxDefaultPosition, wxDefaultSize, 0 );
+//	LinksHelpText->Wrap( -1 );
+//	LinksHelpSizer->Add( LinksHelpText, 0, wxALL, 5 );
+//
+//	LinksMainSizer->Add( LinksHelpSizer, 0, wxEXPAND|wxALL, 5 );
+//
+//	m_LinksPanel->SetSizer( LinksMainSizer );
+//	m_LinksPanel->Layout();
+//	LinksMainSizer->Fit( m_LinksPanel );
+//	m_MainNotebook->AddPage( m_LinksPanel, _( "Links" ), false );
+
 	m_LinksPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* LinksMainSizer;
 	LinksMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	LinksSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, wxT(" Links ") ), wxHORIZONTAL );
+	wxStaticBoxSizer* LinksLabelSizer;
+	LinksLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, _(" Links ") ), wxVERTICAL );
+
+	wxBoxSizer* LinksListBoxSizer;
+	LinksListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_LinksListBox = new wxListBox( m_LinksPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_LinksListBox->Append( m_Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) ) );
-	LinksSizer->Add( m_LinksListBox, 1, wxALL|wxEXPAND, 5 );
+	m_LinksNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "SearchLinks" ) );
+	while( m_LinksNames.Count() < m_LinksListBox->GetCount() )
+        m_LinksNames.Add( wxEmptyString );
+	LinksListBoxSizer->Add( m_LinksListBox, 1, wxALL|wxEXPAND, 5 );
 
+	wxBoxSizer* LinksBtnSizer;
 	LinksBtnSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_LinksAddBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LinksAddBtn->Enable( false );
 	LinksBtnSizer->Add( m_LinksAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_LinksMoveUpBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_go_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
@@ -375,16 +431,54 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 
 	m_LinksDelBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LinksDelBtn->Enable( false );
+
 	LinksBtnSizer->Add( m_LinksDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	LinksSizer->Add( LinksBtnSizer, 0, wxEXPAND, 5 );
+	LinksListBoxSizer->Add( LinksBtnSizer, 0, wxEXPAND, 5 );
 
-	LinksMainSizer->Add( LinksSizer, 1, wxEXPAND|wxALL, 5 );
+	LinksLabelSizer->Add( LinksListBoxSizer, 1, wxEXPAND, 5 );
 
+	wxBoxSizer* LinksEditorSizer;
+	LinksEditorSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxFlexGridSizer* LinksFieldsSizer;
+	LinksFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	LinksFieldsSizer->AddGrowableCol( 1 );
+	LinksFieldsSizer->SetFlexibleDirection( wxBOTH );
+	LinksFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+    wxStaticText * LinkUrlStaticText;
+	LinkUrlStaticText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Url:"), wxDefaultPosition, wxDefaultSize, 0 );
+	LinkUrlStaticText->Wrap( -1 );
+	LinksFieldsSizer->Add( LinkUrlStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	m_LinksUrlTextCtrl = new wxTextCtrl( m_LinksPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	LinksFieldsSizer->Add( m_LinksUrlTextCtrl, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+
+    wxStaticText * LinkNameStaticText;
+	LinkNameStaticText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	LinkNameStaticText->Wrap( -1 );
+	LinksFieldsSizer->Add( LinkNameStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	m_LinksNameTextCtrl = new wxTextCtrl( m_LinksPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	LinksFieldsSizer->Add( m_LinksNameTextCtrl, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+
+	LinksEditorSizer->Add( LinksFieldsSizer, 1, wxEXPAND, 5 );
+
+	m_LinksAcceptBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LinksAcceptBtn->Enable( false );
+
+	LinksEditorSizer->Add( m_LinksAcceptBtn, 0, wxALL, 5 );
+
+	LinksLabelSizer->Add( LinksEditorSizer, 0, wxEXPAND, 5 );
+
+	LinksMainSizer->Add( LinksLabelSizer, 1, wxEXPAND|wxALL, 5 );
+
+	wxStaticBoxSizer* LinksHelpSizer;
 	LinksHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
 
 	wxStaticText * LinksHelpText;
-	LinksHelpText = new wxStaticText( m_LinksPanel, wxID_ANY, _( "Add urls using :\n{lang} : 2 lettes language code.\n{text} : Text to search." ), wxDefaultPosition, wxDefaultSize, 0 );
+	LinksHelpText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Add urls using :\n{lang} : 2 lettes language code.\n{text} : Text to search."), wxDefaultPosition, wxDefaultSize, 0 );
 	LinksHelpText->Wrap( -1 );
 	LinksHelpSizer->Add( LinksHelpText, 0, wxALL, 5 );
 
@@ -393,9 +487,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	m_LinksPanel->SetSizer( LinksMainSizer );
 	m_LinksPanel->Layout();
 	LinksMainSizer->Fit( m_LinksPanel );
-	m_MainNotebook->AddPage( m_LinksPanel, _( "Links" ), false );
+	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
 
-    //
+    // Copy To Panel
 	m_CopyPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* CopyToMainSizer;
 	CopyToMainSizer = new wxBoxSizer( wxVERTICAL );
@@ -471,11 +565,14 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
 
 	m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
-	m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLinkListBoxDClicked ), NULL, this );
+	//m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLinkListBoxDClicked ), NULL, this );
 	m_LinksAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
 	m_LinksDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
 	m_LinksMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
 	m_LinksMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
+	m_LinksUrlTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
+	m_LinksNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
+	m_LinksAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
 
 	m_CopyToFileName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
 }
@@ -523,6 +620,7 @@ guPrefDialog::~guPrefDialog()
         m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
         wxArrayString SearchLinks = m_LinksListBox->GetStrings();
         m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
+        m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "SearchLinks" ), false );
         m_Config->WriteStr( wxT( "CopyToPattern" ), m_CopyToFileName->GetValue(), wxT( "General" ) );
 
         // TODO : Make this process in a thread
@@ -574,11 +672,14 @@ guPrefDialog::~guPrefDialog()
 	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
 
 	m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
-	m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLinkListBoxDClicked ), NULL, this );
+	//m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLinkListBoxDClicked ), NULL, this );
 	m_LinksAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
 	m_LinksDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
 	m_LinksMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
 	m_LinksMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
+	m_LinksUrlTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
+	m_LinksNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
+	m_LinksAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
 
 	m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
 }
@@ -786,50 +887,30 @@ void guPrefDialog::OnLinksListBoxSelected( wxCommandEvent &event )
             m_LinksMoveDownBtn->Enable();
         else
             m_LinksMoveDownBtn->Disable();
+
+        m_LinksUrlTextCtrl->SetValue( m_LinksListBox->GetString( m_LinkSelected ) );
+        m_LinksNameTextCtrl->SetValue( m_LinksNames[ m_LinkSelected ] );
+        m_LinksAcceptBtn->Disable();
     }
     else
     {
         m_LinksDelBtn->Disable();
         m_LinksMoveUpBtn->Disable();
         m_LinksMoveDownBtn->Disable();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPrefDialog::OnLinkListBoxDClicked( wxCommandEvent &event )
-{
-    int index = event.GetInt();
-    if( index != wxNOT_FOUND )
-    {
-        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Link: " ), _( "Edit the url to search" ), m_LinksListBox->GetString( index ) );
-        if( EntryDialog )
-        {
-            if( EntryDialog->ShowModal() == wxID_OK )
-            {
-                if( m_LinksListBox->FindString( EntryDialog->GetValue(), true ) == wxNOT_FOUND )
-                {
-                    m_LinksListBox->SetString( index, EntryDialog->GetValue() );
-                }
-            }
-            EntryDialog->Destroy();
-        }
+        m_LinksAcceptBtn->Disable();
+        m_LinksUrlTextCtrl->SetValue( wxEmptyString );
+        m_LinksNameTextCtrl->SetValue( wxEmptyString );
     }
 }
 
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLinksAddBtnClick( wxCommandEvent& event )
 {
-    wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Link: " ), _( "Enter the url to search" ), wxEmptyString );
-    if( EntryDialog )
+    wxString Url = m_LinksUrlTextCtrl->GetValue();
+    if( !Url.IsEmpty() )
     {
-        if( EntryDialog->ShowModal() == wxID_OK )
-        {
-            if( m_LinksListBox->FindString( EntryDialog->GetValue(), true ) == wxNOT_FOUND )
-            {
-                m_LinksListBox->Append( EntryDialog->GetValue() );
-            }
-        }
-        EntryDialog->Destroy();
+        m_LinksListBox->Append( m_LinksUrlTextCtrl->GetValue() );
+        m_LinksNames.Add( m_LinksNameTextCtrl->GetValue() );
     }
 }
 
@@ -839,6 +920,7 @@ void guPrefDialog::OnLinksDelBtnClick( wxCommandEvent& event )
     if( m_LinkSelected != wxNOT_FOUND )
     {
         m_LinksListBox->Delete( m_LinkSelected );
+        m_LinksNames.RemoveAt( m_LinkSelected );
         m_LinkSelected = wxNOT_FOUND;
     }
 }
@@ -846,12 +928,15 @@ void guPrefDialog::OnLinksDelBtnClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLinkMoveUpBtnClick( wxCommandEvent &event )
 {
-    wxString CurItem = m_LinksListBox->GetString( m_LinkSelected );
+    wxString CurUrl = m_LinksListBox->GetString( m_LinkSelected );
+    wxString CurName = m_LinksNames[ m_LinkSelected ];
     m_LinksListBox->SetString( m_LinkSelected, m_LinksListBox->GetString( m_LinkSelected - 1 ) );
+    m_LinksNames[ m_LinkSelected ] = m_LinksNames[ m_LinkSelected - 1 ];
     m_LinkSelected--;
-    m_LinksListBox->SetString( m_LinkSelected, CurItem );
+    m_LinksListBox->SetString( m_LinkSelected, CurUrl );
+    m_LinksNames[ m_LinkSelected ] = CurName;
     m_LinksListBox->SetSelection( m_LinkSelected );
-//    LinksListBox->Refresh();
+
     event.SetInt( m_LinkSelected );
     OnLinksListBoxSelected( event );
 }
@@ -859,14 +944,41 @@ void guPrefDialog::OnLinkMoveUpBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLinkMoveDownBtnClick( wxCommandEvent &event )
 {
-    wxString CurItem = m_LinksListBox->GetString( m_LinkSelected );
+    wxString CurUrl = m_LinksListBox->GetString( m_LinkSelected );
+    wxString CurName = m_LinksNames[ m_LinkSelected ];
     m_LinksListBox->SetString( m_LinkSelected, m_LinksListBox->GetString( m_LinkSelected + 1 ) );
+    m_LinksNames[ m_LinkSelected ] = m_LinksNames[ m_LinkSelected + 1 ];
     m_LinkSelected++;
-    m_LinksListBox->SetString( m_LinkSelected, CurItem );
+    m_LinksListBox->SetString( m_LinkSelected, CurUrl );
+    m_LinksNames[ m_LinkSelected ] = CurName;
     m_LinksListBox->SetSelection( m_LinkSelected );
-//    LinksListBox->Refresh();
+
     event.SetInt( m_LinkSelected );
     OnLinksListBoxSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLinksTextChanged( wxCommandEvent &event )
+{
+    if( !m_LinksUrlTextCtrl->GetValue().IsEmpty() )
+    {
+        m_LinksAddBtn->Enable();
+        if( m_LinkSelected != wxNOT_FOUND )
+            m_LinksAcceptBtn->Enable();
+    }
+    else
+    {
+        m_LinksAddBtn->Disable();
+        if( m_LinkSelected != wxNOT_FOUND )
+            m_LinksAcceptBtn->Disable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLinksSaveBtnClick( wxCommandEvent &event )
+{
+    m_LinksListBox->SetString( m_LinkSelected, m_LinksUrlTextCtrl->GetValue() );
+    m_LinksNames[ m_LinkSelected ] = m_LinksNameTextCtrl->GetValue();
 }
 
 // -------------------------------------------------------------------------------- //

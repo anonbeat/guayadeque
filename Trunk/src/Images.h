@@ -61,6 +61,7 @@ extern const char * guImage_application_exit[];
 extern const char * guImage_splash[];
 extern const char * guImage_nophoto[];
 extern const char * guImage_tags[];
+extern const char * guImage_tiny_accept[];
 
 #endif
 // -------------------------------------------------------------------------------- //

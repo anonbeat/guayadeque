@@ -140,12 +140,13 @@ wxArrayString guConfig::ReadAStr( const wxString &Key, const wxString &Default, 
 }
 
 // -------------------------------------------------------------------------------- //
-bool guConfig::WriteAStr( const wxString &Key, const wxArrayString &Value, const wxString &Category   )
+bool guConfig::WriteAStr( const wxString &Key, const wxArrayString &Value, const wxString &Category, bool ResetGroup )
 {
     wxMutexLocker Locker( m_ConfigMutex );
     int index;
     int count = Value.Count();
-    DeleteGroup( Category );
+    if( ResetGroup )
+        DeleteGroup( Category );
     SetPath( Category );
     for( index = 0; index < count; index++ )
     {

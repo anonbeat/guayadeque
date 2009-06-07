@@ -100,6 +100,10 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_LinksDelBtn;
     wxBitmapButton *            m_LinksMoveUpBtn;
     wxBitmapButton *            m_LinksMoveDownBtn;
+    wxTextCtrl *                m_LinksUrlTextCtrl;
+    wxTextCtrl *                m_LinksNameTextCtrl;
+    wxBitmapButton *            m_LinksAcceptBtn;
+    wxArrayString               m_LinksNames;
 
 	wxPanel *                   m_CopyPanel;
 	wxTextCtrl *                m_CopyToFileName;
@@ -130,11 +134,13 @@ class guPrefDialog : public wxDialog
 	void OnOnlineDelBtnClick( wxCommandEvent& event );
 	void OnOnlineListBoxDClicked( wxCommandEvent &event );
 	void OnLinksListBoxSelected( wxCommandEvent &event );
-    void OnLinkListBoxDClicked( wxCommandEvent &event );
+    //void OnLinkListBoxDClicked( wxCommandEvent &event );
     void OnLinksAddBtnClick( wxCommandEvent& event );
 	void OnLinksDelBtnClick( wxCommandEvent& event );
 	void OnLinkMoveUpBtnClick( wxCommandEvent &event );
 	void OnLinkMoveDownBtnClick( wxCommandEvent &event );
+	void OnLinksTextChanged( wxCommandEvent &event );
+	void OnLinksSaveBtnClick( wxCommandEvent &event );
 
 	void OnCopyToFileNameUpdated( wxCommandEvent &event );
 

@@ -60,5 +60,6 @@
 #include "./images/splash.xpm"
 #include "./images/nophoto.xpm"
 #include "./images/tags.xpm"
+#include "./images/tiny_accept.xpm"
 
 // -------------------------------------------------------------------------------- //
