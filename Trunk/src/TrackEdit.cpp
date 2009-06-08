@@ -21,7 +21,10 @@
 #include "TrackEdit.h"
 #include "Config.h"
 #include "Images.h"
+#include "LastFM.h"
 #include "Utils.h"
+
+#include "wx/datetime.h"
 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs ) :
@@ -53,12 +56,12 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	wxBoxSizer* DetailSizer;
 	DetailSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticLine * TopStaticLine;
-	TopStaticLine = new wxStaticLine( m_DetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	DetailSizer->Add( TopStaticLine, 0, wxEXPAND | wxALL, 5 );
+//    wxStaticLine * TopStaticLine;
+//	TopStaticLine = new wxStaticLine( m_DetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+//	DetailSizer->Add( TopStaticLine, 0, wxEXPAND | wxALL, 5 );
 
-	wxBoxSizer* DataSizer;
-	DataSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxStaticBoxSizer* DataSizer;
+	DataSizer = new wxStaticBoxSizer( new wxStaticBox( m_DetailPanel, wxID_ANY, _( " Details " ) ), wxVERTICAL );
 
 	wxFlexGridSizer* DataFlexSizer;
 	DataFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
@@ -123,16 +126,28 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_YeStaticText->Wrap( -1 );
 	DataFlexSizer->Add( m_YeStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
+//	m_YearTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+//	DataFlexSizer->Add( m_YearTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	wxBoxSizer* YearSizer;
+	YearSizer = new wxBoxSizer( wxHORIZONTAL );
+
 	m_YearTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_YearTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	YearSizer->Add( m_YearTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	m_GetYearButton = new wxBitmapButton( m_DetailPanel, wxID_ANY, wxBitmap( guImage_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_GetYearButton->SetToolTip( _( "Search in Last.fm the year of the current album" ) );
+	YearSizer->Add( m_GetYearButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	DataFlexSizer->Add( YearSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 
 	DataSizer->Add( DataFlexSizer, 1, wxEXPAND, 5 );
 
 	DetailSizer->Add( DataSizer, 1, wxEXPAND, 5 );
 
-    wxStaticLine * BottomStaticLine;
-	BottomStaticLine = new wxStaticLine( m_DetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	DetailSizer->Add( BottomStaticLine, 0, wxEXPAND | wxALL, 5 );
+//    wxStaticLine * BottomStaticLine;
+//	BottomStaticLine = new wxStaticLine( m_DetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+//	DetailSizer->Add( BottomStaticLine, 0, wxEXPAND | wxALL, 5 );
 
 	m_DetailPanel->SetSizer( DetailSizer );
 	m_DetailPanel->Layout();
@@ -179,6 +194,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_NuCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnNuCopyButtonClicked ), NULL, this );
 	m_GeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
+	m_GetYearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
 
 	//
     // Force the 1st listbox item to be selected
@@ -203,6 +219,7 @@ guTrackEditor::~guTrackEditor()
 	m_NuCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnNuCopyButtonClicked ), NULL, this );
 	m_GeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
+	m_GetYearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
 }
 
 // -------------------------------------------------------------------------------- //
@@ -325,6 +342,28 @@ void guTrackEditor::OnYeCopyButtonClicked( wxCommandEvent& event )
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_Year = Year;
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnGetYearButtonClicked( wxCommandEvent& event )
+{
+    guLastFM LastFM;
+    wxString Artist = m_ArtistTextCtrl->GetValue();
+    wxString Album = m_AlbumTextCtrl->GetValue();
+    if( !Artist.IsEmpty() && !Album.IsEmpty() )
+    {
+        guAlbumInfo AlbumInfo = LastFM.AlbumGetInfo( Artist, Album );
+        if( !AlbumInfo.m_ReleaseDate.IsEmpty() )
+        {
+            // "23 May 2005, 00:00"
+            //guLogMessage( wxT( "%s - %s Release Date: '%s'" ), Artist.c_str(), Album.c_str(), AlbumInfo.m_ReleaseDate.Trim().Trim( false ).c_str() );
+            int Pos = AlbumInfo.m_ReleaseDate.Find( ',' );
+            if( Pos != wxNOT_FOUND )
+            {
+                m_YearTextCtrl->SetValue( AlbumInfo.m_ReleaseDate.Mid( Pos - 4, 4 ) );
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
