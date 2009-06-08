@@ -58,17 +58,19 @@ class guTrackEditor : public wxDialog
 		wxStaticText *      m_GeStaticText;
 		wxTextCtrl *        m_GenreTextCtrl;
 		wxBitmapButton *    m_YeCopyButton;
+		wxBitmapButton *    m_GetYearButton;
 		wxStaticText *      m_YeStaticText;
 		wxTextCtrl *        m_YearTextCtrl;
 
 		// Event handlers, overide them in your derived class
-		void OnSongListBoxSelected( wxCommandEvent& event );
-		void OnArCopyButtonClicked( wxCommandEvent& event );
-		void OnAlCopyButtonClicked( wxCommandEvent& event );
-		void OnTiCopyButtonClicked( wxCommandEvent& event );
-		void OnNuCopyButtonClicked( wxCommandEvent& event );
-		void OnGeCopyButtonClicked( wxCommandEvent& event );
-		void OnYeCopyButtonClicked( wxCommandEvent& event );
+		void OnSongListBoxSelected( wxCommandEvent &event );
+		void OnArCopyButtonClicked( wxCommandEvent &event );
+		void OnAlCopyButtonClicked( wxCommandEvent &event );
+		void OnTiCopyButtonClicked( wxCommandEvent &event );
+		void OnNuCopyButtonClicked( wxCommandEvent &event );
+		void OnGeCopyButtonClicked( wxCommandEvent &event );
+		void OnYeCopyButtonClicked( wxCommandEvent &event );
+		void OnGetYearButtonClicked( wxCommandEvent &event );
 		void ReadItemData( void );
 		void WriteItemData( void );
 
