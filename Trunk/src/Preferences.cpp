@@ -198,9 +198,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
     m_UpdateLibChkBox->SetValue( m_Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) );
 	LibOptionsSIzer->Add( m_UpdateLibChkBox, 0, wxALL, 5 );
 
-	m_CoverSearchChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Search for missing covers on application start"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_CoverSearchChkBox->SetValue( m_Config->ReadBool( wxT( "CoverSearchOnStart" ), false, wxT( "General" ) ) );
-	LibOptionsSIzer->Add( m_CoverSearchChkBox, 0, wxALL, 5 );
+//	m_CoverSearchChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Search for missing covers on application start"), wxDefaultPosition, wxDefaultSize, 0 );
+//    m_CoverSearchChkBox->SetValue( m_Config->ReadBool( wxT( "CoverSearchOnStart" ), false, wxT( "General" ) ) );
+//	LibOptionsSIzer->Add( m_CoverSearchChkBox, 0, wxALL, 5 );
 
 	LibMainSizer->Add( LibOptionsSIzer, 0, wxEXPAND|wxALL, 5 );
 
@@ -612,7 +612,7 @@ guPrefDialog::~guPrefDialog()
         m_Config->WriteAStr( wxT( "LibPath" ), m_PathsListBox->GetStrings(), wxT( "LibPaths" ) );
         m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
         m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );
+//        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
         m_Config->WriteStr( wxT( "UserName" ), m_UserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
         if( !m_PasswdTextCtrl->GetValue().IsEmpty() )

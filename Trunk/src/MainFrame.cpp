@@ -180,6 +180,12 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ) );
     Connect( ID_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ) );
 
+    if( Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
+    {
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
+        wxPostEvent( this, event );
+    }
+
 }
 
 // -------------------------------------------------------------------------------- //

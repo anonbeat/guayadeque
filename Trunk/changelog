@@ -1,4 +1,6 @@
 
+  * Now if Next Track is clicked at the last track in playlist and Play Random 
+    is enabled it will add a new random track to the playlist
   * Fixed bug in some listbox that made the context menu to appear twice
   * Fixed a bug when dragging tracks in the playlist and the list were
     scrolled down.
