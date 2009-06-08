@@ -82,9 +82,12 @@ void guArListBox::GetContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
     Menu->Append( MenuItem );
 
-    Menu->AppendSeparator();
+    if( GetSelection().Count() == 1 )
+    {
+        Menu->AppendSeparator();
 
-    AddOnlineLinksMenu( Menu );
+        AddOnlineLinksMenu( Menu );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

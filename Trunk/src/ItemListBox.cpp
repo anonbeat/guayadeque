@@ -85,7 +85,8 @@ guListBox::guListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
     }
 
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListBox::OnBeginDrag ), NULL, this );
-    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListBox::OnContextMenu ), NULL, this );
+    //Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListBox::OnContextMenu ), NULL, this );
+    Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListBox::OnContextMenu ), NULL, this );
     //Connect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( guListBox::OnKeyDown ), NULL, this );
     Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListBox::OnKeyDown ), NULL, this );
 
@@ -99,7 +100,8 @@ guListBox::~guListBox()
         GetParent()->Disconnect( wxEVT_SIZE, wxSizeEventHandler( guListBox::OnChangedSize ), NULL, this );
 
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListBox::OnBeginDrag ), NULL, this );
-    Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListBox::OnContextMenu ), NULL, this );
+    //Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListBox::OnContextMenu ), NULL, this );
+    Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListBox::OnContextMenu ), NULL, this );
     //Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( guListBox::OnKeyDown ), NULL, this );
     Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListBox::OnKeyDown ), NULL, this );
 
@@ -115,7 +117,7 @@ void guListBox::OnKeyDown( wxKeyEvent &event )
     //event.Skip();
     int KeyCode = event.GetKeyCode();
 
-    //printf( "KeyPressed %i\n", KeyChar );
+    //guLogMessage( wxT( "KeyPressed %i" ), KeyCode );
     //if( wxIsalnum( KeyChar ) )
     if( ( KeyCode >= 'a' && KeyCode <= 'z' ) ||
         ( KeyCode >= 'A' && KeyCode <= 'Z' ) ||
@@ -133,6 +135,12 @@ void guListBox::OnKeyDown( wxKeyEvent &event )
         wxListEvent le( wxEVT_COMMAND_LIST_ITEM_SELECTED, GetId() );
         le.SetEventObject( this );
         wxPostEvent( this, le );
+    }
+    else if( KeyCode == WXK_MENU )
+    {
+        wxMouseEvent me( wxEVT_RIGHT_DOWN );
+        me.m_x = me.m_y = -1;
+        wxPostEvent( this, me );
     }
     event.Skip();
 }
@@ -322,8 +330,9 @@ void guListBox::ReloadItems( bool reset )
 }
 
 // -------------------------------------------------------------------------------- //
-void guListBox::OnContextMenu( wxContextMenuEvent& event )
+void guListBox::OnContextMenu( wxMouseEvent &event )
 {
+    //guLogMessage( wxT( "guListBox::OnContextMenu: %i" ), GetId() );
     wxPoint Point = event.GetPosition();
     // If from keyboard
     if( Point.x == -1 && Point.y == -1 )
@@ -332,19 +341,20 @@ void guListBox::OnContextMenu( wxContextMenuEvent& event )
         Point.x = Size.x / 2;
         Point.y = Size.y / 2;
     }
-    else
-    {
-        Point = ScreenToClient( Point );
-    }
+//    else
+//    {
+//        Point = ScreenToClient( Point );
+//    }
     ShowContextMenu( Point );
 }
 
 // -------------------------------------------------------------------------------- //
 void guListBox::ShowContextMenu( const wxPoint &pos )
 {
-    wxMenu Menu;
-    GetContextMenu( &Menu );
-    PopupMenu( &Menu, pos.x, pos.y );
+    wxMenu * Menu = new wxMenu();
+    GetContextMenu( Menu );
+    PopupMenu( Menu, pos.x, pos.y );
+    delete Menu;
 }
 
 // -------------------------------------------------------------------------------- //

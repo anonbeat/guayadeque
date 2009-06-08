@@ -46,7 +46,8 @@ class guListBox : public wxListCtrl
       virtual void              GetItemsList( void ) = 0;
       virtual void              OnBeginDrag( wxMouseEvent &event );
       void                      AdjustColumnWidth( int width );
-      void                      OnContextMenu( wxContextMenuEvent& event );
+      //void                      OnContextMenu( wxContextMenuEvent& event );
+      void                      OnContextMenu( wxMouseEvent &event );
       virtual void              GetContextMenu( wxMenu * menu ) const = 0;
       void                      ShowContextMenu( const wxPoint & pos );
       //void                      OnKeyDown( wxListEvent &event );

@@ -289,9 +289,12 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
     MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
     Menu.Append( MenuItem );
 
-    Menu.AppendSeparator();
+    if( GetSelection().Count() == 1 )
+    {
+        Menu.AppendSeparator();
 
-    AddOnlineLinksMenu( &Menu );
+        AddOnlineLinksMenu( &Menu );
+    }
 
     PopupMenu( &Menu, Point.x, Point.y );
 }
