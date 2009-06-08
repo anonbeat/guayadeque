@@ -639,6 +639,10 @@ guTrack * guPlayList::GetPrev( const bool bLoop )
             m_CurItem = m_Items.Count() - 1;
             return &m_Items[ m_CurItem ];
         }
+        else
+        {
+            return &m_Items[ m_CurItem ];
+        }
     }
     return NULL;
 }
