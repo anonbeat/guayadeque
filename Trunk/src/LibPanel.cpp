@@ -399,17 +399,19 @@ void guLibPanel::OnGenreListActivated( wxListEvent &event )
 {
     guTrackArray Songs;
     m_GenreListCtrl->GetSelectedSongs( &Songs );
-
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    if( Songs.Count() )
     {
-        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
         {
-            m_PlayerPanel->AddToPlayList( Songs );
-        }
-        else
-        {
-            m_PlayerPanel->SetPlayList( Songs );
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Songs );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Songs );
+            }
         }
     }
 }
@@ -465,16 +467,19 @@ void guLibPanel::OnLabelListActivated( wxListEvent &event )
 {
     guTrackArray Songs;
     m_LabelsListCtrl->GetSelectedSongs( &Songs );
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    if( Songs.Count() )
     {
-        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
         {
-            m_PlayerPanel->AddToPlayList( Songs );
-        }
-        else
-        {
-            m_PlayerPanel->SetPlayList( Songs );
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Songs );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Songs );
+            }
         }
     }
 }
@@ -542,16 +547,19 @@ void guLibPanel::OnArtistListActivated( wxListEvent &event )
 {
     guTrackArray Songs;
     m_ArtistListCtrl->GetSelectedSongs( &Songs );
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    if( Songs.Count() )
     {
-        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
         {
-            m_PlayerPanel->AddToPlayList( Songs );
-        }
-        else
-        {
-            m_PlayerPanel->SetPlayList( Songs );
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Songs );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Songs );
+            }
         }
     }
 }
@@ -676,16 +684,19 @@ void guLibPanel::OnAlbumListActivated( wxListEvent &event )
 {
     guTrackArray Songs;
     m_AlbumListCtrl->GetSelectedSongs( &Songs );
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    if( Songs.Count() )
     {
-        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "General" )) )
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
         {
-            m_PlayerPanel->AddToPlayList( Songs );
-        }
-        else
-        {
-            m_PlayerPanel->SetPlayList( Songs );
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "General" )) )
+            {
+                m_PlayerPanel->AddToPlayList( Songs );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Songs );
+            }
         }
     }
 }
@@ -814,16 +825,19 @@ void guLibPanel::OnAlbumCopyToClicked( wxCommandEvent &event )
 void guLibPanel::OnSongListActivated( wxListEvent &event )
 {
     guTrackArray Songs = m_SongListCtrl->GetSelectedSongs();
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    if( Songs.Count() )
     {
-        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
         {
-            m_PlayerPanel->AddToPlayList( Songs );
-        }
-        else
-        {
-            m_PlayerPanel->SetPlayList( Songs );
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Songs );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Songs );
+            }
         }
     }
 }

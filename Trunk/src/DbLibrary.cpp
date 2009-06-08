@@ -387,7 +387,7 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS artists( artist_id INTEGER  PRIMARY KEY AUTOINCREMENT, artist_name varchar(255), artist_uptag varchar(8) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""artist_id"" on artists (artist_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""artist_name"" on artists (artist_name ASC);" ) );
-      query.Add( wxT( "INSERT INTO artists( artist_id, artist_name ) VALUES( NULL, 'Various' );" ) );
+      //query.Add( wxT( "INSERT INTO artists( artist_id, artist_name ) VALUES( NULL, 'Various' );" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS paths( path_id INTEGER PRIMARY KEY AUTOINCREMENT,path_value varchar(1024),path_uptag varchar(8) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""path_id"" on paths (path_id ASC);" ) );
