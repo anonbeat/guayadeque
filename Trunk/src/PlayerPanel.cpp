@@ -968,10 +968,18 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     guTrack * PrevItem;
 
 //    wxMessageBox( wxT("OnPrevTrackButtonClick"), wxT("Event") );
+    State = m_MediaCtrl->GetState();
+    int CurItem = m_PlayListCtrl->GetCurItem();
+    if( ( CurItem == 0 ) && ( State == wxMEDIASTATE_PLAYING ) )
+    {
+        m_MediaCtrl->Stop();
+        m_MediaCtrl->Play();
+    }
+
     PrevItem = m_PlayListCtrl->GetPrev( m_PlayLoop );
     if( PrevItem )
     {
-        State = m_MediaCtrl->GetState();
+        //State = m_MediaCtrl->GetState();
         if( State != wxMEDIASTATE_STOPPED )
         {
             CurPos = m_MediaCtrl->Tell();
