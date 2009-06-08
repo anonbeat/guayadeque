@@ -974,6 +974,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     {
         m_MediaCtrl->Stop();
         m_MediaCtrl->Play();
+        return;
     }
 
     PrevItem = m_PlayListCtrl->GetPrev( m_PlayLoop );
