@@ -1075,7 +1075,23 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         }
         m_PlayListCtrl->UpdateView();
     }
-    //event.Skip();
+    else
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
+        {
+            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
+            {
+                guTrackArray Tracks;
+                if( m_Db->GetRandomTracks( &Tracks ) )
+                {
+                    AddToPlayList( Tracks );
+
+                    OnNextTrackButtonClick( event );
+                }
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
