@@ -347,7 +347,8 @@ void guAlbumListBox::OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n ) 
 // -------------------------------------------------------------------------------- //
 void guAlbumListBox::UpdateView()
 {
-    RefreshLines( GetVisibleBegin(), GetVisibleEnd() );
+    //RefreshLines( GetVisibleBegin(), GetVisibleEnd() + 1 );
+    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //
