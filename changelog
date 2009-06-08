@@ -1,4 +1,5 @@
 
+  * Fixed bug in some listbox that made the context menu to appear twice
   * Fixed a bug when dragging tracks in the playlist and the list were
     scrolled down.
   * The Links now have names. So you can have multiple links with same host.
