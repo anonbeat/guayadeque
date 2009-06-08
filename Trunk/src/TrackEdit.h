@@ -70,7 +70,7 @@ class guTrackEditor : public wxDialog
 		void OnNuCopyButtonClicked( wxCommandEvent &event );
 		void OnGeCopyButtonClicked( wxCommandEvent &event );
 		void OnYeCopyButtonClicked( wxCommandEvent &event );
-		void OnGetYearButtonClicked( wxCommandEvent &event );
+//		void OnGetYearButtonClicked( wxCommandEvent &event );
 		void ReadItemData( void );
 		void WriteItemData( void );
 
