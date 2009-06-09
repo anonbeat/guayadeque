@@ -1083,13 +1083,12 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     }
     else
     {
-        SetPlayLoop( false );
-
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
             {
+                SetPlayLoop( false );
                 guTrackArray Tracks;
                 if( m_Db->GetRandomTracks( &Tracks ) )
                 {
@@ -1135,14 +1134,13 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     }
     else
     {
-        SetPlayLoop( false );
-
         // If the option to play a random track is set
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
             {
+                SetPlayLoop( false );
                 guTrackArray Tracks;
                 if( m_Db->GetRandomTracks( &Tracks ) )
                 {
