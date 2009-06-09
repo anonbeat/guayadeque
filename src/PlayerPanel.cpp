@@ -400,10 +400,12 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//
+//    m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart ||
+//        Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
 
-    m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart ||
-        Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
+    m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart );
 
     TrackListChanged();
 
