@@ -90,7 +90,7 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
                 AddPlayListItem( Songs[ Index ], false );
             }
             m_CurItem = Config->ReadNum( wxT( "PlayerCurItem" ), -1l, wxT( "General" ) );
-            m_SmartPlayMaxPlayListTracks = Config->ReadNum( wxT( "SmartPlayMaxPlayListTracks" ), 15, wxT( "SmartPlayList" ) );
+            m_SmartPlayMaxPlayListTracks = Config->ReadNum( wxT( "MaxPlayListTracks" ), 15, wxT( "SmartPlayList" ) );
             //
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATELIST );
             //event.SetEventObject( ( wxObject * ) this );

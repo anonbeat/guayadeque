@@ -251,7 +251,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	SmartPlayListFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	m_SmartPlayListMinTracksSpinCtrl = new wxSpinCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 4 );
-    m_SmartPlayListMinTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinPlayTracks" ), 4, wxT( "SmartPlayList" ) ) );
+    m_SmartPlayListMinTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinPlayListTracks" ), 4, wxT( "SmartPlayList" ) ) );
 	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMinTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	m_SmartPlayListMinTracksStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Tracks left to start search"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -259,7 +259,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMinTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_SmartPlayListAddTracksSpinCtrl = new wxSpinCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 3 );
-    m_SmartPlayListAddTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "AddPlayTracks" ), 3, wxT( "SmartPlayList" ) ) );
+    m_SmartPlayListAddTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "AddPlayListTracks" ), 3, wxT( "SmartPlayList" ) ) );
 	SmartPlayListFlexGridSizer->Add( m_SmartPlayListAddTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	m_SmartPlayListAddTracksStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Tracks added each time"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -267,7 +267,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	SmartPlayListFlexGridSizer->Add( m_SmartPlayListAddTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_SmartPlayListMaxTracksSpinCtrl = new wxSpinCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 5, 99, 20 );
-    m_SmartPlayListMaxTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MaxPlayTracks" ), 20, wxT( "SmartPlayList" ) ) );
+    m_SmartPlayListMaxTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MaxPlayListTracks" ), 20, wxT( "SmartPlayList" ) ) );
 	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMaxTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	m_SmartPlayListMaxTracksStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Max tracks kept in playlist"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -624,9 +624,9 @@ guPrefDialog::~guPrefDialog()
         }
         // LastFM Panel Info language
         m_Config->WriteStr( wxT( "Language" ), m_LangIds[ m_LangChoice->GetSelection() ], wxT( "LastFM" ) );
-        m_Config->WriteNum( wxT( "MinPlayTracks" ), m_SmartPlayListMinTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
-        m_Config->WriteNum( wxT( "AddPlayTracks" ), m_SmartPlayListAddTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
-        m_Config->WriteNum( wxT( "MaxPlayTracks" ), m_SmartPlayListMaxTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
+        m_Config->WriteNum( wxT( "MinPlayListTracks" ), m_SmartPlayListMinTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
+        m_Config->WriteNum( wxT( "AddPlayListTracks" ), m_SmartPlayListAddTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
+        m_Config->WriteNum( wxT( "MaxPlayListTracks" ), m_SmartPlayListMaxTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
         m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "SearchFilters" ) );
         m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
         m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );

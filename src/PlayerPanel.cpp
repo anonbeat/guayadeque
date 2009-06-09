@@ -400,29 +400,31 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
 {
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//
-//    m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart ||
-//        Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
-
-    m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart );
-
-    TrackListChanged();
-
-    if( m_PlaySmart )
+    if( SongList.Count() )
     {
-        // Add the Songs to the cache
-        int count = SongList.Count();
-        int index = 0;
-        for( index = 0; index < count; index++ )
+        guTrack * Track = &SongList[ 0 ];
+        bool ClearPlayList = Track->m_TrackMode == guTRACK_MODE_RANDOM ||
+                             Track->m_TrackMode == guTRACK_MODE_SMART;
+
+        m_PlayListCtrl->AddToPlayList( SongList, ClearPlayList );
+
+        TrackListChanged();
+
+        if( m_PlaySmart )
         {
-            if( m_SmartAddedSongs.Index( SongList[ index ].m_ArtistName.Upper() +
-                             SongList[ index ].m_SongName.Upper() ) == wxNOT_FOUND )
+            // Add the Songs to the cache
+            int count = SongList.Count();
+            int index = 0;
+            for( index = 0; index < count; index++ )
             {
-                m_SmartAddedSongs.Add( SongList[ index ].m_ArtistName.Upper() + SongList[ index ].m_SongName.Upper() );
-                if( m_SmartAddedSongs.Count() > GUPLAYER_SMART_CACHEITEMS )
+                if( m_SmartAddedSongs.Index( SongList[ index ].m_ArtistName.Upper() +
+                                 SongList[ index ].m_SongName.Upper() ) == wxNOT_FOUND )
                 {
-                    m_SmartAddedSongs.RemoveAt( 0 );
+                    m_SmartAddedSongs.Add( SongList[ index ].m_ArtistName.Upper() + SongList[ index ].m_SongName.Upper() );
+                    if( m_SmartAddedSongs.Count() > GUPLAYER_SMART_CACHEITEMS )
+                    {
+                        m_SmartAddedSongs.RemoveAt( 0 );
+                    }
                 }
             }
         }
@@ -965,6 +967,49 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+const wxMediaState guPlayerPanel::GetState( void )
+{
+    return m_MediaCtrl->GetState();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetPlaySmart( bool playsmart )
+{
+    m_PlaySmart = playsmart;
+    m_SmartPlayButton->SetValue( m_PlaySmart );
+    if( m_PlaySmart && GetPlayLoop() )
+    {
+        SetPlayLoop( false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayerPanel::GetPlaySmart()
+{
+    return m_PlaySmart;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetPlayLoop( bool playloop )
+{
+    m_PlayLoop = playloop;
+    m_RepeatPlayButton->SetValue( m_PlayLoop );
+    if( m_PlayLoop && GetPlaySmart() )
+    {
+        SetPlaySmart( false );
+    }
+    //
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayerPanel::GetPlayLoop()
+{
+    return m_PlayLoop;
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 {
     wxMediaState State;
@@ -1014,49 +1059,6 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-const wxMediaState guPlayerPanel::GetState( void )
-{
-    return m_MediaCtrl->GetState();
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetPlaySmart( bool playsmart )
-{
-    m_PlaySmart = playsmart;
-    m_SmartPlayButton->SetValue( m_PlaySmart );
-    if( m_PlaySmart && GetPlayLoop() )
-    {
-        SetPlayLoop( false );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-bool guPlayerPanel::GetPlaySmart()
-{
-    return m_PlaySmart;
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetPlayLoop( bool playloop )
-{
-    m_PlayLoop = playloop;
-    m_RepeatPlayButton->SetValue( m_PlayLoop );
-    if( m_PlayLoop && GetPlaySmart() )
-    {
-        SetPlaySmart( false );
-    }
-    //
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
-}
-
-// -------------------------------------------------------------------------------- //
-bool guPlayerPanel::GetPlayLoop()
-{
-    return m_PlayLoop;
-}
-
-// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 {
     wxMediaState State;
@@ -1081,6 +1083,8 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     }
     else
     {
+        SetPlayLoop( false );
+
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -1131,6 +1135,8 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     }
     else
     {
+        SetPlayLoop( false );
+
         // If the option to play a random track is set
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
