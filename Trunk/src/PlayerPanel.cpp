@@ -400,7 +400,11 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
 {
-    m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    m_PlayListCtrl->AddToPlayList( SongList, m_PlaySmart ||
+        Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
+
     TrackListChanged();
 
     if( m_PlaySmart )
@@ -643,15 +647,13 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     // The CachedPlayedSong database to be submitted to LastFM AudioScrobbling
     if( m_AudioScrobbleEnabled && ( m_MediaSong.m_SongId != guPLAYLIST_RADIOSTATION ) ) // If its not a radiostation
     {
-        // TODO : Control when the track have been added automatically or manually
-        //        to submit it the correct source to LastFM
         //guLogMessage( wxT( "PlayTime: %u Length: %u" ), m_MediaSong.PlayTime, m_MediaSong.Length );
         if( ( ( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
             ( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) ) ) && // If have played at least the half
             ( m_MediaSong.m_PlayTime > guAS_MIN_TRACKLEN ) )    // If the Length is more than 30 secs
         {
             if( !m_MediaSong.m_SongName.IsEmpty() &&    // Check if we have no missing data
-                !m_MediaSong.m_AlbumName.IsEmpty() &&
+                // !m_MediaSong.m_AlbumName.IsEmpty() &&
                 !m_MediaSong.m_ArtistName.IsEmpty() )
             {
                 if( !m_Db->AddCachedPlayedSong( m_MediaSong ) )
@@ -1103,7 +1105,8 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     if( !m_MediaSong.m_SongId && m_PlayListCtrl->GetItemCount() )
     {
         m_PlayListCtrl->SetCurrent( 0 );
-        m_MediaSong = * m_PlayListCtrl->GetCurrent();
+        //m_MediaSong = * m_PlayListCtrl->GetCurrent();
+        SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
     }
     if( m_MediaSong.m_SongId )
     {
@@ -1123,6 +1126,24 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
             return;
         }
         m_PlayListCtrl->UpdateView();
+    }
+    else
+    {
+        // If the option to play a random track is set
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
+        {
+            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
+            {
+                guTrackArray Tracks;
+                if( m_Db->GetRandomTracks( &Tracks ) )
+                {
+                    AddToPlayList( Tracks );
+
+                    OnPlayButtonClick( event );
+                }
+            }
+        }
     }
     //wxLogMessage( wxT( "OnPlayButtonClick Id : %i" ), m_MediaSong.SongId );
 }
@@ -1302,6 +1323,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                   Song = m_Db->FindSong( SimilarTracks[ index ].m_ArtistName, SimilarTracks[ index ].m_TrackName );
                   if( Song )
                   {
+                      Song->m_TrackMode = guTRACK_MODE_SMART;
                       //guLogMessage( wxT( "Found this song in the Songs Library" ) );
                       Songs->Add( Song );
                   }
@@ -1326,7 +1348,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                         {
                             wxArrayInt Artists;
                             Artists.Add( ArtistId );
-                            m_Db->GetArtistsSongs( Artists, Songs );
+                            m_Db->GetArtistsSongs( Artists, Songs, guTRACK_MODE_SMART );
                         }
                     }
                 }
