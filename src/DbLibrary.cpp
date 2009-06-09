@@ -2021,7 +2021,7 @@ int DbLibrary::GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs )
+int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs, guTrackMode trackmode )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2051,6 +2051,7 @@ int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs 
       //Song->GenreName = dbRes->GetString( 10 );
       Song->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
       Song->m_Year = dbRes.GetInt( 9 );
+      Song->m_TrackMode = trackmode;
       Songs->Add( Song );
     }
     dbRes.Finalize();
@@ -2137,6 +2138,7 @@ int DbLibrary::GetRandomTracks( guTrackArray * Tracks )
     //Track->GenreName = dbRes->GetString( 10 );
     Track->m_GenreName = guListItemsGetName( m_GenresCache, dbRes.GetInt( 2 ) );
     Track->m_Year = dbRes.GetInt( 9 );
+    Track->m_TrackMode = guTRACK_MODE_RANDOM;
     Tracks->Add( Track );
   }
   dbRes.Finalize();
@@ -3323,6 +3325,20 @@ bool DbLibrary::AddCachedPlayedSong( const guTrack &Song )
   wxString Title = Song.m_SongName;
   wxString Artist = Song.m_ArtistName;
   wxString Album = Song.m_AlbumName;
+  char Source;
+
+  switch( Song.m_TrackMode )
+  {
+    case guTRACK_MODE_USER :
+      Source = 'P';
+      break;
+    case guTRACK_MODE_SMART :
+      Source = 'L';
+    case guTRACK_MODE_RANDOM :
+      Source = 'S';
+    default :
+      Source = 'U';
+  }
 
   escape_query_str( &Title );
   escape_query_str( &Artist );
@@ -3331,11 +3347,12 @@ bool DbLibrary::AddCachedPlayedSong( const guTrack &Song )
   query = wxString::Format( wxT( "INSERT into audioscs( audiosc_id, audiosc_artist, "\
           "audiosc_album, audiosc_track, audiosc_playedtime, audiosc_source, "\
           "audiosc_ratting, audiosc_len, audiosc_tracknum, audiosc_mbtrackid) "\
-          "VALUES( NULL, '%s', '%s', '%s', %u, 'P', '', %u, %i, %u );" ),
+          "VALUES( NULL, '%s', '%s', '%s', %u, '%c', '', %u, %i, %u );" ),
           Artist.c_str(),
           Album.c_str(),
           Title.c_str(),
           wxGetUTCTime() - Song.m_Length,
+          Source,
           Song.m_Length,
           Song.m_Number,
           0 );

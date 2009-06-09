@@ -38,6 +38,13 @@
 
 #define GU_MAX_QUERY_ROWS    100
 
+enum  guTrackMode {
+    guTRACK_MODE_USER,
+    guTRACK_MODE_SMART,
+    guTRACK_MODE_RANDOM,
+    guTRACK_MODE_RADIO
+};
+
 // -------------------------------------------------------------------------------- //
 class guTrack
 {
@@ -56,9 +63,12 @@ class guTrack
     int             m_Year;               // the year of the song
     int             m_Length;             // the length of the song in seconds
     int             m_CoverId;
-//    wxArrayString   Labels;
-    guTrack() {};
-    //guTrack( int m_Id, const wxString &m_Name ) { SongId = m_Id; SongName = m_Name; Numb };
+    guTrackMode     m_TrackMode;          // Indicate how the track was created
+
+    guTrack() {
+        m_TrackMode = guTRACK_MODE_USER;
+    };
+
     ~guTrack() {};
 };
 WX_DECLARE_OBJARRAY(guTrack, guTrackArray);
@@ -275,7 +285,7 @@ class DbLibrary {
     int                 GetSongs( guTrackArray * Songs );
     void                UpdateSongs( guTrackArray * Songs );
     int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs );
-    int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs );
+    int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs, guTrackMode trackmode = guTRACK_MODE_USER );
     int                 GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs );
     int                 GetRandomTracks( guTrackArray * Tracks );
 

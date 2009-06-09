@@ -352,16 +352,16 @@ void guPlayList::OnKeyDown( wxKeyEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::AddToPlayList( const guTrackArray &NewItems, const bool DeleteOld )
+void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold )
 {
     int Index;
     int Count;
-    Count = NewItems.Count();
+    Count = items.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-      m_Items.Add( NewItems[ Index ] );
-      m_TotalLen += NewItems[ Index ].m_Length;
-      if( DeleteOld && ( m_CurItem != 0 ) && m_Items.Count() > ( size_t ) m_SmartPlayMaxPlayListTracks )
+      m_Items.Add( items[ Index ] );
+      m_TotalLen += items[ Index ].m_Length;
+      if( deleteold && ( m_CurItem != 0 ) && ( m_Items.Count() > ( size_t ) m_SmartPlayMaxPlayListTracks ) )
       {
         m_TotalLen -= m_Items[ 0 ].m_Length;
         m_Items.RemoveAt( 0 );
