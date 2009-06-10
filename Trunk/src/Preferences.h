@@ -130,6 +130,7 @@ class guPrefDialog : public wxDialog
     void OnAddCoverBtnClick( wxCommandEvent& event );
 	void OnDelCoverBtnClick( wxCommandEvent& event );
 	void OnFiltersListBoxSelected( wxCommandEvent &event );
+	void OnASUserNameChanged( wxCommandEvent &event );
     void OnOnlineAddBtnClick( wxCommandEvent& event );
 	void OnOnlineDelBtnClick( wxCommandEvent& event );
 	void OnOnlineListBoxDClicked( wxCommandEvent &event );
