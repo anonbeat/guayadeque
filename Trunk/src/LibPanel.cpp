@@ -347,7 +347,6 @@ void guLibPanel::ReloadControls( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSearchActivated( wxCommandEvent& event )
 {
-    guLogMessage( wxT( "guLibPanel::SearchActivated" ) );
     wxArrayString Words = guSplitWords( m_InputTextCtrl->GetLineText( 0 ) );
 
     m_Db->SetTeFilters( Words );
