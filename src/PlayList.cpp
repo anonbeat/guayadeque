@@ -116,8 +116,8 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     }
     m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
     //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
-    m_PlayBgColor  = m_TextFgColor;
-    m_PlayFgColor  = m_EveBgColor;
+    //m_PlayBgColor  = m_TextFgColor;
+    m_PlayFgColor  = m_SelBgColor;
 
     SetBackgroundColour( m_EveBgColor );
 
@@ -506,8 +506,8 @@ void guPlayList::OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n ) cons
     //else if( n == ( size_t ) GetSelection() )
     else if( IsSelected( n ) )
       dc.SetBrush( wxBrush( m_SelBgColor ) );
-    else if( n == ( size_t ) m_CurItem )
-      dc.SetBrush( wxBrush( m_PlayBgColor ) );
+//    else if( n == ( size_t ) m_CurItem )
+//      dc.SetBrush( wxBrush( m_PlayBgColor ) );
     else
       dc.SetBrush( wxBrush( n & 1 ? m_OddBgColor : m_EveBgColor ) );
 
