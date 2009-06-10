@@ -41,6 +41,7 @@ class guVolumeFrame : public wxFrame
 		void VolSliderChanged( wxScrollEvent& event );
 		void DecVolButtonClick( wxCommandEvent& event );
 		void SetVolume( void );
+		void OnMouseWheel( wxMouseEvent &event );
 
 	public:
 		guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 26,200 ), long style = 0|wxTAB_TRAVERSAL );

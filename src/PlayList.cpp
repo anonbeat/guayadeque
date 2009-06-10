@@ -100,8 +100,8 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
 
     SetDropTarget( new guPlayListDropTarget( this ) );
 
-    m_PlayBgColor  = wxColor( 0, 0, 0 ); //SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHT );
-    m_PlayFgColor  = wxColor( 255, 255, 255 ); //SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
+//    m_PlayBgColor  = wxColor( 0, 0, 0 ); //SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHT );
+//    m_PlayFgColor  = wxColor( 255, 255, 255 ); //SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
     m_DragBgColor  = * wxGREY_BRUSH;
     m_SelBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
     m_SelFgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
@@ -116,6 +116,8 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     }
     m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
     //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
+    m_PlayBgColor  = m_TextFgColor;
+    m_PlayFgColor  = m_EveBgColor;
 
     SetBackgroundColour( m_EveBgColor );
 
@@ -433,13 +435,13 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
     Item = m_Items[ n ];
     dc.SetFont( Font  );
     dc.SetBackgroundMode( wxTRANSPARENT );
-    if( n == ( size_t ) m_CurItem )
-    {
-        dc.SetTextForeground( m_PlayFgColor );
-    }
-    else if( IsSelected( n ) )
+    if( IsSelected( n ) )
     {
         dc.SetTextForeground( m_SelFgColor );
+    }
+    else if( n == ( size_t ) m_CurItem )
+    {
+        dc.SetTextForeground( m_PlayFgColor );
     }
     else
     {

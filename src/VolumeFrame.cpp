@@ -19,6 +19,7 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "VolumeFrame.h"
+//#include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
 guVolumeFrame::guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) :
@@ -50,6 +51,7 @@ guVolumeFrame::guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindow
 
 	// Connect Events
 	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guVolumeFrame::VolFrameActivate ) );
+	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ) );
 	m_IncVolButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::IncVolButtonClick ), NULL, this );
 	m_VolSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
 	m_VolSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
@@ -62,6 +64,7 @@ guVolumeFrame::~guVolumeFrame()
 {
 	// Disconnect Events
 	Disconnect( wxEVT_ACTIVATE, wxActivateEventHandler( guVolumeFrame::VolFrameActivate ) );
+	Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ) );
 	m_IncVolButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::IncVolButtonClick ), NULL, this );
 	m_VolSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
 	m_DecVolButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::DecVolButtonClick ), NULL, this );
@@ -98,6 +101,14 @@ void guVolumeFrame::VolSliderChanged( wxScrollEvent& event )
 void guVolumeFrame::DecVolButtonClick( wxCommandEvent& event )
 {
     m_VolSlider->SetValue( m_VolSlider->GetValue() - 5 );
+    SetVolume();
+}
+
+// -------------------------------------------------------------------------------- //
+void guVolumeFrame::OnMouseWheel( wxMouseEvent &event )
+{
+    int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
+    m_VolSlider->SetValue( m_VolSlider->GetValue() + ( Rotation * 2 ) );
     SetVolume();
 }
 

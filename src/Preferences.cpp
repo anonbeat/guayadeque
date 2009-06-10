@@ -237,8 +237,13 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	ASLoginSizer->Add( m_PasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_PasswdTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
+	m_PasswdTextCtrl->SetValue( m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
 	// Password is saved in md5 form so we cant load it back
 	ASLoginSizer->Add( m_PasswdTextCtrl, 0, wxALL, 5 );
+
+	if( m_PasswdTextCtrl->IsEmpty() ||
+	    m_UserNameTextCtrl->IsEmpty() )
+        m_ASEnableChkBox->Disable();
 
 	LastFMASSizer->Add( ASLoginSizer, 1, wxEXPAND, 5 );
 
@@ -351,51 +356,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	OnlineMainSizer->Fit( m_OnlinePanel );
 	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online Services" ), false );
 
-
-    // Links
-//	m_LinksPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//	LinksMainSizer = new wxBoxSizer( wxVERTICAL );
-//
-//	LinksSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, wxT(" Links ") ), wxHORIZONTAL );
-//
-//	m_LinksListBox = new wxListBox( m_LinksPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-//	m_LinksListBox->Append( m_Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) ) );
-//	LinksSizer->Add( m_LinksListBox, 1, wxALL|wxEXPAND, 5 );
-//
-//	LinksBtnSizer = new wxBoxSizer( wxVERTICAL );
-//
-//	m_LinksAddBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, 0 );
-//	LinksBtnSizer->Add( m_LinksAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
-//
-//	m_LinksMoveUpBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_go_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-//	m_LinksMoveUpBtn->Enable( false );
-//	LinksBtnSizer->Add( m_LinksMoveUpBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
-//
-//	m_LinksMoveDownBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_go_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-//	m_LinksMoveDownBtn->Enable( false );
-//	LinksBtnSizer->Add( m_LinksMoveDownBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
-//
-//	m_LinksDelBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-//	m_LinksDelBtn->Enable( false );
-//	LinksBtnSizer->Add( m_LinksDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
-//
-//	LinksSizer->Add( LinksBtnSizer, 0, wxEXPAND, 5 );
-//
-//	LinksMainSizer->Add( LinksSizer, 1, wxEXPAND|wxALL, 5 );
-//
-//	LinksHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
-//
-//	wxStaticText * LinksHelpText;
-//	LinksHelpText = new wxStaticText( m_LinksPanel, wxID_ANY, _( "Add urls using :\n{lang} : 2 lettes language code.\n{text} : Text to search." ), wxDefaultPosition, wxDefaultSize, 0 );
-//	LinksHelpText->Wrap( -1 );
-//	LinksHelpSizer->Add( LinksHelpText, 0, wxALL, 5 );
-//
-//	LinksMainSizer->Add( LinksHelpSizer, 0, wxEXPAND|wxALL, 5 );
-//
-//	m_LinksPanel->SetSizer( LinksMainSizer );
-//	m_LinksPanel->Layout();
-//	LinksMainSizer->Fit( m_LinksPanel );
-//	m_MainNotebook->AddPage( m_LinksPanel, _( "Links" ), false );
 
 	m_LinksPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* LinksMainSizer;
@@ -576,6 +536,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 	m_OnlineDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
 	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
 
+    m_UserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
+    m_PasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
+
 	m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
 	//m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLinkListBoxDClicked ), NULL, this );
 	m_LinksAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
@@ -613,9 +576,9 @@ guPrefDialog::~guPrefDialog()
         m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
         m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
 //        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
+        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->IsEnabled() && m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
         m_Config->WriteStr( wxT( "UserName" ), m_UserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
-        if( !m_PasswdTextCtrl->GetValue().IsEmpty() )
+        if( !m_PasswdTextCtrl->IsEmpty() && m_PasswdTextCtrl->GetValue() != wxT( "******" ) )
         {
             guMD5 MD5;
             m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_PasswdTextCtrl->GetValue() ), wxT( "LastFM" ) );
@@ -641,6 +604,10 @@ guPrefDialog::~guPrefDialog()
         for( index = 0; index < count; index++ )
         {
             wxURI Uri( SearchLinks[ index ] );
+            if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) ) )
+            {
+                wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons" ), 0770 );
+            }
             wxString IconFile = wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) + Uri.GetServer() + wxT( ".ico" );
             if( !wxFileExists( IconFile ) )
             {
@@ -682,6 +649,9 @@ guPrefDialog::~guPrefDialog()
 	m_OnlineAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
 	m_OnlineDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
 	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
+
+    m_UserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
+    m_PasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
 
 	m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
 	//m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLinkListBoxDClicked ), NULL, this );
@@ -835,6 +805,19 @@ void guPrefDialog::OnFiltersListBoxSelected( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPrefDialog::OnASUserNameChanged( wxCommandEvent &event )
+{
+    if( m_UserNameTextCtrl->IsEmpty() || m_PasswdTextCtrl->IsEmpty() )
+    {
+        m_ASEnableChkBox->Disable();
+    }
+    else
+    {
+        m_ASEnableChkBox->Enable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPrefDialog::OnOnlineAddBtnClick( wxCommandEvent& event )
 {
     wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Filter: " ), _( "Enter the text to filter" ), wxEmptyString );
@@ -972,7 +955,7 @@ void guPrefDialog::OnLinkMoveDownBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLinksTextChanged( wxCommandEvent &event )
 {
-    if( !m_LinksUrlTextCtrl->GetValue().IsEmpty() )
+    if( !m_LinksUrlTextCtrl->IsEmpty() )
     {
         m_LinksAddBtn->Enable();
         if( m_LinkSelected != wxNOT_FOUND )
