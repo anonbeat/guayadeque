@@ -30,7 +30,7 @@
 wxString PatternToExample( const wxString &Pattern );
 
 // -------------------------------------------------------------------------------- //
-guPrefDialog::guPrefDialog( wxWindow* parent ) :
+guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
     wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 500, 515 ), wxDEFAULT_DIALOG_STYLE )
 {
 	wxBoxSizer *        MainSizer;
@@ -56,6 +56,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent ) :
 //	wxBoxSizer *        LinksBtnSizer;
 //	wxStaticBoxSizer *  LinksHelpSizer;
 
+    m_Db = db;
     m_LinkSelected = wxNOT_FOUND;
 
     m_Config = ( guConfig * ) guConfig::Get();
@@ -573,6 +574,10 @@ guPrefDialog::~guPrefDialog()
         m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteAStr( wxT( "LibPath" ), m_PathsListBox->GetStrings(), wxT( "LibPaths" ) );
+        if( m_Db )
+        {
+            m_Db->SetLibPath( m_PathsListBox->GetStrings() );
+        }
         m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
         m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
 //        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );

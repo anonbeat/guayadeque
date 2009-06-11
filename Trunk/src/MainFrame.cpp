@@ -341,7 +341,7 @@ void guMainFrame::CreateMenu()
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPreferences( wxCommandEvent &event )
 {
-    guPrefDialog * PrefDialog = new guPrefDialog( this );
+    guPrefDialog * PrefDialog = new guPrefDialog( this, m_Db );
     if( PrefDialog )
     {
         PrefDialog->ShowModal();
