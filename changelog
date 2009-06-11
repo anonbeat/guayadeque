@@ -1,4 +1,5 @@
 
+  * Added Play/Enqueue options to Last.fm panel items
   * Playlist current track now follow theme color
   * Last.fm preferences shouldn't be enabled if the user or pass ir not
     filled
