@@ -238,12 +238,6 @@ void guLastFMInfoCtrl::OnEnqueueClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 int guLastFMInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 {
-    if( m_Info->m_TrackId != wxNOT_FOUND )
-    {
-        wxArrayInt Selections;
-        Selections.Add( m_Info->m_TrackId );
-        return m_Db->GetSongs( Selections, tracks );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -481,6 +475,17 @@ void guArtistInfoCtrl::OnHtmlLinkClicked( wxHtmlLinkEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
+int guArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
+{
+    if( m_Info->m_ArtistId != wxNOT_FOUND )
+    {
+        wxArrayInt Selections;
+        Selections.Add( m_Info->m_ArtistId );
+        return m_Db->GetArtistsSongs( Selections, tracks );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guAlbumInfoCtrl
 // -------------------------------------------------------------------------------- //
 guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
@@ -582,6 +587,18 @@ void guAlbumInfoCtrl::OnContextMenu( wxContextMenuEvent& event )
         return;
 
     guLastFMInfoCtrl::OnContextMenu( event );
+}
+
+// -------------------------------------------------------------------------------- //
+int guAlbumInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
+{
+    if( m_Info->m_AlbumId != wxNOT_FOUND )
+    {
+        wxArrayInt Selections;
+        Selections.Add( m_Info->m_AlbumId );
+        return m_Db->GetAlbumsSongs( Selections, tracks );
+    }
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -691,10 +708,10 @@ void guSimilarArtistInfoCtrl::OnContextMenu( wxContextMenuEvent& event )
 // -------------------------------------------------------------------------------- //
 int guSimilarArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 {
-    if( m_Info->m_TrackId != wxNOT_FOUND )
+    if( m_Info->m_ArtistId != wxNOT_FOUND )
     {
         wxArrayInt Selections;
-        Selections.Add( m_Info->m_TrackId );
+        Selections.Add( m_Info->m_ArtistId );
         return m_Db->GetArtistsSongs( Selections, tracks );
     }
 }
@@ -808,7 +825,7 @@ void guTrackInfoCtrl::OnContextMenu( wxContextMenuEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
+int guTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 {
     if( m_Info->m_TrackId != wxNOT_FOUND )
     {
