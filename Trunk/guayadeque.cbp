@@ -141,6 +141,8 @@
 		<Unit filename="src/LastFMPanel.h" />
 		<Unit filename="src/LibPanel.cpp" />
 		<Unit filename="src/LibPanel.h" />
+		<Unit filename="src/LibUpdate.cpp" />
+		<Unit filename="src/LibUpdate.h" />
 		<Unit filename="src/LyricsPanel.cpp" />
 		<Unit filename="src/LyricsPanel.h" />
 		<Unit filename="src/MD5.cpp" />
