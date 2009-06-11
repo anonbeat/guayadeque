@@ -38,10 +38,11 @@ WX_DEFINE_OBJARRAY(guLastFMTrackInfoArray);
 WX_DEFINE_OBJARRAY(guLastFMAlbumInfoArray);
 
 // -------------------------------------------------------------------------------- //
-guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, bool createcontrols ) :
+guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel, bool createcontrols ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL )
 {
     m_Db = db;
+    m_PlayerPanel = playerpanel;
     m_NormalColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
     m_NotFoundColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
 
@@ -213,10 +214,43 @@ wxString guLastFMInfoCtrl::GetSearchText( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLastFMInfoCtrl::OnPlayClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    GetSelectedTracks( &Tracks );
+    if( m_PlayerPanel && Tracks.Count() )
+    {
+        m_PlayerPanel->SetPlayList( Tracks );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMInfoCtrl::OnEnqueueClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    GetSelectedTracks( &Tracks );
+    if( m_PlayerPanel && Tracks.Count() )
+    {
+        m_PlayerPanel->AddToPlayList( Tracks );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+int guLastFMInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
+{
+    if( m_Info->m_TrackId != wxNOT_FOUND )
+    {
+        wxArrayInt Selections;
+        Selections.Add( m_Info->m_TrackId );
+        return m_Db->GetSongs( Selections, tracks );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guArtistInfoCtrl
 // -------------------------------------------------------------------------------- //
-guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, DbLibrary * db ) :
-                 guLastFMInfoCtrl( parent, db, false )
+guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+                 guLastFMInfoCtrl( parent, db, playerpanel, false )
 {
     m_Info = NULL;
     m_ShowLongBioText = false;
@@ -293,8 +327,7 @@ void guArtistInfoCtrl::SetInfo( guLastFMArtistInfo * info )
     m_Info = info;
 
     m_Info->m_ArtistId = m_Db->FindArtist( m_Info->m_Artist->m_Name );
-//    m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
-//                                        wxColour( 255, 0, 0 ) : wxColour( 0, 0, 0 ) );
+
     m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
                                         m_NotFoundColor : m_NormalColor );
     SetBitmap( m_Info->m_Image );
@@ -349,6 +382,19 @@ wxString guArtistInfoCtrl::GetSearchText( void )
 void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 {
     wxMenuItem * MenuItem;
+
+    if( m_Info->m_ArtistId != wxNOT_FOUND )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_min_media_playback_start ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+    }
 
     if( !m_Info->m_Artist->m_Url.IsEmpty() )
     {
@@ -437,8 +483,8 @@ void guArtistInfoCtrl::OnHtmlLinkClicked( wxHtmlLinkEvent& event )
 // -------------------------------------------------------------------------------- //
 // guAlbumInfoCtrl
 // -------------------------------------------------------------------------------- //
-guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db ) :
-                 guLastFMInfoCtrl( parent, db )
+guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+                 guLastFMInfoCtrl( parent, db, playerpanel )
 {
     m_Info = NULL;
     m_Text->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumInfoCtrl::OnClick ), NULL, this );
@@ -504,6 +550,19 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
 {
     wxMenuItem * MenuItem;
 
+    if( m_Info->m_AlbumId != wxNOT_FOUND )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_min_media_playback_start ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+    }
+
     if( !m_Info->m_Album->m_Url.IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
@@ -528,8 +587,8 @@ void guAlbumInfoCtrl::OnContextMenu( wxContextMenuEvent& event )
 // -------------------------------------------------------------------------------- //
 // guSimilarArtistInfoCtrl
 // -------------------------------------------------------------------------------- //
-guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary * db ) :
-                  guLastFMInfoCtrl( parent, db )
+guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+                  guLastFMInfoCtrl( parent, db, playerpanel )
 {
     m_Info = NULL;
 
@@ -596,6 +655,19 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 {
     wxMenuItem * MenuItem;
 
+    if( m_Info->m_ArtistId != wxNOT_FOUND )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_min_media_playback_start ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+    }
+
     if( !m_Info->m_Artist->m_Url.IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
@@ -617,10 +689,21 @@ void guSimilarArtistInfoCtrl::OnContextMenu( wxContextMenuEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
+int guSimilarArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
+{
+    if( m_Info->m_TrackId != wxNOT_FOUND )
+    {
+        wxArrayInt Selections;
+        Selections.Add( m_Info->m_TrackId );
+        return m_Db->GetArtistsSongs( Selections, tracks );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guTrackInfoCtrl
 // -------------------------------------------------------------------------------- //
-guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, DbLibrary * db ) :
-                 guLastFMInfoCtrl( parent, db )
+guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+                 guLastFMInfoCtrl( parent, db, playerpanel )
 {
     m_Info = NULL;
 
@@ -690,6 +773,19 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
 {
     wxMenuItem * MenuItem;
 
+    if( m_Info->m_TrackId != wxNOT_FOUND )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_min_media_playback_start ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+    }
+
     if( !m_Info->m_Track->m_Url.IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
@@ -712,12 +808,24 @@ void guTrackInfoCtrl::OnContextMenu( wxContextMenuEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
+{
+    if( m_Info->m_TrackId != wxNOT_FOUND )
+    {
+        wxArrayInt Selections;
+        Selections.Add( m_Info->m_TrackId );
+        return m_Db->GetSongs( Selections, tracks );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guLastFMPanel
 // -------------------------------------------------------------------------------- //
-guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
+guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
     wxScrolledWindow( Parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL )
 {
     m_Db = db;
+    m_PlayerPanel = playerpanel;
     m_UpdateTracks = true;
 
     m_ShowArtistDetails = true;
@@ -757,7 +865,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
 
 	m_ArtistInfoMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_ArtistInfoCtrl = new guArtistInfoCtrl( this, m_Db );
+	m_ArtistInfoCtrl = new guArtistInfoCtrl( this, m_Db, m_PlayerPanel );
 
 	m_ArtistInfoMainSizer->Add( m_ArtistInfoCtrl, 1, wxEXPAND, 5 );
 
@@ -789,7 +897,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
     int index;
     for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
     {
-        m_AlbumInfoCtrls.Add( new guAlbumInfoCtrl( this, m_Db ) );
+        m_AlbumInfoCtrls.Add( new guAlbumInfoCtrl( this, m_Db, m_PlayerPanel ) );
         m_AlbumsSizer->Add( m_AlbumInfoCtrls[ index ], 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
     }
 
@@ -819,7 +927,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
 
     for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
     {
-        m_ArtistInfoCtrls.Add( new guSimilarArtistInfoCtrl( this, m_Db ) );
+        m_ArtistInfoCtrls.Add( new guSimilarArtistInfoCtrl( this, m_Db, m_PlayerPanel ) );
         m_ArtistsSizer->Add( m_ArtistInfoCtrls[ index ], 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
     }
 
@@ -849,7 +957,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db ) :
 
     for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
     {
-        m_TrackInfoCtrls.Add( new guTrackInfoCtrl( this, m_Db ) );
+        m_TrackInfoCtrls.Add( new guTrackInfoCtrl( this, m_Db, m_PlayerPanel ) );
         m_TracksSizer->Add( m_TrackInfoCtrls[ index ], 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
     }
 

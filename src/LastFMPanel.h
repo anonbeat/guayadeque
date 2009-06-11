@@ -22,6 +22,7 @@
 #define LASTFMPANEL_H
 
 #include "LastFM.h"
+#include "PlayerPanel.h"
 #include "ThreadArray.h"
 
 #include <wx/image.h>
@@ -242,21 +243,25 @@ class guFetchTrackInfoThread : public guFetchLastFMInfoThread
 class guLastFMInfoCtrl : public wxPanel
 {
   protected :
-    DbLibrary *         m_Db;
-    wxStaticBitmap *    m_Bitmap;
-	wxStaticText *      m_Text;
-	wxColor             m_NormalColor;
-	wxColor             m_NotFoundColor;
+    DbLibrary *             m_Db;
+    guPlayerPanel *         m_PlayerPanel;
+    wxStaticBitmap *        m_Bitmap;
+	wxStaticText *          m_Text;
+	wxColor                 m_NormalColor;
+	wxColor                 m_NotFoundColor;
 
-    virtual void        OnContextMenu( wxContextMenuEvent& event );
-    virtual void        CreateContextMenu( wxMenu * Menu );
-    virtual void        OnClick( wxMouseEvent &event );
-    virtual wxString    GetSearchText( void );
-    virtual void        OnSearchLinkClicked( wxCommandEvent &event );
-    virtual void        CreateControls( wxWindow * parent );
+    virtual void            OnContextMenu( wxContextMenuEvent& event );
+    virtual void            CreateContextMenu( wxMenu * Menu );
+    virtual void            OnClick( wxMouseEvent &event );
+    virtual wxString        GetSearchText( void );
+    virtual void            OnSearchLinkClicked( wxCommandEvent &event );
+    virtual void            CreateControls( wxWindow * parent );
+    virtual void            OnPlayClicked( wxCommandEvent &event );
+    virtual void            OnEnqueueClicked( wxCommandEvent &event );
+    virtual int             GetSelectedTracks( guTrackArray * tracks );
 
   public :
-	guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, bool createcontrols = true );
+	guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel, bool createcontrols = true );
 	~guLastFMInfoCtrl();
 
     virtual void Clear( void );
@@ -285,9 +290,10 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
     void                UpdateArtistInfoText( void );
     void                OnShowMoreLinkClicked( wxHyperlinkEvent &event );
     void                OnHtmlLinkClicked( wxHtmlLinkEvent& event );
+    virtual int         GetSelectedTracks( guTrackArray * tracks );
 
   public :
-    guArtistInfoCtrl( wxWindow * parent, DbLibrary * db );
+    guArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
     ~guArtistInfoCtrl();
 
     void SetInfo( guLastFMArtistInfo * info );
@@ -306,9 +312,10 @@ class guAlbumInfoCtrl : public guLastFMInfoCtrl
     virtual void    OnClick( wxMouseEvent &event );
     virtual wxString    GetSearchText( void );
     virtual void    CreateContextMenu( wxMenu * Menu );
+    virtual int     GetSelectedTracks( guTrackArray * tracks );
 
   public :
-    guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db );
+    guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
     ~guAlbumInfoCtrl();
 
     void SetInfo( guLastFMAlbumInfo * info );
@@ -328,9 +335,10 @@ class guSimilarArtistInfoCtrl : public guLastFMInfoCtrl
     virtual wxString    GetSearchText( void );
 //    void            OnSearchLinkClicked( wxCommandEvent &event );
     void            OnClick( wxMouseEvent &event );
+    virtual int             GetSelectedTracks( guTrackArray * tracks );
 
   public :
-    guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary * db );
+    guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
     ~guSimilarArtistInfoCtrl();
 
     void SetInfo( guLastFMSimilarArtistInfo * info );
@@ -345,14 +353,15 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
   private :
     guLastFMTrackInfo * m_Info;
 
-    virtual void    OnContextMenu( wxContextMenuEvent& event );
-    virtual void    CreateContextMenu( wxMenu * Menu );
+    virtual void        OnContextMenu( wxContextMenuEvent& event );
+    virtual void        CreateContextMenu( wxMenu * Menu );
     virtual wxString    GetSearchText( void );
-//    void            OnSearchLinkClicked( wxCommandEvent &event );
-    void            OnClick( wxMouseEvent &event );
+//    void                OnSearchLinkClicked( wxCommandEvent &event );
+    void                OnClick( wxMouseEvent &event );
+    virtual int         GetSelectedTracks( guTrackArray * tracks );
 
   public :
-    guTrackInfoCtrl( wxWindow * parent, DbLibrary * db );
+    guTrackInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
     ~guTrackInfoCtrl();
 
     void SetInfo( guLastFMTrackInfo * info );
@@ -366,6 +375,7 @@ class guLastFMPanel : public wxScrolledWindow
 {
   private :
     DbLibrary *                 m_Db;
+    guPlayerPanel *             m_PlayerPanel;
 	wxString                    m_ArtistName;
 	wxString                    m_LastArtistName;
 	wxString                    m_TrackName;
@@ -441,7 +451,7 @@ class guLastFMPanel : public wxScrolledWindow
 
 
   public :
-            guLastFMPanel( wxWindow * parent, DbLibrary * db );
+            guLastFMPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
             ~guLastFMPanel();
 
     void    OnUpdatedTrack( wxCommandEvent &event );

@@ -123,6 +123,8 @@
 #define ID_LASTFM_UPDATE_ALBUMINFO      1122    // The thread update the top albums
 #define ID_LASTFM_UPDATE_SIMARTIST      1123    // The thread update the Similar artists
 #define ID_LASTFM_UPDATE_SIMTRACK       1124    // The thread update the Similar tracks
+#define ID_LASTFM_PLAY                  1125
+#define ID_LASTFM_ENQUEUE               1126
 
 #define ID_LASTFM_VISIT_URL             1130
 #define ID_LASTFM_SEARCH_LINK           2000    // From 2000 for Link #0 to ...
