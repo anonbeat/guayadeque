@@ -405,7 +405,7 @@ void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
     int Width;
     int Height;
     GetSize( &Width, &Height );
-    if( ( y > ( Height - 10 ) ) && GetLastVisibleLine() != ( GetCount() - 1 ) )
+    if( ( y > ( Height - 10 ) ) && GetLastVisibleLine() != GetCount() )
     {
         ScrollLines( 1 );
     }
