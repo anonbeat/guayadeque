@@ -101,7 +101,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false );
 
     // LastFM Info Panel
-	m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db );
+	m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_PlayerPanel );
 	m_CatNotebook->AddPage( m_LastFMPanel, _( "LastFM" ), false );
 
     // Lyrics Panel
