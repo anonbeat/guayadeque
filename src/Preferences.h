@@ -22,6 +22,7 @@
 #define PREFERENCES_H
 
 #include "Config.h"
+#include "DbLibrary.h"
 
 #include <wx/string.h>
 #include <wx/checkbox.h>
@@ -49,6 +50,7 @@
 class guPrefDialog : public wxDialog
 {
   private:
+    DbLibrary *                 m_Db;
 
   protected:
     wxNotebook *                m_MainNotebook;
@@ -146,7 +148,7 @@ class guPrefDialog : public wxDialog
 	void OnCopyToFileNameUpdated( wxCommandEvent &event );
 
   public:
-    guPrefDialog( wxWindow * parent );
+    guPrefDialog( wxWindow * parent, DbLibrary * db );
     ~guPrefDialog();
 
 };
