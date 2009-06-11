@@ -54,6 +54,8 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerP
 guLastFMInfoCtrl::~guLastFMInfoCtrl()
 {
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
+    Disconnect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
+    Disconnect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -79,6 +81,8 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	MainSizer->Fit( this );
 
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
+    Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
+    Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -311,6 +315,8 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	//MainSizer->Fit( this );
 
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guArtistInfoCtrl::OnContextMenu ), NULL, this );
+    Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnPlayClicked ), NULL, this );
+    Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnEnqueueClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
