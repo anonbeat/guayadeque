@@ -24,8 +24,6 @@
 #include "DbLibrary.h"
 #include "MainFrame.h"
 
-class guLibCountThread;
-
 // -------------------------------------------------------------------------------- //
 class guLibUpdateThread : public wxThread
 {
@@ -34,36 +32,15 @@ class guLibUpdateThread : public wxThread
     guMainFrame *       m_MainFrame;
     wxArrayString       m_Files;
     int                 m_GaugeId;
+    wxArrayString       m_LibPaths;
 
-    wxMutex             m_FilesMutex;
-    guLibCountThread *  m_LibCountThread;
-    wxMutex             m_LibCountThreadMutex;
+    int                 ScanDirectory( wxString dirname );
 
   public :
     guLibUpdateThread( DbLibrary * db );
     ~guLibUpdateThread();
 
     guLibUpdateThread::ExitCode Entry();
-
-  friend class guLibCountThread;
-};
-
-// -------------------------------------------------------------------------------- //
-class guLibCountThread : public wxThread
-{
-  private :
-    guLibUpdateThread * m_LibUpdateThread;
-    wxArrayString       m_LibPaths;
-
-    int                 ScanDirectory( wxString dirname );
-    void                AddFileToList( wxString filename );
-
-  public :
-    guLibCountThread( guLibUpdateThread * libupdatethread );
-    ~guLibCountThread();
-
-
-    guLibCountThread::ExitCode Entry();
 
 };
 

@@ -26,6 +26,7 @@
 #include "LastFM.h"
 #include "LastFMPanel.h"
 #include "LibPanel.h"
+//#include "LibUpdate.h"
 #include "LyricsPanel.h"
 #include "PlayerPanel.h"
 #include "RadioPanel.h"
@@ -39,6 +40,7 @@
 
 
 class guTaskBarIcon;
+class guLibUpdateThread;
 
 // -------------------------------------------------------------------------------- //
 class guMainFrame : public wxFrame
@@ -55,6 +57,7 @@ class guMainFrame : public wxFrame
         guStatusBar *       m_MainStatusBar;
 
         DbLibrary *         m_Db;
+        guLibUpdateThread * m_LibUpdateThread;
 
         guMPRIS *           m_MPRIS;
 
