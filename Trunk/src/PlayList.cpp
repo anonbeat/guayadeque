@@ -46,7 +46,7 @@ END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
 guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
-            wxVListBox( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_MULTIPLE )
+            wxVListBox( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_MULTIPLE|wxSUNKEN_BORDER  )
 {
     wxArrayString Songs;
     int Count;
