@@ -23,6 +23,7 @@
 #include "Commands.h"
 #include "ConfirmExit.h"
 #include "Images.h"
+#include "LibUpdate.h"
 #include "Preferences.h"
 #include "SplashWin.h"
 #include "TaskBar.h"
@@ -480,10 +481,7 @@ void guMainFrame::OnUpdateCovers( wxCommandEvent &WXUNUSED( event ) )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
 {
-    if( m_Db )
-    {
-        m_Db->UpdateLibrary();
-    }
+    guLibUpdateThread * LibUpdateThread = new guLibUpdateThread( m_Db );
 }
 
 // ---------------------------------------------------------------------- //

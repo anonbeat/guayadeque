@@ -1117,13 +1117,17 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, wxString &FilePath )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::ReadFileTags( const wxString &FileName )
+int DbLibrary::ReadFileTags( const char * filename )
 {
   TagInfo Info;
 
+  wxString FileName( filename, wxConvUTF8 );
+
   Info.ReadID3Tags( FileName );
 
-  wxString PathName = wxGetCwd();
+  //wxString PathName = wxGetCwd();
+  //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
+  wxString PathName = wxPathOnly( FileName );
   //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
   if( !GetPathId( &m_CurSong.m_PathId, PathName ) )
   {
@@ -1380,7 +1384,7 @@ int DbLibrary::ScanDirectory( const wxString &DirName, int GaugeId )
             // TODO: add other file formats ?
             if( FileName.EndsWith( wxT( ".mp3" ) ) )
             {
-                ReadFileTags( FileName );
+                ReadFileTags( FileName.char_str() );
             }
           }
         }
