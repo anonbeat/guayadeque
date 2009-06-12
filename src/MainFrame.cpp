@@ -65,6 +65,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
                                       wxGetHomeDir() + wxT( "/Music" ),
                                       wxT( "LibPaths" ) ) );
 
+    m_LibUpdateThread = NULL;
     //
     // guMainFrame GUI components
     //
@@ -202,6 +203,12 @@ guMainFrame::~guMainFrame()
         wxSize MainWindowSize = GetSize();
         Config->WriteNum( wxT( "MainWindowSizeWidth" ), MainWindowSize.x, wxT( "Positions" ) );
         Config->WriteNum( wxT( "MainWindowSizeHeight" ), MainWindowSize.y, wxT( "Positions" ) );
+    }
+
+    if( m_LibUpdateThread )
+    {
+        m_LibUpdateThread->Pause();
+        m_LibUpdateThread->Delete();
     }
 
     if( m_TaskBarIcon )
@@ -392,6 +399,7 @@ void guMainFrame::LibraryUpdated( wxCommandEvent &event )
 //    guLogMessage( wxT( "Library Updated Event fired" ) );
     if( m_LibPanel )
         m_LibPanel->ReloadControls( event );
+    m_LibUpdateThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -481,7 +489,9 @@ void guMainFrame::OnUpdateCovers( wxCommandEvent &WXUNUSED( event ) )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
 {
-    guLibUpdateThread * LibUpdateThread = new guLibUpdateThread( m_Db );
+    if( m_LibUpdateThread )
+        return;
+    m_LibUpdateThread = new guLibUpdateThread( m_Db );
 }
 
 // ---------------------------------------------------------------------- //
