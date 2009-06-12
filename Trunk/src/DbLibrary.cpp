@@ -611,7 +611,7 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
         {
             do {
                 CurFile = FileName.Lower();
-                //guLogMessage( wxT( "FindCoverFile: Found file %s" ), FileName.c_str() );
+                guLogMessage( wxT( "FindCoverFile: Found file '%s'" ), FileName.c_str() );
                 if( SearchCoverWords( CurFile, m_CoverSearchWords ) )
                 {
                     //guLogMessage( wxT( "FindCoverFile: This file have been detected as a Cover" ) );
@@ -881,8 +881,22 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
   wxSQLite3ResultSet dbRes;
   int RetVal = 0;
 //  printf( "GetAlbumId\n" );
+  wxString PathName = wxEmptyString;
 
   escape_query_str( &AlbumName );
+
+  query = wxString::Format( wxT( "SELECT path_value FROM paths WHERE path_id = %u LIMIT 1;" ), PathId );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      PathName = dbRes.GetString( 0 );
+      //guLogMessage( wxT( "PathName: '%s'" ), PathName.c_str() );
+  }
+
+  dbRes.Finalize();
+
 
   query = wxString::Format( wxT( "SELECT album_id, album_coverid, album_uptag, album_artistid "\
                                  "FROM albums "\
@@ -913,7 +927,7 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
 
     if( !* CoverId )
     {
-        * CoverId = FindCoverFile( wxGetCwd() );
+        * CoverId = FindCoverFile( PathName );
         if( * CoverId )
         {
             query = wxString::Format( wxT( "UPDATE albums SET album_coverid = %i "\
@@ -949,7 +963,7 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
   else
   {
     //guLogMessage( wxT( "AlbumName not found. Searching for covers in '%s'" ), wxGetCwd().c_str() );
-    * CoverId = FindCoverFile( wxGetCwd() );
+    * CoverId = FindCoverFile( PathName );
     //guLogMessage( wxT( "Found Cover with Id : %i" ), * CoverId );
 
     query = query.Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid, album_uptag ) "\
@@ -1200,13 +1214,6 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
   int count = Songs->Count();
   guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
 
-  // Refresh the SearchCoverWords array
-  guConfig * Config = ( guConfig * ) guConfig::Get();
-  if( Config )
-  {
-      m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-  }
-
   // Process each Track
   for( index = 0; index < count; index++ )
   {
@@ -1454,6 +1461,13 @@ void DbLibrary::SetLibPath( const wxArrayString &NewPaths )
   for( unsigned int Index = 0; Index < m_LibPaths.Count(); Index++ )
   {
     guLogMessage( m_LibPaths[ Index ] );
+  }
+
+  // Refresh the SearchCoverWords array
+  guConfig * Config = ( guConfig * ) guConfig::Get();
+  if( Config )
+  {
+      m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
   }
 }
 

@@ -31,7 +31,6 @@ guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
     m_Db = db;
     m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
-    guLogMessage( wxT( "Gauge: %i" ), m_GaugeId );
 
     m_LibCountThread = new guLibCountThread( this );
 
@@ -112,7 +111,7 @@ guLibCountThread::guLibCountThread( guLibUpdateThread * libupdatethread )
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
         Run();
     }
 }
