@@ -554,10 +554,20 @@ int inline DbLibrary::ExecuteUpdate( const wxSQLite3StatementBuffer &query )
 // -------------------------------------------------------------------------------- //
 int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
 {
+  static wxString LastGenre = wxEmptyString;
+  static int LastGenreId;
+  if( LastGenre == GenreName )
+  {
+      * GenreId = LastGenreId;
+      return 1;
+  }
+
   wxString query;
   wxSQLite3ResultSet dbRes;
   wxASSERT( GenreId );
   int RetVal = 0;
+
+  LastGenre = GenreName;
 
   escape_query_str( &GenreName );
 
@@ -568,7 +578,7 @@ int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
 
   if( dbRes.NextRow() )
   {
-    * GenreId = dbRes.GetInt( 0 );
+    * GenreId = LastGenreId = dbRes.GetInt( 0 );
     if( dbRes.GetString( 1 ) != m_UpTag )
     {
         query = wxString::Format( wxT( "UPDATE genres SET genre_uptag = '%s' "\
@@ -583,7 +593,7 @@ int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
                                    "VALUES( NULL, '%s', '%s' );" ), GenreName.c_str(), m_UpTag.c_str() );
     if( ExecuteUpdate( query ) == 1 )
     {
-      * GenreId = m_Db.GetLastRowId().GetLo();
+      * GenreId = LastGenreId = m_Db.GetLastRowId().GetLo();
       RetVal = 1;
     }
   }
@@ -611,7 +621,7 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
         {
             do {
                 CurFile = FileName.Lower();
-                guLogMessage( wxT( "FindCoverFile: Found file '%s'" ), FileName.c_str() );
+                //guLogMessage( wxT( "FindCoverFile: Found file '%s'" ), FileName.c_str() );
                 if( SearchCoverWords( CurFile, m_CoverSearchWords ) )
                 {
                     //guLogMessage( wxT( "FindCoverFile: This file have been detected as a Cover" ) );
@@ -877,6 +887,17 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
 // -------------------------------------------------------------------------------- //
 int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, const int ArtistId, const int PathId )
 {
+  static wxString LastAlbum = wxEmptyString;
+  static int LastAlbumId;
+  static int LastCoverId;
+
+  if( LastAlbum == AlbumName )
+  {
+      * AlbumId = LastAlbumId;
+      * CoverId = LastCoverId;
+      return 1;
+  }
+
   wxString query;
   wxSQLite3ResultSet dbRes;
   int RetVal = 0;
@@ -907,8 +928,8 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
 
   if( dbRes.NextRow() )
   {
-    * AlbumId = dbRes.GetInt( 0 );
-    * CoverId = dbRes.GetInt( 1 );
+    * AlbumId = LastAlbumId = dbRes.GetInt( 0 );
+    * CoverId = LastCoverId = dbRes.GetInt( 1 );
     if( * CoverId )
     {
         // Check if the Actual Cover exists and
@@ -921,13 +942,13 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
                                        "WHERE album_id = %i;" ), * AlbumId );
             ExecuteUpdate( query );
             // The cover did not exist so clear it
-            * CoverId = 0;
+            * CoverId = LastCoverId = 0;
         }
     }
 
     if( !* CoverId )
     {
-        * CoverId = FindCoverFile( PathName );
+        * CoverId = LastCoverId = FindCoverFile( PathName );
         if( * CoverId )
         {
             query = wxString::Format( wxT( "UPDATE albums SET album_coverid = %i "\
@@ -963,14 +984,14 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
   else
   {
     //guLogMessage( wxT( "AlbumName not found. Searching for covers in '%s'" ), wxGetCwd().c_str() );
-    * CoverId = FindCoverFile( PathName );
+    * CoverId = LastCoverId = FindCoverFile( PathName );
     //guLogMessage( wxT( "Found Cover with Id : %i" ), * CoverId );
 
     query = query.Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid, album_uptag ) "\
                                "VALUES( NULL, %u, %u, '%s', %u, '%s' );" ), ArtistId, PathId,  AlbumName.c_str(), * CoverId, m_UpTag.c_str() );
     if( ExecuteUpdate( query ) == 1 )
     {
-      * AlbumId = m_Db.GetLastRowId().GetLo();
+      * AlbumId = LastAlbumId = m_Db.GetLastRowId().GetLo();
       RetVal = 1;
     }
   }
@@ -1032,10 +1053,20 @@ int DbLibrary::GetLabelId( int * LabelId, wxString &LabelName )
 // -------------------------------------------------------------------------------- //
 int DbLibrary::GetPathId( int * PathId, wxString &PathValue )
 {
+  static wxString LastPath = wxEmptyString;
+  static int      LastPathId;
+
+  if( PathValue == LastPath )
+  {
+      * PathId = LastPathId;
+      return 1;
+  }
+
   wxString query;
   wxSQLite3ResultSet dbRes;
   int RetVal = 0;
-//  printf( "GetPathId\n" );
+
+  LastPath = PathValue;
 
   if( !PathValue.EndsWith( wxT( "/" ) ) )
     PathValue += '/';
@@ -1048,7 +1079,7 @@ int DbLibrary::GetPathId( int * PathId, wxString &PathValue )
 
   if( dbRes.NextRow() )
   {
-    * PathId = dbRes.GetInt( 0 );
+    * PathId = LastPathId = dbRes.GetInt( 0 );
     if( dbRes.GetString( 1 ) != m_UpTag )
     {
         query = wxString::Format( wxT( "UPDATE paths SET path_uptag = '%s' "\
@@ -1063,11 +1094,12 @@ int DbLibrary::GetPathId( int * PathId, wxString &PathValue )
                                    "VALUES( NULL, '%s', '%s' );" ), PathValue.c_str(), m_UpTag.c_str() );
     if( ExecuteUpdate( query ) == 1 )
     {
-      * PathId = m_Db.GetLastRowId().GetLo();
+      * PathId = LastPathId = m_Db.GetLastRowId().GetLo();
       RetVal = 1;
     }
   }
   dbRes.Finalize();
+
   return RetVal;
 }
 
@@ -2186,10 +2218,21 @@ const wxString DbLibrary::GetArtistName( const int ArtistId )
 // -------------------------------------------------------------------------------- //
 bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
 {
+  static wxString LastArtist = wxEmptyString;
+  static int LastArtistId = wxNOT_FOUND;
+
+  if( LastArtist == ArtistName )
+  {
+      * ArtistId = LastArtistId;
+      return 1;
+  }
+
   wxString query;
   wxSQLite3ResultSet dbRes;
   bool RetVal = false;
 //  printf( "GetArtistId\n" );
+
+  LastArtist = ArtistName;
 
   escape_query_str( &ArtistName );
 
@@ -2200,7 +2243,7 @@ bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
 
   if( dbRes.NextRow() )
   {
-    * ArtistId = dbRes.GetInt( 0 );
+    * ArtistId = LastArtistId = dbRes.GetInt( 0 );
     if( dbRes.GetString( 1 ) != m_UpTag )
     {
         query = wxString::Format( wxT( "UPDATE artists SET artist_uptag = '%s' "\
@@ -2215,7 +2258,7 @@ bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
                                    "VALUES( NULL, '%s', '%s');" ), ArtistName.c_str(), m_UpTag.c_str() );
     if( ExecuteUpdate( query ) == 1 )
     {
-      * ArtistId = m_Db.GetLastRowId().GetLo();
+      * ArtistId = LastArtistId = m_Db.GetLastRowId().GetLo();
       RetVal = true;
     }
   }
