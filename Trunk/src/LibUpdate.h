@@ -33,6 +33,7 @@ class guLibUpdateThread : public wxThread
     wxArrayString       m_Files;
     int                 m_GaugeId;
     wxArrayString       m_LibPaths;
+    wxDateTime          m_LastUpdate;
 
     int                 ScanDirectory( wxString dirname );
 

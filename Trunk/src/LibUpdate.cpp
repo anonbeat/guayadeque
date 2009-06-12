@@ -36,6 +36,7 @@ guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
     if( Config )
     {
          m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+         m_LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
     }
 
     if( Create() == wxTHREAD_NO_ERROR )
@@ -48,6 +49,13 @@ guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::~guLibUpdateThread()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        wxDateTime Now = wxDateTime::Now();
+        Config->WriteStr( wxT( "LastUpdate" ), Now.Format(), wxT( "General" ) );
+    }
+
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
     event.SetEventObject( ( wxObject * ) this );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
@@ -90,7 +98,11 @@ int guLibUpdateThread::ScanDirectory( wxString dirname )
             // TODO: add other file formats ?
             if( FileName.EndsWith( wxT( ".mp3" ) ) )
             {
-                m_Files.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
+                wxFileName FN( FileName );
+                if( FN.GetModificationTime() > m_LastUpdate )
+                {
+                    m_Files.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
+                }
             }
           }
         }
@@ -106,6 +118,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 {
     wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
+
     wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
