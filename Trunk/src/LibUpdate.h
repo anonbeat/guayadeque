@@ -33,11 +33,14 @@ class guLibUpdateThread : public wxThread
     DbLibrary *         m_Db;
     guMainFrame *       m_MainFrame;
     wxArrayString       m_Files;
+    int                 m_GaugeId;
+
     wxMutex             m_FilesMutex;
     guLibCountThread *  m_LibCountThread;
+    wxMutex             m_LibCountThreadMutex;
 
   public :
-    guLibUpdateThread( DbLibrary * db, guMainFrame * mainframe )
+    guLibUpdateThread( DbLibrary * db );
     ~guLibUpdateThread();
 
     guLibUpdateThread::ExitCode Entry();
@@ -50,9 +53,17 @@ class guLibCountThread : public wxThread
 {
   private :
     guLibUpdateThread * m_LibUpdateThread;
+    wxArrayString       m_LibPaths;
+
+    int                 ScanDirectory( wxString dirname );
+    void                AddFileToList( wxString filename );
 
   public :
     guLibCountThread( guLibUpdateThread * libupdatethread );
+    ~guLibCountThread();
+
+
+    guLibCountThread::ExitCode Entry();
 
 };
 

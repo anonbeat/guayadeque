@@ -104,7 +104,7 @@ bool TagInfo::ReadID3Tags( const wxString &FileName )
     }
     else
     {
-      guLogError( wxT( "Could not read tags from file %s\n" ), FileName.c_str() );
+      guLogError( wxT( "Could not read tags from file '%s'" ), FileName.c_str() );
     }
 
     return true;

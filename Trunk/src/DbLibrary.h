@@ -305,7 +305,7 @@ class DbLibrary {
 
 
     void                SetLibPath( const wxArrayString &NewPaths );
-    int                 ReadFileTags( const wxString &FileName );
+    int                 ReadFileTags( const char * filename );
     void                DeleteOldRecs( void );
     int                 UpdateLibrary( void );
 
