@@ -33,7 +33,7 @@ guGauge::guGauge( wxWindow * parent ) :
 	m_StaticText->Wrap( -1 );
 	MainSizer->Add( m_StaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0 );
 
-	m_Gauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( 150, 15 ), wxGA_HORIZONTAL );
+	m_Gauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1, 15 ), wxGA_HORIZONTAL );
 	MainSizer->Add( m_Gauge, 1, wxALIGN_CENTER_VERTICAL|wxALL, 0 );
 
 	SetSizer( MainSizer );
@@ -66,7 +66,7 @@ void guGauge::SetTotal( int total )
     if( m_Gauge )
     {
         m_Gauge->SetRange( total );
-        SetValue( 0 );
+        //SetValue( 0 );
     }
 }
 
