@@ -360,6 +360,24 @@ unsigned long DbLibrary::GetDbVersion( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void DbLibrary::DoCleanUp( void )
+{
+  wxString query;
+
+  // Delete all posible orphan entries
+  query = wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" );
+  ExecuteUpdate( query );
+  query = wxT( "DELETE FROM artists WHERE artist_id NOT IN ( SELECT DISTINCT song_artistid FROM songs );" );
+  ExecuteUpdate( query );
+  query = wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" );
+  ExecuteUpdate( query );
+  query = wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT album_coverid FROM albums );" );
+  ExecuteUpdate( query );
+  query = wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" );
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
 bool DbLibrary::CheckDbVersion( const wxString &DbName )
 {
     wxArrayString query;
@@ -1340,17 +1358,7 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
 
   wxString query;
 
-  // Delete all posible orphan entries
-  query = wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" );
-  ExecuteUpdate( query );
-  query = wxT( "DELETE FROM artists WHERE artist_id NOT IN ( SELECT DISTINCT song_artistid FROM songs );" );
-  ExecuteUpdate( query );
-  query = wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" );
-  ExecuteUpdate( query );
-  query = wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT album_coverid FROM albums );" );
-  ExecuteUpdate( query );
-  query = wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" );
-  ExecuteUpdate( query );
+  DoCleanUp();
 
   LoadCache();
 

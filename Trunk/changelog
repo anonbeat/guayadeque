@@ -1,10 +1,11 @@
 
+  * Improved library update. Now more faster.
   * Added Play/Enqueue options to Last.fm panel items
   * Playlist current track now follow theme color
   * Last.fm preferences shouldn't be enabled if the user or pass ir not
     filled
   * Mouse wheel support in the volumen control window
-  * Create ~/.guayadeque/LinkIcons dir if was not created where to store the
+  * Create ~/.guayadeque/LinkIcons dir if doesnt exists to store the
     Links Icons
 
 2009-06-09 0.1.0
