@@ -133,8 +133,10 @@ class guPlayerPanel : public wxPanel
 
     int                     m_BufferGaugeId;
 
+    wxMutex                 m_VolumenMutex;
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
+	void                OnVolumenMouseWheel( wxMouseEvent &event );
     void                OnLeftDClickPlayerCoverBitmap( wxMouseEvent &event );
     void                OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
     void                OnPlayerPositionSliderEndSeek( wxScrollEvent &event );

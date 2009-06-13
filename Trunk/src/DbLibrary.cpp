@@ -259,7 +259,7 @@ DbLibrary::DbLibrary()
   m_RaGeFilters.Empty();
   m_RaLaFilters.Empty();
 
-  m_UpTag = wxEmptyString;
+  //m_UpTag = wxEmptyString;
 
   LoadCache();
 }
@@ -273,7 +273,7 @@ DbLibrary::DbLibrary( const wxString &DbName )
   // Once its checked open it
   Open( DbName );
 
-  m_UpTag = wxEmptyString;
+  //m_UpTag = wxEmptyString;
 
   //
   guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -422,26 +422,26 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
 
     if( dbVer == 0 )
     {
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS genres( genre_id INTEGER PRIMARY KEY AUTOINCREMENT,genre_name varchar(255),genre_uptag varchar(8) );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS genres( genre_id INTEGER PRIMARY KEY AUTOINCREMENT,genre_name varchar(255) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""genre_id"" on genres (genre_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""genre_name"" on genres (genre_name ASC);" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS albums( album_id INTEGER PRIMARY KEY AUTOINCREMENT, album_artistid INTEGER, album_pathid INTEGER, album_name varchar(255), album_coverid INTEGER, album_uptag varchar(8) );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS albums( album_id INTEGER PRIMARY KEY AUTOINCREMENT, album_artistid INTEGER, album_pathid INTEGER, album_name varchar(255), album_coverid INTEGER );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""album_id"" on albums (album_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_artistid"" on albums (album_artistid ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_pathid"" on albums (album_pathid ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_name"" on albums (album_name ASC);" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS artists( artist_id INTEGER  PRIMARY KEY AUTOINCREMENT, artist_name varchar(255), artist_uptag varchar(8) );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS artists( artist_id INTEGER  PRIMARY KEY AUTOINCREMENT, artist_name varchar(255) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""artist_id"" on artists (artist_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""artist_name"" on artists (artist_name ASC);" ) );
       //query.Add( wxT( "INSERT INTO artists( artist_id, artist_name ) VALUES( NULL, 'Various' );" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS paths( path_id INTEGER PRIMARY KEY AUTOINCREMENT,path_value varchar(1024),path_uptag varchar(8) );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS paths( path_id INTEGER PRIMARY KEY AUTOINCREMENT,path_value varchar(1024) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""path_id"" on paths (path_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""path_value"" on paths (path_value ASC);" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS songs( song_id INTEGER PRIMARY KEY AUTOINCREMENT, song_name varchar(255), song_albumid INTEGER, song_artistid INTEGER, song_genreid INTEGER, song_filename varchar(255), song_pathid INTEGER, song_number int(3), song_year int(4), song_length int, song_uptag varchar(8) );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS songs( song_id INTEGER PRIMARY KEY AUTOINCREMENT, song_name varchar(255), song_albumid INTEGER, song_artistid INTEGER, song_genreid INTEGER, song_filename varchar(255), song_pathid INTEGER, song_number int(3), song_year int(4), song_length int );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""song_id"" on songs (song_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_name"" on songs (song_name ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_albumid"" on songs (song_albumid ASC);" ) );
@@ -466,7 +466,7 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plsong_plid"" on plsongs (plsong_plid ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plsong_songid"" on plsongs (plsong_songid ASC);" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_hash VARCHAR( 32 ), cover_uptag VARCHAR(8) );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_hash VARCHAR( 32 ) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""cover_id"" on covers (cover_id ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS audioscs( audiosc_id INTEGER PRIMARY KEY AUTOINCREMENT, audiosc_artist VARCHAR(255), audiosc_album varchar(255), audiosc_track varchar(255), audiosc_playedtime INTEGER, audiosc_source char(1), audiosc_ratting char(1), audiosc_len INTEGER, audiosc_tracknum INTEGER, audiosc_mbtrackid INTEGER );" ) );
@@ -619,7 +619,7 @@ int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
 
   escape_query_str( &GenreName );
 
-  query = wxString::Format( wxT( "SELECT genre_id, genre_uptag FROM genres "\
+  query = wxString::Format( wxT( "SELECT genre_id FROM genres "\
                                  "WHERE genre_name = '%s' LIMIT 1;" ), GenreName.c_str() );
 
   dbRes = ExecuteQuery( query );
@@ -627,18 +627,12 @@ int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
   if( dbRes.NextRow() )
   {
     * GenreId = LastGenreId = dbRes.GetInt( 0 );
-//    if( dbRes.GetString( 1 ) != m_UpTag )
-//    {
-//        query = wxString::Format( wxT( "UPDATE genres SET genre_uptag = '%s' "\
-//                                       "WHERE genre_id = %i;" ), m_UpTag.c_str(), * GenreId );
-//        ExecuteUpdate( query );
-//    }
     RetVal = 1;
   }
   else
   {
-    query = wxString::Format( wxT( "INSERT INTO genres( genre_id, genre_name, genre_uptag ) "\
-                                   "VALUES( NULL, '%s', '%s' );" ), GenreName.c_str(), m_UpTag.c_str() );
+    query = wxString::Format( wxT( "INSERT INTO genres( genre_id, genre_name ) "\
+                                   "VALUES( NULL, '%s' );" ), GenreName.c_str() );
     if( ExecuteUpdate( query ) == 1 )
     {
       * GenreId = LastGenreId = m_Db.GetLastRowId().GetLo();
@@ -686,7 +680,7 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
 
                         escape_query_str( &CurFile );
 
-                        query = wxString::Format( wxT( "SELECT cover_id, cover_path, cover_hash, cover_uptag FROM covers " \
+                        query = wxString::Format( wxT( "SELECT cover_id, cover_path, cover_hash FROM covers " \
                                     "WHERE cover_path = '%s' LIMIT 1;" ), CurFile.c_str() );
 
                         dbRes = ExecuteQuery( query );
@@ -713,7 +707,7 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
                                       //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
 
                                       wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format(
-                                          wxT( "UPDATE covers SET cover_thumb = ?, cover_hash = '%s', cover_uptag = '%s' WHERE cover_id = %u;" ), CoverHash.c_str(), m_UpTag.c_str(), CoverId ) );
+                                          wxT( "UPDATE covers SET cover_thumb = ?, cover_hash = '%s' WHERE cover_id = %u;" ), CoverHash.c_str(), CoverId ) );
 
                                       try {
                                         stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
@@ -727,13 +721,6 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
                                   }
                                 }
                             }
-
-//                            if( dbRes.GetString( 3 ) != m_UpTag )
-//                            {
-//                                query = wxString::Format( wxT( "UPDATE covers SET cover_uptag = '%s' " \
-//                                                               "WHERE cover_id = %i;" ), m_UpTag.c_str(), CoverId );
-//                                ExecuteUpdate( query );
-//                            }
                         }
                         else
                         {
@@ -750,8 +737,8 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
                               {
                                   //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
 
-                                  wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_hash, cover_uptag ) "
-                                                   "VALUES( NULL, '%s', ?, '%s', '%s' );" ), CurFile.c_str(), CoverHash.c_str(), m_UpTag.c_str() ) );
+                                  wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_hash ) "
+                                                   "VALUES( NULL, '%s', ?, '%s' );" ), CurFile.c_str(), CoverHash.c_str() ) );
 
                                   try {
                                     stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
@@ -910,8 +897,8 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
 //
 //      stmt.ExecuteQuery();
       wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format(
-          wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_hash, cover_uptag ) " \
-               "VALUES( NULL, '%s', ?, '%s', '' )" ),
+          wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_hash ) " \
+               "VALUES( NULL, '%s', ?, '%s' )" ),
           FileName.c_str(), CoverHash.c_str() ) );
 
       try {
@@ -967,7 +954,7 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
   dbRes.Finalize();
 
 
-  query = wxString::Format( wxT( "SELECT album_id, album_coverid, album_uptag, album_artistid "\
+  query = wxString::Format( wxT( "SELECT album_id, album_coverid, album_artistid "\
                                  "FROM albums "\
                                  "WHERE album_name = '%s' "\
                                  "AND album_pathid = %u LIMIT 1;" ), AlbumName.c_str(), PathId );
@@ -1005,22 +992,8 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
         }
     }
 
-//    if( dbRes.GetString( 2 ) != m_UpTag )
-//    {
-//        query = wxString::Format( wxT( "UPDATE albums SET album_uptag = '%s' "\
-//                                       "WHERE album_id = %i;" ), m_UpTag.c_str(), * AlbumId );
-//        ExecuteUpdate( query );
-//    }
-
-    if( * CoverId )
-    {
-        query = wxString::Format( wxT( "UPDATE covers SET cover_uptag = '%s' "\
-                                       "WHERE cover_id = %i;" ), m_UpTag.c_str(), * CoverId );
-        ExecuteUpdate( query );
-    }
-
     // Now check if the artist id changed and if so update it
-    if( dbRes.GetInt( 3 ) != ArtistId )
+    if( dbRes.GetInt( 2 ) != ArtistId )
     {
         query = wxString::Format( wxT( "UPDATE albums SET album_artistid = %u "\
                                        "WHERE album_id = %i;" ), ArtistId, * AlbumId );
@@ -1035,8 +1008,8 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
     * CoverId = LastCoverId = FindCoverFile( PathName );
     //guLogMessage( wxT( "Found Cover with Id : %i" ), * CoverId );
 
-    query = query.Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid, album_uptag ) "\
-                               "VALUES( NULL, %u, %u, '%s', %u, '%s' );" ), ArtistId, PathId,  AlbumName.c_str(), * CoverId, m_UpTag.c_str() );
+    query = query.Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid ) "\
+                               "VALUES( NULL, %u, %u, '%s', %u );" ), ArtistId, PathId,  AlbumName.c_str(), * CoverId );
     if( ExecuteUpdate( query ) == 1 )
     {
       * AlbumId = LastAlbumId = m_Db.GetLastRowId().GetLo();
@@ -1121,25 +1094,19 @@ int DbLibrary::GetPathId( int * PathId, wxString &PathValue )
 
   escape_query_str( &PathValue );
 
-  query = wxString::Format( wxT( "SELECT path_id, path_uptag FROM paths "\
+  query = wxString::Format( wxT( "SELECT path_id FROM paths "\
                                  "WHERE path_value = '%s' LIMIT 1;" ), PathValue.c_str() );
   dbRes = ExecuteQuery( query );
 
   if( dbRes.NextRow() )
   {
     * PathId = LastPathId = dbRes.GetInt( 0 );
-//    if( dbRes.GetString( 1 ) != m_UpTag )
-//    {
-//        query = wxString::Format( wxT( "UPDATE paths SET path_uptag = '%s' "\
-//                                       "WHERE path_id = %i;" ), m_UpTag.c_str(), * PathId );
-//        ExecuteUpdate( query );
-//    }
     RetVal = 1;
   }
   else
   {
-    query = wxString::Format( wxT( "INSERT INTO paths( path_id, path_value, path_uptag ) "\
-                                   "VALUES( NULL, '%s', '%s' );" ), PathValue.c_str(), m_UpTag.c_str() );
+    query = wxString::Format( wxT( "INSERT INTO paths( path_id, path_value ) "\
+                                   "VALUES( NULL, '%s' );" ), PathValue.c_str() );
     if( ExecuteUpdate( query ) == 1 )
     {
       * PathId = LastPathId = m_Db.GetLastRowId().GetLo();
@@ -1164,7 +1131,7 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
   escape_query_str( &FileName );
 
 //  printf( "%u : %s\n", FileName.Length(), TextBuf );
-  query = query.Format( wxT( "SELECT song_id, song_uptag FROM songs "\
+  query = query.Format( wxT( "SELECT song_id FROM songs "\
                              "WHERE song_pathid = %u " \
                              "AND song_filename = '%s' LIMIT 1;" ), PathId, FileName.c_str() );
   //printf( query.ToAscii() );
@@ -1173,18 +1140,12 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
   if( dbRes.NextRow() )
   {
     * SongId = dbRes.GetInt( 0 );
-//    if( dbRes.GetString( 1 ) != m_UpTag )
-//    {
-//        query = wxString::Format( wxT( "UPDATE songs SET song_uptag = '%s' "\
-//                                       "WHERE song_id = %i;" ), m_UpTag.c_str(), * SongId );
-//        ExecuteUpdate( query );
-//    }
     RetVal = 1;
   }
   else
   {
-    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_uptag ) "\
-                               "VALUES( NULL, %u, '%s' )" ), PathId, m_UpTag.c_str() );
+    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid ) "\
+                               "VALUES( NULL, %u )" ), PathId );
     if( ExecuteUpdate( query ) == 1 )
     {
       * SongId = m_Db.GetLastRowId().GetLo();
@@ -1470,56 +1431,6 @@ int DbLibrary::ScanDirectory( const wxString &DirName, int GaugeId )
   }
   wxSetWorkingDirectory( SavedDir );
   return 1;
-}
-
-// -------------------------------------------------------------------------------- //
-int DbLibrary::UpdateLibrary()
-{
-  // Refresh the SearchCoverWords array
-  // Its loaded here so only needed to load once for every update
-  guConfig * Config = ( guConfig * ) guConfig::Get();
-  if( Config )
-  {
-      m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-  }
-
-  guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-  int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge();
-  DbUpdateLibThread * UpdateLibThread = new DbUpdateLibThread( this, m_LibPaths, GaugeId );
-  if( UpdateLibThread )
-  {
-    m_UpTag = GenerateRandomTag();
-    guLogMessage( wxT( "Updating with Tag %s" ), m_UpTag.c_str() );
-    UpdateLibThread->Create();
-    UpdateLibThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-    UpdateLibThread->Run();
-  }
-  return 1;
-}
-
-// -------------------------------------------------------------------------------- //
-void DbLibrary::DeleteOldRecs()
-{
-  wxString query;
-
-  query = wxString::Format( wxT( "DELETE FROM songs WHERE song_uptag != '%s';" ), m_UpTag.c_str() );
-  ExecuteUpdate( query );
-
-  query = wxString::Format( wxT( "DELETE FROM genres WHERE genre_uptag != '%s';" ), m_UpTag.c_str() );
-  ExecuteUpdate( query );
-
-  query = wxString::Format( wxT( "DELETE FROM artists WHERE artist_uptag != '%s';" ), m_UpTag.c_str() );
-  ExecuteUpdate( query );
-
-  query = wxString::Format( wxT( "DELETE FROM albums WHERE album_uptag != '%s';" ), m_UpTag.c_str() );
-  ExecuteUpdate( query );
-
-  query = wxString::Format( wxT( "DELETE FROM paths WHERE path_uptag != '%s';" ), m_UpTag.c_str() );
-  ExecuteUpdate( query );
-
-  query = wxString::Format( wxT( "DELETE FROM covers WHERE cover_uptag != '%s';" ), m_UpTag.c_str() );
-  ExecuteUpdate( query );
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2277,7 +2188,7 @@ bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
 
   escape_query_str( &ArtistName );
 
-  query = wxString::Format( wxT( "SELECT artist_id, artist_uptag FROM artists "\
+  query = wxString::Format( wxT( "SELECT artist_id FROM artists "\
                                  "WHERE artist_name = '%s' LIMIT 1;" ), ArtistName.c_str() );
 
   dbRes = ExecuteQuery( query );
@@ -2285,18 +2196,12 @@ bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
   if( dbRes.NextRow() )
   {
     * ArtistId = LastArtistId = dbRes.GetInt( 0 );
-//    if( dbRes.GetString( 1 ) != m_UpTag )
-//    {
-//        query = wxString::Format( wxT( "UPDATE artists SET artist_uptag = '%s' "\
-//                                       "WHERE artist_id = %i;" ), m_UpTag.c_str(), * ArtistId );
-//        ExecuteUpdate( query );
-//    }
     RetVal = true;
   }
   else if( Create )
   {
-    query = wxString::Format( wxT( "INSERT INTO artists( artist_id, artist_name, artist_uptag ) "\
-                                   "VALUES( NULL, '%s', '%s');" ), ArtistName.c_str(), m_UpTag.c_str() );
+    query = wxString::Format( wxT( "INSERT INTO artists( artist_id, artist_name ) "\
+                                   "VALUES( NULL, '%s' );" ), ArtistName.c_str() );
     if( ExecuteUpdate( query ) == 1 )
     {
       * ArtistId = LastArtistId = m_Db.GetLastRowId().GetLo();
@@ -3519,46 +3424,6 @@ bool DbLibrary::DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo 
         return true;
   }
   return false;
-}
-
-// -------------------------------------------------------------------------------- //
-// DbUpdateLibThread
-// -------------------------------------------------------------------------------- //
-DbUpdateLibThread::DbUpdateLibThread( DbLibrary * NewDb, const wxArrayString &NewPaths, int gaugeid ) : wxThread()
-{
-    m_Db = NewDb;
-    m_Paths = NewPaths;
-    m_GaugeId = gaugeid;
-}
-
-// -------------------------------------------------------------------------------- //
-DbUpdateLibThread::~DbUpdateLibThread()
-{
-//    printf( "DbUpdateLibThread Object destroyed\n" );
-};
-
-// -------------------------------------------------------------------------------- //
-DbUpdateLibThread::ExitCode DbUpdateLibThread::Entry()
-{
-    int index;
-    int Count = m_Paths.Count();
-    for( index = 0; index < Count; ++index )
-    {
-        guLogMessage( wxT( "Scanning Dir %s" ), m_Paths[ index ].c_str() );
-        m_Db->ScanDirectory( m_Paths[ index ], m_GaugeId );
-    }
-    m_Db->DeleteOldRecs();
-    guLogMessage( wxT( "Done UpdateLibrary Thread" ) );
-    //
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
-    event.SetEventObject( ( wxObject * ) this );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
-
-    // Remove the Gauge from the MainFrame
-    event.SetId( ID_GAUGE_REMOVE );
-    event.SetInt( m_GaugeId );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
-    return 0;
 }
 
 // -------------------------------------------------------------------------------- //

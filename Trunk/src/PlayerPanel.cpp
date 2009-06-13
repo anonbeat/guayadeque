@@ -228,6 +228,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	m_PlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
 	m_StopButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
 	m_VolumenButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
+	m_VolumenButton->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnVolumenMouseWheel ), NULL, this );
 	m_SmartPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
 	m_RandomPlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
 	m_RepeatPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
@@ -500,7 +501,6 @@ void guPlayerPanel::UpdateStatus()
 
     if( m_CurVolume != m_LastVolume )
     {
-        //ReadVol = m_MediaCtrl->GetVolume() * 100;
         if( m_CurVolume > 75 )
             m_VolumenButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_high ) );
         else if( m_CurVolume > 50 )
@@ -1106,6 +1106,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 {
     wxMediaState State;
+
     // Get The Current Song From m_PlayListCtrl
     //guTrack * CurItem = m_PlayListCtrl->GetCurrent();
     if( !m_MediaSong.m_SongId && m_PlayListCtrl->GetItemCount() )
@@ -1256,10 +1257,16 @@ int guPlayerPanel::GetVolume()
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetVolume( int Vol )
 {
+    if( Vol == m_CurVolume )
+        return;
     m_CurVolume = Vol;
+    if( m_CurVolume < 0 )
+        m_CurVolume = 0;
+    else if( m_CurVolume > 100 )
+        m_CurVolume = 100;
 //    if( m_MediaCtrl->GetState() != wxMEDIASTATE_STOPPED )
 //    {
-        m_MediaCtrl->SetVolume( ( ( double ) Vol ) / 100 );
+    m_MediaCtrl->SetVolume( Vol / 100 );
 //    }
 }
 
@@ -1284,6 +1291,13 @@ void guPlayerPanelTimer::Notify()
     {
         Player->UpdateStatus();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
+{
+    int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
+    SetVolume( m_CurVolume + ( Rotation * 4 ) );
 }
 
 // -------------------------------------------------------------------------------- //
