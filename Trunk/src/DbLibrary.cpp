@@ -406,6 +406,15 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
     int Count;
     unsigned long dbVer;
 
+    if( !wxFileExists( DbName ) )
+    {
+       // the database is going to be created... Reset the last update
+       guConfig * Config = ( guConfig * ) guConfig::Get();
+       if( Config )
+       {
+           Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) );
+        }
+    }
     //
     Open( DbName );
 
@@ -618,12 +627,12 @@ int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
   if( dbRes.NextRow() )
   {
     * GenreId = LastGenreId = dbRes.GetInt( 0 );
-    if( dbRes.GetString( 1 ) != m_UpTag )
-    {
-        query = wxString::Format( wxT( "UPDATE genres SET genre_uptag = '%s' "\
-                                       "WHERE genre_id = %i;" ), m_UpTag.c_str(), * GenreId );
-        ExecuteUpdate( query );
-    }
+//    if( dbRes.GetString( 1 ) != m_UpTag )
+//    {
+//        query = wxString::Format( wxT( "UPDATE genres SET genre_uptag = '%s' "\
+//                                       "WHERE genre_id = %i;" ), m_UpTag.c_str(), * GenreId );
+//        ExecuteUpdate( query );
+//    }
     RetVal = 1;
   }
   else
@@ -719,12 +728,12 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
                                 }
                             }
 
-                            if( dbRes.GetString( 3 ) != m_UpTag )
-                            {
-                                query = wxString::Format( wxT( "UPDATE covers SET cover_uptag = '%s' " \
-                                                               "WHERE cover_id = %i;" ), m_UpTag.c_str(), CoverId );
-                                ExecuteUpdate( query );
-                            }
+//                            if( dbRes.GetString( 3 ) != m_UpTag )
+//                            {
+//                                query = wxString::Format( wxT( "UPDATE covers SET cover_uptag = '%s' " \
+//                                                               "WHERE cover_id = %i;" ), m_UpTag.c_str(), CoverId );
+//                                ExecuteUpdate( query );
+//                            }
                         }
                         else
                         {
@@ -996,12 +1005,12 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
         }
     }
 
-    if( dbRes.GetString( 2 ) != m_UpTag )
-    {
-        query = wxString::Format( wxT( "UPDATE albums SET album_uptag = '%s' "\
-                                       "WHERE album_id = %i;" ), m_UpTag.c_str(), * AlbumId );
-        ExecuteUpdate( query );
-    }
+//    if( dbRes.GetString( 2 ) != m_UpTag )
+//    {
+//        query = wxString::Format( wxT( "UPDATE albums SET album_uptag = '%s' "\
+//                                       "WHERE album_id = %i;" ), m_UpTag.c_str(), * AlbumId );
+//        ExecuteUpdate( query );
+//    }
 
     if( * CoverId )
     {
@@ -1119,12 +1128,12 @@ int DbLibrary::GetPathId( int * PathId, wxString &PathValue )
   if( dbRes.NextRow() )
   {
     * PathId = LastPathId = dbRes.GetInt( 0 );
-    if( dbRes.GetString( 1 ) != m_UpTag )
-    {
-        query = wxString::Format( wxT( "UPDATE paths SET path_uptag = '%s' "\
-                                       "WHERE path_id = %i;" ), m_UpTag.c_str(), * PathId );
-        ExecuteUpdate( query );
-    }
+//    if( dbRes.GetString( 1 ) != m_UpTag )
+//    {
+//        query = wxString::Format( wxT( "UPDATE paths SET path_uptag = '%s' "\
+//                                       "WHERE path_id = %i;" ), m_UpTag.c_str(), * PathId );
+//        ExecuteUpdate( query );
+//    }
     RetVal = 1;
   }
   else
@@ -1164,12 +1173,12 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
   if( dbRes.NextRow() )
   {
     * SongId = dbRes.GetInt( 0 );
-    if( dbRes.GetString( 1 ) != m_UpTag )
-    {
-        query = wxString::Format( wxT( "UPDATE songs SET song_uptag = '%s' "\
-                                       "WHERE song_id = %i;" ), m_UpTag.c_str(), * SongId );
-        ExecuteUpdate( query );
-    }
+//    if( dbRes.GetString( 1 ) != m_UpTag )
+//    {
+//        query = wxString::Format( wxT( "UPDATE songs SET song_uptag = '%s' "\
+//                                       "WHERE song_id = %i;" ), m_UpTag.c_str(), * SongId );
+//        ExecuteUpdate( query );
+//    }
     RetVal = 1;
   }
   else
@@ -2276,12 +2285,12 @@ bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
   if( dbRes.NextRow() )
   {
     * ArtistId = LastArtistId = dbRes.GetInt( 0 );
-    if( dbRes.GetString( 1 ) != m_UpTag )
-    {
-        query = wxString::Format( wxT( "UPDATE artists SET artist_uptag = '%s' "\
-                                       "WHERE artist_id = %i;" ), m_UpTag.c_str(), * ArtistId );
-        ExecuteUpdate( query );
-    }
+//    if( dbRes.GetString( 1 ) != m_UpTag )
+//    {
+//        query = wxString::Format( wxT( "UPDATE artists SET artist_uptag = '%s' "\
+//                                       "WHERE artist_id = %i;" ), m_UpTag.c_str(), * ArtistId );
+//        ExecuteUpdate( query );
+//    }
     RetVal = true;
   }
   else if( Create )

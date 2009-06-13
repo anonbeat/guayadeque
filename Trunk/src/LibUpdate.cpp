@@ -47,7 +47,7 @@ guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
     {
          m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
          m_LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
-         guLogMessage( wxT( "LastUpdate: %s" ), m_LastUpdate.Format().c_str() );
+         //guLogMessage( wxT( "LastUpdate: %s" ), m_LastUpdate.Format().c_str() );
     }
 
     if( Create() == wxTHREAD_NO_ERROR )
