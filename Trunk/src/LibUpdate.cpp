@@ -143,7 +143,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         return 0;
     }
 
-    // Count all the files and add it to m_Files
+    // For every directory in the library scan for new files and add them to m_Files
     index = 0;
     while( !TestDestroy() && ( index < count ) )
     {
@@ -151,8 +151,8 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         index++;
     }
 
+    // For every new file update it in the database
     count = m_Files.Count();
-
     if( count )
     {
         index = 0;
@@ -171,6 +171,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             wxPostEvent( m_MainFrame, evtup );
         }
     }
+
     m_Db->DoCleanUp();
     return 0;
 }

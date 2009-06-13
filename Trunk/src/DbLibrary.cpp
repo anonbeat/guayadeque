@@ -363,6 +363,27 @@ unsigned long DbLibrary::GetDbVersion( void )
 void DbLibrary::DoCleanUp( void )
 {
   wxString query;
+  wxArrayInt ToDelete;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT DISTINCT song_id, song_filename, path_value FROM songs, paths " \
+               "WHERE song_pathid = path_id;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    if( !wxFileExists( dbRes.GetString( 2 ) + wxT( "/" ) + dbRes.GetString( 1 ) ) )
+    {
+      ToDelete.Add( dbRes.GetInt( 0 ) );
+    }
+  }
+
+  if( ToDelete.Count() )
+  {
+      query = wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( ToDelete, wxT( "song_id" ) );
+      ExecuteUpdate( query );
+  }
 
   // Delete all posible orphan entries
   query = wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" );
