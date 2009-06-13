@@ -507,7 +507,7 @@ void guPlayerPanel::UpdateStatus()
             m_VolumenButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_medium ) );
         else if( m_CurVolume > 25 )
             m_VolumenButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_low ) );
-        else if( m_CurVolume == 0 )
+        else if( m_CurVolume <= 5 )
             m_VolumenButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_muted ) );
         m_VolumenButton->Refresh();
         m_LastVolume = m_CurVolume;
@@ -1260,13 +1260,13 @@ void guPlayerPanel::SetVolume( int Vol )
     if( Vol == m_CurVolume )
         return;
     m_CurVolume = Vol;
-    if( m_CurVolume < 0 )
-        m_CurVolume = 0;
+    if( m_CurVolume < 4 )
+        m_CurVolume = 4;
     else if( m_CurVolume > 100 )
         m_CurVolume = 100;
 //    if( m_MediaCtrl->GetState() != wxMEDIASTATE_STOPPED )
 //    {
-    m_MediaCtrl->SetVolume( Vol / 100 );
+    m_MediaCtrl->SetVolume(  ( ( double ) Vol / ( double ) 100 ) );
 //    }
 }
 
