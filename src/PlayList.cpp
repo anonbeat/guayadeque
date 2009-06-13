@@ -358,6 +358,9 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold 
 {
     int Index;
     int Count;
+    if( m_CurItem == wxNOT_FOUND )
+        m_CurItem = 0;
+
     Count = items.Count();
     for( Index = 0; Index < Count; Index++ )
     {
@@ -566,6 +569,8 @@ void guPlayList::AddItem( const guTrack &NewItem )
         //printf( "Added at %d\n", DragOverItem );
         m_Items.Add( NewItem );
     }
+    if( m_CurItem == wxNOT_FOUND )
+        m_CurItem = 0;
 }
 
 // -------------------------------------------------------------------------------- //

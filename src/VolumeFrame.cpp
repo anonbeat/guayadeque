@@ -50,8 +50,8 @@ guVolumeFrame::guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindow
 	this->Layout();
 
 	// Connect Events
-	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guVolumeFrame::VolFrameActivate ) );
-	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ) );
+	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guVolumeFrame::VolFrameActivate ), NULL, this );
+	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ), NULL, this );
 	m_IncVolButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::IncVolButtonClick ), NULL, this );
 	m_VolSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
 	m_VolSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );

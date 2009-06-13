@@ -210,7 +210,7 @@ class DbLibrary {
     wxSQLite3Database  m_Db;
     wxArrayString      m_LibPaths;
     guTrack            m_CurSong;
-    wxString           m_UpTag;
+    //wxString           m_UpTag;
 
     // Library Filter Options
     wxArrayInt         m_GeFilters;
@@ -307,9 +307,6 @@ class DbLibrary {
 
     void                SetLibPath( const wxArrayString &NewPaths );
     int                 ReadFileTags( const char * filename );
-    void                DeleteOldRecs( void );
-    int                 UpdateLibrary( void );
-
 
     int                 GetFiltersCount() const;
     void                SetTeFilters( const wxArrayString &NewTeFilters );
@@ -371,23 +368,6 @@ class DbLibrary {
     guAS_SubmitInfoArray    GetCachedPlayedSongs( int MaxCount = 10 );
     bool                    DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo );
 
-    friend class DbUpdateLibThread;
-    friend class DbGetSongsThread;
-};
-
-// -------------------------------------------------------------------------------- //
-class DbUpdateLibThread : public wxThread
-{
-  private:
-    DbLibrary *     m_Db;
-    wxArrayString   m_Paths;
-    int             m_GaugeId;
-
-  public:
-    DbUpdateLibThread( DbLibrary * NewDb, const wxArrayString &NewPaths, int gaugeid = wxNOT_FOUND );
-    ~DbUpdateLibThread();
-
-    virtual ExitCode Entry();
 };
 
 // -------------------------------------------------------------------------------- //
