@@ -1297,6 +1297,7 @@ void guPlayerPanelTimer::Notify()
 void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
 {
     int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
+    guLogMessage( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
     SetVolume( m_CurVolume + ( Rotation * 4 ) );
 }
 
