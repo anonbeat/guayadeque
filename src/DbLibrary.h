@@ -250,6 +250,7 @@ class DbLibrary {
     int                 Close();
 
     unsigned long       GetDbVersion( void );
+    void                DoCleanUp( void );
     bool                CheckDbVersion( const wxString &DbName );
     void                LoadCache( void );
 

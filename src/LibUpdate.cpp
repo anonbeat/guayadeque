@@ -26,6 +26,16 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
+wxDateTime GetFileLastChange( const wxString &FileName )
+{
+    wxDateTime RetVal;
+    wxStructStat St;
+    wxStat( FileName, &St );
+    RetVal.Set( St.st_ctime );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
 {
     m_Db = db;
@@ -37,6 +47,7 @@ guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
     {
          m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
          m_LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
+         guLogMessage( wxT( "LastUpdate: %s" ), m_LastUpdate.Format().c_str() );
     }
 
     if( Create() == wxTHREAD_NO_ERROR )
@@ -98,9 +109,12 @@ int guLibUpdateThread::ScanDirectory( wxString dirname )
             // TODO: add other file formats ?
             if( FileName.EndsWith( wxT( ".mp3" ) ) )
             {
-                wxFileName FN( FileName );
-                if( FN.GetModificationTime() > m_LastUpdate )
+//                wxFileName FN( FileName );
+//                if( FN.GetModificationTime() > m_LastUpdate )
+                wxDateTime FileDate = GetFileLastChange( FileName );
+                if( FileDate > m_LastUpdate )
                 {
+                    guLogMessage( wxT( "File date: %s" ), FileDate.Format().c_str() );
                     m_Files.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
                 }
             }
@@ -157,6 +171,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             wxPostEvent( m_MainFrame, evtup );
         }
     }
+    m_Db->DoCleanUp();
     return 0;
 }
 
