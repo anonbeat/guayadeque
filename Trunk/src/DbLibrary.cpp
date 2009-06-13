@@ -2192,6 +2192,9 @@ int DbLibrary::GetRandomTracks( guTrackArray * Tracks )
   }
   dbRes.Finalize();
 
+  if( !TrackCnt )
+    return 0;
+
   query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, song_number, song_pathid, song_filename, song_year " ) \
           wxT( "FROM songs " );
 //  if( GetFiltersCount() )
