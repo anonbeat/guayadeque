@@ -168,6 +168,11 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	PlayerLabelsSizer->Add( m_PosLabelSizer, 1, wxEXPAND, 5 );
 
+	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
+	m_BitRateLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Arial") ) );
+	PlayerLabelsSizer->Add( m_BitRateLabel, 1, wxEXPAND, 5 );
+
 	PlayerDetailsSizer->Add( PlayerLabelsSizer, 1, wxEXPAND, 5 );
 
 	PlayerMainSizer->Add( PlayerDetailsSizer, 0, wxEXPAND, 5 );
@@ -252,6 +257,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     m_MediaCtrl->Connect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTag ), NULL, this );
+    m_MediaCtrl->Connect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
 
     Connect( ID_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracksClicked ) );
@@ -892,6 +898,17 @@ void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnMediaBitrate( wxMediaEvent &event )
+{
+    int bitrate = event.GetInt();
+    if( bitrate )
+    {
+        guLogMessage( wxT( "Bitrate: %u" ), bitrate );
+        m_BitRateLabel->SetLabel( wxString::Format( wxT( "%uK" ), bitrate / 1000 ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
 {
     try {
@@ -1297,7 +1314,7 @@ void guPlayerPanelTimer::Notify()
 void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
 {
     int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
-    guLogMessage( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
+    //guLogMessage( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
     SetVolume( m_CurVolume + ( Rotation * 4 ) );
 }
 

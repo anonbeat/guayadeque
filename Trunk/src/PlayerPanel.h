@@ -100,6 +100,7 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_AlbumLabel;
 	wxStaticText *          m_ArtistLabel;
 	wxStaticText *          m_YearLabel;
+	wxStaticText *          m_BitRateLabel;
 	wxStaticText *          m_PositionLabel;
 	wxBoxSizer *            m_PosLabelSizer;
 	wxSlider *              m_PlayerPositionSlider;
@@ -148,6 +149,7 @@ class guPlayerPanel : public wxPanel
     void                OnMediaLoaded( wxMediaEvent &event );
     void                OnMediaFinished( wxMediaEvent &event );
     void                OnMediaTag( wxMediaEvent &event );
+    void                OnMediaBitrate( wxMediaEvent &event );
     void                OnMediaBuffering( wxMediaEvent &event );
     void                SetCurrentTrack( const guTrack * Song );
 

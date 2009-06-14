@@ -30,8 +30,10 @@
 
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_TAG, wxID_ANY )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING, wxID_ANY )
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_BITRATE, wxID_ANY )
 #define EVT_MEDIA_TAG(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_TAG, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_BUFFERING(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BUFFERING, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+#define EVT_MEDIA_BITRATE(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BITRATE, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 
 // -------------------------------------------------------------------------------- //
 // guMediaCtrl : Interface class for gstreamer

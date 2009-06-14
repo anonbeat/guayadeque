@@ -24,6 +24,7 @@
 
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_TAG )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING )
+DEFINE_EVENT_TYPE( wxEVT_MEDIA_BITRATE )
 
 // -------------------------------------------------------------------------------- //
 extern "C" {
@@ -98,6 +99,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             /* The stream discovered new tags. */
             GstTagList * tags;
             gchar * title = NULL;
+            unsigned int bitrate = 0;
             /* Extract from the message the GstTagList.
             * This generates a copy, so we must remember to free it.*/
             gst_message_parse_tag( message, &tags );
@@ -109,6 +111,14 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             {
                 wxMediaEvent event( wxEVT_MEDIA_TAG );
                 event.SetClientData( new wxString( title, wxConvUTF8 ) );
+                wxPostEvent( ctrl, event );
+            }
+
+            gst_tag_list_get_uint( tags, GST_TAG_BITRATE, &bitrate );
+            if( bitrate )
+            {
+                wxMediaEvent event( wxEVT_MEDIA_BITRATE );
+                event.SetInt( bitrate );
                 wxPostEvent( ctrl, event );
             }
             /* Free the tag list */
