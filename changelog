@@ -1,4 +1,5 @@
 
+  * Show the bitrate of the current track.
   * Improved library update. Now more faster.
   * Added Play/Enqueue options to Last.fm panel items
   * Playlist current track now follow theme color
