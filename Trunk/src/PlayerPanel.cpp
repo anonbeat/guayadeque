@@ -157,21 +157,26 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	//m_PosLabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 	m_YearLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_YearLabel->SetToolTip( _( "Show the year of the current track" ) );
-	m_PosLabelSizer->Add( m_YearLabel, 1, wxEXPAND, 5 );
+	m_PosLabelSizer->Add( m_YearLabel, 1, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	m_PositionLabel = new wxStaticText( this, wxID_ANY, _("00:00 of 00:00"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PositionLabel->SetToolTip( _( "Show the current position and song length of the current track" ) );
 	m_PositionLabel->Wrap( -1 );
-	m_PositionLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	//m_PositionLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	m_PosLabelSizer->Add( m_PositionLabel, 0, wxEXPAND|wxRIGHT, 4 );
+	m_PosLabelSizer->Add( m_PositionLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 4 );
 
 	PlayerLabelsSizer->Add( m_PosLabelSizer, 1, wxEXPAND, 5 );
 
+    wxBoxSizer * BitRateSizer = new wxBoxSizer( wxHORIZONTAL );
+	BitRateSizer->Add( 0, 0, 1, wxALL, 5 );
 	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
 	m_BitRateLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Arial") ) );
-	PlayerLabelsSizer->Add( m_BitRateLabel, 1, wxEXPAND, 5 );
+
+    BitRateSizer->Add( m_BitRateLabel, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+
+	PlayerLabelsSizer->Add( BitRateSizer, 0, wxEXPAND, 5 );
 
 	PlayerDetailsSizer->Add( PlayerLabelsSizer, 1, wxEXPAND, 5 );
 
@@ -331,6 +336,7 @@ guPlayerPanel::~guPlayerPanel()
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTag ), NULL, this );
+    m_MediaCtrl->Disconnect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
 
     Disconnect( ID_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracksClicked ) );
@@ -686,6 +692,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     }
     else
         m_YearLabel->SetLabel( wxEmptyString );
+    m_BitRateLabel->SetLabel( wxEmptyString );
 
     //guLogWarning( wxT( "SetCurrentTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
     CoverImage = NULL;
@@ -903,9 +910,11 @@ void guPlayerPanel::OnMediaBitrate( wxMediaEvent &event )
     int bitrate = event.GetInt();
     if( bitrate )
     {
-        guLogMessage( wxT( "Bitrate: %u" ), bitrate );
-        m_BitRateLabel->SetLabel( wxString::Format( wxT( "%uK" ), bitrate / 1000 ) );
+        //guLogMessage( wxT( "Bitrate: %u" ), bitrate );
+        m_BitRateLabel->SetLabel( wxString::Format( wxT( "%ukbps" ), bitrate / 1000 ) );
     }
+    else
+        m_BitRateLabel->SetLabel( wxEmptyString );
 }
 
 // -------------------------------------------------------------------------------- //
