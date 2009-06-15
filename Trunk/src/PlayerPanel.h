@@ -101,6 +101,7 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_ArtistLabel;
 	wxStaticText *          m_YearLabel;
 	wxStaticText *          m_BitRateLabel;
+	wxBoxSizer *            m_BitRateSizer;
 	wxStaticText *          m_PositionLabel;
 	wxBoxSizer *            m_PosLabelSizer;
 	wxSlider *              m_PlayerPositionSlider;
@@ -195,6 +196,7 @@ class guPlayerPanel : public wxPanel
     void                SetArtistLabel( const wxString &artistname );
     void                SetAlbumLabel( const wxString &albumname );
     void                SetTitleLabel( const wxString &trackname );
+    void                SetBitRate( int bitrate );
 
 //		void                ClearRadioProxy( void );
 

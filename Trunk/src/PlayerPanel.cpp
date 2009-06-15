@@ -168,15 +168,15 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	PlayerLabelsSizer->Add( m_PosLabelSizer, 1, wxEXPAND, 5 );
 
-    wxBoxSizer * BitRateSizer = new wxBoxSizer( wxHORIZONTAL );
-	BitRateSizer->Add( 0, 0, 1, wxALL, 5 );
-	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_BitRateSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_BitRateSizer->Add( 0, 0, 1, wxALL, 5 );
+	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "kbps" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
 	m_BitRateLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Arial") ) );
 
-    BitRateSizer->Add( m_BitRateLabel, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_BitRateSizer->Add( m_BitRateLabel, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	PlayerLabelsSizer->Add( BitRateSizer, 0, wxEXPAND, 5 );
+	PlayerLabelsSizer->Add( m_BitRateSizer, 0, wxEXPAND, 5 );
 
 	PlayerDetailsSizer->Add( PlayerLabelsSizer, 1, wxEXPAND, 5 );
 
@@ -370,6 +370,19 @@ void guPlayerPanel::SetTitleLabel( const wxString &trackname )
     wxString Label = trackname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_TitleLabel->SetLabel( Label );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetBitRate( int bitrate )
+{
+    if( bitrate )
+    {
+        //guLogMessage( wxT( "Bitrate: %u" ), bitrate );
+        m_BitRateLabel->SetLabel( wxString::Format( wxT( "%ukbps" ), bitrate / 1000 ) );
+    }
+    else
+        m_BitRateLabel->SetLabel( wxT( "kbps" ) );
+    m_BitRateSizer->Layout();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -692,7 +705,8 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     }
     else
         m_YearLabel->SetLabel( wxEmptyString );
-    m_BitRateLabel->SetLabel( wxEmptyString );
+
+    SetBitRate( 0 );
 
     //guLogWarning( wxT( "SetCurrentTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
     CoverImage = NULL;
@@ -907,14 +921,7 @@ void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaBitrate( wxMediaEvent &event )
 {
-    int bitrate = event.GetInt();
-    if( bitrate )
-    {
-        //guLogMessage( wxT( "Bitrate: %u" ), bitrate );
-        m_BitRateLabel->SetLabel( wxString::Format( wxT( "%ukbps" ), bitrate / 1000 ) );
-    }
-    else
-        m_BitRateLabel->SetLabel( wxEmptyString );
+    SetBitRate( event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
