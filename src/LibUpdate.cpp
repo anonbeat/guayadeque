@@ -114,7 +114,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname )
                 wxDateTime FileDate = GetFileLastChange( FileName );
                 if( FileDate > m_LastUpdate )
                 {
-                    guLogMessage( wxT( "File date: %s" ), FileDate.Format().c_str() );
+                    //guLogMessage( wxT( "File date: %s" ), FileDate.Format().c_str() );
                     m_Files.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
                 }
             }
