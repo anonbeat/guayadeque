@@ -121,6 +121,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 event.SetInt( bitrate );
                 wxPostEvent( ctrl, event );
             }
+
             /* Free the tag list */
             gst_tag_list_free( tags );
             break;
@@ -190,6 +191,21 @@ guMediaCtrl::guMediaCtrl()
             return;
         }
 
+        GstElement * replay = gst_element_factory_make( "rgvolume", "replaygain" );
+        if( !GST_IS_ELEMENT( replay ) )
+        {
+            if( G_IS_OBJECT( replay ) )
+                g_object_unref( replay );
+            replay = NULL;
+            guLogError( wxT( "Could not create the replay gain object" ) );
+            return;
+        }
+        else
+        {
+            g_object_set( replay, "album-mode", false, NULL );
+        }
+
+        gst_bin_add( GST_BIN( m_Playbin ), replay );
         g_object_set( G_OBJECT( m_Playbin ), "audio-sink", outputsink, NULL );
 
         //
