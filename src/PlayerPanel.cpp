@@ -170,7 +170,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
     m_BitRateSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_BitRateSizer->Add( 0, 0, 1, wxALL, 5 );
-	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "kbps" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "[kbps]" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
 	m_BitRateLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Arial") ) );
 
@@ -378,10 +378,10 @@ void guPlayerPanel::SetBitRate( int bitrate )
     if( bitrate )
     {
         //guLogMessage( wxT( "Bitrate: %u" ), bitrate );
-        m_BitRateLabel->SetLabel( wxString::Format( wxT( "%ukbps" ), bitrate / 1000 ) );
+        m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate / 1000 ) );
     }
     else
-        m_BitRateLabel->SetLabel( wxT( "kbps" ) );
+        m_BitRateLabel->SetLabel( wxT( "[kbps]" ) );
     m_BitRateSizer->Layout();
 }
 
