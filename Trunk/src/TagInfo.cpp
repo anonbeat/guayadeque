@@ -22,15 +22,58 @@
 #include "Utils.h"
 
 #include <tag.h>
+#include <attachedpictureframe.h>
 #include <fileref.h>
 #include <id3v2framefactory.h>
 #include <textidentificationframe.h>
 #include <id3v2tag.h>
 #include <mpegfile.h>
 
+#include <wx/mstream.h>
 #include <wx/tokenzr.h>
 
 using namespace TagLib;
+
+// -------------------------------------------------------------------------------- //
+wxImage * GetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag )
+{
+	wxImage * RetVal = NULL;
+
+	TagLib::ID3v2::FrameList frameList = id3v2Tag->frameList( "APIC" );
+	if( !frameList.isEmpty() )
+	{
+		TagLib::ID3v2::AttachedPictureFrame * PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame * >( frameList.front() );
+        int ImgDataSize = PicFrame->picture().size();
+
+		if( ImgDataSize > 0 )
+		{
+			guLogMessage( wxT( "ID3v2 header contains APIC frame with %u bytes." ), ImgDataSize );
+			wxMemoryInputStream ImgInputStream( PicFrame->picture().data(), ImgDataSize );
+			if( ImgInputStream.IsOk() )
+			{
+			    RetVal = new wxImage( ImgInputStream );
+			}
+		}
+	}
+	return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool SetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
+{
+	bool RetVal = false;
+
+    TagLib::ID3v2::AttachedPictureFrame * PicFrame = new TagLib::ID3v2::AttachedPictureFrame;
+    PicFrame->setMimeType( "image/jpeg" );
+    wxMemoryOutputStream ImgOutputStream;
+    if( coverimage->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
+    {
+        ByteVector ImgData( ( const char * ) ImgOutputStream.GetOutputStreamBuffer(), ImgOutputStream.GetSize() );
+        PicFrame->setPicture( ImgData );
+        id3v2Tag->addFrame( PicFrame );
+    }
+	return RetVal;
+}
 
 // -------------------------------------------------------------------------------- //
 bool TagInfo::ReadID3Tags( const wxString &FileName )
