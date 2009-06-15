@@ -54,7 +54,7 @@ guDBus::guDBus( const char * name, bool System )
         RequestName( name );
     }
 
-    if( dbus_connection_add_filter( m_DBusConn, Handle_Messages, ( void * ) this, NULL ) )
+    if( m_DBusConn && dbus_connection_add_filter( m_DBusConn, Handle_Messages, ( void * ) this, NULL ) )
     {
         m_DBusThread = new guDBusThread( this );
     }
@@ -74,7 +74,6 @@ guDBus::~guDBus()
         //dbus_connection_close( m_DBusConn );
         dbus_connection_unref( m_DBusConn );
     }
-
 }
 
 // -------------------------------------------------------------------------------- //
