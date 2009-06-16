@@ -1,4 +1,6 @@
 
+  * Player shows the cover stored in the id3tags before attempt to load the
+    album cover.
   * Added support to ReplayGain tags
   * Show the bitrate of the current track.
   * Improved library update. Now more faster.
