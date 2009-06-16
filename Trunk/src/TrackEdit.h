@@ -28,53 +28,40 @@
 
 #include "DbLibrary.h"
 
+WX_DEFINE_ARRAY_PTR( wxImage *, guImagePtrArray );
 // -------------------------------------------------------------------------------- //
 // Class guTrackEditor
 // -------------------------------------------------------------------------------- //
 class guTrackEditor : public wxDialog
 {
   private:
-    guTrackArray *        m_Items;
-    int                   m_CurItem;
-    DbLibrary *           m_Db;
+    guTrackArray *      m_Items;
+    guImagePtrArray *   m_Images;
+    int                 m_CurItem;
+    DbLibrary *         m_Db;
 
   protected:
-    wxSplitterWindow* m_SongListSplitter;
-    wxPanel* SongListPanel;
-    wxListBox* m_SongListBox;
-    wxPanel* MainDetailPanel;
-    wxNotebook* MainNoteBook;
-    wxPanel* DetailPanel;
-    wxBitmapButton* m_ArCopyButton;
-    wxStaticText* ArStaticText;
-    wxTextCtrl* m_ArtistTextCtrl;
-    wxBitmapButton* m_AlCopyButton;
-    wxStaticText* AlStaticText;
-    wxTextCtrl* m_AlbumTextCtrl;
-    wxBitmapButton* m_TiCopyButton;
-    wxStaticText* TiStaticText;
-    wxTextCtrl* m_TitleTextCtrl;
-    wxBitmapButton* m_NuCopyButton;
-    wxStaticText* NuStaticText;
-    wxTextCtrl* m_NumberTextCtrl;
-    wxBitmapButton* m_GeCopyButton;
-    wxStaticText* GeStaticText;
-    wxTextCtrl* m_GenreTextCtrl;
-    wxBitmapButton* m_YeCopyButton;
-    wxStaticText* YeStaticText;
-    wxTextCtrl* m_YearTextCtrl;
-    wxPanel* PicturePanel;
+    wxSplitterWindow *  m_SongListSplitter;
+    wxListBox *         m_SongListBox;
+    wxBitmapButton *    m_ArCopyButton;
+    wxTextCtrl *        m_ArtistTextCtrl;
+    wxBitmapButton *    m_AlCopyButton;
+    wxTextCtrl *        m_AlbumTextCtrl;
+    wxBitmapButton *    m_TiCopyButton;
+    wxTextCtrl *        m_TitleTextCtrl;
+    wxBitmapButton *    m_NuCopyButton;
+    wxTextCtrl *        m_NumberTextCtrl;
+    wxBitmapButton *    m_GeCopyButton;
+    wxTextCtrl *        m_GenreTextCtrl;
+    wxBitmapButton *    m_YeCopyButton;
+    wxTextCtrl *        m_YearTextCtrl;
 
-    wxStaticBitmap* m_PictureBitmap;
-    wxBitmapButton* m_AddPicButton;
-    wxBitmapButton* m_DelPicButton;
-    wxBitmapButton* m_SavePicButton;
-    wxBitmapButton* m_EditPicButton;
-
-    wxBitmapButton* m_CopyButton;
-    wxStdDialogButtonSizer* ButtonsSizer;
-    wxButton* ButtonsSizerOK;
-    wxButton* ButtonsSizerCancel;
+    wxStaticBitmap *    m_PictureBitmap;
+    wxBitmapButton *    m_AddPicButton;
+    wxBitmapButton *    m_DelPicButton;
+    wxBitmapButton *    m_SavePicButton;
+    //wxBitmapButton *    m_EditPicButton;
+    wxBitmapButton *    m_CopyPicButton;
 
     // Event handlers, overide them in your derived class
     void OnSongListBoxSelected( wxCommandEvent &event );
@@ -91,8 +78,14 @@ class guTrackEditor : public wxDialog
     void OnButton( wxCommandEvent& event );
     void SongListSplitterOnIdle( wxIdleEvent& );
 
+    void RefreshImage( void );
+    void OnAddImageClicked( wxCommandEvent &event );
+    void OnDelImageClicked( wxCommandEvent &event );
+    void OnSaveImageClicked( wxCommandEvent &event );
+    void OnCopyImageClicked( wxCommandEvent &event );
+
 public:
-    guTrackEditor( wxWindow * parent, DbLibrary * Db, guTrackArray * Songs );
+    guTrackEditor( wxWindow * parent, DbLibrary * Db, guTrackArray * Songs, guImagePtrArray * m_Images );
     ~guTrackEditor();
 
 };

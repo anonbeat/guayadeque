@@ -47,7 +47,7 @@
 [?] Listas de seleccion con cache y carga selectiva de elementos en vez de cargar todos cada vez
 [x] Guardar los labels de las canciones en id3tags
 [ ] Crear, cargar, salvar, etc Playlists
-[ ] Añadir soporte para replay volumen from id3tags
+[x] Añadir soporte para replay volumen from id3tags
 [ ] Añadir scroll a los nombres de artista, cancion y album cuando no se puedan ver completos.
 [x] Auto download cover files should check filetype and covert it to jpeg.
 [x] En las listas de selección añadir la opción 'Todos'
