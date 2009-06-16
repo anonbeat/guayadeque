@@ -32,7 +32,7 @@
 #include <wx/tglbtn.h>
 
 // -------------------------------------------------------------------------------- //
-enum guSongCoverType { GU_SONGCOVER_NONE, GU_SONGCOVER_FILE, GU_SONGCOVER_RADIO };
+enum guSongCoverType { GU_SONGCOVER_NONE, GU_SONGCOVER_FILE, GU_SONGCOVER_RADIO, GU_SONGCOVER_ID3TAG };
 
 // -------------------------------------------------------------------------------- //
 class guCurrentTrack : public guTrack

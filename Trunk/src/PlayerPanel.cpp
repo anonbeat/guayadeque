@@ -27,7 +27,7 @@
 #include "Images.h"
 #include "LastFM.h"
 #include "MainFrame.h"
-//#include "StatusBar.h"
+#include "TagInfo.h"
 #include "Utils.h"
 #include "VolumeFrame.h"
 
@@ -715,6 +715,10 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     {
         CoverImage = new wxImage( guImage_net_radio );
         m_MediaSong.m_CoverType = GU_SONGCOVER_RADIO;
+    }
+    else if( CoverImage = ID3TagGetPicture( m_MediaSong.m_FileName ) )
+    {
+        m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
     }
     else if( m_MediaSong.m_CoverId )
     {

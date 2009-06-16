@@ -30,6 +30,7 @@
 #include <mpegfile.h>
 
 #include <wx/mstream.h>
+#include <wx/wfstream.h>
 #include <wx/tokenzr.h>
 
 using namespace TagLib;
@@ -37,8 +38,6 @@ using namespace TagLib;
 // -------------------------------------------------------------------------------- //
 wxImage * GetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag )
 {
-	wxImage * RetVal = NULL;
-
 	TagLib::ID3v2::FrameList frameList = id3v2Tag->frameList( "APIC" );
 	if( !frameList.isEmpty() )
 	{
@@ -47,19 +46,30 @@ wxImage * GetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag )
 
 		if( ImgDataSize > 0 )
 		{
-			guLogMessage( wxT( "ID3v2 header contains APIC frame with %u bytes." ), ImgDataSize );
-			wxMemoryInputStream ImgInputStream( PicFrame->picture().data(), ImgDataSize );
-			if( ImgInputStream.IsOk() )
-			{
-			    RetVal = new wxImage( ImgInputStream );
-			}
+			//guLogMessage( wxT( "ID3v2 header contains APIC frame with %u bytes." ), ImgDataSize );
+            wxMemoryOutputStream ImgOutStream;
+            ImgOutStream.Write( PicFrame->picture().data(), ImgDataSize );
+            wxMemoryInputStream ImgInputStream( ImgOutStream );
+            wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 ) );
+            if( CoverImage )
+            {
+                if( CoverImage->IsOk() )
+                {
+                    return CoverImage;
+                }
+                else
+                    delete CoverImage;
+            }
+//		    wxFileOutputStream FOut( wxT( "~/test.jpg" ) );
+//		    FOut.Write( PicFrame->picture().data(), ImgDataSize );
+//		    FOut.Close();
 		}
 	}
-	return RetVal;
+	return NULL;
 }
 
 // -------------------------------------------------------------------------------- //
-bool SetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
+bool SetCoverArtToID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
 {
 	bool RetVal = false;
 
@@ -73,6 +83,22 @@ bool SetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
         id3v2Tag->addFrame( PicFrame );
     }
 	return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage *   ID3TagGetPicture( const wxString &filename )
+{
+    TagLib::MPEG::File tagfile( filename.ToUTF8() );
+    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( false );
+    return GetCoverArtFromID3v2( tagv2 );
+}
+
+// -------------------------------------------------------------------------------- //
+bool        ID3TagSetPicture( const wxString &filename, wxImage * picture )
+{
+    TagLib::MPEG::File tagfile( filename.ToUTF8() );
+    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
+    return SetCoverArtToID3v2( tagv2, picture );
 }
 
 // -------------------------------------------------------------------------------- //

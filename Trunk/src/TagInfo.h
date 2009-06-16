@@ -26,6 +26,7 @@
 
 #include <wx/string.h>
 #include <wx/arrstr.h>
+#include <wx/image.h>
 
 // -------------------------------------------------------------------------------- //
 class TagInfo
@@ -68,6 +69,10 @@ class TagInfo
     bool        WriteID3Tags( const wxString &FileName );
 
 };
+
+wxImage *   ID3TagGetPicture( const wxString &filename );
+bool        ID3TagSetPicture( const wxString &filename, wxImage * picture );
+
 
 
 #endif
