@@ -1248,7 +1248,10 @@ void guPlayerPanel::OnLeftDClickPlayerCoverBitmap( wxMouseEvent& event )
     guCoverFrame * BigCover = new guCoverFrame( this, wxID_ANY, wxEmptyString, Pos );
     if( BigCover )
     {
-        BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
+        if( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG )
+            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_FileName );
+        else
+            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
         BigCover->Show();
     }
 }
