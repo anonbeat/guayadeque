@@ -61,5 +61,7 @@
 #include "./images/nophoto.xpm"
 #include "./images/tags.xpm"
 #include "./images/tiny_accept.xpm"
+#include "./images/add.xpm"
+#include "./images/remove.xpm"
 
 // -------------------------------------------------------------------------------- //
