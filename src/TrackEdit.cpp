@@ -19,18 +19,31 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "TrackEdit.h"
+
 #include "Config.h"
 #include "Images.h"
 #include "LastFM.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 #include "wx/datetime.h"
 #include <wx/notebook.h>
 
 // -------------------------------------------------------------------------------- //
-guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs ) :
+guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs, guImagePtrArray * images ) :
                wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 400 ), wxDEFAULT_DIALOG_STYLE )
 {
+    wxPanel *           SongListPanel;
+    wxPanel *           MainDetailPanel;
+    wxNotebook *        MainNoteBook;
+    wxPanel *           DetailPanel;
+    wxStaticText *      ArStaticText;
+    wxStaticText *      AlStaticText;
+    wxStaticText *      TiStaticText;
+    wxStaticText *      NuStaticText;
+    wxStaticText *      GeStaticText;
+    wxStaticText *      YeStaticText;
+    wxPanel *           PicturePanel;
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -151,14 +164,13 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_SavePicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_document_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	PictureButtonSizer->Add( m_SavePicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_EditPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_gtk_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	PictureButtonSizer->Add( m_EditPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
+//	m_EditPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_gtk_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	PictureButtonSizer->Add( m_EditPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	PictureButtonSizer->Add( 10, 0, 0, wxEXPAND, 5 );
 
-	m_CopyButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	PictureButtonSizer->Add( m_CopyButton, 0, wxALL, 5 );
+	m_CopyPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	PictureButtonSizer->Add( m_CopyPicButton, 0, wxALL, 5 );
 
 	PictureSizer->Add( PictureButtonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
@@ -175,6 +187,9 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_SongListSplitter->SplitVertically( SongListPanel, MainDetailPanel, 200 );
 	MainSizer->Add( m_SongListSplitter, 1, wxEXPAND, 5 );
 
+    wxStdDialogButtonSizer *    ButtonsSizer;
+    wxButton *                  ButtonsSizerOK;
+    wxButton *                  ButtonsSizerCancel;
 	ButtonsSizer = new wxStdDialogButtonSizer();
 	ButtonsSizerOK = new wxButton( this, wxID_OK );
 	ButtonsSizer->AddButton( ButtonsSizerOK );
@@ -190,6 +205,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	// --------------------------------------------------------------------
 	m_CurItem = 0;
 	m_Items = NewSongs;
+	m_Images = images;
 	m_Db = NewDb;
 	wxArrayString ItemsText;
 	int index;
@@ -197,6 +213,8 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	for( index = 0; index < count; index++ )
 	{
         ItemsText.Add( ( * m_Items )[ index ].m_FileName );
+        // Fill the initial Images of the files
+        m_Images->Add( ID3TagGetPicture( ( * m_Items )[ index ].m_FileName ) );
 	}
 	m_SongListBox->InsertItems( ItemsText, 0 );
 	m_SongListBox->SetFocus();
@@ -213,6 +231,12 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_GeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
+
+
+	m_AddPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
+	m_DelPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
+	m_SavePicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSaveImageClicked ), NULL, this );
+	m_CopyPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
 
     // Idle Events
 	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
@@ -241,6 +265,11 @@ guTrackEditor::~guTrackEditor()
 	m_GeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
+
+	m_AddPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
+	m_DelPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
+	m_SavePicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSaveImageClicked ), NULL, this );
+	m_CopyPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -263,12 +292,13 @@ void guTrackEditor::ReadItemData( void )
 {
     if( m_CurItem >= 0 )
     {
-        m_ArtistTextCtrl->SetValue( ( * m_Items )[ m_CurItem ].m_ArtistName );
-        m_AlbumTextCtrl->SetValue( ( * m_Items )[ m_CurItem ].m_AlbumName );
-        m_TitleTextCtrl->SetValue( ( * m_Items )[ m_CurItem ].m_SongName );
-        m_NumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), ( * m_Items )[ m_CurItem ].m_Number ) );
-        m_GenreTextCtrl->SetValue( ( * m_Items )[ m_CurItem ].m_GenreName );
-        m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), ( * m_Items )[ m_CurItem ].m_Year ) );
+        guTrack * Track = &( * m_Items )[ m_CurItem ];
+        m_ArtistTextCtrl->SetValue( Track->m_ArtistName );
+        m_AlbumTextCtrl->SetValue( Track->m_AlbumName );
+        m_TitleTextCtrl->SetValue( Track->m_SongName );
+        m_NumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Number ) );
+        m_GenreTextCtrl->SetValue( Track->m_GenreName );
+        m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
     }
     else
     {
@@ -279,6 +309,7 @@ void guTrackEditor::ReadItemData( void )
         m_GenreTextCtrl->SetValue( wxEmptyString );
         m_YearTextCtrl->SetValue( wxEmptyString );
     }
+    RefreshImage();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -386,6 +417,106 @@ void guTrackEditor::OnYeCopyButtonClicked( wxCommandEvent& event )
 //        }
 //    }
 //}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::RefreshImage( void )
+{
+    wxImage Image;
+    wxImage * pCurImage;
+    if( ( m_CurItem >= 0 ) && ( pCurImage = ( * m_Images )[ m_CurItem ] ) )
+    {
+        Image = * pCurImage;
+    }
+    else
+    {
+        Image = wxImage( guImage_no_cover );
+    }
+    Image.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
+    m_PictureBitmap->SetBitmap( Image );
+
+    if( m_CurItem >= 0 )
+    {
+        if( pCurImage )
+        {
+            m_AddPicButton->Enable( false );
+            m_DelPicButton->Enable( true );
+            m_SavePicButton->Enable( true );
+            m_CopyPicButton->Enable( true );
+        }
+        else
+        {
+            m_AddPicButton->Enable( true );
+            m_DelPicButton->Enable( false );
+            m_SavePicButton->Enable( false );
+            m_CopyPicButton->Enable( false );
+        }
+    }
+    else
+    {
+        m_AddPicButton->Enable( false );
+        m_DelPicButton->Enable( false );
+        m_SavePicButton->Enable( false );
+        m_CopyPicButton->Enable( false );
+    }
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnAddImageClicked( wxCommandEvent &event )
+{
+    wxASSERT( m_CurItem >= 0 );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnDelImageClicked( wxCommandEvent &event )
+{
+    wxASSERT( m_CurItem >= 0 );
+    wxImage * pCurImage = ( * m_Images )[ m_CurItem ];
+    ( * m_Images )[ m_CurItem ] = NULL;
+    delete pCurImage;
+    RefreshImage();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnSaveImageClicked( wxCommandEvent &event )
+{
+    wxASSERT( m_CurItem >= 0 );
+
+    wxImage * pCurImage = ( * m_Images )[ m_CurItem ];
+    wxASSERT( pCurImage );
+
+    wxFileDialog * FileDialog = new wxFileDialog( this,
+        wxT( "Select the filename to save" ),
+        wxPathOnly( ( * m_Items )[ m_CurItem ].m_FileName ),
+        wxT( "cover.jpg" ),
+        wxT( "*.jpg;*.png" ),
+        wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
+
+    if( FileDialog )
+    {
+        if( FileDialog->ShowModal() == wxID_OK )
+        {
+            //CoverImage->SaveFile( AlbumPath + wxT( "cover.jpg" ), wxBITMAP_TYPE_JPEG );
+            wxString FileName = FileDialog->GetPath();
+            guLogMessage( wxT( "File Save to : '%s'" ), FileName.c_str() );
+            if( FileName.EndsWith( wxT( ".png" ) ) )
+            {
+                pCurImage->SaveFile( FileName, wxBITMAP_TYPE_PNG );
+            }
+            else
+            {
+                pCurImage->SaveFile( FileName, wxBITMAP_TYPE_JPEG );
+            }
+        }
+        FileDialog->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnCopyImageClicked( wxCommandEvent &event )
+{
+    wxASSERT( m_CurItem >= 0 );
+}
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )

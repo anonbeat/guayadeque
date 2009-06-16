@@ -1,4 +1,5 @@
 
+  * The tracks editor supports images
   * Player shows the cover stored in the id3tags before attempt to load the
     album cover.
   * Added support to ReplayGain tags
