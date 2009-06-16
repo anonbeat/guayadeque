@@ -25,139 +25,156 @@
 #include "Utils.h"
 
 #include "wx/datetime.h"
+#include <wx/notebook.h>
 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs ) :
-               wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 370 ), wxDEFAULT_DIALOG_STYLE )
+               wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 400 ), wxDEFAULT_DIALOG_STYLE )
 {
+
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	MainSizer->Add( 0, 30, 0, wxEXPAND, 5 );
-
 	m_SongListSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
 	m_SongListSplitter->SetMinimumPaneSize( 150 );
-	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
-	m_SongListPanel = new wxPanel( m_SongListSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//	wxBoxSizer* SongListSizer;
-//	SongListSizer = new wxBoxSizer( wxVERTICAL );
-	wxStaticBoxSizer * SongListSizer;
-	SongListSizer = new wxStaticBoxSizer( new wxStaticBox( m_SongListPanel, wxID_ANY, _(" Songs ") ), wxVERTICAL );
 
-	m_SongListBox = new wxListBox( m_SongListPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
+	SongListPanel = new wxPanel( m_SongListSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxStaticBoxSizer* SongListSizer;
+	SongListSizer = new wxStaticBoxSizer( new wxStaticBox( SongListPanel, wxID_ANY, _( " Songs " ) ), wxVERTICAL );
+
+	m_SongListBox = new wxListBox( SongListPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
 	SongListSizer->Add( m_SongListBox, 1, wxALL|wxEXPAND, 2 );
 
-	m_SongListPanel->SetSizer( SongListSizer );
-	m_SongListPanel->Layout();
-	SongListSizer->Fit( m_SongListPanel );
-	m_DetailPanel = new wxPanel( m_SongListSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	SongListPanel->SetSizer( SongListSizer );
+	SongListPanel->Layout();
+	SongListSizer->Fit( SongListPanel );
+	MainDetailPanel = new wxPanel( m_SongListSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* DetailSizer;
 	DetailSizer = new wxBoxSizer( wxVERTICAL );
 
-//    wxStaticLine * TopStaticLine;
-//	TopStaticLine = new wxStaticLine( m_DetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-//	DetailSizer->Add( TopStaticLine, 0, wxEXPAND | wxALL, 5 );
-
-	wxStaticBoxSizer* DataSizer;
-	DataSizer = new wxStaticBoxSizer( new wxStaticBox( m_DetailPanel, wxID_ANY, _( " Details " ) ), wxVERTICAL );
-
+	MainNoteBook = new wxNotebook( MainDetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	DetailPanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* DataFlexSizer;
 	DataFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
 	DataFlexSizer->AddGrowableCol( 2 );
 	DataFlexSizer->SetFlexibleDirection( wxHORIZONTAL );
 	DataFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_ArCopyButton = new wxBitmapButton( m_DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_ArCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	DataFlexSizer->Add( m_ArCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_ArStaticText = new wxStaticText( m_DetailPanel, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_ArStaticText->Wrap( -1 );
-	DataFlexSizer->Add( m_ArStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	ArStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	ArStaticText->Wrap( -1 );
+	DataFlexSizer->Add( ArStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_ArtistTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_ArtistTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	DataFlexSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
 
-	m_AlCopyButton = new wxBitmapButton( m_DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AlCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	DataFlexSizer->Add( m_AlCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_AlStaticText = new wxStaticText( m_DetailPanel, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_AlStaticText->Wrap( -1 );
-	DataFlexSizer->Add( m_AlStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	AlStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	AlStaticText->Wrap( -1 );
+	DataFlexSizer->Add( AlStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_AlbumTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_AlbumTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	DataFlexSizer->Add( m_AlbumTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
 
-	m_TiCopyButton = new wxBitmapButton( m_DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_TiCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	DataFlexSizer->Add( m_TiCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_TiStaticText = new wxStaticText( m_DetailPanel, wxID_ANY, _( "Title:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_TiStaticText->Wrap( -1 );
-	DataFlexSizer->Add( m_TiStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	TiStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Title:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	TiStaticText->Wrap( -1 );
+	DataFlexSizer->Add( TiStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_TitleTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_TitleTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	DataFlexSizer->Add( m_TitleTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
 
-	m_NuCopyButton = new wxBitmapButton( m_DetailPanel, wxID_ANY, wxBitmap( guImage_numerate ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_NuCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_numerate ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	DataFlexSizer->Add( m_NuCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_NuStaticText = new wxStaticText( m_DetailPanel, wxID_ANY, _( "Number:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_NuStaticText->Wrap( -1 );
-	DataFlexSizer->Add( m_NuStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	NuStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Number:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	NuStaticText->Wrap( -1 );
+	DataFlexSizer->Add( NuStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_NumberTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_NumberTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
+	m_NumberTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	DataFlexSizer->Add( m_NumberTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	m_GeCopyButton = new wxBitmapButton( m_DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_GeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	DataFlexSizer->Add( m_GeCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_GeStaticText = new wxStaticText( m_DetailPanel, wxID_ANY, _( "Genre:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_GeStaticText->Wrap( -1 );
-	DataFlexSizer->Add( m_GeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	GeStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Genre:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	GeStaticText->Wrap( -1 );
+	DataFlexSizer->Add( GeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_GenreTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_GenreTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	DataFlexSizer->Add( m_GenreTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
 
-	m_YeCopyButton = new wxBitmapButton( m_DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_YeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	DataFlexSizer->Add( m_YeCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_YeStaticText = new wxStaticText( m_DetailPanel, wxID_ANY, _( "Year:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_YeStaticText->Wrap( -1 );
-	DataFlexSizer->Add( m_YeStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+	YeStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Year:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	YeStaticText->Wrap( -1 );
+	DataFlexSizer->Add( YeStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
-	m_YearTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_YearTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	DataFlexSizer->Add( m_YearTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-//	wxBoxSizer* YearSizer;
-//	YearSizer = new wxBoxSizer( wxHORIZONTAL );
+	DetailPanel->SetSizer( DataFlexSizer );
+	DetailPanel->Layout();
+	DataFlexSizer->Fit( DetailPanel );
+	MainNoteBook->AddPage( DetailPanel, _( "Details" ), true );
+	PicturePanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* PictureSizer;
+	PictureSizer = new wxBoxSizer( wxVERTICAL );
 
-//	m_YearTextCtrl = new wxTextCtrl( m_DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-//	YearSizer->Add( m_YearTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
-//
-//	m_GetYearButton = new wxBitmapButton( m_DetailPanel, wxID_ANY, wxBitmap( guImage_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-//	m_GetYearButton->SetToolTip( _( "Search in Last.fm the year of the current album" ) );
-//	YearSizer->Add( m_GetYearButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-//
-//	DataFlexSizer->Add( YearSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	wxStaticBoxSizer* PictureBitmapSizer;
+	PictureBitmapSizer = new wxStaticBoxSizer( new wxStaticBox( PicturePanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
-	DataSizer->Add( DataFlexSizer, 1, wxEXPAND, 5 );
+	m_PictureBitmap = new wxStaticBitmap( PicturePanel, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 250,250 ), wxSUNKEN_BORDER );
+	PictureBitmapSizer->Add( m_PictureBitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	DetailSizer->Add( DataSizer, 1, wxEXPAND, 5 );
+	PictureSizer->Add( PictureBitmapSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-//    wxStaticLine * BottomStaticLine;
-//	BottomStaticLine = new wxStaticLine( m_DetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-//	DetailSizer->Add( BottomStaticLine, 0, wxEXPAND | wxALL, 5 );
 
-	m_DetailPanel->SetSizer( DetailSizer );
-	m_DetailPanel->Layout();
-	DetailSizer->Fit( m_DetailPanel );
-	m_SongListSplitter->SplitVertically( m_SongListPanel, m_DetailPanel, 179 );
+	wxBoxSizer* PictureButtonSizer;
+	PictureButtonSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_AddPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	PictureButtonSizer->Add( m_AddPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_DelPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	PictureButtonSizer->Add( m_DelPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_SavePicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_document_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	PictureButtonSizer->Add( m_SavePicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_EditPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_gtk_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	PictureButtonSizer->Add( m_EditPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+
+	PictureButtonSizer->Add( 10, 0, 0, wxEXPAND, 5 );
+
+	m_CopyButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	PictureButtonSizer->Add( m_CopyButton, 0, wxALL, 5 );
+
+	PictureSizer->Add( PictureButtonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	PicturePanel->SetSizer( PictureSizer );
+	PicturePanel->Layout();
+	PictureSizer->Fit( PicturePanel );
+	MainNoteBook->AddPage( PicturePanel, _( "Pictures" ), false );
+
+	DetailSizer->Add( MainNoteBook, 1, wxEXPAND | wxALL, 5 );
+
+	MainDetailPanel->SetSizer( DetailSizer );
+	MainDetailPanel->Layout();
+	DetailSizer->Fit( MainDetailPanel );
+	m_SongListSplitter->SplitVertically( SongListPanel, MainDetailPanel, 200 );
 	MainSizer->Add( m_SongListSplitter, 1, wxEXPAND, 5 );
 
-    wxStdDialogButtonSizer* ButtonsSizer;
-    wxButton* ButtonsSizerOK;
-    wxButton* ButtonsSizerCancel;
 	ButtonsSizer = new wxStdDialogButtonSizer();
 	ButtonsSizerOK = new wxButton( this, wxID_OK );
 	ButtonsSizer->AddButton( ButtonsSizerOK );
@@ -169,7 +186,8 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
-	//
+
+	// --------------------------------------------------------------------
 	m_CurItem = 0;
 	m_Items = NewSongs;
 	m_Db = NewDb;
@@ -195,6 +213,9 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_GeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
+
+    // Idle Events
+	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
 
 	//
     // Force the 1st listbox item to be selected
