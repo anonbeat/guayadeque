@@ -19,7 +19,10 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "CoverFrame.h"
+
 #include "Images.h"
+#include "TagInfo.h"
+#include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
 guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & title, const wxPoint & pos, const wxSize & size, long style ) :
@@ -57,6 +60,17 @@ void guCoverFrame::OnClick( wxMouseEvent &event )
 void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &CoverPath )
 {
     wxImage CoverImage;
+    if( CoverType == GU_SONGCOVER_ID3TAG )
+    {
+        wxImage * id3cover = ID3TagGetPicture( CoverPath );
+        if( id3cover )
+        {
+            CoverImage = * id3cover;
+            delete id3cover;
+        }
+        else
+            guLogError( wxT( "Could not retrieve the image from '%s'" ), CoverPath.c_str() );
+    }
     if( CoverType == GU_SONGCOVER_FILE )
     {
         CoverImage.LoadFile( CoverPath );
