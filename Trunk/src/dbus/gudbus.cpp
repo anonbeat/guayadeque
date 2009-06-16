@@ -40,6 +40,7 @@ DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, voi
 guDBus::guDBus( const char * name, bool System )
 {
     dbus_error_init( &m_DBusErr );
+    m_DBusThread = NULL;
 
     m_DBusConn = dbus_bus_get( System ? DBUS_BUS_SYSTEM : DBUS_BUS_SESSION, &m_DBusErr );
 
@@ -49,14 +50,17 @@ guDBus::guDBus( const char * name, bool System )
         dbus_error_free( &m_DBusErr );
     }
 
-    if( name )
+    if( m_DBusConn )
     {
-        RequestName( name );
-    }
+        if( name )
+        {
+            RequestName( name );
+        }
 
-    if( m_DBusConn && dbus_connection_add_filter( m_DBusConn, Handle_Messages, ( void * ) this, NULL ) )
-    {
-        m_DBusThread = new guDBusThread( this );
+        if( dbus_connection_add_filter( m_DBusConn, Handle_Messages, ( void * ) this, NULL ) )
+        {
+            m_DBusThread = new guDBusThread( this );
+        }
     }
 }
 
