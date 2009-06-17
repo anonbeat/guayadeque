@@ -72,15 +72,28 @@ wxImage * GetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag )
 bool SetCoverArtToID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
 {
 	bool RetVal = false;
-
-    TagLib::ID3v2::AttachedPictureFrame * PicFrame = new TagLib::ID3v2::AttachedPictureFrame;
-    PicFrame->setMimeType( "image/jpeg" );
-    wxMemoryOutputStream ImgOutputStream;
-    if( coverimage->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
+    TagLib::ID3v2::AttachedPictureFrame * PicFrame;
+    if( coverimage )
     {
-        ByteVector ImgData( ( const char * ) ImgOutputStream.GetOutputStreamBuffer(), ImgOutputStream.GetSize() );
-        PicFrame->setPicture( ImgData );
-        id3v2Tag->addFrame( PicFrame );
+        PicFrame = new TagLib::ID3v2::AttachedPictureFrame;
+        PicFrame->setMimeType( "image/jpeg" );
+        wxMemoryOutputStream ImgOutputStream;
+        if( coverimage->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
+        {
+            ByteVector ImgData( ( const char * ) ImgOutputStream.GetOutputStreamBuffer(), ImgOutputStream.GetSize() );
+            PicFrame->setPicture( ImgData );
+            id3v2Tag->addFrame( PicFrame );
+            RetVal = true;
+        }
+    }
+    else
+    {
+        TagLib::ID3v2::FrameList FrameList = id3v2Tag->frameListMap()["APIC"];
+        for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
+        {
+            PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
+            id3v2Tag->removeFrame( PicFrame, TRUE );
+        }
     }
 	return RetVal;
 }
@@ -96,9 +109,12 @@ wxImage *   ID3TagGetPicture( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool        ID3TagSetPicture( const wxString &filename, wxImage * picture )
 {
+    bool RetVal;
     TagLib::MPEG::File tagfile( filename.ToUTF8() );
     ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
-    return SetCoverArtToID3v2( tagv2, picture );
+    RetVal = SetCoverArtToID3v2( tagv2, picture );
+    tagfile.save();
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //

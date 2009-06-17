@@ -23,6 +23,7 @@
 #include "Utils.h"
 #include "Commands.h"
 #include "LabelEditor.h"
+#include "TagInfo.h"
 #include "TrackEdit.h"
 #include "CoverEdit.h"
 #include "Images.h"
@@ -717,6 +718,17 @@ void guLibPanel::OnAlbumQueueClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void UpdateImages( const guTrackArray &Songs, const guImagePtrArray &Images )
+{
+    int index;
+    int count = Images.Count();
+    for( index = 0; index < count; index++ )
+    {
+        ID3TagSetPicture( Songs[ index ].m_FileName, Images[ index ] );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
@@ -730,6 +742,7 @@ void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Songs );
+            UpdateImages( Songs, Images );
         }
         TrackEditor->Destroy();
     }
@@ -749,6 +762,7 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Songs );
+            UpdateImages( Songs, Images );
         }
         TrackEditor->Destroy();
     }
@@ -888,6 +902,7 @@ void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Songs );
+            UpdateImages( Songs, Images );
         }
         TrackEditor->Destroy();
     }

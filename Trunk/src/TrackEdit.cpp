@@ -441,15 +441,14 @@ void guTrackEditor::RefreshImage( void )
             m_AddPicButton->Enable( false );
             m_DelPicButton->Enable( true );
             m_SavePicButton->Enable( true );
-            m_CopyPicButton->Enable( true );
         }
         else
         {
             m_AddPicButton->Enable( true );
             m_DelPicButton->Enable( false );
             m_SavePicButton->Enable( false );
-            m_CopyPicButton->Enable( false );
         }
+        m_CopyPicButton->Enable( true );
     }
     else
     {
@@ -465,6 +464,31 @@ void guTrackEditor::RefreshImage( void )
 void guTrackEditor::OnAddImageClicked( wxCommandEvent &event )
 {
     wxASSERT( m_CurItem >= 0 );
+
+    wxFileDialog * FileDialog = new wxFileDialog( this,
+        wxT( "Select the filename to save" ),
+        wxPathOnly( ( * m_Items )[ m_CurItem ].m_FileName ),
+        wxT( "cover.jpg" ),
+        wxT( "*.jpg;*.png" ),
+        wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_PREVIEW );
+
+    if( FileDialog )
+    {
+        if( FileDialog->ShowModal() == wxID_OK )
+        {
+            //CoverImage->SaveFile( AlbumPath + wxT( "cover.jpg" ), wxBITMAP_TYPE_JPEG );
+            wxString FileName = FileDialog->GetPath();
+            //guLogMessage( wxT( "File Open : '%s'" ), FileName.c_str() );
+            wxImage * pCurImage = new wxImage();
+            pCurImage->LoadFile( FileName );
+            if( pCurImage->IsOk() )
+            {
+                ( * m_Images )[ m_CurItem ] = pCurImage;
+                RefreshImage();
+            }
+        }
+        FileDialog->Destroy();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -498,7 +522,7 @@ void guTrackEditor::OnSaveImageClicked( wxCommandEvent &event )
         {
             //CoverImage->SaveFile( AlbumPath + wxT( "cover.jpg" ), wxBITMAP_TYPE_JPEG );
             wxString FileName = FileDialog->GetPath();
-            guLogMessage( wxT( "File Save to : '%s'" ), FileName.c_str() );
+            //guLogMessage( wxT( "File Save to : '%s'" ), FileName.c_str() );
             if( FileName.EndsWith( wxT( ".png" ) ) )
             {
                 pCurImage->SaveFile( FileName, wxBITMAP_TYPE_PNG );
@@ -516,6 +540,20 @@ void guTrackEditor::OnSaveImageClicked( wxCommandEvent &event )
 void guTrackEditor::OnCopyImageClicked( wxCommandEvent &event )
 {
     wxASSERT( m_CurItem >= 0 );
+    wxImage * pCurImage = ( * m_Images )[ m_CurItem ];
+    wxASSERT( pCurImage );
+
+    int index;
+    int count = m_Images->Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( index != m_CurItem )
+        {
+            if( ( * m_Images )[ index ] )
+                delete ( * m_Images )[ index ];
+            ( * m_Images )[ index ] = pCurImage ? ( new wxImage( * pCurImage ) ) : NULL;
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
