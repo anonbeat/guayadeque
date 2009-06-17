@@ -245,6 +245,9 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
     Connect( ID_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
 
+	m_AlbumLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
+	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+
     //
 	m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
@@ -1320,6 +1323,24 @@ bool guPlayerPanel::SetPosition( int pos )
 int guPlayerPanel::GetPosition()
 {
     return m_MediaCtrl->Tell();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
+{
+    wxString * AlbumName = new wxString( m_MediaSong.m_AlbumName );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_SELECTNAME );
+    evt.SetClientData( ( void * ) AlbumName );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
+{
+    wxString * ArtistName = new wxString( m_MediaSong.m_ArtistName );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SELECTNAME );
+    evt.SetClientData( ( void * ) ArtistName );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 // -------------------------------------------------------------------------------- //

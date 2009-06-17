@@ -3670,7 +3670,7 @@
                                         <event name="OnKeyUp"></event>
                                         <event name="OnKillFocus"></event>
                                         <event name="OnLeaveWindow"></event>
-                                        <event name="OnLeftDClick"></event>
+                                        <event name="OnLeftDClick">OnAlbumNameDClicked</event>
                                         <event name="OnLeftDown"></event>
                                         <event name="OnLeftUp"></event>
                                         <event name="OnMiddleDClick"></event>
@@ -3721,7 +3721,7 @@
                                         <event name="OnKeyUp"></event>
                                         <event name="OnKillFocus"></event>
                                         <event name="OnLeaveWindow"></event>
-                                        <event name="OnLeftDClick"></event>
+                                        <event name="OnLeftDClick">OnArtistNameDClicked</event>
                                         <event name="OnLeftDown"></event>
                                         <event name="OnLeftUp"></event>
                                         <event name="OnMiddleDClick"></event>
