@@ -116,6 +116,7 @@
 
 // Commands for the CoverEditor
 #define ID_COVEREDITOR_ADDCOVERIMAGE    1110
+#define ID_COVEREDITOR_DOWNLOADEDLINKS  1111
 
 // Commands for LastFM Panel
 //#define ID_LASTFM_UPDATE_TRACK          1120    // The Player notifies the panel to update the content
