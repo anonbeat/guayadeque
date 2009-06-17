@@ -28,6 +28,9 @@
 #include <wx/arrstr.h>
 #include <wx/image.h>
 
+#define wxStringToTString(s) TagLib::String(s.ToUTF8(), TagLib::String::UTF8)
+#define TStringTowxString(s) wxString::FromUTF8( s.toCString(true))
+
 // -------------------------------------------------------------------------------- //
 class TagInfo
 {
