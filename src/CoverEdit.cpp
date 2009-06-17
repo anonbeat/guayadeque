@@ -186,6 +186,7 @@ guCoverEditor::~guCoverEditor()
 	m_NextButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
 
     Disconnect( ID_COVEREDITOR_ADDCOVERIMAGE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnAddCoverImage ) );
+    Disconnect( ID_COVEREDITOR_DOWNLOADEDLINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnDownloadedLinks ) );
 }
 
 // -------------------------------------------------------------------------------- //

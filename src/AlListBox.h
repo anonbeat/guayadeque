@@ -43,6 +43,7 @@ class guAlListBox : public wxScrolledWindow
   public :
                     guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
                     ~guAlListBox();
+    bool            SelectAlbumName( const wxString &AlbumName );
     void            ReloadItems( const bool reset = true );
     wxArrayInt      GetSelection() const;
     int             GetSelectedSongs( guTrackArray * tracks ) const;

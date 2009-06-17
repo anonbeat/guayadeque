@@ -114,6 +114,8 @@ class guAlbumListBox : public wxVListBox
         void        UpdateView();
         long        FindItem( long start, const wxString& str, bool partial );
         long        FindItem( const long start, const long id );
+
+        bool        SelectAlbumName( const wxString &AlbumName );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -204,6 +206,12 @@ wxArrayInt guAlListBox::GetSelection() const
 int guAlListBox::GetSelectedSongs( guTrackArray * tracks ) const
 {
     return m_ListBox->GetSelectedSongs( tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
+{
+    return m_ListBox->SelectAlbumName( AlbumName );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -646,6 +654,22 @@ wxString guAlbumListBox::GetSearchText( int item )
     return wxString::Format( wxT( "\"%s\" \"%s\"" ),
         m_Db->GetArtistName( m_Items[ item ].m_ArtistId ).c_str(),
         m_Items[ item ].m_Name.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guAlbumListBox::SelectAlbumName( const wxString &AlbumName )
+{
+    long item = FindItem( 0, AlbumName, false );
+    if( item != wxNOT_FOUND )
+    {
+        wxArrayInt Select;
+        Select.Add( m_Items[ item ].m_Id );
+        SetSelection( item );
+        ScrollToLine( item );
+        UpdateView();
+        return true;
+    }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //

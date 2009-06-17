@@ -159,6 +159,9 @@ class guPlayerPanel : public wxPanel
     void                OnSmartAddTracksClicked( wxCommandEvent &event );
     void                OnUpdatedRadioTrack( wxCommandEvent &event );
 
+    void                OnAlbumNameDClicked( wxMouseEvent &event );
+    void                OnArtistNameDClicked( wxMouseEvent &event );
+
   public:
                         guPlayerPanel( wxWindow* parent, DbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
                         ~guPlayerPanel();

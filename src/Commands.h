@@ -59,6 +59,7 @@
 #define ID_ARTIST_EDITLABELS            1042
 #define ID_ARTIST_EDITTRACKS            1043
 #define ID_ARTIST_COPYTO                1044
+#define ID_ARTIST_SELECTNAME            1045
 
 //
 #define ID_ALBUM_PLAY                   1050
@@ -69,6 +70,7 @@
 #define ID_ALBUM_COVER_DOWNLOADED       1055
 #define ID_ALBUM_COVER_DELETE           1056
 #define ID_ALBUM_COPYTO                 1057
+#define ID_ALBUM_SELECTNAME             1058
 
 //
 #define ID_SONG_PLAY                    1060
