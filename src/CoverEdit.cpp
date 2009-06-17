@@ -145,17 +145,11 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	m_NextButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
 
     Connect( ID_COVEREDITOR_ADDCOVERIMAGE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnAddCoverImage ) );
+    Connect( ID_COVEREDITOR_DOWNLOADEDLINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnDownloadedLinks ) );
 
 	//AddCoverLinks();
 
     m_DownloadCoversThread = new guFetchCoverLinksThread( this, m_SearchString.c_str() );
-    if( m_DownloadCoversThread )
-    {
-        m_DownloadCoversThread->Create();
-        m_DownloadCoversThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-        m_DownloadCoversThread->Run();
-    }
-
 
     m_PrevButton->Disable();
     m_NextButton->Disable();
@@ -209,6 +203,12 @@ void guCoverEditor::EndDownloadLinksThread( void )
     //m_Gauge->SetValue( 0 );
     //guLogMessage( wxT( "EndDownloadThread called" ) );
     m_DownloadCoversThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+void guCoverEditor::OnDownloadedLinks( wxCommandEvent &event )
+{
+    EndDownloadLinksThread();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -270,6 +270,8 @@ void guCoverEditor::OnAddCoverImage( wxCommandEvent &event )
     if( ( m_CurrentImage < ( int ) ( m_AlbumCovers.Count() - 1 ) ) && !m_NextButton->IsEnabled() )
         m_NextButton->Enable();
     m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ), m_CurrentImage + 1, m_AlbumCovers.Count() ) );
+    //guLogMessage( wxT( "CurImg: %u  Total:%u" ), m_CurrentImage + 1, m_AlbumCovers.Count() );
+    EndDownloadCoverThread( ( guDownloadCoverThread * ) event.GetClientObject() );
     m_DownloadEventsMutex.Unlock();
 }
 
@@ -350,12 +352,7 @@ void guCoverEditor::OnTextCtrlEnter( wxCommandEvent& event )
 
     // Start again the cover fetcher thread
     m_DownloadCoversThread = new guFetchCoverLinksThread( this, m_SearchString.c_str() );
-    if( m_DownloadCoversThread )
-    {
-        m_DownloadCoversThread->Create();
-        m_DownloadCoversThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-        m_DownloadCoversThread->Run();
-    }
+
     // Disable buttons till one cover is downloaded
     m_PrevButton->Disable();
     m_NextButton->Disable();
@@ -378,14 +375,19 @@ guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * Owner, const w
     m_LastDownload  = 0;
     m_CurrentPage   = 0;
 
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 guFetchCoverLinksThread::~guFetchCoverLinksThread()
 {
     // Indicate the main object that the child thread has been deleted
-    if( !TestDestroy() )
-        m_CoverEditor->EndDownloadLinksThread();
+//    if( !TestDestroy() )
+//        m_CoverEditor->EndDownloadLinksThread();
 };
 
 // -------------------------------------------------------------------------------- //
@@ -517,16 +519,10 @@ guFetchCoverLinksThread::ExitCode guFetchCoverLinksThread::Entry()
             {
                 guDownloadCoverThread * DownloadThread = new guDownloadCoverThread( m_CoverEditor,
                                           &m_CoverLinks[ m_LastDownload ] );
-                if( DownloadThread )
-                {
-                    DownloadThread->Create();
-                    DownloadThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-                    DownloadThread->Run();
-                }
             }
             m_CoverEditor->m_DownloadThreadMutex.Unlock();
             m_LastDownload++;
-            wxMilliSleep( 100 );
+            Sleep( 20 );
         }
         else
         {
@@ -546,28 +542,43 @@ guFetchCoverLinksThread::ExitCode guFetchCoverLinksThread::Entry()
             m_CurrentPage++;
         }
     }
+
+    if( !TestDestroy() )
+    {
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_COVEREDITOR_DOWNLOADEDLINKS );
+        event.SetClientObject( ( wxClientData * ) this );
+        wxPostEvent( m_CoverEditor, event );
+    }
+
     return 0;
 }
 
 // -------------------------------------------------------------------------------- //
 // guDownloadCoverThread
 // -------------------------------------------------------------------------------- //
-guDownloadCoverThread::guDownloadCoverThread( guCoverEditor * Owner, const wxArrayString * CoverInfo ) : wxThread()
+guDownloadCoverThread::guDownloadCoverThread( guCoverEditor * Owner, const wxArrayString * CoverInfo ) :
+    wxThread()
 {
     m_CoverEditor = Owner;
     m_UrlStr      = wxString( ( * CoverInfo )[ GUCOVERINFO_LINK ].c_str() );
     m_SizeStr     = wxString( ( * CoverInfo )[ GUCOVERINFO_SIZE ].c_str() );
     //guLogMessage( wxT( "Link : %s (%s)" ), UrlStr.c_str(), SizeStr.c_str() );
     m_CoverEditor->m_DownloadThreads.Add( this );
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 guDownloadCoverThread::~guDownloadCoverThread()
 {
-    if( !TestDestroy() )
-    {
-        m_CoverEditor->EndDownloadCoverThread( this );
-    }
+//    if( !TestDestroy() )
+//    {
+//        m_CoverEditor->EndDownloadCoverThread( this );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -593,6 +604,7 @@ guDownloadCoverThread::ExitCode guDownloadCoverThread::Entry()
     {
         wxMemoryOutputStream Buffer;
         wxCurlHTTP http;
+        //guLogMessage( wxT( "Init: '%s'" ), m_UrlStr.c_str() );
         if( http.Get( Buffer, m_UrlStr ) )
         {
             if( Buffer.IsOk() && !TestDestroy() )
@@ -619,9 +631,10 @@ guDownloadCoverThread::ExitCode guDownloadCoverThread::Entry()
     }
     if( !TestDestroy() )
     {
+        //guLogMessage( wxT( "Done: '%s'" ), m_UrlStr.c_str() );
         //m_CoverEditor->m_DownloadEventsMutex.Lock();
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_COVEREDITOR_ADDCOVERIMAGE );
-        //event.SetInt( ThreadIndex );
+        event.SetClientObject( ( wxClientData * ) this );
         event.SetClientData( CoverImage );
         wxPostEvent( m_CoverEditor, event );
         //m_CoverEditor->m_DownloadEventsMutex.Unlock();
