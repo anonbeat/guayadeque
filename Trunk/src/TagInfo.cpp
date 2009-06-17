@@ -77,14 +77,12 @@ bool SetCoverArtToID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
     {
         PicFrame = new TagLib::ID3v2::AttachedPictureFrame;
         PicFrame->setMimeType( "image/jpeg" );
+        PicFrame->setType( TagLib::ID3v2::AttachedPictureFrame::FrontCover );
         wxMemoryOutputStream ImgOutputStream;
         if( coverimage->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
         {
-//            wxMemoryInputStream ImgInputStream( ImgOutputStream );
-//		    wxFileOutputStream FOut( wxT( "/home/jrios/test.jpg" ) );
-//		    FOut.Write( ImgInputStream );
-//		    FOut.Close();
-            ByteVector ImgData( ( const char * ) ImgOutputStream.GetOutputStreamBuffer()->GetBufferPos(), ImgOutputStream.GetSize() );
+            ByteVector ImgData( ImgOutputStream.GetSize() );
+            ImgOutputStream.CopyTo( ImgData.data(), ImgOutputStream.GetSize() );
             PicFrame->setPicture( ImgData );
             id3v2Tag->addFrame( PicFrame );
             RetVal = true;
