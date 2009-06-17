@@ -80,7 +80,11 @@ bool SetCoverArtToID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
         wxMemoryOutputStream ImgOutputStream;
         if( coverimage->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
         {
-            ByteVector ImgData( ( const char * ) ImgOutputStream.GetOutputStreamBuffer(), ImgOutputStream.GetSize() );
+//            wxMemoryInputStream ImgInputStream( ImgOutputStream );
+//		    wxFileOutputStream FOut( wxT( "/home/jrios/test.jpg" ) );
+//		    FOut.Write( ImgInputStream );
+//		    FOut.Close();
+            ByteVector ImgData( ( const char * ) ImgOutputStream.GetOutputStreamBuffer()->GetBufferPos(), ImgOutputStream.GetSize() );
             PicFrame->setPicture( ImgData );
             id3v2Tag->addFrame( PicFrame );
             RetVal = true;
@@ -128,10 +132,10 @@ bool TagInfo::ReadID3Tags( const wxString &FileName )
     {
         if( ( tag = fileref.tag() ) )
         {
-            m_TrackName = wxString( tag->title().toCString( true ), wxConvUTF8 );
-            m_ArtistName = wxString( tag->artist().toCString( true ), wxConvUTF8 );
-            m_AlbumName = wxString( tag->album().toCString( true ), wxConvUTF8 );
-            m_GenreName = wxString( tag->genre().toCString( true ), wxConvUTF8 );
+            m_TrackName = TStringTowxString( tag->title() );
+            m_ArtistName = TStringTowxString( tag->artist() );
+            m_AlbumName = TStringTowxString( tag->album() );
+            m_GenreName = TStringTowxString( tag->genre() );
             m_Track = tag->track();
             m_Year = tag->year();
 
@@ -242,10 +246,10 @@ bool TagInfo::WriteID3Tags( const wxString &FileName )
     {
         if( ( tag = fileref.tag() ) )
         {
-            tag->setTitle( ( char * ) m_TrackName.char_str( wxConvISO8859_1 ) );
-            tag->setArtist( ( char * ) m_ArtistName.char_str( wxConvISO8859_1 ) );
-            tag->setAlbum( ( char * ) m_AlbumName.char_str( wxConvISO8859_1 ) );
-            tag->setGenre( ( char * ) m_GenreName.char_str( wxConvISO8859_1 ) );
+            tag->setTitle( wxStringToTString( m_TrackName ) );
+            tag->setArtist( wxStringToTString( m_ArtistName ) );
+            tag->setAlbum( wxStringToTString( m_AlbumName ) );
+            tag->setGenre( wxStringToTString( m_GenreName ) );
             tag->setTrack( m_Track ); // set the id3v1 track
             tag->setYear( m_Year );
         }
