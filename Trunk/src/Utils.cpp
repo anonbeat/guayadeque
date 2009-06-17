@@ -96,7 +96,8 @@ wxString RemoveSearchFilters( const wxString &SearchStr )
         int Pos;
         while( ( Pos = TempStr.Find( Filters[ Index ] ) ) != wxNOT_FOUND )
         {
-            RetVal = RetVal.Remove( Pos, Filters[ Index ].Length() );
+            //RetVal = RetVal.Remove( Pos, Filters[ Index ].Length() );
+            RetVal = RetVal.Mid( 0, Pos ) + wxT( " " ) + RetVal.Mid( Pos + Filters[ Index ].Length() );
             TempStr = RetVal.Lower();
         }
     }

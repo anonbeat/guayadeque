@@ -260,6 +260,7 @@ void guCoverEditor::OnNextButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::OnAddCoverImage( wxCommandEvent &event )
 {
+    m_DownloadEventsMutex.Lock();
     guCoverImage * Image = ( guCoverImage * ) event.GetClientData();
     if( Image )
         m_AlbumCovers.Add( Image );
@@ -269,12 +270,13 @@ void guCoverEditor::OnAddCoverImage( wxCommandEvent &event )
     if( ( m_CurrentImage < ( int ) ( m_AlbumCovers.Count() - 1 ) ) && !m_NextButton->IsEnabled() )
         m_NextButton->Enable();
     m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ), m_CurrentImage + 1, m_AlbumCovers.Count() ) );
+    m_DownloadEventsMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::UpdateCoverBitmap( void )
 {
-    m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ), m_CurrentImage + 1, m_AlbumCovers.Count() ) );
+    m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ),  m_AlbumCovers.Count() ? m_CurrentImage + 1 : 0, m_AlbumCovers.Count() ) );
 
     wxBitmap * BlankCD = new wxBitmap( guImage_blank_cd_cover );
     if( BlankCD )
@@ -617,12 +619,12 @@ guDownloadCoverThread::ExitCode guDownloadCoverThread::Entry()
     }
     if( !TestDestroy() )
     {
-        m_CoverEditor->m_DownloadEventsMutex.Lock();
+        //m_CoverEditor->m_DownloadEventsMutex.Lock();
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_COVEREDITOR_ADDCOVERIMAGE );
         //event.SetInt( ThreadIndex );
         event.SetClientData( CoverImage );
         wxPostEvent( m_CoverEditor, event );
-        m_CoverEditor->m_DownloadEventsMutex.Unlock();
+        //m_CoverEditor->m_DownloadEventsMutex.Unlock();
     }
     else
     {
