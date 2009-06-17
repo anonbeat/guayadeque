@@ -919,6 +919,34 @@ void guLibPanel::OnSongCopyToClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::OnAlbumNameDClicked( wxCommandEvent &event )
+{
+    wxString * AlbumName = ( wxString * ) event.GetClientData();
+    if( AlbumName )
+    {
+        m_AlbumListCtrl->SelectAlbumName( * AlbumName );
+        // The AlbumListCtrl dont call Selected event on selection change :(
+        // so we simulate it here
+        m_Db->SetAlFilters( m_AlbumListCtrl->GetSelection() );
+        delete AlbumName;
+        m_SongListCtrl->ReloadItems();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnArtistNameDClicked( wxCommandEvent &event )
+{
+    wxString * ArtistName = ( wxString * ) event.GetClientData();
+    if( ArtistName )
+    {
+        m_ArtistListCtrl->SelectArtistName( * ArtistName );
+        delete ArtistName;
+        m_AlbumListCtrl->ReloadItems();
+        m_SongListCtrl->ReloadItems();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // OnIdle Events
 // -------------------------------------------------------------------------------- //
 

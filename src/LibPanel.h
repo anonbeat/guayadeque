@@ -122,6 +122,9 @@ class guLibPanel : public wxPanel
     void ReloadControls( wxCommandEvent &event );
     void UpdateLabels( void );
 
+    void OnAlbumNameDClicked( wxCommandEvent &event );
+    void OnArtistNameDClicked( wxCommandEvent &event );
+
 };
 
 #endif
