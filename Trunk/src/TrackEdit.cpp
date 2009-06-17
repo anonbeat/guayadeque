@@ -76,6 +76,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	DataFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	m_ArCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_ArCopyButton->SetToolTip( _( "Copy the Artist name to all the tracks you are editing" ) );
 	DataFlexSizer->Add( m_ArCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	ArStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -86,6 +87,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	DataFlexSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
 
 	m_AlCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AlCopyButton->SetToolTip( _( "Copy the Album name to all the tracks you are editing" ) );
 	DataFlexSizer->Add( m_AlCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	AlStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -96,6 +98,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	DataFlexSizer->Add( m_AlbumTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
 
 	m_TiCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_TiCopyButton->SetToolTip( _( "Copy the Title name to all the tracks you are editing" ) );
 	DataFlexSizer->Add( m_TiCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	TiStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Title:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -106,6 +109,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	DataFlexSizer->Add( m_TitleTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
 
 	m_NuCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_numerate ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_NuCopyButton->SetToolTip( _( "Enumerate the tracks in the order they were added for editing" ) );
 	DataFlexSizer->Add( m_NuCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	NuStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Number:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -116,6 +120,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	DataFlexSizer->Add( m_NumberTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	m_GeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_GeCopyButton->SetToolTip( _( "Copy the Genre name to all songs you are editing" ) );
 	DataFlexSizer->Add( m_GeCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	GeStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Genre:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -126,6 +131,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	DataFlexSizer->Add( m_GenreTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
 
 	m_YeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_YeCopyButton->SetToolTip( _( "Copy the Year to all songs you are editing" ) );
 	DataFlexSizer->Add( m_YeCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	YeStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Year:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -156,12 +162,15 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	PictureButtonSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_AddPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddPicButton->SetToolTip( _( "Add a picture from file to the current track" ) );
 	PictureButtonSizer->Add( m_AddPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_DelPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelPicButton->SetToolTip( _( "Delete the picture from the current track" ) );
 	PictureButtonSizer->Add( m_DelPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_SavePicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_document_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SavePicButton->SetToolTip( _( "Save the current picture to file" ) );
 	PictureButtonSizer->Add( m_SavePicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 //	m_EditPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_gtk_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
@@ -170,6 +179,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	PictureButtonSizer->Add( 10, 0, 0, wxEXPAND, 5 );
 
 	m_CopyPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, wxBitmap( guImage_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CopyPicButton->SetToolTip( _( "Copy the current picute to all the tracks you are editing" ) );
 	PictureButtonSizer->Add( m_CopyPicButton, 0, wxALL, 5 );
 
 	PictureSizer->Add( PictureButtonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -372,6 +382,7 @@ void guTrackEditor::OnNuCopyButtonClicked( wxCommandEvent& event )
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_Number = ( index + 1 );
+    ReadItemData();
 }
 
 // -------------------------------------------------------------------------------- //
