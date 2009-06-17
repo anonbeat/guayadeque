@@ -128,3 +128,16 @@ wxString guArListBox::GetSearchText( int item )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guArListBox::SelectArtistName( const wxString &ArtistName )
+{
+    long item = FindItem( 0, ArtistName, false );
+    if( item != wxNOT_FOUND )
+    {
+        wxArrayInt Select;
+        Select.Add( m_Items[ item ].m_Id );
+        SetSelection( Select );
+        EnsureVisible( item );
+    }
+}
+
+// -------------------------------------------------------------------------------- //

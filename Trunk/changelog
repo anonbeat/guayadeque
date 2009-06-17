@@ -1,4 +1,6 @@
 
+  * Double click over artistname or albumname in player panel current track
+    will select the artist or the album in the library.
   * Fixed bug in cover editor that blocked gui randomly"
   * The tracks editor supports images
   * Fixed bug saving special chars to id3 tags

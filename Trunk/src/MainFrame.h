@@ -45,61 +45,64 @@ class guLibUpdateThread;
 // -------------------------------------------------------------------------------- //
 class guMainFrame : public wxFrame
 {
-    private:
-        wxNotebook *        m_CatNotebook;
-        wxSplitterWindow *  m_PlayerSplitter;
-	    guPlayerPanel *     m_PlayerPanel;
-        guLibPanel *        m_LibPanel;
-        guRadioPanel *      m_RadioPanel;
-        guLastFMPanel *     m_LastFMPanel;
-        guLyricsPanel *     m_LyricsPanel;
-        guTaskBarIcon *     m_TaskBarIcon;
-        guStatusBar *       m_MainStatusBar;
+  private:
+    wxNotebook *        m_CatNotebook;
+    wxSplitterWindow *  m_PlayerSplitter;
+    guPlayerPanel *     m_PlayerPanel;
+    guLibPanel *        m_LibPanel;
+    guRadioPanel *      m_RadioPanel;
+    guLastFMPanel *     m_LastFMPanel;
+    guLyricsPanel *     m_LyricsPanel;
+    guTaskBarIcon *     m_TaskBarIcon;
+    guStatusBar *       m_MainStatusBar;
 
-        DbLibrary *         m_Db;
-        guLibUpdateThread * m_LibUpdateThread;
+    DbLibrary *         m_Db;
+    guLibUpdateThread * m_LibUpdateThread;
 
-        guMPRIS *           m_MPRIS;
+    guMPRIS *           m_MPRIS;
 
-        void                OnUpdateLibrary( wxCommandEvent &event );
-        void                OnUpdateCovers( wxCommandEvent &event );
-        void                OnUpdateTrack( wxCommandEvent &event );
-        void                OnPlayerStatusChanged( wxCommandEvent &event );
-        void                OnPlayerTrackListChanged( wxCommandEvent &event );
-        void                OnPlayerCapsChanged( wxCommandEvent &event );
-        void                OnAudioScrobbleUpdate( wxCommandEvent &event );
-		void                PlayerSplitterOnIdle( wxIdleEvent &event );
-		void                CreateMenu();
-		void                DoCreateStatusBar( int kind );
-		void                OnCloseWindow( wxCloseEvent &event );
-		void                OnPreferences( wxCommandEvent &event );
+    void                OnUpdateLibrary( wxCommandEvent &event );
+    void                OnUpdateCovers( wxCommandEvent &event );
+    void                OnUpdateTrack( wxCommandEvent &event );
+    void                OnPlayerStatusChanged( wxCommandEvent &event );
+    void                OnPlayerTrackListChanged( wxCommandEvent &event );
+    void                OnPlayerCapsChanged( wxCommandEvent &event );
+    void                OnAudioScrobbleUpdate( wxCommandEvent &event );
+    void                PlayerSplitterOnIdle( wxIdleEvent &event );
+    void                CreateMenu();
+    void                DoCreateStatusBar( int kind );
+    void                OnCloseWindow( wxCloseEvent &event );
+    void                OnPreferences( wxCommandEvent &event );
 
-        void                OnPlay( wxCommandEvent &event );
-        void                OnStop( wxCommandEvent &event );
-        void                OnNextTrack( wxCommandEvent &event );
-        void                OnPrevTrack( wxCommandEvent &event );
-        void                OnSmartPlay( wxCommandEvent &event );
-        void                OnRandomize( wxCommandEvent &event );
-        void                OnRepeat( wxCommandEvent &event );
-        void                OnAbout( wxCommandEvent &event );
-        void                OnCopyTracksTo( wxCommandEvent &event );
-        void                OnUpdateLabels( wxCommandEvent &event );
+    void                OnPlay( wxCommandEvent &event );
+    void                OnStop( wxCommandEvent &event );
+    void                OnNextTrack( wxCommandEvent &event );
+    void                OnPrevTrack( wxCommandEvent &event );
+    void                OnSmartPlay( wxCommandEvent &event );
+    void                OnRandomize( wxCommandEvent &event );
+    void                OnRepeat( wxCommandEvent &event );
+    void                OnAbout( wxCommandEvent &event );
+    void                OnCopyTracksTo( wxCommandEvent &event );
+    void                OnUpdateLabels( wxCommandEvent &event );
 
-        void                OnViewLibrary( wxCommandEvent &event );
-        void                OnViewRadio( wxCommandEvent &event );
-        void                OnViewLastFM( wxCommandEvent &event );
-        void                OnViewLyrics( wxCommandEvent &event );
+    void                OnViewLibrary( wxCommandEvent &event );
+    void                OnViewRadio( wxCommandEvent &event );
+    void                OnViewLastFM( wxCommandEvent &event );
+    void                OnViewLyrics( wxCommandEvent &event );
 
-        void                OnGaugePulse( wxCommandEvent &event );
-		void                OnGaugeSetMax( wxCommandEvent &event );
-		void                OnGaugeUpdate( wxCommandEvent &event );
-		void                OnGaugeRemove( wxCommandEvent &event );
+    void                OnGaugePulse( wxCommandEvent &event );
+    void                OnGaugeSetMax( wxCommandEvent &event );
+    void                OnGaugeUpdate( wxCommandEvent &event );
+    void                OnGaugeRemove( wxCommandEvent &event );
 
-    public:
-                            guMainFrame( wxWindow * parent );
-                            ~guMainFrame();
-        void                LibraryUpdated( wxCommandEvent &event );
-        void                OnQuit( wxCommandEvent &WXUNUSED(event) );
+    void                OnAlbumNameDClicked( wxCommandEvent &event );
+    void                OnArtistNameDClicked( wxCommandEvent &event );
+
+  public:
+                        guMainFrame( wxWindow * parent );
+                        ~guMainFrame();
+    void                LibraryUpdated( wxCommandEvent &event );
+    void                OnQuit( wxCommandEvent &WXUNUSED(event) );
 
 };
 
