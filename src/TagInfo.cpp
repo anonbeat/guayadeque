@@ -160,7 +160,7 @@ bool TagInfo::ReadID3Tags( const wxString &FileName )
                 if( Frame )
                 {
                     // [guTRLABELS] guTRLABELS labels
-                    m_TrackLabelsStr = wxString( Frame->toString().toCString( true ), wxConvUTF8 ).Mid( 24 );
+                    m_TrackLabelsStr = TStringTowxString( Frame->toString() ).Mid( 24 );
                     //guLogMessage( wxT( "*Track Label: '%s'\n" ), m_TrackLabelsStr.c_str() );
                     m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
                 }
@@ -171,7 +171,7 @@ bool TagInfo::ReadID3Tags( const wxString &FileName )
                 ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tagv2, "guARLABELS" );
                 if( Frame )
                 {
-                    m_ArtistLabelsStr = wxString( Frame->toString().toCString( true ), wxConvUTF8 ).Mid( 24 );
+                    m_ArtistLabelsStr = TStringTowxString( Frame->toString() ).Mid( 24 );
                     //guLogMessage( wxT( "*Artist Label: '%s'\n" ), m_ArtistLabelsStr.c_str() );
                     m_ArtistLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
                 }
@@ -182,7 +182,7 @@ bool TagInfo::ReadID3Tags( const wxString &FileName )
                 ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tagv2, "guALLABELS" );
                 if( Frame )
                 {
-                    m_AlbumLabelsStr = wxString( Frame->toString().toCString( true ), wxConvUTF8 ).Mid( 24 );
+                    m_AlbumLabelsStr = TStringTowxString( Frame->toString() ).Mid( 24 );
                     //guLogMessage( wxT( "*Album Label: '%s'\n" ), m_AlbumLabelsStr.c_str() );
                     m_AlbumLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
                 }
@@ -219,7 +219,7 @@ void ID3v2_CheckLabelFrame( ID3v2::Tag * tagv2, const char * description, const 
 //        }
 //        else
         {
-            frame->setText( ( char * ) value.char_str( wxConvISO8859_1 ) );
+            frame->setText( wxStringToTString( value ) );
         }
     }
     else
@@ -228,7 +228,7 @@ void ID3v2_CheckLabelFrame( ID3v2::Tag * tagv2, const char * description, const 
         {
             frame = new ID3v2::UserTextIdentificationFrame( TagLib::String::UTF8 );
             frame->setDescription( TagLib::String( description, TagLib::String::UTF8 ) );
-            frame->setText( ( char * ) value.char_str( wxConvISO8859_1 ) );
+            frame->setText( wxStringToTString( value ) );
             tagv2->addFrame( frame );
         }
     }
