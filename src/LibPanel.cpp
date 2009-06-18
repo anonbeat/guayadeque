@@ -351,6 +351,7 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
     wxArrayString Words = guSplitWords( m_InputTextCtrl->GetLineText( 0 ) );
 
     m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
@@ -365,6 +366,7 @@ void guLibPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
     //guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
     m_InputTextCtrl->Clear();
     m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
