@@ -924,6 +924,10 @@ void guLibPanel::OnAlbumNameDClicked( wxCommandEvent &event )
     wxString * AlbumName = ( wxString * ) event.GetClientData();
     if( AlbumName )
     {
+        // Reset all controls
+        wxMouseEvent mouseevent;
+        OnSearchCancelled( mouseevent );
+
         m_AlbumListCtrl->SelectAlbumName( * AlbumName );
         // The AlbumListCtrl dont call Selected event on selection change :(
         // so we simulate it here
@@ -939,6 +943,10 @@ void guLibPanel::OnArtistNameDClicked( wxCommandEvent &event )
     wxString * ArtistName = ( wxString * ) event.GetClientData();
     if( ArtistName )
     {
+        // Reset all controls
+        wxMouseEvent mouseevent;
+        OnSearchCancelled( mouseevent );
+
         m_ArtistListCtrl->SelectArtistName( * ArtistName );
         delete ArtistName;
         m_AlbumListCtrl->ReloadItems();
