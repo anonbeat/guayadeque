@@ -705,6 +705,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     SetTitleLabel( m_MediaSong.m_SongName );
     SetAlbumLabel( m_MediaSong.m_AlbumName );
     SetArtistLabel( m_MediaSong.m_ArtistName );
+
     if( m_MediaSong.m_Year > 0 )
     {
         m_YearLabel->SetLabel( wxString::Format( wxT( "%u" ), m_MediaSong.m_Year ) );
@@ -716,8 +717,6 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     //guLogWarning( wxT( "SetCurrentTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
     CoverImage = NULL;
-    //guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
-    //guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
     if( m_MediaSong.m_SongId == guPLAYLIST_RADIOSTATION )
     {
         CoverImage = new wxImage( guImage_net_radio );
@@ -739,6 +738,16 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         m_MediaSong.m_CoverPath = m_PlayListCtrl->FindCoverFile( wxPathOnly( m_MediaSong.m_FileName ) );
     }
 
+    guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
+    guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
+    guLogMessage( wxT( "   Type : %i" ), m_MediaSong.m_CoverType );
+    guLogMessage( wxT( "  Cover : '%s'" ), m_MediaSong.m_CoverPath.c_str() );
+    guLogMessage( wxT( "===========================================" ) );
+    //{
+    //GU_SONGCOVER_NONE,
+    //GU_SONGCOVER_FILE,
+    //GU_SONGCOVER_RADIO,
+    //GU_SONGCOVER_ID3TAG };
     if( !CoverImage )
     {
         if( m_MediaSong.m_CoverPath.IsEmpty() || !wxFileExists( m_MediaSong.m_CoverPath ) )

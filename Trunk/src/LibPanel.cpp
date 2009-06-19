@@ -817,8 +817,19 @@ void guLibPanel::OnAlbumDeleteCoverClicked( wxCommandEvent &event )
                           _( "Confirm" ),
                           wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
         {
+            int CoverId = m_Db->GetAlbumCoverId( Albums[ 0 ] );
+            if( CoverId > 0 )
+            {
+                wxString CoverPath = m_Db->GetCoverPath( CoverId );
+                wxASSERT( !CoverPath.IsEmpty() );
+                if( !wxRemoveFile( CoverPath ) )
+                {
+                    guLogError( wxT( "Could not remove the cover file '%s'" ), CoverPath.c_str() );
+                }
+            }
             m_Db->SetAlbumCover( Albums[ 0 ], wxEmptyString );
             m_AlbumListCtrl->ReloadItems( false );
+            //bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath )
         }
     }
 }
