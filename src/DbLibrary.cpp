@@ -63,6 +63,21 @@ int guAlbumItemSearch( const guAlbumItems &items, int start, int end, int id )
 }
 
 // -------------------------------------------------------------------------------- //
+guAlbumItem * guAlbumItemGetItem( guAlbumItems &items, int id )
+{
+    int index;
+    int count = items.Count();
+    if( count )
+    {
+        index = guAlbumItemSearch( items, 0, count - 1, id );
+        if( index != wxNOT_FOUND )
+            return &items[ index ];
+        guLogError( wxT( "Could not find in cache the albumid : %i" ), id );
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 wxString guAlbumItemsGetName( const guAlbumItems &items, int id )
 {
     int index;
@@ -315,7 +330,7 @@ void DbLibrary::LoadCache( void )
 {
 //    Labels.Empty();
 //    GetLabels( &Labels );
-    m_GenresCache.Empty();
+    m_GenresCache.Clear();
     GetGenres( &m_GenresCache, true );
     m_ArtistsCache.Clear();
     GetArtists( &m_ArtistsCache, true );
@@ -873,6 +888,7 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
 
     query = wxString::Format( wxT( "UPDATE albums SET album_coverid = 0 WHERE album_id = %i;" ), AlbumId );
     ExecuteUpdate( query );
+    CoverId = 0;
   }
 
   if( !CoverPath.IsEmpty() )
@@ -915,6 +931,13 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
       query = wxString::Format( wxT( "UPDATE albums SET album_coverid = %i WHERE album_id = %i;" ), CoverId, AlbumId );
       return ExecuteUpdate( query );
     }
+  }
+  // Update the AlbumsCache
+  guAlbumItem * AlbumItem = guAlbumItemGetItem( m_AlbumsCache, AlbumId );
+  if( AlbumItem )
+  {
+      AlbumItem->m_CoverId = CoverId;
+      AlbumItem->m_CoverPath = CoverPath;
   }
   return 0;
 }
@@ -2460,6 +2483,26 @@ bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString 
     * ArtistName = dbRes.GetString( 1 );
     * AlbumPath = dbRes.GetString( 2 );
     RetVal = true;
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetAlbumCoverId( const int AlbumId )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int RetVal = wxNOT_FOUND;
+
+  query = wxString::Format ( wxT( "SELECT album_coverid " ) \
+          wxT( "FROM albums " ) \
+          wxT( "WHERE album_id = %u LIMIT 1;" ), AlbumId );
+
+  dbRes = ExecuteQuery( query );
+  if( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
   }
   dbRes.Finalize();
   return RetVal;

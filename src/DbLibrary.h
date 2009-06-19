@@ -133,7 +133,6 @@ class guAlbumItem //: public guListItem
     wxString    m_Name;
     int         m_ArtistId;
     int         m_CoverId;
-    bool        m_CoverChk;
     wxString    m_CoverPath;
     wxBitmap *  m_Thumb;
     int         m_Year;
@@ -141,7 +140,6 @@ class guAlbumItem //: public guListItem
     guAlbumItem()
     {
       m_Thumb = NULL;
-      m_CoverChk = false;
       m_Year = 0;
     };
 
@@ -260,6 +258,7 @@ class DbLibrary {
     int                 FindCoverFile( const wxString &DirName );
     int                 SetAlbumCover( const int AlbumId, const wxString & CoverPath );
     bool                GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath );
+    int                 GetAlbumCoverId( const int AlbumId );
 
     wxString            GetCoverPath( const int CoverId );
     int                 GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, const int ArtistId, const int PathId );
