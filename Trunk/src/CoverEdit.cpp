@@ -22,6 +22,8 @@
 
 #include "Commands.h"
 #include "Config.h"
+#include "CoverFetcher.h"
+#include "Google.h"
 #include "Images.h"
 #include "MainFrame.h"
 #include "Utils.h"
@@ -38,82 +40,85 @@ WX_DEFINE_OBJARRAY(guCoverImageArray);
 
 // -------------------------------------------------------------------------------- //
 guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wxString &Album ) :
-               wxDialog( parent, wxID_ANY, _( "Cover Editor" ), wxDefaultPosition, wxSize( -1,-1 ), wxDEFAULT_DIALOG_STYLE )
+               wxDialog( parent, wxID_ANY, _( "Cover Editor" ), wxDefaultPosition, wxSize( 520, 430 ), wxDEFAULT_DIALOG_STYLE )
 {
-	wxBoxSizer *                MainSizer;
-	wxBoxSizer *                SearchSizer;
-	wxBoxSizer *                InputTextSizer;
-	wxBoxSizer *                CoverSizer;
+    wxStaticText* ArtistStaticText;
+    wxStaticText* AlbumStaticText;
+    wxStaticText* FromStaticText;
+    wxStaticLine * TopStaticLine;
 
-    wxStaticText *              SearchStaticText;
-	wxPanel *                   InputTextPanel;
-	wxStaticBitmap *            LogoTextBitmap;
-	wxStaticLine *              TopStaticLine;
-//	wxStaticLine *              BottomStaticLine;
-	wxStdDialogButtonSizer *    ButtonsSizer;
+    guConfig * Config = ( guConfig * ) guConfig::Get();
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
+	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* EditsSizer;
+	EditsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	SearchStaticText = new wxStaticText( this, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	SearchStaticText->Wrap( -1 );
-	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	ArtistStaticText->Wrap( -1 );
+	EditsSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	InputTextPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
-	InputTextPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+	m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+	EditsSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	InputTextSizer = new wxBoxSizer( wxHORIZONTAL );
+	AlbumStaticText = new wxStaticText( this, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	AlbumStaticText->Wrap( -1 );
+	EditsSizer->Add( AlbumStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	LogoTextBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, wxBitmap( guImage_search ), wxDefaultPosition, wxDefaultSize, 0 );
-	InputTextSizer->Add( LogoTextBitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 0 );
+	m_AlbumTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+	EditsSizer->Add( m_AlbumTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	m_InputTextCtrl = new wxTextCtrl( InputTextPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxNO_BORDER );
-	InputTextSizer->Add( m_InputTextCtrl, 1, wxALL|wxALIGN_CENTER_VERTICAL, 2 );
+	FromStaticText = new wxStaticText( this, wxID_ANY, _( "From:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	FromStaticText->Wrap( -1 );
+	EditsSizer->Add( FromStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_ClearTextBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, wxBitmap( guImage_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_ClearTextBitmap->Enable( false );
+	wxString m_EngineChoiceChoices[] = { wxT("Google"), wxT("Amazon"), wxT("Last.fm") };
+	int m_EngineChoiceNChoices = sizeof( m_EngineChoiceChoices ) / sizeof( wxString );
+	m_EngineChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_EngineChoiceNChoices, m_EngineChoiceChoices, 0 );
+	EditsSizer->Add( m_EngineChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	InputTextSizer->Add( m_ClearTextBitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 0 );
-
-	InputTextPanel->SetSizer( InputTextSizer );
-	InputTextPanel->Layout();
-	InputTextSizer->Fit( InputTextPanel );
-	SearchSizer->Add( InputTextPanel, 1, wxEXPAND|wxALL, 5 );
-
-	MainSizer->Add( SearchSizer, 0, wxEXPAND, 5 );
+	MainSizer->Add( EditsSizer, 0, wxEXPAND, 5 );
 
 	TopStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	MainSizer->Add( TopStaticLine, 0, wxEXPAND | wxALL, 5 );
 
+	wxBoxSizer* CoverSizer;
 	CoverSizer = new wxBoxSizer( wxHORIZONTAL );
+
+
+	CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	m_PrevButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_go_previous ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	CoverSizer->Add( m_PrevButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_blank_cd_cover ), wxDefaultPosition, wxSize( -1,-1 ), 0 );
-	CoverSizer->Add( m_CoverBitmap, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
+	CoverSizer->Add( m_CoverBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_NextButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_go_next ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	CoverSizer->Add( m_NextButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
+
+	CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
 	MainSizer->Add( CoverSizer, 1, wxEXPAND, 5 );
 
 	m_SizeSizer = new wxBoxSizer( wxVERTICAL );
+
 	m_SizeStaticText = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_SizeStaticText->Wrap( -1 );
 	m_SizeSizer->Add( m_SizeStaticText, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	MainSizer->Add( m_SizeSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer * GaugeSizer;
+	wxBoxSizer* GaugeSizer;
 	GaugeSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_Gauge = new guAutoPulseGauge( this, wxID_ANY, MAX_COVERLINKS_ITEMS, wxDefaultPosition, wxSize( -1,7 ), wxGA_HORIZONTAL );
-	//m_Gauge->SetValue( 5 );
-	GaugeSizer->Add( m_Gauge, 1, wxALL|wxEXPAND, 5 );
+	m_Gauge->SetValue( 5 );
+	GaugeSizer->Add( m_Gauge, 1, wxEXPAND|wxALL, 5 );
 
 	m_InfoTextCtrl = new wxStaticText( this, wxID_ANY, wxT("00/00"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_InfoTextCtrl->Wrap( -1 );
@@ -121,35 +126,43 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
 	MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
 
+    wxStdDialogButtonSizer * ButtonsSizer;
+    wxButton * ButtonsSizerOK;
+    wxButton * ButtonsSizerCancel;
 	ButtonsSizer = new wxStdDialogButtonSizer();
-	m_ButtonsSizerOK = new wxButton( this, wxID_OK );
-	ButtonsSizer->AddButton( m_ButtonsSizerOK );
-	m_ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
-	ButtonsSizer->AddButton( m_ButtonsSizerCancel );
+	ButtonsSizerOK = new wxButton( this, wxID_OK );
+	ButtonsSizer->AddButton( ButtonsSizerOK );
+	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
+	ButtonsSizer->AddButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
-	MainSizer->Add( ButtonsSizer, 0, wxEXPAND, 5 );
+	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALIGN_BOTTOM|wxALL, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
-	MainSizer->Fit( this );
 
-    m_SearchString = wxString::Format( wxT( "\"%s\" \"%s\"" ), Artist.c_str(), Album.c_str() );
-    m_InputTextCtrl->SetValue( m_SearchString );
+    m_ArtistTextCtrl->SetValue( Artist );
+    m_AlbumTextCtrl->SetValue( Album );
     m_CurrentImage = 0;
 
+    m_EngineIndex = Config->ReadNum( wxT( "CoverSearchEngine" ), 0, wxT( "General" ) );
+	m_EngineChoice->SetSelection( m_EngineIndex );
+
 	// Connect Events
-	m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
-	m_ClearTextBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnSearchClear ), NULL, this );
+	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
+	m_AlbumTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
+
+	m_EngineChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guCoverEditor::OnEngineChanged ), NULL, this );
+
 	m_CoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
+
 	m_PrevButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
 	m_NextButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
 
     Connect( ID_COVEREDITOR_ADDCOVERIMAGE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnAddCoverImage ) );
     Connect( ID_COVEREDITOR_DOWNLOADEDLINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnDownloadedLinks ) );
 
-	//AddCoverLinks();
 
-    m_DownloadCoversThread = new guFetchCoverLinksThread( this, m_SearchString.c_str() );
+    m_DownloadCoversThread = new guFetchCoverLinksThread( this, Artist.c_str(), Album.c_str(), m_EngineIndex );
 
     m_PrevButton->Disable();
     m_NextButton->Disable();
@@ -158,11 +171,8 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 // -------------------------------------------------------------------------------- //
 guCoverEditor::~guCoverEditor()
 {
-    if( m_DownloadCoversThread )
-    {
-        m_DownloadCoversThread->Pause();
-        m_DownloadCoversThread->Delete();
-    }
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteNum( wxT( "CoverSearchEngine" ), m_EngineChoice->GetSelection(), wxT( "General" ) );
 
     m_DownloadThreadMutex.Lock();
     int index;
@@ -175,13 +185,24 @@ guCoverEditor::~guCoverEditor()
             DownThread->Pause();
             DownThread->Delete();
         }
+        m_DownloadThreads[ index ] = NULL;
     }
     m_DownloadThreadMutex.Unlock();
 
+    if( m_DownloadCoversThread )
+    {
+        m_DownloadCoversThread->Pause();
+        m_DownloadCoversThread->Delete();
+    }
+
 	// Connect Events
-	m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
-	m_ClearTextBitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnSearchClear ), NULL, this );
+	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
+	m_AlbumTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
+
+	m_EngineChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guCoverEditor::OnEngineChanged ), NULL, this );
+
 	m_CoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
+
 	m_PrevButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
 	m_NextButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
 
@@ -192,13 +213,20 @@ guCoverEditor::~guCoverEditor()
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::EndDownloadLinksThread( void )
 {
+    guLogMessage( wxT( "Finished downloading covers..." ) );
     m_DownloadThreadMutex.Lock();
     if( !m_DownloadThreads.Count() )
     {
         if( m_Gauge->IsPulsing() )
+        {
             m_Gauge->StopPulse( MAX_COVERLINKS_ITEMS, MAX_COVERLINKS_ITEMS );
+            guLogMessage( wxT( "StopPulsing" ) );
+        }
         else
+        {
             m_Gauge->SetValue( MAX_COVERLINKS_ITEMS );
+            guLogMessage( wxT( "SetValue" ) );
+        }
     }
     m_DownloadThreadMutex.Unlock();
     //m_Gauge->SetValue( 0 );
@@ -334,8 +362,21 @@ wxImage * guCoverEditor::GetSelectedCoverImage( void )
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::OnTextCtrlEnter( wxCommandEvent& event )
 {
-    // Get the new Search String
-    m_SearchString = guURLEncode( m_InputTextCtrl->GetValue().Trim().Trim( false ) );
+    m_DownloadThreadMutex.Lock();
+    int index;
+    int count = m_DownloadThreads.Count();
+    for( index = 0; index < count; index++ )
+    {
+        guDownloadCoverThread * DownThread = ( guDownloadCoverThread * ) m_DownloadThreads[ index ];
+        if( DownThread )
+        {
+            DownThread->Pause();
+            DownThread->Delete();
+        }
+    }
+    m_DownloadThreads.Empty();
+    m_DownloadThreadMutex.Unlock();
+
     // If Thread still running delete it
     if( m_DownloadCoversThread )
     {
@@ -352,7 +393,9 @@ void guCoverEditor::OnTextCtrlEnter( wxCommandEvent& event )
     m_Gauge->StartPulse();
 
     // Start again the cover fetcher thread
-    m_DownloadCoversThread = new guFetchCoverLinksThread( this, m_SearchString.c_str() );
+    m_DownloadCoversThread = new guFetchCoverLinksThread( this,
+                 m_ArtistTextCtrl->GetValue().c_str(),
+                 m_AlbumTextCtrl->GetValue().c_str(), m_EngineIndex );
 
     // Disable buttons till one cover is downloaded
     m_PrevButton->Disable();
@@ -360,21 +403,70 @@ void guCoverEditor::OnTextCtrlEnter( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guCoverEditor::OnSearchClear( wxMouseEvent& event )
+void guCoverEditor::OnEngineChanged( wxCommandEvent& event )
 {
-    m_InputTextCtrl->SetValue( wxEmptyString );
+    m_DownloadThreadMutex.Lock();
+    int index;
+    int count = m_DownloadThreads.Count();
+    for( index = 0; index < count; index++ )
+    {
+        guDownloadCoverThread * DownThread = ( guDownloadCoverThread * ) m_DownloadThreads[ index ];
+        if( DownThread )
+        {
+            DownThread->Pause();
+            DownThread->Delete();
+        }
+    }
+    m_DownloadThreads.Empty();
+    m_DownloadThreadMutex.Unlock();
+
+    // If Thread still running delete it
+    if( m_DownloadCoversThread )
+    {
+        m_DownloadCoversThread->Pause();
+        m_DownloadCoversThread->Delete();
+    }
+    // Empty already downloaded covers
+    m_AlbumCovers.Empty();
+    // Reset to the 1st Image
+	m_CurrentImage = 0;
+	// Set blank Cover Bitmap
+	UpdateCoverBitmap();
+
+    m_Gauge->StartPulse();
+
+    m_EngineIndex = m_EngineChoice->GetSelection();
+
+    // Start again the cover fetcher thread
+    m_DownloadCoversThread = new guFetchCoverLinksThread( this,
+                 m_ArtistTextCtrl->GetValue().c_str(),
+                 m_AlbumTextCtrl->GetValue().c_str(), m_EngineIndex );
+
+    // Disable buttons till one cover is downloaded
+    m_PrevButton->Disable();
+    m_NextButton->Disable();
 }
 
 // -------------------------------------------------------------------------------- //
 // guFetchCoverLinksThread
 // -------------------------------------------------------------------------------- //
-guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * Owner, const wxChar * SearchStr ) :
+guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * owner,
+                    const wxChar * artist, const wxChar * album, int engineindex ) :
     wxThread()
 {
-    m_CoverEditor   = Owner;
-    m_SearchString  = wxString( SearchStr );
+    m_CoverEditor   = owner;
+    m_CoverFetcher = NULL;
+//    m_Artist = wxString( artist );
+//    m_Album = wxString( album );
+    m_EngineIndex = engineindex;
     m_LastDownload  = 0;
     m_CurrentPage   = 0;
+
+    if( m_EngineIndex == 0 )
+    {
+        m_CoverFetcher = ( guCoverFetcher * ) new guGoogleCoverFetcher( this, &m_CoverLinks, artist, album );
+    }
+
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -386,169 +478,53 @@ guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * Owner, const w
 // -------------------------------------------------------------------------------- //
 guFetchCoverLinksThread::~guFetchCoverLinksThread()
 {
-    // Indicate the main object that the child thread has been deleted
-//    if( !TestDestroy() )
-//        m_CoverEditor->EndDownloadLinksThread();
-};
-
-// -------------------------------------------------------------------------------- //
-wxArrayString guFetchCoverLinksThread::ExtractImageInfo( const wxString &Content )
-{
-    wxArrayString RetVal;
-    wxString CurParam;
-    CurParam = wxEmptyString;
-    wxChar CurChar;
-    int index;
-    int count = Content.Length();
-    for( index = 0; index < count; index++ )
+    if( !TestDestroy() )
     {
-        CurChar = Content[ index ];
-        if( CurChar == wxT( '\"' ) )
-        {
-            index++;
-            while( ( CurChar = Content[ index ] ) != wxT( '\"' ) && ( index < count ) )
-            {
-                CurParam.Append( CurChar );
-                index++;
-            }
-        }
-        else if( CurChar == wxT( ',' ) /*|| CurChar == wxT( ')' )*/ )
-        {
-            //guLogMessage( wxT( "%s" ), CurParam.c_str() );
-            RetVal.Add( CurParam );
-            CurParam = wxEmptyString;
-        }
-        else
-        {
-            CurParam.Append( CurChar );
-        }
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_COVEREDITOR_DOWNLOADEDLINKS );
+        event.SetClientObject( ( wxClientData * ) this );
+        wxPostEvent( m_CoverEditor, event );
     }
-    if( !CurParam.IsEmpty() )
-        RetVal.Add( CurParam );
-    //guLogMessage( wxT( "ImageLink: %s" ), RetVal[ 3 ].c_str() );
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-int guFetchCoverLinksThread::ExtractImagesInfo( wxString &Content, int Count )
-{
-    wxArrayString CurImage;
-    int ImageIndex = 0;
-
-    int StrPos = Content.Find( wxT( "dyn.setResults([[" ) );
-
-    if( StrPos != wxNOT_FOUND )
-        StrPos += 14;
-    //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
-    while( ( StrPos != wxNOT_FOUND ) && !TestDestroy() )
-    {
-        Content = Content.Mid( StrPos + 3 );
-        StrPos = Content.Find( wxT( "],[" ) );
-        if( StrPos == wxNOT_FOUND )
-          return 0; //break;
-        //guLogMessage( wxT( "%s" ), Content.Mid( 0, StrPos ).c_str() );
-        CurImage = ExtractImageInfo( Content.Mid( 0, StrPos ) );
-        //RetVal.Add( CurImage );
-        m_CoverLinks.Add( CurImage );
-        ImageIndex++;
-        if( ImageIndex == Count )
-            break;
-
-        //guLogMessage( wxT( "Pos: %u" ), StrPos );
-    }
-    return ImageIndex;
-}
-
-#define GUCOVERINFO_LINK    3           // 3 -> Link
-#define GUCOVERINFO_COMMENT 6           // 6 -> Comment
-#define GUCOVERINFO_SIZE    9           // 9 -> Size >> 425 x 283 - 130 KB
-
-// -------------------------------------------------------------------------------- //
-bool guFetchCoverLinksThread::AddCoverLinks( void )
-{
-    //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, m_SearchString.c_str() );
-    wxString SearchUrl = wxString::Format( GOOGLE_IMAGES_SEARCH_STR, guURLEncode( m_SearchString ).c_str(), ( m_CurrentPage * COVERS_COUNTER_PER_PAGE ) );
-    //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, SearchUrl.c_str() );
-    //guHTTP http;
-    //http.SetHeader( wxT( "User-Agent" ), wxT( "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.0.2) Gecko/2008092313 Ubuntu/8.04 (hardy) Firefox/3.1" ) );
-    char * Buffer = NULL;
-    wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetVerbose( true );
-    http.Get( Buffer, SearchUrl );
-    if( Buffer )
-    {
-        //printf( "Buffer:\n%s\n", Buffer );
-        if( !TestDestroy() )
-        {
-            wxString Content = wxString( Buffer, wxConvUTF8 );
-            //Content = http.GetContent( SearchUrl, 60 );
-            if( Content.Length() )
-            {
-                if( !TestDestroy() )
-                {
-                    //guLogMessage( Content );
-                    return ExtractImagesInfo( Content, COVERS_COUNTER_PER_PAGE );
-                }
-            }
-            else
-            {
-                guLogError( wxT( "Could not get the remote data from connection" ) );
-            }
-        }
-        free( Buffer );
-    }
-    else
-    {
-        guLogWarning( wxT( "No data received when searching for images" ) );
-    }
-    return false;
 }
 
 // -------------------------------------------------------------------------------- //
 guFetchCoverLinksThread::ExitCode guFetchCoverLinksThread::Entry()
 {
     bool NoMorePics = false;
-    while( !TestDestroy() )
-    {
-        if( m_LastDownload < ( int ) m_CoverLinks.Count() )
-        {
-            m_CoverEditor->m_DownloadThreadMutex.Lock();
-            if( !TestDestroy() )
-            {
-                guDownloadCoverThread * DownloadThread = new guDownloadCoverThread( m_CoverEditor,
-                                          &m_CoverLinks[ m_LastDownload ] );
-            }
-            m_CoverEditor->m_DownloadThreadMutex.Unlock();
-            m_LastDownload++;
-            Sleep( 20 );
-        }
-        else
-        {
-            if( NoMorePics )
-                break;
-            if( m_CoverLinks.Count() > MAX_COVERLINKS_ITEMS )
-                break;
-            if( !AddCoverLinks() )
-            {
-                NoMorePics = true;
-                if( m_LastDownload < ( int ) m_CoverLinks.Count() )
-                {
-                    continue;
-                }
-                break;
-            }
-            m_CurrentPage++;
-        }
-    }
 
-    if( !TestDestroy() )
+    if( m_CoverFetcher )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_COVEREDITOR_DOWNLOADEDLINKS );
-        event.SetClientObject( ( wxClientData * ) this );
-        wxPostEvent( m_CoverEditor, event );
+        while( !TestDestroy() )
+        {
+            if( m_LastDownload < ( int ) m_CoverLinks.Count() )
+            {
+                m_CoverEditor->m_DownloadThreadMutex.Lock();
+                if( !TestDestroy() )
+                {
+                    guDownloadCoverThread * DownloadThread = new guDownloadCoverThread( m_CoverEditor,
+                                              &m_CoverLinks[ m_LastDownload ] );
+                }
+                m_CoverEditor->m_DownloadThreadMutex.Unlock();
+                m_LastDownload++;
+                Sleep( 20 );
+            }
+            else
+            {
+                if( NoMorePics )
+                    break;
+                if( m_CoverLinks.Count() > MAX_COVERLINKS_ITEMS )
+                    break;
+                if( !m_CoverFetcher->AddCoverLinks( m_CurrentPage ) )
+                {
+                    NoMorePics = true;
+                    if( m_LastDownload < ( int ) m_CoverLinks.Count() )
+                    {
+                        continue;
+                    }
+                    break;
+                }
+                m_CurrentPage++;
+            }
+        }
     }
 
     return 0;
@@ -576,10 +552,6 @@ guDownloadCoverThread::guDownloadCoverThread( guCoverEditor * Owner, const wxArr
 // -------------------------------------------------------------------------------- //
 guDownloadCoverThread::~guDownloadCoverThread()
 {
-//    if( !TestDestroy() )
-//    {
-//        m_CoverEditor->EndDownloadCoverThread( this );
-//    }
 }
 
 // -------------------------------------------------------------------------------- //

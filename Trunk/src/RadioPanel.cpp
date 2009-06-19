@@ -295,15 +295,6 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * New
     //Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guRadioStationListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guRadioStationListBox::OnContextMenu ), NULL, this );
 
-//    m_EveAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-//                              wxColor( 250, 250, 250 ),
-//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
-//
-//    m_OddAttr = wxListItemAttr( wxColor( 0, 0, 0 ),
-//                              wxColor( 240, 240, 240 ),
-//                              wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
-//
-//    SetBackgroundColour( wxColor( 250, 250, 250 ) );
     wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
     wxColour ListBoxText;
     ListBoxText.Set( ListBoxColor.Red() ^ 0xFF, ListBoxColor.Green() ^ 0xFF, ListBoxColor.Blue() ^ 0xFF );
@@ -375,7 +366,7 @@ wxString guRadioStationListBox::OnGetItemText( long item, long column ) const
 // -------------------------------------------------------------------------------- //
 wxListItemAttr * guRadioStationListBox::OnGetItemAttr( long item ) const
 {
-    return ( wxListItemAttr * ) ( item & 1 ? &m_EveAttr : &m_OddAttr );
+    return ( wxListItemAttr * ) ( item & 1 ? &m_OddAttr : &m_EveAttr );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -918,13 +909,27 @@ void guRadioPanel::OnRadioUpdate( wxCommandEvent &event )
     guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge();
     wxArrayInt GenresIds = m_GenresListBox->GetSelection();
-
-    guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, GenresIds, GaugeId );
-    if( UpdateRadiosThread )
+    if( !GenresIds.Count() )
     {
-        UpdateRadiosThread->Create();
-        UpdateRadiosThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-        UpdateRadiosThread->Run();
+        guListItems Genres;
+        m_Db->GetRadioGenres( &Genres );
+        int index;
+        int count = Genres.Count();
+        for( index = 0; index < count; index++ )
+        {
+            GenresIds.Add( Genres[ index ].m_Id );
+        }
+    }
+
+    if( GenresIds.Count() )
+    {
+        guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, GenresIds, GaugeId );
+        if( UpdateRadiosThread )
+        {
+            UpdateRadiosThread->Create();
+            UpdateRadiosThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+            UpdateRadiosThread->Run();
+        }
     }
 }
 
@@ -984,7 +989,7 @@ guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
 
         //
         m_Db->DelRadioStations( m_GenresIds );
-        guLogMessage( wxT( "Deleted all radio stations" ) );
+        //guLogMessage( wxT( "Deleted all radio stations" ) );
         count = Genres.Count();
 
         event.SetInt( m_GaugeId );

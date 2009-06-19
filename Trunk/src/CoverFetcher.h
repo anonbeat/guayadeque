@@ -18,41 +18,27 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#include "AutoPulseGauge.h"
-#include "Utils.h"
+#ifndef COVERFETCHER_H
+#define COVERFETCHER_H
+
+#include "CoverEdit.h"
 
 // -------------------------------------------------------------------------------- //
-guAutoPulseGauge::guAutoPulseGauge( wxWindow * parent, wxWindowID id, int range, const wxPoint &pos,
-             const wxSize &size, long style, const wxValidator& validator, const wxString &name ) :
-    wxGauge( parent, id, range, pos, size, style, validator, name )
+class guCoverFetcher
 {
-    m_Timer = new guGaugeTimer( this );
-    m_Timer->Start( 300 );
-}
+  protected :
+    guFetchCoverLinksThread *   m_MainThread;
+    guArrayStringArray *        m_CoverLinks;
+    wxString                    m_Artist;
+    wxString                    m_Album;
 
-// -------------------------------------------------------------------------------- //
-guAutoPulseGauge::~guAutoPulseGauge( void )
-{
-    if( m_Timer )
-        delete m_Timer;
-}
+  public :
+    guCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
+                                    const wxChar * artist, const wxChar * album );
+    ~guCoverFetcher();
 
-// -------------------------------------------------------------------------------- //
-void guAutoPulseGauge::StopPulse( int range, int value )
-{
-    m_Timer->Stop();
-    SetRange( range );
-    SetValue( value );
-}
-
-// -------------------------------------------------------------------------------- //
-void guAutoPulseGauge::StartPulse( void )
-{
-    m_Timer->Start( 300 );
-}
-
-// -------------------------------------------------------------------------------- //
-bool guAutoPulseGauge::IsPulsing( void )
-{
-    return m_Timer->IsRunning();
+    virtual int   AddCoverLinks( int pagenum ) = 0;
 };
+
+
+#endif

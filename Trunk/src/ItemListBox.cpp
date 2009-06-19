@@ -216,7 +216,7 @@ wxString guListBox::OnGetItemText( long item, long column ) const
 // -------------------------------------------------------------------------------- //
 wxListItemAttr * guListBox::OnGetItemAttr( long item ) const
 {
-    return ( wxListItemAttr *) ( item & 1 ?  &m_EveAttr : &m_OddAttr );
+    return ( wxListItemAttr *) ( item & 1 ?  &m_OddAttr : &m_EveAttr );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -34,6 +34,11 @@
 #include <wx/bmpbuttn.h>
 #include <wx/dialog.h>
 #include <wx/gauge.h>
+#include <wx/choice.h>
+
+#define GUCOVERINFO_LINK    0
+#define GUCOVERINFO_SIZE    1
+
 
 // -------------------------------------------------------------------------------- //
 class guCoverImage
@@ -65,22 +70,23 @@ class guCoverImage
 WX_DECLARE_OBJARRAY(guCoverImage, guCoverImageArray);
 
 class guCoverEditor;
+class guCoverFetcher;
 
 // -------------------------------------------------------------------------------- //
 class guFetchCoverLinksThread : public wxThread
 {
   private:
     guCoverEditor *     m_CoverEditor;
+    guCoverFetcher *    m_CoverFetcher;
 	guArrayStringArray  m_CoverLinks;
 	int                 m_CurrentPage;
     int                 m_LastDownload;
-    wxString            m_SearchString;
+    wxString            m_Artist;
+    wxString            m_Album;
+    int                 m_EngineIndex;
 
-	bool                AddCoverLinks();
-    int                 ExtractImagesInfo( wxString &Content, int Count );
-    wxArrayString       ExtractImageInfo( const wxString &Content );
   public:
-    guFetchCoverLinksThread( guCoverEditor * owner, const wxChar * searchstr );
+    guFetchCoverLinksThread( guCoverEditor * owner, const wxChar * artist, const wxChar * album, int engineindex );
     ~guFetchCoverLinksThread();
 
     virtual ExitCode Entry();
@@ -101,14 +107,18 @@ class guDownloadCoverThread : public wxThread
     virtual ExitCode Entry();
 };
 
+class guCoverFetcher;
+
 // -------------------------------------------------------------------------------- //
 // Class guCoverEditor
 // -------------------------------------------------------------------------------- //
 class guCoverEditor : public wxDialog
 {
   private:
-	wxTextCtrl *                m_InputTextCtrl;
-	wxStaticBitmap *            m_ClearTextBitmap;
+    wxTextCtrl *                m_ArtistTextCtrl;
+    wxTextCtrl *                m_AlbumTextCtrl;
+    wxChoice *                  m_EngineChoice;
+
 	wxStaticBitmap *            m_CoverBitmap;
 	wxBitmapButton *            m_PrevButton;
 	wxBitmapButton *            m_NextButton;
@@ -121,17 +131,18 @@ class guCoverEditor : public wxDialog
 	wxMutex                     m_DownloadEventsMutex;
 
     guAutoPulseGauge *          m_Gauge;
-    wxStaticText *                m_InfoTextCtrl;
+    wxStaticText *              m_InfoTextCtrl;
 
-	wxString                    m_SearchString;
 	guCoverImageArray           m_AlbumCovers;
 	guFetchCoverLinksThread *   m_DownloadCoversThread;
 	guThreadArray               m_DownloadThreads;
 	int                         m_CurrentImage;
+    int                         m_EngineIndex;
+
 
 	void OnInitDialog( wxInitDialogEvent& event );
 	void OnTextCtrlEnter( wxCommandEvent& event );
-	void OnSearchClear( wxMouseEvent& event );
+    void OnEngineChanged( wxCommandEvent& event );
 	void OnCoverLeftDClick( wxMouseEvent& event );
 	void OnPrevButtonClick( wxCommandEvent& event );
 	void OnNextButtonClick( wxCommandEvent& event );

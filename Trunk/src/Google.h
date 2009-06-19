@@ -18,41 +18,26 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#include "AutoPulseGauge.h"
-#include "Utils.h"
+#ifndef GOOGLE_H
+#define GOOGLE_H
+
+#include "ArrayStringArray.h"
+#include "CoverFetcher.h"
+
+class guFetchCoverLinksThread;
 
 // -------------------------------------------------------------------------------- //
-guAutoPulseGauge::guAutoPulseGauge( wxWindow * parent, wxWindowID id, int range, const wxPoint &pos,
-             const wxSize &size, long style, const wxValidator& validator, const wxString &name ) :
-    wxGauge( parent, id, range, pos, size, style, validator, name )
+class guGoogleCoverFetcher : public guCoverFetcher
 {
-    m_Timer = new guGaugeTimer( this );
-    m_Timer->Start( 300 );
-}
+  private :
+    wxArrayString ExtractImageInfo( const wxString &content );
+    int           ExtractImagesInfo( guArrayStringArray * coverlinks, wxString &content, int count );
 
-// -------------------------------------------------------------------------------- //
-guAutoPulseGauge::~guAutoPulseGauge( void )
-{
-    if( m_Timer )
-        delete m_Timer;
-}
-
-// -------------------------------------------------------------------------------- //
-void guAutoPulseGauge::StopPulse( int range, int value )
-{
-    m_Timer->Stop();
-    SetRange( range );
-    SetValue( value );
-}
-
-// -------------------------------------------------------------------------------- //
-void guAutoPulseGauge::StartPulse( void )
-{
-    m_Timer->Start( 300 );
-}
-
-// -------------------------------------------------------------------------------- //
-bool guAutoPulseGauge::IsPulsing( void )
-{
-    return m_Timer->IsRunning();
+  public :
+    guGoogleCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
+                                    const wxChar * artist, const wxChar * album );
+    virtual int   AddCoverLinks( int pagenum );
 };
+
+#endif
+// -------------------------------------------------------------------------------- //
