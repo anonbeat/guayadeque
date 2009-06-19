@@ -870,6 +870,7 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
   wxSQLite3ResultSet dbRes;
   wxString query;
   wxString FileName;
+  int RetVal = 0;
 
   // Delete the actual assigned Cover
   // Find the Cover assigned to the album
@@ -929,7 +930,7 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
 
       CoverId = m_Db.GetLastRowId().GetLo();
       query = wxString::Format( wxT( "UPDATE albums SET album_coverid = %i WHERE album_id = %i;" ), CoverId, AlbumId );
-      return ExecuteUpdate( query );
+      RetVal = ExecuteUpdate( query );
     }
   }
   // Update the AlbumsCache
@@ -938,8 +939,9 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath )
   {
       AlbumItem->m_CoverId = CoverId;
       AlbumItem->m_CoverPath = CoverPath;
+      guLogMessage( wxT( "Updated Album with Cover %i '%s'" ), CoverId, CoverPath.c_str() );
   }
-  return 0;
+  return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
