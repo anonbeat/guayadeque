@@ -213,19 +213,16 @@ guCoverEditor::~guCoverEditor()
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::EndDownloadLinksThread( void )
 {
-    guLogMessage( wxT( "Finished downloading covers..." ) );
     m_DownloadThreadMutex.Lock();
     if( !m_DownloadThreads.Count() )
     {
         if( m_Gauge->IsPulsing() )
         {
             m_Gauge->StopPulse( MAX_COVERLINKS_ITEMS, MAX_COVERLINKS_ITEMS );
-            guLogMessage( wxT( "StopPulsing" ) );
         }
         else
         {
             m_Gauge->SetValue( MAX_COVERLINKS_ITEMS );
-            guLogMessage( wxT( "SetValue" ) );
         }
     }
     m_DownloadThreadMutex.Unlock();

@@ -102,6 +102,8 @@ ADD_EXECUTABLE( guayadeque
 	CoverFetcher.h
 	Google.cpp
 	Google.h
+	Amazon.cpp
+	Amazon.h
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 
