@@ -716,7 +716,8 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     //guLogWarning( wxT( "SetCurrentTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
     CoverImage = NULL;
-    //guLogMessage( "CoverId : %i", m_MediaSong.CoverId );
+    //guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
+    //guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
     if( m_MediaSong.m_SongId == guPLAYLIST_RADIOSTATION )
     {
         CoverImage = new wxImage( guImage_net_radio );
