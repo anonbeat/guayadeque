@@ -230,7 +230,15 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     //
     m_PlayListCtrl->RefreshItems();
     TrackListChanged();
-    SetVolume( m_CurVolume );
+    //SetVolume( m_CurVolume );
+    // Sometimes the gstreamer dont accept the volumen
+    // Till its ready. So check if it was that case here.
+    if( ( m_MediaCtrl->GetVolume() * 100.0 ) != m_CurVolume )
+    {
+        SetVolume( ( m_CurVolume > 1 ) ? ( m_CurVolume - 1 ) : ( m_CurVolume + 1 ) );
+        SetVolume( m_CurVolume  );
+        guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
+    }
 
 	// Connect Events
 	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
@@ -981,7 +989,7 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
         //
         m_MediaCtrl->Play();
         m_PlayListCtrl->UpdateView();
-//        SetVolume( CurVolume );
+        //SetVolume( m_CurVolume );
     }
     catch(...)
     {
@@ -1322,7 +1330,7 @@ void guPlayerPanel::SetVolume( int Vol )
         m_CurVolume = 100;
 //    if( m_MediaCtrl->GetState() != wxMEDIASTATE_STOPPED )
 //    {
-    m_MediaCtrl->SetVolume(  ( ( double ) Vol / ( double ) 100 ) );
+    m_MediaCtrl->SetVolume(  ( ( double ) Vol / 100.0 ) );
 //    }
 }
 

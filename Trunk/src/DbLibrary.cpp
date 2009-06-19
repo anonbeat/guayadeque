@@ -411,6 +411,8 @@ void DbLibrary::DoCleanUp( void )
   ExecuteUpdate( query );
   query = wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" );
   ExecuteUpdate( query );
+
+  LoadCache();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1375,8 +1377,6 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
   wxString query;
 
   DoCleanUp();
-
-  LoadCache();
 
 //////////////////////////
   wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
