@@ -129,6 +129,8 @@
 		<Unit filename="src/DbLibrary.h" />
 		<Unit filename="src/GeListBox.cpp" />
 		<Unit filename="src/GeListBox.h" />
+		<Unit filename="src/Google.cpp" />
+		<Unit filename="src/Google.h" />
 		<Unit filename="src/Images.cpp" />
 		<Unit filename="src/Images.h" />
 		<Unit filename="src/ItemListBox.cpp" />
