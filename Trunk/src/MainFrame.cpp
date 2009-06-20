@@ -399,6 +399,7 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::LibraryUpdated( wxCommandEvent &event )
 {
+    m_Db->DoCleanUp();
 //    guLogMessage( wxT( "Library Updated Event fired" ) );
     if( m_LibPanel )
         m_LibPanel->ReloadControls( event );

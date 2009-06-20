@@ -45,9 +45,10 @@ guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-         m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
-         m_LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
-         //guLogMessage( wxT( "LastUpdate: %s" ), m_LastUpdate.Format().c_str() );
+        m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+        m_LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
+        //guLogMessage( wxT( "LastUpdate: %s" ), m_LastUpdate.Format().c_str() );
+        m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
     }
 
     if( Create() == wxTHREAD_NO_ERROR )
@@ -79,9 +80,11 @@ guLibUpdateThread::~guLibUpdateThread()
 // -------------------------------------------------------------------------------- //
 int guLibUpdateThread::ScanDirectory( wxString dirname )
 {
-  wxDir Dir;
-  wxString FileName;
-  wxString SavedDir( wxGetCwd() );
+  wxDir         Dir;
+  wxString      FileName;
+  wxString      LowerFileName;
+  wxString      SavedDir( wxGetCwd() );
+
 
   Dir.Open( dirname );
   wxSetWorkingDirectory( dirname );
@@ -101,22 +104,28 @@ int guLibUpdateThread::ScanDirectory( wxString dirname )
 
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
             event.SetInt( m_GaugeId );
-            event.SetExtraLong( m_Files.Count() );
+            event.SetExtraLong( m_TrackFiles.Count() );
             wxPostEvent( m_MainFrame, event );
           }
           else
           {
-            // TODO: add other file formats ?
-            if( FileName.EndsWith( wxT( ".mp3" ) ) )
+            wxDateTime FileDate = GetFileLastChange( FileName );
+            if( FileDate > m_LastUpdate )
             {
-//                wxFileName FN( FileName );
-//                if( FN.GetModificationTime() > m_LastUpdate )
-                wxDateTime FileDate = GetFileLastChange( FileName );
-                if( FileDate > m_LastUpdate )
-                {
-                    //guLogMessage( wxT( "File date: %s" ), FileDate.Format().c_str() );
-                    m_Files.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
-                }
+              LowerFileName = FileName.Lower();
+              // TODO: add other file formats
+              if( LowerFileName.EndsWith( wxT( ".mp3" ) ) )
+              {
+                m_TrackFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
+              }
+              else if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) &&
+                  LowerFileName.EndsWith( wxT( ".jpg" ) ) ||
+                  LowerFileName.EndsWith( wxT( ".png" ) ) ||
+                  LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
+                  LowerFileName.EndsWith( wxT( ".gif" ) ) )
+              {
+                m_ImageFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
+              }
             }
           }
         }
@@ -143,7 +152,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         return 0;
     }
 
-    // For every directory in the library scan for new files and add them to m_Files
+    // For every directory in the library scan for new files and add them to m_TrackFiles
     index = 0;
     while( !TestDestroy() && ( index < count ) )
     {
@@ -151,8 +160,8 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         index++;
     }
 
-    // For every new file update it in the database
-    count = m_Files.Count();
+    // For every new track file update it in the database
+    count = m_TrackFiles.Count();
     if( count )
     {
         index = 0;
@@ -164,7 +173,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             if( ( index >= count ) )
                 break;
 
-             m_Db->ReadFileTags( m_Files[ index ].char_str() );
+             m_Db->ReadFileTags( m_TrackFiles[ index ].char_str() );
                 //Sleep( 1 );
             index++;
             evtup.SetExtraLong( index );
@@ -172,7 +181,28 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         }
     }
 
-    m_Db->DoCleanUp();
+    count = m_ImageFiles.Count();
+    if( count )
+    {
+        index = 0;
+//        evtmax.SetExtraLong( count );
+//        wxPostEvent( m_MainFrame, evtmax );
+        while( !TestDestroy() )
+        {
+            //guLogMessage( wxT( "%i - %i" ), index, count );
+            if( ( index >= count ) )
+                break;
+
+             m_Db->UpdateImageFile( m_ImageFiles[ index ].char_str() );
+                //Sleep( 1 );
+            index++;
+//            evtup.SetExtraLong( index );
+//            wxPostEvent( m_MainFrame, evtup );
+        }
+    }
+
+    // delete all orphans entries
+//    m_Db->DoCleanUp();
     return 0;
 }
 

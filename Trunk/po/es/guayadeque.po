@@ -183,7 +183,7 @@ msgstr "Poner en cola por defecto"
 
 #: src/Preferences.cpp:113
 msgid "Drop files clear playlist"
-msgstr "Soltar ficheros para limpiar la lista de reproducción"
+msgstr "Arrastrar ficheros limpia la lista de reproducción"
 
 #: src/Preferences.cpp:117
 msgid "Play random track when playlist is empty"
