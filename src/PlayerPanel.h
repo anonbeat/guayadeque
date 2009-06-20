@@ -89,7 +89,7 @@ class guPlayerPanel : public wxPanel
 	wxBitmapButton *        m_NextTrackButton;
 	wxBitmapButton *        m_PlayButton;
 	wxBitmapButton *        m_StopButton;
-	wxBitmapButton *        m_VolumenButton;
+	wxBitmapButton *        m_VolumeButton;
 	//
 	wxToggleBitmapButton *  m_SmartPlayButton;
 	wxBitmapButton *        m_RandomPlayButton;

@@ -102,9 +102,9 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
 	PlayerBtnSizer->Add( m_StopButton, 0, wxALL, 2 );
 
-	m_VolumenButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_audio_volume_medium ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-    m_VolumenButton->SetToolTip( _( "Set player volumen" ) );
-	PlayerBtnSizer->Add( m_VolumenButton, 0, wxALL, 2 );
+	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_audio_volume_medium ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_VolumeButton->SetToolTip( _( "Set player volume" ) );
+	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
 	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, wxBitmap( guImage_smart_play ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist bassed on LastFM" ) );
@@ -231,7 +231,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     m_PlayListCtrl->RefreshItems();
     TrackListChanged();
     //SetVolume( m_CurVolume );
-    // Sometimes the gstreamer dont accept the volumen
+    // Sometimes the gstreamer dont accept the volume
     // Till its ready. So check if it was that case here.
     if( ( m_MediaCtrl->GetVolume() * 100.0 ) != m_CurVolume )
     {
@@ -245,8 +245,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	m_NextTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
 	m_PlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
 	m_StopButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
-	m_VolumenButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
-	m_VolumenButton->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnVolumenMouseWheel ), NULL, this );
+	m_VolumeButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
+	m_VolumeButton->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnVolumenMouseWheel ), NULL, this );
 	m_SmartPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
 	m_RandomPlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
 	m_RepeatPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
@@ -323,7 +323,7 @@ guPlayerPanel::~guPlayerPanel()
 	m_NextTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
 	m_PlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
 	m_StopButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
-	m_VolumenButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
+	m_VolumeButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
 	m_SmartPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
 	m_RandomPlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
 	m_RepeatPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
@@ -541,14 +541,14 @@ void guPlayerPanel::UpdateStatus()
     if( m_CurVolume != m_LastVolume )
     {
         if( m_CurVolume > 75 )
-            m_VolumenButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_high ) );
+            m_VolumeButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_high ) );
         else if( m_CurVolume > 50 )
-            m_VolumenButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_medium ) );
+            m_VolumeButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_medium ) );
         else if( m_CurVolume > 25 )
-            m_VolumenButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_low ) );
+            m_VolumeButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_low ) );
         else if( m_CurVolume <= 5 )
-            m_VolumenButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_muted ) );
-        m_VolumenButton->Refresh();
+            m_VolumeButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_muted ) );
+        m_VolumeButton->Refresh();
         m_LastVolume = m_CurVolume;
     }
 
@@ -1234,7 +1234,7 @@ void guPlayerPanel::OnVolumenButtonClick( wxCommandEvent& event )
     //wxMessageBox( wxT("OnVolumenButtonClick"), wxT("Event") );
     wxPoint Pos;
     //Pos = VolumenButton->GetPosition();
-    Pos = ClientToScreen( m_VolumenButton->GetPosition() );
+    Pos = ClientToScreen( m_VolumeButton->GetPosition() );
     Pos.x += 1;
     guVolumeFrame * VolFrame = new guVolumeFrame( this, this, wxID_ANY, wxEmptyString, Pos );
     //

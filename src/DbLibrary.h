@@ -233,8 +233,6 @@ class DbLibrary {
 
     wxArrayString       m_CoverSearchWords;
 
-    int                 ScanDirectory( const wxString &DirName, int GaugeId = wxNOT_FOUND );
-
     wxString            FiltersSQL( int Level );
 
     int                 GetRadioFiltersCount( void ) const;
@@ -255,8 +253,10 @@ class DbLibrary {
     int                 GetGenreId( int * GenreId, wxString &GenreName );
     const wxString      GetArtistName( const int ArtistId );
     bool                GetArtistId( int * ArtistId, wxString &ArtistName, bool Create = true );
+    int                 AddCoverFile( const wxString &coverfile, const wxString &coverhash = wxEmptyString );
+    void                UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash );
     int                 FindCoverFile( const wxString &DirName );
-    int                 SetAlbumCover( const int AlbumId, const wxString & CoverPath );
+    int                 SetAlbumCover( const int AlbumId, const wxString & CoverPath, const wxString &coverhash = wxEmptyString );
     bool                GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath );
     int                 GetAlbumCoverId( const int AlbumId );
 
@@ -306,6 +306,7 @@ class DbLibrary {
 
     void                SetLibPath( const wxArrayString &NewPaths );
     int                 ReadFileTags( const char * filename );
+    void                UpdateImageFile( const char * filename );
 
     int                 GetFiltersCount() const;
     void                SetTeFilters( const wxArrayString &NewTeFilters );
