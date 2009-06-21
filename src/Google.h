@@ -31,7 +31,7 @@ class guGoogleCoverFetcher : public guCoverFetcher
 {
   private :
     wxArrayString ExtractImageInfo( const wxString &content );
-    int           ExtractImagesInfo( guArrayStringArray * coverlinks, wxString &content, int count );
+    int           ExtractImagesInfo( wxString &content, int count );
 
   public :
     guGoogleCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,

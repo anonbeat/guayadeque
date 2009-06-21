@@ -24,12 +24,16 @@
 #include "ArrayStringArray.h"
 #include "CoverFetcher.h"
 
+#include <wx/xml/xml.h>
+
 class guFetchCoverLinksThread;
 
 // -------------------------------------------------------------------------------- //
 class guAmazonCoverFetcher : public guCoverFetcher
 {
   private :
+    wxArrayString   GetImageInfo( wxXmlNode * XmlNode );
+    int             ExtractImagesInfo( wxString &content );
 
   public :
     guAmazonCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,

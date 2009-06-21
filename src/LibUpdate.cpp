@@ -185,8 +185,8 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
     if( count )
     {
         index = 0;
-//        evtmax.SetExtraLong( count );
-//        wxPostEvent( m_MainFrame, evtmax );
+        evtmax.SetExtraLong( count );
+        wxPostEvent( m_MainFrame, evtmax );
         while( !TestDestroy() )
         {
             //guLogMessage( wxT( "%i - %i" ), index, count );
@@ -194,15 +194,18 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                 break;
 
              m_Db->UpdateImageFile( m_ImageFiles[ index ].char_str() );
-                //Sleep( 1 );
             index++;
-//            evtup.SetExtraLong( index );
-//            wxPostEvent( m_MainFrame, evtup );
+            evtup.SetExtraLong( index );
+            wxPostEvent( m_MainFrame, evtup );
         }
     }
 
+    // This cant be called here as wxBitmap do X11 calls and this can only done from the main
+    // thread. So we must call DoCleanUp from the main thread once this thread is finished.
+    // in the OnLibraryUpdated Event handler
     // delete all orphans entries
-//    m_Db->DoCleanUp();
+    // m_Db->DoCleanUp();
+
     return 0;
 }
 

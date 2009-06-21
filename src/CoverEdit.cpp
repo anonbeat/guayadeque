@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "CoverEdit.h"
 
+#include "Amazon.h"
 #include "Commands.h"
 #include "Config.h"
 #include "CoverFetcher.h"
@@ -32,9 +33,9 @@
 #include <wx/curl/http.h>
 #include <wx/statline.h>
 
-#define GOOGLE_IMAGES_SEARCH_STR wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
-#define COVERS_COUNTER_PER_PAGE 10
-#define MAX_COVERLINKS_ITEMS    30
+#define MAX_COVERLINKS_ITEMS            30
+#define COVER_SEARCH_ENGINE_GOOGLE      0
+#define COVER_SEARCH_ENGINE_AMAZON      1
 
 WX_DEFINE_OBJARRAY(guCoverImageArray);
 
@@ -75,7 +76,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	FromStaticText->Wrap( -1 );
 	EditsSizer->Add( FromStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	wxString m_EngineChoiceChoices[] = { wxT("Google"), wxT("Amazon"), wxT("Last.fm") };
+	wxString m_EngineChoiceChoices[] = { wxT("Google"), wxT("Amazon") /*, wxT("Last.fm") */ };
 	int m_EngineChoiceNChoices = sizeof( m_EngineChoiceChoices ) / sizeof( wxString );
 	m_EngineChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_EngineChoiceNChoices, m_EngineChoiceChoices, 0 );
 	EditsSizer->Add( m_EngineChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -459,9 +460,13 @@ guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * owner,
     m_LastDownload  = 0;
     m_CurrentPage   = 0;
 
-    if( m_EngineIndex == 0 )
+    if( m_EngineIndex == COVER_SEARCH_ENGINE_GOOGLE )
     {
         m_CoverFetcher = ( guCoverFetcher * ) new guGoogleCoverFetcher( this, &m_CoverLinks, artist, album );
+    }
+    else if( m_EngineIndex == COVER_SEARCH_ENGINE_AMAZON )
+    {
+        m_CoverFetcher = ( guCoverFetcher * ) new guAmazonCoverFetcher( this, &m_CoverLinks, artist, album );
     }
 
 

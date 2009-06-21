@@ -80,7 +80,7 @@ wxArrayString guGoogleCoverFetcher::ExtractImageInfo( const wxString &content )
 }
 
 // -------------------------------------------------------------------------------- //
-int guGoogleCoverFetcher::ExtractImagesInfo( guArrayStringArray * coverlinks, wxString &content, int count )
+int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
 {
     wxArrayString CurImage;
     wxArrayString GoogleImage;
@@ -103,7 +103,7 @@ int guGoogleCoverFetcher::ExtractImagesInfo( guArrayStringArray * coverlinks, wx
         CurImage.Empty();
         CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_LINK ] );
         CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_SIZE ] );
-        coverlinks->Add( CurImage );
+        m_CoverLinks->Add( CurImage );
         ImageIndex++;
         if( ImageIndex == count )
             break;
@@ -140,7 +140,7 @@ int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
                 if( !m_MainThread->TestDestroy() )
                 {
                     //guLogMessage( Content );
-                    return ExtractImagesInfo( m_CoverLinks, Content, GOOGLE_COVERS_PER_PAGE );
+                    return ExtractImagesInfo( Content, GOOGLE_COVERS_PER_PAGE );
                 }
             }
             else

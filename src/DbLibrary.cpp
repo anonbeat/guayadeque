@@ -1879,7 +1879,6 @@ wxBitmap * DbLibrary::GetCoverThumb( int CoverId )
   memcpy( imgdata, tmpimgdata, len );
 
   TmpImg = new wxImage( 38, 38, imgdata );
-//  TmpImg->SetData( imgdata );
   RetVal = new wxBitmap( * TmpImg );
   delete TmpImg;
 
