@@ -230,13 +230,14 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     //
     m_PlayListCtrl->RefreshItems();
     TrackListChanged();
-    //SetVolume( m_CurVolume );
-    // Sometimes the gstreamer dont accept the volume
-    // Till its ready. So check if it was that case here.
+    // The SetVolume call dont get set if the volume is the last one
+    // so we do it two calls
     if( ( m_MediaCtrl->GetVolume() * 100.0 ) != m_CurVolume )
     {
-        SetVolume( ( m_CurVolume > 1 ) ? ( m_CurVolume - 1 ) : ( m_CurVolume + 1 ) );
-        SetVolume( m_CurVolume  );
+        int SavedVol = m_CurVolume;
+        SetVolume( 0.0 );
+        SetVolume( SavedVol );
+        //SetVolume( m_CurVolume - 1 );
         guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
     }
 
