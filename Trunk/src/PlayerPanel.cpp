@@ -746,11 +746,11 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         m_MediaSong.m_CoverPath = m_PlayListCtrl->FindCoverFile( wxPathOnly( m_MediaSong.m_FileName ) );
     }
 
-    guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
-    guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
-    guLogMessage( wxT( "   Type : %i" ), m_MediaSong.m_CoverType );
-    guLogMessage( wxT( "  Cover : '%s'" ), m_MediaSong.m_CoverPath.c_str() );
-    guLogMessage( wxT( "===========================================" ) );
+//    guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
+//    guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
+//    guLogMessage( wxT( "   Type : %i" ), m_MediaSong.m_CoverType );
+//    guLogMessage( wxT( "  Cover : '%s'" ), m_MediaSong.m_CoverPath.c_str() );
+//    guLogMessage( wxT( "===========================================" ) );
     //{
     //GU_SONGCOVER_NONE,
     //GU_SONGCOVER_FILE,
