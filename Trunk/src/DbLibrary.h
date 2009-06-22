@@ -275,6 +275,7 @@ class DbLibrary {
     void                GetRadioLabels( guListItems * Labels, bool FullList = false );
     void                GetArtists( guListItems * Artists, bool FullList = false );
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
+    wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );
     //void                GetAlbums( guListItems * Albums );
     void                GetPlayLists( guListItems * PlayLists );
 

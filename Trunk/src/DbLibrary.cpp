@@ -1960,6 +1960,27 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
+wxArrayString DbLibrary::GetAlbumsPaths( const wxArrayInt &AlbumIds )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxArrayString RetVal;
+
+  query = wxT( "SELECT DISTINCT path_value FROM albums, paths "
+               "WHERE album_pathid = path_id AND album_id IN " ) +
+               ArrayIntToStrList( AlbumIds );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+      RetVal.Add( dbRes.GetString( 0 ) );
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 void DbLibrary::GetPlayLists( guListItems * PlayLists )
 {
   wxString query;
