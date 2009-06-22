@@ -938,7 +938,7 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, cons
   {
       AlbumItem->m_CoverId = CoverId;
       AlbumItem->m_CoverPath = CoverPath;
-      guLogMessage( wxT( "Updated Album with Cover %i '%s'" ), CoverId, CoverPath.c_str() );
+      //guLogMessage( wxT( "Updated Album with Cover %i '%s'" ), CoverId, CoverPath.c_str() );
   }
   return RetVal;
 }

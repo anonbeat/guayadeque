@@ -403,46 +403,50 @@ void guCoverEditor::OnTextCtrlEnter( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::OnEngineChanged( wxCommandEvent& event )
 {
-    m_DownloadThreadMutex.Lock();
-    int index;
-    int count = m_DownloadThreads.Count();
-    for( index = 0; index < count; index++ )
+    if( m_EngineIndex != m_EngineChoice->GetSelection() )
     {
-        guDownloadCoverThread * DownThread = ( guDownloadCoverThread * ) m_DownloadThreads[ index ];
-        if( DownThread )
+
+        m_DownloadThreadMutex.Lock();
+        int index;
+        int count = m_DownloadThreads.Count();
+        for( index = 0; index < count; index++ )
         {
-            DownThread->Pause();
-            DownThread->Delete();
+            guDownloadCoverThread * DownThread = ( guDownloadCoverThread * ) m_DownloadThreads[ index ];
+            if( DownThread )
+            {
+                DownThread->Pause();
+                DownThread->Delete();
+            }
         }
+        m_DownloadThreads.Empty();
+        m_DownloadThreadMutex.Unlock();
+
+        // If Thread still running delete it
+        if( m_DownloadCoversThread )
+        {
+            m_DownloadCoversThread->Pause();
+            m_DownloadCoversThread->Delete();
+        }
+        // Empty already downloaded covers
+        m_AlbumCovers.Empty();
+        // Reset to the 1st Image
+        m_CurrentImage = 0;
+        // Set blank Cover Bitmap
+        UpdateCoverBitmap();
+
+        m_Gauge->StartPulse();
+
+        m_EngineIndex = m_EngineChoice->GetSelection();
+
+        // Start again the cover fetcher thread
+        m_DownloadCoversThread = new guFetchCoverLinksThread( this,
+                     m_ArtistTextCtrl->GetValue().c_str(),
+                     m_AlbumTextCtrl->GetValue().c_str(), m_EngineIndex );
+
+        // Disable buttons till one cover is downloaded
+        m_PrevButton->Disable();
+        m_NextButton->Disable();
     }
-    m_DownloadThreads.Empty();
-    m_DownloadThreadMutex.Unlock();
-
-    // If Thread still running delete it
-    if( m_DownloadCoversThread )
-    {
-        m_DownloadCoversThread->Pause();
-        m_DownloadCoversThread->Delete();
-    }
-    // Empty already downloaded covers
-    m_AlbumCovers.Empty();
-    // Reset to the 1st Image
-	m_CurrentImage = 0;
-	// Set blank Cover Bitmap
-	UpdateCoverBitmap();
-
-    m_Gauge->StartPulse();
-
-    m_EngineIndex = m_EngineChoice->GetSelection();
-
-    // Start again the cover fetcher thread
-    m_DownloadCoversThread = new guFetchCoverLinksThread( this,
-                 m_ArtistTextCtrl->GetValue().c_str(),
-                 m_AlbumTextCtrl->GetValue().c_str(), m_EngineIndex );
-
-    // Disable buttons till one cover is downloaded
-    m_PrevButton->Disable();
-    m_NextButton->Disable();
 }
 
 // -------------------------------------------------------------------------------- //
