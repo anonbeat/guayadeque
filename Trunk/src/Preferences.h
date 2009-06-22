@@ -107,6 +107,17 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_LinksAcceptBtn;
     wxArrayString               m_LinksNames;
 
+    wxPanel *                   m_CmdPanel;
+    wxListBox *                 m_CmdListBox;
+    wxBitmapButton *            m_CmdAddBtn;
+    wxBitmapButton *            m_CmdDelBtn;
+    wxBitmapButton *            m_CmdMoveUpBtn;
+    wxBitmapButton *            m_CmdMoveDownBtn;
+    wxTextCtrl *                m_CmdTextCtrl;
+    wxTextCtrl *                m_CmdNameTextCtrl;
+    wxBitmapButton *            m_CmdAcceptBtn;
+    wxArrayString               m_CmdNames;
+
 	wxPanel *                   m_CopyPanel;
 	wxTextCtrl *                m_CopyToFileName;
 	wxTextCtrl *                m_CopyToExampleTextCtrl;
@@ -121,6 +132,7 @@ class guPrefDialog : public wxDialog
     int                         m_CoverSelected;
     int                         m_FilterSelected;
     int                         m_LinkSelected;
+    int                         m_CmdSelected;
 
     // Event Handlers
     void OnPathsListBoxSelected( wxCommandEvent& event );
@@ -136,14 +148,23 @@ class guPrefDialog : public wxDialog
     void OnOnlineAddBtnClick( wxCommandEvent& event );
 	void OnOnlineDelBtnClick( wxCommandEvent& event );
 	void OnOnlineListBoxDClicked( wxCommandEvent &event );
-	void OnLinksListBoxSelected( wxCommandEvent &event );
-    //void OnLinkListBoxDClicked( wxCommandEvent &event );
+
+    void OnLinksListBoxSelected( wxCommandEvent &event );
     void OnLinksAddBtnClick( wxCommandEvent& event );
 	void OnLinksDelBtnClick( wxCommandEvent& event );
 	void OnLinkMoveUpBtnClick( wxCommandEvent &event );
 	void OnLinkMoveDownBtnClick( wxCommandEvent &event );
 	void OnLinksTextChanged( wxCommandEvent &event );
 	void OnLinksSaveBtnClick( wxCommandEvent &event );
+
+    void OnCmdListBoxSelected( wxCommandEvent &event );
+    void OnCmdAddBtnClick( wxCommandEvent& event );
+	void OnCmdDelBtnClick( wxCommandEvent& event );
+	void OnCmdMoveUpBtnClick( wxCommandEvent &event );
+	void OnCmdMoveDownBtnClick( wxCommandEvent &event );
+	void OnCmdTextChanged( wxCommandEvent &event );
+	void OnCmdSaveBtnClick( wxCommandEvent &event );
+
 
 	void OnCopyToFileNameUpdated( wxCommandEvent &event );
 

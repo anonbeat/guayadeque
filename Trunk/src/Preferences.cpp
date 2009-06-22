@@ -31,7 +31,7 @@ wxString PatternToExample( const wxString &Pattern );
 
 // -------------------------------------------------------------------------------- //
 guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
-    wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 500, 515 ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 530, 515 ), wxDEFAULT_DIALOG_STYLE )
 {
 	wxBoxSizer *        MainSizer;
 	wxBoxSizer *        GenMainSizer;
@@ -58,6 +58,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 
     m_Db = db;
     m_LinkSelected = wxNOT_FOUND;
+    m_CmdSelected = wxNOT_FOUND;
 
     m_Config = ( guConfig * ) guConfig::Get();
     if( !m_Config )
@@ -88,7 +89,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 
 	m_MainNotebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 
+    //
     // General Preferences Panel
+    //
 	m_GenPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	GenMainSizer = new wxBoxSizer( wxVERTICAL );
 	StartSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" On Start ") ), wxVERTICAL );
@@ -148,7 +151,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	GenMainSizer->Fit( m_GenPanel );
 	m_MainNotebook->AddPage( m_GenPanel, _("General"), true );
 
+    //
     // Library Preferences Panel
+    //
 	m_LibPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
 	LibMainSizer = new wxBoxSizer( wxVERTICAL );
@@ -199,10 +204,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
     m_UpdateLibChkBox->SetValue( m_Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) );
 	LibOptionsSIzer->Add( m_UpdateLibChkBox, 0, wxALL, 5 );
 
-//	m_CoverSearchChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Search for missing covers on application start"), wxDefaultPosition, wxDefaultSize, 0 );
-//    m_CoverSearchChkBox->SetValue( m_Config->ReadBool( wxT( "CoverSearchOnStart" ), false, wxT( "General" ) ) );
-//	LibOptionsSIzer->Add( m_CoverSearchChkBox, 0, wxALL, 5 );
-
 	LibMainSizer->Add( LibOptionsSIzer, 0, wxEXPAND|wxALL, 5 );
 
 	m_LibPanel->SetSizer( LibMainSizer );
@@ -210,7 +211,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	LibMainSizer->Fit( m_LibPanel );
 	m_MainNotebook->AddPage( m_LibPanel, _("Library"), false );
 
+    //
     // LastFM Panel
+    //
 	m_LastFMPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
 	ASMainSizer = new wxBoxSizer( wxVERTICAL );
@@ -289,7 +292,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	ASMainSizer->Fit( m_LastFMPanel );
 	m_MainNotebook->AddPage( m_LastFMPanel, wxT( "LastFM" ), false );
 
+    //
     // Online Services Filter
+    //
 	m_OnlinePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* OnlineMainSizer;
 	OnlineMainSizer = new wxBoxSizer( wxVERTICAL );
@@ -462,7 +467,116 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	LinksMainSizer->Fit( m_LinksPanel );
 	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
 
+
+    //
+    // Commands Panel
+    //
+    wxStaticText * CmdStaticText;
+    wxStaticText * CmdNameStaticText;
+    wxStaticText * CmdHelpText;
+
+	m_CmdPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* CmdMainSizer;
+	CmdMainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer* CmdLabelSizer;
+	CmdLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_CmdPanel, wxID_ANY, _(" Commands ") ), wxVERTICAL );
+
+	wxBoxSizer* CmdListBoxSizer;
+	CmdListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_CmdListBox = new wxListBox( m_CmdPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+    wxArrayString Commands = m_Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+	m_CmdListBox->Append( Commands );
+	m_CmdNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+    count = m_CmdListBox->GetCount();
+	while( m_CmdNames.Count() < count )
+        m_CmdNames.Add( wxEmptyString );
+    for( index = 0; index < count; index++ )
+    {
+        if( m_CmdNames[ index ].IsEmpty() )
+        {
+            m_CmdNames[ index ] = Commands[ index ].BeforeFirst( ' ' );
+        }
+    }
+
+	CmdListBoxSizer->Add( m_CmdListBox, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* CmdBtnSizer;
+	CmdBtnSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_CmdAddBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, 0 );
+	CmdBtnSizer->Add( m_CmdAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_CmdMoveUpBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_go_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CmdMoveUpBtn->Enable( false );
+	CmdBtnSizer->Add( m_CmdMoveUpBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_CmdMoveDownBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_go_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CmdMoveDownBtn->Enable( false );
+	CmdBtnSizer->Add( m_CmdMoveDownBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_CmdDelBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CmdDelBtn->Enable( false );
+
+	CmdBtnSizer->Add( m_CmdDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	CmdListBoxSizer->Add( CmdBtnSizer, 0, wxEXPAND, 5 );
+
+	CmdLabelSizer->Add( CmdListBoxSizer, 1, wxEXPAND, 5 );
+
+	wxBoxSizer* CmdEditorSizer;
+	CmdEditorSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxFlexGridSizer* CmdFieldsSizer;
+	CmdFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	CmdFieldsSizer->AddGrowableCol( 1 );
+	CmdFieldsSizer->SetFlexibleDirection( wxBOTH );
+	CmdFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	CmdStaticText = new wxStaticText( m_CmdPanel, wxID_ANY, _( "Command:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CmdStaticText->Wrap( -1 );
+	CmdFieldsSizer->Add( CmdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+
+	m_CmdTextCtrl = new wxTextCtrl( m_CmdPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	CmdFieldsSizer->Add( m_CmdTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	CmdNameStaticText = new wxStaticText( m_CmdPanel, wxID_ANY, _( "Name:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CmdNameStaticText->Wrap( -1 );
+	CmdFieldsSizer->Add( CmdNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+
+	m_CmdNameTextCtrl = new wxTextCtrl( m_CmdPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	CmdFieldsSizer->Add( m_CmdNameTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	CmdEditorSizer->Add( CmdFieldsSizer, 1, wxEXPAND, 5 );
+
+	m_CmdAcceptBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CmdAcceptBtn->Enable( false );
+
+	CmdEditorSizer->Add( m_CmdAcceptBtn, 0, wxALL, 5 );
+
+	CmdLabelSizer->Add( CmdEditorSizer, 0, wxEXPAND, 5 );
+
+	CmdMainSizer->Add( CmdLabelSizer, 1, wxEXPAND|wxALL, 5 );
+
+	wxStaticBoxSizer* CmdHelpSizer;
+	CmdHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CmdPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
+
+	CmdHelpText = new wxStaticText( m_CmdPanel, wxID_ANY, _("Add commands using :\n{bp}\t: Album path\n{bc}\t: Album cover file path\n{tp}\t: Track path"), wxDefaultPosition, wxDefaultSize, 0 );
+	CmdHelpText->Wrap( -1 );
+	CmdHelpSizer->Add( CmdHelpText, 0, wxALL, 5 );
+
+	CmdMainSizer->Add( CmdHelpSizer, 0, wxEXPAND|wxALL, 5 );
+
+	m_CmdPanel->SetSizer( CmdMainSizer );
+	m_CmdPanel->Layout();
+	CmdMainSizer->Fit( m_CmdPanel );
+	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
+
+
+    //
     // Copy To Panel
+    //
 	m_CopyPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* CopyToMainSizer;
 	CopyToMainSizer = new wxBoxSizer( wxVERTICAL );
@@ -519,6 +633,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	this->Layout();
 
     //
+    //
+    //
     m_PathSelected = wxNOT_FOUND;
     m_FilterSelected = wxNOT_FOUND;
 
@@ -541,7 +657,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
     m_PasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
 
 	m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
-	//m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLinkListBoxDClicked ), NULL, this );
 	m_LinksAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
 	m_LinksDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
 	m_LinksMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
@@ -549,6 +664,15 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	m_LinksUrlTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
 	m_LinksNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
 	m_LinksAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
+
+	m_CmdListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
+	m_CmdAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
+	m_CmdDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdDelBtnClick ), NULL, this );
+	m_CmdMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveUpBtnClick ), NULL, this );
+	m_CmdMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveDownBtnClick ), NULL, this );
+	m_CmdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
+	m_CmdNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
+	m_CmdAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
 
 	m_CopyToFileName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
 }
@@ -601,6 +725,9 @@ guPrefDialog::~guPrefDialog()
         wxArrayString SearchLinks = m_LinksListBox->GetStrings();
         m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
         m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "SearchLinks" ), false );
+        wxArrayString Commands = m_CmdListBox->GetStrings();
+        m_Config->WriteAStr( wxT( "Cmd" ), Commands, wxT( "Commands" ) );
+        m_Config->WriteAStr( wxT( "Name" ), m_CmdNames, wxT( "Commands" ), false );
         m_Config->WriteStr( wxT( "CopyToPattern" ), m_CopyToFileName->GetValue(), wxT( "General" ) );
 
         // TODO : Make this process in a thread
@@ -667,6 +794,15 @@ guPrefDialog::~guPrefDialog()
 	m_LinksUrlTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
 	m_LinksNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
 	m_LinksAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
+
+	m_CmdListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
+	m_CmdAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
+	m_CmdDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdDelBtnClick ), NULL, this );
+	m_CmdMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveUpBtnClick ), NULL, this );
+	m_CmdMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveDownBtnClick ), NULL, this );
+	m_CmdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
+	m_CmdNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
+	m_CmdAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
 
 	m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
 }
@@ -986,6 +1122,132 @@ void guPrefDialog::OnLinksSaveBtnClick( wxCommandEvent &event )
         m_LinksNameTextCtrl->SetValue( Uri.GetServer() );
     }
 }
+
+
+
+
+
+
+
+
+
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCmdListBoxSelected( wxCommandEvent &event )
+{
+    m_CmdSelected = event.GetInt();
+    if( m_CmdSelected != wxNOT_FOUND )
+    {
+        m_CmdDelBtn->Enable();
+
+        if( m_CmdSelected > 0 )
+            m_CmdMoveUpBtn->Enable();
+        else
+            m_CmdMoveUpBtn->Disable();
+
+        if( m_CmdSelected < ( int ) ( m_CmdListBox->GetCount() - 1 ) )
+            m_CmdMoveDownBtn->Enable();
+        else
+            m_CmdMoveDownBtn->Disable();
+
+        m_CmdTextCtrl->SetValue( m_CmdListBox->GetString( m_CmdSelected ) );
+        m_CmdNameTextCtrl->SetValue( m_CmdNames[ m_CmdSelected ] );
+        m_CmdAcceptBtn->Disable();
+    }
+    else
+    {
+        m_CmdDelBtn->Disable();
+        m_CmdMoveUpBtn->Disable();
+        m_CmdMoveDownBtn->Disable();
+        m_CmdAcceptBtn->Disable();
+        m_CmdTextCtrl->SetValue( wxEmptyString );
+        m_CmdNameTextCtrl->SetValue( wxEmptyString );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCmdAddBtnClick( wxCommandEvent& event )
+{
+    wxString Cmd = m_CmdTextCtrl->GetValue();
+    if( !Cmd.IsEmpty() )
+    {
+        m_CmdListBox->Append( m_CmdTextCtrl->GetValue() );
+        m_CmdNames.Add( m_CmdNameTextCtrl->GetValue() );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCmdDelBtnClick( wxCommandEvent& event )
+{
+    if( m_CmdSelected != wxNOT_FOUND )
+    {
+        m_CmdListBox->Delete( m_CmdSelected );
+        m_CmdNames.RemoveAt( m_CmdSelected );
+        m_CmdSelected = wxNOT_FOUND;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCmdMoveUpBtnClick( wxCommandEvent &event )
+{
+    wxString CurUrl = m_CmdListBox->GetString( m_CmdSelected );
+    wxString CurName = m_CmdNames[ m_CmdSelected ];
+    m_CmdListBox->SetString( m_CmdSelected, m_CmdListBox->GetString( m_CmdSelected - 1 ) );
+    m_CmdNames[ m_CmdSelected ] = m_CmdNames[ m_CmdSelected - 1 ];
+    m_CmdSelected--;
+    m_CmdListBox->SetString( m_CmdSelected, CurUrl );
+    m_CmdNames[ m_CmdSelected ] = CurName;
+    m_CmdListBox->SetSelection( m_CmdSelected );
+
+    event.SetInt( m_CmdSelected );
+    OnCmdListBoxSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCmdMoveDownBtnClick( wxCommandEvent &event )
+{
+    wxString CurUrl = m_CmdListBox->GetString( m_CmdSelected );
+    wxString CurName = m_CmdNames[ m_CmdSelected ];
+    m_CmdListBox->SetString( m_CmdSelected, m_CmdListBox->GetString( m_CmdSelected + 1 ) );
+    m_CmdNames[ m_CmdSelected ] = m_CmdNames[ m_CmdSelected + 1 ];
+    m_CmdSelected++;
+    m_CmdListBox->SetString( m_CmdSelected, CurUrl );
+    m_CmdNames[ m_CmdSelected ] = CurName;
+    m_CmdListBox->SetSelection( m_CmdSelected );
+
+    event.SetInt( m_CmdSelected );
+    OnCmdListBoxSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCmdTextChanged( wxCommandEvent &event )
+{
+    if( !m_CmdTextCtrl->IsEmpty() )
+    {
+        m_CmdAddBtn->Enable();
+        if( m_CmdSelected != wxNOT_FOUND )
+            m_CmdAcceptBtn->Enable();
+    }
+    else
+    {
+        m_CmdAddBtn->Disable();
+        if( m_CmdSelected != wxNOT_FOUND )
+            m_CmdAcceptBtn->Disable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCmdSaveBtnClick( wxCommandEvent &event )
+{
+    m_CmdListBox->SetString( m_CmdSelected, m_CmdTextCtrl->GetValue() );
+    m_CmdNames[ m_CmdSelected ] = m_CmdNameTextCtrl->GetValue();
+    if( m_CmdNames[ m_CmdSelected ].IsEmpty() )
+    {
+        m_CmdNames[ m_CmdSelected ] = m_CmdTextCtrl->GetValue().BeforeFirst( ' ' );
+        m_CmdNameTextCtrl->SetValue( m_CmdNames[ m_CmdSelected ] );
+    }
+}
+
 
 // -------------------------------------------------------------------------------- //
 wxString PatternToExample( const wxString &Pattern )
