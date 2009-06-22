@@ -443,6 +443,38 @@ void guAlbumListBox::ReloadItems( const bool Reset )
 }
 
 // -------------------------------------------------------------------------------- //
+void AddAlbumCommands( wxMenu * Menu )
+{
+    wxMenu * SubMenu;
+    int index;
+    int count;
+    wxMenuItem * MenuItem;
+    if( Menu )
+    {
+        SubMenu = new wxMenu();
+        wxASSERT( SubMenu );
+
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+        if( ( count = Commands.Count() ) )
+        {
+            for( index = 0; index < count; index++ )
+            {
+                MenuItem = new wxMenuItem( Menu, ID_LIBRARY_COMMANDS + index, Names[ index ], Commands[ index ] );
+                SubMenu->Append( MenuItem );
+            }
+        }
+        else
+        {
+            MenuItem = new wxMenuItem( Menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+            SubMenu->Append( MenuItem );
+        }
+        Menu->AppendSubMenu( SubMenu, _( "Commands" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
 {
     wxMenu Menu;
@@ -508,6 +540,9 @@ void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
 
             AddOnlineLinksMenu( &Menu );
         }
+
+        AddAlbumCommands( &Menu );
+
     }
 
     PopupMenu( &Menu, Point.x, Point.y );
