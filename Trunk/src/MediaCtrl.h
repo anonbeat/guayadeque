@@ -21,12 +21,97 @@
 #ifndef MEDIACTRL_H
 #define MEDIACTRL_H
 
+#include <wx/event.h>
 #include <wx/wx.h>
 #include <wx/uri.h>
-#include <wx/mediactrl.h>
+//#include <wx/mediactrl.h>
 
 #undef ATTRIBUTE_PRINTF // there are warnings about redefined ATTRIBUTE_PRINTF in Fedora
 #include <gst/gst.h>
+
+// Start_of_Ripped_Code_From_mediactrl_h
+// This code is from mediactrl.h to avoid the need of the wxWidgets media library because its
+// not included in many distributions by default.
+
+enum wxMediaState
+{
+    wxMEDIASTATE_STOPPED,
+    wxMEDIASTATE_PAUSED,
+    wxMEDIASTATE_PLAYING
+};
+
+// ----------------------------------------------------------------------------
+//
+// wxMediaEvent
+//
+// ----------------------------------------------------------------------------
+class wxMediaEvent : public wxNotifyEvent
+{
+public:
+    // ------------------------------------------------------------------------
+    // wxMediaEvent Constructor
+    //
+    // Normal constructor, much the same as wxNotifyEvent
+    // ------------------------------------------------------------------------
+    wxMediaEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
+        : wxNotifyEvent(commandType, winid)
+    {                                       }
+
+    // ------------------------------------------------------------------------
+    // wxMediaEvent Copy Constructor
+    //
+    // Normal copy constructor, much the same as wxNotifyEvent
+    // ------------------------------------------------------------------------
+    wxMediaEvent(const wxMediaEvent &clone)
+            : wxNotifyEvent(clone)
+    {                                       }
+
+    // ------------------------------------------------------------------------
+    // wxMediaEvent::Clone
+    //
+    // Allocates a copy of this object.
+    // Required for wxEvtHandler::AddPendingEvent
+    // ------------------------------------------------------------------------
+    virtual wxEvent *Clone() const
+    {   return new wxMediaEvent(*this);     }
+
+
+//    // Put this class on wxWidget's RTTI table
+//    DECLARE_DYNAMIC_CLASS(wxMediaEvent)
+};
+
+#define wxMEDIA_LOADED_ID      13002
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_LOADED,     wxMEDIA_LOADED_ID )
+#define EVT_MEDIA_LOADED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_LOADED, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+
+//Event ID to give to our events
+#define wxMEDIA_FINISHED_ID    13000
+#define wxMEDIA_STOP_ID    13001
+//Define our event types - we need to call DEFINE_EVENT_TYPE(EVT) later
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_FINISHED, wxMEDIA_FINISHED_ID )
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_STOP,     wxMEDIA_STOP_ID )
+
+//Function type(s) our events need
+typedef void (wxEvtHandler::*wxMediaEventFunction)(wxMediaEvent&);
+
+#define wxMediaEventHandler(func) \
+    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxMediaEventFunction, &func)
+
+//Macro for usage with message maps
+#define EVT_MEDIA_FINISHED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_FINISHED, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+#define EVT_MEDIA_STOP(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_STOP, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+
+#define wxMEDIA_STATECHANGED_ID      13003
+#define wxMEDIA_PLAY_ID      13004
+#define wxMEDIA_PAUSE_ID      13005
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_STATECHANGED, wxMEDIA_STATECHANGED_ID)
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_PLAY, wxMEDIA_PLAY_ID)
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_PAUSE, wxMEDIA_PAUSE_ID)
+#define EVT_MEDIA_STATECHANGED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_STATECHANGED, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+#define EVT_MEDIA_PLAY(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_PLAY, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+#define EVT_MEDIA_PAUSE(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_PAUSE, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+
+// End_of_Ripped_Code_From_mediactrl_h
 
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_TAG, wxID_ANY )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING, wxID_ANY )
@@ -34,6 +119,7 @@ DECLARE_EVENT_TYPE( wxEVT_MEDIA_BITRATE, wxID_ANY )
 #define EVT_MEDIA_TAG(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_TAG, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_BUFFERING(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BUFFERING, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_BITRATE(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BITRATE, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+
 
 // -------------------------------------------------------------------------------- //
 // guMediaCtrl : Interface class for gstreamer

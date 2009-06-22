@@ -28,7 +28,7 @@
 
 #include <wx/wx.h>
 #include <wx/dnd.h>
-#include <wx/mediactrl.h>
+//#include <wx/mediactrl.h>
 #include <wx/tglbtn.h>
 
 // -------------------------------------------------------------------------------- //
