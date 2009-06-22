@@ -125,6 +125,8 @@
 		<Unit filename="src/ConfirmExit.h" />
 		<Unit filename="src/CoverEdit.cpp" />
 		<Unit filename="src/CoverEdit.h" />
+		<Unit filename="src/CoverFetcher.cpp" />
+		<Unit filename="src/CoverFetcher.h" />
 		<Unit filename="src/CoverFrame.cpp" />
 		<Unit filename="src/CoverFrame.h" />
 		<Unit filename="src/DbLibrary.cpp" />

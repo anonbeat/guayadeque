@@ -237,8 +237,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
         int SavedVol = m_CurVolume;
         SetVolume( 0.0 );
         SetVolume( SavedVol );
-        //SetVolume( m_CurVolume - 1 );
-        guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
+        //guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
     }
 
 	// Connect Events

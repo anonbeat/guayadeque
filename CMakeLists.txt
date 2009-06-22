@@ -19,7 +19,7 @@ SET( 	SEARCH_LIBS
 #SET(CMAKE_FIND_LIBRARY_PREFIXES "")
 #SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
 
-SET(wxWidgets_USE_LIBS base core adv net html xml media)
+SET(wxWidgets_USE_LIBS base core adv net html xml)
 
 FIND_PACKAGE(wxWidgets)
 
