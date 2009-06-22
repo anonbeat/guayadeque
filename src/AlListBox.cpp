@@ -95,6 +95,7 @@ class guAlbumListBox : public wxVListBox
         void            OnContextMenu( wxContextMenuEvent& event );
 
         void            OnSearchLinkClicked( wxCommandEvent &event );
+        void            OnCommandClicked( wxCommandEvent &event );
         wxString        GetSearchText( int Item );
 
         DECLARE_EVENT_TABLE()
@@ -250,6 +251,7 @@ guAlbumListBox::guAlbumListBox( wxWindow * parent, DbLibrary * db ) :
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guAlbumListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumListBox::OnKeyDown ), NULL, this );
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumListBox::OnSearchLinkClicked ) );
+    Connect( ID_ALBUM_COMMANDS, ID_ALBUM_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumListBox::OnCommandClicked ) );
 
     ReloadItems();
 }
@@ -443,7 +445,7 @@ void guAlbumListBox::ReloadItems( const bool Reset )
 }
 
 // -------------------------------------------------------------------------------- //
-void AddAlbumCommands( wxMenu * Menu )
+void AddAlbumCommands( wxMenu * Menu, int SelCount )
 {
     wxMenu * SubMenu;
     int index;
@@ -461,8 +463,11 @@ void AddAlbumCommands( wxMenu * Menu )
         {
             for( index = 0; index < count; index++ )
             {
-                MenuItem = new wxMenuItem( Menu, ID_LIBRARY_COMMANDS + index, Names[ index ], Commands[ index ] );
-                SubMenu->Append( MenuItem );
+                if( ( Commands[ index ].Find( wxT( "{bc}" ) ) == wxNOT_FOUND ) || ( SelCount == 1 ) )
+                {
+                    MenuItem = new wxMenuItem( Menu, ID_ALBUM_COMMANDS + index, Names[ index ], Commands[ index ] );
+                    SubMenu->Append( MenuItem );
+                }
             }
         }
         else
@@ -541,7 +546,7 @@ void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
             AddOnlineLinksMenu( &Menu );
         }
 
-        AddAlbumCommands( &Menu );
+        AddAlbumCommands( &Menu, SelCount );
 
     }
 
@@ -659,7 +664,6 @@ void guAlbumListBox::OnSearchLinkClicked( wxCommandEvent &event )
     Item = GetFirstSelected( cookie );
     if( Item != wxNOT_FOUND )
     {
-
         int index = event.GetId();
 
         guConfig * Config = ( guConfig * ) Config->Get();
@@ -679,6 +683,71 @@ void guAlbumListBox::OnSearchLinkClicked( wxCommandEvent &event )
             SearchLink.Replace( wxT( "{lang}" ), Lang );
             SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
             guWebExecute( SearchLink );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumListBox::OnCommandClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt Selection = GetSelection();
+    if( Selection.Count() )
+    {
+        index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+            wxASSERT( Commands.Count() > 0 );
+
+            wxString AlbumCover;
+            wxString FileList;
+
+            index -= ID_ALBUM_COMMANDS;
+            wxString CurCmd = Commands[ index ];
+            if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+            {
+                wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( Selection );
+                wxString Paths = wxEmptyString;
+                count = AlbumPaths.Count();
+                for( index = 0; index < count; index++ )
+                {
+                    Paths += wxT( " \"" ) + AlbumPaths[ index ] + wxT( "\"" );
+                }
+                CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
+            }
+
+            if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+            {
+                int CoverId = m_Db->GetAlbumCoverId( Selection[ 0 ] );
+                wxString CoverPath = wxEmptyString;
+                if( CoverId > 0 )
+                {
+                    CoverPath = m_Db->GetCoverPath( CoverId );
+                }
+                CurCmd.Replace( wxT( "{bc}" ), CoverPath );
+            }
+
+            if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+            {
+                guTrackArray Songs;
+                wxString SongList = wxEmptyString;
+                if( m_Db->GetAlbumsSongs( Selection, &Songs ) )
+                {
+                    count = Songs.Count();
+                    for( index = 0; index < count; index++ )
+                    {
+                        SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
+                    }
+                    CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                }
+            }
+
+            guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
+            wxExecute( CurCmd );
         }
     }
 }

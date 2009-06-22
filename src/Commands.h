@@ -132,7 +132,10 @@
 #define ID_LASTFM_VISIT_URL             1130
 #define ID_LASTFM_SEARCH_LINK           2000    // From 2000 for Link #0 to 2999
 
-#define ID_LIBRARY_COMMANDS             3000 // 3000...3999
+#define ID_ARTIST_COMMANDS              3000
+#define ID_ALBUM_COMMANDS               3100 // 3000...3099
+#define ID_SONGS_COMMANDS               3200 // 3000...3099
+#define ID_PLAYLIST_COMMANDS            3300 // 3000...3099
 
 
 #define ID_GAUGE_PULSE                  1140
