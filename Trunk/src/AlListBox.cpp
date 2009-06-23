@@ -744,7 +744,7 @@ void guAlbumListBox::OnCommandClicked( wxCommandEvent &event )
             }
 
             guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
-            wxExecute( CurCmd );
+            guExecute( CurCmd );
         }
     }
 }

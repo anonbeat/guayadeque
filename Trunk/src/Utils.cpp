@@ -249,3 +249,12 @@ int guWebExecute( const wxString &Url )
 }
 
 // -------------------------------------------------------------------------------- //
+int guExecute( const wxString &Command )
+{
+    if( Command.Find( wxT( "gnome-terminal" ) ) == wxNOT_FOUND )
+        return wxExecute( Command );
+    else
+        return wxShell( Command );
+}
+
+// -------------------------------------------------------------------------------- //
