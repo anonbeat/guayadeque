@@ -414,7 +414,6 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
                 guTrackArray Songs = GetSelectedSongs();
                 wxArrayInt AlbumList;
                 AlbumList.Add( Songs[ 0 ].m_AlbumId );
-                m_Db->GetArtistsAlbums( Selection, &AlbumList );
                 int CoverId = m_Db->GetAlbumCoverId( AlbumList[ 0 ] );
                 wxString CoverPath = wxEmptyString;
                 if( CoverId > 0 )
