@@ -61,17 +61,17 @@ void guTaListBox::GetContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_ADD, _( "Add Label" ), _( "Create a new label" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_document_new ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
     Menu->Append( MenuItem );
 
     if( GetSelection().Count() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Edit Label" ), _( "Change selected label" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LABEL_DELETE, _( "Delete label" ), _( "Delete selected labels" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_edit_delete ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
         Menu->Append( MenuItem );
     }
 
@@ -84,17 +84,17 @@ void guTaListBox::GetContextMenu( wxMenu * Menu ) const
     Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_PLAY, _( "Play" ), _( "Play current selected labels" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_ENQUEUE, _( "Enqueue" ), _( "Add current selected labels to playlist" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
     Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     Menu->Append( MenuItem );
 }
 

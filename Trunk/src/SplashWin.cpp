@@ -38,7 +38,7 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 //	m_SplashBitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_splash ), wxDefaultPosition, wxDefaultSize, 0 );
 //	MainSizer->Add( m_SplashBitmap, 1, wxEXPAND, 0 );
 
-    m_Bitmap = new wxBitmap( guImage_splash );
+    m_Bitmap = new wxBitmap( guImage( guIMAGE_INDEX_splash ) );
 
 	this->SetSizer( MainSizer );
 	this->Layout();

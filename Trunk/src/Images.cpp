@@ -15,55 +15,133 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program; see the file LICENSE.  If not, write to
 //    the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-//    http://www.gnu.org/copyleft/gpl.html
+//    http://www.gnu.org/copyleft/gpl.h"tml
 //
 // -------------------------------------------------------------------------------- //
 #include "Images.h"
 
-#include "./images/audio-volume-high.xpm"
-#include "./images/audio-volume-medium.xpm"
-#include "./images/audio-volume-low.xpm"
-#include "./images/edit-delete.xpm"
-#include "./images/edit-copy.xpm"
-#include "./images/edit-clear.xpm"
-#include "./images/numerate.xpm"
-#include "./images/go-next.xpm"
-#include "./images/go-previous.xpm"
-#include "./images/go-up.xpm"
-#include "./images/go-down.xpm"
-#include "./images/media-skip-backward.xpm"
-#include "./images/media-skip-forward.xpm"
-#include "./images/audio-volume-muted.xpm"
-#include "./images/gtk-edit.xpm"
-#include "./images/net_radio.xpm"
-#include "./images/document-new.xpm"
-#include "./images/document-save.xpm"
-#include "./images/guayadeque.xpm"
-#include "./images/no-cover.xpm"
-#include "./images/search.xpm"
-#include "./images/download-covers.xpm"
-#include "./images/smart-play.xpm"
-#include "./images/media-playback-start.xpm"
-#include "./images/min-media-playback-start.xpm"
-#include "./images/media-playback-stop.xpm"
-#include "./images/media-playback-pause.xpm"
-#include "./images/min-media-playback-pause.xpm"
-#include "./images/media-playlist-repeat.xpm"
-#include "./images/media-playlist-shuffle.xpm"
-#include "./images/vol-add.xpm"
-#include "./images/vol-remove.xpm"
-#include "./images/blank-cd-cover.xpm"
-#include "./images/lastfm_as_on.xpm"
-#include "./images/lastfm_as_off.xpm"
-#include "./images/default_lastfm_image.xpm"
-#include "./images/application-exit.xpm"
-#include "./images/splash.xpm"
-#include "./images/nophoto.xpm"
-#include "./images/tags.xpm"
-#include "./images/tiny_accept.xpm"
-#include "./images/add.xpm"
-#include "./images/remove.xpm"
-#include "./images/system-run.xpm"
-#include "./images/gnome-bookmark.xpm"
+#include <wx/mstream.h>
+
+// -------------------------------------------------------------------------------- //
+#include "./images/add_png.h"
+#include "./images/blank_cd_cover_png.h"
+#include "./images/bookmark_png.h"
+#include "./images/default_lastfm_image_png.h"
+#include "./images/del_png.h"
+#include "./images/doc_new_png.h"
+#include "./images/doc_save_png.h"
+#include "./images/download_covers_png.h"
+#include "./images/down_png.h"
+#include "./images/edit_clear_png.h"
+#include "./images/edit_copy_png.h"
+#include "./images/edit_delete_png.h"
+#include "./images/edit_png.h"
+#include "./images/exit_png.h"
+#include "./images/guayadeque_png.h"
+#include "./images/lastfm_as_off_png.h"
+#include "./images/lastfm_as_on_png.h"
+#include "./images/lastfm_off_png.h"
+#include "./images/lastfm_on_png.h"
+#include "./images/left_png.h"
+#include "./images/net_radio_jpg.h"
+#include "./images/no_cover_jpg.h"
+#include "./images/no_photo_png.h"
+#include "./images/numerate_png.h"
+#include "./images/playback_pause_png.h"
+#include "./images/playback_start_png.h"
+#include "./images/playback_stop_png.h"
+#include "./images/playlist_repeat_png.h"
+#include "./images/playlist_shuffle_png.h"
+#include "./images/playlist_smart_png.h"
+#include "./images/right_png.h"
+#include "./images/search_png.h"
+#include "./images/skip_backward_png.h"
+#include "./images/skip_forward_png.h"
+#include "./images/splash_png.h"
+#include "./images/system_run_png.h"
+#include "./images/tags_png.h"
+#include "./images/tiny_accept_png.h"
+#include "./images/tiny_add_png.h"
+#include "./images/tiny_del_png.h"
+#include "./images/tiny_playback_pause_png.h"
+#include "./images/tiny_playback_start_png.h"
+#include "./images/up_png.h"
+#include "./images/volume_high_png.h"
+#include "./images/volume_low_png.h"
+#include "./images/volume_medium_png.h"
+#include "./images/volume_muted_png.h"
+
+// -------------------------------------------------------------------------------- //
+typedef struct {
+    const unsigned char * imgdata;
+    unsigned int          imgsize;
+    long                  imgtype;
+} guImage_Item;
+
+// -------------------------------------------------------------------------------- //
+guImage_Item guImage_Items[] = {
+    { guImage_add,                  sizeof( guImage_add ),                  wxBITMAP_TYPE_PNG },
+    { guImage_blank_cd_cover,       sizeof( guImage_blank_cd_cover ),       wxBITMAP_TYPE_PNG },
+    { guImage_bookmark,             sizeof( guImage_bookmark ),             wxBITMAP_TYPE_PNG },
+    { guImage_default_lastfm_image, sizeof( guImage_default_lastfm_image ), wxBITMAP_TYPE_PNG },
+    { guImage_del,                  sizeof( guImage_del ),                  wxBITMAP_TYPE_PNG },
+    { guImage_doc_new,              sizeof( guImage_doc_new ),              wxBITMAP_TYPE_PNG },
+    { guImage_doc_save,             sizeof( guImage_doc_save ),             wxBITMAP_TYPE_PNG },
+    { guImage_download_covers,      sizeof( guImage_download_covers ),      wxBITMAP_TYPE_PNG },
+    { guImage_down,                 sizeof( guImage_down ),                 wxBITMAP_TYPE_PNG },
+    { guImage_edit_clear,           sizeof( guImage_edit_clear ),           wxBITMAP_TYPE_PNG },
+    { guImage_edit_copy,            sizeof( guImage_edit_copy ),            wxBITMAP_TYPE_PNG },
+    { guImage_edit_delete,          sizeof( guImage_edit_delete ),          wxBITMAP_TYPE_PNG },
+    { guImage_edit,                 sizeof( guImage_edit ),                 wxBITMAP_TYPE_PNG },
+    { guImage_exit,                 sizeof( guImage_exit ),                 wxBITMAP_TYPE_PNG },
+    { guImage_guayadeque,           sizeof( guImage_guayadeque ),           wxBITMAP_TYPE_PNG },
+    { guImage_lastfm_as_off,        sizeof( guImage_lastfm_as_off ),        wxBITMAP_TYPE_PNG },
+    { guImage_lastfm_as_on,         sizeof( guImage_lastfm_as_on ),         wxBITMAP_TYPE_PNG },
+    { guImage_lastfm_off,           sizeof( guImage_lastfm_off ),           wxBITMAP_TYPE_PNG },
+    { guImage_lastfm_on,            sizeof( guImage_lastfm_on ),            wxBITMAP_TYPE_PNG },
+    { guImage_left,                 sizeof( guImage_left ),                 wxBITMAP_TYPE_PNG },
+    { guImage_net_radio,            sizeof( guImage_net_radio ),            wxBITMAP_TYPE_JPEG },
+    { guImage_no_cover,             sizeof( guImage_no_cover ),             wxBITMAP_TYPE_JPEG },
+    { guImage_no_photo,             sizeof( guImage_no_photo ),             wxBITMAP_TYPE_PNG },
+    { guImage_numerate,             sizeof( guImage_numerate ),             wxBITMAP_TYPE_PNG },
+    { guImage_playback_pause,       sizeof( guImage_playback_pause ),       wxBITMAP_TYPE_PNG },
+    { guImage_playback_start,       sizeof( guImage_playback_start ),       wxBITMAP_TYPE_PNG },
+    { guImage_playback_stop,        sizeof( guImage_playback_stop ),        wxBITMAP_TYPE_PNG },
+    { guImage_playlist_repeat,      sizeof( guImage_playlist_repeat ),      wxBITMAP_TYPE_PNG },
+    { guImage_playlist_shuffle,     sizeof( guImage_playlist_shuffle ),     wxBITMAP_TYPE_PNG },
+    { guImage_playlist_smart,       sizeof( guImage_playlist_smart ),       wxBITMAP_TYPE_PNG },
+    { guImage_right,                sizeof( guImage_right ),                wxBITMAP_TYPE_PNG },
+    { guImage_search,               sizeof( guImage_search ),               wxBITMAP_TYPE_PNG },
+    { guImage_skip_backward,        sizeof( guImage_skip_backward ),        wxBITMAP_TYPE_PNG },
+    { guImage_skip_forward,         sizeof( guImage_skip_forward ),         wxBITMAP_TYPE_PNG },
+    { guImage_splash,               sizeof( guImage_splash ),               wxBITMAP_TYPE_PNG },
+    { guImage_system_run,           sizeof( guImage_system_run ),           wxBITMAP_TYPE_PNG },
+    { guImage_tags,                 sizeof( guImage_tags ),                 wxBITMAP_TYPE_PNG },
+    { guImage_tiny_accept,          sizeof( guImage_tiny_accept ),          wxBITMAP_TYPE_PNG },
+    { guImage_tiny_add,             sizeof( guImage_tiny_add ),             wxBITMAP_TYPE_PNG },
+    { guImage_tiny_del,             sizeof( guImage_tiny_del ),             wxBITMAP_TYPE_PNG },
+    { guImage_tiny_playback_pause,  sizeof( guImage_tiny_playback_pause ),  wxBITMAP_TYPE_PNG },
+    { guImage_tiny_playback_start,  sizeof( guImage_tiny_playback_start ),  wxBITMAP_TYPE_PNG },
+    { guImage_up,                   sizeof( guImage_up ),                   wxBITMAP_TYPE_PNG },
+    { guImage_volume_high,          sizeof( guImage_volume_high ),          wxBITMAP_TYPE_PNG },
+    { guImage_volume_low,           sizeof( guImage_volume_low ),           wxBITMAP_TYPE_PNG },
+    { guImage_volume_medium,        sizeof( guImage_volume_medium ),        wxBITMAP_TYPE_PNG },
+    { guImage_volume_muted,         sizeof( guImage_volume_muted ),         wxBITMAP_TYPE_PNG }
+};
+
+
+// -------------------------------------------------------------------------------- //
+wxBitmap guBitmap( guIMAGE_INDEX imageindex )
+{
+    return wxBitmap( guImage( imageindex ) );
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage guImage( guIMAGE_INDEX imageindex )
+{
+    wxMemoryInputStream image_stream( guImage_Items[ imageindex ].imgdata,
+                                      guImage_Items[ imageindex ].imgsize );
+    return wxImage( image_stream, guImage_Items[ imageindex ].imgtype );
+}
 
 // -------------------------------------------------------------------------------- //

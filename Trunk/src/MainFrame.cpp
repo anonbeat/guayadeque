@@ -133,7 +133,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
         m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
         if( m_TaskBarIcon )
         {
-            m_TaskBarIcon->SetIcon( wxIcon( guImage_guayadeque ) );
+            wxIcon AppIcon;
+            AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
+            m_TaskBarIcon->SetIcon( AppIcon );
         }
     }
 
@@ -278,13 +280,13 @@ void guMainFrame::CreateMenu()
 	Menu->Append( MenuItem );
 
 	MenuItem = new wxMenuItem( Menu, ID_MENU_UPDATE_COVERS, wxString( _("Update Covers") ) , _( "Try to download all missing covers" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_download_covers ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
 	Menu->Append( MenuItem );
 
 	Menu->AppendSeparator();
 
 	MenuItem = new wxMenuItem( Menu, ID_MENU_PREFERENCES, wxString( _( "&Preferences" ) ) , _( "Change the options of the application" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
 	Menu->Append( MenuItem );
 
 	Menu->AppendSeparator();
@@ -316,33 +318,33 @@ void guMainFrame::CreateMenu()
 
     Menu = new wxMenu();
     MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_NEXTTRACK, wxString( _( "&Next Track" ) ), _( "Play the next track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_skip_forward ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_skip_forward ) );
     Menu->Append( MenuItem );
     MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVTRACK, wxString( _( "&Prev. Track" ) ), _( "Play the previous track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_skip_backward ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_skip_backward ) );
     Menu->Append( MenuItem );
     Menu->AppendSeparator();
     MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PLAY, wxString( _( "&Play" ) ), _( "Play or Pause the current track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu->Append( MenuItem );
     MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_STOP, wxString( _( "&Stop" ) ), _( "Stop the current played track" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_stop ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );
     Menu->Append( MenuItem );
     Menu->AppendSeparator();
     MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on LastFM statics" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_smart_play ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_smart ) );
     Menu->Append( MenuItem );
     MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_RANDOMPLAY, wxString( _( "R&andomize" ) ), _( "Randomize the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playlist_shuffle ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_shuffle ) );
     Menu->Append( MenuItem );
     MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_REPEATPLAY, wxString( _( "&Repeat" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playlist_repeat ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_repeat ) );
     Menu->Append( MenuItem );
     MenuBar->Append( Menu, _( "&Control" ) );
 
     Menu = new wxMenu();
     MenuItem = new wxMenuItem( Menu, ID_MENU_ABOUT, wxString( _( "&About" ) ), _( "Show information about guayadeque music player" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( wxBitmap( guImage_guayadeque ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
     Menu->Append( MenuItem );
     MenuBar->Append( Menu, _( "&Help" ) );
 

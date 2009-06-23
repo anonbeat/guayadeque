@@ -111,28 +111,28 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
     if( m_PlayerPanel )
     {
         MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_PLAY, _( "Play" ), _( "Play current playlist" ) );
-        MenuItem->SetBitmap( wxBitmap( ( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING ) ?
-                                           guImage_media_playback_pause :
-                                           guImage_media_playback_start ) );
+        MenuItem->SetBitmap( guImage( ( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING ) ?
+                                           guIMAGE_INDEX_playback_pause :
+                                           guIMAGE_INDEX_playback_start ) );
         RetVal->Append( MenuItem );
 
         MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_STOP, _( "Stop" ), _( "Play current playlist" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_media_playback_stop ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );
         RetVal->Append( MenuItem );
 
         MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_NEXTTRACK, _( "Next Track" ), _( "Skip to next track in current playlist" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_media_skip_forward ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_skip_forward ) );
         RetVal->Append( MenuItem );
 
         MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_PREVTRACK, _( "Prev Track" ), _( "Skip to previous track in current playlist" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_media_skip_forward ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_skip_forward ) );
         RetVal->Append( MenuItem );
 
         RetVal->AppendSeparator();
     }
 
     MenuItem = new wxMenuItem( RetVal, ID_MENU_QUIT, _( "Exit" ), _( "Exit this program" ) );
-    //MenuItem->SetBitmap( wxBitmap( guImage_media_playback_stop ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );
     RetVal->Append( MenuItem );
 
     return RetVal;

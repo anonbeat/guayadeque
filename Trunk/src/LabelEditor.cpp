@@ -63,12 +63,12 @@ guLabelEditor::guLabelEditor( wxWindow* parent, DbLibrary * db, const wxString &
 	wxBoxSizer* ButtonsSizer;
 	ButtonsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_AddLabelBtn = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_AddLabelBtn->SetToolTip( _( "Add a new label" ) );
 
 	ButtonsSizer->Add( m_AddLabelBtn, 0, wxALL, 5 );
 
-	m_DelLabelBtn = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelLabelBtn->SetToolTip( _( "Delete the selected labels" ) );
 	m_DelLabelBtn->Enable( false );
 

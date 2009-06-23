@@ -64,7 +64,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_default_lastfm_image ),
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_default_lastfm_image ),
 	                                            wxDefaultPosition, wxSize( 50, 50 ), 0 );
     //Bitmap->SetCursor( wxCURSOR_HAND );
 	MainSizer->Add( m_Bitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 2 );
@@ -88,7 +88,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 // -------------------------------------------------------------------------------- //
 void guLastFMInfoCtrl::Clear( void )
 {
-    m_Bitmap->SetBitmap( guImage_default_lastfm_image );
+    m_Bitmap->SetBitmap( guImage( guIMAGE_INDEX_default_lastfm_image ) );
     m_Text->SetLabel( wxEmptyString );
 }
 
@@ -101,7 +101,7 @@ void guLastFMInfoCtrl::SetBitmap( const wxImage * image )
     }
     else
     {
-        m_Bitmap->SetBitmap( wxBitmap( guImage_default_lastfm_image ) );
+        m_Bitmap->SetBitmap( guImage( guIMAGE_INDEX_default_lastfm_image ) );
     }
     m_Bitmap->Refresh();
 }
@@ -160,7 +160,7 @@ void guLastFMInfoCtrl::CreateContextMenu( wxMenu * Menu )
                 }
                 else
                 {
-                    MenuItem->SetBitmap( wxBitmap( guImage_search ) );
+                    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_search ) );
                 }
                 Menu->Append( MenuItem );
             }
@@ -168,7 +168,7 @@ void guLastFMInfoCtrl::CreateContextMenu( wxMenu * Menu )
         else
         {
             MenuItem = new wxMenuItem( Menu, -1, _( "No search link defined" ), _( "Add search links in preferences" ) );
-            MenuItem->SetBitmap( wxBitmap( guImage_search ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_search ) );
             Menu->Append( MenuItem );
         }
     }
@@ -282,7 +282,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 {
 	m_MainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_nophoto ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_photo ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	m_MainSizer->Add( m_Bitmap, 0, wxALL, 5 );
 
 //	wxBoxSizer * DetailSizer;
@@ -339,7 +339,7 @@ void guArtistInfoCtrl::SetInfo( guLastFMArtistInfo * info )
 // -------------------------------------------------------------------------------- //
 void guArtistInfoCtrl::Clear( void )
 {
-    m_Bitmap->SetBitmap( guImage_nophoto );
+    m_Bitmap->SetBitmap( guImage( guIMAGE_INDEX_no_photo ) );
     m_Text->SetLabel( wxEmptyString );
     if( m_Info )
         delete m_Info;
@@ -356,7 +356,7 @@ void guArtistInfoCtrl::SetBitmap( const wxImage * image )
     }
     else
     {
-        m_Bitmap->SetBitmap( wxBitmap( guImage_nophoto ) );
+        m_Bitmap->SetBitmap( guImage( guIMAGE_INDEX_no_photo ) );
     }
     m_Bitmap->Refresh();
 }
@@ -386,11 +386,11 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_ArtistId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_min_media_playback_start ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -399,7 +399,7 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( !m_Info->m_Artist->m_Url.IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_lastfm_as_on ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_lastfm_as_on ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
@@ -564,11 +564,11 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_AlbumId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_min_media_playback_start ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -577,7 +577,7 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( !m_Info->m_Album->m_Url.IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_lastfm_as_on ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_lastfm_as_on ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
@@ -681,11 +681,11 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_ArtistId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_min_media_playback_start ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -694,7 +694,7 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( !m_Info->m_Artist->m_Url.IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_lastfm_as_on ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_lastfm_as_on ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
@@ -799,11 +799,11 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_TrackId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_min_media_playback_start ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -812,7 +812,7 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( !m_Info->m_Track->m_Url.IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_lastfm_as_on ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_lastfm_as_on ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
@@ -880,7 +880,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
 	wxStaticLine * ArInfoStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	ArInfoTitleSizer->Add( ArInfoStaticLine, 1, wxEXPAND | wxALL, 5 );
 
-	m_LastFMPlayBitmapBtn = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_min_media_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LastFMPlayBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LastFMPlayBitmapBtn->SetToolTip( _( "Enables or Disables the update of this page when the current playing track changes" ) );
 	ArInfoTitleSizer->Add( m_LastFMPlayBitmapBtn, 0, wxRIGHT, 5 );
 
@@ -1208,8 +1208,8 @@ void guLastFMPanel::OnUpdateTrackItem( wxCommandEvent &event )
 void guLastFMPanel::OnLastFMPlayBitmapBtnClick( wxCommandEvent &event )
 {
     m_UpdateTracks = !m_UpdateTracks;
-    m_LastFMPlayBitmapBtn->SetLabel( m_UpdateTracks ? guImage_min_media_playback_start :
-                                                  guImage_min_media_playback_pause );
+    m_LastFMPlayBitmapBtn->SetLabel( guImage( m_UpdateTracks ? guIMAGE_INDEX_tiny_playback_start :
+                                                  guIMAGE_INDEX_tiny_playback_pause ) );
 }
 
 // -------------------------------------------------------------------------------- //

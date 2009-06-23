@@ -166,10 +166,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 
 	PathButtonsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_AddPathButton = new wxBitmapButton( m_LibPanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddPathButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	PathButtonsSizer->Add( m_AddPathButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_DelPathButton = new wxBitmapButton( m_LibPanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelPathButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelPathButton->Disable();
 	PathButtonsSizer->Add( m_DelPathButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
@@ -186,10 +186,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	wxBoxSizer* CoversButtonsSizer;
 	CoversButtonsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_AddCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	CoversButtonsSizer->Add( m_AddCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_DelCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelCoverButton->Enable( false );
 	CoversButtonsSizer->Add( m_DelCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
@@ -307,10 +307,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 
 	OnlineBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_OnlineAddBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_OnlineAddBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
 	OnlineBtnSizer->Add( m_OnlineAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_OnlineDelBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_OnlineDelBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_OnlineDelBtn->Disable();
 	OnlineBtnSizer->Add( m_OnlineDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
@@ -395,19 +395,19 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	wxBoxSizer* LinksBtnSizer;
 	LinksBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_LinksAddBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_LinksAddBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
     m_LinksAddBtn->Enable( false );
 	LinksBtnSizer->Add( m_LinksAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_LinksMoveUpBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_go_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LinksMoveUpBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LinksMoveUpBtn->Enable( false );
 	LinksBtnSizer->Add( m_LinksMoveUpBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_LinksMoveDownBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_go_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LinksMoveDownBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LinksMoveDownBtn->Enable( false );
 	LinksBtnSizer->Add( m_LinksMoveDownBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_LinksDelBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LinksDelBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LinksDelBtn->Enable( false );
 
 	LinksBtnSizer->Add( m_LinksDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -443,7 +443,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 
 	LinksEditorSizer->Add( LinksFieldsSizer, 1, wxEXPAND, 5 );
 
-	m_LinksAcceptBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, wxBitmap( guImage_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LinksAcceptBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LinksAcceptBtn->Enable( false );
 
 	LinksEditorSizer->Add( m_LinksAcceptBtn, 0, wxALL, 5 );
@@ -505,18 +505,18 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	wxBoxSizer* CmdBtnSizer;
 	CmdBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_CmdAddBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_vol_add ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_CmdAddBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
 	CmdBtnSizer->Add( m_CmdAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_CmdMoveUpBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_go_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CmdMoveUpBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CmdMoveUpBtn->Enable( false );
 	CmdBtnSizer->Add( m_CmdMoveUpBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_CmdMoveDownBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_go_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CmdMoveDownBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CmdMoveDownBtn->Enable( false );
 	CmdBtnSizer->Add( m_CmdMoveDownBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_CmdDelBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_vol_remove ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CmdDelBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CmdDelBtn->Enable( false );
 
 	CmdBtnSizer->Add( m_CmdDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -550,7 +550,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 
 	CmdEditorSizer->Add( CmdFieldsSizer, 1, wxEXPAND, 5 );
 
-	m_CmdAcceptBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, wxBitmap( guImage_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CmdAcceptBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CmdAcceptBtn->Enable( false );
 
 	CmdEditorSizer->Add( m_CmdAcceptBtn, 0, wxALL, 5 );

@@ -39,7 +39,7 @@ guExitConfirmDlg::guExitConfirmDlg( wxWindow * parent ) :
 
 	TopSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	ExitBitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_application_exit ), wxDefaultPosition, wxDefaultSize, 0 );
+	ExitBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_exit ), wxDefaultPosition, wxDefaultSize, 0 );
 	TopSizer->Add( ExitBitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	MessageString = new wxStaticText( this, wxID_ANY, _("Are you sure you want to exit the application?"), wxDefaultPosition, wxDefaultSize, 0 );

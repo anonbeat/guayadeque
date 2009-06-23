@@ -300,35 +300,35 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
         Point = ScreenToClient( Point );
     }
     MenuItem = new wxMenuItem( &Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_PLAYALL, _( "Play All" ), _( "Play all songs" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUEALL, _( "Enqueue All" ), _( "Add all songs to the playlist" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected songs" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_tags ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     Menu.Append( MenuItem );
 
     int SelCount = GetSelection().Count();
