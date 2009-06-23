@@ -1,0 +1,2 @@
+rm CMakeCache.txt
+cmake . -DCMAKE_INSTALL_PREFIX=/usr -DDEBUG=YES && make

@@ -1121,15 +1121,8 @@ void guPrefDialog::OnLinksSaveBtnClick( wxCommandEvent &event )
         m_LinksNames[ m_LinkSelected ] = Uri.GetServer();
         m_LinksNameTextCtrl->SetValue( Uri.GetServer() );
     }
+    m_LinksAcceptBtn->Disable();
 }
-
-
-
-
-
-
-
-
 
 
 // -------------------------------------------------------------------------------- //
@@ -1246,6 +1239,7 @@ void guPrefDialog::OnCmdSaveBtnClick( wxCommandEvent &event )
         m_CmdNames[ m_CmdSelected ] = m_CmdTextCtrl->GetValue().BeforeFirst( ' ' );
         m_CmdNameTextCtrl->SetValue( m_CmdNames[ m_CmdSelected ] );
     }
+    m_CmdAcceptBtn->Disable();
 }
 
 

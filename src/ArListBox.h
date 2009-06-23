@@ -32,6 +32,7 @@ class guArListBox : public guListBox
     virtual void    GetItemsList( void );
     virtual void    GetContextMenu( wxMenu * menu ) const;
     void            OnSearchLinkClicked( wxCommandEvent &event );
+    void            OnCommandClicked( wxCommandEvent &event );
     wxString        GetSearchText( int Item );
 
   public :
