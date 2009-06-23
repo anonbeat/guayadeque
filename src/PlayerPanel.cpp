@@ -86,37 +86,37 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	PlayerBtnSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_media_skip_backward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_skip_backward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_PrevTrackButton->SetToolTip( _( "Go to Previous Track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_PrevTrackButton, 0, wxALL, 2 );
 
-	m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_media_skip_forward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_skip_forward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_NextTrackButton->SetToolTip( _( "Go to Next Track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxALL, 2 );
 
-	m_PlayButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_media_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_PlayButton->SetToolTip( _( "Start playing or pauses current track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_PlayButton, 0, wxALL, 2 );
 
-	m_StopButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_media_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
 	PlayerBtnSizer->Add( m_StopButton, 0, wxALL, 2 );
 
-	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_audio_volume_medium ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_volume_medium ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_VolumeButton->SetToolTip( _( "Set player volume" ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
-	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, wxBitmap( guImage_smart_play ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playlist_smart ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist bassed on LastFM" ) );
 	// Get this value from config file
 	m_SmartPlayButton->SetValue( m_PlaySmart );
 	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALL, 2 );
 
-	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_media_playlist_shuffle ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playlist_shuffle ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in the playlist" ) );
 	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxALL, 2 );
 
-	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, wxBitmap( guImage_media_playlist_repeat ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playlist_repeat ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_RepeatPlayButton->SetToolTip( _( "Repeats the current playlist" ) );
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
 	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALL, 2 );
@@ -126,7 +126,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	m_PlayerCoverBitmap->SetToolTip( _( "Shows the current track album cover if available" ) );
 	PlayerDetailsSizer->Add( m_PlayerCoverBitmap, 0, wxALL, 2 );
 
@@ -507,11 +507,11 @@ void guPlayerPanel::UpdateStatus()
     {
         if( State == wxMEDIASTATE_PLAYING )
         {
-            m_PlayButton->SetBitmapLabel( wxBitmap( guImage_media_playback_pause ) );
+            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_playback_pause ) );
         }
         else
         {
-            m_PlayButton->SetBitmapLabel( wxBitmap( guImage_media_playback_start ) );
+            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_playback_start ) );
         }
         m_PlayButton->Refresh();
         m_LastPlayState = State;
@@ -541,13 +541,13 @@ void guPlayerPanel::UpdateStatus()
     if( m_CurVolume != m_LastVolume )
     {
         if( m_CurVolume > 75 )
-            m_VolumeButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_high ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_high ) );
         else if( m_CurVolume > 50 )
-            m_VolumeButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_medium ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_medium ) );
         else if( m_CurVolume > 25 )
-            m_VolumeButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_low ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_low ) );
         else if( m_CurVolume <= 5 )
-            m_VolumeButton->SetBitmapLabel( wxBitmap( guImage_audio_volume_muted ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_muted ) );
         m_VolumeButton->Refresh();
         m_LastVolume = m_CurVolume;
     }
@@ -727,7 +727,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     CoverImage = NULL;
     if( m_MediaSong.m_SongId == guPLAYLIST_RADIOSTATION )
     {
-        CoverImage = new wxImage( guImage_net_radio );
+        CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_RADIO;
     }
     else if( CoverImage = ID3TagGetPicture( m_MediaSong.m_FileName ) )
@@ -761,7 +761,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         if( m_MediaSong.m_CoverPath.IsEmpty() || !wxFileExists( m_MediaSong.m_CoverPath ) )
         {
             //printf( "No coverpath set\n" );
-            CoverImage = new wxImage( guImage_no_cover );
+            CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
             m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
             m_MediaSong.m_CoverPath = wxEmptyString;
         }

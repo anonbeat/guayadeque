@@ -172,24 +172,24 @@ void guRadioGenreListBox::GetContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     MenuItem = new wxMenuItem( Menu, ID_RADIO_GENRE_ADD, _( "Add Genre" ), _( "Create a new genre" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_document_new ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
     Menu->Append( MenuItem );
 
     if( GetSelection().Count() )
     {
         MenuItem = new wxMenuItem( Menu, ID_RADIO_GENRE_EDIT, _( "Edit genre" ), _( "Change selected genre" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_RADIO_GENRE_DELETE, _( "Delete genre" ), _( "Delete selected genre" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_edit_delete ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
         Menu->Append( MenuItem );
     }
 
     Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_RADIO_DOUPDATE, _( "Update Radio Stations" ), _( "Update the radio station lists" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
     Menu->Append( MenuItem );
 
 }
@@ -463,17 +463,17 @@ void guRadioStationListBox::OnContextMenu( wxContextMenuEvent& event )
         Point = ScreenToClient( Point );
     }
     MenuItem = new wxMenuItem( &Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_RADIO_EDIT_LABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected stations" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
     Menu.Append( MenuItem );
 
     PopupMenu( &Menu, Point.x, Point.y );
@@ -520,17 +520,17 @@ void guRadioLabelListBox::GetContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_ADD, _( "Add Label" ), _( "Create a new label" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_document_new ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
     Menu->Append( MenuItem );
 
     if( GetSelection().Count() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Edit Label" ), _( "Change selected label" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LABEL_DELETE, _( "Delete label" ), _( "Delete selected labels" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_edit_delete ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
         Menu->Append( MenuItem );
     }
 }
@@ -616,13 +616,13 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 	wxBoxSizer* m_InputTextSizer;
 	m_InputTextSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_InputTextLeftBitmap = new wxStaticBitmap( m_InputTextPanel, wxID_ANY, wxBitmap( guImage_search ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_InputTextLeftBitmap = new wxStaticBitmap( m_InputTextPanel, wxID_ANY, guImage( guIMAGE_INDEX_search ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_InputTextSizer->Add( m_InputTextLeftBitmap, 0, wxALL, 0 );
 
 	m_InputTextCtrl = new wxTextCtrl( m_InputTextPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxNO_BORDER );
 	m_InputTextSizer->Add( m_InputTextCtrl, 1, wxALL, 2 );
 
-	m_InputTextClearBitmap = new wxStaticBitmap( m_InputTextPanel, wxID_ANY, wxBitmap( guImage_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_InputTextClearBitmap = new wxStaticBitmap( m_InputTextPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_InputTextSizer->Add( m_InputTextClearBitmap, 0, wxALL, 0 );
 	m_InputTextClearBitmap->Enable( false );
 

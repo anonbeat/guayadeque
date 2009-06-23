@@ -76,7 +76,7 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     int FieldWidths[] = { -1, 50 };
     SetFieldsCount( 2 );
     SetStatusWidths( 2, FieldWidths );
-    m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_lastfm_as_off ) );
+    m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
     m_ASBitmap->SetToolTip( _( "Shows the status of the LastFM connection." ) );
     Connect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
 }
@@ -112,7 +112,7 @@ void guStatusBar::SetAudioScrobbleService( bool Enabled )
 {
     if( m_ASBitmap )
     {
-        m_ASBitmap->SetBitmap( wxBitmap( Enabled ? guImage_lastfm_as_on : guImage_lastfm_as_off ) );
+        m_ASBitmap->SetBitmap( guImage( Enabled ? guIMAGE_INDEX_lastfm_as_on : guIMAGE_INDEX_lastfm_as_off ) );
         m_ASBitmap->Refresh();
     }
 }

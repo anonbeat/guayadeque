@@ -121,7 +121,7 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
 
     SetBackgroundColour( m_EveBgColor );
 
-    m_PlayBitmap = new wxBitmap( guImage_media_playback_start );
+    m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_playback_start ) );
 
 	Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
@@ -901,31 +901,31 @@ void guPlayList::OnContextMenu( wxContextMenuEvent& event )
     int SelCount = SelectedItems.Count();
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_tags ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_edit_clear ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_clear ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_REMOVE, _( "Remove selected songs" ), _( "Remove selected songs from PlayList" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_edit_delete ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
     Menu.Append( MenuItem );
 
 //    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_SAVE, _( "Save PlayList" ), _( "Save the PlayList" ) );
-//    MenuItem->SetBitmap( wxBitmap( guImage_document_save ) );
+//    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_document_save ) );
 //    Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RANDOMPLAY, _( "Randomize PlayList" ), _( "Randomize the songs in the PlayList" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playlist_shuffle ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_shuffle ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     Menu.Append( MenuItem );
 
     AddPlayListCommands( &Menu, SelCount );

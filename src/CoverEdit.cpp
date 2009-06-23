@@ -92,13 +92,13 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
 	CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_PrevButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_go_previous ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_left ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	CoverSizer->Add( m_PrevButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_blank_cd_cover ), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+	m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_blank_cd_cover ), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	CoverSizer->Add( m_CoverBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_NextButton = new wxBitmapButton( this, wxID_ANY, wxBitmap( guImage_go_next ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_NextButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_right ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	CoverSizer->Add( m_NextButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
@@ -307,7 +307,7 @@ void guCoverEditor::UpdateCoverBitmap( void )
 {
     m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ),  m_AlbumCovers.Count() ? m_CurrentImage + 1 : 0, m_AlbumCovers.Count() ) );
 
-    wxBitmap * BlankCD = new wxBitmap( guImage_blank_cd_cover );
+    wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );
     if( BlankCD )
     {
         if( BlankCD->IsOk() )

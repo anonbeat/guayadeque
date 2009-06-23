@@ -77,14 +77,14 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 
 	InputTextSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_InputTextLeftBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, wxBitmap( guImage_search ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_InputTextLeftBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, guImage( guIMAGE_INDEX_search ), wxDefaultPosition, wxDefaultSize, 0 );
 	InputTextSizer->Add( m_InputTextLeftBitmap, 0, wxALL, 0 );
 
 	m_InputTextCtrl = new wxTextCtrl( InputTextPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxNO_BORDER );
 	//m_InputTextCtrl->SetBackgroundColour( wxColor( 250, 250, 250 ) );
 	InputTextSizer->Add( m_InputTextCtrl, 1, wxALL, 2 );
 
-	m_InputTextClearBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, wxBitmap( guImage_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_InputTextClearBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_InputTextClearBitmap->Disable();
 	InputTextSizer->Add( m_InputTextClearBitmap, 0, wxALL, 0 );
 

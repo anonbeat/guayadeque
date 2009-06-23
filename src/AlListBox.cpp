@@ -500,11 +500,11 @@ void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
     }
 
     MenuItem = new wxMenuItem( &Menu, ID_ALBUM_PLAY, _( "Play" ), _( "Play current selected albums" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_media_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_ALBUM_ENQUEUE, _( "Enqueue" ), _( "Add current selected albums to the Playlist" ) );
-    MenuItem->SetBitmap( wxBitmap( guImage_vol_add ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu.Append( MenuItem );
 
     SelCount = GetSelectedCount();
@@ -513,11 +513,11 @@ void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUM_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected albums" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_tags ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu.Append( MenuItem );
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUM_EDITTRACKS, _( "Edit Album songs" ), _( "Edit the selected albums songs" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_gtk_edit ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
         Menu.Append( MenuItem );
 
         if( SelCount == 1 )
@@ -525,18 +525,18 @@ void guAlbumListBox::OnContextMenu( wxContextMenuEvent& event )
             Menu.AppendSeparator();
 
             MenuItem = new wxMenuItem( &Menu, ID_ALBUM_MANUALCOVER, _( "Download Album cover" ), _( "Download cover for the current selected album" ) );
-            MenuItem->SetBitmap( wxBitmap( guImage_download_covers ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
             Menu.Append( MenuItem );
 
             MenuItem = new wxMenuItem( &Menu, ID_ALBUM_COVER_DELETE, _( "Delete Album cover" ), _( "Delete the cover for the selected album" ) );
-            MenuItem->SetBitmap( wxBitmap( guImage_edit_delete ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
             Menu.Append( MenuItem );
         }
 
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUM_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu.Append( MenuItem );
 
         if( SelCount == 1 )

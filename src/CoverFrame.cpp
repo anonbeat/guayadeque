@@ -77,16 +77,16 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
     }
     else if( CoverType == GU_SONGCOVER_NONE )
     {
-        CoverImage = wxImage( guImage_no_cover );
+        CoverImage = guImage( guIMAGE_INDEX_no_cover );
     }
     else if( CoverType == GU_SONGCOVER_RADIO )
     {
-        CoverImage = wxImage( guImage_net_radio );
+        CoverImage = guImage( guIMAGE_INDEX_net_radio );
     }
     //
     if( CoverImage.IsOk() )
     {
-        wxBitmap * BlankCD = new wxBitmap( guImage_blank_cd_cover );
+        wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );
         if( BlankCD )
         {
             if( BlankCD->IsOk() )
