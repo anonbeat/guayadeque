@@ -2126,6 +2126,28 @@ int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
 }
 
 // -------------------------------------------------------------------------------- //
+int DbLibrary::GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  if( Artists.Count() )
+  {
+    query = wxT( "SELECT DISTINCT song_albumid FROM songs WHERE song_artistid IN " );
+    query += ArrayIntToStrList( Artists );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+        Albums->Add( dbRes.GetInt( 0 ) );
+    }
+    dbRes.Finalize();
+  }
+  return Albums->Count();
+
+}
+
+// -------------------------------------------------------------------------------- //
 int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs )
 {
   wxString query;

@@ -287,6 +287,7 @@ class DbLibrary {
     void                UpdateSongs( guTrackArray * Songs );
     int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs );
     int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs, guTrackMode trackmode = guTRACK_MODE_USER );
+    int                 GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums );
     int                 GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs );
     int                 GetRandomTracks( guTrackArray * Tracks );
 

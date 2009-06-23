@@ -703,9 +703,6 @@ void guAlbumListBox::OnCommandClicked( wxCommandEvent &event )
             wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
             wxASSERT( Commands.Count() > 0 );
 
-            wxString AlbumCover;
-            wxString FileList;
-
             index -= ID_ALBUM_COMMANDS;
             wxString CurCmd = Commands[ index ];
             if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
@@ -726,7 +723,7 @@ void guAlbumListBox::OnCommandClicked( wxCommandEvent &event )
                 wxString CoverPath = wxEmptyString;
                 if( CoverId > 0 )
                 {
-                    CoverPath = m_Db->GetCoverPath( CoverId );
+                    CoverPath = wxT( "\"" ) + m_Db->GetCoverPath( CoverId ) + wxT( "\"" );
                 }
                 CurCmd.Replace( wxT( "{bc}" ), CoverPath );
             }
