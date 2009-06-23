@@ -77,6 +77,7 @@ class guPlayList : public wxVListBox
     void            OnSaveClicked( wxCommandEvent &event );
     void            OnCopyToClicked( wxCommandEvent &event );
     void            OnEditLabelsClicked( wxCommandEvent &event );
+    void            OnCommandClicked( wxCommandEvent &event );
 
     DECLARE_EVENT_TABLE()
 

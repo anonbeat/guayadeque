@@ -1,4 +1,6 @@
 
+  * Added Custom commands that are accesible from contextual menu in Artist,
+    Albums, Songs and Playlist 
   * Removed the need of the wxWidgets media library not present by default
     in many distributions.
   * Added amazon search engine for covers.

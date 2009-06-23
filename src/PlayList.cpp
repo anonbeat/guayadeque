@@ -131,6 +131,7 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     Connect( ID_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
     Connect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Connect( ID_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
+    Connect( ID_PLAYLIST_COMMANDS, ID_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 
 }
 
@@ -166,6 +167,7 @@ guPlayList::~guPlayList()
     Disconnect( ID_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
     Disconnect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Disconnect( ID_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
+    Disconnect( ID_PLAYLIST_COMMANDS, ID_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -839,6 +841,44 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 }
 
 // -------------------------------------------------------------------------------- //
+void AddPlayListCommands( wxMenu * Menu, int SelCount )
+{
+    wxMenu * SubMenu;
+    int index;
+    int count;
+    wxMenuItem * MenuItem;
+    if( Menu )
+    {
+        SubMenu = new wxMenu();
+        wxASSERT( SubMenu );
+
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+        if( ( count = Commands.Count() ) )
+        {
+            for( index = 0; index < count; index++ )
+            {
+                if( ( ( Commands[ index ].Find( wxT( "{bp}" ) ) != wxNOT_FOUND ) ||
+                      ( Commands[ index ].Find( wxT( "{bc}" ) ) != wxNOT_FOUND ) )
+                    && ( SelCount != 1 ) )
+                {
+                    continue;
+                }
+                MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_COMMANDS + index, Names[ index ], Commands[ index ] );
+                SubMenu->Append( MenuItem );
+            }
+        }
+        else
+        {
+            MenuItem = new wxMenuItem( Menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+            SubMenu->Append( MenuItem );
+        }
+        Menu->AppendSubMenu( SubMenu, _( "Commands" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::OnContextMenu( wxContextMenuEvent& event )
 {
     wxMenu Menu;
@@ -887,6 +927,8 @@ void guPlayList::OnContextMenu( wxContextMenuEvent& event )
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
     MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
     Menu.Append( MenuItem );
+
+    AddPlayListCommands( &Menu, SelCount );
 
     PopupMenu( &Menu, Point.x, Point.y );
 }
@@ -1014,6 +1056,70 @@ int guPlayList::GetCaps()
     }
     Caps |= MPRIS_CAPS_CAN_HAS_TRACKLIST;
     return Caps;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnCommandClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt Selection = GetSelectedItems();
+    if( Selection.Count() )
+    {
+        index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+            wxASSERT( Commands.Count() > 0 );
+
+            index -= ID_PLAYLIST_COMMANDS;
+            wxString CurCmd = Commands[ index ];
+
+            if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+            {
+                wxString Path = wxT( "\"" ) + wxPathOnly( m_Items[ Selection[ 0 ] ].m_FileName ) + wxT( "\"" );
+                CurCmd.Replace( wxT( "{bp}" ), Path );
+            }
+
+            if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+            {
+                int CoverId = m_Items[ Selection[ 0 ] ].m_CoverId;
+                wxString CoverPath = wxEmptyString;
+                if( CoverId > 0 )
+                {
+                    CoverPath = m_Db->GetCoverPath( CoverId );
+                }
+                else
+                {
+                    CoverPath = FindCoverFile( wxPathOnly( m_Items[ Selection[ 0 ] ].m_FileName ) );
+                }
+
+                if( !CoverPath.IsEmpty() )
+                {
+                    CurCmd.Replace( wxT( "{bc}" ), wxT( "\"" ) + CoverPath ) + wxT( "\"" );
+                }
+            }
+
+            if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+            {
+                wxString SongList = wxEmptyString;
+                count = Selection.Count();
+                if( count )
+                {
+                    for( index = 0; index < count; index++ )
+                    {
+                        SongList += wxT( " \"" ) + m_Items[ Selection[ index ] ].m_FileName + wxT( "\"" );
+                    }
+                    CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                }
+            }
+
+            guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
+            wxExecute( CurCmd );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
