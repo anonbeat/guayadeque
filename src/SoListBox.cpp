@@ -64,6 +64,7 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guSoListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guSoListBox::OnContextMenu ), NULL, this );
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
+    Connect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
 
 
     wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
@@ -110,6 +111,9 @@ guSoListBox::~guSoListBox()
     m_Songs.Clear();
 
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guSoListBox::OnBeginDrag ), NULL, this );
+    Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guSoListBox::OnContextMenu ), NULL, this );
+    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
+    Disconnect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
 
 }
 
@@ -240,6 +244,44 @@ void guSoListBox::ClearSelection()
 }
 
 // -------------------------------------------------------------------------------- //
+void AddSongsCommands( wxMenu * Menu, int SelCount )
+{
+    wxMenu * SubMenu;
+    int index;
+    int count;
+    wxMenuItem * MenuItem;
+    if( Menu )
+    {
+        SubMenu = new wxMenu();
+        wxASSERT( SubMenu );
+
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+        if( ( count = Commands.Count() ) )
+        {
+            for( index = 0; index < count; index++ )
+            {
+                if( ( ( Commands[ index ].Find( wxT( "{bp}" ) ) != wxNOT_FOUND ) ||
+                      ( Commands[ index ].Find( wxT( "{bc}" ) ) != wxNOT_FOUND ) )
+                    && ( SelCount != 1 ) )
+                {
+                    continue;
+                }
+                MenuItem = new wxMenuItem( Menu, ID_SONGS_COMMANDS + index, Names[ index ], Commands[ index ] );
+                SubMenu->Append( MenuItem );
+            }
+        }
+        else
+        {
+            MenuItem = new wxMenuItem( Menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+            SubMenu->Append( MenuItem );
+        }
+        Menu->AppendSubMenu( SubMenu, _( "Commands" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
 {
     wxMenu Menu;
@@ -289,12 +331,15 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
     MenuItem->SetBitmap( wxBitmap( guImage_edit_copy ) );
     Menu.Append( MenuItem );
 
-    if( GetSelection().Count() == 1 )
+    int SelCount = GetSelection().Count();
+    if( SelCount == 1 )
     {
         Menu.AppendSeparator();
 
         AddOnlineLinksMenu( &Menu );
     }
+
+    AddSongsCommands( &Menu, SelCount );
 
     PopupMenu( &Menu, Point.x, Point.y );
 }
@@ -325,6 +370,77 @@ void guSoListBox::OnSearchLinkClicked( wxCommandEvent &event )
             SearchLink.Replace( wxT( "{lang}" ), Lang );
             SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
             guWebExecute( SearchLink );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::OnCommandClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt Selection = GetSelection();
+    if( Selection.Count() )
+    {
+        index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+            wxASSERT( Commands.Count() > 0 );
+
+            guLogMessage( wxT( "CommandId: %u" ), index );
+            index -= ID_SONGS_COMMANDS;
+            wxString CurCmd = Commands[ index ];
+
+            if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+            {
+                guTrackArray Songs = GetSelectedSongs();
+                wxArrayInt AlbumList;
+                AlbumList.Add( Songs[ 0 ].m_AlbumId );
+                wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( AlbumList );
+                wxString Paths = wxEmptyString;
+                count = AlbumPaths.Count();
+                for( index = 0; index < count; index++ )
+                {
+                    Paths += wxT( " \"" ) + AlbumPaths[ index ] + wxT( "\"" );
+                }
+                CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
+            }
+
+            if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+            {
+                guTrackArray Songs = GetSelectedSongs();
+                wxArrayInt AlbumList;
+                AlbumList.Add( Songs[ 0 ].m_AlbumId );
+                m_Db->GetArtistsAlbums( Selection, &AlbumList );
+                int CoverId = m_Db->GetAlbumCoverId( AlbumList[ 0 ] );
+                wxString CoverPath = wxEmptyString;
+                if( CoverId > 0 )
+                {
+                    CoverPath = wxT( "\"" ) + m_Db->GetCoverPath( CoverId ) + wxT( "\"" );
+                }
+                CurCmd.Replace( wxT( "{bc}" ), CoverPath );
+            }
+
+            if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+            {
+                guTrackArray Songs = GetSelectedSongs();
+                wxString SongList = wxEmptyString;
+                count = Songs.Count();
+                if( count )
+                {
+                    for( index = 0; index < count; index++ )
+                    {
+                        SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
+                    }
+                    CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                }
+            }
+
+            guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
+            wxExecute( CurCmd );
         }
     }
 }
