@@ -39,6 +39,7 @@ class guSoListBox : public wxListCtrl
     void                OnBeginDrag( wxMouseEvent &event );
     void                OnContextMenu( wxContextMenuEvent& event );
     void                OnSearchLinkClicked( wxCommandEvent &event );
+    void                OnCommandClicked( wxCommandEvent &event );
     wxString            GetSearchText( int Item );
 
   public :
