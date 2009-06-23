@@ -64,6 +64,8 @@ extern const char * guImage_tags[];
 extern const char * guImage_tiny_accept[];
 extern const char * guImage_add[];
 extern const char * guImage_remove[];
+extern const char * guImage_system_run[];
+extern const char * guImage_gnome_bookmark[];
 
 #endif
 // -------------------------------------------------------------------------------- //

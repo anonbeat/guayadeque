@@ -63,7 +63,6 @@ void AddOnlineLinksMenu( wxMenu * Menu )
         else
         {
             MenuItem = new wxMenuItem( Menu, -1, _( "No search link defined" ), _( "Add search links in preferences" ) );
-            MenuItem->SetBitmap( wxBitmap( guImage_search ) );
             SubMenu->Append( MenuItem );
         }
         Menu->AppendSubMenu( SubMenu, _( "Links" ) );

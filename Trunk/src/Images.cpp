@@ -63,5 +63,7 @@
 #include "./images/tiny_accept.xpm"
 #include "./images/add.xpm"
 #include "./images/remove.xpm"
+#include "./images/system-run.xpm"
+#include "./images/gnome-bookmark.xpm"
 
 // -------------------------------------------------------------------------------- //
