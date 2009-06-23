@@ -44,6 +44,7 @@ wxString RemoveSearchFilters( const wxString &Album );
 bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings );
 wxString guURLEncode( const wxString &Source );
 int guWebExecute( const wxString &Url );
+int guExecute( const wxString &Command );
 
 // -------------------------------------------------------------------------------- //
 #endif
