@@ -1420,7 +1420,6 @@ void DbLibrary::UpdateImageFile( const char * filename )
   wxString              CoverHash;
   wxString              CoverFile = FileName = wxString( filename, wxConvUTF8 );
 
-  guLogMessage( wxT( "Upating IMage : '%s'" ), FileName.c_str() );
   guMD5 md5;
   wxString NewCoverHash = md5.MD5File( FileName );
 

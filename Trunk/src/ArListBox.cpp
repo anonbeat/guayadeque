@@ -177,7 +177,7 @@ void guArListBox::OnCommandClicked( wxCommandEvent &event )
             wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
             wxASSERT( Commands.Count() > 0 );
 
-            guLogMessage( wxT( "CommandId: %u" ), index );
+            //guLogMessage( wxT( "CommandId: %u" ), index );
             index -= ID_ARTIST_COMMANDS;
             wxString CurCmd = Commands[ index ];
 
@@ -238,7 +238,7 @@ void guArListBox::OnCommandClicked( wxCommandEvent &event )
                 }
             }
 
-            guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
+            //guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
             guExecute( CurCmd );
         }
     }
