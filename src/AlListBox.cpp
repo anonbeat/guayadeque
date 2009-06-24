@@ -743,7 +743,7 @@ void guAlbumListBox::OnCommandClicked( wxCommandEvent &event )
                 }
             }
 
-            guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
+            //guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
             guExecute( CurCmd );
         }
     }
