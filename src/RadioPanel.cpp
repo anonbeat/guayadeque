@@ -462,11 +462,11 @@ void guRadioStationListBox::OnContextMenu( wxContextMenuEvent& event )
     {
         Point = ScreenToClient( Point );
     }
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_RADIO_PLAY, _( "Play" ), _( "Play current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_RADIO_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu.Append( MenuItem );
 
@@ -727,6 +727,8 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
     m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     m_InputTextClearBitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
+    Connect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
+    Connect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -757,6 +759,9 @@ guRadioPanel::~guRadioPanel()
 
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     m_InputTextClearBitmap->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
+
+    Disconnect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
+    Disconnect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -845,44 +850,8 @@ void guRadioPanel::OnStationsEditLabelsClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnStationListActivated( wxListEvent &event )
 {
-    guShoutCast ShoutCast;
-    guTrackArray   Songs;
-    guTrack *  NewSong;
-    int index;
-    int count;
-
-    wxArrayInt Selected = m_StationsListBox->GetSelection();
-    if( Selected.Count() )
-    {
-        //TODO: Download the station in a thread
-        guStationPlayLists PlayList = ShoutCast.GetStationPlayList( Selected[ 0 ] );
-        if( ( count = PlayList.Count() ) )
-        {
-            for( index = 0; index < count; index++ )
-            {
-                NewSong = new guTrack;
-                if( NewSong )
-                {
-                    NewSong->m_SongId = guPLAYLIST_RADIOSTATION;
-                    NewSong->m_FileName = PlayList[ index ].m_Url;
-                    NewSong->m_SongName = PlayList[ index ].m_Name;
-                    NewSong->m_Length = 0;
-                    //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
-                    NewSong->m_CoverId = 0;
-                    NewSong->m_Year = 0;
-                    Songs.Add( NewSong );
-                }
-            }
-
-            if( Songs.Count() )
-              m_PlayerPanel->SetPlayList( Songs );
-
-        }
-        else
-        {
-            wxMessageBox( _( "There are not entries for this Radio Station" ) );
-        }
-    }
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -945,6 +914,69 @@ void guRadioPanel::OnRadioUpdateEnd( wxCommandEvent &event )
 {
     m_GenresListBox->SetCursor( wxCURSOR_ARROW );
     //GenresListBox->Enable();
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioStationsPlay( wxCommandEvent &event )
+{
+    OnSelectStations();
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioStationsEnqueue( wxCommandEvent &event )
+{
+    OnSelectStations( true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnSelectStations( bool enqueue )
+{
+    guShoutCast ShoutCast;
+    guTrackArray   Songs;
+    guTrack *  NewSong;
+    int index;
+    int count;
+
+    wxArrayInt Selected = m_StationsListBox->GetSelection();
+    if( Selected.Count() )
+    {
+        //TODO: Download the station in a thread
+        guStationPlayLists PlayList = ShoutCast.GetStationPlayList( Selected[ 0 ] );
+        if( ( count = PlayList.Count() ) )
+        {
+            for( index = 0; index < count; index++ )
+            {
+                NewSong = new guTrack;
+                if( NewSong )
+                {
+                    NewSong->m_SongId = guPLAYLIST_RADIOSTATION;
+                    NewSong->m_FileName = PlayList[ index ].m_Url;
+                    NewSong->m_SongName = PlayList[ index ].m_Name;
+                    NewSong->m_Length = 0;
+                    //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
+                    NewSong->m_CoverId = 0;
+                    NewSong->m_Year = 0;
+                    Songs.Add( NewSong );
+                }
+            }
+
+            if( Songs.Count() )
+            {
+                if( enqueue )
+                {
+                    m_PlayerPanel->AddToPlayList( Songs );
+                }
+                else
+                {
+                    m_PlayerPanel->SetPlayList( Songs );
+                }
+            }
+        }
+        else
+        {
+            wxMessageBox( _( "There are not entries for this Radio Station" ) );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

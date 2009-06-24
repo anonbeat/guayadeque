@@ -94,13 +94,15 @@
 #define ID_PLAYLIST_EDITLABELS          1079
 
 //
-#define ID_RADIO_DOUPDATE               1080
-#define ID_RADIO_UPDATED                1081
-#define ID_RADIO_UPDATE_END             1082
-#define ID_RADIO_GENRE_ADD              1083
-#define ID_RADIO_GENRE_EDIT             1084
-#define ID_RADIO_GENRE_DELETE           1085
-#define ID_RADIO_EDIT_LABELS            1086
+#define ID_RADIO_PLAY                   1080
+#define ID_RADIO_ENQUEUE                1081
+#define ID_RADIO_DOUPDATE               1082
+#define ID_RADIO_UPDATED                1083
+#define ID_RADIO_UPDATE_END             1084
+#define ID_RADIO_GENRE_ADD              1085
+#define ID_RADIO_GENRE_EDIT             1086
+#define ID_RADIO_GENRE_DELETE           1087
+#define ID_RADIO_EDIT_LABELS            1088
 
 //
 #define ID_PLAYERPANEL_PLAY             1090
