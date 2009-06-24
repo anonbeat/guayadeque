@@ -65,6 +65,9 @@ class guRadioPanel : public wxPanel
       void OnSearchActivated( wxCommandEvent& event );
       void OnSearchCancelled( wxMouseEvent &event );
 	  void OnRadioLabelListSelected( wxListEvent &Event );
+	  void OnRadioStationsPlay( wxCommandEvent &event );
+	  void OnRadioStationsEnqueue( wxCommandEvent &event );
+	  void OnSelectStations( bool enqueue = false );
 
       void GenreSplitterOnIdle( wxIdleEvent& );
       void StationsSplitterOnIdle( wxIdleEvent& );
