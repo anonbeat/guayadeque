@@ -21,7 +21,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#define ID_GUAYADEQUE_VERSION           "0.1.1"
+#define ID_GUAYADEQUE_VERSION           "0.1.2"
 
 // -------------------------------------------------------------------------------- //
 //
