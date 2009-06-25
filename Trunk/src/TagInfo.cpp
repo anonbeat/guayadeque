@@ -81,7 +81,7 @@ bool SetCoverArtToID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
         wxMemoryOutputStream ImgOutputStream;
         if( coverimage->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
         {
-            ByteVector ImgData( ImgOutputStream.GetSize() );
+            ByteVector ImgData( ( TagLib::uint ) ImgOutputStream.GetSize() );
             ImgOutputStream.CopyTo( ImgData.data(), ImgOutputStream.GetSize() );
             PicFrame->setPicture( ImgData );
             id3v2Tag->addFrame( PicFrame );
