@@ -1,4 +1,5 @@
 
+  * Play/Enqueue in RadioStations was not implemented. Fixed now.
   * Added Custom commands that are accesible from contextual menu in Artist,
     Albums, Songs and Playlist 
   * Removed the need of the wxWidgets media library not present by default
