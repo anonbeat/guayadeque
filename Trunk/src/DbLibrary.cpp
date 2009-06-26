@@ -196,7 +196,10 @@ wxString inline ArrayIntToStrList( const wxArrayInt &Data )
   {
     RetVal += wxString::Format( wxT( "%u," ), Data[ index ]  );
   }
-  RetVal = RetVal.RemoveLast() + wxT( ")" );
+  if( RetVal.Length() > 1 )
+    RetVal = RetVal.RemoveLast() + wxT( ")" );
+  else
+    RetVal += wxT( ")" );
   return RetVal;
 }
 
@@ -2583,35 +2586,38 @@ guArrayListItems DbLibrary::GetArtistsLabels( const wxArrayInt &Artists )
   int Id;
   int index;
   int count = Artists.Count();
-  for( index = 0; index < count; index++ )
+  if( count )
   {
-      Id = Artists[ index ];
-      RetVal.Add( new guArrayListItem( Id ) );
-  }
+      for( index = 0; index < count; index++ )
+      {
+          Id = Artists[ index ];
+          RetVal.Add( new guArrayListItem( Id ) );
+      }
 
-  query = wxT( "SELECT settag_artistid, settag_tagid FROM settags " ) \
-          wxT( "WHERE settag_artistid IN " ) + ArrayIntToStrList( Artists );
-  query += wxT( " ORDER BY settag_artistid,settag_tagid;" );
+      query = wxT( "SELECT settag_artistid, settag_tagid FROM settags " ) \
+              wxT( "WHERE settag_artistid IN " ) + ArrayIntToStrList( Artists );
+      query += wxT( " ORDER BY settag_artistid,settag_tagid;" );
 
-  dbRes = ExecuteQuery( query );
+      dbRes = ExecuteQuery( query );
 
-  index = 0;
-  CurItem = &RetVal[ index ];
-  while( dbRes.NextRow() )
-  {
-    Id = dbRes.GetInt( 0 );
-    if( CurItem->GetId() != Id )
-    {
-        index = 0;
-        while( CurItem->GetId() != Id )
+      index = 0;
+      CurItem = &RetVal[ index ];
+      while( dbRes.NextRow() )
+      {
+        Id = dbRes.GetInt( 0 );
+        if( CurItem->GetId() != Id )
         {
-            CurItem = &RetVal[ index ];
-            index++;
+            index = 0;
+            while( CurItem->GetId() != Id )
+            {
+                CurItem = &RetVal[ index ];
+                index++;
+            }
         }
-    }
-    CurItem->AddData( dbRes.GetInt( 1 ) );
+        CurItem->AddData( dbRes.GetInt( 1 ) );
+      }
+      dbRes.Finalize();
   }
-  dbRes.Finalize();
   return RetVal;
 }
 

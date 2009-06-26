@@ -299,6 +299,9 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
     {
         Point = ScreenToClient( Point );
     }
+
+    int SelCount = GetSelection().Count();
+
     MenuItem = new wxMenuItem( &Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu.Append( MenuItem );
@@ -315,31 +318,33 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu.Append( MenuItem );
 
-    Menu.AppendSeparator();
-
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected songs" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
-    Menu.Append( MenuItem );
-
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-    Menu.Append( MenuItem );
-
-    Menu.AppendSeparator();
-
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-    Menu.Append( MenuItem );
-
-    int SelCount = GetSelection().Count();
-    if( SelCount == 1 )
+    if( SelCount )
     {
         Menu.AppendSeparator();
 
-        AddOnlineLinksMenu( &Menu );
-    }
+        MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected songs" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
+        Menu.Append( MenuItem );
 
-    AddSongsCommands( &Menu, SelCount );
+        MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+        Menu.Append( MenuItem );
+
+        Menu.AppendSeparator();
+
+        MenuItem = new wxMenuItem( &Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu.Append( MenuItem );
+
+        if( SelCount == 1 )
+        {
+            Menu.AppendSeparator();
+
+            AddOnlineLinksMenu( &Menu );
+        }
+
+        AddSongsCommands( &Menu, SelCount );
+    }
 
     PopupMenu( &Menu, Point.x, Point.y );
 }

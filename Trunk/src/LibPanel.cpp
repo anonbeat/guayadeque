@@ -588,21 +588,24 @@ void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
     guListItems Labels;
     wxArrayInt Artists;
 
-    m_Db->GetLabels( &Labels, true );
-
     Artists = m_ArtistListCtrl->GetSelection();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Artist Labels Editor" ), Labels, m_Db->GetArtistsLabels( Artists ) );
-    if( LabelEditor )
+    if( Artists.Count() )
     {
-        if( LabelEditor->ShowModal() == wxID_OK )
+        m_Db->GetLabels( &Labels, true );
+
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Artist Labels Editor" ), Labels, m_Db->GetArtistsLabels( Artists ) );
+        if( LabelEditor )
         {
-            // Update the labels in the artists files
-            m_Db->UpdateArtistsLabels( Artists, LabelEditor->GetCheckedIds() );
+            if( LabelEditor->ShowModal() == wxID_OK )
+            {
+                // Update the labels in the artists files
+                m_Db->UpdateArtistsLabels( Artists, LabelEditor->GetCheckedIds() );
+            }
+            LabelEditor->Destroy();
+            m_UpdateLock = true;
+            m_LabelsListCtrl->ReloadItems( false );
+            m_UpdateLock = false;
         }
-        LabelEditor->Destroy();
-        m_UpdateLock = true;
-        m_LabelsListCtrl->ReloadItems( false );
-        m_UpdateLock = false;
     }
 }
 

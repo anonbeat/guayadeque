@@ -1,4 +1,9 @@
 
+  * Fixed crash when using 'Edit labes' in artists or songs with no artist
+    or no songs selected
+    
+
+2009-06-25 0.1.1
   * Play/Enqueue in RadioStations was not implemented. Fixed now.
   * Added Custom commands that are accesible from contextual menu in Artist,
     Albums, Songs and Playlist 
