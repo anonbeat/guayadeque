@@ -40,6 +40,8 @@ int guGeListBox::GetSelectedSongs( guTrackArray * Songs ) const
 void guGeListBox::GetContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
+    int SelCount = GetSelection().Count();
+
     MenuItem = new wxMenuItem( Menu, ID_GENRE_PLAY, _( "Play" ), _( "Play current selected genres" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu->Append( MenuItem );
@@ -48,11 +50,14 @@ void guGeListBox::GetContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
-    Menu->AppendSeparator();
+    if( SelCount )
+    {
+        Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-    Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_GENRE_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

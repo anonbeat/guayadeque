@@ -95,6 +95,8 @@ void guArListBox::GetContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
 
+    int SelCount = GetSelection().Count();
+
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_PLAY, _( "Play" ), _( "Play current selected artists" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
     Menu->Append( MenuItem );
@@ -103,31 +105,33 @@ void guArListBox::GetContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
-    Menu->AppendSeparator();
-
-    MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected artists" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
-    Menu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs from the selected artists" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-    Menu->Append( MenuItem );
-
-    Menu->AppendSeparator();
-
-    MenuItem = new wxMenuItem( Menu, ID_ARTIST_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-    Menu->Append( MenuItem );
-
-    int SelCount = GetSelection().Count();
-    if( SelCount == 1 )
+    if( SelCount )
     {
         Menu->AppendSeparator();
 
-        AddOnlineLinksMenu( Menu );
-    }
+        MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected artists" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
+        Menu->Append( MenuItem );
 
-    AddArtistCommands( Menu, SelCount );
+        MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs from the selected artists" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_ARTIST_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
+
+        if( SelCount == 1 )
+        {
+            Menu->AppendSeparator();
+
+            AddOnlineLinksMenu( Menu );
+        }
+
+        AddArtistCommands( Menu, SelCount );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
