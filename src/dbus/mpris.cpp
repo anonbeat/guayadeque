@@ -216,7 +216,7 @@ void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
 
     const char * metadata_names[] = {
         "location", "title", "artist", "album", "tracknumber",
-        "time", "mtime", "genre", "year", "arturl"
+        "time", "mtime", "genre", "rating", "year", "arturl"
     };
 
     dbus_message_iter_init_append( reply->GetMessage(), &args );
@@ -232,8 +232,15 @@ void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
     FillMetadataDetails( &dict, metadata_names[ 5 ], ( const int ) CurTrack->m_Length );
     FillMetadataDetails( &dict, metadata_names[ 6 ], ( const int ) CurTrack->m_Length * 1000 );
     FillMetadataDetails( &dict, metadata_names[ 7 ], ( const char * ) CurTrack->m_GenreName.char_str() );
+
+    if( CurTrack->m_Rating >= 0 )
+        FillMetadataDetails( &dict, metadata_names[ 8 ], ( const int ) CurTrack->m_Rating );
+
     if( CurTrack->m_Year )
-        FillMetadataDetails( &dict, metadata_names[ 8 ], ( const int ) CurTrack->m_Year );
+        FillMetadataDetails( &dict, metadata_names[ 9 ], ( const int ) CurTrack->m_Year );
+
+//    if( !CurTrack->m_CoverPath.IsEmpty() )
+//        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_CoverPath.c_str() ).char_str() );
 
     dbus_message_iter_close_container( &args, &dict );
 
@@ -249,7 +256,7 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
 
     const char * metadata_names[] = {
         "location", "title", "artist", "album", "tracknumber",
-        "time", "mtime", "genre", "year", "arturl"
+        "time", "mtime", "genre", "rating", "year", "arturl"
     };
 
     dbus_message_iter_init_append( reply->GetMessage(), &args );
@@ -265,11 +272,14 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
     FillMetadataDetails( &dict, metadata_names[ 5 ], ( const int ) CurTrack->m_Length );
     FillMetadataDetails( &dict, metadata_names[ 6 ], ( const int ) CurTrack->m_Length * 1000 );
     FillMetadataDetails( &dict, metadata_names[ 7 ], ( const char * ) CurTrack->m_GenreName.char_str() );
+    if( CurTrack->m_Rating >= 0 )
+        FillMetadataDetails( &dict, metadata_names[ 8 ], ( const int ) CurTrack->m_Rating );
+
     if( CurTrack->m_Year )
-        FillMetadataDetails( &dict, metadata_names[ 8 ], ( const int ) CurTrack->m_Year );
+        FillMetadataDetails( &dict, metadata_names[ 9 ], ( const int ) CurTrack->m_Year );
 
     if( !CurTrack->m_CoverPath.IsEmpty() )
-        FillMetadataDetails( &dict, metadata_names[ 9 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_CoverPath.c_str() ).char_str() );
+        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_CoverPath.c_str() ).char_str() );
 
     dbus_message_iter_close_container( &args, &dict );
 

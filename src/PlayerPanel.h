@@ -58,6 +58,11 @@ class guCurrentTrack : public guTrack
         m_Number = Src.m_Number;
         m_Year = Src.m_Year;
         m_Length = Src.m_Length;
+        m_Bitrate = Src.m_Bitrate;
+        m_PlayCount = Src.m_PlayCount;
+        m_Rating = Src.m_Rating;
+        m_LastPlay = Src.m_LastPlay;
+        m_AddedTime = Src.m_AddedTime;
         m_CoverId = Src.m_CoverId;
         m_PlayTime = 0;
         //CoverType = GU_SONGCOVER_NONE;
@@ -100,6 +105,8 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_AlbumLabel;
 	wxStaticText *          m_ArtistLabel;
 	wxStaticText *          m_YearLabel;
+	wxStaticText *          m_EnRating;
+	wxStaticText *          m_DiRating;
 	wxStaticText *          m_BitRateLabel;
 	wxBoxSizer *            m_BitRateSizer;
 	wxStaticText *          m_PositionLabel;
@@ -135,7 +142,8 @@ class guPlayerPanel : public wxPanel
 
     int                     m_BufferGaugeId;
 
-    wxMutex                 m_VolumenMutex;
+    int                     m_RatingStart;
+    int                     m_RatingStartY;
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
@@ -161,6 +169,8 @@ class guPlayerPanel : public wxPanel
 
     void                OnAlbumNameDClicked( wxMouseEvent &event );
     void                OnArtistNameDClicked( wxMouseEvent &event );
+    void                OnRatingMouseEvents( wxMouseEvent &event );
+    void                OnMouseCaptureLost( wxMouseCaptureLostEvent &event );
 
   public:
                         guPlayerPanel( wxWindow* parent, DbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
@@ -199,9 +209,12 @@ class guPlayerPanel : public wxPanel
     void                SetArtistLabel( const wxString &artistname );
     void                SetAlbumLabel( const wxString &albumname );
     void                SetTitleLabel( const wxString &trackname );
+    void                SetRatingLabel( const int Rating );
     void                SetBitRate( int bitrate );
 
 //		void                ClearRadioProxy( void );
+
+    DECLARE_EVENT_TABLE()
 
     friend class guSmartAddTracksThread;
 };

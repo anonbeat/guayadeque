@@ -118,10 +118,12 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
     //m_PlayBgColor  = m_TextFgColor;
     m_PlayFgColor  = m_SelBgColor;
+    m_RatingEnabled = wxColour( 255, 191, 0 );
+    m_RatingDisabled = wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT );
 
     SetBackgroundColour( m_EveBgColor );
 
-    m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_playback_start ) );
+    m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
 
 	Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
@@ -429,7 +431,7 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
 {
     guTrack Item;
     wxRect CutRect;
-    wxSize TimeLen;
+    wxSize TextSize;
     wxString TimeStr;
 //    wxArrayInt Selection;
     wxFont Font( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
@@ -462,19 +464,48 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
         Font.SetWeight( wxFONTWEIGHT_NORMAL );
         dc.SetFont( Font );
         dc.DrawText( Item.m_ArtistName + wxT( " - " ) + Item.m_AlbumName, rect.x + 5, rect.y + ( dc.GetCharHeight() + 10 ) );
-        //
+        // Get the area where the length will be writen
         TimeStr = LenToString( Item.m_Length );
-        TimeLen = dc.GetTextExtent( TimeStr );
+        TextSize = dc.GetTextExtent( TimeStr );
         CutRect = rect;
-        CutRect.x += CutRect.width - ( TimeLen.GetWidth() + 6 );
-        CutRect.width -= CutRect.width - ( TimeLen.GetWidth() + 6 );
+        //CutRect.x += CutRect.width - ( TextSize.GetWidth() + 6 );
+        CutRect.x += CutRect.width - ( 50 + 6 );
+        CutRect.width -= CutRect.x;
         OnDrawBackground( dc, CutRect, n );
-        dc.DrawText( TimeStr, CutRect.x + 3, CutRect.y + 5 );
+
         if( n == ( size_t ) m_CurItem && m_PlayBitmap )
         {
             // Draw Play bitmap
-            dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 8, CutRect.y + 15, true );
+            dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 21, CutRect.y + 14, true );
         }
+
+        dc.DrawText( TimeStr, CutRect.x + ( ( 56 - TextSize.GetWidth() ) / 2 ), CutRect.y + 5 );
+        //guLogMessage( wxT( "%i - %i" ), TextSize.GetWidth(), TextSize.GetHeight() );
+        // Draw the rating
+        int EnCount = 0;
+        int DiCount = 5;
+        wxString LabelStr = wxT( "★★★★★" );
+        if( Item.m_Rating > 0 && Item.m_Rating < 6 )
+        {
+            EnCount = Item.m_Rating;
+            DiCount = 5 - EnCount;
+        }
+        if( EnCount )
+        {
+            dc.SetTextForeground( m_RatingEnabled );
+            dc.DrawText( LabelStr.Mid( 0, EnCount ), CutRect.x + 3, CutRect.y + ( dc.GetCharHeight() + 10 ) );
+            TextSize = dc.GetTextExtent( LabelStr.Mid( 0, EnCount ) );
+        }
+        else
+        {
+            TextSize = wxSize( 0, 0 );
+        }
+
+        dc.SetTextForeground( m_RatingDisabled );
+        dc.DrawText( LabelStr.Mid( 0, DiCount ),
+                     CutRect.x + 3 + TextSize.GetWidth(),
+                     CutRect.y + ( dc.GetCharHeight() + 10 ) );
+
     }
     else
     {
@@ -805,20 +836,25 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
             //Song.m_Number = -1;
 
             //Song.m_SongId = 1;
-            Song.m_SongId = m_Db->FindTrackFile( Song.m_FileName );
+            //guLogMessage( wxT( "Loading : %s" ), Song.m_FileName.c_str() );
+            m_Db->FindTrackFile( Song.m_FileName, &Song );
+
             if( !Song.m_SongId )
+            {
                 Song.m_SongId = guPLAYLIST_NOTDBTRACK;
 
-            Info.ReadID3Tags( Song.m_FileName );
+                Info.ReadID3Tags( Song.m_FileName );
 
-            Song.m_ArtistName = Info.m_ArtistName;
-            Song.m_AlbumName = Info.m_AlbumName;
-            Song.m_SongName = Info.m_TrackName;
-            Song.m_Number = Info.m_Track;
-            Song.m_GenreName = Info.m_GenreName;
-            Song.m_Length = Info.m_Length;
-            Song.m_Year = Info.m_Year;
-            m_TotalLen += Info.m_Length;
+                Song.m_ArtistName = Info.m_ArtistName;
+                Song.m_AlbumName = Info.m_AlbumName;
+                Song.m_SongName = Info.m_TrackName;
+                Song.m_Number = Info.m_Track;
+                Song.m_GenreName = Info.m_GenreName;
+                Song.m_Length = Info.m_Length;
+                Song.m_Year = Info.m_Year;
+            }
+
+            m_TotalLen += Song.m_Length;
 
             AddItem( Song );
         }
@@ -1118,6 +1154,22 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
 
             //guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
             guExecute( CurCmd );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::UpdatedRating( const int songid, const int rating )
+{
+    int index;
+    int count = m_Items.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( m_Items[ index ].m_SongId == songid )
+        {
+            m_Items[ index ].m_Rating = rating;
+            UpdateView();
+            break;
         }
     }
 }
