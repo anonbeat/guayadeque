@@ -1,7 +1,10 @@
 
+  * Now you can edit the rating of a track from the Player current track
+    info. To do it move the mouse up and down while clicking on rating starts.
+  * Added bitrate, rating, playcount, lastplay, added time  to tracks database
   * Fixed crash when using 'Edit labes' in artists or songs with no artist
     or no songs selected
-    
+
 
 2009-06-25 0.1.1
   * Play/Enqueue in RadioStations was not implemented. Fixed now.

@@ -50,7 +50,6 @@ class guPlayList : public wxVListBox
     int             m_DragCount;
     wxBitmap *      m_PlayBitmap;
 
-    wxColor         m_PlayBgColor;
     wxColor         m_PlayFgColor;
     wxBrush         m_DragBgColor;
     wxColor         m_SelBgColor;
@@ -58,7 +57,8 @@ class guPlayList : public wxVListBox
     wxColor         m_OddBgColor;
     wxColor         m_EveBgColor;
     wxColor         m_TextFgColor;
-//        wxColor         m_SepColor;
+    wxColor         m_RatingEnabled;
+    wxColor         m_RatingDisabled;
 
     void            OnDragOver( const wxCoord x, const wxCoord y );
     void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
@@ -109,6 +109,7 @@ class guPlayList : public wxVListBox
     void            Randomize( void );
     int             GetCaps();
     void            RemoveItem( int itemnum );
+    void            UpdatedRating( const int songid, const int rating );
 
   friend class guAddDropFilesThread;
   friend class guPlayListDropTarget;

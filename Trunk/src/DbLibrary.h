@@ -62,6 +62,11 @@ class guTrack
     int             m_Number;             // the track num of the song into the album
     int             m_Year;               // the year of the song
     int             m_Length;             // the length of the song in seconds
+    int             m_Bitrate;
+    int             m_Rating;
+    int             m_PlayCount;
+    wxDateTime      m_LastPlay;
+    wxDateTime      m_AddedTime;
     int             m_CoverId;
     guTrackMode     m_TrackMode;          // Indicate how the track was created
 
@@ -235,6 +240,8 @@ class DbLibrary {
 
     wxString            FiltersSQL( int Level );
 
+
+    void                FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes );
     int                 GetRadioFiltersCount( void ) const;
     wxString            RadioFiltersSQL( void );
 
@@ -329,6 +336,10 @@ class DbLibrary {
     void                UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels );
     void                UpdateSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Labels );
 
+    void                SetTrackRating( const int songid, const int rating );
+    void                SetTracksRating( const wxArrayInt &songids, const int rating );
+
+
     wxSQLite3ResultSet  ExecuteQuery(  const wxSQLite3StatementBuffer &query );
     int                 ExecuteUpdate( const wxString &query );
     int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
@@ -341,7 +352,7 @@ class DbLibrary {
     int                 FindAlbum( const wxString &Artist, const wxString &Album );
     int                 FindTrack( const wxString &Artist, const wxString &m_Name );
     guTrack *           FindSong( const wxString &Artist, const wxString &Track );
-    int                 FindTrackFile( const wxString &filename );
+    int                 FindTrackFile( const wxString &filename, guTrack * song );
 
     //
     // Radio support functions

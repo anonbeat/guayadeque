@@ -29,6 +29,12 @@
 #include "wx/datetime.h"
 #include <wx/notebook.h>
 
+BEGIN_EVENT_TABLE(guTrackEditor,wxDialog)
+    EVT_MOUSE_EVENTS( guTrackEditor::OnRatingMouseEvents )
+END_EVENT_TABLE()
+
+
+
 // -------------------------------------------------------------------------------- //
 guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs, guImagePtrArray * images ) :
                wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 400 ), wxDEFAULT_DIALOG_STYLE )
@@ -136,10 +142,35 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 
 	YeStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Year:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	YeStaticText->Wrap( -1 );
-	DataFlexSizer->Add( YeStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+	DataFlexSizer->Add( YeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_YearTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	DataFlexSizer->Add( m_YearTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	m_RaCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	DataFlexSizer->Add( m_RaCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * RaStaticText;
+	RaStaticText = new wxStaticText( DetailPanel, wxID_ANY, _("Rating:"), wxDefaultPosition, wxDefaultSize, 0 );
+	RaStaticText->Wrap( -1 );
+	DataFlexSizer->Add( RaStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_RatingSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_EnRating = new wxStaticText( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_EnRating->Wrap( -1 );
+	m_EnRating->SetForegroundColour( wxColour( 255, 191, 0 ) );
+
+	m_RatingSizer->Add( m_EnRating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+
+	m_DiRating = new wxStaticText( DetailPanel, wxID_ANY, wxT("★★★★★"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DiRating->Wrap( -1 );
+	m_DiRating->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+
+	m_RatingSizer->Add( m_DiRating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	DataFlexSizer->Add( m_RatingSizer, 1, wxEXPAND, 5 );
+
 
 	DetailPanel->SetSizer( DataFlexSizer );
 	DetailPanel->Layout();
@@ -217,6 +248,8 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_Items = NewSongs;
 	m_Images = images;
 	m_Db = NewDb;
+	m_CurrentRating = -1;
+	m_RatingChanged = false;
 	wxArrayString ItemsText;
 	int index;
 	int count = m_Items->Count();
@@ -240,13 +273,16 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_NuCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnNuCopyButtonClicked ), NULL, this );
 	m_GeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
+	m_RaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
-
+    m_EnRating->SetEventHandler( this );
+    m_DiRating->SetEventHandler( this );
 
 	m_AddPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
 	m_SavePicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSaveImageClicked ), NULL, this );
 	m_CopyPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
+
 
     // Idle Events
 	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
@@ -274,6 +310,7 @@ guTrackEditor::~guTrackEditor()
 	m_NuCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnNuCopyButtonClicked ), NULL, this );
 	m_GeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
+	m_RaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
 
 	m_AddPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
@@ -300,6 +337,7 @@ void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::ReadItemData( void )
 {
+    //guLogMessage( wxT( "ReadItemData: %i" ), m_CurItem );
     if( m_CurItem >= 0 )
     {
         guTrack * Track = &( * m_Items )[ m_CurItem ];
@@ -309,6 +347,7 @@ void guTrackEditor::ReadItemData( void )
         m_NumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Number ) );
         m_GenreTextCtrl->SetValue( Track->m_GenreName );
         m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
+        SetCurrentRating( Track->m_Rating );
     }
     else
     {
@@ -318,6 +357,7 @@ void guTrackEditor::ReadItemData( void )
         m_NumberTextCtrl->SetValue( wxEmptyString );
         m_GenreTextCtrl->SetValue( wxEmptyString );
         m_YearTextCtrl->SetValue( wxEmptyString );
+        SetCurrentRating( -1 );
     }
     RefreshImage();
 }
@@ -325,6 +365,7 @@ void guTrackEditor::ReadItemData( void )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::WriteItemData( void )
 {
+    //guLogMessage( wxT( "WriteItemData: %i" ), m_CurItem );
     if( m_CurItem >= 0 )
     {
         if( m_ArtistTextCtrl->IsModified() )
@@ -339,6 +380,8 @@ void guTrackEditor::WriteItemData( void )
           ( * m_Items )[ m_CurItem ].m_GenreName = m_GenreTextCtrl->GetLineText( 0 );
         if( m_YearTextCtrl->IsModified() )
            m_YearTextCtrl->GetLineText( 0 ).ToLong( ( long * ) &( * m_Items )[ m_CurItem ].m_Year );
+        if( m_RatingChanged )
+            ( * m_Items )[ m_CurItem ].m_Rating = m_CurrentRating;
     }
 }
 
@@ -407,6 +450,15 @@ void guTrackEditor::OnYeCopyButtonClicked( wxCommandEvent& event )
         ( * m_Items )[ index ].m_Year = Year;
 }
 
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnRaCopyButtonClicked( wxCommandEvent& event )
+{
+    int index;
+    int count = m_Items->Count();
+    for( index = 0; index < count; index++ )
+        ( * m_Items )[ index ].m_Rating = m_CurrentRating;
+}
+
 //// -------------------------------------------------------------------------------- //
 //void guTrackEditor::OnGetYearButtonClicked( wxCommandEvent& event )
 //{
@@ -428,6 +480,59 @@ void guTrackEditor::OnYeCopyButtonClicked( wxCommandEvent& event )
 //        }
 //    }
 //}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnRatingMouseEvents( wxMouseEvent &event )
+{
+    if( event.LeftIsDown() )
+    {
+        wxPoint MousePos = wxGetMousePosition();
+        if( event.LeftDown() && !HasCapture() &&
+            ( ( ( wxStaticText * ) event.GetEventObject() == m_EnRating ) ||
+              ( ( wxStaticText * ) event.GetEventObject() == m_DiRating ) ) )
+        {
+            m_RatingStartY = MousePos.y;
+            m_RatingStart = m_CurrentRating;
+            CaptureMouse();
+            //guLogMessage( wxT( "Mouse captured" ) );
+        }
+        else if( HasCapture() )
+        {
+            //guLogMessage( wxT( "%i  %i" ), m_RatingStart, ( m_RatingStartY - MousePos.y ) / 5 );
+            SetCurrentRating( wxMin( 5, wxMax( 0, m_RatingStart + ( ( m_RatingStartY - MousePos.y ) / 5 ) ) ) );
+        }
+    }
+    else if( event.LeftUp() )
+    {
+        wxPoint MousePos = wxGetMousePosition();
+        if( HasCapture() )
+        {
+            ReleaseMouse();
+            //guLogMessage( wxT( "Mouse released" ) );
+            SetCurrentRating( wxMin( 5, wxMax( 0, m_RatingStart + ( ( m_RatingStartY - MousePos.y ) / 5 ) ) ) );
+            m_RatingChanged = true;
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::SetCurrentRating( const int rating )
+{
+    //guLogMessage( wxT( "Set Rating to %i" ), rating );
+    m_CurrentRating = rating;
+    int EnCount = 0;
+    int DiCount = 5;
+    wxString LabelStr = wxT( "★★★★★" );
+    if( rating > 0 && rating < 6 )
+    {
+        EnCount = rating;
+        DiCount = 5 - rating;
+    }
+    m_EnRating->SetLabel( LabelStr.Mid( 0, EnCount ) );
+    m_DiRating->SetLabel( LabelStr.Mid( 0, DiCount ) );
+    m_RatingSizer->Layout();
+    m_RatingChanged = false;
+}
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::RefreshImage( void )

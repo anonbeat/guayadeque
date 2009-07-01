@@ -136,13 +136,14 @@ bool TagInfo::ReadID3Tags( const wxString &FileName )
             m_GenreName = TStringTowxString( tag->genre() );
             m_Track = tag->track();
             m_Year = tag->year();
-
         }
 
         apro = fileref.audioProperties();
         if( apro )
         {
             m_Length = apro->length();
+            m_Bitrate = apro->bitrate();
+            //m_Samplerate = apro->sampleRate();
         }
         else
         {

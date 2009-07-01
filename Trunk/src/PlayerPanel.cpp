@@ -31,12 +31,20 @@
 #include "Utils.h"
 #include "VolumeFrame.h"
 
+#include <wx/gdicmn.h>
 #include <wx/regex.h>
+#include <wx/utils.h>
 
 #define GUPLAYER_MIN_PREVTRACK_POS      5000
 #define GUPLAYER_SMART_ADDTRACKS        3
 #define GUPLAYER_SMART_ADDTRACKSPOS     4
 #define GUPLAYER_SMART_CACHEITEMS       100
+
+BEGIN_EVENT_TABLE(guPlayerPanel,wxPanel)
+    EVT_MOUSE_EVENTS( guPlayerPanel::OnRatingMouseEvents )
+    EVT_MOUSEWHEEL( guPlayerPanel::OnRatingMouseEvents )
+END_EVENT_TABLE()
+
 
 // -------------------------------------------------------------------------------- //
 guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
@@ -64,6 +72,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     m_LastCurPos = -1;
     m_LastPlayState = wxMEDIASTATE_STOPPED;
     m_LastTotalLen = -1;
+    m_RatingStart = 0;
     //
 
     // Load configuration
@@ -137,7 +146,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	m_TitleLabel->Wrap( -1 );
 	m_TitleLabel->SetFont( wxFont( 16, 77, 90, 92, false, wxT("Arial") ) );
 
-	PlayerLabelsSizer->Add( m_TitleLabel, 0, wxALL, 2 );
+	PlayerLabelsSizer->Add( m_TitleLabel, 0, wxLEFT|wxRIGHT|wxBOTTOM, 2 );
 
 	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_AlbumLabel->SetToolTip( _( "Show the album name of the current track" ) );
@@ -157,26 +166,41 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	//m_PosLabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 	m_YearLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_YearLabel->SetToolTip( _( "Show the year of the current track" ) );
-	m_PosLabelSizer->Add( m_YearLabel, 1, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+	m_PosLabelSizer->Add( m_YearLabel, 1, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 2 );
 
 	m_PositionLabel = new wxStaticText( this, wxID_ANY, _("00:00 of 00:00"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PositionLabel->SetToolTip( _( "Show the current position and song length of the current track" ) );
 	m_PositionLabel->Wrap( -1 );
 	//m_PositionLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	m_PosLabelSizer->Add( m_PositionLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 4 );
+	m_PosLabelSizer->Add( m_PositionLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 2 );
 
-	PlayerLabelsSizer->Add( m_PosLabelSizer, 1, wxEXPAND, 5 );
+	PlayerLabelsSizer->Add( m_PosLabelSizer, 1, wxEXPAND, 2 );
 
     m_BitRateSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_EnRating = new wxStaticText( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_EnRating->SetToolTip( _( "Show the rating of the current track" ) );
+	m_EnRating->SetFont( wxFont( 10, 74, 93, 90, false, wxT("Sans") ) );
+	m_EnRating->SetForegroundColour( wxColour( 255, 191, 0 ) );
+	m_BitRateSizer->Add( m_EnRating, 0, wxLEFT, 2 );
+
+	m_DiRating = new wxStaticText( this, wxID_ANY, wxT( "★★★★★" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DiRating->SetToolTip( _( "Show the rating of the current track" ) );
+	m_DiRating->SetFont( wxFont( 10, 74, 93, 90, false, wxT("Sans") ) );
+	m_DiRating->SetForegroundColour( wxColour( 255, 191, 0 ) );
+	m_DiRating->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+	m_BitRateSizer->Add( m_DiRating, 0, wxRIGHT, 2 );
+
 	m_BitRateSizer->Add( 0, 0, 1, wxALL, 5 );
+
 	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "[kbps]" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
 	m_BitRateLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Arial") ) );
 
     m_BitRateSizer->Add( m_BitRateLabel, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	PlayerLabelsSizer->Add( m_BitRateSizer, 0, wxEXPAND, 5 );
+	PlayerLabelsSizer->Add( m_BitRateSizer, 0, wxEXPAND, 2 );
 
 	PlayerDetailsSizer->Add( PlayerLabelsSizer, 1, wxEXPAND, 5 );
 
@@ -255,6 +279,9 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	m_AlbumLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+
+    m_EnRating->SetEventHandler( this );
+    m_DiRating->SetEventHandler( this );
 
     //
 	m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
@@ -384,6 +411,23 @@ void guPlayerPanel::SetTitleLabel( const wxString &trackname )
     wxString Label = trackname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_TitleLabel->SetLabel( Label );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetRatingLabel( const int rating )
+{
+    //guLogMessage( wxT( "Set Rating to %i" ), rating );
+    int EnCount = 0;
+    int DiCount = 5;
+    wxString LabelStr = wxT( "★★★★★" );
+    if( rating > 0 && rating < 6 )
+    {
+        EnCount = rating;
+        DiCount = 5 - rating;
+    }
+    m_EnRating->SetLabel( LabelStr.Mid( 0, EnCount ) );
+    m_DiRating->SetLabel( LabelStr.Mid( 0, DiCount ) );
+    m_BitRateSizer->Layout();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -708,11 +752,13 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     // Set the Current Song
     m_MediaSong = * Song;
+    guLogMessage( wxT( "PlayerRating: %i" ), Song->m_Rating );
 
     // Update the Current Playing Song Info
     SetTitleLabel( m_MediaSong.m_SongName );
     SetAlbumLabel( m_MediaSong.m_AlbumName );
     SetArtistLabel( m_MediaSong.m_ArtistName );
+    SetRatingLabel( m_MediaSong.m_Rating );
 
     if( m_MediaSong.m_Year > 0 )
     {
@@ -1362,6 +1408,63 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
     wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SELECTNAME );
     evt.SetClientData( ( void * ) ArtistName );
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnRatingMouseEvents( wxMouseEvent &event )
+{
+    if( event.LeftIsDown() )
+    {
+        wxPoint MousePos = wxGetMousePosition();
+        if( event.LeftDown() && !HasCapture() &&
+            ( ( ( wxStaticText * ) event.GetEventObject() == m_EnRating ) ||
+              ( ( wxStaticText * ) event.GetEventObject() == m_DiRating ) ) )
+        {
+            m_RatingStartY = MousePos.y;
+            m_RatingStart = m_MediaSong.m_Rating;
+            CaptureMouse();
+            //guLogMessage( wxT( "Mouse captured" ) );
+        }
+        else if( HasCapture() )
+        {
+            //guLogMessage( wxT( "%i  %i" ), m_RatingStart, ( m_RatingStartY - MousePos.y ) / 5 );
+            SetRatingLabel( wxMin( 5, wxMax( 0, m_RatingStart + ( ( m_RatingStartY - MousePos.y ) / 5 ) ) ) );
+        }
+    }
+    else if( event.LeftUp() )
+    {
+        wxPoint MousePos = wxGetMousePosition();
+        if( HasCapture() )
+        {
+            ReleaseMouse();
+            //guLogMessage( wxT( "Mouse released" ) );
+            m_MediaSong.m_Rating = wxMin( 5, wxMax( 0, m_RatingStart + ( ( m_RatingStartY - MousePos.y ) / 5 ) ) );
+            m_Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
+            m_PlayListCtrl->UpdatedRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
+        }
+    }
+//    else //if( event.GetEventType() == wxEVT_MOUSEWHEEL  )
+//    {
+//        guLogMessage( wxT( "Event Type: %i" ), event.GetEventType() );
+////        if( ( ( wxStaticText * ) event.GetEventObject() == m_EnRating ) ||
+////              ( ( wxStaticText * ) event.GetEventObject() == m_DiRating ) )
+//        if( event.GetWheelDelta() )
+//        {
+//            int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
+//            guLogMessage( wxT( "Rating: %i  Rotations:%i" ), m_RatingStart, Rotation );
+//        //    SetVolume( m_CurVolume + ( Rotation * 4 ) );
+//        }
+//    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnMouseCaptureLost( wxMouseCaptureLostEvent &event )
+{
+    guLogMessage( wxT( "Mouse capture lost" ) );
+    wxMouseEvent evt( wxEVT_LEFT_UP );
+    evt.SetEventObject( event.GetEventObject() );
+    evt.m_x = evt.m_y = -1;
+    OnRatingMouseEvents( evt );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -39,9 +39,10 @@ class TagInfo
     wxString        m_GenreName;
     wxString        m_ArtistName;
     wxString        m_AlbumName;
-    long            m_Track;
-    long            m_Year;
-    long            m_Length;
+    int             m_Track;
+    int             m_Year;
+    int             m_Length;
+    int             m_Bitrate;
     wxArrayString   m_TrackLabels;
     wxString        m_TrackLabelsStr;
     wxArrayString   m_ArtistLabels;
@@ -58,6 +59,7 @@ class TagInfo
         m_Track = 0;
         m_Year = 0;
         m_Length = 0;
+        m_Bitrate = 0;
         m_TrackLabels.Empty();
         m_TrackLabelsStr = wxEmptyString;
         m_ArtistLabels.Empty();

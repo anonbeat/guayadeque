@@ -55,6 +55,10 @@ class guTrackEditor : public wxDialog
     wxTextCtrl *        m_GenreTextCtrl;
     wxBitmapButton *    m_YeCopyButton;
     wxTextCtrl *        m_YearTextCtrl;
+    wxBitmapButton *    m_RaCopyButton;
+    wxBoxSizer *        m_RatingSizer;
+    wxStaticText *      m_EnRating;
+    wxStaticText *      m_DiRating;
 
     wxStaticBitmap *    m_PictureBitmap;
     wxBitmapButton *    m_AddPicButton;
@@ -62,6 +66,10 @@ class guTrackEditor : public wxDialog
     wxBitmapButton *    m_SavePicButton;
     //wxBitmapButton *    m_EditPicButton;
     wxBitmapButton *    m_CopyPicButton;
+    int                 m_CurrentRating;
+    int                 m_RatingStartY;
+    int                 m_RatingStart;
+    bool                m_RatingChanged;
 
     // Event handlers, overide them in your derived class
     void OnSongListBoxSelected( wxCommandEvent &event );
@@ -71,6 +79,7 @@ class guTrackEditor : public wxDialog
     void OnNuCopyButtonClicked( wxCommandEvent &event );
     void OnGeCopyButtonClicked( wxCommandEvent &event );
     void OnYeCopyButtonClicked( wxCommandEvent &event );
+    void OnRaCopyButtonClicked( wxCommandEvent &event );
 //		void OnGetYearButtonClicked( wxCommandEvent &event );
     void ReadItemData( void );
     void WriteItemData( void );
@@ -83,6 +92,11 @@ class guTrackEditor : public wxDialog
     void OnDelImageClicked( wxCommandEvent &event );
     void OnSaveImageClicked( wxCommandEvent &event );
     void OnCopyImageClicked( wxCommandEvent &event );
+
+    void SetCurrentRating( const int rating );
+    void OnRatingMouseEvents( wxMouseEvent &event );
+
+    DECLARE_EVENT_TABLE()
 
 public:
     guTrackEditor( wxWindow * parent, DbLibrary * Db, guTrackArray * Songs, guImagePtrArray * m_Images );
