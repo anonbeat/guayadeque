@@ -24,6 +24,7 @@
 #include "AudioScrobble.h"
 #include "MediaCtrl.h"
 #include "PlayList.h"
+#include "RatingCtrl.h"
 
 
 #include <wx/wx.h>
@@ -105,8 +106,7 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_AlbumLabel;
 	wxStaticText *          m_ArtistLabel;
 	wxStaticText *          m_YearLabel;
-	wxStaticText *          m_EnRating;
-	wxStaticText *          m_DiRating;
+    guRating *              m_Rating;
 	wxStaticText *          m_BitRateLabel;
 	wxBoxSizer *            m_BitRateSizer;
 	wxStaticText *          m_PositionLabel;
@@ -142,9 +142,6 @@ class guPlayerPanel : public wxPanel
 
     int                     m_BufferGaugeId;
 
-    int                     m_RatingStart;
-    int                     m_RatingStartY;
-
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
     void                OnLeftDClickPlayerCoverBitmap( wxMouseEvent &event );
@@ -169,8 +166,7 @@ class guPlayerPanel : public wxPanel
 
     void                OnAlbumNameDClicked( wxMouseEvent &event );
     void                OnArtistNameDClicked( wxMouseEvent &event );
-    void                OnRatingMouseEvents( wxMouseEvent &event );
-    void                OnMouseCaptureLost( wxMouseCaptureLostEvent &event );
+    void                OnRatingChanged( guRatingEvent &event );
 
   public:
                         guPlayerPanel( wxWindow* parent, DbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
@@ -213,8 +209,6 @@ class guPlayerPanel : public wxPanel
     void                SetBitRate( int bitrate );
 
 //		void                ClearRadioProxy( void );
-
-    DECLARE_EVENT_TABLE()
 
     friend class guSmartAddTracksThread;
 };

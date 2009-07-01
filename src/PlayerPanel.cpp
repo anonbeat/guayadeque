@@ -40,12 +40,6 @@
 #define GUPLAYER_SMART_ADDTRACKSPOS     4
 #define GUPLAYER_SMART_CACHEITEMS       100
 
-BEGIN_EVENT_TABLE(guPlayerPanel,wxPanel)
-    EVT_MOUSE_EVENTS( guPlayerPanel::OnRatingMouseEvents )
-    EVT_MOUSEWHEEL( guPlayerPanel::OnRatingMouseEvents )
-END_EVENT_TABLE()
-
-
 // -------------------------------------------------------------------------------- //
 guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
        : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL )
@@ -72,8 +66,6 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     m_LastCurPos = -1;
     m_LastPlayState = wxMEDIASTATE_STOPPED;
     m_LastTotalLen = -1;
-    m_RatingStart = 0;
-    //
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -179,18 +171,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
     m_BitRateSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_EnRating = new wxStaticText( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_EnRating->SetToolTip( _( "Show the rating of the current track" ) );
-	m_EnRating->SetFont( wxFont( 10, 74, 93, 90, false, wxT("Sans") ) );
-	m_EnRating->SetForegroundColour( wxColour( 255, 191, 0 ) );
-	m_BitRateSizer->Add( m_EnRating, 0, wxLEFT, 2 );
-
-	m_DiRating = new wxStaticText( this, wxID_ANY, wxT( "★★★★★" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_DiRating->SetToolTip( _( "Show the rating of the current track" ) );
-	m_DiRating->SetFont( wxFont( 10, 74, 93, 90, false, wxT("Sans") ) );
-	m_DiRating->SetForegroundColour( wxColour( 255, 191, 0 ) );
-	m_DiRating->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
-	m_BitRateSizer->Add( m_DiRating, 0, wxRIGHT, 2 );
+    m_Rating = new guRating( this, GURATING_STYLE_MID );
+	m_BitRateSizer->Add( m_Rating, 0, wxRIGHT, 2 );
 
 	m_BitRateSizer->Add( 0, 0, 1, wxALL, 5 );
 
@@ -279,9 +261,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	m_AlbumLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
-
-    m_EnRating->SetEventHandler( this );
-    m_DiRating->SetEventHandler( this );
+	m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 
     //
 	m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
@@ -416,18 +396,7 @@ void guPlayerPanel::SetTitleLabel( const wxString &trackname )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetRatingLabel( const int rating )
 {
-    //guLogMessage( wxT( "Set Rating to %i" ), rating );
-    int EnCount = 0;
-    int DiCount = 5;
-    wxString LabelStr = wxT( "★★★★★" );
-    if( rating > 0 && rating < 6 )
-    {
-        EnCount = rating;
-        DiCount = 5 - rating;
-    }
-    m_EnRating->SetLabel( LabelStr.Mid( 0, EnCount ) );
-    m_DiRating->SetLabel( LabelStr.Mid( 0, DiCount ) );
-    m_BitRateSizer->Layout();
+    m_Rating->SetRating( rating );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1411,60 +1380,14 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnRatingMouseEvents( wxMouseEvent &event )
+void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
 {
-    if( event.LeftIsDown() )
+    m_MediaSong.m_Rating = event.GetInt();
+    if( m_MediaSong.m_SongId > 0 )
     {
-        wxPoint MousePos = wxGetMousePosition();
-        if( event.LeftDown() && !HasCapture() &&
-            ( ( ( wxStaticText * ) event.GetEventObject() == m_EnRating ) ||
-              ( ( wxStaticText * ) event.GetEventObject() == m_DiRating ) ) )
-        {
-            m_RatingStartY = MousePos.y;
-            m_RatingStart = m_MediaSong.m_Rating;
-            CaptureMouse();
-            //guLogMessage( wxT( "Mouse captured" ) );
-        }
-        else if( HasCapture() )
-        {
-            //guLogMessage( wxT( "%i  %i" ), m_RatingStart, ( m_RatingStartY - MousePos.y ) / 5 );
-            SetRatingLabel( wxMin( 5, wxMax( 0, m_RatingStart + ( ( m_RatingStartY - MousePos.y ) / 5 ) ) ) );
-        }
+        m_Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
+        m_PlayListCtrl->UpdatedRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
     }
-    else if( event.LeftUp() )
-    {
-        wxPoint MousePos = wxGetMousePosition();
-        if( HasCapture() )
-        {
-            ReleaseMouse();
-            //guLogMessage( wxT( "Mouse released" ) );
-            m_MediaSong.m_Rating = wxMin( 5, wxMax( 0, m_RatingStart + ( ( m_RatingStartY - MousePos.y ) / 5 ) ) );
-            m_Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
-            m_PlayListCtrl->UpdatedRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
-        }
-    }
-//    else //if( event.GetEventType() == wxEVT_MOUSEWHEEL  )
-//    {
-//        guLogMessage( wxT( "Event Type: %i" ), event.GetEventType() );
-////        if( ( ( wxStaticText * ) event.GetEventObject() == m_EnRating ) ||
-////              ( ( wxStaticText * ) event.GetEventObject() == m_DiRating ) )
-//        if( event.GetWheelDelta() )
-//        {
-//            int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
-//            guLogMessage( wxT( "Rating: %i  Rotations:%i" ), m_RatingStart, Rotation );
-//        //    SetVolume( m_CurVolume + ( Rotation * 4 ) );
-//        }
-//    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnMouseCaptureLost( wxMouseCaptureLostEvent &event )
-{
-    guLogMessage( wxT( "Mouse capture lost" ) );
-    wxMouseEvent evt( wxEVT_LEFT_UP );
-    evt.SetEventObject( event.GetEventObject() );
-    evt.m_x = evt.m_y = -1;
-    OnRatingMouseEvents( evt );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -171,6 +171,8 @@
 		<Unit filename="src/RadioGenreEditor.h" />
 		<Unit filename="src/RadioPanel.cpp" />
 		<Unit filename="src/RadioPanel.h" />
+		<Unit filename="src/RatingCtrl.cpp" />
+		<Unit filename="src/RatingCtrl.h" />
 		<Unit filename="src/Shoutcast.cpp" />
 		<Unit filename="src/Shoutcast.h" />
 		<Unit filename="src/SoListBox.cpp" />

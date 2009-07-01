@@ -159,12 +159,14 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 
 	m_EnRating = new wxStaticText( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_EnRating->Wrap( -1 );
+	m_EnRating->SetFont( wxFont( 12, 74, 93, 90, false, wxT("Sans") ) );
 	m_EnRating->SetForegroundColour( wxColour( 255, 191, 0 ) );
 
 	m_RatingSizer->Add( m_EnRating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
 	m_DiRating = new wxStaticText( DetailPanel, wxID_ANY, wxT("★★★★★"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_DiRating->Wrap( -1 );
+	m_DiRating->SetFont( wxFont( 12, 74, 93, 90, false, wxT("Sans") ) );
 	m_DiRating->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
 
 	m_RatingSizer->Add( m_DiRating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
