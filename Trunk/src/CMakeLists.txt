@@ -104,6 +104,8 @@ ADD_EXECUTABLE( guayadeque
 	Google.h
 	Amazon.cpp
 	Amazon.h
+	RatingCtrl.cpp
+	RatingCtrl.h
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 

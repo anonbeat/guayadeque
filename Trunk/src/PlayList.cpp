@@ -118,12 +118,14 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
     //m_PlayBgColor  = m_TextFgColor;
     m_PlayFgColor  = m_SelBgColor;
-    m_RatingEnabled = wxColour( 255, 191, 0 );
-    m_RatingDisabled = wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT );
+    //m_RatingEnabled = wxColour( 255, 191, 0 );
+    //m_RatingDisabled = wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT );
 
     SetBackgroundColour( m_EveBgColor );
 
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
+    m_GreyStar   = new wxBitmap( guImage( guIMAGE_INDEX_grey_star_tiny ) );
+    m_YellowStar = new wxBitmap( guImage( guIMAGE_INDEX_yellow_star_tiny ) );
 
 	Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
@@ -160,6 +162,10 @@ guPlayList::~guPlayList()
 
     if( m_PlayBitmap )
       delete m_PlayBitmap;
+    if( m_GreyStar )
+      delete m_GreyStar;
+    if( m_YellowStar )
+      delete m_YellowStar;
 
 	Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
@@ -458,54 +464,44 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
     if( Item.m_SongId != guPLAYLIST_RADIOSTATION )
     {
         //y = dc.GetCharHeight();
+        int OffsetSecLine;
         dc.DrawText( Item.m_SongName, rect.x + 5, rect.y + 5 );
         //Font.SetPointSize( 7 );
         Font.SetStyle( wxFONTSTYLE_ITALIC );
         Font.SetWeight( wxFONTWEIGHT_NORMAL );
         dc.SetFont( Font );
-        dc.DrawText( Item.m_ArtistName + wxT( " - " ) + Item.m_AlbumName, rect.x + 5, rect.y + ( dc.GetCharHeight() + 10 ) );
+
+        OffsetSecLine = rect.y + ( dc.GetCharHeight() + 10 );
+
+        dc.DrawText( Item.m_ArtistName + wxT( " - " ) + Item.m_AlbumName, rect.x + 5, OffsetSecLine );
+
         // Get the area where the length will be writen
         TimeStr = LenToString( Item.m_Length );
         TextSize = dc.GetTextExtent( TimeStr );
         CutRect = rect;
-        //CutRect.x += CutRect.width - ( TextSize.GetWidth() + 6 );
         CutRect.x += CutRect.width - ( 50 + 6 );
         CutRect.width -= CutRect.x;
         OnDrawBackground( dc, CutRect, n );
 
+        // Draw Play bitmap
         if( n == ( size_t ) m_CurItem && m_PlayBitmap )
         {
-            // Draw Play bitmap
             dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 21, CutRect.y + 14, true );
         }
 
+        // Draw the Length string
         dc.DrawText( TimeStr, CutRect.x + ( ( 56 - TextSize.GetWidth() ) / 2 ), CutRect.y + 5 );
         //guLogMessage( wxT( "%i - %i" ), TextSize.GetWidth(), TextSize.GetHeight() );
+
         // Draw the rating
-        int EnCount = 0;
-        int DiCount = 5;
-        wxString LabelStr = wxT( "★★★★★" );
-        if( Item.m_Rating > 0 && Item.m_Rating < 6 )
+        int index;
+        OffsetSecLine += 2;
+        CutRect.x += 3;
+        for( index = 0; index < 5; index++ )
         {
-            EnCount = Item.m_Rating;
-            DiCount = 5 - EnCount;
+           dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_GreyStar : * m_YellowStar,
+                          CutRect.x + ( 10 * index ), OffsetSecLine, true );
         }
-        if( EnCount )
-        {
-            dc.SetTextForeground( m_RatingEnabled );
-            dc.DrawText( LabelStr.Mid( 0, EnCount ), CutRect.x + 3, CutRect.y + ( dc.GetCharHeight() + 10 ) );
-            TextSize = dc.GetTextExtent( LabelStr.Mid( 0, EnCount ) );
-        }
-        else
-        {
-            TextSize = wxSize( 0, 0 );
-        }
-
-        dc.SetTextForeground( m_RatingDisabled );
-        dc.DrawText( LabelStr.Mid( 0, DiCount ),
-                     CutRect.x + 3 + TextSize.GetWidth(),
-                     CutRect.y + ( dc.GetCharHeight() + 10 ) );
-
     }
     else
     {

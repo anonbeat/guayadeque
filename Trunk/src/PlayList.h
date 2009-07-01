@@ -49,6 +49,8 @@ class guPlayList : public wxVListBox
     wxPoint         m_DragStart;
     int             m_DragCount;
     wxBitmap *      m_PlayBitmap;
+    wxBitmap *      m_GreyStar;
+    wxBitmap *      m_YellowStar;
 
     wxColor         m_PlayFgColor;
     wxBrush         m_DragBgColor;
@@ -57,8 +59,8 @@ class guPlayList : public wxVListBox
     wxColor         m_OddBgColor;
     wxColor         m_EveBgColor;
     wxColor         m_TextFgColor;
-    wxColor         m_RatingEnabled;
-    wxColor         m_RatingDisabled;
+    //wxColor         m_RatingEnabled;
+    //wxColor         m_RatingDisabled;
 
     void            OnDragOver( const wxCoord x, const wxCoord y );
     void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
