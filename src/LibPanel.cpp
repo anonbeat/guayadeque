@@ -942,21 +942,23 @@ void guLibPanel::OnAlbumNameDClicked( wxCommandEvent &event )
     {
         // Reset all controls
         wxArrayString Words;
-        m_Db->SetTeFilters( Words );
         m_UpdateLock = true;
+        m_Db->SetTeFilters( Words );
         m_LabelsListCtrl->ReloadItems();
         m_GenreListCtrl->ReloadItems();
         m_ArtistListCtrl->ReloadItems();
-        m_AlbumListCtrl->ReloadItems();
-        m_SongListCtrl->ReloadItems();
         m_UpdateLock = false;
-
+        m_AlbumListCtrl->ReloadItems();
         m_AlbumListCtrl->SelectAlbumName( * AlbumName );
+        //m_SongListCtrl->ReloadItems();
+
         // The AlbumListCtrl dont call Selected event on selection change :(
         // so we simulate it here
-        m_Db->SetAlFilters( m_AlbumListCtrl->GetSelection() );
+        //m_Db->SetAlFilters( m_AlbumListCtrl->GetSelection() );
         delete AlbumName;
-        m_SongListCtrl->ReloadItems();
+        //m_SongListCtrl->ReloadItems();
+         // Reset all controls
+
     }
 }
 
@@ -967,13 +969,18 @@ void guLibPanel::OnArtistNameDClicked( wxCommandEvent &event )
     if( ArtistName )
     {
         // Reset all controls
-        wxMouseEvent mouseevent;
-        OnSearchCancelled( mouseevent );
-
+        wxArrayString Words;
+        m_UpdateLock = true;
+        m_Db->SetTeFilters( Words );
+        m_LabelsListCtrl->ReloadItems();
+        m_GenreListCtrl->ReloadItems();
+        m_ArtistListCtrl->ReloadItems();
         m_ArtistListCtrl->SelectArtistName( * ArtistName );
-        delete ArtistName;
+        m_Db->SetAlFilters( m_AlbumListCtrl->GetSelection() );
         m_AlbumListCtrl->ReloadItems();
         m_SongListCtrl->ReloadItems();
+        m_UpdateLock = false;
+        delete ArtistName;
     }
 }
 
