@@ -1,4 +1,5 @@
 
+  * Fixed a bug in player. Now Prev Track when stopped update the info
   * Now you can edit the rating of a track from the Player current track
     info. To do it move the mouse up and down while clicking on rating starts.
   * Added bitrate, rating, playcount, lastplay, added time  to tracks database
