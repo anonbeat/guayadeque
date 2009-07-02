@@ -23,9 +23,9 @@
 
 #include <wx/control.h>
 
-#define GURATING_STYLE_BIG      0
+#define GURATING_STYLE_TINY     0
 #define GURATING_STYLE_MID      1
-#define GURATING_STYLE_TINY     2
+#define GURATING_STYLE_BIG      2
 
 class guRatingEvent : public wxNotifyEvent
 {

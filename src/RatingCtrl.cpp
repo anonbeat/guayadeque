@@ -25,6 +25,10 @@
 
 #include <wx/dcclient.h>
 
+#define GURATING_IMAGE_MINSIZE      8
+#define GURATING_IMAGE_SEPARATION   1
+#define GURATING_IMAGE_SIZE         GURATING_IMAGE_MINSIZE + GURATING_IMAGE_SEPARATION
+
 DEFINE_EVENT_TYPE( guEVT_RATING_CHANGED )
 
 BEGIN_EVENT_TABLE( guRating, wxControl )
@@ -39,8 +43,8 @@ guRating::guRating( wxWindow * parent, const int style ) : wxControl( parent, wx
     m_Rating = wxNOT_FOUND;
     m_Style = style;
 
-    m_GreyStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_grey_star_big + style ) ) );
-    m_YellowStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_yellow_star_big + style ) ) );
+    m_GreyStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_grey_star_tiny + style ) ) );
+    m_YellowStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_yellow_star_tiny + style ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -56,7 +60,6 @@ guRating::~guRating()
 void guRating::SetRating( const int rating )
 {
     m_Rating = rating;
-    guLogMessage( wxT( "Rating Set to %i" ), rating );
     Refresh();
     Update();
 }
@@ -71,8 +74,8 @@ int guRating::GetRating( void )
 wxSize guRating::DoGetBestSize( void ) const
 {
     wxSize RetVal;
-    RetVal.x = 5 * ( ( m_Style * 2 ) + 12 );
-    RetVal.y = ( m_Style * 2 ) + 12;
+    RetVal.x = 4 + ( 5 * ( ( m_Style * 2 ) + GURATING_IMAGE_SIZE ) );
+    RetVal.y = ( m_Style * 2 ) + 15;
     return RetVal;
 }
 
@@ -84,11 +87,12 @@ void guRating::OnPaint( wxPaintEvent &event )
 
     dc.SetBackgroundMode( wxTRANSPARENT );
     int x;
-    //int y = 2;
+    int w = ( ( m_Style * 2 ) + GURATING_IMAGE_SIZE );
+
     for( x = 0; x < 5; x++ )
     {
        dc.DrawBitmap( ( x >= m_Rating ) ? * m_GreyStar : * m_YellowStar,
-                      2 + ( 10 * x ), 2, true );
+                      3 + ( w * x ), 2, true );
     }
 }
 
@@ -102,7 +106,8 @@ void guRating::OnMouseEvents( wxMouseEvent &event )
     }
     else if( event.LeftIsDown() )
     {
-        m_Rating = ( wxMax( 0, event.m_x - 2 ) / 10 ) + 1;
+        int w = ( ( m_Style * 2 ) + 9 );
+        m_Rating = wxMin( 5, ( wxMax( 0, event.m_x - 2 ) / w ) + 1 );
         //guLogMessage( wxT( "Clicked %i %i" ), event.m_x, m_Rating );
     }
     if( SavedRating != m_Rating )
