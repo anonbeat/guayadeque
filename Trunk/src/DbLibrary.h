@@ -241,7 +241,7 @@ class DbLibrary {
     wxString            FiltersSQL( int Level );
 
 
-    void                FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes );
+    void inline         FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes );
     int                 GetRadioFiltersCount( void ) const;
     wxString            RadioFiltersSQL( void );
 

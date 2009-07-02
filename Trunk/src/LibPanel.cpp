@@ -941,8 +941,15 @@ void guLibPanel::OnAlbumNameDClicked( wxCommandEvent &event )
     if( AlbumName )
     {
         // Reset all controls
-        wxMouseEvent mouseevent;
-        OnSearchCancelled( mouseevent );
+        wxArrayString Words;
+        m_Db->SetTeFilters( Words );
+        m_UpdateLock = true;
+        m_LabelsListCtrl->ReloadItems();
+        m_GenreListCtrl->ReloadItems();
+        m_ArtistListCtrl->ReloadItems();
+        m_AlbumListCtrl->ReloadItems();
+        m_SongListCtrl->ReloadItems();
+        m_UpdateLock = false;
 
         m_AlbumListCtrl->SelectAlbumName( * AlbumName );
         // The AlbumListCtrl dont call Selected event on selection change :(

@@ -2041,7 +2041,7 @@ void DbLibrary::GetPlayLists( guListItems * PlayLists )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes )
+void inline DbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes )
 {
   Song->m_SongId     = dbRes->GetInt( 0 );
   Song->m_SongName   = dbRes->GetString( 1 );
