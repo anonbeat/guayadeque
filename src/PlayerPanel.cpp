@@ -1093,7 +1093,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     wxFileOffset CurPos;
     guTrack * PrevItem;
 
-//    wxMessageBox( wxT("OnPrevTrackButtonClick"), wxT("Event") );
+    // If we are already in the first Item start again the song from the begining
     State = m_MediaCtrl->GetState();
     int CurItem = m_PlayListCtrl->GetCurItem();
     if( ( CurItem == 0 ) && ( State == wxMEDIASTATE_PLAYING ) )
@@ -1129,6 +1129,10 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
                     LoadMedia( m_MediaSong.m_FileName );
                 }
             }
+        }
+        else
+        {
+            SetCurrentTrack( PrevItem );
         }
         m_PlayListCtrl->UpdateView();
     }
