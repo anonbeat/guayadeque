@@ -163,6 +163,8 @@
 		<Unit filename="src/OnlineLinks.h" />
 		<Unit filename="src/PlayList.cpp" />
 		<Unit filename="src/PlayList.h" />
+		<Unit filename="src/PlayListPanel.cpp" />
+		<Unit filename="src/PlayListPanel.h" />
 		<Unit filename="src/PlayerPanel.cpp" />
 		<Unit filename="src/PlayerPanel.h" />
 		<Unit filename="src/Preferences.cpp" />

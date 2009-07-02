@@ -106,6 +106,8 @@ ADD_EXECUTABLE( guayadeque
 	Amazon.h
 	RatingCtrl.cpp
 	RatingCtrl.h
+	PlayListPanel.cpp
+	PlayListPanel.h
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 

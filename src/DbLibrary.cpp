@@ -2962,6 +2962,15 @@ void DbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating )
 }
 
 // -------------------------------------------------------------------------------- //
+void DbLibrary::SetTrackPlayCount( const int songid, const int playcount )
+{
+  wxString query;
+  query = wxString::Format( wxT( "UPDATE songs SET song_playcount = %u, song_lastplay = CURRENT_TIMESTAMP WHERE song_id = %u;" ),
+                            playcount, songid );
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
 guCoverInfos DbLibrary::GetEmptyCovers( void )
 {
     wxString query;
