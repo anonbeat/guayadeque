@@ -721,7 +721,6 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     // Set the Current Song
     m_MediaSong = * Song;
-    guLogMessage( wxT( "PlayerRating: %i" ), Song->m_Rating );
 
     // Update the Current Playing Song Info
     SetTitleLabel( m_MediaSong.m_SongName );
