@@ -39,6 +39,12 @@ WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
+#define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
+               "song_number, song_pathid, song_filename, song_year, "\
+               "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "\
+               "FROM songs " )
+
+
 // -------------------------------------------------------------------------------- //
 // Various functions
 // -------------------------------------------------------------------------------- //
@@ -485,7 +491,7 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
                       "song_name varchar(255), song_albumid INTEGER, song_artistid INTEGER, song_genreid INTEGER, "
                       "song_filename varchar(255), song_pathid INTEGER, song_number INTEGER(3), song_year INTEGER(4), "
                       "song_length INTEGER, song_bitrate INTEGER, song_rating INTEGER DEFAULT -1, song_playcount INTEGER, "
-                      "song_addedtime TEXT DEFAULT CURRENT_TIMESTAMP, song_lastplay TEXT );" ) );
+                      "song_addedtime INTEGER, song_lastplay INTEGER );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""song_id"" on songs (song_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_name"" on songs (song_name ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_albumid"" on songs (song_albumid ASC);" ) );
@@ -1185,8 +1191,8 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
   }
   else
   {
-    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid ) "\
-                               "VALUES( NULL, %u )" ), PathId );
+    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_addedtime ) "\
+                               "VALUES( NULL, %u, %u )" ), PathId, wxDateTime::GetTimeNow() );
     if( ExecuteUpdate( query ) == 1 )
     {
       * SongId = m_Db.GetLastRowId().GetLo();
@@ -2057,8 +2063,8 @@ void inline DbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbR
   Song->m_Bitrate    = dbRes->GetInt( 10 );
   Song->m_Rating     = dbRes->GetInt( 11 );
   Song->m_PlayCount  = dbRes->GetInt( 12 );
-  Song->m_LastPlay   = dbRes->GetDateTime( 13 );
-  Song->m_AddedTime  = dbRes->GetDateTime( 14 );
+  Song->m_LastPlay   = dbRes->GetInt( 13 );
+  Song->m_AddedTime  = dbRes->GetInt( 14 );
 //  guLogMessage( wxT( "Rating: %i" ), Song->m_Rating );
 }
 
@@ -2074,11 +2080,8 @@ int DbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
   {
     subquery = ArrayIntToStrList( Labels );
 
-    query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, "
-                 "song_albumid, song_length, song_number, song_pathid, song_filename, "
-                 "song_year, song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-                 "FROM songs WHERE " );
-    query += wxT( "( (song_artistid IN ( SELECT settag_artistid FROM settags WHERE " \
+    query = GU_TRACKS_QUERYSTR;
+    query += wxT( "WHERE ( (song_artistid IN ( SELECT settag_artistid FROM settags WHERE " \
                   "settag_tagid IN " ) + subquery + wxT( " and settag_artistid > 0 ) ) OR" );
     query += wxT( " (song_albumid IN ( SELECT settag_albumid FROM settags WHERE " \
                   "settag_tagid IN " ) + subquery + wxT( " and settag_albumid > 0 ) ) OR" );
@@ -2110,10 +2113,7 @@ int DbLibrary::GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs )
 
   if( Genres.Count() )
   {
-    query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, "
-                 "song_length, song_number, song_pathid, song_filename, song_year, "
-                 "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-                 "FROM songs WHERE song_genreid IN " );
+    query = GU_TRACKS_QUERYSTR wxT( " WHERE song_genreid IN " );
     query += ArrayIntToStrList( Genres );
     //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
     query += wxT( " ORDER BY song_albumid, song_number;" );
@@ -2139,10 +2139,7 @@ int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
   guTrack * Song;
   if( Artists.Count() )
   {
-    query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "
-                 "song_number, song_pathid, song_filename, song_year, "
-                 "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-                 "FROM songs WHERE song_artistid IN " );
+    query = GU_TRACKS_QUERYSTR wxT( " WHERE song_artistid IN " );
     query += ArrayIntToStrList( Artists );
     //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
     query += wxT( " ORDER BY song_albumid, song_number;" );
@@ -2190,10 +2187,7 @@ int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs )
   guTrack * Song;
   if( Albums.Count() )
   {
-    query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, "
-                 "song_length, song_number, song_pathid, song_filename, song_year, "
-                 "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-                 "FROM songs WHERE song_albumid IN " );
+    query = GU_TRACKS_QUERYSTR wxT( " WHERE song_albumid IN " );
     query += ArrayIntToStrList( Albums );
     //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
     query += wxT( " ORDER BY song_albumid, song_number;" );
@@ -2230,10 +2224,7 @@ int DbLibrary::GetRandomTracks( guTrackArray * Tracks )
   if( !TrackCnt )
     return 0;
 
-  query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "
-               "song_number, song_pathid, song_filename, song_year, "
-               "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-               "FROM songs " );
+  query = GU_TRACKS_QUERYSTR;
   query += wxT( " LIMIT %u, 1;" );
 
   query = wxString::Format( query, guRandom( TrackCnt ) );
@@ -2397,10 +2388,7 @@ guTrack * DbLibrary::FindSong( const wxString &Artist, const wxString &Track )
   escape_query_str( &ArtistName );
   escape_query_str( &TrackName );
 
-  query = wxT( "SELECT song_id, song_name, song_artistid, artist_name, song_albumid, song_length, "
-               "song_number, song_pathid, song_filename, song_year, "
-               "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-               "FROM songs, artists " );
+  query = GU_TRACKS_QUERYSTR wxT( ", artists " );
 
   query += wxString::Format( wxT( "WHERE artist_id = song_artistid AND UPPER(artist_name) = '%s' AND UPPER(song_name) = '%s' LIMIT 1;" ), ArtistName.c_str(), TrackName.c_str() );
 
@@ -2444,11 +2432,9 @@ int DbLibrary::FindTrackFile( const wxString &filename, guTrack * song )
     Path = filename.AfterLast( '/' );
     escape_query_str( &Path );
 
-    query = wxString::Format( wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, "
-             "song_albumid, song_length, song_number, song_pathid, song_filename, "
-             "song_year, song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-             "FROM songs WHERE song_pathid = %u AND song_filename = '%s' LIMIT 1;" ),
-             PathId, Path.c_str() );
+    query = GU_TRACKS_QUERYSTR +
+            wxString::Format( wxT( " WHERE song_pathid = %u AND song_filename = '%s' LIMIT 1;" ),
+                              PathId, Path.c_str() );
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
@@ -2470,10 +2456,7 @@ int DbLibrary::GetSongs( wxArrayInt SongIds, guTrackArray * Songs )
   wxSQLite3ResultSet dbRes;
   guTrack * Song;
 
-  query = wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "
-               "song_number, song_pathid, song_filename, song_year, "
-               "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-               "FROM songs " );
+  query = GU_TRACKS_QUERYSTR;
   query += wxT( "WHERE song_id IN " ) + ArrayIntToStrList( SongIds );
   // TODO : Allow the user to select the order of the tracks
   query += wxT( " ORDER BY song_albumid, song_number;" );
@@ -2499,10 +2482,7 @@ int DbLibrary::GetSongs( guTrackArray * Songs )
   guTrack * Song;
   //guLogMessage( wxT( "DbLibrary::GetSongs" ) );
 
-  query = wxT( "SELECT DISTINCT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "
-               "song_number, song_pathid, song_filename, song_year, "
-               "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime "
-               "FROM songs " );
+  query = GU_TRACKS_QUERYSTR;
   if( GetFiltersCount() )
     query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
   //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
@@ -2965,8 +2945,8 @@ void DbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating )
 void DbLibrary::SetTrackPlayCount( const int songid, const int playcount )
 {
   wxString query;
-  query = wxString::Format( wxT( "UPDATE songs SET song_playcount = %u, song_lastplay = CURRENT_TIMESTAMP WHERE song_id = %u;" ),
-                            playcount, songid );
+  query = wxString::Format( wxT( "UPDATE songs SET song_playcount = %u, song_lastplay = %u WHERE song_id = %u;" ),
+                            playcount, wxDateTime::GetTimeNow(), songid );
   ExecuteUpdate( query );
 }
 

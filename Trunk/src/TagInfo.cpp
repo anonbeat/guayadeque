@@ -38,6 +38,9 @@ using namespace TagLib;
 // -------------------------------------------------------------------------------- //
 wxImage * GetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag )
 {
+    if( !id3v2Tag )
+        return NULL;
+
 	TagLib::ID3v2::FrameList frameList = id3v2Tag->frameList( "APIC" );
 	if( !frameList.isEmpty() )
 	{
@@ -71,6 +74,8 @@ wxImage * GetCoverArtFromID3v2( TagLib::ID3v2::Tag * id3v2Tag )
 // -------------------------------------------------------------------------------- //
 bool SetCoverArtToID3v2( TagLib::ID3v2::Tag * id3v2Tag, wxImage * coverimage )
 {
+	if( !id3v2Tag )
+        return false;
 	bool RetVal = false;
     TagLib::ID3v2::AttachedPictureFrame * PicFrame;
     if( coverimage )

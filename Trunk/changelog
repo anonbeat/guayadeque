@@ -1,4 +1,5 @@
 
+  * Fixed crash when trying to read tags from a missing file.
   * The track playcount is updated when the track have been played at least
     the half of its length.
   * Fixed a bug in player. Now Prev Track when stopped update the info
