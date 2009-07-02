@@ -70,12 +70,12 @@
 #include "./images/volume_low_png.h"
 #include "./images/volume_medium_png.h"
 #include "./images/volume_muted_png.h"
-#include "./images/grey_star_big.h"
-#include "./images/grey_star_mid.h"
 #include "./images/grey_star_tiny.h"
-#include "./images/yellow_star_big.h"
-#include "./images/yellow_star_mid.h"
+#include "./images/grey_star_mid.h"
+#include "./images/grey_star_big.h"
 #include "./images/yellow_star_tiny.h"
+#include "./images/yellow_star_mid.h"
+#include "./images/yellow_star_big.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -133,12 +133,12 @@ guImage_Item guImage_Items[] = {
     { guImage_volume_low,           sizeof( guImage_volume_low ),           wxBITMAP_TYPE_PNG },
     { guImage_volume_medium,        sizeof( guImage_volume_medium ),        wxBITMAP_TYPE_PNG },
     { guImage_volume_muted,         sizeof( guImage_volume_muted ),         wxBITMAP_TYPE_PNG },
-    { guImage_grey_star_big,        sizeof( guImage_grey_star_big ),        wxBITMAP_TYPE_PNG },
-    { guImage_grey_star_mid,        sizeof( guImage_grey_star_mid ),        wxBITMAP_TYPE_PNG },
     { guImage_grey_star_tiny,       sizeof( guImage_grey_star_tiny ),       wxBITMAP_TYPE_PNG },
-    { guImage_yellow_star_big,      sizeof( guImage_yellow_star_big ),      wxBITMAP_TYPE_PNG },
+    { guImage_grey_star_mid,        sizeof( guImage_grey_star_mid ),        wxBITMAP_TYPE_PNG },
+    { guImage_grey_star_big,        sizeof( guImage_grey_star_big ),        wxBITMAP_TYPE_PNG },
+    { guImage_yellow_star_tiny,     sizeof( guImage_yellow_star_tiny ),     wxBITMAP_TYPE_PNG },
     { guImage_yellow_star_mid,      sizeof( guImage_yellow_star_mid ),      wxBITMAP_TYPE_PNG },
-    { guImage_yellow_star_tiny,     sizeof( guImage_yellow_star_tiny ),     wxBITMAP_TYPE_PNG }
+    { guImage_yellow_star_big,      sizeof( guImage_yellow_star_big ),      wxBITMAP_TYPE_PNG }
 };
 
 

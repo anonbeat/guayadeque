@@ -29,12 +29,6 @@
 #include "wx/datetime.h"
 #include <wx/notebook.h>
 
-BEGIN_EVENT_TABLE(guTrackEditor,wxDialog)
-    EVT_MOUSE_EVENTS( guTrackEditor::OnRatingMouseEvents )
-END_EVENT_TABLE()
-
-
-
 // -------------------------------------------------------------------------------- //
 guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs, guImagePtrArray * images ) :
                wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 400 ), wxDEFAULT_DIALOG_STYLE )
@@ -155,24 +149,8 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	RaStaticText->Wrap( -1 );
 	DataFlexSizer->Add( RaStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_RatingSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	m_EnRating = new wxStaticText( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_EnRating->Wrap( -1 );
-	m_EnRating->SetFont( wxFont( 12, 74, 93, 90, false, wxT("Sans") ) );
-	m_EnRating->SetForegroundColour( wxColour( 255, 191, 0 ) );
-
-	m_RatingSizer->Add( m_EnRating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
-
-	m_DiRating = new wxStaticText( DetailPanel, wxID_ANY, wxT("★★★★★"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_DiRating->Wrap( -1 );
-	m_DiRating->SetFont( wxFont( 12, 74, 93, 90, false, wxT("Sans") ) );
-	m_DiRating->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
-
-	m_RatingSizer->Add( m_DiRating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
-
-	DataFlexSizer->Add( m_RatingSizer, 1, wxEXPAND, 5 );
-
+    m_Rating = new guRating( DetailPanel, GURATING_STYLE_BIG );
+	DataFlexSizer->Add( m_Rating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	DetailPanel->SetSizer( DataFlexSizer );
 	DetailPanel->Layout();
@@ -277,8 +255,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
-    m_EnRating->SetEventHandler( this );
-    m_DiRating->SetEventHandler( this );
+    m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guTrackEditor::OnRatingChanged ), NULL, this );
 
 	m_AddPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
@@ -349,7 +326,7 @@ void guTrackEditor::ReadItemData( void )
         m_NumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Number ) );
         m_GenreTextCtrl->SetValue( Track->m_GenreName );
         m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
-        SetCurrentRating( Track->m_Rating );
+        m_Rating->SetRating( Track->m_Rating );
     }
     else
     {
@@ -359,7 +336,7 @@ void guTrackEditor::ReadItemData( void )
         m_NumberTextCtrl->SetValue( wxEmptyString );
         m_GenreTextCtrl->SetValue( wxEmptyString );
         m_YearTextCtrl->SetValue( wxEmptyString );
-        SetCurrentRating( -1 );
+        m_Rating->SetRating( -1 );
     }
     RefreshImage();
 }
@@ -383,7 +360,7 @@ void guTrackEditor::WriteItemData( void )
         if( m_YearTextCtrl->IsModified() )
            m_YearTextCtrl->GetLineText( 0 ).ToLong( ( long * ) &( * m_Items )[ m_CurItem ].m_Year );
         if( m_RatingChanged )
-            ( * m_Items )[ m_CurItem ].m_Rating = m_CurrentRating;
+            ( * m_Items )[ m_CurItem ].m_Rating = m_Rating->GetRating();
     }
 }
 
@@ -458,7 +435,7 @@ void guTrackEditor::OnRaCopyButtonClicked( wxCommandEvent& event )
     int index;
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
-        ( * m_Items )[ index ].m_Rating = m_CurrentRating;
+        ( * m_Items )[ index ].m_Rating = m_Rating->GetRating();
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -484,56 +461,10 @@ void guTrackEditor::OnRaCopyButtonClicked( wxCommandEvent& event )
 //}
 
 // -------------------------------------------------------------------------------- //
-void guTrackEditor::OnRatingMouseEvents( wxMouseEvent &event )
+void guTrackEditor::OnRatingChanged( guRatingEvent &event )
 {
-    if( event.LeftIsDown() )
-    {
-        wxPoint MousePos = wxGetMousePosition();
-        if( event.LeftDown() && !HasCapture() &&
-            ( ( ( wxStaticText * ) event.GetEventObject() == m_EnRating ) ||
-              ( ( wxStaticText * ) event.GetEventObject() == m_DiRating ) ) )
-        {
-            m_RatingStartY = MousePos.y;
-            m_RatingStart = m_CurrentRating;
-            CaptureMouse();
-            //guLogMessage( wxT( "Mouse captured" ) );
-        }
-        else if( HasCapture() )
-        {
-            //guLogMessage( wxT( "%i  %i" ), m_RatingStart, ( m_RatingStartY - MousePos.y ) / 5 );
-            SetCurrentRating( wxMin( 5, wxMax( 0, m_RatingStart + ( ( m_RatingStartY - MousePos.y ) / 5 ) ) ) );
-        }
-    }
-    else if( event.LeftUp() )
-    {
-        wxPoint MousePos = wxGetMousePosition();
-        if( HasCapture() )
-        {
-            ReleaseMouse();
-            //guLogMessage( wxT( "Mouse released" ) );
-            SetCurrentRating( wxMin( 5, wxMax( 0, m_RatingStart + ( ( m_RatingStartY - MousePos.y ) / 5 ) ) ) );
-            m_RatingChanged = true;
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guTrackEditor::SetCurrentRating( const int rating )
-{
-    //guLogMessage( wxT( "Set Rating to %i" ), rating );
-    m_CurrentRating = rating;
-    int EnCount = 0;
-    int DiCount = 5;
-    wxString LabelStr = wxT( "★★★★★" );
-    if( rating > 0 && rating < 6 )
-    {
-        EnCount = rating;
-        DiCount = 5 - rating;
-    }
-    m_EnRating->SetLabel( LabelStr.Mid( 0, EnCount ) );
-    m_DiRating->SetLabel( LabelStr.Mid( 0, DiCount ) );
-    m_RatingSizer->Layout();
-    m_RatingChanged = false;
+    m_RatingChanged = true;
+    m_CurrentRating = event.GetInt();
 }
 
 // -------------------------------------------------------------------------------- //

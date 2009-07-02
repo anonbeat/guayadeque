@@ -21,12 +21,13 @@
 #ifndef TRACKEDIT_H
 #define TRACKEDIT_H
 
+#include "DbLibrary.h"
+#include "RatingCtrl.h"
+
 #include <wx/wx.h>
 #include <wx/notebook.h>
 #include <wx/statline.h>
 #include <wx/splitter.h>
-
-#include "DbLibrary.h"
 
 WX_DEFINE_ARRAY_PTR( wxImage *, guImagePtrArray );
 // -------------------------------------------------------------------------------- //
@@ -56,9 +57,7 @@ class guTrackEditor : public wxDialog
     wxBitmapButton *    m_YeCopyButton;
     wxTextCtrl *        m_YearTextCtrl;
     wxBitmapButton *    m_RaCopyButton;
-    wxBoxSizer *        m_RatingSizer;
-    wxStaticText *      m_EnRating;
-    wxStaticText *      m_DiRating;
+    guRating *          m_Rating;
 
     wxStaticBitmap *    m_PictureBitmap;
     wxBitmapButton *    m_AddPicButton;
@@ -93,10 +92,7 @@ class guTrackEditor : public wxDialog
     void OnSaveImageClicked( wxCommandEvent &event );
     void OnCopyImageClicked( wxCommandEvent &event );
 
-    void SetCurrentRating( const int rating );
-    void OnRatingMouseEvents( wxMouseEvent &event );
-
-    DECLARE_EVENT_TABLE()
+    void OnRatingChanged( guRatingEvent &event );
 
 public:
     guTrackEditor( wxWindow * parent, DbLibrary * Db, guTrackArray * Songs, guImagePtrArray * m_Images );
