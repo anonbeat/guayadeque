@@ -65,8 +65,8 @@ class guTrack
     int             m_Bitrate;
     int             m_Rating;
     int             m_PlayCount;
-    wxDateTime      m_LastPlay;
-    wxDateTime      m_AddedTime;
+    int             m_LastPlay;
+    int             m_AddedTime;
     int             m_CoverId;
     guTrackMode     m_TrackMode;          // Indicate how the track was created
 

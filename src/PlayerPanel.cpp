@@ -339,6 +339,7 @@ guPlayerPanel::~guPlayerPanel()
 
 	m_AlbumLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+	m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 
     //
 	m_PlayerCoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
@@ -1401,6 +1402,10 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
     {
         m_Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
         m_PlayListCtrl->UpdatedRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
+    }
+    else
+    {
+        m_Rating->SetRating( -1 );
     }
 }
 

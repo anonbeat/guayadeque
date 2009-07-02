@@ -22,6 +22,7 @@
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
+#include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
 guTaListBox::guTaListBox( wxWindow * parent, DbLibrary * NewDb, wxString Label ) : guListBox( parent, NewDb, Label )
@@ -45,6 +46,7 @@ void guTaListBox::GetItemsList( void )
 {
     m_Items.Add( new guListItem( 0, _( "All" ) ) );
     m_Db->GetLabels( &m_Items );
+    guLogMessage( wxT( "Labels ReloadItems" ) );
 }
 
 // -------------------------------------------------------------------------------- //

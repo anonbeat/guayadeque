@@ -953,6 +953,7 @@ void guRadioPanel::OnSelectStations( bool enqueue )
                     NewSong->m_FileName = PlayList[ index ].m_Url;
                     NewSong->m_SongName = PlayList[ index ].m_Name;
                     NewSong->m_Length = 0;
+                    NewSong->m_Rating = -1;
                     //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
                     NewSong->m_CoverId = 0;
                     NewSong->m_Year = 0;

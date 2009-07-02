@@ -47,6 +47,7 @@ void guArListBox::GetItemsList( void )
 {
     m_Items.Add( new guListItem( 0, _( "All" ) ) );
     m_Db->GetArtists( &m_Items );
+    guLogMessage( wxT( "Artists ReloadItems" ) );
 }
 
 // -------------------------------------------------------------------------------- //
