@@ -339,6 +339,8 @@ class DbLibrary {
     void                SetTrackRating( const int songid, const int rating );
     void                SetTracksRating( const wxArrayInt &songids, const int rating );
 
+    void                SetTrackPlayCount( const int songid, const int playcount );
+
 
     wxSQLite3ResultSet  ExecuteQuery(  const wxSQLite3StatementBuffer &query );
     int                 ExecuteUpdate( const wxString &query );

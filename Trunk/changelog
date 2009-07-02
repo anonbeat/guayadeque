@@ -1,4 +1,6 @@
 
+  * The track playcount is updated when the track have been played at least
+    the half of its length.
   * Fixed a bug in player. Now Prev Track when stopped update the info
   * Now you can edit the rating of a track from the Player current track
     info. To do it move the mouse up and down while clicking on rating starts.

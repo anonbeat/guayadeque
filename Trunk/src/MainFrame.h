@@ -29,6 +29,7 @@
 //#include "LibUpdate.h"
 #include "LyricsPanel.h"
 #include "PlayerPanel.h"
+#include "PlayListPanel.h"
 #include "RadioPanel.h"
 #include "StatusBar.h"
 #include "SplashWin.h"
@@ -53,6 +54,7 @@ class guMainFrame : public wxFrame
     guRadioPanel *      m_RadioPanel;
     guLastFMPanel *     m_LastFMPanel;
     guLyricsPanel *     m_LyricsPanel;
+    guPlayListPanel *   m_PlayListPanel;
     guTaskBarIcon *     m_TaskBarIcon;
     guStatusBar *       m_MainStatusBar;
 
