@@ -43,6 +43,8 @@ class TagInfo
     int             m_Year;
     int             m_Length;
     int             m_Bitrate;
+    int             m_PlayCount;
+    int             m_Rating;
     wxArrayString   m_TrackLabels;
     wxString        m_TrackLabelsStr;
     wxArrayString   m_ArtistLabels;

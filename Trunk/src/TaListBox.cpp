@@ -46,7 +46,6 @@ void guTaListBox::GetItemsList( void )
 {
     m_Items.Add( new guListItem( 0, _( "All" ) ) );
     m_Db->GetLabels( &m_Items );
-    guLogMessage( wxT( "Labels ReloadItems" ) );
 }
 
 // -------------------------------------------------------------------------------- //

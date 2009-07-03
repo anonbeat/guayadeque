@@ -38,7 +38,12 @@
 
 #define GU_MAX_QUERY_ROWS    100
 
-enum  guTrackMode {
+// PLAYLISTS
+#define GUPLAYLIST_STATIC       0
+#define GUPLAYLIST_DYNAMIC      1
+
+
+enum guTrackMode {
     guTRACK_MODE_USER,
     guTRACK_MODE_SMART,
     guTRACK_MODE_RANDOM,
@@ -283,7 +288,8 @@ class DbLibrary {
     void                GetArtists( guListItems * Artists, bool FullList = false );
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
     wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );
-    //void                GetAlbums( guListItems * Albums );
+
+    int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &songs );
     void                GetPlayLists( guListItems * PlayLists );
 
     void                GetPaths( guListItems * Paths, bool FullList = false );
