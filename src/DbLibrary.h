@@ -290,7 +290,7 @@ class DbLibrary {
     wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );
 
     int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &songs );
-    void                GetPlayLists( guListItems * PlayLists );
+    void                GetPlayLists( guListItems * PlayLists, const int type );
 
     void                GetPaths( guListItems * Paths, bool FullList = false );
 

@@ -77,7 +77,8 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_grey_star_big,
     guIMAGE_INDEX_yellow_star_tiny,
     guIMAGE_INDEX_yellow_star_mid,
-    guIMAGE_INDEX_yellow_star_big
+    guIMAGE_INDEX_yellow_star_big,
+    guIMAGE_INDEX_track
 };
 
 

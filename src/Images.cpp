@@ -76,6 +76,7 @@
 #include "./images/yellow_star_tiny.h"
 #include "./images/yellow_star_mid.h"
 #include "./images/yellow_star_big.h"
+#include "./images/track_png.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -138,7 +139,8 @@ guImage_Item guImage_Items[] = {
     { guImage_grey_star_big,        sizeof( guImage_grey_star_big ),        wxBITMAP_TYPE_PNG },
     { guImage_yellow_star_tiny,     sizeof( guImage_yellow_star_tiny ),     wxBITMAP_TYPE_PNG },
     { guImage_yellow_star_mid,      sizeof( guImage_yellow_star_mid ),      wxBITMAP_TYPE_PNG },
-    { guImage_yellow_star_big,      sizeof( guImage_yellow_star_big ),      wxBITMAP_TYPE_PNG }
+    { guImage_yellow_star_big,      sizeof( guImage_yellow_star_big ),      wxBITMAP_TYPE_PNG },
+    { guImage_track,                sizeof( guImage_track ),                wxBITMAP_TYPE_PNG }
 };
 
 

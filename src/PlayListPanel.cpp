@@ -20,14 +20,102 @@
 // -------------------------------------------------------------------------------- //
 #include "PlayListPanel.h"
 
+#include "DbLibrary.h"
+#include "Images.h"
+#include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-// guPLNamesListBox
-// -------------------------------------------------------------------------------- //
-//class guPLNamesListBox : public guListBox
-//{
-//};
+class guPLNamesData : public wxTreeItemData
+{
+  private :
+    int m_Id;
+    int m_Type;
+  public :
+    guPLNamesData( const int id, const int type ) { m_Id = id; m_Type = type; };
+    int     GetData( void ) { return m_Id; };
+    void    SetData( int id ) { m_Id = id; };
+    int     GetType( void ) { return m_Type; };
+    void    SetType( int type ) { m_Type = type; };
+};
 
+// -------------------------------------------------------------------------------- //
+guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db ) :
+    wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_SINGLE|wxSUNKEN_BORDER )
+{
+    m_Db = db;
+    m_ImageList = new wxImageList();
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_track ) ) );
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_system_run ) ) );
+
+    AssignImageList( m_ImageList );
+
+    m_RootId   = AddRoot( wxT( "Playlists" ), -1, -1, NULL );
+    m_StaticId = AppendItem( m_RootId, _( "Static playlists" ), 0, 0, NULL );
+    m_DynamicId = AppendItem( m_RootId, _( "Dynamic playlists" ), 1, 1, NULL );
+
+    SetIndent( 5 );
+
+    ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+guPLNamesTreeCtrl::~guPLNamesTreeCtrl()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::ReloadItems( void )
+{
+    int index;
+    int count;
+//    wxTreeItemId Selected = GetSelection();
+
+    DeleteChildren( m_StaticId );
+    DeleteChildren( m_DynamicId );
+
+    guListItems m_StaticItems;
+    m_Db->GetPlayLists( &m_StaticItems, GUPLAYLIST_STATIC );
+    if( ( count = m_StaticItems.Count() ) )
+    {
+        for( index = 0; index < count; index++ )
+        {
+            AppendItem( m_StaticId, m_StaticItems[ index ].m_Name, 0, 0,
+                                new guPLNamesData( m_StaticItems[ index ].m_Id, GUPLAYLIST_STATIC ) );
+        }
+    }
+
+    guListItems m_DynamicItems;
+    m_Db->GetPlayLists( &m_DynamicItems, GUPLAYLIST_DYNAMIC );
+    if( ( count = m_DynamicItems.Count() ) )
+    {
+        for( index = 0; index < count; index++ )
+        {
+            AppendItem( m_DynamicId, m_DynamicItems[ index ].m_Name, 1, 1,
+                                new guPLNamesData( m_DynamicItems[ index ].m_Id, GUPLAYLIST_DYNAMIC ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guPLTracksListBox
+// -------------------------------------------------------------------------------- //
+guPLTracksListBox::guPLTracksListBox( wxWindow * parent, DbLibrary * db ) :
+  guSoListBox( parent, db )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guPLTracksListBox::~guPLTracksListBox()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLTracksListBox::FillTracks( void )
+{
+    guLogMessage( wxT( "guPLTracksListBox FillTracks" ) );
+    SetItemCount( 0 );
+}
 
 // -------------------------------------------------------------------------------- //
 // guPlayListPanel
@@ -48,8 +136,11 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 	wxBoxSizer* NameSizer;
 	NameSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_NamesListCtrl = new wxListCtrl( NamesPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST|wxLC_VIRTUAL );
-	NameSizer->Add( m_NamesListCtrl, 1, wxALL|wxEXPAND, 5 );
+    wxStaticText * m_NameStaticText;
+    m_NameStaticText = new wxStaticText( NamesPanel, wxID_ANY, _( "Play lists:" ) );
+    NameSizer->Add( m_NameStaticText, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5 );
+	m_NamesTreeCtrl = new guPLNamesTreeCtrl( NamesPanel, m_Db );
+	NameSizer->Add( m_NamesTreeCtrl, 1, wxALL|wxEXPAND, 1 );
 
 	NamesPanel->SetSizer( NameSizer );
 	NamesPanel->Layout();
@@ -60,8 +151,8 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 	wxBoxSizer* DetailsSizer;
 	DetailsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_DetailsListCtrl = new wxListCtrl( DetailsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST|wxLC_VIRTUAL );
-	DetailsSizer->Add( m_DetailsListCtrl, 1, wxALL|wxEXPAND, 5 );
+	m_PLTracksListBox = new guPLTracksListBox( DetailsPanel, m_Db );
+	DetailsSizer->Add( m_PLTracksListBox, 1, wxALL|wxEXPAND, 1 );
 
 	DetailsPanel->SetSizer( DetailsSizer );
 	DetailsPanel->Layout();
@@ -72,6 +163,8 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+	m_NamesTreeCtrl->Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guPlayListPanel::OnPLNamesSelected ), NULL, this );
+
 
 	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
@@ -79,6 +172,18 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 // -------------------------------------------------------------------------------- //
 guPlayListPanel::~guPlayListPanel()
 {
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLNamesSelected( wxTreeEvent& event )
+{
+    guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( event.GetItem() );
+    if( ItemData )
+    {
+        int PlayListId = ItemData->GetData();
+        int PlayListType = ItemData->GetType();
+        guLogMessage( wxT( "Item: %u type: %u" ), PlayListId, PlayListType );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -828,6 +828,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 
         if( wxFileExists( Song.m_FileName ) )
         {
+            Song.m_SongId = 0;
             Song.m_CoverId = 0;
             //Song.m_Number = -1;
 
@@ -994,7 +995,8 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
     {
         for( index = 0; index < count; index++ )
         {
-            Songs.Add( m_Items[ SelectedItems[ index ] ].m_SongId );
+            if( m_Items[ SelectedItems[ index ] ].m_SongId > 0 )
+                Songs.Add( m_Items[ SelectedItems[ index ] ].m_SongId );
         }
     }
     else
@@ -1002,13 +1004,14 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
         count = m_Items.Count();
         for( index = 0; index < count; index++ )
         {
-            Songs.Add( m_Items[ index ].m_SongId );
+            if( m_Items[ index ].m_SongId > 0 )
+                Songs.Add( m_Items[ index ].m_SongId );
         }
     }
 
     if( Songs.Count() )
     {
-        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "PlayList Name: " ), _( "Enter the new playlist name" ) );
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( wxTheApp->GetTopWindow(), _( "PlayList Name: " ), _( "Enter the new playlist name" ) );
         if( EntryDialog->ShowModal() == wxID_OK )
         {
             m_Db->CreateStaticPlayList( EntryDialog->GetValue(), Songs );

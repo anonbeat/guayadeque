@@ -139,7 +139,7 @@ public:
 // guAlListBox
 // -------------------------------------------------------------------------------- //
 guAlListBox::guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
-    wxScrolledWindow( parent )
+    wxScrolledWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER )
 {
     m_ListBox = new guAlbumListBox( this, db );
     m_Header = new guAlbumListBoxHeader( this, m_ListBox, label, wxPoint( 0, 0 ) );
@@ -165,6 +165,8 @@ void guAlListBox::OnChangedSize( wxSizeEvent &event )
         h += d + 4;
         // Calculate the Width
         //
+        Size.x -= 6;
+        Size.y -= 6;
         w = Size.x;
         if( m_ListBox )
         {

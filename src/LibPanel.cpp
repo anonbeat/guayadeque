@@ -122,7 +122,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 	m_GenreLabelsSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::GenreLabelsSplitterOnIdle ), NULL, this );
 
 	m_GenrePanel = new wxPanel( m_GenreLabelsSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-    m_GenrePanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+    //m_GenrePanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
 
 	GenreSizer = new wxBoxSizer( wxVERTICAL );
 
@@ -134,7 +134,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 	m_GenrePanel->Layout();
 	GenreSizer->Fit( m_GenrePanel );
 	m_LabelsPanel = new wxPanel( m_GenreLabelsSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-    m_LabelsPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+    //m_LabelsPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
 	LabelsSizer = new wxBoxSizer( wxVERTICAL );
 
 	//LabelsListCtrl = new wxListCtrl( LabelsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
@@ -159,7 +159,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 
 	m_ArtistAlbumSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::ArtistAlbumSplitterOnIdle ), NULL, this );
 	m_ArtistPanel = new wxPanel( m_ArtistAlbumSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_ArtistPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+	//m_ArtistPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
 	ArtistSizer = new wxBoxSizer( wxVERTICAL );
 
 	//ArtistListCtrl = new wxListCtrl( ArtistPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
@@ -170,7 +170,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 	m_ArtistPanel->Layout();
 	ArtistSizer->Fit( m_ArtistPanel );
 	m_AlbumPanel = new wxPanel( m_ArtistAlbumSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-    m_AlbumPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+    //m_AlbumPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
 	AlbumSizer = new wxBoxSizer( wxVERTICAL );
 
 	//AlbumListCtrl = new wxListCtrl( AlbumPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
@@ -194,11 +194,12 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 	SelectorSizer->Fit( SelectorPanel );
 
 	SongListPanel = new wxPanel( m_SongListSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-    SongListPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+    //SongListPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
 	SongListSizer = new wxBoxSizer( wxVERTICAL );
 
 	//SongListCtrl = new wxListCtrl( SongListPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
 	m_SongListCtrl = new guSoListBox( SongListPanel, m_Db );
+	m_SongListCtrl->ReloadItems();
 	SongListSizer->Add( m_SongListCtrl, 1, wxEXPAND, 5 );
 
 	SongListPanel->SetSizer( SongListSizer );

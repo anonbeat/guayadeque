@@ -675,7 +675,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 	m_LabelsListBox = new guRadioLabelListBox( LabelsPanel, m_Db, _( "Labels" ) );
 	//m_LabelsListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
 
-	LabelsSizer->Add( m_LabelsListBox, 1, wxALL|wxEXPAND, 5 );
+	LabelsSizer->Add( m_LabelsListBox, 1, wxALL|wxEXPAND, 1 );
 
 	LabelsPanel->SetSizer( LabelsSizer );
 	LabelsPanel->Layout();
