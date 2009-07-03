@@ -19,8 +19,6 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "PlayList.h"
-#include <wx/types.h>
-#include <wx/uri.h>
 
 #include "Config.h"
 #include "Commands.h"
@@ -34,6 +32,8 @@
 
 //#include <id3/tag.h>
 //#include <id3/misc_support.h>
+#include <wx/types.h>
+#include <wx/uri.h>
 
 #define GUPLAYLIST_ITEM_SIZE        40
 
@@ -937,17 +937,19 @@ void guPlayList::OnContextMenu( wxContextMenuEvent& event )
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
     Menu.Append( MenuItem );
 
+    Menu.AppendSeparator();
+
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_clear ) );
+    Menu.Append( MenuItem );
+
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_SAVE, _( "Save PlayList" ), _( "Save the PlayList" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_REMOVE, _( "Remove selected songs" ), _( "Remove selected songs from PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
     Menu.Append( MenuItem );
-
-//    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_SAVE, _( "Save PlayList" ), _( "Save the PlayList" ) );
-//    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_document_save ) );
-//    Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
@@ -983,6 +985,37 @@ void guPlayList::OnRemoveClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnSaveClicked( wxCommandEvent &event )
 {
+    int index;
+    int count;
+    wxArrayInt SelectedItems = GetSelectedItems();
+    wxArrayInt Songs;
+
+    if( ( count = SelectedItems.Count() ) )
+    {
+        for( index = 0; index < count; index++ )
+        {
+            Songs.Add( m_Items[ SelectedItems[ index ] ].m_SongId );
+        }
+    }
+    else
+    {
+        count = m_Items.Count();
+        for( index = 0; index < count; index++ )
+        {
+            Songs.Add( m_Items[ index ].m_SongId );
+        }
+    }
+
+    if( Songs.Count() )
+    {
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "PlayList Name: " ), _( "Enter the new playlist name" ) );
+        if( EntryDialog->ShowModal() == wxID_OK )
+        {
+            m_Db->CreateStaticPlayList( EntryDialog->GetValue(), Songs );
+            // TODO : Send a message to update the Playlist ListBox
+        }
+        EntryDialog->Destroy();
+    }
 }
 
 // -------------------------------------------------------------------------------- //

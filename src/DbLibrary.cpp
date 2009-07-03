@@ -518,10 +518,10 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
                       "playlist_type INTEGER(2));" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""playlist_id"" on playlists (playlist_id ASC);" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsettings( plsetting_id INTEGER PRIMARY KEY AUTOINCREMENT, plsetting_plid INTEGER, plsettings_songid INTEGER, "
-                      "plsetting_option INTEGER(2), plsetting_value TEXT(255), plsetting_valueindex INTEGER(2) );" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plsetting_id"" on plsettings (plsetting_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plsetting_plid"" on plsettings (plsetting_plid ASC);" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsets( plset_id INTEGER PRIMARY KEY AUTOINCREMENT, plset_plid INTEGER, plset_songid INTEGER, "
+                      "plset_option INTEGER(2), plset_value TEXT(255), plset_valueindex INTEGER(2) );" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plset_id"" on plsets (plset_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plset_plid"" on plsets (plset_plid ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_hash VARCHAR( 32 ) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""cover_id"" on covers (cover_id ASC);" ) );
@@ -2025,6 +2025,46 @@ wxArrayString DbLibrary::GetAlbumsPaths( const wxArrayInt &AlbumIds )
   }
   dbRes.Finalize();
   return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &songs )
+{
+  int PlayListId = 0;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString PLName = name;
+  escape_query_str( &PLName );
+
+  query = wxString::Format( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type ) VALUES( NULL, \"%s\", %u );" ),
+          PLName.c_str(),
+          GUPLAYLIST_STATIC );
+
+  if( ExecuteUpdate( query ) == 1 )
+  {
+      PlayListId = m_Db.GetLastRowId().GetLo();
+  }
+  dbRes.Finalize();
+
+  if( PlayListId )
+  {
+    int count = songs.Count();
+    int index;
+    for( index = 0; index < count; index++ )
+    {
+//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name varchar(100), "
+//                      "playlist_type INTEGER(2));" ) );
+//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsets( plset_id INTEGER PRIMARY KEY AUTOINCREMENT, plset_plid INTEGER, plset_songid INTEGER, "
+//                      "plset_option INTEGER(2), plset_value TEXT(255), plset_valueindex INTEGER(2) );" ) );
+      query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_option, plset_value, plset_valueindex ) "
+                                     "VALUES( NULL, %u, %u, 0, \"\", 0 );" ),
+                    PlayListId,
+                    songs[ index ] );
+      ExecuteQuery( query );
+      dbRes.Finalize();
+    }
+  }
+  return PlayListId;
 }
 
 // -------------------------------------------------------------------------------- //

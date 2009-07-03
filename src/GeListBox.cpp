@@ -29,7 +29,6 @@ void guGeListBox::GetItemsList( void )
 {
     m_Items.Add( new guListItem( 0, _( "All" ) ) );
     m_Db->GetGenres( &m_Items );
-    guLogMessage( wxT( "Genres ReloadItems" ) );
 }
 
 // -------------------------------------------------------------------------------- //

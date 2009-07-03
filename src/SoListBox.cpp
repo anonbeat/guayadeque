@@ -173,8 +173,6 @@ void guSoListBox::ReloadItems()
     GetColumn( 1, ListItem );
     ListItem.SetText( wxString::Format( _( "Title (%u)" ), ItemCount ) );
     SetColumn( 1, ListItem );
-
-    guLogMessage( wxT( "Songs ReloadItems" ) );
 }
 
 // -------------------------------------------------------------------------------- //

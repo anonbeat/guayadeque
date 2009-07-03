@@ -442,7 +442,6 @@ void guAlbumListBox::ReloadItems( const bool Reset )
       ScrollToLine( FirstVisible );
     }
     UpdateView();
-    guLogMessage( wxT( "Albums ReloadItems" ) );
 }
 
 // -------------------------------------------------------------------------------- //

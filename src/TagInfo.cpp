@@ -160,6 +160,7 @@ bool TagInfo::ReadID3Tags( const wxString &FileName )
         ID3v2::Tag * tagv2 = ( ( TagLib::MPEG::File * ) fileref.file() )->ID3v2Tag();
         if( tagv2 )
         {
+
             if( m_TrackLabels.Count() == 0 )
             {
                 ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tagv2, "guTRLABELS" );
