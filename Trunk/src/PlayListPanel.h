@@ -23,6 +23,7 @@
 
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
+#include "SoListBox.h"
 
 
 #include <wx/string.h>
@@ -42,6 +43,39 @@
 #include <wx/listctrl.h>
 #include <wx/splitter.h>
 #include <wx/frame.h>
+#include <wx/treectrl.h>
+#include <wx/imaglist.h>
+
+// -------------------------------------------------------------------------------- //
+// guPLNamesTreeCtrl
+// -------------------------------------------------------------------------------- //
+class guPLNamesTreeCtrl : public wxTreeCtrl
+{
+  private :
+    DbLibrary *     m_Db;
+    wxImageList *   m_ImageList;
+    wxTreeItemId    m_RootId;
+    wxTreeItemId    m_StaticId;
+    wxTreeItemId    m_DynamicId;
+
+  public :
+    guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db );
+    ~guPLNamesTreeCtrl();
+
+    void            ReloadItems( void );
+
+};
+
+// -------------------------------------------------------------------------------- //
+class guPLTracksListBox : public guSoListBox
+{
+  private :
+    virtual void FillTracks( void );
+
+  public :
+    guPLTracksListBox( wxWindow * parent, DbLibrary * db );
+    ~guPLTracksListBox();
+};
 
 // -------------------------------------------------------------------------------- //
 class guPlayListPanel : public wxPanel
@@ -51,9 +85,10 @@ class guPlayListPanel : public wxPanel
     guPlayerPanel *     m_PlayerPanel;
 
     wxSplitterWindow *  m_MainSplitter;
-    wxListCtrl *        m_NamesListCtrl;
-    wxListCtrl *        m_DetailsListCtrl;
+    guPLNamesTreeCtrl * m_NamesTreeCtrl;
+    guPLTracksListBox * m_PLTracksListBox;
 
+    void                OnPLNamesSelected( wxTreeEvent& event );
 
   public :
     guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );

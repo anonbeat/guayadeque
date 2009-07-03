@@ -2068,13 +2068,13 @@ int DbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &son
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetPlayLists( guListItems * PlayLists )
+void DbLibrary::GetPlayLists( guListItems * PlayLists, const int type )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
 //  guListItems RetVal;
 
-  query = wxT( "SELECT playlist_id, playlist_name FROM playlists;" );
+  query = wxString::Format( wxT( "SELECT playlist_id, playlist_name FROM playlists WHERE playlist_type = %u;" ), type );
 
   dbRes = ExecuteQuery( query );
 

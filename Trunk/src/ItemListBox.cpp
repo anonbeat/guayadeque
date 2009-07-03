@@ -29,7 +29,7 @@ END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
 guListBox::guListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
-             wxListCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_VIRTUAL|wxLC_AUTOARRANGE )
+             wxListCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_VIRTUAL|wxLC_AUTOARRANGE|wxSUNKEN_BORDER )
 {
     wxListItem ListItem;
 

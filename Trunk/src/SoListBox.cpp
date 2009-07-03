@@ -31,7 +31,7 @@
 
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
-             wxListCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_VIRTUAL )
+             wxListCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_VIRTUAL|wxSUNKEN_BORDER )
 {
     wxListItem ListItem;
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -94,7 +94,7 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
                                 wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
 
-    ReloadItems();
+    //ReloadItems();
 }
 
 
@@ -153,6 +153,12 @@ wxListItemAttr * guSoListBox::OnGetItemAttr( long item ) const
 }
 
 // -------------------------------------------------------------------------------- //
+void guSoListBox::FillTracks( void )
+{
+    SetItemCount( m_Db->GetSongs( &m_Songs ) );
+}
+
+// -------------------------------------------------------------------------------- //
 void guSoListBox::ReloadItems()
 {
     long ItemCount;
@@ -165,13 +171,13 @@ void guSoListBox::ReloadItems()
         m_Songs.Empty();
 
     //Songs.Add( new guTrack( 0, _( "All" ) ) );
-    ItemCount = m_Db->GetSongs( &m_Songs );
-
-    SetItemCount( ItemCount );
+    //ItemCount = m_Db->GetSongs( &m_Songs );
+    //SetItemCount( ItemCount );
+    FillTracks();
 
     wxListItem ListItem;
     GetColumn( 1, ListItem );
-    ListItem.SetText( wxString::Format( _( "Title (%u)" ), ItemCount ) );
+    ListItem.SetText( wxString::Format( _( "Title (%u)" ), m_Songs.Count() ) );
     SetColumn( 1, ListItem );
 }
 

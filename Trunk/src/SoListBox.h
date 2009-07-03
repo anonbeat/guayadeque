@@ -41,6 +41,7 @@ class guSoListBox : public wxListCtrl
     void                OnSearchLinkClicked( wxCommandEvent &event );
     void                OnCommandClicked( wxCommandEvent &event );
     wxString            GetSearchText( int Item );
+    virtual void        FillTracks();
 
   public :
                         guSoListBox( wxWindow * parent, DbLibrary * NewDb );
