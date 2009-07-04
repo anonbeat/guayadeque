@@ -58,6 +58,8 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     wxTreeItemId    m_StaticId;
     wxTreeItemId    m_DynamicId;
 
+    void            OnContextMenu( wxTreeEvent &event );
+
   public :
     guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db );
     ~guPLNamesTreeCtrl();
@@ -92,6 +94,13 @@ class guPlayListPanel : public wxPanel
     guPLTracksListBox * m_PLTracksListBox;
 
     void                OnPLNamesSelected( wxTreeEvent& event );
+    void                OnPLNamesPlay( wxCommandEvent &event );
+    void                OnPLNamesEnqueue( wxCommandEvent &event );
+    void                OnPLNamesNewPlaylist( wxCommandEvent &event );
+    void                OnPLNamesRenamePlaylist( wxCommandEvent &event );
+    void                OnPLNamesDeletePlaylist( wxCommandEvent &event );
+    void                OnPLNamesCopyTo( wxCommandEvent &event );
+
 
   public :
     guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );

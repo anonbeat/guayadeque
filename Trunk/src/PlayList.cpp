@@ -92,7 +92,7 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
             m_CurItem = Config->ReadNum( wxT( "PlayerCurItem" ), -1l, wxT( "General" ) );
             m_SmartPlayMaxPlayListTracks = Config->ReadNum( wxT( "MaxPlayListTracks" ), 15, wxT( "SmartPlayList" ) );
             //
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATELIST );
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
             //event.SetEventObject( ( wxObject * ) this );
             wxPostEvent( this, event );
         }
@@ -130,12 +130,12 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
 	Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guPlayList::OnContextMenu ), NULL, this );
-    Connect( ID_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
-    Connect( ID_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
-    Connect( ID_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
-    Connect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
-    Connect( ID_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
-    Connect( ID_PLAYLIST_COMMANDS, ID_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 
 }
 
@@ -170,12 +170,12 @@ guPlayList::~guPlayList()
 	Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guPlayList::OnContextMenu ), NULL, this );
-    Disconnect( ID_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
-    Disconnect( ID_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
-    Disconnect( ID_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
-    Disconnect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
-    Disconnect( ID_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
-    Disconnect( ID_PLAYLIST_COMMANDS, ID_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -899,7 +899,7 @@ void AddPlayListCommands( wxMenu * Menu, int SelCount )
                 {
                     continue;
                 }
-                MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_COMMANDS + index, Names[ index ], Commands[ index ] );
+                MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_COMMANDS + index, Names[ index ], Commands[ index ] );
                 SubMenu->Append( MenuItem );
             }
         }
@@ -934,33 +934,33 @@ void guPlayList::OnContextMenu( wxContextMenuEvent& event )
     wxArrayInt SelectedItems = GetSelectedItems();
     int SelCount = SelectedItems.Count();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_clear ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_SAVE, _( "Save PlayList" ), _( "Save the PlayList" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_SAVE, _( "Save PlayList" ), _( "Save the PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_REMOVE, _( "Remove selected songs" ), _( "Remove selected songs from PlayList" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_REMOVE, _( "Remove selected songs" ), _( "Remove selected songs from PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RANDOMPLAY, _( "Randomize PlayList" ), _( "Randomize the songs in the PlayList" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, _( "Randomize PlayList" ), _( "Randomize the songs in the PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_shuffle ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     Menu.Append( MenuItem );
 
@@ -1143,7 +1143,7 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
             wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
             wxASSERT( Commands.Count() > 0 );
 
-            index -= ID_PLAYLIST_COMMANDS;
+            index -= ID_PLAYER_PLAYLIST_COMMANDS;
             wxString CurCmd = Commands[ index ];
 
             if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
@@ -1253,7 +1253,7 @@ void guAddDropFilesThread::AddDropFiles( const wxString &DirName )
                         {
                             AddDropFiles( FileName );
                             // Update the guPlayList Object on every dir
-                            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATELIST );
+                            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
                             wxPostEvent( m_PlayList, event );
                         }
                         else
@@ -1295,7 +1295,7 @@ guAddDropFilesThread::ExitCode guAddDropFilesThread::Entry()
     if( !TestDestroy() )
     {
         // Once finished send the update guPlayList event to the guPlayList object
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATELIST );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
         //event.SetEventObject( ( wxObject * ) this );
         wxPostEvent( m_PlayList, event );
     }

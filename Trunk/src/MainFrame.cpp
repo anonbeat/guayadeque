@@ -172,9 +172,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ) );
     Connect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ) );
     Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ) );
-    Connect( ID_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ) );
-    Connect( ID_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ) );
-    Connect( ID_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ) );
+    Connect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ) );
+    Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ) );
+    Connect( ID_PLAYER_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ) );
     Connect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ) );
 
     Connect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ) );
@@ -251,9 +251,9 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ) );
     Disconnect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ) );
     Disconnect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ) );
-    Disconnect( ID_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ) );
-    Disconnect( ID_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ) );
-    Disconnect( ID_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ) );
+    Disconnect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ) );
+    Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ) );
+    Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ) );
     Disconnect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ) );
 
     Disconnect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ) );
@@ -335,13 +335,13 @@ void guMainFrame::CreateMenu()
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );
     Menu->Append( MenuItem );
     Menu->AppendSeparator();
-    MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on LastFM statics" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on LastFM statics" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_smart ) );
     Menu->Append( MenuItem );
-    MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_RANDOMPLAY, wxString( _( "R&andomize" ) ), _( "Randomize the playlist" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, wxString( _( "R&andomize" ) ), _( "Randomize the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_shuffle ) );
     Menu->Append( MenuItem );
-    MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_REPEATPLAY, wxString( _( "&Repeat" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATPLAY, wxString( _( "&Repeat" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_repeat ) );
     Menu->Append( MenuItem );
     MenuBar->Append( Menu, _( "&Control" ) );
