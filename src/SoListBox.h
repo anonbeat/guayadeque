@@ -31,6 +31,7 @@ class guSoListBox : public wxListCtrl
   protected :
     DbLibrary *         m_Db;
     guTrackArray        m_Songs;
+    wxString            m_ConfName;
     wxListItemAttr      m_OddAttr;
     wxListItemAttr      m_EveAttr;
 
@@ -44,7 +45,7 @@ class guSoListBox : public wxListCtrl
     virtual void        FillTracks();
 
   public :
-                        guSoListBox( wxWindow * parent, DbLibrary * NewDb );
+                        guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname );
                         ~guSoListBox();
     void                ReloadItems();
     wxArrayInt          GetSelection( void ) const;

@@ -100,9 +100,11 @@ void guPLNamesTreeCtrl::ReloadItems( void )
 // -------------------------------------------------------------------------------- //
 // guPLTracksListBox
 // -------------------------------------------------------------------------------- //
-guPLTracksListBox::guPLTracksListBox( wxWindow * parent, DbLibrary * db ) :
-  guSoListBox( parent, db )
+guPLTracksListBox::guPLTracksListBox( wxWindow * parent, DbLibrary * db, wxString confname ) :
+  guSoListBox( parent, db, confname )
 {
+    m_PLId = wxNOT_FOUND;
+    m_PLType = wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -113,8 +115,22 @@ guPLTracksListBox::~guPLTracksListBox()
 // -------------------------------------------------------------------------------- //
 void guPLTracksListBox::FillTracks( void )
 {
-    guLogMessage( wxT( "guPLTracksListBox FillTracks" ) );
-    SetItemCount( 0 );
+    if( m_PLId > 0 )
+    {
+        SetItemCount( m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Songs ) );
+    }
+    else
+    {
+        SetItemCount( 0 );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLTracksListBox::SetPlayList( int plid, int pltype )
+{
+    m_PLId = plid;
+    m_PLType = pltype;
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -151,7 +167,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 	wxBoxSizer* DetailsSizer;
 	DetailsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_PLTracksListBox = new guPLTracksListBox( DetailsPanel, m_Db );
+	m_PLTracksListBox = new guPLTracksListBox( DetailsPanel, m_Db, wxT( "PLColSize" ) );
 	DetailsSizer->Add( m_PLTracksListBox, 1, wxALL|wxEXPAND, 1 );
 
 	DetailsPanel->SetSizer( DetailsSizer );
@@ -180,9 +196,8 @@ void guPlayListPanel::OnPLNamesSelected( wxTreeEvent& event )
     guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( event.GetItem() );
     if( ItemData )
     {
-        int PlayListId = ItemData->GetData();
-        int PlayListType = ItemData->GetType();
-        guLogMessage( wxT( "Item: %u type: %u" ), PlayListId, PlayListType );
+        m_PLTracksListBox->SetPlayList( ItemData->GetData(), ItemData->GetType() );
+        //guLogMessage( wxT( "Item: %u type: %u" ), PlayListId, PlayListType );
     }
 }
 

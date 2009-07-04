@@ -30,35 +30,36 @@
 
 
 // -------------------------------------------------------------------------------- //
-guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb ) :
+guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname ) :
              wxListCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_VIRTUAL|wxSUNKEN_BORDER )
 {
     wxListItem ListItem;
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     m_Db = NewDb;
+    m_ConfName = confname;
 
 
     // Create the Columns
     ListItem.SetText( wxT( "#" ) );
     ListItem.SetImage( wxNOT_FOUND );
-    ListItem.SetWidth( Config->ReadNum( wxT( "SongColSize0" ), 40, wxT( "Positions" ) ) );
+    ListItem.SetWidth( Config->ReadNum( confname + wxT( "0" ), 40, wxT( "Positions" ) ) );
     InsertColumn( 0, ListItem );
 
     ListItem.SetText( _( "Title" ) );
-    ListItem.SetWidth( Config->ReadNum( wxT( "SongColSize1" ), 200, wxT( "Positions" ) ) );
+    ListItem.SetWidth( Config->ReadNum( confname + wxT( "1" ), 200, wxT( "Positions" ) ) );
     InsertColumn( 1, ListItem );
 
     ListItem.SetText( _( "Artist" ) );
-    ListItem.SetWidth( Config->ReadNum( wxT( "SongColSize2" ), 200, wxT( "Positions" ) ) );
+    ListItem.SetWidth( Config->ReadNum( confname + wxT( "2" ), 200, wxT( "Positions" ) ) );
     InsertColumn( 2, ListItem );
 
     ListItem.SetText( _( "Album" ) );
-    ListItem.SetWidth( Config->ReadNum( wxT( "SongColSize3" ), 200, wxT( "Positions" ) ) );
+    ListItem.SetWidth( Config->ReadNum( confname + wxT( "3" ), 200, wxT( "Positions" ) ) );
     InsertColumn( 3, ListItem );
 
     ListItem.SetText( _( "Length" ) );
-    ListItem.SetWidth( Config->ReadNum( wxT( "SongColSize4" ), 100, wxT( "Positions" ) ) );
+    ListItem.SetWidth( Config->ReadNum( confname + wxT( "4" ), 100, wxT( "Positions" ) ) );
     InsertColumn( 4, ListItem );
 
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guSoListBox::OnBeginDrag ), NULL, this );
@@ -105,7 +106,7 @@ guSoListBox::~guSoListBox()
     int Index;
     for( Index = 0; Index < 5; Index++ )
     {
-        Config->WriteNum( wxString::Format( wxT( "SongColSize%u" ), Index ), GetColumnWidth( Index ), wxT( "Positions" ) );
+        Config->WriteNum( wxString::Format( m_ConfName + wxT( "%u" ), Index ), GetColumnWidth( Index ), wxT( "Positions" ) );
     }
 
     m_Songs.Clear();
