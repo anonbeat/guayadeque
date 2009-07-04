@@ -34,6 +34,7 @@ class guSoListBox : public wxListCtrl
     wxString            m_ConfName;
     wxListItemAttr      m_OddAttr;
     wxListItemAttr      m_EveAttr;
+    int                 m_PrevColSize;
 
     wxString            OnGetItemText( long item, long column ) const;
     wxListItemAttr *    OnGetItemAttr( long item ) const;
@@ -41,6 +42,7 @@ class guSoListBox : public wxListCtrl
     void                OnContextMenu( wxContextMenuEvent& event );
     void                OnSearchLinkClicked( wxCommandEvent &event );
     void                OnCommandClicked( wxCommandEvent &event );
+
     wxString            GetSearchText( int Item );
     virtual void        FillTracks();
 

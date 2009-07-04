@@ -2134,6 +2134,37 @@ int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray 
 }
 
 // -------------------------------------------------------------------------------- //
+void DbLibrary::DeletePlayList( const int plid )
+{
+  wxString query;
+
+  if( plid )
+  {
+    query = wxString::Format( wxT( "DELETE FROM plsets WHERE plset_plid = %u;" ), plid );
+    ExecuteUpdate( query );
+
+    query = wxString::Format( wxT( "DELETE FROM playlists WHERE playlist_id = %u;" ), plid );
+    ExecuteUpdate( query );
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetPlayListName( const int plid, const wxString &plname )
+{
+  wxString query;
+  wxString PlayListName = plname;
+
+  escape_query_str( &PlayListName );
+
+  if( plid )
+  {
+    query = wxString::Format( wxT( "UPDATE playlists SET playlist_name = \"%s\" WHERE playlist_id = %u;" ),
+          PlayListName.c_str(), plid );
+    ExecuteUpdate( query );
+  }
+}
+
+// -------------------------------------------------------------------------------- //
 int DbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
 {
   wxString subquery;

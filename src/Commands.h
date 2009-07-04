@@ -82,16 +82,16 @@
 #define ID_SONG_COPYTO                  1066
 
 //
-#define ID_PLAYLIST_UPDATELIST          1070
-#define ID_PLAYLIST_CLEAR               1071
-#define ID_PLAYLIST_REMOVE              1072
-#define ID_PLAYLIST_SAVE                1073
-#define ID_PLAYLIST_SMARTPLAY           1074
-#define ID_PLAYLIST_RANDOMPLAY          1075
-#define ID_PLAYLIST_REPEATPLAY          1076
-#define ID_PLAYLIST_SMART_ADDTRACK      1077
-#define ID_PLAYLIST_COPYTO              1078
-#define ID_PLAYLIST_EDITLABELS          1079
+#define ID_PLAYER_PLAYLIST_UPDATELIST          1070
+#define ID_PLAYER_PLAYLIST_CLEAR               1071
+#define ID_PLAYER_PLAYLIST_REMOVE              1072
+#define ID_PLAYER_PLAYLIST_SAVE                1073
+#define ID_PLAYER_PLAYLIST_SMARTPLAY           1074
+#define ID_PLAYER_PLAYLIST_RANDOMPLAY          1075
+#define ID_PLAYER_PLAYLIST_REPEATPLAY          1076
+#define ID_PLAYER_PLAYLIST_SMART_ADDTRACK      1077
+#define ID_PLAYER_PLAYLIST_COPYTO              1078
+#define ID_PLAYER_PLAYLIST_EDITLABELS          1079
 
 //
 #define ID_RADIO_PLAY                   1080
@@ -137,7 +137,7 @@
 #define ID_ARTIST_COMMANDS              3000
 #define ID_ALBUM_COMMANDS               3100 // 3000...3099
 #define ID_SONGS_COMMANDS               3200 // 3000...3099
-#define ID_PLAYLIST_COMMANDS            3300 // 3000...3099
+#define ID_PLAYER_PLAYLIST_COMMANDS     3300 // 3000...3099
 
 
 #define ID_GAUGE_PULSE                  1140
@@ -150,6 +150,13 @@
 #define ID_MULTIMEDIAKEYS_DBUS          1160
 
 // Rating ids 1170
+
+#define ID_PLAYLIST_PLAY                1180
+#define ID_PLAYLIST_ENQUEUE             1181
+#define ID_PLAYLIST_NEWPLAYLIST         1182
+#define ID_PLAYLIST_RENAME              1183
+#define ID_PLAYLIST_DELETE              1184
+#define ID_PLAYLIST_COPYTO              1185
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -257,7 +257,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	m_RandomPlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
 	m_RepeatPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
 
-    Connect( ID_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
+    Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
 
 	m_AlbumLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
@@ -274,7 +274,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
 
-    m_PlayListCtrl->Connect( ID_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
+    m_PlayListCtrl->Connect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
     m_PlayListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
 
     m_MediaCtrl->Connect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
@@ -283,7 +283,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     m_MediaCtrl->Connect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
 
-    Connect( ID_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracksClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracksClicked ) );
 
 //    Connect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
 
@@ -335,7 +335,7 @@ guPlayerPanel::~guPlayerPanel()
 	m_RandomPlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
 	m_RepeatPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
 
-    Disconnect( ID_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
+    Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
 
 	m_AlbumLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
@@ -352,7 +352,7 @@ guPlayerPanel::~guPlayerPanel()
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
 
-    m_PlayListCtrl->Disconnect( ID_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
+    m_PlayListCtrl->Disconnect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
     m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
 
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
@@ -361,7 +361,7 @@ guPlayerPanel::~guPlayerPanel()
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
 
-    Disconnect( ID_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracksClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracksClicked ) );
 
 //    Disconnect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
 
@@ -1505,7 +1505,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
         }
         if( !TestDestroy() )
         {
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_SMART_ADDTRACK );
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_SMART_ADDTRACK );
             //event.SetEventObject( ( wxObject * ) this );
             event.SetClientData( ( void * ) Songs );
             wxPostEvent( m_PlayerPanel, event );
