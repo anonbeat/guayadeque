@@ -724,17 +724,6 @@ void guLibPanel::OnAlbumQueueClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void UpdateImages( const guTrackArray &Songs, const guImagePtrArray &Images )
-{
-    int index;
-    int count = Images.Count();
-    for( index = 0; index < count; index++ )
-    {
-        ID3TagSetPicture( Songs[ index ].m_FileName, Images[ index ] );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
