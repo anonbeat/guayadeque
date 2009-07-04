@@ -2109,6 +2109,31 @@ void inline DbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbR
 }
 
 // -------------------------------------------------------------------------------- //
+int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Track;
+
+  if( plid )
+  {
+    query = GU_TRACKS_QUERYSTR;
+    query += wxString::Format( wxT( ", plsets WHERE plset_songid = song_id AND plset_plid = %u" ), plid );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Track = new guTrack();
+      FillTrackFromDb( Track, &dbRes );
+      tracks->Add( Track );
+    }
+    dbRes.Finalize();
+  }
+  return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
 int DbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
 {
   wxString subquery;

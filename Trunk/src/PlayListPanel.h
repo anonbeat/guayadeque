@@ -70,11 +70,14 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
 class guPLTracksListBox : public guSoListBox
 {
   private :
+    int  m_PLId;
+    int  m_PLType;
     virtual void FillTracks( void );
 
   public :
-    guPLTracksListBox( wxWindow * parent, DbLibrary * db );
+    guPLTracksListBox( wxWindow * parent, DbLibrary * db, wxString confname );
     ~guPLTracksListBox();
+    void SetPlayList( int plid, int pltype );
 };
 
 // -------------------------------------------------------------------------------- //
