@@ -21,8 +21,12 @@
 #include "PlayListPanel.h"
 
 #include "Commands.h"
+#include "Config.h"
 #include "DbLibrary.h"
 #include "Images.h"
+#include "LabelEditor.h"
+#include "TagInfo.h"
+#include "TrackEdit.h"
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
@@ -246,6 +250,16 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
     Connect( ID_PLAYLIST_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesDeletePlaylist ) );
     Connect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
 
+
+    m_PLTracksListBox->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
+    Connect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayClicked ) );
+    Connect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayAllClicked ) );
+    Connect( ID_SONG_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksQueueClicked ) );
+    Connect( ID_SONG_ENQUEUEALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksQueueAllClicked ) );
+    Connect( ID_SONG_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditLabelsClicked ) );
+    Connect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditTracksClicked ) );
+    Connect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksCopyToClicked ) );
+
 	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
 
@@ -259,6 +273,15 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_PLAYLIST_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesRenamePlaylist ) );
     Disconnect( ID_PLAYLIST_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesDeletePlaylist ) );
     Disconnect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
+
+    m_PLTracksListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
+    Disconnect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayClicked ) );
+    Disconnect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayAllClicked ) );
+    Disconnect( ID_SONG_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksQueueClicked ) );
+    Disconnect( ID_SONG_ENQUEUEALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksQueueAllClicked ) );
+    Disconnect( ID_SONG_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditLabelsClicked ) );
+    Disconnect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditTracksClicked ) );
+    Disconnect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksCopyToClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -350,6 +373,113 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
         event.SetClientData( ( void * ) Tracks );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksActivated( wxListEvent &event )
+{
+    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+    if( Tracks.Count() )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
+        {
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Tracks );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Tracks );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksPlayClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+    if( !Tracks.Count() )
+        Tracks = m_PLTracksListBox->GetAllSongs();
+    m_PlayerPanel->SetPlayList( Tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksPlayAllClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+    m_PlayerPanel->SetPlayList( Tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksQueueClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+    if( !Tracks.Count() )
+        Tracks = m_PLTracksListBox->GetAllSongs();
+    m_PlayerPanel->AddToPlayList( Tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksQueueAllClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+    m_PlayerPanel->AddToPlayList( Tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksEditLabelsClicked( wxCommandEvent &event )
+{
+    guListItems Labels;
+    wxArrayInt SongIds;
+
+    m_Db->GetLabels( &Labels, true );
+
+    SongIds = m_PLTracksListBox->GetSelection();
+
+    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ),
+                         Labels, m_Db->GetSongsLabels( SongIds ) );
+    if( LabelEditor )
+    {
+        if( LabelEditor->ShowModal() == wxID_OK )
+        {
+            m_Db->UpdateSongsLabels( SongIds, LabelEditor->GetCheckedIds() );
+        }
+        LabelEditor->Destroy();
+        m_PLTracksListBox->ReloadItems();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+    guImagePtrArray Images;
+    if( !Tracks.Count() )
+        return;
+
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images );
+    if( TrackEditor )
+    {
+        if( TrackEditor->ShowModal() == wxID_OK )
+        {
+            m_Db->UpdateSongs( &Tracks );
+            UpdateImages( Tracks, Images );
+            m_PLTracksListBox->ReloadItems();
+        }
+        TrackEditor->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksCopyToClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+
+    event.SetId( ID_MAINFRAME_COPYTO );
+    event.SetClientData( ( void * ) new guTrackArray( Tracks ) );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
 // -------------------------------------------------------------------------------- //

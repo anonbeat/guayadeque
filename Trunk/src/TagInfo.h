@@ -21,8 +21,7 @@
 #ifndef TAGINFO_H
 #define TAGINFO_H
 
-//#include <id3/tag.h>
-//#include <id3/misc_support.h>
+#include "DbLibrary.h"
 
 #include <wx/string.h>
 #include <wx/arrstr.h>
@@ -77,9 +76,11 @@ class TagInfo
 
 };
 
+class guImagePtrArray;
+
 wxImage *   ID3TagGetPicture( const wxString &filename );
 bool        ID3TagSetPicture( const wxString &filename, wxImage * picture );
-
+void        UpdateImages( const guTrackArray &Songs, const guImagePtrArray &Images );
 
 
 #endif

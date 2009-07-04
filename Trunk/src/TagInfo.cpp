@@ -21,6 +21,8 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
+#include "TrackEdit.h"
+
 #include <tag.h>
 #include <attachedpictureframe.h>
 #include <fileref.h>
@@ -238,6 +240,17 @@ void ID3v2_CheckLabelFrame( ID3v2::Tag * tagv2, const char * description, const 
             frame->setText( wxStringToTString( value ) );
             tagv2->addFrame( frame );
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void UpdateImages( const guTrackArray &Songs, const guImagePtrArray &Images )
+{
+    int index;
+    int count = Images.Count();
+    for( index = 0; index < count; index++ )
+    {
+        ID3TagSetPicture( Songs[ index ].m_FileName, Images[ index ] );
     }
 }
 
