@@ -93,7 +93,8 @@ class guPlayListPanel : public wxPanel
     guPLNamesTreeCtrl * m_NamesTreeCtrl;
     guPLTracksListBox * m_PLTracksListBox;
 
-    void                OnPLNamesSelected( wxTreeEvent& event );
+    void                OnPLNamesSelected( wxTreeEvent &event );
+    void                OnPLNamesActivated( wxTreeEvent &event );
     void                OnPLNamesPlay( wxCommandEvent &event );
     void                OnPLNamesEnqueue( wxCommandEvent &event );
     void                OnPLNamesNewPlaylist( wxCommandEvent &event );
