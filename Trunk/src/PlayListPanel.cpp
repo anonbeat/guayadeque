@@ -243,6 +243,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 	this->Layout();
 
 	Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guPlayListPanel::OnPLNamesSelected ), NULL, this );
+	Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guPlayListPanel::OnPLNamesActivated ), NULL, this );
     Connect( ID_PLAYLIST_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesPlay ) );
     Connect( ID_PLAYLIST_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesEnqueue ) );
     Connect( ID_PLAYLIST_NEWPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesNewPlaylist ) );
@@ -267,6 +268,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 guPlayListPanel::~guPlayListPanel()
 {
 	Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guPlayListPanel::OnPLNamesSelected ), NULL, this );
+	Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guPlayListPanel::OnPLNamesActivated ), NULL, this );
     Disconnect( ID_PLAYLIST_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesPlay ) );
     Disconnect( ID_PLAYLIST_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesEnqueue ) );
     Disconnect( ID_PLAYLIST_NEWPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesNewPlaylist ) );
@@ -296,6 +298,18 @@ void guPlayListPanel::OnPLNamesSelected( wxTreeEvent& event )
     {
         m_PLTracksListBox->SetPlayList( -1, -1 );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLNamesActivated( wxTreeEvent& event )
+{
+    guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( event.GetItem() );
+    if( ItemData )
+    {
+        guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+        m_PlayerPanel->SetPlayList( Tracks );
+    }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
