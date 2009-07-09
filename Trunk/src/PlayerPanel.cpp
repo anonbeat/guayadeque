@@ -1401,11 +1401,20 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
     if( m_MediaSong.m_SongId > 0 )
     {
         m_Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
-        m_PlayListCtrl->UpdatedRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
+        m_PlayListCtrl->UpdatedTrack( ( guTrack * ) &m_MediaSong );
     }
     else
     {
         m_Rating->SetRating( -1 );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
+{
+    if( m_PlayListCtrl )
+    {
+        m_PlayListCtrl->UpdatedTracks( tracks );
     }
 }
 

@@ -112,12 +112,14 @@ class guPlayListPanel : public wxPanel
     void                OnPLTracksEditTracksClicked( wxCommandEvent &event );
     void                OnPLTracksCopyToClicked( wxCommandEvent &event );
 
+    void                MainSplitterOnIdle( wxIdleEvent &event );
 
   public :
     guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();
 
-    void MainSplitterOnIdle( wxIdleEvent &event );
+    void                PlayListUpdated( void );
+
 };
 
 #endif

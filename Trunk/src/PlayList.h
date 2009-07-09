@@ -111,7 +111,8 @@ class guPlayList : public wxVListBox
     void            Randomize( void );
     int             GetCaps();
     void            RemoveItem( int itemnum );
-    void            UpdatedRating( const int songid, const int rating );
+    void            UpdatedTracks( const guTrackArray * tracks );
+    void            UpdatedTrack( const guTrack * track );
 
   friend class guAddDropFilesThread;
   friend class guPlayListDropTarget;

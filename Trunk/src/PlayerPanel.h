@@ -208,7 +208,8 @@ class guPlayerPanel : public wxPanel
     void                SetRatingLabel( const int Rating );
     void                SetBitRate( int bitrate );
 
-//		void                ClearRadioProxy( void );
+    void                UpdatedTracks( const guTrackArray * tracks );
+
 
     friend class guSmartAddTracksThread;
 };

@@ -1,4 +1,6 @@
 
+  * Edited tracks will be updated if it was in player playlist
+  * Implemented Playlists. Static and Dynamic
   * Fixed crash when trying to read tags from a missing file.
   * The track playcount is updated when the track have been played at least
     the half of its length.

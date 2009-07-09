@@ -100,6 +100,8 @@ class guMainFrame : public wxFrame
     void                OnAlbumNameDClicked( wxCommandEvent &event );
     void                OnArtistNameDClicked( wxCommandEvent &event );
 
+    void                OnPlayListUpdated( wxCommandEvent &event );
+
   public:
                         guMainFrame( wxWindow * parent );
                         ~guMainFrame();

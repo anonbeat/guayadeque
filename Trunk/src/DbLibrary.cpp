@@ -526,7 +526,7 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                                              "playlist_limited, playlist_limitvalue, playlist_limittype, "
                                              "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                                     "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 0, 0, 0, 0 );" ) );
+                                     "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 1, 8, 1, 0 );" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                                              "playlist_limited, playlist_limitvalue, playlist_limittype, "
                                              "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
@@ -1446,7 +1446,7 @@ int DbLibrary::UpdateSong()
                                  "song_artistid = %u, song_albumid = %u, song_pathid = %u, "
                                  "song_filename = '%s', song_number = %u, song_year = %u, "
                                  "song_length = %u, song_bitrate = %u, song_rating = %i, "
-                                 "song_filesize WHERE song_id = %u;" ),
+                                 "song_filesize = %u WHERE song_id = %u;" ),
             m_CurSong.m_SongName.c_str(),
             m_CurSong.m_GenreId,
             m_CurSong.m_ArtistId,
@@ -1466,7 +1466,7 @@ int DbLibrary::UpdateSong()
       query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', song_genreid = %u, "\
                                  "song_artistid = %u, song_albumid = %u, song_pathid = %u, "\
                                  "song_filename = '%s', song_number = %u, song_year = %u, "\
-                                 "song_length = %u, song_bitrate = %u WHERE song_id = %u;" ),
+                                 "song_length = %u, song_bitrate = %u, song_filesize = %u WHERE song_id = %u;" ),
             m_CurSong.m_SongName.c_str(),
             m_CurSong.m_GenreId,
             m_CurSong.m_ArtistId,
@@ -1477,6 +1477,7 @@ int DbLibrary::UpdateSong()
             m_CurSong.m_Year,
             m_CurSong.m_Length,
             m_CurSong.m_Bitrate,
+            m_CurSong.m_FileSize,
             m_CurSong.m_SongId );
   }
   //printf( query.ToAscii() ); printf( "\n" );
@@ -2391,7 +2392,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
     }
   }
   // SORTING Options
-  guLogMessage( wxT( "Sort: %u %u %u" ), playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc );
+  //guLogMessage( wxT( "Sort: %u %u %u" ), playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc );
   wxString sort = wxEmptyString;
   if( playlist->m_Sorted )
   {
@@ -2443,7 +2444,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
     if( playlist->m_SortDesc )
         sort += wxT( " DESC" );
   }
-  guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
+  //guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
   return GU_TRACKS_QUERYSTR + dbNames + query + sort;
 }
 
@@ -2523,9 +2524,7 @@ int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray 
             {
                 Count += Track->m_FileSize;
             }
-            guLogMessage( wxT( "Limit %u%u" ), Limit.GetLo(), Limit.GetHi() );
-            guLogMessage( wxT( "Count %u%u" ), Count.GetLo(), Count.GetHi() );
-            if( Count > Limit )
+            if( Count >= Limit )
                 break;
         }
         tracks->Add( Track );
