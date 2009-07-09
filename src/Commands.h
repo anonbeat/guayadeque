@@ -158,6 +158,7 @@
 #define ID_PLAYLIST_RENAME              1184
 #define ID_PLAYLIST_DELETE              1185
 #define ID_PLAYLIST_COPYTO              1186
+#define ID_PLAYLIST_UPDATED             1187
 
 #endif
 // -------------------------------------------------------------------------------- //

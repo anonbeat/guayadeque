@@ -849,6 +849,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
                 Song.m_GenreName = Info.m_GenreName;
                 Song.m_Length = Info.m_Length;
                 Song.m_Year = Info.m_Year;
+                Song.m_Rating = wxNOT_FOUND;
             }
 
             m_TotalLen += Song.m_Length;
@@ -1015,7 +1016,8 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
         if( EntryDialog->ShowModal() == wxID_OK )
         {
             m_Db->CreateStaticPlayList( EntryDialog->GetValue(), Songs );
-            // TODO : Send a message to update the Playlist ListBox
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
         }
         EntryDialog->Destroy();
     }
@@ -1192,18 +1194,57 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::UpdatedRating( const int songid, const int rating )
+void guPlayList::UpdatedTracks( const guTrackArray * tracks )
 {
+    // If there are no items in the playlist there is nothing to do
+    if( !m_Items.Count() )
+        return;
+
+    bool found = false;
     int index;
-    int count = m_Items.Count();
+    int count = tracks->Count();
     for( index = 0; index < count; index++ )
     {
-        if( m_Items[ index ].m_SongId == songid )
+        int item;
+        int itemcnt = m_Items.Count();
+        for( item = 0; item < itemcnt; item++ )
         {
-            m_Items[ index ].m_Rating = rating;
-            UpdateView();
+            if( m_Items[ item ].m_SongId == ( * tracks )[ index ].m_SongId )
+            {
+                m_Items[ item ] = ( * tracks )[ index ];
+                found = true;
+                break;
+            }
+        }
+    }
+    if( found )
+    {
+        UpdateView();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::UpdatedTrack( const guTrack * track )
+{
+    // If there are no items in the playlist there is nothing to do
+    if( !m_Items.Count() )
+        return;
+
+    bool found = false;
+    int item;
+    int itemcnt = m_Items.Count();
+    for( item = 0; item < itemcnt; item++ )
+    {
+        if( m_Items[ item ].m_SongId == track->m_SongId )
+        {
+            m_Items[ item ] = * track;
+            found = true;
             break;
         }
+    }
+    if( found )
+    {
+        UpdateView();
     }
 }
 

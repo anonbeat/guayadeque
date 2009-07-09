@@ -543,6 +543,12 @@ void guPlayListPanel::OnPLTracksCopyToClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayListPanel::PlayListUpdated( void )
+{
+    m_NamesTreeCtrl->ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayListPanel::MainSplitterOnIdle( wxIdleEvent &event )
 {
     m_MainSplitter->SetSashPosition( 176 );

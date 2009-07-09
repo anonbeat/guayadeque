@@ -191,6 +191,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ) );
     Connect( ID_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ) );
 
+    Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ) );
+
     if( Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
     {
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
@@ -507,6 +509,7 @@ void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
 // ---------------------------------------------------------------------- //
 void guMainFrame::OnPlay( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "MainFrame::ONPlay()" ) );
     if( m_PlayerPanel )
       m_PlayerPanel->OnPlayButtonClick( event );
 }
@@ -704,6 +707,13 @@ void guMainFrame::OnAlbumNameDClicked( wxCommandEvent &event )
 void guMainFrame::OnArtistNameDClicked( wxCommandEvent &event )
 {
     m_LibPanel->OnArtistNameDClicked( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPlayListUpdated( wxCommandEvent &event )
+{
+    if( m_PlayListPanel )
+        m_PlayListPanel->PlayListUpdated();
 }
 
 // -------------------------------------------------------------------------------- //
