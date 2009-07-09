@@ -212,6 +212,8 @@ void inline escape_query_str( wxString * Str )
 #define GULIBRARY_FILTER_ALBUMS     3
 #define GULIBRARY_FILTER_SONGS      4
 
+class guDynPlayList;
+
 // -------------------------------------------------------------------------------- //
 class DbLibrary {
   private :
@@ -294,6 +296,9 @@ class DbLibrary {
     int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks );
     void                DeletePlayList( const int plid );
     void                SetPlayListName( const int plid, const wxString &plname );
+    void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
+    int                 CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist );
+    void                UpdateDynPlayList( const int plid, const guDynPlayList * playlist );
 
 
     void                GetPaths( guListItems * Paths, bool FullList = false );

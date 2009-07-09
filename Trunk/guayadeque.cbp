@@ -131,6 +131,9 @@
 		<Unit filename="src/CoverFrame.h" />
 		<Unit filename="src/DbLibrary.cpp" />
 		<Unit filename="src/DbLibrary.h" />
+		<Unit filename="src/DynamicPlayList.cpp" />
+		<Unit filename="src/DynamicPlayList.h" />
+		<Unit filename="src/DynamicPlaylist.cpp" />
 		<Unit filename="src/GeListBox.cpp" />
 		<Unit filename="src/GeListBox.h" />
 		<Unit filename="src/Google.cpp" />

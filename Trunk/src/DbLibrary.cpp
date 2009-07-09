@@ -22,10 +22,11 @@
 
 #include "Commands.h"
 #include "Config.h"
+#include "DynamicPlayList.h"
+#include "MainFrame.h"
 #include "MD5.h"
 #include "TagInfo.h"
 #include "Utils.h"
-#include "MainFrame.h"
 
 #include <wx/mstream.h>
 
@@ -515,11 +516,12 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_songid"" on settags (settag_songid ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name varchar(100), "
-                      "playlist_type INTEGER(2));" ) );
+                      "playlist_type INTEGER(2), playlist_limited BOOLEAN, playlist_limitvalue INTEGER, playlist_limittype INTEGER(2), "
+                      "playlist_sorted BOOLEAN, playlist_sorttype INTEGER(2), playlist_sortdesc BOOLEAN, playlist_anyoption BOOLEAN);" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""playlist_id"" on playlists (playlist_id ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsets( plset_id INTEGER PRIMARY KEY AUTOINCREMENT, plset_plid INTEGER, plset_songid INTEGER, "
-                      "plset_option INTEGER(2), plset_value TEXT(255), plset_valueindex INTEGER(2) );" ) );
+                      "plset_type INTEGER(2), plset_option INTEGER(2), plset_text TEXT(255), plset_number INTEGER, plset_option2 INTEGER );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plset_id"" on plsets (plset_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plset_plid"" on plsets (plset_plid ASC);" ) );
 
@@ -1191,8 +1193,8 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
   }
   else
   {
-    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_addedtime ) "\
-                               "VALUES( NULL, %u, %u )" ), PathId, wxDateTime::GetTimeNow() );
+    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_playcount, song_addedtime ) "\
+                               "VALUES( NULL, %u, %u, %u )" ), PathId, 0, wxDateTime::GetTimeNow() );
     if( ExecuteUpdate( query ) == 1 )
     {
       * SongId = m_Db.GetLastRowId().GetLo();
@@ -2044,7 +2046,7 @@ int DbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &son
   {
       PlayListId = m_Db.GetLastRowId().GetLo();
   }
-  dbRes.Finalize();
+  //dbRes.Finalize();
 
   if( PlayListId )
   {
@@ -2055,15 +2057,71 @@ int DbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &son
 //      query.Add( wxT( "CREATE TABLE IF NOT EXISTS playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name varchar(100), "
 //                      "playlist_type INTEGER(2));" ) );
 //      query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsets( plset_id INTEGER PRIMARY KEY AUTOINCREMENT, plset_plid INTEGER, plset_songid INTEGER, "
-//                      "plset_option INTEGER(2), plset_value TEXT(255), plset_valueindex INTEGER(2) );" ) );
-      query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_option, plset_value, plset_valueindex ) "
-                                     "VALUES( NULL, %u, %u, 0, \"\", 0 );" ),
+//                      "plset_type INTEGER(2), plset_option INTEGER(2), plset_text TEXT(255), plset_option2 INTEGER );" ) );
+      query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_type, plset_option, plset_text, plset_option2 ) "
+                                     "VALUES( NULL, %u, %u, 0, 0, \"\", 0 );" ),
                     PlayListId,
                     songs[ index ] );
-      ExecuteQuery( query );
-      dbRes.Finalize();
+      ExecuteUpdate( query );
+      //dbRes.Finalize();
     }
   }
+  return PlayListId;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist )
+{
+  wxASSERT( playlist );
+
+  int PlayListId = 0;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString PLName = name;
+  escape_query_str( &PLName );
+
+//  playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name varchar(100), "
+//            "playlist_type INTEGER(2), playlist_limited BOOLEAN, playlist_limitvalue INTEGER, playlist_limittype INTEGER(2), "
+//            "playlist_sorted BOOLEAN, playlist_sorttype INTEGER(2), playlist_sortdesc BOOLEAN, playlist_anyoption BOOLEAN);" ) );
+
+  query = wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
+               "playlist_limited, playlist_limitvalue, playlist_limittype, "
+               "playlist_sorted, playlist_sorttype, playlist_sortdesc, "
+               "playlist_anyoption ) " );
+  query += wxString::Format( wxT( "VALUES( NULL, \"%s\", %u, %u, %u, %u, %u, %u, %u, %u );" ),
+          PLName.c_str(),
+          GUPLAYLIST_DYNAMIC,
+          playlist->m_Limited, playlist->m_LimitValue, playlist->m_LimitType,
+          playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc,
+          playlist->m_AnyOption );
+
+  if( ExecuteUpdate( query ) == 1 )
+  {
+      PlayListId = m_Db.GetLastRowId().GetLo();
+  }
+
+  if( PlayListId )
+  {
+      int index;
+      int count = playlist->m_Filters.Count();
+      for( index = 0; index < count; index++ )
+      {
+        guFilterItem * FilterItem = &playlist->m_Filters[ index ];
+
+        query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
+                                       "VALUES( NULL, %u, 0, %u, %u, \"%s\", %u, %u );" ),
+                      PlayListId,
+                      FilterItem->m_Type,
+                      FilterItem->m_Option,
+                      FilterItem->m_Text.c_str(),
+                      FilterItem->m_Number,
+                      FilterItem->m_Option2
+                       );
+
+        ExecuteUpdate( query );
+      }
+  }
+
   return PlayListId;
 }
 
@@ -2109,6 +2167,232 @@ void inline DbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbR
 }
 
 // -------------------------------------------------------------------------------- //
+const wxString DynPLStringOption( int option, const wxString &text )
+{
+  wxString TextParam = text;
+  escape_query_str( &TextParam );
+  wxString FmtStr;
+  switch( option )
+  {
+    case 0 :
+      FmtStr = wxT( "LIKE \"%%%s%%\"" );
+      break;
+    case 1 :
+      FmtStr = wxT( "NOT LIKE \"%%%s%%\"" );
+      break;
+    case 2 :
+      FmtStr = wxT( "= \"%s\"" );
+      break;
+    case 3 :
+      FmtStr = wxT( "LIKE \"%s%%\"" );
+      break;
+    case 4 :
+      FmtStr = wxT( "LIKE \"%%%s\"" );
+      break;
+  }
+  return wxString::Format( FmtStr, TextParam.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //
+const wxString DynPLYearOption( const int option, const int year )
+{
+  wxString FmtStr;
+  switch( option )
+  {
+    case 0 :
+      FmtStr = wxT( "= %u" );
+      break;
+    case 1 :
+      FmtStr = wxT( "> %u" );
+      break;
+    case 2 :
+      FmtStr = wxT( "< %u" );
+      break;
+  }
+  return wxString::Format( FmtStr, year );
+}
+
+// -------------------------------------------------------------------------------- //
+const wxString DynPLNumericOption( const int option, const int value )
+{
+  wxString FmtStr;
+  switch( option )
+  {
+    case 0 :
+      FmtStr = wxT( "= %u" );
+      break;
+    case 1 :
+      FmtStr = wxT( ">= %u" );
+      break;
+    case 2 :
+      FmtStr = wxT( "<= %u" );
+      break;
+  }
+  return wxString::Format( FmtStr, value );
+}
+
+// -------------------------------------------------------------------------------- //
+unsigned long DynPLDateOption2[] = {
+    60,         // Minutes
+    3600,       // Hours
+    86400,      // Days
+    604800,     // Weeks
+    2592000     // Months
+};
+
+// -------------------------------------------------------------------------------- //
+const wxString DynPLDateOption( const int option, const int value, const int option2 )
+{
+  unsigned long Time;
+  wxString FmtStr;
+
+  switch( option )
+  {
+    case 0 : // IN_THE_LAST
+    {
+        FmtStr = wxT( ">= %u" );
+        break;
+    }
+
+    case 1 : // BEFORE_THE_LAST
+    {
+        FmtStr = wxT( "< %u" );
+        break;
+    }
+  }
+  Time = wxDateTime::GetTimeNow() - ( value * DynPLDateOption2[ option2 ] );
+  return wxString::Format( FmtStr, Time );
+}
+
+// -------------------------------------------------------------------------------- //
+const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
+{
+  wxASSERT( playlist );
+  wxString query = wxT( "WHERE " );
+  wxString dbNames = wxEmptyString;
+  int index;
+  int count = playlist->m_Filters.Count();
+  for( index = 0; index < count; index++ )
+  {
+    if( index )
+    {
+        query += playlist->m_AnyOption ? wxT( " OR  " ) : wxT( " AND " );
+    }
+    switch( playlist->m_Filters[ index ].m_Type )
+    {
+      case 0 : // TITLE
+        query += wxT( "song_name " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                                   playlist->m_Filters[ index ].m_Text );
+        break;
+
+      case 1 :  // ALBUM
+        dbNames += wxT( ", artists " );
+        query += wxT( "( song_artistid = artist_id AND artist_name " ) +
+                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                    playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+        break;
+
+      case 2 : // ALBUM
+        dbNames += wxT( ", albums " );
+        query += wxT( "( song_albumid = album_id AND album_name " ) +
+                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                    playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+        break;
+
+      case 3 : // GENRE
+        dbNames += wxT( ", genres " );
+        query += wxT( "( song_genreid = genre_id AND genre_name " ) +
+                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                    playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+        break;
+
+      case 4 : // PATH
+        dbNames += wxT( ", paths " );
+        query += wxT( "( song_pathid = path_id AND path_value " ) +
+                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                    playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+        break;
+
+      case 5 :  // YEAR
+      {
+        query += wxT( "song_year " ) +
+                 DynPLYearOption( playlist->m_Filters[ index ].m_Option,
+                                  playlist->m_Filters[ index ].m_Number );
+        break;
+      }
+
+      case 6 :  // RATING
+      {
+        query += wxT( "song_rating " ) +
+                 DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
+                                  playlist->m_Filters[ index ].m_Number );
+        break;
+      }
+
+      case 7 :  // LENGTH
+      {
+        query += wxT( "song_length " ) +
+                 DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
+                                  playlist->m_Filters[ index ].m_Number );
+        break;
+      }
+
+      case 8 :  // PLAYCOUNT
+      {
+        query += wxT( "song_playcount " ) +
+                 DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
+                                  playlist->m_Filters[ index ].m_Number );
+        break;
+      }
+
+      case 9 :
+      {
+        query += wxT( "song_lastplay " ) +
+                 DynPLDateOption( playlist->m_Filters[ index ].m_Option,
+                 playlist->m_Filters[ index ].m_Number,
+                 playlist->m_Filters[ index ].m_Option2 );
+        break;
+      }
+
+      case 10 :
+      {
+        query += wxT( "song_addedtime " ) +
+                 DynPLDateOption( playlist->m_Filters[ index ].m_Option,
+                 playlist->m_Filters[ index ].m_Number,
+                 playlist->m_Filters[ index ].m_Option2 );
+        break;
+      }
+
+    }
+  }
+  // SORTING Options
+  guLogMessage( wxT( "Sort: %u %u %u" ), playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc );
+  wxString sort = wxEmptyString;
+  if( playlist->m_Sorted )
+  {
+    sort = wxT( " ORDER BY " );
+    switch( playlist->m_SortType )
+    {
+        case 0 : sort += wxT( "song_name" ); break;
+// TODO:Make sorting of artist, album and genre alphabetic by its name
+        case 1 : sort += wxT( "song_artistid" ); break;
+        case 2 : sort += wxT( "song_albumid" ); break;
+        case 3 : sort += wxT( "song_genreid" ); break;
+        case 4 : sort += wxT( "song_year" ); break;
+        case 5 : sort += wxT( "song_rating" ); break;
+        case 6 : sort += wxT( "song_length" ); break;
+        case 7 : sort += wxT( "song_playcount" ); break;
+        case 8 : sort += wxT( "song_lastplay" ); break;
+        case 9 : sort += wxT( "song_addedtime" ); break;
+    }
+    if( playlist->m_SortDesc )
+        sort += wxT( " DESC" );
+  }
+  guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
+  return GU_TRACKS_QUERYSTR + dbNames + query + sort;
+}
+
+// -------------------------------------------------------------------------------- //
 int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks )
 {
   wxString query;
@@ -2117,20 +2401,125 @@ int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray 
 
   if( plid )
   {
-    query = GU_TRACKS_QUERYSTR;
-    query += wxString::Format( wxT( ", plsets WHERE plset_songid = song_id AND plset_plid = %u" ), plid );
+    if( pltype == GUPLAYLIST_STATIC )
+    {
+      query = GU_TRACKS_QUERYSTR;
+      query += wxString::Format( wxT( ", plsets WHERE plset_songid = song_id AND plset_plid = %u" ), plid );
 
+      dbRes = ExecuteQuery( query );
+
+      while( dbRes.NextRow() )
+      {
+        Track = new guTrack();
+        FillTrackFromDb( Track, &dbRes );
+        tracks->Add( Track );
+      }
+      dbRes.Finalize();
+    }
+    else //GUPLAYLIST_DYNAMIC
+    {
+      guDynPlayList PlayList;
+      GetDynamicPlayList( plid, &PlayList );
+
+      query = DynPlayListToSQLQuery( &PlayList );
+
+      dbRes = ExecuteQuery( query );
+
+      while( dbRes.NextRow() )
+      {
+        guTrack * Track = new guTrack();
+        FillTrackFromDb( Track, &dbRes );
+        tracks->Add( Track );
+      }
+      dbRes.Finalize();
+    }
+  }
+  return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::GetDynamicPlayList( const int plid, guDynPlayList * playlist )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT playlist_limited, playlist_limitvalue, playlist_limittype, "
+               "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption "
+               "FROM playlists WHERE playlist_id = %u LIMIT 1;" ), plid );
+  dbRes = ExecuteQuery( query );
+  if( dbRes.NextRow() )
+  {
+    playlist->m_Id = plid;
+    playlist->m_Limited = dbRes.GetBool( 0 );
+    playlist->m_LimitValue = dbRes.GetInt( 1 );
+    playlist->m_LimitType = dbRes.GetInt( 2 );
+    playlist->m_Sorted = dbRes.GetBool( 3 );
+    playlist->m_SortType = dbRes.GetInt( 4 );
+    playlist->m_SortDesc = dbRes.GetBool( 5 );
+    playlist->m_AnyOption = dbRes.GetBool( 6 );
+  }
+  dbRes.Finalize();
+
+  if( playlist->m_Id )
+  {
+    query = wxString::Format( wxT( "SELECT plset_type, plset_option, plset_text, plset_number, plset_option2 "
+                              "FROM plsets WHERE plset_plid = %u;" ), plid );
     dbRes = ExecuteQuery( query );
-
     while( dbRes.NextRow() )
     {
-      Track = new guTrack();
-      FillTrackFromDb( Track, &dbRes );
-      tracks->Add( Track );
+      guFilterItem * FilterItem = new guFilterItem();
+      FilterItem->m_Type = dbRes.GetInt( 0 );
+      FilterItem->m_Option = dbRes.GetInt( 1 );
+      FilterItem->m_Text = dbRes.GetString( 2 );
+      FilterItem->m_Number = dbRes.GetInt( 3 );
+      FilterItem->m_Option2 = dbRes.GetInt( 4 );
+      FilterItem->SetFilterLabel();
+      playlist->m_Filters.Add( FilterItem );
     }
     dbRes.Finalize();
   }
-  return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::UpdateDynPlayList( const int plid, const guDynPlayList * playlist )
+{
+  wxASSERT( playlist );
+
+  wxString query;
+
+  query = wxString::Format( wxT( "UPDATE playlists SET "
+               "playlist_limited = %u, playlist_limitvalue = %u, playlist_limittype = %u, "
+               "playlist_sorted = %u, playlist_sorttype = %u, playlist_sortdesc = %u, "
+               "playlist_anyoption = %u WHERE playlist_id = %u;" ),
+               playlist->m_Limited, playlist->m_LimitValue, playlist->m_LimitType,
+               playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc,
+               playlist->m_AnyOption,
+               plid );
+
+  ExecuteUpdate( query );
+
+  query = wxString::Format( wxT( "DELETE FROM plsets WHERE plset_plid = %u;" ), plid );
+  ExecuteUpdate( query );
+
+  int index;
+  int count = playlist->m_Filters.Count();
+  for( index = 0; index < count; index++ )
+  {
+    guFilterItem * FilterItem = &playlist->m_Filters[ index ];
+
+    query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
+                  "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
+                  "VALUES( NULL, %u, 0, %u, %u, \"%s\", %u, %u );" ),
+                  plid,
+                  FilterItem->m_Type,
+                  FilterItem->m_Option,
+                  FilterItem->m_Text.c_str(),
+                  FilterItem->m_Number,
+                  FilterItem->m_Option2
+                   );
+
+    ExecuteUpdate( query );
+  }
 }
 
 // -------------------------------------------------------------------------------- //

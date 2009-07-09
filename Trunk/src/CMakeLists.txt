@@ -108,6 +108,8 @@ ADD_EXECUTABLE( guayadeque
 	RatingCtrl.h
 	PlayListPanel.cpp
 	PlayListPanel.h
+	DynamicPlayList.cpp
+	DynamicPlayList.h
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 
