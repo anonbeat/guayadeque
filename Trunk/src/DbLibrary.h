@@ -64,6 +64,7 @@ class guTrack
     wxString        m_GenreName;
     int             m_PathId;
     wxString        m_FileName;           // mp3 filename
+    unsigned int    m_FileSize;
     int             m_Number;             // the track num of the song into the album
     int             m_Year;               // the year of the song
     int             m_Length;             // the length of the song in seconds

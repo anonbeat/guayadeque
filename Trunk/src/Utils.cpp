@@ -258,3 +258,11 @@ int guExecute( const wxString &Command )
 }
 
 // -------------------------------------------------------------------------------- //
+unsigned int guGetFileSize( const wxString &FileName )
+{
+    wxStructStat St;
+    wxStat( FileName, &St );
+    return St.st_size;
+}
+
+// -------------------------------------------------------------------------------- //

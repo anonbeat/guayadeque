@@ -45,6 +45,7 @@ bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings );
 wxString guURLEncode( const wxString &Source );
 int guWebExecute( const wxString &Url );
 int guExecute( const wxString &Command );
+unsigned int guGetFileSize( const wxString &FileName );
 
 // -------------------------------------------------------------------------------- //
 #endif
