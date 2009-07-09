@@ -98,6 +98,7 @@ class guPlayListPanel : public wxPanel
     void                OnPLNamesPlay( wxCommandEvent &event );
     void                OnPLNamesEnqueue( wxCommandEvent &event );
     void                OnPLNamesNewPlaylist( wxCommandEvent &event );
+    void                OnPLNamesEditPlaylist( wxCommandEvent &event );
     void                OnPLNamesRenamePlaylist( wxCommandEvent &event );
     void                OnPLNamesDeletePlaylist( wxCommandEvent &event );
     void                OnPLNamesCopyTo( wxCommandEvent &event );

@@ -154,9 +154,10 @@
 #define ID_PLAYLIST_PLAY                1180
 #define ID_PLAYLIST_ENQUEUE             1181
 #define ID_PLAYLIST_NEWPLAYLIST         1182
-#define ID_PLAYLIST_RENAME              1183
-#define ID_PLAYLIST_DELETE              1184
-#define ID_PLAYLIST_COPYTO              1185
+#define ID_PLAYLIST_EDIT                1183
+#define ID_PLAYLIST_RENAME              1184
+#define ID_PLAYLIST_DELETE              1185
+#define ID_PLAYLIST_COPYTO              1186
 
 #endif
 // -------------------------------------------------------------------------------- //

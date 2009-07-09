@@ -23,6 +23,7 @@
 #include "Commands.h"
 #include "Config.h"
 #include "DbLibrary.h"
+#include "DynamicPlayList.h"
 #include "Images.h"
 #include "LabelEditor.h"
 #include "TagInfo.h"
@@ -114,11 +115,11 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
     wxPoint Point = event.GetPoint();
 
     wxTreeItemId ItemId = event.GetItem();
-    wxTreeItemData * ItemData = NULL;
+    guPLNamesData * ItemData = NULL;
 
     if( ItemId.IsOk() )
     {
-        ItemData = GetItemData( ItemId );
+        ItemData = ( guPLNamesData * ) GetItemData( ItemId );
 
         if( ItemData )
         {
@@ -140,6 +141,13 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
 
     if( ItemData )
     {
+        if( ItemData->GetType() == GUPLAYLIST_DYNAMIC )
+        {
+            MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDIT, _( "Edit Playlist" ), _( "Edit the selected playlist" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            Menu.Append( MenuItem );
+        }
+
         MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RENAME, _( "Rename Playlist" ), _( "Change the name of the selected playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
         Menu.Append( MenuItem );
@@ -247,6 +255,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
     Connect( ID_PLAYLIST_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesPlay ) );
     Connect( ID_PLAYLIST_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesEnqueue ) );
     Connect( ID_PLAYLIST_NEWPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesNewPlaylist ) );
+    Connect( ID_PLAYLIST_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesEditPlaylist ) );
     Connect( ID_PLAYLIST_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesRenamePlaylist ) );
     Connect( ID_PLAYLIST_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesDeletePlaylist ) );
     Connect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
@@ -272,6 +281,7 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_PLAYLIST_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesPlay ) );
     Disconnect( ID_PLAYLIST_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesEnqueue ) );
     Disconnect( ID_PLAYLIST_NEWPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesNewPlaylist ) );
+    Disconnect( ID_PLAYLIST_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesEditPlaylist ) );
     Disconnect( ID_PLAYLIST_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesRenamePlaylist ) );
     Disconnect( ID_PLAYLIST_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesDeletePlaylist ) );
     Disconnect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
@@ -337,6 +347,42 @@ void guPlayListPanel::OnPLNamesEnqueue( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesNewPlaylist( wxCommandEvent &event )
 {
+    guDynPlayList DynPlayList;
+    guDynPlayListEditor * PlayListEditor = new guDynPlayListEditor( this, &DynPlayList );
+    if( PlayListEditor->ShowModal() == wxID_OK )
+    {
+        PlayListEditor->FillPlayListEditData();
+
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "PlayList Name: " ),
+          _( "Enter the new playlist name" ), wxT( "New Dynamic Playlist" ) );
+        if( EntryDialog->ShowModal() == wxID_OK )
+        {
+            m_Db->CreateDynamicPlayList( EntryDialog->GetValue(), &DynPlayList );
+            m_NamesTreeCtrl->ReloadItems();
+        }
+        EntryDialog->Destroy();
+    }
+    PlayListEditor->Destroy();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLNamesEditPlaylist( wxCommandEvent &event )
+{
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    if( ItemId.IsOk() )
+    {
+        guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
+        guDynPlayList DynPlayList;
+        m_Db->GetDynamicPlayList( ItemData->GetData(), &DynPlayList );
+        guDynPlayListEditor * PlayListEditor = new guDynPlayListEditor( this, &DynPlayList );
+        if( PlayListEditor->ShowModal() == wxID_OK )
+        {
+            PlayListEditor->FillPlayListEditData();
+            m_Db->UpdateDynPlayList( ItemData->GetData(), &DynPlayList );
+            m_NamesTreeCtrl->ReloadItems();
+        }
+        PlayListEditor->Destroy();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
