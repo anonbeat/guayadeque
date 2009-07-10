@@ -56,6 +56,7 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     m_Db = db;
     m_TotalLen = 0;
     m_CurItem = wxNOT_FOUND;
+    m_StartPlaying = false;
 
     //CurItem = wxNOT_FOUND;
     m_DragOverItem = wxNOT_FOUND;
@@ -74,6 +75,7 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
             if( wxFileExists( MainApp->argv[ Index ] ) )
             {
                 AddPlayListItem( MainApp->argv[ Index ] );
+                m_StartPlaying = true;
             }
         }
     }

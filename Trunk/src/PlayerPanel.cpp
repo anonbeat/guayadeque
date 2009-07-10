@@ -215,7 +215,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	PlayListPanelSizer->Add( m_PlayListLabelsSizer, 0, wxEXPAND, 5 );
 
-	m_PlayListCtrl = new guPlayList( PlayListPanel, m_Db ); //, wxDefaultPosition, wxDefaultSize, wxLC_NO_HEADER|wxLC_REPORT );
+	m_PlayListCtrl = new guPlayList( PlayListPanel, m_Db );
 	PlayListPanelSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
 
 	PlayListPanel->SetSizer( PlayListPanelSizer );
@@ -244,6 +244,13 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
         SetVolume( 0.0 );
         SetVolume( SavedVol );
         //guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
+    }
+
+    // There was a track passed as argument that we will play
+    if( m_PlayListCtrl->StartPlaying() )
+    {
+        wxCommandEvent event;
+        OnPlayButtonClick( event );
     }
 
 	// Connect Events
