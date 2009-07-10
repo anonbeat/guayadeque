@@ -146,6 +146,10 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
             MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDIT, _( "Edit Playlist" ), _( "Edit the selected playlist" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
             Menu.Append( MenuItem );
+
+            MenuItem = new wxMenuItem( &Menu, ID_SONG_SAVEPLAYLIST, _( "Save Playlist" ), _( "Save the selected playlist as a Static Playlist" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+            Menu.Append( MenuItem );
         }
 
         MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RENAME, _( "Rename Playlist" ), _( "Change the name of the selected playlist" ) );
@@ -269,6 +273,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
     Connect( ID_SONG_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditLabelsClicked ) );
     Connect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditTracksClicked ) );
     Connect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksCopyToClicked ) );
+    Connect( ID_SONG_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSavePlayListClicked ) );
 
 	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
@@ -527,6 +532,7 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
             m_Db->UpdateSongs( &Tracks );
             UpdateImages( Tracks, Images );
             m_PLTracksListBox->ReloadItems();
+            m_PlayerPanel->UpdatedTracks( &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -540,6 +546,30 @@ void guPlayListPanel::OnPLTracksCopyToClicked( wxCommandEvent &event )
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) new guTrackArray( Tracks ) );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+    if( ( count = Tracks.Count() ) )
+    {
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( wxTheApp->GetTopWindow(), _( "PlayList Name: " ), _( "Enter the new playlist name" ) );
+        if( EntryDialog->ShowModal() == wxID_OK )
+        {
+            wxArrayInt SongIds;
+            for( index = 0; index < count; index++ )
+            {
+                SongIds.Add( Tracks[ index ].m_SongId );
+            }
+            m_Db->CreateStaticPlayList( EntryDialog->GetValue(), SongIds );
+
+            m_NamesTreeCtrl->ReloadItems();
+        }
+        EntryDialog->Destroy();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
