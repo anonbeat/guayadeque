@@ -111,6 +111,7 @@ class guPlayListPanel : public wxPanel
     void                OnPLTracksEditLabelsClicked( wxCommandEvent &event );
     void                OnPLTracksEditTracksClicked( wxCommandEvent &event );
     void                OnPLTracksCopyToClicked( wxCommandEvent &event );
+    void                OnPLTracksSavePlayListClicked( wxCommandEvent &event );
 
     void                MainSplitterOnIdle( wxIdleEvent &event );
 

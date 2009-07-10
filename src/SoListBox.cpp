@@ -338,6 +338,10 @@ void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
 
         Menu.AppendSeparator();
 
+        MenuItem = new wxMenuItem( &Menu, ID_SONG_SAVEPLAYLIST, _( "Save Playlist" ), _( "Save all selected tracks as a playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        Menu.Append( MenuItem );
+
         MenuItem = new wxMenuItem( &Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu.Append( MenuItem );

@@ -80,6 +80,7 @@
 #define ID_SONG_EDITLABELS              1064
 #define ID_SONG_EDITTRACKS              1065
 #define ID_SONG_COPYTO                  1066
+#define ID_SONG_SAVEPLAYLIST            1067
 
 //
 #define ID_PLAYER_PLAYLIST_UPDATELIST          1070

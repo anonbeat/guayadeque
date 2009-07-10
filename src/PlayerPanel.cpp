@@ -1412,6 +1412,34 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
 {
+    wxASSERT( tracks );
+    int index;
+    int count = tracks->Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( ( * tracks )[ index ].m_SongId == m_MediaSong.m_SongId )
+        {
+            m_MediaSong = ( * tracks )[ index ];
+
+            // Update the Current Playing Song Info
+            SetTitleLabel( m_MediaSong.m_SongName );
+            SetAlbumLabel( m_MediaSong.m_AlbumName );
+            SetArtistLabel( m_MediaSong.m_ArtistName );
+            SetRatingLabel( m_MediaSong.m_Rating );
+
+            if( m_MediaSong.m_Year > 0 )
+            {
+                m_YearLabel->SetLabel( wxString::Format( wxT( "%u" ), m_MediaSong.m_Year ) );
+            }
+            else
+            {
+                m_YearLabel->SetLabel( wxEmptyString );
+            }
+
+            break;
+        }
+    }
+
     if( m_PlayListCtrl )
     {
         m_PlayListCtrl->UpdatedTracks( tracks );

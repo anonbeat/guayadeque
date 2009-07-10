@@ -109,6 +109,7 @@ class guLibPanel : public wxPanel
     void OnSongsEditLabelsClicked( wxCommandEvent &event );
     void OnSongsEditTracksClicked( wxCommandEvent &event );
     void OnSongCopyToClicked( wxCommandEvent &event );
+    void OnSongSavePlayListClicked( wxCommandEvent &event );
 
     // Idle event handlers
     void SelGenreSplitterOnIdle( wxIdleEvent &event );
