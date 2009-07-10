@@ -39,6 +39,7 @@ class guPlayList : public wxVListBox
   private :
     DbLibrary *     m_Db;
     guTrackArray    m_Items;
+    bool            m_StartPlaying;
     long            m_CurItem;
     long            m_TotalLen;
     long            m_SmartPlayMaxPlayListTracks;
@@ -113,6 +114,7 @@ class guPlayList : public wxVListBox
     void            RemoveItem( int itemnum );
     void            UpdatedTracks( const guTrackArray * tracks );
     void            UpdatedTrack( const guTrack * track );
+    bool            StartPlaying( void ) { return m_StartPlaying; }
 
   friend class guAddDropFilesThread;
   friend class guPlayListDropTarget;

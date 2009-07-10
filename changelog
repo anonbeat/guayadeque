@@ -1,4 +1,5 @@
 
+  * Tracks passed in command line will be played by default
   * Edited tracks will be updated if it was in player playlist
   * Implemented Playlists. Static and Dynamic
   * Fixed crash when trying to read tags from a missing file.
