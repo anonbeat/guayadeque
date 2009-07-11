@@ -221,6 +221,7 @@ class DbLibrary {
     wxSQLite3Database  m_Db;
     wxArrayString      m_LibPaths;
     guTrack            m_CurSong;
+    bool               m_NeedUpdate;
     //wxString           m_UpTag;
 
     // Library Filter Options
@@ -259,6 +260,7 @@ class DbLibrary {
                         ~DbLibrary();
     int                 Open( const wxString &DbPath );
     int                 Close();
+    bool                NeedUpdate( void ) { return m_NeedUpdate; };
 
     unsigned long       GetDbVersion( void );
     void                DoCleanUp( void );

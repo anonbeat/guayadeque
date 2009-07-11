@@ -193,8 +193,10 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ) );
 
-    if( Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
+    // If the database need to be updated
+    if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
     {
+        guLogMessage( wxT( "Database updating started." ) );
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
         wxPostEvent( this, event );
     }

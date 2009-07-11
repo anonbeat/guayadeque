@@ -1,4 +1,5 @@
 
+  * Update the library automatically if detects an old version installed
   * Tracks passed in command line will be played by default
   * Edited tracks will be updated if it was in player playlist
   * Implemented Playlists. Static and Dynamic
