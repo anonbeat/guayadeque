@@ -40,10 +40,13 @@ WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
+#define GU_CURRENT_DBVERSION    "5"
+
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
                "song_number, song_pathid, song_filename, song_year, "\
                "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime, song_filesize "\
                "FROM songs " )
+
 
 
 // -------------------------------------------------------------------------------- //
@@ -275,6 +278,8 @@ DbLibrary::DbLibrary()
     m_RaOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
   }
 
+  m_NeedUpdate = false;
+
   m_GeFilters.Empty();
   m_LaFilters.Empty();
   m_ArFilters.Empty();
@@ -292,13 +297,13 @@ DbLibrary::DbLibrary()
 // -------------------------------------------------------------------------------- //
 DbLibrary::DbLibrary( const wxString &DbName )
 {
+  m_NeedUpdate = false;
+
   // Check the version and if needed update or create it
   CheckDbVersion( DbName );
 
   // Once its checked open it
   Open( DbName );
-
-  //m_UpTag = wxEmptyString;
 
   //
   guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -449,112 +454,122 @@ void DbLibrary::DoCleanUp( void )
 // -------------------------------------------------------------------------------- //
 bool DbLibrary::CheckDbVersion( const wxString &DbName )
 {
-    wxArrayString query;
-    int Index;
-    int Count;
-    unsigned long dbVer;
+  wxArrayString query;
+  int Index;
+  int Count;
+  unsigned long dbVer;
 
-    if( !wxFileExists( DbName ) )
+  //
+  Open( DbName );
+
+  dbVer = GetDbVersion();
+
+  switch( dbVer )
+  {
+    case 4 :
     {
-       // the database is going to be created... Reset the last update
-       guConfig * Config = ( guConfig * ) guConfig::Get();
-       if( Config )
-       {
-           Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) );
-        }
+        Close();
+        guLogMessage( wxT( "Update of database needed. Old database renamed to guayadeque.db.save" ) );
+        wxRenameFile( DbName, DbName + wxT( ".save" ), true );
+        m_NeedUpdate = true;
+        Open( DbName );
+        query.Add( wxT( "CREATE TABLE Version( version INTEGER );" ) );
     }
-    //
-    Open( DbName );
 
-    dbVer = GetDbVersion();
-
-    if( dbVer == 0 )
+    case 0 :
     {
+      // the database is going to be created... Reset the last update
+      guConfig * Config = ( guConfig * ) guConfig::Get();
+      if( Config )
+      {
+        Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) );
+      }
+
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS genres( genre_id INTEGER PRIMARY KEY AUTOINCREMENT,genre_name varchar(255) );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""genre_id"" on genres (genre_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""genre_name"" on genres (genre_name ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'genre_id' on genres (genre_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'genre_name' on genres (genre_name ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS albums( album_id INTEGER PRIMARY KEY AUTOINCREMENT, album_artistid INTEGER, album_pathid INTEGER, album_name varchar(255), album_coverid INTEGER );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""album_id"" on albums (album_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_artistid"" on albums (album_artistid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_pathid"" on albums (album_pathid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""album_name"" on albums (album_name ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'album_id' on albums (album_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'album_artistid' on albums (album_artistid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'album_pathid' on albums (album_pathid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'album_name' on albums (album_name ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS artists( artist_id INTEGER  PRIMARY KEY AUTOINCREMENT, artist_name varchar(255) );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""artist_id"" on artists (artist_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""artist_name"" on artists (artist_name ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'artist_id' on artists (artist_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'artist_name' on artists (artist_name ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS paths( path_id INTEGER PRIMARY KEY AUTOINCREMENT,path_value varchar(1024) );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""path_id"" on paths (path_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""path_value"" on paths (path_value ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'path_id' on paths (path_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'path_value' on paths (path_value ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS songs( song_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "song_name varchar(255), song_albumid INTEGER, song_artistid INTEGER, song_genreid INTEGER, "
                       "song_filename varchar(255), song_pathid INTEGER, song_number INTEGER(3), song_year INTEGER(4), "
                       "song_length INTEGER, song_bitrate INTEGER, song_rating INTEGER DEFAULT -1, song_playcount INTEGER, "
                       "song_addedtime INTEGER, song_lastplay INTEGER, song_filesize INTEGER );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""song_id"" on songs (song_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_name"" on songs (song_name ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_albumid"" on songs (song_albumid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_artistid"" on songs (song_artistid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_genreid"" on songs (song_genreid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_pathid"" on songs (song_pathid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_length"" on songs (song_length ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_bitrate"" on songs (song_bitrate ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_rating"" on songs (song_rating ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_playcount"" on songs (song_playcount ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_addedtime"" on songs (song_addedtime ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""song_lastplay"" on songs (song_lastplay ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'song_id' on songs (song_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_name' on songs (song_name ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_albumid' on songs (song_albumid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_artistid' on songs (song_artistid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_genreid' on songs (song_genreid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_pathid' on songs (song_pathid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_length' on songs (song_length ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_bitrate' on songs (song_bitrate ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_rating' on songs (song_rating ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_playcount' on songs (song_playcount ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_addedtime' on songs (song_addedtime ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_lastplay' on songs (song_lastplay ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS tags( tag_id INTEGER  PRIMARY KEY AUTOINCREMENT, tag_name varchar(100) );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""tag_id"" on tags (tag_id ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_id' on tags (tag_id ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS settags( settag_tagid INTEGER, settag_artistid INTEGER, settag_albumid INTEGER, settag_songid INTEGER );" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_tagid"" on settags (settag_tagid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_artistid"" on settags (settag_artistid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_albumid"" on settags (settag_albumid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""settag_songid"" on settags (settag_songid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'settag_tagid' on settags (settag_tagid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'settag_artistid' on settags (settag_artistid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'settag_albumid' on settags (settag_albumid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'settag_songid' on settags (settag_songid ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name varchar(100), "
                       "playlist_type INTEGER(2), playlist_limited BOOLEAN, playlist_limitvalue INTEGER, playlist_limittype INTEGER(2), "
                       "playlist_sorted BOOLEAN, playlist_sorttype INTEGER(2), playlist_sortdesc BOOLEAN, playlist_anyoption BOOLEAN);" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""playlist_id"" on playlists (playlist_id ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'playlist_id' on playlists (playlist_id ASC);" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
-                                             "playlist_limited, playlist_limitvalue, playlist_limittype, "
-                                             "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                                     "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 0, 0, 0, 0 );" ) );
+                      "playlist_limited, playlist_limitvalue, playlist_limittype, "
+                      "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
+                      "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 0, 0, 0, 0 );" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
-                                             "playlist_limited, playlist_limitvalue, playlist_limittype, "
-                                             "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                                     "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 1, 8, 1, 0 );" ) );
+                      "playlist_limited, playlist_limitvalue, playlist_limittype, "
+                      "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
+                      "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 1, 8, 1, 0 );" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
-                                             "playlist_limited, playlist_limitvalue, playlist_limittype, "
-                                             "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                                     "VALUES( NULL, 'Most Rated Tracks', 1, 0, 0, 0, 0, 0, 0, 0 );" ) );
+                      "playlist_limited, playlist_limitvalue, playlist_limittype, "
+                      "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
+                      "VALUES( NULL, 'Most Rated Tracks', 1, 0, 0, 0, 0, 0, 0, 0 );" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsets( plset_id INTEGER PRIMARY KEY AUTOINCREMENT, plset_plid INTEGER, plset_songid INTEGER, "
                       "plset_type INTEGER(2), plset_option INTEGER(2), plset_text TEXT(255), plset_number INTEGER, plset_option2 INTEGER );" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plset_id"" on plsets (plset_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""plset_plid"" on plsets (plset_plid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'plset_id' on plsets (plset_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'plset_plid' on plsets (plset_plid ASC);" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
-                                          "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                                  "VALUES( NULL, 1, 0, 10, 0, '', 1, 3 );" ) );
+                      "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
+                      "VALUES( NULL, 1, 0, 10, 0, '', 1, 3 );" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
-                                          "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                                  "VALUES( NULL, 2, 0, 9, 0, '', 1, 2 );" ) );
+                      "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
+                      "VALUES( NULL, 2, 0, 9, 0, '', 1, 2 );" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
-                                          "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                                  "VALUES( NULL, 3, 0, 6, 1, '', 5, 0 );" ) );
+                      "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
+                      "VALUES( NULL, 3, 0, 6, 1, '', 5, 0 );" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_hash VARCHAR( 32 ) );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""cover_id"" on covers (cover_id ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS audioscs( audiosc_id INTEGER PRIMARY KEY AUTOINCREMENT, audiosc_artist VARCHAR(255), audiosc_album varchar(255), audiosc_track varchar(255), audiosc_playedtime INTEGER, audiosc_source char(1), audiosc_ratting char(1), audiosc_len INTEGER, audiosc_tracknum INTEGER, audiosc_mbtrackid INTEGER );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""audiosc_id"" on audioscs (audiosc_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""audiosc_playedtime"" on audioscs (audiosc_playedtime ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'audiosc_id' on audioscs (audiosc_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'audiosc_playedtime' on audioscs (audiosc_playedtime ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiogenres( radiogenre_id INTEGER PRIMARY KEY AUTOINCREMENT, radiogenre_name VARCHAR(255), radio_tunerbase VARCHAR(255) );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS ""radiogenre_id"" on radiogenres (radiogenre_id ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'radiogenre_id' on radiogenres (radiogenre_id ASC);" ) );
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '60s' );" ) );
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '80s' );" ) );
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '90s' );" ) );
@@ -584,32 +599,30 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Top 40' );" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER, radiostation_genreid INTEGER, radiostation_name VARCHAR(255), radiostation_type VARCHAR(32), radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiostation_id"" on radiostations (radiostation_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiostation_genreid"" on radiostations (radiostation_genreid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_genreid ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiolabels( radiolabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiolabel_name VARCHAR(255));" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiolabel_id"" on radiolabels (radiolabel_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiolabel_id' on radiolabels (radiolabel_id ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiosetlabels( radiosetlabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiosetlabel_labelid INTEGER, radiosetlabel_stationid INTEGER);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiosetlabel_id"" on radiosetlabels (radiosetlabel_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiosetlabel_labelid"" on radiosetlabels (radiosetlabel_labelid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS ""radiosetlabel_stationidid"" on radiosetlabels (radiosetlabel_stationid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_id' on radiosetlabels (radiosetlabel_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_labelid' on radiosetlabels (radiosetlabel_labelid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_stationidid' on radiosetlabels (radiosetlabel_stationid ASC);" ) );
 
-      query.Add( wxT( "INSERT INTO Version( version ) VALUES( 4 );" ) );
+      query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
+      break;
     }
-    else if( dbVer == 4 ) // previous version was found... update needed
-    {
+  }
 
-    }
-
-    Count = query.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
+  Count = query.Count();
+  for( Index = 0; Index < Count; Index++ )
+  {
       //guLogMessage( query[ Index ] );
-      ExecuteUpdate( query[ Index ] );
-    }
+    ExecuteUpdate( query[ Index ] );
+  }
 
-    return true;
+  return true;
 }
 
 // -------------------------------------------------------------------------------- //
