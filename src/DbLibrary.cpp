@@ -537,7 +537,7 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                      "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 0, 0, 0, 0 );" ) );
+                      "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 1, 9, 1, 0 );" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
