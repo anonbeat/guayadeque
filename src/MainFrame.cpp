@@ -70,8 +70,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_library ) ) ); // Library
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_radio_online ) ) ); // Radio
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_lastfm_on ) ) ); // LastFM
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_edit ) ) ); // Letras
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_track ) ) ); // PlayLists
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_tiny_edit ) ) ); // Letras
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_playlists ) ) ); // PlayLists
 
     //
     // guMainFrame GUI components

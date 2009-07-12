@@ -40,8 +40,7 @@
 #include "./images/guayadeque_png.h"
 #include "./images/lastfm_as_off_png.h"
 #include "./images/lastfm_as_on_png.h"
-#include "./images/lastfm_off_png.h"
-#include "./images/lastfm_on_png.h"
+#include "./images/lastfm_on.h"
 #include "./images/left_png.h"
 #include "./images/net_radio_jpg.h"
 #include "./images/no_cover_jpg.h"
@@ -79,6 +78,8 @@
 #include "./images/track_png.h"
 #include "./images/library.h"
 #include "./images/radio_online.h"
+#include "./images/playlists.h"
+#include "./images/tiny_edit.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -106,7 +107,6 @@ guImage_Item guImage_Items[] = {
     { guImage_guayadeque,           sizeof( guImage_guayadeque ),           wxBITMAP_TYPE_PNG },
     { guImage_lastfm_as_off,        sizeof( guImage_lastfm_as_off ),        wxBITMAP_TYPE_PNG },
     { guImage_lastfm_as_on,         sizeof( guImage_lastfm_as_on ),         wxBITMAP_TYPE_PNG },
-    { guImage_lastfm_off,           sizeof( guImage_lastfm_off ),           wxBITMAP_TYPE_PNG },
     { guImage_lastfm_on,            sizeof( guImage_lastfm_on ),            wxBITMAP_TYPE_PNG },
     { guImage_left,                 sizeof( guImage_left ),                 wxBITMAP_TYPE_PNG },
     { guImage_net_radio,            sizeof( guImage_net_radio ),            wxBITMAP_TYPE_JPEG },
@@ -144,7 +144,9 @@ guImage_Item guImage_Items[] = {
     { guImage_yellow_star_big,      sizeof( guImage_yellow_star_big ),      wxBITMAP_TYPE_PNG },
     { guImage_track,                sizeof( guImage_track ),                wxBITMAP_TYPE_PNG },
     { guImage_library,              sizeof( guImage_library ),              wxBITMAP_TYPE_PNG },
-    { guImage_radio_online,         sizeof( guImage_radio_online ),         wxBITMAP_TYPE_PNG }
+    { guImage_radio_online,         sizeof( guImage_radio_online ),         wxBITMAP_TYPE_PNG },
+    { guImage_playlists,            sizeof( guImage_playlists ),            wxBITMAP_TYPE_PNG },
+    { guImage_tiny_edit,            sizeof( guImage_tiny_edit ),            wxBITMAP_TYPE_PNG }
 };
 
 
