@@ -77,11 +77,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_yellow_star_tiny,
     guIMAGE_INDEX_yellow_star_mid,
     guIMAGE_INDEX_yellow_star_big,
-    guIMAGE_INDEX_track,
-    guIMAGE_INDEX_library,
-    guIMAGE_INDEX_radio_online,
-    guIMAGE_INDEX_playlists,
-    guIMAGE_INDEX_tiny_edit
+    guIMAGE_INDEX_track
 };
 
 

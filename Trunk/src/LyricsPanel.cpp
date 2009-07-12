@@ -32,13 +32,17 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 {
     m_LyricThread = NULL;
 
+    wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
+
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	MainSizer->Add( 0, 15, 0, wxEXPAND, 5 );
 
     m_LyricTitle = new wxStaticText( this, wxID_ANY, wxEmptyString );
-	m_LyricTitle->SetFont( wxFont( 12, 70, 90, 92, false, wxEmptyString ) );
+    CurrentFont.SetPointSize( 12 );
+    CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+	m_LyricTitle->SetFont( CurrentFont ); //wxFont( 12, 70, 90, 92, false, wxEmptyString ) );
     MainSizer->Add( m_LyricTitle, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
@@ -47,6 +51,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	wxColour BGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME );
 	BGColor.Set( BGColor.Red() - 5, BGColor.Green() - 5, BGColor.Blue() - 5 );
 	m_LyricText->SetBackgroundColour( BGColor );
+	m_LyricText->SetFonts( CurrentFont.GetFaceName(), wxEmptyString );
 
 	MainSizer->Add( m_LyricText, 1, wxALL|wxEXPAND, 5 );
 

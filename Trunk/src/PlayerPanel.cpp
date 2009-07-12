@@ -52,6 +52,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     wxPanel * PlayListPanel;
 	wxBoxSizer* PlayListPanelSizer;
 
+	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
+
     m_Db = NewDb;
     m_BufferGaugeId = wxNOT_FOUND;
     m_MediaSong.m_SongId = 0;
@@ -136,21 +138,27 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	m_TitleLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_TitleLabel->SetToolTip( _( "Show the name of the current track" ) );
 	m_TitleLabel->Wrap( -1 );
-	m_TitleLabel->SetFont( wxFont( 16, 77, 90, 92, false, wxT("Arial") ) );
+	CurrentFont.SetPointSize( 16 );
+	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+	m_TitleLabel->SetFont( CurrentFont );
 
 	PlayerLabelsSizer->Add( m_TitleLabel, 0, wxLEFT|wxRIGHT|wxBOTTOM, 2 );
 
 	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_AlbumLabel->SetToolTip( _( "Show the album name of the current track" ) );
 	m_AlbumLabel->Wrap( -1 );
-	m_AlbumLabel->SetFont( wxFont( 12, 77, 93, 90, false, wxT( "Arial" ) ) );
+	CurrentFont.SetPointSize( 12 );
+	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
+	CurrentFont.SetStyle( wxFONTSTYLE_ITALIC );
+	m_AlbumLabel->SetFont( CurrentFont );
 
 	PlayerLabelsSizer->Add( m_AlbumLabel, 0, wxALL, 2 );
 
 	m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_ArtistLabel->SetToolTip( _( "Show the artist name of the current track" ) );
 	m_ArtistLabel->Wrap( -1 );
-	m_ArtistLabel->SetFont( wxFont( 12, 74, 90, 90, false, wxT("Arial") ) );
+	CurrentFont.SetStyle( wxFONTSTYLE_NORMAL );
+	m_ArtistLabel->SetFont( CurrentFont );
 
 	PlayerLabelsSizer->Add( m_ArtistLabel, 0, wxALL, 2 );
 
@@ -163,7 +171,6 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	m_PositionLabel = new wxStaticText( this, wxID_ANY, _("00:00 of 00:00"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PositionLabel->SetToolTip( _( "Show the current position and song length of the current track" ) );
 	m_PositionLabel->Wrap( -1 );
-	//m_PositionLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
 	m_PosLabelSizer->Add( m_PositionLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 2 );
 
@@ -178,7 +185,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 
 	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "[kbps]" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
-	m_BitRateLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Arial") ) );
+	CurrentFont.SetPointSize( 8 );
+	m_BitRateLabel->SetFont( CurrentFont );
 
     m_BitRateSizer->Add( m_BitRateLabel, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 

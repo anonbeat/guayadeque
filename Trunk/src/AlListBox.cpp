@@ -84,6 +84,7 @@ class guAlbumListBox : public wxVListBox
         wxColor                 m_OddBgColor;
         wxColor                 m_EveBgColor;
         wxColor                 m_TextFgColor;
+        wxFont *                m_Font;
 
         void            OnDragOver( const wxCoord x, const wxCoord y );
         void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
@@ -249,6 +250,9 @@ guAlbumListBox::guAlbumListBox( wxWindow * parent, DbLibrary * db ) :
     m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
     SetBackgroundColour( m_EveBgColor );
 
+    m_Font = new wxFont( SystemSettings.GetFont( wxSYS_SYSTEM_FONT ) );
+    m_Font->SetPointSize( 10 );
+
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumListBox::OnContextMenu ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guAlbumListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumListBox::OnKeyDown ), NULL, this );
@@ -262,6 +266,9 @@ guAlbumListBox::guAlbumListBox( wxWindow * parent, DbLibrary * db ) :
 guAlbumListBox::~guAlbumListBox()
 {
     m_Items.Clear();
+
+    if( m_Font )
+        delete m_Font;
 
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumListBox::OnContextMenu ), NULL, this );
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guAlbumListBox::OnBeginDrag ), NULL, this );
@@ -303,11 +310,12 @@ void guAlbumListBox::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
     if( ( int ) n == wxNOT_FOUND )
         return;
 
-    wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
+    //wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
+    m_Font->SetPointSize( 10 );
 
     guAlbumItem * Item = &m_Items[ n ];
 
-    dc.SetFont( Font );
+    dc.SetFont( * m_Font );
     dc.SetBackgroundMode( wxTRANSPARENT );
 
     dc.SetTextForeground( IsSelected( n ) ? m_SelFgColor : m_TextFgColor );
@@ -316,8 +324,8 @@ void guAlbumListBox::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
 
     if( Item->m_Year > 0 )
     {
-        Font.SetPointSize( 7 );
-        dc.SetFont( Font );
+        m_Font->SetPointSize( 7 );
+        dc.SetFont( * m_Font );
         dc.DrawText( wxString::Format( wxT( "%04u" ), Item->m_Year ), rect.x + 45, rect.y + 26 );
     }
 

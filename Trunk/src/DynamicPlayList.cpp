@@ -144,11 +144,11 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
 	index;
 	count = m_Filters->Count();
-	guLogMessage( wxT( "Found %u filters" ), count );
+	//guLogMessage( wxT( "Found %u filters" ), count );
 	for( index = 0; index < count; index++ )
 	{
 	    m_FiltersListBox->Append( ( * m_Filters )[ index ].GetLabel() );
-	    guLogMessage( wxT( "Filter %u : %s" ), index, ( * m_Filters )[ index ].GetLabel().c_str() );
+	    //guLogMessage( wxT( "Filter %u : %s" ), index, ( * m_Filters )[ index ].GetLabel().c_str() );
 	}
 
 	CurFiltersSizer->Add( m_FiltersListBox, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -303,6 +303,8 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 // -------------------------------------------------------------------------------- //
 guDynPlayListEditor::~guDynPlayListEditor()
 {
+	m_FiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFiltersSelected ), NULL, this );
+
 	m_FilterFieldChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterFieldSelected ), NULL, this );
 	m_FilterOptionChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterOptionSelected ), NULL, this );
 	m_FilterText->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guDynPlayListEditor::OnFilterTextChanged ), NULL, this );
@@ -494,7 +496,7 @@ void guDynPlayListEditor::OnFiltersSelected( wxCommandEvent &event )
         guFilterItem * FilterItem = &( * m_Filters )[ m_CurFilter ];
         UpdateEditor( FilterItem->m_Type );
         m_FilterFieldChoice->SetSelection( FilterItem->m_Type );
-        guLogMessage( wxT( "Type : %u   Option: %u" ), FilterItem->m_Type, FilterItem->m_Option );
+        //guLogMessage( wxT( "Type : %u   Option: %u" ), FilterItem->m_Type, FilterItem->m_Option );
         m_FilterOptionChoice->SetSelection( FilterItem->m_Option );
         if( FilterItem->m_Type < 5 )
         {
