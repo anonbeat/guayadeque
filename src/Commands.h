@@ -33,7 +33,8 @@
 #define ID_MENU_VIEW_LASTFM             1005
 #define ID_MENU_VIEW_RADIO              1006
 #define ID_MENU_VIEW_LYRICS             1007
-#define ID_MENU_ABOUT                   1008
+#define ID_MENU_VIEW_PLAYLISTS          1008
+#define ID_MENU_ABOUT                   1009
 
 #define ID_MAINFRAME_COPYTO             1018
 #define ID_LIBRARY_UPDATED              1019

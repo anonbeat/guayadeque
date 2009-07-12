@@ -66,12 +66,6 @@ guMainFrame::guMainFrame( wxWindow * parent )
                                       wxT( "LibPaths" ) ) );
 
     m_LibUpdateThread = NULL;
-    m_ImageList = new wxImageList();
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_library ) ) ); // Library
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_radio_online ) ) ); // Radio
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_lastfm_on ) ) ); // LastFM
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_tiny_edit ) ) ); // Letras
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_playlists ) ) ); // PlayLists
 
     //
     // guMainFrame GUI components
@@ -100,27 +94,26 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	MultiSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_CatNotebook = new wxNotebook( MultiPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	m_CatNotebook->AssignImageList( m_ImageList );
 
     // Library Page
 	m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true, 0 );
+	m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true );
 
     // Radio Page
 	m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false, 1 );
+	m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false );
 
     // LastFM Info Panel
 	m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_LastFMPanel, wxEmptyString, false, 2 );
+	m_CatNotebook->AddPage( m_LastFMPanel, _( "Last.fm" ), false );
 
     // Lyrics Panel
     m_LyricsPanel = new guLyricsPanel( m_CatNotebook );
-    m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false, 3 );
+    m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
 
     // PlayList Page
     m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false, 4 );
+	m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
 
     // FileSystem Page
 //	FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -193,6 +186,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ) );
     Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ) );
     Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ) );
+    Connect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ) );
 
     Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ) );
     Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ) );
@@ -276,6 +270,7 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ) );
     Disconnect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ) );
     Disconnect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ) );
+    Disconnect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ) );
 
     Disconnect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ) );
     Disconnect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ) );
@@ -322,11 +317,15 @@ void guMainFrame::CreateMenu()
     Menu->Append( MenuItem );
     MenuItem->Check( true );
 
-    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_LASTFM, wxString( _( "Last&FM" ) ), _( "Show/Hide the LastFM panel" ), wxITEM_CHECK );
+    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_LASTFM, wxString( _( "Last.&fm" ) ), _( "Show/Hide the Last.fm panel" ), wxITEM_CHECK );
     Menu->Append( MenuItem );
     MenuItem->Check( true );
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_LYRICS, wxString( _( "L&yrics" ) ), _( "Show/Hide the lyrics panel" ), wxITEM_CHECK );
+    Menu->Append( MenuItem );
+    MenuItem->Check( true );
+
+    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_PLAYLISTS, wxString( _( "&PlayLists" ) ), _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
     Menu->Append( MenuItem );
     MenuItem->Check( true );
 
@@ -347,7 +346,7 @@ void guMainFrame::CreateMenu()
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );
     Menu->Append( MenuItem );
     Menu->AppendSeparator();
-    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on LastFM statics" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on Last.fm statics" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_smart ) );
     Menu->Append( MenuItem );
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, wxString( _( "R&andomize" ) ), _( "Randomize the playlist" ), wxITEM_NORMAL );
@@ -640,7 +639,7 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        m_CatNotebook->InsertPage( 0, m_LibPanel, _( "Library" ), true );
+        m_CatNotebook->InsertPage( 0, m_LibPanel, _( "Library" ), true, 0 );
     }
     else
     {
@@ -658,7 +657,7 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        m_CatNotebook->InsertPage( wxMin( 1, m_CatNotebook->GetPageCount() ), m_RadioPanel, _( "Radio" ), true );
+        m_CatNotebook->InsertPage( wxMin( 1, m_CatNotebook->GetPageCount() ), m_RadioPanel, _( "Radio" ), true, 1 );
     }
     else
     {
@@ -676,7 +675,7 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        m_CatNotebook->InsertPage( wxMin( 2, m_CatNotebook->GetPageCount() ), m_LastFMPanel, _( "LastFM" ), true );
+        m_CatNotebook->InsertPage( wxMin( 2, m_CatNotebook->GetPageCount() ), m_LastFMPanel, wxEmptyString, true, 2 );
     }
     else
     {
@@ -694,11 +693,29 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        m_CatNotebook->InsertPage( wxMin( 3, m_CatNotebook->GetPageCount() ), m_LyricsPanel, _( "Lyrics" ), true );
+        m_CatNotebook->InsertPage( wxMin( 3, m_CatNotebook->GetPageCount() ), m_LyricsPanel, _( "Lyrics" ), true, 3 );
     }
     else
     {
         int PageIndex = GetPageIndex( m_CatNotebook, m_LyricsPanel );
+        if( PageIndex >= 0 )
+        {
+            //guLogMessage( wxT( "Show Lirycs enabled" ) );
+            m_CatNotebook->RemovePage( PageIndex );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
+{
+    if( event.IsChecked() )
+    {
+        m_CatNotebook->InsertPage( wxMin( 4, m_CatNotebook->GetPageCount() ), m_PlayListPanel, _( "PlayLists" ), true, 4 );
+    }
+    else
+    {
+        int PageIndex = GetPageIndex( m_CatNotebook, m_PlayListPanel );
         if( PageIndex >= 0 )
         {
             //guLogMessage( wxT( "Show Lirycs enabled" ) );

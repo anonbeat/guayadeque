@@ -63,6 +63,8 @@ class guPlayList : public wxVListBox
     //wxColor         m_RatingEnabled;
     //wxColor         m_RatingDisabled;
 
+    wxFont *        m_Font;
+
     void            OnDragOver( const wxCoord x, const wxCoord y );
     void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
     wxCoord         OnMeasureItem( size_t n ) const;

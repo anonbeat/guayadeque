@@ -295,12 +295,19 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 
 	m_Text = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Text->Wrap( -1 );
-	m_Text->SetFont( wxFont( 12, 74, 90, 92, false, wxT("Sans") ) );
+	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
+	CurrentFont.SetPointSize( 12 );
+	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+	m_Text->SetFont( CurrentFont );
 
 	m_DetailSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_ArtistDetails = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
 	m_ArtistDetails->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
+	CurrentFont.SetPointSize( 10 );
+	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
+	m_ArtistDetails->SetFonts( CurrentFont.GetFaceName(), wxEmptyString );
+
 	wxColour ArtistBG = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME );
 	ArtistBG.Set( ArtistBG.Red() - 5, ArtistBG.Green() - 5, ArtistBG.Blue() - 5 );
 	m_ArtistDetails->SetBackgroundColour( ArtistBG );
@@ -870,6 +877,8 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
         m_ShowTracks = Config->ReadBool( wxT( "LFMShowTracks" ), true, wxT( "General" )  );
     }
 
+    wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
+
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
     // Artist Info
@@ -878,7 +887,10 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
 
 	m_ArtistDetailsStaticText = new wxStaticText( this, wxID_ANY, _("Artist Info"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_ArtistDetailsStaticText->Wrap( -1 );
-	m_ArtistDetailsStaticText->SetFont( wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
+    CurrentFont.SetPointSize( GULASTFM_TITLE_FONT_SIZE );
+    CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+    //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
+	m_ArtistDetailsStaticText->SetFont( CurrentFont );
 
 	ArInfoTitleSizer->Add( m_ArtistDetailsStaticText, 0, wxALL, 5 );
 
@@ -912,7 +924,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
 	m_AlbumsStaticText = new wxStaticText( this, wxID_ANY, _("Top Albums"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_AlbumsStaticText->Wrap( -1 );
 	//AlbumsStaticText->SetCursor( wxCURSOR_HAND );
-	m_AlbumsStaticText->SetFont( wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
+	m_AlbumsStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
 	AlTitleSizer->Add( m_AlbumsStaticText, 0, wxALL, 5 );
 
@@ -942,7 +954,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
 
 	m_ArtistsStaticText = new wxStaticText( this, wxID_ANY, _("Similar Artists"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_ArtistsStaticText->Wrap( -1 );
-	m_ArtistsStaticText->SetFont( wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
+	m_ArtistsStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
 	SimArTitleSizer->Add( m_ArtistsStaticText, 0, wxALL, 5 );
 
@@ -972,7 +984,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
 
 	m_TracksStaticText = new wxStaticText( this, wxID_ANY, _("Similar Tracks"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_TracksStaticText->Wrap( -1 );
-	m_TracksStaticText->SetFont( wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
+	m_TracksStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
 	SimTrTItleSizer->Add( m_TracksStaticText, 0, wxALL, 5 );
 

@@ -125,6 +125,8 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
 
     SetBackgroundColour( m_EveBgColor );
 
+    m_Font = new wxFont( wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT ) );
+
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     m_GreyStar   = new wxBitmap( guImage( guIMAGE_INDEX_grey_star_tiny ) );
     m_YellowStar = new wxBitmap( guImage( guIMAGE_INDEX_yellow_star_tiny ) );
@@ -168,6 +170,9 @@ guPlayList::~guPlayList()
       delete m_GreyStar;
     if( m_YellowStar )
       delete m_YellowStar;
+
+    if( m_Font )
+        delete m_Font;
 
 	Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
@@ -442,13 +447,16 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
     wxSize TextSize;
     wxString TimeStr;
 //    wxArrayInt Selection;
-    wxFont Font( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
 
     if( ( int ) n == wxNOT_FOUND )
         return;
 
     Item = m_Items[ n ];
-    dc.SetFont( Font  );
+    m_Font->SetPointSize( 8 );
+    m_Font->SetStyle( wxFONTSTYLE_NORMAL );
+    m_Font->SetWeight( wxFONTWEIGHT_BOLD );
+
+    dc.SetFont( * m_Font );
     dc.SetBackgroundMode( wxTRANSPARENT );
     if( IsSelected( n ) )
     {
@@ -469,9 +477,9 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
         int OffsetSecLine;
         dc.DrawText( Item.m_SongName, rect.x + 5, rect.y + 5 );
         //Font.SetPointSize( 7 );
-        Font.SetStyle( wxFONTSTYLE_ITALIC );
-        Font.SetWeight( wxFONTWEIGHT_NORMAL );
-        dc.SetFont( Font );
+        m_Font->SetStyle( wxFONTSTYLE_ITALIC );
+        m_Font->SetWeight( wxFONTWEIGHT_NORMAL );
+        dc.SetFont( * m_Font );
 
         OffsetSecLine = rect.y + ( dc.GetCharHeight() + 10 );
 

@@ -60,7 +60,6 @@ class guMainFrame : public wxFrame
 
     DbLibrary *         m_Db;
     guLibUpdateThread * m_LibUpdateThread;
-    wxImageList *       m_ImageList;
 
     guMPRIS *           m_MPRIS;
 
@@ -92,6 +91,7 @@ class guMainFrame : public wxFrame
     void                OnViewRadio( wxCommandEvent &event );
     void                OnViewLastFM( wxCommandEvent &event );
     void                OnViewLyrics( wxCommandEvent &event );
+    void                OnViewPlayLists( wxCommandEvent &event );
 
     void                OnGaugePulse( wxCommandEvent &event );
     void                OnGaugeSetMax( wxCommandEvent &event );
