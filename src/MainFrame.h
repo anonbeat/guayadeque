@@ -60,6 +60,7 @@ class guMainFrame : public wxFrame
 
     DbLibrary *         m_Db;
     guLibUpdateThread * m_LibUpdateThread;
+    wxImageList *       m_ImageList;
 
     guMPRIS *           m_MPRIS;
 

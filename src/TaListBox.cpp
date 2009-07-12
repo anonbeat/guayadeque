@@ -142,9 +142,10 @@ void guTaListBox::EditLabel( wxCommandEvent &event )
         // Get the Index of the First Selected Item
         int item = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
         wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Enter the new label name" ), m_Items[ item ].m_Name );
-        if( EntryDialog->ShowModal() == wxID_OK )
+        if( EntryDialog->ShowModal() == wxID_OK &&
+            m_Items[ item ].m_Name != EntryDialog->GetValue() )
         {
-            m_Db->SetLabelName( Selection[ 0 ], EntryDialog->GetValue() );
+            m_Db->SetLabelName( Selection[ 0 ], m_Items[ item ].m_Name, EntryDialog->GetValue() );
             ReloadItems();
         }
         EntryDialog->Destroy();
