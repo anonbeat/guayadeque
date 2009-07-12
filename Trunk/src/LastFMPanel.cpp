@@ -251,7 +251,9 @@ guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerP
                  guLastFMInfoCtrl( parent, db, playerpanel, false )
 {
     m_Info = NULL;
-    m_ShowLongBioText = false;
+
+    guConfig * Config = ( guConfig * ) Config->Get();
+    m_ShowLongBioText = Config->ReadBool( wxT( "LFMShowLongBioText" ), false, wxT( "General" )  );
 
     CreateControls( parent );
 
@@ -268,6 +270,9 @@ guArtistInfoCtrl::~guArtistInfoCtrl()
 {
     if( m_Info )
         delete m_Info;
+
+    guConfig * Config = ( guConfig * ) Config->Get();
+    Config->WriteBool( wxT( "LFMShowLongBioText" ), m_ShowLongBioText, wxT( "General" )  );
 
     m_Text->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guArtistInfoCtrl::OnClick ), NULL, this );
     m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guArtistInfoCtrl::OnClick ), NULL, this );
@@ -302,7 +307,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	m_ArtistDetails->SetBorders( 0 );
 	m_DetailSizer->Add( m_ArtistDetails, 1, wxALL|wxEXPAND, 5 );
 
-	m_ShowMoreHyperLink = new wxHyperlinkCtrl( this, wxID_ANY, _("More..."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_ShowMoreHyperLink = new wxHyperlinkCtrl( this, wxID_ANY, m_ShowLongBioText ? _( "Less..." ) : _("More..."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	m_ShowMoreHyperLink->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
 	m_ShowMoreHyperLink->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
 	m_ShowMoreHyperLink->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );

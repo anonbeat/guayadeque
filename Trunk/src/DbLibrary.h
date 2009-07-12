@@ -318,7 +318,7 @@ class DbLibrary {
 
     int                 GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs );
     int                 AddLabel( wxString LabelName );
-    int                 SetLabelName( const int LabelId, wxString NewName );
+    int                 SetLabelName( const int labelid, const wxString &oldlabel, const wxString &newlabel );
     int                 DelLabel( const int LabelId );
     wxArrayInt          GetLabels( void );
 
@@ -353,6 +353,7 @@ class DbLibrary {
     void                UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels );
     void                UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels );
     void                UpdateSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Labels );
+    void                UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newlabel );
 
     void                SetTrackRating( const int songid, const int rating );
     void                SetTracksRating( const wxArrayInt &songids, const int rating );

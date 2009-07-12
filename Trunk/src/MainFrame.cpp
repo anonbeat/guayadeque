@@ -66,6 +66,13 @@ guMainFrame::guMainFrame( wxWindow * parent )
                                       wxT( "LibPaths" ) ) );
 
     m_LibUpdateThread = NULL;
+    m_ImageList = new wxImageList();
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_library ) ) ); // Library
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_radio_online ) ) ); // Radio
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_lastfm_on ) ) ); // LastFM
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_edit ) ) ); // Letras
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_track ) ) ); // PlayLists
+
     //
     // guMainFrame GUI components
     //
@@ -93,26 +100,27 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	MultiSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_CatNotebook = new wxNotebook( MultiPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_CatNotebook->AssignImageList( m_ImageList );
 
     // Library Page
 	m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true );
+	m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true, 0 );
 
     // Radio Page
 	m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false );
-
-    // PlayList Page
-    m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
+	m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false, 1 );
 
     // LastFM Info Panel
 	m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_LastFMPanel, _( "LastFM" ), false );
+	m_CatNotebook->AddPage( m_LastFMPanel, wxEmptyString, false, 2 );
 
     // Lyrics Panel
     m_LyricsPanel = new guLyricsPanel( m_CatNotebook );
-    m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
+    m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false, 3 );
+
+    // PlayList Page
+    m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+	m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false, 4 );
 
     // FileSystem Page
 //	FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );

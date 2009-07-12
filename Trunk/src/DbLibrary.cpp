@@ -1728,25 +1728,43 @@ int DbLibrary::AddLabel( wxString LabelName )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::SetLabelName( const int LabelId, wxString LabelName )
+int DbLibrary::SetLabelName( const int labelid, const wxString &oldlabel, const wxString &newlabel )
 {
-    wxString query;
-    escape_query_str( &LabelName );
+  wxString query;
+  guListItems   LaItems;
+  guTrackArray  Tracks;
+  wxArrayInt    Labels;
+  Labels.Add( labelid );
 
-    query = query.Format( wxT( "UPDATE tags SET tag_name = '%s' WHERE tag_id = %u;" ), LabelName.c_str(), LabelId );
+  GetLabelsSongs( Labels, &Tracks );
+  UpdateSongsLabel( &Tracks, oldlabel, newlabel );
 
-    if( ExecuteUpdate( query ) == 1 )
-    {
-      // TODO : Update the label name into the songs with this label
-      return m_Db.GetLastRowId().GetLo();
-    }
-    return 0;
+
+  wxString LabelName = newlabel;
+  escape_query_str( &LabelName );
+
+  query = query.Format( wxT( "UPDATE tags SET tag_name = '%s' WHERE tag_id = %u;" ), LabelName.c_str(), labelid );
+
+  if( ExecuteUpdate( query ) == 1 )
+  {
+    return m_Db.GetLastRowId().GetLo();
+  }
+  return 0;
 }
 
 // -------------------------------------------------------------------------------- //
 int DbLibrary::DelLabel( const int LabelId )
 {
-  wxString query;
+  guListItems   LaItems;
+  wxString      query;
+  guTrackArray  Tracks;
+  wxArrayInt    Labels;
+  Labels.Add( LabelId );
+
+  GetLabels( &LaItems, true );
+
+  GetLabelsSongs( Labels, &Tracks );
+  UpdateSongsLabel( &Tracks, guListItemsGetName( LaItems, LabelId ), wxEmptyString );
 
   query = query.Format( wxT( "DELETE FROM tags WHERE tag_id = %u;" ), LabelId );
   if( ExecuteUpdate( query ) )
@@ -3496,16 +3514,53 @@ void DbLibrary::UpdateSongsLabels( const wxArrayInt &SongIds, const wxArrayInt &
     //guLogMessage( wxT( "'%s' -> '%s'" ), Song->FileName.c_str(), TrackLabelStr.c_str() );
     if( wxFileExists( Song->m_FileName ) )
     {
-//////      ID3_Tag Tag;
-//////      Tag.Link( Song->m_FileName.ToUTF8() );
-//////      TagInfo info;
-//////      info.ReadID3Tags( &Tag );
       TagInfo info;
       info.ReadID3Tags( Song->m_FileName );
 
       info.m_TrackLabelsStr = TrackLabelStr;
 
-//////      info.WriteID3Tags( &Tag );
+      info.WriteID3Tags( Song->m_FileName );
+    }
+    else
+    {
+        guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void inline RemoveLabel( wxString * labelstr, const wxString * labelname, const wxString * newname )
+{
+    if( labelstr->IsEmpty() )
+        return;
+    if( labelstr->Replace( wxT( "|" + ( * labelname ) ), * newname ) )
+        return;
+    if( labelstr->Replace( ( * labelname ) + wxT( "|" ), * newname ) )
+        return;
+    labelstr->Replace( ( * labelname ), * newname );
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newname )
+{
+  wxASSERT( tracks );
+  guTrack *     Song;
+  int           index;
+  int           count;
+
+  count = tracks->Count();
+  for( index = 0; index < count; index++ )
+  {
+    Song = &( * tracks )[ index ];
+    if( wxFileExists( Song->m_FileName ) )
+    {
+      TagInfo info;
+      info.ReadID3Tags( Song->m_FileName );
+
+      RemoveLabel( &info.m_TrackLabelsStr, &label, &newname );
+      RemoveLabel( &info.m_ArtistLabelsStr, &label, &newname );
+      RemoveLabel( &info.m_AlbumLabelsStr, &label, &newname );
+
       info.WriteID3Tags( Song->m_FileName );
     }
     else
