@@ -42,7 +42,6 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_guayadeque,
     guIMAGE_INDEX_lastfm_as_off,
     guIMAGE_INDEX_lastfm_as_on,
-    guIMAGE_INDEX_lastfm_off,
     guIMAGE_INDEX_lastfm_on,
     guIMAGE_INDEX_left,
     guIMAGE_INDEX_net_radio,
@@ -80,7 +79,9 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_yellow_star_big,
     guIMAGE_INDEX_track,
     guIMAGE_INDEX_library,
-    guIMAGE_INDEX_radio_online
+    guIMAGE_INDEX_radio_online,
+    guIMAGE_INDEX_playlists,
+    guIMAGE_INDEX_tiny_edit
 };
 
 
