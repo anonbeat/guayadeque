@@ -25,6 +25,7 @@
 #include "Config.h"
 #include "Utils.h"
 
+#include "wx/clipbrd.h"
 #include <wx/curl/base.h>
 #include <wx/image.h>
 #include <wx/tooltip.h>
@@ -85,6 +86,10 @@ bool guMainApp::OnInit()
         guLogError( wxT( "Another program instance is already running, aborting." ) );
         return false;
     }
+
+    // Use the primary clipboard which is shared with other applications
+    wxTheClipboard->UsePrimarySelection( false );
+
 
 //    // Init the sockets
 //    wxSocketBase::Initialize();

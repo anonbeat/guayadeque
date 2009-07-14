@@ -255,6 +255,7 @@ class guLastFMInfoCtrl : public wxPanel
     virtual void            OnClick( wxMouseEvent &event );
     virtual wxString        GetSearchText( void );
     virtual void            OnSearchLinkClicked( wxCommandEvent &event );
+    virtual void            OnCopyToClipboard( wxCommandEvent &event );
     virtual void            CreateControls( wxWindow * parent );
     virtual void            OnPlayClicked( wxCommandEvent &event );
     virtual void            OnEnqueueClicked( wxCommandEvent &event );
