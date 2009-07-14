@@ -134,6 +134,7 @@
 #define ID_LASTFM_ENQUEUE               1126
 
 #define ID_LASTFM_VISIT_URL             1130
+#define ID_LASTFM_COPYTOCLIPBOARD       1131
 #define ID_LASTFM_SEARCH_LINK           2000    // From 2000 for Link #0 to 2999
 
 #define ID_ARTIST_COMMANDS              3000

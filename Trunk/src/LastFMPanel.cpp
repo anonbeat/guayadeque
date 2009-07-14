@@ -26,6 +26,7 @@
 #include "MainApp.h"
 
 #include <wx/arrimpl.cpp>
+#include "wx/clipbrd.h"
 #include <wx/curl/http.h>
 #include <wx/statline.h>
 #include <wx/uri.h>
@@ -56,6 +57,7 @@ guLastFMInfoCtrl::~guLastFMInfoCtrl()
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
     Disconnect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
     Disconnect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
+    Disconnect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -83,6 +85,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
     Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
     Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
+    Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -212,6 +215,25 @@ void guLastFMInfoCtrl::OnSearchLinkClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLastFMInfoCtrl::OnCopyToClipboard( wxCommandEvent &event )
+{
+    //guLogMessage( wxT( "OnCopyToClipboard : %s" ), GetSearchText().c_str() );
+    if( wxTheClipboard->Open() )
+    {
+        wxTheClipboard->Clear();
+        if ( !wxTheClipboard->AddData( new wxTextDataObject( GetSearchText() ) ) )
+        {
+            guLogError( wxT( "Can't copy data to the clipboard" ) );
+        }
+        wxTheClipboard->Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the clipboard object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 wxString guLastFMInfoCtrl::GetSearchText( void )
 {
     return wxEmptyString;
@@ -329,6 +351,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guArtistInfoCtrl::OnContextMenu ), NULL, this );
     Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnPlayClicked ), NULL, this );
     Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnEnqueueClicked ), NULL, this );
+    Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnCopyToClipboard ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -405,6 +428,14 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
         Menu->Append( MenuItem );
 
+        Menu->AppendSeparator();
+    }
+
+    if( !GetSearchText().IsEmpty() )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the artist name to clipboard" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
 
@@ -586,6 +617,14 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
         Menu->AppendSeparator();
     }
 
+    if( !GetSearchText().IsEmpty() )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the album info to clipboard" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
+        Menu->AppendSeparator();
+    }
+
     if( !m_Info->m_Album->m_Url.IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_VISIT_URL, wxT( "Last.fm" ), _( "Visit last.fm page for this item" ) );
@@ -700,6 +739,14 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
+        Menu->AppendSeparator();
+    }
+
+    if( !GetSearchText().IsEmpty() )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the artist info to clipboard" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
 
@@ -818,6 +865,14 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
+        Menu->AppendSeparator();
+    }
+
+    if( !GetSearchText().IsEmpty() )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the track info to clipboard" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
 
