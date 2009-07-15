@@ -727,12 +727,14 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnAlbumNameDClicked( wxCommandEvent &event )
 {
+    m_CatNotebook->SetSelection( 0 );
     m_LibPanel->OnAlbumNameDClicked( event );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnArtistNameDClicked( wxCommandEvent &event )
 {
+    m_CatNotebook->SetSelection( 0 );
     m_LibPanel->OnArtistNameDClicked( event );
 }
 

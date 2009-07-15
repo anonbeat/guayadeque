@@ -49,6 +49,13 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerP
 
     if( createcontrols )
         this->CreateControls( parent );
+
+    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
+    Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
+    Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
+    Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
+    Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
+    Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -81,11 +88,6 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	SetSizer( MainSizer );
 	Layout();
 	MainSizer->Fit( this );
-
-    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
-    Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
-    Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
-    Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -163,7 +165,7 @@ void guLastFMInfoCtrl::CreateContextMenu( wxMenu * Menu )
                 }
                 else
                 {
-                    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_search ) );
+                    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
                 }
                 Menu->Append( MenuItem );
             }
@@ -171,7 +173,7 @@ void guLastFMInfoCtrl::CreateContextMenu( wxMenu * Menu )
         else
         {
             MenuItem = new wxMenuItem( Menu, -1, _( "No search link defined" ), _( "Add search links in preferences" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_search ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
             Menu->Append( MenuItem );
         }
     }
@@ -267,6 +269,16 @@ int guLastFMInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLastFMInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
+{
+}
+
+// -------------------------------------------------------------------------------- //
 // guArtistInfoCtrl
 // -------------------------------------------------------------------------------- //
 guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
@@ -348,10 +360,6 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	Layout();
 	//MainSizer->Fit( this );
 
-    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guArtistInfoCtrl::OnContextMenu ), NULL, this );
-    Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnPlayClicked ), NULL, this );
-    Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnEnqueueClicked ), NULL, this );
-    Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnCopyToClipboard ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -425,9 +433,12 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+        Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
 
@@ -535,6 +546,15 @@ int guArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 }
 
 // -------------------------------------------------------------------------------- //
+void guArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
+{
+    wxString * ArtistName = new wxString( m_Info->m_Artist->m_Name );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SELECTNAME );
+    evt.SetClientData( ( void * ) ArtistName );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+}
+
+// -------------------------------------------------------------------------------- //
 // guAlbumInfoCtrl
 // -------------------------------------------------------------------------------- //
 guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
@@ -611,9 +631,12 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECTNAME, _( "Search Album" ), _( "Search the album in the library" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+        Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
 
@@ -656,6 +679,15 @@ int guAlbumInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
         return m_Db->GetAlbumsSongs( Selections, tracks );
     }
 
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
+{
+    wxString * AlbumName = new wxString( m_Info->m_Album->m_Name );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_SELECTNAME );
+    evt.SetClientData( ( void * ) AlbumName );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -739,6 +771,9 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+        Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
 
@@ -779,6 +814,15 @@ int guSimilarArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
         Selections.Add( m_Info->m_ArtistId );
         return m_Db->GetArtistsSongs( Selections, tracks );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guSimilarArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
+{
+    wxString * ArtistName = new wxString( m_Info->m_Artist->m_Name );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SELECTNAME );
+    evt.SetClientData( ( void * ) ArtistName );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -865,6 +909,9 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+        Menu->Append( MenuItem );
         Menu->AppendSeparator();
     }
 
@@ -906,6 +953,15 @@ int guTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
         Selections.Add( m_Info->m_TrackId );
         return m_Db->GetSongs( Selections, tracks );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
+{
+    wxString * ArtistName = new wxString( m_Info->m_Track->m_ArtistName );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SELECTNAME );
+    evt.SetClientData( ( void * ) ArtistName );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
