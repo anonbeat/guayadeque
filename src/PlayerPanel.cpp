@@ -260,6 +260,18 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
         wxCommandEvent event;
         OnPlayButtonClick( event );
     }
+    else
+    {
+        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) )
+        {
+            m_TrackStartPos = wxMax( 0, Config->ReadNum( wxT( "CurrentTrackPos" ), 0, wxT( "General" ) ) - 500 );
+            if( m_TrackStartPos > 0 )
+            {
+                wxCommandEvent event;
+                OnPlayButtonClick( event );
+            }
+        }
+    }
 
 	// Connect Events
 	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
@@ -337,6 +349,19 @@ guPlayerPanel::~guPlayerPanel()
         Config->WriteNum( wxT( "PlayerCurVol" ), m_CurVolume, wxT( "General" ) );
         Config->WriteBool( wxT( "PlayerLoop" ), m_PlayLoop, wxT( "General" ) );
         Config->WriteBool( wxT( "PlayerSmart" ), m_PlaySmart, wxT( "General" ) );
+        // If the track length is at least the configured minimun track length save the pos offset
+        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) )
+        {
+            if( ( m_LastPlayState != wxMEDIASTATE_STOPPED ) &&
+                ( m_MediaSong.m_Length >= ( Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) * 60 ) ) )
+            {
+                Config->WriteNum( wxT( "CurrentTrackPos" ), m_LastCurPos, wxT( "General" ) );
+            }
+            else
+            {
+                Config->WriteNum( wxT( "CurrentTrackPos" ), 0, wxT( "General" ) );
+            }
+        }
         //printf( PlaySmart ? "Smart Enabled" : "Smart Disabled" );  printf( "\n" );
     }
 
@@ -1029,6 +1054,11 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
 
         //
         m_MediaCtrl->Play();
+        if( m_TrackStartPos )
+        {
+            SetPosition( m_TrackStartPos );
+            m_TrackStartPos = 0;
+        }
         m_PlayListCtrl->UpdateView();
         //SetVolume( m_CurVolume );
     }

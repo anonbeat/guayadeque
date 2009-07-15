@@ -995,9 +995,6 @@ void guLibPanel::OnArtistNameDClicked( wxCommandEvent &event )
         m_ArtistListCtrl->ReloadItems();
         m_UpdateLock = false;
         m_ArtistListCtrl->SelectArtistName( * ArtistName );
-//        m_Db->SetAlFilters( m_AlbumListCtrl->GetSelection() );
-//        m_AlbumListCtrl->ReloadItems();
-//        m_SongListCtrl->ReloadItems();
         m_ArtistListCtrl->SetFocus();
         delete ArtistName;
     }

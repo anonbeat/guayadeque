@@ -134,6 +134,7 @@ class guPlayerPanel : public wxPanel
 	bool                    m_SmartSearchEnabled;
     int                     m_SmartPlayAddTracks;
     int                     m_SmartPlayMinTracksToPlay;
+    unsigned int            m_TrackStartPos;
 
     // AudioScrobble
     guAudioScrobble *       m_AudioScrobble;

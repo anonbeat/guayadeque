@@ -1,4 +1,6 @@
 
+  * Added an option to save/restore playing position when track is bigger than the
+    length specified in preferences
   * Fixed bug in library updated when only changed dir name
   * Added option in last.fm panel to copy element info text to clipboard
   * Update the library automatically if detects an old version installed
