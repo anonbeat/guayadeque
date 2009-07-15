@@ -778,6 +778,12 @@ bool guAlbumListBox::SelectAlbumName( const wxString &AlbumName )
         SetSelection( item );
         ScrollToLine( item );
         UpdateView();
+
+        wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
+        event.SetEventObject( this );
+        event.SetInt( item );
+        (void) GetEventHandler()->ProcessEvent( event );
+
         return true;
     }
     return false;
