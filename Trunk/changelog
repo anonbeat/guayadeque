@@ -1,4 +1,5 @@
 
+  * Fixed bug in library updated when only changed dir name
   * Added option in last.fm panel to copy element info text to clipboard
   * Update the library automatically if detects an old version installed
   * Tracks passed in command line will be played by default

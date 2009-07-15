@@ -34,10 +34,10 @@ class guLibUpdateThread : public wxThread
     wxArrayString       m_ImageFiles;
     int                 m_GaugeId;
     wxArrayString       m_LibPaths;
-    wxDateTime          m_LastUpdate;
+    unsigned int        m_LastUpdate;
     wxArrayString       m_CoverSearchWords;
 
-    int                 ScanDirectory( wxString dirname );
+    int                 ScanDirectory( wxString dirname, bool includedir = false );
 
   public :
     guLibUpdateThread( DbLibrary * db );
