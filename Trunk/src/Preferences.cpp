@@ -136,6 +136,21 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
     m_SavePlayListChkBox->SetValue( m_Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) );
 	OnCloseSizer->Add( m_SavePlayListChkBox, 0, wxALL, 5 );
 
+	wxBoxSizer* StartPlayingSizer;
+	StartPlayingSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, wxT("Save position when track length is at least (minutes)"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_SavePosCheckBox->SetValue( m_Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) );
+
+	StartPlayingSizer->Add( m_SavePosCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+
+	m_MinLenSpinCtrl = new wxSpinCtrl( m_GenPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 9999, 10 );
+	m_MinLenSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) );
+	StartPlayingSizer->Add( m_MinLenSpinCtrl, 0, wxALIGN_CENTER_VERTICAL, 5 );
+
+	OnCloseSizer->Add( StartPlayingSizer, 1, wxEXPAND, 5 );
+
+
 	m_CloseTaskBarChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Close to task bar icon"), wxDefaultPosition, wxDefaultSize, 0 );
     m_CloseTaskBarChkBox->SetValue( m_Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) );
 	OnCloseSizer->Add( m_CloseTaskBarChkBox, 0, wxALL, 5 );
@@ -695,6 +710,8 @@ guPrefDialog::~guPrefDialog()
         m_Config->WriteBool( wxT( "RndTrackOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "SavePlayListOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "SaveCurrentTrackPos" ), m_SavePosCheckBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteNum( wxT( "MinSavePlayPosLength" ), m_MinLenSpinCtrl->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteAStr( wxT( "LibPath" ), m_PathsListBox->GetStrings(), wxT( "LibPaths" ) );

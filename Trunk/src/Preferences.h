@@ -63,6 +63,8 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_RndPlayChkBox;
     wxCheckBox *                m_AlYearOrderChkBox;
     wxCheckBox *                m_SavePlayListChkBox;
+    wxCheckBox *                m_SavePosCheckBox;
+	wxSpinCtrl *                m_MinLenSpinCtrl;
     wxCheckBox *                m_CloseTaskBarChkBox;
     wxCheckBox *                m_ExitConfirmChkBox;
     wxPanel *                   m_LibPanel;
