@@ -101,7 +101,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           {
             unsigned int FileDate = GetFileLastChange( FileName );
             //guLogMessage( wxT( "Scanning dir '%s'" ), FileName.c_str() );
-            ScanDirectory( FileName, FileDate > m_LastUpdate );
+            ScanDirectory( FileName, includedir || ( FileDate > m_LastUpdate ) );
 
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
             event.SetInt( m_GaugeId );
@@ -201,7 +201,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         }
     }
 
-    // This cant be called here as wxBitmap do X11 calls and this can only done from the main
+    // This cant be called here as wxBitmap do X11 calls and this can only be done from the main
     // thread. So we must call DoCleanUp from the main thread once this thread is finished.
     // in the OnLibraryUpdated Event handler
     // delete all orphans entries
