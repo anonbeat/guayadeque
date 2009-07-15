@@ -26,13 +26,11 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-wxDateTime GetFileLastChange( const wxString &FileName )
+unsigned int GetFileLastChange( const wxString &FileName )
 {
-    wxDateTime RetVal;
     wxStructStat St;
     wxStat( FileName, &St );
-    RetVal.Set( St.st_ctime );
-    return RetVal;
+    return St.st_ctime;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -46,7 +44,9 @@ guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
     if( Config )
     {
         m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
-        m_LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
+        wxDateTime LastTime;
+        LastTime.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
+        m_LastUpdate = LastTime.GetTicks();
         //guLogMessage( wxT( "LastUpdate: %s" ), m_LastUpdate.Format().c_str() );
         m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
     }
@@ -78,7 +78,7 @@ guLibUpdateThread::~guLibUpdateThread()
 }
 
 // -------------------------------------------------------------------------------- //
-int guLibUpdateThread::ScanDirectory( wxString dirname )
+int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 {
   wxDir         Dir;
   wxString      FileName;
@@ -99,8 +99,9 @@ int guLibUpdateThread::ScanDirectory( wxString dirname )
         {
           if( Dir.Exists( FileName ) )
           {
+            unsigned int FileDate = GetFileLastChange( FileName );
             //guLogMessage( wxT( "Scanning dir '%s'" ), FileName.c_str() );
-            ScanDirectory( FileName );
+            ScanDirectory( FileName, FileDate > m_LastUpdate );
 
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
             event.SetInt( m_GaugeId );
@@ -109,8 +110,8 @@ int guLibUpdateThread::ScanDirectory( wxString dirname )
           }
           else
           {
-            wxDateTime FileDate = GetFileLastChange( FileName );
-            if( FileDate > m_LastUpdate )
+            unsigned int FileDate = GetFileLastChange( FileName );
+            if( includedir || ( FileDate > m_LastUpdate ) )
             {
               LowerFileName = FileName.Lower();
               // TODO: add other file formats
