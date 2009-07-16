@@ -2951,8 +2951,8 @@ int DbLibrary::FindAlbum( const wxString &Artist, const wxString &Album )
   int ArtistId = FindArtist( Artist );
   if( ArtistId != wxNOT_FOUND )
   {
-    query = wxString::Format( wxT( "SELECT album_id FROM albums WHERE " )\
-                wxT( "album_artistid = %d AND LOWER(album_name) = '%s' LIMIT 1;" ),
+    query = wxString::Format( wxT( "SELECT album_id FROM albums WHERE "
+                "album_artistid = %d AND LOWER(album_name) = '%s' LIMIT 1;" ),
                 ArtistId, Param.c_str() );
 
     dbRes = ExecuteQuery( query );
