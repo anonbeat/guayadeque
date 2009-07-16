@@ -1348,10 +1348,17 @@ guAddDropFilesThread::ExitCode guAddDropFilesThread::Entry()
         // Once finished send the update guPlayList event to the guPlayList object
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
         //event.SetEventObject( ( wxObject * ) this );
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) )
+        {
+            event.SetExtraLong( 1 );
+        }
         wxPostEvent( m_PlayList, event );
     }
     //
     m_PlayList->m_DragOverItem = wxNOT_FOUND;
+
+
     return 0;
 }
 
@@ -1389,6 +1396,7 @@ bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
                 m_PlayList->ClearItems();
                 m_PlayList->RefreshAll();
                 m_PlayList->m_DragOverItem = wxNOT_FOUND;
+                m_PlayList->m_CurItem = 0;
             }
             //guLogMessage( wxT( "ClearPlaylist set on config. Playlist cleared" ) );
         }

@@ -540,8 +540,32 @@ void guPlayerPanel::TrackListChanged( void )
 void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
 {
     m_PlayListCtrl->RefreshItems();
-    TrackListChanged();
     SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
+
+    // If a Player reset is needed
+    if( event.GetExtraLong() )
+    {
+        OnStopButtonClick( event );
+        OnPlayButtonClick( event );
+
+        if( m_PlaySmart )
+        {
+            // Reset the Smart added songs cache
+            m_SmartAddedSongs.Empty();
+            int count;
+            int index = 0;
+            count = m_PlayListCtrl->GetCount();
+            // We only insert the last CACHEITEMS as the rest should be forgiven
+            if( count > GUPLAYER_SMART_CACHEITEMS )
+                index = count - GUPLAYER_SMART_CACHEITEMS;
+            for( ; index < count; index++ )
+            {
+                guTrack * Track = m_PlayListCtrl->GetItem( index );
+                m_SmartAddedSongs.Add( Track->m_ArtistName.Upper() + Track->m_SongName.Upper() );
+            }
+        }
+    }
+    TrackListChanged();
 }
 
 // -------------------------------------------------------------------------------- //

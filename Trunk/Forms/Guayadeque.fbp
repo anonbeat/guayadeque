@@ -34718,7 +34718,7 @@
             <property name="minimum_size"></property>
             <property name="name">PrefDialog1</property>
             <property name="pos"></property>
-            <property name="size">518,510</property>
+            <property name="size">528,549</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE</property>
             <property name="subclass"></property>
             <property name="title">Preferences</property>
