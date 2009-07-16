@@ -322,7 +322,21 @@ void guPlayListPanel::OnPLNamesActivated( wxTreeEvent& event )
     if( ItemData )
     {
         guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
-        m_PlayerPanel->SetPlayList( Tracks );
+        if( Tracks.Count() )
+        {
+            guConfig * Config = ( guConfig * ) guConfig::Get();
+            if( Config )
+            {
+                if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+                {
+                    m_PlayerPanel->AddToPlayList( Tracks );
+                }
+                else
+                {
+                    m_PlayerPanel->SetPlayList( Tracks );
+                }
+            }
+        }
     }
     event.Skip();
 }
