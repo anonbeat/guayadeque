@@ -106,7 +106,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	PlayerBtnSizer->Add( m_StopButton, 0, wxALL, 2 );
 
 	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_volume_medium ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-    m_VolumeButton->SetToolTip( _( "Set player volume" ) );
+    m_VolumeButton->SetToolTip( _( "Volume 0%" ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
 	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playlist_smart ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
@@ -248,7 +248,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     // so we do it two calls
     if( ( m_MediaCtrl->GetVolume() * 100.0 ) != m_CurVolume )
     {
-        int SavedVol = m_CurVolume;
+        float SavedVol = m_CurVolume;
         SetVolume( 0.0 );
         SetVolume( SavedVol );
         //guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
@@ -622,10 +622,10 @@ void guPlayerPanel::UpdateStatus()
             m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_high ) );
         else if( m_CurVolume > 50 )
             m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_medium ) );
-        else if( m_CurVolume > 25 )
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_low ) );
-        else if( m_CurVolume <= 5 )
+        else if( m_CurVolume == 0 )
             m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_muted ) );
+        else
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_low ) );
         m_VolumeButton->Refresh();
         m_LastVolume = m_CurVolume;
     }
@@ -1412,25 +1412,33 @@ void guPlayerPanel::OnPlayerPositionSliderEndSeek( wxScrollEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-int guPlayerPanel::GetVolume()
+float guPlayerPanel::GetVolume()
 {
     return m_CurVolume;
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetVolume( int Vol )
+void guPlayerPanel::SetVolume( float volume )
 {
-    if( Vol == m_CurVolume )
+    if( volume == m_CurVolume )
         return;
-    m_CurVolume = Vol;
-    if( m_CurVolume < 4 )
-        m_CurVolume = 4;
-    else if( m_CurVolume > 100 )
-        m_CurVolume = 100;
+
+    if( volume < 0 )
+        volume = 0;
+    else if( volume > 100 )
+        volume = 100;
+
+    m_CurVolume = volume;
+
+////    if( m_CurVolume < 4 )
+////        m_CurVolume = 4;
+////    else if( m_CurVolume > 100 )
+////        m_CurVolume = 100;
 //    if( m_MediaCtrl->GetState() != wxMEDIASTATE_STOPPED )
 //    {
-    m_MediaCtrl->SetVolume(  ( ( double ) Vol / 100.0 ) );
+    m_MediaCtrl->SetVolume(  volume / 100.0 );
 //    }
+    m_VolumeButton->SetToolTip( wxString::Format( _( "Volume %u%%" ), ( int ) volume ) );
 }
 
 // -------------------------------------------------------------------------------- //

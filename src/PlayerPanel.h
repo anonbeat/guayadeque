@@ -122,10 +122,10 @@ class guPlayerPanel : public wxPanel
 	guPlayerPanelTimer *    m_PlayerTimer;
     guCurrentTrack          m_MediaSong;
 	wxMediaState            m_LastPlayState;
-	int                     m_LastVolume;
+	float                   m_LastVolume;
 	wxFileOffset            m_LastCurPos;
 
-	int                     m_CurVolume;
+	float                   m_CurVolume;
 	bool                    m_PlayLoop;
 	bool                    m_PlaySmart;
 	bool                    m_SliderIsDragged;
@@ -176,8 +176,8 @@ class guPlayerPanel : public wxPanel
     void                SetPlayList( const guTrackArray &SongList );
     void                AddToPlayList( const guTrackArray &SongList );
     void                AddToPlayList( const wxString &FileName );
-    int                 GetVolume();
-    void                SetVolume( int Vol );
+    float               GetVolume();
+    void                SetVolume( float volume );
     bool                SetPosition( int pos );
     int                 GetPosition();
     void                TrackListChanged( void );
