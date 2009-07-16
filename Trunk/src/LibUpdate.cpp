@@ -26,7 +26,7 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-unsigned int GetFileLastChange( const wxString &FileName )
+int GetFileLastChange( const wxString &FileName )
 {
     wxStructStat St;
     wxStat( FileName, &St );
@@ -47,7 +47,7 @@ guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
         wxDateTime LastTime;
         LastTime.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
         m_LastUpdate = LastTime.GetTicks();
-        //guLogMessage( wxT( "LastUpdate: %s" ), m_LastUpdate.Format().c_str() );
+        //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
         m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
     }
 
@@ -99,7 +99,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
         {
           if( Dir.Exists( FileName ) )
           {
-            unsigned int FileDate = GetFileLastChange( FileName );
+            int FileDate = GetFileLastChange( FileName );
             //guLogMessage( wxT( "Scanning dir '%s'" ), FileName.c_str() );
             ScanDirectory( FileName, includedir || ( FileDate > m_LastUpdate ) );
 
@@ -110,7 +110,8 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           }
           else
           {
-            unsigned int FileDate = GetFileLastChange( FileName );
+            int FileDate = GetFileLastChange( FileName );
+            //guLogMessage( wxT( "FileDate: %u  -> %u" ), m_LastUpdate, FileDate );
             if( includedir || ( FileDate > m_LastUpdate ) )
             {
               LowerFileName = FileName.Lower();
