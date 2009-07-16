@@ -34,7 +34,7 @@ class guLibUpdateThread : public wxThread
     wxArrayString       m_ImageFiles;
     int                 m_GaugeId;
     wxArrayString       m_LibPaths;
-    unsigned int        m_LastUpdate;
+    int                 m_LastUpdate;
     wxArrayString       m_CoverSearchWords;
 
     int                 ScanDirectory( wxString dirname, bool includedir = false );
