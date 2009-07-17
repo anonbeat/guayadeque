@@ -158,3 +158,43 @@ bool guConfig::WriteAStr( const wxString &Key, const wxArrayString &Value, const
 }
 
 // -------------------------------------------------------------------------------- //
+// -------------------------------------------------------------------------------- //
+wxArrayInt guConfig::ReadANum( const wxString &Key, const int Default, const wxString &Category  )
+{
+    wxMutexLocker Locker( m_ConfigMutex );
+    int Entry;
+    wxArrayInt RetVal;
+    if( HasGroup( Category ) )
+    {
+        RetVal.Empty();
+        SetPath( Category );
+        int index = 0;
+        do {
+            if( !Read( wxString::Format( Key + wxT( "%i" ), index++ ), &Entry, Default ) )
+                break;
+            RetVal.Add( Entry );
+        } while( 1 );
+        SetPath( wxT( "/" ) );
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guConfig::WriteANum( const wxString &Key, const wxArrayInt &Value, const wxString &Category, bool ResetGroup )
+{
+    wxMutexLocker Locker( m_ConfigMutex );
+    int index;
+    int count = Value.Count();
+    if( ResetGroup )
+        DeleteGroup( Category );
+    SetPath( Category );
+    for( index = 0; index < count; index++ )
+    {
+        if( !Write( wxString::Format( Key + wxT( "%i" ), index ), Value[ index ] ) )
+            break;
+    }
+    SetPath( wxT( "/" ) );
+    return ( index = count );
+}
+
+// -------------------------------------------------------------------------------- //

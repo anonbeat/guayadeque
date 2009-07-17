@@ -28,6 +28,19 @@
 #include "PlayList.h" // LenToString
 #include "Utils.h"
 
+wxString guSONGS_COLUMN_NAMES[] = {
+    wxT( "#" ),
+    _( "Title" ),
+    _( "Artist" ),
+    _( "Album" ),
+    _( "Length" ),
+    _( "Year" ),
+    _( "BitRate" ),
+    _( "Rating" ),
+    _( "PlayCount" ),
+    _( "Last Play" ),
+    _( "Added Date" )
+};
 
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname ) :
@@ -39,28 +52,25 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
     m_Db = NewDb;
     m_ConfName = confname;
 
+    m_Columns = Config->ReadANum( confname + wxT( "Col" ), 0, confname + wxT( "s" ) );
+    if( !m_Columns.Count() )
+    {
+        m_Columns.Add( guSONGS_COLUMN_NUMBER );
+        m_Columns.Add( guSONGS_COLUMN_TITLE );
+        m_Columns.Add( guSONGS_COLUMN_ARTIST );
+        m_Columns.Add( guSONGS_COLUMN_ALBUM );
+        m_Columns.Add( guSONGS_COLUMN_LENGTH );
+    }
 
-    // Create the Columns
-    ListItem.SetText( wxT( "#" ) );
+    int index;
+    int count = m_Columns.Count();
     ListItem.SetImage( wxNOT_FOUND );
-    ListItem.SetWidth( Config->ReadNum( confname + wxT( "0" ), 40, wxT( "Positions" ) ) );
-    InsertColumn( 0, ListItem );
-
-    ListItem.SetText( _( "Title" ) );
-    ListItem.SetWidth( Config->ReadNum( confname + wxT( "1" ), 200, wxT( "Positions" ) ) );
-    InsertColumn( 1, ListItem );
-
-    ListItem.SetText( _( "Artist" ) );
-    ListItem.SetWidth( Config->ReadNum( confname + wxT( "2" ), 200, wxT( "Positions" ) ) );
-    InsertColumn( 2, ListItem );
-
-    ListItem.SetText( _( "Album" ) );
-    ListItem.SetWidth( Config->ReadNum( confname + wxT( "3" ), 200, wxT( "Positions" ) ) );
-    InsertColumn( 3, ListItem );
-
-    ListItem.SetText( _( "Length" ) );
-    ListItem.SetWidth( Config->ReadNum( confname + wxT( "4" ), 100, wxT( "Positions" ) ) );
-    InsertColumn( 4, ListItem );
+    for( index = 0; index < count; index++ )
+    {
+        ListItem.SetText( guSONGS_COLUMN_NAMES[ m_Columns[ index ] ] );
+        ListItem.SetWidth( Config->ReadNum( confname + wxString::Format( wxT( "ColSize%u" ), index ), 40, wxT( "Positions" ) ) );
+        InsertColumn( index, ListItem );
+    }
 
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guSoListBox::OnBeginDrag ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guSoListBox::OnContextMenu ), NULL, this );
@@ -103,11 +113,13 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
 guSoListBox::~guSoListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    int Index;
-    for( Index = 0; Index < 5; Index++ )
+    int index;
+    int count = m_Columns.Count();
+    for( index = 0; index < count; index++ )
     {
-        Config->WriteNum( wxString::Format( m_ConfName + wxT( "%u" ), Index ), GetColumnWidth( Index ), wxT( "Positions" ) );
+        Config->WriteNum( wxString::Format( m_ConfName + wxT( "ColSize%u" ), index ), GetColumnWidth( index ), wxT( "Positions" ) );
     }
+    Config->WriteANum( m_ConfName + wxT( "Col" ), m_Columns, m_ConfName + wxT( "s" ) );
 
     m_Songs.Clear();
 
@@ -125,23 +137,56 @@ wxString guSoListBox::OnGetItemText( long item, long column ) const
 
     Song = &m_Songs[ item ];
 
-    switch( column )
+    switch( m_Columns[ column ] )
     {
-        case 0 :
+        case guSONGS_COLUMN_NUMBER :
           return wxString::Format( wxT( "%02u" ), Song->m_Number );
-          break;
-        case 1 :
+
+        case guSONGS_COLUMN_TITLE  :
           return Song->m_SongName;
 
-        case 2 :
+        case guSONGS_COLUMN_ARTIST :
           return Song->m_ArtistName;
 
-        case 3 :
+        case guSONGS_COLUMN_ALBUM :
           return Song->m_AlbumName;
 
-        case 4 :
+        case guSONGS_COLUMN_LENGTH :
           return LenToString( Song->m_Length );
-          break;
+
+        case guSONGS_COLUMN_YEAR :
+            if( Song->m_Year )
+                return wxString::Format( wxT( "%u" ), Song->m_Year );
+            else
+                return wxEmptyString;
+
+        case guSONGS_COLUMN_BITRATE :
+            return wxString::Format( wxT( "%u" ), Song->m_Bitrate );
+
+        case guSONGS_COLUMN_RATING :
+            return wxString::Format( wxT( "%i" ), Song->m_Rating );
+
+        case guSONGS_COLUMN_PLAYCOUNT :
+            return wxString::Format( wxT( "%u" ), Song->m_PlayCount );
+
+        case guSONGS_COLUMN_LASTPLAY :
+        {
+            if( Song->m_LastPlay )
+            {
+                wxDateTime LastPlay;
+                LastPlay.Set( ( time_t ) Song->m_LastPlay );
+                return LastPlay.FormatDate();
+            }
+            else
+                return _( "Never" );
+        }
+
+        case guSONGS_COLUMN_ADDEDDATE :
+        {
+            wxDateTime AddedDate;
+            AddedDate.Set( ( time_t ) Song->m_AddedTime );
+            return AddedDate.FormatDate();
+        }
     }
     return wxEmptyString;
 }

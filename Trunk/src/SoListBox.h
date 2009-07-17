@@ -25,12 +25,26 @@
 
 #include "DbLibrary.h"
 
+#define guSONGS_COLUMN_NUMBER       0
+#define guSONGS_COLUMN_TITLE        1
+#define guSONGS_COLUMN_ARTIST       2
+#define guSONGS_COLUMN_ALBUM        3
+#define guSONGS_COLUMN_LENGTH       4
+#define guSONGS_COLUMN_YEAR         5
+#define guSONGS_COLUMN_BITRATE      6
+#define guSONGS_COLUMN_RATING       7
+#define guSONGS_COLUMN_PLAYCOUNT    8
+#define guSONGS_COLUMN_LASTPLAY     9
+#define guSONGS_COLUMN_ADDEDDATE    10
+
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public wxListCtrl
 {
   protected :
     DbLibrary *         m_Db;
+    wxArrayInt          m_Columns;
     guTrackArray        m_Songs;
+
     wxString            m_ConfName;
     wxListItemAttr      m_OddAttr;
     wxListItemAttr      m_EveAttr;
