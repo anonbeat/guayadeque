@@ -1430,14 +1430,7 @@ void guPlayerPanel::SetVolume( float volume )
 
     m_CurVolume = volume;
 
-////    if( m_CurVolume < 4 )
-////        m_CurVolume = 4;
-////    else if( m_CurVolume > 100 )
-////        m_CurVolume = 100;
-//    if( m_MediaCtrl->GetState() != wxMEDIASTATE_STOPPED )
-//    {
     m_MediaCtrl->SetVolume(  volume / 100.0 );
-//    }
     m_VolumeButton->SetToolTip( wxString::Format( _( "Volume %u%%" ), ( int ) volume ) );
 }
 

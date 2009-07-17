@@ -242,7 +242,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 	wxBoxSizer* DetailsSizer;
 	DetailsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_PLTracksListBox = new guPLTracksListBox( DetailsPanel, m_Db, wxT( "PLColSize" ) );
+	m_PLTracksListBox = new guPLTracksListBox( DetailsPanel, m_Db, wxT( "PlayList" ) );
 	DetailsSizer->Add( m_PLTracksListBox, 1, wxALL|wxEXPAND, 1 );
 
 	DetailsPanel->SetSizer( DetailsSizer );
