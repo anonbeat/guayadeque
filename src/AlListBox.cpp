@@ -159,30 +159,31 @@ void guAlListBox::OnChangedSize( wxSizeEvent &event )
 {
     int w, h, d;
     wxSize Size = event.GetSize();
+    Size.x -= 6;
+    Size.y -= 6;
+    //guLogMessage( wxT( "Header SetSize %i,%i" ), Size.x, Size.y );
     if( m_Header )
     {
         // Calculate the Height
         GetTextExtent( wxT("Hg"), &w, &h, &d );
         h += d + 4;
+
         // Calculate the Width
         //
-        Size.x -= 6;
-        Size.y -= 6;
-        w = Size.x;
-        if( m_ListBox )
-        {
-            // If we need to show a scrollbar
-            if( ( int ) m_ListBox->GetItemCount() > ( Size.GetHeight() / ALLISTBOX_ITEM_SIZE ) )
-            {
-                w -= wxSystemSettings::GetMetric( wxSYS_VSCROLL_X );
-            }
-        }
+//        w = Size.x;
+//        if( m_ListBox )
+//        {
+//            // If we need to show a scrollbar
+//            if( ( int ) m_ListBox->GetItemCount() > ( Size.GetHeight() / ALLISTBOX_ITEM_SIZE ) )
+//            {
+//                w -= wxSystemSettings::GetMetric( wxSYS_VSCROLL_X );
+//            }
+//        }
         // Only change size if its different
-        if( m_Header->GetSize().GetWidth() != w )
+        if( m_Header->GetSize().GetWidth() != Size.x )
         {
-            m_Header->SetSize( w, h );
+            m_Header->SetSize( Size.x, h );
         }
-//        guLogMessage( wxT( "Header SetSize %i,%i" ), w, h );
     }
     if( m_ListBox )
     {
@@ -839,14 +840,14 @@ void guAlbumListBoxHeader::OnPaint( wxPaintEvent &WXUNUSED(event) )
     dc.SetTextForeground( GetForegroundColour() );
 
     int flags = 0;
-    if (!m_parent->IsEnabled())
+    if( !m_parent->IsEnabled() )
         flags |= wxCONTROL_DISABLED;
 
     wxRendererNative::Get().DrawHeaderButton( this, dc, wxRect( 0, 0, w, h ), flags );
 
     wxCoord wLabel;
     wxCoord hLabel;
-    dc.GetTextExtent( m_LabelStr, &wLabel, &hLabel);
+    dc.GetTextExtent( m_LabelStr, &wLabel, &hLabel );
 
     dc.DrawText( m_LabelStr, 4, h / 2 - hLabel / 2 );
 //    guLogMessage( wxT( "OnPaint (%i,%i)" ), w, h );
@@ -865,25 +866,25 @@ void guAlbumListBoxHeader::OnSetFocus( wxFocusEvent &WXUNUSED(event) )
 // -------------------------------------------------------------------------------- //
 void guAlbumListBoxHeader::UpdateLabel( void )
 {
-    int h;
-    int w;
-    wxSize Size;
-    wxSize CurSize;
-    if( m_Owner )
-    {
-        Size = m_Owner->GetSize();
-        w = Size.GetWidth();
-        CurSize = GetSize();
-        h = CurSize.GetHeight();
-        if( ( int ) m_Owner->GetItemCount() > ( Size.GetHeight() / ALLISTBOX_ITEM_SIZE ) )
-        {
-            w -= wxSystemSettings::GetMetric( wxSYS_VSCROLL_X );
-        }
-        if( CurSize.GetWidth() != w )
-        {
-            SetSize( w, GetSize().GetHeight() );
-        }
-    }
+//////    int h;
+//////    int w;
+//////    wxSize Size;
+//////    wxSize CurSize;
+//////    if( m_Owner )
+//////    {
+//////        Size = m_Owner->GetSize();
+//////        w = Size.GetWidth();
+//////        CurSize = GetSize();
+//////        h = CurSize.GetHeight();
+//////        if( ( int ) m_Owner->GetItemCount() > ( Size.GetHeight() / ALLISTBOX_ITEM_SIZE ) )
+//////        {
+//////            w -= wxSystemSettings::GetMetric( wxSYS_VSCROLL_X );
+//////        }
+//////        if( CurSize.GetWidth() != w )
+//////        {
+//////            SetSize( w, GetSize().GetHeight() );
+//////        }
+//////    }
     m_LabelStr = wxString::Format( m_LabelFmt, m_Owner->GetItemCount() - 1 );
     Refresh();
 //    Update();
