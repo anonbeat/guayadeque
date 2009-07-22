@@ -21,9 +21,8 @@
 #ifndef GUSOLISTBOX_H
 #define GUSOLISTBOX_H
 
-#include <wx/wx.h>
-
 #include "DbLibrary.h"
+#include "ListView.h"
 
 #define guSONGS_COLUMN_NUMBER       0
 #define guSONGS_COLUMN_TITLE        1
@@ -38,37 +37,38 @@
 #define guSONGS_COLUMN_ADDEDDATE    10
 
 // -------------------------------------------------------------------------------- //
-class guSoListBox : public wxListCtrl
+class guSoListBox : public guListView
 {
   protected :
     DbLibrary *         m_Db;
     wxArrayInt          m_Columns;
-    guTrackArray        m_Songs;
-
+    guTrackArray        m_Items;
     wxString            m_ConfName;
-    wxListItemAttr      m_OddAttr;
-    wxListItemAttr      m_EveAttr;
-    int                 m_PrevColSize;
 
-    wxString            OnGetItemText( long item, long column ) const;
-    wxListItemAttr *    OnGetItemAttr( long item ) const;
-    void                OnBeginDrag( wxMouseEvent &event );
-    void                OnContextMenu( wxContextMenuEvent& event );
-    void                OnSearchLinkClicked( wxCommandEvent &event );
-    void                OnCommandClicked( wxCommandEvent &event );
+    wxBitmap *          m_GreyStar;
+    wxBitmap *          m_YellowStar;
 
-    wxString            GetSearchText( int Item );
-    virtual void        FillTracks();
+
+    virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    virtual void                CreateContextMenu( wxMenu * Menu ) const;
+    virtual wxString            OnGetItemText( const int row, const int column );
+    virtual void                GetItemsList( void );
+
+    void                        OnSearchLinkClicked( wxCommandEvent &event );
+    void                        OnCommandClicked( wxCommandEvent &event );
+    wxString                    GetSearchText( int item ) const;
 
   public :
-                        guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname );
-                        ~guSoListBox();
-    void                ReloadItems();
-    wxArrayInt          GetSelection( void ) const;
-    guTrackArray        GetSelectedSongs() const;
-    guTrackArray        GetAllSongs() const;
-    void                ClearSelection();
+    guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname );
+    ~guSoListBox();
 
+    virtual void                ReloadItems( bool reset = true );
+
+    virtual int                 GetSelectedSongs( guTrackArray * Songs ) const;
+    virtual void                GetAllSongs( guTrackArray * Songs ) const;
+
+    virtual int inline          GetItemId( const int row ) const;
+    virtual wxString inline     GetItemName( const int row ) const;
 };
 
 #endif

@@ -37,7 +37,7 @@ class guRadioGenreListBox : public guListBox
 {
     private :
       void GetItemsList( void );
-      void GetContextMenu( wxMenu * Menu ) const;
+      void CreateContextMenu( wxMenu * Menu ) const;
       void OnRadioGenreAdd( wxCommandEvent &event );
       void OnRadioGenreEdit( wxCommandEvent &event );
       void OnRadioGenreDelete( wxCommandEvent &event );
@@ -59,7 +59,7 @@ class guRadioLabelListBox : public guListBox
     protected :
 
       virtual void GetItemsList( void );
-      virtual void GetContextMenu( wxMenu * Menu ) const;
+      virtual void CreateContextMenu( wxMenu * Menu ) const;
       void AddLabel( wxCommandEvent &event );
       void DelLabel( wxCommandEvent &event );
       void EditLabel( wxCommandEvent &event );
@@ -155,8 +155,7 @@ guRadioGenreListBox::~guRadioGenreListBox()
 // -------------------------------------------------------------------------------- //
 void guRadioGenreListBox::GetItemsList( void )
 {
-    m_Items.Add( new guListItem( 0, _( "All" ) ) );
-    m_Db->GetRadioGenres( &m_Items );
+    m_Db->GetRadioGenres( m_Items );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -167,7 +166,7 @@ int guRadioGenreListBox::GetSelectedSongs( guTrackArray * Songs ) const
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioGenreListBox::GetContextMenu( wxMenu * Menu ) const
+void guRadioGenreListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
 
@@ -175,7 +174,7 @@ void guRadioGenreListBox::GetContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
     Menu->Append( MenuItem );
 
-    if( GetSelection().Count() )
+    if( GetSelectedItems().Count() )
     {
         MenuItem = new wxMenuItem( Menu, ID_RADIO_GENRE_EDIT, _( "Edit genre" ), _( "Change selected genre" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
@@ -224,12 +223,13 @@ void guRadioGenreListBox::OnRadioGenreAdd( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioGenreListBox::OnRadioGenreEdit( wxCommandEvent &event )
 {
-    wxArrayInt Selection = GetSelection();
+    wxArrayInt Selection = GetSelectedItems();
     if( Selection.Count() )
     {
         // Get the Index of the First Selected Item
-        int item = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
-        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Genre Name: " ), _( "Enter the new Genre Name" ), m_Items[ item ].m_Name );
+        unsigned long cookie;
+        int item = GetFirstSelected( cookie );
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Genre Name: " ), _( "Enter the new Genre Name" ), ( * m_Items )[ item ].m_Name );
         if( EntryDialog->ShowModal() == wxID_OK )
         {
             m_Db->SetRadioGenreName( Selection[ 0 ], EntryDialog->GetValue() );
@@ -242,7 +242,7 @@ void guRadioGenreListBox::OnRadioGenreEdit( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioGenreListBox::OnRadioGenreDelete( wxCommandEvent &event )
 {
-    wxArrayInt Selection = GetSelection();
+    wxArrayInt Selection = GetSelectedItems();
     int Count = Selection.Count();
     if( Count )
     {
@@ -504,18 +504,17 @@ guRadioLabelListBox::~guRadioLabelListBox()
 // -------------------------------------------------------------------------------- //
 void guRadioLabelListBox::GetItemsList( void )
 {
-    m_Items.Add( new guListItem( 0, _( "All" ) ) );
-    m_Db->GetRadioLabels( &m_Items );
+    m_Db->GetRadioLabels( m_Items );
 }
 
 // -------------------------------------------------------------------------------- //
 int guRadioLabelListBox::GetSelectedSongs( guTrackArray * Songs ) const
 {
-    return m_Db->GetRadioLabelsSongs( GetSelection(), Songs );
+    return m_Db->GetRadioLabelsSongs( GetSelectedItems(), Songs );
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioLabelListBox::GetContextMenu( wxMenu * Menu ) const
+void guRadioLabelListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
 
@@ -523,7 +522,7 @@ void guRadioLabelListBox::GetContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
     Menu->Append( MenuItem );
 
-    if( GetSelection().Count() )
+    if( GetSelectedItems().Count() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Edit Label" ), _( "Change selected label" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
@@ -552,7 +551,7 @@ void guRadioLabelListBox::AddLabel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioLabelListBox::DelLabel( wxCommandEvent &event )
 {
-    wxArrayInt Selection = GetSelection();
+    wxArrayInt Selection = GetSelectedItems();
     int Count = Selection.Count();
     if( Count )
     {
@@ -572,12 +571,13 @@ void guRadioLabelListBox::DelLabel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioLabelListBox::EditLabel( wxCommandEvent &event )
 {
-    wxArrayInt Selection = GetSelection();
+    wxArrayInt Selection = GetSelectedItems();
     if( Selection.Count() )
     {
         // Get the Index of the First Selected Item
-        int item = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
-        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Enter the new label name" ), m_Items[ item ].m_Name );
+        unsigned long cookie;
+        int item = GetFirstSelected( cookie );
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Enter the new label name" ), ( * m_Items )[ item ].m_Name );
         if( EntryDialog->ShowModal() == wxID_OK )
         {
             m_Db->SetRadioLabelName( Selection[ 0 ], EntryDialog->GetValue() );
@@ -710,11 +710,10 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 	this->SetSizer( MainSizer );
 	this->Layout();
 
-    m_GenresListBox->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
-    m_GenresListBox->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED,  wxListEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
+    m_GenresListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
 
-    m_LabelsListBox->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
-    m_LabelsListBox->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
+    m_LabelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
+
     //
     Connect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdate ) );
     Connect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ) );
@@ -857,14 +856,14 @@ void guRadioPanel::OnStationListActivated( wxListEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioGenreListSelected( wxListEvent &Event )
 {
-    m_Db->SetRadioGenresFilters( m_GenresListBox->GetSelection() );
+    m_Db->SetRadioGenresFilters( m_GenresListBox->GetSelectedItems() );
     m_StationsListBox->ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioLabelListSelected( wxListEvent &Event )
 {
-    m_Db->SetRadioLabelsFilters( m_LabelsListBox->GetSelection() );
+    m_Db->SetRadioLabelsFilters( m_LabelsListBox->GetSelectedItems() );
     m_GenresListBox->ReloadItems();
     m_StationsListBox->ReloadItems();
 }
@@ -877,7 +876,7 @@ void guRadioPanel::OnRadioUpdate( wxCommandEvent &event )
 
     guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge();
-    wxArrayInt GenresIds = m_GenresListBox->GetSelection();
+    wxArrayInt GenresIds = m_GenresListBox->GetSelectedItems();
     if( !GenresIds.Count() )
     {
         guListItems Genres;

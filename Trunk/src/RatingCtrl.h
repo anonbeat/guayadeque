@@ -27,6 +27,10 @@
 #define GURATING_STYLE_MID      1
 #define GURATING_STYLE_BIG      2
 
+#define GURATING_IMAGE_MINSIZE      8
+#define GURATING_IMAGE_SEPARATION   1
+#define GURATING_IMAGE_SIZE         GURATING_IMAGE_MINSIZE + GURATING_IMAGE_SEPARATION
+
 class guRatingEvent : public wxNotifyEvent
 {
 public:

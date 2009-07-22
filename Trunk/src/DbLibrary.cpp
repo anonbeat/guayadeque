@@ -537,11 +537,11 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                      "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 1, 9, 1, 0 );" ) );
+                      "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 1, 10, 1, 0 );" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                      "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 1, 8, 1, 0 );" ) );
+                      "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 1, 9, 1, 0 );" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
@@ -553,13 +553,13 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'plset_plid' on plsets (plset_plid ASC);" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
                       "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                      "VALUES( NULL, 1, 0, 10, 0, '', 1, 3 );" ) );
+                      "VALUES( NULL, 1, 0, 11, 0, '', 1, 3 );" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
                       "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                      "VALUES( NULL, 2, 0, 9, 0, '', 1, 2 );" ) );
+                      "VALUES( NULL, 2, 0, 10, 0, '', 1, 2 );" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
                       "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                      "VALUES( NULL, 3, 0, 6, 1, '', 5, 0 );" ) );
+                      "VALUES( NULL, 3, 0, 7, 1, '', 5, 0 );" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_hash VARCHAR( 32 ) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
@@ -2231,19 +2231,19 @@ const wxString DynPLStringOption( int option, const wxString &text )
   wxString FmtStr;
   switch( option )
   {
-    case 0 :
+    case guDYNAMIC_FILTER_OPTION_STRING_CONTAINS : // contains
       FmtStr = wxT( "LIKE \"%%%s%%\"" );
       break;
-    case 1 :
+    case guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS : // not contains
       FmtStr = wxT( "NOT LIKE \"%%%s%%\"" );
       break;
-    case 2 :
+    case guDYNAMIC_FILTER_OPTION_STRING_EQUAL : // EQUAL
       FmtStr = wxT( "= \"%s\"" );
       break;
-    case 3 :
+    case guDYNAMIC_FILTER_OPTION_STRING_START_WITH : // START WITH
       FmtStr = wxT( "LIKE \"%s%%\"" );
       break;
-    case 4 :
+    case guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH : // ENDS WITH
       FmtStr = wxT( "LIKE \"%%%s\"" );
       break;
   }
@@ -2256,13 +2256,13 @@ const wxString DynPLYearOption( const int option, const int year )
   wxString FmtStr;
   switch( option )
   {
-    case 0 :
+    case guDYNAMIC_FILTER_OPTION_YEAR_EQUAL :
       FmtStr = wxT( "= %u" );
       break;
-    case 1 :
+    case guDYNAMIC_FILTER_OPTION_YEAR_AFTER :
       FmtStr = wxT( "> %u" );
       break;
-    case 2 :
+    case guDYNAMIC_FILTER_OPTION_YEAR_BEFORE :
       FmtStr = wxT( "< %u" );
       break;
   }
@@ -2275,13 +2275,13 @@ const wxString DynPLNumericOption( const int option, const int value )
   wxString FmtStr;
   switch( option )
   {
-    case 0 :
+    case guDYNAMIC_FILTER_OPTION_NUMERIC_EQUALS :
       FmtStr = wxT( "= %u" );
       break;
-    case 1 :
+    case guDYNAMIC_FILTER_OPTION_NUMERIC_AT_LEAST :
       FmtStr = wxT( ">= %u" );
       break;
-    case 2 :
+    case guDYNAMIC_FILTER_OPTION_NUMERIC_AT_MOST :
       FmtStr = wxT( "<= %u" );
       break;
   }
@@ -2305,13 +2305,13 @@ const wxString DynPLDateOption( const int option, const int value, const int opt
 
   switch( option )
   {
-    case 0 : // IN_THE_LAST
+    case guDYNAMIC_FILTER_OPTION_DATE_IN_THE_LAST : // IN_THE_LAST
     {
         FmtStr = wxT( ">= %u" );
         break;
     }
 
-    case 1 : // BEFORE_THE_LAST
+    case guDYNAMIC_FILTER_OPTION_DATE_BEFORE_THE_LAST : // BEFORE_THE_LAST
     {
         FmtStr = wxT( "< %u" );
         break;
@@ -2337,40 +2337,40 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
     }
     switch( playlist->m_Filters[ index ].m_Type )
     {
-      case 0 : // TITLE
+      case guDYNAMIC_FILTER_TYPE_TITLE : // TITLE
         query += wxT( "song_name " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                                    playlist->m_Filters[ index ].m_Text );
         break;
 
-      case 1 :  // ALBUM
+      case guDYNAMIC_FILTER_TYPE_ARTIST :  // ARTIST
         dbNames += wxT( ", artists " );
         query += wxT( "( song_artistid = artist_id AND artist_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
-      case 2 : // ALBUM
+      case guDYNAMIC_FILTER_TYPE_ALBUM : // ALBUM
         dbNames += wxT( ", albums " );
         query += wxT( "( song_albumid = album_id AND album_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
-      case 3 : // GENRE
+      case guDYNAMIC_FILTER_TYPE_GENRE : // GENRE
         dbNames += wxT( ", genres " );
         query += wxT( "( song_genreid = genre_id AND genre_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
-      case 4 : // PATH
+      case guDYNAMIC_FILTER_TYPE_PATH : // PATH
         dbNames += wxT( ", paths " );
         query += wxT( "( song_pathid = path_id AND path_value " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
-      case 5 :  // YEAR
+      case guDYNAMIC_FILTER_TYPE_YEAR :  // YEAR
       {
         query += wxT( "song_year " ) +
                  DynPLYearOption( playlist->m_Filters[ index ].m_Option,
@@ -2378,7 +2378,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
       }
 
-      case 6 :  // RATING
+      case guDYNAMIC_FILTER_TYPE_RATING :  // RATING
       {
         query += wxT( "song_rating " ) +
                  DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
@@ -2386,7 +2386,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
       }
 
-      case 7 :  // LENGTH
+      case guDYNAMIC_FILTER_TYPE_LENGTH :  // LENGTH
       {
         query += wxT( "song_length " ) +
                  DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
@@ -2394,7 +2394,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
       }
 
-      case 8 :  // PLAYCOUNT
+      case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :  // PLAYCOUNT
       {
         query += wxT( "song_playcount " ) +
                  DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
@@ -2402,7 +2402,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
       }
 
-      case 9 :
+      case guDYNAMIC_FILTER_TYPE_LASTPLAY :
       {
         query += wxT( "song_lastplay " ) +
                  DynPLDateOption( playlist->m_Filters[ index ].m_Option,
@@ -2411,7 +2411,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
       }
 
-      case 10 :
+      case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
       {
         query += wxT( "song_addedtime " ) +
                  DynPLDateOption( playlist->m_Filters[ index ].m_Option,
@@ -2430,9 +2430,9 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
     sort = wxT( " ORDER BY " );
     switch( playlist->m_SortType )
     {
-        case 0 : sort += wxT( "song_name" ); break;
+        case guDYNAMIC_FILTER_ORDER_TITLE : sort += wxT( "song_name" ); break;
 
-        case 1 :
+        case guDYNAMIC_FILTER_ORDER_ARTIST :
         {
             if( !dbNames.Contains( wxT( "artists" ) ) )
             {
@@ -2443,7 +2443,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             break;
         }
 
-        case 2 :
+        case guDYNAMIC_FILTER_ORDER_ALBUM :
         {
             if( !dbNames.Contains( wxT( "albums" ) ) )
             {
@@ -2454,7 +2454,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             break;
         }
 
-        case 3 :
+        case guDYNAMIC_FILTER_ORDER_GENRE :
         {
             if( !dbNames.Contains( wxT( "genres" ) ) )
             {
@@ -2465,12 +2465,12 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             break;
         }
 
-        case 4 : sort += wxT( "song_year" ); break;
-        case 5 : sort += wxT( "song_rating" ); break;
-        case 6 : sort += wxT( "song_length" ); break;
-        case 7 : sort += wxT( "song_playcount" ); break;
-        case 8 : sort += wxT( "song_lastplay" ); break;
-        case 9 : sort += wxT( "song_addedtime" ); break;
+        case guDYNAMIC_FILTER_ORDER_YEAR : sort += wxT( "song_year" ); break;
+        case guDYNAMIC_FILTER_ORDER_RATING : sort += wxT( "song_rating" ); break;
+        case guDYNAMIC_FILTER_ORDER_LENGTH : sort += wxT( "song_length" ); break;
+        case guDYNAMIC_FILTER_ORDER_PLAYCOUNT : sort += wxT( "song_playcount" ); break;
+        case guDYNAMIC_FILTER_ORDER_LASTPLAY : sort += wxT( "song_lastplay" ); break;
+        case guDYNAMIC_FILTER_ORDER_ADDEDDATE : sort += wxT( "song_addedtime" ); break;
     }
     if( playlist->m_SortDesc )
         sort += wxT( " DESC" );
@@ -2513,20 +2513,20 @@ int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray 
       {
           switch( PlayList.m_LimitType )
           {
-              case 0 : // TRACKS
+              case guDYNAMIC_FILTER_LIMIT_TRACKS : // TRACKS
                 Limit = PlayList.m_LimitValue;
                 break;
 
-              case 1 : // Minutes -> to seconds
+              case guDYNAMIC_FILTER_LIMIT_MINUTES : // Minutes -> to seconds
                 Limit = PlayList.m_LimitValue * 60;
                 break;
 
-              case 2 : // MB -> To bytes
+              case guDYNAMIC_FILTER_LIMIT_MEGABYTES : // MB -> To bytes
                 Limit = PlayList.m_LimitValue;
                 Limit *= 1000;
                 break;
 
-              case 3 : // GB -> to bytes
+              case guDYNAMIC_FILTER_LIMIT_GIGABYTES : // GB -> to bytes
                 Limit = PlayList.m_LimitValue;
                 Limit *= 1000000;
                 break;
@@ -2543,11 +2543,11 @@ int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray 
         FillTrackFromDb( Track, &dbRes );
         if( PlayList.m_Limited )
         {
-            if( PlayList.m_LimitType == 0 )
+            if( PlayList.m_LimitType == guDYNAMIC_FILTER_LIMIT_TRACKS )
             {
                 Count++;
             }
-            else if( PlayList.m_LimitType == 1 )
+            else if( PlayList.m_LimitType == guDYNAMIC_FILTER_LIMIT_MINUTES )
             {
                 Count += Track->m_Length;
             }

@@ -23,6 +23,7 @@
 
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
+#include "PLSoListBox.h"
 #include "SoListBox.h"
 
 
@@ -68,19 +69,19 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
 
 };
 
-// -------------------------------------------------------------------------------- //
-class guPLTracksListBox : public guSoListBox
-{
-  private :
-    int  m_PLId;
-    int  m_PLType;
-    virtual void FillTracks( void );
-
-  public :
-    guPLTracksListBox( wxWindow * parent, DbLibrary * db, wxString confname );
-    ~guPLTracksListBox();
-    void SetPlayList( int plid, int pltype );
-};
+//// -------------------------------------------------------------------------------- //
+//class guPLTracksListBox : public guSoListBox
+//{
+//  private :
+//    int  m_PLId;
+//    int  m_PLType;
+//    virtual void FillTracks( void );
+//
+//  public :
+//    guPLTracksListBox( wxWindow * parent, DbLibrary * db, wxString confname );
+//    ~guPLTracksListBox();
+//    void SetPlayList( int plid, int pltype );
+//};
 
 // -------------------------------------------------------------------------------- //
 class guPlayListPanel : public wxPanel
@@ -91,7 +92,7 @@ class guPlayListPanel : public wxPanel
 
     wxSplitterWindow *  m_MainSplitter;
     guPLNamesTreeCtrl * m_NamesTreeCtrl;
-    guPLTracksListBox * m_PLTracksListBox;
+    guPLSoListBox *     m_PLTracksListBox;
 
     void                OnPLNamesSelected( wxTreeEvent &event );
     void                OnPLNamesActivated( wxTreeEvent &event );

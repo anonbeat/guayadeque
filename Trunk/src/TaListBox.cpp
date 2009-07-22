@@ -25,7 +25,8 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guTaListBox::guTaListBox( wxWindow * parent, DbLibrary * NewDb, wxString Label ) : guListBox( parent, NewDb, Label )
+guTaListBox::guTaListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label ) :
+             guListBox( parent, NewDb, Label )
 {
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::AddLabel ) );
     Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::DelLabel ) );
@@ -44,18 +45,17 @@ guTaListBox::~guTaListBox()
 // -------------------------------------------------------------------------------- //
 void guTaListBox::GetItemsList( void )
 {
-    m_Items.Add( new guListItem( 0, _( "All" ) ) );
-    m_Db->GetLabels( &m_Items );
+    m_Db->GetLabels( m_Items );
 }
 
 // -------------------------------------------------------------------------------- //
 int guTaListBox::GetSelectedSongs( guTrackArray * Songs ) const
 {
-    return m_Db->GetLabelsSongs( GetSelection(), Songs );
+    return m_Db->GetLabelsSongs( GetSelectedItems(), Songs );
 }
 
 // -------------------------------------------------------------------------------- //
-void guTaListBox::GetContextMenu( wxMenu * Menu ) const
+void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     //    menu->Append(Menu_Dummy_First, _T("&First item\tCtrl-F1"));
     //    menu->AppendSeparator();
@@ -65,7 +65,7 @@ void guTaListBox::GetContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
     Menu->Append( MenuItem );
 
-    if( GetSelection().Count() )
+    if( GetSelectedItems().Count() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Edit Label" ), _( "Change selected label" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
@@ -116,7 +116,7 @@ void guTaListBox::AddLabel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTaListBox::DelLabel( wxCommandEvent &event )
 {
-    wxArrayInt Selection = GetSelection();
+    wxArrayInt Selection = GetSelectedItems();
     int Count = Selection.Count();
     if( Count )
     {
@@ -136,16 +136,17 @@ void guTaListBox::DelLabel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTaListBox::EditLabel( wxCommandEvent &event )
 {
-    wxArrayInt Selection = GetSelection();
+    wxArrayInt Selection = GetSelectedItems();
     if( Selection.Count() )
     {
         // Get the Index of the First Selected Item
-        int item = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
-        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Enter the new label name" ), m_Items[ item ].m_Name );
+        unsigned long cookie;
+        int item = GetFirstSelected( cookie );
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Enter the new label name" ), ( * m_Items )[ item ].m_Name );
         if( EntryDialog->ShowModal() == wxID_OK &&
-            m_Items[ item ].m_Name != EntryDialog->GetValue() )
+            ( * m_Items )[ item ].m_Name != EntryDialog->GetValue() )
         {
-            m_Db->SetLabelName( Selection[ 0 ], m_Items[ item ].m_Name, EntryDialog->GetValue() );
+            m_Db->SetLabelName( Selection[ 0 ], ( * m_Items )[ item ].m_Name, EntryDialog->GetValue() );
             ReloadItems();
         }
         EntryDialog->Destroy();

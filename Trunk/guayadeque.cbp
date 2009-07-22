@@ -133,7 +133,6 @@
 		<Unit filename="src/DbLibrary.h" />
 		<Unit filename="src/DynamicPlayList.cpp" />
 		<Unit filename="src/DynamicPlayList.h" />
-		<Unit filename="src/DynamicPlaylist.cpp" />
 		<Unit filename="src/GeListBox.cpp" />
 		<Unit filename="src/GeListBox.h" />
 		<Unit filename="src/Google.cpp" />
@@ -152,6 +151,8 @@
 		<Unit filename="src/LibPanel.h" />
 		<Unit filename="src/LibUpdate.cpp" />
 		<Unit filename="src/LibUpdate.h" />
+		<Unit filename="src/ListView.cpp" />
+		<Unit filename="src/ListView.h" />
 		<Unit filename="src/LyricsPanel.cpp" />
 		<Unit filename="src/LyricsPanel.h" />
 		<Unit filename="src/MD5.cpp" />
@@ -164,6 +165,8 @@
 		<Unit filename="src/MediaCtrl.h" />
 		<Unit filename="src/OnlineLinks.cpp" />
 		<Unit filename="src/OnlineLinks.h" />
+		<Unit filename="src/PLSoListBox.cpp" />
+		<Unit filename="src/PLSoListBox.h" />
 		<Unit filename="src/PlayList.cpp" />
 		<Unit filename="src/PlayList.h" />
 		<Unit filename="src/PlayListPanel.cpp" />
