@@ -173,42 +173,6 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-// guPLTracksListBox
-// -------------------------------------------------------------------------------- //
-guPLTracksListBox::guPLTracksListBox( wxWindow * parent, DbLibrary * db, wxString confname ) :
-  guSoListBox( parent, db, confname )
-{
-    m_PLId = wxNOT_FOUND;
-    m_PLType = wxNOT_FOUND;
-}
-
-// -------------------------------------------------------------------------------- //
-guPLTracksListBox::~guPLTracksListBox()
-{
-}
-
-// -------------------------------------------------------------------------------- //
-void guPLTracksListBox::FillTracks( void )
-{
-    if( m_PLId > 0 )
-    {
-        SetItemCount( m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Songs ) );
-    }
-    else
-    {
-        SetItemCount( 0 );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPLTracksListBox::SetPlayList( int plid, int pltype )
-{
-    m_PLId = plid;
-    m_PLType = pltype;
-    ReloadItems();
-}
-
-// -------------------------------------------------------------------------------- //
 // guPlayListPanel
 // -------------------------------------------------------------------------------- //
 guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
@@ -242,7 +206,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
 	wxBoxSizer* DetailsSizer;
 	DetailsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_PLTracksListBox = new guPLTracksListBox( DetailsPanel, m_Db, wxT( "PlayList" ) );
+	m_PLTracksListBox = new guPLSoListBox( DetailsPanel, m_Db, wxT( "PlayList" ) );
 	DetailsSizer->Add( m_PLTracksListBox, 1, wxALL|wxEXPAND, 1 );
 
 	DetailsPanel->SetSizer( DetailsSizer );
@@ -265,7 +229,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
     Connect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
 
 
-    m_PLTracksListBox->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
+//    m_PLTracksListBox->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
     Connect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayClicked ) );
     Connect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayAllClicked ) );
     Connect( ID_SONG_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksQueueClicked ) );
@@ -291,7 +255,7 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_PLAYLIST_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesDeletePlaylist ) );
     Disconnect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
 
-    m_PLTracksListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
+//    m_PLTracksListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
     Disconnect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayClicked ) );
     Disconnect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayAllClicked ) );
     Disconnect( ID_SONG_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksQueueClicked ) );
@@ -321,7 +285,8 @@ void guPlayListPanel::OnPLNamesActivated( wxTreeEvent& event )
     guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( event.GetItem() );
     if( ItemData )
     {
-        guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+        guTrackArray Tracks;
+        m_PLTracksListBox->GetAllSongs( &Tracks );
         if( Tracks.Count() )
         {
             guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -347,7 +312,8 @@ void guPlayListPanel::OnPLNamesPlay( wxCommandEvent &event )
     wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
     if( ItemId.IsOk() )
     {
-        guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+        guTrackArray Tracks;
+        m_PLTracksListBox->GetAllSongs( &Tracks );
         m_PlayerPanel->SetPlayList( Tracks );
     }
 }
@@ -358,7 +324,8 @@ void guPlayListPanel::OnPLNamesEnqueue( wxCommandEvent &event )
     wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
     if( ItemId.IsOk() )
     {
-        guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+        guTrackArray Tracks;
+        m_PLTracksListBox->GetAllSongs( &Tracks );
         m_PlayerPanel->AddToPlayList( Tracks );
     }
 }
@@ -447,7 +414,8 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
     wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
     if( ItemId.IsOk() )
     {
-        guTrackArray * Tracks = new guTrackArray( m_PLTracksListBox->GetAllSongs() );
+        guTrackArray * Tracks = new guTrackArray();
+        m_PLTracksListBox->GetAllSongs( Tracks );
         event.SetId( ID_MAINFRAME_COPYTO );
         event.SetClientData( ( void * ) Tracks );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
@@ -457,7 +425,8 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksActivated( wxListEvent &event )
 {
-    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
     if( Tracks.Count() )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -478,32 +447,36 @@ void guPlayListPanel::OnPLTracksActivated( wxListEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksPlayClicked( wxCommandEvent &event )
 {
-    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
-        Tracks = m_PLTracksListBox->GetAllSongs();
+        m_PLTracksListBox->GetAllSongs( &Tracks );
     m_PlayerPanel->SetPlayList( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksPlayAllClicked( wxCommandEvent &event )
 {
-    guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetAllSongs( &Tracks );
     m_PlayerPanel->SetPlayList( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksQueueClicked( wxCommandEvent &event )
 {
-    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
-        Tracks = m_PLTracksListBox->GetAllSongs();
+        m_PLTracksListBox->GetAllSongs( &Tracks );
     m_PlayerPanel->AddToPlayList( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksQueueAllClicked( wxCommandEvent &event )
 {
-    guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetAllSongs( &Tracks );
     m_PlayerPanel->AddToPlayList( Tracks );
 }
 
@@ -515,7 +488,7 @@ void guPlayListPanel::OnPLTracksEditLabelsClicked( wxCommandEvent &event )
 
     m_Db->GetLabels( &Labels, true );
 
-    SongIds = m_PLTracksListBox->GetSelection();
+    SongIds = m_PLTracksListBox->GetSelectedItems();
 
     guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ),
                          Labels, m_Db->GetSongsLabels( SongIds ) );
@@ -533,10 +506,11 @@ void guPlayListPanel::OnPLTracksEditLabelsClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
 {
-    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
-    guImagePtrArray Images;
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         return;
+    guImagePtrArray Images;
 
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images );
     if( TrackEditor )
@@ -555,10 +529,11 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksCopyToClicked( wxCommandEvent &event )
 {
-    guTrackArray Tracks = m_PLTracksListBox->GetSelectedSongs();
+    guTrackArray * Tracks = new guTrackArray();
+    m_PLTracksListBox->GetSelectedSongs( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
-    event.SetClientData( ( void * ) new guTrackArray( Tracks ) );
+    event.SetClientData( ( void * ) Tracks );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
@@ -567,7 +542,8 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
 {
     int index;
     int count;
-    guTrackArray Tracks = m_PLTracksListBox->GetAllSongs();
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetAllSongs( &Tracks );
     if( ( count = Tracks.Count() ) )
     {
         wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( wxTheApp->GetTopWindow(), _( "PlayList Name: " ), _( "Enter the new playlist name" ) );

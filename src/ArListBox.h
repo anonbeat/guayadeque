@@ -30,13 +30,13 @@ class guArListBox : public guListBox
 {
   protected :
     virtual void    GetItemsList( void );
-    virtual void    GetContextMenu( wxMenu * menu ) const;
+    virtual void    CreateContextMenu( wxMenu * menu ) const;
     void            OnSearchLinkClicked( wxCommandEvent &event );
     void            OnCommandClicked( wxCommandEvent &event );
-    wxString        GetSearchText( int Item );
+    wxString        GetSearchText( int Item ) const;
 
   public :
-                    guArListBox( wxWindow * parent, DbLibrary * db, wxString label );
+                    guArListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
                     ~guArListBox();
     virtual int     GetSelectedSongs( guTrackArray * songs ) const;
     bool            SelectArtistName( const wxString &ArtistName );

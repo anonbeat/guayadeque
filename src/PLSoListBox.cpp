@@ -18,46 +18,48 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#include "GeListBox.h"
+#include "PLSoListBox.h"
+
+#include "Config.h" // Configuration
 #include "Commands.h"
-#include "Config.h"
 #include "Images.h"
+#include "MainApp.h"
+#include "OnlineLinks.h"
+#include "PlayList.h" // LenToString
 #include "Utils.h"
+#include "RatingCtrl.h"
 
 // -------------------------------------------------------------------------------- //
-void guGeListBox::GetItemsList( void )
+guPLSoListBox::guPLSoListBox( wxWindow * parent, DbLibrary * db, wxString confname ) :
+             guSoListBox( parent, db, confname )
 {
-    m_Db->GetGenres( m_Items );
+    m_PLId = wxNOT_FOUND;
+    m_PLType = wxNOT_FOUND;
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
-int guGeListBox::GetSelectedSongs( guTrackArray * Songs ) const
+guPLSoListBox::~guPLSoListBox()
 {
-    return m_Db->GetGenresSongs( GetSelectedItems(), Songs );
 }
 
 // -------------------------------------------------------------------------------- //
-void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
+void guPLSoListBox::GetItemsList( void )
 {
-    wxMenuItem * MenuItem;
-    int SelCount = GetSelectedItems().Count();
-
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_PLAY, _( "Play" ), _( "Play current selected genres" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
-    Menu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE, _( "Enqueue" ), _( "Add current selected genres to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu->Append( MenuItem );
-
-    if( SelCount )
+    if( m_PLId > 0 )
     {
-        Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_GENRE_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
+        m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Items );
     }
+    else
+        m_Items.Empty();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::SetPlayList( int plid, int pltype )
+{
+    m_PLId = plid;
+    m_PLType = pltype;
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //

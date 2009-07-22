@@ -30,11 +30,11 @@ class guGeListBox : public guListBox
     protected :
 
       virtual void GetItemsList( void );
-      virtual void GetContextMenu( wxMenu * Menu ) const;
+      virtual void CreateContextMenu( wxMenu * Menu ) const;
 
     public :
 
-      guGeListBox( wxWindow * parent, DbLibrary * NewDb, wxString Label ) :
+      guGeListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label ) :
         guListBox( parent, NewDb, Label )
       {
           ReloadItems();

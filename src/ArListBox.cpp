@@ -27,7 +27,7 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guArListBox::guArListBox( wxWindow * parent, DbLibrary * db, wxString label ) :
+guArListBox::guArListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
              guListBox( parent, db, label )
 {
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );
@@ -45,14 +45,13 @@ guArListBox::~guArListBox()
 // -------------------------------------------------------------------------------- //
 void guArListBox::GetItemsList( void )
 {
-    m_Items.Add( new guListItem( 0, _( "All" ) ) );
-    m_Db->GetArtists( &m_Items );
+    m_Db->GetArtists( m_Items );
 }
 
 // -------------------------------------------------------------------------------- //
 int guArListBox::GetSelectedSongs( guTrackArray * songs ) const
 {
-    return m_Db->GetArtistsSongs( GetSelection(), songs );
+    return m_Db->GetArtistsSongs( GetSelectedItems(), songs );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -91,11 +90,11 @@ void AddArtistCommands( wxMenu * Menu, int SelCount )
 }
 
 // -------------------------------------------------------------------------------- //
-void guArListBox::GetContextMenu( wxMenu * Menu ) const
+void guArListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
 
-    int SelCount = GetSelection().Count();
+    int SelCount = GetSelectedItems().Count();
 
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_PLAY, _( "Play" ), _( "Play current selected artists" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
@@ -123,10 +122,9 @@ void guArListBox::GetContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
 
+        Menu->AppendSeparator();
         if( SelCount == 1 )
         {
-            Menu->AppendSeparator();
-
             AddOnlineLinksMenu( Menu );
         }
 
@@ -138,10 +136,10 @@ void guArListBox::GetContextMenu( wxMenu * Menu ) const
 void guArListBox::OnSearchLinkClicked( wxCommandEvent &event )
 {
     int Item = wxNOT_FOUND;
-    Item = GetNextItem( Item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+    unsigned long cookie;
+    Item = GetFirstSelected( cookie );
     if( Item != wxNOT_FOUND )
     {
-
         int index = event.GetId();
 
         guConfig * Config = ( guConfig * ) Config->Get();
@@ -170,7 +168,7 @@ void guArListBox::OnCommandClicked( wxCommandEvent &event )
 {
     int index;
     int count;
-    wxArrayInt Selection = GetSelection();
+    wxArrayInt Selection = GetSelectedItems();
     if( Selection.Count() )
     {
         index = event.GetId();
@@ -249,21 +247,19 @@ void guArListBox::OnCommandClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guArListBox::GetSearchText( int item )
+wxString guArListBox::GetSearchText( int item ) const
 {
-    return GetItemText( item );
+    return GetItemName( item );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guArListBox::SelectArtistName( const wxString &ArtistName )
 {
-    long item = FindItem( 0, ArtistName, false );
+    int item = FindItem( 0, ArtistName, false );
     if( item != wxNOT_FOUND )
     {
-        wxArrayInt Select;
-        Select.Add( m_Items[ item ].m_Id );
-        SetSelection( Select );
-        EnsureVisible( item );
+        SetSelection( item );
+        ScrollToLine( item );
     }
 }
 

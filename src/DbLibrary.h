@@ -137,18 +137,22 @@ class guCoverInfo
 WX_DECLARE_OBJARRAY(guCoverInfo, guCoverInfos);
 
 // -------------------------------------------------------------------------------- //
-class guAlbumItem //: public guListItem
+class guAlbumItem : public guListItem
 {
   public:
-    int         m_Id;
-    wxString    m_Name;
     int         m_ArtistId;
     int         m_CoverId;
     wxString    m_CoverPath;
     wxBitmap *  m_Thumb;
     int         m_Year;
 
-    guAlbumItem()
+    guAlbumItem() : guListItem()
+    {
+      m_Thumb = NULL;
+      m_Year = 0;
+    }
+
+    guAlbumItem( int id, const wxString &label ) : guListItem( id, label )
     {
       m_Thumb = NULL;
       m_Year = 0;
@@ -168,8 +172,8 @@ class guRadioStation
 {
   public :
     long        m_Id;
-    long        m_GenreId;
     wxString    m_Name;
+    long        m_GenreId;
     wxString    m_Type;
     long        m_BitRate;
     long        m_Listeners;

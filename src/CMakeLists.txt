@@ -110,6 +110,10 @@ ADD_EXECUTABLE( guayadeque
 	PlayListPanel.h
 	DynamicPlayList.cpp
 	DynamicPlayList.h
+        ListView.cpp
+	ListView.h
+	PLSoListBox.cpp
+	PLSoListBox.h
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 

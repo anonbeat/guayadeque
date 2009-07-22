@@ -27,6 +27,7 @@
 #include "OnlineLinks.h"
 #include "PlayList.h" // LenToString
 #include "Utils.h"
+#include "RatingCtrl.h"
 
 wxString guSONGS_COLUMN_NAMES[] = {
     wxT( "#" ),
@@ -44,9 +45,8 @@ wxString guSONGS_COLUMN_NAMES[] = {
 
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname ) :
-             wxListCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_VIRTUAL|wxSUNKEN_BORDER )
+             guListView( parent )
 {
-    wxListItem ListItem;
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     m_Db = NewDb;
@@ -64,48 +64,19 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
 
     int index;
     int count = m_Columns.Count();
-    ListItem.SetImage( wxNOT_FOUND );
     for( index = 0; index < count; index++ )
     {
-        ListItem.SetText( guSONGS_COLUMN_NAMES[ m_Columns[ index ] ] );
-        ListItem.SetWidth( Config->ReadNum( confname + wxString::Format( wxT( "ColSize%u" ), index ), 40, wxT( "Positions" ) ) );
-        InsertColumn( index, ListItem );
+        guListViewColumn * Column = new guListViewColumn( guSONGS_COLUMN_NAMES[ m_Columns[ index ] ] );
+        Column->m_Width = Config->ReadNum( confname + wxString::Format( wxT( "ColSize%u" ), index ), 40, wxT( "Positions" ) );
+        InsertColumn( Column );
     }
 
-    Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guSoListBox::OnBeginDrag ), NULL, this );
-    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guSoListBox::OnContextMenu ), NULL, this );
+    m_GreyStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_grey_star_tiny + GURATING_STYLE_MID ) ) );
+    m_YellowStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_yellow_star_tiny + GURATING_STYLE_MID ) ) );
+
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Connect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
-
-
-    wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
-    wxColour ListBoxText;
-    ListBoxText.Set( ListBoxColor.Red() ^ 0xFF, ListBoxColor.Green() ^ 0xFF, ListBoxColor.Blue() ^ 0xFF );
-    m_EveAttr = wxListItemAttr( ListBoxText,
-                                ListBoxColor,
-                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
-
-    SetBackgroundColour( ListBoxColor );
-
-    if( ListBoxColor.Red() > 0x0A && ListBoxColor.Green() > 0x0A && ListBoxColor.Blue() > 0x0A )
-    {
-        ListBoxColor.Set( ListBoxColor.Red() - 0xA,
-                          ListBoxColor.Green() - 0xA,
-                          ListBoxColor.Blue() - 0xA );
-    }
-    else
-    {
-        ListBoxColor.Set( ListBoxColor.Red() + 0xA,
-                          ListBoxColor.Green() + 0xA,
-                          ListBoxColor.Blue() + 0xA );
-    }
-
-    m_OddAttr = wxListItemAttr( ListBoxText,
-                                ListBoxColor,
-                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
-
-
-    //ReloadItems();
+    ReloadItems();
 }
 
 
@@ -121,23 +92,24 @@ guSoListBox::~guSoListBox()
     }
     Config->WriteANum( m_ConfName + wxT( "Col" ), m_Columns, m_ConfName + wxT( "s" ) );
 
-    m_Songs.Clear();
+    if( m_GreyStar )
+        delete m_GreyStar;
+    if( m_YellowStar )
+        delete m_YellowStar;
 
-    Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guSoListBox::OnBeginDrag ), NULL, this );
-    Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guSoListBox::OnContextMenu ), NULL, this );
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Disconnect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
 
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guSoListBox::OnGetItemText( long item, long column ) const
+wxString guSoListBox::OnGetItemText( const int row, const int col )
 {
     guTrack * Song;
 
-    Song = &m_Songs[ item ];
+    Song = &m_Items[ row ];
 
-    switch( m_Columns[ column ] )
+    switch( m_Columns[ col ] )
     {
         case guSONGS_COLUMN_NUMBER :
           return wxString::Format( wxT( "%02u" ), Song->m_Number );
@@ -191,106 +163,81 @@ wxString guSoListBox::OnGetItemText( long item, long column ) const
     return wxEmptyString;
 }
 
+// -------------------------------------------------------------------------------- //
+void guSoListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
+{
+    if( m_Columns[ col ] == guSONGS_COLUMN_RATING )
+    {
+        dc.SetBackgroundMode( wxTRANSPARENT );
+        int x;
+        int w = ( ( GURATING_STYLE_MID * 2 ) + GURATING_IMAGE_SIZE );
+
+        for( x = 0; x < 5; x++ )
+        {
+           dc.DrawBitmap( ( x >= m_Items[ row ].m_Rating ) ? * m_GreyStar : * m_YellowStar,
+                          rect.x + 3 + ( w * x ), rect.y + 6, true );
+        }
+    }
+    else
+    {
+        guListView::DrawItem( dc, rect, row, col );
+    }
+}
+
 
 // -------------------------------------------------------------------------------- //
-wxListItemAttr * guSoListBox::OnGetItemAttr( long item ) const
+void guSoListBox::GetItemsList( void )
 {
-    return ( wxListItemAttr * ) ( item & 1 ? &m_OddAttr : &m_EveAttr );
+    m_Db->GetSongs( &m_Items );
 }
 
 // -------------------------------------------------------------------------------- //
-void guSoListBox::FillTracks( void )
+void guSoListBox::ReloadItems( bool reset )
 {
-    SetItemCount( m_Db->GetSongs( &m_Songs ) );
+    //
+    wxArrayInt Selection;
+    int FirstVisible = GetFirstVisibleLine();
+
+    if( reset )
+        SetSelection( -1 );
+    else
+        Selection = GetSelectedItems();
+
+    m_Items.Empty();
+
+    GetItemsList();
+
+    SetItemCount( m_Items.Count() );
+
+    if( !reset )
+    {
+      SetSelectedItems( Selection );
+      ScrollToLine( FirstVisible );
+    }
+    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //
-void guSoListBox::ReloadItems()
+int guSoListBox::GetSelectedSongs( guTrackArray * tracks ) const
 {
-    long ItemCount;
-    if( !m_Db )
-        return;
-
-    ClearSelection();
-
-    if( m_Songs.Count() )
-        m_Songs.Empty();
-
-    //Songs.Add( new guTrack( 0, _( "All" ) ) );
-    //ItemCount = m_Db->GetSongs( &m_Songs );
-    //SetItemCount( ItemCount );
-    FillTracks();
-
-    wxListItem ListItem;
-    GetColumn( 1, ListItem );
-    ListItem.SetText( wxString::Format( _( "Title (%u)" ), m_Songs.Count() ) );
-    SetColumn( 1, ListItem );
+    unsigned long cookie;
+    int item = GetFirstSelected( cookie );
+    while( item != wxNOT_FOUND )
+    {
+        tracks->Add( new guTrack( m_Items[ item ] ) );
+        item = GetNextSelected( cookie );
+    }
+    return tracks->Count();
 }
 
 // -------------------------------------------------------------------------------- //
-void guSoListBox::OnBeginDrag( wxMouseEvent &event )
+void guSoListBox::GetAllSongs( guTrackArray * tracks ) const
 {
-    //printf( "Drag started\n" );
     int index;
-    int count;
-    wxFileDataObject Files; // = wxFileDataObject();
-    guTrackArray Songs = GetSelectedSongs();
-
-    count = Songs.Count();
-
+    int count = m_Items.Count();
     for( index = 0; index < count; index++ )
     {
-      Files.AddFile( Songs[ index ].m_FileName );
-      //printf( "Added file " ); printf( Songs[ index ].FileName.char_str() ); printf( "\n" );
-    }
-
-    wxDropSource source( Files, this );
-
-    source.DoDragDrop();
-    //wxMessageBox( wxT( "DoDragDrop Done" ) );
-}
-
-// -------------------------------------------------------------------------------- //
-wxArrayInt guSoListBox::GetSelection( void ) const
-{
-    wxArrayInt RetVal;
-    long item = -1;
-    while( ( item = GetNextItem( item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED ) ) != wxNOT_FOUND )
-    {
-        RetVal.Add( m_Songs[ item ].m_SongId );
-    }
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-guTrackArray guSoListBox::GetSelectedSongs() const
-{
-    guTrackArray RetVal;
-    long item = -1;
-    while( ( item = GetNextItem( item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED ) ) != wxNOT_FOUND )
-    {
-        // this item is selected - do whatever is needed with it
-        RetVal.Add( new guTrack( m_Songs[ item ] ) );
-    }
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-guTrackArray guSoListBox::GetAllSongs() const
-{
-    guTrackArray RetVal;
-    RetVal = m_Songs;
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-void guSoListBox::ClearSelection()
-{
-    long item = -1;
-    while( ( item = GetNextItem( item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED ) ) != wxNOT_FOUND )
-    {
-        // this item is selected - do whatever is needed with it
-        SetItemState( item, false, -1 );
+        tracks->Add( new guTrack( m_Items[ index ] ) );
     }
 }
 
@@ -333,82 +280,65 @@ void AddSongsCommands( wxMenu * Menu, int SelCount )
 }
 
 // -------------------------------------------------------------------------------- //
-void guSoListBox::OnContextMenu( wxContextMenuEvent& event )
+void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 {
-    wxMenu Menu;
     wxMenuItem * MenuItem;
+    int SelCount = GetSelectedItems().Count();
 
-    wxPoint Point = event.GetPosition();
-    // If from keyboard
-    if( Point.x == -1 && Point.y == -1 )
-    {
-        wxSize Size = GetSize();
-        Point.x = Size.x / 2;
-        Point.y = Size.y / 2;
-    }
-    else
-    {
-        Point = ScreenToClient( Point );
-    }
-
-    int SelCount = GetSelection().Count();
-
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
+    MenuItem = new wxMenuItem( Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_PLAYALL, _( "Play All" ), _( "Play all songs" ) );
+    MenuItem = new wxMenuItem( Menu, ID_SONG_PLAYALL, _( "Play All" ), _( "Play all songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );
+    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_SONG_ENQUEUEALL, _( "Enqueue All" ), _( "Add all songs to the playlist" ) );
+    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL, _( "Enqueue All" ), _( "Add all songs to the playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
     if( SelCount )
     {
-        Menu.AppendSeparator();
+        Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected songs" ) );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected songs" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
-        Menu.Append( MenuItem );
+        Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( &Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-        Menu.Append( MenuItem );
+        Menu->Append( MenuItem );
 
-        Menu.AppendSeparator();
+        Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( &Menu, ID_SONG_SAVEPLAYLIST, _( "Save Playlist" ), _( "Save all selected tracks as a playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_SAVEPLAYLIST, _( "Save Playlist" ), _( "Save all selected tracks as a playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-        Menu.Append( MenuItem );
+        Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( &Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu.Append( MenuItem );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
 
         if( SelCount == 1 )
         {
-            Menu.AppendSeparator();
-
-            AddOnlineLinksMenu( &Menu );
+            AddOnlineLinksMenu( Menu );
         }
 
-        AddSongsCommands( &Menu, SelCount );
+        AddSongsCommands( Menu, SelCount );
     }
-
-    PopupMenu( &Menu, Point.x, Point.y );
 }
 
 // -------------------------------------------------------------------------------- //
 void guSoListBox::OnSearchLinkClicked( wxCommandEvent &event )
 {
-    int Item = wxNOT_FOUND;
-    Item = GetNextItem( Item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+    unsigned long cookie;
+    int Item = GetFirstSelected( cookie );
     if( Item != wxNOT_FOUND )
     {
         int index = event.GetId();
@@ -439,7 +369,7 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
 {
     int index;
     int count;
-    wxArrayInt Selection = GetSelection();
+    wxArrayInt Selection = GetSelectedItems();
     if( Selection.Count() )
     {
         index = event.GetId();
@@ -455,7 +385,8 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
 
             if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
             {
-                guTrackArray Songs = GetSelectedSongs();
+                guTrackArray Songs;
+                GetSelectedSongs( &Songs );
                 wxArrayInt AlbumList;
                 AlbumList.Add( Songs[ 0 ].m_AlbumId );
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( AlbumList );
@@ -470,7 +401,8 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
 
             if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
             {
-                guTrackArray Songs = GetSelectedSongs();
+                guTrackArray Songs;
+                GetSelectedSongs( &Songs );
                 wxArrayInt AlbumList;
                 AlbumList.Add( Songs[ 0 ].m_AlbumId );
                 int CoverId = m_Db->GetAlbumCoverId( AlbumList[ 0 ] );
@@ -484,7 +416,8 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
 
             if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
             {
-                guTrackArray Songs = GetSelectedSongs();
+                guTrackArray Songs;
+                GetSelectedSongs( &Songs );
                 wxString SongList = wxEmptyString;
                 count = Songs.Count();
                 if( count )
@@ -504,11 +437,23 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guSoListBox::GetSearchText( int item )
+wxString guSoListBox::GetSearchText( int item ) const
 {
     return wxString::Format( wxT( "\"%s\" \"%s\"" ),
-        m_Songs[ item ].m_ArtistName.c_str(),
-        m_Songs[ item ].m_SongName.c_str() );
+        m_Items[ item ].m_ArtistName.c_str(),
+        m_Items[ item ].m_SongName.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline guSoListBox::GetItemName( const int row ) const
+{
+    return m_Items[ row ].m_SongName;
+}
+
+// -------------------------------------------------------------------------------- //
+int inline guSoListBox::GetItemId( const int row ) const
+{
+    return m_Items[ row ].m_SongId;
 }
 
 // -------------------------------------------------------------------------------- //

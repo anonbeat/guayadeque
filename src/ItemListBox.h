@@ -21,67 +21,28 @@
 #ifndef GUITEMLISTBOX_H
 #define GUITEMLISTBOX_H
 
-#include <wx/wx.h>
-#include <wx/menu.h>
-
+#include "ListView.h"
 #include "DbLibrary.h"
 
-class guItemListBoxTimer;
-
 // -------------------------------------------------------------------------------- //
-class guListBox : public wxListCtrl
+class guListBox : public guListView
 {
-    protected :
-      DbLibrary *           m_Db;
-      guListItems           m_Items;
-      wxListItemAttr        m_EveAttr;
-      wxListItemAttr        m_OddAttr;
-      wxString              m_Label;
-      wxString              m_SearchStr;
-      guItemListBoxTimer *  m_SearchStrTimer;
+  protected :
+    DbLibrary *         m_Db;
+    guListItems *       m_Items;
 
-      virtual wxString          OnGetItemText( long item, long column ) const;
-      virtual wxListItemAttr *  OnGetItemAttr( long item ) const;
-      virtual void              OnChangedSize( wxSizeEvent &event );
-      virtual void              GetItemsList( void ) = 0;
-      virtual void              OnBeginDrag( wxMouseEvent &event );
-      void                      AdjustColumnWidth( int width );
-      //void                      OnContextMenu( wxContextMenuEvent& event );
-      void                      OnContextMenu( wxMouseEvent &event );
-      virtual void              GetContextMenu( wxMenu * menu ) const = 0;
-      void                      ShowContextMenu( const wxPoint & pos );
-      //void                      OnKeyDown( wxListEvent &event );
-      void                      OnKeyDown( wxKeyEvent &event );
-      void                      OnMouse( wxMouseEvent &event );
+    virtual wxString    OnGetItemText( const int row, const int col );
+    void                OnBeginDrag( wxMouseEvent &event );
+    virtual wxString    GetSearchText( const int item ) const;
 
-    public :
-      guListBox( wxWindow * parent, DbLibrary * db, wxString label = wxEmptyString );
-      ~guListBox();
+  public :
+    guListBox( wxWindow * parent, DbLibrary * db, const wxString &label = wxEmptyString );
+    ~guListBox();
 
-      virtual void              ReloadItems( bool reset = true );
-      wxArrayInt                GetSelection( bool reallist = false ) const;
-      void                      SetSelection( const wxArrayInt selection );
-      void                      ClearSelection();
-      virtual int               GetSelectedSongs( guTrackArray * songs ) const = 0;
-      virtual wxString          GetItemText( long item ) const;
-      virtual int               GetItemData( long item ) const;
+    virtual wxString inline GetItemName( const int item ) const;
+    virtual int inline      GetItemId( const int item ) const;
+    virtual void            ReloadItems( bool reset = true );
 
-    friend class guItemListBoxTimer;
-    DECLARE_EVENT_TABLE()
-
-};
-
-// -------------------------------------------------------------------------------- //
-class guItemListBoxTimer : public wxTimer
-{
-public:
-    //Ctor
-    guItemListBoxTimer( guListBox * listbox ) { m_ItemListBox = listbox; }
-
-    //Called each time the timer's timeout expires
-    void Notify(); // { ItemListBox->SearchStr = wxEmptyString; };
-
-    guListBox * m_ItemListBox;       //
 };
 
 #endif

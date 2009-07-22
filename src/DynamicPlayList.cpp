@@ -26,9 +26,12 @@
 WX_DEFINE_OBJARRAY(guFilterItemArray);
 
 
-wxString m_FilterFieldChoices[] = { _("Title"), _("Artist"), _("Album"), _("Genre"),
-                                          _("Path"), _("Year"), _("Rating"), _("Length"),
-                                          _("Play Count"), _("Last Play Time"), _("Added Date") };
+wxString m_FilterFieldChoices[] = {
+    _("Title"), _("Artist"), _("Album"), _("Genre"), _( "Label" ),
+    _("Path"), _("Year"), _("Rating"), _("Length"),
+    _("Play Count"), _("Last Play Time"), _("Added Date")
+};
+
 wxString m_FilterTextOptionChoices[] = { _("Contains"), _("Does not contains"), _("Equals"),
                                            _("Begins with"), _("Ends with") };
 
@@ -40,9 +43,11 @@ wxString m_FilterDateOptionChoices[] = { _( "in the last" ), _( "before the last
 
 wxString m_LimitChoices[] = { _("Tracks"), _("Minutes"), wxT("MB"), wxT("GB") };
 
-wxString m_SortChoices[] = { _("Title"), _("Artist"), _( "Album" ), _( "Genre" ),
-                                   _( "Year" ), _( "Rating" ), _( "Length" ),
-                                   _( "Play Count" ), _( "Last Play Time" ), _( "Added Time" ) };
+wxString m_SortChoices[] = {
+    _("Title"), _("Artist"), _( "Album" ), _( "Genre" ), _( "Label" ),
+    _( "Year" ), _( "Rating" ), _( "Length" ),
+    _( "Play Count" ), _( "Last Play Time" ), _( "Added Time" )
+};
 
 wxString m_FilterDateOption2Choices[] = { _( "minutes" ), _( "hours" ), _( "days" ), _( "weeks" ), _( "months" ) };
 
@@ -75,41 +80,42 @@ void guFilterItem::SetFilterLabel( void )
     m_Label = m_FilterFieldChoices[ m_Type ] + wxT( " " );
     switch( m_Type )
     {
-        case 0 : // String
-        case 1 :
-        case 2 :
-        case 3 :
-        case 4 :
+        case guDYNAMIC_FILTER_TYPE_TITLE : // String
+        case guDYNAMIC_FILTER_TYPE_ARTIST :
+        case guDYNAMIC_FILTER_TYPE_ALBUM :
+        case guDYNAMIC_FILTER_TYPE_GENRE :
+        case guDYNAMIC_FILTER_TYPE_LABEL :
+        case guDYNAMIC_FILTER_TYPE_PATH :
         {
             m_Label += m_FilterTextOptionChoices[ m_Option ] + wxT( " " );
             m_Label += m_Text;
             break;
         }
 
-        case 5 : // Year
+        case guDYNAMIC_FILTER_TYPE_YEAR : // Year
         {
             m_Label += m_FilterYearOptionChoices[ m_Option ];
             m_Label += wxString::Format( wxT( " %u" ), m_Number );
             break;
         }
 
-        case 6 : // Numbers
-        case 8 :
+        case guDYNAMIC_FILTER_TYPE_RATING : // Numbers
+        case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :
         {
             m_Label += m_FilterNumberOptionChoices[ m_Option ];
             m_Label += wxString::Format( wxT( " %u" ), m_Number );
             break;
         }
 
-        case 7 : // Time
+        case guDYNAMIC_FILTER_TYPE_LENGTH : // Time
         {
             m_Label += m_FilterNumberOptionChoices[ m_Option ] + wxT( " " );
             m_Label += LenToString( m_Number );
             break;
         }
 
-        case 9 :
-        case 10 :
+        case guDYNAMIC_FILTER_TYPE_LASTPLAY :
+        case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
         {
             m_Label += m_FilterDateOptionChoices[ m_Option ];
             m_Label += wxString::Format( wxT( " %u " ), m_Number );
@@ -334,20 +340,20 @@ guFilterItem guDynPlayListEditor::GetFilterItem( void )
 {
     guFilterItem FilterItem;
     int FilterType = m_FilterFieldChoice->GetSelection();
-    if( FilterType < 5 )
+    if( FilterType < guDYNAMIC_FILTER_TYPE_YEAR )
     {
         FilterItem.Set( FilterType,
                     m_FilterOptionChoice->GetSelection(),
                     FilterItem.m_Text = m_FilterText->GetValue() );
     }
-    else if( FilterType == 6 )
+    else if( FilterType == guDYNAMIC_FILTER_TYPE_RATING )
     {
         FilterItem.Set( FilterType,
                         m_FilterOptionChoice->GetSelection(),
                         m_FilterRating->GetRating(),
                         0 );
     }
-    else if( FilterType == 7 )
+    else if( FilterType == guDYNAMIC_FILTER_TYPE_LENGTH )
     {
         unsigned long hour = m_LengthHours->GetValue();
         unsigned long min = m_LengthMinutes->GetValue();
@@ -358,7 +364,7 @@ guFilterItem guDynPlayListEditor::GetFilterItem( void )
                         0 );
 
     }
-    else if( FilterType > 8 )
+    else if( FilterType > guDYNAMIC_FILTER_TYPE_PLAYCOUNT )
     {
         unsigned long value = 0;
         m_FilterText->GetValue().ToULong( &value );
@@ -391,7 +397,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
     int index;
     int count;
 
-    if( FilterType == 7 )
+    if( FilterType == guDYNAMIC_FILTER_TYPE_LENGTH )
     {
         //
         m_FilterAdd->Enable( true );
@@ -402,7 +408,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
         m_FilterAdd->Enable( false );
     }
 
-    if( FilterType == 6 )
+    if( FilterType == guDYNAMIC_FILTER_TYPE_RATING )
     {
         m_FilterText->Show( false );
         m_FilterRating->Show( true );
@@ -413,7 +419,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
         m_LengthSeparator2->Show( false );
         m_LengthSeconds->Show( false );
     }
-    else if( FilterType == 7 )
+    else if( FilterType == guDYNAMIC_FILTER_TYPE_LENGTH )
     {
         m_FilterText->Show( false );
         m_FilterRating->Show( false );
@@ -425,7 +431,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
         m_LengthSeconds->Show( true );
 
     }
-    else if( FilterType > 8 )
+    else if( FilterType > guDYNAMIC_FILTER_TYPE_PLAYCOUNT )
     {
         m_FilterText->Show( true );
         m_FilterRating->Show( false );
@@ -450,7 +456,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
 
     m_FilterOptionChoice->Clear();
 
-    if( FilterType < 5 )
+    if( FilterType < guDYNAMIC_FILTER_TYPE_YEAR )
     {
         count = sizeof( m_FilterTextOptionChoices ) / sizeof( wxString );
         for( index = 0; index < count; index++ )
@@ -458,7 +464,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
             m_FilterOptionChoice->Append( m_FilterTextOptionChoices[ index ] );
         }
     }
-    else if( FilterType == 5 )
+    else if( FilterType == guDYNAMIC_FILTER_TYPE_YEAR )
     {
         count = sizeof( m_FilterYearOptionChoices ) / sizeof( wxString );
         for( index = 0; index < count; index++ )
@@ -466,7 +472,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
             m_FilterOptionChoice->Append( m_FilterYearOptionChoices[ index ] );
         }
     }
-    else if( FilterType > 5 && FilterType < 9 )
+    else if( FilterType < guDYNAMIC_FILTER_TYPE_LASTPLAY )
     {
         count = sizeof( m_FilterNumberOptionChoices ) / sizeof( wxString );
         for( index = 0; index < count; index++ )
@@ -474,7 +480,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
             m_FilterOptionChoice->Append( m_FilterNumberOptionChoices[ index ] );
         }
     }
-    else if( FilterType > 8 )
+    else if( FilterType > guDYNAMIC_FILTER_TYPE_PLAYCOUNT )
     {
         count = sizeof( m_FilterDateOptionChoices ) / sizeof( wxString );
         for( index = 0; index < count; index++ )
@@ -498,15 +504,15 @@ void guDynPlayListEditor::OnFiltersSelected( wxCommandEvent &event )
         m_FilterFieldChoice->SetSelection( FilterItem->m_Type );
         //guLogMessage( wxT( "Type : %u   Option: %u" ), FilterItem->m_Type, FilterItem->m_Option );
         m_FilterOptionChoice->SetSelection( FilterItem->m_Option );
-        if( FilterItem->m_Type < 5 )
+        if( FilterItem->m_Type < guDYNAMIC_FILTER_TYPE_YEAR )
         {
             m_FilterText->SetValue( FilterItem->m_Text );
         }
-        else if( FilterItem->m_Type == 6 )
+        else if( FilterItem->m_Type == guDYNAMIC_FILTER_TYPE_RATING )
         {
             m_FilterRating->SetRating( FilterItem->m_Number );
         }
-        else if( FilterItem->m_Type == 7 )
+        else if( FilterItem->m_Type == guDYNAMIC_FILTER_TYPE_LENGTH )
         {
             unsigned long value = FilterItem->m_Number;
             m_LengthHours->SetValue( int( value / 3600 ) );
@@ -579,7 +585,7 @@ void guDynPlayListEditor::OnFilterDateOption2Selected( wxCommandEvent &event )
 void guDynPlayListEditor::OnFilterTextChanged( wxCommandEvent& event )
 {
     int FilterType = m_FilterFieldChoice->GetSelection();
-    if( FilterType > 4 )
+    if( FilterType > guDYNAMIC_FILTER_TYPE_PATH )
     {
         unsigned long value = 0;
         if( !m_FilterText->GetValue().IsEmpty() && !m_FilterText->GetValue().ToULong( &value ) )

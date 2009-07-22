@@ -21,32 +21,38 @@
 #ifndef GUALLISTBOX_H
 #define GUALLISTBOX_H
 
-#include <wx/listctrl.h>
-#include <wx/scrolwin.h>
-#include <wx/vlbox.h>
-
 #include "DbLibrary.h"
+#include "ItemListBox.h"
 
-class guAlbumListBox;
-class guAlbumListBoxHeader;
-
-class guAlListBox : public wxScrolledWindow
+// -------------------------------------------------------------------------------- //
+class guAlListBox : public  guListView
 {
   private :
-    guAlbumListBoxHeader * m_Header;
-    guAlbumListBox *       m_ListBox;
+    DbLibrary * m_Db;
+    guAlbumItems * m_Items;
 
-    void            OnChangedSize( wxSizeEvent &event );
-    void            OnAlbumListActivated( wxListEvent &event );
-    void            OnAlbumListSelected( wxListEvent &event );
+    void                OnAlbumListActivated( wxListEvent &event );
+    void                OnAlbumListSelected( wxListEvent &event );
+    virtual void        DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    wxCoord             OnMeasureItem( size_t n ) const;
+    virtual void        CreateContextMenu( wxMenu * menu ) const;
+
+    virtual void        GetItemsList( void );
+    void                OnSearchLinkClicked( wxCommandEvent &event );
+    void                OnCommandClicked( wxCommandEvent &event );
+    wxString            GetSearchText( int item ) const;
 
   public :
-                    guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
-                    ~guAlListBox();
-    bool            SelectAlbumName( const wxString &AlbumName );
-    void            ReloadItems( const bool reset = true );
-    wxArrayInt      GetSelection() const;
-    int             GetSelectedSongs( guTrackArray * tracks ) const;
+                        guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
+                        ~guAlListBox();
+    bool                SelectAlbumName( const wxString &AlbumName );
+//    void                ReloadItems( const bool reset = true );
+//    wxArrayInt          GetSelection() const;
+    virtual int             GetSelectedSongs( guTrackArray * tracks ) const;
+    virtual wxString inline GetItemName( const int item ) const;
+    virtual int inline      GetItemId( const int item ) const;
+    virtual void            ReloadItems( bool reset = true );
+
 
 };
 

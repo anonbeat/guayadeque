@@ -18,30 +18,25 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TALISTBOX_H
-#define TALISTBOX_H
+#ifndef GUPLSOLISTBOX_H
+#define GUPLSOLISTBOX_H
 
-#include "ItemListBox.h"
+#include "SoListBox.h"
 
 // -------------------------------------------------------------------------------- //
-class guTaListBox : public guListBox
+class guPLSoListBox : public guSoListBox
 {
+  protected :
+    int  m_PLId;
+    int  m_PLType;
 
-    protected :
+    virtual void                GetItemsList( void );
 
-      virtual void GetItemsList( void );
-      virtual void CreateContextMenu( wxMenu * Menu ) const;
-      void AddLabel( wxCommandEvent &event );
-      void DelLabel( wxCommandEvent &event );
-      void EditLabel( wxCommandEvent &event );
+  public :
+    guPLSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname );
+    ~guPLSoListBox();
 
-    public :
-
-      guTaListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label );
-      ~guTaListBox();
-
-      virtual int GetSelectedSongs( guTrackArray * Songs ) const;
-
+    void    SetPlayList( int plid, int pltype );
 };
 
 #endif

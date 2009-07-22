@@ -45,6 +45,56 @@
 #include <wx/spinctrl.h>
 #include <wx/dialog.h>
 
+
+#define guDYNAMIC_FILTER_TYPE_TITLE                     0
+#define guDYNAMIC_FILTER_TYPE_ARTIST                    1
+#define guDYNAMIC_FILTER_TYPE_ALBUM                     2
+#define guDYNAMIC_FILTER_TYPE_GENRE                     3
+#define guDYNAMIC_FILTER_TYPE_LABEL                     4
+#define guDYNAMIC_FILTER_TYPE_PATH                      5
+#define guDYNAMIC_FILTER_TYPE_YEAR                      6
+#define guDYNAMIC_FILTER_TYPE_RATING                    7
+#define guDYNAMIC_FILTER_TYPE_LENGTH                    8
+#define guDYNAMIC_FILTER_TYPE_PLAYCOUNT                 9
+#define guDYNAMIC_FILTER_TYPE_LASTPLAY                  10
+#define guDYNAMIC_FILTER_TYPE_ADDEDDATE                 11
+
+#define guDYNAMIC_FILTER_ORDER_TITLE                    0
+#define guDYNAMIC_FILTER_ORDER_ARTIST                   1
+#define guDYNAMIC_FILTER_ORDER_ALBUM                    2
+#define guDYNAMIC_FILTER_ORDER_GENRE                    3
+#define guDYNAMIC_FILTER_ORDER_LABEL                    4
+#define guDYNAMIC_FILTER_ORDER_PATH                     5
+#define guDYNAMIC_FILTER_ORDER_YEAR                     6
+#define guDYNAMIC_FILTER_ORDER_RATING                   7
+#define guDYNAMIC_FILTER_ORDER_LENGTH                   8
+#define guDYNAMIC_FILTER_ORDER_PLAYCOUNT                9
+#define guDYNAMIC_FILTER_ORDER_LASTPLAY                 10
+#define guDYNAMIC_FILTER_ORDER_ADDEDDATE                11
+
+#define guDYNAMIC_FILTER_OPTION_STRING_CONTAINS         0
+#define guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS     1
+#define guDYNAMIC_FILTER_OPTION_STRING_EQUAL            2
+#define guDYNAMIC_FILTER_OPTION_STRING_START_WITH       3
+#define guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH        4
+
+#define guDYNAMIC_FILTER_OPTION_YEAR_EQUAL              0
+#define guDYNAMIC_FILTER_OPTION_YEAR_AFTER              1
+#define guDYNAMIC_FILTER_OPTION_YEAR_BEFORE             2
+
+#define guDYNAMIC_FILTER_OPTION_NUMERIC_EQUALS          0
+#define guDYNAMIC_FILTER_OPTION_NUMERIC_AT_LEAST        1
+#define guDYNAMIC_FILTER_OPTION_NUMERIC_AT_MOST         2
+
+#define guDYNAMIC_FILTER_OPTION_DATE_IN_THE_LAST        0
+#define guDYNAMIC_FILTER_OPTION_DATE_BEFORE_THE_LAST    1
+
+#define guDYNAMIC_FILTER_LIMIT_TRACKS                   0
+#define guDYNAMIC_FILTER_LIMIT_MINUTES                  1
+#define guDYNAMIC_FILTER_LIMIT_MEGABYTES                2
+#define guDYNAMIC_FILTER_LIMIT_GIGABYTES                3
+
+
 // -------------------------------------------------------------------------------- //
 class guFilterItem
 {
