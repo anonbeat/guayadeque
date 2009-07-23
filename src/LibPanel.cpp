@@ -388,7 +388,7 @@ void guLibPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnGenreListSelected( wxListEvent &event )
 {
-    wxLongLong time = wxGetLocalTimeMillis();
+    //wxLongLong time = wxGetLocalTimeMillis();
     m_Db->SetGeFilters( m_GenreListCtrl->GetSelectedItems() );
 
     if( !m_UpdateLock )
@@ -399,8 +399,8 @@ void guLibPanel::OnGenreListSelected( wxListEvent &event )
         m_SongListCtrl->ReloadItems();
         m_UpdateLock = false;
     }
-    time = wxGetLocalTimeMillis() - time;;
-    guLogWarning( wxT( "Genre Time : %u ms" ), time.GetLo() );
+    //time = wxGetLocalTimeMillis() - time;;
+    //guLogWarning( wxT( "Genre Time : %u ms" ), time.GetLo() );
 }
 
 // -------------------------------------------------------------------------------- //

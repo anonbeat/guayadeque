@@ -30,8 +30,8 @@
 #include "RatingCtrl.h"
 
 // -------------------------------------------------------------------------------- //
-guPLSoListBox::guPLSoListBox( wxWindow * parent, DbLibrary * db, wxString confname ) :
-             guSoListBox( parent, db, confname )
+guPLSoListBox::guPLSoListBox( wxWindow * parent, DbLibrary * db, wxString confname, int style ) :
+             guSoListBox( parent, db, confname, style )
 {
     m_PLId = wxNOT_FOUND;
     m_PLType = wxNOT_FOUND;

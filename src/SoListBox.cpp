@@ -45,7 +45,7 @@ wxString guSONGS_COLUMN_NAMES[] = {
 
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, long style ) :
-             guListView( parent, wxLB_MULTIPLE, wxID_ANY, wxDefaultPosition, wxDefaultSize, style )
+             guListView( parent, wxLB_MULTIPLE, wxID_ANY, wxDefaultPosition, wxDefaultSize, style|wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
