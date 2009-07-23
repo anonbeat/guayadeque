@@ -35,7 +35,6 @@
 #define guLISTVIEW_ITEM_MARGIN      2
 
 #define guLISTVIEW_TIMER_TIMEOUT    500
-#define guLISTVIEW_DEFAULT_HEIGHT   25
 #define guLISTVIEW_MIN_COL_SIZE     45
 
 WX_DEFINE_OBJARRAY(guListViewColumnArray);
@@ -172,6 +171,8 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     m_Columns = new guListViewColumnArray();
     m_ListBox = new guListViewClient( this, flags, m_Columns, &m_Attr );
     m_Header = new guListViewHeader( this, m_ListBox, m_Columns, wxPoint( 0, 0 ) );
+    m_ColSelect = ( style & guLISTVIEW_COLUMN_SELECT );
+    m_ItemHeight = 0;
 
     parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guListView::OnChangedSize ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
@@ -294,7 +295,19 @@ void guListView::SetItemHeight( const int height )
 // -------------------------------------------------------------------------------- //
 wxCoord guListView::OnMeasureItem( size_t n ) const
 {
-    return wxCoord( guLISTVIEW_DEFAULT_HEIGHT );
+    if( !m_ItemHeight )
+    {
+        guListView * self = wxConstCast( this, guListView );
+
+        wxClientDC dc( self );
+        dc.SetFont( GetFont() );
+
+        wxCoord y;
+        dc.GetTextExtent( wxT( "H" ), NULL, &y );
+
+        self->m_ItemHeight = y + 4; // 2 up, 2 down
+    }
+    return m_ItemHeight;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -455,6 +468,12 @@ void guListView::SetColumnWidth( const int col, const int width )
 int guListView::GetColumnWidth( const int col ) const
 {
     return ( * m_Columns )[ col ].m_Width;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guListView::IsAllowedColumnSelect( void ) const
+{
+    return m_ColSelect;
 }
 
 
@@ -956,6 +975,10 @@ void guListViewHeader::OnMouse( wxMouseEvent &event )
             m_IsDragging = hit_border;
             m_DragOfset = col_start;
             CaptureMouse();
+        }
+        else if( m_Owner->IsAllowedColumnSelect() && event.RightDown() )
+        {
+            guLogMessage( wxT( "Now should be shown the column editor" ) );
         }
         else if( col_num >= 0 )
         {
