@@ -30,6 +30,9 @@
 class guListViewClient;
 class guListViewHeader;
 
+// Own style flags
+#define guLISTVIEW_COLUMN_SELECT    0x1000
+
 // -------------------------------------------------------------------------------- //
 // guListViewColumn
 // -------------------------------------------------------------------------------- //
@@ -107,6 +110,8 @@ class guListView : public wxScrolledWindow
 {
   protected :
     guListViewAttr          m_Attr;
+    bool                    m_ColSelect;
+    int                     m_ItemHeight;
 
     virtual void        GetItemsList( void ) = 0;
     virtual void        DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
@@ -160,6 +165,8 @@ class guListView : public wxScrolledWindow
 
     void                    SetColumnWidth( const int col, const int width );
     int                     GetColumnWidth( const int col ) const;
+
+    bool                    IsAllowedColumnSelect( void ) const;
 
     friend class guListViewClient;
 

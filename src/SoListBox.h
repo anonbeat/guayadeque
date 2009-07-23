@@ -59,7 +59,7 @@ class guSoListBox : public guListView
     wxString                    GetSearchText( int item ) const;
 
   public :
-    guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname );
+    guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, long style = wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER );
     ~guSoListBox();
 
     virtual void                ReloadItems( bool reset = true );
