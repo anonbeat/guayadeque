@@ -51,7 +51,7 @@
 #define guLISTVIEW_ITEM_MARGIN      2
 
 #define guLISTVIEW_TIMER_TIMEOUT    500
-#define guLISTVIEW_MIN_COL_SIZE     30
+#define guLISTVIEW_MIN_COL_SIZE     20
 
 WX_DEFINE_OBJARRAY(guListViewColumnArray);
 
@@ -167,27 +167,28 @@ class guListViewClient : public wxVListBox
 // -------------------------------------------------------------------------------- //
 class guListViewColEdit : public wxDialog
 {
-	private:
+  //private:
 
-	protected:
-	    guListView *                m_Owner;
-	    guListViewColumnArray *     m_Columns;
-	    wxArrayString               m_ItemsText;
-	    wxArrayInt                  m_ItemsData;
+  protected:
+    int                         m_SelItem;
+    guListView *                m_Owner;
+    guListViewColumnArray *     m_Columns;
+    wxArrayString               m_ItemsText;
+    wxArrayInt                  m_ItemsData;
 
-		wxCheckListBox *            m_ColumnsListBox;
-		wxBitmapButton *            m_UpBitmapBtn;
-		wxBitmapButton *            m_DownBitmapBtn;
+    wxCheckListBox *            m_ColumnsListBox;
+    wxBitmapButton *            m_UpBitmapBtn;
+    wxBitmapButton *            m_DownBitmapBtn;
 
-		void    OnColumnSelected( wxCommandEvent &event );
-		void    OnUpBtnClick( wxCommandEvent &event );
-		void    OnDownBtnClick( wxCommandEvent &event );
+    void    OnColumnSelected( wxCommandEvent &event );
+    void    OnUpBtnClick( wxCommandEvent &event );
+    void    OnDownBtnClick( wxCommandEvent &event );
 
-	public:
-		guListViewColEdit( wxWindow * parent, guListViewColumnArray * columns );
-		~guListViewColEdit();
+  public:
+    guListViewColEdit( wxWindow * parent, guListViewColumnArray * columns );
+    ~guListViewColEdit();
 
-        void    GetCheckedItems( wxArrayInt * checked );
+    void    UpdateColumns( void );
 };
 
 
@@ -920,8 +921,6 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
     wxPaintDC dc( this );
     AdjustDC( dc );
 
-    guLogMessage( wxT( "Painting Header" ) );
-
     dc.SetFont( GetFont() );
 
     // width and height of the entire header window
@@ -1143,16 +1142,13 @@ void guListViewHeader::OnEditColumns( void )
     guListViewColEdit * ListViewColEdit = new guListViewColEdit( m_Owner, m_Columns );
     if( ListViewColEdit )
     {
-        int RetCode = ListViewColEdit->ShowModal();
-        ListViewColEdit->Destroy();
-        if( RetCode == wxID_OK )
+        if( ListViewColEdit->ShowModal() == wxID_OK )
         {
-            m_Owner->SetColumnWidth( 0, 30 );
-
-//            RefreshWidth();
+            ListViewColEdit->UpdateColumns();
+            RefreshWidth();
             m_Owner->Refresh();
-//            m_Owner->Update();
         }
+        ListViewColEdit->Destroy();
     }
 }
 
@@ -1165,6 +1161,7 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 {
     m_Owner = ( guListView * ) parent;
     m_Columns = columns;
+    m_SelItem = wxNOT_FOUND;
 
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -1189,9 +1186,11 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	BtnsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_UpBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_UpBitmapBtn->Enable( false );
 	BtnsSizer->Add( m_UpBitmapBtn, 0, wxTOP|wxBOTTOM, 5 );
 
 	m_DownBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DownBitmapBtn->Enable( false );
 	BtnsSizer->Add( m_DownBitmapBtn, 0, wxTOP|wxBOTTOM, 5 );
 
 	ColumnsSizer->Add( BtnsSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
@@ -1223,9 +1222,19 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
     }
 
 	// Connect Events
-//	m_ColumnsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guListViewColEdit::OnColumnSelected ), NULL, this );
-//	m_UpBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnUpBtnClick ), NULL, this );
-//	m_DownBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnDownBtnClick ), NULL, this );
+	m_ColumnsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guListViewColEdit::OnColumnSelected ), NULL, this );
+	m_UpBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnUpBtnClick ), NULL, this );
+	m_DownBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnDownBtnClick ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guListViewColEdit::~guListViewColEdit()
+{
+
+	// Disconnect Events
+	m_ColumnsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guListViewColEdit::OnColumnSelected ), NULL, this );
+	m_UpBitmapBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnUpBtnClick ), NULL, this );
+	m_DownBitmapBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnDownBtnClick ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1242,82 +1251,88 @@ int FindColumnId( const guListViewColumnArray * columns, const int id )
 }
 
 // -------------------------------------------------------------------------------- //
-guListViewColEdit::~guListViewColEdit()
+void guListViewColEdit::UpdateColumns( void )
 {
-    if( GetReturnCode() == wxID_OK )
+    int ColId;
+    int ColPos;
+    int index;
+    int count = m_ItemsData.Count();
+    for( index = 0; index < count; index++ )
     {
-        int ColId;
-        int ColPos;
-        int index;
-        int count = m_ItemsData.Count();
-        for( index = 0; index < count; index++ )
+        ColId = m_ItemsData[ index ];
+        ColPos = FindColumnId( m_Columns, ColId );
+        if( ColPos != index )
         {
-            ColId = m_ItemsData[ index ];
-            ColPos = FindColumnId( m_Columns, ColId );
-            if( ColPos != index )
-            {
-                guListViewColumn * Column = &( * m_Columns )[ ColPos ];
-                m_Columns->RemoveAt( ColPos );
-                m_Columns->Insert( Column, index );
-            }
-            ( * m_Columns )[ index ].m_Enabled = m_ColumnsListBox->IsChecked( index );
-            //guLogMessage( wxT( "Item %i  %i" ), index, m_ColumnsListBox->IsChecked( index ) );
+            guListViewColumn * Column = m_Columns->Detach( ColPos );
+            m_Columns->Insert( Column, index );
         }
+        ( * m_Columns )[ index ].m_Enabled = m_ColumnsListBox->IsChecked( index );
     }
-
-	// Disconnect Events
-//	m_ColumnsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guListViewColEdit::OnColumnSelected ), NULL, this );
-//	m_UpBitmapBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnUpBtnClick ), NULL, this );
-//	m_DownBitmapBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnDownBtnClick ), NULL, this );
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guListViewColEdit::GetSelectedColumns( guListViewColumArray * columns )
-//{
-//    wxArrayInt Selected;
-//
-//    int index;
-//    int count = m_ItemsData.Count();
-//    for( index = 0; index < count; index++ )
-//    {
-//        if( m_ColumnsListBox->IsChecked( index ) )
-//        {
-//            Selected.Add( m_ItemsData[ index ] );
-//        }
-//    }
-//
-//    if( !Selected.Count() )
-//    {
-//        Selected.Add( guSONGS_COLUMN_NUMBER );
-//        Selected.Add( guSONGS_COLUMN_TITLE );
-//        Selected.Add( guSONGS_COLUMN_ARTIST );
-//        Selected.Add( guSONGS_COLUMN_ALBUM );
-//        Selected.Add( guSONGS_COLUMN_LENGTH );
-//    }
-//
-//    int index;
-//    int count = Selected.Count();
-//    for( index = 0; index < count; index++ )
-//    {
-//        if( FindColumnLabel( colums, Selected[ index ] ) == wxNOT_FOUND )
-//        {
-//            guListViewColumn * Column = new guListViewColumn( m_ItemsText[ m_ItemsData[ index ] ] );
-//            Column->m_Width = ;
-//            columns->Add( Column );
-//        }
-//    }
-//
-//    count = columns->Count();
-//    for( index = 0; index < count; index++ )
-//    {
-//        if( m_( * colums )[ index ].m_Label , Selected[ index ] ) == wxNOT_FOUND )
-//        {
-//            guListViewColumn * Column = new guListViewColumn( m_ItemsText[ m_ItemsData[ index ] ] );
-//            Column->m_Width = ;
-//            columns->Add( Column );
-//        }
-//    }
-//}
+// -------------------------------------------------------------------------------- //
+void guListViewColEdit::OnColumnSelected( wxCommandEvent &event )
+{
+    m_SelItem = event.GetInt();
+    if( m_SelItem != wxNOT_FOUND )
+    {
+        m_UpBitmapBtn->Enable( m_SelItem > 0 );
+        m_DownBitmapBtn->Enable( m_SelItem < ( m_ItemsData.Count() - 1 ) );
+    }
+    else
+    {
+        m_UpBitmapBtn->Enable( false );
+        m_DownBitmapBtn->Enable( false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guListViewColEdit::OnUpBtnClick( wxCommandEvent &event )
+{
+    wxString CurLabel = m_ItemsText[ m_SelItem ];
+    int      CurData = m_ItemsData[ m_SelItem ];
+    bool     CurCheck = m_ColumnsListBox->IsChecked( m_SelItem );
+
+    m_ColumnsListBox->SetString( m_SelItem, m_ColumnsListBox->GetString( m_SelItem - 1 ) );
+    m_ColumnsListBox->Check( m_SelItem, m_ColumnsListBox->IsChecked( m_SelItem - 1 ) );
+    m_ItemsText[ m_SelItem ] = m_ItemsText[ m_SelItem - 1 ];
+    m_ItemsData[ m_SelItem ] = m_ItemsData[ m_SelItem - 1 ];
+    m_SelItem--;
+    m_ColumnsListBox->SetString( m_SelItem, CurLabel );
+    if( CurCheck )
+        m_ColumnsListBox->Check( m_SelItem );
+    m_ItemsText[ m_SelItem ] = CurLabel;
+    m_ItemsData[ m_SelItem ] = CurData;
+    m_ColumnsListBox->SetSelection( m_SelItem );
+
+    event.SetInt( m_SelItem );
+    OnColumnSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guListViewColEdit::OnDownBtnClick( wxCommandEvent &event )
+{
+    wxString CurLabel = m_ItemsText[ m_SelItem ];
+    int      CurData = m_ItemsData[ m_SelItem ];
+    bool     CurCheck = m_ColumnsListBox->IsChecked( m_SelItem );
+
+    m_ColumnsListBox->SetString( m_SelItem, m_ColumnsListBox->GetString( m_SelItem + 1 ) );
+    m_ColumnsListBox->Check( m_SelItem, m_ColumnsListBox->IsChecked( m_SelItem + 1 ) );
+    m_ItemsText[ m_SelItem ] = m_ItemsText[ m_SelItem + 1 ];
+    m_ItemsData[ m_SelItem ] = m_ItemsData[ m_SelItem + 1 ];
+    m_SelItem++;
+    m_ColumnsListBox->SetString( m_SelItem, CurLabel );
+    if( CurCheck )
+        m_ColumnsListBox->Check( m_SelItem );
+    m_ItemsText[ m_SelItem ] = CurLabel;
+    m_ItemsData[ m_SelItem ] = CurData;
+    m_ColumnsListBox->SetSelection( m_SelItem );
+
+    event.SetInt( m_SelItem );
+    OnColumnSelected( event );
+}
+
+
 
 
 // -------------------------------------------------------------------------------- //

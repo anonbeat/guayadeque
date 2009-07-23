@@ -33,7 +33,7 @@ class guPLSoListBox : public guSoListBox
     virtual void                GetItemsList( void );
 
   public :
-    guPLSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname );
+    guPLSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, int style = 0 );
     ~guPLSoListBox();
 
     void    SetPlayList( int plid, int pltype );
