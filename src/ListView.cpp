@@ -32,10 +32,26 @@
 #include <wx/event.h>
 #include <wx/renderer.h>
 
+#include <wx/string.h>
+#include <wx/checklst.h>
+#include <wx/gdicmn.h>
+#include <wx/font.h>
+#include <wx/colour.h>
+#include <wx/settings.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
+#include <wx/bmpbuttn.h>
+#include <wx/button.h>
+#include <wx/sizer.h>
+#include <wx/statbox.h>
+#include <wx/dialog.h>
+
+
 #define guLISTVIEW_ITEM_MARGIN      2
 
 #define guLISTVIEW_TIMER_TIMEOUT    500
-#define guLISTVIEW_MIN_COL_SIZE     45
+#define guLISTVIEW_MIN_COL_SIZE     30
 
 WX_DEFINE_OBJARRAY(guListViewColumnArray);
 
@@ -60,6 +76,7 @@ class guListViewHeader : public wxWindow
     void OnPaint( wxPaintEvent &event );
     void OnSetFocus( wxFocusEvent &event );
     void AdjustDC( wxDC &dc );
+    void OnEditColumns( void );
 
   public:
     guListViewHeader();
@@ -142,6 +159,36 @@ class guListViewClient : public wxVListBox
     friend class guListViewClientTimer;
 };
 
+
+
+
+// -------------------------------------------------------------------------------- //
+// guListViewColEdit
+// -------------------------------------------------------------------------------- //
+class guListViewColEdit : public wxDialog
+{
+	private:
+
+	protected:
+	    guListView *                m_Owner;
+	    guListViewColumnArray *     m_Columns;
+	    wxArrayString               m_ItemsText;
+	    wxArrayInt                  m_ItemsData;
+
+		wxCheckListBox *            m_ColumnsListBox;
+		wxBitmapButton *            m_UpBitmapBtn;
+		wxBitmapButton *            m_DownBitmapBtn;
+
+		void    OnColumnSelected( wxCommandEvent &event );
+		void    OnUpBtnClick( wxCommandEvent &event );
+		void    OnDownBtnClick( wxCommandEvent &event );
+
+	public:
+		guListViewColEdit( wxWindow * parent, guListViewColumnArray * columns );
+		~guListViewColEdit();
+
+        void    GetCheckedItems( wxArrayInt * checked );
+};
 
 
 
@@ -295,6 +342,7 @@ void guListView::SetItemHeight( const int height )
 // -------------------------------------------------------------------------------- //
 wxCoord guListView::OnMeasureItem( size_t n ) const
 {
+    // Code taken from the generic/liistctrl.cpp file
     if( !m_ItemHeight )
     {
         guListView * self = wxConstCast( this, guListView );
@@ -623,22 +671,25 @@ void guListViewClient::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) cons
     int count = m_Columns->Count();
     for( index = 0; index < count; index++ )
     {
-        int w = ( * m_Columns )[ index ].m_Width;
-        if( w == wxNOT_FOUND )
-            w = rect.width;
-
-        cRect.x = StartOfs;
-
-        cRect.width = w - guLISTVIEW_ITEM_MARGIN;
-
+        if( ( * m_Columns )[ index ].m_Enabled )
         {
-            wxDCClipper clip( dc, cRect );
+            int w = ( * m_Columns )[ index ].m_Width;
+            if( w == wxNOT_FOUND )
+                w = rect.width;
 
-            DrawItem( dc, cRect, n, index );
+            cRect.x = StartOfs;
+
+            cRect.width = w - guLISTVIEW_ITEM_MARGIN;
+
+            {
+                wxDCClipper clip( dc, cRect );
+
+                DrawItem( dc, cRect, n, index );
+            }
+            StartOfs += w;
+            if( StartOfs > ( m_HScrollPos + rect.width ) )
+                break;
         }
-        StartOfs += w;
-        if( StartOfs > ( m_HScrollPos + rect.width ) )
-            break;
     }
 }
 
@@ -679,27 +730,28 @@ void guListViewClient::OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n 
     if( ( int ) n == wxNOT_FOUND )
         return;
 
-//    rect.x += m_HScrollPos;
-
     wxRect cRect = rect;
     int StartOfs = rect.x;
     int index;
     int count = m_Columns->Count();
     for( index = 0; index < count; index++ )
     {
-        cRect.x     = StartOfs;
-        int w = ( * m_Columns )[ index ].m_Width;
-        if( w != wxNOT_FOUND )
-            cRect.width = w;
-
+        if( ( * m_Columns )[ index ].m_Enabled )
         {
-            wxDCClipper clip( dc, cRect );
+            cRect.x     = StartOfs;
+            int w = ( * m_Columns )[ index ].m_Width;
+            if( w != wxNOT_FOUND )
+                cRect.width = w;
 
-            DrawBackground( dc, cRect, n, index );
+            {
+                wxDCClipper clip( dc, cRect );
+
+                DrawBackground( dc, cRect, n, index );
+            }
+            StartOfs += cRect.width;
+            if( StartOfs > ( m_HScrollPos + rect.width ) )
+                break;
         }
-        StartOfs += cRect.width;
-        if( StartOfs > ( m_HScrollPos + rect.width ) )
-            break;
     }
 }
 
@@ -868,6 +920,8 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
     wxPaintDC dc( this );
     AdjustDC( dc );
 
+    guLogMessage( wxT( "Painting Header" ) );
+
     dc.SetFont( GetFont() );
 
     // width and height of the entire header window
@@ -893,23 +947,33 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
     int ScrollPos = m_ListViewClient->GetScrollPos( wxHORIZONTAL );
     for( index = 0; index < count; index++ )
     {
-        cRect.x = StartOfs;
-        int cw = ( * m_Columns )[ index ].m_Width;
-        if( cw != wxNOT_FOUND )
-            cRect.width = cw;
-
-        //guLogMessage( wxT( "Pinting header %u at %u %u '%s'" ), index, cRect.x, cRect.width, ( * m_Columns )[ index ].m_Label.c_str() );
-
+        if( ( * m_Columns )[ index ].m_Enabled )
         {
-            wxDCClipper clip( dc, cRect );
-            wxRendererNative::Get().DrawHeaderButton( this, dc, cRect, flags );
+            cRect.x = StartOfs;
+            int cw = ( * m_Columns )[ index ].m_Width;
+            if( cw != wxNOT_FOUND )
+                cRect.width = cw;
 
-            dc.DrawText( ( * m_Columns )[ index ].m_Label, cRect.x + 2, hLabel );
+            //guLogMessage( wxT( "Pinting header %u at %u %u '%s'" ), index, cRect.x, cRect.width, ( * m_Columns )[ index ].m_Label.c_str() );
+
+            {
+                wxDCClipper clip( dc, cRect );
+                wxRendererNative::Get().DrawHeaderButton( this, dc, cRect, flags );
+
+                dc.DrawText( ( * m_Columns )[ index ].m_Label, cRect.x + 2, hLabel );
+            }
+
+            StartOfs += ( * m_Columns )[ index ].m_Width;
+            if( StartOfs > w + ScrollPos )
+                break;
         }
+    }
 
-        StartOfs += ( * m_Columns )[ index ].m_Width;
-        if( StartOfs > w + ScrollPos )
-            break;
+    if( m_Width < w )
+    {
+        cRect.x = m_Width;
+        cRect.width = w - m_Width;
+        wxRendererNative::Get().DrawHeaderButton( this, dc, cRect, flags );
     }
 }
 
@@ -932,19 +996,22 @@ void guListViewHeader::OnMouse( wxMouseEvent &event )
     int count = m_Columns->Count();
     for( index = 0; index < count; index++ )
     {
-        col_border += ( * m_Columns )[ index ].m_Width;
-        if( ( my < 22 ) && abs( mx - col_border ) < 3 )
+        if( ( * m_Columns )[ index ].m_Enabled )
         {
-            hit_border = index;
-            break;
-        }
+            col_border += ( * m_Columns )[ index ].m_Width;
+            if( ( my < 22 ) && abs( mx - col_border ) < 3 )
+            {
+                hit_border = index;
+                break;
+            }
 
-        if( mx < col_border + 3 )
-        {
-            col_num = index;
-            break;
+            if( mx < col_border + 3 )
+            {
+                col_num = index;
+                break;
+            }
+            col_start = col_border;
         }
-        col_start = col_border;
     }
 
 //    guLogMessage( wxT( "cn:%i  cs:%i  cb:%i  id:%i  mx:%i  my:%i" ), col_num, col_start, col_border, m_IsDragging, mx, my );
@@ -960,7 +1027,6 @@ void guListViewHeader::OnMouse( wxMouseEvent &event )
         else
         {
             //guLogMessage( wxT( "sp: %i  mx:%i  do:%i" ), ScrollPos, mx, m_DragOfset );
-            //( * m_Columns )[ m_IsDragging ].m_Width = mx - m_DragOfset;
             if( mx > ( m_DragOfset + guLISTVIEW_MIN_COL_SIZE ) )
             {
                 m_Owner->SetColumnWidth( m_IsDragging, mx - m_DragOfset );
@@ -978,7 +1044,7 @@ void guListViewHeader::OnMouse( wxMouseEvent &event )
         }
         else if( m_Owner->IsAllowedColumnSelect() && event.RightDown() )
         {
-            guLogMessage( wxT( "Now should be shown the column editor" ) );
+            OnEditColumns();
         }
         else if( col_num >= 0 )
         {
@@ -1031,7 +1097,10 @@ int guListViewHeader::RefreshWidth( void )
         m_Width = 0;
         for( index = 0; index < count; index++ )
         {
-            m_Width += ( * m_Columns )[ index ].m_Width;
+            if( ( * m_Columns )[ index ].m_Enabled )
+            {
+                m_Width += ( * m_Columns )[ index ].m_Width;
+            }
         }
 
         // Checkif its needed the horizontal scroll bar
@@ -1068,6 +1137,187 @@ void guListViewHeader::AdjustDC( wxDC &dc )
     dc.SetDeviceOrigin( org_x - ScrollPos, org_y );
 }
 
+// -------------------------------------------------------------------------------- //
+void guListViewHeader::OnEditColumns( void )
+{
+    guListViewColEdit * ListViewColEdit = new guListViewColEdit( m_Owner, m_Columns );
+    if( ListViewColEdit )
+    {
+        int RetCode = ListViewColEdit->ShowModal();
+        ListViewColEdit->Destroy();
+        if( RetCode == wxID_OK )
+        {
+            m_Owner->SetColumnWidth( 0, 30 );
+
+//            RefreshWidth();
+            m_Owner->Refresh();
+//            m_Owner->Update();
+        }
+    }
+}
+
+
+// -------------------------------------------------------------------------------- //
+// guListViewClientTimer
+// -------------------------------------------------------------------------------- //
+guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray * columns ) :
+    wxDialog( parent, wxID_ANY, _( "Select Columns" ), wxDefaultPosition, wxSize( 246,340 ), wxDEFAULT_DIALOG_STYLE )
+{
+    m_Owner = ( guListView * ) parent;
+    m_Columns = columns;
+
+	SetSizeHints( wxDefaultSize, wxDefaultSize );
+
+	wxBoxSizer * MainSizer;
+	MainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer * ColumnsSizer;
+	ColumnsSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT(" Columns ") ), wxHORIZONTAL );
+
+    int index;
+    int count = columns->Count();
+    for( index = 0; index < count; index++ )
+    {
+        m_ItemsText.Add( ( * columns )[ index ].m_Label );
+        m_ItemsData.Add( ( * columns )[ index ].m_Id );
+    }
+
+	m_ColumnsListBox = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_ItemsText, wxLB_SINGLE );
+	ColumnsSizer->Add( m_ColumnsListBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	wxBoxSizer * BtnsSizer;
+	BtnsSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_UpBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	BtnsSizer->Add( m_UpBitmapBtn, 0, wxTOP|wxBOTTOM, 5 );
+
+	m_DownBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	BtnsSizer->Add( m_DownBitmapBtn, 0, wxTOP|wxBOTTOM, 5 );
+
+	ColumnsSizer->Add( BtnsSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+
+    wxStdDialogButtonSizer * StdBtnSizer;
+    wxButton * StdBtnSizerOK;
+    wxButton * StdBtnSizerCancel;
+	MainSizer->Add( ColumnsSizer, 1, wxEXPAND|wxALL, 5 );
+
+	StdBtnSizer = new wxStdDialogButtonSizer();
+	StdBtnSizerOK = new wxButton( this, wxID_OK );
+	StdBtnSizer->AddButton( StdBtnSizerOK );
+	StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
+	StdBtnSizer->AddButton( StdBtnSizerCancel );
+	StdBtnSizer->Realize();
+	MainSizer->Add( StdBtnSizer, 0, wxEXPAND, 5 );
+
+	this->SetSizer( MainSizer );
+	this->Layout();
+
+
+    count = columns->Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( ( * columns )[ index ].m_Enabled )
+        {
+            m_ColumnsListBox->Check( index );
+        }
+    }
+
+	// Connect Events
+//	m_ColumnsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guListViewColEdit::OnColumnSelected ), NULL, this );
+//	m_UpBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnUpBtnClick ), NULL, this );
+//	m_DownBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnDownBtnClick ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+int FindColumnId( const guListViewColumnArray * columns, const int id )
+{
+    int index;
+    int count = columns->Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( ( * columns )[ index ].m_Id == id )
+            return index;
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+guListViewColEdit::~guListViewColEdit()
+{
+    if( GetReturnCode() == wxID_OK )
+    {
+        int ColId;
+        int ColPos;
+        int index;
+        int count = m_ItemsData.Count();
+        for( index = 0; index < count; index++ )
+        {
+            ColId = m_ItemsData[ index ];
+            ColPos = FindColumnId( m_Columns, ColId );
+            if( ColPos != index )
+            {
+                guListViewColumn * Column = &( * m_Columns )[ ColPos ];
+                m_Columns->RemoveAt( ColPos );
+                m_Columns->Insert( Column, index );
+            }
+            ( * m_Columns )[ index ].m_Enabled = m_ColumnsListBox->IsChecked( index );
+            //guLogMessage( wxT( "Item %i  %i" ), index, m_ColumnsListBox->IsChecked( index ) );
+        }
+    }
+
+	// Disconnect Events
+//	m_ColumnsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guListViewColEdit::OnColumnSelected ), NULL, this );
+//	m_UpBitmapBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnUpBtnClick ), NULL, this );
+//	m_DownBitmapBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnDownBtnClick ), NULL, this );
+}
+
+//// -------------------------------------------------------------------------------- //
+//void guListViewColEdit::GetSelectedColumns( guListViewColumArray * columns )
+//{
+//    wxArrayInt Selected;
+//
+//    int index;
+//    int count = m_ItemsData.Count();
+//    for( index = 0; index < count; index++ )
+//    {
+//        if( m_ColumnsListBox->IsChecked( index ) )
+//        {
+//            Selected.Add( m_ItemsData[ index ] );
+//        }
+//    }
+//
+//    if( !Selected.Count() )
+//    {
+//        Selected.Add( guSONGS_COLUMN_NUMBER );
+//        Selected.Add( guSONGS_COLUMN_TITLE );
+//        Selected.Add( guSONGS_COLUMN_ARTIST );
+//        Selected.Add( guSONGS_COLUMN_ALBUM );
+//        Selected.Add( guSONGS_COLUMN_LENGTH );
+//    }
+//
+//    int index;
+//    int count = Selected.Count();
+//    for( index = 0; index < count; index++ )
+//    {
+//        if( FindColumnLabel( colums, Selected[ index ] ) == wxNOT_FOUND )
+//        {
+//            guListViewColumn * Column = new guListViewColumn( m_ItemsText[ m_ItemsData[ index ] ] );
+//            Column->m_Width = ;
+//            columns->Add( Column );
+//        }
+//    }
+//
+//    count = columns->Count();
+//    for( index = 0; index < count; index++ )
+//    {
+//        if( m_( * colums )[ index ].m_Label , Selected[ index ] ) == wxNOT_FOUND )
+//        {
+//            guListViewColumn * Column = new guListViewColumn( m_ItemsText[ m_ItemsData[ index ] ] );
+//            Column->m_Width = ;
+//            columns->Add( Column );
+//        }
+//    }
+//}
 
 
 // -------------------------------------------------------------------------------- //

@@ -30,7 +30,7 @@ guListBox::guListBox( wxWindow * parent, DbLibrary * db, const wxString &label )
     m_Db = db;
     m_Items = new guListItems();
 
-    guListViewColumn * Column = new guListViewColumn( label );
+    guListViewColumn * Column = new guListViewColumn( label, 0 );
     InsertColumn( Column );
 }
 
