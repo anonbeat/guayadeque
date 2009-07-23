@@ -40,16 +40,18 @@ class guListViewColumn
 {
   public :
     wxString m_Label;
+    int      m_Id;
     int      m_Width;
-    bool     m_CustomDraw;
+    bool     m_Enabled;
 
     guListViewColumn() {};
     ~guListViewColumn() {};
-    guListViewColumn( const wxString &label, const int width = -1, const bool customdraw = false )
+    guListViewColumn( const wxString &label, const int id, const int width = -1, const bool enabled = true )
     {
         m_Label = label;
+        m_Id = id;
         m_Width = width;
-        m_CustomDraw = customdraw;
+        m_Enabled = enabled;
     };
 
 };
@@ -112,6 +114,7 @@ class guListView : public wxScrolledWindow
     guListViewAttr          m_Attr;
     bool                    m_ColSelect;
     int                     m_ItemHeight;
+    guListViewColumnArray * m_Columns;
 
     virtual void        GetItemsList( void ) = 0;
     virtual void        DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
@@ -120,7 +123,6 @@ class guListView : public wxScrolledWindow
   private :
     guListViewClient *      m_ListBox;
     guListViewHeader *      m_Header;
-    guListViewColumnArray * m_Columns;
 
     void                OnChangedSize( wxSizeEvent &event );
 

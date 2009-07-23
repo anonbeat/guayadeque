@@ -52,22 +52,18 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
     m_Db = NewDb;
     m_ConfName = confname;
 
-    m_Columns = Config->ReadANum( confname + wxT( "Col" ), 0, confname + wxT( "s" ) );
-    if( !m_Columns.Count() )
-    {
-        m_Columns.Add( guSONGS_COLUMN_NUMBER );
-        m_Columns.Add( guSONGS_COLUMN_TITLE );
-        m_Columns.Add( guSONGS_COLUMN_ARTIST );
-        m_Columns.Add( guSONGS_COLUMN_ALBUM );
-        m_Columns.Add( guSONGS_COLUMN_LENGTH );
-    }
-
+    int ColId;
     int index;
-    int count = m_Columns.Count();
+    int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
     {
-        guListViewColumn * Column = new guListViewColumn( guSONGS_COLUMN_NAMES[ m_Columns[ index ] ] );
-        Column->m_Width = Config->ReadNum( confname + wxString::Format( wxT( "ColSize%u" ), index ), 40, wxT( "Positions" ) );
+        ColId = Config->ReadNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ), index, m_ConfName + wxT( "Columns" ) );
+        guListViewColumn * Column = new guListViewColumn(
+            guSONGS_COLUMN_NAMES[ ColId ],
+            ColId,
+            Config->ReadNum( m_ConfName + wxString::Format( wxT( "ColWidth%u" ), index ), 80, m_ConfName + wxT( "Columns" ) ),
+            Config->ReadBool( m_ConfName + wxString::Format( wxT( "ColShow%u" ), index ), true, m_ConfName + wxT( "Columns" ) )
+            );
         InsertColumn( Column );
     }
 
@@ -84,13 +80,21 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
 guSoListBox::~guSoListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    int ColId;
     int index;
-    int count = m_Columns.Count();
+    int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
     {
-        Config->WriteNum( wxString::Format( m_ConfName + wxT( "ColSize%u" ), index ), GetColumnWidth( index ), wxT( "Positions" ) );
+        Config->WriteNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ),
+                          ( * m_Columns )[ index ].m_Id,
+                          m_ConfName + wxT( "Columns" ) );
+        Config->WriteNum( m_ConfName + wxString::Format( wxT( "ColWidth%u" ), index ),
+                          ( * m_Columns )[ index ].m_Width,
+                          m_ConfName + wxT( "Columns" ) );
+        Config->WriteBool( m_ConfName + wxString::Format( wxT( "ColShow%u" ), index ),
+                           ( * m_Columns )[ index ].m_Enabled,
+                           m_ConfName + wxT( "Columns" ) );
     }
-    Config->WriteANum( m_ConfName + wxT( "Col" ), m_Columns, m_ConfName + wxT( "s" ) );
 
     if( m_GreyStar )
         delete m_GreyStar;
@@ -99,7 +103,6 @@ guSoListBox::~guSoListBox()
 
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Disconnect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -109,7 +112,7 @@ wxString guSoListBox::OnGetItemText( const int row, const int col )
 
     Song = &m_Items[ row ];
 
-    switch( m_Columns[ col ] )
+    switch( ( * m_Columns )[ col ].m_Id )
     {
         case guSONGS_COLUMN_NUMBER :
           return wxString::Format( wxT( "%02u" ), Song->m_Number );
@@ -166,7 +169,7 @@ wxString guSoListBox::OnGetItemText( const int row, const int col )
 // -------------------------------------------------------------------------------- //
 void guSoListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-    if( m_Columns[ col ] == guSONGS_COLUMN_RATING )
+    if( ( * m_Columns )[ col ].m_Id == guSONGS_COLUMN_RATING )
     {
         dc.SetBackgroundMode( wxTRANSPARENT );
         int x;

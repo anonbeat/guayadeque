@@ -41,7 +41,7 @@ class guSoListBox : public guListView
 {
   protected :
     DbLibrary *         m_Db;
-    wxArrayInt          m_Columns;
+    //wxArrayInt          m_Columns;
     guTrackArray        m_Items;
     wxString            m_ConfName;
 
@@ -69,6 +69,7 @@ class guSoListBox : public guListView
 
     virtual int inline          GetItemId( const int row ) const;
     virtual wxString inline     GetItemName( const int row ) const;
+
 };
 
 #endif

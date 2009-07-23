@@ -41,7 +41,7 @@ guAlListBox::guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &lab
     m_Db = db;
     m_Items = new guAlbumItems();
 
-    guListViewColumn * Column = new guListViewColumn( label );
+    guListViewColumn * Column = new guListViewColumn( label, 0 );
     InsertColumn( Column );
 
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
