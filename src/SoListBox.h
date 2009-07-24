@@ -51,7 +51,7 @@ class guSoListBox : public guListView
 
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
-    virtual wxString            OnGetItemText( const int row, const int column );
+    virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
 
     void                        OnSearchLinkClicked( wxCommandEvent &event );

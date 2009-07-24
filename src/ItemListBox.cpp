@@ -43,7 +43,7 @@ guListBox::~guListBox()
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guListBox::OnGetItemText( const int row, const int col )
+wxString guListBox::OnGetItemText( const int row, const int col ) const
 {
     return GetItemName( row );
 }
