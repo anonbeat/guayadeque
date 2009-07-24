@@ -36,17 +36,15 @@
 class guRadioGenreListBox : public guListBox
 {
     private :
-      void GetItemsList( void );
-      void CreateContextMenu( wxMenu * Menu ) const;
-      void OnRadioGenreAdd( wxCommandEvent &event );
-      void OnRadioGenreEdit( wxCommandEvent &event );
-      void OnRadioGenreDelete( wxCommandEvent &event );
+      virtual void  GetItemsList( void );
+      virtual void  CreateContextMenu( wxMenu * Menu ) const;
+      void          OnRadioGenreAdd( wxCommandEvent &event );
+      void          OnRadioGenreEdit( wxCommandEvent &event );
+      void          OnRadioGenreDelete( wxCommandEvent &event );
 
     public :
       guRadioGenreListBox( wxWindow * parent, DbLibrary * NewDb, wxString Label );
       ~guRadioGenreListBox();
-
-      int GetSelectedSongs( guTrackArray * Songs ) const; // For dag n drop support
 
 };
 
@@ -55,21 +53,18 @@ class guRadioGenreListBox : public guListBox
 // -------------------------------------------------------------------------------- //
 class guRadioLabelListBox : public guListBox
 {
-
     protected :
 
-      virtual void GetItemsList( void );
-      virtual void CreateContextMenu( wxMenu * Menu ) const;
-      void AddLabel( wxCommandEvent &event );
-      void DelLabel( wxCommandEvent &event );
-      void EditLabel( wxCommandEvent &event );
+      virtual void  GetItemsList( void );
+      virtual void  CreateContextMenu( wxMenu * Menu ) const;
+      void          AddLabel( wxCommandEvent &event );
+      void          DelLabel( wxCommandEvent &event );
+      void          EditLabel( wxCommandEvent &event );
 
     public :
 
       guRadioLabelListBox( wxWindow * parent, DbLibrary * NewDb, wxString Label );
       ~guRadioLabelListBox();
-
-      virtual int GetSelectedSongs( guTrackArray * Songs ) const;
 
 };
 
@@ -101,33 +96,45 @@ class guUpdateRadiosThread : public wxThread
     virtual ExitCode Entry();
 };
 
+
+
+wxString guRADIOSTATIONS_COLUMN_NAMES[] = {
+    _( "Name" ),
+    _( "BitRate" ),
+    _( "Listeners" )
+};
+
+#define guRADIOSTATIONS_COLUMN_NAME         0
+#define guRADIOSTATIONS_COLUMN_BITRATE      1
+#define guRADIOSTATIONS_COLUMN_LISTENERS    2
+
 // -------------------------------------------------------------------------------- //
 // guRadioStationListBox
 // -------------------------------------------------------------------------------- //
-class guRadioStationListBox : public wxListCtrl
+class guRadioStationListBox : public guListView
 {
-    protected :
-      DbLibrary * m_Db;
-      guRadioStations m_Radios;
-      wxListItemAttr m_OddAttr;
-      wxListItemAttr m_EveAttr;
+  protected :
+    DbLibrary *       m_Db;
+    guRadioStations   m_Radios;
+    int               m_StationsOrder;
+    bool              m_StationsOrderDesc;
 
-      wxString          OnGetItemText( long item, long column ) const;
-      wxListItemAttr *  OnGetItemAttr( long item ) const;
-      void              OnBeginDrag( wxMouseEvent &event );
-      void              OnContextMenu( wxContextMenuEvent& event );
+    virtual void                CreateContextMenu( wxMenu * Menu ) const;
+    virtual wxString            OnGetItemText( const int row, const int column ) const;
+    virtual void                GetItemsList( void );
 
-    public :
-                        guRadioStationListBox( wxWindow * parent, DbLibrary * NewDb );
-                        ~guRadioStationListBox();
+  public :
+    guRadioStationListBox( wxWindow * parent, DbLibrary * NewDb );
+    ~guRadioStationListBox();
 
-      void              ReloadItems( bool Reset = true );
-      wxArrayInt        GetSelection( void ) const;
-      guRadioStations   GetSelectedSongs() const;
-      guRadioStations   GetAllSongs() const;
-      void              ClearSelection();
+    virtual void                ReloadItems( bool reset = true );
 
+    virtual int inline          GetItemId( const int row ) const;
+    virtual wxString inline     GetItemName( const int row ) const;
+
+    void                        SetStationsOrder( int order );
 };
+
 
 
 
@@ -156,13 +163,6 @@ guRadioGenreListBox::~guRadioGenreListBox()
 void guRadioGenreListBox::GetItemsList( void )
 {
     m_Db->GetRadioGenres( m_Items );
-}
-
-// -------------------------------------------------------------------------------- //
-int guRadioGenreListBox::GetSelectedSongs( guTrackArray * Songs ) const
-{
-    //return Db->GetArtistsSongs( GetSelection(), Songs );
-    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -259,67 +259,32 @@ void guRadioGenreListBox::OnRadioGenreDelete( wxCommandEvent &event )
     }
 }
 
+
 // -------------------------------------------------------------------------------- //
 // guRadioStationListBox
 // -------------------------------------------------------------------------------- //
-
-// -------------------------------------------------------------------------------- //
-guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * NewDb ) :
-             wxListCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL )
+guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * db ) :
+    guListView( parent )
 {
-    wxListItem ListItem;
+    m_Db = db;
+
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    m_Db = NewDb;
-    int RaOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
+    m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
+    m_StationsOrderDesc = Config->ReadNum( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );;
 
     // Create the Columns
-    ListItem.SetText( _( "Name" ) );
-    ListItem.SetWidth( Config->ReadNum( wxT( "RadioColSize0" ), 400, wxT( "Positions" ) ) );
-    InsertColumn( 0, ListItem );
-
-    if( RaOrder == RADIOSTATIONS_ORDER_BITRATE )
-        ListItem.SetText( _( "BitRate*" ) );
-    else
-        ListItem.SetText( _( "BitRate" ) );
-    ListItem.SetWidth( Config->ReadNum( wxT( "RadioColSize1" ), 100, wxT( "Positions" ) ) );
-    InsertColumn( 1, ListItem );
-
-    if( RaOrder == RADIOSTATIONS_ORDER_LISTENERS )
-        ListItem.SetText( _( "Listeners*" ) );
-    else
-        ListItem.SetText( _( "Listeners" ) );
-    ListItem.SetWidth( Config->ReadNum( wxT( "RadioColSize2" ), 100, wxT( "Positions" ) ) );
-    InsertColumn( 2, ListItem );
-
-    //Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guRadioStationListBox::OnBeginDrag ), NULL, this );
-    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guRadioStationListBox::OnContextMenu ), NULL, this );
-
-    wxColour ListBoxColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
-    wxColour ListBoxText;
-    ListBoxText.Set( ListBoxColor.Red() ^ 0xFF, ListBoxColor.Green() ^ 0xFF, ListBoxColor.Blue() ^ 0xFF );
-    m_EveAttr = wxListItemAttr( ListBoxText,
-                                ListBoxColor,
-                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
-
-    SetBackgroundColour( ListBoxColor );
-
-    if( ListBoxColor.Red() > 0x0A && ListBoxColor.Green() > 0x0A && ListBoxColor.Blue() > 0x0A )
+    int index;
+    int count = sizeof( guRADIOSTATIONS_COLUMN_NAMES ) / sizeof( wxString );
+    for( index = 0; index < count; index++ )
     {
-        ListBoxColor.Set( ListBoxColor.Red() - 0xA,
-                          ListBoxColor.Green() - 0xA,
-                          ListBoxColor.Blue() - 0xA );
+        guListViewColumn * Column = new guListViewColumn(
+            guRADIOSTATIONS_COLUMN_NAMES[ index ] + ( m_StationsOrder == index ? wxT( "*" ) : wxEmptyString ),
+            index,
+            Config->ReadNum( wxString::Format( wxT( "RadioColSize%u" ), index ), 80, wxT( "Positions" ) )
+        );
+        InsertColumn( Column );
     }
-    else
-    {
-        ListBoxColor.Set( ListBoxColor.Red() + 0xA,
-                          ListBoxColor.Green() + 0xA,
-                          ListBoxColor.Blue() + 0xA );
-    }
-
-    m_OddAttr = wxListItemAttr( ListBoxText,
-                                ListBoxColor,
-                                wxSystemSettings::GetFont( wxSYS_DEFAULT_GUI_FONT ) );
 
     ReloadItems();
 }
@@ -329,161 +294,136 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * New
 guRadioStationListBox::~guRadioStationListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    int Index;
-    for( Index = 0; Index < 3; Index++ )
+
+    int index;
+    int count = sizeof( guRADIOSTATIONS_COLUMN_NAMES ) / sizeof( wxString );
+    for( index = 0; index < count; index++ )
     {
-        Config->WriteNum( wxString::Format( wxT( "RadioColSize%u" ), Index ), GetColumnWidth( Index ), wxT( "Positions" ) );
+        Config->WriteNum( wxString::Format( wxT( "RadioColSize%u" ), index ), GetColumnWidth( index ), wxT( "Positions" ) );
     }
 
-    m_Radios.Clear();
-
-//    Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guRadioStationListBox::OnBeginDrag ), NULL, this );
-    Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guRadioStationListBox::OnContextMenu ), NULL, this );
-
+    Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "General" ) );
+    Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "General" ) );;
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guRadioStationListBox::OnGetItemText( long item, long column ) const
+wxString guRadioStationListBox::OnGetItemText( const int row, const int col ) const
 {
-//    wxString RetVal;
     guRadioStation * Radio;
-    Radio = &m_Radios[ item ];
-    switch( column )
+    Radio = &m_Radios[ row ];
+    switch( col )
     {
-        case 0 :
+        case guRADIOSTATIONS_COLUMN_NAME :
           return Radio->m_Name;
           break;
-        case 1 :
+
+        case guRADIOSTATIONS_COLUMN_BITRATE :
           return wxString::Format( wxT( "%u" ), Radio->m_BitRate );
           break;
-        case 2 :
+
+        case guRADIOSTATIONS_COLUMN_LISTENERS :
           return wxString::Format( wxT( "%u" ), Radio->m_Listeners );
+
     }
     return wxEmptyString;
 }
 
 
 // -------------------------------------------------------------------------------- //
-wxListItemAttr * guRadioStationListBox::OnGetItemAttr( long item ) const
+void guRadioStationListBox::GetItemsList( void )
 {
-    return ( wxListItemAttr * ) ( item & 1 ? &m_OddAttr : &m_EveAttr );
+    m_Db->GetRadioStations( &m_Radios );
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioStationListBox::ReloadItems( bool Reset )
+void guRadioStationListBox::ReloadItems( bool reset )
 {
-    long ItemCount;
-    if( !m_Db )
-        return;
+    wxASSERT( m_Db );
 
-    long FirstVisible = GetTopItem();
-    if( Reset )
-        ClearSelection();
+    //
+    wxArrayInt Selection;
+    int FirstVisible = GetFirstVisibleLine();
 
-    if( m_Radios.Count() )
-        m_Radios.Empty();
+    if( reset )
+        SetSelection( -1 );
+    else
+        Selection = GetSelectedItems();
 
-    ItemCount = m_Db->GetRadioStations( &m_Radios );
-    SetItemCount( ItemCount );
+    m_Radios.Empty();
 
-    if( !Reset )
+    GetItemsList();
+
+    SetItemCount( m_Radios.Count() );
+
+    if( !reset )
     {
-        EnsureVisible( FirstVisible );
-        //RefreshItems( FirstVisible, FirstVisible + GetCountPerPage() );
-        RefreshItems( FirstVisible, wxMin( ItemCount, FirstVisible + GetCountPerPage() ) - 1 );
+      SetSelectedItems( Selection );
+      ScrollToLine( FirstVisible );
     }
-
-    wxListItem ListItem;
-    GetColumn( 0, ListItem );
-    ListItem.SetText( wxString::Format( _( "Name (%u)" ), ItemCount ) );
-    SetColumn( 0, ListItem );
+    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayInt guRadioStationListBox::GetSelection( void ) const
+void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
 {
-    wxArrayInt RetVal;
-    long item = -1;
-    while( ( item = GetNextItem( item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED ) ) != wxNOT_FOUND )
-    {
-        // this item is selected - do whatever is needed with it
-        RetVal.Add( m_Radios[ item ].m_Id );
-    }
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-guRadioStations guRadioStationListBox::GetSelectedSongs() const
-{
-    guRadioStations RetVal;
-    long item = -1;
-    while( ( item = GetNextItem( item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED ) ) != wxNOT_FOUND )
-    {
-        // this item is selected - do whatever is needed with it
-        RetVal.Add( new guRadioStation( m_Radios[ item ] ) );
-    }
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-guRadioStations guRadioStationListBox::GetAllSongs() const
-{
-    guRadioStations RetVal;
-    RetVal = m_Radios;
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-void guRadioStationListBox::ClearSelection()
-{
-    long item = -1;
-    while( ( item = GetNextItem( item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED ) ) != wxNOT_FOUND )
-    {
-        // this item is selected - do whatever is needed with it
-        SetItemState( item, false, -1 );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guRadioStationListBox::OnContextMenu( wxContextMenuEvent& event )
-{
-    wxMenu Menu;
     wxMenuItem * MenuItem;
+    MenuItem = new wxMenuItem( Menu, ID_RADIO_PLAY, _( "Play" ), _( "Play current selected songs" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
+    Menu->Append( MenuItem );
 
-    wxPoint Point = event.GetPosition();
-    // If from keyboard
-    if( Point.x == -1 && Point.y == -1 )
+    MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    Menu->Append( MenuItem );
+
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, ID_RADIO_EDIT_LABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected stations" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+    Menu->Append( MenuItem );
+}
+
+// -------------------------------------------------------------------------------- //
+int inline guRadioStationListBox::GetItemId( const int row ) const
+{
+    return m_Radios[ row ].m_Id;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline guRadioStationListBox::GetItemName( const int row ) const
+{
+    return m_Radios[ row ].m_Name;
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioStationListBox::SetStationsOrder( int order )
+{
+    if( m_StationsOrder != order )
     {
-        wxSize Size = GetSize();
-        Point.x = Size.x / 2;
-        Point.y = Size.y / 2;
+        m_StationsOrder = order;
+        m_StationsOrderDesc = ( order != 0 );
     }
     else
+        m_StationsOrderDesc = !m_StationsOrderDesc;
+
+    m_Db->SetRadioStationsOrder( m_StationsOrder );
+
+    wxString LabelStr;
+
+    int index;
+    int count = 3;
+    for( index = 0; index < count; index++ )
     {
-        Point = ScreenToClient( Point );
+        LabelStr = guRADIOSTATIONS_COLUMN_NAMES[ index ];
+        if( order == index )
+          LabelStr += wxT( "*" );
+        SetColumnLabel( index, LabelStr );
     }
-    MenuItem = new wxMenuItem( &Menu, ID_RADIO_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
-    Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_RADIO_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu.Append( MenuItem );
-
-    Menu.AppendSeparator();
-
-    MenuItem = new wxMenuItem( &Menu, ID_RADIO_EDIT_LABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected stations" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-    Menu.Append( MenuItem );
-
-    PopupMenu( &Menu, Point.x, Point.y );
+    ReloadItems();
 }
-
 
 // -------------------------------------------------------------------------------- //
 // guRadioLabelListBox
-// -------------------------------------------------------------------------------- //
-
 // -------------------------------------------------------------------------------- //
 guRadioLabelListBox::guRadioLabelListBox( wxWindow * parent, DbLibrary * NewDb, wxString Label ) : guListBox( parent, NewDb, Label )
 {
@@ -505,12 +445,6 @@ guRadioLabelListBox::~guRadioLabelListBox()
 void guRadioLabelListBox::GetItemsList( void )
 {
     m_Db->GetRadioLabels( m_Items );
-}
-
-// -------------------------------------------------------------------------------- //
-int guRadioLabelListBox::GetSelectedSongs( guTrackArray * Songs ) const
-{
-    return m_Db->GetRadioLabelsSongs( GetSelectedItems(), Songs );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -689,13 +623,12 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
 
     wxPanel * StationsPanel;
 	StationsPanel = new wxPanel( m_StationsSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	StationsPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+//	StationsPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
 
 	wxBoxSizer* StationsSizer;
 	StationsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_StationsListBox = new guRadioStationListBox( StationsPanel, m_Db );
-	//m_StationsListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
 
 	StationsSizer->Add( m_StationsListBox, 1, wxALL|wxEXPAND, 1 );
 
@@ -719,7 +652,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel *
     Connect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ) );
     Connect( ID_RADIO_UPDATE_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdateEnd ) );
 
-    m_StationsListBox->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guRadioPanel::OnStationListActivated ), NULL, this );
+    m_StationsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guRadioPanel::OnStationListActivated ), NULL, this );
 	m_StationsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
     Connect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
@@ -742,17 +675,15 @@ guRadioPanel::~guRadioPanel()
     }
 
     //
-    m_GenresListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
-    m_GenresListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED,  wxListEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
+    m_GenresListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
 
-    m_LabelsListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
-    m_LabelsListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
+    m_LabelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
     //
     Disconnect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdate ) );
     Disconnect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ) );
     Disconnect( ID_RADIO_UPDATE_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdateEnd ) );
 
-    m_StationsListBox->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guRadioPanel::OnStationListActivated ), NULL, this );
+    m_StationsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guRadioPanel::OnStationListActivated ), NULL, this );
 	m_StationsListBox->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
     Disconnect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
@@ -789,39 +720,10 @@ void guRadioPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnStationListBoxColClick( wxListEvent &event )
 {
-    wxListItem ListItem;
-    wxString LabelStr;
-
     int col = event.GetColumn();
-    if( col == 1 ) // BitRate
-    {
-        m_Db->SetRadioStatonsOrder( RADIOSTATIONS_ORDER_BITRATE );
-    }
-    else if( col == 2 ) // Listeners
-    {
-        m_Db->SetRadioStatonsOrder( RADIOSTATIONS_ORDER_LISTENERS );
-    }
-    else
-    {
-        event.Skip();
+    if( col < 0 )
         return;
-    }
-
-    m_StationsListBox->GetColumn( 1, ListItem );
-    LabelStr = _( "Bitrate" );
-    if( col == 1 )
-      LabelStr += wxT( "*" );
-    ListItem.SetText( LabelStr );
-    m_StationsListBox->SetColumn( 1, ListItem );
-
-    m_StationsListBox->GetColumn( 2, ListItem );
-    LabelStr = _( "Listeners" );
-    if( col == 2 )
-      LabelStr += wxT( "*" );
-    ListItem.SetText( LabelStr );
-    m_StationsListBox->SetColumn( 2, ListItem );
-
-    m_StationsListBox->ReloadItems();
+    m_StationsListBox->SetStationsOrder( col );
 }
 
 
@@ -833,7 +735,7 @@ void guRadioPanel::OnStationsEditLabelsClicked( wxCommandEvent &event )
 
     m_Db->GetRadioLabels( &Labels, true );
 
-    Stations = m_StationsListBox->GetSelection();
+    Stations = m_StationsListBox->GetSelectedItems();
     guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Stations Labels Editor" ), Labels, m_Db->GetStationsLabels( Stations ) );
     if( LabelEditor )
     {
@@ -936,7 +838,7 @@ void guRadioPanel::OnSelectStations( bool enqueue )
     int index;
     int count;
 
-    wxArrayInt Selected = m_StationsListBox->GetSelection();
+    wxArrayInt Selected = m_StationsListBox->GetSelectedItems();
     if( Selected.Count() )
     {
         //TODO: Download the station in a thread

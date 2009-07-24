@@ -106,7 +106,7 @@ guSoListBox::~guSoListBox()
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guSoListBox::OnGetItemText( const int row, const int col )
+wxString guSoListBox::OnGetItemText( const int row, const int col ) const
 {
     guTrack * Song;
 

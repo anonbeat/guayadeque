@@ -275,7 +275,7 @@ DbLibrary::DbLibrary()
   {
     //
     m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
-    m_RaOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
+    m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
   }
 
   m_NeedUpdate = false;
@@ -311,7 +311,7 @@ DbLibrary::DbLibrary( const wxString &DbName )
   {
     //
     m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
-    m_RaOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
+    m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
   }
 
   m_GeFilters.Empty();
@@ -334,7 +334,7 @@ DbLibrary::~DbLibrary()
   {
     //
     //Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlOrder, wxT( "General" ) );
-    Config->WriteNum( wxT( "StationsOrder" ), m_RaOrder, wxT( "General" ) );
+    Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "General" ) );
   }
 
   Close();
@@ -3830,9 +3830,15 @@ void DbLibrary::SetRadioGenres( const wxArrayString &Genres )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioStatonsOrder( int OrderValue )
+void DbLibrary::SetRadioStationsOrder( int order )
 {
-    m_RaOrder = OrderValue;
+    if( m_StationsOrder != order )
+    {
+        m_StationsOrder = order;
+        m_StationsOrderDesc = ( order != 0 );
+    }
+    else
+        m_StationsOrderDesc = !m_StationsOrderDesc;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3847,11 +3853,16 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
     query = wxT( "SELECT DISTINCT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations "\
                  "ORDER BY " );
-    if( m_RaOrder == RADIOSTATIONS_ORDER_BITRATE )
+
+    if( m_StationsOrder == guRADIOSTATIONS_ORDER_NAME )
+        query += wxT( "radiostation_name" );
+    else if( m_StationsOrder == guRADIOSTATIONS_ORDER_BITRATE )
         query += wxT( "radiostation_br" );
     else
         query += wxT( "radiostation_lc" );
-    query += wxT( " DESC;" );
+
+    if( m_StationsOrderDesc )
+        query += wxT( " DESC;" );
   }
  else
   {
@@ -3895,33 +3906,18 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
     }
 
     query += wxT( " ORDER BY " );
-    if( m_RaOrder == RADIOSTATIONS_ORDER_BITRATE )
+
+    if( m_StationsOrder == guRADIOSTATIONS_ORDER_NAME )
+        query += wxT( "radiostation_name" );
+    else if( m_StationsOrder == guRADIOSTATIONS_ORDER_BITRATE )
         query += wxT( "radiostation_br" );
     else
         query += wxT( "radiostation_lc" );
-    query += wxT( " DESC;" );
 
-    //guLogMessage( query );
-
-//    query = wxT( "SELECT radiostation_id, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
-//                 "FROM radiogenres, radiostations WHERE radiogenre_id = radiostation_genreid " );
-//    if( m_RaGeFilters.Count() )
-//    {
-//      query += wxT( " AND " ) + ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
-//    }
-//    if( m_RaTeFilters.Count() )
-//    {
-//      query += wxT( " AND " ) + RadioFiltersSQL();
-//    }
-//    query += wxT( " ORDER BY " );
-//    if( m_RaOrder )
-//        query += wxT( "radiostation_br" );
-//    else
-//        query += wxT( "radiostation_lc" );
-//    query += wxT( " DESC;" );
+    if( m_StationsOrderDesc )
+        query += wxT( " DESC;" );
   }
-  //guLogMessage( wxT( "GetRadioStations : RaOrder = %u" ), RaOrder );
-  //guLogMessage( wxT( "GetRadioStations : query = %s" ), query.c_str() );
+  //guLogMessage( wxT( "GetRadioStations : Order: %u query = %s" ), m_StationsOrder, query.c_str() );
 
   dbRes = ExecuteQuery( query );
 

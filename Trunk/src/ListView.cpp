@@ -275,7 +275,7 @@ void guListView::OnChangedSize( wxSizeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guListView::OnGetItemText( const int row, const int col )
+wxString guListView::OnGetItemText( const int row, const int col ) const
 {
     return wxEmptyString;
 }
@@ -415,11 +415,11 @@ bool guListView::IsSelected( size_t row ) const
 // -------------------------------------------------------------------------------- //
 void guListView::OnBeginDrag( wxMouseEvent &event )
 {
-    //printf( "Drag started\n" );
     guTrackArray Songs;
     wxFileDataObject Files; // = wxFileDataObject();
     int index;
     int count;
+    // TODO : Virtualice the function to add the files to the FileDataObject
     if( GetSelectedSongs( &Songs ) )
     {
         count = Songs.Count();
@@ -525,6 +525,18 @@ bool guListView::IsAllowedColumnSelect( void ) const
     return m_ColSelect;
 }
 
+// -------------------------------------------------------------------------------- //
+wxString guListView::GetColumnLabel( const int col ) const
+{
+    return m_Columns->Item( col ).m_Label;
+}
+
+// -------------------------------------------------------------------------------- //
+void  guListView::SetColumnLabel( const int col, const wxString &label )
+{
+    m_Columns->Item( col ).m_Label = label;
+    m_Header->Refresh();
+}
 
 
 

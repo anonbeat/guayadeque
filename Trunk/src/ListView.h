@@ -126,7 +126,7 @@ class guListView : public wxScrolledWindow
 
     void                OnChangedSize( wxSizeEvent &event );
 
-    virtual wxString    OnGetItemText( const int row, const int column );
+    virtual wxString    OnGetItemText( const int row, const int column ) const;
     virtual void        CreateContextMenu( wxMenu * menu ) const;
     void                OnContextMenu( wxContextMenuEvent &event );
     virtual wxCoord     OnMeasureItem( size_t row ) const;
@@ -140,7 +140,6 @@ class guListView : public wxScrolledWindow
                 long style = wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER );
     ~guListView();
 
-    void                    InsertColumn( guListViewColumn * column );
     void                    SetItemCount( const int count );
     int                     GetItemCount( void ) const;
     void                    SetItemHeight( const int height );
@@ -165,8 +164,11 @@ class guListView : public wxScrolledWindow
     virtual int inline      GetItemId( const int item ) const = 0;
     long                    FindItem( long start, const wxString &str, bool partial );
 
+    void                    InsertColumn( guListViewColumn * column );
     void                    SetColumnWidth( const int col, const int width );
     int                     GetColumnWidth( const int col ) const;
+    wxString                GetColumnLabel( const int col ) const;
+    void                    SetColumnLabel( const int col, const wxString &label );
 
     bool                    IsAllowedColumnSelect( void ) const;
 
