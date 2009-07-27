@@ -367,6 +367,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     wxRect CutRect;
     wxSize TextSize;
     wxString TimeStr;
+    int OffsetSecLine;
 //    wxArrayInt Selection;
 
     Item = m_Items[ row ];
@@ -389,11 +390,25 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
         dc.SetTextForeground( m_Attr.m_TextFgColor );
     }
 
+
+    // Draw the Items Texts
+    CutRect = rect;
+
+    // Draw Play bitmap
+    if( row == m_CurItem && m_PlayBitmap )
+    {
+        dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 2, CutRect.y + 12, true );
+        CutRect.x += 16;
+        CutRect.width -= 16;
+    }
+
     if( Item.m_SongId != guPLAYLIST_RADIOSTATION )
     {
-        //y = dc.GetCharHeight();
-        int OffsetSecLine;
-        dc.DrawText( Item.m_SongName, rect.x + 5, rect.y + 5 );
+        CutRect.width -= ( 50 + 6 + 2 );
+
+        dc.SetClippingRegion( CutRect );
+
+        dc.DrawText( Item.m_SongName, CutRect.x + 5, CutRect.y + 5 );
         //Font.SetPointSize( 7 );
         m_Attr.m_Font->SetStyle( wxFONTSTYLE_ITALIC );
         m_Attr.m_Font->SetWeight( wxFONTWEIGHT_NORMAL );
@@ -401,23 +416,19 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 
         OffsetSecLine = rect.y + ( dc.GetCharHeight() + 10 );
 
-        dc.DrawText( Item.m_ArtistName + wxT( " - " ) + Item.m_AlbumName, rect.x + 5, OffsetSecLine );
+        dc.DrawText( Item.m_ArtistName + wxT( " - " ) + Item.m_AlbumName, CutRect.x + 5, OffsetSecLine );
 
-        // Get the area where the length will be writen
+        dc.DestroyClippingRegion();
+
+        // Draw the length and rating
+        CutRect = rect;
+        CutRect.x += ( CutRect.width - ( 50 + 6 ) );
+        CutRect.width = ( 50 + 6 );
+
+        dc.SetClippingRegion( CutRect );
+
         TimeStr = LenToString( Item.m_Length );
         TextSize = dc.GetTextExtent( TimeStr );
-        CutRect = rect;
-        CutRect.x += CutRect.width - ( 50 + 6 );
-        CutRect.width -= CutRect.x;
-        DrawBackground( dc, CutRect, row, 0 );
-
-        // Draw Play bitmap
-        if( row == m_CurItem && m_PlayBitmap )
-        {
-            dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 21, CutRect.y + 14, true );
-        }
-
-        // Draw the Length string
         dc.DrawText( TimeStr, CutRect.x + ( ( 56 - TextSize.GetWidth() ) / 2 ), CutRect.y + 5 );
         //guLogMessage( wxT( "%i - %i" ), TextSize.GetWidth(), TextSize.GetHeight() );
 
@@ -433,18 +444,9 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     }
     else
     {
-        dc.DrawText( Item.m_SongName, rect.x + 25, rect.y + 5 );
-        CutRect = rect;
-        CutRect.x += CutRect.width - 30;
-        CutRect.width = 30;
-        DrawBackground( dc, CutRect, row, 0 );
-        //dc.DrawText( TimeStr, CutRect.x + 3, CutRect.y + 5 );
-        if( row == m_CurItem && m_PlayBitmap )
-        {
-            // Draw Play bitmap
-            dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 8, CutRect.y + 8, true );
-        }
+        dc.DrawText( Item.m_SongName, CutRect.x + 2, CutRect.y + 13 );
     }
+
 }
 
 // -------------------------------------------------------------------------------- //
