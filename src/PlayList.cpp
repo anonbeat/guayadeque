@@ -154,7 +154,7 @@ void guPlayList::OnBeginDrag( wxMouseEvent &event )
     wxFileDataObject Files; // = wxFileDataObject();
     int index;
     int count;
-    wxArrayInt Selection = GetSelectedItems();
+    wxArrayInt Selection = GetSelectedItems( false );
 
     count = Selection.Count();
     //printf( "OnBeginDraw: %d\n", count );
@@ -197,7 +197,7 @@ void guPlayList::RemoveSelected()
 {
     int index;
     int count;
-    wxArrayInt Selected = GetSelectedItems();
+    wxArrayInt Selected = GetSelectedItems( false );
     count = Selected.Count();
     for( index = count - 1; index >= 0; index-- )
     {
@@ -206,6 +206,7 @@ void guPlayList::RemoveSelected()
     ClearSelectedItems();
 }
 
+//// -------------------------------------------------------------------------------- //
 //static void PrintItems( guTrackArray Songs, int IP, int SI, int CI )
 //{
 //    int Index;
@@ -213,7 +214,7 @@ void guPlayList::RemoveSelected()
 //    printf( "SI: %d  IP: %d  CI: %d\n", SI, IP, CI );
 //    for( Index = 0; Index < Count; Index++ )
 //    {
-//        printf( "%02d ", Songs[ Index ].Number );
+//        printf( "%02d ", Songs[ Index ].m_Number );
 //    }
 //    printf( "\n" );
 //}
@@ -229,14 +230,14 @@ void guPlayList::MoveSelected()
     int     Count;
     bool    CurItemSet = false;
     guTrackArray MoveItems;
-    wxArrayInt Selection = GetSelectedItems();
+    wxArrayInt Selection = GetSelectedItems( false );
     if( m_DragOverItem != ( size_t ) wxNOT_FOUND )
     {
         // Where is the Items to be moved
         InsertPos = m_DragOverAfter ? m_DragOverItem + 1 : m_DragOverItem;
         // How Many elements to move
         Count = Selection.Count();
-//        PrintItems( Items, InsertPos, Selection[ 0 ], CurItem );
+        //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
         // Get a copy of every element to move
         for( Index = 0; Index < Count; Index++ )
         {
@@ -246,6 +247,7 @@ void guPlayList::MoveSelected()
         // We move from last (bigger) to first
         for( Index = Count - 1; Index >= 0; Index-- )
         {
+            //guLogMessage( wxT( "%i) ci:%i ip:%i" ), Index, m_CurItem, InsertPos );
             m_Items.RemoveAt( Selection[ Index ] );
             if( Selection[ Index ] < InsertPos )
                 InsertPos--;
@@ -843,7 +845,7 @@ void AddPlayListCommands( wxMenu * Menu, int SelCount )
 void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
-    int SelCount = GetSelectedItems().Count();
+    int SelCount = GetSelectedItems( false ).Count();
 
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
@@ -898,7 +900,7 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
 {
     int index;
     int count;
-    wxArrayInt SelectedItems = GetSelectedItems();
+    wxArrayInt SelectedItems = GetSelectedItems( false );
     wxArrayInt Songs;
 
     if( ( count = SelectedItems.Count() ) )
@@ -936,7 +938,7 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
 void guPlayList::OnCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks;
-    wxArrayInt SelectedItems = GetSelectedItems();
+    wxArrayInt SelectedItems = GetSelectedItems( false );
     int index;
     int count = SelectedItems.Count();
     if( count )
@@ -964,7 +966,7 @@ void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
     wxArrayInt SongIds;
     //
     guTrack * Track;
-    wxArrayInt SelectedItems = GetSelectedItems();
+    wxArrayInt SelectedItems = GetSelectedItems( false );
     int index;
 
     int count = SelectedItems.Count();
@@ -1043,7 +1045,7 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
 {
     int index;
     int count;
-    wxArrayInt Selection = GetSelectedItems();
+    wxArrayInt Selection = GetSelectedItems( false );
     if( Selection.Count() )
     {
         index = event.GetId();

@@ -2497,7 +2497,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         sort += wxT( " DESC" );
   }
 
-  guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
+  //guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
 
   return GU_TRACKS_QUERYSTR + dbNames + query + sort;
 }
