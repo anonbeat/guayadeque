@@ -68,6 +68,8 @@ class guListViewAttr
     wxColor     m_EveBgColor;
     wxColor     m_OddBgColor;
     wxColor     m_TextFgColor;
+    //wxColor     m_PlayFgColor;
+    wxBrush     m_DragBgColor;
     wxFont *    m_Font;
 
     guListViewAttr() {
@@ -83,6 +85,9 @@ class guListViewAttr
             m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
         }
         m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
+
+        //m_PlayFgColor  = m_SelBgColor;
+        m_DragBgColor  = * wxGREY_BRUSH;
 
         m_Font = new wxFont( wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT ) );
     };
@@ -116,22 +121,21 @@ class guListView : public wxScrolledWindow
     int                     m_ItemHeight;
     guListViewColumnArray * m_Columns;
 
+    virtual void        OnKeyDown( wxKeyEvent &event );
     virtual void        GetItemsList( void ) = 0;
     virtual void        DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void        DrawBackground( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    virtual wxString    OnGetItemText( const int row, const int column ) const;
+    virtual void        CreateContextMenu( wxMenu * menu ) const;
+    virtual wxCoord     OnMeasureItem( size_t row ) const;
+    virtual void        OnBeginDrag( wxMouseEvent &event );
 
   private :
     guListViewClient *      m_ListBox;
     guListViewHeader *      m_Header;
 
     void                OnChangedSize( wxSizeEvent &event );
-
-    virtual wxString    OnGetItemText( const int row, const int column ) const;
-    virtual void        CreateContextMenu( wxMenu * menu ) const;
     void                OnContextMenu( wxContextMenuEvent &event );
-    virtual wxCoord     OnMeasureItem( size_t row ) const;
-    void                OnBeginDrag( wxMouseEvent &event );
-
     void                OnHScroll( wxScrollWinEvent &event );
 
   public :
@@ -149,17 +153,24 @@ class guListView : public wxScrolledWindow
     int                     GetNextSelected( unsigned long &cookie ) const;
     bool                    Select( size_t item, bool select = true );
     void                    SetSelection( int selection );
+
     size_t                  GetFirstVisibleLine() const;
+    size_t                  GetLastVisibleLine() const;
+    bool                    ScrollLines( int lines );
+
     bool                    ScrollToLine( size_t line );
-    void                    RefreshAll();
+    void                    RefreshAll( int scroll = wxNOT_FOUND );
+    void                    RefreshLines( const int from, const int to );
     bool                    IsSelected( size_t row ) const;
     virtual int             GetSelectedSongs( guTrackArray * Songs ) const;
+    int                     HitTest( wxCoord x, wxCoord y ) const;
 
     virtual void            ReloadItems( bool reset = true ) = 0;
 
-    wxArrayInt              GetSelectedItems( bool reallist = true ) const;
-    void                    SetSelectedItems( const wxArrayInt &selection );
-    void                    ClearSelectedItems();
+    virtual wxArrayInt      GetSelectedItems( bool reallist = true ) const;
+    virtual void            SetSelectedItems( const wxArrayInt &selection );
+    virtual void            ClearSelectedItems();
+
     virtual wxString inline GetItemName( const int item ) const = 0;
     virtual int inline      GetItemId( const int item ) const = 0;
     long                    FindItem( long start, const wxString &str, bool partial );

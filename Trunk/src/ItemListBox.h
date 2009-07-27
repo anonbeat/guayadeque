@@ -32,7 +32,6 @@ class guListBox : public guListView
     guListItems *       m_Items;
 
     virtual wxString    OnGetItemText( const int row, const int col ) const;
-    void                OnBeginDrag( wxMouseEvent &event );
     virtual wxString    GetSearchText( const int item ) const;
 
   public :

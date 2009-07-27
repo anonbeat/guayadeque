@@ -202,47 +202,28 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	PlayListSizer = new wxBoxSizer( wxVERTICAL );
 
 	PlayListPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//	PlayListPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
-	PlayListPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
 
 	PlayListPanelSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_PlayListLabelsSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	m_PlayListStaticText = new wxStaticText( PlayListPanel, wxID_ANY, _(" Now Playing:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_PlayListStaticText->Wrap( -1 );
-	//PlayListStaticText->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-
-	m_PlayListLabelsSizer->Add( m_PlayListStaticText, 0, wxALL, 2 );
-	m_PlayListLabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
-	m_PlayListLenStaticText = new wxStaticText( PlayListPanel, wxID_ANY, wxT("00:00"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_PlayListLenStaticText->SetToolTip( _( "Shows the total length of the current playlist" ) );
-	m_PlayListLenStaticText->Wrap( -1 );
-	m_PlayListLabelsSizer->Add( m_PlayListLenStaticText, 0, wxALL, 2 );
-
-	PlayListPanelSizer->Add( m_PlayListLabelsSizer, 0, wxEXPAND, 5 );
-
 	m_PlayListCtrl = new guPlayList( PlayListPanel, m_Db );
-	PlayListPanelSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
+	PlayListPanelSizer->Add( m_PlayListCtrl );
 
 	PlayListPanel->SetSizer( PlayListPanelSizer );
 	PlayListPanel->Layout();
+
 	PlayListPanelSizer->Fit( PlayListPanel );
 	PlayListSizer->Add( PlayListPanel, 1, wxEXPAND | wxALL, 2 );
 
-
 	PlayerMainSizer->Add( PlayListSizer, 1, wxEXPAND, 5 );
+
 	this->SetSizer( PlayerMainSizer );
 	this->Layout();
-	PlayerMainSizer->Fit( this );
-
 
     m_MediaCtrl = new guMediaCtrl();
     //m_MediaCtrl->Create( this, wxID_ANY );
 
     //
-    m_PlayListCtrl->RefreshItems();
+    m_PlayListCtrl->ReloadItems();
     TrackListChanged();
     // The SetVolume call dont get set if the volume is the last one
     // so we do it two calls
@@ -313,7 +294,6 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     Connect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracksClicked ) );
 
 //    Connect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
-
 
     m_PlayerTimer = new guPlayerPanelTimer( this );
     m_PlayerTimer->Start( 400 );
@@ -487,7 +467,7 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
 void guPlayerPanel::AddToPlayList( const wxString &FileName )
 {
     m_PlayListCtrl->AddPlayListItem( FileName );
-    m_PlayListCtrl->RefreshItems();
+    m_PlayListCtrl->ReloadItems();
     TrackListChanged();
     // TODO Need to add the track to the smart cache
 }
@@ -529,8 +509,13 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::TrackListChanged( void )
 {
-    m_PlayListLenStaticText->SetLabel( m_PlayListCtrl->GetLengthStr() );
-   	m_PlayListLabelsSizer->Layout();
+//    m_PlayListLenStaticText->SetLabel( m_PlayListCtrl->GetLengthStr() );
+//   	m_PlayListLabelsSizer->Layout();
+    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
+        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+            m_PlayListCtrl->GetCurItem() + 1,
+            m_PlayListCtrl->GetCount(),
+            m_PlayListCtrl->GetLengthStr().c_str() ) );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKLISTCHANGED );
     wxPostEvent( this, event );
@@ -539,7 +524,7 @@ void guPlayerPanel::TrackListChanged( void )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
 {
-    m_PlayListCtrl->RefreshItems();
+    m_PlayListCtrl->ReloadItems();
     SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
 
     // If a Player reset is needed
@@ -748,7 +733,7 @@ const guTrack * guPlayerPanel::GetTrack( int index )
 void guPlayerPanel::RemoveItem( int itemnum )
 {
     m_PlayListCtrl->RemoveItem( itemnum );
-    m_PlayListCtrl->RefreshItems();
+    m_PlayListCtrl->ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -812,6 +797,13 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         m_YearLabel->SetLabel( wxEmptyString );
 
     SetBitRate( 0 );
+
+
+    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
+        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+            m_PlayListCtrl->GetCurItem() + 1,
+            m_PlayListCtrl->GetCount(),
+            m_PlayListCtrl->GetLengthStr().c_str() ) );
 
     //guLogWarning( wxT( "SetCurrentTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
     CoverImage = NULL;
@@ -1083,7 +1075,7 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
             SetPosition( m_TrackStartPos );
             m_TrackStartPos = 0;
         }
-        m_PlayListCtrl->UpdateView();
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         //SetVolume( m_CurVolume );
     }
     catch(...)
@@ -1101,7 +1093,7 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
         //m_MediaSong = * NextItem;
         SetCurrentTrack( NextItem );
         LoadMedia( NextItem->m_FileName );
-        m_PlayListCtrl->UpdateView();
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     else
     {
@@ -1214,7 +1206,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         {
             SetCurrentTrack( PrevItem );
         }
-        m_PlayListCtrl->UpdateView();
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     //event.Skip();
 }
@@ -1240,7 +1232,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         {
             LoadMedia( m_MediaSong.m_FileName );
         }
-        m_PlayListCtrl->UpdateView();
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     else
     {
@@ -1292,7 +1284,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
             LoadMedia( m_MediaSong.m_FileName );
             return;
         }
-        m_PlayListCtrl->UpdateView();
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     else
     {

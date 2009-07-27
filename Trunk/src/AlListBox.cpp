@@ -91,9 +91,6 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
     wxString CoverPath;
 //    wxLongLong time = wxGetLocalTimeMillis();
 
-    if( ( int ) row == wxNOT_FOUND )
-        return;
-
     //wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
     m_Attr.m_Font->SetPointSize( 10 );
 

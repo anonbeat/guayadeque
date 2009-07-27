@@ -112,9 +112,9 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_PositionLabel;
 	wxBoxSizer *            m_PosLabelSizer;
 	wxSlider *              m_PlayerPositionSlider;
-	wxStaticText *          m_PlayListStaticText;
-	wxStaticText *          m_PlayListLenStaticText;
-    wxBoxSizer *            m_PlayListLabelsSizer;
+//	wxStaticText *          m_PlayListStaticText;
+//	wxStaticText *          m_PlayListLenStaticText;
+//    wxBoxSizer *            m_PlayListLabelsSizer;
 
     DbLibrary *             m_Db;
 	guPlayList *            m_PlayListCtrl;

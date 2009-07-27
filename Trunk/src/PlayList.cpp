@@ -38,20 +38,15 @@
 #define GUPLAYLIST_ITEM_SIZE        40
 
 // -------------------------------------------------------------------------------- //
-// guPlayList
-// -------------------------------------------------------------------------------- //
-BEGIN_EVENT_TABLE(guPlayList,wxVListBox)
-  EVT_MOUSE_EVENTS   (guPlayList::OnMouse)
-END_EVENT_TABLE()
-
-// -------------------------------------------------------------------------------- //
 guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
-            wxVListBox( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_MULTIPLE|wxSUNKEN_BORDER  )
+            guListView( parent )
 {
     wxArrayString Songs;
     int Count;
     int Index;
     guConfig * Config;
+
+    InsertColumn( new guListViewColumn( _( "Now Playing" ), 0 ) );
 
     m_Db = db;
     m_TotalLen = 0;
@@ -102,38 +97,11 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
 
     SetDropTarget( new guPlayListDropTarget( this ) );
 
-//    m_PlayBgColor  = wxColor( 0, 0, 0 ); //SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHT );
-//    m_PlayFgColor  = wxColor( 255, 255, 255 ); //SystemSettings.GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
-    m_DragBgColor  = * wxGREY_BRUSH;
-    m_SelBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
-    m_SelFgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
-    m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
-    if( m_EveBgColor.Red() > 0x0A && m_EveBgColor.Green() > 0x0A && m_EveBgColor.Blue() > 0x0A )
-    {
-        m_OddBgColor.Set( m_EveBgColor.Red() - 0xA, m_EveBgColor.Green() - 0x0A, m_EveBgColor.Blue() - 0x0A );
-    }
-    else
-    {
-        m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
-    }
-    m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
-    //m_SepColor    = SystemSettings.GetColour( wxSYS_COLOUR_WINDOWFRAME );
-    //m_PlayBgColor  = m_TextFgColor;
-    m_PlayFgColor  = m_SelBgColor;
-    //m_RatingEnabled = wxColour( 255, 191, 0 );
-    //m_RatingDisabled = wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT );
-
-    SetBackgroundColour( m_EveBgColor );
-
-    m_Font = new wxFont( wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT ) );
-
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     m_GreyStar   = new wxBitmap( guImage( guIMAGE_INDEX_grey_star_tiny ) );
     m_YellowStar = new wxBitmap( guImage( guIMAGE_INDEX_yellow_star_tiny ) );
 
-	Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
-    Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
-    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guPlayList::OnContextMenu ), NULL, this );
+//    Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
     Connect( ID_PLAYER_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
     Connect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
@@ -141,6 +109,7 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     Connect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
     Connect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -161,8 +130,6 @@ guPlayList::~guPlayList()
         Config->WriteAStr( wxT( "PlayListSong" ), Songs, wxT( "PlayList" ) );
         Config->WriteNum( wxT( "PlayerCurItem" ), m_CurItem, wxT( "General" ) );
     }
-    // Destroy all items
-    m_Items.Clear();
 
     if( m_PlayBitmap )
       delete m_PlayBitmap;
@@ -171,48 +138,13 @@ guPlayList::~guPlayList()
     if( m_YellowStar )
       delete m_YellowStar;
 
-    if( m_Font )
-        delete m_Font;
-
-	Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPlayList::OnKeyDown ), NULL, this );
-    Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
-    Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guPlayList::OnContextMenu ), NULL, this );
+//    Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayList::OnMouse( wxMouseEvent &event )
-{
-    //printf( "guPlayList::OnMouse\n" );
-    if( event.Dragging() )
-    {
-        //printf( "guPlayList::OnMouseDragging\n" );
-        if( !m_DragCount )
-        {
-            m_DragStart = event.GetPosition();
-        }
-
-        if( ++m_DragCount == 3 )
-        {
-            //printf( "guPlayList::OnMouseDragging (Fired!) \n" );
-            wxListEvent le( wxEVT_COMMAND_LIST_BEGIN_DRAG, GetId() );
-            le.SetEventObject( this );
-            //le.m_itemIndex = m_lineLastClicked;
-            le.m_pointDrag = m_DragStart;
-            GetEventHandler()->ProcessEvent( le );
-        }
-
-        return;
-    }
-    else
-      m_DragCount = 0;
-
-    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -239,25 +171,10 @@ void guPlayList::OnBeginDrag( wxMouseEvent &event )
     wxDragResult Result = source.DoDragDrop();
     if( Result )
     {
-
     }
     m_DragSelfItems = false;
     m_DragOverItem = wxNOT_FOUND;
-    //wxMessageBox( wxT( "DoDragDrop Done" ) );
-}
-
-// -------------------------------------------------------------------------------- //
-wxArrayInt guPlayList::GetSelectedItems()
-{
-    wxArrayInt RetVal;
-    unsigned long cookie;
-    int item = GetFirstSelected( cookie );
-    while( item != wxNOT_FOUND )
-    {
-        RetVal.Add( item );
-        item = GetNextSelected( cookie );
-    }
-    return RetVal;
+    //printf( "DoDragDrop Done" );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -278,15 +195,15 @@ void guPlayList::RemoveItem( int itemnum )
 // -------------------------------------------------------------------------------- //
 void guPlayList::RemoveSelected()
 {
-    int Index;
-    int item;
-    wxArrayInt Selection = GetSelectedItems();
-    for( Index = Selection.Count() - 1; Index >= 0; Index-- )
+    int index;
+    int count;
+    wxArrayInt Selected = GetSelectedItems();
+    count = Selected.Count();
+    for( index = count - 1; index >= 0; index-- )
     {
-        item = Selection[ Index ];
-        RemoveItem( item );
+        RemoveItem( Selected[ index ] );
     }
-    DoSelectAll( false );
+    ClearSelectedItems();
 }
 
 //static void PrintItems( guTrackArray Songs, int IP, int SI, int CI )
@@ -353,7 +270,7 @@ void guPlayList::MoveSelected()
         }
 //        PrintItems( Items, InsertPos, Selection[ 0 ], CurItem );
     }
-    DoSelectAll( false );
+    ClearSelectedItems();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -361,10 +278,8 @@ void guPlayList::OnKeyDown( wxKeyEvent &event )
 {
     if( event.GetKeyCode() == WXK_DELETE )
     {
-        //wxMessageBox( wxT( "Delete" ) );
         RemoveSelected();
-        RefreshItems();
-        //RefreshAll();
+        ReloadItems();
         return;
     }
     event.Skip();
@@ -390,7 +305,7 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold 
         m_CurItem--;
       }
     }
-    RefreshItems();
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -407,31 +322,37 @@ void guPlayList::SetPlayList( const guTrackArray &NewItems )
     {
       m_TotalLen += m_Items[ Index ].m_Length;
     }
-
-    RefreshItems();
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
 {
-    m_DragOverItem = HitTest( x, y );
+    int w, h, d;
+    GetTextExtent( wxT("Hg"), &w, &h, &d );
+    h += d + 4;
+    int wherey = y - h;
+
+    m_DragOverItem = HitTest( x, wherey );
     // Check if its over a item if its in the upper or lower part
     // to determine if will be inserted before or after
     if( ( int ) m_DragOverItem != wxNOT_FOUND )
     {
-        m_DragOverAfter = ( y > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
+        m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
         RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetCount() ) );
     }
     int Width;
     int Height;
     GetSize( &Width, &Height );
-    if( ( y > ( Height - 10 ) ) && GetLastVisibleLine() != GetCount() )
+    Height -= h;
+
+    if( ( wherey > ( Height - 10 ) ) && GetLastVisibleLine() != GetCount() )
     {
         ScrollLines( 1 );
     }
     else
     {
-        if( ( y < 10 ) && GetFirstVisibleLine() > 0 )
+        if( ( wherey < 10 ) && GetFirstVisibleLine() > 0 )
         {
             ScrollLines( -1 );
         }
@@ -440,7 +361,7 @@ void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
+void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
     guTrack Item;
     wxRect CutRect;
@@ -448,27 +369,24 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
     wxString TimeStr;
 //    wxArrayInt Selection;
 
-    if( ( int ) n == wxNOT_FOUND )
-        return;
+    Item = m_Items[ row ];
+    m_Attr.m_Font->SetPointSize( 8 );
+    m_Attr.m_Font->SetStyle( wxFONTSTYLE_NORMAL );
+    m_Attr.m_Font->SetWeight( wxFONTWEIGHT_BOLD );
 
-    Item = m_Items[ n ];
-    m_Font->SetPointSize( 8 );
-    m_Font->SetStyle( wxFONTSTYLE_NORMAL );
-    m_Font->SetWeight( wxFONTWEIGHT_BOLD );
-
-    dc.SetFont( * m_Font );
+    dc.SetFont( * m_Attr.m_Font );
     dc.SetBackgroundMode( wxTRANSPARENT );
-    if( IsSelected( n ) )
+    if( IsSelected( row ) )
     {
-        dc.SetTextForeground( m_SelFgColor );
+        dc.SetTextForeground( m_Attr.m_SelFgColor );
     }
-    else if( n == ( size_t ) m_CurItem )
+    else if( row == m_CurItem )
     {
-        dc.SetTextForeground( m_PlayFgColor );
+        dc.SetTextForeground( m_Attr.m_SelBgColor );
     }
     else
     {
-        dc.SetTextForeground( m_TextFgColor );
+        dc.SetTextForeground( m_Attr.m_TextFgColor );
     }
 
     if( Item.m_SongId != guPLAYLIST_RADIOSTATION )
@@ -477,9 +395,9 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
         int OffsetSecLine;
         dc.DrawText( Item.m_SongName, rect.x + 5, rect.y + 5 );
         //Font.SetPointSize( 7 );
-        m_Font->SetStyle( wxFONTSTYLE_ITALIC );
-        m_Font->SetWeight( wxFONTWEIGHT_NORMAL );
-        dc.SetFont( * m_Font );
+        m_Attr.m_Font->SetStyle( wxFONTSTYLE_ITALIC );
+        m_Attr.m_Font->SetWeight( wxFONTWEIGHT_NORMAL );
+        dc.SetFont( * m_Attr.m_Font );
 
         OffsetSecLine = rect.y + ( dc.GetCharHeight() + 10 );
 
@@ -491,10 +409,10 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
         CutRect = rect;
         CutRect.x += CutRect.width - ( 50 + 6 );
         CutRect.width -= CutRect.x;
-        OnDrawBackground( dc, CutRect, n );
+        DrawBackground( dc, CutRect, row, 0 );
 
         // Draw Play bitmap
-        if( n == ( size_t ) m_CurItem && m_PlayBitmap )
+        if( row == m_CurItem && m_PlayBitmap )
         {
             dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 21, CutRect.y + 14, true );
         }
@@ -519,9 +437,9 @@ void guPlayList::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const
         CutRect = rect;
         CutRect.x += CutRect.width - 30;
         CutRect.width = 30;
-        OnDrawBackground( dc, CutRect, n );
+        DrawBackground( dc, CutRect, row, 0 );
         //dc.DrawText( TimeStr, CutRect.x + 3, CutRect.y + 5 );
-        if( n == ( size_t ) m_CurItem && m_PlayBitmap )
+        if( row == m_CurItem && m_PlayBitmap )
         {
             // Draw Play bitmap
             dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 8, CutRect.y + 8, true );
@@ -536,27 +454,24 @@ wxCoord guPlayList::OnMeasureItem( size_t n ) const
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n ) const
+void guPlayList::DrawBackground( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
     wxRect LineRect;
 
-    if( ( int ) n == wxNOT_FOUND )
-        return;
-
-    if( n == m_DragOverItem )
-      dc.SetBrush( m_DragBgColor );
+    if( row == m_DragOverItem )
+      dc.SetBrush( m_Attr.m_DragBgColor );
     //else if( n == ( size_t ) GetSelection() )
-    else if( IsSelected( n ) )
-      dc.SetBrush( wxBrush( m_SelBgColor ) );
+    else if( IsSelected( row ) )
+      dc.SetBrush( wxBrush( m_Attr.m_SelBgColor ) );
 //    else if( n == ( size_t ) m_CurItem )
 //      dc.SetBrush( wxBrush( m_PlayBgColor ) );
     else
-      dc.SetBrush( wxBrush( n & 1 ? m_OddBgColor : m_EveBgColor ) );
+      dc.SetBrush( wxBrush( row & 1 ? m_Attr.m_OddBgColor : m_Attr.m_EveBgColor ) );
 
     dc.SetPen( * wxTRANSPARENT_PEN );
     dc.DrawRectangle( rect );
 
-    if( n == m_DragOverItem )
+    if( row == m_DragOverItem )
     {
         LineRect = rect;
         if( m_DragOverAfter )
@@ -565,7 +480,6 @@ void guPlayList::OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n ) cons
         dc.SetBrush( * wxBLACK_BRUSH );
         dc.DrawRectangle( LineRect );
     }
-    //printf( "DrawBackground: %d\n", ( int ) n );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -575,20 +489,20 @@ long guPlayList::GetCount()
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::UpdateView( bool Scroll )
+wxString guPlayList::OnGetItemText( const int row, const int col ) const
 {
-    if( Scroll && !IsVisible( m_CurItem ) )
-    {
-        ScrollToLine( m_CurItem );
-    }
-    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::RefreshItems()
+void guPlayList::GetItemsList( void )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::ReloadItems( bool reset )
 {
     SetItemCount( GetCount() );
-    UpdateView();
+    RefreshAll( m_CurItem );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -722,8 +636,8 @@ void guPlayList::ClearItems()
     }
     m_CurItem = wxNOT_FOUND;
     m_TotalLen = 0;
-    DoSelectAll( false );
-    RefreshItems();
+    ClearSelectedItems();
+    ReloadItems();
     //PlayerPanel->UpdateTotalLength();
 }
 
@@ -736,15 +650,15 @@ void guPlayList::Randomize( void )
     int count = m_Items.Count();
     guTrack SavedItem;
 
-    if( m_CurItem > 0 )
-    {
-        SavedItem = m_Items[ 0 ];
-        m_Items[ 0 ] = m_Items[ m_CurItem ];
-        m_Items[ m_CurItem ] = SavedItem;
-        m_CurItem = 0;
-    }
     if( count > 2 )
     {
+        if( m_CurItem > 0 )
+        {
+            SavedItem = m_Items[ 0 ];
+            m_Items[ 0 ] = m_Items[ m_CurItem ];
+            m_Items[ m_CurItem ] = SavedItem;
+            m_CurItem = 0;
+        }
         for( index = 0; index < count; index++ )
         {
             do {
@@ -761,8 +675,8 @@ void guPlayList::Randomize( void )
             //wxMilliSleep( 1 );
            //guLogMessage( wxT( "%u -> %u" ), pos, newpos );
         }
-        DoSelectAll( false );
-        UpdateView();
+        ClearSelectedItems();
+        Refresh( m_CurItem );
     }
 }
 
@@ -924,60 +838,43 @@ void AddPlayListCommands( wxMenu * Menu, int SelCount )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::OnContextMenu( wxContextMenuEvent& event )
+void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 {
-    wxMenu Menu;
     wxMenuItem * MenuItem;
+    int SelCount = GetSelectedItems().Count();
 
-    wxPoint Point = event.GetPosition();
-    // If from keyboard
-    if( Point.x == -1 && Point.y == -1 )
-    {
-        wxSize Size = GetSize();
-        Point.x = Size.x / 2;
-        Point.y = Size.y / 2;
-    }
-    else
-    {
-        Point = ScreenToClient( Point );
-    }
-
-    wxArrayInt SelectedItems = GetSelectedItems();
-    int SelCount = SelectedItems.Count();
-
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    Menu.AppendSeparator();
+    Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_clear ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_SAVE, _( "Save PlayList" ), _( "Save the PlayList" ) );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SAVE, _( "Save PlayList" ), _( "Save the PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_REMOVE, _( "Remove selected songs" ), _( "Remove selected songs from PlayList" ) );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REMOVE, _( "Remove selected songs" ), _( "Remove selected songs from PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    Menu.AppendSeparator();
+    Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, _( "Randomize PlayList" ), _( "Randomize the songs in the PlayList" ) );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, _( "Randomize PlayList" ), _( "Randomize the songs in the PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_shuffle ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    Menu.AppendSeparator();
+    Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_PLAYER_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-    Menu.Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    AddPlayListCommands( &Menu, SelCount );
+    AddPlayListCommands( Menu, SelCount );
 
-    PopupMenu( &Menu, Point.x, Point.y );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -990,7 +887,7 @@ void guPlayList::OnClearClicked( wxCommandEvent &event )
 void guPlayList::OnRemoveClicked( wxCommandEvent &event )
 {
     RemoveSelected();
-    RefreshItems();
+    ReloadItems();
     //PlayerPanel->UpdateTotalLength();
 }
 
@@ -1229,7 +1126,7 @@ void guPlayList::UpdatedTracks( const guTrackArray * tracks )
     }
     if( found )
     {
-        UpdateView();
+        RefreshAll();
     }
 }
 
@@ -1254,9 +1151,22 @@ void guPlayList::UpdatedTrack( const guTrack * track )
     }
     if( found )
     {
-        UpdateView();
+        RefreshAll();
     }
 }
+
+// -------------------------------------------------------------------------------- //
+wxString inline guPlayList::GetItemName( const int row ) const
+{
+    return m_Items[ row ].m_SongName;
+}
+
+// -------------------------------------------------------------------------------- //
+int inline guPlayList::GetItemId( const int row ) const
+{
+    return row;
+}
+
 
 // -------------------------------------------------------------------------------- //
 // guAddDropFilesThread
@@ -1384,7 +1294,7 @@ bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
     if( m_PlayList->m_DragSelfItems )
     {
         m_PlayList->MoveSelected();
-        m_PlayList->UpdateView( false );
+        m_PlayList->RefreshAll();
     }
     else
     {
