@@ -223,6 +223,7 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     m_ItemHeight = 0;
 
     parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guListView::OnChangedSize ), NULL, this );
+	m_ListBox->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListView::OnKeyDown ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
     Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListView::OnBeginDrag ), NULL, this );
 }
@@ -234,6 +235,7 @@ guListView::~guListView()
         delete m_Columns;
 
     GetParent()->Disconnect( wxEVT_SIZE, wxSizeEventHandler( guListView::OnChangedSize ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListView::OnKeyDown ), NULL, this );
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
     Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListView::OnBeginDrag ), NULL, this );
 }
@@ -252,7 +254,7 @@ void guListView::OnChangedSize( wxSizeEvent &event )
     wxSize Size = event.GetSize();
     Size.x -= 6;
     Size.y -= 6;
-    //guLogMessage( wxT( "Header SetSize %i,%i" ), Size.x, Size.y );
+    //guLogMessage( wxT( "ListView SetSize %i,%i" ), Size.x, Size.y );
     if( m_Header )
     {
         // Calculate the Height
@@ -395,15 +397,38 @@ size_t guListView::GetFirstVisibleLine() const
 }
 
 // -------------------------------------------------------------------------------- //
+size_t guListView::GetLastVisibleLine() const
+{
+    return m_ListBox->GetLastVisibleLine();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guListView::ScrollLines( int lines )
+{
+    return m_ListBox->ScrollLines( lines );
+}
+
+// -------------------------------------------------------------------------------- //
 bool guListView::ScrollToLine( size_t line )
 {
     return m_ListBox->ScrollToLine( line );
 }
 
 // -------------------------------------------------------------------------------- //
-void guListView::RefreshAll()
+void guListView::RefreshAll( int scroll )
 {
+    if( scroll != wxNOT_FOUND )
+    {
+        if( !m_ListBox->IsVisible( scroll ) )
+            m_ListBox->ScrollToLine( scroll );
+    }
     m_ListBox->RefreshAll();
+}
+
+// -------------------------------------------------------------------------------- //
+void guListView::RefreshLines( const int from, const int to )
+{
+    m_ListBox->RefreshLines( from, to );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -420,10 +445,9 @@ void guListView::OnBeginDrag( wxMouseEvent &event )
     int index;
     int count;
     // TODO : Virtualice the function to add the files to the FileDataObject
-    if( GetSelectedSongs( &Songs ) )
+    if( ( count = GetSelectedSongs( &Songs ) ) )
     {
-        count = Songs.Count();
-
+        //count = Songs.Count();
         for( index = 0; index < count; index++ )
         {
           Files.AddFile( Songs[ index ].m_FileName );
@@ -457,7 +481,6 @@ wxArrayInt guListView::GetSelectedItems( const bool convertall ) const
     int ItemId;
     if( GetItemCount() )
     {
-
         item = GetFirstSelected( cookie );
         while( item != wxNOT_FOUND )
         {
@@ -538,7 +561,17 @@ void  guListView::SetColumnLabel( const int col, const wxString &label )
     m_Header->Refresh();
 }
 
+// -------------------------------------------------------------------------------- //
+void guListView::OnKeyDown( wxKeyEvent &event )
+{
+    event.Skip();
+}
 
+// -------------------------------------------------------------------------------- //
+int guListView::HitTest( wxCoord x, wxCoord y ) const
+{
+    return m_ListBox->HitTest( x, y );
+}
 
 // -------------------------------------------------------------------------------- //
 // guListViewClient

@@ -21,20 +21,22 @@
 #ifndef PLAYLIST_H
 #define PLAYLIST_H
 
+#include "DbLibrary.h"
+#include "ListView.h"
+
 #include <wx/wx.h>
 #include <wx/vlbox.h>
 #include <wx/dnd.h>
 #include <wx/dir.h>
 #include <wx/arrimpl.cpp>
 
-#include "DbLibrary.h"
 
 wxString LenToString( int Len );
 
 class guPlayerPanel;
 
 // -------------------------------------------------------------------------------- //
-class guPlayList : public wxVListBox
+class guPlayList : public guListView
 {
   private :
     DbLibrary *     m_Db;
@@ -53,70 +55,65 @@ class guPlayList : public wxVListBox
     wxBitmap *      m_GreyStar;
     wxBitmap *      m_YellowStar;
 
-    wxColor         m_PlayFgColor;
-    wxBrush         m_DragBgColor;
-    wxColor         m_SelBgColor;
-    wxColor         m_SelFgColor;
-    wxColor         m_OddBgColor;
-    wxColor         m_EveBgColor;
-    wxColor         m_TextFgColor;
-    //wxColor         m_RatingEnabled;
-    //wxColor         m_RatingDisabled;
 
-    wxFont *        m_Font;
+    virtual wxCoord             OnMeasureItem( size_t row ) const;
 
     void            OnDragOver( const wxCoord x, const wxCoord y );
-    void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
-    wxCoord         OnMeasureItem( size_t n ) const;
-    void            OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n ) const;
-    void            OnKeyDown( wxKeyEvent &event );
-    void            OnBeginDrag( wxMouseEvent &event );
-    void            OnMouse( wxMouseEvent &event );
-    void            RemoveSelected();
-    void            MoveSelected();
-    void            OnContextMenu( wxContextMenuEvent& event );
+//    void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
+    virtual void                OnBeginDrag( wxMouseEvent &event );
+//    void            OnMouse( wxMouseEvent &event );
+    void                        RemoveSelected();
+    void                        MoveSelected();
 
+    void                        OnClearClicked( wxCommandEvent &event );
+    void                        OnRemoveClicked( wxCommandEvent &event );
+    void                        OnSaveClicked( wxCommandEvent &event );
+    void                        OnCopyToClicked( wxCommandEvent &event );
+    void                        OnEditLabelsClicked( wxCommandEvent &event );
+    void                        OnCommandClicked( wxCommandEvent &event );
 
-    void            OnClearClicked( wxCommandEvent &event );
-    void            OnRemoveClicked( wxCommandEvent &event );
-    void            OnSaveClicked( wxCommandEvent &event );
-    void            OnCopyToClicked( wxCommandEvent &event );
-    void            OnEditLabelsClicked( wxCommandEvent &event );
-    void            OnCommandClicked( wxCommandEvent &event );
-
-    DECLARE_EVENT_TABLE()
+  protected:
+    virtual void                OnKeyDown( wxKeyEvent &event );
+    virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    virtual void                DrawBackground( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    virtual void                CreateContextMenu( wxMenu * Menu ) const;
+    virtual wxString            OnGetItemText( const int row, const int column ) const;
+    virtual void                GetItemsList( void );
 
   public :
     guPlayList( wxWindow * parent, DbLibrary * db );
     ~guPlayList();
 
-    void            AddItem( const guTrack &NewItem );
-    void            AddItem( const guTrack * NewItem );
-    void            AddPlayListItem( const wxString &FileName, bool AddPath = false );
+    void                        AddItem( const guTrack &NewItem );
+    void                        AddItem( const guTrack * NewItem );
+    void                        AddPlayListItem( const wxString &FileName, bool AddPath = false );
 
-    void            RefreshItems();
-    void            UpdateView( bool Scroll = true );
+    virtual void                ReloadItems( bool reset = true );
 
-    guTrack *       GetItem( size_t item );
-    long            GetCount();
-    guTrack *       GetCurrent();
-    int             GetCurItem();
-    void            SetCurrent( const int NewCurItem );
-    guTrack *       GetNext( bool bLoop );
-    guTrack *       GetPrev( bool bLoop );
-    void            ClearItems();
-    long            GetLength( void ) const;
-    wxString        GetLengthStr( void ) const;
-    void            AddToPlayList( const guTrackArray &NewItems, const bool DeleteOld = false );
-    void            SetPlayList( const guTrackArray &NewItems );
-    wxArrayInt      GetSelectedItems();
-    wxString        FindCoverFile( const wxString &DirName );
-    void            Randomize( void );
-    int             GetCaps();
-    void            RemoveItem( int itemnum );
-    void            UpdatedTracks( const guTrackArray * tracks );
-    void            UpdatedTrack( const guTrack * track );
-    bool            StartPlaying( void ) { return m_StartPlaying; }
+    virtual int inline          GetItemId( const int row ) const;
+    virtual wxString inline     GetItemName( const int row ) const;
+
+
+    guTrack *                   GetItem( size_t item );
+    long                        GetCount();
+    guTrack *                   GetCurrent();
+    int                         GetCurItem();
+    void                        SetCurrent( const int NewCurItem );
+    guTrack *                   GetNext( bool bLoop );
+    guTrack *                   GetPrev( bool bLoop );
+    void                        ClearItems();
+    long                        GetLength( void ) const;
+    wxString                    GetLengthStr( void ) const;
+    void                        AddToPlayList( const guTrackArray &NewItems, const bool DeleteOld = false );
+    void                        SetPlayList( const guTrackArray &NewItems );
+    wxString                    FindCoverFile( const wxString &DirName );
+    void                        Randomize( void );
+    int                         GetCaps();
+    void                        RemoveItem( int itemnum );
+    void                        UpdatedTracks( const guTrackArray * tracks );
+    void                        UpdatedTrack( const guTrack * track );
+    bool                        StartPlaying( void ) { return m_StartPlaying; }
+
 
   friend class guAddDropFilesThread;
   friend class guPlayListDropTarget;
