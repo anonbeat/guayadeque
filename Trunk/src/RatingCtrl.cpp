@@ -97,7 +97,7 @@ void guRating::OnMouseEvents( wxMouseEvent &event )
     int SavedRating = m_Rating;
     if( event.RightDown() )
     {
-        m_Rating = -1;
+        m_Rating = 0;
     }
     else if( event.LeftIsDown() )
     {
