@@ -279,11 +279,14 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	MainSizer->Add( ResultSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
     wxStdDialogButtonSizer * ButtonsSizer;
+    wxButton *  BtnCancel;
+
 	ButtonsSizer = new wxStdDialogButtonSizer();
-	ButtonsSizerOK = new wxButton( this, wxID_OK );
-	ButtonsSizer->AddButton( ButtonsSizerOK );
-	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
-	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	m_BtnOk = new wxButton( this, wxID_OK );
+	m_BtnOk->Enable( m_Filters->Count() );
+	ButtonsSizer->AddButton( m_BtnOk );
+	BtnCancel = new wxButton( this, wxID_CANCEL );
+	ButtonsSizer->AddButton( BtnCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND, 5 );
 
@@ -619,6 +622,8 @@ void guDynPlayListEditor::OnFilterAddClicked( wxCommandEvent& event )
     m_Filters->Add( FilterItem );
     m_FiltersListBox->Append( FilterItem.GetLabel() );
     m_FiltersListBox->Refresh();
+
+    m_BtnOk->Enable( m_Filters->Count() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -629,6 +634,8 @@ void guDynPlayListEditor::OnFilterDelClicked( wxCommandEvent& event )
         m_Filters->RemoveAt( m_CurFilter );
         m_FiltersListBox->Delete( m_CurFilter );
         m_CurFilter = wxNOT_FOUND;
+
+        m_BtnOk->Enable( m_Filters->Count() );
     }
 }
 
