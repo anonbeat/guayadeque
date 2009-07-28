@@ -57,7 +57,6 @@ void guRating::SetRating( const int rating )
 {
     m_Rating = rating;
     Refresh();
-    Update();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -112,7 +111,6 @@ void guRating::OnMouseEvents( wxMouseEvent &event )
     if( SavedRating != m_Rating )
     {
         Refresh();
-        //Update();
         guRatingEvent evt( guEVT_RATING_CHANGED );
         //evt.SetClientObject( this );
         evt.SetInt( m_Rating );

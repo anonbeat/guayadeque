@@ -118,7 +118,6 @@ class guListView : public wxScrolledWindow
   protected :
     guListViewAttr          m_Attr;
     bool                    m_ColSelect;
-    int                     m_ItemHeight;
     guListViewColumnArray * m_Columns;
 
     virtual void        OnKeyDown( wxKeyEvent &event );

@@ -369,7 +369,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     wxRect CutRect;
     wxSize TextSize;
     wxString TimeStr;
-    int OffsetSecLine;
+//    int OffsetSecLine;
 //    wxArrayInt Selection;
 
     Item = m_Items[ row ];
@@ -399,7 +399,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     // Draw Play bitmap
     if( row == m_CurItem && m_PlayBitmap )
     {
-        dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 2, CutRect.y + 12, true );
+        dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 4, CutRect.y + 12, true );
         CutRect.x += 16;
         CutRect.width -= 16;
     }
@@ -410,15 +410,13 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 
         dc.SetClippingRegion( CutRect );
 
-        dc.DrawText( Item.m_SongName, CutRect.x + 5, CutRect.y + 5 );
-        //Font.SetPointSize( 7 );
-        m_Attr.m_Font->SetStyle( wxFONTSTYLE_ITALIC );
+        dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
+        //m_Attr.m_Font->SetPointSize( 7 );
+        //m_Attr.m_Font->SetStyle( wxFONTSTYLE_ITALIC );
         m_Attr.m_Font->SetWeight( wxFONTWEIGHT_NORMAL );
         dc.SetFont( * m_Attr.m_Font );
 
-        OffsetSecLine = rect.y + ( dc.GetCharHeight() + 10 );
-
-        dc.DrawText( Item.m_ArtistName + wxT( " - " ) + Item.m_AlbumName, CutRect.x + 5, OffsetSecLine );
+        dc.DrawText( Item.m_ArtistName + wxT( " - " ) + Item.m_AlbumName, CutRect.x + 4, CutRect.y + m_SecondLineOffset );
 
         dc.DestroyClippingRegion();
 
@@ -429,24 +427,29 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 
         dc.SetClippingRegion( CutRect );
 
+        //m_Attr.m_Font->SetPointSize( 8 );
+        //m_Attr.m_Font->SetStyle( wxFONTSTYLE_NORMAL );
+        //dc.SetFont( * m_Attr.m_Font );
+
         TimeStr = LenToString( Item.m_Length );
         TextSize = dc.GetTextExtent( TimeStr );
-        dc.DrawText( TimeStr, CutRect.x + ( ( 56 - TextSize.GetWidth() ) / 2 ), CutRect.y + 5 );
+        dc.DrawText( TimeStr, CutRect.x + ( ( 56 - TextSize.GetWidth() ) / 2 ), CutRect.y + 4 );
         //guLogMessage( wxT( "%i - %i" ), TextSize.GetWidth(), TextSize.GetHeight() );
 
         // Draw the rating
         int index;
-        OffsetSecLine += 2;
+        //OffsetSecLine += 2;
         CutRect.x += 3;
+        CutRect.y += 2;
         for( index = 0; index < 5; index++ )
         {
            dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_GreyStar : * m_YellowStar,
-                          CutRect.x + ( 10 * index ), OffsetSecLine, true );
+                          CutRect.x + ( 10 * index ), CutRect.y + m_SecondLineOffset, true );
         }
     }
     else
     {
-        dc.DrawText( Item.m_SongName, CutRect.x + 2, CutRect.y + 13 );
+        dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
     }
 
 }
@@ -454,7 +457,29 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 // -------------------------------------------------------------------------------- //
 wxCoord guPlayList::OnMeasureItem( size_t n ) const
 {
-    return wxCoord( GUPLAYLIST_ITEM_SIZE );
+    int Height = 4;
+    // Code taken from the generic/listctrl.cpp file
+    guPlayList * self = wxConstCast( this, guPlayList );
+
+    wxClientDC dc( self );
+    wxFont Font = GetFont();
+    Font.SetPointSize( 8 );
+    dc.SetFont( Font );
+
+    wxCoord y;
+    dc.GetTextExtent( wxT( "Hg" ), NULL, &y );
+    Height += y + 2;
+    self->m_SecondLineOffset = Height;
+
+//    Font.SetPointSize( 7 );
+//    dc.SetFont( Font );
+//    dc.GetTextExtent( wxT( "Hg" ), NULL, &y );
+    Height += y + 4;
+
+    self->SetItemHeight( Height );
+
+//    guLogMessage( wxT( "PlayList::OnMeasureItem %i  %i" ), m_SecondLineOffset, Height );
+    return Height;
 }
 
 // -------------------------------------------------------------------------------- //

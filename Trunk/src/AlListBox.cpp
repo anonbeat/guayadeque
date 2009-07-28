@@ -126,6 +126,10 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 // -------------------------------------------------------------------------------- //
 wxCoord guAlListBox::OnMeasureItem( size_t n ) const
 {
+    // Code taken from the generic/listctrl.cpp file
+    guAlListBox * self = wxConstCast( this, guAlListBox );
+
+    self->SetItemHeight( ALLISTBOX_ITEM_SIZE );
     return wxCoord( ALLISTBOX_ITEM_SIZE );
 }
 
