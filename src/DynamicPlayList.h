@@ -171,8 +171,8 @@ class guDynPlayListEditor : public wxDialog
 		wxCheckBox * m_DescCheckBox;
 
 		wxCheckBox * m_AddOnAnyCheckBox;
-		wxButton * ButtonsSizerOK;
-		wxButton * ButtonsSizerCancel;
+
+		wxButton * m_BtnOk;
 
 		// event handlers, overide them in your derived class
 		void OnFiltersSelected( wxCommandEvent &event );
