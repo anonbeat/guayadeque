@@ -98,18 +98,21 @@ void guRating::OnMouseEvents( wxMouseEvent &event )
     int SavedRating = m_Rating;
     if( event.RightDown() )
     {
-        m_Rating = 0;
+        m_Rating = -1;
     }
     else if( event.LeftIsDown() )
     {
-        int w = ( ( m_Style * 2 ) + 9 );
-        m_Rating = wxMin( 5, ( wxMax( 0, event.m_x - 2 ) / w ) + 1 );
+        int w = ( ( m_Style * 2 ) + GURATING_IMAGE_SIZE );
+        if( event.m_x < 3 )
+            m_Rating = 0;
+        else
+            m_Rating = wxMin( 5, ( wxMax( 0, event.m_x - 3 ) / w ) + 1 );
         //guLogMessage( wxT( "Clicked %i %i" ), event.m_x, m_Rating );
     }
     if( SavedRating != m_Rating )
     {
         Refresh();
-        Update();
+        //Update();
         guRatingEvent evt( guEVT_RATING_CHANGED );
         //evt.SetClientObject( this );
         evt.SetInt( m_Rating );
