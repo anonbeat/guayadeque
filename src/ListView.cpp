@@ -220,7 +220,6 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     m_ListBox = new guListViewClient( this, flags, m_Columns, &m_Attr );
     m_Header = new guListViewHeader( this, m_ListBox, m_Columns, wxPoint( 0, 0 ) );
     m_ColSelect = ( style & guLISTVIEW_COLUMN_SELECT );
-    m_ItemHeight = 0;
 
     parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guListView::OnChangedSize ), NULL, this );
 	m_ListBox->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListView::OnKeyDown ), NULL, this );
@@ -345,20 +344,17 @@ void guListView::SetItemHeight( const int height )
 // -------------------------------------------------------------------------------- //
 wxCoord guListView::OnMeasureItem( size_t n ) const
 {
-    // Code taken from the generic/liistctrl.cpp file
-    if( !m_ItemHeight )
-    {
-        guListView * self = wxConstCast( this, guListView );
+    // Code taken from the generic/listctrl.cpp file
+    guListView * self = wxConstCast( this, guListView );
 
-        wxClientDC dc( self );
-        dc.SetFont( GetFont() );
+    wxClientDC dc( self );
+    dc.SetFont( GetFont() );
 
-        wxCoord y;
-        dc.GetTextExtent( wxT( "H" ), NULL, &y );
+    wxCoord y;
+    dc.GetTextExtent( wxT( "Hg" ), NULL, &y );
 
-        self->m_ItemHeight = y + 4; // 2 up, 2 down
-    }
-    return m_ItemHeight;
+    self->SetItemHeight( y + 4 ); // 2 up, 2 down
+    return y + 4;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -724,7 +720,6 @@ void guListViewClient::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) cons
                 w = rect.width;
 
             cRect.x = StartOfs;
-
             cRect.width = w - guLISTVIEW_ITEM_MARGIN;
 
             {
