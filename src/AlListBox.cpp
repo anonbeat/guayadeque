@@ -88,7 +88,7 @@ bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
 // -------------------------------------------------------------------------------- //
 void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-    wxString CoverPath;
+//    wxString CoverPath;
 //    wxLongLong time = wxGetLocalTimeMillis();
 
     //wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
@@ -101,13 +101,13 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 
     dc.SetTextForeground( IsSelected( row ) ? m_Attr.m_SelFgColor : m_Attr.m_TextFgColor );
 
-    dc.DrawText( Item->m_Name, rect.x + 45, rect.y + 8 );
+    dc.DrawText( Item->m_Name, rect.x + 45, rect.y + 4 );
 
     if( Item->m_Year > 0 )
     {
         m_Attr.m_Font->SetPointSize( 7 );
         dc.SetFont( * m_Attr.m_Font );
-        dc.DrawText( wxString::Format( wxT( "%04u" ), Item->m_Year ), rect.x + 45, rect.y + 26 );
+        dc.DrawText( wxString::Format( wxT( "%04u" ), Item->m_Year ), rect.x + 45, rect.y + 22 );
     }
 
     if( Item->m_Thumb && Item->m_Thumb->IsOk() )

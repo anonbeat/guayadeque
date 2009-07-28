@@ -340,7 +340,7 @@ void guPlayListPanel::OnPLNamesNewPlaylist( wxCommandEvent &event )
         PlayListEditor->FillPlayListEditData();
 
         wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "PlayList Name: " ),
-          _( "Enter the new playlist name" ), wxT( "New Dynamic Playlist" ) );
+          _( "Enter the new playlist name" ), _( "New Dynamic Playlist" ) );
         if( EntryDialog->ShowModal() == wxID_OK )
         {
             m_Db->CreateDynamicPlayList( EntryDialog->GetValue(), &DynPlayList );
