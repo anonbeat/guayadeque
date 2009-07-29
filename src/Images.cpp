@@ -77,6 +77,8 @@
 #include "./images/yellow_star_big.h"
 #include "./images/track_png.h"
 #include "./images/tiny_search.h"
+#include "./images/sort_asc.h"
+#include "./images/sort_desc.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -140,7 +142,9 @@ guImage_Item guImage_Items[] = {
     { guImage_yellow_star_mid,      sizeof( guImage_yellow_star_mid ),      wxBITMAP_TYPE_PNG },
     { guImage_yellow_star_big,      sizeof( guImage_yellow_star_big ),      wxBITMAP_TYPE_PNG },
     { guImage_track,                sizeof( guImage_track ),                wxBITMAP_TYPE_PNG },
-    { guImage_tiny_search,          sizeof( guImage_tiny_search ),          wxBITMAP_TYPE_PNG }
+    { guImage_tiny_search,          sizeof( guImage_tiny_search ),          wxBITMAP_TYPE_PNG },
+    { guImage_sort_asc,             sizeof( guImage_sort_asc ),             wxBITMAP_TYPE_PNG },
+    { guImage_sort_desc,            sizeof( guImage_sort_desc ),            wxBITMAP_TYPE_PNG }
 };
 
 
