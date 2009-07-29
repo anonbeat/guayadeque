@@ -1,4 +1,5 @@
 
+  * Clicking in Songs List box selects the sorting of the tracks
   * Added an option to save/restore playing position when track is bigger than the
     length specified in preferences
   * Fixed bug in library updated when only changed dir name

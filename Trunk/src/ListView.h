@@ -179,6 +179,7 @@ class guListView : public wxScrolledWindow
     int                     GetColumnWidth( const int col ) const;
     wxString                GetColumnLabel( const int col ) const;
     void                    SetColumnLabel( const int col, const wxString &label );
+    int                     GetColumnId( const int col ) const;
 
     bool                    IsAllowedColumnSelect( void ) const;
 

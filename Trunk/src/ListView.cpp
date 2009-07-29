@@ -535,7 +535,7 @@ void guListView::SetColumnWidth( const int col, const int width )
 // -------------------------------------------------------------------------------- //
 int guListView::GetColumnWidth( const int col ) const
 {
-    return ( * m_Columns )[ col ].m_Width;
+    return m_Columns->Item( col ).m_Width;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -548,6 +548,12 @@ bool guListView::IsAllowedColumnSelect( void ) const
 wxString guListView::GetColumnLabel( const int col ) const
 {
     return m_Columns->Item( col ).m_Label;
+}
+
+// -------------------------------------------------------------------------------- //
+int guListView::GetColumnId( const int col ) const
+{
+    return m_Columns->Item( col ).m_Id;
 }
 
 // -------------------------------------------------------------------------------- //

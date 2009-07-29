@@ -180,6 +180,20 @@ class guRadioStation
 };
 WX_DECLARE_OBJARRAY(guRadioStation,guRadioStations);
 
+enum guTRACKS_ORDER {
+    guTRACKS_ORDER_ARTIST_ALBUM_NUMBER, // Default order
+    guTRACKS_ORDER_NUMBER,
+    guTRACKS_ORDER_TITLE,
+    guTRACKS_ORDER_ARTIST,
+    guTRACKS_ORDER_ALBUM,
+    guTRACKS_ORDER_LENGTH,
+    guTRACKS_ORDER_YEAR,
+    guTRACKS_ORDER_BITRATE,
+    guTRACKS_ORDER_RATING,
+    guTRACKS_ORDER_PLAYCOUNT,
+    guTRACKS_ORDER_LASTPLAY,
+    guTRACKS_ORDER_ADDEDDATE
+};
 
 #define guRADIOSTATIONS_ORDER_NAME        0
 #define guRADIOSTATIONS_ORDER_BITRATE     1
@@ -242,6 +256,8 @@ class DbLibrary {
     wxArrayInt         m_RaLaFilters;
     wxArrayString      m_RaTeFilters;
 
+    guTRACKS_ORDER     m_TracksOrder;
+    bool               m_TracksOrderDesc;
     int                m_StationsOrder; // 0 -> Name, 1 -> BitRate, 2 -> Listeners
     bool               m_StationsOrderDesc;
     int                m_AlOrder; // 0 ->
@@ -316,6 +332,7 @@ class DbLibrary {
 
     int                 GetSongs( wxArrayInt SongIds, guTrackArray * Songs );
     int                 GetSongs( guTrackArray * Songs );
+    void                SetSongsOrder( const guTRACKS_ORDER order );
     void                UpdateSongs( guTrackArray * Songs );
     int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs );
     int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs, guTrackMode trackmode = guTRACK_MODE_USER );
