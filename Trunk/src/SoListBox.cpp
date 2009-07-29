@@ -29,6 +29,8 @@
 #include "Utils.h"
 #include "RatingCtrl.h"
 
+#include <wx/imaglist.h>
+
 wxString guSONGS_COLUMN_NAMES[ 11 ] = {
     wxT( "#" ),
     _( "Title" ),
@@ -52,7 +54,14 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
     m_Db = NewDb;
     m_ConfName = confname;
 
+    wxImageList * ImageList = new wxImageList();
+    ImageList->Add( guImage( guImage_INDEX_sort_asc ) );
+    ImageList->Add( guImage( guIMAGE_INDEX_sort_desc ) );
+
+    SetImageList( ImageList );
+
     int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) ) - 1;
+    bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
 
     int ColId;
     int index;
@@ -61,12 +70,18 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
     {
         ColId = Config->ReadNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ), index, m_ConfName + wxT( "Columns" ) );
         guListViewColumn * Column = new guListViewColumn(
-            guSONGS_COLUMN_NAMES[ ColId ]  + ( ColId == ColOrder ? wxT( "*" ) : wxEmptyString ),
+            //guSONGS_COLUMN_NAMES[ ColId ]  + ( ColId == ColOrder ? wxT( "*" ) : wxEmptyString ),
+            guSONGS_COLUMN_NAMES[ ColId ],
             ColId,
             Config->ReadNum( m_ConfName + wxString::Format( wxT( "ColWidth%u" ), index ), 80, m_ConfName + wxT( "Columns" ) ),
             Config->ReadBool( m_ConfName + wxString::Format( wxT( "ColShow%u" ), index ), true, m_ConfName + wxT( "Columns" ) )
             );
         InsertColumn( Column );
+
+        if( ColId == ColOrder )
+        {
+            SetColumnImage( index, ColOrderDesc );
+        }
     }
 
     m_GreyStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_grey_star_tiny + GURATING_STYLE_MID ) ) );

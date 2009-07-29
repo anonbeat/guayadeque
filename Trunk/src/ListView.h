@@ -42,6 +42,7 @@ class guListViewColumn
     wxString m_Label;
     int      m_Id;
     int      m_Width;
+    int      m_ImageIndex;
     bool     m_Enabled;
 
     guListViewColumn() {};
@@ -52,6 +53,7 @@ class guListViewColumn
         m_Id = id;
         m_Width = width;
         m_Enabled = enabled;
+        m_ImageIndex = wxNOT_FOUND;
     };
 
 };
@@ -119,6 +121,7 @@ class guListView : public wxScrolledWindow
     guListViewAttr          m_Attr;
     bool                    m_ColSelect;
     guListViewColumnArray * m_Columns;
+    wxImageList *           m_ImageList;
 
     virtual void        OnKeyDown( wxKeyEvent &event );
     virtual void        GetItemsList( void ) = 0;
@@ -174,12 +177,15 @@ class guListView : public wxScrolledWindow
     virtual int inline      GetItemId( const int item ) const = 0;
     long                    FindItem( long start, const wxString &str, bool partial );
 
+    void                    SetImageList( wxImageList * imagelist );
+
     void                    InsertColumn( guListViewColumn * column );
     void                    SetColumnWidth( const int col, const int width );
     int                     GetColumnWidth( const int col ) const;
     wxString                GetColumnLabel( const int col ) const;
     void                    SetColumnLabel( const int col, const wxString &label );
     int                     GetColumnId( const int col ) const;
+    void                    SetColumnImage( const int col, const int imageindex );
 
     bool                    IsAllowedColumnSelect( void ) const;
 

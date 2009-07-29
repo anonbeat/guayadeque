@@ -3266,6 +3266,18 @@ void DbLibrary::SetSongsOrder( const guTRACKS_ORDER order )
 }
 
 // -------------------------------------------------------------------------------- //
+guTRACKS_ORDER DbLibrary::GetSongsOrder( void ) const
+{
+    return m_TracksOrder;
+}
+
+// -------------------------------------------------------------------------------- //
+bool DbLibrary::GetSongsOrderDesc( void ) const
+{
+    return m_TracksOrderDesc;
+}
+
+// -------------------------------------------------------------------------------- //
 bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath )
 {
   wxString query;

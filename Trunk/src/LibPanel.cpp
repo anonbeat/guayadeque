@@ -975,18 +975,22 @@ void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongListColClicked( wxListEvent &event )
 {
-    int ColNum = m_SongListCtrl->GetColumnId( event.m_col );
-    m_Db->SetSongsOrder( ( guTRACKS_ORDER ) ( ColNum + 1 ) );
+    int ColId = m_SongListCtrl->GetColumnId( event.m_col );
+    m_Db->SetSongsOrder( ( guTRACKS_ORDER ) ( ColId + 1 ) );
 
     // Create the Columns
-    int ColId;
+    int CurColId;
     int index;
     int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
     {
-        ColId = m_SongListCtrl->GetColumnId( index );
-        m_SongListCtrl->SetColumnLabel( index,
-            guSONGS_COLUMN_NAMES[ ColId ] + ( ColId == ColNum ? wxT( "*" ) : wxEmptyString ) );
+        CurColId = m_SongListCtrl->GetColumnId( index );
+        m_SongListCtrl->SetColumnImage( index,
+            ( ColId != CurColId ) ? wxNOT_FOUND :
+                ( m_Db->GetSongsOrderDesc() ? 1 : 0 ) );
+
+//        m_SongListCtrl->SetColumnLabel( index,
+//            guSONGS_COLUMN_NAMES[ ColId ] + ( ColId == ColNum ? wxT( "*" ) : wxEmptyString ) );
     }
 
     m_SongListCtrl->ReloadItems();
