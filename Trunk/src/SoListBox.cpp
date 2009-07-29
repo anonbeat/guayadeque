@@ -29,7 +29,7 @@
 #include "Utils.h"
 #include "RatingCtrl.h"
 
-wxString guSONGS_COLUMN_NAMES[] = {
+wxString guSONGS_COLUMN_NAMES[ 11 ] = {
     wxT( "#" ),
     _( "Title" ),
     _( "Artist" ),
@@ -52,6 +52,8 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
     m_Db = NewDb;
     m_ConfName = confname;
 
+    int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) ) - 1;
+
     int ColId;
     int index;
     int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
@@ -59,7 +61,7 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
     {
         ColId = Config->ReadNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ), index, m_ConfName + wxT( "Columns" ) );
         guListViewColumn * Column = new guListViewColumn(
-            guSONGS_COLUMN_NAMES[ ColId ],
+            guSONGS_COLUMN_NAMES[ ColId ]  + ( ColId == ColOrder ? wxT( "*" ) : wxEmptyString ),
             ColId,
             Config->ReadNum( m_ConfName + wxString::Format( wxT( "ColWidth%u" ), index ), 80, m_ConfName + wxT( "Columns" ) ),
             Config->ReadBool( m_ConfName + wxString::Format( wxT( "ColShow%u" ), index ), true, m_ConfName + wxT( "Columns" ) )

@@ -88,10 +88,6 @@ bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
 // -------------------------------------------------------------------------------- //
 void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-//    wxString CoverPath;
-//    wxLongLong time = wxGetLocalTimeMillis();
-
-    //wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
     m_Attr.m_Font->SetPointSize( 10 );
 
     guAlbumItem * Item = &( * ( guAlbumItems * ) m_Items )[ row ];
@@ -107,7 +103,7 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
     {
         m_Attr.m_Font->SetPointSize( 7 );
         dc.SetFont( * m_Attr.m_Font );
-        dc.DrawText( wxString::Format( wxT( "%04u" ), Item->m_Year ), rect.x + 45, rect.y + 22 );
+        dc.DrawText( wxString::Format( wxT( "%4u" ), Item->m_Year ), rect.x + 45, rect.y + 22 );
     }
 
     if( Item->m_Thumb && Item->m_Thumb->IsOk() )
@@ -118,9 +114,6 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
     {
         guLogError( wxT( "Thumb image corrupt or not correctly loaded" ) );
     }
-
-//    time = wxGetLocalTimeMillis() - time;
-//    guLogWarning( _T( "OnDrawItem %i (%ums)" ), n, time.GetLo() );
 }
 
 // -------------------------------------------------------------------------------- //
