@@ -3177,17 +3177,17 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
   }
   //
   if( orderdesc )
-    query += wxT( " DESC;" );
+    query += wxT( " DESC" );
 
   switch( order )
   {
     case guTRACKS_ORDER_ARTIST_ALBUM_NUMBER :
     case guTRACKS_ORDER_ARTIST :
-      query += wxT( ",album_name,song_number" );
+      query += wxT( ",album_name,song_number;" );
       break;
 
     case guTRACKS_ORDER_ALBUM :
-      query += wxT( ",song_number" );
+      query += wxT( ",song_number;" );
       break;
 
   }
@@ -3236,6 +3236,8 @@ int DbLibrary::GetSongs( guTrackArray * Songs )
     query += FiltersSQL( GULIBRARY_FILTER_SONGS );
   }
   query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
+
+  //guLogMessage( wxT( "%s" ), query.c_str() );
 
   dbRes = ExecuteQuery( query );
 
