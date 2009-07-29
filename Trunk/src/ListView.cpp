@@ -1024,7 +1024,6 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
 
             //guLogMessage( wxT( "Pinting header %u at %u %u '%s'" ), index, cRect.x, cRect.width, ( * m_Columns )[ index ].m_Label.c_str() );
 
-
             wxRendererNative::Get().DrawHeaderButton( this, dc, cRect, flags );
 
             if( CurCol->m_ImageIndex >= 0 )
