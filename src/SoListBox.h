@@ -36,6 +36,8 @@
 #define guSONGS_COLUMN_LASTPLAY     9
 #define guSONGS_COLUMN_ADDEDDATE    10
 
+extern wxString guSONGS_COLUMN_NAMES[ 11 ];
+
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public guListView
 {

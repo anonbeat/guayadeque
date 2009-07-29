@@ -52,6 +52,8 @@ WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 // -------------------------------------------------------------------------------- //
 // Various functions
 // -------------------------------------------------------------------------------- //
+wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order );
+wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc );
 
 // -------------------------------------------------------------------------------- //
 int guAlbumItemSearch( const guAlbumItems &items, int start, int end, int id )
@@ -2720,15 +2722,15 @@ int DbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
     subquery = ArrayIntToStrList( Labels );
 
     query = GU_TRACKS_QUERYSTR;
-    query += wxT( "WHERE ( (song_artistid IN ( SELECT settag_artistid FROM settags WHERE " \
+    query += GetSongsDBNamesSQL( m_TracksOrder );
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += wxT( "( (song_artistid IN ( SELECT settag_artistid FROM settags WHERE " \
                   "settag_tagid IN " ) + subquery + wxT( " and settag_artistid > 0 ) ) OR" );
     query += wxT( " (song_albumid IN ( SELECT settag_albumid FROM settags WHERE " \
                   "settag_tagid IN " ) + subquery + wxT( " and settag_albumid > 0 ) ) OR" );
     query += wxT( " (song_id IN ( SELECT settag_songid FROM settags WHERE " \
-                  "settag_tagid IN " ) + subquery + wxT( " and settag_songid > 0 ) ) )" );
-
-    //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
-    query += wxT( " ORDER BY song_albumid, song_number;" );
+                  "settag_tagid IN " ) + subquery + wxT( " and settag_songid > 0 ) ) ) " );
+    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
     dbRes = ExecuteQuery( query );
 
@@ -2752,10 +2754,11 @@ int DbLibrary::GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs )
 
   if( Genres.Count() )
   {
-    query = GU_TRACKS_QUERYSTR wxT( " WHERE song_genreid IN " );
-    query += ArrayIntToStrList( Genres );
-    //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
-    query += wxT( " ORDER BY song_albumid, song_number;" );
+    query = GU_TRACKS_QUERYSTR;
+    query += GetSongsDBNamesSQL( m_TracksOrder );
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += wxT( "song_genreid IN " ) + ArrayIntToStrList( Genres );
+    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
     dbRes = ExecuteQuery( query );
 
@@ -2778,10 +2781,11 @@ int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
   guTrack * Song;
   if( Artists.Count() )
   {
-    query = GU_TRACKS_QUERYSTR wxT( " WHERE song_artistid IN " );
-    query += ArrayIntToStrList( Artists );
-    //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
-    query += wxT( " ORDER BY song_albumid, song_number;" );
+    query = GU_TRACKS_QUERYSTR;
+    query += GetSongsDBNamesSQL( m_TracksOrder );
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += wxT( "song_artistid IN " ) + ArrayIntToStrList( Artists );
+    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
     dbRes = ExecuteQuery( query );
 
@@ -2826,10 +2830,11 @@ int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs )
   guTrack * Song;
   if( Albums.Count() )
   {
-    query = GU_TRACKS_QUERYSTR wxT( " WHERE song_albumid IN " );
-    query += ArrayIntToStrList( Albums );
-    //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
-    query += wxT( " ORDER BY song_albumid, song_number;" );
+    query = GU_TRACKS_QUERYSTR;
+    query += GetSongsDBNamesSQL( m_TracksOrder );
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += wxT( "song_albumid IN " ) + ArrayIntToStrList( Albums );
+    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
     dbRes = ExecuteQuery( query );
 
@@ -3089,48 +3094,40 @@ int DbLibrary::FindTrackFile( const wxString &filename, guTrack * song )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetSongs( wxArrayInt SongIds, guTrackArray * Songs )
+wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
 {
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-  guTrack * Song;
-
-  query = GU_TRACKS_QUERYSTR;
-  query += wxT( "WHERE song_id IN " ) + ArrayIntToStrList( SongIds );
-  // TODO : Allow the user to select the order of the tracks
-  query += wxT( " ORDER BY song_albumid, song_number;" );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
+  wxString query = wxEmptyString;
+  //
+  switch( order )
   {
-    Song = new guTrack();
-    FillTrackFromDb( Song, &dbRes );
-    Songs->Add( Song );
+    case guTRACKS_ORDER_ARTIST_ALBUM_NUMBER :
+    case guTRACKS_ORDER_ARTIST :
+    case guTRACKS_ORDER_ALBUM :
+      query += wxT( ",artists,albums WHERE song_artistid = artist_id AND song_albumid = album_id " );
+      break;
+//    case guTRACKS_ORDER_TITLE :
+//    case guTRACKS_ORDER_NUMBER :
+//    case guTRACKS_ORDER_LENGTH :
+//    case guTRACKS_ORDER_YEAR :
+//    case guTRACKS_ORDER_RATING :
+//    case guTRACKS_ORDER_BITRATE :
+//    case guTRACKS_ORDER_PLAYCOUNT :
+//    case guTRACKS_ORDER_LASTPLAY :
+//    case guTRACKS_ORDER_ADDEDDATE :
+//      break;
   }
-  dbRes.Finalize();
-
-  return Songs->Count();
+  return query;
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetSongs( guTrackArray * Songs )
+wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
 {
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-  guTrack * Song;
-  //guLogMessage( wxT( "DbLibrary::GetSongs" ) );
-
-  query = GU_TRACKS_QUERYSTR;
-  if( GetFiltersCount() )
-    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
-
-  query += wxT( " ORDER BY " );
-
-  switch( m_TracksOrder )
+  wxString query = wxT( " ORDER BY " );
+  //
+  switch( order )
   {
     case guTRACKS_ORDER_ARTIST_ALBUM_NUMBER :
-      query += wxT( "song_artistid, song_albumid, song_number" );
+      query += wxT( "artist_name" );
       break;
 
     case guTRACKS_ORDER_TITLE :
@@ -3138,11 +3135,11 @@ int DbLibrary::GetSongs( guTrackArray * Songs )
       break;
 
     case guTRACKS_ORDER_ARTIST :
-      query += wxT( "song_artistid" );
+      query += wxT( "artist_name" );
       break;
 
     case guTRACKS_ORDER_ALBUM :
-      query += wxT( "song_albumid" );
+      query += wxT( "album_name" );
       break;
 
     case guTRACKS_ORDER_NUMBER :
@@ -3178,9 +3175,67 @@ int DbLibrary::GetSongs( guTrackArray * Songs )
       break;
 
   }
-
-  if( m_TracksOrderDesc )
+  //
+  if( orderdesc )
     query += wxT( " DESC;" );
+
+  switch( order )
+  {
+    case guTRACKS_ORDER_ARTIST_ALBUM_NUMBER :
+    case guTRACKS_ORDER_ARTIST :
+      query += wxT( ",album_name, song_number" );
+      break;
+
+    case guTRACKS_ORDER_ALBUM :
+      query += wxT( ",song_number" );
+      break;
+
+  }
+  //
+  return query;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetSongs( wxArrayInt SongIds, guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+
+  query = GU_TRACKS_QUERYSTR;
+  query += GetSongsDBNamesSQL( m_TracksOrder );
+  query += wxT( "WHERE song_id IN " ) + ArrayIntToStrList( SongIds );
+  query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Song = new guTrack();
+    FillTrackFromDb( Song, &dbRes );
+    Songs->Add( Song );
+  }
+  dbRes.Finalize();
+
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetSongs( guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+  //guLogMessage( wxT( "DbLibrary::GetSongs" ) );
+
+  query = GU_TRACKS_QUERYSTR;
+  query += GetSongsDBNamesSQL( m_TracksOrder );
+  if( GetFiltersCount() )
+  {
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += FiltersSQL( GULIBRARY_FILTER_SONGS );
+  }
+  query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
   dbRes = ExecuteQuery( query );
 
