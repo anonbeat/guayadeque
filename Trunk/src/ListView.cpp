@@ -1389,6 +1389,7 @@ void guListViewClientTimer::Notify()
     int index;
     if( m_ListViewClient->m_SearchStr.Len() )
     {
+        m_ListViewClient->SetSelection( -1 );
         index = m_ListViewClient->FindItem( 0, m_ListViewClient->m_SearchStr, true );
         m_ListViewClient->SetSelection( index );
 
