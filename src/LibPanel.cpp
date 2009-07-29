@@ -232,6 +232,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
     m_AlbumListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnAlbumListActivated ), NULL, this );
 
     m_SongListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
+    m_SongListCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
 
     m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
@@ -299,6 +300,7 @@ guLibPanel::~guLibPanel()
     m_ArtistListCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( guLibPanel::OnArtistListActivated ), NULL, this );
 
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
+    m_SongListCtrl->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
 
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
@@ -968,6 +970,14 @@ void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
         }
         EntryDialog->Destroy();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongListColClicked( wxListEvent &event )
+{
+    int ColId = m_SongListCtrl->GetColumnId( event.m_col );
+    m_Db->SetSongsOrder( ( guTRACKS_ORDER ) ( ColId + 1 ) );
+    m_SongListCtrl->ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //

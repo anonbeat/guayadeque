@@ -273,7 +273,8 @@ DbLibrary::DbLibrary()
   guConfig * Config = ( guConfig * ) guConfig::Get();
   if( Config )
   {
-    //
+    m_TracksOrder = ( guTRACKS_ORDER ) Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
+    m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
     m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
   }
@@ -309,7 +310,8 @@ DbLibrary::DbLibrary( const wxString &DbName )
   guConfig * Config = ( guConfig * ) guConfig::Get();
   if( Config )
   {
-    //
+    m_TracksOrder = ( guTRACKS_ORDER ) Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
+    m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
     m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
   }
@@ -332,8 +334,8 @@ DbLibrary::~DbLibrary()
   guConfig * Config = ( guConfig * ) guConfig::Get();
   if( Config )
   {
-    //
-    //Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlOrder, wxT( "General" ) );
+    Config->WriteNum( wxT( "TracksOrder" ), m_TracksOrder, wxT( "General" ) );
+    Config->WriteBool( wxT( "TracksOrderDesc" ), m_TracksOrderDesc, wxT( "General" ) );
     Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "General" ) );
   }
 
@@ -3122,8 +3124,63 @@ int DbLibrary::GetSongs( guTrackArray * Songs )
   query = GU_TRACKS_QUERYSTR;
   if( GetFiltersCount() )
     query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
-  //query += wxT( " ORDER BY song_artistid, song_albumid, song_number;" );
-  query += wxT( " ORDER BY song_albumid, song_number;" );
+
+  query += wxT( " ORDER BY " );
+
+  switch( m_TracksOrder )
+  {
+    case guTRACKS_ORDER_ARTIST_ALBUM_NUMBER :
+      query += wxT( "song_artistid, song_albumid, song_number" );
+      break;
+
+    case guTRACKS_ORDER_TITLE :
+      query += wxT( "song_name" );
+      break;
+
+    case guTRACKS_ORDER_ARTIST :
+      query += wxT( "song_artistid" );
+      break;
+
+    case guTRACKS_ORDER_ALBUM :
+      query += wxT( "song_albumid" );
+      break;
+
+    case guTRACKS_ORDER_NUMBER :
+      query += wxT( "song_number" );
+      break;
+
+    case guTRACKS_ORDER_LENGTH :
+      query += wxT( "song_length" );
+      break;
+
+    case guTRACKS_ORDER_YEAR :
+      query += wxT( "song_year" );
+      break;
+
+    case guTRACKS_ORDER_RATING :
+      query += wxT( "song_rating" );
+      break;
+
+    case guTRACKS_ORDER_BITRATE :
+      query += wxT( "song_bitrate" );
+      break;
+
+    case guTRACKS_ORDER_PLAYCOUNT :
+      query += wxT( "song_playcount" );
+      break;
+
+    case guTRACKS_ORDER_LASTPLAY :
+      query += wxT( "song_lastplay" );
+      break;
+
+    case guTRACKS_ORDER_ADDEDDATE :
+      query += wxT( "song_addedtime" );
+      break;
+
+  }
+
+  if( m_TracksOrderDesc )
+    query += wxT( " DESC;" );
 
   dbRes = ExecuteQuery( query );
 
@@ -3136,6 +3193,19 @@ int DbLibrary::GetSongs( guTrackArray * Songs )
   dbRes.Finalize();
 
   return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetSongsOrder( const guTRACKS_ORDER order )
+{
+    if( m_TracksOrder != order )
+    {
+        m_TracksOrder = order;
+    }
+    else
+    {
+        m_TracksOrderDesc = !m_TracksOrderDesc;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
