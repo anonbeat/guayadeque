@@ -3187,7 +3187,7 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
       break;
 
     case guTRACKS_ORDER_ALBUM :
-      query += wxT( ",song_number;" );
+      query += wxT( ",artist_name, song_number;" );
       break;
 
   }
