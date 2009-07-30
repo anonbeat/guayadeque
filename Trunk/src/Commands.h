@@ -82,6 +82,9 @@
 #define ID_SONG_EDITTRACKS              1065
 #define ID_SONG_COPYTO                  1066
 #define ID_SONG_SAVEPLAYLIST            1067
+#define ID_SONG_BROWSE_GENRE            1068
+#define ID_SONG_BROWSE_ARTIST           1069
+#define ID_SONG_BROWSE_ALBUM            2060
 
 //
 #define ID_PLAYER_PLAYLIST_UPDATELIST          1070
@@ -135,7 +138,7 @@
 
 #define ID_LASTFM_VISIT_URL             1130
 #define ID_LASTFM_COPYTOCLIPBOARD       1131
-#define ID_LASTFM_SEARCH_LINK           2000    // From 2000 for Link #0 to 2999
+#define ID_LASTFM_SEARCH_LINK           4000    // From 4000 for Link #0 to 4999
 
 #define ID_ARTIST_COMMANDS              3000
 #define ID_ALBUM_COMMANDS               3100 // 3000...3099

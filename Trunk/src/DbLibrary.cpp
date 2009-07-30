@@ -2209,14 +2209,16 @@ void inline DbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbR
 {
   Song->m_SongId     = dbRes->GetInt( 0 );
   Song->m_SongName   = dbRes->GetString( 1 );
-  Song->m_ArtistName = guListItemsGetName( m_ArtistsCache, dbRes->GetInt( 3 ) );
+  Song->m_GenreId    = dbRes->GetInt( 2 );
+  Song->m_ArtistId   = dbRes->GetInt( 3 );
+  Song->m_ArtistName = guListItemsGetName( m_ArtistsCache, Song->m_ArtistId );
   Song->m_AlbumId    = dbRes->GetInt( 4 );
   Song->m_AlbumName  = guAlbumItemsGetName( m_AlbumsCache, Song->m_AlbumId );
   Song->m_Length     = dbRes->GetInt( 5 );
   Song->m_Number     = dbRes->GetInt( 6 );
   Song->m_FileName   = guListItemsGetName( m_PathsCache, dbRes->GetInt( 7 ) ) + dbRes->GetString( 8 );
   Song->m_CoverId    = guAlbumItemsGetCoverId( m_AlbumsCache, Song->m_AlbumId );
-  Song->m_GenreName  = guListItemsGetName( m_GenresCache, dbRes->GetInt( 2 ) );
+  Song->m_GenreName  = guListItemsGetName( m_GenresCache, Song->m_GenreId );
   Song->m_Year       = dbRes->GetInt( 9 );
   Song->m_Bitrate    = dbRes->GetInt( 10 );
   Song->m_Rating     = dbRes->GetInt( 11 );

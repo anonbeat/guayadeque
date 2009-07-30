@@ -42,6 +42,8 @@ class guListBox : public guListView
     virtual int inline      GetItemId( const int item ) const;
     virtual void            ReloadItems( bool reset = true );
 
+    virtual void            SetSelectedItems( const wxArrayInt &selection );
+
 };
 
 #endif

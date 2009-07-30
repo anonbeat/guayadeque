@@ -73,7 +73,7 @@ bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
     if( item != wxNOT_FOUND )
     {
         SetSelection( item );
-        ScrollToLine( item );
+        //ScrollToLine( item );
         return true;
 //        UpdateView();
 //

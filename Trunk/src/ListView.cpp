@@ -510,6 +510,7 @@ void guListView::SetSelectedItems( const wxArrayInt &selection )
 {
     int index;
     int count = GetItemCount();
+    ClearSelectedItems();
     for( index = 0; index < count; index++ )
     {
         if( selection.Index( GetItemId( index ) ) != wxNOT_FOUND )

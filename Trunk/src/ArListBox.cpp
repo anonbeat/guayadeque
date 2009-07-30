@@ -259,7 +259,7 @@ bool guArListBox::SelectArtistName( const wxString &ArtistName )
     if( item != wxNOT_FOUND )
     {
         SetSelection( item );
-        ScrollToLine( item );
+        //ScrollToLine( item );
     }
 }
 
