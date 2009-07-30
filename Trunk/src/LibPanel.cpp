@@ -985,12 +985,12 @@ void guLibPanel::OnSongListColClicked( wxListEvent &event )
     for( index = 0; index < count; index++ )
     {
         CurColId = m_SongListCtrl->GetColumnId( index );
-        m_SongListCtrl->SetColumnImage( index,
-            ( ColId != CurColId ) ? wxNOT_FOUND :
-                ( m_Db->GetSongsOrderDesc() ? 1 : 0 ) );
+//        m_SongListCtrl->SetColumnImage( index,
+//            ( ColId != CurColId ) ? wxNOT_FOUND :
+//                ( m_Db->GetSongsOrderDesc() ? 1 : 0 ) );
 
-//        m_SongListCtrl->SetColumnLabel( index,
-//            guSONGS_COLUMN_NAMES[ ColId ] + ( ColId == ColNum ? wxT( "*" ) : wxEmptyString ) );
+        m_SongListCtrl->SetColumnLabel( index,
+            guSONGS_COLUMN_NAMES[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_Db->GetSongsOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
     m_SongListCtrl->ReloadItems();
