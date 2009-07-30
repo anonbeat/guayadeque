@@ -31,7 +31,8 @@ class guListViewClient;
 class guListViewHeader;
 
 // Own style flags
-#define guLISTVIEW_COLUMN_SELECT    0x1000
+#define guLISTVIEW_COLUMN_SELECT        0x1000
+#define guLISTVIEW_COLUMN_SORTING       0X2000
 
 // -------------------------------------------------------------------------------- //
 // guListViewColumn
