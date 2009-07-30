@@ -449,9 +449,8 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     }
     else
     {
-        dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
+        dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 13 );
     }
-
 }
 
 // -------------------------------------------------------------------------------- //
