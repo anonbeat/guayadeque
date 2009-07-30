@@ -58,13 +58,20 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
     bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
 
     int ColId;
+    wxString ColName;
     int index;
     int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
     {
         ColId = Config->ReadNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ), index, m_ConfName + wxT( "Columns" ) );
+
+        ColName = guSONGS_COLUMN_NAMES[ ColId ];
+
+        if( style & guLISTVIEW_COLUMN_SORTING )
+            ColName += ( ( ColId == ColOrder ) ? ( ColOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
+
         guListViewColumn * Column = new guListViewColumn(
-            guSONGS_COLUMN_NAMES[ ColId ]  + ( ( ColId == ColOrder ) ? ( ColOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ),
+            ColName,
             ColId,
             Config->ReadNum( m_ConfName + wxString::Format( wxT( "ColWidth%u" ), index ), 80, m_ConfName + wxT( "Columns" ) ),
             Config->ReadBool( m_ConfName + wxString::Format( wxT( "ColShow%u" ), index ), true, m_ConfName + wxT( "Columns" ) )
