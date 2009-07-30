@@ -47,10 +47,8 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 
 	m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
 	m_LyricText->SetBorders( 0 );
-
-	wxColour BGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME );
-	BGColor.Set( BGColor.Red() - 5, BGColor.Green() - 5, BGColor.Blue() - 5 );
-	m_LyricText->SetBackgroundColour( BGColor );
+    m_LyricText->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s></body></html>" ),
+          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str() ) );
 	m_LyricText->SetFonts( CurrentFont.GetFaceName(), wxEmptyString );
 
 	MainSizer->Add( m_LyricText, 1, wxALL|wxEXPAND, 5 );
