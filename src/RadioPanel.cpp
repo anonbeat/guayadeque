@@ -273,27 +273,18 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * db 
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
     m_StationsOrderDesc = Config->ReadNum( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );;
 
-    wxImageList * ImageList = new wxImageList();
-    ImageList->Add( guImage( guImage_INDEX_sort_asc ) );
-    ImageList->Add( guImage( guIMAGE_INDEX_sort_desc ) );
-    SetImageList( ImageList );
-
     // Create the Columns
+    int ColId;
     int index;
     int count = sizeof( guRADIOSTATIONS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
     {
         guListViewColumn * Column = new guListViewColumn(
-            guRADIOSTATIONS_COLUMN_NAMES[ index ],
+            guRADIOSTATIONS_COLUMN_NAMES[ index ] + ( ( index == m_StationsOrder ) ? ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ),
             index,
             Config->ReadNum( wxString::Format( wxT( "RadioColSize%u" ), index ), 80, wxT( "Positions" ) )
         );
         InsertColumn( Column );
-
-        if( m_StationsOrder == index )
-        {
-            SetColumnImage( index, m_StationsOrderDesc );
-        }
     }
 
     ReloadItems();
@@ -421,8 +412,9 @@ void guRadioStationListBox::SetStationsOrder( int order )
     int count = 3;
     for( index = 0; index < count; index++ )
     {
-        SetColumnImage( index,
-            ( index != m_StationsOrder ) ? wxNOT_FOUND : m_StationsOrderDesc );
+        SetColumnLabel( index,
+            guRADIOSTATIONS_COLUMN_NAMES[ index ]  + ( ( index == m_StationsOrder ) ?
+                ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
     ReloadItems();
