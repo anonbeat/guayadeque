@@ -92,3 +92,12 @@ wxString guListBox::GetSearchText( const int item ) const
 }
 
 // -------------------------------------------------------------------------------- //
+void  guListBox::SetSelectedItems( const wxArrayInt &selection )
+{
+    guListView::SetSelectedItems( selection );
+
+    wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
+    event.SetEventObject( this );
+    event.SetInt( -1 );
+    (void) GetEventHandler()->ProcessEvent( event );
+}

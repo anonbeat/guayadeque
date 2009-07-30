@@ -269,7 +269,10 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
     Connect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongsEditTracksClicked ) );
     Connect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongCopyToClicked ) );
     Connect( ID_SONG_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSavePlayListClicked ) );
-    //
+
+    Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectGenre ) );
+    Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectArtist ) );
+    Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbum ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -337,6 +340,10 @@ guLibPanel::~guLibPanel()
     Disconnect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongsEditTracksClicked ) );
     Disconnect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongCopyToClicked ) );
     Disconnect( ID_SONG_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSavePlayListClicked ) );
+
+    Disconnect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectGenre ) );
+    Disconnect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectArtist ) );
+    Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbum ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -985,15 +992,86 @@ void guLibPanel::OnSongListColClicked( wxListEvent &event )
     for( index = 0; index < count; index++ )
     {
         CurColId = m_SongListCtrl->GetColumnId( index );
-//        m_SongListCtrl->SetColumnImage( index,
-//            ( ColId != CurColId ) ? wxNOT_FOUND :
-//                ( m_Db->GetSongsOrderDesc() ? 1 : 0 ) );
-
         m_SongListCtrl->SetColumnLabel( index,
             guSONGS_COLUMN_NAMES[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_Db->GetSongsOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
     m_SongListCtrl->ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongSelectGenre( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_SongListCtrl->GetSelectedSongs( &Tracks );
+    wxArrayInt Genres;
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Genres.Index( Tracks[ index ].m_GenreId ) == wxNOT_FOUND )
+        {
+            Genres.Add( Tracks[ index ].m_GenreId );
+        }
+    }
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_GenreListCtrl->SetSelectedItems( Genres );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongSelectArtist( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_SongListCtrl->GetSelectedSongs( &Tracks );
+    wxArrayInt Artists;
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Artists.Index( Tracks[ index ].m_ArtistId ) == wxNOT_FOUND )
+        {
+            Artists.Add( Tracks[ index ].m_ArtistId );
+        }
+    }
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_ArtistListCtrl->SetSelectedItems( Artists );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongSelectAlbum( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_SongListCtrl->GetSelectedSongs( &Tracks );
+    wxArrayInt Albums;
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Albums.Index( Tracks[ index ].m_AlbumId ) == wxNOT_FOUND )
+        {
+            Albums.Add( Tracks[ index ].m_AlbumId );
+        }
+    }
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_AlbumListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_AlbumListCtrl->SetSelectedItems( Albums );
 }
 
 // -------------------------------------------------------------------------------- //
