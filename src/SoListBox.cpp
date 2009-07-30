@@ -60,7 +60,7 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
 //
 //    SetImageList( ImageList );
 
-    int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) ) - 1;
+    int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
 
     int ColId;
