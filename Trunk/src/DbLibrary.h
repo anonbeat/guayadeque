@@ -181,7 +181,6 @@ class guRadioStation
 WX_DECLARE_OBJARRAY(guRadioStation,guRadioStations);
 
 enum guTRACKS_ORDER {
-    guTRACKS_ORDER_ARTIST_ALBUM_NUMBER, // Default order
     guTRACKS_ORDER_NUMBER,
     guTRACKS_ORDER_TITLE,
     guTRACKS_ORDER_ARTIST,

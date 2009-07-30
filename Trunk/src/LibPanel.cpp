@@ -976,7 +976,7 @@ void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
 void guLibPanel::OnSongListColClicked( wxListEvent &event )
 {
     int ColId = m_SongListCtrl->GetColumnId( event.m_col );
-    m_Db->SetSongsOrder( ( guTRACKS_ORDER ) ( ColId + 1 ) );
+    m_Db->SetSongsOrder( ( guTRACKS_ORDER ) ColId );
 
     // Create the Columns
     int CurColId;
