@@ -21,24 +21,46 @@
 #ifndef LYRICSPANEL_H
 #define LYRICSPANEL_H
 
-#include <wx/html/htmlwin.h>
-#include <wx/scrolwin.h>
-#include <wx/sizer.h>
+#include <wx/bitmap.h>
+#include <wx/checkbox.h>
+#include <wx/colour.h>
+#include <wx/font.h>
+#include <wx/gdicmn.h>
+#include <wx/image.h>
+#include <wx/settings.h>
 #include <wx/stattext.h>
+#include <wx/string.h>
+#include <wx/textctrl.h>
+#include <wx/icon.h>
+#include <wx/bmpbuttn.h>
+#include <wx/button.h>
+#include <wx/sizer.h>
+#include <wx/statline.h>
+#include <wx/html/htmlwin.h>
+#include <wx/panel.h>
 
 class guFetchLyricThread;
 
 // -------------------------------------------------------------------------------- //
-class guLyricsPanel : public wxScrolledWindow
+class guLyricsPanel : public wxPanel
 {
   protected :
     wxStaticText *          m_LyricTitle;
     wxHtmlWindow *          m_LyricText;
     guFetchLyricThread *    m_LyricThread;
+    wxCheckBox *            m_UpdateCheckBox;
+	wxTextCtrl *            m_ArtistTextCtrl;
+	wxTextCtrl *            m_TrackTextCtrl;
+	wxBitmapButton *        m_SearchButton;
+	bool                    m_UpdateEnabled;
 
     void    SetTitle( const wxString &title );
     void    SetText( const wxString &text );
     void    OnDownloadedLyric( wxCommandEvent &event );
+	void    OnUpdateChkBoxClicked( wxCommandEvent& event );
+    void    OnTextUpdated( wxCommandEvent& event );
+	void    OnSearchBtnClick( wxCommandEvent& event );
+
 
   public :
     guLyricsPanel( wxWindow * parent );
