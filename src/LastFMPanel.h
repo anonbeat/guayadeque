@@ -388,7 +388,6 @@ class guLastFMPanel : public wxScrolledWindow
 	wxString            m_LongBio;
 	bool                m_UpdateTracks;
 
-
 	guFetchAlbumInfoThread *            m_AlbumsUpdateThread;
 	wxMutex                             m_AlbumsUpdateThreadMutex;
 
@@ -404,11 +403,15 @@ class guLastFMPanel : public wxScrolledWindow
 	// GUI Elements
 	wxBoxSizer *                        m_MainSizer;
 
+    wxCheckBox *                        m_UpdateCheckBox;
+    wxTextCtrl *                        m_ArtistTextCtrl;
+    wxTextCtrl *                        m_TrackTextCtrl;
+    wxBitmapButton *                    m_SearchButton;
+
     bool                                m_ShowArtistDetails;
     wxStaticText *                      m_ArtistDetailsStaticText;
 	wxBoxSizer *                        m_ArtistInfoMainSizer;
 	wxBoxSizer *                        m_ArtistDetailsSizer;
-	wxBitmapButton *                    m_LastFMPlayBitmapBtn;
 
     guArtistInfoCtrl *                  m_ArtistInfoCtrl;
 
@@ -443,8 +446,9 @@ class guLastFMPanel : public wxScrolledWindow
 	void    OnSimArTitleDClick( wxMouseEvent &event );
 	void    OnSimTrTitleDClick( wxMouseEvent &event );
 
-	void    OnLastFMPlayBitmapBtnClick( wxCommandEvent &event );
-
+	void    OnUpdateChkBoxClick( wxCommandEvent &event );
+    void    OnTextUpdated( wxCommandEvent& event );
+    void    OnSearchBtnClick( wxCommandEvent &event );
 
 	void    OnAlbumTextClicked( wxMouseEvent &event );
 	void    OnArtistTextClicked( wxMouseEvent &event );
