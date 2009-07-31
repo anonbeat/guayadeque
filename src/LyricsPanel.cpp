@@ -21,6 +21,7 @@
 #include "LyricsPanel.h"
 
 #include "Commands.h"
+#include "Images.h"
 #include "Utils.h"
 
 #include <wx/curl/http.h>
@@ -28,22 +29,71 @@
 
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
-    wxScrolledWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
     m_LyricThread = NULL;
+    m_UpdateEnabled = true;
 
     wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	MainSizer->Add( 0, 15, 0, wxEXPAND, 5 );
+	wxBoxSizer * TitleSizer;
+	TitleSizer = new wxBoxSizer( wxVERTICAL );
 
-    m_LyricTitle = new wxStaticText( this, wxID_ANY, wxEmptyString );
+	wxBoxSizer * EditorSizer;
+	EditorSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_UpdateCheckBox->SetValue( m_UpdateEnabled );
+
+	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+
+	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxStaticText * ArtistStaticText;
+	ArtistStaticText = new wxStaticText( this, wxID_ANY, wxT("Artist:"), wxDefaultPosition, wxDefaultSize, 0 );
+	ArtistStaticText->Wrap( -1 );
+
+	EditorSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+
+	m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_ArtistTextCtrl->Enable( false );
+
+	EditorSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+
+	wxStaticText * TrackStaticText;
+	TrackStaticText = new wxStaticText( this, wxID_ANY, wxT("Track:"), wxDefaultPosition, wxDefaultSize, 0 );
+	TrackStaticText->Wrap( -1 );
+
+	EditorSizer->Add( TrackStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+
+	m_TrackTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_TrackTextCtrl->Enable( false );
+
+	EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+
+	m_SearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SearchButton->Enable( false );
+
+	EditorSizer->Add( m_SearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	TitleSizer->Add( EditorSizer, 1, wxEXPAND, 5 );
+
+	wxStaticLine * TopLine;
+	TopLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	TitleSizer->Add( TopLine, 0, wxEXPAND|wxALL, 5 );
+
+    m_LyricTitle = new wxStaticText( this, wxID_ANY, wxT( "/" ) );
     CurrentFont.SetPointSize( 12 );
     CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
-	m_LyricTitle->SetFont( CurrentFont ); //wxFont( 12, 70, 90, 92, false, wxEmptyString ) );
-    MainSizer->Add( m_LyricTitle, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	m_LyricTitle->SetFont( CurrentFont );
+
+	TitleSizer->Add( m_LyricTitle, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	MainSizer->Add( TitleSizer, 0, wxEXPAND, 5 );
 
 	m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
 	m_LyricText->SetBorders( 0 );
@@ -56,6 +106,11 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+
+	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
+	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
+	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
+	m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
     Connect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ) );
 }
 
@@ -72,10 +127,36 @@ guLyricsPanel::~guLyricsPanel()
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
 {
-    // Player informs there is a new track playing
-    //guLogMessage( wxT( "Received guLyricsPanel::UpdateTrack event" ) );
-    const wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
-    SetTrack( ( * Params )[ 0 ], ( * Params )[ 1 ] );
+    if( m_UpdateEnabled )
+    {
+        const wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
+        SetTrack( ( * Params )[ 0 ], ( * Params )[ 1 ] );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnTextUpdated( wxCommandEvent& event )
+{
+    m_SearchButton->Enable( !m_UpdateEnabled &&
+                            !m_ArtistTextCtrl->GetValue().IsEmpty() &&
+                            !m_TrackTextCtrl->GetValue().IsEmpty() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnUpdateChkBoxClicked( wxCommandEvent& event )
+{
+    m_UpdateEnabled = m_UpdateCheckBox->IsChecked();
+    m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
+    m_TrackTextCtrl->Enable( !m_UpdateEnabled );
+    m_SearchButton->Enable( !m_UpdateEnabled &&
+                            !m_ArtistTextCtrl->GetValue().IsEmpty() &&
+                            !m_TrackTextCtrl->GetValue().IsEmpty() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnSearchBtnClick( wxCommandEvent& event )
+{
+    SetTrack( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -151,41 +232,50 @@ guFetchLyricThread::~guFetchLyricThread()
 }
 
 // -------------------------------------------------------------------------------- //
-guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
+wxString GetUrlContent( const wxString &url )
 {
-    wxCurlHTTP http;
-    char * Buffer = NULL;
-    wxString UrlStr = wxString::Format( wxT( "http://lyricwiki.org/api.php?func=getSong&artist=%s&song=%s" ),
-                        guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+    wxCurlHTTP  http;
+    char *      Buffer;
+    wxString RetVal = wxEmptyString;
+
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: text/html" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.Get( Buffer, UrlStr );
+    Buffer = NULL;
+    http.Get( Buffer, url );
     if( Buffer )
     {
-        if( !TestDestroy() )
+        RetVal = wxString( Buffer, wxConvUTF8 );
+        free( Buffer );
+    }
+    else
+    {
+        guLogError( wxT( "Could not get the lyrics" ) );
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
+{
+    int         StartPos;
+    int         EndPos;
+    wxString    Content;
+    wxString    UrlStr = wxString::Format( wxT( "http://lyricwiki.org/api.php?func=getSong&artist=%s&song=%s" ),
+                        guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+    do {
+        Content = GetUrlContent( UrlStr );
+        //
+        if( !Content.IsEmpty() )
         {
-            wxString Content = wxString( Buffer, wxConvUTF8 );
-            free( Buffer );
-            //
-            if( !Content.IsEmpty() )
+            //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+            StartPos = Content.Find( wxT( "<div class='lyricbox' >" ) );
+            if( StartPos != wxNOT_FOUND )
             {
-                int StartPos = Content.Find( wxT( "<pre>" ) ) + 5;
-                int EndPos = Content.Find( wxT( "</pre>" ) );
-                if( StartPos == wxNOT_FOUND || EndPos == wxNOT_FOUND )
-                {
-                    Content = _( "No lyrics found for this song." );
-                }
-                else
-                {
-                    Content = Content.Mid( StartPos, EndPos - StartPos );
-                    if( Content.Find( wxT( "Not found" ) ) != wxNOT_FOUND )
-                    {
-                        Content = _( "No lyrics found for this song." );
-                    }
-                }
-                //Content = Content.Mid( 0,  ) );
-                //guLogMessage( wxT( "Content: %i \n%s" ), Content.Find( wxT( "</pre>" ) ), Content.c_str() );
+                Content = Content.Mid( StartPos + 23 );
+                EndPos = Content.Find( wxT( "</div>" ) );
+                Content = Content.Mid( 0, EndPos );
+
                 Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
                 if( !TestDestroy() )
@@ -195,16 +285,59 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
                     wxPostEvent( m_LyricsPanel, event );
                 }
             }
+            else if( Content.Find( wxT( "#REDIRECT" ) ) != wxNOT_FOUND )
+            {
+                //guLogMessage( wxT( "Redirection found..." ) );
+                StartPos = Content.Find( wxT( "url: " ) );
+                if( StartPos != wxNOT_FOUND )
+                {
+                    Content = Content.Mid( StartPos );
+                    StartPos = Content.Find( wxT( "href='" ) );
+                    if( StartPos != wxNOT_FOUND )
+                    {
+                        EndPos = Content.Find( wxT( "' title" ) );
+                        StartPos += 6;
+                        Content = Content.Mid( StartPos, EndPos - StartPos );
+                        UrlStr = wxEmptyString;
+                        UrlStr = Content;
+                        continue;
+                    }
+                }
+            }
             else
             {
-                guLogError( wxT( "Lyrics error converting the buffer" ) );
+                StartPos = Content.Find( wxT( "<pre>" ) );
+                EndPos = Content.Find( wxT( "</pre>" ) );
+                if( StartPos == wxNOT_FOUND || EndPos == wxNOT_FOUND )
+                {
+                    Content = _( "No lyrics found for this song." );
+                }
+                else
+                {
+                    StartPos += 5;
+                    Content = Content.Mid( StartPos, EndPos - StartPos );
+                    if( Content.Find( wxT( "Not found" ) ) != wxNOT_FOUND )
+                    {
+                        Content = _( "No lyrics found for this song." );
+                    }
+                }
+
+                Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
+
+                if( !TestDestroy() )
+                {
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
+                    event.SetClientData( new wxString( Content.c_str() ) );
+                    wxPostEvent( m_LyricsPanel, event );
+                }
             }
         }
-    }
-    else
-    {
-        guLogError( wxT( "Could not get the lyrics" ) );
-    }
+        else
+        {
+            guLogError( wxT( "Lyrics error converting the buffer" ) );
+        }
+        break;
+    } while( true );
     return 0;
 }
 

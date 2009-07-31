@@ -1,4 +1,5 @@
 
+  * Lyrics panel allow to enter any track name for manual lyrics search
   * Clicking in Songs List box selects the sorting of the tracks
   * Added an option to save/restore playing position when track is bigger than the
     length specified in preferences
