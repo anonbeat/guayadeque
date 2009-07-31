@@ -54,7 +54,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	wxStaticText * ArtistStaticText;
-	ArtistStaticText = new wxStaticText( this, wxID_ANY, wxT("Artist:"), wxDefaultPosition, wxDefaultSize, 0 );
+	ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	ArtistStaticText->Wrap( -1 );
 
 	EditorSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
@@ -65,7 +65,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	EditorSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	wxStaticText * TrackStaticText;
-	TrackStaticText = new wxStaticText( this, wxID_ANY, wxT("Track:"), wxDefaultPosition, wxDefaultSize, 0 );
+	TrackStaticText = new wxStaticText( this, wxID_ANY, _( "Track:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	TrackStaticText->Wrap( -1 );
 
 	EditorSizer->Add( TrackStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );

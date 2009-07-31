@@ -992,6 +992,52 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
 
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
+    // Manual Artist Editor
+	wxBoxSizer * EditorSizer;
+	EditorSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_UpdateCheckBox->SetValue(true);
+
+	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+
+	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxStaticText * ArtistStaticText;
+	ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	ArtistStaticText->Wrap( -1 );
+	EditorSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+
+	m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_ArtistTextCtrl->Enable( false );
+
+	EditorSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+
+	wxStaticText * TrackStaticText;
+	TrackStaticText = new wxStaticText( this, wxID_ANY, _( "Track:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	TrackStaticText->Wrap( -1 );
+
+	EditorSizer->Add( TrackStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+
+	m_TrackTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_TrackTextCtrl->Enable( false );
+
+	EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+	m_SearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SearchButton->Enable( false );
+
+	m_SearchButton->Enable( false );
+
+	EditorSizer->Add( m_SearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	m_MainSizer->Add( EditorSizer, 0, wxEXPAND, 5 );
+
+	wxStaticLine * TopStaticLine;
+	TopStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	m_MainSizer->Add( TopStaticLine, 0, wxEXPAND | wxALL, 5 );
+
+
     // Artist Info
 	wxBoxSizer * ArInfoTitleSizer;
 	ArInfoTitleSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -1008,9 +1054,9 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
 	wxStaticLine * ArInfoStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	ArInfoTitleSizer->Add( ArInfoStaticLine, 1, wxEXPAND | wxALL, 5 );
 
-	m_LastFMPlayBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_LastFMPlayBitmapBtn->SetToolTip( _( "Enables or Disables the update of this page when the current playing track changes" ) );
-	ArInfoTitleSizer->Add( m_LastFMPlayBitmapBtn, 0, wxRIGHT, 5 );
+//	m_LastFMPlayBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_LastFMPlayBitmapBtn->SetToolTip( _( "Enables or Disables the update of this page when the current playing track changes" ) );
+//	ArInfoTitleSizer->Add( m_LastFMPlayBitmapBtn, 0, wxRIGHT, 5 );
 
 	m_MainSizer->Add( ArInfoTitleSizer, 0, wxEXPAND, 5 );
 
@@ -1134,7 +1180,10 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
     Connect( ID_LASTFM_UPDATE_SIMTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTrackItem ) );
 
 	m_ArtistDetailsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnArInfoTitleDClicked ), NULL, this );
-	m_LastFMPlayBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnLastFMPlayBitmapBtnClick ), NULL, this );
+	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLastFMPanel::OnUpdateChkBoxClick ), NULL, this );
+	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
+	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
+	m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSearchBtnClick ), NULL, this );
 	m_AlbumsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
 	m_ArtistsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimArTitleDClick ), NULL, this );
 	m_TracksStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
@@ -1169,7 +1218,14 @@ guLastFMPanel::~guLastFMPanel()
     Disconnect( ID_LASTFM_UPDATE_SIMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistItem ) );
     Disconnect( ID_LASTFM_UPDATE_SIMTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTrackItem ) );
 
+	m_ArtistDetailsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnArInfoTitleDClicked ), NULL, this );
+	m_UpdateCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLastFMPanel::OnUpdateChkBoxClick ), NULL, this );
+	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
+	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
+	m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSearchBtnClick ), NULL, this );
 	m_AlbumsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
+	m_ArtistsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimArTitleDClick ), NULL, this );
+	m_TracksStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -1184,9 +1240,6 @@ guLastFMPanel::~guLastFMPanel()
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::SetTrack( const wxString &artistname, const wxString &trackname )
 {
-    if( !m_UpdateTracks )
-        return;
-
     int index;
 
     m_ArtistName = artistname;
@@ -1220,12 +1273,13 @@ void guLastFMPanel::SetTrack( const wxString &artistname, const wxString &trackn
             m_AlbumInfoCtrls[ index ]->Clear();
         }
 
-        m_ArtistsUpdateThread = new guFetchSimilarArtistInfoThread( this, artistname.c_str() );
-
-        m_AlbumsUpdateThread = new guFetchAlbumInfoThread( this, artistname.c_str() );
-
         m_LastArtistName = m_ArtistName;
+        if( !artistname.IsEmpty() )
+        {
+            m_ArtistsUpdateThread = new guFetchSimilarArtistInfoThread( this, artistname.c_str() );
 
+            m_AlbumsUpdateThread = new guFetchAlbumInfoThread( this, artistname.c_str() );
+        }
     }
 
     if( m_LastTrackName != m_TrackName )
@@ -1243,19 +1297,47 @@ void guLastFMPanel::SetTrack( const wxString &artistname, const wxString &trackn
             m_TrackInfoCtrls[ index ]->Clear();
         }
 
-        m_TracksUpdateThread = new guFetchTrackInfoThread( this, artistname.c_str(), trackname.c_str() );
         m_LastTrackName = m_TrackName;
-
+        if( !artistname.IsEmpty() && !trackname.IsEmpty() )
+        {
+            m_TracksUpdateThread = new guFetchTrackInfoThread( this, artistname.c_str(), trackname.c_str() );
+        }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnUpdateChkBoxClick( wxCommandEvent &event )
+{
+    m_UpdateTracks = m_UpdateCheckBox->IsChecked();
+    //
+    m_ArtistTextCtrl->Enable( !m_UpdateTracks );
+    m_TrackTextCtrl->Enable( !m_UpdateTracks );
+    m_SearchButton->Enable( !m_UpdateTracks &&
+                !m_ArtistTextCtrl->GetValue().IsEmpty() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnTextUpdated( wxCommandEvent& event )
+{
+    m_SearchButton->Enable( !m_UpdateTracks &&
+        !m_ArtistTextCtrl->GetValue().IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnUpdatedTrack( wxCommandEvent &event )
 {
+    if( !m_UpdateTracks )
+        return;
     // Player informs there is a new track playing
     //guLogMessage( wxT( "Received LastFMPanel::UpdateTrack event" ) );
     const wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
     SetTrack( ( * Params )[ 0 ], ( * Params )[ 1 ] );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnSearchBtnClick( wxCommandEvent& event )
+{
+    SetTrack( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1330,14 +1412,6 @@ void guLastFMPanel::OnUpdateTrackItem( wxCommandEvent &event )
     {
         guLogError( wxT( "Received a LastFMInfo event with NULL Data" ) );
     }
-}
-
-// -------------------------------------------------------------------------------- //
-void guLastFMPanel::OnLastFMPlayBitmapBtnClick( wxCommandEvent &event )
-{
-    m_UpdateTracks = !m_UpdateTracks;
-    m_LastFMPlayBitmapBtn->SetLabel( guImage( m_UpdateTracks ? guIMAGE_INDEX_tiny_playback_start :
-                                                  guIMAGE_INDEX_tiny_playback_pause ) );
 }
 
 // -------------------------------------------------------------------------------- //
