@@ -135,6 +135,7 @@
 #define ID_LASTFM_UPDATE_SIMTRACK       1124    // The thread update the Similar tracks
 #define ID_LASTFM_PLAY                  1125
 #define ID_LASTFM_ENQUEUE               1126
+#define ID_LASTFM_SELECT_ARTIST         1127
 
 #define ID_LASTFM_VISIT_URL             1130
 #define ID_LASTFM_COPYTOCLIPBOARD       1131

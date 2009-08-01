@@ -702,6 +702,7 @@ guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary *
     m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSimilarArtistInfoCtrl::OnClick ), NULL, this );
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSearchLinkClicked ) );
     Connect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSearchLinkClicked ) );
+    Connect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSelectArtist ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -714,6 +715,7 @@ guSimilarArtistInfoCtrl::~guSimilarArtistInfoCtrl()
     m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSimilarArtistInfoCtrl::OnClick ), NULL, this );
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSearchLinkClicked ) );
     Disconnect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSearchLinkClicked ) );
+    Disconnect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSelectArtist ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -751,6 +753,14 @@ void guSimilarArtistInfoCtrl::OnClick( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guSimilarArtistInfoCtrl::OnSelectArtist( wxCommandEvent &event )
+{
+    guLastFMPanel * LastFMPanel = ( guLastFMPanel * ) GetParent();
+    LastFMPanel->SetUpdateEnable( false );
+    LastFMPanel->SetTrack( GetSearchText(), wxEmptyString );
+}
+
+// -------------------------------------------------------------------------------- //
 wxString guSimilarArtistInfoCtrl::GetSearchText( void )
 {
     return m_Info->m_Artist->m_Name;
@@ -779,6 +789,9 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !GetSearchText().IsEmpty() )
     {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_SELECT_ARTIST, wxT( "Show artist info" ), _( "Update the information with the current selected artist" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the artist info to clipboard" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
@@ -972,7 +985,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel *
 {
     m_Db = db;
     m_PlayerPanel = playerpanel;
-    m_UpdateTracks = true;
+    m_UpdateEnabled = true;
 
     m_ShowArtistDetails = true;
     m_ShowAlbums = true;
@@ -1306,27 +1319,37 @@ void guLastFMPanel::SetTrack( const wxString &artistname, const wxString &trackn
 }
 
 // -------------------------------------------------------------------------------- //
+void guLastFMPanel::SetUpdateEnable( bool value )
+{
+    m_UpdateCheckBox->SetValue( value );
+    m_UpdateEnabled = value;
+
+    wxCommandEvent event;
+    OnUpdateChkBoxClick( event );
+}
+
+// -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnUpdateChkBoxClick( wxCommandEvent &event )
 {
-    m_UpdateTracks = m_UpdateCheckBox->IsChecked();
+    m_UpdateEnabled = m_UpdateCheckBox->IsChecked();
     //
-    m_ArtistTextCtrl->Enable( !m_UpdateTracks );
-    m_TrackTextCtrl->Enable( !m_UpdateTracks );
-    m_SearchButton->Enable( !m_UpdateTracks &&
+    m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
+    m_TrackTextCtrl->Enable( !m_UpdateEnabled );
+    m_SearchButton->Enable( !m_UpdateEnabled &&
                 !m_ArtistTextCtrl->GetValue().IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnTextUpdated( wxCommandEvent& event )
 {
-    m_SearchButton->Enable( !m_UpdateTracks &&
+    m_SearchButton->Enable( !m_UpdateEnabled &&
         !m_ArtistTextCtrl->GetValue().IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnUpdatedTrack( wxCommandEvent &event )
 {
-    if( !m_UpdateTracks )
+    if( !m_UpdateEnabled )
         return;
     // Player informs there is a new track playing
     //guLogMessage( wxT( "Received LastFMPanel::UpdateTrack event" ) );

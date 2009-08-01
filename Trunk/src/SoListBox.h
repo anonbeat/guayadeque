@@ -43,13 +43,11 @@ class guSoListBox : public guListView
 {
   protected :
     DbLibrary *         m_Db;
-    //wxArrayInt          m_Columns;
     guTrackArray        m_Items;
     wxString            m_ConfName;
 
     wxBitmap *          m_GreyStar;
     wxBitmap *          m_YellowStar;
-
 
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;

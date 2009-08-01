@@ -340,6 +340,7 @@ class guSimilarArtistInfoCtrl : public guLastFMInfoCtrl
     void                OnClick( wxMouseEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
+    void                OnSelectArtist( wxCommandEvent &event );
 
   public :
     guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
@@ -386,7 +387,7 @@ class guLastFMPanel : public wxScrolledWindow
 	wxString            m_LastTrackName;
 	wxString            m_ShortBio;
 	wxString            m_LongBio;
-	bool                m_UpdateTracks;
+	bool                m_UpdateEnabled;
 
 	guFetchAlbumInfoThread *            m_AlbumsUpdateThread;
 	wxMutex                             m_AlbumsUpdateThreadMutex;
@@ -464,6 +465,7 @@ class guLastFMPanel : public wxScrolledWindow
 
     void    OnUpdatedTrack( wxCommandEvent &event );
 	void    SetTrack( const wxString &artistname, const wxString &trackname );
+	void    SetUpdateEnable( bool value );
 	void    UpdateLayout( void );
 
     friend class guFetchLastFMInfoThread;
