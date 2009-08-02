@@ -2566,6 +2566,8 @@ int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray 
 
       dbRes = ExecuteQuery( query );
 
+      //guLogMessage( wxT( "%s" ), query.c_str() );
+
       while( dbRes.NextRow() )
       {
         guTrack * Track = new guTrack();

@@ -64,13 +64,13 @@
 #define guDYNAMIC_FILTER_ORDER_ALBUM                    2
 #define guDYNAMIC_FILTER_ORDER_GENRE                    3
 #define guDYNAMIC_FILTER_ORDER_LABEL                    4
-#define guDYNAMIC_FILTER_ORDER_PATH                     5
-#define guDYNAMIC_FILTER_ORDER_YEAR                     6
-#define guDYNAMIC_FILTER_ORDER_RATING                   7
-#define guDYNAMIC_FILTER_ORDER_LENGTH                   8
-#define guDYNAMIC_FILTER_ORDER_PLAYCOUNT                9
-#define guDYNAMIC_FILTER_ORDER_LASTPLAY                 10
-#define guDYNAMIC_FILTER_ORDER_ADDEDDATE                11
+//#define guDYNAMIC_FILTER_ORDER_PATH                     5
+#define guDYNAMIC_FILTER_ORDER_YEAR                     5
+#define guDYNAMIC_FILTER_ORDER_RATING                   6
+#define guDYNAMIC_FILTER_ORDER_LENGTH                   7
+#define guDYNAMIC_FILTER_ORDER_PLAYCOUNT                8
+#define guDYNAMIC_FILTER_ORDER_LASTPLAY                 9
+#define guDYNAMIC_FILTER_ORDER_ADDEDDATE                10
 
 #define guDYNAMIC_FILTER_OPTION_STRING_CONTAINS         0
 #define guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS     1
