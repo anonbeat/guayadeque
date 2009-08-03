@@ -50,6 +50,10 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerP
     if( createcontrols )
         this->CreateControls( parent );
 
+
+    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSearchLinkClicked ) );
+    Connect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSearchLinkClicked ) );
+
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
     Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
     Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
@@ -61,10 +65,15 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerP
 // -------------------------------------------------------------------------------- //
 guLastFMInfoCtrl::~guLastFMInfoCtrl()
 {
+    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSearchLinkClicked ) );
+    Disconnect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSearchLinkClicked ) );
+
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
     Disconnect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
     Disconnect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
     Disconnect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
+    Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
+    Disconnect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -88,6 +97,10 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	SetSizer( MainSizer );
 	Layout();
 	MainSizer->Fit( this );
+
+//    Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
+//    m_Bitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
+    m_Text->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -180,8 +193,25 @@ void guLastFMInfoCtrl::CreateContextMenu( wxMenu * Menu )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLastFMInfoCtrl::OnClick( wxMouseEvent &event )
+void guLastFMInfoCtrl::OnDoubleClicked( wxMouseEvent &event )
 {
+    guTrackArray Tracks;
+    GetSelectedTracks( &Tracks );
+    if( Tracks.Count() )
+    {
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( m_PlayerPanel && Config )
+        {
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Tracks );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Tracks );
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -190,8 +220,7 @@ void guLastFMInfoCtrl::OnSearchLinkClicked( wxCommandEvent &event )
     int index = event.GetId();
     if( index == ID_LASTFM_VISIT_URL )
     {
-        wxMouseEvent event;
-        OnClick( event );
+        guWebExecute( GetItemUrl() );
         return;
     }
 
@@ -237,6 +266,12 @@ void guLastFMInfoCtrl::OnCopyToClipboard( wxCommandEvent &event )
 
 // -------------------------------------------------------------------------------- //
 wxString guLastFMInfoCtrl::GetSearchText( void )
+{
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guLastFMInfoCtrl::GetItemUrl( void )
 {
     return wxEmptyString;
 }
@@ -291,10 +326,6 @@ guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerP
 
     CreateControls( parent );
 
-    m_Text->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guArtistInfoCtrl::OnClick ), NULL, this );
-    m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guArtistInfoCtrl::OnClick ), NULL, this );
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnSearchLinkClicked ) );
-    Connect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnSearchLinkClicked ) );
 	m_ShowMoreHyperLink->Connect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( guArtistInfoCtrl::OnShowMoreLinkClicked ), NULL, this );
 	m_ArtistDetails->Connect( wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler( guArtistInfoCtrl::OnHtmlLinkClicked ), NULL, this );
 };
@@ -308,10 +339,6 @@ guArtistInfoCtrl::~guArtistInfoCtrl()
     guConfig * Config = ( guConfig * ) Config->Get();
     Config->WriteBool( wxT( "LFMShowLongBioText" ), m_ShowLongBioText, wxT( "General" )  );
 
-    m_Text->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guArtistInfoCtrl::OnClick ), NULL, this );
-    m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guArtistInfoCtrl::OnClick ), NULL, this );
-    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnSearchLinkClicked ) );
-    Disconnect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArtistInfoCtrl::OnSearchLinkClicked ) );
 	m_ShowMoreHyperLink->Disconnect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( guArtistInfoCtrl::OnShowMoreLinkClicked ), NULL, this );
 	m_ArtistDetails->Disconnect( wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler( guArtistInfoCtrl::OnHtmlLinkClicked ), NULL, this );
 }
@@ -360,6 +387,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	Layout();
 	//MainSizer->Fit( this );
 
+    m_Text->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guArtistInfoCtrl::OnDoubleClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -404,21 +432,16 @@ void guArtistInfoCtrl::SetBitmap( const wxImage * image )
     m_Bitmap->Refresh();
 }
 
-
-// -------------------------------------------------------------------------------- //
-void guArtistInfoCtrl::OnClick( wxMouseEvent &event )
-{
-    if( m_Info )
-    {
-        //guLogMessage( wxT( "guAlbumInfo::OnClick %s" ), Info->Album->Url.c_str() );
-        guWebExecute( m_Info->m_Artist->m_Url );
-    }
-}
-
 // -------------------------------------------------------------------------------- //
 wxString guArtistInfoCtrl::GetSearchText( void )
 {
     return m_Info->m_Artist->m_Name;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guArtistInfoCtrl::GetItemUrl( void )
+{
+    return m_Info->m_Artist->m_Url;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -561,10 +584,6 @@ guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPan
                  guLastFMInfoCtrl( parent, db, playerpanel )
 {
     m_Info = NULL;
-    m_Text->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumInfoCtrl::OnClick ), NULL, this );
-    m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumInfoCtrl::OnClick ), NULL, this );
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumInfoCtrl::OnSearchLinkClicked ) );
-    Connect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumInfoCtrl::OnSearchLinkClicked ) );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -572,11 +591,6 @@ guAlbumInfoCtrl::~guAlbumInfoCtrl()
 {
     if( m_Info )
         delete m_Info;
-
-    m_Text->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumInfoCtrl::OnClick ), NULL, this );
-    m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumInfoCtrl::OnClick ), NULL, this );
-    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumInfoCtrl::OnSearchLinkClicked ) );
-    Disconnect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumInfoCtrl::OnSearchLinkClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -603,20 +617,26 @@ void guAlbumInfoCtrl::Clear( void )
     m_Info = NULL;
 }
 
-// -------------------------------------------------------------------------------- //
-void guAlbumInfoCtrl::OnClick( wxMouseEvent &event )
-{
-    if( m_Info )
-    {
-        //guLogMessage( wxT( "guAlbumInfo::OnClick %s" ), Info->Album->Url.c_str() );
-        guWebExecute( m_Info->m_Album->m_Url );
-    }
-}
+//// -------------------------------------------------------------------------------- //
+//void guAlbumInfoCtrl::OnClick( wxMouseEvent &event )
+//{
+//    if( m_Info )
+//    {
+//        //guLogMessage( wxT( "guAlbumInfo::OnClick %s" ), Info->Album->Url.c_str() );
+//        guWebExecute( m_Info->m_Album->m_Url );
+//    }
+//}
 
 // -------------------------------------------------------------------------------- //
 wxString guAlbumInfoCtrl::GetSearchText( void )
 {
     return wxString::Format( wxT( "%s %s" ), m_Info->m_Album->m_Artist.c_str(), m_Info->m_Album->m_Name.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guAlbumInfoCtrl::GetItemUrl( void )
+{
+    return m_Info->m_Album->m_Url;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -698,10 +718,6 @@ guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary *
 {
     m_Info = NULL;
 
-    m_Text->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSimilarArtistInfoCtrl::OnClick ), NULL, this );
-    m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSimilarArtistInfoCtrl::OnClick ), NULL, this );
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSearchLinkClicked ) );
-    Connect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSearchLinkClicked ) );
     Connect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSelectArtist ), NULL, this );
 }
 
@@ -711,10 +727,6 @@ guSimilarArtistInfoCtrl::~guSimilarArtistInfoCtrl()
     if( m_Info )
         delete m_Info;
 
-    m_Text->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSimilarArtistInfoCtrl::OnClick ), NULL, this );
-    m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSimilarArtistInfoCtrl::OnClick ), NULL, this );
-    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSearchLinkClicked ) );
-    Disconnect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSearchLinkClicked ) );
     Disconnect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSelectArtist ), NULL, this );
 }
 
@@ -742,15 +754,15 @@ void guSimilarArtistInfoCtrl::Clear( void )
     m_Info = NULL;
 }
 
-// -------------------------------------------------------------------------------- //
-void guSimilarArtistInfoCtrl::OnClick( wxMouseEvent &event )
-{
-    if( m_Info )
-    {
-        //guLogMessage( wxT( "guArtistInfo::OnClick %s" ), Info->Artist->Url.c_str() );
-        guWebExecute( m_Info->m_Artist->m_Url );
-    }
-}
+//// -------------------------------------------------------------------------------- //
+//void guSimilarArtistInfoCtrl::OnClick( wxMouseEvent &event )
+//{
+//    if( m_Info )
+//    {
+//        //guLogMessage( wxT( "guArtistInfo::OnClick %s" ), Info->Artist->Url.c_str() );
+//        guWebExecute( m_Info->m_Artist->m_Url );
+//    }
+//}
 
 // -------------------------------------------------------------------------------- //
 void guSimilarArtistInfoCtrl::OnSelectArtist( wxCommandEvent &event )
@@ -764,6 +776,12 @@ void guSimilarArtistInfoCtrl::OnSelectArtist( wxCommandEvent &event )
 wxString guSimilarArtistInfoCtrl::GetSearchText( void )
 {
     return m_Info->m_Artist->m_Name;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guSimilarArtistInfoCtrl::GetItemUrl( void )
+{
+    return m_Info->m_Artist->m_Url;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -845,11 +863,6 @@ guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPan
                  guLastFMInfoCtrl( parent, db, playerpanel )
 {
     m_Info = NULL;
-
-    m_Text->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guTrackInfoCtrl::OnClick ), NULL, this );
-    m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guTrackInfoCtrl::OnClick ), NULL, this );
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackInfoCtrl::OnSearchLinkClicked ) );
-    Connect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackInfoCtrl::OnSearchLinkClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -857,11 +870,6 @@ guTrackInfoCtrl::~guTrackInfoCtrl()
 {
     if( m_Info )
         delete m_Info;
-
-    m_Text->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guTrackInfoCtrl::OnClick ), NULL, this );
-    m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guTrackInfoCtrl::OnClick ), NULL, this );
-    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackInfoCtrl::OnSearchLinkClicked ) );
-    Disconnect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackInfoCtrl::OnSearchLinkClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -891,20 +899,26 @@ void guTrackInfoCtrl::Clear( void )
     m_Info = NULL;
 }
 
-// -------------------------------------------------------------------------------- //
-void guTrackInfoCtrl::OnClick( wxMouseEvent &event )
-{
-    if( m_Info )
-    {
-        //guLogMessage( wxT( "guArtistInfo::OnClick %s" ), Info->Artist->Url.c_str() );
-        guWebExecute( m_Info->m_Track->m_Url );
-    }
-}
+//// -------------------------------------------------------------------------------- //
+//void guTrackInfoCtrl::OnClick( wxMouseEvent &event )
+//{
+//    if( m_Info )
+//    {
+//        //guLogMessage( wxT( "guArtistInfo::OnClick %s" ), Info->Artist->Url.c_str() );
+//        guWebExecute( m_Info->m_Track->m_Url );
+//    }
+//}
 
 // -------------------------------------------------------------------------------- //
 wxString guTrackInfoCtrl::GetSearchText( void )
 {
     return wxString::Format( wxT( "%s %s" ), m_Info->m_Track->m_ArtistName.c_str(), m_Info->m_Track->m_TrackName.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guTrackInfoCtrl::GetItemUrl( void )
+{
+    return m_Info->m_Track->m_Url;
 }
 
 // -------------------------------------------------------------------------------- //
