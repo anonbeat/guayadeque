@@ -268,7 +268,7 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
         //
         if( !Content.IsEmpty() )
         {
-            guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+            //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
             StartPos = Content.Find( wxT( "<div class='lyricbox' >" ) );
             if( StartPos != wxNOT_FOUND )
             {
