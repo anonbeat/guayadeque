@@ -98,8 +98,11 @@ class guMainFrame : public wxFrame
     void                OnGaugeUpdate( wxCommandEvent &event );
     void                OnGaugeRemove( wxCommandEvent &event );
 
-    void                OnAlbumNameDClicked( wxCommandEvent &event );
-    void                OnArtistNameDClicked( wxCommandEvent &event );
+    void                OnSelectAlbumName( wxCommandEvent &event );
+    void                OnSelectArtistName( wxCommandEvent &event );
+    void                OnGenreSetSelection( wxCommandEvent &event );
+    void                OnArtistSetSelection( wxCommandEvent &event );
+    void                OnAlbumSetSelection( wxCommandEvent &event );
 
     void                OnPlayListUpdated( wxCommandEvent &event );
 

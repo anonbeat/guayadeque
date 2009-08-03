@@ -258,9 +258,16 @@ bool guArListBox::SelectArtistName( const wxString &ArtistName )
     int item = FindItem( 0, ArtistName, false );
     if( item != wxNOT_FOUND )
     {
-        SetSelection( item );
-        //ScrollToLine( item );
+        wxArrayInt * Artists = new wxArrayInt();
+        Artists->Add( ( * m_Items )[ item ].m_Id );
+
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SETSELECTION );
+        event.SetClientData( ( void * ) Artists );
+        wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+        return true;
     }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //

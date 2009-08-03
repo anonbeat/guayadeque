@@ -239,6 +239,10 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPan
     Connect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksCopyToClicked ) );
     Connect( ID_SONG_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSavePlayListClicked ) );
 
+    Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectGenre ) );
+    Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
+    Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
+
 	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
 
@@ -255,6 +259,7 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_PLAYLIST_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesDeletePlaylist ) );
     Disconnect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
 
+
     m_PLTracksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
     Disconnect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayClicked ) );
     Disconnect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayAllClicked ) );
@@ -263,6 +268,13 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_SONG_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditLabelsClicked ) );
     Disconnect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditTracksClicked ) );
     Disconnect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksCopyToClicked ) );
+    Disconnect( ID_SONG_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSavePlayListClicked ) );
+
+    Disconnect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectGenre ) );
+    Disconnect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
+    Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
+
+	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -566,6 +578,68 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
 void guPlayListPanel::PlayListUpdated( void )
 {
     m_NamesTreeCtrl->ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksSelectGenre( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+    wxArrayInt * Genres = new wxArrayInt();
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Genres->Index( Tracks[ index ].m_GenreId ) == wxNOT_FOUND )
+        {
+            Genres->Add( Tracks[ index ].m_GenreId );
+        }
+    }
+
+    event.SetId( ID_GENRE_SETSELECTION );
+    event.SetClientData( ( void * ) Genres );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksSelectArtist( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+    wxArrayInt * Artists = new wxArrayInt();
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Artists->Index( Tracks[ index ].m_ArtistId ) == wxNOT_FOUND )
+        {
+            Artists->Add( Tracks[ index ].m_ArtistId );
+        }
+    }
+    event.SetId( ID_ARTIST_SETSELECTION );
+    event.SetClientData( ( void * ) Artists );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksSelectAlbum( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+    wxArrayInt * Albums = new wxArrayInt();
+
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Albums->Index( Tracks[ index ].m_AlbumId ) == wxNOT_FOUND )
+        {
+            Albums->Add( Tracks[ index ].m_AlbumId );
+        }
+    }
+    event.SetId( ID_ALBUM_SETSELECTION );
+    event.SetClientData( ( void * ) Albums );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
 // -------------------------------------------------------------------------------- //

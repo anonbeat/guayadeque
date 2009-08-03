@@ -1004,23 +1004,18 @@ void guLibPanel::OnSongSelectGenre( wxCommandEvent &event )
 {
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-    wxArrayInt Genres;
+    wxArrayInt * Genres = new wxArrayInt();
     int index;
     int count = Tracks.Count();
     for( index = 0; index < count; index++ )
     {
-        if( Genres.Index( Tracks[ index ].m_GenreId ) == wxNOT_FOUND )
+        if( Genres->Index( Tracks[ index ].m_GenreId ) == wxNOT_FOUND )
         {
-            Genres.Add( Tracks[ index ].m_GenreId );
+            Genres->Add( Tracks[ index ].m_GenreId );
         }
     }
-    wxArrayString Words;
-    m_UpdateLock = true;
-    m_Db->SetTeFilters( Words );
-    m_LabelsListCtrl->ReloadItems();
-    m_GenreListCtrl->ReloadItems();
-    m_UpdateLock = false;
-    m_GenreListCtrl->SetSelectedItems( Genres );
+    SelectGenres( Genres );
+    delete Genres;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1028,24 +1023,18 @@ void guLibPanel::OnSongSelectArtist( wxCommandEvent &event )
 {
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-    wxArrayInt Artists;
+    wxArrayInt * Artists = new wxArrayInt();
     int index;
     int count = Tracks.Count();
     for( index = 0; index < count; index++ )
     {
-        if( Artists.Index( Tracks[ index ].m_ArtistId ) == wxNOT_FOUND )
+        if( Artists->Index( Tracks[ index ].m_ArtistId ) == wxNOT_FOUND )
         {
-            Artists.Add( Tracks[ index ].m_ArtistId );
+            Artists->Add( Tracks[ index ].m_ArtistId );
         }
     }
-    wxArrayString Words;
-    m_UpdateLock = true;
-    m_Db->SetTeFilters( Words );
-    m_LabelsListCtrl->ReloadItems();
-    m_GenreListCtrl->ReloadItems();
-    m_ArtistListCtrl->ReloadItems();
-    m_UpdateLock = false;
-    m_ArtistListCtrl->SetSelectedItems( Artists );
+    SelectArtists( Artists );
+    delete Artists;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1053,16 +1042,61 @@ void guLibPanel::OnSongSelectAlbum( wxCommandEvent &event )
 {
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-    wxArrayInt Albums;
+    wxArrayInt * Albums = new wxArrayInt();
+
     int index;
     int count = Tracks.Count();
     for( index = 0; index < count; index++ )
     {
-        if( Albums.Index( Tracks[ index ].m_AlbumId ) == wxNOT_FOUND )
+        if( Albums->Index( Tracks[ index ].m_AlbumId ) == wxNOT_FOUND )
         {
-            Albums.Add( Tracks[ index ].m_AlbumId );
+            Albums->Add( Tracks[ index ].m_AlbumId );
         }
     }
+    SelectAlbums( Albums );
+    delete Albums;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SelectAlbumName( const wxString &album )
+{
+    m_AlbumListCtrl->SelectAlbumName( album );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SelectArtistName( const wxString &artist )
+{
+    m_ArtistListCtrl->SelectArtistName( artist );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SelectGenres( wxArrayInt * genres )
+{
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_GenreListCtrl->SetSelectedItems( * genres );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SelectArtists( wxArrayInt * artists )
+{
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_ArtistListCtrl->SetSelectedItems( * artists );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SelectAlbums( wxArrayInt * albums )
+{
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words );
@@ -1071,53 +1105,7 @@ void guLibPanel::OnSongSelectAlbum( wxCommandEvent &event )
     m_ArtistListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
     m_UpdateLock = false;
-    m_AlbumListCtrl->SetSelectedItems( Albums );
-}
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::OnAlbumNameDClicked( wxCommandEvent &event )
-{
-    wxString * AlbumName = ( wxString * ) event.GetClientData();
-    if( AlbumName )
-    {
-        // Reset all controls
-        wxArrayString Words;
-        m_UpdateLock = true;
-        m_Db->SetTeFilters( Words );
-        m_LabelsListCtrl->ReloadItems();
-        m_GenreListCtrl->ReloadItems();
-        m_ArtistListCtrl->ReloadItems();
-        m_UpdateLock = false;
-        m_AlbumListCtrl->ReloadItems();
-        m_AlbumListCtrl->SelectAlbumName( * AlbumName );
-        m_AlbumListCtrl->SetFocus();
-        //m_SongListCtrl->ReloadItems();
-
-        delete AlbumName;
-        //m_SongListCtrl->ReloadItems();
-         // Reset all controls
-
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::OnArtistNameDClicked( wxCommandEvent &event )
-{
-    wxString * ArtistName = ( wxString * ) event.GetClientData();
-    if( ArtistName )
-    {
-        // Reset all controls
-        wxArrayString Words;
-        m_UpdateLock = true;
-        m_Db->SetTeFilters( Words );
-        m_LabelsListCtrl->ReloadItems();
-        m_GenreListCtrl->ReloadItems();
-        m_ArtistListCtrl->ReloadItems();
-        m_UpdateLock = false;
-        m_ArtistListCtrl->SelectArtistName( * ArtistName );
-        m_ArtistListCtrl->SetFocus();
-        delete ArtistName;
-    }
+    m_AlbumListCtrl->SetSelectedItems( * albums );
 }
 
 // -------------------------------------------------------------------------------- //

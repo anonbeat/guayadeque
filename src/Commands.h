@@ -43,6 +43,8 @@
 #define ID_GENRE_PLAY                   1020
 #define ID_GENRE_ENQUEUE                1021
 #define ID_GENRE_COPYTO                 1022
+#define ID_GENRE_SELECTNAME             1023
+#define ID_GENRE_SETSELECTION           1024
 
 //
 #define ID_LABEL_ADD                    1030
@@ -61,6 +63,7 @@
 #define ID_ARTIST_EDITTRACKS            1043
 #define ID_ARTIST_COPYTO                1044
 #define ID_ARTIST_SELECTNAME            1045
+#define ID_ARTIST_SETSELECTION          1046
 
 //
 #define ID_ALBUM_PLAY                   1050
@@ -72,6 +75,7 @@
 #define ID_ALBUM_COVER_DELETE           1056
 #define ID_ALBUM_COPYTO                 1057
 #define ID_ALBUM_SELECTNAME             1058
+#define ID_ALBUM_SETSELECTION           1059
 
 //
 #define ID_SONG_PLAY                    1060
