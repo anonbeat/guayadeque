@@ -166,8 +166,13 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ) );
     Connect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ) );
     Connect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ) );
-	Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumNameDClicked ), NULL, this );
-	Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistNameDClicked ), NULL, this );
+
+	Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbumName ), NULL, this );
+	Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtistName ), NULL, this );
+
+	Connect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
+	Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
+	Connect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumSetSelection ), NULL, this );
 
     Connect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlay ) );
     Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ) );
@@ -250,6 +255,14 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ) );
     Disconnect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ) );
     Disconnect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ) );
+
+	Disconnect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbumName ), NULL, this );
+	Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtistName ), NULL, this );
+
+	Disconnect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
+	Disconnect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
+	Disconnect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumSetSelection ), NULL, this );
+
     Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
     Disconnect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ) );
 
@@ -646,7 +659,6 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
         int PageIndex = GetPageIndex( m_CatNotebook, m_LibPanel );
         if( PageIndex >= 0 )
         {
-            //guLogMessage( wxT( "Show Lirycs enabled" ) );
             m_CatNotebook->RemovePage( PageIndex );
         }
     }
@@ -664,7 +676,6 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
         int PageIndex = GetPageIndex( m_CatNotebook, m_RadioPanel );
         if( PageIndex >= 0 )
         {
-            //guLogMessage( wxT( "Show Lirycs enabled" ) );
             m_CatNotebook->RemovePage( PageIndex );
         }
     }
@@ -682,7 +693,6 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
         int PageIndex = GetPageIndex( m_CatNotebook, m_LastFMPanel );
         if( PageIndex >= 0 )
         {
-            //guLogMessage( wxT( "Show Lirycs enabled" ) );
             m_CatNotebook->RemovePage( PageIndex );
         }
     }
@@ -700,7 +710,6 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
         int PageIndex = GetPageIndex( m_CatNotebook, m_LyricsPanel );
         if( PageIndex >= 0 )
         {
-            //guLogMessage( wxT( "Show Lirycs enabled" ) );
             m_CatNotebook->RemovePage( PageIndex );
         }
     }
@@ -718,24 +727,69 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
         int PageIndex = GetPageIndex( m_CatNotebook, m_PlayListPanel );
         if( PageIndex >= 0 )
         {
-            //guLogMessage( wxT( "Show Lirycs enabled" ) );
             m_CatNotebook->RemovePage( PageIndex );
         }
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnAlbumNameDClicked( wxCommandEvent &event )
+void guMainFrame::OnSelectAlbumName( wxCommandEvent &event )
 {
-    m_CatNotebook->SetSelection( 0 );
-    m_LibPanel->OnAlbumNameDClicked( event );
+    wxString * album = ( wxString * ) event.GetClientData();
+    if( album )
+    {
+        m_CatNotebook->SetSelection( 0 );
+        m_LibPanel->SelectAlbumName( * album );
+        delete album;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnArtistNameDClicked( wxCommandEvent &event )
+void guMainFrame::OnSelectArtistName( wxCommandEvent &event )
 {
-    m_CatNotebook->SetSelection( 0 );
-    m_LibPanel->OnArtistNameDClicked( event );
+    wxString * artist = ( wxString * ) event.GetClientData();
+    if( artist )
+    {
+        m_CatNotebook->SetSelection( 0 );
+        m_LibPanel->SelectArtistName( * artist );
+        delete artist;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnGenreSetSelection( wxCommandEvent &event )
+{
+    wxArrayInt * genres = ( wxArrayInt * ) event.GetClientData();
+    if( genres )
+    {
+        m_CatNotebook->SetSelection( 0 );
+        m_LibPanel->SelectGenres( genres );
+        delete genres;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnArtistSetSelection( wxCommandEvent &event )
+{
+    wxArrayInt * artists = ( wxArrayInt * ) event.GetClientData();
+    if( artists )
+    {
+        m_CatNotebook->SetSelection( 0 );
+        m_LibPanel->SelectArtists( artists );
+        delete artists;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnAlbumSetSelection( wxCommandEvent &event )
+{
+    wxArrayInt * albums = ( wxArrayInt * ) event.GetClientData();
+    if( albums )
+    {
+        m_CatNotebook->SetSelection( 0 );
+        m_LibPanel->SelectAlbums( albums );
+        delete albums;
+    }
 }
 
 // -------------------------------------------------------------------------------- //

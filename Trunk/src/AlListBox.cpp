@@ -72,15 +72,13 @@ bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
     long item = FindItem( 0, AlbumName, false );
     if( item != wxNOT_FOUND )
     {
-        SetSelection( item );
-        //ScrollToLine( item );
+        wxArrayInt * Albums = new wxArrayInt();
+        Albums->Add( ( * m_Items )[ item ].m_Id );
+
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_SETSELECTION );
+        event.SetClientData( ( void * ) Albums );
+        wxPostEvent( wxTheApp->GetTopWindow(), event );
         return true;
-//        UpdateView();
-//
-//        wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
-//        event.SetEventObject( this );
-//        event.SetInt( item );
-//        (void) GetEventHandler()->ProcessEvent( event );
     }
     return false;
 }

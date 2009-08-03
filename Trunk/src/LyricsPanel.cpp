@@ -268,7 +268,7 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
         //
         if( !Content.IsEmpty() )
         {
-            //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+            guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
             StartPos = Content.Find( wxT( "<div class='lyricbox' >" ) );
             if( StartPos != wxNOT_FOUND )
             {
@@ -298,7 +298,6 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
                         EndPos = Content.Find( wxT( "' title" ) );
                         StartPos += 6;
                         Content = Content.Mid( StartPos, EndPos - StartPos );
-                        UrlStr = wxEmptyString;
                         UrlStr = Content;
                         continue;
                     }
@@ -306,29 +305,38 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
             }
             else
             {
-                StartPos = Content.Find( wxT( "<pre>" ) );
-                EndPos = Content.Find( wxT( "</pre>" ) );
-                if( StartPos == wxNOT_FOUND || EndPos == wxNOT_FOUND )
+//                StartPos = Content.Find( wxT( "<pre>" ) );
+//                EndPos = Content.Find( wxT( "</pre>" ) );
+//                if( StartPos == wxNOT_FOUND || EndPos == wxNOT_FOUND )
+//                {
+//                    Content = _( "No lyrics found for this song." );
+//                }
+//                else
+//                {
+//                    StartPos += 5;
+//                    Content = Content.Mid( StartPos, EndPos - StartPos );
+//                    if( Content.Find( wxT( "Not found" ) ) != wxNOT_FOUND )
+//                    {
+//                        Content = _( "No lyrics found for this song." );
+//                    }
+//                }
+//
+//                Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
+//
+//                if( !TestDestroy() )
+//                {
+//                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
+//                    event.SetClientData( new wxString( Content.c_str() ) );
+//                    wxPostEvent( m_LyricsPanel, event );
+//                }
+                StartPos = Content.Find( wxT( "<a href='" ) );
+                if( StartPos != wxNOT_FOUND )
                 {
-                    Content = _( "No lyrics found for this song." );
-                }
-                else
-                {
-                    StartPos += 5;
+                    EndPos = Content.Find( wxT( "'>" ) );
+                    StartPos += 9;
                     Content = Content.Mid( StartPos, EndPos - StartPos );
-                    if( Content.Find( wxT( "Not found" ) ) != wxNOT_FOUND )
-                    {
-                        Content = _( "No lyrics found for this song." );
-                    }
-                }
-
-                Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
-
-                if( !TestDestroy() )
-                {
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
-                    event.SetClientData( new wxString( Content.c_str() ) );
-                    wxPostEvent( m_LyricsPanel, event );
+                    UrlStr = Content;
+                    continue;
                 }
             }
         }
