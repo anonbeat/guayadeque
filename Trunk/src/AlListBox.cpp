@@ -360,3 +360,14 @@ void guAlListBox::ReloadItems( bool reset )
 }
 
 // -------------------------------------------------------------------------------- //
+void  guAlListBox::SetSelectedItems( const wxArrayInt &selection )
+{
+    guListView::SetSelectedItems( selection );
+
+    wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
+    event.SetEventObject( this );
+    event.SetInt( -1 );
+    (void) GetEventHandler()->ProcessEvent( event );
+}
+
+// -------------------------------------------------------------------------------- //
