@@ -1386,6 +1386,7 @@ void guLastFMPanel::OnUpdateArtistInfo( wxCommandEvent &event )
     if( ArtistInfo )
     {
         m_ArtistInfoCtrl->SetInfo( ArtistInfo );
+        m_MainSizer->FitInside( this );
     }
     else
     {
@@ -1404,7 +1405,8 @@ void guLastFMPanel::OnUpdateAlbumItem( wxCommandEvent &event )
     if( AlbumInfo )
     {
         m_AlbumInfoCtrls[ index ]->SetInfo( AlbumInfo );
-        Layout();
+        //Layout();
+        m_MainSizer->FitInside( this );
     }
     else
     {
@@ -1423,7 +1425,8 @@ void guLastFMPanel::OnUpdateArtistItem( wxCommandEvent &event )
     if( ArtistInfo )
     {
         m_ArtistInfoCtrls[ index ]->SetInfo( ArtistInfo );
-        Layout();
+        //Layout();
+        m_MainSizer->FitInside( this );
     }
     else
     {
@@ -1443,7 +1446,8 @@ void guLastFMPanel::OnUpdateTrackItem( wxCommandEvent &event )
     if( TrackInfo )
     {
         m_TrackInfoCtrls[ index ]->SetInfo( TrackInfo );
-        Layout();
+        //Layout();
+        m_MainSizer->FitInside( this );
     }
     else
     {
