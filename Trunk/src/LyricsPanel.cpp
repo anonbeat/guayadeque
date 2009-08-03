@@ -182,7 +182,8 @@ void guLyricsPanel::SetText( const wxString &text )
 void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
 {
     SetTitle( track + wxT( " / " ) + artist );
-    SetText( _( "No lyrics found for this song." ) );
+    //SetText( _( "No lyrics found for this song." ) );
+    SetText( _( "Searching the lyrics for this track" ) );
     m_LyricThread = new guFetchLyricThread( this, artist.c_str(), track.c_str() );
 }
 
@@ -200,6 +201,10 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     {
         SetText( * Content );
         delete Content;
+    }
+    else
+    {
+        SetText( _( "No lyrics found for this song." ) );
     }
 }
 
@@ -250,7 +255,7 @@ wxString GetUrlContent( const wxString &url )
     }
     else
     {
-        guLogError( wxT( "Could not get the lyrics" ) );
+        guLogError( wxT( "Could not get the lyrics: %s" ), url.c_str() );
     }
     return RetVal;
 }
@@ -264,6 +269,7 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
     wxString    UrlStr = wxString::Format( wxT( "http://lyricwiki.org/api.php?func=getSong&artist=%s&song=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
     do {
+        //guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
         Content = GetUrlContent( UrlStr );
         //
         if( !Content.IsEmpty() )
@@ -342,7 +348,13 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
         }
         else
         {
-            guLogError( wxT( "Lyrics error converting the buffer" ) );
+//            guLogError( wxT( "Lyrics error converting the buffer" ) );
+            if( !TestDestroy() )
+            {
+                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
+                event.SetClientData( NULL );
+                wxPostEvent( m_LyricsPanel, event );
+            }
         }
         break;
     } while( true );
