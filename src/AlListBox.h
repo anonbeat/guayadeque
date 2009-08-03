@@ -52,6 +52,7 @@ class guAlListBox : public  guListView
     virtual wxString inline GetItemName( const int item ) const;
     virtual int inline      GetItemId( const int item ) const;
     virtual void            ReloadItems( bool reset = true );
+    virtual void            SetSelectedItems( const wxArrayInt &selection );
 
 
 };
