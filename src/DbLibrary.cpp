@@ -3202,8 +3202,11 @@ int DbLibrary::GetSongs( wxArrayInt SongIds, guTrackArray * Songs )
 
   query = GU_TRACKS_QUERYSTR;
   query += GetSongsDBNamesSQL( m_TracksOrder );
-  query += wxT( "WHERE song_id IN " ) + ArrayIntToStrList( SongIds );
+  query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+  query += wxT( "song_id IN " ) + ArrayIntToStrList( SongIds );
   query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc, m_AlOrder );
+
+  //guLogMessage( wxT( "%s" ), query.c_str() );
 
   dbRes = ExecuteQuery( query );
 

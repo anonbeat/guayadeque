@@ -252,8 +252,9 @@ class guLastFMInfoCtrl : public wxPanel
 
     virtual void        OnContextMenu( wxContextMenuEvent& event );
     virtual void        CreateContextMenu( wxMenu * Menu );
-    virtual void        OnClick( wxMouseEvent &event );
+    virtual void        OnDoubleClicked( wxMouseEvent &event );
     virtual wxString    GetSearchText( void );
+    virtual wxString    GetItemUrl( void );
     virtual void        OnSearchLinkClicked( wxCommandEvent &event );
     virtual void        OnCopyToClipboard( wxCommandEvent &event );
     virtual void        CreateControls( wxWindow * parent );
@@ -285,8 +286,9 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
 	bool                    m_ShowLongBioText;
 
     virtual void        OnContextMenu( wxContextMenuEvent& event );
-    virtual void        OnClick( wxMouseEvent &event );
+    //virtual void        OnClick( wxMouseEvent &event );
     virtual wxString    GetSearchText( void );
+    virtual wxString    GetItemUrl( void );
     virtual void        CreateContextMenu( wxMenu * Menu );
     virtual void        CreateControls( wxWindow * parent );
     void                UpdateArtistInfoText( void );
@@ -312,8 +314,9 @@ class guAlbumInfoCtrl : public guLastFMInfoCtrl
 
     virtual void        OnContextMenu( wxContextMenuEvent& event );
 //    void                OnSearchLinkClicked( wxCommandEvent &event );
-    virtual void        OnClick( wxMouseEvent &event );
+    //virtual void        OnClick( wxMouseEvent &event );
     virtual wxString    GetSearchText( void );
+    virtual wxString    GetItemUrl( void );
     virtual void        CreateContextMenu( wxMenu * Menu );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnAlbumSelectName( wxCommandEvent &event );
@@ -337,7 +340,8 @@ class guSimilarArtistInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnContextMenu( wxContextMenuEvent& event );
     virtual void        CreateContextMenu( wxMenu * Menu );
     virtual wxString    GetSearchText( void );
-    void                OnClick( wxMouseEvent &event );
+    virtual wxString    GetItemUrl( void );
+    //void                OnClick( wxMouseEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
     void                OnSelectArtist( wxCommandEvent &event );
@@ -361,7 +365,8 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnContextMenu( wxContextMenuEvent& event );
     virtual void        CreateContextMenu( wxMenu * Menu );
     virtual wxString    GetSearchText( void );
-    void                OnClick( wxMouseEvent &event );
+    virtual wxString    GetItemUrl( void );
+    //void                OnClick( wxMouseEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
 
