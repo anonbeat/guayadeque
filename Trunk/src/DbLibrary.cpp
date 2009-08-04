@@ -4390,7 +4390,7 @@ wxString DbLibrary::SearchLyric( const wxString &artist, const wxString &trackna
 }
 
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::SaveLyric( const wxString &artist, const wxString &trackname, const wxString &text )
+bool DbLibrary::CreateLyric( const wxString &artist, const wxString &trackname, const wxString &text )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;

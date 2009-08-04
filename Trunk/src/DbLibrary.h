@@ -427,6 +427,12 @@ class DbLibrary {
     guAS_SubmitInfoArray    GetCachedPlayedSongs( int MaxCount = 10 );
     bool                    DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo );
 
+    //
+    // Lyrics functions
+    //
+    wxString                SearchLyric( const wxString &artist, const wxString &trackname );
+    bool                    CreateLyric( const wxString &artist, const wxString &trackname, const wxString &text );
+
 };
 
 // -------------------------------------------------------------------------------- //
