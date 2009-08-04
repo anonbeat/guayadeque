@@ -472,13 +472,21 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
   {
     case 4 :
     {
-        Close();
-        guLogMessage( wxT( "Update of database needed. Old database renamed to guayadeque.db.save" ) );
-        wxRenameFile( DbName, DbName + wxT( ".save" ), true );
-        m_NeedUpdate = true;
-        Open( DbName );
-        query.Add( wxT( "CREATE TABLE Version( version INTEGER );" ) );
+      Close();
+      guLogMessage( wxT( "Update of database needed. Old database renamed to guayadeque.db.save" ) );
+      wxRenameFile( DbName, DbName + wxT( ".save" ), true );
+      m_NeedUpdate = true;
+      Open( DbName );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS Version( version INTEGER );" ) );
     }
+
+//    case 5 :
+//    {
+//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS lyrics( lyric_id INTEGER PRIMARY KEY AUTOINCREMENT, lyric_artist VARCHAR(255), lyric_title VARCHAR(255), lyric_text VARCHAR );" ) );
+//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'lyric_id' on lyrics (lyric_id ASC);" ) );
+//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'lyric_artist' on lyrics (lyric_artist ASC);" ) );
+//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'lyric_title' on lyrics (lyric_title ASC);" ) );
+//    }
 
     case 0 :
     {
@@ -4349,6 +4357,62 @@ bool DbLibrary::DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo 
         return true;
   }
   return false;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString DbLibrary::SearchLyric( const wxString &artist, const wxString &trackname )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString RetVal = wxEmptyString;
+  wxString Artist;
+  wxString TrackName;
+
+  Artist = artist;
+  escape_query_str( &Artist );
+
+  TrackName = trackname;
+  escape_query_str( &TrackName );
+
+  query = wxString::Format( wxT( "SELECT lyric_text FROM lyrics "
+                                 "WHERE lyric_artist = '%s' AND lyric_title = '%s' LIMIT 1;" ),
+                                 Artist.c_str(), TrackName.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+      RetVal = dbRes.GetString( 0 );
+  }
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool DbLibrary::SaveLyric( const wxString &artist, const wxString &trackname, const wxString &text )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxString RetVal = wxEmptyString;
+  wxString Artist;
+  wxString TrackName;
+  wxString Text;
+
+  Artist = artist;
+  escape_query_str( &Artist );
+
+  TrackName = trackname;
+  escape_query_str( &TrackName );
+
+  Text = text;
+  escape_query_str( &Text );
+
+  query = wxString::Format( wxT( "INSERT INTO lyrics( lyric_id, lyric_artist, lyric_title, lyric_text ) "
+                                 "VALUES( NULL, '%s', '%s', '%s' );" ),
+                                 Artist.c_str(), TrackName.c_str(), Text.c_str() );
+
+  return ExecuteUpdate( query );
 }
 
 // -------------------------------------------------------------------------------- //
