@@ -279,6 +279,7 @@ DbLibrary::DbLibrary()
     m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
     m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
+    m_StationsOrderDesc = Config->ReadBool( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );
   }
 
   m_NeedUpdate = false;
@@ -316,6 +317,7 @@ DbLibrary::DbLibrary( const wxString &DbName )
     m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
     m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
+    m_StationsOrderDesc = Config->ReadBool( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );
   }
 
   m_GeFilters.Empty();
@@ -339,6 +341,7 @@ DbLibrary::~DbLibrary()
     Config->WriteNum( wxT( "TracksOrder" ), m_TracksOrder, wxT( "General" ) );
     Config->WriteBool( wxT( "TracksOrderDesc" ), m_TracksOrderDesc, wxT( "General" ) );
     Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "General" ) );
+    Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "General" ) );
   }
 
   Close();
@@ -4088,7 +4091,6 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
     if( m_StationsOrderDesc )
         query += wxT( " DESC;" );
   }
-  //guLogMessage( wxT( "GetRadioStations : Order: %u query = %s" ), m_StationsOrder, query.c_str() );
 
   dbRes = ExecuteQuery( query );
 
