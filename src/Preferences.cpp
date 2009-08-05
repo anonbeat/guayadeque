@@ -372,6 +372,22 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
     }
 	OnlineMainSizer->Add( m_RadioMinBitRateRadBox, 0, wxALL|wxEXPAND, 5 );
 
+	wxStaticBoxSizer * LyricsSizer;
+	LyricsSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Lyrics Provider ") ), wxHORIZONTAL );
+
+	wxStaticText * LyricsProviderStaticText;
+	LyricsProviderStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Lyrics Provider:"), wxDefaultPosition, wxDefaultSize, 0 );
+	LyricsProviderStaticText->Wrap( -1 );
+	LyricsSizer->Add( LyricsProviderStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxString LyricsChoiceChoices[] = { wxT("LyricWiki: http://lyricwiki.org"), wxT("LeosLyrics: http://leoslyrics.com") };
+	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
+	m_LyricsChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
+	m_LyricsChoice->SetSelection( m_Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) ) );
+	LyricsSizer->Add( m_LyricsChoice, 0, wxALL, 5 );
+
+	OnlineMainSizer->Add( LyricsSizer, 0, wxEXPAND|wxALL, 5 );
+
 	m_OnlinePanel->SetSizer( OnlineMainSizer );
 	m_OnlinePanel->Layout();
 	OnlineMainSizer->Fit( m_OnlinePanel );
@@ -739,6 +755,7 @@ guPrefDialog::~guPrefDialog()
         m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "SearchFilters" ) );
         m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
         m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
+        m_Config->WriteNum( wxT( "LyricSearchEngine" ), m_LyricsChoice->GetSelection(), wxT( "General" ) );
         wxArrayString SearchLinks = m_LinksListBox->GetStrings();
         m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
         m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "SearchLinks" ), false );

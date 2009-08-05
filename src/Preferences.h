@@ -129,6 +129,8 @@ class guPrefDialog : public wxDialog
     wxRadioBox *                m_RadioMinBitRateRadBox;
     wxArrayString               m_RadioMinBitRateRadBoxChoices;
 
+    wxChoice *                  m_LyricsChoice;
+
     guConfig *                  m_Config;
     int                         m_PathSelected;
     int                         m_CoverSelected;
