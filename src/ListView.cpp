@@ -486,7 +486,7 @@ wxArrayInt guListView::GetSelectedItems( const bool convertall ) const
         {
             ItemId = GetItemId( item );
             RetVal.Add( ItemId );
-            if( ItemId == 0 )
+            if( convertall && ( ItemId == 0 ) )
                 break;
             item = GetNextSelected( cookie );
         }
