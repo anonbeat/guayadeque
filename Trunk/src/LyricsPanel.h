@@ -39,7 +39,10 @@
 #include <wx/html/htmlwin.h>
 #include <wx/panel.h>
 
-class guFetchLyricThread;
+class guSearchLyricEngine;
+
+#define guLYRIC_ENGINE_LYRICWIKI        0
+#define guLYRIC_ENGINE_LEOSLYRICS       1
 
 // -------------------------------------------------------------------------------- //
 class guLyricsPanel : public wxPanel
@@ -47,7 +50,7 @@ class guLyricsPanel : public wxPanel
   protected :
     wxStaticText *          m_LyricTitle;
     wxHtmlWindow *          m_LyricText;
-    guFetchLyricThread *    m_LyricThread;
+    guSearchLyricEngine *   m_LyricThread;
     wxCheckBox *            m_UpdateCheckBox;
 	wxTextCtrl *            m_ArtistTextCtrl;
 	wxTextCtrl *            m_TrackTextCtrl;
@@ -73,19 +76,45 @@ class guLyricsPanel : public wxPanel
 };
 
 // -------------------------------------------------------------------------------- //
-class guFetchLyricThread : public wxThread
+class guSearchLyricEngine : public wxThread
 {
-  protected:
+  private :
     guLyricsPanel *         m_LyricsPanel;
+  protected :
     wxString                m_ArtistName;
     wxString                m_TrackName;
 
   public:
-    guFetchLyricThread( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname );
-    ~guFetchLyricThread();
+    guSearchLyricEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    ~guSearchLyricEngine();
 
     virtual ExitCode Entry();
+    virtual void SearchLyric( void ) = 0;
+    virtual void SetLyric( wxString * lyrictext );
+};
 
+// -------------------------------------------------------------------------------- //
+class guLyricWikiEngine : public guSearchLyricEngine
+{
+  public:
+    guLyricWikiEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    ~guLyricWikiEngine();
+
+    virtual void SearchLyric( void );
+};
+
+// -------------------------------------------------------------------------------- //
+class guLeosLyricsEngine : public guSearchLyricEngine
+{
+  private:
+    wxString GetLyricId( void );
+    wxString GetLyricText( const wxString &lyricid );
+
+  public:
+    guLeosLyricsEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    ~guLeosLyricsEngine();
+
+    virtual void SearchLyric( void );
 };
 
 #endif

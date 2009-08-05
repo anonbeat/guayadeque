@@ -22,6 +22,7 @@
 #define AUDIOSCROBBLE_H
 
 #include <wx/wx.h>
+#include "Commands.h"
 #include "DbLibrary.h"
 
 
@@ -33,7 +34,7 @@
 
 #ifndef guAS_DEVELOPMENT
     #define guAS_CLIENT_ID          wxT( "gua" ) // Assigned by Adrian Woodhead <adrian@last.fm>
-    #define guAS_CLIENT_VERSION     wxT( "0.01" )
+    #define guAS_CLIENT_VERSION     ID_GUAYADEQUE_VERSION
 #else
     #define guAS_CLIENT_ID          wxT( "tst" )
     #define guAS_CLIENT_VERSION     wxT( "1.0" )

@@ -21,11 +21,37 @@
 #include "LyricsPanel.h"
 
 #include "Commands.h"
+#include "Config.h"
 #include "Images.h"
 #include "Utils.h"
 
 #include <wx/curl/http.h>
 #include <wx/settings.h>
+#include <wx/xml/xml.h>
+
+// -------------------------------------------------------------------------------- //
+wxString GetUrlContent( const wxString &url )
+{
+    wxCurlHTTP  http;
+    char *      Buffer;
+    wxString RetVal = wxEmptyString;
+
+    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "Accept: text/html" ) );
+    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    Buffer = NULL;
+    http.Get( Buffer, url );
+    if( Buffer )
+    {
+        RetVal = wxString( Buffer, wxConvUTF8 );
+        free( Buffer );
+    }
+    else
+    {
+        guLogError( wxT( "Could not get the lyrics: %s" ), url.c_str() );
+    }
+    return RetVal;
+}
 
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
@@ -184,7 +210,18 @@ void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
     SetTitle( track + wxT( " / " ) + artist );
     //SetText( _( "No lyrics found for this song." ) );
     SetText( _( "Searching the lyrics for this track" ) );
-    m_LyricThread = new guFetchLyricThread( this, artist.c_str(), track.c_str() );
+
+    guConfig * Config = ( guConfig * ) Config->Get();
+
+    int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
+    if( Engine == guLYRIC_ENGINE_LYRICWIKI )
+    {
+        m_LyricThread = new guLyricWikiEngine( this, artist.c_str(), track.c_str() );
+    }
+    else if( Engine == guLYRIC_ENGINE_LEOSLYRICS )
+    {
+        m_LyricThread = new guLeosLyricsEngine( this, artist.c_str(), track.c_str() );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -211,7 +248,7 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 //
 // -------------------------------------------------------------------------------- //
-guFetchLyricThread::guFetchLyricThread( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
+guSearchLyricEngine::guSearchLyricEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
     wxThread()
 {
     wxASSERT( lyricpanel );
@@ -221,14 +258,10 @@ guFetchLyricThread::guFetchLyricThread( guLyricsPanel * lyricpanel, const wxChar
     m_LyricsPanel = lyricpanel;
     m_ArtistName = artistname;
     m_TrackName = trackname;
-    if( Create() == wxTHREAD_NO_ERROR )
-    {
-        Run();
-    }
 }
 
 // -------------------------------------------------------------------------------- //
-guFetchLyricThread::~guFetchLyricThread()
+guSearchLyricEngine::~guSearchLyricEngine()
 {
     if( !TestDestroy() )
     {
@@ -237,39 +270,60 @@ guFetchLyricThread::~guFetchLyricThread()
 }
 
 // -------------------------------------------------------------------------------- //
-wxString GetUrlContent( const wxString &url )
+guSearchLyricEngine::ExitCode guSearchLyricEngine::Entry()
 {
-    wxCurlHTTP  http;
-    char *      Buffer;
-    wxString RetVal = wxEmptyString;
+    if( !TestDestroy() )
+    {
+        SearchLyric();
+    }
+    return 0;
+}
 
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    Buffer = NULL;
-    http.Get( Buffer, url );
-    if( Buffer )
+//// -------------------------------------------------------------------------------- //
+//void guSearchLyricEngine::SearchLyric( void )
+//{
+//}
+
+// -------------------------------------------------------------------------------- //
+void guSearchLyricEngine::SetLyric( wxString * lyrictext )
+{
+    if( !TestDestroy() )
     {
-        RetVal = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
+        event.SetClientData( ( void * ) lyrictext );
+        wxPostEvent( m_LyricsPanel, event );
     }
-    else
+}
+
+
+// -------------------------------------------------------------------------------- //
+// guLyricWikiEngine
+// -------------------------------------------------------------------------------- //
+guLyricWikiEngine::guLyricWikiEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( lyricpanel, artistname, trackname )
+{
+    if( Create() == wxTHREAD_NO_ERROR )
     {
-        guLogError( wxT( "Could not get the lyrics: %s" ), url.c_str() );
+        Run();
     }
-    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
+guLyricWikiEngine::~guLyricWikiEngine()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricWikiEngine::SearchLyric( void )
 {
     int         StartPos;
     int         EndPos;
     wxString    Content;
     wxString    UrlStr = wxString::Format( wxT( "http://lyricwiki.org/api.php?func=getSong&artist=%s&song=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
-    do {
-        //guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
+
+    while( !TestDestroy() )
+    {
         Content = GetUrlContent( UrlStr );
         //
         if( !Content.IsEmpty() )
@@ -284,12 +338,8 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
 
                 Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
-                if( !TestDestroy() )
-                {
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
-                    event.SetClientData( new wxString( Content.c_str() ) );
-                    wxPostEvent( m_LyricsPanel, event );
-                }
+                SetLyric( new wxString( Content.c_str() ) );
+                break;
             }
             else if( Content.Find( wxT( "#REDIRECT" ) ) != wxNOT_FOUND )
             {
@@ -305,7 +355,6 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
                         StartPos += 6;
                         Content = Content.Mid( StartPos, EndPos - StartPos );
                         UrlStr = Content;
-                        continue;
                     }
                 }
             }
@@ -342,23 +391,204 @@ guFetchLyricThread::ExitCode guFetchLyricThread::Entry()
                     StartPos += 9;
                     Content = Content.Mid( StartPos, EndPos - StartPos );
                     UrlStr = Content;
-                    continue;
                 }
             }
         }
         else
         {
-//            guLogError( wxT( "Lyrics error converting the buffer" ) );
             if( !TestDestroy() )
             {
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
-                event.SetClientData( NULL );
-                wxPostEvent( m_LyricsPanel, event );
+                SetLyric( NULL );
+                break;
             }
         }
-        break;
-    } while( true );
-    return 0;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guLyricWikiEngine
+// -------------------------------------------------------------------------------- //
+guLeosLyricsEngine::guLeosLyricsEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( lyricpanel, artistname, trackname )
+{
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guLeosLyricsEngine::~guLeosLyricsEngine()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guLeosLyricsEngine::GetLyricId( void )
+{
+    wxString RetVal = wxEmptyString;
+
+    wxString LyricIdUrl = wxString::Format( wxT( "http://api.leoslyrics.com/api_search.php?auth=Guayadeque&artist=%s&songtitle=%s" ),
+      guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+
+    wxString Content = GetUrlContent( LyricIdUrl );
+    if( !Content.IsEmpty() )
+    {
+        //guLogMessage( wxT( "%s" ), LyricIdText.c_str() );
+//        <?xml version="1.0" encoding="UTF-8"?>
+//        <leoslyrics>
+//          <response code="0">SUCCESS</response>
+//          <searchResults>
+//            <result id="68822" hid="RHNi62g2zmQ=" exactMatch="true">
+//              <title>Home</title>
+//              <feat />
+//              <artist>
+//                <name>Sarah McLachlan</name>
+//              </artist>
+//            </result>
+//          </searchResults>
+//        </leoslyrics>
+
+        wxStringInputStream ins( Content );
+        wxXmlDocument XmlDoc( ins );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        wxString Status;
+        if( XmlNode && XmlNode->GetName() == wxT( "leoslyrics" ) )
+        {
+            XmlNode = XmlNode->GetChildren();
+            while( XmlNode )
+            {
+                //guLogMessage( wxT( "Name: %s" ), XmlNode->GetName().c_str() );
+                if( XmlNode->GetName() == wxT( "response" ) )
+                {
+                    //guLogMessage( wxT( "Result: %s" ), XmlNode->GetNodeContent().c_str() );
+                    if( XmlNode->GetNodeContent() != wxT( "SUCCESS" ) )
+                    {
+                        break;
+                    }
+                }
+                else if( XmlNode->GetName() == wxT( "searchResults" ) )
+                {
+                    XmlNode = XmlNode->GetChildren();
+                    while( XmlNode )
+                    {
+                        //guLogMessage( wxT( "SubName: %s" ), XmlNode->GetName().c_str() );
+                        if( XmlNode->GetName() == wxT( "result" ) )
+                        {
+                            XmlNode->GetPropVal( wxT( "exactMatch" ), &Status );
+                            if( Status == wxT( "true" ) )
+                            {
+                                XmlNode->GetPropVal( wxT( "hid" ), &Status );
+                                //guLogMessage( wxT( "Found it with id '%s'" ), Status.c_str() );
+                                if( !Status.IsEmpty() )
+                                    RetVal = Status;
+                                break;
+                            }
+                        }
+                        XmlNode = XmlNode->GetNext();
+                    }
+                    break;
+                }
+                XmlNode = XmlNode->GetNext();
+            }
+        }
+    }
+    return RetVal;
+}
+
+
+// -------------------------------------------------------------------------------- //
+wxString guLeosLyricsEngine::GetLyricText( const wxString &lyricid )
+{
+    wxString RetVal = wxEmptyString;
+
+    wxString LyricIdUrl = wxString::Format( wxT( "http://api.leoslyrics.com/api_lyrics.php?auth=Guayadeque&hid=%s" ),
+        lyricid.c_str() );
+
+    wxString Content = GetUrlContent( LyricIdUrl );
+    if( !Content.IsEmpty() )
+    {
+//        <?xml version="1.0" encoding="UTF-8"?>
+//        <leoslyrics>
+//          <response code="0">SUCCESS</response>
+//          <lyric hid="VxwOBYpM3iY=" id="120741">
+//            <title>Comfort Eagle</title>
+//            <feat />
+//            <artist>
+//              <name>Cake</name>
+//
+//            </artist>
+//            <albums>
+//              <album>
+//                <name>Comfort Eagle</name>
+//                <imageUrl>http://images.amazon.com/images/P/B00005MCW5.01.MZZZZZZZ.jpg</imageUrl>
+//              </album>
+//            </albums>
+//            <writer />
+//
+//            <text>LyricText&#xD;
+//            </text>
+//          </lyric>
+//        </leoslyrics>
+//
+        wxStringInputStream ins( Content );
+        wxXmlDocument XmlDoc( ins );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        wxString Status;
+        if( XmlNode && XmlNode->GetName() == wxT( "leoslyrics" ) )
+        {
+            XmlNode = XmlNode->GetChildren();
+            while( XmlNode )
+            {
+                //guLogMessage( wxT( "Name: %s" ), XmlNode->GetName().c_str() );
+                if( XmlNode->GetName() == wxT( "response" ) )
+                {
+                    //guLogMessage( wxT( "Result: %s" ), XmlNode->GetNodeContent().c_str() );
+                    if( XmlNode->GetNodeContent() != wxT( "SUCCESS" ) )
+                    {
+                        break;
+                    }
+                }
+                else if( XmlNode->GetName() == wxT( "lyric" ) )
+                {
+                    XmlNode = XmlNode->GetChildren();
+                    continue;
+                }
+                else if( XmlNode->GetName() == wxT( "text" ) )
+                {
+                    RetVal = XmlNode->GetNodeContent();
+                    //RetVal.Replace( wxT( "&#xD" ), wxT( "<br>" ) );
+                    RetVal.Replace( wxT( "\n" ), wxT( "<br>" ) );
+                    //guLogMessage( wxT( "Result: %s" ), RetVal.c_str() );
+                    break;
+                }
+                XmlNode = XmlNode->GetNext();
+            }
+        }
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLeosLyricsEngine::SearchLyric( void )
+{
+    // 1
+    //http://api.leoslyrics.com/api_search.php?auth=Guayadeque&artist=%s&songtitle=%s
+    // 2
+    //http://api.leoslyrics.com/api_lyrics.php?auth=Guayadeque&hid=%s
+    //
+    wxString LyricId = GetLyricId();
+    if( !LyricId.IsEmpty() )
+    {
+        wxString LyricText = GetLyricText( LyricId );
+        if( LyricText.IsEmpty() )
+        {
+            SetLyric( NULL );
+        }
+        else
+        {
+            SetLyric( new wxString( LyricText ) );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
