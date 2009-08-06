@@ -350,11 +350,13 @@ guLibPanel::~guLibPanel()
 void guLibPanel::ReloadControls( wxCommandEvent &event )
 {
     m_Db->LoadCache();
+    m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems( false );
     m_GenreListCtrl->ReloadItems( false );
     m_ArtistListCtrl->ReloadItems( false );
     m_AlbumListCtrl->ReloadItems( false );
     m_SongListCtrl->ReloadItems();
+    m_UpdateLock = false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -367,11 +369,13 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
     wxArrayString Words = guSplitWords( m_InputTextCtrl->GetLineText( 0 ) );
 
     m_Db->SetTeFilters( Words );
+    m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
     m_SongListCtrl->ReloadItems();
+    m_UpdateLock = false;
     m_InputTextClearBitmap->Enable();
 }
 
@@ -382,11 +386,13 @@ void guLibPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
     //guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
     m_InputTextCtrl->Clear();
     m_Db->SetTeFilters( Words );
+    m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
     m_SongListCtrl->ReloadItems();
+    m_UpdateLock = false;
     m_InputTextClearBitmap->Disable();
 }
 
