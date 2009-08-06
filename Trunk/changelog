@@ -1,4 +1,5 @@
 
+  * Added Lyrc.com.ar lyric search http://lirc.com.ar/
   * TaskBar Icon is created/removed if enabled/disabled from preferences
   * Albums list box now only show the Album with the biggest year
   * Fixed bug in playlist not allowing to delete more than one track if the
