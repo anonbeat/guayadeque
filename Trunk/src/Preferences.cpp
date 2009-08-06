@@ -153,6 +153,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 
 	m_CloseTaskBarChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Close to task bar icon"), wxDefaultPosition, wxDefaultSize, 0 );
     m_CloseTaskBarChkBox->SetValue( m_Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) );
+    m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() );
 	OnCloseSizer->Add( m_CloseTaskBarChkBox, 0, wxALL, 5 );
 
 	m_ExitConfirmChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Ask confirmation on exit"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -669,6 +670,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
     m_PathSelected = wxNOT_FOUND;
     m_FilterSelected = wxNOT_FOUND;
 
+	m_TaskIconChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
+
 	m_PathsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxSelected ), NULL, this );
 	m_AddPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
 	m_DelPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
@@ -711,96 +714,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 // -------------------------------------------------------------------------------- //
 guPrefDialog::~guPrefDialog()
 {
-    if( GetReturnCode() == wxID_OK )
-    {
-        m_Config = ( guConfig * ) guConfig::Get();
-        if( !m_Config )
-            guLogError( wxT( "Invalid m_Config object in preferences dialog" ) );
-
-        // Save all configurations
-        m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "RndTrackOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "SavePlayListOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "SaveCurrentTrackPos" ), m_SavePosCheckBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteNum( wxT( "MinSavePlayPosLength" ), m_MinLenSpinCtrl->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteAStr( wxT( "LibPath" ), m_PathsListBox->GetStrings(), wxT( "LibPaths" ) );
-        if( m_Db )
-        {
-            m_Db->SetLibPath( m_PathsListBox->GetStrings() );
-        }
-        m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
-        m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
-//        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );
-        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->IsEnabled() && m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
-        m_Config->WriteStr( wxT( "UserName" ), m_UserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
-        if( !m_PasswdTextCtrl->IsEmpty() && m_PasswdTextCtrl->GetValue() != wxT( "******" ) )
-        {
-            guMD5 MD5;
-            m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_PasswdTextCtrl->GetValue() ), wxT( "LastFM" ) );
-            //guLogMessage( wxT( "Pass: %s" ), PasswdTextCtrl->GetValue().c_str() );
-            //guLogMessage( wxT( "MD5 : %s" ), MD5.MD5( PasswdTextCtrl->GetValue() ).c_str() );
-        }
-        // LastFM Panel Info language
-        m_Config->WriteStr( wxT( "Language" ), m_LangIds[ m_LangChoice->GetSelection() ], wxT( "LastFM" ) );
-        m_Config->WriteNum( wxT( "MinPlayListTracks" ), m_SmartPlayListMinTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
-        m_Config->WriteNum( wxT( "AddPlayListTracks" ), m_SmartPlayListAddTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
-        m_Config->WriteNum( wxT( "MaxPlayListTracks" ), m_SmartPlayListMaxTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
-        m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "SearchFilters" ) );
-        m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
-        m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
-        m_Config->WriteNum( wxT( "LyricSearchEngine" ), m_LyricsChoice->GetSelection(), wxT( "General" ) );
-        wxArrayString SearchLinks = m_LinksListBox->GetStrings();
-        m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
-        m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "SearchLinks" ), false );
-        wxArrayString Commands = m_CmdListBox->GetStrings();
-        m_Config->WriteAStr( wxT( "Cmd" ), Commands, wxT( "Commands" ) );
-        m_Config->WriteAStr( wxT( "Name" ), m_CmdNames, wxT( "Commands" ), false );
-        m_Config->WriteStr( wxT( "CopyToPattern" ), m_CopyToFileName->GetValue(), wxT( "General" ) );
-
-        // TODO : Make this process in a thread
-        int index;
-        int count = SearchLinks.Count();
-        for( index = 0; index < count; index++ )
-        {
-            wxURI Uri( SearchLinks[ index ] );
-            if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) ) )
-            {
-                wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons" ), 0770 );
-            }
-            wxString IconFile = wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) + Uri.GetServer() + wxT( ".ico" );
-            if( !wxFileExists( IconFile ) )
-            {
-                if( DownloadFile( Uri.GetServer() + wxT( "/favicon.ico" ), IconFile ) )
-                {
-                    wxImage Image( IconFile, wxBITMAP_TYPE_ANY );
-                    if( Image.IsOk() )
-                    {
-                        if( Image.GetWidth() > 25 || Image.GetHeight() > 25 )
-                        {
-                            Image.Rescale( 25, 25, wxIMAGE_QUALITY_HIGH );
-                        }
-                        if( Image.IsOk() )
-                        {
-                            Image.SaveFile( IconFile, wxBITMAP_TYPE_ICO );
-                        }
-                    }
-                }
-                else
-                {
-                    guLogError( wxT( "Coult not get the icon from SearchLink server '%s'" ), Uri.GetServer().c_str() );
-                }
-            }
-        }
-
-    }
     //
+	m_TaskIconChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
+
 	m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxSelected ), NULL, this );
 	m_AddPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
 	m_DelPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
@@ -839,6 +755,104 @@ guPrefDialog::~guPrefDialog()
 	m_CmdAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
 
 	m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
+}
+
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::SaveSettings( void )
+{
+    m_Config = ( guConfig * ) guConfig::Get();
+    if( !m_Config )
+        guLogError( wxT( "Invalid m_Config object in preferences dialog" ) );
+
+    // Save all configurations
+    m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "RndTrackOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "SavePlayListOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "SaveCurrentTrackPos" ), m_SavePosCheckBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteNum( wxT( "MinSavePlayPosLength" ), m_MinLenSpinCtrl->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_TaskIconChkBox->IsChecked() && m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteAStr( wxT( "LibPath" ), m_PathsListBox->GetStrings(), wxT( "LibPaths" ) );
+    if( m_Db )
+    {
+        m_Db->SetLibPath( m_PathsListBox->GetStrings() );
+    }
+    m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
+    m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
+//        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->IsEnabled() && m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
+    m_Config->WriteStr( wxT( "UserName" ), m_UserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
+    if( !m_PasswdTextCtrl->IsEmpty() && m_PasswdTextCtrl->GetValue() != wxT( "******" ) )
+    {
+        guMD5 MD5;
+        m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_PasswdTextCtrl->GetValue() ), wxT( "LastFM" ) );
+        //guLogMessage( wxT( "Pass: %s" ), PasswdTextCtrl->GetValue().c_str() );
+        //guLogMessage( wxT( "MD5 : %s" ), MD5.MD5( PasswdTextCtrl->GetValue() ).c_str() );
+    }
+    // LastFM Panel Info language
+    m_Config->WriteStr( wxT( "Language" ), m_LangIds[ m_LangChoice->GetSelection() ], wxT( "LastFM" ) );
+    m_Config->WriteNum( wxT( "MinPlayListTracks" ), m_SmartPlayListMinTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
+    m_Config->WriteNum( wxT( "AddPlayListTracks" ), m_SmartPlayListAddTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
+    m_Config->WriteNum( wxT( "MaxPlayListTracks" ), m_SmartPlayListMaxTracksSpinCtrl->GetValue(), wxT( "SmartPlayList" ) );
+    m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "SearchFilters" ) );
+    m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
+    m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
+    m_Config->WriteNum( wxT( "LyricSearchEngine" ), m_LyricsChoice->GetSelection(), wxT( "General" ) );
+    wxArrayString SearchLinks = m_LinksListBox->GetStrings();
+    m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
+    m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "SearchLinks" ), false );
+    wxArrayString Commands = m_CmdListBox->GetStrings();
+    m_Config->WriteAStr( wxT( "Cmd" ), Commands, wxT( "Commands" ) );
+    m_Config->WriteAStr( wxT( "Name" ), m_CmdNames, wxT( "Commands" ), false );
+    m_Config->WriteStr( wxT( "CopyToPattern" ), m_CopyToFileName->GetValue(), wxT( "General" ) );
+
+    // TODO : Make this process in a thread
+    int index;
+    int count = SearchLinks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        wxURI Uri( SearchLinks[ index ] );
+        if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) ) )
+        {
+            wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons" ), 0770 );
+        }
+        wxString IconFile = wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) + Uri.GetServer() + wxT( ".ico" );
+        if( !wxFileExists( IconFile ) )
+        {
+            if( DownloadFile( Uri.GetServer() + wxT( "/favicon.ico" ), IconFile ) )
+            {
+                wxImage Image( IconFile, wxBITMAP_TYPE_ANY );
+                if( Image.IsOk() )
+                {
+                    if( Image.GetWidth() > 25 || Image.GetHeight() > 25 )
+                    {
+                        Image.Rescale( 25, 25, wxIMAGE_QUALITY_HIGH );
+                    }
+                    if( Image.IsOk() )
+                    {
+                        Image.SaveFile( IconFile, wxBITMAP_TYPE_ICO );
+                    }
+                }
+            }
+            else
+            {
+                guLogError( wxT( "Coult not get the icon from SearchLink server '%s'" ), Uri.GetServer().c_str() );
+            }
+        }
+    }
+    m_Config->Flush();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnActivateTaskBarIcon( wxCommandEvent& event )
+{
+    m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

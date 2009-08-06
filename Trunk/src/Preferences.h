@@ -139,6 +139,7 @@ class guPrefDialog : public wxDialog
     int                         m_CmdSelected;
 
     // Event Handlers
+    void OnActivateTaskBarIcon( wxCommandEvent& event );
     void OnPathsListBoxSelected( wxCommandEvent& event );
     void OnAddPathBtnClick( wxCommandEvent& event );
 	void OnDelPathBtnClick( wxCommandEvent& event );
@@ -175,6 +176,8 @@ class guPrefDialog : public wxDialog
   public:
     guPrefDialog( wxWindow * parent, DbLibrary * db );
     ~guPrefDialog();
+
+    void SaveSettings( void );
 
 };
 

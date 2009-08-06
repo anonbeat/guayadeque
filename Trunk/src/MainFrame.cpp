@@ -135,13 +135,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_TaskBarIcon = NULL;
     if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
     {
-        m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
-        if( m_TaskBarIcon )
-        {
-            wxIcon AppIcon;
-            AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
-            m_TaskBarIcon->SetIcon( AppIcon );
-        }
+        CreateTaskBarIcon();
     }
 
     // Init the MPRIS object
@@ -385,7 +379,22 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
     guPrefDialog * PrefDialog = new guPrefDialog( this, m_Db );
     if( PrefDialog )
     {
-        PrefDialog->ShowModal();
+        if( PrefDialog->ShowModal() == wxID_OK )
+        {
+            PrefDialog->SaveSettings();
+
+            guConfig * Config = ( guConfig * ) guConfig::Get();
+            if( !m_TaskBarIcon && Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
+            {
+                CreateTaskBarIcon();
+            }
+            else if( m_TaskBarIcon && !Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
+            {
+                m_TaskBarIcon->RemoveIcon();
+                delete m_TaskBarIcon;
+                m_TaskBarIcon = NULL;
+            }
+        }
         PrefDialog->Destroy();
     }
 }
@@ -397,7 +406,9 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
+        // If the icon
+        if( m_TaskBarIcon &&
+            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
             Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
         {
             if( event.CanVeto() )
@@ -838,6 +849,18 @@ void guMainFrame::PlayerSplitterOnIdle( wxIdleEvent& WXUNUSED( event ) )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_PlayerSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
     m_PlayerSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::PlayerSplitterOnIdle ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::CreateTaskBarIcon( void )
+{
+    m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
+    if( m_TaskBarIcon )
+    {
+        wxIcon AppIcon;
+        AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
+        m_TaskBarIcon->SetIcon( AppIcon );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

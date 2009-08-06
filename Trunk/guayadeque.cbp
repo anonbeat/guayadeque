@@ -7,51 +7,6 @@
 		<Option compiler="gcc" />
 		<Option show_notes="0">
 			<notes>
-				<![CDATA[-------. TODO .-------
-[x] Detect Songs in Radio
-[x] Filter files when droped files to playlist
-[x] Add configuration option to select if playlist is replaced on droped new files
-[ ] Add selecton by Path in albums
-[ ] Large Process should allow to be cancelled
-[ ] Separate Db and Tags
-[x] Add support to get covers from images.google.com
-[?] Add threads to get data from database. discarded
-[x] Add counters to the list item results
-[x] Add context menus
-[?] Add clear selection context menus
-[x]Add support for keystrokes in Listbox
-[x]Edit tags support
-[x]Edit songs id3tags
-[x]download covers
-[x]Add support for Send audio scrobbing
-[x]When playing a radio. Cancell scroll pos and reset its state
-[x] When starting add to SmartCache current Playlist
-[x] Modificar Tags a Labels en el programa
-[x] Añadir una lista de generos disponibles para seleccionar generos en radios
-[ ] Cuando no hay radios añadidas y se entra en el panel de radio avisar si se quiere añadir las radios
-
-[x] Add a list of words to detect covers like front, cover, ...
-[x] Shoutcast StrToUrl and guURLEncode are the same...
-
-[x] En las etiquetas de lastfm reemplazar el caracter & por &&
-
-[x] Cambiar todos los miembros de clases por m_
-[ ] Cambiar todos los parametros a minusculas
-
-[ ] Detectar imagenes desde id3tags
-[x] Audioscrobble debe ser desde un thread
-[x] Completar información desde LastFM. BIografia, TopAlbums, Artistas Similares, etc
-[x] Cargar canciones desde command line
-[ ] Completar el navegador de ficheros
-[x] Barra de progreso para los procesos largos
-[?] Listas de seleccion con cache y carga selectiva de elementos en vez de cargar todos cada vez
-[x] Guardar los labels de las canciones en id3tags
-[ ] Crear, cargar, salvar, etc Playlists
-[x] Añadir soporte para replay volumen from id3tags
-[ ] Añadir scroll a los nombres de artista, cancion y album cuando no se puedan ver completos.
-[x] Auto download cover files should check filetype and covert it to jpeg.
-[x] En las listas de selección añadir la opción 'Todos'
-]]>
 			</notes>
 		</Option>
 		<Build>
@@ -70,6 +25,8 @@
 					<Add option="-I./src" />
 				</Compiler>
 				<Linker>
+					<Add option="`wx-config --libs`" />
+					<Add option="`pkg-config gstreamer-0.10 --libs`" />
 					<Add library="id3" />
 					<Add library="sqlite3" />
 				</Linker>
@@ -93,10 +50,17 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-w" />
+			<Add option="-Wfatal-errors" />
+			<Add option="-W" />
+			<Add option="-Wall" />
 			<Add option="`pkg-config gtk+-2.0 --cflags`" />
 			<Add option="`wx-config --cflags`" />
 			<Add option="`curl-config --cflags`" />
 			<Add option="`pkg-config gstreamer-0.10 --cflags`" />
+			<Add directory="/usr/include/dbus-1.0" />
+			<Add directory="/usr/lib/dbus-1.0/include" />
+			<Add directory="/usr/include/taglib" />
 		</Compiler>
 		<Linker>
 			<Add option="`wx-config --libs`" />
@@ -105,6 +69,7 @@
 			<Add library="id3" />
 			<Add library="sqlite3" />
 			<Add library="libcurl" />
+			<Add library="/usr/lib/libtag.so" />
 		</Linker>
 		<Unit filename="src/AlListBox.cpp" />
 		<Unit filename="src/AlListBox.h" />

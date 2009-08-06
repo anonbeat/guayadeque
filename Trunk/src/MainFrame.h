@@ -106,6 +106,8 @@ class guMainFrame : public wxFrame
 
     void                OnPlayListUpdated( wxCommandEvent &event );
 
+    void                CreateTaskBarIcon( void );
+
   public:
                         guMainFrame( wxWindow * parent );
                         ~guMainFrame();

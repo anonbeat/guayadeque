@@ -589,6 +589,10 @@ void guLeosLyricsEngine::SearchLyric( void )
             SetLyric( new wxString( LyricText ) );
         }
     }
+    else
+    {
+        SetLyric( NULL );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
