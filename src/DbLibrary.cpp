@@ -2033,9 +2033,15 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   wxString CoverPath;
   //guLogMessage( wxT( "DbLibrary::GetAlbums" )
 
+#ifdef IWANT_SLOW_ALBUMS_QUERY_BUT_NOT_REPEATED_ALBUMS
   query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, "
                "( SELECT song_year FROM songs WHERE song_albumid = album_id ORDER BY song_year DESC LIMIT 1 ) AS album_year "
                "FROM albums, songs WHERE album_id = song_albumid " );
+#else
+  query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year "
+               "FROM albums, songs WHERE album_id = song_albumid " );
+#endif
+
   if( FullList )
   {
       query += wxT( "ORDER BY album_id" );
@@ -2049,37 +2055,10 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
       query += wxT( " ORDER BY " );
       if( m_AlOrder == ALBUMS_ORDER_YEAR )
       {
-        query += wxT( "album_year," );
+        query += wxT( "song_year," );
       }
       query += wxT( "album_name;" );
   }
-
-//  if( FullList )
-//  {
-//    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums, songs "\
-//                 "WHERE song_albumid = album_id ORDER BY album_id;" );
-//  }
-//  else if( !( m_LaFilters.Count() + m_GeFilters.Count() + m_ArFilters.Count() + m_TeFilters.Count() ) )
-//  {
-//    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums, songs WHERE album_id = song_albumid ORDER BY " );
-//    if( m_AlOrder == ALBUMS_ORDER_YEAR )
-//    {
-//        query += wxT( "song_year," );
-//    }
-//    query += wxT( "album_name;" );
-//  }
-//  else
-//  {
-//    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums,songs " ) \
-//            wxT( "WHERE album_id = song_albumid AND " );
-//    query += FiltersSQL( GULIBRARY_FILTER_ALBUMS );
-//    query += wxT( " ORDER BY " );
-//    if( m_AlOrder == ALBUMS_ORDER_YEAR )
-//    {
-//        query += wxT( "song_year," );
-//    }
-//    query += wxT( "album_name;" );
-//  }
 
 //  guLogMessage( query );
 
