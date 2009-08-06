@@ -2034,7 +2034,7 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   //guLogMessage( wxT( "DbLibrary::GetAlbums" )
 
   query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, "
-               "( SELECT song_year FROM songs WHERE song_albumid = album_id ORDER BY song_year DESC LIMIT 1 ) as album_year "
+               "( SELECT song_year FROM songs WHERE song_albumid = album_id ORDER BY song_year DESC LIMIT 1 ) AS album_year "
                "FROM albums, songs WHERE album_id = song_albumid " );
   if( FullList )
   {

@@ -216,11 +216,15 @@ void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
     int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
     if( Engine == guLYRIC_ENGINE_LYRICWIKI )
     {
-        m_LyricThread = new guLyricWikiEngine( this, artist.c_str(), track.c_str() );
+        m_LyricThread = new guLyrcComArEngine( this, artist.c_str(), track.c_str() );
     }
     else if( Engine == guLYRIC_ENGINE_LEOSLYRICS )
     {
         m_LyricThread = new guLeosLyricsEngine( this, artist.c_str(), track.c_str() );
+    }
+    else if( Engine == guLYRIC_ENGINE_LYRC_COM_AR )
+    {
+        m_LyricThread = new guLyrcComArEngine( this, artist.c_str(), track.c_str() );
     }
 }
 
@@ -590,6 +594,56 @@ void guLeosLyricsEngine::SearchLyric( void )
         }
     }
     else
+    {
+        SetLyric( NULL );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guLyrcComArEngine
+// -------------------------------------------------------------------------------- //
+guLyrcComArEngine::guLyrcComArEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( lyricpanel, artistname, trackname )
+{
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guLyrcComArEngine::~guLyrcComArEngine()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyrcComArEngine::SearchLyric( void )
+{
+    int         StartPos;
+    int         EndPos;
+    wxString    Content;
+    wxString    UrlStr = wxString::Format( wxT( "http://lyrc.com.ar/en/tema1en.php?artist=%s&songname=%s" ),
+                        guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+
+    Content = GetUrlContent( UrlStr );
+    //
+    if( !Content.IsEmpty() )
+    {
+        guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+        StartPos = Content.Find( wxT( "</script></td></tr></table>" ) );
+        if( StartPos != wxNOT_FOUND )
+        {
+            Content = Content.Mid( StartPos + 27 );
+            guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+            EndPos = Content.Find( wxT( "<a href=\"#\"" ) );
+            Content = Content.Mid( 0, EndPos );
+            guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+            //Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
+            SetLyric( new wxString( Content.c_str() ) );
+            return;
+        }
+    }
+    if( !TestDestroy() )
     {
         SetLyric( NULL );
     }
