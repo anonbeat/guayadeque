@@ -629,15 +629,12 @@ void guLyrcComArEngine::SearchLyric( void )
     //
     if( !Content.IsEmpty() )
     {
-        guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
         StartPos = Content.Find( wxT( "</script></td></tr></table>" ) );
         if( StartPos != wxNOT_FOUND )
         {
             Content = Content.Mid( StartPos + 27 );
-            guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
             EndPos = Content.Find( wxT( "<a href=\"#\"" ) );
             Content = Content.Mid( 0, EndPos );
-            guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
             //Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
             SetLyric( new wxString( Content.c_str() ) );
             return;
