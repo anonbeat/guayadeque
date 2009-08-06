@@ -25,7 +25,7 @@
 #include <wx/menu.h>
 
 // ---------------------------------------------------------------------- //
-guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPlayerPanel )
+guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPlayerPanel ) : wxTaskBarIcon()
 {
     m_MainFrame = NewMainFrame;
     m_PlayerPanel = NewPlayerPanel;

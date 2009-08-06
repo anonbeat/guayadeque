@@ -2031,36 +2031,57 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   wxSQLite3ResultSet dbRes;
 //  guListItems RetVal;
   wxString CoverPath;
-  //guLogMessage( wxT( "DbLibrary::GetAlbums" ) );
+  //guLogMessage( wxT( "DbLibrary::GetAlbums" )
 
+  query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, "
+               "( SELECT song_year FROM songs WHERE song_albumid = album_id ORDER BY song_year DESC LIMIT 1 ) as album_year "
+               "FROM albums, songs WHERE album_id = song_albumid " );
   if( FullList )
   {
-    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums, songs "\
-                 "WHERE song_albumid = album_id ORDER BY album_id;" );
-  }
-  else if( !( m_LaFilters.Count() + m_GeFilters.Count() + m_ArFilters.Count() + m_TeFilters.Count() ) )
-  {
-    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums, songs WHERE album_id = song_albumid ORDER BY " );
-    if( m_AlOrder == ALBUMS_ORDER_YEAR )
-    {
-        query += wxT( "song_year," );
-    }
-    query += wxT( "album_name;" );
+      query += wxT( "ORDER BY album_id" );
   }
   else
   {
-    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums,songs " ) \
-            wxT( "WHERE album_id = song_albumid AND " );
-    query += FiltersSQL( GULIBRARY_FILTER_ALBUMS );
-    query += wxT( " ORDER BY " );
-    if( m_AlOrder == ALBUMS_ORDER_YEAR )
-    {
-        query += wxT( "song_year," );
-    }
-    query += wxT( "album_name;" );
+      if( m_LaFilters.Count() || m_GeFilters.Count() || m_ArFilters.Count() || m_TeFilters.Count() )
+      {
+        query += wxT( "AND " ) + FiltersSQL( GULIBRARY_FILTER_ALBUMS );
+      }
+      query += wxT( " ORDER BY " );
+      if( m_AlOrder == ALBUMS_ORDER_YEAR )
+      {
+        query += wxT( "album_year," );
+      }
+      query += wxT( "album_name;" );
   }
 
-  //guLogMessage( query );
+//  if( FullList )
+//  {
+//    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums, songs "\
+//                 "WHERE song_albumid = album_id ORDER BY album_id;" );
+//  }
+//  else if( !( m_LaFilters.Count() + m_GeFilters.Count() + m_ArFilters.Count() + m_TeFilters.Count() ) )
+//  {
+//    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums, songs WHERE album_id = song_albumid ORDER BY " );
+//    if( m_AlOrder == ALBUMS_ORDER_YEAR )
+//    {
+//        query += wxT( "song_year," );
+//    }
+//    query += wxT( "album_name;" );
+//  }
+//  else
+//  {
+//    query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year FROM albums,songs " ) \
+//            wxT( "WHERE album_id = song_albumid AND " );
+//    query += FiltersSQL( GULIBRARY_FILTER_ALBUMS );
+//    query += wxT( " ORDER BY " );
+//    if( m_AlOrder == ALBUMS_ORDER_YEAR )
+//    {
+//        query += wxT( "song_year," );
+//    }
+//    query += wxT( "album_name;" );
+//  }
+
+//  guLogMessage( query );
 
   dbRes = ExecuteQuery( query );
 
