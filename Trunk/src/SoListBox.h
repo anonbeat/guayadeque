@@ -28,15 +28,16 @@
 #define guSONGS_COLUMN_TITLE        1
 #define guSONGS_COLUMN_ARTIST       2
 #define guSONGS_COLUMN_ALBUM        3
-#define guSONGS_COLUMN_LENGTH       4
-#define guSONGS_COLUMN_YEAR         5
-#define guSONGS_COLUMN_BITRATE      6
-#define guSONGS_COLUMN_RATING       7
-#define guSONGS_COLUMN_PLAYCOUNT    8
-#define guSONGS_COLUMN_LASTPLAY     9
-#define guSONGS_COLUMN_ADDEDDATE    10
+#define guSONGS_COLUMN_GENRE        4
+#define guSONGS_COLUMN_LENGTH       5
+#define guSONGS_COLUMN_YEAR         6
+#define guSONGS_COLUMN_BITRATE      7
+#define guSONGS_COLUMN_RATING       8
+#define guSONGS_COLUMN_PLAYCOUNT    9
+#define guSONGS_COLUMN_LASTPLAY     10
+#define guSONGS_COLUMN_ADDEDDATE    11
 
-extern wxString guSONGS_COLUMN_NAMES[ 11 ];
+extern wxString guSONGS_COLUMN_NAMES[ guSONGS_COLUMN_ADDEDDATE + 1 ];
 
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public guListView

@@ -3145,6 +3145,11 @@ wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
     case guTRACKS_ORDER_ALBUM :
       query += wxT( ",artists,albums WHERE song_artistid = artist_id AND song_albumid = album_id " );
       break;
+
+    case guTRACKS_ORDER_GENRE :
+      query += wxT( ",genres WHERE song_genreid = genre_id " );
+      break;
+
 //    case guTRACKS_ORDER_TITLE :
 //    case guTRACKS_ORDER_NUMBER :
 //    case guTRACKS_ORDER_LENGTH :
@@ -3176,6 +3181,10 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc, cons
 
     case guTRACKS_ORDER_ALBUM :
         query += ( alorder == ALBUMS_ORDER_NAME ) ? wxT( "album_name" ) : wxT( "song_year" );
+      break;
+
+    case guTRACKS_ORDER_GENRE :
+      query += wxT( "genre_name" );
       break;
 
     case guTRACKS_ORDER_NUMBER :
