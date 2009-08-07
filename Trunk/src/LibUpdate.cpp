@@ -116,7 +116,8 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
             {
               LowerFileName = FileName.Lower();
               // TODO: add other file formats
-              if( LowerFileName.EndsWith( wxT( ".mp3" ) ) )
+              if( LowerFileName.EndsWith( wxT( ".mp3" ) ) ||
+                  LowerFileName.EndsWith( wxT( ".flac" ) ) )
               {
                 m_TrackFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
               }
