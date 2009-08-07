@@ -31,11 +31,12 @@
 
 #include <wx/imaglist.h>
 
-wxString guSONGS_COLUMN_NAMES[ 11 ] = {
+wxString guSONGS_COLUMN_NAMES[ guSONGS_COLUMN_ADDEDDATE + 1 ] = {
     wxT( "#" ),
     _( "Title" ),
     _( "Artist" ),
     _( "Album" ),
+    _( "Genre" ),
     _( "Length" ),
     _( "Year" ),
     _( "BitRate" ),
@@ -137,6 +138,9 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
 
         case guSONGS_COLUMN_ALBUM :
           return Song->m_AlbumName;
+
+        case guSONGS_COLUMN_GENRE :
+          return Song->m_GenreName;
 
         case guSONGS_COLUMN_LENGTH :
           return LenToString( Song->m_Length );
