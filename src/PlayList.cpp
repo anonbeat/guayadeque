@@ -758,72 +758,80 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
 void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 {
     wxListItem ListItem;
-    TagInfo Info;
 
-    guTrack Song;
-    wxString Len;
-    wxURI UriPath( FileName );
-    if( UriPath.IsReference() )
+    guTagInfo * TagInfo;
+
+    TagInfo = guGetTagInfoHandler( FileName );
+
+    if( TagInfo )
     {
-        //guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
-
-        //
-        Song.m_FileName = wxEmptyString;
-
-        if( AddPath )
+        guTrack Song;
+        wxString Len;
+        wxURI UriPath( FileName );
+        if( UriPath.IsReference() )
         {
-            Song.m_FileName = wxGetCwd() + wxT( "/" );
-        }
+            //guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
 
-        //Song.m_FileName +=  UriPath.Unescape( UriPath.GetPath() ); //.AfterLast( '/' );
-        Song.m_FileName += FileName;
+            //
+            Song.m_FileName = wxEmptyString;
 
-        if( wxFileExists( Song.m_FileName ) )
-        {
-            Song.m_SongId = 0;
-            Song.m_CoverId = 0;
-            //Song.m_Number = -1;
-
-            //Song.m_SongId = 1;
-            //guLogMessage( wxT( "Loading : %s" ), Song.m_FileName.c_str() );
-            m_Db->FindTrackFile( Song.m_FileName, &Song );
-
-            if( !Song.m_SongId )
+            if( AddPath )
             {
-                Song.m_SongId = guPLAYLIST_NOTDBTRACK;
-
-                Info.ReadID3Tags( Song.m_FileName );
-
-                Song.m_ArtistName = Info.m_ArtistName;
-                Song.m_AlbumName = Info.m_AlbumName;
-                Song.m_SongName = Info.m_TrackName;
-                Song.m_Number = Info.m_Track;
-                Song.m_GenreName = Info.m_GenreName;
-                Song.m_Length = Info.m_Length;
-                Song.m_Year = Info.m_Year;
-                Song.m_Rating = wxNOT_FOUND;
+                Song.m_FileName = wxGetCwd() + wxT( "/" );
             }
 
-            m_TotalLen += Song.m_Length;
+            //Song.m_FileName +=  UriPath.Unescape( UriPath.GetPath() ); //.AfterLast( '/' );
+            Song.m_FileName += FileName;
 
-            AddItem( Song );
+            if( wxFileExists( Song.m_FileName ) )
+            {
+                Song.m_SongId = 0;
+                Song.m_CoverId = 0;
+                //Song.m_Number = -1;
+
+                //Song.m_SongId = 1;
+                //guLogMessage( wxT( "Loading : %s" ), Song.m_FileName.c_str() );
+                m_Db->FindTrackFile( Song.m_FileName, &Song );
+
+                if( !Song.m_SongId )
+                {
+                    Song.m_SongId = guPLAYLIST_NOTDBTRACK;
+
+                    TagInfo->Read( Song.m_FileName );
+
+                    Song.m_ArtistName = TagInfo->m_ArtistName;
+                    Song.m_AlbumName = TagInfo->m_AlbumName;
+                    Song.m_SongName = TagInfo->m_TrackName;
+                    Song.m_Number = TagInfo->m_Track;
+                    Song.m_GenreName = TagInfo->m_GenreName;
+                    Song.m_Length = TagInfo->m_Length;
+                    Song.m_Year = TagInfo->m_Year;
+                    Song.m_Rating = wxNOT_FOUND;
+                }
+
+                m_TotalLen += Song.m_Length;
+
+                AddItem( Song );
+            }
+            else
+            {
+                guLogWarning( wxT( "Could not open the file '%s'" ), Song.m_FileName.c_str() );
+            }
         }
         else
         {
-            guLogWarning( wxT( "Could not open the file '%s'" ), Song.m_FileName.c_str() );
+            Song.m_SongId   = guPLAYLIST_RADIOSTATION;
+            Song.m_CoverId  = 0;
+            Song.m_FileName = FileName;
+            Song.m_SongName = FileName;
+            Song.m_Length   = 0;
+            Song.m_Year     = 0;
+            Song.m_Rating   = wxNOT_FOUND;
+            AddItem( Song );
+            //guLogMessage( wxT( "Added a radio stream" ) );
         }
-    }
-    else
-    {
-        Song.m_SongId   = guPLAYLIST_RADIOSTATION;
-        Song.m_CoverId  = 0;
-        Song.m_FileName = FileName;
-        Song.m_SongName = FileName;
-        Song.m_Length   = 0;
-        Song.m_Year     = 0;
-        Song.m_Rating   = -1;
-        AddItem( Song );
-        //guLogMessage( wxT( "Added a radio stream" ) );
+
+        delete TagInfo;
     }
 }
 
