@@ -31,7 +31,7 @@
 #define TStringTowxString(s) wxString::FromUTF8( s.toCString(true))
 
 // -------------------------------------------------------------------------------- //
-class TagInfo
+class guTagInfo
 {
   public:
     wxString        m_TrackName;
@@ -51,7 +51,7 @@ class TagInfo
     wxArrayString   m_AlbumLabels;
     wxString        m_AlbumLabelsStr;
 
-    TagInfo()
+    guTagInfo()
     {
         m_TrackName = wxEmptyString;
         m_GenreName = wxEmptyString;
@@ -69,10 +69,58 @@ class TagInfo
         m_AlbumLabelsStr = wxEmptyString;
     };
 
-//    int         RemoveLabelFrame( ID3_Tag * tag, const char * Name );
-//    ID3_Frame * Find( ID3_Tag * tag, const char * Name );
-    bool        ReadID3Tags( const wxString &FileName );
-    bool        WriteID3Tags( const wxString &FileName );
+    ~guTagInfo(){};
+
+//    bool        ReadID3Tags( const wxString &FileName );
+//    bool        WriteID3Tags( const wxString &FileName );
+    virtual bool        Read( const wxString &filename ) = 0;
+    virtual bool        Write( const wxString &filename ) = 0;
+    virtual wxImage *   GetImage( const wxString &filename ) = 0;
+    virtual bool        SetImage( const wxString &filename, const wxImage * image ) = 0;
+
+};
+
+guTagInfo * guGetTagInfoHandler( const wxString &filename );
+
+// -------------------------------------------------------------------------------- //
+class guMp3TagInfo : public guTagInfo
+{
+  public :
+    guMp3TagInfo();
+    ~guMp3TagInfo();
+
+    virtual bool        Read( const wxString &filename );
+    virtual bool        Write( const wxString &filename );
+    virtual wxImage *   GetImage( const wxString &filename );
+    virtual bool        SetImage( const wxString &filename, const wxImage * image );
+
+};
+
+// -------------------------------------------------------------------------------- //
+class guFlacTagInfo : public guTagInfo
+{
+  public :
+    guFlacTagInfo();
+    ~guFlacTagInfo();
+
+    virtual bool        Read( const wxString &filename );
+    virtual bool        Write( const wxString &filename );
+    virtual wxImage *   GetImage( const wxString &filename );
+    virtual bool        SetImage( const wxString &filename, const wxImage * image );
+
+};
+
+// -------------------------------------------------------------------------------- //
+class guOggTagInfo : public guTagInfo
+{
+  public :
+    guOggTagInfo();
+    ~guOggTagInfo();
+
+    virtual bool        Read( const wxString &filename );
+    virtual bool        Write( const wxString &filename );
+    virtual wxImage *   GetImage( const wxString &filename );
+    virtual bool        SetImage( const wxString &filename, const wxImage * image );
 
 };
 

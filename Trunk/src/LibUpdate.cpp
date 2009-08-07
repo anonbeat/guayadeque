@@ -26,7 +26,7 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-int GetFileLastChange( const wxString &FileName )
+int inline GetFileLastChange( const wxString &FileName )
 {
     wxStructStat St;
     wxStat( FileName, &St );
@@ -116,8 +116,13 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
             {
               LowerFileName = FileName.Lower();
               // TODO: add other file formats
-              if( LowerFileName.EndsWith( wxT( ".mp3" ) ) ||
-                  LowerFileName.EndsWith( wxT( ".flac" ) ) )
+              if( LowerFileName.EndsWith( wxT( ".mp3"  ) ) ||   // MP3
+                  LowerFileName.EndsWith( wxT( ".flac" ) ) ||   // FLAC
+                  LowerFileName.EndsWith( wxT( ".ogg"  ) ) ||   // Ogg Vorbis
+                  LowerFileName.EndsWith( wxT( ".mpc"  ) ) ||   // mpc
+                  LowerFileName.EndsWith( wxT( ".wav"  ) ) ||   // WavPack
+                  LowerFileName.EndsWith( wxT( ".tta"  ) )      // TrueAudio
+                  )
               {
                 m_TrackFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
               }
@@ -203,9 +208,11 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         }
     }
 
+    //
     // This cant be called here as wxBitmap do X11 calls and this can only be done from the main
     // thread. So we must call DoCleanUp from the main thread once this thread is finished.
     // in the OnLibraryUpdated Event handler
+    //
     // delete all orphans entries
     // m_Db->DoCleanUp();
 

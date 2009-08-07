@@ -1272,80 +1272,92 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, wxString &FilePath )
 // -------------------------------------------------------------------------------- //
 int DbLibrary::ReadFileTags( const char * filename )
 {
-  TagInfo Info;
+  guTagInfo * TagInfo;
 
   wxString FileName( filename, wxConvUTF8 );
 
-  Info.ReadID3Tags( FileName );
+  TagInfo = guGetTagInfoHandler( FileName );
 
-  //wxString PathName = wxGetCwd();
-  //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
-  wxString PathName = wxPathOnly( FileName );
-  //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
-  if( !GetPathId( &m_CurSong.m_PathId, PathName ) )
+  if( !TagInfo )
   {
-     guLogWarning( wxT( "Could not get the PathId\n" ) );
-     return 0;
+      return 0;
   }
 
-  if( !GetArtistId( &m_CurSong.m_ArtistId, Info.m_ArtistName ) )
+  if( TagInfo->Read( FileName ) )
   {
-    guLogWarning( wxT( "Could not get the ArtistId" ) );
-    return 0;
+      //wxString PathName = wxGetCwd();
+      //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
+      wxString PathName = wxPathOnly( FileName );
+      //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
+      if( !GetPathId( &m_CurSong.m_PathId, PathName ) )
+      {
+         guLogWarning( wxT( "Could not get the PathId\n" ) );
+         return 0;
+      }
+
+      if( !GetArtistId( &m_CurSong.m_ArtistId, TagInfo->m_ArtistName ) )
+      {
+        guLogWarning( wxT( "Could not get the ArtistId" ) );
+        return 0;
+      }
+
+      if( !GetAlbumId( &m_CurSong.m_AlbumId, &m_CurSong.m_CoverId, TagInfo->m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId ) )
+      {
+        guLogWarning( wxT( "Could not get the AlbumId" ) );
+        return 0;
+      }
+
+      if( !GetGenreId( &m_CurSong.m_GenreId, TagInfo->m_GenreName ) )
+      {
+        guLogWarning( wxT( "Could not get the GenreId" ) );
+        return 0;
+      }
+
+      m_CurSong.m_FileName = FileName.AfterLast( '/' );
+      m_CurSong.m_SongName = TagInfo->m_TrackName;
+      m_CurSong.m_FileSize = guGetFileSize( FileName );
+
+      GetSongId( &m_CurSong.m_SongId, m_CurSong.m_FileName, m_CurSong.m_PathId );
+
+      m_CurSong.m_Number   = TagInfo->m_Track;
+      m_CurSong.m_Year     = TagInfo->m_Year;
+      m_CurSong.m_Length   = TagInfo->m_Length;
+      m_CurSong.m_Bitrate  = TagInfo->m_Bitrate;
+      m_CurSong.m_Rating   = -1;
+
+      wxArrayInt ArrayIds;
+      //
+      if( TagInfo->m_TrackLabels.Count() )
+      {
+        ArrayIds.Add( m_CurSong.m_SongId );
+        wxArrayInt TrackLabelIds = GetLabelIds( TagInfo->m_TrackLabels );
+        SetSongsLabels( ArrayIds, TrackLabelIds );
+      }
+
+      if( TagInfo->m_ArtistLabels.Count() )
+      {
+        ArrayIds.Empty();
+        ArrayIds.Add( m_CurSong.m_ArtistId );
+        wxArrayInt ArtistLabelIds = GetLabelIds( TagInfo->m_ArtistLabels );
+        SetArtistsLabels( ArrayIds, ArtistLabelIds );
+      }
+
+      if( TagInfo->m_AlbumLabels.Count() )
+      {
+        ArrayIds.Empty();
+        ArrayIds.Add( m_CurSong.m_AlbumId );
+        wxArrayInt AlbumLabelIds = GetLabelIds( TagInfo->m_AlbumLabels );
+        SetAlbumsLabels( ArrayIds, AlbumLabelIds );
+      }
+
+      UpdateSong();
+
+      return 1;
   }
 
-  if( !GetAlbumId( &m_CurSong.m_AlbumId, &m_CurSong.m_CoverId, Info.m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId ) )
-  {
-    guLogWarning( wxT( "Could not get the AlbumId" ) );
-    return 0;
-  }
+  delete TagInfo;
 
-  if( !GetGenreId( &m_CurSong.m_GenreId, Info.m_GenreName ) )
-  {
-    guLogWarning( wxT( "Could not get the GenreId" ) );
-    return 0;
-  }
-
-  m_CurSong.m_FileName = FileName.AfterLast( '/' );
-  m_CurSong.m_SongName = Info.m_TrackName;
-  m_CurSong.m_FileSize = guGetFileSize( FileName );
-
-  GetSongId( &m_CurSong.m_SongId, m_CurSong.m_FileName, m_CurSong.m_PathId );
-
-  m_CurSong.m_Number   = Info.m_Track;
-  m_CurSong.m_Year     = Info.m_Year;
-  m_CurSong.m_Length   = Info.m_Length;
-  m_CurSong.m_Bitrate  = Info.m_Bitrate;
-  m_CurSong.m_Rating   = -1;
-
-  wxArrayInt ArrayIds;
-  //
-  if( Info.m_TrackLabels.Count() )
-  {
-    ArrayIds.Add( m_CurSong.m_SongId );
-    wxArrayInt TrackLabelIds = GetLabelIds( Info.m_TrackLabels );
-    SetSongsLabels( ArrayIds, TrackLabelIds );
-  }
-
-  if( Info.m_ArtistLabels.Count() )
-  {
-    ArrayIds.Empty();
-    ArrayIds.Add( m_CurSong.m_ArtistId );
-    wxArrayInt ArtistLabelIds = GetLabelIds( Info.m_ArtistLabels );
-    SetArtistsLabels( ArrayIds, ArtistLabelIds );
-  }
-
-  if( Info.m_AlbumLabels.Count() )
-  {
-    ArrayIds.Empty();
-    ArrayIds.Add( m_CurSong.m_AlbumId );
-    wxArrayInt AlbumLabelIds = GetLabelIds( Info.m_AlbumLabels );
-    SetAlbumsLabels( ArrayIds, AlbumLabelIds );
-  }
-
-  UpdateSong();
-
-  return 1;
+  return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1364,27 +1376,35 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
     if( wxFileExists( Song->m_FileName ) )
     {
         //MainFrame->SetStatusText( wxString::Format( _( "Updating track %s" ), Song->m_FileName.c_str() ) );
+
         //guLogMessage( wxT( "Updating FileName '%s'" ), Song->FileName.c_str() );
-        // Update the File iD3Tags
-//////        ID3_Tag Tag;
-//////        Tag.Link( Song->m_FileName.ToUTF8() );
-        TagInfo info;
 
-        info.m_TrackName = Song->m_SongName;
-        info.m_ArtistName = Song->m_ArtistName;
-        info.m_AlbumName = Song->m_AlbumName;
-        info.m_GenreName = Song->m_GenreName;
-        info.m_Track = Song->m_Number;
-        info.m_Year = Song->m_Year;
+        //
+        // Update the File Tags
+        //
+        guTagInfo * TagInfo = guGetTagInfoHandler( Song->m_FileName );
 
-//////        info.WriteID3Tags( &Tag );
-        info.WriteID3Tags( Song->m_FileName );
+        if( !TagInfo )
+        {
+            guLogError( wxT( "There is no handler for the file '%s'" ), Song->m_FileName.c_str() );
+            continue;
+        }
 
-        //Tag.Update();
+        TagInfo->m_TrackName = Song->m_SongName;
+        TagInfo->m_ArtistName = Song->m_ArtistName;
+        TagInfo->m_AlbumName = Song->m_AlbumName;
+        TagInfo->m_GenreName = Song->m_GenreName;
+        TagInfo->m_Track = Song->m_Number;
+        TagInfo->m_Year = Song->m_Year;
 
+        TagInfo->Write( Song->m_FileName );
+
+        delete TagInfo;
+        TagInfo = NULL;
+
+        //
         // Update the Library
-    //////////////////////////
-
+        //
         wxString PathName;
         int      PathId;
         int      ArtistId;
@@ -3587,17 +3607,18 @@ void DbLibrary::UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt
 
     if( wxFileExists( Song->m_FileName ) )
     {
-//////      ID3_Tag Tag;
-//////      Tag.Link( Song->m_FileName.ToUTF8() );
-//////      TagInfo info;
-//////      info.ReadID3Tags( &Tag );
-      TagInfo info;
-      info.ReadID3Tags( Song->m_FileName );
+      guTagInfo * TagInfo;
+      TagInfo = guGetTagInfoHandler( Song->m_FileName );
+      if( !TagInfo )
+        continue;
 
-      info.m_ArtistLabelsStr = ArtistLabelStr;
+      TagInfo->Read( Song->m_FileName );
 
-//////      info.WriteID3Tags( &Tag );
-      info.WriteID3Tags( Song->m_FileName );
+      TagInfo->m_ArtistLabelsStr = ArtistLabelStr;
+
+      TagInfo->Write( Song->m_FileName );
+
+      delete TagInfo;
     }
     else
     {
@@ -3640,17 +3661,18 @@ void DbLibrary::UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &
 
     if( wxFileExists( Song->m_FileName ) )
     {
-//////      ID3_Tag Tag;
-//////      Tag.Link( Song->m_FileName.ToUTF8() );
-//////      TagInfo info;
-//////      info.ReadID3Tags( &Tag );
-      TagInfo info;
-      info.ReadID3Tags( Song->m_FileName );
+      guTagInfo * TagInfo;
+      TagInfo = guGetTagInfoHandler( Song->m_FileName );
+      if( !TagInfo )
+        continue;
 
-      info.m_AlbumLabelsStr = AlbumLabelStr;
+      TagInfo->Read( Song->m_FileName );
 
-//////      info.WriteID3Tags( &Tag );
-      info.WriteID3Tags( Song->m_FileName );
+      TagInfo->m_AlbumLabelsStr = AlbumLabelStr;
+
+      TagInfo->Write( Song->m_FileName );
+
+      delete TagInfo;
     }
     else
     {
@@ -3694,12 +3716,18 @@ void DbLibrary::UpdateSongsLabels( const wxArrayInt &SongIds, const wxArrayInt &
     //guLogMessage( wxT( "'%s' -> '%s'" ), Song->FileName.c_str(), TrackLabelStr.c_str() );
     if( wxFileExists( Song->m_FileName ) )
     {
-      TagInfo info;
-      info.ReadID3Tags( Song->m_FileName );
+      guTagInfo * TagInfo;
+      TagInfo = guGetTagInfoHandler( Song->m_FileName );
+      if( !TagInfo )
+        continue;
 
-      info.m_TrackLabelsStr = TrackLabelStr;
+      TagInfo->Read( Song->m_FileName );
 
-      info.WriteID3Tags( Song->m_FileName );
+      TagInfo->m_TrackLabelsStr = TrackLabelStr;
+
+      TagInfo->Write( Song->m_FileName );
+
+      delete TagInfo;
     }
     else
     {
@@ -3734,14 +3762,20 @@ void DbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString &l
     Song = &( * tracks )[ index ];
     if( wxFileExists( Song->m_FileName ) )
     {
-      TagInfo info;
-      info.ReadID3Tags( Song->m_FileName );
+      guTagInfo * TagInfo;
+      TagInfo = guGetTagInfoHandler( Song->m_FileName );
+      if( !TagInfo )
+        continue;
 
-      RemoveLabel( &info.m_TrackLabelsStr, &label, &newname );
-      RemoveLabel( &info.m_ArtistLabelsStr, &label, &newname );
-      RemoveLabel( &info.m_AlbumLabelsStr, &label, &newname );
+      TagInfo->Read( Song->m_FileName );
 
-      info.WriteID3Tags( Song->m_FileName );
+      RemoveLabel( &TagInfo->m_TrackLabelsStr, &label, &newname );
+      RemoveLabel( &TagInfo->m_ArtistLabelsStr, &label, &newname );
+      RemoveLabel( &TagInfo->m_AlbumLabelsStr, &label, &newname );
+
+      TagInfo->Write( Song->m_FileName );
+
+      delete TagInfo;
     }
     else
     {
