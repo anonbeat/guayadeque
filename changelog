@@ -3,6 +3,7 @@
   * TaskBar Icon is created/removed if enabled/disabled from preferences
   * Fixed bug in playlist not allowing to delete more than one track if the
     first track is selected
+  * Albums list box will show the albums with the biggest track year only
   * Added LeoLyrics lyric search http://leoslyrics.com/
   * Fixed bug in radio stations list box ordering
 

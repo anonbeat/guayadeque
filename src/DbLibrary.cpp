@@ -2027,20 +2027,16 @@ void DbLibrary::GetPaths( guListItems * Paths, bool FullList )
 // -------------------------------------------------------------------------------- //
 void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 {
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-//  guListItems RetVal;
-  wxString CoverPath;
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+  wxArrayInt            AddedAlbums;
+  int                   AlbumId;
+  int                   AlbumFound;
+  wxString              CoverPath;
   //guLogMessage( wxT( "DbLibrary::GetAlbums" )
 
-#ifdef IWANT_SLOW_ALBUMS_QUERY_BUT_NOT_REPEATED_ALBUMS
-  query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, "
-               "( SELECT song_year FROM songs WHERE song_albumid = album_id ORDER BY song_year DESC LIMIT 1 ) AS album_year "
-               "FROM albums, songs WHERE album_id = song_albumid " );
-#else
   query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year "
                "FROM albums, songs WHERE album_id = song_albumid " );
-#endif
 
   if( FullList )
   {
@@ -2066,14 +2062,24 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 
   while( dbRes.NextRow() )
   {
-    guAlbumItem * AlbumItem = new guAlbumItem();
-    AlbumItem->m_Id = dbRes.GetInt( 0 );
-    AlbumItem->m_Name = dbRes.GetString( 1 );
-    AlbumItem->m_ArtistId = dbRes.GetInt( 2 );
-    AlbumItem->m_CoverId = dbRes.GetInt( 3 );
-    AlbumItem->m_Thumb = GetCoverThumb( AlbumItem->m_CoverId );
-    AlbumItem->m_Year = dbRes.GetInt( 4 );
-    Albums->Add( AlbumItem );
+      AlbumId = dbRes.GetInt( 0 );
+      if( ( AlbumFound = AddedAlbums.Index( AlbumId ) ) == wxNOT_FOUND )
+      {
+        guAlbumItem * AlbumItem = new guAlbumItem();
+        AlbumItem->m_Id = AlbumId; //dbRes.GetInt( 0 );
+        AlbumItem->m_Name = dbRes.GetString( 1 );
+        AlbumItem->m_ArtistId = dbRes.GetInt( 2 );
+        AlbumItem->m_CoverId = dbRes.GetInt( 3 );
+        AlbumItem->m_Thumb = GetCoverThumb( AlbumItem->m_CoverId );
+        AlbumItem->m_Year = dbRes.GetInt( 4 );
+        Albums->Add( AlbumItem );
+        AddedAlbums.Add( AlbumId );
+      }
+      else
+      {
+          if( ( * Albums )[ AlbumFound ].m_Year < dbRes.GetInt( 4 ) )
+            ( * Albums )[ AlbumFound ].m_Year = dbRes.GetInt( 4 );
+      }
   }
   dbRes.Finalize();
 //  return RetVal;
