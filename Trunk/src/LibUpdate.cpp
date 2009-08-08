@@ -119,9 +119,10 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
               if( LowerFileName.EndsWith( wxT( ".mp3"  ) ) ||   // MP3
                   LowerFileName.EndsWith( wxT( ".flac" ) ) ||   // FLAC
                   LowerFileName.EndsWith( wxT( ".ogg"  ) ) ||   // Ogg Vorbis
-                  LowerFileName.EndsWith( wxT( ".mpc"  ) ) ||   // mpc
-                  LowerFileName.EndsWith( wxT( ".wav"  ) ) ||   // WavPack
-                  LowerFileName.EndsWith( wxT( ".tta"  ) )      // TrueAudio
+                  //LowerFileName.EndsWith( wxT( ".wav"  ) ) ||   // WavPack
+                  //LowerFileName.EndsWith( wxT( ".tta"  ) ) ||   // TrueAudio
+                  //LowerFileName.EndsWith( wxT( ".ape"  ) ) ||   // Audio Monkeys
+                  LowerFileName.EndsWith( wxT( ".mpc"  ) )      // mpc
                   )
               {
                 m_TrackFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );

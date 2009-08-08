@@ -1,6 +1,6 @@
 
   * Added column genre to songs list box
-  * Added support to flac and ogg file formats.
+  * Added support to flac, ogg and mpc file formats.
   * Added Lyrc.com.ar lyric search http://lirc.com.ar/
   * TaskBar Icon is created/removed if enabled/disabled from preferences
   * Fixed bug in playlist not allowing to delete more than one track if the

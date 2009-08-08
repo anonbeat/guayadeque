@@ -71,12 +71,11 @@ class guTagInfo
 
     ~guTagInfo(){};
 
-//    bool        ReadID3Tags( const wxString &FileName );
-//    bool        WriteID3Tags( const wxString &FileName );
-    virtual bool        Read( const wxString &filename ) = 0;
-    virtual bool        Write( const wxString &filename ) = 0;
-    virtual wxImage *   GetImage( const wxString &filename ) = 0;
-    virtual bool        SetImage( const wxString &filename, const wxImage * image ) = 0;
+    virtual bool        Read( const wxString &filename );
+    virtual bool        Write( const wxString &filename );
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( const wxString &filename );
+    virtual bool        SetImage( const wxString &filename, const wxImage * image );
 
 };
 
@@ -91,6 +90,7 @@ class guMp3TagInfo : public guTagInfo
 
     virtual bool        Read( const wxString &filename );
     virtual bool        Write( const wxString &filename );
+    virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( const wxString &filename );
     virtual bool        SetImage( const wxString &filename, const wxImage * image );
 
@@ -103,11 +103,6 @@ class guFlacTagInfo : public guTagInfo
     guFlacTagInfo();
     ~guFlacTagInfo();
 
-    virtual bool        Read( const wxString &filename );
-    virtual bool        Write( const wxString &filename );
-    virtual wxImage *   GetImage( const wxString &filename );
-    virtual bool        SetImage( const wxString &filename, const wxImage * image );
-
 };
 
 // -------------------------------------------------------------------------------- //
@@ -117,12 +112,25 @@ class guOggTagInfo : public guTagInfo
     guOggTagInfo();
     ~guOggTagInfo();
 
-    virtual bool        Read( const wxString &filename );
-    virtual bool        Write( const wxString &filename );
-    virtual wxImage *   GetImage( const wxString &filename );
-    virtual bool        SetImage( const wxString &filename, const wxImage * image );
+};
+
+// -------------------------------------------------------------------------------- //
+class guMpcTagInfo : public guTagInfo
+{
+  public :
+    guMpcTagInfo();
+    ~guMpcTagInfo();
 
 };
+
+//// -------------------------------------------------------------------------------- //
+//class guApeTagInfo : public guTagInfo
+//{
+//  public :
+//    guApeTagInfo();
+//    ~guApeTagInfo();
+//
+//};
 
 class guImagePtrArray;
 
