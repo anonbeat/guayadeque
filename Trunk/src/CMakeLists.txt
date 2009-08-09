@@ -112,6 +112,8 @@ ADD_EXECUTABLE( guayadeque
 	ListView.h
 	PLSoListBox.cpp
 	PLSoListBox.h
+	Base64.cpp
+	Base64.h
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 
