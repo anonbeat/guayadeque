@@ -119,6 +119,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
               if( LowerFileName.EndsWith( wxT( ".mp3"  ) ) ||   // MP3
                   LowerFileName.EndsWith( wxT( ".flac" ) ) ||   // FLAC
                   LowerFileName.EndsWith( wxT( ".ogg"  ) ) ||   // Ogg Vorbis
+                  LowerFileName.EndsWith( wxT( ".oga"  ) ) ||   // Ogg Vorbis
                   //LowerFileName.EndsWith( wxT( ".wav"  ) ) ||   // WavPack
                   //LowerFileName.EndsWith( wxT( ".tta"  ) ) ||   // TrueAudio
                   //LowerFileName.EndsWith( wxT( ".ape"  ) ) ||   // Audio Monkeys
