@@ -33,6 +33,8 @@
 #include <mpegfile.h>
 #include <flacfile.h>
 #include <vorbisfile.h>
+#include <xiphcomment.h>
+
 
 #include <wx/mstream.h>
 #include <wx/wfstream.h>
@@ -438,122 +440,99 @@ guOggTagInfo::~guOggTagInfo()
 {
 }
 
-// -------------------------------------------------------------------------------- //
-bool guOggTagInfo::CanHandleImages( void )
-{
-    return true;
-}
-
-// -------------------------------------------------------------------------------- //
-wxImage * GetXiphCommentCoverArt( Ogg::XiphComment * xiphcomment )
-{
-    if( xiphcomment->contains( "COVERART" ) )
-    {
-        wxString CoverMime = TStringTowxString( xiphcomment->fieldListMap()[ "COVERARTMIME" ].front() );
-
-        wxString CoverEncData =  wxString( xiphcomment->fieldListMap()[ "COVERART" ].front().data( TagLib::String::Latin1 ).data(), wxConvISO8859_1 );
-        wxMemoryBuffer CoverDecData = guBase64Decode( CoverEncData );
-
-        wxMemoryInputStream ImgInputStream( CoverDecData.GetData(), CoverDecData.GetDataLen() );
-
-        wxImage * CoverImage = new wxImage( ImgInputStream, CoverMime );
-        if( CoverImage )
-        {
-            if( CoverImage->IsOk() )
-            {
-                return CoverImage;
-            }
-            else
-            {
-                delete CoverImage;
-            }
-        }
-    }
-    return NULL;
-}
-
-// -------------------------------------------------------------------------------- //
-wxImage * guOggTagInfo::GetImage( const wxString &filename )
-{
-    TagLib::Ogg::Vorbis::File tagfile( filename.ToUTF8() );
-
-    wxImage * RetVal = GetXiphCommentCoverArt( tagfile.tag() );
-    if( !RetVal )
-    {
-        guLogMessage( wxT( "No cover found in ogg file" ) );
-    }
-    return RetVal;
-
-
-#if 0
-	TagLib::ID3v2::FrameList frameList = tagv2->frameList( "APIC" );
-	if( !frameList.isEmpty() )
-	{
-		TagLib::ID3v2::AttachedPictureFrame * PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame * >( frameList.front() );
-        int ImgDataSize = PicFrame->picture().size();
-
-		if( ImgDataSize > 0 )
-		{
-			//guLogMessage( wxT( "ID3v2 header contains APIC frame with %u bytes." ), ImgDataSize );
-            wxMemoryOutputStream ImgOutStream;
-            ImgOutStream.Write( PicFrame->picture().data(), ImgDataSize );
-            wxMemoryInputStream ImgInputStream( ImgOutStream );
-            wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 ) );
-            if( CoverImage )
-            {
-                if( CoverImage->IsOk() )
-                {
-                    return CoverImage;
-                }
-                else
-                {
-                    delete CoverImage;
-                }
-            }
-//		    wxFileOutputStream FOut( wxT( "~/test.jpg" ) );
-//		    FOut.Write( PicFrame->picture().data(), ImgDataSize );
-//		    FOut.Close();
-		}
-	}
-	return NULL;
-#endif
-}
-
-// -------------------------------------------------------------------------------- //
-bool guOggTagInfo::SetImage( const wxString &filename, const wxImage * image )
-{
-    TagLib::MPEG::File tagfile( filename.ToUTF8() );
-    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
-
-	if( !tagv2 )
-        return false;
-
-    TagLib::ID3v2::AttachedPictureFrame * PicFrame;
-    if( image )
-    {
-        PicFrame = new TagLib::ID3v2::AttachedPictureFrame;
-        PicFrame->setMimeType( "image/jpeg" );
-        PicFrame->setType( TagLib::ID3v2::AttachedPictureFrame::FrontCover );
-        wxMemoryOutputStream ImgOutputStream;
-        if( image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
-        {
-            ByteVector ImgData( ( TagLib::uint ) ImgOutputStream.GetSize() );
-            ImgOutputStream.CopyTo( ImgData.data(), ImgOutputStream.GetSize() );
-            PicFrame->setPicture( ImgData );
-            tagv2->addFrame( PicFrame );
-        }
-    }
-    else
-    {
-        TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["APIC"];
-        for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
-        {
-            PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
-            tagv2->removeFrame( PicFrame, TRUE );
-        }
-    }
-    return tagfile.save();
-}
+//// -------------------------------------------------------------------------------- //
+//bool guOggTagInfo::CanHandleImages( void )
+//{
+//    return false;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//wxImage * GetXiphCommentCoverArt( Ogg::XiphComment * xiphcomment )
+//{
+//    if( xiphcomment->contains( "COVERART" ) )
+//    {
+//        wxString CoverMime = TStringTowxString( xiphcomment->fieldListMap()[ "COVERARTMIME" ].front() );
+//
+//        wxString CoverEncData = TStringTowxString( xiphcomment->fieldListMap()[ "COVERART" ].front() );
+//
+//        //guLogMessage( wxT( "Image:\n%s\n" ), CoverEncData.c_str() );
+//
+//        wxMemoryBuffer CoverDecData = guBase64Decode( CoverEncData );
+//
+//        guLogMessage( wxT( "Image Decoded Data : (%i) %i bytes %i" ), CoverDecData.GetBufSize(), CoverDecData.GetDataLen(), ErrorPos );
+//
+//        //wxFileOutputStream FOut( wxT( "/home/jrios/test.jpg" ) );
+//        //FOut.Write( CoverDecData.GetData(), CoverDecData.GetDataLen() );
+//        //FOut.Close();
+//
+//        wxMemoryInputStream ImgInputStream( CoverDecData.GetData(), CoverDecData.GetDataLen() );
+//
+//        wxImage * CoverImage = new wxImage( ImgInputStream, CoverMime );
+//        if( CoverImage )
+//        {
+//            if( CoverImage->IsOk() )
+//            {
+//                return CoverImage;
+//            }
+//            else
+//            {
+//                delete CoverImage;
+//            }
+//        }
+//    }
+//    return NULL;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//wxImage * guOggTagInfo::GetImage( const wxString &filename )
+//{
+//    TagLib::Ogg::Vorbis::File tagfile( filename.ToUTF8() );
+//
+//    wxImage * RetVal = GetXiphCommentCoverArt( tagfile.tag() );
+//    if( !RetVal )
+//    {
+//        guLogMessage( wxT( "No cover found in ogg file" ) );
+//    }
+//    return RetVal;
+//
+//
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//bool guOggTagInfo::SetImage( const wxString &filename, const wxImage * image )
+//{
+//    TagLib::MPEG::File tagfile( filename.ToUTF8() );
+//    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
+//
+//	if( !tagv2 )
+//        return false;
+//
+//    TagLib::ID3v2::AttachedPictureFrame * PicFrame;
+//    if( image )
+//    {
+//        PicFrame = new TagLib::ID3v2::AttachedPictureFrame;
+//        PicFrame->setMimeType( "image/jpeg" );
+//        PicFrame->setType( TagLib::ID3v2::AttachedPictureFrame::FrontCover );
+//        wxMemoryOutputStream ImgOutputStream;
+//        if( image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
+//        {
+//            ByteVector ImgData( ( TagLib::uint ) ImgOutputStream.GetSize() );
+//            ImgOutputStream.CopyTo( ImgData.data(), ImgOutputStream.GetSize() );
+//            PicFrame->setPicture( ImgData );
+//            tagv2->addFrame( PicFrame );
+//        }
+//    }
+//    else
+//    {
+//        TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["APIC"];
+//        for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
+//        {
+//            PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
+//            tagv2->removeFrame( PicFrame, TRUE );
+//        }
+//    }
+//    return tagfile.save();
+//}
 
 
 
