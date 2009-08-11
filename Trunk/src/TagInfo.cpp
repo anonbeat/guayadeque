@@ -32,8 +32,6 @@
 #include <id3v2tag.h>
 #include <mpegfile.h>
 #include <flacfile.h>
-#include <vorbisfile.h>
-#include <xiphcomment.h>
 
 
 #include <wx/mstream.h>
@@ -47,20 +45,20 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
 {
     if( filename.Lower().EndsWith( wxT( ".mp3" ) ) )
     {
-        return new guMp3TagInfo();
+        return new guMp3TagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".flac" ) ) )
     {
-        return new guFlacTagInfo();
+        return new guFlacTagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".ogg" ) ) ||
              filename.Lower().EndsWith( wxT( ".oga" ) ) )
     {
-        return new guOggTagInfo();
+        return new guOggTagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".mpc" ) ) )
     {
-        return new guMpcTagInfo();
+        return new guMpcTagInfo( filename );
     }
 //    else if( filename.Lower().EndsWith( wxT( ".ape" ) ) )
 //    {
@@ -73,9 +71,9 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTagInfo::Read( const wxString &filename )
+bool guTagInfo::Read( void )
 {
-    FileRef fileref = TagLib::FileRef( filename.ToUTF8(), true, TagLib::AudioProperties::Fast );
+    FileRef fileref = TagLib::FileRef( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
     Tag * tag;
     AudioProperties * apro;
 
@@ -92,7 +90,7 @@ bool guTagInfo::Read( const wxString &filename )
         }
         else
         {
-            guLogWarning( wxT( "Cant get tag object from %s" ), filename.c_str() );
+            guLogWarning( wxT( "Cant get tag object from %s" ), m_FileName.c_str() );
         }
 
         apro = fileref.audioProperties();
@@ -104,20 +102,20 @@ bool guTagInfo::Read( const wxString &filename )
         }
         else
         {
-            guLogWarning( wxT( "Cant read audio properties from %s" ), filename.c_str() );
+            guLogWarning( wxT( "Cant read audio properties from %s" ), m_FileName.c_str() );
         }
     }
     else
     {
-      guLogError( wxT( "Could not read tags from file %s" ), filename.c_str() );
+      guLogError( wxT( "Could not read tags from file %s" ), m_FileName.c_str() );
     }
     return true;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTagInfo::Write( const wxString &filename )
+bool guTagInfo::Write( void )
 {
-    FileRef fileref = TagLib::FileRef( filename.ToUTF8() );
+    FileRef fileref = TagLib::FileRef( m_FileName.ToUTF8() );
     Tag * tag;
 
     if( !fileref.isNull() )
@@ -134,13 +132,13 @@ bool guTagInfo::Write( const wxString &filename )
 
         if( !fileref.save() )
         {
-          guLogWarning( wxT( "Tags Save failed for file %s" ), filename.c_str() );
+          guLogWarning( wxT( "Tags Save failed for file %s" ), m_FileName.c_str() );
           return false;
         }
     }
     else
     {
-      guLogError( wxT( "Invalid file references writing tags for file %s" ), filename.c_str() );
+      guLogError( wxT( "Invalid file references writing tags for file %s" ), m_FileName.c_str() );
     }
     return true;
 }
@@ -152,13 +150,13 @@ bool guTagInfo::CanHandleImages( void )
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * guTagInfo::GetImage( const wxString &filename )
+wxImage * guTagInfo::GetImage( void )
 {
 	return NULL;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTagInfo::SetImage( const wxString &filename, const wxImage * image )
+bool guTagInfo::SetImage( const wxImage * image )
 {
     return false;
 }
@@ -169,7 +167,7 @@ bool guTagInfo::SetImage( const wxString &filename, const wxImage * image )
 // -------------------------------------------------------------------------------- //
 // guMp3TagInfo
 // -------------------------------------------------------------------------------- //
-guMp3TagInfo::guMp3TagInfo() : guTagInfo()
+guMp3TagInfo::guMp3TagInfo( const wxString &filename ) : guTagInfo( filename )
 {
 }
 
@@ -179,11 +177,11 @@ guMp3TagInfo::~guMp3TagInfo()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMp3TagInfo::Read( const wxString &filename )
+bool guMp3TagInfo::Read( void )
 {
-    wxASSERT( !filename.Lower().EndsWith( wxT( ".mp3" ) ) )
+    wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".mp3" ) ) )
 
-    FileRef fileref = TagLib::FileRef( filename.ToUTF8(), true, TagLib::AudioProperties::Fast );
+    FileRef fileref = TagLib::FileRef( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
     Tag * tag;
     AudioProperties * apro;
 
@@ -208,7 +206,7 @@ bool guMp3TagInfo::Read( const wxString &filename )
         }
         else
         {
-            guLogWarning( wxT( "Cant read audio properties from %s\n" ), filename.c_str() );
+            guLogWarning( wxT( "Cant read audio properties from %s\n" ), m_FileName.c_str() );
         }
 
 
@@ -253,7 +251,7 @@ bool guMp3TagInfo::Read( const wxString &filename )
     }
     else
     {
-      guLogError( wxT( "Could not read tags from file '%s'" ), filename.c_str() );
+      guLogError( wxT( "Could not read tags from file '%s'" ), m_FileName.c_str() );
     }
 
     return true;
@@ -284,9 +282,9 @@ void ID3v2_CheckLabelFrame( ID3v2::Tag * tagv2, const char * description, const 
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMp3TagInfo::Write( const wxString &filename )
+bool guMp3TagInfo::Write( void )
 {
-    FileRef fileref = TagLib::FileRef( filename.ToUTF8() );
+    FileRef fileref = TagLib::FileRef( m_FileName.ToUTF8() );
     Tag * tag;
 
     if( !fileref.isNull() )
@@ -324,15 +322,15 @@ bool guMp3TagInfo::Write( const wxString &filename )
     }
     else
     {
-      guLogError( wxT( "Could not read tags from file %s\n" ), filename.c_str() );
+      guLogError( wxT( "Could not read tags from file %s\n" ), m_FileName.c_str() );
     }
     return true;
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * guMp3TagInfo::GetImage( const wxString &filename )
+wxImage * guMp3TagInfo::GetImage( void )
 {
-    TagLib::MPEG::File tagfile( filename.ToUTF8() );
+    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
     ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( false );
     if( !tagv2 )
         return NULL;
@@ -370,9 +368,9 @@ wxImage * guMp3TagInfo::GetImage( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMp3TagInfo::SetImage( const wxString &filename, const wxImage * image )
+bool guMp3TagInfo::SetImage( const wxImage * image )
 {
-    TagLib::MPEG::File tagfile( filename.ToUTF8() );
+    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
     ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
 
 	if( !tagv2 )
@@ -416,7 +414,7 @@ bool guMp3TagInfo::CanHandleImages( void )
 // -------------------------------------------------------------------------------- //
 // guFlacTagInfo
 // -------------------------------------------------------------------------------- //
-guFlacTagInfo::guFlacTagInfo() : guTagInfo()
+guFlacTagInfo::guFlacTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
 }
 
@@ -431,7 +429,7 @@ guFlacTagInfo::~guFlacTagInfo()
 // -------------------------------------------------------------------------------- //
 // guOggTagInfo
 // -------------------------------------------------------------------------------- //
-guOggTagInfo::guOggTagInfo() : guTagInfo()
+guOggTagInfo::guOggTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
 }
 
@@ -484,9 +482,9 @@ guOggTagInfo::~guOggTagInfo()
 //}
 //
 //// -------------------------------------------------------------------------------- //
-//wxImage * guOggTagInfo::GetImage( const wxString &filename )
+//wxImage * guOggTagInfo::GetImage( void )
 //{
-//    TagLib::Ogg::Vorbis::File tagfile( filename.ToUTF8() );
+//    TagLib::Ogg::Vorbis::File tagfile( m_FileName.ToUTF8() );
 //
 //    wxImage * RetVal = GetXiphCommentCoverArt( tagfile.tag() );
 //    if( !RetVal )
@@ -499,9 +497,9 @@ guOggTagInfo::~guOggTagInfo()
 //}
 //
 //// -------------------------------------------------------------------------------- //
-//bool guOggTagInfo::SetImage( const wxString &filename, const wxImage * image )
+//bool guOggTagInfo::SetImage( const wxImage * image )
 //{
-//    TagLib::MPEG::File tagfile( filename.ToUTF8() );
+//    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
 //    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
 //
 //	if( !tagv2 )
@@ -540,7 +538,7 @@ guOggTagInfo::~guOggTagInfo()
 // -------------------------------------------------------------------------------- //
 // guMpcTagInfo
 // -------------------------------------------------------------------------------- //
-guMpcTagInfo::guMpcTagInfo() : guTagInfo()
+guMpcTagInfo::guMpcTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
 }
 
@@ -555,7 +553,7 @@ guMpcTagInfo::~guMpcTagInfo()
 //// -------------------------------------------------------------------------------- //
 //// guApeTagInfo
 //// -------------------------------------------------------------------------------- //
-//guApeTagInfo::guApeTagInfo() : guTagInfo()
+//guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo( filename )
 //{
 //}
 //
@@ -575,7 +573,7 @@ wxImage * ID3TagGetPicture( const wxString &filename )
     guTagInfo * TagInfo = guGetTagInfoHandler( filename );
     if( TagInfo )
     {
-        wxImage * RetVal = TagInfo->GetImage( filename );
+        wxImage * RetVal = TagInfo->GetImage();
         delete TagInfo;
         return RetVal;
     }
@@ -588,7 +586,7 @@ bool ID3TagSetPicture( const wxString &filename, wxImage * picture )
     guTagInfo * TagInfo = guGetTagInfoHandler( filename );
     if( TagInfo )
     {
-        bool RetVal = TagInfo->CanHandleImages() && TagInfo->SetImage( filename, picture );
+        bool RetVal = TagInfo->CanHandleImages() && TagInfo->SetImage( picture );
         delete TagInfo;
         return RetVal;
     }

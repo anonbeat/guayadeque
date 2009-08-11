@@ -66,6 +66,7 @@ guLibUpdateThread::~guLibUpdateThread()
     {
         wxDateTime Now = wxDateTime::Now();
         Config->WriteStr( wxT( "LastUpdate" ), Now.Format(), wxT( "General" ) );
+        Config->Flush();
     }
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );

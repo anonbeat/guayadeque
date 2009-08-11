@@ -49,7 +49,7 @@ ENDIF( NOT LIBTAG_LIBRARIES )
 
 PKG_CHECK_MODULES( LIBDBUS dbus-1 )
 IF( NOT LIBDBUS_LIBRARIES )
-	MESSAGE( FATAL_ERROR "dbus have not been found!" )
+	MESSAGE( FATAL_ERROR "dbus not found!" )
 ENDIF( NOT LIBDBUS_LIBRARIES )
 
 # Include wxWidgets macros
