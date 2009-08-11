@@ -32,6 +32,7 @@
 #include <id3v2tag.h>
 #include <mpegfile.h>
 #include <flacfile.h>
+#include <mp4file.h>
 
 
 #include <wx/mstream.h>
@@ -60,10 +61,12 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     {
         return new guMpcTagInfo( filename );
     }
-//    else if( filename.Lower().EndsWith( wxT( ".ape" ) ) )
-//    {
-//        return new guApeTagInfo();
-//    }
+    else if( filename.Lower().EndsWith( wxT( ".wma" ) ) ||
+            filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
+            filename.Lower().EndsWith( wxT( ".ape" ) ) )
+    {
+        return new guTagInfo( filename );
+    }
     else
     {
         return NULL;
@@ -73,7 +76,7 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool guTagInfo::Read( void )
 {
-    FileRef fileref = TagLib::FileRef( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
+    FileRef fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
     Tag * tag;
     AudioProperties * apro;
 
@@ -115,7 +118,7 @@ bool guTagInfo::Read( void )
 // -------------------------------------------------------------------------------- //
 bool guTagInfo::Write( void )
 {
-    FileRef fileref = TagLib::FileRef( m_FileName.ToUTF8() );
+    FileRef fileref( m_FileName.ToUTF8() );
     Tag * tag;
 
     if( !fileref.isNull() )
@@ -181,7 +184,7 @@ bool guMp3TagInfo::Read( void )
 {
     wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".mp3" ) ) )
 
-    FileRef fileref = TagLib::FileRef( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
+    FileRef fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
     Tag * tag;
     AudioProperties * apro;
 
@@ -550,17 +553,64 @@ guMpcTagInfo::~guMpcTagInfo()
 
 
 
-//// -------------------------------------------------------------------------------- //
-//// guApeTagInfo
-//// -------------------------------------------------------------------------------- //
-//guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo( filename )
-//{
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//guApeTagInfo::~guApeTagInfo()
-//{
-//}
+// -------------------------------------------------------------------------------- //
+// guApeTagInfo
+// -------------------------------------------------------------------------------- //
+guM4aTagInfo::guM4aTagInfo( const wxString &filename ) : guTagInfo( filename )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guM4aTagInfo::~guM4aTagInfo()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guM4aTagInfo::Read( void )
+{
+    MP4::File fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
+    MP4::Tag * tag;
+    AudioProperties * apro;
+
+    if( !fileref.isValid() )
+    {
+        if( ( tag = ( MP4::Tag * ) fileref.tag() ) )
+        {
+            m_TrackName = TStringTowxString( tag->title() );
+            m_ArtistName = TStringTowxString( tag->artist() );
+            m_AlbumName = TStringTowxString( tag->album() );
+            m_GenreName = TStringTowxString( tag->genre() );
+            m_Track = tag->track();
+            m_Year = tag->year();
+        }
+        else
+        {
+            guLogWarning( wxT( "Cant get tag object from %s" ), m_FileName.c_str() );
+        }
+
+        apro = fileref.audioProperties();
+        if( apro )
+        {
+            m_Length = apro->length();
+            m_Bitrate = apro->bitrate();
+            //m_Samplerate = apro->sampleRate();
+        }
+        else
+        {
+            guLogWarning( wxT( "Cant read audio properties from %s" ), m_FileName.c_str() );
+        }
+    }
+    else
+    {
+      guLogError( wxT( "Could not read tags from file %s" ), m_FileName.c_str() );
+    }
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guM4aTagInfo::Write( void )
+{
+}
 
 
 

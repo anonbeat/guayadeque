@@ -129,14 +129,16 @@ class guMpcTagInfo : public guTagInfo
 
 };
 
-//// -------------------------------------------------------------------------------- //
-//class guApeTagInfo : public guTagInfo
-//{
-//  public :
-//    guAPeTagInfo( const wxString &filename = wxEmptyString );
-//    ~guApeTagInfo();
-//
-//};
+// -------------------------------------------------------------------------------- //
+class guM4aTagInfo : public guTagInfo
+{
+  public :
+    guM4aTagInfo( const wxString &filename = wxEmptyString );
+    ~guM4aTagInfo();
+
+    virtual bool        Read( void );
+    virtual bool        Write( void );
+};
 
 class guImagePtrArray;
 
