@@ -1283,7 +1283,7 @@ int DbLibrary::ReadFileTags( const char * filename )
       return 0;
   }
 
-  if( TagInfo->Read( FileName ) )
+  if( TagInfo->Read() )
   {
       //wxString PathName = wxGetCwd();
       //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
@@ -1397,10 +1397,10 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
         TagInfo->m_Track = Song->m_Number;
         TagInfo->m_Year = Song->m_Year;
 
-        TagInfo->Write( Song->m_FileName );
+        TagInfo->Write();
 
         delete TagInfo;
-        TagInfo = NULL;
+        //TagInfo = NULL;
 
         //
         // Update the Library
@@ -3621,11 +3621,11 @@ void DbLibrary::UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt
       if( !TagInfo )
         continue;
 
-      TagInfo->Read( Song->m_FileName );
+      TagInfo->Read();
 
       TagInfo->m_ArtistLabelsStr = ArtistLabelStr;
 
-      TagInfo->Write( Song->m_FileName );
+      TagInfo->Write();
 
       delete TagInfo;
     }
@@ -3675,11 +3675,11 @@ void DbLibrary::UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &
       if( !TagInfo )
         continue;
 
-      TagInfo->Read( Song->m_FileName );
+      TagInfo->Read();
 
       TagInfo->m_AlbumLabelsStr = AlbumLabelStr;
 
-      TagInfo->Write( Song->m_FileName );
+      TagInfo->Write();
 
       delete TagInfo;
     }
@@ -3730,11 +3730,11 @@ void DbLibrary::UpdateSongsLabels( const wxArrayInt &SongIds, const wxArrayInt &
       if( !TagInfo )
         continue;
 
-      TagInfo->Read( Song->m_FileName );
+      TagInfo->Read();
 
       TagInfo->m_TrackLabelsStr = TrackLabelStr;
 
-      TagInfo->Write( Song->m_FileName );
+      TagInfo->Write();
 
       delete TagInfo;
     }
@@ -3776,13 +3776,13 @@ void DbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString &l
       if( !TagInfo )
         continue;
 
-      TagInfo->Read( Song->m_FileName );
+      TagInfo->Read();
 
       RemoveLabel( &TagInfo->m_TrackLabelsStr, &label, &newname );
       RemoveLabel( &TagInfo->m_ArtistLabelsStr, &label, &newname );
       RemoveLabel( &TagInfo->m_AlbumLabelsStr, &label, &newname );
 
-      TagInfo->Write( Song->m_FileName );
+      TagInfo->Write();
 
       delete TagInfo;
     }

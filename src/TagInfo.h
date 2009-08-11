@@ -34,6 +34,7 @@
 class guTagInfo
 {
   public:
+    wxString        m_FileName;
     wxString        m_TrackName;
     wxString        m_GenreName;
     wxString        m_ArtistName;
@@ -51,8 +52,9 @@ class guTagInfo
     wxArrayString   m_AlbumLabels;
     wxString        m_AlbumLabelsStr;
 
-    guTagInfo()
+    guTagInfo( const wxString &filename = wxEmptyString )
     {
+        m_FileName = filename;
         m_TrackName = wxEmptyString;
         m_GenreName = wxEmptyString;
         m_ArtistName = wxEmptyString;
@@ -71,11 +73,12 @@ class guTagInfo
 
     ~guTagInfo(){};
 
-    virtual bool        Read( const wxString &filename );
-    virtual bool        Write( const wxString &filename );
+    void                SetFileName( const wxString &filename ) { m_FileName = filename; };
+    virtual bool        Read( void );
+    virtual bool        Write( void );
     virtual bool        CanHandleImages( void );
-    virtual wxImage *   GetImage( const wxString &filename );
-    virtual bool        SetImage( const wxString &filename, const wxImage * image );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
 
 };
 
@@ -85,14 +88,14 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename );
 class guMp3TagInfo : public guTagInfo
 {
   public :
-    guMp3TagInfo();
+    guMp3TagInfo( const wxString &filename = wxEmptyString );
     ~guMp3TagInfo();
 
-    virtual bool        Read( const wxString &filename );
-    virtual bool        Write( const wxString &filename );
+    virtual bool        Read( void );
+    virtual bool        Write( void );
     virtual bool        CanHandleImages( void );
-    virtual wxImage *   GetImage( const wxString &filename );
-    virtual bool        SetImage( const wxString &filename, const wxImage * image );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
 
 };
 
@@ -100,7 +103,7 @@ class guMp3TagInfo : public guTagInfo
 class guFlacTagInfo : public guTagInfo
 {
   public :
-    guFlacTagInfo();
+    guFlacTagInfo( const wxString &filename = wxEmptyString );
     ~guFlacTagInfo();
 
 };
@@ -109,7 +112,7 @@ class guFlacTagInfo : public guTagInfo
 class guOggTagInfo : public guTagInfo
 {
   public :
-    guOggTagInfo();
+    guOggTagInfo( const wxString &filename = wxEmptyString );
     ~guOggTagInfo();
 
 //    virtual bool        CanHandleImages( void );
@@ -121,7 +124,7 @@ class guOggTagInfo : public guTagInfo
 class guMpcTagInfo : public guTagInfo
 {
   public :
-    guMpcTagInfo();
+    guMpcTagInfo( const wxString &filename = wxEmptyString );
     ~guMpcTagInfo();
 
 };
@@ -130,7 +133,7 @@ class guMpcTagInfo : public guTagInfo
 //class guApeTagInfo : public guTagInfo
 //{
 //  public :
-//    guApeTagInfo();
+//    guAPeTagInfo( const wxString &filename = wxEmptyString );
 //    ~guApeTagInfo();
 //
 //};

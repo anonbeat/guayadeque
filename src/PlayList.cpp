@@ -773,15 +773,13 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
             //guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
 
             //
-            Song.m_FileName = wxEmptyString;
+            Song.m_FileName = FileName;
 
             if( AddPath )
             {
-                Song.m_FileName = wxGetCwd() + wxT( "/" );
+                Song.m_FileName = wxGetCwd() + wxT( "/" ) + FileName;
+                TagInfo->SetFileName( Song.m_FileName );
             }
-
-            //Song.m_FileName +=  UriPath.Unescape( UriPath.GetPath() ); //.AfterLast( '/' );
-            Song.m_FileName += FileName;
 
             if( wxFileExists( Song.m_FileName ) )
             {
@@ -797,7 +795,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
                 {
                     Song.m_SongId = guPLAYLIST_NOTDBTRACK;
 
-                    TagInfo->Read( Song.m_FileName );
+                    TagInfo->Read();
 
                     Song.m_ArtistName = TagInfo->m_ArtistName;
                     Song.m_AlbumName = TagInfo->m_AlbumName;
