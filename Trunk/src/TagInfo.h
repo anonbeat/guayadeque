@@ -82,6 +82,7 @@ class guTagInfo
 
 };
 
+bool guIsValidAudioFile( const wxString &filename );
 guTagInfo * guGetTagInfoHandler( const wxString &filename );
 
 // -------------------------------------------------------------------------------- //
@@ -130,15 +131,21 @@ class guMpcTagInfo : public guTagInfo
 };
 
 // -------------------------------------------------------------------------------- //
-class guM4aTagInfo : public guTagInfo
+class guMp4TagInfo : public guTagInfo
 {
   public :
-    guM4aTagInfo( const wxString &filename = wxEmptyString );
-    ~guM4aTagInfo();
+    guMp4TagInfo( const wxString &filename = wxEmptyString );
+    ~guMp4TagInfo();
 
     virtual bool        Read( void );
     virtual bool        Write( void );
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
 };
+
+
+
 
 class guImagePtrArray;
 
