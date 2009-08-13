@@ -23,6 +23,7 @@
 #include "Commands.h"
 #include "Config.h"
 #include "MainApp.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
@@ -117,17 +118,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
             {
               LowerFileName = FileName.Lower();
               // TODO: add other file formats
-              if( LowerFileName.EndsWith( wxT( ".mp3"  ) ) ||   // MP3
-                  LowerFileName.EndsWith( wxT( ".flac" ) ) ||   // FLAC
-                  LowerFileName.EndsWith( wxT( ".ogg"  ) ) ||   // Ogg Vorbis
-                  LowerFileName.EndsWith( wxT( ".oga"  ) ) ||   // Ogg Vorbis
-                  LowerFileName.EndsWith( wxT( ".wma"  ) ) ||   // Windows Media Audio
-                  LowerFileName.EndsWith( wxT( ".m4a"  ) ) ||   // Apple audio
-                  LowerFileName.EndsWith( wxT( ".ape"  ) ) ||   // Audio Monkeys
-                  //LowerFileName.EndsWith( wxT( ".wav"  ) ) ||   // WavPack
-                  //LowerFileName.EndsWith( wxT( ".tta"  ) ) ||   // TrueAudio
-                  LowerFileName.EndsWith( wxT( ".mpc"  ) )      // mpc
-                  )
+              if( guIsValidAudioFile( LowerFileName ) )
               {
                 m_TrackFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
               }

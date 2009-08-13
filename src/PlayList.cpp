@@ -1253,7 +1253,7 @@ void guAddDropFilesThread::AddDropFiles( const wxString &DirName )
                         }
                         else
                         {
-                            if( FileName.Lower().EndsWith( wxT( ".mp3" ) ) )
+                            if( guIsValidAudioFile( FileName ) )
                             {
                                 //guLogMessage( wxT( "Adding file %i '%s'" ), m_PlayList->GetCount(), FileName.c_str() );
                                 m_PlayList->AddPlayListItem( FileName, true );
@@ -1266,7 +1266,7 @@ void guAddDropFilesThread::AddDropFiles( const wxString &DirName )
     }
     else
     {
-        if( DirName.Lower().EndsWith( wxT( ".mp3" ) ) )
+        if( guIsValidAudioFile( DirName ) )
         {
             //guLogMessage( wxT( "Adding file %i '%s'" ), m_PlayList->GetCount(), FileName.c_str() );
             m_PlayList->AddPlayListItem( DirName, false );

@@ -57,6 +57,17 @@ IF( NOT LIBDBUS_LIBRARIES )
 	MESSAGE( FATAL_ERROR "dbus not found!" )
 ENDIF( NOT LIBDBUS_LIBRARIES )
 
+FIND_PATH( LIBMP4DEV mp4.h /usr/include /usr/local/include )
+IF( NOT LIBMP4DEV )
+	MESSAGE( FATAL_ERROR "libmp4 not found!" )
+ENDIF( NOT LIBMP4DEV )
+
+FIND_LIBRARY( LIBMP4 NAMES mp4v2 PATH /usr/lib /usr/local/lib )
+IF( NOT LIBMP4 )
+        MESSAGE( FATAL_ERROR "libmp4 not found!" )
+ENDIF( NOT LIBMP4 )
+
+
 # Include wxWidgets macros
 INCLUDE(${wxWidgets_USE_FILE})
 

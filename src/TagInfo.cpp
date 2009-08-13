@@ -41,6 +41,28 @@
 
 using namespace TagLib;
 
+
+// -------------------------------------------------------------------------------- //
+bool guIsValidAudioFile( const wxString &filename )
+{
+    wxString FileName = filename.Lower();
+    if( FileName.EndsWith( wxT( ".mp3"  ) ) ||
+        FileName.EndsWith( wxT( ".flac" ) ) ||
+        FileName.EndsWith( wxT( ".ogg"  ) ) ||
+        FileName.EndsWith( wxT( ".oga"  ) ) ||
+//        FileName.EndsWith( wxT( ".wma"  ) ) ||
+        FileName.EndsWith( wxT( ".mp4"  ) ) ||  // MP4 files
+        FileName.EndsWith( wxT( ".m4a"  ) ) ||
+        FileName.EndsWith( wxT( ".m4p"  ) ) ||
+        FileName.EndsWith( wxT( ".aac"  ) ) ||
+//        FileName.EndsWith( wxT( ".ape"  ) ) ||
+        FileName.EndsWith( wxT( ".mpc"  ) ) )
+    {
+        return true;
+    }
+    return false;
+}
+
 // -------------------------------------------------------------------------------- //
 guTagInfo * guGetTagInfoHandler( const wxString &filename )
 {
@@ -61,11 +83,12 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     {
         return new guMpcTagInfo( filename );
     }
-    else if( filename.Lower().EndsWith( wxT( ".wma" ) ) ||
+    else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
             filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
-            filename.Lower().EndsWith( wxT( ".ape" ) ) )
+            filename.Lower().EndsWith( wxT( ".m4p" ) ) ||
+            filename.Lower().EndsWith( wxT( ".aac" ) ) )
     {
-        return new guTagInfo( filename );
+        return new guMp4TagInfo( filename );
     }
     else
     {
@@ -550,73 +573,199 @@ guMpcTagInfo::~guMpcTagInfo()
 {
 }
 
-
-
-
 // -------------------------------------------------------------------------------- //
-// guApeTagInfo
+// guMp4TagInfo
 // -------------------------------------------------------------------------------- //
-guM4aTagInfo::guM4aTagInfo( const wxString &filename ) : guTagInfo( filename )
+#include <mp4.h>
+
+guMp4TagInfo::guMp4TagInfo( const wxString &filename ) : guTagInfo( filename )
 {
 }
 
 // -------------------------------------------------------------------------------- //
-guM4aTagInfo::~guM4aTagInfo()
+guMp4TagInfo::~guMp4TagInfo()
 {
 }
 
-// -------------------------------------------------------------------------------- //
-bool guM4aTagInfo::Read( void )
-{
-    MP4::File fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
-    MP4::Tag * tag;
-    AudioProperties * apro;
 
-    if( !fileref.isValid() )
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::Read( void )
+{
+    char * Value;
+    MP4FileHandle mp4_file = MP4Read( m_FileName.ToAscii() );
+    if( mp4_file != MP4_INVALID_FILE_HANDLE )
     {
-        if( ( tag = ( MP4::Tag * ) fileref.tag() ) )
+        if( MP4GetMetadataName( mp4_file, &Value ) && Value )
         {
-            m_TrackName = TStringTowxString( tag->title() );
-            m_ArtistName = TStringTowxString( tag->artist() );
-            m_AlbumName = TStringTowxString( tag->album() );
-            m_GenreName = TStringTowxString( tag->genre() );
-            m_Track = tag->track();
-            m_Year = tag->year();
-        }
-        else
-        {
-            guLogWarning( wxT( "Cant get tag object from %s" ), m_FileName.c_str() );
+            m_TrackName = wxString( Value, wxConvUTF8 );
+            free( Value );
         }
 
-        apro = fileref.audioProperties();
-        if( apro )
+        if( MP4GetMetadataArtist( mp4_file, &Value ) && Value )
         {
-            m_Length = apro->length();
-            m_Bitrate = apro->bitrate();
-            //m_Samplerate = apro->sampleRate();
+            m_ArtistName = wxString( Value, wxConvUTF8 );
+            free( Value );
         }
-        else
+
+        if( MP4GetMetadataAlbum( mp4_file,  &Value ) && Value )
         {
-            guLogWarning( wxT( "Cant read audio properties from %s" ), m_FileName.c_str() );
+            m_AlbumName = wxString( Value, wxConvUTF8 );
+            free( Value );
         }
+
+        if( MP4GetMetadataGenre( mp4_file, &Value ) && Value )
+        {
+            m_GenreName = wxString( Value, wxConvUTF8 );
+            free( Value );
+        }
+
+        u_int16_t TotTracks;
+        MP4GetMetadataTrack( mp4_file, ( u_int16_t * ) &m_Track, &TotTracks );
+
+        if( MP4GetMetadataYear( mp4_file, &Value ) && Value )
+        {
+            wxString( Value, wxConvUTF8 ).ToLong( ( long int * ) &m_Year );
+            free( Value );
+        }
+
+        MP4Duration Duration = MP4GetTrackDuration( mp4_file, 1 );
+        double sDuration = UINT64_TO_DOUBLE( MP4ConvertFromTrackDuration( mp4_file, 1, Duration, MP4_SECS_TIME_SCALE ) );
+        m_Length = sDuration;
+
+        m_Bitrate = MP4GetTrackBitRate( mp4_file, 1 ) / 1000;
+
+        //guLogMessage( wxT( "Track %i    BitRate %i    Length %i" ), m_Track, m_Bitrate, m_Length );
+
+        MP4Close( mp4_file );
     }
     else
     {
-      guLogError( wxT( "Could not read tags from file %s" ), m_FileName.c_str() );
+        guLogError( wxT( "Read : could not open the file %s" ), m_FileName.c_str() );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::Write( void )
+{
+    MP4FileHandle mp4_file = MP4Modify( m_FileName.ToAscii() );
+    if( mp4_file != MP4_INVALID_FILE_HANDLE )
+    {
+        uint8_t * CoverData = NULL;
+        uint32_t CoverSize;
+        // If the cover have cover save it
+        if( MP4GetMetadataCoverArtCount( mp4_file ) )
+        {
+            MP4GetMetadataCoverArt( mp4_file, &CoverData, &CoverSize );
+        }
+
+        MP4SetMetadataName( mp4_file, m_TrackName.ToUTF8() );
+        MP4SetMetadataArtist( mp4_file, m_ArtistName.ToUTF8() );
+        MP4SetMetadataAlbum( mp4_file, m_AlbumName.ToUTF8() );
+        MP4SetMetadataGenre( mp4_file, m_GenreName.ToUTF8() );
+        MP4SetMetadataTrack( mp4_file, m_Track, 0 );
+        MP4SetMetadataYear( mp4_file, wxString::Format( wxT( "%d" ), m_Year ).ToUTF8() );
+        if( CoverData )
+        {
+            MP4SetMetadataCoverArt( mp4_file, CoverData, CoverSize );
+        }
+        MP4Close( mp4_file );
+    }
+    else
+    {
+        guLogError( wxT( "Write : could not open the file %s" ), m_FileName.c_str() );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::CanHandleImages( void )
+{
     return true;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guM4aTagInfo::Write( void )
+wxImage * guMp4TagInfo::GetImage( void )
 {
+    MP4FileHandle mp4_file = MP4Read( m_FileName.ToAscii() );
+    if( mp4_file != MP4_INVALID_FILE_HANDLE )
+    {
+        if( MP4GetMetadataCoverArtCount( mp4_file ) )
+        {
+            uint8_t *   CoverData;
+            uint32_t    CoverSize;
+            if( MP4GetMetadataCoverArt( mp4_file, &CoverData, &CoverSize ) )
+            {
+                wxMemoryOutputStream ImgOutStream;
+                ImgOutStream.Write( CoverData, CoverSize );
+                wxMemoryInputStream ImgInputStream( ImgOutStream );
+                wxImage * CoverImage = new wxImage( ImgInputStream, wxBITMAP_TYPE_JPEG );
+                if( !CoverImage || !CoverImage->IsOk() )
+                {
+                    if( CoverImage )
+                        delete CoverImage;
+                    CoverImage = new wxImage( ImgInputStream, wxBITMAP_TYPE_PNG );
+                }
+
+                if( CoverImage )
+                {
+                    if( CoverImage->IsOk() )
+                    {
+                        return CoverImage;
+                    }
+                    else
+                    {
+                        delete CoverImage;
+                    }
+                }
+            }
+        }
+        MP4Close( mp4_file );
+    }
+    else
+    {
+        guLogError( wxT( "GetImage : could not open the file %s" ), m_FileName.c_str() );
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::SetImage( const wxImage * image )
+{
+    bool RetVal = false;
+    MP4FileHandle mp4_file = MP4Modify( m_FileName.ToAscii() );
+    if( mp4_file != MP4_INVALID_FILE_HANDLE )
+    {
+        if( image )
+        {
+            wxMemoryOutputStream ImgOutputStream;
+            if( image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
+            {
+                uint8_t * CoverData = ( uint8_t * ) malloc( ImgOutputStream.GetSize() );
+                if( CoverData )
+                {
+                    ImgOutputStream.CopyTo( CoverData, ImgOutputStream.GetSize() );
+                    RetVal = MP4SetMetadataCoverArt( mp4_file, CoverData, ImgOutputStream.GetSize() );
+                    free( CoverData );
+                }
+            }
+        }
+        else
+        {
+            RetVal = MP4DeleteMetadataCoverArt( mp4_file );
+        }
+        MP4Close( mp4_file );
+    }
+    else
+    {
+        guLogError( wxT( "SetImage : could not open the file %s" ), m_FileName.c_str() );
+    }
+    return RetVal;
 }
 
 
 
 
 // -------------------------------------------------------------------------------- //
-//
+// Other functions
 // -------------------------------------------------------------------------------- //
 wxImage * ID3TagGetPicture( const wxString &filename )
 {
