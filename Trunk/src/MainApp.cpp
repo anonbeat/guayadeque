@@ -25,7 +25,7 @@
 #include "Config.h"
 #include "Utils.h"
 
-#include <tplugins.h>
+//#include <tplugins.h>
 
 #include "wx/clipbrd.h"
 #include <wx/curl/base.h>
@@ -102,8 +102,9 @@ bool guMainApp::OnInit()
     // Init the wxCurl Lib
     wxCurlBase::Init();
 
-    // Register the TagLib extra plugins
-    registerTaglibPlugins();
+//    TagLib-Extras package has too many dependencies including the whole KDE :/ in fedora
+//    // Register the TagLib extra plugins
+//    registerTaglibPlugins();
 
     //
     if( m_Locale.Init( wxLANGUAGE_DEFAULT,
