@@ -24,6 +24,8 @@
 #include "TrackEdit.h"
 #include "Base64.h"
 
+#include <mp4.h>
+
 #include <tag.h>
 #include <attachedpictureframe.h>
 #include <fileref.h>
@@ -32,7 +34,7 @@
 #include <id3v2tag.h>
 #include <mpegfile.h>
 #include <flacfile.h>
-#include <mp4file.h>
+//#include <mp4file.h>
 
 
 #include <wx/mstream.h>
@@ -55,7 +57,7 @@ bool guIsValidAudioFile( const wxString &filename )
         FileName.EndsWith( wxT( ".m4a"  ) ) ||
         FileName.EndsWith( wxT( ".m4p"  ) ) ||
         FileName.EndsWith( wxT( ".aac"  ) ) ||
-//        FileName.EndsWith( wxT( ".ape"  ) ) ||
+        FileName.EndsWith( wxT( ".ape"  ) ) ||
         FileName.EndsWith( wxT( ".mpc"  ) ) )
     {
         return true;
@@ -82,6 +84,10 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     else if( filename.Lower().EndsWith( wxT( ".mpc" ) ) )
     {
         return new guMpcTagInfo( filename );
+    }
+    else if ( filename.Lower().EndsWith( wxT( ".ape" ) ) )
+    {
+        return new guTagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
             filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
@@ -576,8 +582,6 @@ guMpcTagInfo::~guMpcTagInfo()
 // -------------------------------------------------------------------------------- //
 // guMp4TagInfo
 // -------------------------------------------------------------------------------- //
-#include <mp4.h>
-
 guMp4TagInfo::guMp4TagInfo( const wxString &filename ) : guTagInfo( filename )
 {
 }
@@ -592,7 +596,7 @@ guMp4TagInfo::~guMp4TagInfo()
 bool guMp4TagInfo::Read( void )
 {
     char * Value;
-    MP4FileHandle mp4_file = MP4Read( m_FileName.ToAscii() );
+    MP4FileHandle mp4_file = MP4Read( m_FileName.ToUTF8() );
     if( mp4_file != MP4_INVALID_FILE_HANDLE )
     {
         if( MP4GetMetadataName( mp4_file, &Value ) && Value )
@@ -647,7 +651,7 @@ bool guMp4TagInfo::Read( void )
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::Write( void )
 {
-    MP4FileHandle mp4_file = MP4Modify( m_FileName.ToAscii() );
+    MP4FileHandle mp4_file = MP4Modify( m_FileName.ToUTF8() );
     if( mp4_file != MP4_INVALID_FILE_HANDLE )
     {
         uint8_t * CoverData = NULL;
@@ -685,7 +689,7 @@ bool guMp4TagInfo::CanHandleImages( void )
 // -------------------------------------------------------------------------------- //
 wxImage * guMp4TagInfo::GetImage( void )
 {
-    MP4FileHandle mp4_file = MP4Read( m_FileName.ToAscii() );
+    MP4FileHandle mp4_file = MP4Read( m_FileName.ToUTF8() );
     if( mp4_file != MP4_INVALID_FILE_HANDLE )
     {
         if( MP4GetMetadataCoverArtCount( mp4_file ) )
@@ -697,6 +701,7 @@ wxImage * guMp4TagInfo::GetImage( void )
                 wxMemoryOutputStream ImgOutStream;
                 ImgOutStream.Write( CoverData, CoverSize );
                 wxMemoryInputStream ImgInputStream( ImgOutStream );
+                // TODO : Determine image type from data stream
                 wxImage * CoverImage = new wxImage( ImgInputStream, wxBITMAP_TYPE_JPEG );
                 if( !CoverImage || !CoverImage->IsOk() )
                 {
@@ -731,7 +736,7 @@ wxImage * guMp4TagInfo::GetImage( void )
 bool guMp4TagInfo::SetImage( const wxImage * image )
 {
     bool RetVal = false;
-    MP4FileHandle mp4_file = MP4Modify( m_FileName.ToAscii() );
+    MP4FileHandle mp4_file = MP4Modify( m_FileName.ToUTF8() );
     if( mp4_file != MP4_INVALID_FILE_HANDLE )
     {
         if( image )
@@ -745,6 +750,10 @@ bool guMp4TagInfo::SetImage( const wxImage * image )
                     ImgOutputStream.CopyTo( CoverData, ImgOutputStream.GetSize() );
                     RetVal = MP4SetMetadataCoverArt( mp4_file, CoverData, ImgOutputStream.GetSize() );
                     free( CoverData );
+                }
+                else
+                {
+                    guLogError( wxT( "could not allocate memory for image processing %s" ), m_FileName.c_str() );
                 }
             }
         }
