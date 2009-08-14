@@ -32,6 +32,10 @@
 #include <mp4v2.h>
 #endif
 
+#ifndef UINT64_TO_DOUBLE
+#define UINT64_TO_DOUBLE(a) ((double)((int64_t)(a)))
+#endif
+
 #include <tag.h>
 #include <attachedpictureframe.h>
 #include <fileref.h>
