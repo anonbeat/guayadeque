@@ -59,15 +59,21 @@ IF( NOT LIBDBUS_LIBRARIES )
 	MESSAGE( FATAL_ERROR "dbus not found!" )
 ENDIF( NOT LIBDBUS_LIBRARIES )
 
-FIND_PATH( LIBMP4_INCLUDE_DIRS mp4.h /usr/include /usr/local/include/usr/include/mp4v2 )
+FIND_PATH( LIBMP4_INCLUDE_DIRS mp4.h /usr/include /usr/local/include /usr/include/mp4v2 /usr/local/include/mp4v2 )
 IF( NOT LIBMP4_INCLUDE_DIRS )
-	MESSAGE( FATAL_ERROR "libmp4 not found!" )
+	#MESSAGE( FATAL_ERROR "libmp4 not found!" )
+        FIND_PATH( LIBMP4_INCLUDE_DIRS mp4v2.h /usr/include /usr/local/include/ /usr/include/mp4v2 /usr/local/include/mp4v2 )
+	IF( NOT LIBMP4_INCLUDE_DIRS )
+		MESSAGE( FATAL_ERROR "libmp4 header not found!" )
+	ELSE( NOT LIBMP4_INCLUDE_DIRS )
+		SET( USING_MP4V2_HEADER 1 )
+	ENDIF( NOT LIBMP4_INCLUDE_DIRS )
 ENDIF( NOT LIBMP4_INCLUDE_DIRS )
 
-FIND_LIBRARY( LIBMP4LIB NAMES mp4v2 PATH /usr/lib /usr/local/lib )
-IF( NOT LIBMP4 )
+FIND_LIBRARY( LIBMP4_LIBRARIES NAMES mp4v2 PATH /usr/lib /usr/local/lib /usr/lib64 /usr/local/lib64 )
+IF( NOT LIBMP4_LIBRARIES )
         MESSAGE( FATAL_ERROR "libmp4 not found!" )
-ENDIF( NOT LIBMP4 )
+ENDIF( NOT LIBMP4_LIBRARIES )
 
 
 # Include wxWidgets macros
@@ -98,6 +104,11 @@ INSTALL( FILES guayadeque.png DESTINATION share/pixmaps/ )
 INSTALL( FILES guayadeque.default.conf DESTINATION share/guayadeque )
 
 CONFIGURE_FILE(
+    ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/src/config.h
+    )
+
+CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
@@ -110,3 +121,4 @@ ADD_CUSTOM_TARGET(debug
 
 ADD_CUSTOM_TARGET(release
   ${CMAKE_COMMAND} -DMAKE_BUILD_TYPE:STRING=Release ${PROJECT_SOURCE_DIR})
+

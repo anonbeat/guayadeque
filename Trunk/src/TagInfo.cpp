@@ -24,7 +24,13 @@
 #include "TrackEdit.h"
 #include "Base64.h"
 
+#include "config.h"
+
+#ifndef USING_MP4V2_HEADER
 #include <mp4.h>
+#else
+#include <mp4v2.h>
+#endif
 
 #include <tag.h>
 #include <attachedpictureframe.h>
