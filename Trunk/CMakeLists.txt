@@ -59,12 +59,12 @@ IF( NOT LIBDBUS_LIBRARIES )
 	MESSAGE( FATAL_ERROR "dbus not found!" )
 ENDIF( NOT LIBDBUS_LIBRARIES )
 
-FIND_PATH( LIBMP4DEV mp4.h /usr/include /usr/local/include )
-IF( NOT LIBMP4DEV )
+FIND_PATH( LIBMP4_INCLUDE_DIRS mp4.h /usr/include /usr/local/include/usr/include/mp4v2 )
+IF( NOT LIBMP4_INCLUDE_DIRS )
 	MESSAGE( FATAL_ERROR "libmp4 not found!" )
-ENDIF( NOT LIBMP4DEV )
+ENDIF( NOT LIBMP4_INCLUDE_DIRS )
 
-FIND_LIBRARY( LIBMP4 NAMES mp4v2 PATH /usr/lib /usr/local/lib )
+FIND_LIBRARY( LIBMP4LIB NAMES mp4v2 PATH /usr/lib /usr/local/lib )
 IF( NOT LIBMP4 )
         MESSAGE( FATAL_ERROR "libmp4 not found!" )
 ENDIF( NOT LIBMP4 )
@@ -85,7 +85,7 @@ INCLUDE_DIRECTORIES(${Guayadeque_SOURCE_DIR}
 			${SQLITE3_INCLUDE_DIRS}
 			${LIBCURL_INCLUDE_DIRS}
 			${LIBTAG_INCLUDE_DIRS}
-#			${LIBTAGEXTRAS_INCLUDE_DIRS}
+			${LIBMP4_INCLUDE_DIRS}
               		${LIBDBUS_INCLUDE_DIRS}
                          )
  
