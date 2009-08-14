@@ -105,7 +105,7 @@ INSTALL( FILES guayadeque.default.conf DESTINATION share/guayadeque )
 
 CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/src/config.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h
     )
 
 CONFIGURE_FILE(
