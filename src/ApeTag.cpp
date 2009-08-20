@@ -400,7 +400,7 @@ void inline guApeFile::WriteInt( const int value )
 // -------------------------------------------------------------------------------- //
 void guApeFile::WriteApeHeaderFooter( const wxUint32 flags )
 {
-    guLogMessage( wxT( "Writing header/footer at %08X" ), m_File->Tell() );
+    //guLogMessage( wxT( "Writing header/footer at %08X" ), m_File->Tell() );
 
     WriteInt( APE_MAGIC_0 );
     WriteInt( APE_MAGIC_1 );
@@ -435,7 +435,7 @@ void guApeFile::WriteApeItems( void )
         if( !ValueBuf )
             continue;
 
-        guLogMessage( wxT( "writing item %u at %08X" ), index, m_File->Tell() );
+        //guLogMessage( wxT( "writing item %u at %08X" ), index, m_File->Tell() );
 
         int KeyLen = ApeItem->m_Key.size();
 
@@ -452,17 +452,10 @@ void guApeFile::WriteApeItems( void )
         }
         else
         {
-//      const wxWX2MBbuf buf = s.mb_str(conv);
-//      if (!buf)
-//          return false;
-//      size_t size = strlen(buf);
-//      return Write((const char *) buf, size) == size;
-
             m_File->Write( ValueBuf, ValueLen );
 
-            //m_File->Write( ApeItem->m_Value );
-            guLogMessage( wxT( "'%s'\n Size: %u   Length: %u" ),
-                ApeItem->m_Value.c_str(), ApeItem->m_Value.size(), ApeItem->m_Value.Length() );
+//            guLogMessage( wxT( "'%s'\n Size: %u   Length: %u" ),
+//                ApeItem->m_Value.c_str(), ApeItem->m_Value.size(), ApeItem->m_Value.Length() );
         }
     }
 }
@@ -470,7 +463,7 @@ void guApeFile::WriteApeItems( void )
 // -------------------------------------------------------------------------------- //
 bool guApeFile::WriteApeTag( void )
 {
-    guLogMessage( wxT( "file length %u" ), m_Tag->FileLength() );
+    //guLogMessage( wxT( "file length %u" ), m_Tag->FileLength() );
 
     const wxUint32 TagOffset = !m_Tag->TagOffset() ?  m_Tag->FileLength() : m_Tag->TagOffset();
 
