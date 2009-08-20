@@ -21,10 +21,10 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
-#include "TrackEdit.h"
+#include "ApeTag.h"
 #include "Base64.h"
-
 #include "config.h"
+#include "TrackEdit.h"
 
 #ifndef USING_MP4V2_HEADER
 #include <mp4.h>
@@ -44,6 +44,8 @@
 #include <id3v2tag.h>
 #include <mpegfile.h>
 #include <flacfile.h>
+#include <mpcfile.h>
+//#include <apetag.h>
 //#include <mp4file.h>
 
 
@@ -62,7 +64,7 @@ bool guIsValidAudioFile( const wxString &filename )
         FileName.EndsWith( wxT( ".flac" ) ) ||
         FileName.EndsWith( wxT( ".ogg"  ) ) ||
         FileName.EndsWith( wxT( ".oga"  ) ) ||
-//        FileName.EndsWith( wxT( ".wma"  ) ) ||
+        FileName.EndsWith( wxT( ".wma"  ) ) ||
         FileName.EndsWith( wxT( ".mp4"  ) ) ||  // MP4 files
         FileName.EndsWith( wxT( ".m4a"  ) ) ||
         FileName.EndsWith( wxT( ".m4p"  ) ) ||
@@ -95,9 +97,9 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     {
         return new guMpcTagInfo( filename );
     }
-    else if ( filename.Lower().EndsWith( wxT( ".ape" ) ) )
+    else if( filename.Lower().EndsWith( wxT( ".ape" ) ) )
     {
-        return new guTagInfo( filename );
+        return new guApeTagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
             filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
@@ -106,6 +108,15 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     {
         return new guMp4TagInfo( filename );
     }
+//    else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
+//            filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
+//            filename.Lower().EndsWith( wxT( ".m4p" ) ) ||
+//            filename.Lower().EndsWith( wxT( ".aac" ) ) ||
+//            filename.Lower().EndsWith( wxT( ".wma" ) ) ||
+//            filename.Lower().EndsWith( wxT( ".wav" ) ) )
+//    {
+//        return new guTagInfo( filename );
+//     }
     else
     {
         return NULL;
@@ -370,6 +381,41 @@ bool guMp3TagInfo::Write( void )
 }
 
 // -------------------------------------------------------------------------------- //
+wxImage * GetID3v2Image( ID3v2::Tag * tagv2 )
+{
+	TagLib::ID3v2::FrameList frameList = tagv2->frameList( "APIC" );
+	if( !frameList.isEmpty() )
+	{
+		TagLib::ID3v2::AttachedPictureFrame * PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame * >( frameList.front() );
+        int ImgDataSize = PicFrame->picture().size();
+
+		if( ImgDataSize > 0 )
+		{
+			//guLogMessage( wxT( "ID3v2 header contains APIC frame with %u bytes." ), ImgDataSize );
+            wxMemoryOutputStream ImgOutStream;
+            ImgOutStream.Write( PicFrame->picture().data(), ImgDataSize );
+            wxMemoryInputStream ImgInputStream( ImgOutStream );
+            wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 ) );
+            if( CoverImage )
+            {
+                if( CoverImage->IsOk() )
+                {
+                    return CoverImage;
+                }
+                else
+                {
+                    delete CoverImage;
+                }
+            }
+//		    wxFileOutputStream FOut( wxT( "~/test.jpg" ) );
+//		    FOut.Write( PicFrame->picture().data(), ImgDataSize );
+//		    FOut.Close();
+		}
+	}
+	return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 wxImage * guMp3TagInfo::GetImage( void )
 {
     TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
@@ -409,15 +455,10 @@ wxImage * guMp3TagInfo::GetImage( void )
 	return NULL;
 }
 
+
 // -------------------------------------------------------------------------------- //
-bool guMp3TagInfo::SetImage( const wxImage * image )
+void SetID3v2Image( ID3v2::Tag * tagv2, const wxImage * image )
 {
-    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
-    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
-
-	if( !tagv2 )
-        return false;
-
     TagLib::ID3v2::AttachedPictureFrame * PicFrame;
     if( image )
     {
@@ -442,6 +483,19 @@ bool guMp3TagInfo::SetImage( const wxImage * image )
             tagv2->removeFrame( PicFrame, TRUE );
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMp3TagInfo::SetImage( const wxImage * image )
+{
+    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
+    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
+
+	if( !tagv2 )
+        return false;
+
+    SetID3v2Image( tagv2, image );
+
     return tagfile.save();
 }
 
@@ -683,11 +737,13 @@ bool guMp4TagInfo::Write( void )
             MP4SetMetadataCoverArt( mp4_file, CoverData, CoverSize );
         }
         MP4Close( mp4_file );
+        return true;
     }
     else
     {
         guLogError( wxT( "Write : could not open the file %s" ), m_FileName.c_str() );
     }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -778,6 +834,56 @@ bool guMp4TagInfo::SetImage( const wxImage * image )
         guLogError( wxT( "SetImage : could not open the file %s" ), m_FileName.c_str() );
     }
     return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo( filename )
+{
+    wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".ape" ) ) )
+}
+
+// -------------------------------------------------------------------------------- //
+guApeTagInfo::~guApeTagInfo()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guApeTagInfo::Read( void )
+{
+    guApeFile File( m_FileName );
+    guApeTag * Tag = File.GetApeTag();
+    if( Tag )
+    {
+        m_TrackName = Tag->GetTitle();
+        m_ArtistName = Tag->GetArtist();
+        m_AlbumName = Tag->GetAlbum();
+        m_GenreName = Tag->GetGenre();
+        m_Track = Tag->GetTrack();
+        m_Year = Tag->GetYear();
+        m_Length = File.GetTrackLength();
+        m_Bitrate = File.GetBitRate();
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guApeTagInfo::Write( void )
+{
+    guApeFile File( m_FileName );
+    guApeTag * Tag = File.GetApeTag();
+    if( Tag )
+    {
+        Tag->SetTitle( m_TrackName );
+        Tag->SetArtist( m_ArtistName );
+        Tag->SetAlbum( m_AlbumName );
+        Tag->SetGenre( m_GenreName );
+        Tag->SetTrack( m_Track );
+        Tag->SetYear( m_Year );
+        File.WriteApeTag();
+        return true;
+    }
+    return false;
 }
 
 

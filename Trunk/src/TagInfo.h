@@ -144,7 +144,16 @@ class guMp4TagInfo : public guTagInfo
     virtual bool        SetImage( const wxImage * image );
 };
 
+// -------------------------------------------------------------------------------- //
+class guApeTagInfo : public guTagInfo
+{
+  public :
+    guApeTagInfo( const wxString &filename = wxEmptyString );
+    ~guApeTagInfo();
 
+    virtual bool        Read( void );
+    virtual bool        Write( void );
+};
 
 
 class guImagePtrArray;

@@ -12,6 +12,7 @@ INCLUDE_DIRECTORIES(
         ${SQLITE3_INCLUDE_DIRS}
         ${LIBCURL_INCLUDE_DIRS}
         ${LIBTAG_INCLUDE_DIRS}
+#	${LIBTAGEXTRAS_INCLUDE_DIRS}
 	${LIBMP4_INCLUDE_DIRS}
         ${LIBDBUS_INCLUDE_DIRS} )
 
@@ -115,6 +116,8 @@ ADD_EXECUTABLE( guayadeque
 	PLSoListBox.h
 	Base64.cpp
 	Base64.h
+	ApeTag.cpp
+	ApeTag.h
 	wxsqlite3/wxsqlite3.cpp 
 	curl/base.cpp
 	curl/http.cpp 
@@ -130,6 +133,7 @@ TARGET_LINK_LIBRARIES( guayadeque
 	${SQLITE3_LIBRARIES}
 	${LIBCURL_LIBRARIES}
         ${LIBTAG_LIBRARIES}
+#	${LIBTAGEXTRAS_LIBRARIES}
 	${LIBMP4_LIBRARIES}
         ${LIBDBUS_LIBRARIES}
 	)

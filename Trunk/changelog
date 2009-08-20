@@ -1,4 +1,5 @@
 
+  * Added support to ape file format.
   * Added support to mp4 using libmp4 library. Need libmp4v2 installed
   * Added column genre to songs list box
   * Added support to flac, ogg and mpc file formats.

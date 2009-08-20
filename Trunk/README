@@ -13,5 +13,5 @@ sudo make install
 Please email with bugs and suggestions or to add a translation to anonbeat@gmail.com
 
 
-Read tags from mp4, m4p, m4a, aac file format have been added using libmp4v2
-library. Play it done using the gstreamer backend.
+Support to mp4, m4p, m4a, aac files format have been added using libmp4v2
+library. Play is done using the gstreamer backend.

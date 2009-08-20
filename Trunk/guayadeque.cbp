@@ -71,6 +71,8 @@
 		<Unit filename="src/AlListBox.h" />
 		<Unit filename="src/Amazon.cpp" />
 		<Unit filename="src/Amazon.h" />
+		<Unit filename="src/ApeTag.cpp" />
+		<Unit filename="src/ApeTag.h" />
 		<Unit filename="src/ArListBox.cpp" />
 		<Unit filename="src/ArListBox.h" />
 		<Unit filename="src/ArrayStringArray.cpp" />
