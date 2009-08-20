@@ -102,7 +102,7 @@ bool guMainApp::OnInit()
     // Init the wxCurl Lib
     wxCurlBase::Init();
 
-//    TagLib-Extras package has too many dependencies including the whole KDE :/ in fedora
+//    //TagLib-Extras package has too many dependencies including the whole KDE :/ in fedora
 //    // Register the TagLib extra plugins
 //    registerTaglibPlugins();
 
