@@ -25,6 +25,8 @@
 #include "Config.h"
 #include "Utils.h"
 
+#include "taglib-extras/tplugins.h"
+
 #include "wx/clipbrd.h"
 #include <wx/curl/base.h>
 #include <wx/image.h>
@@ -96,6 +98,10 @@ bool guMainApp::OnInit()
 
     // Init the wxCurl Lib
     wxCurlBase::Init();
+
+    // Register the asf plugin for taglib
+    registerTaglibPlugins();
+
 
     //
     if( m_Locale.Init( wxLANGUAGE_DEFAULT,

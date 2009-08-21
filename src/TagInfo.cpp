@@ -64,10 +64,10 @@ bool guIsValidAudioFile( const wxString &filename )
         FileName.EndsWith( wxT( ".flac" ) ) ||
         FileName.EndsWith( wxT( ".ogg"  ) ) ||
         FileName.EndsWith( wxT( ".oga"  ) ) ||
-        FileName.EndsWith( wxT( ".wma"  ) ) ||
         FileName.EndsWith( wxT( ".mp4"  ) ) ||  // MP4 files
         FileName.EndsWith( wxT( ".m4a"  ) ) ||
         FileName.EndsWith( wxT( ".m4p"  ) ) ||
+        FileName.EndsWith( wxT( ".wma"  ) ) ||
         FileName.EndsWith( wxT( ".aac"  ) ) ||
         FileName.EndsWith( wxT( ".ape"  ) ) ||
         FileName.EndsWith( wxT( ".mpc"  ) ) )
@@ -101,22 +101,22 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     {
         return new guApeTagInfo( filename );
     }
-    else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
-            filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
-            filename.Lower().EndsWith( wxT( ".m4p" ) ) ||
-            filename.Lower().EndsWith( wxT( ".aac" ) ) )
-    {
-        return new guMp4TagInfo( filename );
-    }
 //    else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
 //            filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
 //            filename.Lower().EndsWith( wxT( ".m4p" ) ) ||
-//            filename.Lower().EndsWith( wxT( ".aac" ) ) ||
-//            filename.Lower().EndsWith( wxT( ".wma" ) ) ||
-//            filename.Lower().EndsWith( wxT( ".wav" ) ) )
+//            filename.Lower().EndsWith( wxT( ".aac" ) ) )
 //    {
-//        return new guTagInfo( filename );
-//     }
+//        return new guMp4TagInfo( filename );
+//    }
+    else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
+             filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
+             filename.Lower().EndsWith( wxT( ".m4p" ) ) ||
+             filename.Lower().EndsWith( wxT( ".aac" ) ) ||
+             filename.Lower().EndsWith( wxT( ".wma" ) ) ||
+             filename.Lower().EndsWith( wxT( ".asf" ) ) )
+    {
+        return new guTagInfo( filename );
+    }
     else
     {
         return NULL;
@@ -144,6 +144,7 @@ bool guTagInfo::Read( void )
         else
         {
             guLogWarning( wxT( "Cant get tag object from %s" ), m_FileName.c_str() );
+            return false;
         }
 
         apro = fileref.audioProperties();
@@ -161,6 +162,7 @@ bool guTagInfo::Read( void )
     else
     {
       guLogError( wxT( "Could not read tags from file %s" ), m_FileName.c_str() );
+      return false;
     }
     return true;
 }
@@ -182,6 +184,11 @@ bool guTagInfo::Write( void )
             tag->setTrack( m_Track ); // set the id3v1 track
             tag->setYear( m_Year );
         }
+        else
+        {
+            guLogWarning( wxT( "Cant get tag object from %s" ), m_FileName.c_str() );
+            return false;
+        }
 
         if( !fileref.save() )
         {
@@ -192,6 +199,7 @@ bool guTagInfo::Write( void )
     else
     {
       guLogError( wxT( "Invalid file references writing tags for file %s" ), m_FileName.c_str() );
+      return false;
     }
     return true;
 }
