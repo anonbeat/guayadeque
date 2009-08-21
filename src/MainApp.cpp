@@ -25,8 +25,6 @@
 #include "Config.h"
 #include "Utils.h"
 
-//#include <tplugins.h>
-
 #include "wx/clipbrd.h"
 #include <wx/curl/base.h>
 #include <wx/image.h>
@@ -93,18 +91,11 @@ bool guMainApp::OnInit()
     wxTheClipboard->UsePrimarySelection( false );
 
 
-//    // Init the sockets
-//    wxSocketBase::Initialize();
-
     // Init all image handlers
     wxInitAllImageHandlers();
 
     // Init the wxCurl Lib
     wxCurlBase::Init();
-
-//    //TagLib-Extras package has too many dependencies including the whole KDE :/ in fedora
-//    // Register the TagLib extra plugins
-//    registerTaglibPlugins();
 
     //
     if( m_Locale.Init( wxLANGUAGE_DEFAULT,
