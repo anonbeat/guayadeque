@@ -3,19 +3,110 @@ IF( DEBUG )
 ENDIF( DEBUG )
 
 INCLUDE_DIRECTORIES(
-	${guayadeque_SOURCE_DIR}
-	${guayadeque_SOURCE_DIR}/wx
-	${guayadeque_SOURCE_DIR}/wx/curl
-	${guayadeque_SOURCE_DIR}/wxsqlite3
-        ${guayadeque_SOURCE_DIR}/dbus
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/wx
+	${CMAKE_CURRENT_SOURCE_DIR}/wx/curl
+	${CMAKE_CURRENT_SOURCE_DIR}/wxsqlite3
+        ${CMAKE_CURRENT_SOURCE_DIR}/dbus
+	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras
+	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras/asf
+	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras/mp4
+	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras/wav
+	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras/audible
+	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras/rmff
         ${GSTREAMER_INCLUDE_DIRS}
         ${SQLITE3_INCLUDE_DIRS}
         ${LIBCURL_INCLUDE_DIRS}
         ${LIBTAG_INCLUDE_DIRS}
-#	${LIBTAGEXTRAS_INCLUDE_DIRS}
 	${LIBMP4_INCLUDE_DIRS}
-        ${LIBDBUS_INCLUDE_DIRS} )
+        ${LIBDBUS_INCLUDE_DIRS} 
+)
 
+SET( WXSQLITE3_SOURCES
+	wxsqlite3/wxsqlite3.cpp 
+)
+
+SET( CURL_SOURCES
+	curl/base.cpp
+	curl/http.cpp 
+)
+
+SET( DBUS_SOURCES
+        dbus/gudbus.cpp
+        dbus/gudbus.h
+	dbus/mpris.cpp
+	dbus/mpris.h
+)
+
+ADD_SUBDIRECTORY( taglib-extras )
+
+SET( TAGLIB_EXTRAS_SOURCES
+#	taglib-extras/config-taglib-extras.h
+	taglib-extras/taglib-extras_export.h
+	taglib-extras/tfile_helper.cpp
+	taglib-extras/tfile_helper.h
+	taglib-extras/tdebug.cpp
+	taglib-extras/tdebug.h
+	taglib-extras/tplugins.cpp
+	taglib-extras/tplugins.h
+)
+
+SET( TAGLIB_EXTRAS_ASF_SOURCES
+	taglib-extras/asf/asfattribute.cpp
+	taglib-extras/asf/asfattribute.h
+	taglib-extras/asf/asffile.cpp
+	taglib-extras/asf/asffile.h
+	taglib-extras/asf/asffiletyperesolver.cpp
+	taglib-extras/asf/asffiletyperesolver.h
+	taglib-extras/asf/asfproperties.cpp
+	taglib-extras/asf/asfproperties.h
+	taglib-extras/asf/asftag.cpp
+	taglib-extras/asf/asftag.h
+)
+
+SET( TAGLIB_EXTRAS_MP4_SOURCES
+	taglib-extras/mp4/mp4atom.cpp
+	taglib-extras/mp4/mp4atom.h
+	taglib-extras/mp4/mp4file.cpp
+	taglib-extras/mp4/mp4file.h
+	taglib-extras/mp4/mp4filetyperesolver.cpp
+	taglib-extras/mp4/mp4filetyperesolver.h
+	taglib-extras/mp4/mp4item.cpp
+	taglib-extras/mp4/mp4item.h
+	taglib-extras/mp4/mp4properties.cpp
+	taglib-extras/mp4/mp4properties.h
+	taglib-extras/mp4/mp4tag.cpp
+	taglib-extras/mp4/mp4tag.h
+)	
+
+SET( TAGLIB_EXTRAS_WAV_SOURCES
+	taglib-extras/wav/wavfile.cpp
+	taglib-extras/wav/wavfile.h
+	taglib-extras/wav/wavfiletyperesolver.cpp
+	taglib-extras/wav/wavfiletyperesolver.h
+	taglib-extras/wav/wavproperties.cpp
+	taglib-extras/wav/wavproperties.h
+)
+
+SET( TAGLIB_EXTRAS_AUDIBLE_SOURCES
+	taglib-extras/audible/audiblefile.cpp
+	taglib-extras/audible/audiblefile.h
+	taglib-extras/audible/audiblefiletyperesolver.cpp
+	taglib-extras/audible/audiblefiletyperesolver.h
+	taglib-extras/audible/audibleproperties.cpp
+	taglib-extras/audible/audibleproperties.h
+	taglib-extras/audible/audibletag.cpp
+	taglib-extras/audible/audibletag.h
+)
+
+SET( TAGLIB_EXTRAS_RMFF_SOURCES
+	taglib-extras/rmff/realmediafile.cpp
+	taglib-extras/rmff/realmediafile.h
+	taglib-extras/rmff/realmediafiletyperesolver.cpp
+	taglib-extras/rmff/realmediafiletyperesolver.h
+	taglib-extras/rmff/rmff.cpp
+	taglib-extras/rmff/rmff.h
+)
 
 ADD_EXECUTABLE( guayadeque
 	AlListBox.cpp
@@ -118,13 +209,15 @@ ADD_EXECUTABLE( guayadeque
 	Base64.h
 	ApeTag.cpp
 	ApeTag.h
-	wxsqlite3/wxsqlite3.cpp 
-	curl/base.cpp
-	curl/http.cpp 
-        dbus/gudbus.cpp
-        dbus/gudbus.h
-	dbus/mpris.cpp
-	dbus/mpris.h
+	${WXSQLITE3_SOURCES}
+	${CURL_SOURCES}
+    	${DBUS_SOURCES}
+	${TAGLIB_EXTRAS_SOURCES}
+	${TAGLIB_EXTRAS_ASF_SOURCES}
+	${TAGLIB_EXTRAS_MP4_SOURCES}
+	${TAGLIB_EXTRAS_WAV_SOURCES}
+	${TAGLIB_EXTRAS_AUDIBLE_SOURCES}
+	${TAGLIB_EXTRAS_RMFF_SOURCES}
        )
 
 TARGET_LINK_LIBRARIES( guayadeque
@@ -133,7 +226,6 @@ TARGET_LINK_LIBRARIES( guayadeque
 	${SQLITE3_LIBRARIES}
 	${LIBCURL_LIBRARIES}
         ${LIBTAG_LIBRARIES}
-#	${LIBTAGEXTRAS_LIBRARIES}
 	${LIBMP4_LIBRARIES}
         ${LIBDBUS_LIBRARIES}
 	)
