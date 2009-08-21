@@ -575,6 +575,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
     if( ApeFooter.m_Version != APE_VERSION_2 )
     {
         guLogWarning( wxT( "Unsupported ApeFooter tag version %i" ), ApeFooter.m_Version );
+        return;
     }
 
     //guLogMessage( wxT( "Found ApeFooter tag footer version: %i  length: %i  items: %i  flags: %08x" ),
@@ -619,43 +620,50 @@ void guApeFile::ReadAndProcessApeHeader( void )
     // read and process tag data
     m_File->Seek( - ( int ) ApeFooter.m_Length, wxFromEnd );
 
-    char * const buffer = new char[ ApeFooter.m_Length ];
+    char * const ItemsBuf = new char[ ApeFooter.m_Length ];
 
-    m_File->Read( ( void * ) buffer, ApeFooter.m_Length );
+    m_File->Read( ( void * ) ItemsBuf, ApeFooter.m_Length );
 
-    char * cp = buffer;
+    char * CurBufPos = ItemsBuf;
 
     wxString Value;
     wxString Key;
     int index;
     for( index = 0; index < ApeFooter.m_Items; index++ )
     {
-        const wxUint32 ValueLen = ReadLittleEndianUint32( cp );
-        cp += sizeof( ValueLen );
-        const wxUint32 ItemFlags = ReadLittleEndianUint32( cp );
-        cp += sizeof( ItemFlags );
+        const wxUint32 ValueLen = ReadLittleEndianUint32( CurBufPos );
+        CurBufPos += sizeof( ValueLen );
+        if( ValueLen > ( ApeFooter.m_Length - ( ItemsBuf - CurBufPos ) ) )
+        {
+            guLogWarning( wxT( "Aborting reading of corrupt ape tag" ) );
+            m_Tag->DelAllItems();
+            break;
+        }
 
-        Key = wxString( cp, wxConvUTF8 );
+        const wxUint32 ItemFlags = ReadLittleEndianUint32( CurBufPos );
+        CurBufPos += sizeof( ItemFlags );
 
-        cp += 1 + Key.Length();
+        Key = wxString( CurBufPos, wxConvUTF8 );
+
+        CurBufPos += 1 + Key.Length();
 
         if( ( ItemFlags & APE_FLAG_CONTENT_TYPE ) == APE_FLAG_CONTENT_BINARY )
         {
-            Value = wxString::From8BitData( cp, ValueLen );
+            Value = wxString::From8BitData( CurBufPos, ValueLen );
         }
         else
         {
-            Value = wxString::FromUTF8( cp, ValueLen );
+            Value = wxString::FromUTF8( CurBufPos, ValueLen );
         }
 
-        cp += ValueLen;
+        CurBufPos += ValueLen;
 
         //guLogMessage( wxT( "Tag%i => Len: %i  Flags: %08x  Key: '%s'  Value: '%s'" ),
         //                                         index, ValueLen, ItemFlags, Key.c_str(), Value.c_str() );
         m_Tag->AddItem( new guApeItem( Key, Value, ItemFlags ) );
     }
 
-    delete buffer;
+    delete ItemsBuf;
 }
 
 // -------------------------------------------------------------------------------- //

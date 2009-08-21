@@ -220,7 +220,7 @@ void guSoListBox::ReloadItems( bool reset )
     if( reset )
         SetSelection( -1 );
     else
-        Selection = GetSelectedItems();
+        Selection = GetSelectedItems( false );
 
     m_Items.Empty();
 
