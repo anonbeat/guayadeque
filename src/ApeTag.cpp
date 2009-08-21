@@ -230,17 +230,11 @@ void guApeTag::SetItem( const wxString &key, char * data, wxUint32 len )
     guApeItem * ApeItem = GetItem( key );
     if( ApeItem )
     {
-        ApeItem->m_Value = wxString( ' ', len );
-        int index = 0;
-        for( index = 0; index < len; index++ )
-            ApeItem->m_Value[ index ] = ( ( char * ) data )[ index ];
+        ApeItem->m_Value = wxString::From8BitData( data, len );
     }
     else
     {
-        ApeItem = new guApeItem( key, wxString( ' ', len ), APE_FLAG_CONTENT_BINARY );
-        int index = 0;
-        for( index = 0; index < len; index++ )
-            ApeItem->m_Value[ index ] = data[ index ];
+        ApeItem = new guApeItem( key, wxString::From8BitData( data, len ), APE_FLAG_CONTENT_BINARY );
         m_Items->Add( ApeItem );
     }
 }
