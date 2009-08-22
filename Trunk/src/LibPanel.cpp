@@ -1066,12 +1066,27 @@ void guLibPanel::OnSongSelectAlbum( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::SelectAlbumName( const wxString &album )
 {
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_AlbumListCtrl->ReloadItems();
+    m_UpdateLock = false;
     m_AlbumListCtrl->SelectAlbumName( album );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLibPanel::SelectArtistName( const wxString &artist )
 {
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_UpdateLock = false;
     m_ArtistListCtrl->SelectArtistName( artist );
 }
 
