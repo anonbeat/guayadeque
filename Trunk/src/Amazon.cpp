@@ -41,16 +41,34 @@
 //    &ItemPage=[The page Num {1..x}]
 
 #define AMAZON_SEARCH_APIKEY    "AKIAI3VJGDYXLU7N2HKQ"
-#define AMAZON_SEARCH_URL       wxT( "http://webservices.amazon.com/onca/xml?"\
-                                    "=&AWSAccessKeyId=" AMAZON_SEARCH_APIKEY\
-                                    "&Artist=%s"\
-                                    "&ItemPage=%u"\
-                                    "&Keywords=%s"\
-                                    "&Operation=ItemSearch"\
-                                    "&ResponseGroup=Images,Small"\
-                                    "&SearchIndex=Music"\
-                                    "&Service=AWSECommerceService"\
-                                    "&Timestamp=%s" )
+
+//      http://webservices.amazon.com/onca/xml?
+//          AWSAccessKeyId=AKIAI3VJGDYXLU7N2HKQ
+//          &Artist=David%20Lanz
+//          &ItemPage=1
+//          &Keywords=An%20Evening%20With%20David%20Lanz
+//          &Operation=ItemSearch
+//          &ResponseGroup=Images%2CSmall
+//          &SearchIndex=Music
+//          &Service=AWSECommerceService
+//          &Timestamp=2009-08-24T20%3A30%3A19.000Z
+//          &Signature=IE6pzSSRaUorPMkUq4k2FBYO9oWYPxaAMf3xslq48ZI%3D
+//
+#if 0
+A: http://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAI3VJGDYXLU7N2HKQ&Artist=David%20Lanz&ItemPage=1&Keywords=An%20Evening%20With%20David%20Lanz&Operation=ItemSearch&ResponseGroup=Images%2CSmall&SearchIndex=Music&Service=AWSECommerceService&Timestamp=2009-08-24T20%3A30%3A19.000Z&Signature=IE6pzSSRaUorPMkUq4k2FBYO9oWYPxaAMf3xslq48ZI%3D
+G: http://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAI3VJGDYXLU7N2HKQ&Artist=David%20Lanz&ItemPage=1&Keywords=An%20Evening%20With%20David%20Lanz&Operation=ItemSearch&ResponseGroup=Images%2CSmall&SearchIndex=Music&Service=AWSECommerceService&Timestamp=2009-08-24T20%3A30%3A19.000Z&Signature=IE6pzSSRaUorPMkUq4k2FBYO9oWYPxaAMf3xslq48ZI%3D
+#endif
+
+#define AMAZON_SEARCH_URL       wxT( "http://webservices.amazon.com/onca/xml?" )
+#define AMAZON_SEARCH_PARAMS    wxT( "AWSAccessKeyId=" AMAZON_SEARCH_APIKEY\
+                                     "&Artist=%s"\
+                                     "&ItemPage=%u"\
+                                     "&Keywords=%s"\
+                                     "&Operation=ItemSearch"\
+                                     "&ResponseGroup=Images,Small"\
+                                     "&SearchIndex=Music"\
+                                     "&Service=AWSECommerceService"\
+                                     "&Timestamp=%s" )
 
 
 
@@ -210,26 +228,32 @@ void inline HMACSha256( char * key, unsigned int key_size,
 }
 
 // -------------------------------------------------------------------------------- //
+wxString FixEncoding( const wxString &text )
+{
+    wxString RetVal = text;
+    RetVal.Replace( wxT( "+" ), wxT( "%20" ) );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 wxString GetAmazonSign( const wxString &text )
 {
 #define AMAZON_SEARCH_SECRET    wxT( "ICsfRx7YNpBBamJyJcolN0qGKH6bBG7NlA9kLqhq" )
     wxString Str = wxT( "GET\nwebservices.amazon.com\n/onca/xml\n" ) + text;
 
-    guLogMessage( wxT( "String : '%s'" ), Str.c_str() );
+    //guLogMessage( wxT( "String : '%s'" ), Str.c_str() );
     wxString Key = AMAZON_SEARCH_SECRET;
     char * Output = ( char * ) malloc( 1024 );
 
     HMACSha256( Key.char_str(), Key.Length(), Str.char_str(), Str.Length(), Output, SHA256_DIGEST_SIZE );
 
     wxString Sign = guBase64Encode( Output, SHA256_DIGEST_SIZE );
-    guLogMessage( wxT( "Signature: '%s'" ), Sign.c_str() );
+    //guLogMessage( wxT( "Signature: '%s'" ), Sign.c_str() );
     Sign.Replace( wxT( "+" ), wxT( "%2B" ) );
     Sign.Replace( wxT( "=" ), wxT( "%3D" ) );
 
-    guLogMessage( wxT( "Encoded: '%s'" ), Sign.c_str() );
-
+    //guLogMessage( wxT( "Encoded: '%s'" ), Sign.c_str() );
     free( Output );
-
     return Sign;
 }
 
@@ -238,20 +262,19 @@ int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
 {
     wxDateTime CurTime = wxDateTime::Now();
 
-    wxString SearchUrl = wxString::Format( AMAZON_SEARCH_URL,
-        guURLEncode( m_Artist ).c_str(),
+    wxString SearchParams = wxString::Format( AMAZON_SEARCH_PARAMS,
+        FixEncoding( guURLEncode( m_Artist ) ).c_str(),
         pagenum + 1,
-        guURLEncode( m_Album ).c_str(),
-        guURLEncode( CurTime.Format( wxT( "%Y-%m-%dT%H:%M:%SZ" ) ) ).c_str() );
+        FixEncoding( guURLEncode( m_Album ) ).c_str(),
+        guURLEncode( CurTime.ToUTC().Format( wxT( "%Y-%m-%dT%H:%M:%S.000Z" ) ) ).c_str() );
 
-    SearchUrl.Replace( wxT( "," ), wxT( "%2C" ) );
+    SearchParams.Replace( wxT( "," ), wxT( "%2C" ) );
 
+    wxString SignText = GetAmazonSign( SearchParams );
 
-    wxString SignText = GetAmazonSign( SearchUrl );
-    SearchUrl += wxT( "&Signature=" ) + SignText;
+    wxString SearchUrl = AMAZON_SEARCH_URL + SearchParams + wxT( "&Signature=" ) + SignText;
 
-    guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
-
+    //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
 
     char * Buffer = NULL;
     wxCurlHTTP http;
