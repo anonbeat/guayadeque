@@ -317,6 +317,8 @@ void guPlayList::SetPlayList( const guTrackArray &NewItems )
     int Count;
     m_Items = NewItems;
 
+    SetSelection( -1 );
+
     m_CurItem = 0;
     Count = m_Items.Count();
     m_TotalLen = 0;

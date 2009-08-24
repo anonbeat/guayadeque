@@ -195,7 +195,7 @@ int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
         guURLEncode( m_Album ).c_str(),
         pagenum + 1 );
 
-    //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
+    guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
 
     char * Buffer = NULL;
     wxCurlHTTP http;
