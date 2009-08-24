@@ -8,6 +8,7 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}/wx/curl
 	${CMAKE_CURRENT_SOURCE_DIR}/wxsqlite3
         ${CMAKE_CURRENT_SOURCE_DIR}/dbus
+	${CMAKE_CURRENT_SOURCE_DIR}/hmac
 	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras
 	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras/asf
 	${CMAKE_CURRENT_SOURCE_DIR}/taglib-extras/mp4
@@ -36,6 +37,13 @@ SET( DBUS_SOURCES
         dbus/gudbus.h
 	dbus/mpris.cpp
 	dbus/mpris.h
+)
+
+SET( HMAC_SHA2_SOURCES
+	hmac/hmac_sha2.c
+	hmac/hmac_sha2.h
+	hmac/sha2.c
+	hmac/sha2.h
 )
 
 ADD_SUBDIRECTORY( taglib-extras )
@@ -212,6 +220,7 @@ ADD_EXECUTABLE( guayadeque
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
+	${HMAC_SHA2_SOURCES}
 	${TAGLIB_EXTRAS_SOURCES}
 	${TAGLIB_EXTRAS_ASF_SOURCES}
 	${TAGLIB_EXTRAS_MP4_SOURCES}

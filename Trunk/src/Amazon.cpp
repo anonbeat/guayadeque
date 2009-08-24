@@ -23,6 +23,10 @@
 #include "CoverEdit.h"
 #include "Utils.h"
 
+#include "Base64.h"
+#include "hmac/sha2.h"
+#include "hmac_sha2.h"
+
 #include <wx/arrimpl.cpp>
 #include <wx/curl/http.h>
 #include <wx/statline.h>
@@ -36,10 +40,18 @@
 //    &SearchIndex=Music
 //    &ItemPage=[The page Num {1..x}]
 
-#define AMAZON_SEARCH_APIKEY    wxT( "AKIAI3VJGDYXLU7N2HKQ" )
-#define AMAZON_SEARCH_URL       wxT( "http://webservices.amazon.com/onca/xml?Service=AWSECommerceService&SubscriptionId=" )\
-                                AMAZON_SEARCH_APIKEY\
-                                wxT( "&Operation=ItemSearch&SearchIndex=Music&ResponseGroup=Images,Small&Artist=%s&Keywords=%s&ItemPage=%u" )
+#define AMAZON_SEARCH_APIKEY    "AKIAI3VJGDYXLU7N2HKQ"
+#define AMAZON_SEARCH_URL       wxT( "http://webservices.amazon.com/onca/xml?"\
+                                    "=&AWSAccessKeyId=" AMAZON_SEARCH_APIKEY\
+                                    "&Artist=%s"\
+                                    "&ItemPage=%u"\
+                                    "&Keywords=%s"\
+                                    "&Operation=ItemSearch"\
+                                    "&ResponseGroup=Images,Small"\
+                                    "&SearchIndex=Music"\
+                                    "&Service=AWSECommerceService"\
+                                    "&Timestamp=%s" )
+
 
 
 // -------------------------------------------------------------------------------- //
@@ -188,14 +200,58 @@ int guAmazonCoverFetcher::ExtractImagesInfo( wxString &content )
 
 
 // -------------------------------------------------------------------------------- //
+void inline HMACSha256( char * key, unsigned int key_size,
+          char * message, unsigned int message_len,
+          char * mac, unsigned mac_size )
+{
+    return hmac_sha256( ( unsigned char * ) key, key_size,
+                        ( unsigned char * ) message, message_len,
+                        ( unsigned char * ) mac, mac_size );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString GetAmazonSign( const wxString &text )
+{
+#define AMAZON_SEARCH_SECRET    wxT( "ICsfRx7YNpBBamJyJcolN0qGKH6bBG7NlA9kLqhq" )
+    wxString Str = wxT( "GET\nwebservices.amazon.com\n/onca/xml\n" ) + text;
+
+    guLogMessage( wxT( "String : '%s'" ), Str.c_str() );
+    wxString Key = AMAZON_SEARCH_SECRET;
+    char * Output = ( char * ) malloc( 1024 );
+
+    HMACSha256( Key.char_str(), Key.Length(), Str.char_str(), Str.Length(), Output, SHA256_DIGEST_SIZE );
+
+    wxString Sign = guBase64Encode( Output, SHA256_DIGEST_SIZE );
+    guLogMessage( wxT( "Signature: '%s'" ), Sign.c_str() );
+    Sign.Replace( wxT( "+" ), wxT( "%2B" ) );
+    Sign.Replace( wxT( "=" ), wxT( "%3D" ) );
+
+    guLogMessage( wxT( "Encoded: '%s'" ), Sign.c_str() );
+
+    free( Output );
+
+    return Sign;
+}
+
+// -------------------------------------------------------------------------------- //
 int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
 {
+    wxDateTime CurTime = wxDateTime::Now();
+
     wxString SearchUrl = wxString::Format( AMAZON_SEARCH_URL,
         guURLEncode( m_Artist ).c_str(),
+        pagenum + 1,
         guURLEncode( m_Album ).c_str(),
-        pagenum + 1 );
+        guURLEncode( CurTime.Format( wxT( "%Y-%m-%dT%H:%M:%SZ" ) ) ).c_str() );
+
+    SearchUrl.Replace( wxT( "," ), wxT( "%2C" ) );
+
+
+    wxString SignText = GetAmazonSign( SearchUrl );
+    SearchUrl += wxT( "&Signature=" ) + SignText;
 
     guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
+
 
     char * Buffer = NULL;
     wxCurlHTTP http;
