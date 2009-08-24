@@ -42,23 +42,6 @@
 
 #define AMAZON_SEARCH_APIKEY    "AKIAI3VJGDYXLU7N2HKQ"
 
-//      http://webservices.amazon.com/onca/xml?
-//          AWSAccessKeyId=AKIAI3VJGDYXLU7N2HKQ
-//          &Artist=David%20Lanz
-//          &ItemPage=1
-//          &Keywords=An%20Evening%20With%20David%20Lanz
-//          &Operation=ItemSearch
-//          &ResponseGroup=Images%2CSmall
-//          &SearchIndex=Music
-//          &Service=AWSECommerceService
-//          &Timestamp=2009-08-24T20%3A30%3A19.000Z
-//          &Signature=IE6pzSSRaUorPMkUq4k2FBYO9oWYPxaAMf3xslq48ZI%3D
-//
-#if 0
-A: http://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAI3VJGDYXLU7N2HKQ&Artist=David%20Lanz&ItemPage=1&Keywords=An%20Evening%20With%20David%20Lanz&Operation=ItemSearch&ResponseGroup=Images%2CSmall&SearchIndex=Music&Service=AWSECommerceService&Timestamp=2009-08-24T20%3A30%3A19.000Z&Signature=IE6pzSSRaUorPMkUq4k2FBYO9oWYPxaAMf3xslq48ZI%3D
-G: http://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAI3VJGDYXLU7N2HKQ&Artist=David%20Lanz&ItemPage=1&Keywords=An%20Evening%20With%20David%20Lanz&Operation=ItemSearch&ResponseGroup=Images%2CSmall&SearchIndex=Music&Service=AWSECommerceService&Timestamp=2009-08-24T20%3A30%3A19.000Z&Signature=IE6pzSSRaUorPMkUq4k2FBYO9oWYPxaAMf3xslq48ZI%3D
-#endif
-
 #define AMAZON_SEARCH_URL       wxT( "http://webservices.amazon.com/onca/xml?" )
 #define AMAZON_SEARCH_PARAMS    wxT( "AWSAccessKeyId=" AMAZON_SEARCH_APIKEY\
                                      "&Artist=%s"\
