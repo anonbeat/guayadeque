@@ -382,9 +382,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	LyricsSizer->Add( LyricsProviderStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxString LyricsChoiceChoices[] = {
-	    wxT("LyricWiki: http://lyricwiki.org"),
-	    wxT("LeosLyrics: http://leoslyrics.com"),
-	    wxT("Lyrc.com.ar: http://lyrc.com.ar")
+	    wxT( "http://lyricwiki.org" ),
+	    wxT( "http://leoslyrics.com" ),
+	    wxT( "http://lyrc.com.ar" ),
+	    wxT( "http://cduniverse.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
 	m_LyricsChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );

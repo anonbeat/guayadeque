@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "LyricsPanel.h"
 
+#include "Base64.h"
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
@@ -29,8 +30,10 @@
 #include <wx/settings.h>
 #include <wx/xml/xml.h>
 
+wxString GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString );
+
 // -------------------------------------------------------------------------------- //
-wxString GetUrlContent( const wxString &url )
+wxString GetUrlContent( const wxString &url, const wxString &referer )
 {
     wxCurlHTTP  http;
     char *      Buffer;
@@ -39,6 +42,10 @@ wxString GetUrlContent( const wxString &url )
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: text/html" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    if( !referer.IsEmpty() )
+    {
+        http.AddHeader( wxT( "Referer: " ) + referer );
+    }
     Buffer = NULL;
     http.Get( Buffer, url );
     if( Buffer )
@@ -225,6 +232,10 @@ void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
     else if( Engine == guLYRIC_ENGINE_LYRC_COM_AR )
     {
         m_LyricThread = new guLyrcComArEngine( this, artist.c_str(), track.c_str() );
+    }
+    else if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
+    {
+        m_LyricThread = new guCDUEngine( this, artist.c_str(), track.c_str() );
     }
 }
 
@@ -637,6 +648,64 @@ void guLyrcComArEngine::SearchLyric( void )
             Content = Content.Mid( 0, EndPos );
             //Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
             SetLyric( new wxString( Content.c_str() ) );
+            return;
+        }
+    }
+    if( !TestDestroy() )
+    {
+        SetLyric( NULL );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guCDUEngine
+// -------------------------------------------------------------------------------- //
+guCDUEngine::guCDUEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( lyricpanel, artistname, trackname )
+{
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guCDUEngine::~guCDUEngine()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guCDUEngine::SearchLyric( void )
+{
+    int         StartPos;
+    int         EndPos;
+    wxString    Content;
+    wxString    UrlStr = wxString::Format( wxT( "http://www.cduniverse.com/lyricsearch.asp?artist=%s&song=%s" ),
+                        guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+
+    Content = GetUrlContent( UrlStr, wxT( "http://www.cduniverse.com/lyrics.asp?id=&style=music&pid=" ) );
+    //
+    if( !Content.IsEmpty() )
+    {
+        StartPos = Content.Find( wxT( "<div id=\"divEncodedLyrics\" style=\"display:none\">" ) );
+        if( StartPos != wxNOT_FOUND )
+        {
+            Content = Content.Mid( StartPos + 48 );
+            EndPos = Content.Find( wxT( "</div></body>" ) );
+            Content = Content.Mid( 0, EndPos );
+            if( !Content.IsEmpty() )
+            {
+                //guLogMessage( wxT( "Content = '%s'" ), Content.c_str() );
+                wxMemoryBuffer LyricBuffer = guBase64Decode( Content );
+
+                Content = wxString::FromUTF8( ( char * ) LyricBuffer.GetData(), LyricBuffer.GetDataLen() );
+                Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
+
+                //printf( "Lyrics : %s\n", ( char * ) LyricBuffer.GetData() );
+                //GUlO
+
+                SetLyric( new wxString(  Content ) );
+            }
             return;
         }
     }
