@@ -199,6 +199,10 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
             Menu->Append( MenuItem );
 
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECT_COVER, _( "Select cover location" ), _( "Select the cover image file from disk" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            Menu->Append( MenuItem );
+
             MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_DELETE, _( "Delete Album cover" ), _( "Delete the cover for the selected album" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
             Menu->Append( MenuItem );

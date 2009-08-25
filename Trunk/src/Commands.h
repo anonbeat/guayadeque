@@ -76,6 +76,7 @@
 #define ID_ALBUM_COPYTO                 1057
 #define ID_ALBUM_SELECTNAME             1058
 #define ID_ALBUM_SETSELECTION           1059
+#define ID_ALBUM_SELECT_COVER           2050
 
 //
 #define ID_SONG_PLAY                    1060

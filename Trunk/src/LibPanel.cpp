@@ -258,6 +258,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
     Connect( ID_ALBUM_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumEditLabelsClicked ) );
     Connect( ID_ALBUM_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumEditTracksClicked ) );
     Connect( ID_ALBUM_MANUALCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumDownloadCoverClicked ) );
+    Connect( ID_ALBUM_SELECT_COVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumSelectCoverClicked ) );
     Connect( ID_ALBUM_COVER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumDeleteCoverClicked ) );
     Connect( ID_ALBUM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumCopyToClicked ) );
 
@@ -329,6 +330,7 @@ guLibPanel::~guLibPanel()
     Disconnect( ID_ALBUM_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumEditLabelsClicked ) );
     Disconnect( ID_ALBUM_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumEditTracksClicked ) );
     Disconnect( ID_ALBUM_MANUALCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumDownloadCoverClicked ) );
+    Disconnect( ID_ALBUM_SELECT_COVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumSelectCoverClicked ) );
     Disconnect( ID_ALBUM_COVER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumDeleteCoverClicked ) );
     Disconnect( ID_ALBUM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumCopyToClicked ) );
 
@@ -822,6 +824,42 @@ void guLibPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
         }
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
+{
+    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
+    if( Albums.Count() )
+    {
+        wxString AlbumName;
+        wxString ArtistName;
+        wxString AlbumPath;
+        if( !m_Db->GetAlbumInfo( Albums[ 0 ], &AlbumName, &ArtistName, &AlbumPath ) )
+        {
+            wxMessageBox( _( "Could not find the Album in the songs library.\n"\
+                             "You should update the library." ), _( "Error" ), wxICON_ERROR | wxOK );
+            return;
+        }
+
+        wxFileDialog * FileDialog = new wxFileDialog( this,
+            wxT( "Select the cover filename" ),
+            AlbumPath,
+            wxT( "cover.jpg" ),
+            wxT( "*.jpg;*.png" ),
+            wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_PREVIEW );
+
+        if( FileDialog )
+        {
+            if( FileDialog->ShowModal() == wxID_OK )
+            {
+                m_Db->SetAlbumCover( Albums[ 0 ], FileDialog->GetPath() );
+                m_AlbumListCtrl->ReloadItems( false );
+            }
+            FileDialog->Destroy();
+        }
+    }
+}
+
 
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumDeleteCoverClicked( wxCommandEvent &event )
