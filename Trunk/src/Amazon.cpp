@@ -211,10 +211,12 @@ void inline HMACSha256( char * key, unsigned int key_size,
 }
 
 // -------------------------------------------------------------------------------- //
-wxString FixEncoding( const wxString &text )
+wxString percentEncodeRfc3986( const wxString &text )
 {
     wxString RetVal = text;
     RetVal.Replace( wxT( "+" ), wxT( "%20" ) );
+    RetVal.Replace( wxT( "*" ), wxT( "%2A" ) );
+    RetVal.Replace( wxT( "%7E" ), wxT( "~" ) );
     return RetVal;
 }
 
@@ -246,9 +248,9 @@ int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
     wxDateTime CurTime = wxDateTime::Now();
 
     wxString SearchParams = wxString::Format( AMAZON_SEARCH_PARAMS,
-        FixEncoding( guURLEncode( m_Artist ) ).c_str(),
+        percentEncodeRfc3986( guURLEncode( m_Artist ) ).c_str(),
         pagenum + 1,
-        FixEncoding( guURLEncode( m_Album ) ).c_str(),
+        percentEncodeRfc3986( guURLEncode( m_Album ) ).c_str(),
         guURLEncode( CurTime.ToUTC().Format( wxT( "%Y-%m-%dT%H:%M:%S.000Z" ) ) ).c_str() );
 
     SearchParams.Replace( wxT( "," ), wxT( "%2C" ) );
