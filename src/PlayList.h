@@ -45,6 +45,7 @@ class guPlayList : public guListView
     long            m_CurItem;
     long            m_TotalLen;
     long            m_SmartPlayMaxPlayListTracks;
+    int             m_ItemHeight;
 
     size_t          m_DragOverItem;
     bool            m_DragOverAfter;
