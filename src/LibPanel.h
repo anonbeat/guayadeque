@@ -97,6 +97,7 @@ class guLibPanel : public wxPanel
     void OnAlbumEditLabelsClicked( wxCommandEvent &event );
     void OnAlbumEditTracksClicked( wxCommandEvent &event );
     void OnAlbumDownloadCoverClicked( wxCommandEvent &event );
+    void OnAlbumSelectCoverClicked( wxCommandEvent &event );
     void OnAlbumDeleteCoverClicked( wxCommandEvent &event );
     void OnAlbumCopyToClicked( wxCommandEvent &event );
 

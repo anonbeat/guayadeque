@@ -1,4 +1,5 @@
 
+  * Added option in Album list box to select a cover file from disk
   * Fixed the amazon cover download
   * In Player Playlist selection is cancelled when new playlist is set
   * Added support to ape file format.
