@@ -44,6 +44,7 @@ class guSearchLyricEngine;
 #define guLYRIC_ENGINE_LYRICWIKI        0
 #define guLYRIC_ENGINE_LEOSLYRICS       1
 #define guLYRIC_ENGINE_LYRC_COM_AR      2
+#define guLYRIC_ENGINE_CDUNIVERSE       3
 
 // -------------------------------------------------------------------------------- //
 class guLyricsPanel : public wxPanel
@@ -124,6 +125,16 @@ class guLyrcComArEngine : public guSearchLyricEngine
   public:
     guLyrcComArEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
     ~guLyrcComArEngine();
+
+    virtual void SearchLyric( void );
+};
+
+// -------------------------------------------------------------------------------- //
+class guCDUEngine : public guSearchLyricEngine
+{
+  public:
+    guCDUEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    ~guCDUEngine();
 
     virtual void SearchLyric( void );
 };

@@ -94,8 +94,8 @@ wxMemoryBuffer guBase64Decode( const wxString  &src )
     wxMemoryBuffer RetVal( src.Length() * 5 );
     char CurChar;
     //RetVal.SetDataLen( 0 );
-    guLogMessage( wxT( "Src. Len %i " ), src.Length() );
-    guLogMessage( wxT( "Buf. Len %i %i" ), RetVal.GetBufSize(), RetVal.GetDataLen() );
+//    guLogMessage( wxT( "Src. Len %i " ), src.Length() );
+//    guLogMessage( wxT( "Buf. Len %i %i" ), RetVal.GetBufSize(), RetVal.GetDataLen() );
 
     while( len-- && ( ( CurChar = src[ index ] ) != '=' ) && IsBase64Char( CurChar ) )
     {
