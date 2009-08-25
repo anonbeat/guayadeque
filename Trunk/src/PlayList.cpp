@@ -35,7 +35,7 @@
 #include <wx/types.h>
 #include <wx/uri.h>
 
-#define GUPLAYLIST_ITEM_SIZE        40
+//#define GUPLAYLIST_ITEM_SIZE        40
 
 // -------------------------------------------------------------------------------- //
 guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
@@ -45,6 +45,7 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     int Count;
     int Index;
     guConfig * Config;
+    m_ItemHeight = 40;
 
     InsertColumn( new guListViewColumn( _( "Now Playing" ), 0 ) );
 
@@ -342,7 +343,8 @@ void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
     // to determine if will be inserted before or after
     if( ( int ) m_DragOverItem != wxNOT_FOUND )
     {
-        m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
+        //m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
+        m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * m_ItemHeight ) - ( m_ItemHeight / 2 ) ) );
         RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetCount() ) );
     }
     int Width;
@@ -478,8 +480,10 @@ wxCoord guPlayList::OnMeasureItem( size_t n ) const
     Height += y + 4;
 
     self->SetItemHeight( Height );
+    self->m_ItemHeight = Height;
 
 //    guLogMessage( wxT( "PlayList::OnMeasureItem %i  %i" ), m_SecondLineOffset, Height );
+
     return Height;
 }
 
