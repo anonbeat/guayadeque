@@ -704,7 +704,7 @@ void guCDUEngine::SearchLyric( void )
                 //printf( "Lyrics : %s\n", ( char * ) LyricBuffer.GetData() );
                 //GUlO
 
-                SetLyric( new wxString(  Content ) );
+                SetLyric( new wxString( Content ) );
             }
             return;
         }
