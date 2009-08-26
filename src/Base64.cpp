@@ -22,8 +22,11 @@
 
 #include "Utils.h"
 
+#include <wx/sstream.h>
+
 // -------------------------------------------------------------------------------- //
-static const wxString guBase64_Chars = wxT( "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" );
+static const wxChar guBase64_Chars[] = wxT( "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" );
+static const wxChar guBase64_Pad = wxT( '=' );
 
 // -------------------------------------------------------------------------------- //
 #define IsBase64Char( c ) ( ( c >= 'A' && c <= 'Z' ) ||\
@@ -32,126 +35,137 @@ static const wxString guBase64_Chars = wxT( "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghi
                             ( c == '+' ) || ( c == '/' ) )
 
 // -------------------------------------------------------------------------------- //
-wxString guBase64Encode( const char * src, unsigned int len )
+wxString guBase64Encode( const char * src, const unsigned int len )
 {
-    wxString RetVal = wxEmptyString;
-    int i = 0;
-    int j = 0;
-    unsigned char char_array_3[ 3 ];
-    unsigned char char_array_4[ 4 ];
-
-    while( len-- )
-    {
-        char_array_3[ i++ ] = * ( src++ );
-        if( i == 3 )
-        {
-            char_array_4[ 0 ] =   ( char_array_3[ 0 ] & 0xfc ) >> 2;
-            char_array_4[ 1 ] = ( ( char_array_3[ 0 ] & 0x03 ) << 4 ) + ( ( char_array_3[ 1 ] & 0xf0 ) >> 4 );
-            char_array_4[ 2 ] = ( ( char_array_3[ 1 ] & 0x0f ) << 2 ) + ( ( char_array_3[ 2 ] & 0xc0 ) >> 6 );
-            char_array_4[ 3 ] = char_array_3[ 2 ] & 0x3f;
-
-            for( i = 0; ( i < 4 ) ; i++ )
-            {
-                RetVal += guBase64_Chars[ char_array_4[ i ] ];
-            }
-            i = 0;
-        }
-    }
-
-    if( i )
-    {
-        for( j = i; j < 3; j++ )
-        {
-            char_array_3[ j ] = 0;
-        }
-
-        char_array_4[ 0 ] = ( char_array_3[ 0 ] & 0xfc ) >> 2;
-        char_array_4[ 1 ] = ( ( char_array_3[ 0 ] & 0x03 ) << 4 ) + ( ( char_array_3[ 1 ] & 0xf0 ) >> 4 );
-        char_array_4[ 2 ] = ( ( char_array_3[ 1 ] & 0x0f ) << 2 ) + ( ( char_array_3[ 2 ] & 0xc0 ) >> 6 );
-        char_array_4[ 3 ] = char_array_3[ 2 ] & 0x3f;
-
-        for( j = 0; ( j < i + 1 ); j++ )
-        {
-            RetVal += guBase64_Chars[ char_array_4[ j ] ];
-        }
-
-        while( ( i++ < 3 ) )
-            RetVal += '=';
-
-    }
-    return RetVal;
+    wxMemoryInputStream Ins( src, len );
+    return guBase64Encode( Ins );
 }
 
 // -------------------------------------------------------------------------------- //
-wxMemoryBuffer guBase64Decode( const wxString  &src )
+wxString guBase64Encode( const wxMemoryInputStream &ins )
 {
-    unsigned int len = src.Length();
-    int i = 0;
-    int j = 0;
-    int index = 0;
-    unsigned char char_array_3[ 3 ];
-    unsigned char char_array_4[ 4 ];
-    wxMemoryBuffer RetVal( src.Length() * 5 );
-    char CurChar;
-    //RetVal.SetDataLen( 0 );
-//    guLogMessage( wxT( "Src. Len %i " ), src.Length() );
-//    guLogMessage( wxT( "Buf. Len %i %i" ), RetVal.GetBufSize(), RetVal.GetDataLen() );
-
-    while( len-- && ( ( CurChar = src[ index ] ) != '=' ) && IsBase64Char( CurChar ) )
+    wxString EncodedString;
+    int Index;
+    int Count = ins.GetLength();
+    EncodedString.Alloc( ( ( Count / 3 ) + ( ( Count % 3 ) > 0 ) ) * 4 );
+    wxUint32 Temp;
+    char * pData = ( char * ) ins.GetInputStreamBuffer()->GetBufferStart();
+    for( Index = 0; Index < Count / 3; Index++ )
     {
-        char_array_4[ i++ ] = CurChar;
-        index++;
-        if( i == 4 )
+        Temp  = ( * pData++ ) << 16;
+        Temp += ( * pData++ ) <<  8;
+        Temp += ( * pData++ );
+        EncodedString.Append( guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ] );
+        EncodedString.Append( guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ] );
+        EncodedString.Append( guBase64_Chars[ ( Temp & 0x00000FC0 ) >>  6 ] );
+        EncodedString.Append( guBase64_Chars[ ( Temp & 0x0000003F )       ] );
+    }
+    switch( Count % 3 )
+    {
+        case 1 :
+            Temp = ( * pData++ ) << 16;
+            EncodedString.Append( guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ] );
+            EncodedString.Append( guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ] );
+            EncodedString.Append( guBase64_Pad, 2 );
+            break;
+
+        case 2 :
+            Temp  = ( * pData++ ) << 16;
+            Temp += ( * pData++ ) <<  8;
+            EncodedString.Append( guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ] );
+            EncodedString.Append( guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ] );
+            EncodedString.Append( guBase64_Chars[ ( Temp & 0x00000FC0 ) >>  6 ] );
+            EncodedString.Append( guBase64_Pad, 1 );
+            break;
+    }
+    return EncodedString;
+}
+
+// -------------------------------------------------------------------------------- //
+wxMemoryBuffer guBase64Decode( const wxString &ins )
+{
+    wxMemoryBuffer DecodedBytes;
+    int Index;
+    int Count = ins.Length();
+    if( !( Count % 4 ) )
+    {
+        DecodedBytes.SetBufSize( ( Count / 4 ) * 3 );
+        wxUint32 Temp = 0;
+        //guLogMessage( wxT( "Decoding %s" ), ins.c_str() );
+        const wxChar * pData = ins.c_str();
+        for( Index = 0; Index < Count / 4; Index++ )
         {
-            for( i = 0; i < 4; i++ )
+            int iPos;
+            for( iPos = 0; iPos < 4; iPos++ )
             {
-                char_array_4[ i ] = guBase64_Chars.Find( char_array_4[ i ] );
+                Temp <<= 6;
+                if( * pData >= 0x41 && * pData <= 0x5A ) // A .. Z
+                {
+                    Temp |= * pData - 0x41;
+                }
+                else if( * pData >= 0x61 && * pData <= 0x7A ) // a .. z
+                {
+                    Temp |= * pData - 0x47;
+                }
+                else if( * pData >= 0x30 && * pData <= 0x39 )
+                {
+                    Temp |= * pData + 0x04;
+                }
+                else if( * pData == '+' )
+                {
+                    Temp |= 0x3E;
+                }
+                else if( * pData == '/' )
+                {
+                    Temp |= 0x3F;
+                }
+                else if( * pData == '=' )   // Pad Character
+                {
+                    switch(  Count - ( ( Index * 4 ) + iPos ) )
+                    {
+                        case 1 :
+                            DecodedBytes.AppendByte( ( Temp >> 16 ) & 0x000000FF );
+                            DecodedBytes.AppendByte( ( Temp >>  8 ) & 0x000000FF );
+                            break;
+                        case 2 :
+                            DecodedBytes.AppendByte( ( Temp >> 10 ) & 0x000000FF );
+                            break;
+                        default :
+                            guLogError( wxT( "Invalid pad character in Base64" ) );
+                    }
+                    return DecodedBytes;
+                }
+                else
+                {
+                    guLogError( wxT( "Invalid Base64 character %02x at pos %u" ), * pData, ( Index * 4 ) + iPos );
+                    return DecodedBytes;
+                }
+                pData++;
             }
-
-            char_array_3[ 0 ] = ( char_array_4[ 0 ] << 2 ) + ( ( char_array_4[ 1 ] & 0x30 ) >> 4 );
-            char_array_3[ 1 ] = ( ( char_array_4[ 1 ] & 0xf ) << 4 ) + ( ( char_array_4[ 2 ] & 0x3c ) >> 2 );
-            char_array_3[ 2 ] = ( ( char_array_4[ 2 ] & 0x3 ) << 6 ) + char_array_4[ 3 ];
-
-            for( i = 0; ( i < 3 ); i++ )
-            {
-                RetVal.AppendByte( char_array_3[ i ] );
-            }
-            i = 0;
+            DecodedBytes.AppendByte( ( Temp >> 16 ) & 0x000000FF );
+            DecodedBytes.AppendByte( ( Temp >>  8 ) & 0x000000FF );
+            DecodedBytes.AppendByte( ( Temp       ) & 0x000000FF );
         }
     }
-    //guLogMessage( wxT( "%i %i %c %i" ), index, len, CurChar, IsBase64Char( CurChar ) );
-
-    if( i )
+    else
     {
-        for( j = i; j < 4; j++ )
-            char_array_4[ j ] = 0;
-
-        for( j = 0; j < 4; j++ )
-        {
-            char_array_4[ j ] = guBase64_Chars.Find( char_array_4[ j ] );
-        }
-
-        char_array_3[ 0 ] = ( char_array_4[ 0 ] << 2 ) + ( ( char_array_4[ 1 ] & 0x30 ) >> 4 );
-        char_array_3[ 1 ] = ( ( char_array_4[ 1 ] & 0xf ) << 4 ) + ( ( char_array_4[ 2 ] & 0x3c ) >> 2 );
-        char_array_3[ 2 ] = ( ( char_array_4[ 2 ] & 0x3 ) << 6 ) + char_array_4[ 3 ];
-
-        for( j = 0; ( j < i - 1 ); j++ )
-        {
-            RetVal.AppendByte( char_array_3[ j ] );
-        }
+        guLogError( wxT( "Wrong Base64 data length" ) );
     }
-    printf( "\n" );
-    return RetVal;
+    return DecodedBytes;
 }
 
 // -------------------------------------------------------------------------------- //
 //int main( void )
 //{
 //    wxString TestStr = wxT( "Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure." );
+//    wprintf( TestStr.c_str() ); wprintf( wxT( " (%u)\n\n" ), TestStr.Length() );
 //    wxString Encoded = guBase64Encode( TestStr.ToAscii(), TestStr.Length() );
-//    wprintf( Encoded.c_str() ); printf( "\n\n" );
-//    wxString Decoded = guBase64Decode( Encoded );
-//    wprintf( Decoded.c_str() ); printf( "\n\n" );
+//    wprintf( Encoded.c_str() ); wprintf( wxT( "\n\n" ) );
+//    wxMemoryBuffer Decoded = guBase64Decode( Encoded );
+//    wxString DStr;
+//    wprintf( wxT( "String Length %u" ), Decoded.GetDataLen() );
+//    DStr = wxString::From8BitData( ( char * ) Decoded.GetData(), Decoded.GetDataLen() );
+//    wprintf( DStr.c_str() );  wprintf( wxT( "\n\n" ) );
 //    return 0;
 //}
 // -------------------------------------------------------------------------------- //

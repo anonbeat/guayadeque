@@ -21,11 +21,13 @@
 #ifndef GUBASE64_H
 #define GUBASE64_H
 
+#include <wx/mstream.h>
 #include <wx/string.h>
 
 // -------------------------------------------------------------------------------- //
+wxString        guBase64Encode( const wxMemoryInputStream &ins );
 wxString        guBase64Encode( const char * src, unsigned int len );
-//wxString        guBase64Decode( const wxString &src );
+
 wxMemoryBuffer  guBase64Decode( const wxString  &src );
 
 #endif
