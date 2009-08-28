@@ -24,7 +24,7 @@
 #include "Utils.h"
 
 #include "Base64.h"
-#include "hmac/sha2.h"
+#include "sha2.h"
 #include "hmac_sha2.h"
 
 #include <wx/arrimpl.cpp>

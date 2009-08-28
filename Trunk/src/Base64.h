@@ -25,6 +25,7 @@
 #include <wx/string.h>
 
 // -------------------------------------------------------------------------------- //
+int guBase64Encode( const char * src, const size_t srclen, char * dst, const size_t dstlen );
 wxString        guBase64Encode( const wxMemoryInputStream &ins );
 wxString        guBase64Encode( const char * src, unsigned int len );
 
