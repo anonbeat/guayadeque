@@ -29,56 +29,61 @@ static const wxChar guBase64_Chars[] = wxT( "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghi
 static const wxChar guBase64_Pad = wxT( '=' );
 
 // -------------------------------------------------------------------------------- //
-#define IsBase64Char( c ) ( ( c >= 'A' && c <= 'Z' ) ||\
-                            ( c >= 'a' && c <= 'z' ) ||\
-                            ( c >= '0' && c <= '9' ) ||\
-                            ( c == '+' ) || ( c == '/' ) )
-
-// -------------------------------------------------------------------------------- //
-wxString guBase64Encode( const char * src, const unsigned int len )
+wxString guBase64Encode( const char * src, const size_t srclen )
 {
-    wxMemoryInputStream Ins( src, len );
-    return guBase64Encode( Ins );
+    wxString RetVal;
+    int dstlen = ( ( srclen / 3 ) + ( ( srclen % 3 ) > 0 ) ) * 4;
+    char * dst = ( char * ) malloc( dstlen );
+    if( guBase64Encode( src, srclen, dst, dstlen ) > 0 )
+    {
+        RetVal = wxString::From8BitData( dst, dstlen );
+    }
+    free( dst );
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guBase64Encode( const wxMemoryInputStream &ins )
+int guBase64Encode( const char * src, const size_t srclen, char * dst, const size_t dstlen )
 {
     wxString EncodedString;
     int Index;
-    int Count = ins.GetLength();
-    EncodedString.Alloc( ( ( Count / 3 ) + ( ( Count % 3 ) > 0 ) ) * 4 );
-    wxUint32 Temp;
-    char * pData = ( char * ) ins.GetInputStreamBuffer()->GetBufferStart();
-    for( Index = 0; Index < Count / 3; Index++ )
+
+    if( ( ( srclen / 3 ) + ( ( srclen % 3 ) > 0 ) ) * 4 > dstlen )
+        return -1;
+
+    unsigned int Temp;
+    const unsigned char * pData = ( unsigned char * ) src;
+    int OutPos = 0;
+    for( Index = 0; Index < srclen / 3; Index++ )
     {
         Temp  = ( * pData++ ) << 16;
-        Temp += ( * pData++ ) <<  8;
-        Temp += ( * pData++ );
-        EncodedString.Append( guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ] );
-        EncodedString.Append( guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ] );
-        EncodedString.Append( guBase64_Chars[ ( Temp & 0x00000FC0 ) >>  6 ] );
-        EncodedString.Append( guBase64_Chars[ ( Temp & 0x0000003F )       ] );
+        Temp |= ( ( * pData++ ) <<  8 );
+        Temp |= ( * pData++ );
+        dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ];
+        dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ];
+        dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x00000FC0 ) >>  6 ];
+        dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x0000003F )       ];
     }
-    switch( Count % 3 )
+    switch( srclen % 3 )
     {
         case 1 :
             Temp = ( * pData++ ) << 16;
-            EncodedString.Append( guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ] );
-            EncodedString.Append( guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ] );
-            EncodedString.Append( guBase64_Pad, 2 );
+            dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ];
+            dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ];
+            dst[ OutPos++ ] = guBase64_Pad;
+            dst[ OutPos++ ] = guBase64_Pad;
             break;
 
         case 2 :
             Temp  = ( * pData++ ) << 16;
             Temp += ( * pData++ ) <<  8;
-            EncodedString.Append( guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ] );
-            EncodedString.Append( guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ] );
-            EncodedString.Append( guBase64_Chars[ ( Temp & 0x00000FC0 ) >>  6 ] );
-            EncodedString.Append( guBase64_Pad, 1 );
+            dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x00FC0000 ) >> 18 ];
+            dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x0003F000 ) >> 12 ];
+            dst[ OutPos++ ] = guBase64_Chars[ ( Temp & 0x00000FC0 ) >>  6 ];
+            dst[ OutPos++ ] = guBase64_Pad;
             break;
     }
-    return EncodedString;
+    return OutPos;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -154,16 +159,17 @@ wxMemoryBuffer guBase64Decode( const wxString &ins )
     return DecodedBytes;
 }
 
-// -------------------------------------------------------------------------------- //
+//// -------------------------------------------------------------------------------- //
 //int main( void )
 //{
-//    wxString TestStr = wxT( "Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure." );
+//    wxString TestStr = wxT( "0123456789 Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure." );
 //    wprintf( TestStr.c_str() ); wprintf( wxT( " (%u)\n\n" ), TestStr.Length() );
-//    wxString Encoded = guBase64Encode( TestStr.ToAscii(), TestStr.Length() );
+//    Encoded = guBase64Encode( TestStr.ToAscii(), TestStr.Length() );
+//
 //    wprintf( Encoded.c_str() ); wprintf( wxT( "\n\n" ) );
 //    wxMemoryBuffer Decoded = guBase64Decode( Encoded );
 //    wxString DStr;
-//    wprintf( wxT( "String Length %u" ), Decoded.GetDataLen() );
+//    wprintf( wxT( "String Length %u\n" ), Decoded.GetDataLen() );
 //    DStr = wxString::From8BitData( ( char * ) Decoded.GetData(), Decoded.GetDataLen() );
 //    wprintf( DStr.c_str() );  wprintf( wxT( "\n\n" ) );
 //    return 0;
