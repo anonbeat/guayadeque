@@ -503,6 +503,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
         return;
     }
 
+//    printf( "Version          : %u\n", CHeader.nVersion );
     // New header format
     if( CHeader.nVersion >= 3980 )
     {
@@ -530,7 +531,9 @@ void guApeFile::ReadAndProcessApeHeader( void )
     else    // Old header format
     {
         APE_HEADER_OLD Header;
-        m_File->Read( &Header, sizeof( APE_HEADER ) );
+        m_File->Seek( 0 );
+
+        m_File->Read( &Header, sizeof( APE_HEADER_OLD ) );
 
         wxUint32 BlocksPerFrame = ( ( Header.nVersion >= 3900 ) || ( ( Header.nVersion >= 3800 ) && ( Header.nCompressionLevel == COMPRESSION_LEVEL_EXTRA_HIGH ) ) ) ? 73728 : 9216;
         if( ( Header.nVersion >= 3950 ) )
@@ -547,7 +550,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
     }
 
     m_BitRate = m_TrackLength ? int( ( double( FileLength ) * double( 8 ) ) / ( double( m_TrackLength ) * double( 1000 ) ) ) : 0;
-    //guLogMessage( wxT( "Track size %u  length %s  bitrate %u" ), FileLength, LenToString( m_TrackLength ).c_str(), m_BitRate );
+//    guLogMessage( wxT( "Track size %u  length %s  bitrate %u" ), FileLength, LenToString( m_TrackLength ).c_str(), m_BitRate );
 
     if( FileLength < sizeof( guAPE_HEADER_FOOTER ) )
     {
