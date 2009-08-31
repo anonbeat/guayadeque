@@ -107,9 +107,9 @@ class guFlacTagInfo : public guTagInfo
     guFlacTagInfo( const wxString &filename = wxEmptyString );
     ~guFlacTagInfo();
 
-//    virtual bool        CanHandleImages( void );
-//    virtual wxImage *   GetImage();
-//    virtual bool        SetImage( const wxImage * image );
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage();
+    virtual bool        SetImage( const wxImage * image );
 };
 
 // -------------------------------------------------------------------------------- //

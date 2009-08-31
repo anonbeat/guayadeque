@@ -50,6 +50,10 @@
 //#include <apetag.h>
 //#include <mp4file.h>
 
+// FLAC Dev files
+#include <FLAC/metadata.h>
+#include <FLAC/format.h>
+
 
 #include <wx/mstream.h>
 #include <wx/wfstream.h>
@@ -566,41 +570,145 @@ guFlacTagInfo::~guFlacTagInfo()
 {
 }
 
-//// -------------------------------------------------------------------------------- //
-//bool guFlacTagInfo::CanHandleImages( void )
-//{
-//    return true;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//wxImage * guFlacTagInfo::GetImage( void )
-//{
-//    guLogMessage( wxT( "guFlacTagInfo::GetImage()" ) );
-//
-//    FLAC::File * file = new FLAC::File( m_FileName.ToUTF8(), false );
-//
-//    Ogg::XiphComment * XiphCmt = file->xiphComment();
-//    if( XiphCmt )
-//    {
-//        guLogMessage( wxT( "Its xiphcomment" ) );
-//        return GetXiphCommentCoverArt( XiphCmt );
-//    }
+// -------------------------------------------------------------------------------- //
+bool guFlacTagInfo::CanHandleImages( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guFlacTagInfo::GetImage( void )
+{
+    //guLogMessage( wxT( "guFlacTagInfo::GetImage()" ) );
+
+    FLAC__StreamMetadata * Picture = NULL;
+
+    if( !FLAC__metadata_get_picture( m_FileName.ToUTF8(),
+            &Picture,
+            FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER,
+            NULL, NULL, -1, -1, -1, -1 ) )
+    {
+        FLAC__metadata_get_picture( m_FileName.ToUTF8(),
+            &Picture,
+            FLAC__STREAM_METADATA_PICTURE_TYPE_OTHER,
+            NULL, NULL, -1, -1, -1, -1 );
+    }
+
+    if( Picture )
+    {
+
+        wxMemoryOutputStream ImgOutStream;
+        FLAC__StreamMetadata_Picture * PicInfo = &Picture->data.picture;
+        ImgOutStream.Write( PicInfo->data, PicInfo->data_length );
+        wxMemoryInputStream ImgInputStream( ImgOutStream );
+        wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicInfo->mime_type, wxConvUTF8 ) );
+
+        FLAC__metadata_object_delete( Picture );
+
+        if( CoverImage )
+        {
+            if( CoverImage->IsOk() )
+            {
+                return CoverImage;
+            }
+            else
+            {
+                delete CoverImage;
+            }
+        }
+    }
 //    else
 //    {
-//        ID3v2::Tag * tagv2 = file->ID3v2Tag();
-//        if( tagv2 )
-//        {
-//            guLogMessage( wxT( "Its ID3v2" ) );
-//            return GetID3v2Image( tagv2 );
-//        }
+//        guLogMessage( wxT( "Flac file does not contain any image file." ) );
 //    }
-//    return NULL;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//bool guFlacTagInfo::SetImage( const wxImage * image )
-//{
-//}
+
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guFlacTagInfo::SetImage( const wxImage * image )
+{
+    FLAC__Metadata_Chain * Chain;
+    FLAC__Metadata_Iterator * Iter;
+
+    Chain = FLAC__metadata_chain_new();
+    if( Chain )
+    {
+        if( FLAC__metadata_chain_read( Chain, m_FileName.ToUTF8() ) )
+        {
+            Iter = FLAC__metadata_iterator_new();
+            if( Iter )
+            {
+                FLAC__metadata_iterator_init( Iter, Chain );
+
+                while( FLAC__metadata_iterator_next( Iter ) )
+                {
+                    if( FLAC__metadata_iterator_get_block_type( Iter ) == FLAC__METADATA_TYPE_PICTURE )
+                    {
+                        //
+                        FLAC__metadata_iterator_delete_block( Iter, true );
+                    }
+                }
+
+                wxMemoryOutputStream ImgOutputStream;
+                if( image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
+                {
+                    FLAC__byte * CoverData = ( FLAC__byte * ) malloc( ImgOutputStream.GetSize() );
+                    if( CoverData )
+                    {
+                        const char * PicErrStr;
+
+                        ImgOutputStream.CopyTo( CoverData, ImgOutputStream.GetSize() );
+
+                        //
+                        FLAC__StreamMetadata * Picture;
+                        Picture = FLAC__metadata_object_new( FLAC__METADATA_TYPE_PICTURE );
+                        Picture->data.picture.type = FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER;
+                        FLAC__metadata_object_picture_set_mime_type( Picture,  ( char * ) "image/jpeg", TRUE );
+
+                        //FLAC__metadata_object_picture_set_description( Picture, ( char * ) "", TRUE );
+                        Picture->data.picture.width  = image->GetWidth();
+                        Picture->data.picture.height = image->GetHeight();
+                        Picture->data.picture.depth  = 0;
+
+                        FLAC__metadata_object_picture_set_data( Picture, CoverData, ( FLAC__uint32 ) ImgOutputStream.GetSize(), FALSE );
+
+                        if( FLAC__metadata_object_picture_is_legal( Picture, &PicErrStr ) )
+                        {
+                            FLAC__metadata_iterator_insert_block_after( Iter, Picture );
+                            FLAC__metadata_chain_sort_padding( Chain );
+
+                            if( !FLAC__metadata_chain_write( Chain, TRUE, TRUE ) )
+                            {
+                                guLogError( wxT( "Could not save the FLAC file" ) );
+                            }
+
+                            FLAC__metadata_chain_delete( Chain );
+                        }
+                        else
+                        {
+                            guLogError( wxT( "The FLAC picture is invalid: %s" ), PicErrStr );
+                            FLAC__metadata_object_delete( Picture );
+                        }
+                    }
+                }
+            }
+            else
+            {
+                guLogError( wxT( "Could not create the FLAC Iterator." ) );
+            }
+        }
+        else
+        {
+            guLogError( wxT( "Could not read the FLAC metadata." ) );
+        }
+    }
+    else
+    {
+        guLogError( wxT( "Could not create a FLAC chain." ) );
+    }
+    return false;
+}
 
 
 
