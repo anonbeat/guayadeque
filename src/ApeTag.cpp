@@ -563,7 +563,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
     if( ApeFooter.m_Magic[ 0 ] != APE_MAGIC_0 || ApeFooter.m_Magic[ 1 ] != APE_MAGIC_1 )
     {
         guLogWarning( wxT( "file does not contain ApeFooter tag" ) );
-        return; //new TAG(FileLength,0,0);
+        return;
     }
 
     if( ApeFooter.m_Version != APE_VERSION_2 )
@@ -579,7 +579,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
     if( FileLength < ApeFooter.m_Length )
     {
         guLogWarning( wxT( "ApeTag bigger than file" ) );
-        return; // new TAG(FileLength,0,0);
+        return;
     }
 
     // read header if any

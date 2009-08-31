@@ -702,7 +702,6 @@ void guCDUEngine::SearchLyric( void )
                 Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
                 //printf( "Lyrics : %s\n", ( char * ) LyricBuffer.GetData() );
-                //GUlO
 
                 SetLyric( new wxString( Content ) );
             }
