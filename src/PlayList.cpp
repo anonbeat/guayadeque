@@ -293,8 +293,8 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold 
 {
     int Index;
     int Count;
-    if( m_CurItem == wxNOT_FOUND )
-        m_CurItem = 0;
+//    if( m_CurItem == wxNOT_FOUND )
+//        m_CurItem = 0;
 
     Count = items.Count();
     for( Index = 0; Index < Count; Index++ )
