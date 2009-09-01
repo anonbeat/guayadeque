@@ -2,7 +2,7 @@ Guayadeque Music Player 0.0.4 Beta
 J.Rios anonbeat@gmail.com
 see LICENSE
 
-Need installed taglib, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1, libmp4v2
+Need installed taglib, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1, libmp4v2, libflac
 
 Have been developed in Fedora core 9, 10 and Ubuntu 8.10
 

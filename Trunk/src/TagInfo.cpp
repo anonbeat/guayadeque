@@ -586,34 +586,33 @@ wxImage * guFlacTagInfo::GetImage( void )
     if( !FLAC__metadata_get_picture( m_FileName.ToUTF8(),
             &Picture,
             FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER,
-            NULL, NULL, -1, -1, -1, -1 ) )
-    {
-        FLAC__metadata_get_picture( m_FileName.ToUTF8(),
+            NULL, NULL, -1, -1, -1, -1 ) ||
+          FLAC__metadata_get_picture( m_FileName.ToUTF8(),
             &Picture,
             FLAC__STREAM_METADATA_PICTURE_TYPE_OTHER,
-            NULL, NULL, -1, -1, -1, -1 );
-    }
-
-    if( Picture )
+            NULL, NULL, -1, -1, -1, -1 ) )
     {
-
-        wxMemoryOutputStream ImgOutStream;
-        FLAC__StreamMetadata_Picture * PicInfo = &Picture->data.picture;
-        ImgOutStream.Write( PicInfo->data, PicInfo->data_length );
-        wxMemoryInputStream ImgInputStream( ImgOutStream );
-        wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicInfo->mime_type, wxConvUTF8 ) );
-
-        FLAC__metadata_object_delete( Picture );
-
-        if( CoverImage )
+        if( Picture )
         {
-            if( CoverImage->IsOk() )
+
+            wxMemoryOutputStream ImgOutStream;
+            FLAC__StreamMetadata_Picture * PicInfo = &Picture->data.picture;
+            ImgOutStream.Write( PicInfo->data, PicInfo->data_length );
+            wxMemoryInputStream ImgInputStream( ImgOutStream );
+            wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicInfo->mime_type, wxConvUTF8 ) );
+
+            FLAC__metadata_object_delete( Picture );
+
+            if( CoverImage )
             {
-                return CoverImage;
-            }
-            else
-            {
-                delete CoverImage;
+                if( CoverImage->IsOk() )
+                {
+                    return CoverImage;
+                }
+                else
+                {
+                    delete CoverImage;
+                }
             }
         }
     }
@@ -645,8 +644,12 @@ bool guFlacTagInfo::SetImage( const wxImage * image )
                 {
                     if( FLAC__metadata_iterator_get_block_type( Iter ) == FLAC__METADATA_TYPE_PICTURE )
                     {
-                        //
-                        FLAC__metadata_iterator_delete_block( Iter, true );
+                        FLAC__StreamMetadata * Picture = FLAC__metadata_iterator_get_block( Iter );
+                        if( Picture->data.picture.type ==  FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER )
+                        {
+                            //
+                            FLAC__metadata_iterator_delete_block( Iter, true );
+                        }
                     }
                 }
 
