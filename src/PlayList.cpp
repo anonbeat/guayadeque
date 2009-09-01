@@ -556,8 +556,8 @@ void guPlayList::AddItem( const guTrack &NewItem )
         //printf( "Added at %d\n", DragOverItem );
         m_Items.Add( NewItem );
     }
-    if( m_CurItem == wxNOT_FOUND )
-        m_CurItem = 0;
+//    if( m_CurItem == wxNOT_FOUND )
+//        m_CurItem = 0;
 }
 
 // -------------------------------------------------------------------------------- //
