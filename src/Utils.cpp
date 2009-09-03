@@ -128,7 +128,8 @@ bool DownloadImage( const wxString &Source, const wxString &Target )
     long        ImageType;
     wxImage *   Image = NULL;
 
-    if( Source.Lower().EndsWith( wxT( ".jpg" ) ) )
+    if( Source.Lower().EndsWith( wxT( ".jpg" ) ) ||
+        Source.Lower().EndsWith( wxT( ".jpeg" ) ) )
       ImageType = wxBITMAP_TYPE_JPEG;
     else if( Source.Lower().EndsWith( wxT( ".png" ) ) )
       ImageType = wxBITMAP_TYPE_PNG;

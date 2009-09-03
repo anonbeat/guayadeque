@@ -25,6 +25,7 @@
 #include <wx/arrimpl.cpp>
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
+#include <wx/tokenzr.h>
 
 #define guDISCOGS_BASEURL           "http://www.discogs.com"
 #define guDISCOGS_QUERY_APIKEY      "b955caf59c"
@@ -358,6 +359,20 @@ guDiscogsCoverFetcher::~guDiscogsCoverFetcher()
 }
 
 // -------------------------------------------------------------------------------- //
+bool GetNameMatch( const wxString &title, const wxString &search )
+{
+    wxArrayString SearchWords = wxStringTokenize( search );
+    int index;
+    int count = SearchWords.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( title.Find( SearchWords[ index ].Lower() ) == wxNOT_FOUND )
+            return false;
+    }
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
 int guDiscogsCoverFetcher::AddCoverLinks( int pagenum )
 {
     guDiscogs Discogs;
@@ -367,7 +382,7 @@ int guDiscogsCoverFetcher::AddCoverLinks( int pagenum )
     int Count = wxMin( Artist.m_Releases.Count(), ( pagenum + 1 ) * guDISCOGS_REQUEST_ITEMS );
     int CheckCount = 0;
 
-    guLogMessage( wxT( "Reading %s %i Releases..." ), m_Artist.c_str(), Count );
+    //guLogMessage( wxT( "Reading %s %i Releases..." ), m_Artist.c_str(), Count );
 
     for( Index = ( pagenum * guDISCOGS_REQUEST_ITEMS ); Index < Count; Index++ )
     {
@@ -377,7 +392,7 @@ int guDiscogsCoverFetcher::AddCoverLinks( int pagenum )
 //            Artist.m_Releases[ Index ].m_Format.c_str() );
 
         if( Artist.m_Releases[ Index ].m_Type == wxT( "Main" ) &&
-            Artist.m_Releases[ Index ].m_Title == m_Album )
+            GetNameMatch( Artist.m_Releases[ Index ].m_Title.Lower(), m_Album ) )
         {
             Discogs.GetRelease( Artist.m_Releases[ Index ].m_Id, &Artist.m_Releases[ Index ] );
 
