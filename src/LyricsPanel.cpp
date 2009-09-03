@@ -30,36 +30,6 @@
 #include <wx/settings.h>
 #include <wx/xml/xml.h>
 
-wxString GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString );
-
-// -------------------------------------------------------------------------------- //
-wxString GetUrlContent( const wxString &url, const wxString &referer )
-{
-    wxCurlHTTP  http;
-    char *      Buffer;
-    wxString RetVal = wxEmptyString;
-
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    if( !referer.IsEmpty() )
-    {
-        http.AddHeader( wxT( "Referer: " ) + referer );
-    }
-    Buffer = NULL;
-    http.Get( Buffer, url );
-    if( Buffer )
-    {
-        RetVal = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
-    }
-    else
-    {
-        guLogError( wxT( "Could not get the lyrics: %s" ), url.c_str() );
-    }
-    return RetVal;
-}
-
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )

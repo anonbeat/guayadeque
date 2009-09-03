@@ -242,7 +242,6 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_SongListBox->InsertItems( ItemsText, 0 );
 	m_SongListBox->SetFocus();
 
-
 	// Connect Events
 	Connect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
 

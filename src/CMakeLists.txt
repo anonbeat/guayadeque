@@ -218,6 +218,8 @@ ADD_EXECUTABLE( guayadeque
 	Base64.h
 	ApeTag.cpp
 	ApeTag.h
+	Discogs.cpp
+	Discogs.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

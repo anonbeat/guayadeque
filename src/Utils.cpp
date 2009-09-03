@@ -23,6 +23,7 @@
 
 #include <wx/curl/http.h>
 #include <wx/regex.h>
+#include <wx/zstream.h>
 
 // -------------------------------------------------------------------------------- //
 wxString LenToString( int Len )
@@ -263,6 +264,55 @@ unsigned int guGetFileSize( const wxString &FileName )
     wxStructStat St;
     wxStat( FileName, &St );
     return St.st_size;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString GetUrlContent( const wxString &url, const wxString &referer, bool encoding )
+{
+    wxCurlHTTP  http;
+    //char *      Buffer;
+    wxString RetVal = wxEmptyString;
+
+    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "Accept: text/html" ) );
+    if( encoding )
+    {
+        http.AddHeader( wxT( "Accept Encoding: gzip" ) );
+    }
+    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    if( !referer.IsEmpty() )
+    {
+        http.AddHeader( wxT( "Referer: " ) + referer );
+    }
+
+    wxMemoryOutputStream Buffer;
+    http.Get( Buffer, url );
+    if( Buffer.IsOk() )
+    {
+        wxString ResponseHeaders = http.GetResponseHeader();
+        if( ResponseHeaders.Find( wxT( "Content-Encoding: gzip" ) ) != wxNOT_FOUND )
+        {
+            //guLogMessage( wxT( "Response Headers:\n%s" ), ResponseHeaders.c_str() );
+            wxMemoryInputStream Ins( Buffer );
+            wxZlibInputStream ZIn( Ins );
+            wxStringOutputStream Outs( &RetVal );
+            ZIn.Read( Outs );
+        }
+        else
+        {
+            //RetVal = wxString( Buffer, wxConvUTF8 );
+            wxStringOutputStream Outs( &RetVal );
+            wxMemoryInputStream Ins( Buffer );
+            Ins.Read( Outs );
+        }
+        //free( Buffer );
+    }
+    else
+    {
+        guLogError( wxT( "Could not get '%s'" ), url.c_str() );
+    }
+    //guLogMessage( wxT( "Response:\n%s" ), RetVal.c_str() );
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
