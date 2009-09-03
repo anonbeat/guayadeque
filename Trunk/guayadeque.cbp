@@ -96,6 +96,8 @@
 		<Unit filename="src/CoverFrame.h" />
 		<Unit filename="src/DbLibrary.cpp" />
 		<Unit filename="src/DbLibrary.h" />
+		<Unit filename="src/Discogs.cpp" />
+		<Unit filename="src/Discogs.h" />
 		<Unit filename="src/DynamicPlayList.cpp" />
 		<Unit filename="src/DynamicPlayList.h" />
 		<Unit filename="src/GeListBox.cpp" />
