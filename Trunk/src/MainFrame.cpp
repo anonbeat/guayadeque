@@ -138,11 +138,26 @@ guMainFrame::guMainFrame( wxWindow * parent )
         CreateTaskBarIcon();
     }
 
+
+    m_DBusServer = new guDBusServer( NULL );
+    guDBusServer::Set( m_DBusServer );
+    if( !m_DBusServer )
+    {
+        guLogError( wxT( "Could not create the dbus server object" ) );
+    }
+
     // Init the MPRIS object
-    m_MPRIS = new guMPRIS( GUAYADEQUE_MPRIS_SERVICENAME, m_PlayerPanel );
+    m_MPRIS = new guMPRIS( m_DBusServer, m_PlayerPanel );
     if( !m_MPRIS )
     {
-        guLogError( wxT( "Could not create the mpris object" ) );
+        guLogError( wxT( "Could not create the mpris dbus object" ) );
+    }
+
+    // Init the MMKeys object
+    m_MMKeys = new guMMKeys( m_DBusServer, m_PlayerPanel );
+    if( !m_MMKeys )
+    {
+        guLogError( wxT( "Could not create the mmkeys dbus object" ) );
     }
 
     //
@@ -542,7 +557,6 @@ void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
 // ---------------------------------------------------------------------- //
 void guMainFrame::OnPlay( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "MainFrame::ONPlay()" ) );
     if( m_PlayerPanel )
       m_PlayerPanel->OnPlayButtonClick( event );
 }
@@ -957,7 +971,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
         wxPostEvent( wxTheApp->GetTopWindow(), event );
 
     }
-    guLogMessage( wxT( "Finalized Cover Update Thread" ) );
+    //guLogMessage( wxT( "Finalized Cover Update Thread" ) );
 
     //event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
     event.SetId( ID_GAUGE_REMOVE );

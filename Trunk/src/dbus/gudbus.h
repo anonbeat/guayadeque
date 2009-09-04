@@ -24,7 +24,9 @@
 #define DBUS_THREAD_IDLE_TIMEOUT    50
 
 #include <dbus/dbus.h>
+#include <wx/dynarray.h>
 #include <wx/thread.h>
+
 
 class guDBusThread;
 
@@ -77,17 +79,20 @@ class guDBusSignal : public guDBusMessage
     guDBusSignal( const char * path, const char * iface, const char * name );
 };
 
+class guDBusServer;
+
 // -------------------------------------------------------------------------------- //
-class guDBus
+class guDBusClient
 {
   protected :
-    DBusConnection *    m_DBusConn;
-    DBusError           m_DBusErr;
-    guDBusThread *      m_DBusThread;
+    guDBusServer * m_DBusServer;
+
+    bool RegisterClient( void );
+    bool UnRegisterClient( void );
 
   public :
-    guDBus( const char * name, bool System = false );
-    ~guDBus();
+    guDBusClient( guDBusServer * server );
+    ~guDBusClient();
 
     bool                        RequestName( const char * name );
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
@@ -99,20 +104,67 @@ class guDBus
     void                        Flush();
 
 };
+WX_DEFINE_ARRAY_PTR( guDBusClient *, guDBusClientArray );
+
+static guDBusServer * MainDBusServer = NULL;
+
+// -------------------------------------------------------------------------------- //
+class guDBusServer
+{
+  protected :
+    DBusConnection *    m_DBusConn;
+    DBusError           m_DBusErr;
+    guDBusClientArray   m_Clients;
+    wxMutex             m_ClientsMutex;
+    guDBusThread *      m_DBusThread;
+
+  public :
+    guDBusServer( const char * name, bool System = false );
+    ~guDBusServer();
+
+
+    bool                        RequestName( const char * name );
+    virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
+    DBusConnection *            GetConnection();
+    bool                        RegisterObjectPath( const char * objname );
+    bool                        UnRegisterObjectPath( const char * objname );
+    bool                        AddMatch( const char * rule );
+    bool                        Send( guDBusMessage * msg );
+    void                        Flush();
+
+    bool                        RegisterClient( guDBusClient * client );
+    bool                        UnRegisterClient( guDBusClient * client );
+
+    static void Set( guDBusServer * server )
+    {
+        wxASSERT( !MainDBusServer );
+        wxASSERT( server );
+
+        MainDBusServer = server;
+    }
+
+    static guDBusServer * Get( void )
+    {
+        return MainDBusServer;
+    }
+
+    friend class guDBusClient;
+};
+
 
 // -------------------------------------------------------------------------------- //
 class guDBusThread : public wxThread
 {
   protected :
-    guDBus * m_DBusOwner;
+    guDBusServer * m_DBusOwner;
 
   public :
-    guDBusThread( guDBus * dbusowner );
+    guDBusThread( guDBusServer * dbusowner );
     ~guDBusThread();
 
     virtual ExitCode Entry();
 
-    friend class guDBus;
+    friend class guDBusServer;
 };
 
 #endif
