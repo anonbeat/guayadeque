@@ -268,7 +268,7 @@ unsigned int guGetFileSize( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString GetUrlContent( const wxString &url, const wxString &referer, bool encoding )
+wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipped )
 {
     wxCurlHTTP  http;
     //char *      Buffer;
@@ -276,7 +276,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool encod
 
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: text/html" ) );
-    if( encoding )
+    if( gzipped )
     {
         http.AddHeader( wxT( "Accept Encoding: gzip" ) );
     }

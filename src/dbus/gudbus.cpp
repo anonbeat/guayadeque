@@ -24,7 +24,7 @@
 // -------------------------------------------------------------------------------- //
 DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, void * udata )
 {
-	guDBus * DBusObj = ( guDBus * ) udata;
+	guDBusServer * DBusObj = ( guDBusServer * ) udata;
 	guDBusMessage * Msg = new guDBusMessage( msg );
 	guDBusMethodReturn * Reply = NULL;
 	if( Msg->NeedReply() )
@@ -37,7 +37,7 @@ DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, voi
 }
 
 // -------------------------------------------------------------------------------- //
-guDBus::guDBus( const char * name, bool System )
+guDBusServer::guDBusServer( const char * name, bool System )
 {
     dbus_error_init( &m_DBusErr );
     m_DBusThread = NULL;
@@ -65,8 +65,17 @@ guDBus::guDBus( const char * name, bool System )
 }
 
 // -------------------------------------------------------------------------------- //
-guDBus::~guDBus()
+guDBusServer::~guDBusServer()
 {
+    if( m_Clients.Count() )
+    {
+        while( m_Clients.Count() )
+        {
+            guDBusClient * Client = m_Clients.Last();
+            delete Client;
+        }
+    }
+
     if( m_DBusThread )
     {
         m_DBusThread->Pause();
@@ -81,13 +90,13 @@ guDBus::~guDBus()
 }
 
 // -------------------------------------------------------------------------------- //
-DBusConnection * guDBus::GetConnection()
+DBusConnection * guDBusServer::GetConnection()
 {
     return m_DBusConn;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDBus::RequestName( const char * name )
+bool guDBusServer::RequestName( const char * name )
 {
     wxASSERT( name );
 
@@ -103,20 +112,37 @@ bool guDBus::RequestName( const char * name )
 }
 
 // -------------------------------------------------------------------------------- //
-DBusHandlerResult guDBus::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
+DBusHandlerResult guDBusServer::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 {
     wxASSERT( msg );
 
+    DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+
+    int index;
+    int count = m_Clients.Count();
+    for( index = 0; index < count; index++ )
+    {
+        m_ClientsMutex.Lock();
+        if( m_Clients[ index ]->HandleMessages( msg, reply ) == DBUS_HANDLER_RESULT_HANDLED )
+        {
+            RetVal = DBUS_HANDLER_RESULT_HANDLED;
+            m_ClientsMutex.Unlock();
+            break;
+        }
+        m_ClientsMutex.Unlock();
+    }
+
+    // release the dbus objects
     dbus_message_unref( msg->GetMessage() );
 
     if( reply )
         dbus_message_unref( reply->GetMessage() );
 
-    return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDBus::RegisterObjectPath( const char * objname )
+bool guDBusServer::RegisterObjectPath( const char * objname )
 {
     DBusObjectPathVTable VTable = { NULL, Handle_Messages, NULL, NULL, NULL, NULL };
 
@@ -124,13 +150,13 @@ bool guDBus::RegisterObjectPath( const char * objname )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDBus::UnRegisterObjectPath( const char * objname )
+bool guDBusServer::UnRegisterObjectPath( const char * objname )
 {
     return dbus_connection_unregister_object_path( m_DBusConn, objname );
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDBus::AddMatch( const char * rule )
+bool guDBusServer::AddMatch( const char * rule )
 {
     DBusError error;
 
@@ -148,17 +174,116 @@ bool guDBus::AddMatch( const char * rule )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDBus::Send( guDBusMessage * msg )
+bool guDBusServer::Send( guDBusMessage * msg )
 {
     return dbus_connection_send( m_DBusConn, msg->GetMessage(), NULL );
 }
 
 // -------------------------------------------------------------------------------- //
-void guDBus::Flush()
+void guDBusServer::Flush()
 {
     dbus_connection_flush( m_DBusConn );
 }
 
+// -------------------------------------------------------------------------------- //
+bool guDBusServer::RegisterClient( guDBusClient * client )
+{
+    wxMutexLocker Locker( m_ClientsMutex );
+    if( m_Clients.Index( client ) == wxNOT_FOUND )
+    {
+        m_Clients.Add( client );
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusServer::UnRegisterClient( guDBusClient * client )
+{
+    wxMutexLocker Locker( m_ClientsMutex );
+    if( m_Clients.Index( client ) != wxNOT_FOUND )
+    {
+        m_Clients.Remove( client );
+        return true;
+    }
+    return false;
+}
+
+
+// -------------------------------------------------------------------------------- //
+// guDBusClient
+// -------------------------------------------------------------------------------- //
+guDBusClient::guDBusClient( guDBusServer * server )
+{
+    wxASSERT( server );
+    m_DBusServer = server;
+}
+
+// -------------------------------------------------------------------------------- //
+guDBusClient::~guDBusClient()
+{
+    UnRegisterClient();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::RegisterClient( void )
+{
+    return m_DBusServer->RegisterClient( this );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::UnRegisterClient( void )
+{
+    return m_DBusServer->UnRegisterClient( this );
+}
+
+// -------------------------------------------------------------------------------- //
+DBusHandlerResult guDBusClient::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
+{
+    return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::RequestName( const char * name )
+{
+    return m_DBusServer->RequestName( name );
+}
+
+// -------------------------------------------------------------------------------- //
+DBusConnection * guDBusClient::GetConnection()
+{
+    return m_DBusServer->GetConnection();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::RegisterObjectPath( const char * objname )
+{
+    return m_DBusServer->RegisterObjectPath( objname );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::UnRegisterObjectPath( const char * objname )
+{
+    return m_DBusServer->UnRegisterObjectPath( objname );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::AddMatch( const char * rule )
+{
+    return m_DBusServer->AddMatch( rule );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::Send( guDBusMessage * msg )
+{
+    return m_DBusServer->Send( msg );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDBusClient::Flush()
+{
+    m_DBusServer->Flush();
+}
 
 // -------------------------------------------------------------------------------- //
 // guDBusMessage
@@ -333,7 +458,7 @@ guDBusSignal::guDBusSignal( const char * path, const char * iface, const char * 
 // -------------------------------------------------------------------------------- //
 // guDBusThread
 // -------------------------------------------------------------------------------- //
-guDBusThread::guDBusThread( guDBus * dbusowner ) : wxThread( wxTHREAD_DETACHED )
+guDBusThread::guDBusThread( guDBusServer * dbusowner ) : wxThread( wxTHREAD_DETACHED )
 {
     m_DBusOwner = dbusowner;
 

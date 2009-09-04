@@ -25,13 +25,13 @@
 #include "PlayerPanel.h"
 
 // -------------------------------------------------------------------------------- //
-class guMMKeys : public guDBus
+class guMMKeys : public guDBusClient
 {
   protected :
     guPlayerPanel * m_PlayerPanel;
 
   public :
-    guMMKeys( guPlayerPanel * playerpanel );
+    guMMKeys( guDBusServer * server, guPlayerPanel * playerpanel );
     ~guMMKeys();
 
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );

@@ -43,13 +43,13 @@
 #define MPRIS_CAPS_CAN_HAS_TRACKLIST     ( 1 << 6 )
 
 // -------------------------------------------------------------------------------- //
-class guMPRIS : public guDBus
+class guMPRIS : public guDBusClient
 {
   protected :
     guPlayerPanel * m_PlayerPanel;
 
   public :
-    guMPRIS( const char * name, guPlayerPanel * playerpanel );
+    guMPRIS( guDBusServer * server, guPlayerPanel * playerpanel );
     ~guMPRIS();
 
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
