@@ -795,7 +795,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 
                 //Song.m_SongId = 1;
                 //guLogMessage( wxT( "Loading : %s" ), Song.m_FileName.c_str() );
-//                m_Db->FindTrackFile( Song.m_FileName, &Song );
+                m_Db->FindTrackFile( Song.m_FileName, &Song );
 
                 if( !Song.m_SongId )
                 {
