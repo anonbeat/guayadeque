@@ -1,4 +1,5 @@
 
+  * Added partial support to gnome session. Now save playlist when session is ended
   * Added support for Discogs cover download. See www.discogs.com
   * Added cd universe lyric search
   * Fixed drop files after any element in the player playlist
