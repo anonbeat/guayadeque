@@ -21,7 +21,8 @@
 #ifndef GUDBUS_H
 #define GUDBUS_H
 
-#define DBUS_THREAD_IDLE_TIMEOUT    50
+#define guDBUS_THREAD_IDLE_TIMEOUT      50
+#define guDBUS_DEFAULT_SEND_TIMEOUT     1000
 
 #include <dbus/dbus.h>
 #include <wx/dynarray.h>
@@ -61,7 +62,15 @@ class guDBusMessage
      bool            IsError( const char * errname );
      bool            IsMethodCall( const char * iface, const char * method );
      bool            IsSignal( const char * iface, const char * signal_name );
+     const char *    GetObjectPath();
 
+};
+
+// -------------------------------------------------------------------------------- //
+class guDBusMethodCall : public guDBusMessage
+{
+  public :
+    guDBusMethodCall( const char * dest, const char * path, const char *iface, const char * method );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -101,6 +110,8 @@ class guDBusClient
     bool                        UnRegisterObjectPath( const char * objname );
     bool                        AddMatch( const char * rule );
     bool                        Send( guDBusMessage * msg );
+    bool                        SendWithReply( guDBusMessage * msg, int timeout = guDBUS_DEFAULT_SEND_TIMEOUT );
+    guDBusMessage *             SendWithReplyAndBlock( guDBusMessage * msg, int timeout = guDBUS_DEFAULT_SEND_TIMEOUT );
     void                        Flush();
 
 };
@@ -130,7 +141,11 @@ class guDBusServer
     bool                        UnRegisterObjectPath( const char * objname );
     bool                        AddMatch( const char * rule );
     bool                        Send( guDBusMessage * msg );
+    bool                        SendWithReply( guDBusMessage * msg, int timeout = guDBUS_DEFAULT_SEND_TIMEOUT );
+    guDBusMessage *             SendWithReplyAndBlock( guDBusMessage * msg, int timeout = guDBUS_DEFAULT_SEND_TIMEOUT );
     void                        Flush();
+    void                        MethodCall( const char * dest, const char * path,
+                                            const char * iface, const char * method );
 
     bool                        RegisterClient( guDBusClient * client );
     bool                        UnRegisterClient( guDBusClient * client );

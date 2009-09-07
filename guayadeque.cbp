@@ -171,6 +171,8 @@
 		<Unit filename="src/VolumeFrame.h" />
 		<Unit filename="src/curl/base.cpp" />
 		<Unit filename="src/curl/http.cpp" />
+		<Unit filename="src/dbus/gsession.cpp" />
+		<Unit filename="src/dbus/gsession.h" />
 		<Unit filename="src/dbus/gudbus.cpp" />
 		<Unit filename="src/dbus/gudbus.h" />
 		<Unit filename="src/dbus/mmkeys.cpp" />

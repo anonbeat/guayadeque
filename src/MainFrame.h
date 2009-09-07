@@ -37,6 +37,7 @@
 #include "dbus/gudbus.h"
 #include "dbus/mpris.h"
 #include "dbus/mmkeys.h"
+#include "dbus/gsession.h"
 
 #include <wx/wx.h>
 #include <wx/splitter.h>
@@ -66,6 +67,7 @@ class guMainFrame : public wxFrame
     guDBusServer *      m_DBusServer;
     guMPRIS *           m_MPRIS;
     guMMKeys *          m_MMKeys;
+    guGSession *        m_GSession;
 
     void                OnUpdateLibrary( wxCommandEvent &event );
     void                OnUpdateCovers( wxCommandEvent &event );
