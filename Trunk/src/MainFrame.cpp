@@ -160,6 +160,12 @@ guMainFrame::guMainFrame( wxWindow * parent )
         guLogError( wxT( "Could not create the mmkeys dbus object" ) );
     }
 
+    m_GSession = new guGSession( m_DBusServer );
+    if( !m_GSession )
+    {
+        guLogError( wxT( "Could not create the gnome session dbus object" ) );
+    }
+
     //
 	m_PlayerSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::PlayerSplitterOnIdle ), NULL, this );
 

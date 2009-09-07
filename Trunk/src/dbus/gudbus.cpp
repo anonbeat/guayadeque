@@ -37,6 +37,21 @@ DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, voi
 }
 
 // -------------------------------------------------------------------------------- //
+void Handle_Response( DBusPendingCall * PCall, void * udata )
+{
+	guDBusServer * DBusObj = ( guDBusServer * ) udata;
+	DBusMessage * reply;
+	reply = dbus_pending_call_steal_reply( PCall );
+    guDBusMessage * Msg = new guDBusMessage( reply );
+
+    DBusObj->HandleMessages( Msg, NULL );
+
+	dbus_message_unref( reply );
+	dbus_pending_call_unref( PCall );
+}
+
+
+// -------------------------------------------------------------------------------- //
 guDBusServer::guDBusServer( const char * name, bool System )
 {
     dbus_error_init( &m_DBusErr );
@@ -180,6 +195,25 @@ bool guDBusServer::Send( guDBusMessage * msg )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guDBusServer::SendWithReply( guDBusMessage * msg, int timeout )
+{
+    DBusPendingCall * PCall = NULL;
+    bool RetVal = dbus_connection_send_with_reply( m_DBusConn, msg->GetMessage(), &PCall, timeout );
+	dbus_pending_call_set_notify( PCall, Handle_Response, (void *) this, NULL );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+guDBusMessage * guDBusServer::SendWithReplyAndBlock( guDBusMessage * msg, int timeout )
+{
+    DBusError error;
+    dbus_error_init( &error );
+
+    DBusMessage * Result = dbus_connection_send_with_reply_and_block( m_DBusConn, msg->GetMessage(), timeout, &error );
+    return Result ? new guDBusMessage( Result ) : NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 void guDBusServer::Flush()
 {
     dbus_connection_flush( m_DBusConn );
@@ -277,6 +311,18 @@ bool guDBusClient::AddMatch( const char * rule )
 bool guDBusClient::Send( guDBusMessage * msg )
 {
     return m_DBusServer->Send( msg );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::SendWithReply( guDBusMessage * msg, int timeout )
+{
+    return m_DBusServer->SendWithReply( msg, timeout );
+}
+
+// -------------------------------------------------------------------------------- //
+guDBusMessage * guDBusClient::SendWithReplyAndBlock( guDBusMessage * msg, int timeout )
+{
+    return m_DBusServer->SendWithReplyAndBlock( msg, timeout );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -436,7 +482,24 @@ guDBusMessage::~guDBusMessage()
 }
 
 // -------------------------------------------------------------------------------- //
-// guDBusReturnMessage
+const char * guDBusMessage::GetObjectPath()
+{
+    const char * RetVal;
+    if( !dbus_message_get_args( m_DBusMsg, NULL, DBUS_TYPE_OBJECT_PATH, &RetVal, DBUS_TYPE_INVALID ) )
+        return NULL;
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+// guDBusMethodCall
+// -------------------------------------------------------------------------------- //
+guDBusMethodCall::guDBusMethodCall( const char * dest, const char * path, const char *iface, const char * method ) :
+  guDBusMessage( dbus_message_new_method_call( dest, path, iface, method ) )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+// guDBusMethodReturn
 // -------------------------------------------------------------------------------- //
 guDBusMethodReturn::guDBusMethodReturn( guDBusMessage * msg )  :
   guDBusMessage( dbus_message_new_method_return( msg->GetMessage() ) )
@@ -480,7 +543,7 @@ guDBusThread::ExitCode guDBusThread::Entry()
     while( !TestDestroy() )
     {
         dbus_connection_read_write_dispatch( m_DBusOwner->GetConnection(), 0 );
-        Sleep( DBUS_THREAD_IDLE_TIMEOUT );
+        Sleep( guDBUS_THREAD_IDLE_TIMEOUT );
     }
 }
 
