@@ -55,6 +55,7 @@ guGSession::guGSession( guDBusServer * server ) : guDBusClient( server )
     SendWithReply( Msg );
 
     delete Msg;
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -109,6 +110,9 @@ DBusHandlerResult guGSession::HandleMessages( guDBusMessage * msg, guDBusMessage
             else
             {
                 //guLogMessage( wxT( "Got the GSession Client Id : '%s'" ), m_ObjectPath.c_str() );
+//                AddMatch( wxString::Format( wxT( "type='signal',"
+//	                      "interface='org.gnome.SessionManager.ClientPrivate',"
+//	                      "path='%s'" ), m_ObjectPath.c_str() ).char_str() );
                 m_Status = guGSESSION_STATUS_INITIALIZED;
             }
         }
@@ -117,8 +121,7 @@ DBusHandlerResult guGSession::HandleMessages( guDBusMessage * msg, guDBusMessage
     {
         if( !strcmp( Path, m_ObjectPath.ToAscii() ) )
         {
-            guLogMessage( wxT( "Received GSession Client Signal" ) );
-
+            //guLogMessage( wxT( "Received GSession Client Signal" ) );
             if( !strcmp( Member, "Stop" ) )
             {
                 RetVal = DBUS_HANDLER_RESULT_HANDLED;
