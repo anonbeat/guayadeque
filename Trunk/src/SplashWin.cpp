@@ -95,7 +95,7 @@ void guSplashFrame::OnTimeout( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guSplashFrame::DoPaint( wxDC &dc )
 {
-    wxString Version = wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION );
+    wxString Version = wxT( ID_GUAYADEQUE_VERSION );
     wxString Credits = wxT( "J.Rios anonbeat@gmail.com" );
 
     wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
@@ -108,11 +108,11 @@ void guSplashFrame::DoPaint( wxDC &dc )
 
     dc.GetTextExtent( Version,  &width, &height, 0, 0, &Font );
     width >>= 1;
-    dc.DrawText( Version, 250 - width, 265 );
+    dc.DrawText( Version, 365 - width, 210 );
 
     dc.GetTextExtent( Credits,  &width, &height, 0, 0, &Font );
     width >>= 1;
-    dc.DrawText( Credits, 250 - width, 280 );
+    dc.DrawText( Credits, 365 - width, 225 );
 }
 
 // -------------------------------------------------------------------------------- //
