@@ -22,6 +22,7 @@
 #define TRACKEDIT_H
 
 #include "DbLibrary.h"
+#include "MusicDns.h"
 #include "RatingCtrl.h"
 
 #include <wx/wx.h>
@@ -30,6 +31,7 @@
 #include <wx/splitter.h>
 
 WX_DEFINE_ARRAY_PTR( wxImage *, guImagePtrArray );
+
 // -------------------------------------------------------------------------------- //
 // Class guTrackEditor
 // -------------------------------------------------------------------------------- //
@@ -40,6 +42,7 @@ class guTrackEditor : public wxDialog
     guImagePtrArray *   m_Images;
     int                 m_CurItem;
     DbLibrary *         m_Db;
+    guMusicDns *        m_MusicDns;
 
   protected:
     wxSplitterWindow *  m_SongListSplitter;
@@ -69,6 +72,8 @@ class guTrackEditor : public wxDialog
     int                 m_RatingStartY;
     int                 m_RatingStart;
     bool                m_RatingChanged;
+    wxBitmapButton *    m_MusicDnsButton;
+
 
     // Event handlers, overide them in your derived class
     void OnSongListBoxSelected( wxCommandEvent &event );
@@ -80,6 +85,8 @@ class guTrackEditor : public wxDialog
     void OnYeCopyButtonClicked( wxCommandEvent &event );
     void OnRaCopyButtonClicked( wxCommandEvent &event );
 //		void OnGetYearButtonClicked( wxCommandEvent &event );
+    void OnMusicDnsButtonClicked( wxCommandEvent &event );
+
     void ReadItemData( void );
     void WriteItemData( void );
 
@@ -93,6 +100,8 @@ class guTrackEditor : public wxDialog
     void OnCopyImageClicked( wxCommandEvent &event );
 
     void OnRatingChanged( guRatingEvent &event );
+
+    void OnMusicDnsPUID( wxCommandEvent &event );
 
 public:
     guTrackEditor( wxWindow * parent, DbLibrary * Db, guTrackArray * Songs, guImagePtrArray * m_Images );

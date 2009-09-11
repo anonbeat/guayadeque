@@ -224,6 +224,8 @@ ADD_EXECUTABLE( guayadeque
 	ApeTag.h
 	Discogs.cpp
 	Discogs.h
+	MusicDns.cpp
+	MusicDns.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
