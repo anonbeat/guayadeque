@@ -1586,10 +1586,11 @@ void DbLibrary::UpdateImageFile( const char * filename )
 
     return;
   }
-  else
-  {
-      guLogError( wxT( "The image '%s' with no album set" ), FileName.c_str() );
-  }
+// An image which appear to not be to any album was found. We do nothing with this
+//  else
+//  {
+//      guLogError( wxT( "The image '%s' with no album set" ), FileName.c_str() );
+//  }
   dbRes.Finalize();
 }
 

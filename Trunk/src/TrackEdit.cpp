@@ -149,8 +149,18 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	RaStaticText->Wrap( -1 );
 	DataFlexSizer->Add( RaStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
+	wxBoxSizer * RatingSizer;
+	RatingSizer = new wxBoxSizer( wxHORIZONTAL );
+
     m_Rating = new guRating( DetailPanel, GURATING_STYLE_BIG );
-	DataFlexSizer->Add( m_Rating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	RatingSizer->Add( m_Rating, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+	RatingSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_MusicDnsButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MusicDnsButton->SetToolTip( _( "Search metadata in musicbrainz database" ) );
+	RatingSizer->Add( m_MusicDnsButton, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+
+	DataFlexSizer->Add( RatingSizer, 0, wxEXPAND, 5 );
 
 	DetailPanel->SetSizer( DataFlexSizer );
 	DetailPanel->Layout();
@@ -241,6 +251,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	}
 	m_SongListBox->InsertItems( ItemsText, 0 );
 	m_SongListBox->SetFocus();
+	m_MusicDns = new guMusicDns();
 
 	// Connect Events
 	Connect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
@@ -254,12 +265,15 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
+    m_MusicDnsButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMusicDnsButtonClicked ), NULL, this );
     m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guTrackEditor::OnRatingChanged ), NULL, this );
 
 	m_AddPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
 	m_SavePicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSaveImageClicked ), NULL, this );
 	m_CopyPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
+
+	m_MusicDns->Connect( guMUSICDNS_EVENT_PUID, wxCommandEventHandler( guTrackEditor::OnMusicDnsPUID ), NULL, this );
 
 
     // Idle Events
@@ -278,6 +292,11 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::~guTrackEditor()
 {
+    if( m_MusicDns )
+    {
+        delete m_MusicDns;
+    }
+
 	// Disconnect Events
 	Disconnect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
 
@@ -290,6 +309,7 @@ guTrackEditor::~guTrackEditor()
 	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
+    m_MusicDnsButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMusicDnsButtonClicked ), NULL, this );
 
 	m_AddPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
@@ -326,6 +346,7 @@ void guTrackEditor::ReadItemData( void )
         m_GenreTextCtrl->SetValue( Track->m_GenreName );
         m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
         m_Rating->SetRating( Track->m_Rating );
+        m_MusicDnsButton->Enable( true );
     }
     else
     {
@@ -336,6 +357,11 @@ void guTrackEditor::ReadItemData( void )
         m_GenreTextCtrl->SetValue( wxEmptyString );
         m_YearTextCtrl->SetValue( wxEmptyString );
         m_Rating->SetRating( -1 );
+        m_MusicDnsButton->Enable( false );
+    }
+    if( m_MusicDns->IsRunning() )
+    {
+        m_MusicDns->CancelSearch();
     }
     RefreshImage();
 }
@@ -435,6 +461,13 @@ void guTrackEditor::OnRaCopyButtonClicked( wxCommandEvent& event )
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_Rating = m_Rating->GetRating();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMusicDnsButtonClicked( wxCommandEvent& event )
+{
+    m_MusicDns->SetTrack( &( * m_Items )[ m_CurItem ] );
+    m_MusicDnsButton->Enable( false );
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -602,6 +635,14 @@ void guTrackEditor::OnCopyImageClicked( wxCommandEvent &event )
             ( * m_Images )[ index ] = pCurImage ? ( new wxImage( * pCurImage ) ) : NULL;
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMusicDnsPUID( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "The PUID is '%s' Length:%u" ), m_MusicDns->GetPUID().c_str(), m_Items->Item( m_CurItem ).m_Length * 1000 );
+    //guLogMessage( wxT( "OnMusicDnsPUID %08x" ), m_MusicDnsButton );
+    m_MusicDnsButton->Enable( true );
 }
 
 // -------------------------------------------------------------------------------- //

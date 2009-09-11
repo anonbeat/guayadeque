@@ -85,7 +85,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             }
             wxMediaEvent event( wxEVT_MEDIA_BUFFERING );
             event.SetInt( Percent );
-            wxPostEvent( ctrl, event );
+            ctrl->AddPendingEvent( event );
             //printf( "Buffering %d%%\n", Percent );
             break;
         }
@@ -114,7 +114,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             {
                 wxMediaEvent event( wxEVT_MEDIA_TAG );
                 event.SetClientData( new wxString( title, wxConvUTF8 ) );
-                wxPostEvent( ctrl, event );
+                ctrl->AddPendingEvent( event );
             }
 
             gst_tag_list_get_uint( tags, GST_TAG_BITRATE, &bitrate );
@@ -122,7 +122,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             {
                 wxMediaEvent event( wxEVT_MEDIA_BITRATE );
                 event.SetInt( bitrate );
-                wxPostEvent( ctrl, event );
+                ctrl->AddPendingEvent( event );
             }
 
             /* Free the tag list */

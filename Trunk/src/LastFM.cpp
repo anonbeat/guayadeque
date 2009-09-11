@@ -22,7 +22,8 @@
 #include "Config.h"
 #include "Utils.h"
 
-#include <wx/curl/http.h>
+#include "curl/http.h"
+
 #include <wx/xml/xml.h>
 #include <wx/sckstrm.h>
 
