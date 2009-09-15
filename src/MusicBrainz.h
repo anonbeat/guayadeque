@@ -21,9 +21,62 @@
 #ifndef MUSICBRAINZ_H
 #define MUSICBRAINZ_H
 
+#include "DbLibrary.h"
+#include "MusicDns.h"
+
+#include <wx/wx.h>
+#include <wx/dynarray.h>
+#include <wx/thread.h>
+#include <wx/xml/xml.h>
+
+// -------------------------------------------------------------------------------- //
+class guMBTrack
+{
+  public :
+    wxString        m_Id;
+    wxString        m_Title;
+    int             m_Length;
+    wxString        m_ArtistId;
+    wxString        m_ArtistName;
+    wxString        m_ReleaseId;
+    wxString        m_ReleaseName;
+};
+WX_DECLARE_OBJARRAY( guMBTrack, guMBTrackArray );
+
+int FindMBTracksReleaseId( guMBTrackArray * mbtracks, const wxString &releaseid );
+
+// -------------------------------------------------------------------------------- //
+class guMBRelease
+{
+  public :
+    wxString        m_Id;
+    wxString        m_Title;
+    wxString        m_ArtistId;
+    wxString        m_ArtistName;
+    int             m_Year;
+    guMBTrackArray  m_Tracks;
+};
+WX_DECLARE_OBJARRAY( guMBRelease, guMBReleaseArray );
+
+
 // -------------------------------------------------------------------------------- //
 class guMusicBrainz
 {
+  protected :
+    bool m_ReceivedPUId;
+
+  public :
+    guMusicBrainz();
+    ~guMusicBrainz();
+
+    void GetTracks( guMBTrackArray * mbtracks, const wxString &trackpuid );
+    void GetTracks( guMBTrackArray * mbtracks, const guTrack * track );
+
+    void GetRelease( guMBRelease * mbrelease, const wxString &releaseid );
+
+    //void GetTracksMetadata( guTrackArray * tracks );
+
+    void FoundPUID( const wxString &puid ); // Method called from MusicDns
 };
 
 

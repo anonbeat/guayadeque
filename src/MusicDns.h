@@ -30,9 +30,6 @@
 #undef ATTRIBUTE_PRINTF // there are warnings about redefined ATTRIBUTE_PRINTF in Fedora
 #include <gst/gst.h>
 
-DECLARE_EVENT_TYPE( guMUSICDNS_EVENT_PUID, wxID_ANY )
-DECLARE_EVENT_TYPE( guMUSICDNS_EVENT_SEARCHDONE, wxID_ANY )
-
 class guMusicDns;
 
 // -------------------------------------------------------------------------------- //
@@ -53,27 +50,40 @@ class guMusicDnsThread : public wxThread
     void                Stop( void );
 };
 
+class guMusicBrainz;
+
+#define guMDNS_STATUS_OK                    0
+#define guMDNS_STATUS_ERROR_THREAD          1
+#define guMDNS_STATUS_ERROR_GSTREAMER       2
+#define guMDNS_STATUS_ERROR_NO_FINGERPRINT  3
+#define guMDNS_STATUS_ERROR_HTTP            4
+#define guMDNS_STATUS_ERROR_NOXMLDATA       5
+#define guMDNS_STATUS_ERROR_XMLERROR        6
+#define guMDNS_STATUS_ERROR_XMLPARSE        7
+
 // -------------------------------------------------------------------------------- //
-class guMusicDns : public wxEvtHandler
+class guMusicDns
 {
   protected :
-    guTrack *           m_Track;
+    guMusicBrainz *     m_MusicBrainz;
+    const guTrack *     m_Track;
     wxString            m_Fingerprint;
     wxString            m_PUID;
     wxString            m_XmlDoc;
     guMusicDnsThread *  m_MusicDnsThread;
+    int                 m_Status;
 
     bool DoGetFingerprint( void );
     bool DoGetMetadata( void );
     bool DoParseXmlDoc( void );
     bool ReadTrackInfo( wxXmlNode * XmlNode );
-    void OnFingerprint( wxCommandEvent &event );
+    void     SetStatus( const int status );
 
   public :
-    guMusicDns( void );
+    guMusicDns( guMusicBrainz * musicbrainz );
     ~guMusicDns();
 
-    void     SetTrack( guTrack * track );
+    void     SetTrack( const guTrack * track );
     wxString GetXmlDoc( void );
     void     SetXmlDoc( const wxString &xmldoc );
     wxString GetFingerprint( void );
@@ -88,6 +98,9 @@ class guMusicDns : public wxEvtHandler
 
     bool     IsRunning( void );
     void     CancelSearch( void );
+
+    int      GetStatus( void );
+    bool     IsOk( void );
 
     friend class guMusicDnsThread;
 };

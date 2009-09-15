@@ -130,6 +130,8 @@
 		<Unit filename="src/MainFrame.h" />
 		<Unit filename="src/MediaCtrl.cpp" />
 		<Unit filename="src/MediaCtrl.h" />
+		<Unit filename="src/MusicBrainz.cpp" />
+		<Unit filename="src/MusicBrainz.h" />
 		<Unit filename="src/MusicDns.cpp" />
 		<Unit filename="src/MusicDns.h" />
 		<Unit filename="src/OnlineLinks.cpp" />

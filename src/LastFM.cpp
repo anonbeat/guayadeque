@@ -25,7 +25,7 @@
 #include "curl/http.h"
 
 #include <wx/xml/xml.h>
-#include <wx/sckstrm.h>
+#include <wx/sstream.h>
 
 
 WX_DEFINE_OBJARRAY(guAlbumInfoArray);

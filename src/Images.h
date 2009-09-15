@@ -79,7 +79,8 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_yellow_star_big,
     guIMAGE_INDEX_track,
     guIMAGE_INDEX_tiny_search,
-    guIMAGE_INDEX_search_engine
+    guIMAGE_INDEX_search_engine,
+    guIMAGE_INDEX_musicbrainz
 };
 
 
