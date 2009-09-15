@@ -22,7 +22,6 @@
 #define TRACKEDIT_H
 
 #include "DbLibrary.h"
-#include "MusicDns.h"
 #include "RatingCtrl.h"
 
 #include <wx/wx.h>
@@ -32,17 +31,34 @@
 
 WX_DEFINE_ARRAY_PTR( wxImage *, guImagePtrArray );
 
+class guTrackEditor;
+
+// -------------------------------------------------------------------------------- //
+class guMusicBrainzMetadataThread : public wxThread
+{
+  protected :
+    guTrackEditor * m_TrackEditor;
+    guTrackArray * m_Tracks;
+
+  public :
+    guMusicBrainzMetadataThread( guTrackEditor * trackeditor );
+    ~guMusicBrainzMetadataThread();
+
+    virtual ExitCode Entry();
+
+};
+
 // -------------------------------------------------------------------------------- //
 // Class guTrackEditor
 // -------------------------------------------------------------------------------- //
 class guTrackEditor : public wxDialog
 {
   private:
-    guTrackArray *      m_Items;
-    guImagePtrArray *   m_Images;
-    int                 m_CurItem;
-    DbLibrary *         m_Db;
-    guMusicDns *        m_MusicDns;
+    guTrackArray *                  m_Items;
+    guImagePtrArray *               m_Images;
+    int                             m_CurItem;
+    DbLibrary *                     m_Db;
+    guMusicBrainzMetadataThread *   m_MusicBrainzThread;
 
   protected:
     wxSplitterWindow *  m_SongListSplitter;
@@ -66,13 +82,12 @@ class guTrackEditor : public wxDialog
     wxBitmapButton *    m_AddPicButton;
     wxBitmapButton *    m_DelPicButton;
     wxBitmapButton *    m_SavePicButton;
-    //wxBitmapButton *    m_EditPicButton;
     wxBitmapButton *    m_CopyPicButton;
     int                 m_CurrentRating;
     int                 m_RatingStartY;
     int                 m_RatingStart;
     bool                m_RatingChanged;
-    wxBitmapButton *    m_MusicDnsButton;
+    wxBitmapButton *    m_MusicBrainzButton;
 
 
     // Event handlers, overide them in your derived class
@@ -84,8 +99,7 @@ class guTrackEditor : public wxDialog
     void OnGeCopyButtonClicked( wxCommandEvent &event );
     void OnYeCopyButtonClicked( wxCommandEvent &event );
     void OnRaCopyButtonClicked( wxCommandEvent &event );
-//		void OnGetYearButtonClicked( wxCommandEvent &event );
-    void OnMusicDnsButtonClicked( wxCommandEvent &event );
+    void OnMusicBrainzButtonClicked( wxCommandEvent &event );
 
     void ReadItemData( void );
     void WriteItemData( void );
@@ -101,12 +115,13 @@ class guTrackEditor : public wxDialog
 
     void OnRatingChanged( guRatingEvent &event );
 
-    void OnMusicDnsPUID( wxCommandEvent &event );
+    void FinishedMusicBrainzSearch( void );
 
 public:
     guTrackEditor( wxWindow * parent, DbLibrary * Db, guTrackArray * Songs, guImagePtrArray * m_Images );
     ~guTrackEditor();
 
+    friend class guMusicBrainzMetadataThread;
 };
 
 #endif

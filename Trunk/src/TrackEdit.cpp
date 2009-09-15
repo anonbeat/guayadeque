@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "Images.h"
 #include "LastFM.h"
+#include "MusicBrainz.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
@@ -156,9 +157,9 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	RatingSizer->Add( m_Rating, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
 	RatingSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_MusicDnsButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_MusicDnsButton->SetToolTip( _( "Search metadata in musicbrainz database" ) );
-	RatingSizer->Add( m_MusicDnsButton, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+	m_MusicBrainzButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MusicBrainzButton->SetToolTip( _( "Search metadata in musicbrainz database" ) );
+	RatingSizer->Add( m_MusicBrainzButton, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
 
 	DataFlexSizer->Add( RatingSizer, 0, wxEXPAND, 5 );
 
@@ -234,6 +235,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 
 
 	// --------------------------------------------------------------------
+	m_MusicBrainzThread = NULL;
 	m_CurItem = 0;
 	m_Items = NewSongs;
 	m_Images = images;
@@ -251,7 +253,6 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	}
 	m_SongListBox->InsertItems( ItemsText, 0 );
 	m_SongListBox->SetFocus();
-	m_MusicDns = new guMusicDns();
 
 	// Connect Events
 	Connect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
@@ -265,16 +266,13 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
-    m_MusicDnsButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMusicDnsButtonClicked ), NULL, this );
+    m_MusicBrainzButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMusicBrainzButtonClicked), NULL, this );
     m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guTrackEditor::OnRatingChanged ), NULL, this );
 
 	m_AddPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
 	m_SavePicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSaveImageClicked ), NULL, this );
 	m_CopyPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
-
-	m_MusicDns->Connect( guMUSICDNS_EVENT_PUID, wxCommandEventHandler( guTrackEditor::OnMusicDnsPUID ), NULL, this );
-
 
     // Idle Events
 	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
@@ -292,9 +290,10 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::~guTrackEditor()
 {
-    if( m_MusicDns )
+    if( m_MusicBrainzThread )
     {
-        delete m_MusicDns;
+        m_MusicBrainzThread->Pause();
+        m_MusicBrainzThread->Delete();
     }
 
 	// Disconnect Events
@@ -309,7 +308,7 @@ guTrackEditor::~guTrackEditor()
 	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
 //	m_GetYearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
-    m_MusicDnsButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMusicDnsButtonClicked ), NULL, this );
+    m_MusicBrainzButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMusicBrainzButtonClicked), NULL, this );
 
 	m_AddPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
@@ -346,7 +345,7 @@ void guTrackEditor::ReadItemData( void )
         m_GenreTextCtrl->SetValue( Track->m_GenreName );
         m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
         m_Rating->SetRating( Track->m_Rating );
-        m_MusicDnsButton->Enable( true );
+        m_MusicBrainzButton->Enable( true );
     }
     else
     {
@@ -357,11 +356,7 @@ void guTrackEditor::ReadItemData( void )
         m_GenreTextCtrl->SetValue( wxEmptyString );
         m_YearTextCtrl->SetValue( wxEmptyString );
         m_Rating->SetRating( -1 );
-        m_MusicDnsButton->Enable( false );
-    }
-    if( m_MusicDns->IsRunning() )
-    {
-        m_MusicDns->CancelSearch();
+        m_MusicBrainzButton->Enable( false );
     }
     RefreshImage();
 }
@@ -462,35 +457,6 @@ void guTrackEditor::OnRaCopyButtonClicked( wxCommandEvent& event )
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_Rating = m_Rating->GetRating();
 }
-
-// -------------------------------------------------------------------------------- //
-void guTrackEditor::OnMusicDnsButtonClicked( wxCommandEvent& event )
-{
-    m_MusicDns->SetTrack( &( * m_Items )[ m_CurItem ] );
-    m_MusicDnsButton->Enable( false );
-}
-
-//// -------------------------------------------------------------------------------- //
-//void guTrackEditor::OnGetYearButtonClicked( wxCommandEvent& event )
-//{
-//    guLastFM LastFM;
-//    wxString Artist = m_ArtistTextCtrl->GetValue();
-//    wxString Album = m_AlbumTextCtrl->GetValue();
-//    if( !Artist.IsEmpty() && !Album.IsEmpty() )
-//    {
-//        guAlbumInfo AlbumInfo = LastFM.AlbumGetInfo( Artist, Album );
-//        if( !AlbumInfo.m_ReleaseDate.IsEmpty() )
-//        {
-//            // "23 May 2005, 00:00"
-//            //guLogMessage( wxT( "%s - %s Release Date: '%s'" ), Artist.c_str(), Album.c_str(), AlbumInfo.m_ReleaseDate.Trim().Trim( false ).c_str() );
-//            int Pos = AlbumInfo.m_ReleaseDate.Find( ',' );
-//            if( Pos != wxNOT_FOUND )
-//            {
-//                m_YearTextCtrl->SetValue( AlbumInfo.m_ReleaseDate.Mid( Pos - 4, 4 ) );
-//            }
-//        }
-//    }
-//}
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnRatingChanged( guRatingEvent &event )
@@ -638,11 +604,25 @@ void guTrackEditor::OnCopyImageClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guTrackEditor::OnMusicDnsPUID( wxCommandEvent &event )
+void guTrackEditor::OnMusicBrainzButtonClicked( wxCommandEvent& event )
 {
-    guLogMessage( wxT( "The PUID is '%s' Length:%u" ), m_MusicDns->GetPUID().c_str(), m_Items->Item( m_CurItem ).m_Length * 1000 );
-    //guLogMessage( wxT( "OnMusicDnsPUID %08x" ), m_MusicDnsButton );
-    m_MusicDnsButton->Enable( true );
+    if( m_Items->Count() )
+    {
+        m_MusicBrainzButton->Enable( false );
+        if( m_MusicBrainzThread )
+        {
+            m_MusicBrainzThread->Pause();
+            m_MusicBrainzThread->Delete();
+        }
+        m_MusicBrainzThread = new guMusicBrainzMetadataThread( this );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::FinishedMusicBrainzSearch( void )
+{
+    m_MusicBrainzButton->Enable( true );
+    m_MusicBrainzThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -650,6 +630,133 @@ void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
 {
     m_SongListSplitter->SetSashPosition( 200 );
     m_SongListSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+// guMusicBrainzMetadataThread
+// -------------------------------------------------------------------------------- //
+guMusicBrainzMetadataThread::guMusicBrainzMetadataThread( guTrackEditor * trackeditor ) : wxThread()
+{
+    m_TrackEditor = trackeditor;
+    m_Tracks = m_TrackEditor->m_Items;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guMusicBrainzMetadataThread::~guMusicBrainzMetadataThread()
+{
+    m_TrackEditor->FinishedMusicBrainzSearch();
+}
+
+// -------------------------------------------------------------------------------- //
+guMusicBrainzMetadataThread::ExitCode guMusicBrainzMetadataThread::Entry()
+{
+    if( !TestDestroy() )
+    {
+        guMBTrackArray FoundTracks;
+        guMBTrackArray OtherTrackReleases;
+        guMusicBrainz * MusicBrainz = new guMusicBrainz();
+
+        MusicBrainz->GetTracks( &FoundTracks, &( * m_Tracks )[ 0 ] );
+
+        int CurrentTrack = 1;
+        // Check the number of Releases
+        guLogMessage( wxT( "Found 0 - %u Releases whith this puid" ), FoundTracks.Count() );
+        while( FoundTracks.Count() > 1 )
+        {
+            OtherTrackReleases.Empty();
+
+            MusicBrainz->GetTracks( &OtherTrackReleases, &( * m_Tracks )[ CurrentTrack ] );
+
+
+            if( OtherTrackReleases.Count() )
+            {
+                int Index;
+                //int Count = FoundTracks.Count();
+                for( Index = FoundTracks.Count() - 1; Index >= 0; Index-- )
+                {
+                    if( FindMBTracksReleaseId( &OtherTrackReleases, FoundTracks[ Index ].m_ReleaseId ) == wxNOT_FOUND )
+                    {
+                        guLogMessage( wxT( "Removing Release %s" ), FoundTracks[ Index ].m_ReleaseName.c_str() );
+                        FoundTracks.RemoveAt( Index );
+                    }
+                }
+
+                guLogMessage( wxT( "Found %u - %u Releases whith this puid" ), CurrentTrack, FoundTracks.Count() );
+                //int Index = 0;
+                int Count = FoundTracks.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    guLogMessage( wxT( "'%s' '%s'" ), FoundTracks[ Index ].m_ReleaseId.c_str(),
+                            FoundTracks[ Index ].m_ReleaseName.c_str() );
+                }
+            }
+
+            CurrentTrack++;
+            if( CurrentTrack >= m_Tracks->Count() )
+            {
+                break;
+            }
+        }
+
+        //
+        // If there is more than one release we can allow the user to select the proper
+        //
+        if( FoundTracks.Count() )
+        {
+            guMBRelease Release;
+            MusicBrainz->GetRelease( &Release, FoundTracks[ 0 ].m_ReleaseId );
+
+            guLogMessage( wxT( "%s : %s (%u) (%u tracks)" ),
+                Release.m_ArtistName.c_str(),
+                Release.m_Title.c_str(),
+                Release.m_Year,
+                Release.m_Tracks.Count() );
+
+            if( Release.m_Tracks.Count() != m_Tracks->Count() )
+            {
+                guLogError( wxT( "The original release have %u tracks and only provided %u" ),
+                   Release.m_Tracks.Count(), m_Tracks->Count() );
+            }
+            //else
+            {
+                int Index;
+                int Count = Release.m_Tracks.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    if( Index < m_Tracks->Count() )
+                    {
+                        guLogMessage( wxT( "%u - %s - %s  %u : %u" ),
+                            Index + 1,
+                            Release.m_Tracks[ Index ].m_ArtistName.IsEmpty() ?
+                                Release.m_ArtistName.c_str() :
+                                Release.m_Tracks[ Index ].m_ArtistName.c_str(),
+                            Release.m_Tracks[ Index ].m_Title.c_str(),
+                            Release.m_Tracks[ Index ].m_Length,
+                            ( * m_Tracks )[ Index ].m_Length );
+                    }
+                    else
+                    {
+                        guLogMessage( wxT( "%u - %s - %s  %u : nope" ),
+                            Index + 1,
+                            Release.m_Tracks[ Index ].m_ArtistName.IsEmpty() ?
+                                Release.m_ArtistName.c_str() :
+                                Release.m_Tracks[ Index ].m_ArtistName.c_str(),
+                            Release.m_Tracks[ Index ].m_Title.c_str(),
+                            Release.m_Tracks[ Index ].m_Length );
+                    }
+                }
+            }
+        }
+
+        delete MusicBrainz;
+    }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //

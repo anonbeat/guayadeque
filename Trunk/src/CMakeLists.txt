@@ -226,6 +226,8 @@ ADD_EXECUTABLE( guayadeque
 	Discogs.h
 	MusicDns.cpp
 	MusicDns.h
+	MusicBrainz.cpp
+	MusicBrainz.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
