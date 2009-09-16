@@ -731,14 +731,16 @@ guMusicBrainzMetadataThread::ExitCode guMusicBrainzMetadataThread::Entry()
                 {
                     if( Index < m_Tracks->Count() )
                     {
-                        guLogMessage( wxT( "%u - %s - %s  %u : %u" ),
+                        guLogMessage( wxT( "%u - %s - %s  %u : %u %s" ),
                             Index + 1,
                             Release.m_Tracks[ Index ].m_ArtistName.IsEmpty() ?
                                 Release.m_ArtistName.c_str() :
                                 Release.m_Tracks[ Index ].m_ArtistName.c_str(),
                             Release.m_Tracks[ Index ].m_Title.c_str(),
                             Release.m_Tracks[ Index ].m_Length,
-                            ( * m_Tracks )[ Index ].m_Length );
+                            ( * m_Tracks )[ Index ].m_Length * 1000,
+                            abs( Release.m_Tracks[ Index ].m_Length -
+                            ( ( * m_Tracks )[ Index ].m_Length * 1000 ) ) > 3000 ? wxT( "*" ) : wxT( "" ) );
                     }
                     else
                     {
