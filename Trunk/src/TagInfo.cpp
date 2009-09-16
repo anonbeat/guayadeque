@@ -654,7 +654,7 @@ bool guFlacTagInfo::SetImage( const wxImage * image )
                 }
 
                 wxMemoryOutputStream ImgOutputStream;
-                if( image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
+                if( image && image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
                 {
                     FLAC__byte * CoverData = ( FLAC__byte * ) malloc( ImgOutputStream.GetSize() );
                     if( CoverData )

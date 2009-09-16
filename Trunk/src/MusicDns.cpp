@@ -210,7 +210,7 @@ guMusicDnsThread::guMusicDnsThread( guMusicDns * musicdns, const wxChar * filena
 
                   if( Create() == wxTHREAD_NO_ERROR )
                   {
-                    SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+                    SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
                     Run();
                     return;
                   }
