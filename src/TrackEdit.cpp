@@ -23,16 +23,18 @@
 #include "Config.h"
 #include "Images.h"
 #include "LastFM.h"
-#include "MusicBrainz.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
 #include "wx/datetime.h"
 #include <wx/notebook.h>
+#include <wx/regex.h>
+
+const wxEventType guTrackEditEvent = wxNewEventType();
 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs, guImagePtrArray * images ) :
-               wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 400 ), wxDEFAULT_DIALOG_STYLE )
+               wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE )
 {
     wxPanel *           SongListPanel;
     wxPanel *           MainDetailPanel;
@@ -45,6 +47,10 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
     wxStaticText *      GeStaticText;
     wxStaticText *      YeStaticText;
     wxPanel *           PicturePanel;
+    wxPanel *           MBrainzPanel;
+    wxStaticText *      MBAlbumStaticText;
+    wxStaticText *      MBAlbumDetailStaticText;
+    wxStaticLine *      MBrainzStaticLine;
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -55,13 +61,19 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_SongListSplitter->SetMinimumPaneSize( 150 );
 
 	SongListPanel = new wxPanel( m_SongListSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
+	wxBoxSizer * SongsMainSizer;
+	SongsMainSizer = new wxBoxSizer( wxVERTICAL );
+
 	wxStaticBoxSizer* SongListSizer;
 	SongListSizer = new wxStaticBoxSizer( new wxStaticBox( SongListPanel, wxID_ANY, _( " Songs " ) ), wxVERTICAL );
 
 	m_SongListBox = new wxListBox( SongListPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
 	SongListSizer->Add( m_SongListBox, 1, wxALL|wxEXPAND, 2 );
 
-	SongListPanel->SetSizer( SongListSizer );
+	SongsMainSizer->Add( SongListSizer, 1, wxEXPAND|wxALL, 5 );
+
+	SongListPanel->SetSizer( SongsMainSizer );
 	SongListPanel->Layout();
 	SongListSizer->Fit( SongListPanel );
 	MainDetailPanel = new wxPanel( m_SongListSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -69,104 +81,109 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	DetailSizer = new wxBoxSizer( wxVERTICAL );
 
 	MainNoteBook = new wxNotebook( MainDetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+
+    //
+    // Details
+    //
 	DetailPanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxSizer * MainDetailSizer = new wxBoxSizer( wxVERTICAL );
 	wxFlexGridSizer* DataFlexSizer;
 	DataFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
 	DataFlexSizer->AddGrowableCol( 2 );
-	DataFlexSizer->SetFlexibleDirection( wxHORIZONTAL );
+	DataFlexSizer->SetFlexibleDirection( wxBOTH );
 	DataFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_ArCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_ArCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_ArCopyButton->SetToolTip( _( "Copy the Artist name to all the tracks you are editing" ) );
-	DataFlexSizer->Add( m_ArCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	DataFlexSizer->Add( m_ArCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	ArStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	ArStaticText->Wrap( -1 );
-	DataFlexSizer->Add( ArStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	DataFlexSizer->Add( ArStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
 	m_ArtistTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
+	DataFlexSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
-	m_AlCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AlCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_AlCopyButton->SetToolTip( _( "Copy the Album name to all the tracks you are editing" ) );
-	DataFlexSizer->Add( m_AlCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	DataFlexSizer->Add( m_AlCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	AlStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	AlStaticText->Wrap( -1 );
-	DataFlexSizer->Add( AlStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	DataFlexSizer->Add( AlStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
 	m_AlbumTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_AlbumTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
+	DataFlexSizer->Add( m_AlbumTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
-	m_TiCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_TiCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_TiCopyButton->SetToolTip( _( "Copy the Title name to all the tracks you are editing" ) );
-	DataFlexSizer->Add( m_TiCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	DataFlexSizer->Add( m_TiCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	TiStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Title:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	TiStaticText->Wrap( -1 );
-	DataFlexSizer->Add( TiStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	DataFlexSizer->Add( TiStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
 	m_TitleTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_TitleTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
+	DataFlexSizer->Add( m_TitleTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
-	m_NuCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_numerate ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_NuCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_numerate ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_NuCopyButton->SetToolTip( _( "Enumerate the tracks in the order they were added for editing" ) );
-	DataFlexSizer->Add( m_NuCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	DataFlexSizer->Add( m_NuCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	NuStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Number:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	NuStaticText->Wrap( -1 );
-	DataFlexSizer->Add( NuStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	DataFlexSizer->Add( NuStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
 	m_NumberTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_NumberTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	DataFlexSizer->Add( m_NumberTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	m_GeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_GeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_GeCopyButton->SetToolTip( _( "Copy the Genre name to all songs you are editing" ) );
-	DataFlexSizer->Add( m_GeCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	DataFlexSizer->Add( m_GeCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	GeStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Genre:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	GeStaticText->Wrap( -1 );
-	DataFlexSizer->Add( GeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	DataFlexSizer->Add( GeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
 	m_GenreTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_GenreTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 10 );
+	DataFlexSizer->Add( m_GenreTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
-	m_YeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_YeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_YeCopyButton->SetToolTip( _( "Copy the Year to all songs you are editing" ) );
-	DataFlexSizer->Add( m_YeCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	DataFlexSizer->Add( m_YeCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	YeStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Year:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	YeStaticText->Wrap( -1 );
-	DataFlexSizer->Add( YeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	DataFlexSizer->Add( YeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
 	m_YearTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_YearTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	DataFlexSizer->Add( m_YearTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	m_RaCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_RaCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	DataFlexSizer->Add( m_RaCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * RaStaticText;
 	RaStaticText = new wxStaticText( DetailPanel, wxID_ANY, _("Rating:"), wxDefaultPosition, wxDefaultSize, 0 );
 	RaStaticText->Wrap( -1 );
-	DataFlexSizer->Add( RaStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
-
-	wxBoxSizer * RatingSizer;
-	RatingSizer = new wxBoxSizer( wxHORIZONTAL );
+	DataFlexSizer->Add( RaStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
     m_Rating = new guRating( DetailPanel, GURATING_STYLE_BIG );
-	RatingSizer->Add( m_Rating, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
-	RatingSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	DataFlexSizer->Add( m_Rating, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	m_MusicBrainzButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_MusicBrainzButton->SetToolTip( _( "Search metadata in musicbrainz database" ) );
-	RatingSizer->Add( m_MusicBrainzButton, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+	MainDetailSizer->Add( DataFlexSizer, 0, wxEXPAND, 5 );
 
-	DataFlexSizer->Add( RatingSizer, 0, wxEXPAND, 5 );
+	m_DetailInfoStaticText = new wxStaticText( DetailPanel, wxID_ANY, wxT("Type\t: mp3\nBitRate\t: 160 kbps\nLength\t: 04:09\nFileSize\t: 4.9 Mbytes"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailInfoStaticText->Wrap( -1 );
+	MainDetailSizer->Add( m_DetailInfoStaticText, 1, wxALL|wxEXPAND, 5 );
 
-	DetailPanel->SetSizer( DataFlexSizer );
+	DetailPanel->SetSizer( MainDetailSizer );
 	DetailPanel->Layout();
 	DataFlexSizer->Fit( DetailPanel );
 	MainNoteBook->AddPage( DetailPanel, _( "Details" ), true );
+
+	//
+	// Pictures
+	//
 	PicturePanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* PictureSizer;
 	PictureSizer = new wxBoxSizer( wxVERTICAL );
@@ -200,7 +217,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 
 	PictureButtonSizer->Add( 10, 0, 0, wxEXPAND, 5 );
 
-	m_CopyPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CopyPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CopyPicButton->SetToolTip( _( "Copy the current picute to all the tracks you are editing" ) );
 	PictureButtonSizer->Add( m_CopyPicButton, 0, wxALL, 5 );
 
@@ -210,6 +227,165 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	PicturePanel->Layout();
 	PictureSizer->Fit( PicturePanel );
 	MainNoteBook->AddPage( PicturePanel, _( "Pictures" ), false );
+
+    //
+    // MusicBrainz
+    //
+	MBrainzPanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* MBrainzSizer;
+	MBrainzSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxBoxSizer* MBQuerySizer;
+	MBQuerySizer = new wxBoxSizer( wxHORIZONTAL );
+
+    wxStaticText * MBQueryArtistStaticText;
+	wxStaticText * MBQueryTitleStaticText;
+	MBQueryArtistStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxT("Artist:"), wxDefaultPosition, wxDefaultSize, 0 );
+	MBQueryArtistStaticText->Wrap( -1 );
+	MBQuerySizer->Add( MBQueryArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	m_MBQueryArtistTextCtrl = new wxTextCtrl( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBQueryArtistTextCtrl->SetToolTip( _( "Type the artist name to search in musicbrainz" ) );
+	MBQuerySizer->Add( m_MBQueryArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	MBQueryTitleStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxT("Title:"), wxDefaultPosition, wxDefaultSize, 0 );
+	MBQueryTitleStaticText->Wrap( -1 );
+	MBQuerySizer->Add( MBQueryTitleStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	m_MBQueryTitleTextCtrl = new wxTextCtrl( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBQueryTitleTextCtrl->SetToolTip( _( "Type the album name to search in musicbrainz" ) );
+	MBQuerySizer->Add( m_MBQueryTitleTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	m_MBQueryClearButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_clear ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBQueryClearButton->SetToolTip( _( "Clear the search fields so it search using the music fingerprint" ) );
+	MBQuerySizer->Add( m_MBQueryClearButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	MBrainzSizer->Add( MBQuerySizer, 0, wxEXPAND, 5 );
+
+	wxBoxSizer* MBrainzTopSizer;
+	MBrainzTopSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	MBAlbumStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	MBAlbumStaticText->Wrap( -1 );
+	MBrainzTopSizer->Add( MBAlbumStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	wxArrayString m_MBrainzAlbumChoiceChoices;
+	m_MBrainzAlbumChoice = new wxChoice( MBrainzPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MBrainzAlbumChoiceChoices, 0 );
+	m_MBrainzAlbumChoice->SetToolTip( _( "Select the album found in musicbrainz" ) );
+	m_MBrainzAlbumChoice->SetSelection( 0 );
+
+	MBrainzTopSizer->Add( m_MBrainzAlbumChoice, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	m_MBrainzAddButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBrainzAddButton->SetToolTip( _( "Search albums in musicbrainz" ) );
+	//m_MBrainzAddButton->Enable( false );
+
+	MBrainzTopSizer->Add( m_MBrainzAddButton, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_MBrainzCopyButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBrainzCopyButton->SetToolTip( _( "Copy the content of the album to the edited tracks" ) );
+	m_MBrainzCopyButton->Enable( false );
+
+	MBrainzTopSizer->Add( m_MBrainzCopyButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	MBrainzSizer->Add( MBrainzTopSizer, 0, wxEXPAND, 5 );
+
+	wxStaticBoxSizer* MBDetailSizer;
+	MBDetailSizer = new wxStaticBoxSizer( new wxStaticBox( MBrainzPanel, wxID_ANY, _( " Details " ) ), wxVERTICAL );
+
+	wxFlexGridSizer* MBDetailFlexGridSizer;
+	MBDetailFlexGridSizer = new wxFlexGridSizer( 5, 3, 0, 0 );
+	MBDetailFlexGridSizer->AddGrowableCol( 1 );
+	MBDetailFlexGridSizer->SetFlexibleDirection( wxBOTH );
+	MBDetailFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	m_MBrainzArtistStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzArtistStaticText->Wrap( -1 );
+	MBDetailFlexGridSizer->Add( m_MBrainzArtistStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_MBrainzArtistTextCtrl = new wxTextCtrl( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	MBDetailFlexGridSizer->Add( m_MBrainzArtistTextCtrl, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	m_MBrainzArCopyButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBrainzArCopyButton->SetToolTip( _( "Copy the artist to the edited tracks" ) );
+	MBDetailFlexGridSizer->Add( m_MBrainzArCopyButton, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_MBrainzAlbumStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _("Album:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzAlbumStaticText->Wrap( -1 );
+	MBDetailFlexGridSizer->Add( m_MBrainzAlbumStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	m_MBrainzAlbumTextCtrl = new wxTextCtrl( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	MBDetailFlexGridSizer->Add( m_MBrainzAlbumTextCtrl, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	m_MBrainzAlCopyButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBrainzAlCopyButton->SetToolTip( _( "Copy the album to the edited tracks" ) );
+	MBDetailFlexGridSizer->Add( m_MBrainzAlCopyButton, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_MBrainzDateStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _( "Date:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzDateStaticText->Wrap( -1 );
+	MBDetailFlexGridSizer->Add( m_MBrainzDateStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	wxArrayString m_MBrainzDateChoiceChoices;
+	m_MBrainzDateChoice = new wxChoice( MBrainzPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MBrainzDateChoiceChoices, 0 );
+	m_MBrainzDateChoice->SetSelection( 0 );
+	MBDetailFlexGridSizer->Add( m_MBrainzDateChoice, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	m_MBrainzDaCopyButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBrainzDaCopyButton->SetToolTip( _( "Copy the date to the edited tracks" ) );
+	MBDetailFlexGridSizer->Add( m_MBrainzDaCopyButton, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_MBrainzTitleStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _( "Title:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzTitleStaticText->Wrap( -1 );
+	MBDetailFlexGridSizer->Add( m_MBrainzTitleStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	m_MBrainzTitleTextCtrl = new wxTextCtrl( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	MBDetailFlexGridSizer->Add( m_MBrainzTitleTextCtrl, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	m_MBrainzTiCopyButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBrainzTiCopyButton->SetToolTip( _( "Copy the song names to the edited tracks" ) );
+	MBDetailFlexGridSizer->Add( m_MBrainzTiCopyButton, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_MBrainzLengthStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxT("Length:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzLengthStaticText->Wrap( -1 );
+	MBDetailFlexGridSizer->Add( m_MBrainzLengthStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxBoxSizer* MBNumberSizer;
+	MBNumberSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_MBrainzLengthTextCtrl = new wxTextCtrl( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	MBNumberSizer->Add( m_MBrainzLengthTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	MBNumberSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_MBrainzNumberStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxT("Number:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzNumberStaticText->Wrap( -1 );
+	MBNumberSizer->Add( m_MBrainzNumberStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_MBrainzNumberTextCtrl = new wxTextCtrl( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	MBNumberSizer->Add( m_MBrainzNumberTextCtrl, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	MBDetailFlexGridSizer->Add( MBNumberSizer, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_MBrainzNuCopyButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBrainzNuCopyButton->SetToolTip( _( "Copy the number to the edited tracks" ) );
+	MBDetailFlexGridSizer->Add( m_MBrainzNuCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	MBDetailSizer->Add( MBDetailFlexGridSizer, 0, wxEXPAND, 5 );
+
+	MBrainzStaticLine = new wxStaticLine( MBrainzPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	MBDetailSizer->Add( MBrainzStaticLine, 0, wxEXPAND | wxALL, 5 );
+
+	m_MBrainzInfoStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE );
+	m_MBrainzInfoStaticText->Wrap( 398 );
+	MBDetailSizer->Add( m_MBrainzInfoStaticText, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+
+	MBrainzSizer->Add( MBDetailSizer, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	MBrainzPanel->SetSizer( MBrainzSizer );
+	MBrainzPanel->Layout();
+	MBrainzSizer->Fit( MBrainzPanel );
+	MainNoteBook->AddPage( MBrainzPanel, wxT( "MusicBrainz" ), false );
+
 
 	DetailSizer->Add( MainNoteBook, 1, wxEXPAND | wxALL, 5 );
 
@@ -235,7 +411,14 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 
 
 	// --------------------------------------------------------------------
-	m_MusicBrainzThread = NULL;
+    m_NormalColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
+    m_ErrorColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
+	m_MBrainzThread = NULL;
+	m_MBrainzAlbums = NULL;
+	m_MBrainzReleases = NULL;
+	m_MBrainzCurTrack = 0;
+	m_MBrainzCurAlbum = wxNOT_FOUND;
+	m_MBQuerySetArtistEnabled = true;
 	m_CurItem = 0;
 	m_Items = NewSongs;
 	m_Images = images;
@@ -255,7 +438,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_SongListBox->SetFocus();
 
 	// Connect Events
-	Connect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
+//	Connect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
 
 	m_SongListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTrackEditor::OnSongListBoxSelected ), NULL, this );
 	m_ArCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnArCopyButtonClicked ), NULL, this );
@@ -265,14 +448,27 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	m_GeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
-//	m_GetYearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
-    m_MusicBrainzButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMusicBrainzButtonClicked), NULL, this );
     m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guTrackEditor::OnRatingChanged ), NULL, this );
 
 	m_AddPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
 	m_SavePicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSaveImageClicked ), NULL, this );
 	m_CopyPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
+
+	m_MBQueryArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnMBQueryTextCtrlChanged ), NULL, this );
+	m_MBQueryTitleTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnMBQueryTextCtrlChanged ), NULL, this );
+	m_MBQueryClearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBQueryClearButtonClicked ), NULL, this );
+
+    m_MBrainzAddButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzAddButtonClicked ), NULL, this );
+    Connect( guTRACKEDIT_EVENT_MBRAINZ_TRACKS, guTrackEditEvent, wxCommandEventHandler( guTrackEditor::OnMBrainzAlbumsFound ), NULL, this );
+	m_MBrainzAlbumChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guTrackEditor::OnMBrainzAlbumChoiceSelected ), NULL, this );
+	m_MBrainzCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzCopyButtonClicked ), NULL, this );
+
+	m_MBrainzArCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzArtistCopyButtonClicked ), NULL, this );
+	m_MBrainzAlCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzAlbumCopyButtonClicked ), NULL, this );
+	m_MBrainzDaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzDateCopyButtonClicked ), NULL, this );
+	m_MBrainzTiCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzTitleCopyButtonClicked ), NULL, this );
+	m_MBrainzNuCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzNumberCopyButtonClicked ), NULL, this );
 
     // Idle Events
 	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
@@ -290,14 +486,16 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::~guTrackEditor()
 {
-    if( m_MusicBrainzThread )
+    if( m_MBrainzThread )
     {
-        m_MusicBrainzThread->Pause();
-        m_MusicBrainzThread->Delete();
+        m_MBrainzThread->Pause();
+        m_MBrainzThread->Delete();
     }
 
-	// Disconnect Events
-	Disconnect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
+    if( m_MBrainzReleases )
+        delete m_MBrainzReleases;
+    if( m_MBrainzAlbums )
+        delete m_MBrainzAlbums;
 
 	m_SongListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTrackEditor::OnSongListBoxSelected ), NULL, this );
 	m_ArCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnArCopyButtonClicked ), NULL, this );
@@ -307,8 +505,6 @@ guTrackEditor::~guTrackEditor()
 	m_GeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
 	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
-//	m_GetYearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGetYearButtonClicked ), NULL, this);
-    m_MusicBrainzButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMusicBrainzButtonClicked), NULL, this );
 
 	m_AddPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
@@ -317,11 +513,11 @@ guTrackEditor::~guTrackEditor()
 }
 
 // -------------------------------------------------------------------------------- //
-void guTrackEditor::OnButton( wxCommandEvent& event )
-{
-    WriteItemData();
-    event.Skip();
-}
+//void guTrackEditor::OnButton( wxCommandEvent& event )
+//{
+//    WriteItemData();
+//    event.Skip();
+//}
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
@@ -345,7 +541,19 @@ void guTrackEditor::ReadItemData( void )
         m_GenreTextCtrl->SetValue( Track->m_GenreName );
         m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
         m_Rating->SetRating( Track->m_Rating );
-        m_MusicBrainzButton->Enable( true );
+        m_DetailInfoStaticText->SetLabel( wxString::Format( wxT( "File Type\t: %s\n"
+                                               "BitRate\t: %u Kbps\n"
+                                               "Length\t: %s\n"
+                                               "File Size\t: %.1f MB" ),
+                                               Track->m_FileName.AfterLast( wxT( '.' ) ).c_str(),
+                                               Track->m_Bitrate,
+                                               LenToString( Track->m_Length ).c_str(),
+                                               float( guGetFileSize( Track->m_FileName ) ) / float( 1000000 ) ) );
+        if( m_MBQuerySetArtistEnabled )
+        {
+            m_MBQueryArtistTextCtrl->SetValue( Track->m_ArtistName );
+            m_MBQueryTitleTextCtrl->SetValue( Track->m_AlbumName );
+        }
     }
     else
     {
@@ -356,9 +564,12 @@ void guTrackEditor::ReadItemData( void )
         m_GenreTextCtrl->SetValue( wxEmptyString );
         m_YearTextCtrl->SetValue( wxEmptyString );
         m_Rating->SetRating( -1 );
-        m_MusicBrainzButton->Enable( false );
+        m_DetailInfoStaticText->SetLabel( wxEmptyString );
+        m_MBQueryArtistTextCtrl->SetValue( wxEmptyString );
+        m_MBQueryTitleTextCtrl->SetValue( wxEmptyString );
     }
     RefreshImage();
+    UpdateMBrainzTrackInfo();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -604,25 +815,385 @@ void guTrackEditor::OnCopyImageClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guTrackEditor::OnMusicBrainzButtonClicked( wxCommandEvent& event )
+void guTrackEditor::FinishedMusicBrainzSearch( void )
 {
-    if( m_Items->Count() )
+    m_MBrainzThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
+{
+    if( m_MBQuerySetArtistEnabled )
+        m_MBQuerySetArtistEnabled = false;
+
+    if( !m_MBQueryArtistTextCtrl->GetValue().IsEmpty() ||
+        !m_MBQueryTitleTextCtrl->GetValue().IsEmpty() )
     {
-        m_MusicBrainzButton->Enable( false );
-        if( m_MusicBrainzThread )
+        guMBReleaseArray * Releases = new guMBReleaseArray();
+        guMusicBrainz * MusicBrainz = new guMusicBrainz();
+
+        wxASSERT( Releases );
+        wxASSERT( MusicBrainz );
+
+        m_MBrainzAddButton->Enable( false );
+        MusicBrainz->GetReleases( Releases, m_MBQueryArtistTextCtrl->GetValue(), m_MBQueryTitleTextCtrl->GetValue() );
+
+        if( m_MBrainzReleases && m_MBrainzReleases->Count() )
         {
-            m_MusicBrainzThread->Pause();
-            m_MusicBrainzThread->Delete();
+            m_MBrainzReleases->Empty();
+            m_MBrainzAlbumChoice->Clear();
+            //m_MBrainzAlbumChoice->
         }
-        m_MusicBrainzThread = new guMusicBrainzMetadataThread( this );
+
+        int Index;
+        int Count = Releases->Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guMBRelease * Release = &( * Releases )[ Index ];
+            //guLogMessage( wxT( "Release %u : %s" ), Index, Release->m_Id.c_str() );
+            if( FindMBrainzReleaseId( Release->m_Id ) == wxNOT_FOUND )
+            {
+                guMBRelease * NewRelease = new guMBRelease();
+                MusicBrainz->GetRelease( NewRelease, Release->m_Id );
+                m_MBrainzReleases->Add( NewRelease );
+                m_MBrainzAlbumChoice->Append( NewRelease->m_Title );
+
+                if( m_MBrainzAlbumChoice->GetSelection() == wxNOT_FOUND )
+                {
+                    m_MBrainzAlbumChoice->SetSelection( 0 );
+                    event.SetInt( 0 );
+                    OnMBrainzAlbumChoiceSelected( event );
+
+                    m_MBrainzAddButton->SetBitmapLabel( guBitmap( guIMAGE_INDEX_tiny_search_again ) );
+                }
+            }
+            wxTheApp->Yield();
+        }
+        m_MBrainzAddButton->Enable( true );
+
+        delete MusicBrainz;
+        delete Releases;
+    }
+    else if( m_MBrainzCurTrack < m_Items->Count() )
+    {
+        m_MBrainzAddButton->Enable( false );
+        m_MBrainzThread = new guMusicBrainzMetadataThread( this, m_MBrainzCurTrack );
+        m_MBrainzCurTrack++;
+        guLogMessage( wxT( "Albums search thread created" ) );
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guTrackEditor::FinishedMusicBrainzSearch( void )
+int guTrackEditor::FindMBrainzReleaseId( const wxString releaseid )
 {
-    m_MusicBrainzButton->Enable( true );
-    m_MusicBrainzThread = NULL;
+    int Index;
+    int Count;
+    if( !m_MBrainzReleases )
+    {
+        m_MBrainzReleases = new guMBReleaseArray();
+    }
+    if( ( Count = m_MBrainzReleases->Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( m_MBrainzReleases->Item( Index ).m_Id == releaseid )
+            {
+                return Index;
+            }
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzAlbumsFound( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnMBrainzAlbumsFound..." ) );
+    //
+    guMBTrackArray * Tracks = ( guMBTrackArray * ) event.GetClientData();
+    if( Tracks )
+    {
+        int Index;
+        int Count;
+        if( ( Count = Tracks->Count() ) )
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                guMBTrack * MBTrack = &Tracks->Item( Index );
+                if( FindMBrainzReleaseId( MBTrack->m_ReleaseId ) == wxNOT_FOUND )
+                {
+                    m_MBrainzAlbumChoice->Append( Tracks->Item( Index ).m_ReleaseName );
+                    guMBRelease * MBRelease = new guMBRelease();
+                    guMusicBrainz * MusicBrainz = new guMusicBrainz();
+                    MusicBrainz->GetRelease( MBRelease, Tracks->Item( Index ).m_ReleaseId );
+                    m_MBrainzReleases->Add( MBRelease );
+//                    // Check the release track count and the track lengths
+//                    // to mark the items as very possible to be wrong
+//                    if( CheckTracksLengths( MBRelease->m_Tracks, m_Items ) ||
+//                        MBRelease->m_Tracks.Count() != m_Items->Count() )
+//                    {
+//                        m_MBrainzAlbumChoice->Set
+//                    }
+                    delete MusicBrainz;
+                }
+            }
+            if( m_MBrainzAlbumChoice->GetSelection() == wxNOT_FOUND )
+            {
+                m_MBrainzAlbumChoice->SetSelection( 0 );
+                event.SetInt( 0 );
+                OnMBrainzAlbumChoiceSelected( event );
+            }
+            m_MBrainzAddButton->SetBitmapLabel( guBitmap( guIMAGE_INDEX_tiny_search_again ) );
+        }
+        m_MBrainzAddButton->Enable( true );
+
+        delete Tracks;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::UpdateMBrainzTrackInfo( void )
+{
+    if( m_MBrainzCurAlbum >= 0 && m_CurItem >= 0 )
+    {
+        guMBTrackArray * MBTracks = &m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_Tracks;
+        if( m_CurItem < MBTracks->Count() )
+        {
+            guMBTrack * MBTrack = &MBTracks->Item( m_CurItem );
+            guTrack * Track = &m_Items->Item( m_CurItem );
+
+            // Artist
+            if( !MBTrack->m_ArtistName.IsEmpty() )
+            {
+                m_MBrainzArtistStaticText->SetForegroundColour( Track->m_ArtistName == MBTrack->m_ArtistName ?
+                                        m_NormalColor : m_ErrorColor );
+                m_MBrainzArtistTextCtrl->SetValue( MBTrack->m_ArtistName );
+            }
+            else
+            {
+                m_MBrainzArtistStaticText->SetForegroundColour( Track->m_ArtistName == m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_ArtistName ?
+                                        m_NormalColor : m_ErrorColor );
+            }
+
+            // ALbum
+            m_MBrainzAlbumStaticText->SetForegroundColour( Track->m_AlbumName == m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_Title ?
+                                        m_NormalColor : m_ErrorColor );
+
+            // Title
+            m_MBrainzTitleStaticText->SetForegroundColour( Track->m_SongName == MBTrack->m_Title ?
+                                        m_NormalColor : m_ErrorColor );
+            m_MBrainzTitleTextCtrl->SetValue( MBTrack->m_Title );
+
+            // Year
+            if( Track->m_Year )
+            {
+                m_MBrainzDateStaticText->SetForegroundColour( m_MBrainzDateChoice->GetStringSelection().Find( wxString::Format( wxT( "%u" ), Track->m_Year ) ) == wxNOT_FOUND ?
+                                        m_ErrorColor : m_NormalColor );
+            }
+            else
+            {
+                m_MBrainzDateStaticText->SetForegroundColour( m_MBrainzDateChoice->GetStringSelection().IsEmpty() ?
+                                        m_NormalColor : m_ErrorColor );
+            }
+            // Length
+            m_MBrainzLengthStaticText->SetForegroundColour(
+                    GetTrackLengthDiff( Track->m_Length * 1000, MBTrack->m_Length ) > guMBRAINZ_MAX_TIME_DIFF ?
+                                        m_ErrorColor : m_NormalColor );
+            m_MBrainzLengthTextCtrl->SetValue( LenToString( MBTrack->m_Length / 1000 ) );
+
+            // Number
+            m_MBrainzNumberStaticText->SetForegroundColour( Track->m_Number == MBTrack->m_Number ?
+                                        m_NormalColor : m_ErrorColor );
+            m_MBrainzNumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), MBTrack->m_Number ) );
+
+            return;
+        }
+    }
+    m_MBrainzTitleTextCtrl->SetValue( wxEmptyString );
+    m_MBrainzNumberTextCtrl->SetValue( wxEmptyString );
+}
+
+// -------------------------------------------------------------------------------- //
+int guTrackEditor::CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray * tracks )
+{
+    int RetVal = 0;
+    int Index;
+    int Count = wxMin( tracks->Count(), mbtracks->Count() );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( GetTrackLengthDiff( tracks->Item( Index ).m_Length * 1000,
+                             mbtracks->Item( Index ).m_Length ) > guMBRAINZ_MAX_TIME_DIFF )
+        {
+            RetVal++;
+        }
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzAlbumChoiceSelected( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "MusicBrainzAlbumSelected..." ) );
+    m_MBrainzCurAlbum = event.GetInt();
+    if( m_MBrainzCurAlbum >= 0 )
+    {
+        guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+        m_MBrainzArtistTextCtrl->SetValue( MBRelease->m_ArtistName );
+        m_MBrainzDateChoice->Clear();
+        m_MBrainzDateChoice->Append( MBRelease->m_Events );
+        m_MBrainzDateChoice->SetSelection( 0 );
+        UpdateMBrainzTrackInfo();
+        m_MBrainzCopyButton->Enable( true );
+        m_MBrainzAlbumTextCtrl->SetValue( MBRelease->m_Title );
+
+        // Check the number of tracks
+        wxString InfoText;
+        if( MBRelease->m_Tracks.Count() != m_Items->Count() )
+        {
+            InfoText = wxString::Format( _( "Error: The album have %u tracks and you are editing %u" ),
+                            MBRelease->m_Tracks.Count(), m_Items->Count() );
+        }
+        if( CheckTracksLengths( &MBRelease->m_Tracks, m_Items ) > 1 )
+        {
+            InfoText += _( "\n"
+                             "Warning: The length of some edited tracks don't match" );
+        }
+        m_MBrainzInfoStaticText->SetLabel( InfoText );
+    }
+    else
+    {
+        m_MBrainzCopyButton->Enable( false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzCopyButtonClicked( wxCommandEvent &event )
+{
+    guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+    int Index;
+    int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &m_Items->Item( Index );
+        guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        Track->m_ArtistName = MBTrack->m_ArtistName.IsEmpty() ? MBRelease->m_ArtistName : MBTrack->m_ArtistName;
+        Track->m_AlbumName = MBRelease->m_Title;
+        Track->m_SongName = MBTrack->m_Title;
+        Track->m_Number = MBTrack->m_Number;
+        if( m_MBrainzDateChoice->GetCount() )
+        {
+            wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_ADVANCED );
+            if( RegEx.IsValid() && RegEx.Matches( m_MBrainzDateChoice->GetStringSelection() ) && RegEx.GetMatchCount() == 1 )
+            {
+                RegEx.GetMatch( m_MBrainzDateChoice->GetStringSelection(), 0 ).ToLong( ( long * ) &Track->m_Year );
+            }
+        }
+    }
+    // Refresh the Details Window
+    ReadItemData();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event )
+{
+    guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+    int Index;
+    int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &m_Items->Item( Index );
+        guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        Track->m_ArtistName = MBTrack->m_ArtistName.IsEmpty() ? MBRelease->m_ArtistName : MBTrack->m_ArtistName;
+    }
+    // Refresh the Details Window
+    ReadItemData();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event )
+{
+    guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+    int Index;
+    int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &m_Items->Item( Index );
+        guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        Track->m_AlbumName = MBRelease->m_Title;
+    }
+    // Refresh the Details Window
+    ReadItemData();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzDateCopyButtonClicked( wxCommandEvent& event )
+{
+    guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+    int Index;
+    int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &m_Items->Item( Index );
+        guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        if( m_MBrainzDateChoice->GetCount() )
+        {
+            wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_ADVANCED );
+            if( RegEx.IsValid() && RegEx.Matches( m_MBrainzDateChoice->GetStringSelection() ) && RegEx.GetMatchCount() == 1 )
+            {
+                RegEx.GetMatch( m_MBrainzDateChoice->GetStringSelection(), 0 ).ToLong( ( long * ) &Track->m_Year );
+            }
+        }
+    }
+    // Refresh the Details Window
+    ReadItemData();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzTitleCopyButtonClicked( wxCommandEvent& event )
+{
+    guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+    int Index;
+    int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &m_Items->Item( Index );
+        guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        Track->m_SongName = MBTrack->m_Title;
+    }
+    // Refresh the Details Window
+    ReadItemData();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzNumberCopyButtonClicked( wxCommandEvent& event )
+{
+    guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+    int Index;
+    int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &m_Items->Item( Index );
+        guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        Track->m_Number = MBTrack->m_Number;
+    }
+    // Refresh the Details Window
+    ReadItemData();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBQueryClearButtonClicked( wxCommandEvent &event )
+{
+    if( m_MBQuerySetArtistEnabled )
+        m_MBQuerySetArtistEnabled = false;
+    m_MBQueryArtistTextCtrl->SetValue( wxEmptyString );
+    m_MBQueryTitleTextCtrl->SetValue( wxEmptyString );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBQueryTextCtrlChanged( wxCommandEvent& event )
+{
+    if( m_MBQuerySetArtistEnabled )
+        m_MBQuerySetArtistEnabled = false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -635,10 +1206,10 @@ void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
 // -------------------------------------------------------------------------------- //
 // guMusicBrainzMetadataThread
 // -------------------------------------------------------------------------------- //
-guMusicBrainzMetadataThread::guMusicBrainzMetadataThread( guTrackEditor * trackeditor ) : wxThread()
+guMusicBrainzMetadataThread::guMusicBrainzMetadataThread( guTrackEditor * trackeditor, int trackindex ) : wxThread()
 {
     m_TrackEditor = trackeditor;
-    m_Tracks = m_TrackEditor->m_Items;
+    m_Track = &( * m_TrackEditor->m_Items )[ trackindex ];
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -658,103 +1229,21 @@ guMusicBrainzMetadataThread::ExitCode guMusicBrainzMetadataThread::Entry()
 {
     if( !TestDestroy() )
     {
-        guMBTrackArray FoundTracks;
-        guMBTrackArray OtherTrackReleases;
+        guMBTrackArray * FoundTracks = new guMBTrackArray();
         guMusicBrainz * MusicBrainz = new guMusicBrainz();
 
-        MusicBrainz->GetTracks( &FoundTracks, &( * m_Tracks )[ 0 ] );
-
-        int CurrentTrack = 1;
-        // Check the number of Releases
-        guLogMessage( wxT( "Found 0 - %u Releases whith this puid" ), FoundTracks.Count() );
-        while( FoundTracks.Count() > 1 )
+        if( !FoundTracks || !MusicBrainz )
         {
-            OtherTrackReleases.Empty();
-
-            MusicBrainz->GetTracks( &OtherTrackReleases, &( * m_Tracks )[ CurrentTrack ] );
-
-
-            if( OtherTrackReleases.Count() )
-            {
-                int Index;
-                //int Count = FoundTracks.Count();
-                for( Index = FoundTracks.Count() - 1; Index >= 0; Index-- )
-                {
-                    if( FindMBTracksReleaseId( &OtherTrackReleases, FoundTracks[ Index ].m_ReleaseId ) == wxNOT_FOUND )
-                    {
-                        guLogMessage( wxT( "Removing Release %s" ), FoundTracks[ Index ].m_ReleaseName.c_str() );
-                        FoundTracks.RemoveAt( Index );
-                    }
-                }
-
-                guLogMessage( wxT( "Found %u - %u Releases whith this puid" ), CurrentTrack, FoundTracks.Count() );
-                //int Index = 0;
-                int Count = FoundTracks.Count();
-                for( Index = 0; Index < Count; Index++ )
-                {
-                    guLogMessage( wxT( "'%s' '%s'" ), FoundTracks[ Index ].m_ReleaseId.c_str(),
-                            FoundTracks[ Index ].m_ReleaseName.c_str() );
-                }
-            }
-
-            CurrentTrack++;
-            if( CurrentTrack >= m_Tracks->Count() )
-            {
-                break;
-            }
+            guLogError( wxT( "Could not create Musicbrainz object" ) );
+            return 0;
         }
 
-        //
-        // If there is more than one release we can allow the user to select the proper
-        //
-        if( FoundTracks.Count() )
-        {
-            guMBRelease Release;
-            MusicBrainz->GetRelease( &Release, FoundTracks[ 0 ].m_ReleaseId );
+        MusicBrainz->GetTracks( FoundTracks, m_Track, m_Track->m_Length * 1000 );
 
-            guLogMessage( wxT( "%s : %s (%u) (%u tracks)" ),
-                Release.m_ArtistName.c_str(),
-                Release.m_Title.c_str(),
-                Release.m_Year,
-                Release.m_Tracks.Count() );
-
-            if( Release.m_Tracks.Count() != m_Tracks->Count() )
-            {
-                guLogError( wxT( "The original release have %u tracks and only provided %u" ),
-                   Release.m_Tracks.Count(), m_Tracks->Count() );
-            }
-            //else
-            {
-                int Index;
-                int Count = Release.m_Tracks.Count();
-                for( Index = 0; Index < Count; Index++ )
-                {
-                    if( Index < m_Tracks->Count() )
-                    {
-                        guLogMessage( wxT( "%u - %s - %s  %u : %u %s" ),
-                            Index + 1,
-                            Release.m_Tracks[ Index ].m_ArtistName.IsEmpty() ?
-                                Release.m_ArtistName.c_str() :
-                                Release.m_Tracks[ Index ].m_ArtistName.c_str(),
-                            Release.m_Tracks[ Index ].m_Title.c_str(),
-                            Release.m_Tracks[ Index ].m_Length,
-                            ( * m_Tracks )[ Index ].m_Length * 1000,
-                            abs( Release.m_Tracks[ Index ].m_Length -
-                            ( ( * m_Tracks )[ Index ].m_Length * 1000 ) ) > 3000 ? wxT( "*" ) : wxT( "" ) );
-                    }
-                    else
-                    {
-                        guLogMessage( wxT( "%u - %s - %s  %u : nope" ),
-                            Index + 1,
-                            Release.m_Tracks[ Index ].m_ArtistName.IsEmpty() ?
-                                Release.m_ArtistName.c_str() :
-                                Release.m_Tracks[ Index ].m_ArtistName.c_str(),
-                            Release.m_Tracks[ Index ].m_Title.c_str(),
-                            Release.m_Tracks[ Index ].m_Length );
-                    }
-                }
-            }
-        }
+        wxCommandEvent event( guTrackEditEvent, guTRACKEDIT_EVENT_MBRAINZ_TRACKS );
+        event.SetClientData( FoundTracks );
+        wxPostEvent( m_TrackEditor, event );
+        guLogMessage( wxT( "The event was sent..." ) );
 
         delete MusicBrainz;
     }

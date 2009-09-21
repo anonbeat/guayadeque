@@ -81,7 +81,10 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_search,
     guIMAGE_INDEX_search_engine,
     guIMAGE_INDEX_musicbrainz,
-    guImage_INDEX_tiny_edit_copy
+    guIMAGE_INDEX_tiny_edit_copy,
+    guIMAGE_INDEX_tiny_search_again,
+    guIMAGE_INDEX_tiny_numerate,
+    guIMAGE_INDEX_tiny_edit_clear
 };
 
 

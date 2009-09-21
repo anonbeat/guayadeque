@@ -369,7 +369,7 @@ void guMusicDns::SetXmlDoc( const wxString &xmldoc )
 {
     int EndPos = xmldoc.Find( wxT( "</metadata>" ) ) + 11;
     m_XmlDoc = xmldoc.Mid( 0, EndPos );
-    guLogMessage( wxT( "XmlDoc:\n%s" ), m_XmlDoc.c_str() );
+    //guLogMessage( wxT( "XmlDoc:\n%s" ), m_XmlDoc.c_str() );
     if( !m_XmlDoc.IsEmpty() )
         DoParseXmlDoc();
     else
@@ -390,7 +390,7 @@ void guMusicDns::SetPUID( const wxString &puid )
     {
         CancelSearch();
     }
-    guLogMessage( wxT( "Calling FoundPUID..." ) );
+    //guLogMessage( wxT( "Calling FoundPUID..." ) );
     m_MusicBrainz->FoundPUID( m_PUID );
 }
 
@@ -455,7 +455,7 @@ bool guMusicDns::DoGetMetadata( void )
         wxString::Format( wxT( "%u" ), m_Track->m_Year ).c_str() );
 
 
-    guLogMessage( wxT( guMUSICDNS_BASEURL ) wxT( "%s" ), HtmlData.c_str() );
+    //guLogMessage( wxT( guMUSICDNS_BASEURL ) wxT( "%s" ), HtmlData.c_str() );
     wxCurlHTTP  http;
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: text/html" ) );
@@ -485,7 +485,7 @@ bool guMusicDns::ReadTrackInfo( wxXmlNode * XmlNode )
 //        </puid-list>
 //      </track>
 //    </metadata>
-    if( XmlNode->GetName() == wxT( "track" ) )
+    if( XmlNode && XmlNode->GetName() == wxT( "track" ) )
     {
         XmlNode = XmlNode->GetChildren();
         while( XmlNode )

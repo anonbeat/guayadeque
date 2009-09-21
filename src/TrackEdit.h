@@ -22,6 +22,7 @@
 #define TRACKEDIT_H
 
 #include "DbLibrary.h"
+#include "MusicBrainz.h"
 #include "RatingCtrl.h"
 
 #include <wx/wx.h>
@@ -31,6 +32,9 @@
 
 WX_DEFINE_ARRAY_PTR( wxImage *, guImagePtrArray );
 
+extern const wxEventType guTrackEditEvent;
+#define guTRACKEDIT_EVENT_MBRAINZ_TRACKS        1000
+
 class guTrackEditor;
 
 // -------------------------------------------------------------------------------- //
@@ -38,10 +42,10 @@ class guMusicBrainzMetadataThread : public wxThread
 {
   protected :
     guTrackEditor * m_TrackEditor;
-    guTrackArray * m_Tracks;
+    guTrack *       m_Track;
 
   public :
-    guMusicBrainzMetadataThread( guTrackEditor * trackeditor );
+    guMusicBrainzMetadataThread( guTrackEditor * trackeditor, int trackindex );
     ~guMusicBrainzMetadataThread();
 
     virtual ExitCode Entry();
@@ -54,11 +58,17 @@ class guMusicBrainzMetadataThread : public wxThread
 class guTrackEditor : public wxDialog
 {
   private:
-    guTrackArray *                  m_Items;
-    guImagePtrArray *               m_Images;
-    int                             m_CurItem;
-    DbLibrary *                     m_Db;
-    guMusicBrainzMetadataThread *   m_MusicBrainzThread;
+    guTrackArray *      m_Items;
+    guImagePtrArray *   m_Images;
+    int                 m_CurItem;
+    DbLibrary *         m_Db;
+    guMBTrackArray *    m_MBrainzAlbums;
+    guMBReleaseArray *  m_MBrainzReleases;
+    int                 m_MBrainzCurTrack;
+    int                 m_MBrainzCurAlbum;
+	wxColor             m_NormalColor;
+	wxColor             m_ErrorColor;
+
 
   protected:
     wxSplitterWindow *  m_SongListSplitter;
@@ -77,6 +87,7 @@ class guTrackEditor : public wxDialog
     wxTextCtrl *        m_YearTextCtrl;
     wxBitmapButton *    m_RaCopyButton;
     guRating *          m_Rating;
+    wxStaticText *      m_DetailInfoStaticText;
 
     wxStaticBitmap *    m_PictureBitmap;
     wxBitmapButton *    m_AddPicButton;
@@ -87,8 +98,37 @@ class guTrackEditor : public wxDialog
     int                 m_RatingStartY;
     int                 m_RatingStart;
     bool                m_RatingChanged;
-    wxBitmapButton *    m_MusicBrainzButton;
+    //wxBitmapButton *    m_MusicBrainzButton;
 
+    guMusicBrainzMetadataThread *   m_MBrainzThread;
+    wxChoice *          m_MBrainzAlbumChoice;
+    wxBitmapButton *    m_MBrainzAddButton;
+    wxBitmapButton *    m_MBrainzCopyButton;
+
+
+	wxTextCtrl *        m_MBQueryArtistTextCtrl;
+    wxTextCtrl *        m_MBQueryTitleTextCtrl;
+    wxBitmapButton *    m_MBQueryClearButton;
+    bool                m_MBQuerySetArtistEnabled;
+
+	wxStaticText *      m_MBrainzArtistStaticText;
+    wxTextCtrl *        m_MBrainzArtistTextCtrl;
+    wxBitmapButton *    m_MBrainzArCopyButton;
+    wxStaticText *      m_MBrainzAlbumStaticText;
+    wxTextCtrl *        m_MBrainzAlbumTextCtrl;
+    wxBitmapButton *    m_MBrainzAlCopyButton;
+    wxStaticText *      m_MBrainzDateStaticText;
+    wxChoice *          m_MBrainzDateChoice;
+    wxBitmapButton *    m_MBrainzDaCopyButton;
+    wxStaticText *      m_MBrainzTitleStaticText;
+    wxTextCtrl *        m_MBrainzTitleTextCtrl;
+    wxBitmapButton *    m_MBrainzTiCopyButton;
+    wxStaticText *      m_MBrainzLengthStaticText;
+    wxTextCtrl *        m_MBrainzLengthTextCtrl;
+    wxStaticText *      m_MBrainzNumberStaticText;
+    wxTextCtrl *        m_MBrainzNumberTextCtrl;
+    wxStaticText *      m_MBrainzInfoStaticText;
+    wxBitmapButton *    m_MBrainzNuCopyButton;
 
     // Event handlers, overide them in your derived class
     void OnSongListBoxSelected( wxCommandEvent &event );
@@ -99,12 +139,27 @@ class guTrackEditor : public wxDialog
     void OnGeCopyButtonClicked( wxCommandEvent &event );
     void OnYeCopyButtonClicked( wxCommandEvent &event );
     void OnRaCopyButtonClicked( wxCommandEvent &event );
-    void OnMusicBrainzButtonClicked( wxCommandEvent &event );
+
+    void OnMBrainzAddButtonClicked( wxCommandEvent &event );
+    void OnMBrainzAlbumsFound( wxCommandEvent &event );
+    void OnMBrainzAlbumChoiceSelected( wxCommandEvent &event );
+
+    void OnMBrainzCopyButtonClicked( wxCommandEvent &event );
+
+	void OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event );
+	void OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event );
+	void OnMBrainzDateCopyButtonClicked( wxCommandEvent& event );
+	void OnMBrainzTitleCopyButtonClicked( wxCommandEvent& event );
+	void OnMBrainzNumberCopyButtonClicked( wxCommandEvent& event );
+
+
+    void OnMBQueryClearButtonClicked( wxCommandEvent &event );
+	void OnMBQueryTextCtrlChanged( wxCommandEvent& event );
+
 
     void ReadItemData( void );
     void WriteItemData( void );
 
-    void OnButton( wxCommandEvent& event );
     void SongListSplitterOnIdle( wxIdleEvent& );
 
     void RefreshImage( void );
@@ -116,6 +171,9 @@ class guTrackEditor : public wxDialog
     void OnRatingChanged( guRatingEvent &event );
 
     void FinishedMusicBrainzSearch( void );
+    int  FindMBrainzReleaseId( const wxString releaseid );
+    void UpdateMBrainzTrackInfo( void );
+    int  CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray * tracks );
 
 public:
     guTrackEditor( wxWindow * parent, DbLibrary * Db, guTrackArray * Songs, guImagePtrArray * m_Images );

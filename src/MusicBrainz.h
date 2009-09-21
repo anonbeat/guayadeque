@@ -29,6 +29,9 @@
 #include <wx/thread.h>
 #include <wx/xml/xml.h>
 
+#define GetTrackLengthDiff( time1, time2 )      abs( time1 - time2 )
+#define guMBRAINZ_MAX_TIME_DIFF                 3000
+
 // -------------------------------------------------------------------------------- //
 class guMBTrack
 {
@@ -40,6 +43,10 @@ class guMBTrack
     wxString        m_ArtistName;
     wxString        m_ReleaseId;
     wxString        m_ReleaseName;
+    int             m_Number;
+
+    guMBTrack() { m_Length = 0; m_Number = 0; }
+
 };
 WX_DECLARE_OBJARRAY( guMBTrack, guMBTrackArray );
 
@@ -53,7 +60,7 @@ class guMBRelease
     wxString        m_Title;
     wxString        m_ArtistId;
     wxString        m_ArtistName;
-    int             m_Year;
+    wxArrayString   m_Events;
     guMBTrackArray  m_Tracks;
 };
 WX_DECLARE_OBJARRAY( guMBRelease, guMBReleaseArray );
@@ -69,11 +76,11 @@ class guMusicBrainz
     guMusicBrainz();
     ~guMusicBrainz();
 
-    void GetTracks( guMBTrackArray * mbtracks, const wxString &trackpuid );
-    void GetTracks( guMBTrackArray * mbtracks, const guTrack * track );
+    void GetTracks( guMBTrackArray * mbtracks, const wxString &trackpuid, int tracklength = wxNOT_FOUND );
+    void GetTracks( guMBTrackArray * mbtracks, const guTrack * track, int tracklength = wxNOT_FOUND );
 
     void GetRelease( guMBRelease * mbrelease, const wxString &releaseid );
-
+    void GetReleases( guMBReleaseArray * mbreleases, const wxString &artist, const wxString &title );
     //void GetTracksMetadata( guTrackArray * tracks );
 
     void FoundPUID( const wxString &puid ); // Method called from MusicDns
