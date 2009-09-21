@@ -546,7 +546,7 @@ void guDynPlayListEditor::OnFiltersSelected( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::OnFilterFieldSelected( wxCommandEvent &event )
 {
-    int FilterType = m_FilterFieldChoice->GetSelection();
+    int FilterType = event.GetInt();
 
     m_FilterText->SetValue( wxEmptyString );
     m_LengthHours->SetValue( 0 );

@@ -40,6 +40,8 @@
 #define guMUSICBRAINZ_URL_TAG                   guMUSICBRAINZ_URL_BASE "tag/?type=xml"
 #define guMUSICBRAINZ_URL_RATING                guMUSICBRAINZ_URL_BASE "rating/?type=xml"
 
+#define guMUSICBRAINZ_URL_RELEASE_BY_TEXT       guMUSICBRAINZ_URL_BASE "release/?type=xml&artist=%s&title=%s"
+
 WX_DEFINE_OBJARRAY( guMBTrackArray );
 WX_DEFINE_OBJARRAY( guMBReleaseArray );
 
@@ -92,6 +94,23 @@ void ReadXmlTrackRelease( wxXmlNode * XmlNode, guMBTrack * track )
 }
 
 // -------------------------------------------------------------------------------- //
+int GetXmlTrackLength( wxXmlNode * XmlNode )
+{
+    wxASSERT( XmlNode );
+    while( XmlNode )
+    {
+        if( XmlNode->GetName() == wxT( "duration" ) )
+        {
+            int RetVal;
+            XmlNode->GetNodeContent().ToLong( ( long int * ) &RetVal );
+            return RetVal;
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
 void ReadXmlTrack( wxXmlNode * XmlNode, guMBTrack * track )
 {
     while( XmlNode )
@@ -117,30 +136,40 @@ void ReadXmlTrack( wxXmlNode * XmlNode, guMBTrack * track )
     }
 }
 
+
 // -------------------------------------------------------------------------------- //
-void ReadXmlTracks( wxXmlNode * XmlNode, guMBTrackArray * tracks )
+void ReadXmlTracks( wxXmlNode * XmlNode, guMBTrackArray * tracks, int filterlength = wxNOT_FOUND );
+void ReadXmlTracks( wxXmlNode * XmlNode, guMBTrackArray * tracks, int filterlength  )
 {
     wxASSERT( XmlNode );
     wxASSERT( tracks );
 
+    int TrackNum = 1;
     while( XmlNode && XmlNode->GetName() == wxT( "track" ) )
     {
-        guMBTrack * Track = new guMBTrack();
-        wxASSERT( Track );
-        XmlNode->GetPropVal( wxT( "id" ), &Track->m_Id );
-        ReadXmlTrack( XmlNode->GetChildren(), Track );
-        tracks->Add( Track );
+        // We filter the tracks by the lengths so if the difference of the
+        // tracks is bigger than 3 secs we discard them
+//        if( filterlength == wxNOT_FOUND ||
+//            GetTrackLengthDiff( filterlength, GetXmlTrackLength( XmlNode->GetChildren() ) ) > guMDNS_MAX_TIME_DIFF )
+        {
+            guMBTrack * Track = new guMBTrack();
+            wxASSERT( Track );
+            XmlNode->GetPropVal( wxT( "id" ), &Track->m_Id );
+            Track->m_Number = TrackNum;
+            ReadXmlTrack( XmlNode->GetChildren(), Track );
+            tracks->Add( Track );
+            TrackNum++;
+        }
         XmlNode = XmlNode->GetNext();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const guTrack * track )
+void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const guTrack * track, int tracklength )
 {
     wxASSERT( mbtracks );
     wxASSERT( track );
 
-    guLogMessage( wxT( "GetTracks..." ) );
     guMusicDns * MusicDns = new guMusicDns( this );
     if( MusicDns )
     {
@@ -148,7 +177,7 @@ void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const guTrack * track 
 
         m_ReceivedPUId = false;
 
-        guLogMessage( wxT( "IsOk: %u   ReceivedPUID: %u" ), MusicDns->IsOk(), m_ReceivedPUId );
+        //guLogMessage( wxT( "IsOk: %u   ReceivedPUID: %u" ), MusicDns->IsOk(), m_ReceivedPUId );
 
         while( MusicDns->IsOk() )
         {
@@ -159,8 +188,8 @@ void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const guTrack * track 
 
         if( m_ReceivedPUId )
         {
-            guLogMessage( wxT( "IsOk: %u   ReceivedPUID: %u" ), MusicDns->IsOk(), m_ReceivedPUId );
-           GetTracks( mbtracks, MusicDns->GetPUID() );
+            //guLogMessage( wxT( "IsOk: %u   ReceivedPUID: %u" ), MusicDns->IsOk(), m_ReceivedPUId );
+            GetTracks( mbtracks, MusicDns->GetPUID(), tracklength );
         }
         else
         {
@@ -174,7 +203,7 @@ void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const guTrack * track 
 }
 
 // -------------------------------------------------------------------------------- //
-void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const wxString &trackpuid )
+void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const wxString &trackpuid, int tracklength )
 {
     if( trackpuid.IsEmpty() )
     {
@@ -186,7 +215,7 @@ void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const wxString &trackp
     wxString QueryUrl = wxString::Format( wxT( guMUSICBRAINZ_URL_TRACK
                 "&puid=%s&releasetype=official" ), trackpuid.c_str() );
 
-    guLogMessage( wxT( "MusicBrainz: %s" ), QueryUrl.c_str() );
+    //guLogMessage( wxT( "MusicBrainz: %s" ), QueryUrl.c_str() );
 
     wxCurlHTTP  http;
     char *      Buffer = NULL;
@@ -205,7 +234,7 @@ void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const wxString &trackp
     wxString Content = wxString( Buffer, wxConvUTF8 );
     free( Buffer );
 
-    guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+    //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
 
     if( Content.Length() )
     {
@@ -217,7 +246,7 @@ void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const wxString &trackp
             XmlNode = XmlNode->GetChildren();
             if( XmlNode && XmlNode->GetName() == wxT( "track-list" ) )
             {
-                ReadXmlTracks( XmlNode->GetChildren(), mbtracks );
+                ReadXmlTracks( XmlNode->GetChildren(), mbtracks, tracklength );
             }
         }
     }
@@ -232,14 +261,19 @@ void guMusicBrainz::FoundPUID( const wxString &puid )
 // -------------------------------------------------------------------------------- //
 void ReadXmlReleaseYear( wxXmlNode * XmlNode, guMBRelease * mbrelease )
 {
-    while( XmlNode->GetName() == wxT( "event" ) )
+    while( XmlNode && XmlNode->GetName() == wxT( "event" ) )
     {
-        wxString Year;
-        XmlNode->GetPropVal( wxT( "date" ), &Year );
-        if( !Year.IsEmpty() )
+        wxString Event;
+        wxString Value;
+        XmlNode->GetPropVal( wxT( "date" ), &Value );
+        if( !Value.IsEmpty() )
         {
-            Year.ToULong( ( unsigned long * ) &mbrelease->m_Year );
-                return;
+            Event += Value;
+            XmlNode->GetPropVal( wxT( "country" ), &Value );
+            Event += wxT( " : " ) + Value;
+            XmlNode->GetPropVal( wxT( "format" ), &Value );
+            Event += wxT( " : " ) + Value;
+            mbrelease->m_Events.Add( Event );
         }
         XmlNode = XmlNode->GetNext();
     }
@@ -272,14 +306,30 @@ void ReadXmlRelease( wxXmlNode * XmlNode, guMBRelease * mbrelease )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMusicBrainz::GetRelease( guMBRelease * mbrelease, const wxString &releaseid )
+void ReadXmlReleases( wxXmlNode * XmlNode, guMBReleaseArray * mbreleases )
+{
+    while( XmlNode && XmlNode->GetName() == wxT( "release" ) )
+    {
+        guMBRelease * MBRelease = new guMBRelease();
+        XmlNode->GetPropVal( wxT( "id" ), &MBRelease->m_Id );
+        //guLogMessage( wxT( "Release found %s" ), MBRelease->m_Id.c_str() );
+        ReadXmlRelease( XmlNode->GetChildren(), MBRelease );
+        mbreleases->Add( MBRelease );
+        //delete MBRelease;
+
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMusicBrainz::GetReleases( guMBReleaseArray * mbreleases, const wxString &artist, const wxString &title )
 {
     wxASSERT( mbrelease );
-    wxString QueryUrl = wxString::Format( wxT( guMUSICBRAINZ_URL_RELEASE_ID
-                "&inc=tracks+artist+release-events" ), releaseid.c_str() );
+    wxString QueryUrl = wxString::Format( wxT( guMUSICBRAINZ_URL_RELEASE_BY_TEXT
+                "&releasetypes=Official" ),
+                guURLEncode( artist ).c_str(), guURLEncode( title ).c_str() );
 
-    guLogMessage( wxT( "GetRelease: %s" ), QueryUrl.c_str() );
-
+    //guLogMessage( wxT( "GetRelease: %s" ), QueryUrl.c_str() );
     wxCurlHTTP  http;
     char *      Buffer = NULL;
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
@@ -295,8 +345,47 @@ void guMusicBrainz::GetRelease( guMBRelease * mbrelease, const wxString &release
     wxString Content = wxString( Buffer, wxConvUTF8 );
     free( Buffer );
 
-    guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+    //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+    if( Content.Length() )
+    {
+        wxStringInputStream ins( Content );
+        wxXmlDocument XmlDoc( ins );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        if( XmlNode && ( XmlNode->GetName() == wxT( "metadata" ) ) )
+        {
+            XmlNode = XmlNode->GetChildren();
+            if( XmlNode && XmlNode->GetName() == wxT( "release-list" ) )
+            {
+                ReadXmlReleases( XmlNode->GetChildren(), mbreleases );
+            }
+        }
+    }
+}
 
+// -------------------------------------------------------------------------------- //
+void guMusicBrainz::GetRelease( guMBRelease * mbrelease, const wxString &releaseid )
+{
+    wxASSERT( mbrelease );
+    wxString QueryUrl = wxString::Format( wxT( guMUSICBRAINZ_URL_RELEASE_ID
+                "&inc=tracks+artist+release-events" ), releaseid.c_str() );
+
+    //guLogMessage( wxT( "GetRelease: %s" ), QueryUrl.c_str() );
+    wxCurlHTTP  http;
+    char *      Buffer = NULL;
+    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "Accept: text/html" ) );
+    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.Get( Buffer, QueryUrl );
+    if( !Buffer )
+    {
+        guLogError( wxT( "Got no data from MusicBrainz GetRelease" ) );
+        return;
+    }
+
+    wxString Content = wxString( Buffer, wxConvUTF8 );
+    free( Buffer );
+
+    //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
     if( Content.Length() )
     {
         wxStringInputStream ins( Content );
