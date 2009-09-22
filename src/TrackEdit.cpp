@@ -415,7 +415,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
     m_ErrorColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
 	m_MBrainzThread = NULL;
 	m_MBrainzAlbums = NULL;
-	m_MBrainzReleases = NULL;
+	m_MBrainzReleases = new guMBReleaseArray();
 	m_MBrainzCurTrack = 0;
 	m_MBrainzCurAlbum = wxNOT_FOUND;
 	m_MBQuerySetArtistEnabled = true;
@@ -879,7 +879,7 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
         m_MBrainzAddButton->Enable( false );
         m_MBrainzThread = new guMusicBrainzMetadataThread( this, m_MBrainzCurTrack );
         m_MBrainzCurTrack++;
-        guLogMessage( wxT( "Albums search thread created" ) );
+        //guLogMessage( wxT( "Albums search thread created" ) );
     }
 }
 
@@ -888,10 +888,10 @@ int guTrackEditor::FindMBrainzReleaseId( const wxString releaseid )
 {
     int Index;
     int Count;
-    if( !m_MBrainzReleases )
-    {
-        m_MBrainzReleases = new guMBReleaseArray();
-    }
+//    if( !m_MBrainzReleases )
+//    {
+//        m_MBrainzReleases = new guMBReleaseArray();
+//    }
     if( ( Count = m_MBrainzReleases->Count() ) )
     {
         for( Index = 0; Index < Count; Index++ )
@@ -908,7 +908,7 @@ int guTrackEditor::FindMBrainzReleaseId( const wxString releaseid )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzAlbumsFound( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "OnMBrainzAlbumsFound..." ) );
+    //guLogMessage( wxT( "OnMBrainzAlbumsFound..." ) );
     //
     guMBTrackArray * Tracks = ( guMBTrackArray * ) event.GetClientData();
     if( Tracks )
@@ -1033,7 +1033,7 @@ int guTrackEditor::CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray *
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzAlbumChoiceSelected( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "MusicBrainzAlbumSelected..." ) );
+    //guLogMessage( wxT( "MusicBrainzAlbumSelected..." ) );
     m_MBrainzCurAlbum = event.GetInt();
     if( m_MBrainzCurAlbum >= 0 )
     {
@@ -1069,6 +1069,9 @@ void guTrackEditor::OnMBrainzAlbumChoiceSelected( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzCopyButtonClicked( wxCommandEvent &event )
 {
+    if( !( m_MBrainzReleases && m_MBrainzReleases->Count() && m_MBrainzCurAlbum >= 0 ) )
+        return;
+
     guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
     int Index;
     int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
@@ -1096,6 +1099,8 @@ void guTrackEditor::OnMBrainzCopyButtonClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event )
 {
+    if( !( m_MBrainzReleases && m_MBrainzReleases->Count() && m_MBrainzCurAlbum >= 0 ) )
+        return;
     guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
     int Index;
     int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
@@ -1112,6 +1117,8 @@ void guTrackEditor::OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event )
 {
+    if( !( m_MBrainzReleases && m_MBrainzReleases->Count() && m_MBrainzCurAlbum >= 0 ) )
+        return;
     guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
     int Index;
     int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
@@ -1128,6 +1135,8 @@ void guTrackEditor::OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzDateCopyButtonClicked( wxCommandEvent& event )
 {
+    if( !( m_MBrainzReleases && m_MBrainzReleases->Count() && m_MBrainzCurAlbum >= 0 ) )
+        return;
     guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
     int Index;
     int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
@@ -1151,6 +1160,8 @@ void guTrackEditor::OnMBrainzDateCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzTitleCopyButtonClicked( wxCommandEvent& event )
 {
+    if( !( m_MBrainzReleases && m_MBrainzReleases->Count() && m_MBrainzCurAlbum >= 0 ) )
+        return;
     guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
     int Index;
     int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
@@ -1167,6 +1178,8 @@ void guTrackEditor::OnMBrainzTitleCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzNumberCopyButtonClicked( wxCommandEvent& event )
 {
+    if( !( m_MBrainzReleases && m_MBrainzReleases->Count() && m_MBrainzCurAlbum >= 0 ) )
+        return;
     guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
     int Index;
     int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
@@ -1243,7 +1256,7 @@ guMusicBrainzMetadataThread::ExitCode guMusicBrainzMetadataThread::Entry()
         wxCommandEvent event( guTrackEditEvent, guTRACKEDIT_EVENT_MBRAINZ_TRACKS );
         event.SetClientData( FoundTracks );
         wxPostEvent( m_TrackEditor, event );
-        guLogMessage( wxT( "The event was sent..." ) );
+        //guLogMessage( wxT( "The event was sent..." ) );
 
         delete MusicBrainz;
     }
