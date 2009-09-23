@@ -11311,7 +11311,7 @@
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">1</property>
-                    <object class="wxSplitterWindow" expanded="1">
+                    <object class="wxSplitterWindow" expanded="0">
                         <property name="bg"></property>
                         <property name="context_help"></property>
                         <property name="enabled">1</property>
@@ -11406,7 +11406,7 @@
                                 <event name="OnSetFocus"></event>
                                 <event name="OnSize"></event>
                                 <event name="OnUpdateUI"></event>
-                                <object class="wxBoxSizer" expanded="1">
+                                <object class="wxBoxSizer" expanded="0">
                                     <property name="minimum_size"></property>
                                     <property name="name">SongsMainSizer</property>
                                     <property name="orient">wxVERTICAL</property>
@@ -11523,7 +11523,7 @@
                                 <event name="OnSetFocus"></event>
                                 <event name="OnSize"></event>
                                 <event name="OnUpdateUI"></event>
-                                <object class="wxBoxSizer" expanded="1">
+                                <object class="wxBoxSizer" expanded="0">
                                     <property name="minimum_size"></property>
                                     <property name="name">DetailMainSizer</property>
                                     <property name="orient">wxVERTICAL</property>
@@ -11754,7 +11754,7 @@
                                                                     </object>
                                                                 </object>
                                                                 <object class="sizeritem" expanded="1">
-                                                                    <property name="border">10</property>
+                                                                    <property name="border">5</property>
                                                                     <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT</property>
                                                                     <property name="proportion">1</property>
                                                                     <object class="wxTextCtrl" expanded="1">
@@ -11917,7 +11917,7 @@
                                                                     </object>
                                                                 </object>
                                                                 <object class="sizeritem" expanded="1">
-                                                                    <property name="border">10</property>
+                                                                    <property name="border">5</property>
                                                                     <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT</property>
                                                                     <property name="proportion">0</property>
                                                                     <object class="wxTextCtrl" expanded="1">
@@ -12080,7 +12080,7 @@
                                                                     </object>
                                                                 </object>
                                                                 <object class="sizeritem" expanded="1">
-                                                                    <property name="border">10</property>
+                                                                    <property name="border">5</property>
                                                                     <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT</property>
                                                                     <property name="proportion">0</property>
                                                                     <object class="wxTextCtrl" expanded="1">
@@ -12406,7 +12406,7 @@
                                                                     </object>
                                                                 </object>
                                                                 <object class="sizeritem" expanded="1">
-                                                                    <property name="border">10</property>
+                                                                    <property name="border">5</property>
                                                                     <property name="flag">wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT</property>
                                                                     <property name="proportion">0</property>
                                                                     <object class="wxTextCtrl" expanded="1">
@@ -12796,7 +12796,7 @@
                                                                 <property name="font"></property>
                                                                 <property name="hidden">0</property>
                                                                 <property name="id">wxID_ANY</property>
-                                                                <property name="label">Type&#x09;: mp3&#x0A;BitRate&#x09;: 160 kbps&#x0A;Length&#x09;: 04:09&#x0A;FileSize&#x09;: 4.9 Mbytes</property>
+                                                                <property name="label">File Type&#x09;: mp3&#x0A;BitRate&#x09;: 160 kbps&#x0A;Length&#x09;: 04:09&#x0A;FileSize&#x09;: 4.9 Mbytes</property>
                                                                 <property name="maximum_size"></property>
                                                                 <property name="minimum_size"></property>
                                                                 <property name="name">m_DetailInfoStaticText</property>
@@ -13275,7 +13275,7 @@
                                                 <property name="bitmap"></property>
                                                 <property name="label">MusicBrainz</property>
                                                 <property name="select">1</property>
-                                                <object class="wxPanel" expanded="1">
+                                                <object class="wxPanel" expanded="0">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
                                                     <property name="enabled">1</property>

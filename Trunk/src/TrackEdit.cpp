@@ -835,7 +835,10 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
         wxASSERT( Releases );
         wxASSERT( MusicBrainz );
 
+        wxSetCursor( * wxHOURGLASS_CURSOR );
         m_MBrainzAddButton->Enable( false );
+        wxTheApp->Yield();
+
         MusicBrainz->GetReleases( Releases, m_MBQueryArtistTextCtrl->GetValue(), m_MBQueryTitleTextCtrl->GetValue() );
 
         if( m_MBrainzReleases && m_MBrainzReleases->Count() )
@@ -870,12 +873,14 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
             wxTheApp->Yield();
         }
         m_MBrainzAddButton->Enable( true );
+        wxSetCursor( * wxSTANDARD_CURSOR );
 
         delete MusicBrainz;
         delete Releases;
     }
     else if( m_MBrainzCurTrack < m_Items->Count() )
     {
+        wxSetCursor( *wxHOURGLASS_CURSOR );
         m_MBrainzAddButton->Enable( false );
         m_MBrainzThread = new guMusicBrainzMetadataThread( this, m_MBrainzCurTrack );
         m_MBrainzCurTrack++;
@@ -949,6 +954,7 @@ void guTrackEditor::OnMBrainzAlbumsFound( wxCommandEvent &event )
 
         delete Tracks;
     }
+    wxSetCursor( *wxSTANDARD_CURSOR );
 }
 
 // -------------------------------------------------------------------------------- //
