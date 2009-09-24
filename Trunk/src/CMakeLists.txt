@@ -228,6 +228,8 @@ ADD_EXECUTABLE( guayadeque
 	MusicDns.h
 	MusicBrainz.cpp
 	MusicBrainz.h
+	PodcastsPanel.cpp
+	PodcastsPanel.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
