@@ -115,6 +115,10 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
 	m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
 
+    // Podcast Page
+    m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db );
+    m_CatNotebook->AddPage( m_PodcastsPanel, _( "Podcasts" ), false );
+
     // FileSystem Page
 //	FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 //	CatNotebook->AddPage( FileSysPanel, wxT("FileSystem"), false );

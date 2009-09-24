@@ -1059,7 +1059,7 @@ void guTrackEditor::OnMBrainzAlbumChoiceSelected( wxCommandEvent &event )
             InfoText = wxString::Format( _( "Error: The album have %u tracks and you are editing %u" ),
                             MBRelease->m_Tracks.Count(), m_Items->Count() );
         }
-        if( CheckTracksLengths( &MBRelease->m_Tracks, m_Items ) > 1 )
+        if( CheckTracksLengths( &MBRelease->m_Tracks, m_Items ) )
         {
             InfoText += _( "\n"
                              "Warning: The length of some edited tracks don't match" );
