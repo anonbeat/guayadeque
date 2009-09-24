@@ -880,7 +880,7 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
     }
     else if( m_MBrainzCurTrack < m_Items->Count() )
     {
-        wxSetCursor( *wxHOURGLASS_CURSOR );
+        wxSetCursor( * wxHOURGLASS_CURSOR );
         m_MBrainzAddButton->Enable( false );
         m_MBrainzThread = new guMusicBrainzMetadataThread( this, m_MBrainzCurTrack );
         m_MBrainzCurTrack++;
