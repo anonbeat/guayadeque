@@ -39,8 +39,10 @@ WX_DEFINE_OBJARRAY(guAlbumItems);
 WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
+WX_DEFINE_OBJARRAY(guPodcastChannelArray);
+WX_DEFINE_OBJARRAY(guPodcastItemArray);
 
-#define GU_CURRENT_DBVERSION    "5"
+#define GU_CURRENT_DBVERSION    "6"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
                "song_number, song_pathid, song_filename, song_year, "\
@@ -483,14 +485,6 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS Version( version INTEGER );" ) );
     }
 
-//    case 5 :
-//    {
-//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS lyrics( lyric_id INTEGER PRIMARY KEY AUTOINCREMENT, lyric_artist VARCHAR(255), lyric_title VARCHAR(255), lyric_text VARCHAR );" ) );
-//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'lyric_id' on lyrics (lyric_id ASC);" ) );
-//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'lyric_artist' on lyrics (lyric_artist ASC);" ) );
-//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'lyric_title' on lyrics (lyric_title ASC);" ) );
-//    }
-
     case 0 :
     {
       // the database is going to be created... Reset the last update
@@ -624,9 +618,29 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_id' on radiosetlabels (radiosetlabel_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_labelid' on radiosetlabels (radiosetlabel_labelid ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_stationidid' on radiosetlabels (radiosetlabel_stationid ASC);" ) );
+    }
 
+    case 5 :
+    {
+        guLogMessage( wxT( "Updating database version to 6" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastchs( podcastch_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "podcastch_url VARCHAR, podcastch_title VARCHAR, podcastch_description VARCHAR, "
+                      "podcastch_language VARCHAR, podcastch_time INTEGER, podcastch_sumary VARCHAR, "
+                      "podcastch_author VARCHAR, podcastch_ownername VARCHAR, podcastch_owneremail VARCHAR, "
+                      "podcastch_category VARCHAR, podcastch_image VARCHAR );" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_title' on podcastchs(podcastch_title ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_language' on podcastchs(podcastch_language ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_time' on podcastchs(podcastch_time ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_category' on podcastchs(podcastch_category ASC);" ) );
+
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastitems( podcastitem_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "podcastitem_chid INTEGER, podcastitem_title VARCHAR, podcastitem_description VARCHAR, "
+                      "podcastitem_time INTEGER, podcastitem_url VARCHAR, podcastitem_file VARCHAR, "
+                      "podcastitem_length INTEGER );" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
+      query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
-      break;
     }
   }
 
@@ -4465,6 +4479,29 @@ bool DbLibrary::CreateLyric( const wxString &artist, const wxString &trackname, 
                                  Artist.c_str(), TrackName.c_str(), Text.c_str() );
 
   return ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
+               "podcastch_language, podcastch_time, podcastch_sumary, "
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+               "podcastch_category, podcastch_image "
+               "FROM podcastchs" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastChannel * Channel = new guPodcastChannel();
+    channels->Add( Channel );
+  }
+  dbRes.Finalize();
+  return channels->Count();
 }
 
 // -------------------------------------------------------------------------------- //
