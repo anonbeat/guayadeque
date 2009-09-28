@@ -172,5 +172,7 @@
 #define ID_PLAYLIST_COPYTO              1186
 #define ID_PLAYLIST_UPDATED             1187
 
+#define ID_PODCASTS_ADD                 1190
+
 #endif
 // -------------------------------------------------------------------------------- //

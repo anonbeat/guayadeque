@@ -91,6 +91,8 @@ class guPodcastPanel : public wxPanel
     wxStaticText *      m_DetailItemDateText;
     wxStaticText *      m_DetailItemLengthText;
 
+    void AddChannel( wxCommandEvent &event );
+
 public:
     guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
     ~guPodcastPanel();

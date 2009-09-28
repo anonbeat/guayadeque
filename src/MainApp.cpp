@@ -58,6 +58,7 @@ guMainApp::guMainApp() : wxApp()
         guLogMessage( wxT( "Created the default configuration file" ) );
     }
 
+
     m_Config = new guConfig();
     guConfig::Set( m_Config );
 }
