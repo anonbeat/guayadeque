@@ -4505,3 +4505,61 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
 }
 
 // -------------------------------------------------------------------------------- //
+void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
+{
+  wxString query;
+  int ChannelId;
+  if( ( ChannelId = GetPodcastChannelUrl( channel->m_Url ) ) == wxNOT_FOUND )
+  {
+    query = wxString::Format( wxT( "INSERT INTO podcastchs( podcastch_id, podcastch_url, podcastch_title, "
+                    "podcastch_description, podcastch_language, podcastch_time, podcastch_sumary, "
+                    "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+                    "podcastch_category, podcastch_image ) "
+                    "VALUES( NULL, '%s', '%s', "
+                    "'%s', '%s', 0, '%s', "
+                    "'%s', '%s', '%s', "
+                    "'%s', '%s' );" ),
+                        escape_query_str( channel->m_Url ).c_str(),
+                        escape_query_str( channel->m_Title ).c_str(),
+                        escape_query_str( channel->m_Description ).c_str(),
+                        escape_query_str( channel->m_Lang ).c_str(),
+                        //channel->m_Time,
+                        escape_query_str( channel->m_Summary ).c_str(),
+                        escape_query_str( channel->m_Author ).c_str(),
+                        escape_query_str( channel->m_OwnerName ).c_str(),
+                        escape_query_str( channel->m_OwnerEmail ).c_str(),
+                        escape_query_str( channel->m_Category ).c_str(),
+                        escape_query_str( channel->m_Image ).c_str() );
+    ExecuteUpdate( query );
+  }
+  else
+  {
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::SavePodcastChannels( const guPodcastChannelArray * channels )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::AddPodcastChannel( const guPodcastChannel * channel )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::DelPodcastChannel( const int id )
+{
+}
+
+// -------------------------------------------------------------------------------- //

@@ -24,7 +24,6 @@
 #include "Images.h"
 #include "Utils.h"
 
-
 #include <wx/curl/http.h>
 #include <wx/regex.h>
 #include <wx/zstream.h>
