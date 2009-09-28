@@ -220,35 +220,37 @@ class guAS_SubmitInfo //guAudioScrobbler_SubmitInfo
 WX_DECLARE_OBJARRAY(guAS_SubmitInfo, guAS_SubmitInfoArray);
 
 // -------------------------------------------------------------------------------- //
-class guPodcastChannel
-{
-  public :
-    int         m_Id;
-    wxString    m_Url;
-    wxString    m_Title;
-    wxString    m_Link;
-    wxString    m_Description;
-    wxString    m_Lang;
-    int         m_Time;
-    wxString    m_Summary;
-    wxString    m_Category;
-    wxString    m_Image;
-    wxString    m_OwnerName;
-    wxString    m_OwnerEmail;
-};
-WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
-
 class guPodcastItem
 {
   public :
     wxString    m_Title;
     wxString    m_Author;
-    wxString    m_Link;
-    wxString    m_Description;
+    //wxString    m_Link;
+    wxString    m_Summary;
     wxString    m_Enclosure;
+    int         m_Time;
     wxString    m_Length;
 };
 WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
+
+class guPodcastChannel
+{
+  public :
+    int                 m_Id;
+    wxString            m_Url;
+    wxString            m_Title;
+    wxString            m_Link;
+    wxString            m_Description;
+    wxString            m_Lang;
+    wxString            m_Summary;
+    wxString            m_Category;
+    wxString            m_Image;
+    wxString            m_Author;
+    wxString            m_OwnerName;
+    wxString            m_OwnerEmail;
+    guPodcastItemArray  m_Items;
+};
+WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
 
 // -------------------------------------------------------------------------------- //
 void inline escape_query_str( wxString * Str )
