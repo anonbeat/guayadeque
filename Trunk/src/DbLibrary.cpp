@@ -4488,7 +4488,7 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
   wxSQLite3ResultSet dbRes;
 
   query = wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
-               "podcastch_language, podcastch_time, podcastch_sumary, "
+               "podcastch_language, podcastch_sumary, "
                "podcastch_author, podcastch_ownername, podcastch_owneremail, "
                "podcastch_category, podcastch_image "
                "FROM podcastchs" );
@@ -4498,6 +4498,17 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
   while( dbRes.NextRow() )
   {
     guPodcastChannel * Channel = new guPodcastChannel();
+    Channel->m_Id = dbRes.GetInt( 0 );
+    Channel->m_Url = dbRes.GetString( 1 );
+    Channel->m_Title = dbRes.GetString( 2 );
+    Channel->m_Description = dbRes.GetString( 3 );
+    Channel->m_Lang = dbRes.GetString( 4 );
+    Channel->m_Summary = dbRes.GetString( 5 );
+    Channel->m_Author = dbRes.GetString( 6 );
+    Channel->m_OwnerName = dbRes.GetString( 7 );
+    Channel->m_OwnerEmail = dbRes.GetString( 8 );
+    Channel->m_Category = dbRes.GetString( 9 );
+    Channel->m_Image = dbRes.GetString( 10 );
     channels->Add( Channel );
   }
   dbRes.Finalize();
@@ -4507,54 +4518,148 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
 // -------------------------------------------------------------------------------- //
 void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
 {
+  wxASSERT( channel );
+
   wxString query;
   int ChannelId;
   if( ( ChannelId = GetPodcastChannelUrl( channel->m_Url ) ) == wxNOT_FOUND )
   {
     query = wxString::Format( wxT( "INSERT INTO podcastchs( podcastch_id, podcastch_url, podcastch_title, "
-                    "podcastch_description, podcastch_language, podcastch_time, podcastch_sumary, "
-                    "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-                    "podcastch_category, podcastch_image ) "
-                    "VALUES( NULL, '%s', '%s', "
-                    "'%s', '%s', 0, '%s', "
-                    "'%s', '%s', '%s', "
-                    "'%s', '%s' );" ),
-                        escape_query_str( channel->m_Url ).c_str(),
-                        escape_query_str( channel->m_Title ).c_str(),
-                        escape_query_str( channel->m_Description ).c_str(),
-                        escape_query_str( channel->m_Lang ).c_str(),
-                        //channel->m_Time,
-                        escape_query_str( channel->m_Summary ).c_str(),
-                        escape_query_str( channel->m_Author ).c_str(),
-                        escape_query_str( channel->m_OwnerName ).c_str(),
-                        escape_query_str( channel->m_OwnerEmail ).c_str(),
-                        escape_query_str( channel->m_Category ).c_str(),
-                        escape_query_str( channel->m_Image ).c_str() );
+        "podcastch_description, podcastch_language, podcastch_time, podcastch_sumary, "
+        "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+        "podcastch_category, podcastch_image ) "
+        "VALUES( NULL, '%s', '%s', "
+        "'%s', '%s', 0, '%s', "
+        "'%s', '%s', '%s', "
+        "'%s', '%s' );" ),
+        escape_query_str( channel->m_Url ).c_str(),
+        escape_query_str( channel->m_Title ).c_str(),
+        escape_query_str( channel->m_Description ).c_str(),
+        escape_query_str( channel->m_Lang ).c_str(),
+        escape_query_str( channel->m_Summary ).c_str(),
+        escape_query_str( channel->m_Author ).c_str(),
+        escape_query_str( channel->m_OwnerName ).c_str(),
+        escape_query_str( channel->m_OwnerEmail ).c_str(),
+        escape_query_str( channel->m_Category ).c_str(),
+        escape_query_str( channel->m_Image ).c_str() );
     ExecuteUpdate( query );
+    ChannelId = m_Db.GetLastRowId().GetLo();
   }
   else
   {
+    query = wxString::Format( wxT( "UPDATE podcastchs "
+        "SET podcastch_url = '%s', podcastch_title = '%s', "
+        "podcastch_description = '%s', podcastch_language = '%s', podcastch_sumary = '%s', "
+        "podcastch_author = '%s', podcastch_ownername = '%s', podcastch_owneremail = '%s', "
+        "podcastch_category = '%s', podcastch_image  = '%s' "
+        "WHERE podcastch_id = %u" ),
+        escape_query_str( channel->m_Url ).c_str(),
+        escape_query_str( channel->m_Title ).c_str(),
+        escape_query_str( channel->m_Description ).c_str(),
+        escape_query_str( channel->m_Lang ).c_str(),
+        escape_query_str( channel->m_Summary ).c_str(),
+        escape_query_str( channel->m_Author ).c_str(),
+        escape_query_str( channel->m_OwnerName ).c_str(),
+        escape_query_str( channel->m_OwnerEmail ).c_str(),
+        escape_query_str( channel->m_Category ).c_str(),
+        escape_query_str( channel->m_Image ).c_str(),
+        ChannelId );
+    ExecuteUpdate( query );
   }
+
+  // Delete all PodcastItems
+
+
 }
 
 // -------------------------------------------------------------------------------- //
 int DbLibrary::SavePodcastChannels( const guPodcastChannelArray * channels )
 {
+    wxASSERT( channels );
+    int Index;
+    int Count = channels->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        SavePodcastChannel( &channels->Item( Index ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 int DbLibrary::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel )
 {
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
+               "podcastch_language, podcastch_sumary, "
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+               "podcastch_category, podcastch_image "
+               "FROM podcastchs "
+               "WHERE podcastch_url = '%s' LIMIT 1;" ),
+               escape_query_str( url ).c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( channel )
+    {
+      channel->m_Id = RetVal;
+      channel->m_Url = dbRes.GetString( 1 );
+      channel->m_Title = dbRes.GetString( 2 );
+      channel->m_Description = dbRes.GetString( 3 );
+      channel->m_Lang = dbRes.GetString( 4 );
+      channel->m_Summary = dbRes.GetString( 5 );
+      channel->m_Author = dbRes.GetString( 6 );
+      channel->m_OwnerName = dbRes.GetString( 7 );
+      channel->m_OwnerEmail = dbRes.GetString( 8 );
+      channel->m_Category = dbRes.GetString( 9 );
+      channel->m_Image = dbRes.GetString( 10 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
 int DbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
 {
-}
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
 
-// -------------------------------------------------------------------------------- //
-void DbLibrary::AddPodcastChannel( const guPodcastChannel * channel )
-{
+  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
+               "podcastch_language, podcastch_sumary, "
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+               "podcastch_category, podcastch_image "
+               "FROM podcastchs "
+               "WHERE podcastch_id = %u LIMIT 1;" ),
+               id );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( channel )
+    {
+      channel->m_Id = RetVal;
+      channel->m_Url = dbRes.GetString( 1 );
+      channel->m_Title = dbRes.GetString( 2 );
+      channel->m_Description = dbRes.GetString( 3 );
+      channel->m_Lang = dbRes.GetString( 4 );
+      channel->m_Summary = dbRes.GetString( 5 );
+      channel->m_Author = dbRes.GetString( 6 );
+      channel->m_OwnerName = dbRes.GetString( 7 );
+      channel->m_OwnerEmail = dbRes.GetString( 8 );
+      channel->m_Category = dbRes.GetString( 9 );
+      channel->m_Image = dbRes.GetString( 10 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
