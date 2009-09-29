@@ -223,6 +223,7 @@ WX_DECLARE_OBJARRAY(guAS_SubmitInfo, guAS_SubmitInfoArray);
 class guPodcastItem
 {
   public :
+    int         m_Id;
     wxString    m_Title;
     wxString    m_Author;
     //wxString    m_Link;
@@ -230,6 +231,7 @@ class guPodcastItem
     wxString    m_Enclosure;
     int         m_Time;
     wxString    m_Length;
+    wxString    m_FileName;
 };
 WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
 
@@ -484,6 +486,14 @@ class DbLibrary {
     int                     GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel = NULL );
     int                     GetPodcastChannelId( const int id, guPodcastChannel * channel = NULL );
     void                    DelPodcastChannel( const int id );
+
+    int                     GetPodcastItems( guPodcastItemArray * items );
+    void                    SavePodcastItem( const int channelid, const guPodcastItem * item );
+    void                    SavePodcastItems( const int channelid, const guPodcastItemArray * items );
+    int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );
+    int                     GetPodcastItemId( const int itemid, guPodcastItem * item = NULL );
+    void                    DelPodcastItem( const int itemid );
+    void                    DetPodcastItems( const int channelid );
 };
 
 // -------------------------------------------------------------------------------- //
