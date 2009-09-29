@@ -483,7 +483,6 @@ class DbLibrary {
     int                     SavePodcastChannels( const guPodcastChannelArray * channels );
     int                     GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel = NULL );
     int                     GetPodcastChannelId( const int id, guPodcastChannel * channel = NULL );
-    void                    AddPodcastChannel( const guPodcastChannel * channel );
     void                    DelPodcastChannel( const int id );
 };
 

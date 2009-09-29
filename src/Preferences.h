@@ -45,6 +45,7 @@
 #include <wx/spinctrl.h>
 #include <wx/notebook.h>
 #include <wx/dialog.h>
+#include <wx/filepicker.h>
 
 // -------------------------------------------------------------------------------- //
 class guPrefDialog : public wxDialog
@@ -128,6 +129,15 @@ class guPrefDialog : public wxDialog
 
     wxRadioBox *                m_RadioMinBitRateRadBox;
     wxArrayString               m_RadioMinBitRateRadBoxChoices;
+
+    wxDirPickerCtrl *           m_PodcastPath;
+    wxCheckBox *                m_PodcastUpdate;
+    wxChoice *                  m_PodcastUpdatePeriod;
+    wxCheckBox *                m_PodcastDelete;
+    wxSpinCtrl *                m_PodcastDeleteTime;
+    wxChoice *                  m_PodcastDeletePeriod;
+
+    wxCheckBox* m_PodcastDeletePlayed;
 
     wxChoice *                  m_LyricsChoice;
 

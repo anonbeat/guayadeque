@@ -51,6 +51,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	wxStaticBoxSizer *  OnlineFiltersSizer;
 	wxBoxSizer *        OnlineBtnSizer;
 	wxStaticBoxSizer *  BrowserCmdSizer;
+    wxPanel *           PodcastPanel;
+    wxStaticText *      PodcastPathStaticText;
 //	wxBoxSizer *        LinksMainSizer;
 //	wxStaticBoxSizer *  LinksSizer;
 //	wxBoxSizer *        LinksBtnSizer;
@@ -399,7 +401,81 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	OnlineMainSizer->Fit( m_OnlinePanel );
 	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online Services" ), false );
 
+    //
+    // Podcasts
+    //
+	PodcastPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* PodcastsMainSizer;
+	PodcastsMainSizer = new wxBoxSizer( wxVERTICAL );
 
+	wxStaticBoxSizer* PodcastsSizer;
+	PodcastsSizer = new wxStaticBoxSizer( new wxStaticBox( PodcastPanel, wxID_ANY, wxT(" Podcasts ") ), wxVERTICAL );
+
+	wxBoxSizer* PathSizer;
+	PathSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	PodcastPathStaticText = new wxStaticText( PodcastPanel, wxID_ANY, wxT("Destination directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	PodcastPathStaticText->Wrap( -1 );
+	PathSizer->Add( PodcastPathStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_PodcastPath = new wxDirPickerCtrl( PodcastPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir(), wxT( "Podcasts" ) ), wxT("Select podcasts folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE | wxDIRP_DIR_MUST_EXIST );
+	PathSizer->Add( m_PodcastPath, 1, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+
+	PodcastsSizer->Add( PathSizer, 0, wxEXPAND, 5 );
+
+	wxBoxSizer* UpdateSizer;
+	UpdateSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_PodcastUpdate = new wxCheckBox( PodcastPanel, wxID_ANY, wxT("Check new podcasts every"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PodcastUpdate->SetValue( m_Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) );
+
+	UpdateSizer->Add( m_PodcastUpdate, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	wxString m_PodcastUpdatePeriodChoices[] = { wxT("Day"), wxT("Week"), wxT("Month") };
+	int m_PodcastUpdatePeriodNChoices = sizeof( m_PodcastUpdatePeriodChoices ) / sizeof( wxString );
+	m_PodcastUpdatePeriod = new wxChoice( PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastUpdatePeriodNChoices, m_PodcastUpdatePeriodChoices, 0 );
+	m_PodcastUpdatePeriod->SetSelection( m_Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "Podcasts" ) ) );
+	UpdateSizer->Add( m_PodcastUpdatePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	PodcastsSizer->Add( UpdateSizer, 0, wxEXPAND, 5 );
+
+	wxBoxSizer* DeleteSizer;
+	DeleteSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_PodcastDelete = new wxCheckBox( PodcastPanel, wxID_ANY, wxT("Delete podcasts after"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PodcastDelete->SetValue( m_Config->ReadBool( wxT( "Delete" ), false, wxT( "Podcasts" ) ) );
+
+	DeleteSizer->Add( m_PodcastDelete, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_PodcastDeleteTime = new wxSpinCtrl( PodcastPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 99,
+        m_Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "Podcasts" ) ) );
+	DeleteSizer->Add( m_PodcastDeleteTime, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	wxString m_PodcastDeletePeriodChoices[] = { wxT("Days"), wxT("Weeks"), wxT("Months") };
+	int m_PodcastDeletePeriodNChoices = sizeof( m_PodcastDeletePeriodChoices ) / sizeof( wxString );
+	m_PodcastDeletePeriod = new wxChoice( PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastDeletePeriodNChoices, m_PodcastDeletePeriodChoices, 0 );
+	m_PodcastDeletePeriod->SetSelection( m_Config->ReadNum( wxT( "DeletePeriod" ), 0, wxT( "Podcasts" ) ) );
+	DeleteSizer->Add( m_PodcastDeletePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	DeleteSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_PodcastDeletePlayed = new wxCheckBox( PodcastPanel, wxID_ANY, wxT("Only if played"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PodcastDeletePlayed->SetValue( m_Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "Podcasts" ) ) );
+
+	DeleteSizer->Add( m_PodcastDeletePlayed, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	PodcastsSizer->Add( DeleteSizer, 0, wxEXPAND, 5 );
+
+	PodcastsMainSizer->Add( PodcastsSizer, 0, wxEXPAND|wxALL, 5 );
+
+	PodcastPanel->SetSizer( PodcastsMainSizer );
+	PodcastPanel->Layout();
+	PodcastsMainSizer->Fit( PodcastPanel );
+	m_MainNotebook->AddPage( PodcastPanel, wxT("Podcasts"), false );
+
+    //
+    // Links
+    //
 	m_LinksPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* LinksMainSizer;
 	LinksMainSizer = new wxBoxSizer( wxVERTICAL );
@@ -809,6 +885,14 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
     m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
     m_Config->WriteNum( wxT( "LyricSearchEngine" ), m_LyricsChoice->GetSelection(), wxT( "General" ) );
+    m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "Podcasts" ) );
+    m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "Podcasts" ) );
+    m_Config->WriteNum( wxT( "UpdatePeriod" ), m_PodcastUpdatePeriod->GetSelection(), wxT( "Podcasts" ) );
+    m_Config->WriteBool( wxT( "Delete" ), m_PodcastDelete->GetValue(), wxT( "Podcasts" ) );
+    m_Config->WriteNum( wxT( "DeleteTime" ), m_PodcastDeleteTime->GetValue(), wxT( "Podcasts" ) );
+    m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "Podcasts" ) );
+    m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
+
     wxArrayString SearchLinks = m_LinksListBox->GetStrings();
     m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
     m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "SearchLinks" ), false );

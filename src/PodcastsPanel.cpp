@@ -369,6 +369,9 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                 ReadXmlPodcastChannel( XmlNode->GetChildren(), &PodcastChannel );
 
                 guLogMessage( wxT( "Podcast '%s'" ), PodcastChannel.m_Title.c_str() );
+
+                m_Db->SavePodcastChannel( &PodcastChannel );
+                m_ChannelsListBox->ReloadItems();
             }
         }
         else
