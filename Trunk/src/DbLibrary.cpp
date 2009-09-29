@@ -635,9 +635,9 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_category' on podcastchs(podcastch_category ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastitems( podcastitem_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "podcastitem_chid INTEGER, podcastitem_title VARCHAR, podcastitem_description VARCHAR, "
-                      "podcastitem_time INTEGER, podcastitem_url VARCHAR, podcastitem_file VARCHAR, "
-                      "podcastitem_length INTEGER );" ) );
+                      "podcastitem_chid INTEGER, podcastitem_title VARCHAR, podcastitem_summary VARCHAR, "
+                      "podcastitem_author VARCHAR, podcastitem_enclosure VARCHAR, podcastitem_time INTEGER, "
+                      "podcastitem_file VARCHAR, podcastitem_length INTEGER );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
@@ -4567,8 +4567,8 @@ void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
     ExecuteUpdate( query );
   }
 
-  // Delete all PodcastItems
-
+  // Save the Items
+  SavePodcastItems( ChannelId, &channel->m_Items );
 
 }
 
@@ -4664,6 +4664,171 @@ int DbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
 
 // -------------------------------------------------------------------------------- //
 void DbLibrary::DelPodcastChannel( const int id )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
+{
+  wxASSERT( items );
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastitem_id, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_length FROM podcastitems;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastItem * Item = new guPodcastItem();
+    Item->m_Id = dbRes.GetInt( 0 );
+    Item->m_Title = dbRes.GetString( 1 );
+    Item->m_Summary = dbRes.GetString( 2 );
+    Item->m_Author = dbRes.GetString( 3 );
+    Item->m_Enclosure = dbRes.GetString( 4 );
+    Item->m_Time = dbRes.GetInt( 5 );
+    Item->m_FileName = dbRes.GetString( 6 );
+    Item->m_Length = dbRes.GetString( 7 );
+    items->Add( Item );
+  }
+  dbRes.Finalize();
+  return items->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SavePodcastItem( const int channelid, const guPodcastItem * item )
+{
+  wxASSERT( item );
+
+  wxString query;
+  int ItemId;
+  if( ( ItemId = GetPodcastItemEnclosure( item->m_Enclosure ) ) == wxNOT_FOUND )
+  {
+    query = wxString::Format( wxT( "INSERT INTO podcastitems( "
+                "podcastitem_id, podcastitem_chid, podcastitem_title, podcastitem_summary, "
+                "podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+                "podcastitem_file, podcastitem_length ) "
+                "VALUES( NULL, %u, '%s', '%s', '%s', '%s', "
+                "%u, '%s', '%s' );" ),
+                channelid,
+                escape_query_str( item->m_Title ).c_str(),
+                escape_query_str( item->m_Summary ).c_str(),
+                escape_query_str( item->m_Author ).c_str(),
+                escape_query_str( item->m_Enclosure ).c_str(),
+                item->m_Time,
+                escape_query_str( item->m_FileName ).c_str(),
+                escape_query_str( item->m_Length ).c_str() );
+
+    ExecuteUpdate( query );
+    ItemId = m_Db.GetLastRowId().GetLo();
+  }
+  else
+  {
+    query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_chid = %u, podcastitem_title = '%s', "
+                "podcastitem_summary = '%s', podcastitem_author = '%s', "
+                "podcastitem_enclosure = '%s', podcastitem_time = %u, "
+                "podcastitem_file = '%s', podcastitem_length = '%s' "
+                "WHERE podcastitem_id = %u;" ),
+                channelid,
+                escape_query_str( item->m_Title ).c_str(),
+                escape_query_str( item->m_Summary ).c_str(),
+                escape_query_str( item->m_Author ).c_str(),
+                escape_query_str( item->m_Enclosure ).c_str(),
+                item->m_Time,
+                escape_query_str( item->m_FileName ).c_str(),
+                escape_query_str( item->m_Length ).c_str(),
+                item->m_Id );
+
+    ExecuteUpdate( query );
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SavePodcastItems( const int channelid, const guPodcastItemArray * items )
+{
+    wxASSERT( items );
+    int Index;
+    int Count = items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        SavePodcastItem( channelid, &items->Item( Index ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item )
+{
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_length FROM podcastitems WHERE podcastitem_enclosure = '%s';" ),
+            escape_query_str( enclosure ).c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( item )
+    {
+      item->m_Id = RetVal;
+      item->m_Title = dbRes.GetString( 1 );
+      item->m_Summary = dbRes.GetString( 2 );
+      item->m_Author = dbRes.GetString( 3 );
+      item->m_Enclosure = dbRes.GetString( 4 );
+      item->m_Time = dbRes.GetInt( 5 );
+      item->m_FileName = dbRes.GetString( 6 );
+      item->m_Length = dbRes.GetString( 7 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
+{
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_length FROM podcastitems WHERE podcastitem_id = %u LIMIT 1;" ),
+            itemid );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( item )
+    {
+      item->m_Id = RetVal;
+      item->m_Title = dbRes.GetString( 1 );
+      item->m_Summary = dbRes.GetString( 2 );
+      item->m_Author = dbRes.GetString( 3 );
+      item->m_Enclosure = dbRes.GetString( 4 );
+      item->m_Time = dbRes.GetInt( 5 );
+      item->m_FileName = dbRes.GetString( 6 );
+      item->m_Length = dbRes.GetString( 7 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::DelPodcastItem( const int itemid )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::DetPodcastItems( const int channelid )
 {
 }
 
