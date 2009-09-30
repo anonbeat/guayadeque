@@ -83,6 +83,7 @@
 #include "./images/tiny_search_again.h"
 #include "./images/tiny_numerate.h"
 #include "./images/tiny_edit_clear.h"
+#include "./images/podcast_icon.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -148,12 +149,13 @@ guImage_Item guImage_Items[] = {
     { guImage_track,                sizeof( guImage_track ),                wxBITMAP_TYPE_PNG },
     { guImage_tiny_search,          sizeof( guImage_tiny_search ),          wxBITMAP_TYPE_PNG },
     { guImage_search_engine,	    sizeof( guImage_search_engine ),        wxBITMAP_TYPE_PNG },
-    { guImage_musicbrainz,	    sizeof( guImage_musicbrainz ),          wxBITMAP_TYPE_PNG },
+    { guImage_musicbrainz,	        sizeof( guImage_musicbrainz ),          wxBITMAP_TYPE_PNG },
     { guImage_tiny_edit_copy,	    sizeof( guImage_tiny_edit_copy ), 	    wxBITMAP_TYPE_PNG },
     { guImage_tiny_search_again,    sizeof( guImage_tiny_search_again ),    wxBITMAP_TYPE_PNG },
     { guImage_tiny_numerate,	    sizeof( guImage_tiny_numerate ),        wxBITMAP_TYPE_PNG },
-    { guImage_tiny_edit_clear,      sizeof( guImage_tiny_edit_clear ),      wxBITMAP_TYPE_PNG }
-    
+    { guImage_tiny_edit_clear,      sizeof( guImage_tiny_edit_clear ),      wxBITMAP_TYPE_PNG },
+    { guImage_podcast_icon,         sizeof( guImage_podcast_icon ),         wxBITMAP_TYPE_JPEG }
+
 };
 
 

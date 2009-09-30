@@ -35,7 +35,7 @@
 class guChannelsListBox : public guListBox
 {
   protected :
-    guPodcastChannelArray m_Channels;
+    guPodcastChannelArray m_PodChannels;
 
     virtual void GetItemsList( void );
     virtual void CreateContextMenu( wxMenu * Menu ) const;
@@ -50,21 +50,38 @@ class guChannelsListBox : public guListBox
     virtual int GetSelectedSongs( guTrackArray * Songs ) const;
 };
 
+#define guPODCASTS_COLUMN_TITLE         0
+#define guPODCASTS_COLUMN_CHANNEL       1
+#define guPODCASTS_COLUMN_DATE          2
+#define guPODCASTS_COLUMN_LENGTH        3
+#define guPODCASTS_COLUMN_AUTHOR        4
+#define guPODCASTS_COLUMN_PLAYCOUNT     5
+#define guPODCASTS_COLUMN_LASTPLAY      6
+#define guPODCASTS_COLUMN_STATUS        7
+
 // -------------------------------------------------------------------------------- //
-class guPodcastListBox : public guListBox
+class guPodcastListBox : public guListView
 {
   protected :
-    virtual void GetItemsList( void );
-    virtual void CreateContextMenu( wxMenu * menu ) const;
+    DbLibrary *         m_Db;
+    guPodcastItemArray  m_PodItems;
+    int                 m_Order;
+    bool                m_OrderDesc;
+
+    virtual void                CreateContextMenu( wxMenu * Menu ) const;
+    virtual wxString            OnGetItemText( const int row, const int column ) const;
+    virtual void                GetItemsList( void );
 
   public :
-    guPodcastListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
-        guListBox( parent, db, label )
-    {
-        ReloadItems();
-    };
+    guPodcastListBox( wxWindow * parent, DbLibrary * NewDb );
+    ~guPodcastListBox();
 
-    virtual int GetSelectedSongs( guTrackArray * Songs ) const;
+    virtual void                ReloadItems( bool reset = true );
+
+    virtual int inline          GetItemId( const int row ) const;
+    virtual wxString inline     GetItemName( const int row ) const;
+
+    void                        SetOrder( int order );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -73,13 +90,17 @@ class guPodcastPanel : public wxPanel
   private:
     void                MainSplitterOnIdle( wxIdleEvent& );
     void                OnChangedSize( wxSizeEvent& event );
+    void                OnChannelsSelected( wxListEvent &event );
+    void                UpdateChannelInfo( int index );
+    void                OnPodcastsColClick( wxListEvent &event );
+    void                OnPodcastItemSelected( wxListEvent &event );
 
   protected:
     DbLibrary *         m_Db;
     guPlayerPanel *     m_PlayerPanel;
     wxSplitterWindow *  m_MainSplitter;
 	guChannelsListBox * m_ChannelsListBox;
-    guPodcastListBox *  m_Podcasts;
+    guPodcastListBox *  m_PodcastsListBox;
     wxStaticBitmap *    m_DetailImage;
     wxStaticText *      m_DetailChannelTitle;
     wxStaticText *      m_DetailDescText;
