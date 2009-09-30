@@ -4692,7 +4692,7 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
             "podcastitem_file, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
             "podcastitem_status, "
-            "podcastch_title "
+            "podcastch_title, podcastsch_category "
             "FROM podcastitems, podcastchs "
             "WHERE podcastitem_chid = podcastch_id" );
 
@@ -4706,6 +4706,8 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
     query += wxT( "podcastitem_title" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_CHANNEL )
     query += wxT( "podcastch_title" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_CATEGORY )
+    query += wxT( "podcastch_category" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_DATE )
     query += wxT( "podcastitem_time" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_LENGTH )
@@ -4740,6 +4742,7 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
     Item->m_Status = dbRes.GetInt( 10 );
 
     Item->m_Channel = dbRes.GetString( 11 );
+    Item->m_Category = dbRes.GetString( 12 );
     items->Add( Item );
   }
   dbRes.Finalize();

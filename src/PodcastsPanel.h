@@ -52,12 +52,13 @@ class guChannelsListBox : public guListBox
 
 #define guPODCASTS_COLUMN_TITLE         0
 #define guPODCASTS_COLUMN_CHANNEL       1
-#define guPODCASTS_COLUMN_DATE          2
-#define guPODCASTS_COLUMN_LENGTH        3
-#define guPODCASTS_COLUMN_AUTHOR        4
-#define guPODCASTS_COLUMN_PLAYCOUNT     5
-#define guPODCASTS_COLUMN_LASTPLAY      6
-#define guPODCASTS_COLUMN_STATUS        7
+#define guPODCASTS_COLUMN_CATEGORY      2
+#define guPODCASTS_COLUMN_DATE          3
+#define guPODCASTS_COLUMN_LENGTH        4
+#define guPODCASTS_COLUMN_AUTHOR        5
+#define guPODCASTS_COLUMN_PLAYCOUNT     6
+#define guPODCASTS_COLUMN_LASTPLAY      7
+#define guPODCASTS_COLUMN_STATUS        8
 
 // -------------------------------------------------------------------------------- //
 class guPodcastListBox : public guListView

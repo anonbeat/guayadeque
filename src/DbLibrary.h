@@ -234,6 +234,7 @@ class guPodcastItem
     int         m_Time;
     int         m_Length;
     wxString    m_FileName;
+    wxString    m_Category;
 
     int         m_PlayCount;
     int         m_LastPlay;
