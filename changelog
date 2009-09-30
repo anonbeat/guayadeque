@@ -1,4 +1,5 @@
 
+  * Only allow to select one radiostation
   * Added support for musicbrainz searchs in Track Editor. Its Album
     oriented. Can search for tracks even when no metadata is not found
     using audio fingerprint. Leave empty artist and title fields for this.

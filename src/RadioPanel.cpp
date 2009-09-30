@@ -264,7 +264,7 @@ void guRadioGenreListBox::OnRadioGenreDelete( wxCommandEvent &event )
 // guRadioStationListBox
 // -------------------------------------------------------------------------------- //
 guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * db ) :
-    guListView( parent )
+    guListView( parent, wxLB_SINGLE )
 {
     m_Db = db;
 

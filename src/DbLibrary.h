@@ -226,12 +226,18 @@ class guPodcastItem
     int         m_Id;
     wxString    m_Title;
     wxString    m_Author;
+    int         m_ChId;
+    wxString    m_Channel;
     //wxString    m_Link;
     wxString    m_Summary;
     wxString    m_Enclosure;
     int         m_Time;
-    wxString    m_Length;
+    int         m_Length;
     wxString    m_FileName;
+
+    int         m_PlayCount;
+    int         m_LastPlay;
+    int         m_Status;
 };
 WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
 
@@ -312,6 +318,11 @@ class DbLibrary {
     guListItems         m_PathsCache;
 
     wxArrayString       m_CoverSearchWords;
+
+    // Podcasts
+    wxArrayInt          m_PodChFilters;
+    int                 m_PodcastOrder;
+    bool                m_PodcastOrderDesc;
 
     wxString            FiltersSQL( int Level );
 
@@ -494,6 +505,9 @@ class DbLibrary {
     int                     GetPodcastItemId( const int itemid, guPodcastItem * item = NULL );
     void                    DelPodcastItem( const int itemid );
     void                    DetPodcastItems( const int channelid );
+    void                    SetPodcastChannelFilters( const wxArrayInt &filters );
+    void                    SetPodcastOrder( int order );
+
 };
 
 // -------------------------------------------------------------------------------- //

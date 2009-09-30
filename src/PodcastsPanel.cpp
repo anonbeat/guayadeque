@@ -21,6 +21,7 @@
 #include "PodcastsPanel.h"
 
 #include "Commands.h"
+#include "Config.h"
 #include "Images.h"
 #include "Utils.h"
 
@@ -61,7 +62,6 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
         wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Podcasts/Images" ), 0770 );
     }
 
-
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* MainSizer;
@@ -74,7 +74,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	ChannelsMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_ChannelsListBox = new guChannelsListBox( ChannelsPanel, m_Db, _( "Channels" ) );
-	ChannelsMainSizer->Add( m_ChannelsListBox, 1, wxEXPAND|wxALL, 5 );
+	ChannelsMainSizer->Add( m_ChannelsListBox, 1, wxEXPAND|wxALL, 1 );
 
 	ChannelsPanel->SetSizer( ChannelsMainSizer );
 	ChannelsPanel->Layout();
@@ -83,8 +83,8 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	wxBoxSizer* MainPodcastsSizer;
 	MainPodcastsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_Podcasts = new guPodcastListBox( PodcastsPanel, m_Db, _( "Podcasts" ) );
-	MainPodcastsSizer->Add( m_Podcasts, 1, wxALL|wxEXPAND, 5 );
+	m_PodcastsListBox = new guPodcastListBox( PodcastsPanel, m_Db );
+	MainPodcastsSizer->Add( m_PodcastsListBox, 1, wxALL|wxEXPAND, 1 );
 
 	PodcastsPanel->SetSizer( MainPodcastsSizer );
 	PodcastsPanel->Layout();
@@ -101,7 +101,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	DetailFlexGridSizer->SetFlexibleDirection( wxBOTH );
 	DetailFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_DetailImage = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 60,60 ), 0 );
+	m_DetailImage = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_podcast_icon ), wxDefaultPosition, wxSize( 60,60 ), 0 );
 	DetailFlexGridSizer->Add( m_DetailImage, 0, wxALL, 5 );
 
 	m_DetailChannelTitle = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
@@ -204,8 +204,13 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	Connect( wxEVT_SIZE, wxSizeEventHandler( guPodcastPanel::OnChangedSize ) );
 	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::MainSplitterOnIdle ), NULL, this );
     Connect( ID_PODCASTS_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ) );
+
+    m_ChannelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnChannelsSelected ), NULL, this );
+	m_PodcastsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guPodcastPanel::OnPodcastsColClick ), NULL, this );
+    m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnPodcastItemSelected ), NULL, this );
 }
 
+// -------------------------------------------------------------------------------- //
 guPodcastPanel::~guPodcastPanel()
 {
 }
@@ -218,6 +223,28 @@ void guPodcastPanel::OnChangedSize( wxSizeEvent& event )
 	m_DetailDescText->Wrap( Size.GetWidth() );
 	m_DetailItemSumaryText->Wrap( Size.GetWidth() );
 	Layout();
+}
+
+// -------------------------------------------------------------------------------- //
+int StrLengthToInt( const wxString &length )
+{
+    int RetVal = 0;
+    int Factor[] = { 1, 60, 3600, 86400 };
+    int FactorIndex = 0;
+    // 1:02:03:04
+    wxString Rest = length.Strip( wxString::both );
+    int element;
+    do {
+        Rest.AfterLast( wxT( ':' ) ).ToLong( ( long * ) &element );
+        if( !element )
+            break;
+        RetVal += Factor[ FactorIndex ] * element;
+        FactorIndex++;
+        if( ( FactorIndex > 3 ) )
+            break;
+        Rest = Rest.BeforeLast( wxT( ':' ) );
+    } while( !Rest.IsEmpty() );
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -262,7 +289,7 @@ void ReadXmlPodcastItem( wxXmlNode * XmlNode, guPodcastItem * item )
         }
         else if( XmlNode->GetName() == wxT( "itunes:duration" ) )
         {
-            item->m_Length = XmlNode->GetNodeContent();
+            item->m_Length = StrLengthToInt( XmlNode->GetNodeContent() );
         }
         else if( XmlNode->GetName() == wxT( "itunes:author" ) )
         {
@@ -383,6 +410,68 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
+{
+    m_Db->SetPodcastChannelFilters( m_ChannelsListBox->GetSelectedItems() );
+    m_PodcastsListBox->ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastsColClick( wxListEvent &event )
+{
+    int col = event.GetColumn();
+    if( col < 0 )
+        return;
+    m_PodcastsListBox->SetOrder( col );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastItemSelected( wxListEvent &event )
+{
+    wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
+    UpdateChannelInfo( Selection.Count() ? Selection[ 0 ] : -1 );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::UpdateChannelInfo( int itemid )
+{
+    guPodcastChannel    PodcastChannel;
+    guPodcastItem       PodcastItem;
+    //
+    if( itemid > 0 )
+    {
+        m_Db->GetPodcastItemId( itemid, &PodcastItem );
+        m_Db->GetPodcastChannelId( PodcastItem.m_ChId, &PodcastChannel );
+        //m_DetailImage->
+        m_DetailChannelTitle->SetLabel( PodcastChannel.m_Title );
+        m_DetailDescText->SetLabel( PodcastChannel.m_Description );
+        m_DetailAuthorText->SetLabel( PodcastChannel.m_Author );
+        m_DetailOwnerText->SetLabel( PodcastChannel.m_OwnerName );
+        m_DetailEmailText->SetLabel( PodcastChannel.m_OwnerEmail );
+        m_DetailItemTitleText->SetLabel( PodcastItem.m_Title );
+        m_DetailItemSumaryText->SetLabel( PodcastItem.m_Summary );
+        wxDateTime AddedDate;
+        AddedDate.Set( ( time_t ) PodcastItem.m_Time );
+        m_DetailItemDateText->SetLabel( AddedDate.FormatDate() );
+        m_DetailItemLengthText->SetLabel( LenToString( PodcastItem.m_Length ) );
+    }
+    else
+    {
+        m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_podcast_icon ) );
+//        wxStaticBitmap *    m_DetailImage;
+        m_DetailChannelTitle->SetLabel( wxEmptyString );
+        m_DetailDescText->SetLabel( wxEmptyString );
+        m_DetailAuthorText->SetLabel( wxEmptyString );
+        m_DetailOwnerText->SetLabel( wxEmptyString );
+        m_DetailEmailText->SetLabel( wxEmptyString );
+        m_DetailItemTitleText->SetLabel( wxEmptyString );
+        m_DetailItemSumaryText->SetLabel( wxEmptyString );
+        m_DetailItemDateText->SetLabel( wxEmptyString );
+        m_DetailItemLengthText->SetLabel( wxEmptyString );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPodcastPanel::MainSplitterOnIdle( wxIdleEvent &event )
 {
     m_MainSplitter->SetSashPosition( 230 );
@@ -394,13 +483,13 @@ void guPodcastPanel::MainSplitterOnIdle( wxIdleEvent &event )
 // -------------------------------------------------------------------------------- //
 void guChannelsListBox::GetItemsList( void )
 {
-    m_Channels.Empty();
+    m_PodChannels.Empty();
     int Index;
     int Count;
-    Count = m_Db->GetPodcastChannels( &m_Channels );
+    Count = m_Db->GetPodcastChannels( &m_PodChannels );
     for( Index = 0; Index < Count; Index++ )
     {
-        m_Items->Add( new guListItem( m_Channels[ Index ].m_Id, m_Channels[ Index ].m_Title ) );
+        m_Items->Add( new guListItem( m_PodChannels[ Index ].m_Id, m_PodChannels[ Index ].m_Title ) );
     }
 }
 
@@ -437,39 +526,197 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
 // -------------------------------------------------------------------------------- //
 // guPodcastListBox
 // -------------------------------------------------------------------------------- //
-void guPodcastListBox::GetItemsList( void )
+wxString guPODCASTS_COLUMN_NAMES[] = {
+    _( "Title" ),
+    _( "Channel" ),
+    _( "Date" ),
+    _( "Length" ),
+    _( "Author" ),
+    _( "PlayCount" ),
+    _( "LastPlay" ),
+    _( "Status" )
+};
+
+// -------------------------------------------------------------------------------- //
+guPodcastListBox::guPodcastListBox( wxWindow * parent, DbLibrary * db ) :
+    guListView( parent, wxLB_SINGLE )
 {
-    //m_Db->GetGenres( m_Items );
+    m_Db = db;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
+    m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
+
+    // Create the Columns
+    int ColId;
+    int index;
+    int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
+    for( index = 0; index < count; index++ )
+    {
+        guListViewColumn * Column = new guListViewColumn(
+            guPODCASTS_COLUMN_NAMES[ index ] + ( ( index == m_Order ) ? ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ),
+            index,
+            Config->ReadNum( wxString::Format( wxT( "PodcastsColSize%u" ), index ), 80, wxT( "Positions" ) )
+        );
+        InsertColumn( Column );
+    }
+
+    ReloadItems();
+}
+
+
+// -------------------------------------------------------------------------------- //
+guPodcastListBox::~guPodcastListBox()
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    int index;
+    int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
+    for( index = 0; index < count; index++ )
+    {
+        Config->WriteNum( wxString::Format( wxT( "PodcastsColSize%u" ), index ), GetColumnWidth( index ), wxT( "Positions" ) );
+    }
+
+    Config->WriteNum( wxT( "Order" ), m_Order, wxT( "Podcasts" ) );
+    Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "Podcasts" ) );
 }
 
 // -------------------------------------------------------------------------------- //
-int guPodcastListBox::GetSelectedSongs( guTrackArray * Songs ) const
+wxString guPodcastListBox::OnGetItemText( const int row, const int col ) const
 {
-    //return m_Db->GetGenresSongs( GetSelectedItems(), Songs );
+    guPodcastItem * Podcast;
+    Podcast = &m_PodItems[ row ];
+    switch( col )
+    {
+        case guPODCASTS_COLUMN_TITLE :
+          return Podcast->m_Title;
+
+        case guPODCASTS_COLUMN_CHANNEL :
+          return Podcast->m_Channel;
+
+        case guPODCASTS_COLUMN_DATE :
+        {
+          wxDateTime AddedDate;
+          AddedDate.Set( ( time_t ) Podcast->m_Time );
+          return AddedDate.FormatDate();
+          break;
+        }
+
+        case guPODCASTS_COLUMN_LENGTH :
+          return LenToString( Podcast->m_Length );
+
+        case guPODCASTS_COLUMN_AUTHOR :
+          return Podcast->m_Author;
+
+        case guPODCASTS_COLUMN_PLAYCOUNT :
+          return wxString::Format( wxT( "%u" ), Podcast->m_PlayCount );
+
+        case guPODCASTS_COLUMN_LASTPLAY :
+          if( Podcast->m_LastPlay )
+          {
+            wxDateTime LastPlay;
+            LastPlay.Set( ( time_t ) Podcast->m_LastPlay );
+            return LastPlay.FormatDate();
+          }
+          else
+            return _( "Never" );
+
+        case guPODCASTS_COLUMN_STATUS :
+            return wxEmptyString;
+    }
+    return wxEmptyString;
+}
+
+
+// -------------------------------------------------------------------------------- //
+void guPodcastListBox::GetItemsList( void )
+{
+    m_Db->GetPodcastItems( &m_PodItems );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastListBox::ReloadItems( bool reset )
+{
+    wxASSERT( m_Db );
+
+    //
+    wxArrayInt Selection;
+    int FirstVisible = GetFirstVisibleLine();
+
+    if( reset )
+        SetSelection( -1 );
+    else
+        Selection = GetSelectedItems( false );
+
+    m_PodItems.Empty();
+
+    GetItemsList();
+
+    SetItemCount( m_PodItems.Count() );
+
+    if( !reset )
+    {
+      SetSelectedItems( Selection );
+      ScrollToLine( FirstVisible );
+    }
+    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //
 void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
 {
-//    wxMenuItem * MenuItem;
-//    int SelCount = GetSelectedItems().Count();
-//
-//    MenuItem = new wxMenuItem( Menu, ID_GENRE_PLAY, _( "Play" ), _( "Play current selected genres" ) );
-//    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
-//    Menu->Append( MenuItem );
-//
-//    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE, _( "Enqueue" ), _( "Add current selected genres to playlist" ) );
-//    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-//    Menu->Append( MenuItem );
-//
-//    if( SelCount )
-//    {
-//        Menu->AppendSeparator();
-//
-//        MenuItem = new wxMenuItem( Menu, ID_GENRE_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-//        Menu->Append( MenuItem );
-//    }
+    wxMenuItem * MenuItem;
+    MenuItem = new wxMenuItem( Menu, ID_RADIO_PLAY, _( "Play" ), _( "Play current selected songs" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    Menu->Append( MenuItem );
+
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, ID_RADIO_EDIT_LABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected stations" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+    Menu->Append( MenuItem );
+}
+
+// -------------------------------------------------------------------------------- //
+int inline guPodcastListBox::GetItemId( const int row ) const
+{
+    return m_PodItems[ row ].m_Id;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline guPodcastListBox::GetItemName( const int row ) const
+{
+    return m_PodItems[ row ].m_Title;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastListBox::SetOrder( int order )
+{
+    if( m_Order != order )
+    {
+        m_Order = order;
+        m_OrderDesc = ( order != 0 );
+    }
+    else
+        m_OrderDesc = !m_OrderDesc;
+
+    m_Db->SetPodcastOrder( m_Order );
+
+    int index;
+    int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
+    for( index = 0; index < count; index++ )
+    {
+        SetColumnLabel( index,
+            guPODCASTS_COLUMN_NAMES[ index ]  + ( ( index == m_Order ) ?
+                ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+    }
+
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
