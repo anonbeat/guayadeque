@@ -272,6 +272,7 @@ void ReadXmlPodcastItem( wxXmlNode * XmlNode, guPodcastItem * item )
         if( XmlNode->GetName() == wxT( "title" ) )
         {
             item->m_Title = XmlNode->GetNodeContent();
+            guLogMessage( wxT( "Item: '%s'" ), item->m_Title.c_str() );
         }
         else if( XmlNode->GetName() == wxT( "enclosure" ) )
         {
@@ -373,21 +374,9 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
         http.Get( Buffer, EntryDialog->GetValue() );
         if( Buffer )
         {
-            if( http.GetResponseHeader().Find( wxT( "iso-8859-1" ) ) )
-            {
-                Content = wxString( Buffer, wxConvISO8859_1 );
-            }
-            else
-            {
-                Content = wxString( Buffer, wxConvUTF8 );
-            }
-            free( Buffer );
-        }
-
-        if( !Content.IsEmpty() )
-        {
-            wxStringInputStream ins( Content );
+            wxMemoryInputStream ins( Buffer, Strlen( Buffer ) );
             wxXmlDocument XmlDoc( ins );
+            //wxSt
             wxXmlNode * XmlNode = XmlDoc.GetRoot();
             if( XmlNode && XmlNode->GetName() == wxT( "rss" ) )
             {
@@ -395,11 +384,11 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                 PodcastChannel.m_Url = EntryDialog->GetValue();
                 ReadXmlPodcastChannel( XmlNode->GetChildren(), &PodcastChannel );
 
-                guLogMessage( wxT( "Podcast '%s'" ), PodcastChannel.m_Title.c_str() );
-
                 m_Db->SavePodcastChannel( &PodcastChannel );
                 m_ChannelsListBox->ReloadItems();
             }
+
+            free( Buffer );
         }
         else
         {
@@ -594,6 +583,9 @@ wxString guPodcastListBox::OnGetItemText( const int row, const int col ) const
 
         case guPODCASTS_COLUMN_CHANNEL :
           return Podcast->m_Channel;
+
+        case guPODCASTS_COLUMN_CATEGORY :
+          return Podcast->m_Category;
 
         case guPODCASTS_COLUMN_DATE :
         {
