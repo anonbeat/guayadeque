@@ -703,9 +703,10 @@ wxSQLite3ResultSet DbLibrary::ExecuteQuery( const wxString &query )
   try {
     RetVal = m_Db.ExecuteQuery( query );
   }
-  catch(...)
+  catch( wxSQLite3Exception &e )
   {
-      guLogError( wxT( "DbLibrary::ExecuteQuery exception '%s'" ), query.c_str() );
+    guLogError( wxT( "DbLibrary::ExecuteQuery exception '%s'\n%u: %s" ),
+        query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
   }
   return RetVal;
 }
@@ -720,9 +721,10 @@ int inline DbLibrary::ExecuteUpdate( const wxString &query )
   try {
     RetVal = m_Db.ExecuteUpdate( query );
   }
-  catch(...)
+  catch( wxSQLite3Exception &e )
   {
-    guLogError( wxT( "DbLibrary::ExecuteUpdate exception '%s'" ), query.c_str() );
+    guLogError( wxT( "DbLibrary::ExecuteUpdate exception '%s'\n%u: %s" ),
+        query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
   }
   return RetVal;
 }
@@ -4688,11 +4690,11 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT podcastitem_id, podcastitem_title, "
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
             "podcastitem_file, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
             "podcastitem_status, "
-            "podcastch_title, podcastsch_category "
+            "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
             "WHERE podcastitem_chid = podcastch_id" );
 
@@ -4730,19 +4732,20 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
   {
     guPodcastItem * Item = new guPodcastItem();
     Item->m_Id = dbRes.GetInt( 0 );
-    Item->m_Title = dbRes.GetString( 1 );
-    Item->m_Summary = dbRes.GetString( 2 );
-    Item->m_Author = dbRes.GetString( 3 );
-    Item->m_Enclosure = dbRes.GetString( 4 );
-    Item->m_Time = dbRes.GetInt( 5 );
-    Item->m_FileName = dbRes.GetString( 6 );
-    Item->m_Length = dbRes.GetInt( 7 );
-    Item->m_PlayCount = dbRes.GetInt( 8 );
-    Item->m_LastPlay = dbRes.GetInt( 9 );
-    Item->m_Status = dbRes.GetInt( 10 );
+    Item->m_ChId = dbRes.GetInt( 1 );
+    Item->m_Title = dbRes.GetString( 2 );
+    Item->m_Summary = dbRes.GetString( 3 );
+    Item->m_Author = dbRes.GetString( 4 );
+    Item->m_Enclosure = dbRes.GetString( 5 );
+    Item->m_Time = dbRes.GetInt( 6 );
+    Item->m_FileName = dbRes.GetString( 7 );
+    Item->m_Length = dbRes.GetInt( 8 );
+    Item->m_PlayCount = dbRes.GetInt( 9 );
+    Item->m_LastPlay = dbRes.GetInt( 10 );
+    Item->m_Status = dbRes.GetInt( 11 );
 
-    Item->m_Channel = dbRes.GetString( 11 );
-    Item->m_Category = dbRes.GetString( 12 );
+    Item->m_Channel = dbRes.GetString( 12 );
+    Item->m_Category = dbRes.GetString( 13 );
     items->Add( Item );
   }
   dbRes.Finalize();
@@ -4816,9 +4819,15 @@ int DbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem
   int RetVal = wxNOT_FOUND;
   wxString query;
   wxSQLite3ResultSet dbRes;
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_title, "
+
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_length FROM podcastitems WHERE podcastitem_enclosure = '%s';" ),
+            "podcastitem_file, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND "
+            "podcastitem_enclosure = '%s';" ),
             escape_query_str( enclosure ).c_str() );
 
   dbRes = ExecuteQuery( query );
@@ -4829,13 +4838,20 @@ int DbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem
     if( item )
     {
       item->m_Id = RetVal;
-      item->m_Title = dbRes.GetString( 1 );
-      item->m_Summary = dbRes.GetString( 2 );
-      item->m_Author = dbRes.GetString( 3 );
-      item->m_Enclosure = dbRes.GetString( 4 );
-      item->m_Time = dbRes.GetInt( 5 );
-      item->m_FileName = dbRes.GetString( 6 );
-      item->m_Length = dbRes.GetInt( 7 );
+      item->m_ChId = dbRes.GetInt( 1 );
+      item->m_Title = dbRes.GetString( 2 );
+      item->m_Summary = dbRes.GetString( 3 );
+      item->m_Author = dbRes.GetString( 4 );
+      item->m_Enclosure = dbRes.GetString( 5 );
+      item->m_Time = dbRes.GetInt( 6 );
+      item->m_FileName = dbRes.GetString( 7 );
+      item->m_Length = dbRes.GetInt( 8 );
+      item->m_PlayCount = dbRes.GetInt( 9 );
+      item->m_LastPlay = dbRes.GetInt( 10 );
+      item->m_Status = dbRes.GetInt( 11 );
+
+      item->m_Channel = dbRes.GetString( 12 );
+      item->m_Category = dbRes.GetString( 13 );
     }
   }
   dbRes.Finalize();
@@ -4848,9 +4864,15 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
   int RetVal = wxNOT_FOUND;
   wxString query;
   wxSQLite3ResultSet dbRes;
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_title, "
+
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_length FROM podcastitems WHERE podcastitem_id = %u LIMIT 1;" ),
+            "podcastitem_file, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND "
+            "podcastitem_id = %u LIMIT 1;" ),
             itemid );
 
   dbRes = ExecuteQuery( query );
@@ -4861,13 +4883,20 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
     if( item )
     {
       item->m_Id = RetVal;
-      item->m_Title = dbRes.GetString( 1 );
-      item->m_Summary = dbRes.GetString( 2 );
-      item->m_Author = dbRes.GetString( 3 );
-      item->m_Enclosure = dbRes.GetString( 4 );
-      item->m_Time = dbRes.GetInt( 5 );
-      item->m_FileName = dbRes.GetString( 6 );
-      item->m_Length = dbRes.GetInt( 7 );
+      item->m_ChId = dbRes.GetInt( 1 );
+      item->m_Title = dbRes.GetString( 2 );
+      item->m_Summary = dbRes.GetString( 3 );
+      item->m_Author = dbRes.GetString( 4 );
+      item->m_Enclosure = dbRes.GetString( 5 );
+      item->m_Time = dbRes.GetInt( 6 );
+      item->m_FileName = dbRes.GetString( 7 );
+      item->m_Length = dbRes.GetInt( 8 );
+      item->m_PlayCount = dbRes.GetInt( 9 );
+      item->m_LastPlay = dbRes.GetInt( 10 );
+      item->m_Status = dbRes.GetInt( 11 );
+
+      item->m_Channel = dbRes.GetString( 12 );
+      item->m_Category = dbRes.GetString( 13 );
     }
   }
   dbRes.Finalize();

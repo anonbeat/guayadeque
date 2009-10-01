@@ -481,14 +481,26 @@ wxArrayInt guListView::GetSelectedItems( const bool convertall ) const
     int ItemId;
     if( GetItemCount() )
     {
-        item = GetFirstSelected( cookie );
-        while( item != wxNOT_FOUND )
+        if( m_ListBox->HasMultipleSelection() )
         {
-            ItemId = GetItemId( item );
-            RetVal.Add( ItemId );
-            if( convertall && ( ItemId == 0 ) )
-                break;
-            item = GetNextSelected( cookie );
+            item = GetFirstSelected( cookie );
+            while( item != wxNOT_FOUND )
+            {
+                ItemId = GetItemId( item );
+                RetVal.Add( ItemId );
+                if( convertall && ( ItemId == 0 ) )
+                    break;
+                item = GetNextSelected( cookie );
+            }
+        }
+        else
+        {
+            item = m_ListBox->GetSelection();
+            if( item != wxNOT_FOUND )
+            {
+                ItemId = GetItemId( item );
+                RetVal.Add( ItemId );
+            }
         }
 
         //
