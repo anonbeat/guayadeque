@@ -79,8 +79,8 @@ class guPodcastListBox : public guListView
 
     virtual void                ReloadItems( bool reset = true );
 
-    virtual int inline          GetItemId( const int row ) const;
-    virtual wxString inline     GetItemName( const int row ) const;
+    virtual wxString inline GetItemName( const int item ) const;
+    virtual int inline      GetItemId( const int item ) const;
 
     void                        SetOrder( int order );
 };
@@ -100,8 +100,10 @@ class guPodcastPanel : public wxPanel
     DbLibrary *         m_Db;
     guPlayerPanel *     m_PlayerPanel;
     wxSplitterWindow *  m_MainSplitter;
+    wxSplitterWindow *  m_TopSplitter;
 	guChannelsListBox * m_ChannelsListBox;
     guPodcastListBox *  m_PodcastsListBox;
+	wxBoxSizer *        m_DetailMainSizer;
     wxStaticBitmap *    m_DetailImage;
     wxStaticText *      m_DetailChannelTitle;
     wxStaticText *      m_DetailDescText;
@@ -112,6 +114,7 @@ class guPodcastPanel : public wxPanel
     wxStaticText *      m_DetailItemSumaryText;
     wxStaticText *      m_DetailItemDateText;
     wxStaticText *      m_DetailItemLengthText;
+    wxScrolledWindow *  m_DetailScrolledWindow;
 
     void AddChannel( wxCommandEvent &event );
 
