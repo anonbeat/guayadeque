@@ -122,12 +122,13 @@ bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings )
 }
 
 // -------------------------------------------------------------------------------- //
-bool DownloadImage( const wxString &Source, const wxString &Target )
+bool DownloadImage( const wxString &Source, const wxString &Target, int maxwidth, int maxheight )
 {
     bool        RetVal = false;
     long        ImageType;
     wxImage *   Image = NULL;
 
+    guLogMessage( wxT( "Downloading the file '%s'" ), Source.c_str() );
     if( Source.Lower().EndsWith( wxT( ".jpg" ) ) ||
         Source.Lower().EndsWith( wxT( ".jpeg" ) ) )
       ImageType = wxBITMAP_TYPE_JPEG;
@@ -156,6 +157,13 @@ bool DownloadImage( const wxString &Source, const wxString &Target )
                     {
                         if( Image->IsOk() )
                         {
+                            if( maxwidth != -1 )
+                            {
+                                if( maxheight != -1 )
+                                    Image->Rescale( maxwidth, maxheight, wxIMAGE_QUALITY_HIGH );
+                                else
+                                    Image->Rescale( maxwidth, maxwidth, wxIMAGE_QUALITY_HIGH );
+                            }
                             RetVal = Image->SaveFile( Target, wxBITMAP_TYPE_JPEG );
                         }
                         delete Image;

@@ -37,6 +37,8 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 {
     m_Db = db;
     m_PlayerPanel = playerpanel;
+    m_LastChannelInfoId = wxNOT_FOUND;
+    m_LastPodcastInfoId = wxNOT_FOUND;
 
     wxPanel * ChannelsPanel;
     wxPanel * PodcastsPanel;
@@ -52,17 +54,21 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
     wxStaticText * DetailItemLengthLabel;
 
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
     // Check that the directory to store podcasts are created
-    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Podcasts/" ) ) )
+    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    if( !wxDirExists( m_PodcastsPath ) )
     {
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), 0770 );
-    }
-    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Podcasts/Images" ) ) )
-    {
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Podcasts/Images" ), 0770 );
+        wxMkdir( m_PodcastsPath, 0770 );
     }
 
-	wxBoxSizer* MainSizer;
+    if( !wxDirExists( m_PodcastsPath + wxT( "/Images" ) ) )
+    {
+        wxMkdir( m_PodcastsPath + wxT( "/Images" ), 0770 );
+    }
+
+	wxBoxSizer *        MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_MainSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
@@ -114,110 +120,109 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	m_DetailScrolledWindow->SetScrollRate( 5, 5 );
 	m_DetailScrolledWindow->SetMinSize( wxSize( -1,100 ) );
 
-	wxFlexGridSizer* DetailFlexGridSizer;
-	DetailFlexGridSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
-	DetailFlexGridSizer->AddGrowableCol( 1 );
-	DetailFlexGridSizer->SetFlexibleDirection( wxBOTH );
-	DetailFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	m_DetailFlexGridSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	m_DetailFlexGridSizer->AddGrowableCol( 1 );
+	m_DetailFlexGridSizer->SetFlexibleDirection( wxBOTH );
+	m_DetailFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_DetailImage = new wxStaticBitmap( m_DetailScrolledWindow, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 60,60 ), 0 );
-	DetailFlexGridSizer->Add( m_DetailImage, 0, wxALL, 5 );
+	m_DetailImage = new wxStaticBitmap( m_DetailScrolledWindow, wxID_ANY, guImage( guIMAGE_INDEX_tiny_podcast_icon ), wxDefaultPosition, wxSize( 60,60 ), 0 );
+	m_DetailFlexGridSizer->Add( m_DetailImage, 0, wxALL, 5 );
 
-	m_DetailChannelTitle = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("My Garden Communications Impulse"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailChannelTitle = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailChannelTitle->Wrap( -1 );
 	m_DetailChannelTitle->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 
-	DetailFlexGridSizer->Add( m_DetailChannelTitle, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailChannelTitle, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	DetailDescLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Description:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailDescLabel->Wrap( -1 );
 	DetailDescLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	DetailFlexGridSizer->Add( DetailDescLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_DetailFlexGridSizer->Add( DetailDescLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailDescText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("This is the first in a serie of podcasts that treats the impulse of the communication in the collapse of the industrial economy in the my garden."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailDescText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailDescText->Wrap( 445 );
-	DetailFlexGridSizer->Add( m_DetailDescText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailDescText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	DetailAuthorLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailAuthorLabel->Wrap( -1 );
 	DetailAuthorLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	DetailFlexGridSizer->Add( DetailAuthorLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_DetailFlexGridSizer->Add( DetailAuthorLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailAuthorText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Gerard Vaesley"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailAuthorText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailAuthorText->Wrap( -1 );
-	DetailFlexGridSizer->Add( m_DetailAuthorText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailAuthorText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	DetailOwnerLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailOwnerLabel->Wrap( -1 );
 	DetailOwnerLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	DetailFlexGridSizer->Add( DetailOwnerLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_DetailFlexGridSizer->Add( DetailOwnerLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailOwnerText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("VRT Records S.A."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailOwnerText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailOwnerText->Wrap( -1 );
-	DetailFlexGridSizer->Add( m_DetailOwnerText, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailOwnerText, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-//	DetailEmailLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("email:"), wxDefaultPosition, wxDefaultSize, 0 );
-//	DetailEmailLabel->Wrap( -1 );
-//	DetailEmailLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
-//
-//	DetailFlexGridSizer->Add( DetailEmailLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-//
-//	m_DetailEmailText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("info@gerard.vrt.com"), wxDefaultPosition, wxDefaultSize, 0 );
-//	m_DetailEmailText->Wrap( -1 );
-//	DetailFlexGridSizer->Add( m_DetailEmailText, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+	wxStaticText * DetailLinkLabel;
+	DetailLinkLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Link:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailLinkLabel->Wrap( -1 );
+	DetailLinkLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+
+	m_DetailFlexGridSizer->Add( DetailLinkLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_DetailLinkText = new wxHyperlinkCtrl( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_DetailFlexGridSizer->Add( m_DetailLinkText, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	DetailStaticLine1 = new wxStaticLine( m_DetailScrolledWindow, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	DetailFlexGridSizer->Add( DetailStaticLine1, 0, wxEXPAND|wxBOTTOM|wxLEFT, 5 );
+	m_DetailFlexGridSizer->Add( DetailStaticLine1, 0, wxEXPAND|wxBOTTOM|wxLEFT, 5 );
 
 	DetailStaticLine2 = new wxStaticLine( m_DetailScrolledWindow, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	DetailFlexGridSizer->Add( DetailStaticLine2, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+	m_DetailFlexGridSizer->Add( DetailStaticLine2, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	DetailItemTitleLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Title:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemTitleLabel->Wrap( -1 );
 	DetailItemTitleLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	DetailFlexGridSizer->Add( DetailItemTitleLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_DetailFlexGridSizer->Add( DetailItemTitleLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailItemTitleText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("First Podcast ever"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailItemTitleText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailItemTitleText->Wrap( -1 );
-	DetailFlexGridSizer->Add( m_DetailItemTitleText, 0, wxBOTTOM|wxRIGHT, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailItemTitleText, 0, wxBOTTOM|wxRIGHT, 5 );
 
 	DetailItemSumaryLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Sumary:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemSumaryLabel->Wrap( -1 );
 	DetailItemSumaryLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	DetailFlexGridSizer->Add( DetailItemSumaryLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_DetailFlexGridSizer->Add( DetailItemSumaryLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailItemSumaryText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("This is the first podcast that have been done in this server... It will be available more soon"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailItemSumaryText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailItemSumaryText->Wrap( 300 );
-	DetailFlexGridSizer->Add( m_DetailItemSumaryText, 0, wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailItemSumaryText, 0, wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
 	DetailItemDateLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Date:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemDateLabel->Wrap( -1 );
 	DetailItemDateLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	DetailFlexGridSizer->Add( DetailItemDateLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_DetailFlexGridSizer->Add( DetailItemDateLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailItemDateText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Mon, 11 September 2009 00:00:00 GMT"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailItemDateText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailItemDateText->Wrap( -1 );
-	DetailFlexGridSizer->Add( m_DetailItemDateText, 0, wxBOTTOM|wxRIGHT, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailItemDateText, 0, wxBOTTOM|wxRIGHT, 5 );
 
 	DetailItemLengthLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Length:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemLengthLabel->Wrap( -1 );
 	DetailItemLengthLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
-	DetailFlexGridSizer->Add( DetailItemLengthLabel, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
+	m_DetailFlexGridSizer->Add( DetailItemLengthLabel, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
 
-	m_DetailItemLengthText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("04:15"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailItemLengthText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailItemLengthText->Wrap( -1 );
-	DetailFlexGridSizer->Add( m_DetailItemLengthText, 0, wxBOTTOM|wxRIGHT, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailItemLengthText, 0, wxBOTTOM|wxRIGHT, 5 );
 
-	m_DetailScrolledWindow->SetSizer( DetailFlexGridSizer );
+	m_DetailScrolledWindow->SetSizer( m_DetailFlexGridSizer );
 	m_DetailScrolledWindow->Layout();
-	DetailFlexGridSizer->Fit( m_DetailScrolledWindow );
+	m_DetailFlexGridSizer->Fit( m_DetailScrolledWindow );
 	DetailSizer->Add( m_DetailScrolledWindow, 1, wxEXPAND | wxALL, 5 );
 
 	m_DetailMainSizer->Add( DetailSizer, 1, wxEXPAND|wxALL, 5 );
@@ -402,10 +407,10 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
     if( EntryDialog->ShowModal() == wxID_OK )
     {
         wxCurlHTTP  http;
+        wxSetCursor( * wxHOURGLASS_CURSOR );
+        wxTheApp->Yield();
 
         guLogMessage( wxT( "The address is %s" ), EntryDialog->GetValue().c_str() );
-
-        wxString Content;
 
         http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
         http.AddHeader( wxT( "Accept: */*" ) );
@@ -424,6 +429,28 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                 PodcastChannel.m_Url = EntryDialog->GetValue();
                 ReadXmlPodcastChannel( XmlNode->GetChildren(), &PodcastChannel );
 
+                if( !PodcastChannel.m_Image.IsEmpty() )
+                {
+                    guLogMessage( wxT( "Downloading the Image..." ) );
+                    wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/Images/" ) + PodcastChannel.m_Title + wxT( ".jpg" ) );
+                    if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+                    {
+                        if( !wxFileExists( ImageFile.GetFullPath() ) )
+                        {
+                            if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
+                                guLogMessage( wxT( "Download failed..." ) );
+                        }
+                        else
+                        {
+                            guLogMessage( wxT( "Image File already exists" ) );
+                        }
+                    }
+                    else
+                    {
+                        guLogMessage( wxT( "Error in normalize..." ) );
+                    }
+                }
+
                 m_Db->SavePodcastChannel( &PodcastChannel );
                 m_ChannelsListBox->ReloadItems();
             }
@@ -434,6 +461,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
         {
             guLogError( wxT( "Could not get podcast content for %s" ), EntryDialog->GetValue().c_str() );
         }
+        wxSetCursor( * wxSTANDARD_CURSOR );
     }
     EntryDialog->Destroy();
 }
@@ -441,8 +469,14 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
 {
-    m_Db->SetPodcastChannelFilters( m_ChannelsListBox->GetSelectedItems() );
+    wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
+    m_Db->SetPodcastChannelFilters( SelectedItems );
     m_PodcastsListBox->ReloadItems();
+
+    if( SelectedItems.Count() == 1 && SelectedItems[ 0 ] != 0 )
+        UpdateChannelInfo( SelectedItems[ 0 ] );
+    else
+        UpdateChannelInfo( -1 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -458,32 +492,60 @@ void guPodcastPanel::OnPodcastsColClick( wxListEvent &event )
 void guPodcastPanel::OnPodcastItemSelected( wxListEvent &event )
 {
     wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
-    UpdateChannelInfo( Selection.Count() ? Selection[ 0 ] : -1 );
+    UpdatePodcastInfo( Selection.Count() ? Selection[ 0 ] : -1 );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::UpdatePodcastInfo( int itemid )
+{
+    if( m_LastPodcastInfoId == itemid )
+        return;
+
+    m_LastPodcastInfoId = itemid;
+
+    guPodcastItem       PodcastItem;
+    //
+    guLogMessage( wxT( "Updating the podcast info of the item %u" ), itemid );
+    if( itemid > 0 )
+    {
+        m_Db->GetPodcastItemId( itemid, &PodcastItem );
+
+        UpdateChannelInfo( PodcastItem.m_ChId );
+
+        m_DetailItemTitleText->SetLabel( PodcastItem.m_Title );
+        m_DetailItemSumaryText->SetLabel( PodcastItem.m_Summary );
+        wxDateTime AddedDate;
+        AddedDate.Set( ( time_t ) PodcastItem.m_Time );
+        m_DetailItemDateText->SetLabel( AddedDate.Format( wxT( "%a, %d %b %Y %T %z" ) ) );
+        m_DetailItemLengthText->SetLabel( LenToString( PodcastItem.m_Length ) );
+    }
+    else
+    {
+        m_DetailItemTitleText->SetLabel( wxEmptyString );
+        m_DetailItemSumaryText->SetLabel( wxEmptyString );
+        m_DetailItemDateText->SetLabel( wxEmptyString );
+        m_DetailItemLengthText->SetLabel( wxEmptyString );
+    }
+    m_DetailMainSizer->FitInside( m_DetailScrolledWindow );
+    m_DetailScrolledWindow->SetVirtualSize( m_DetailMainSizer->GetSize() );
+    //m_DetailFlexGridSizer->FitInside( m_DetailScrolledWindow );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPodcastPanel::UpdateChannelInfo( int itemid )
 {
+    if( m_LastChannelInfoId == itemid )
+        return;
+
+    m_LastChannelInfoId = itemid;
+
     guPodcastChannel    PodcastChannel;
-    guPodcastItem       PodcastItem;
     //
-    guLogMessage( wxT( "Updating the info of the item %u" ), itemid );
+    guLogMessage( wxT( "Updating the channel info of the item %u" ), itemid );
     if( itemid > 0 )
     {
-//    int                 m_Id;
-//    wxString            m_Url;
-//    wxString            m_Title;
-//    wxString            m_Link;
-//    wxString            m_Description;
-//    wxString            m_Lang;
-//    wxString            m_Summary;
-//    wxString            m_Category;
-//    wxString            m_Image;
-//    wxString            m_Author;
-//    wxString            m_OwnerName;
-//    wxString            m_OwnerEmail;
-        m_Db->GetPodcastItemId( itemid, &PodcastItem );
-        m_Db->GetPodcastChannelId( PodcastItem.m_ChId, &PodcastChannel );
+        //m_Db->GetPodcastItemId( itemid, &PodcastItem );
+        m_Db->GetPodcastChannelId( itemid, &PodcastChannel );
         guLogMessage( wxT( "PodcastChannel:\n"
             "Id             : %u\n"
             "Url            : %s\n"
@@ -510,41 +572,42 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
             PodcastChannel.m_OwnerName.c_str(),
             PodcastChannel.m_OwnerEmail.c_str() );
 
+        // Set Image...
+        wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/Images/" ) + PodcastChannel.m_Title + wxT( ".jpg" ) );
+        if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+        {
+            wxImage PodcastImage;
+            if( wxFileExists( ImageFile.GetFullPath() ) &&
+                PodcastImage.LoadFile( ImageFile.GetFullPath() ) &&
+                PodcastImage.IsOk() )
+            {
+                m_DetailImage->SetBitmap( PodcastImage );
+            }
+            else
+                m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_tiny_podcast_icon ) );
+        }
 
-        //m_DetailImage->
         m_DetailChannelTitle->SetLabel( PodcastChannel.m_Title );
         m_DetailDescText->SetLabel( PodcastChannel.m_Description );
         m_DetailAuthorText->SetLabel( PodcastChannel.m_Author );
         m_DetailOwnerText->SetLabel( PodcastChannel.m_OwnerName +
-                                     wxT( " (" + PodcastChannel.m_OwnerEmail + wxT( ")" ) ) );
-        //m_DetailEmailText->SetLabel( PodcastChannel.m_OwnerEmail );
-        m_DetailItemTitleText->SetLabel( PodcastItem.m_Title );
-        m_DetailItemSumaryText->SetLabel( PodcastItem.m_Summary );
-        wxDateTime AddedDate;
-        AddedDate.Set( ( time_t ) PodcastItem.m_Time );
-        m_DetailItemDateText->SetLabel( AddedDate.FormatDate() );
-        m_DetailItemLengthText->SetLabel( LenToString( PodcastItem.m_Length ) );
+                                     wxT( " (" ) + PodcastChannel.m_OwnerEmail + wxT( ")" ) );
+        m_DetailLinkText->SetLabel( PodcastChannel.m_Url );
+        m_DetailLinkText->SetURL( PodcastChannel.m_Url );
     }
     else
     {
-        m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_podcast_icon ) );
-//        wxStaticBitmap *    m_DetailImage;
+        m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_tiny_podcast_icon ) );
         m_DetailChannelTitle->SetLabel( wxEmptyString );
         m_DetailDescText->SetLabel( wxEmptyString );
         m_DetailAuthorText->SetLabel( wxEmptyString );
         m_DetailOwnerText->SetLabel( wxEmptyString );
-        //m_DetailEmailText->SetLabel( wxEmptyString );
-        m_DetailItemTitleText->SetLabel( wxEmptyString );
-        m_DetailItemSumaryText->SetLabel( wxEmptyString );
-        m_DetailItemDateText->SetLabel( wxEmptyString );
-        m_DetailItemLengthText->SetLabel( wxEmptyString );
+        m_DetailLinkText->SetURL( wxEmptyString );
+        m_DetailLinkText->SetLabel( wxEmptyString );
     }
-//    wxSize Size = GetSize();
-//	m_DetailDescText->Wrap( Size.GetWidth() - 70 );
-//	//m_DetailItemTitleText->Wrap( Size.GetWidth() - 70 );
-//	m_DetailItemSumaryText->Wrap( Size.GetWidth() - 70 );
-//
     m_DetailMainSizer->FitInside( m_DetailScrolledWindow );
+    m_DetailScrolledWindow->SetVirtualSize( m_DetailMainSizer->GetSize() );
+    //m_DetailFlexGridSizer->FitInside( m_DetailScrolledWindow );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -605,6 +668,7 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
 // guPodcastListBox
 // -------------------------------------------------------------------------------- //
 wxString guPODCASTS_COLUMN_NAMES[] = {
+    _( "Status" ),
     _( "Title" ),
     _( "Channel" ),
     _( "Category" ),
@@ -612,8 +676,7 @@ wxString guPODCASTS_COLUMN_NAMES[] = {
     _( "Length" ),
     _( "Author" ),
     _( "PlayCount" ),
-    _( "LastPlay" ),
-    _( "Status" )
+    _( "LastPlay" )
 };
 
 // -------------------------------------------------------------------------------- //
@@ -668,6 +731,9 @@ wxString guPodcastListBox::OnGetItemText( const int row, const int col ) const
     Podcast = &m_PodItems[ row ];
     switch( col )
     {
+        case guPODCASTS_COLUMN_STATUS :
+            return wxEmptyString;
+
         case guPODCASTS_COLUMN_TITLE :
           return Podcast->m_Title;
 
@@ -703,9 +769,6 @@ wxString guPodcastListBox::OnGetItemText( const int row, const int col ) const
           }
           else
             return _( "Never" );
-
-        case guPODCASTS_COLUMN_STATUS :
-            return wxEmptyString;
     }
     return wxEmptyString;
 }
