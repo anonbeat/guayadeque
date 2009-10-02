@@ -84,6 +84,7 @@
 #include "./images/tiny_numerate.h"
 #include "./images/tiny_edit_clear.h"
 #include "./images/podcast_icon.h"
+#include "./images/tiny_podcast_icon.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -154,8 +155,8 @@ guImage_Item guImage_Items[] = {
     { guImage_tiny_search_again,    sizeof( guImage_tiny_search_again ),    wxBITMAP_TYPE_PNG },
     { guImage_tiny_numerate,	    sizeof( guImage_tiny_numerate ),        wxBITMAP_TYPE_PNG },
     { guImage_tiny_edit_clear,      sizeof( guImage_tiny_edit_clear ),      wxBITMAP_TYPE_PNG },
-    { guImage_podcast_icon,         sizeof( guImage_podcast_icon ),         wxBITMAP_TYPE_JPEG }
-
+    { guImage_podcast_icon,         sizeof( guImage_podcast_icon ),         wxBITMAP_TYPE_JPEG },
+    { guImage_tiny_podcast_icon,    sizeof( guImage_tiny_podcast_icon ),    wxBITMAP_TYPE_JPEG }
 };
 
 

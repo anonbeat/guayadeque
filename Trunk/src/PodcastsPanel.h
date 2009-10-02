@@ -25,6 +25,7 @@
 #include "PlayerPanel.h"
 
 #include <wx/wx.h>
+#include <wx/hyperlink.h>
 #include <wx/splitter.h>
 #include <wx/statline.h>
 
@@ -50,15 +51,15 @@ class guChannelsListBox : public guListBox
     virtual int GetSelectedSongs( guTrackArray * Songs ) const;
 };
 
-#define guPODCASTS_COLUMN_TITLE         0
-#define guPODCASTS_COLUMN_CHANNEL       1
-#define guPODCASTS_COLUMN_CATEGORY      2
-#define guPODCASTS_COLUMN_DATE          3
-#define guPODCASTS_COLUMN_LENGTH        4
-#define guPODCASTS_COLUMN_AUTHOR        5
-#define guPODCASTS_COLUMN_PLAYCOUNT     6
-#define guPODCASTS_COLUMN_LASTPLAY      7
-#define guPODCASTS_COLUMN_STATUS        8
+#define guPODCASTS_COLUMN_STATUS        0
+#define guPODCASTS_COLUMN_TITLE         1
+#define guPODCASTS_COLUMN_CHANNEL       2
+#define guPODCASTS_COLUMN_CATEGORY      3
+#define guPODCASTS_COLUMN_DATE          4
+#define guPODCASTS_COLUMN_LENGTH        5
+#define guPODCASTS_COLUMN_AUTHOR        6
+#define guPODCASTS_COLUMN_PLAYCOUNT     7
+#define guPODCASTS_COLUMN_LASTPLAY      8
 
 // -------------------------------------------------------------------------------- //
 class guPodcastListBox : public guListView
@@ -92,13 +93,16 @@ class guPodcastPanel : public wxPanel
     void                MainSplitterOnIdle( wxIdleEvent& );
     void                OnChangedSize( wxSizeEvent& event );
     void                OnChannelsSelected( wxListEvent &event );
-    void                UpdateChannelInfo( int index );
+    void                UpdatePodcastInfo( int itemid );
+    void                UpdateChannelInfo( int itemid );
     void                OnPodcastsColClick( wxListEvent &event );
     void                OnPodcastItemSelected( wxListEvent &event );
 
   protected:
     DbLibrary *         m_Db;
     guPlayerPanel *     m_PlayerPanel;
+
+    wxString            m_PodcastsPath;
     wxSplitterWindow *  m_MainSplitter;
     wxSplitterWindow *  m_TopSplitter;
 	guChannelsListBox * m_ChannelsListBox;
@@ -109,12 +113,17 @@ class guPodcastPanel : public wxPanel
     wxStaticText *      m_DetailDescText;
     wxStaticText *      m_DetailAuthorText;
     wxStaticText *      m_DetailOwnerText;
+    wxHyperlinkCtrl *   m_DetailLinkText;
     wxStaticText *      m_DetailEmailText;
     wxStaticText *      m_DetailItemTitleText;
     wxStaticText *      m_DetailItemSumaryText;
     wxStaticText *      m_DetailItemDateText;
     wxStaticText *      m_DetailItemLengthText;
     wxScrolledWindow *  m_DetailScrolledWindow;
+	wxFlexGridSizer *   m_DetailFlexGridSizer;
+
+    int                 m_LastChannelInfoId;
+    int                 m_LastPodcastInfoId;
 
     void AddChannel( wxCommandEvent &event );
 
