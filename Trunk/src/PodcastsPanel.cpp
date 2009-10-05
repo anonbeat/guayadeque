@@ -265,8 +265,9 @@ void guPodcastPanel::OnChangedSize( wxSizeEvent& event )
 {
 	event.Skip();
 //    wxSize Size = event.GetSize();
-//	m_DetailDescText->Wrap( Size.GetWidth() - 100 );
-//	m_DetailItemSumaryText->Wrap( Size.GetWidth() - 100 );
+//	m_DetailDescText->Wrap( Size.GetWidth() - 200 );
+//	m_DetailItemSumaryText->Wrap( Size.GetWidth() - 200 );
+//	m_DetailFlexGridSizer->FitInside( m_DetailScrolledWindow );
 //	Layout();
 }
 
@@ -689,7 +690,7 @@ wxString guPODCASTS_COLUMN_NAMES[] = {
 
 // -------------------------------------------------------------------------------- //
 guPodcastListBox::guPodcastListBox( wxWindow * parent, DbLibrary * db ) :
-    guListView( parent, wxLB_SINGLE )
+    guListView( parent, wxLB_SINGLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING )
 {
     m_Db = db;
 
