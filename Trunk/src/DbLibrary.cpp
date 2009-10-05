@@ -4795,7 +4795,7 @@ void DbLibrary::SavePodcastItem( const int channelid, const guPodcastItem * item
                 item->m_Time,
                 escape_query_str( item->m_FileName ).c_str(),
                 item->m_Length,
-                item->m_Id );
+                ItemId );
 
     ExecuteUpdate( query );
   }
