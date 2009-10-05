@@ -61,6 +61,7 @@ class guChannelsListBox : public guListBox
 #define guPODCASTS_COLUMN_PLAYCOUNT     7
 #define guPODCASTS_COLUMN_LASTPLAY      8
 
+
 // -------------------------------------------------------------------------------- //
 class guPodcastListBox : public guListView
 {
@@ -70,6 +71,7 @@ class guPodcastListBox : public guListView
     int                 m_Order;
     bool                m_OrderDesc;
 
+    virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );

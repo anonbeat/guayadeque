@@ -239,6 +239,17 @@ class guPodcastItem
     int         m_PlayCount;
     int         m_LastPlay;
     int         m_Status;
+
+    guPodcastItem()
+    {
+        m_Id = 0;
+        m_ChId = 0;
+        m_Time = 0;
+        m_Length = 0;
+        m_PlayCount = 0;
+        m_LastPlay = 0;
+        m_Status = 0;
+    }
 };
 WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
 

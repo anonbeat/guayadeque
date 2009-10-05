@@ -276,19 +276,24 @@ int StrLengthToInt( const wxString &length )
     int RetVal = 0;
     int Factor[] = { 1, 60, 3600, 86400 };
     int FactorIndex = 0;
-    // 1:02:03:04
-    wxString Rest = length.Strip( wxString::both );
-    int element;
-    do {
-        Rest.AfterLast( wxT( ':' ) ).ToLong( ( long * ) &element );
-        if( !element )
-            break;
-        RetVal += Factor[ FactorIndex ] * element;
-        FactorIndex++;
-        if( ( FactorIndex > 3 ) )
-            break;
-        Rest = Rest.BeforeLast( wxT( ':' ) );
-    } while( !Rest.IsEmpty() );
+
+    if( !length.IsEmpty() )
+    {
+        // 1:02:03:04
+        wxString Rest = length.Strip( wxString::both );
+        int element;
+        do {
+            Rest.AfterLast( wxT( ':' ) ).ToLong( ( long * ) &element );
+            if( !element )
+                break;
+            RetVal += Factor[ FactorIndex ] * element;
+            FactorIndex++;
+            if( ( FactorIndex > 3 ) )
+                break;
+            Rest = Rest.BeforeLast( wxT( ':' ) );
+        } while( !Rest.IsEmpty() );
+    }
+//    guLogMessage( wxT( "%s -> %i" ), length.c_str(), RetVal );
     return RetVal;
 }
 
@@ -323,7 +328,9 @@ void ReadXmlPodcastItem( wxXmlNode * XmlNode, guPodcastItem * item )
         {
             XmlNode->GetPropVal( wxT( "url" ), &item->m_Enclosure );
         }
-        else if( XmlNode->GetName() == wxT( "itunes:summary" ) )
+        else if( item->m_Summary.IsEmpty() && ( XmlNode->GetName() == wxT( "itunes:summary" ) ) ||
+                 ( XmlNode->GetName() == wxT( "description" ) )
+         )
         {
             item->m_Summary= XmlNode->GetNodeContent();
         }
@@ -393,6 +400,7 @@ void ReadXmlPodcastChannel( wxXmlNode * XmlNode, guPodcastChannel * channel )
             {
                 guPodcastItem * PodcastItem = new guPodcastItem();
                 ReadXmlPodcastItem( XmlNode->GetChildren(), PodcastItem );
+                guLogMessage( wxT( "Item Length: %i" ), PodcastItem->m_Length );
                 channel->m_Items.Add( PodcastItem );
             }
             XmlNode = XmlNode->GetNext();
@@ -722,6 +730,19 @@ guPodcastListBox::~guPodcastListBox()
 
     Config->WriteNum( wxT( "Order" ), m_Order, wxT( "Podcasts" ) );
     Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "Podcasts" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
+{
+//    if( col == guPODCASTS_COLUMN_STATUS )
+//    {
+//        //dc.SetBackgroundMode( wxTRANSPARENT );
+//    }
+//    else
+//    {
+        guListView::DrawItem( dc, rect, row, col );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //

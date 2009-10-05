@@ -57,6 +57,7 @@ wxString LenToString( int Len )
         LenStr += LenStr.Format( wxT( "%02u:" ), h );
     }
     LenStr += LenStr.Format( wxT( "%02u:%02u" ), m, Len );
+//    guLogMessage( wxT( "%i -> %s" ), Len, LenStr.c_str() );
     return LenStr;
 }
 
