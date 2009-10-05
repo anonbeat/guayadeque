@@ -220,7 +220,7 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     m_ImageList = ( wxImageList * ) NULL;
     m_ListBox = new guListViewClient( this, flags, m_Columns, &m_Attr );
     m_Header = new guListViewHeader( this, m_ListBox, m_Columns, wxPoint( 0, 0 ) );
-    m_ColSelect = ( style & guLISTVIEW_COLUMN_SELECT );
+    m_ColSelect = ( flags & guLISTVIEW_COLUMN_SELECT );
 
     parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guListView::OnChangedSize ), NULL, this );
 	m_ListBox->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListView::OnKeyDown ), NULL, this );
