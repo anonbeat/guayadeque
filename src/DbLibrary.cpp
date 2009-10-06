@@ -636,7 +636,8 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
                       "podcastch_url VARCHAR, podcastch_title VARCHAR, podcastch_description VARCHAR, "
                       "podcastch_language VARCHAR, podcastch_time INTEGER, podcastch_sumary VARCHAR, "
                       "podcastch_author VARCHAR, podcastch_ownername VARCHAR, podcastch_owneremail VARCHAR, "
-                      "podcastch_category VARCHAR, podcastch_image VARCHAR );" ) );
+                      "podcastch_category VARCHAR, podcastch_image VARCHAR, podcastch_downtype INTEGER, "
+                      "podcastch_downtext VARCHAR, podcastch_allowdel BOOLEAN );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_title' on podcastchs(podcastch_title ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_url' on podcastchs(podcastch_url ASC);" ) );
@@ -4506,7 +4507,8 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
   query = wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
                "podcastch_language, podcastch_sumary, "
                "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image "
+               "podcastch_category, podcastch_image, "
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
                "FROM podcastchs" );
 
   dbRes = ExecuteQuery( query );
@@ -4525,6 +4527,9 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
     Channel->m_OwnerEmail = dbRes.GetString( 8 );
     Channel->m_Category = dbRes.GetString( 9 );
     Channel->m_Image = dbRes.GetString( 10 );
+    Channel->m_DownloadType = dbRes.GetInt( 11 );
+    Channel->m_DownloadText = dbRes.GetString( 12 );
+    Channel->m_AllowDelete = dbRes.GetBool( 13 );
     channels->Add( Channel );
   }
   dbRes.Finalize();
@@ -4543,11 +4548,12 @@ void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
     query = wxString::Format( wxT( "INSERT INTO podcastchs( podcastch_id, podcastch_url, podcastch_title, "
         "podcastch_description, podcastch_language, podcastch_time, podcastch_sumary, "
         "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-        "podcastch_category, podcastch_image ) "
+        "podcastch_category, podcastch_image, "
+        "podcastch_downtype, podcastch_downtext, podcastch_allowdel ) "
         "VALUES( NULL, '%s', '%s', "
         "'%s', '%s', 0, '%s', "
         "'%s', '%s', '%s', "
-        "'%s', '%s' );" ),
+        "'%s', '%s', %u, '%s', %u );" ),
         escape_query_str( channel->m_Url ).c_str(),
         escape_query_str( channel->m_Title ).c_str(),
         escape_query_str( channel->m_Description ).c_str(),
@@ -4557,7 +4563,11 @@ void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
         escape_query_str( channel->m_OwnerName ).c_str(),
         escape_query_str( channel->m_OwnerEmail ).c_str(),
         escape_query_str( channel->m_Category ).c_str(),
-        escape_query_str( channel->m_Image ).c_str() );
+        escape_query_str( channel->m_Image ).c_str(),
+        channel->m_DownloadType,
+        escape_query_str( channel->m_DownloadText ).c_str(),
+        channel->m_AllowDelete );
+
     ExecuteUpdate( query );
     ChannelId = m_Db.GetLastRowId().GetLo();
   }
@@ -4567,7 +4577,8 @@ void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
         "SET podcastch_url = '%s', podcastch_title = '%s', "
         "podcastch_description = '%s', podcastch_language = '%s', podcastch_sumary = '%s', "
         "podcastch_author = '%s', podcastch_ownername = '%s', podcastch_owneremail = '%s', "
-        "podcastch_category = '%s', podcastch_image  = '%s' "
+        "podcastch_category = '%s', podcastch_image  = '%s', "
+        "podcastch_downtype = %u, podcastch_downtext = '%s', podcastch_allowdel = %u "
         "WHERE podcastch_id = %u" ),
         escape_query_str( channel->m_Url ).c_str(),
         escape_query_str( channel->m_Title ).c_str(),
@@ -4579,6 +4590,9 @@ void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
         escape_query_str( channel->m_OwnerEmail ).c_str(),
         escape_query_str( channel->m_Category ).c_str(),
         escape_query_str( channel->m_Image ).c_str(),
+        channel->m_DownloadType,
+        escape_query_str( channel->m_DownloadText ).c_str(),
+        channel->m_AllowDelete,
         ChannelId );
     ExecuteUpdate( query );
   }

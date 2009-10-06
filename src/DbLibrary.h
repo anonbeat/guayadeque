@@ -269,6 +269,9 @@ class guPodcastChannel
     wxString            m_OwnerName;
     wxString            m_OwnerEmail;
     guPodcastItemArray  m_Items;
+    int                 m_DownloadType;
+    wxString            m_DownloadText;
+    bool                m_AllowDelete;
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
 

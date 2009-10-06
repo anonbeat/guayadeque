@@ -61,6 +61,14 @@ class guChannelsListBox : public guListBox
 #define guPODCASTS_COLUMN_PLAYCOUNT     7
 #define guPODCASTS_COLUMN_LASTPLAY      8
 
+typedef enum {
+    guPODCAST_STATUS_PENDING,
+    guPODCAST_STATUS_DOWNLOADING,
+    guPODCAST_STATUS_READY,
+    guPODCAST_STATUS_DELETED,
+    guPODCAST_STATUS_ERROR
+} guPodcastStatus;
+
 
 // -------------------------------------------------------------------------------- //
 class guPodcastListBox : public guListView
@@ -93,7 +101,6 @@ class guPodcastPanel : public wxPanel
 {
   private:
     void                MainSplitterOnIdle( wxIdleEvent& );
-    void                OnChangedSize( wxSizeEvent& event );
     void                OnChannelsSelected( wxListEvent &event );
     void                UpdatePodcastInfo( int itemid );
     void                UpdateChannelInfo( int itemid );
