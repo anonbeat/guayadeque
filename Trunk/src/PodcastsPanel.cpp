@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "PodcastsPanel.h"
 
+#include "ChannelEditor.h"
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
@@ -31,6 +32,8 @@
 #include <wx/xml/xml.h>
 #include <wx/sstream.h>
 
+// -------------------------------------------------------------------------------- //
+// guPostcastPanel
 // -------------------------------------------------------------------------------- //
 guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 672,586 ), wxTAB_TRAVERSAL )
@@ -140,8 +143,8 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 
 	m_DetailFlexGridSizer->Add( DetailDescLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailDescText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_DetailDescText->Wrap( 445 );
+	m_DetailDescText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE );
+	//m_DetailDescText->Wrap( 445 );
 	m_DetailFlexGridSizer->Add( m_DetailDescText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	DetailAuthorLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -196,8 +199,8 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 
 	m_DetailFlexGridSizer->Add( DetailItemSumaryLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailItemSumaryText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_DetailItemSumaryText->Wrap( 300 );
+	m_DetailItemSumaryText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE );
+	//m_DetailItemSumaryText->Wrap( 300 );
 	m_DetailFlexGridSizer->Add( m_DetailItemSumaryText, 0, wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
 	DetailItemDateLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Date:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -237,7 +240,6 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	this->Layout();
 
 
-	Connect( wxEVT_SIZE, wxSizeEventHandler( guPodcastPanel::OnChangedSize ) );
 	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::MainSplitterOnIdle ), NULL, this );
 //	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_MainSplitterOnIdle ), NULL, this );
 //	m_TopSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_TopSplitterOnIdle ), NULL, this );
@@ -258,17 +260,6 @@ guPodcastPanel::~guPodcastPanel()
         Config->WriteNum( wxT( "PodcastsMainSashPos" ), m_MainSplitter->GetSashPosition(), wxT( "Positions" ) );
         Config->WriteNum( wxT( "PodcastsTopSashPos" ), m_TopSplitter->GetSashPosition(), wxT( "Positions" ) );
     }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPodcastPanel::OnChangedSize( wxSizeEvent& event )
-{
-	event.Skip();
-//    wxSize Size = event.GetSize();
-//	m_DetailDescText->Wrap( Size.GetWidth() - 200 );
-//	m_DetailItemSumaryText->Wrap( Size.GetWidth() - 200 );
-//	m_DetailFlexGridSizer->FitInside( m_DetailScrolledWindow );
-//	Layout();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -460,8 +451,15 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                     }
                 }
 
-                m_Db->SavePodcastChannel( &PodcastChannel );
-                m_ChannelsListBox->ReloadItems();
+                wxSetCursor( * wxSTANDARD_CURSOR );
+                //
+                guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
+                if( ChannelEditor->ShowModal() == wxID_OK )
+                {
+                    m_Db->SavePodcastChannel( &PodcastChannel );
+                    m_ChannelsListBox->ReloadItems();
+                }
+                ChannelEditor->Destroy();
             }
 
             free( Buffer );
@@ -535,9 +533,7 @@ void guPodcastPanel::UpdatePodcastInfo( int itemid )
         m_DetailItemDateText->SetLabel( wxEmptyString );
         m_DetailItemLengthText->SetLabel( wxEmptyString );
     }
-    m_DetailMainSizer->FitInside( m_DetailScrolledWindow );
-    m_DetailScrolledWindow->SetVirtualSize( m_DetailMainSizer->GetSize() );
-    //m_DetailFlexGridSizer->FitInside( m_DetailScrolledWindow );
+    m_DetailMainSizer->Layout();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -699,17 +695,24 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, DbLibrary * db ) :
     m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
     m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
 
-    // Create the Columns
     int ColId;
+    wxString ColName;
     int index;
     int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
     {
+        ColId = Config->ReadNum( wxString::Format( wxT( "PodcastsCol%u" ), index ), index, wxT( "PodcastsColumns" ) );
+
+        ColName = guPODCASTS_COLUMN_NAMES[ ColId ];
+
+        ColName += ( ( ColId == m_Order ) ? ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
+
         guListViewColumn * Column = new guListViewColumn(
-            guPODCASTS_COLUMN_NAMES[ index ] + ( ( index == m_Order ) ? ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ),
-            index,
-            Config->ReadNum( wxString::Format( wxT( "PodcastsColSize%u" ), index ), 80, wxT( "Positions" ) )
-        );
+            ColName,
+            ColId,
+            Config->ReadNum( wxString::Format( wxT( "PodcastsColWidth%u" ), index ), 80, wxT( "PodcastsColumns" ) ),
+            Config->ReadBool( wxString::Format( wxT( "PodcastsColShow%u" ), index ), true, wxT( "PodcastsColumns" ) )
+            );
         InsertColumn( Column );
     }
 
@@ -721,12 +724,17 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, DbLibrary * db ) :
 guPodcastListBox::~guPodcastListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-
+    int ColId;
     int index;
     int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
     {
-        Config->WriteNum( wxString::Format( wxT( "PodcastsColSize%u" ), index ), GetColumnWidth( index ), wxT( "Positions" ) );
+        Config->WriteNum( wxString::Format( wxT( "PodcastsCol%u" ), index ),
+                          ( * m_Columns )[ index ].m_Id, wxT( "PodcastsColumns" ) );
+        Config->WriteNum( wxString::Format( wxT( "PodcastsColWidth%u" ), index ),
+                          ( * m_Columns )[ index ].m_Width, wxT( "PodcastsColumns" ) );
+        Config->WriteBool( wxString::Format( wxT( "PodcastsColShow%u" ), index ),
+                           ( * m_Columns )[ index ].m_Enabled, wxT( "PodcastsColumns" ) );
     }
 
     Config->WriteNum( wxT( "Order" ), m_Order, wxT( "Podcasts" ) );
