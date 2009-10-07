@@ -122,13 +122,13 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	wxBoxSizer* DownloadSizer;
 	DownloadSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxString m_DownloadChoiceChoices[] = { _( "All" ), _( "Only if contains" ), _( "Manually" ) };
+	wxString m_DownloadChoiceChoices[] = { _( "Manually" ), _( "Only if contains" ), _( "All" ) };
 	int m_DownloadChoiceNChoices = sizeof( m_DownloadChoiceChoices ) / sizeof( wxString );
 	m_DownloadChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_DownloadChoiceNChoices, m_DownloadChoiceChoices, 0 );
-	m_DownloadChoice->SetSelection( 0 );
+	m_DownloadChoice->SetSelection( channel->m_DownloadType );
 	DownloadSizer->Add( m_DownloadChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	m_DownloadText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_DownloadText = new wxTextCtrl( this, wxID_ANY, channel->m_DownloadText, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DownloadText->Enable( false );
 
 	DownloadSizer->Add( m_DownloadText, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
@@ -140,6 +140,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	FlexGridSizer->Add( DeleteLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	m_DeleteCheckBox = new wxCheckBox( this, wxID_ANY, _( "Allow delete old items" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DeleteCheckBox->SetValue( channel->m_AllowDelete );
 
 	FlexGridSizer->Add( m_DeleteCheckBox, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 

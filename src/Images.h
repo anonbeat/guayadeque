@@ -86,7 +86,10 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_numerate,
     guIMAGE_INDEX_tiny_edit_clear,
     guIMAGE_INDEX_podcast_icon,
-    guIMAGE_INDEX_tiny_podcast_icon
+    guIMAGE_INDEX_tiny_podcast_icon,
+    guIMAGE_INDEX_tiny_status_pending,
+    guIMAGE_INDEX_tiny_status_error,
+    guIMAGE_INDEX_tiny_doc_save
 };
 
 

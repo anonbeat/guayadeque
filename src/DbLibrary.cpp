@@ -4624,7 +4624,8 @@ int DbLibrary::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * cha
   query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
                "podcastch_language, podcastch_sumary, "
                "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image "
+               "podcastch_category, podcastch_image, "
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
                "FROM podcastchs "
                "WHERE podcastch_url = '%s' LIMIT 1;" ),
                escape_query_str( url ).c_str() );
@@ -4647,6 +4648,9 @@ int DbLibrary::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * cha
       channel->m_OwnerEmail = dbRes.GetString( 8 );
       channel->m_Category = dbRes.GetString( 9 );
       channel->m_Image = dbRes.GetString( 10 );
+      channel->m_DownloadType = dbRes.GetInt( 11 );
+      channel->m_DownloadText = dbRes.GetString( 12 );
+      channel->m_AllowDelete = dbRes.GetBool( 13 );
     }
   }
   dbRes.Finalize();
@@ -4663,7 +4667,8 @@ int DbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
   query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
                "podcastch_language, podcastch_sumary, "
                "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image "
+               "podcastch_category, podcastch_image, "
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
                "FROM podcastchs "
                "WHERE podcastch_id = %u LIMIT 1;" ),
                id );
@@ -4686,6 +4691,9 @@ int DbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
       channel->m_OwnerEmail = dbRes.GetString( 8 );
       channel->m_Category = dbRes.GetString( 9 );
       channel->m_Image = dbRes.GetString( 10 );
+      channel->m_DownloadType = dbRes.GetInt( 11 );
+      channel->m_DownloadText = dbRes.GetString( 12 );
+      channel->m_AllowDelete = dbRes.GetBool( 13 );
     }
   }
   dbRes.Finalize();
@@ -4695,6 +4703,13 @@ int DbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
 // -------------------------------------------------------------------------------- //
 void DbLibrary::DelPodcastChannel( const int id )
 {
+  wxString query;
+
+  query = wxString::Format( wxT( "DELETE FROM podcastchs WHERE podcastch_id = %u;" ), id );
+
+  ExecuteUpdate( query );
+
+  DelPodcastItems( id );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4921,11 +4936,24 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
 // -------------------------------------------------------------------------------- //
 void DbLibrary::DelPodcastItem( const int itemid )
 {
+  wxString query;
+
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+            "podcastitem_status = %u WHERE podcastitem_id = %u;" ),
+            guPODCAST_STATUS_DELETED, itemid );
+
+  ExecuteUpdate( query );
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::DetPodcastItems( const int channelid )
+void DbLibrary::DelPodcastItems( const int channelid )
 {
+  wxString query;
+
+  query = wxString::Format( wxT( "DELETE FROM podcastitems "
+            "WHERE podcastitem_chid = %u;" ), channelid );
+
+  ExecuteUpdate( query );
 }
 
 // -------------------------------------------------------------------------------- //
