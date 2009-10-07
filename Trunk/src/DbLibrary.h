@@ -519,7 +519,7 @@ class DbLibrary {
     int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );
     int                     GetPodcastItemId( const int itemid, guPodcastItem * item = NULL );
     void                    DelPodcastItem( const int itemid );
-    void                    DetPodcastItems( const int channelid );
+    void                    DelPodcastItems( const int channelid );
     void                    SetPodcastChannelFilters( const wxArrayInt &filters );
     void                    SetPodcastOrder( int order );
 

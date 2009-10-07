@@ -69,6 +69,12 @@ typedef enum {
     guPODCAST_STATUS_ERROR
 } guPodcastStatus;
 
+typedef enum {
+    guPODCAST_DOWNLOAD_MANUALLY,
+    guPODCAST_DOWNLOAD_FILTER,
+    guPODCAST_DOWNLOAD_ALL
+} guPodcastDownload;
+
 
 // -------------------------------------------------------------------------------- //
 class guPodcastListBox : public guListView
@@ -78,6 +84,7 @@ class guPodcastListBox : public guListView
     guPodcastItemArray  m_PodItems;
     int                 m_Order;
     bool                m_OrderDesc;
+    wxImage *           m_Images[ guPODCAST_STATUS_ERROR + 1 ];
 
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
@@ -135,6 +142,9 @@ class guPodcastPanel : public wxPanel
     int                 m_LastPodcastInfoId;
 
     void AddChannel( wxCommandEvent &event );
+    void DeleteChannels( wxCommandEvent &event );
+    void ChannelProperties( wxCommandEvent &event );
+    void ChannelsCopyTo( wxCommandEvent &event );
 
 public:
     guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );

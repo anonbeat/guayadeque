@@ -85,6 +85,9 @@
 #include "./images/tiny_edit_clear.h"
 #include "./images/podcast_icon.h"
 #include "./images/tiny_podcast_icon.h"
+#include "./images/tiny_status_pending.h"
+#include "./images/tiny_status_error.h"
+#include "./images/tiny_doc_save.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -156,7 +159,10 @@ guImage_Item guImage_Items[] = {
     { guImage_tiny_numerate,	    sizeof( guImage_tiny_numerate ),        wxBITMAP_TYPE_PNG },
     { guImage_tiny_edit_clear,      sizeof( guImage_tiny_edit_clear ),      wxBITMAP_TYPE_PNG },
     { guImage_podcast_icon,         sizeof( guImage_podcast_icon ),         wxBITMAP_TYPE_JPEG },
-    { guImage_tiny_podcast_icon,    sizeof( guImage_tiny_podcast_icon ),    wxBITMAP_TYPE_JPEG }
+    { guImage_tiny_podcast_icon,    sizeof( guImage_tiny_podcast_icon ),    wxBITMAP_TYPE_JPEG },
+    { guImage_tiny_status_pending,  sizeof( guImage_tiny_status_pending ),  wxBITMAP_TYPE_PNG },
+    { guImage_tiny_status_error,    sizeof( guImage_tiny_status_error ),    wxBITMAP_TYPE_PNG },
+    { guImage_tiny_doc_save,        sizeof( guImage_tiny_doc_save ),        wxBITMAP_TYPE_PNG }
 };
 
 
