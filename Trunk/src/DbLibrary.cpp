@@ -4537,7 +4537,7 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
+void DbLibrary::SavePodcastChannel( guPodcastChannel * channel )
 {
   wxASSERT( channel );
 
@@ -4570,6 +4570,7 @@ void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
 
     ExecuteUpdate( query );
     ChannelId = m_Db.GetLastRowId().GetLo();
+    channel->m_Id = ChannelId;
   }
   else
   {
@@ -4593,8 +4594,10 @@ void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
         channel->m_DownloadType,
         escape_query_str( channel->m_DownloadText ).c_str(),
         channel->m_AllowDelete,
-        ChannelId );
+        channel->m_Id );
     ExecuteUpdate( query );
+
+    ChannelId = channel->m_Id;
   }
 
   // Save the Items
@@ -4603,7 +4606,7 @@ void DbLibrary::SavePodcastChannel( const guPodcastChannel * channel )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::SavePodcastChannels( const guPodcastChannelArray * channels )
+int DbLibrary::SavePodcastChannels( guPodcastChannelArray * channels )
 {
     wxASSERT( channels );
     int Index;
@@ -4782,7 +4785,7 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastItem( const int channelid, const guPodcastItem * item )
+void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item )
 {
   wxASSERT( item );
 
@@ -4791,11 +4794,12 @@ void DbLibrary::SavePodcastItem( const int channelid, const guPodcastItem * item
   if( ( ItemId = GetPodcastItemEnclosure( item->m_Enclosure ) ) == wxNOT_FOUND )
   {
     query = wxString::Format( wxT( "INSERT INTO podcastitems( "
-                "podcastitem_id, podcastitem_chid, podcastitem_title, podcastitem_summary, "
-                "podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-                "podcastitem_file, podcastitem_length ) "
-                "VALUES( NULL, %u, '%s', '%s', '%s', '%s', "
-                "%u, '%s', %u );" ),
+                "podcastitem_id, podcastitem_chid, podcastitem_title, "
+                "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+                "podcastitem_file, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+                "podcastitem_status ) "
+                "VALUES( NULL, %u, '%s', '%s', '%s', '%s', %u, "
+                "'%s', %u, %u, %u, %u );" ),
                 channelid,
                 escape_query_str( item->m_Title ).c_str(),
                 escape_query_str( item->m_Summary ).c_str(),
@@ -4803,7 +4807,8 @@ void DbLibrary::SavePodcastItem( const int channelid, const guPodcastItem * item
                 escape_query_str( item->m_Enclosure ).c_str(),
                 item->m_Time,
                 escape_query_str( item->m_FileName ).c_str(),
-                item->m_Length );
+                item->m_Length,
+                0, 0, 0 );
 
     ExecuteUpdate( query );
     ItemId = m_Db.GetLastRowId().GetLo();
@@ -4814,7 +4819,8 @@ void DbLibrary::SavePodcastItem( const int channelid, const guPodcastItem * item
                 "podcastitem_chid = %u, podcastitem_title = '%s', "
                 "podcastitem_summary = '%s', podcastitem_author = '%s', "
                 "podcastitem_enclosure = '%s', podcastitem_time = %u, "
-                "podcastitem_file = '%s', podcastitem_length = %u "
+                "podcastitem_file = '%s', podcastitem_length = %u, "
+                "podcastitem_status = %u "
                 "WHERE podcastitem_id = %u;" ),
                 channelid,
                 escape_query_str( item->m_Title ).c_str(),
@@ -4824,6 +4830,7 @@ void DbLibrary::SavePodcastItem( const int channelid, const guPodcastItem * item
                 item->m_Time,
                 escape_query_str( item->m_FileName ).c_str(),
                 item->m_Length,
+                item->m_Status,
                 ItemId );
 
     ExecuteUpdate( query );
@@ -4831,7 +4838,7 @@ void DbLibrary::SavePodcastItem( const int channelid, const guPodcastItem * item
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastItems( const int channelid, const guPodcastItemArray * items )
+void DbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * items )
 {
     wxASSERT( items );
     int Index;

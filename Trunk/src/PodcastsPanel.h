@@ -62,6 +62,7 @@ class guChannelsListBox : public guListBox
 #define guPODCASTS_COLUMN_LASTPLAY      8
 
 typedef enum {
+    guPODCAST_STATUS_NORMAL,
     guPODCAST_STATUS_PENDING,
     guPODCAST_STATUS_DOWNLOADING,
     guPODCAST_STATUS_READY,
@@ -105,19 +106,26 @@ class guPodcastListBox : public guListView
 
 class guPodcastPanel;
 
+extern const wxEventType guPodcastEvent;
+#define guPODCAST_EVENT_UPDATE_ITEM         1000
+
 // -------------------------------------------------------------------------------- //
 class guPodcastDownloadThread : public wxThread
 {
   protected :
     guPodcastPanel *    m_PodcastPanel;
+    wxString            m_PodcastsPath;
     guPodcastItemArray  m_Items;
     wxMutex             m_ItemsMutex;
+
+    void SendUpdateEvent( guPodcastItem * podcastitem );
 
   public :
     guPodcastDownloadThread( guPodcastPanel * podcastpanel );
     ~guPodcastDownloadThread();
 
     ExitCode Entry();
+    void AddPodcastItems( guPodcastItemArray * items );
 
 };
 
@@ -131,6 +139,7 @@ class guPodcastPanel : public wxPanel
     void                UpdateChannelInfo( int itemid );
     void                OnPodcastsColClick( wxListEvent &event );
     void                OnPodcastItemSelected( wxListEvent &event );
+    void                OnPodcastItemUpdated( wxCommandEvent &event );
 
   protected:
     DbLibrary *                 m_Db;
@@ -165,6 +174,7 @@ class guPodcastPanel : public wxPanel
     void ChannelsCopyTo( wxCommandEvent &event );
 
     void ClearDownloadThread( void );
+    void AddDownloadItems( const int channelid, guPodcastItemArray * items );
 
 public:
     guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
