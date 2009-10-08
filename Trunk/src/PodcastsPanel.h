@@ -103,6 +103,24 @@ class guPodcastListBox : public guListView
     void                        SetOrder( int order );
 };
 
+class guPodcastPanel;
+
+// -------------------------------------------------------------------------------- //
+class guPodcastDownloadThread : public wxThread
+{
+  protected :
+    guPodcastPanel *    m_PodcastPanel;
+    guPodcastItemArray  m_Items;
+    wxMutex             m_ItemsMutex;
+
+  public :
+    guPodcastDownloadThread( guPodcastPanel * podcastpanel );
+    ~guPodcastDownloadThread();
+
+    ExitCode Entry();
+
+};
+
 // -------------------------------------------------------------------------------- //
 class guPodcastPanel : public wxPanel
 {
@@ -115,41 +133,44 @@ class guPodcastPanel : public wxPanel
     void                OnPodcastItemSelected( wxListEvent &event );
 
   protected:
-    DbLibrary *         m_Db;
-    guPlayerPanel *     m_PlayerPanel;
+    DbLibrary *                 m_Db;
+    guPlayerPanel *             m_PlayerPanel;
+    wxString                    m_PodcastsPath;
+    int                         m_LastChannelInfoId;
+    int                         m_LastPodcastInfoId;
+    guPodcastDownloadThread *   m_DownloadThread;
 
-    wxString            m_PodcastsPath;
-    wxSplitterWindow *  m_MainSplitter;
-    wxSplitterWindow *  m_TopSplitter;
-	guChannelsListBox * m_ChannelsListBox;
-    guPodcastListBox *  m_PodcastsListBox;
-	wxBoxSizer *        m_DetailMainSizer;
-    wxStaticBitmap *    m_DetailImage;
-    wxStaticText *      m_DetailChannelTitle;
-    wxStaticText *      m_DetailDescText;
-    wxStaticText *      m_DetailAuthorText;
-    wxStaticText *      m_DetailOwnerText;
-    wxHyperlinkCtrl *   m_DetailLinkText;
-    wxStaticText *      m_DetailEmailText;
-    wxStaticText *      m_DetailItemTitleText;
-    wxStaticText *      m_DetailItemSumaryText;
-    wxStaticText *      m_DetailItemDateText;
-    wxStaticText *      m_DetailItemLengthText;
-    wxScrolledWindow *  m_DetailScrolledWindow;
-	wxFlexGridSizer *   m_DetailFlexGridSizer;
-
-    int                 m_LastChannelInfoId;
-    int                 m_LastPodcastInfoId;
+    wxSplitterWindow *          m_MainSplitter;
+    wxSplitterWindow *          m_TopSplitter;
+	guChannelsListBox *         m_ChannelsListBox;
+    guPodcastListBox *          m_PodcastsListBox;
+	wxBoxSizer *                m_DetailMainSizer;
+    wxStaticBitmap *            m_DetailImage;
+    wxStaticText *              m_DetailChannelTitle;
+    wxStaticText *              m_DetailDescText;
+    wxStaticText *              m_DetailAuthorText;
+    wxStaticText *              m_DetailOwnerText;
+    wxHyperlinkCtrl *           m_DetailLinkText;
+    wxStaticText *              m_DetailEmailText;
+    wxStaticText *              m_DetailItemTitleText;
+    wxStaticText *              m_DetailItemSumaryText;
+    wxStaticText *              m_DetailItemDateText;
+    wxStaticText *              m_DetailItemLengthText;
+    wxScrolledWindow *          m_DetailScrolledWindow;
+	wxFlexGridSizer *           m_DetailFlexGridSizer;
 
     void AddChannel( wxCommandEvent &event );
     void DeleteChannels( wxCommandEvent &event );
     void ChannelProperties( wxCommandEvent &event );
     void ChannelsCopyTo( wxCommandEvent &event );
 
+    void ClearDownloadThread( void );
+
 public:
     guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
     ~guPodcastPanel();
 
+    friend class guPodcastDownloadThread;
 };
 
 #endif

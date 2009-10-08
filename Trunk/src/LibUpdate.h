@@ -43,7 +43,7 @@ class guLibUpdateThread : public wxThread
     guLibUpdateThread( DbLibrary * db );
     ~guLibUpdateThread();
 
-    guLibUpdateThread::ExitCode Entry();
+    ExitCode Entry();
 
 };
 

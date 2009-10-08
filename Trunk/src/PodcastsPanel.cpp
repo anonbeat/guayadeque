@@ -42,6 +42,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
     m_PlayerPanel = playerpanel;
     m_LastChannelInfoId = wxNOT_FOUND;
     m_LastPodcastInfoId = wxNOT_FOUND;
+    m_DownloadThread = NULL;
 
     wxPanel * ChannelsPanel;
     wxPanel * PodcastsPanel;
@@ -454,7 +455,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                     }
                 }
 
-                wxSetCursor( * wxSTANDARD_CURSOR );
+                wxSetCursor( wxNullCursor );
                 //
                 guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
                 if( ChannelEditor->ShowModal() == wxID_OK )
@@ -471,7 +472,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
         {
             guLogError( wxT( "Could not get podcast content for %s" ), EntryDialog->GetValue().c_str() );
         }
-        wxSetCursor( * wxSTANDARD_CURSOR );
+        wxSetCursor( wxNullCursor );
     }
     EntryDialog->Destroy();
 }
@@ -490,7 +491,7 @@ void guPodcastPanel::DeleteChannels( wxCommandEvent &event )
             m_Db->DelPodcastChannel( SelectedItems[ Index ] );
         }
         m_ChannelsListBox->ReloadItems();
-        wxSetCursor( * wxSTANDARD_CURSOR );
+        wxSetCursor( wxNullCursor );
     }
 }
 
@@ -655,6 +656,12 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
     m_DetailMainSizer->FitInside( m_DetailScrolledWindow );
     m_DetailScrolledWindow->SetVirtualSize( m_DetailMainSizer->GetSize() );
     //m_DetailFlexGridSizer->FitInside( m_DetailScrolledWindow );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::ClearDownloadThread( void )
+{
+    m_DownloadThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -958,6 +965,35 @@ void guPodcastListBox::SetOrder( int order )
     }
 
     ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+//guPodcastDownloadThread
+// -------------------------------------------------------------------------------- //
+guPodcastDownloadThread::guPodcastDownloadThread( guPodcastPanel * podcastpanel )
+{
+    m_PodcastPanel = podcastpanel;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guPodcastDownloadThread::~guPodcastDownloadThread()
+{
+    m_PodcastPanel->ClearDownloadThread();
+}
+
+// -------------------------------------------------------------------------------- //
+guPodcastDownloadThread::ExitCode guPodcastDownloadThread::Entry()
+{
+    while( !TestDestroy() )
+    {
+    }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
