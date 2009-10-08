@@ -507,15 +507,15 @@ class DbLibrary {
     // Podcasts functions
     //
     int                     GetPodcastChannels( guPodcastChannelArray * channels );
-    void                    SavePodcastChannel( const guPodcastChannel * channel );
-    int                     SavePodcastChannels( const guPodcastChannelArray * channels );
+    void                    SavePodcastChannel( guPodcastChannel * channel );
+    int                     SavePodcastChannels( guPodcastChannelArray * channels );
     int                     GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel = NULL );
     int                     GetPodcastChannelId( const int id, guPodcastChannel * channel = NULL );
     void                    DelPodcastChannel( const int id );
 
     int                     GetPodcastItems( guPodcastItemArray * items );
-    void                    SavePodcastItem( const int channelid, const guPodcastItem * item );
-    void                    SavePodcastItems( const int channelid, const guPodcastItemArray * items );
+    void                    SavePodcastItem( const int channelid, guPodcastItem * item );
+    void                    SavePodcastItems( const int channelid, guPodcastItemArray * items );
     int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );
     int                     GetPodcastItemId( const int itemid, guPodcastItem * item = NULL );
     void                    DelPodcastItem( const int itemid );
