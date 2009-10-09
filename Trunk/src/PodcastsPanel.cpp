@@ -257,6 +257,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
     m_ChannelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnChannelsSelected ), NULL, this );
 	m_PodcastsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guPodcastPanel::OnPodcastsColClick ), NULL, this );
     m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnPodcastItemSelected ), NULL, this );
+    m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPodcastPanel::OnPodcastItemActivated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -753,6 +754,82 @@ void guPodcastPanel::OnPodcastItemUpdated( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnSelectPodcasts( bool enqueue )
+{
+    int Index;
+    int Count;
+    wxArrayInt Selected = m_PodcastsListBox->GetSelectedItems();
+    if( ( Count = Selected.Count() ) )
+    {
+        guTrackArray Tracks;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guPodcastItem PodcastItem;
+            if( m_Db->GetPodcastItemId( Selected[ Index ], &PodcastItem ) )
+            {
+                if( PodcastItem.m_Status == guPODCAST_STATUS_READY )
+                {
+                    if( wxFileExists( PodcastItem.m_FileName ) )
+                    {
+                        guTrack * Track = new guTrack();
+                        if( Track )
+                        {
+                            Track->m_Type = guTRACK_TYPE_PODCAST;
+                            Track->m_FileName = PodcastItem.m_FileName;
+                            Track->m_SongName = PodcastItem.m_Title;
+                            Track->m_ArtistName = PodcastItem.m_Author;
+                            Track->m_Length = PodcastItem.m_Length;
+                            Track->m_Rating = -1;
+                            Track->m_CoverId = 0;
+                            Track->m_Year = 0; // Get year from item date
+                            Tracks.Add( Track );
+                        }
+                    }
+                    else
+                    {
+                        PodcastItem.m_Status = guPODCAST_STATUS_ERROR;
+                        wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
+                        event.SetClientData( new guPodcastItem( PodcastItem ) );
+                        wxPostEvent( this, event );
+                    }
+                }
+                else if( PodcastItem.m_Status == guPODCAST_STATUS_NORMAL )
+                {
+                    // Download the item
+                    guPodcastItemArray AddList;
+                    AddList.Add( PodcastItem );
+                    AddDownloadItems( PodcastItem.m_ChId, &AddList );
+
+                    PodcastItem.m_Status = guPODCAST_STATUS_PENDING;
+                    wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
+                    event.SetClientData( new guPodcastItem( PodcastItem ) );
+                    wxPostEvent( this, event );
+                }
+            }
+        }
+
+        if( Tracks.Count() )
+        {
+            if( enqueue )
+            {
+                m_PlayerPanel->AddToPlayList( Tracks );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Tracks );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastItemActivated( wxListEvent &event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    OnSelectPodcasts( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
+}
+
+// -------------------------------------------------------------------------------- //
 void guPodcastPanel::MainSplitterOnIdle( wxIdleEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -1126,6 +1203,7 @@ guPodcastDownloadThread::ExitCode guPodcastDownloadThread::Entry()
             if( PodcastItem->m_Enclosure.IsEmpty() )
             {
                 PodcastItem->m_Status = guPODCAST_STATUS_ERROR;
+                PodcastItem->m_FileName = wxEmptyString;
                 SendUpdateEvent( PodcastItem );
             }
             else
@@ -1136,6 +1214,7 @@ guPodcastDownloadThread::ExitCode guPodcastDownloadThread::Entry()
                                             Uri.GetPath().AfterLast( wxT( '/' ) ) );
                 if( PodcastFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
                 {
+                    PodcastItem->m_FileName = PodcastFile.GetFullPath();
                     if( !wxFileExists( PodcastFile.GetFullPath() ) )
                     {
                         PodcastItem->m_Status = guPODCAST_STATUS_DOWNLOADING;

@@ -33,15 +33,16 @@
 // wxSqlite3
 #include "wx/wxsqlite3.h"
 
-#define guPLAYLIST_RADIOSTATION     wxNOT_FOUND
-#define guPLAYLIST_NOTDBTRACK       (-2)
-
-#define GU_MAX_QUERY_ROWS    100
-
 // PLAYLISTS
 #define GUPLAYLIST_STATIC       0
 #define GUPLAYLIST_DYNAMIC      1
 
+enum guTrackType {
+    guTRACK_TYPE_DB,
+    guTRACK_TYPE_NODB,
+    guTRACK_TYPE_RADIOSTATION,
+    guTRACK_TYPE_PODCAST
+};
 
 enum guTrackMode {
     guTRACK_MODE_USER,
@@ -54,6 +55,7 @@ enum guTrackMode {
 class guTrack
 {
   public:
+    guTrackType     m_Type;
     int             m_SongId;
     wxString        m_SongName;
     int             m_AlbumId;
@@ -77,6 +79,7 @@ class guTrack
     guTrackMode     m_TrackMode;          // Indicate how the track was created
 
     guTrack() {
+        m_Type = guTRACK_TYPE_DB;
         m_TrackMode = guTRACK_MODE_USER;
     };
 
@@ -514,6 +517,7 @@ class DbLibrary {
     void                    DelPodcastChannel( const int id );
 
     int                     GetPodcastItems( guPodcastItemArray * items );
+    int                     GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items );
     void                    SavePodcastItem( const int channelid, guPodcastItem * item );
     void                    SavePodcastItems( const int channelid, guPodcastItemArray * items );
     int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );

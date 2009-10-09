@@ -848,7 +848,7 @@ void guRadioPanel::OnSelectStations( bool enqueue )
                 NewSong = new guTrack;
                 if( NewSong )
                 {
-                    NewSong->m_SongId = guPLAYLIST_RADIOSTATION;
+                    NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
                     NewSong->m_FileName = PlayList[ index ].m_Url;
                     NewSong->m_SongName = PlayList[ index ].m_Name;
                     NewSong->m_Length = 0;
