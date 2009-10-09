@@ -1038,7 +1038,7 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 
     for( index = 0; index < count; index++ )
     {
-        if( ( * m_Tracks )[ index ].m_SongId != guPLAYLIST_RADIOSTATION )
+        if( ( * m_Tracks )[ index ].m_Type < guTRACK_TYPE_RADIOSTATION )
         {
             FileName = FilePattern;
             FileName.Replace( wxT( "{a}" ), ( * m_Tracks )[ index ].m_ArtistName );
@@ -1068,6 +1068,9 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
                 guLogError( wxT( "Could not create path for copy the file '%s'" ), FileName.c_str() );
             }
             //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );
+        }
+        else if( ( * m_Tracks )[ index ].m_Type == guTRACK_TYPE_PODCAST )
+        {
         }
         //
         event.SetId( ID_GAUGE_UPDATE );

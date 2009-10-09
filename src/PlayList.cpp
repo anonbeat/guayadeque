@@ -408,7 +408,8 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
         CutRect.width -= 16;
     }
 
-    if( Item.m_SongId != guPLAYLIST_RADIOSTATION )
+    // The DB or NODB Tracks
+    if( Item.m_Type < guTRACK_TYPE_RADIOSTATION )
     {
         CutRect.width -= ( 50 + 6 + 2 );
 
@@ -740,6 +741,7 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
         {
             do {
                 CurFile = FileName.Lower();
+                //guLogMessage( wxT( "Searching %s : %s" ), DirName.c_str(), CurFile.c_str() );
 
                 if( SearchCoverWords( CurFile, CoverSearchWords ) )
                 {
@@ -799,7 +801,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 
                 if( !Song.m_SongId )
                 {
-                    Song.m_SongId = guPLAYLIST_NOTDBTRACK;
+                    Song.m_Type = guTRACK_TYPE_NODB;
 
                     TagInfo->Read();
 
@@ -824,7 +826,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         }
         else
         {
-            Song.m_SongId   = guPLAYLIST_RADIOSTATION;
+            Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
             Song.m_CoverId  = 0;
             Song.m_FileName = FileName;
             Song.m_SongName = FileName;

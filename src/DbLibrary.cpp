@@ -4785,6 +4785,71 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items )
+{
+  wxASSERT( items );
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id "
+            "AND " ) + ArrayToFilter( ids, wxT( "podcastitem_id" ) );
+
+  query += wxT( " ORDER BY " );
+  if( m_PodcastOrder == guPODCASTS_COLUMN_TITLE )
+    query += wxT( "podcastitem_title" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_CHANNEL )
+    query += wxT( "podcastch_title" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_CATEGORY )
+    query += wxT( "podcastch_category" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_DATE )
+    query += wxT( "podcastitem_time" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_LENGTH )
+    query += wxT( "podcastitem_length" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_AUTHOR )
+    query += wxT( "podcastitem_author" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_PLAYCOUNT )
+    query += wxT( "podcastitem_playcount" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_LASTPLAY )
+    query += wxT( "podcastitem_lastplay" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_STATUS )
+    query += wxT( "podcastitem_status" );
+
+  if( m_PodcastOrderDesc )
+    query += wxT( " DESC;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastItem * Item = new guPodcastItem();
+    Item->m_Id = dbRes.GetInt( 0 );
+    Item->m_ChId = dbRes.GetInt( 1 );
+    Item->m_Title = dbRes.GetString( 2 );
+    Item->m_Summary = dbRes.GetString( 3 );
+    Item->m_Author = dbRes.GetString( 4 );
+    Item->m_Enclosure = dbRes.GetString( 5 );
+    Item->m_Time = dbRes.GetInt( 6 );
+    Item->m_FileName = dbRes.GetString( 7 );
+    Item->m_Length = dbRes.GetInt( 8 );
+    Item->m_PlayCount = dbRes.GetInt( 9 );
+    Item->m_LastPlay = dbRes.GetInt( 10 );
+    Item->m_Status = dbRes.GetInt( 11 );
+
+    Item->m_Channel = dbRes.GetString( 12 );
+    Item->m_Category = dbRes.GetString( 13 );
+    items->Add( Item );
+  }
+  dbRes.Finalize();
+  return items->Count();
+}
+
+// -------------------------------------------------------------------------------- //
 void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item )
 {
   wxASSERT( item );

@@ -33,19 +33,27 @@
 #include <wx/tglbtn.h>
 
 // -------------------------------------------------------------------------------- //
-enum guSongCoverType { GU_SONGCOVER_NONE, GU_SONGCOVER_FILE, GU_SONGCOVER_RADIO, GU_SONGCOVER_ID3TAG };
+enum guSongCoverType { GU_SONGCOVER_NONE, GU_SONGCOVER_FILE, GU_SONGCOVER_RADIO, GU_SONGCOVER_ID3TAG, GU_SONGCOVER_PODCAST };
 
 // -------------------------------------------------------------------------------- //
 class guCurrentTrack : public guTrack
 {
   public:
     // Only for the Current Played song
+    bool            m_Loaded;
     int             m_PlayTime;           // how many secs the song have been played
     guSongCoverType m_CoverType;
     wxString        m_CoverPath;
 
+    guCurrentTrack()
+    {
+        m_Loaded = false;
+    }
+
     guCurrentTrack& operator=(const guTrack &Src)
     {
+        m_Loaded = true;
+        m_Type = Src.m_Type;
         m_SongId = Src.m_SongId;
         m_SongName = Src.m_SongName;
         m_AlbumId = Src.m_AlbumId;
@@ -67,9 +75,13 @@ class guCurrentTrack : public guTrack
         m_CoverId = Src.m_CoverId;
         m_PlayTime = 0;
         //CoverType = GU_SONGCOVER_NONE;
-        if( m_SongId == guPLAYLIST_RADIOSTATION )
+        if( m_Type == guTRACK_TYPE_RADIOSTATION )
         {
             m_CoverType = GU_SONGCOVER_RADIO;
+        }
+        else if( m_Type == guTRACK_TYPE_PODCAST )
+        {
+            m_CoverType = GU_SONGCOVER_NONE;
         }
         else if( m_CoverId )
         {

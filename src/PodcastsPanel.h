@@ -140,6 +140,7 @@ class guPodcastPanel : public wxPanel
     void                OnPodcastsColClick( wxListEvent &event );
     void                OnPodcastItemSelected( wxListEvent &event );
     void                OnPodcastItemUpdated( wxCommandEvent &event );
+    void                OnPodcastItemActivated( wxListEvent &event );
 
   protected:
     DbLibrary *                 m_Db;
@@ -175,6 +176,7 @@ class guPodcastPanel : public wxPanel
 
     void ClearDownloadThread( void );
     void AddDownloadItems( const int channelid, guPodcastItemArray * items );
+    void OnSelectPodcasts( bool enqueue = false );
 
 public:
     guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
