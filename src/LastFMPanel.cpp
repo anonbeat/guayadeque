@@ -1618,6 +1618,14 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
             {
                 if( Buffer.IsOk() && !TestDestroy() )
                 {
+//                    if( http.GetResponseCode() != 200 )
+//                    {
+//                        guLogMessage( wxT( "Error %u getting the image '%s'\n%s" ),
+//                            http.GetResponseCode(),
+//                            m_ImageUrl.c_str(),
+//                            http.GetResponseHeader().c_str() );
+//
+//                    }
                     wxMemoryInputStream Ins( Buffer );
                     if( Ins.IsOk() && !TestDestroy() )
                     {

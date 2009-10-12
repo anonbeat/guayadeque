@@ -135,8 +135,8 @@ bool DownloadImage( const wxString &Source, const wxString &Target, int maxwidth
       ImageType = wxBITMAP_TYPE_JPEG;
     else if( Source.Lower().EndsWith( wxT( ".png" ) ) )
       ImageType = wxBITMAP_TYPE_PNG;
-//    else if( UrlStr.Lower().EndsWith( wxT( ".gif" ) ) ) // Removed because of some random segfaults
-//      ImageType = wxBITMAP_TYPE_GIF;                    // in gifs handler functions
+    else if( Source.Lower().EndsWith( wxT( ".gif" ) ) ) // Removed because of some random segfaults
+      ImageType = wxBITMAP_TYPE_GIF;                    // in gifs handler functions
     else if( Source.Lower().EndsWith( wxT( ".bmp" ) ) )
       ImageType = wxBITMAP_TYPE_BMP;
     else
@@ -148,6 +148,14 @@ bool DownloadImage( const wxString &Source, const wxString &Target, int maxwidth
         wxCurlHTTP http;
         if( http.Get( Buffer, Source ) )
         {
+            if( http.GetResponseCode() != 200 )
+            {
+                guLogMessage( wxT( "Error %u getting the image '%s'\n%s" ),
+                    http.GetResponseCode(),
+                    Source.c_str(),
+                    http.GetResponseHeader().c_str() );
+
+            }
             if( Buffer.IsOk() )
             {
                 wxMemoryInputStream Ins( Buffer );

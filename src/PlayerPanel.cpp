@@ -769,12 +769,16 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     }
 
     // Update the play count if it has player at least the half of the track
-    if( m_MediaSong.m_SongId > 0 )  // If its a song from the library
+    if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )  // If its a song from the library
     {
         if( ( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
             ( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) ) )  // If have played at least the half
         {
-            m_Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount + 1 );
+            if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+                m_Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount + 1 );
+            else
+                m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount + 1 );
         }
     }
 

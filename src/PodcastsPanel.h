@@ -91,6 +91,7 @@ class guPodcastListBox : public guListView
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
+    virtual int                 GetSelectedSongs( guTrackArray * tracks ) const;
 
   public :
     guPodcastListBox( wxWindow * parent, DbLibrary * NewDb );
@@ -110,22 +111,23 @@ extern const wxEventType guPodcastEvent;
 #define guPODCAST_EVENT_UPDATE_ITEM         1000
 
 // -------------------------------------------------------------------------------- //
-class guPodcastDownloadThread : public wxThread
+class guPodcastDownloadQueueThread : public wxThread
 {
   protected :
     guPodcastPanel *    m_PodcastPanel;
     wxString            m_PodcastsPath;
     guPodcastItemArray  m_Items;
     wxMutex             m_ItemsMutex;
+    int                 m_CurPos;
 
     void SendUpdateEvent( guPodcastItem * podcastitem );
 
   public :
-    guPodcastDownloadThread( guPodcastPanel * podcastpanel );
-    ~guPodcastDownloadThread();
+    guPodcastDownloadQueueThread( guPodcastPanel * podcastpanel );
+    ~guPodcastDownloadQueueThread();
 
     ExitCode Entry();
-    void AddPodcastItems( guPodcastItemArray * items );
+    void AddPodcastItems( guPodcastItemArray * items, bool priority = false );
 
 };
 
@@ -142,13 +144,19 @@ class guPodcastPanel : public wxPanel
     void                OnPodcastItemUpdated( wxCommandEvent &event );
     void                OnPodcastItemActivated( wxListEvent &event );
 
+    void                OnPodcastItemPlay( wxCommandEvent &event );
+    void                OnPodcastItemEnqueue( wxCommandEvent &event );
+    void                OnPodcastItemDelete( wxCommandEvent &event );
+    void                OnPodcastItemDownload( wxCommandEvent &event );
+
+
   protected:
     DbLibrary *                 m_Db;
     guPlayerPanel *             m_PlayerPanel;
     wxString                    m_PodcastsPath;
     int                         m_LastChannelInfoId;
     int                         m_LastPodcastInfoId;
-    guPodcastDownloadThread *   m_DownloadThread;
+    guPodcastDownloadQueueThread *   m_DownloadThread;
 
     wxSplitterWindow *          m_MainSplitter;
     wxSplitterWindow *          m_TopSplitter;
@@ -175,14 +183,14 @@ class guPodcastPanel : public wxPanel
     void ChannelsCopyTo( wxCommandEvent &event );
 
     void ClearDownloadThread( void );
-    void AddDownloadItems( const int channelid, guPodcastItemArray * items );
+    void AddDownloadItems( guPodcastItemArray * items );
     void OnSelectPodcasts( bool enqueue = false );
 
 public:
     guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
     ~guPodcastPanel();
 
-    friend class guPodcastDownloadThread;
+    friend class guPodcastDownloadQueueThread;
 };
 
 #endif
