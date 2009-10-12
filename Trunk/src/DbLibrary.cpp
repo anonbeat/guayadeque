@@ -649,6 +649,7 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
                       "podcastitem_lastplay INTEGER, podcastitem_status INTEGER );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_title' on podcastitems(podcastitem_title ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_file' on podcastitems(podcastitem_file ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_chid' on podcastitems(podcastitem_chid ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_time' on podcastitems(podcastitem_time ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_enclosure' on podcastitems(podcastitem_enclosure ASC);" ) );
@@ -4728,7 +4729,7 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
             "podcastitem_status, "
             "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id" );
+            "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
 
   if( m_PodChFilters.Count() )
   {
@@ -4915,6 +4916,28 @@ void DbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * item
 }
 
 // -------------------------------------------------------------------------------- //
+void DbLibrary::SetPodcastItemStatus( const int itemid, const int status )
+{
+  wxString query;
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_status = %u WHERE podcastitem_id = %u;" ),
+            status, itemid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetPodcastItemPlayCount( const int itemid, const int playcount )
+{
+  wxString query;
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_playcount = %u, podcastitem_lastplay = %u WHERE podcastitem_id = %u;" ),
+            playcount, wxDateTime::GetTimeNow(), itemid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
 int DbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item )
 {
   int RetVal = wxNOT_FOUND;
@@ -4975,6 +4998,52 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
             "WHERE podcastitem_chid = podcastch_id AND "
             "podcastitem_id = %u LIMIT 1;" ),
             itemid );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( item )
+    {
+      item->m_Id = RetVal;
+      item->m_ChId = dbRes.GetInt( 1 );
+      guLogMessage( wxT( "ChannelId: %u" ), item->m_ChId );
+      item->m_Title = dbRes.GetString( 2 );
+      item->m_Summary = dbRes.GetString( 3 );
+      item->m_Author = dbRes.GetString( 4 );
+      item->m_Enclosure = dbRes.GetString( 5 );
+      item->m_Time = dbRes.GetInt( 6 );
+      item->m_FileName = dbRes.GetString( 7 );
+      item->m_Length = dbRes.GetInt( 8 );
+      item->m_PlayCount = dbRes.GetInt( 9 );
+      item->m_LastPlay = dbRes.GetInt( 10 );
+      item->m_Status = dbRes.GetInt( 11 );
+
+      item->m_Channel = dbRes.GetString( 12 );
+      item->m_Category = dbRes.GetString( 13 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * item )
+{
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND "
+            "podcastitem_file = '%s' LIMIT 1;" ),
+            escape_query_str( filename ).c_str() );
 
   dbRes = ExecuteQuery( query );
 

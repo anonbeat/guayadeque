@@ -248,9 +248,9 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 //	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_MainSplitterOnIdle ), NULL, this );
 //	m_TopSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_TopSplitterOnIdle ), NULL, this );
     Connect( ID_PODCASTS_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ) );
-    Connect( ID_PODCASTS_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ) );
+    Connect( ID_PODCASTS_DEL_CHANNEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ) );
     Connect( ID_PODCASTS_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ) );
-    Connect( ID_PODCASTS_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ) );
+    Connect( ID_PODCASTS_COPYTO_CHANNEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ) );
 
     Connect( guPODCAST_EVENT_UPDATE_ITEM, guPodcastEvent, wxCommandEventHandler( guPodcastPanel::OnPodcastItemUpdated ), NULL, this );
 
@@ -258,6 +258,10 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	m_PodcastsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guPodcastPanel::OnPodcastsColClick ), NULL, this );
     m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnPodcastItemSelected ), NULL, this );
     m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPodcastPanel::OnPodcastItemActivated ), NULL, this );
+    Connect( ID_PODCASTS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemPlay ) );
+    Connect( ID_PODCASTS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ) );
+    Connect( ID_PODCASTS_DEL_ITEM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ) );
+    Connect( ID_PODCASTS_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -411,7 +415,7 @@ void ReadXmlPodcastChannel( wxXmlNode * XmlNode, guPodcastChannel * channel )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::AddDownloadItems( const int channelid, guPodcastItemArray * items )
+void guPodcastPanel::AddDownloadItems( guPodcastItemArray * items )
 {
     wxASSERT( items );
 
@@ -422,16 +426,15 @@ void guPodcastPanel::AddDownloadItems( const int channelid, guPodcastItemArray *
         if( !m_DownloadThread )
         {
             guLogMessage( wxT( "Creating Download thread..." ) );
-            m_DownloadThread = new guPodcastDownloadThread( this );
+            m_DownloadThread = new guPodcastDownloadQueueThread( this );
             guLogMessage( wxT( "Created Download thread..." ) );
         }
 
         for( Index = 0; Index < Count; Index++ )
         {
             items->Item( Index ).m_Status = guPODCAST_STATUS_PENDING;
+            m_Db->SetPodcastItemStatus( items->Item( Index ).m_Id, guPODCAST_STATUS_PENDING );
         }
-
-        m_Db->SavePodcastItems( channelid, items );
 
         guLogMessage( wxT( "Adding Download Items... %u" ), Count );
         m_DownloadThread->AddPodcastItems( items );
@@ -532,10 +535,11 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
 
                     NormalizePodcastChannel( &PodcastChannel );
 
-                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
-                    {
-                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
-                    }
+                    // This should be a call to wake up the update thread
+//                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
+//                    {
+//                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
+//                    }
 
                     m_ChannelsListBox->ReloadItems();
                 }
@@ -556,18 +560,23 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPodcastPanel::DeleteChannels( wxCommandEvent &event )
 {
-    wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
-    int Index;
-    int Count;
-    if( ( Count = SelectedItems.Count() ) )
+    if( wxMessageBox( _( "Are you sure to delete the selected podcast channel?" ),
+                      _( "Confirm" ),
+                      wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
     {
-        wxSetCursor( * wxHOURGLASS_CURSOR );
-        for( Index = 0; Index < Count; Index++ )
+        wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
+        int Index;
+        int Count;
+        if( ( Count = SelectedItems.Count() ) )
         {
-            m_Db->DelPodcastChannel( SelectedItems[ Index ] );
+            wxSetCursor( * wxHOURGLASS_CURSOR );
+            for( Index = 0; Index < Count; Index++ )
+            {
+                m_Db->DelPodcastChannel( SelectedItems[ Index ] );
+            }
+            m_ChannelsListBox->ReloadItems();
+            wxSetCursor( wxNullCursor );
         }
-        m_ChannelsListBox->ReloadItems();
-        wxSetCursor( wxNullCursor );
     }
 }
 
@@ -670,31 +679,31 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
     {
         //m_Db->GetPodcastItemId( itemid, &PodcastItem );
         m_Db->GetPodcastChannelId( itemid, &PodcastChannel );
-        guLogMessage( wxT( "PodcastChannel:\n"
-            "Id             : %u\n"
-            "Url            : %s\n"
-            "Title          : %s\n"
-            "Link           : %s\n"
-            "Description    : %s\n"
-            "Lang           : %s\n"
-            "Summary        : %s\n"
-            "Category       : %s\n"
-            "Image          : %s\n"
-            "Author         : %s\n"
-            "OwnerName      : %s\n"
-            "OwnerEmail     : %s\n" ),
-            PodcastChannel.m_Id,
-            PodcastChannel.m_Url.c_str(),
-            PodcastChannel.m_Title.c_str(),
-            PodcastChannel.m_Link.c_str(),
-            PodcastChannel.m_Description.c_str(),
-            PodcastChannel.m_Lang.c_str(),
-            PodcastChannel.m_Summary.c_str(),
-            PodcastChannel.m_Category.c_str(),
-            PodcastChannel.m_Image.c_str(),
-            PodcastChannel.m_Author.c_str(),
-            PodcastChannel.m_OwnerName.c_str(),
-            PodcastChannel.m_OwnerEmail.c_str() );
+//        guLogMessage( wxT( "PodcastChannel:\n"
+//            "Id             : %u\n"
+//            "Url            : %s\n"
+//            "Title          : %s\n"
+//            "Link           : %s\n"
+//            "Description    : %s\n"
+//            "Lang           : %s\n"
+//            "Summary        : %s\n"
+//            "Category       : %s\n"
+//            "Image          : %s\n"
+//            "Author         : %s\n"
+//            "OwnerName      : %s\n"
+//            "OwnerEmail     : %s\n" ),
+//            PodcastChannel.m_Id,
+//            PodcastChannel.m_Url.c_str(),
+//            PodcastChannel.m_Title.c_str(),
+//            PodcastChannel.m_Link.c_str(),
+//            PodcastChannel.m_Description.c_str(),
+//            PodcastChannel.m_Lang.c_str(),
+//            PodcastChannel.m_Summary.c_str(),
+//            PodcastChannel.m_Category.c_str(),
+//            PodcastChannel.m_Image.c_str(),
+//            PodcastChannel.m_Author.c_str(),
+//            PodcastChannel.m_OwnerName.c_str(),
+//            PodcastChannel.m_OwnerEmail.c_str() );
 
         // Set Image...
         wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/Images/" ) + PodcastChannel.m_Title + wxT( ".jpg" ) );
@@ -765,7 +774,7 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue )
         for( Index = 0; Index < Count; Index++ )
         {
             guPodcastItem PodcastItem;
-            if( m_Db->GetPodcastItemId( Selected[ Index ], &PodcastItem ) )
+            if( m_Db->GetPodcastItemId( Selected[ Index ], &PodcastItem ) != wxNOT_FOUND )
             {
                 if( PodcastItem.m_Status == guPODCAST_STATUS_READY )
                 {
@@ -775,10 +784,12 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue )
                         if( Track )
                         {
                             Track->m_Type = guTRACK_TYPE_PODCAST;
+                            Track->m_SongId = PodcastItem.m_Id;
                             Track->m_FileName = PodcastItem.m_FileName;
                             Track->m_SongName = PodcastItem.m_Title;
                             Track->m_ArtistName = PodcastItem.m_Author;
                             Track->m_Length = PodcastItem.m_Length;
+                            Track->m_PlayCount = PodcastItem.m_PlayCount;
                             Track->m_Rating = -1;
                             Track->m_CoverId = 0;
                             Track->m_Year = 0; // Get year from item date
@@ -793,12 +804,13 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue )
                         wxPostEvent( this, event );
                     }
                 }
-                else if( PodcastItem.m_Status == guPODCAST_STATUS_NORMAL )
+                else if( ( PodcastItem.m_Status == guPODCAST_STATUS_NORMAL ) ||
+                         ( PodcastItem.m_Status == guPODCAST_STATUS_ERROR ) )
                 {
                     // Download the item
                     guPodcastItemArray AddList;
                     AddList.Add( PodcastItem );
-                    AddDownloadItems( PodcastItem.m_ChId, &AddList );
+                    AddDownloadItems( &AddList );
 
                     PodcastItem.m_Status = guPODCAST_STATUS_PENDING;
                     wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
@@ -827,6 +839,53 @@ void guPodcastPanel::OnPodcastItemActivated( wxListEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     OnSelectPodcasts( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastItemPlay( wxCommandEvent &event )
+{
+    OnSelectPodcasts( false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastItemEnqueue( wxCommandEvent &event )
+{
+    OnSelectPodcasts( true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastItemDelete( wxCommandEvent &event )
+{
+    if( wxMessageBox( _( "Are you sure to delete the selected podcast item?" ),
+                      _( "Confirm" ),
+                      wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+    {
+        wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
+        int Index;
+        int Count = Selection.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            m_Db->SetPodcastItemStatus( Selection[ Index ], guPODCAST_STATUS_DELETED );
+        }
+        m_PodcastsListBox->ReloadItems();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastItemDownload( wxCommandEvent &event )
+{
+    wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
+    guPodcastItemArray DownloadList;
+    int Index;
+    int Count = Selection.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guPodcastItem PodcastItem;
+        m_Db->GetPodcastItemId( Selection[ Index ], &PodcastItem );
+        DownloadList.Add( new guPodcastItem( PodcastItem ) );
+    }
+    AddDownloadItems( &DownloadList );
+    m_PodcastsListBox->ReloadItems( false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -871,7 +930,7 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
 
     if( SelCount )
     {
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_DELETE, _( "Delete Channels" ), _( "delete this podcast channels and all its items" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_DEL_CHANNEL, _( "Delete Channels" ), _( "delete this podcast channels and all its items" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_del ) );
         Menu->Append( MenuItem );
 
@@ -883,8 +942,13 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
         }
 
         Menu->AppendSeparator();
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_COPYTO, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_COPYTO_CHANNEL, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_UNDELETE, _( "Undelete" ), _( "Show all deleted podcasts of the selected channels" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
     }
 }
@@ -906,7 +970,7 @@ wxString guPODCASTS_COLUMN_NAMES[] = {
 
 // -------------------------------------------------------------------------------- //
 guPodcastListBox::guPodcastListBox( wxWindow * parent, DbLibrary * db ) :
-    guListView( parent, wxLB_SINGLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING )
+    guListView( parent, wxLB_MULTIPLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING )
 {
     m_Db = db;
 
@@ -1079,20 +1143,35 @@ void guPodcastListBox::ReloadItems( bool reset )
 // -------------------------------------------------------------------------------- //
 void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
 {
-    wxMenuItem * MenuItem;
-    MenuItem = new wxMenuItem( Menu, ID_RADIO_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
-    Menu->Append( MenuItem );
+    wxArrayInt Selection = GetSelectedItems();
+    if( Selection.Count() )
+    {
+        wxMenuItem * MenuItem;
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_PLAY, _( "Play" ), _( "Play current selected songs" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
+        Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+        Menu->Append( MenuItem );
 
-    Menu->AppendSeparator();
+        Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( Menu, ID_RADIO_EDIT_LABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected stations" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-    Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_DEL_ITEM, _( "Delete" ), _( "Delete the current selected podcasts" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_del ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_DOWNLOAD, _( "Download" ), _( "Download the current selected podcasts" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_COPYTO_ITEM, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1133,11 +1212,48 @@ void guPodcastListBox::SetOrder( int order )
 }
 
 // -------------------------------------------------------------------------------- //
-//guPodcastDownloadThread
+int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
+{
+    wxArrayInt Selection = GetSelectedItems();
+    int Index;
+    int Count = Selection.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guPodcastItem PodcastItem;
+            if( ( m_Db->GetPodcastItemId( Selection[ Index ], &PodcastItem ) != wxNOT_FOUND ) &&
+                ( PodcastItem.m_Status == guPODCAST_STATUS_READY ) &&
+                ( wxFileExists( PodcastItem.m_FileName ) ) )
+            {
+                guTrack * Track = new guTrack();
+                if( Track )
+                {
+                    Track->m_Type = guTRACK_TYPE_PODCAST;
+                    Track->m_SongId = PodcastItem.m_Id;
+                    Track->m_FileName = PodcastItem.m_FileName;
+                    Track->m_SongName = PodcastItem.m_Title;
+                    Track->m_ArtistName = PodcastItem.m_Author;
+                    Track->m_Length = PodcastItem.m_Length;
+                    Track->m_PlayCount = PodcastItem.m_PlayCount;
+                    Track->m_Rating = -1;
+                    Track->m_CoverId = 0;
+                    Track->m_Year = 0; // Get year from item date
+                    tracks->Add( Track );
+                }
+            }
+        }
+    }
+    return Count;
+}
+
 // -------------------------------------------------------------------------------- //
-guPodcastDownloadThread::guPodcastDownloadThread( guPodcastPanel * podcastpanel )
+// guPodcastDownloadQueueThread
+// -------------------------------------------------------------------------------- //
+guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guPodcastPanel * podcastpanel )
 {
     m_PodcastPanel = podcastpanel;
+    m_CurPos = 0;
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     // Check that the directory to store podcasts are created
@@ -1150,13 +1266,13 @@ guPodcastDownloadThread::guPodcastDownloadThread( guPodcastPanel * podcastpanel 
 }
 
 // -------------------------------------------------------------------------------- //
-guPodcastDownloadThread::~guPodcastDownloadThread()
+guPodcastDownloadQueueThread::~guPodcastDownloadQueueThread()
 {
     m_PodcastPanel->ClearDownloadThread();
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastDownloadThread::SendUpdateEvent( guPodcastItem * podcastitem )
+void guPodcastDownloadQueueThread::SendUpdateEvent( guPodcastItem * podcastitem )
 {
     wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
     event.SetClientData( new guPodcastItem( * podcastitem ) );
@@ -1164,7 +1280,7 @@ void guPodcastDownloadThread::SendUpdateEvent( guPodcastItem * podcastitem )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastDownloadThread::AddPodcastItems( guPodcastItemArray * items )
+void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, bool priority )
 {
     wxASSERT( items );
 
@@ -1176,7 +1292,10 @@ void guPodcastDownloadThread::AddPodcastItems( guPodcastItemArray * items )
         m_ItemsMutex.Lock();
         for( Index = 0; Index < Count; Index++ )
         {
-            m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
+            if( priority )
+                m_Items.Insert( new guPodcastItem( items->Item( Index ) ), m_CurPos + 1 );
+            else
+                m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
         }
         m_ItemsMutex.Unlock();
         guLogMessage( wxT( "2) Added the items to the download thread..." ) );
@@ -1190,16 +1309,18 @@ void guPodcastDownloadThread::AddPodcastItems( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-guPodcastDownloadThread::ExitCode guPodcastDownloadThread::Entry()
+guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
 {
-    int Index = 0;
+    int Count;
     while( !TestDestroy() )
     {
         m_ItemsMutex.Lock();
-        if( Index < m_Items.Count() )
+        Count = m_Items.Count();
+        m_ItemsMutex.Unlock();
+        if( m_CurPos < Count )
         {
             //
-            guPodcastItem * PodcastItem = &m_Items[ Index ];
+            guPodcastItem * PodcastItem = &m_Items[ m_CurPos ];
             if( PodcastItem->m_Enclosure.IsEmpty() )
             {
                 PodcastItem->m_Status = guPODCAST_STATUS_ERROR;
@@ -1230,13 +1351,14 @@ guPodcastDownloadThread::ExitCode guPodcastDownloadThread::Entry()
                             PodcastItem->m_Status = guPODCAST_STATUS_ERROR;
                             guLogMessage( wxT( "Podcast download failed..." ) );
                         }
+                        SendUpdateEvent( PodcastItem );
                     }
                     else
                     {
                         PodcastItem->m_Status = guPODCAST_STATUS_READY;
                         guLogMessage( wxT( "Podcast File already exists" ) );
+                        SendUpdateEvent( PodcastItem );
                     }
-                    SendUpdateEvent( PodcastItem );
                 }
                 else
                 {
@@ -1245,11 +1367,19 @@ guPodcastDownloadThread::ExitCode guPodcastDownloadThread::Entry()
             }
 
             //
-            Index++;
+            m_CurPos++;
         }
-        m_ItemsMutex.Unlock();
-
-        Sleep( 20 );
+        else
+        {
+            m_ItemsMutex.Lock();
+            if( m_CurPos == m_Items.Count() )
+            {
+                m_CurPos = 0;
+                m_Items.Clear();
+            }
+            m_ItemsMutex.Unlock();
+        }
+        Sleep( 40 );
     }
     return 0;
 }

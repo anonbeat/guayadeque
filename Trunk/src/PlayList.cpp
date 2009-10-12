@@ -797,22 +797,35 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 
                 //Song.m_SongId = 1;
                 //guLogMessage( wxT( "Loading : %s" ), Song.m_FileName.c_str() );
-                m_Db->FindTrackFile( Song.m_FileName, &Song );
-
-                if( !Song.m_SongId )
+                if( !m_Db->FindTrackFile( Song.m_FileName, &Song ) )
                 {
-                    Song.m_Type = guTRACK_TYPE_NODB;
+                    guPodcastItem PodcastItem;
+                    if( m_Db->GetPodcastItemFile( Song.m_FileName, &PodcastItem ) )
+                    {
+                        Song.m_Type = guTRACK_TYPE_PODCAST;
+                        Song.m_SongName = PodcastItem.m_Title;
+                        Song.m_ArtistName = PodcastItem.m_Author;
+                        Song.m_AlbumName = PodcastItem.m_Channel;
+                        Song.m_Length = PodcastItem.m_Length;
+                        Song.m_Year = 0;
+                        Song.m_Rating = wxNOT_FOUND;
 
-                    TagInfo->Read();
+                    }
+                    else
+                    {
+                        Song.m_Type = guTRACK_TYPE_NOTDB;
 
-                    Song.m_ArtistName = TagInfo->m_ArtistName;
-                    Song.m_AlbumName = TagInfo->m_AlbumName;
-                    Song.m_SongName = TagInfo->m_TrackName;
-                    Song.m_Number = TagInfo->m_Track;
-                    Song.m_GenreName = TagInfo->m_GenreName;
-                    Song.m_Length = TagInfo->m_Length;
-                    Song.m_Year = TagInfo->m_Year;
-                    Song.m_Rating = wxNOT_FOUND;
+                        TagInfo->Read();
+
+                        Song.m_ArtistName = TagInfo->m_ArtistName;
+                        Song.m_AlbumName = TagInfo->m_AlbumName;
+                        Song.m_SongName = TagInfo->m_TrackName;
+                        Song.m_Number = TagInfo->m_Track;
+                        Song.m_GenreName = TagInfo->m_GenreName;
+                        Song.m_Length = TagInfo->m_Length;
+                        Song.m_Year = TagInfo->m_Year;
+                        Song.m_Rating = wxNOT_FOUND;
+                    }
                 }
 
                 m_TotalLen += Song.m_Length;

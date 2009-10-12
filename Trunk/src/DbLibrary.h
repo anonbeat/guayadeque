@@ -39,7 +39,7 @@
 
 enum guTrackType {
     guTRACK_TYPE_DB,
-    guTRACK_TYPE_NODB,
+    guTRACK_TYPE_NOTDB,
     guTRACK_TYPE_RADIOSTATION,
     guTRACK_TYPE_PODCAST
 };
@@ -520,8 +520,11 @@ class DbLibrary {
     int                     GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items );
     void                    SavePodcastItem( const int channelid, guPodcastItem * item );
     void                    SavePodcastItems( const int channelid, guPodcastItemArray * items );
+    void                    SetPodcastItemStatus( const int itemid, const int status );
+    void                    SetPodcastItemPlayCount( const int itemid, const int playcount );
     int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );
     int                     GetPodcastItemId( const int itemid, guPodcastItem * item = NULL );
+    int                     GetPodcastItemFile( const wxString &filename, guPodcastItem * item = NULL );
     void                    DelPodcastItem( const int itemid );
     void                    DelPodcastItems( const int channelid );
     void                    SetPodcastChannelFilters( const wxArrayInt &filters );
