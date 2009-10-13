@@ -70,11 +70,6 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
         wxMkdir( m_PodcastsPath, 0770 );
     }
 
-    if( !wxDirExists( m_PodcastsPath + wxT( "/Images" ) ) )
-    {
-        wxMkdir( m_PodcastsPath + wxT( "/Images" ), 0770 );
-    }
-
 	wxBoxSizer *        MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
@@ -247,21 +242,30 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::MainSplitterOnIdle ), NULL, this );
 //	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_MainSplitterOnIdle ), NULL, this );
 //	m_TopSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_TopSplitterOnIdle ), NULL, this );
-    Connect( ID_PODCASTS_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ) );
-    Connect( ID_PODCASTS_DEL_CHANNEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ) );
-    Connect( ID_PODCASTS_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ) );
-    Connect( ID_PODCASTS_COPYTO_CHANNEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ) );
+    Connect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ) );
+    Connect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ) );
+    Connect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ) );
+    Connect( ID_PODCASTS_CHANNEL_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ) );
+    Connect( ID_PODCASTS_CHANNEL_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::UpdateChannels ) );
 
     Connect( guPODCAST_EVENT_UPDATE_ITEM, guPodcastEvent, wxCommandEventHandler( guPodcastPanel::OnPodcastItemUpdated ), NULL, this );
 
     m_ChannelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnChannelsSelected ), NULL, this );
+    m_ChannelsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPodcastPanel::OnChannelsActivated ), NULL, this );
 	m_PodcastsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guPodcastPanel::OnPodcastsColClick ), NULL, this );
     m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnPodcastItemSelected ), NULL, this );
     m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPodcastPanel::OnPodcastItemActivated ), NULL, this );
-    Connect( ID_PODCASTS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemPlay ) );
-    Connect( ID_PODCASTS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ) );
-    Connect( ID_PODCASTS_DEL_ITEM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ) );
-    Connect( ID_PODCASTS_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ) );
+
+    Connect( ID_PODCASTS_ITEM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemPlay ) );
+    Connect( ID_PODCASTS_ITEM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ) );
+    Connect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ) );
+    Connect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ) );
+
+    // Add the previously pending podcasts to download
+    guPodcastItemArray Podcasts;
+    m_Db->GetPendingPodcasts( &Podcasts );
+    if( Podcasts.Count() )
+        AddDownloadItems( &Podcasts );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -488,28 +492,6 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                 PodcastChannel.m_Url = EntryDialog->GetValue();
                 ReadXmlPodcastChannel( XmlNode->GetChildren(), &PodcastChannel );
 
-                if( !PodcastChannel.m_Image.IsEmpty() )
-                {
-                    guLogMessage( wxT( "Downloading the Image..." ) );
-                    wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/Images/" ) + PodcastChannel.m_Title + wxT( ".jpg" ) );
-                    if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
-                    {
-                        if( !wxFileExists( ImageFile.GetFullPath() ) )
-                        {
-                            if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
-                                guLogMessage( wxT( "Download failed..." ) );
-                        }
-                        else
-                        {
-                            guLogMessage( wxT( "Image File already exists" ) );
-                        }
-                    }
-                    else
-                    {
-                        guLogMessage( wxT( "Error in normalize..." ) );
-                    }
-                }
-
                 wxSetCursor( wxNullCursor );
                 //
                 guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
@@ -525,6 +507,30 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                         if( !wxDirExists( ChannelDir.GetFullPath() ) )
                         {
                             wxMkdir( ChannelDir.GetFullPath(), 0770 );
+                        }
+                    }
+
+                    if( !PodcastChannel.m_Image.IsEmpty() )
+                    {
+                        guLogMessage( wxT( "Downloading the Image..." ) );
+                        wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                                           PodcastChannel.m_Title + wxT( "/" ) +
+                                                           PodcastChannel.m_Title + wxT( ".jpg" ) );
+                        if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+                        {
+                            if( !wxFileExists( ImageFile.GetFullPath() ) )
+                            {
+                                if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
+                                    guLogMessage( wxT( "Download image failed..." ) );
+                            }
+                            else
+                            {
+                                guLogMessage( wxT( "Image File already exists" ) );
+                            }
+                        }
+                        else
+                        {
+                            guLogMessage( wxT( "Error in normalize..." ) );
                         }
                     }
 
@@ -602,6 +608,27 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPodcastPanel::UpdateChannels( wxCommandEvent &event )
+{
+    wxArrayInt Selected = m_ChannelsListBox->GetSelectedItems();
+    int Count;
+    if( ( Count = Selected.Count() ) )
+    {
+        wxSetCursor( * wxHOURGLASS_CURSOR );
+        guPodcastChannel PodcastChannel;
+        int Index;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( m_Db->GetPodcastChannelId( Selected[ Index ], &PodcastChannel ) != wxNOT_FOUND )
+            {
+                ProcessChannel( PodcastChannel.m_Url );
+            }
+        }
+        wxSetCursor( wxNullCursor );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
 {
     wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
@@ -612,6 +639,95 @@ void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
         UpdateChannelInfo( SelectedItems[ 0 ] );
     else
         UpdateChannelInfo( -1 );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::ProcessChannel( const wxString &url )
+{
+    wxCurlHTTP  http;
+    wxSetCursor( * wxHOURGLASS_CURSOR );
+    wxTheApp->Yield();
+
+    guLogMessage( wxT( "The address is %s" ), url.c_str() );
+
+    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "Accept: */*" ) );
+    http.AddHeader( wxT( "Accept-Charset: utf-8;iso-8859-1" ) );
+    char * Buffer = NULL;
+    http.Get( Buffer, url );
+    if( Buffer )
+    {
+        wxMemoryInputStream ins( Buffer, Strlen( Buffer ) );
+        wxXmlDocument XmlDoc( ins );
+        //wxSt
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        if( XmlNode && XmlNode->GetName() == wxT( "rss" ) )
+        {
+            guPodcastChannel PodcastChannel;
+            PodcastChannel.m_Url = url;
+            ReadXmlPodcastChannel( XmlNode->GetChildren(), &PodcastChannel );
+
+            if( !PodcastChannel.m_Image.IsEmpty() )
+            {
+                guLogMessage( wxT( "Downloading the Image..." ) );
+                wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                                   PodcastChannel.m_Title + wxT( "/" ) +
+                                                   PodcastChannel.m_Title + wxT( ".jpg" ) );
+                if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+                {
+                    if( !wxFileExists( ImageFile.GetFullPath() ) )
+                    {
+                        if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
+                            guLogMessage( wxT( "Download image failed..." ) );
+                    }
+                    else
+                    {
+                        guLogMessage( wxT( "Image File already exists" ) );
+                    }
+                }
+                else
+                {
+                    guLogMessage( wxT( "Error in normalize..." ) );
+                }
+            }
+
+            //
+            m_Db->SavePodcastChannel( &PodcastChannel, true );
+
+//            NormalizePodcastChannel( &PodcastChannel );
+
+            // This should be a call to wake up the update thread
+//                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
+//                    {
+//                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
+//                    }
+
+            m_ChannelsListBox->ReloadItems( false );
+            //m_PodcastsListBox->ReloadItems( false );
+        }
+
+        free( Buffer );
+    }
+    else
+    {
+        guLogError( wxT( "Could not get podcast content for %s" ), url.c_str() );
+    }
+    wxSetCursor( wxNullCursor );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnChannelsActivated( wxListEvent &event )
+{
+    wxArrayInt Selected = m_ChannelsListBox->GetSelectedItems();
+
+    if( Selected.Count() )
+    {
+        guPodcastChannel PodcastChannel;
+        if( m_Db->GetPodcastChannelId( Selected[ 0 ], &PodcastChannel ) != wxNOT_FOUND )
+        {
+            ProcessChannel( PodcastChannel.m_Url );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -706,7 +822,9 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
 //            PodcastChannel.m_OwnerEmail.c_str() );
 
         // Set Image...
-        wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/Images/" ) + PodcastChannel.m_Title + wxT( ".jpg" ) );
+        wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                           PodcastChannel.m_Title + wxT( "/" ) +
+                                           PodcastChannel.m_Title + wxT( ".jpg" ) );
         if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
         {
             wxImage PodcastImage;
@@ -924,31 +1042,34 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
     int SelCount = GetSelectedItems().Count();
 
-    MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ADD, _( "New Channel" ), _( "Add a new podcast channel" ) );
+    MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_ADD, _( "New Channel" ), _( "Add a new podcast channel" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
     if( SelCount )
     {
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_DEL_CHANNEL, _( "Delete Channels" ), _( "delete this podcast channels and all its items" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UPDATE, _( "Update" ), _( "Update the podcast items of the selected channels" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search_again ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_DEL, _( "Delete" ), _( "delete this podcast channels and all its items" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_del ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UNDELETE, _( "Undelete" ), _( "Show all deleted podcasts of the selected channels" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
 
         if( SelCount == 1 )
         {
-            MenuItem = new wxMenuItem( Menu, ID_PODCASTS_PROPERTIES, _( "Properties" ), _( "Edit the podcast channel" ) );
+            MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_PROPERTIES, _( "Properties" ), _( "Edit the podcast channel" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
             Menu->Append( MenuItem );
         }
 
         Menu->AppendSeparator();
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_COPYTO_CHANNEL, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_COPYTO, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
-
-        Menu->AppendSeparator();
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_UNDELETE, _( "Undelete" ), _( "Show all deleted podcasts of the selected channels" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
     }
 }
@@ -1119,12 +1240,17 @@ void guPodcastListBox::ReloadItems( bool reset )
 
     //
     wxArrayInt Selection;
-    int FirstVisible = GetFirstVisibleLine();
+    int FirstVisible;
 
     if( reset )
+    {
         SetSelection( -1 );
+    }
     else
+    {
         Selection = GetSelectedItems( false );
+        FirstVisible = GetFirstVisibleLine();
+    }
 
     m_PodItems.Empty();
 
@@ -1147,28 +1273,28 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
     if( Selection.Count() )
     {
         wxMenuItem * MenuItem;
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_PLAY, _( "Play" ), _( "Play current selected songs" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_PLAY, _( "Play" ), _( "Play current selected songs" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_DEL_ITEM, _( "Delete" ), _( "Delete the current selected podcasts" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_DEL, _( "Delete" ), _( "Delete the current selected podcasts" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_del ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_DOWNLOAD, _( "Download" ), _( "Download the current selected podcasts" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_DOWNLOAD, _( "Download" ), _( "Download the current selected podcasts" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_COPYTO_ITEM, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_COPYTO, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
     }

@@ -172,16 +172,18 @@
 #define ID_PLAYLIST_COPYTO              1186
 #define ID_PLAYLIST_UPDATED             1187
 
-#define ID_PODCASTS_ADD                 1190
-#define ID_PODCASTS_DEL_CHANNEL         1191
-#define ID_PODCASTS_DEL_ITEM            1192
-#define ID_PODCASTS_PROPERTIES          1193
-#define ID_PODCASTS_COPYTO_CHANNEL      1194
-#define ID_PODCASTS_COPYTO_ITEM         1195
-#define ID_PODCASTS_PLAY                1196
-#define ID_PODCASTS_ENQUEUE             1197
-#define ID_PODCASTS_DOWNLOAD            1198
-#define ID_PODCASTS_UNDELETE            1199
+#define ID_PODCASTS_CHANNEL_ADD          1190
+#define ID_PODCASTS_CHANNEL_DEL          1191
+#define ID_PODCASTS_CHANNEL_PROPERTIES   1192
+#define ID_PODCASTS_CHANNEL_COPYTO       1193
+#define ID_PODCASTS_CHANNEL_UPDATE       1194
+#define ID_PODCASTS_CHANNEL_UNDELETE     1195
+
+#define ID_PODCASTS_ITEM_DEL            1200
+#define ID_PODCASTS_ITEM_COPYTO         1201
+#define ID_PODCASTS_ITEM_PLAY           1202
+#define ID_PODCASTS_ITEM_ENQUEUE        1203
+#define ID_PODCASTS_ITEM_DOWNLOAD       1204
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -137,6 +137,7 @@ class guPodcastPanel : public wxPanel
   private:
     void                MainSplitterOnIdle( wxIdleEvent& );
     void                OnChannelsSelected( wxListEvent &event );
+    void                OnChannelsActivated( wxListEvent &event );
     void                UpdatePodcastInfo( int itemid );
     void                UpdateChannelInfo( int itemid );
     void                OnPodcastsColClick( wxListEvent &event );
@@ -177,10 +178,13 @@ class guPodcastPanel : public wxPanel
     wxScrolledWindow *          m_DetailScrolledWindow;
 	wxFlexGridSizer *           m_DetailFlexGridSizer;
 
+    void ProcessChannel( const wxString &url );
+
     void AddChannel( wxCommandEvent &event );
     void DeleteChannels( wxCommandEvent &event );
     void ChannelProperties( wxCommandEvent &event );
     void ChannelsCopyTo( wxCommandEvent &event );
+    void UpdateChannels( wxCommandEvent &event );
 
     void ClearDownloadThread( void );
     void AddDownloadItems( guPodcastItemArray * items );

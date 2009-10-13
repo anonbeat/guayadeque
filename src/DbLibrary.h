@@ -510,16 +510,16 @@ class DbLibrary {
     // Podcasts functions
     //
     int                     GetPodcastChannels( guPodcastChannelArray * channels );
-    void                    SavePodcastChannel( guPodcastChannel * channel );
-    int                     SavePodcastChannels( guPodcastChannelArray * channels );
+    void                    SavePodcastChannel( guPodcastChannel * channel, bool onlynew = false );
+    int                     SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew = false );
     int                     GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel = NULL );
     int                     GetPodcastChannelId( const int id, guPodcastChannel * channel = NULL );
     void                    DelPodcastChannel( const int id );
 
     int                     GetPodcastItems( guPodcastItemArray * items );
     int                     GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items );
-    void                    SavePodcastItem( const int channelid, guPodcastItem * item );
-    void                    SavePodcastItems( const int channelid, guPodcastItemArray * items );
+    void                    SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew = false );
+    void                    SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew = false );
     void                    SetPodcastItemStatus( const int itemid, const int status );
     void                    SetPodcastItemPlayCount( const int itemid, const int playcount );
     int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );
@@ -529,6 +529,7 @@ class DbLibrary {
     void                    DelPodcastItems( const int channelid );
     void                    SetPodcastChannelFilters( const wxArrayInt &filters );
     void                    SetPodcastOrder( int order );
+    int                     GetPendingPodcasts( guPodcastItemArray * items );
 
 };
 
