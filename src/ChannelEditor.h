@@ -65,5 +65,19 @@ class guChannelEditor : public wxDialog
 
 };
 
+class guChannelUpdateImageThread  : public wxThread
+{
+  protected :
+    wxString            m_ImageUrl;
+    guChannelEditor *   m_ChannelEditor;
+
+  public :
+    guChannelUpdateImageThread( guChannelEditor * channeleditor, const wxChar * imageurl );
+    ~guChannelUpdateImageThread();
+
+    ExitCode Entry();
+
+};
+
 #endif
 // -------------------------------------------------------------------------------- //

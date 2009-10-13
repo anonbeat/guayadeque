@@ -1048,16 +1048,17 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
 
     if( SelCount )
     {
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UPDATE, _( "Update" ), _( "Update the podcast items of the selected channels" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search_again ) );
-        Menu->Append( MenuItem );
-
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_DEL, _( "Delete" ), _( "delete this podcast channels and all its items" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_del ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UNDELETE, _( "Undelete" ), _( "Show all deleted podcasts of the selected channels" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UPDATE, _( "Update" ), _( "Update the podcast items of the selected channels" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
         Menu->Append( MenuItem );
 
         if( SelCount == 1 )
