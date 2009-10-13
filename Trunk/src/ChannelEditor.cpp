@@ -21,9 +21,13 @@
 #include "ChannelEditor.h"
 
 #include "Config.h"
+#include "Commands.h"
 #include "Images.h"
+#include <wx/curl/http.h>
 
 #include <wx/filename.h>
+
+#define guPODCASTS_IMAGE_SIZE   60
 
 // -------------------------------------------------------------------------------- //
 guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel ) :
@@ -59,12 +63,14 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	FlexGridSizer->SetFlexibleDirection( wxBOTH );
 	FlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_Image = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 60,60 ), 0 );
+	m_Image = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( guPODCASTS_IMAGE_SIZE,guPODCASTS_IMAGE_SIZE ), 0 );
 	FlexGridSizer->Add( m_Image, 0, wxALL, 5 );
 
     // Check that the directory to store podcasts are created
     wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
-    wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) + channel->m_Title + wxT( "/" ) + channel->m_Title + wxT( ".jpg" ) );
+    wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
+                                       channel->m_Title + wxT( "/" ) +
+                                       channel->m_Title + wxT( ".jpg" ) );
     if( ImageFile.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
     {
         wxImage PodcastImage;
@@ -77,6 +83,10 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
         else
         {
             m_Image->SetBitmap( guBitmap( guIMAGE_INDEX_tiny_podcast_icon ) );
+            if( !channel->m_Image.IsEmpty() )
+            {
+                guChannelUpdateImageThread * UpdateImageThread = new guChannelUpdateImageThread( this, channel->m_Image.c_str() );
+            }
         }
     }
 
@@ -185,6 +195,93 @@ void guChannelEditor::GetEditData( void )
     m_PodcastChannel->m_DownloadText = ( m_PodcastChannel->m_DownloadType == 1 ) ?
                                         m_DownloadText->GetValue() : wxT( "" );
     m_PodcastChannel->m_AllowDelete = m_DeleteCheckBox->IsChecked();
+}
+
+// -------------------------------------------------------------------------------- //
+// guChannelUpdateImageThread
+// -------------------------------------------------------------------------------- //
+guChannelUpdateImageThread::guChannelUpdateImageThread( guChannelEditor * channeleditor, const wxChar * imageurl ) :
+    wxThread( wxTHREAD_DETACHED )
+{
+    m_ChannelEditor = channeleditor;
+    m_ImageUrl      = wxString( imageurl );
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guChannelUpdateImageThread::~guChannelUpdateImageThread()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guChannelUpdateImageThread::ExitCode guChannelUpdateImageThread::Entry()
+{
+    wxImage *       Image = NULL;
+    long            ImageType;
+
+    //wxASSERT( pImage );
+
+    if( !m_ImageUrl.IsEmpty() )
+    {
+        if( m_ImageUrl.Lower().EndsWith( wxT( ".jpg" ) ) ||
+            m_ImageUrl.Lower().EndsWith( wxT( ".jpeg" ) ) )
+          ImageType = wxBITMAP_TYPE_JPEG;
+        else if( m_ImageUrl.Lower().EndsWith( wxT( ".png" ) ) )
+          ImageType = wxBITMAP_TYPE_PNG;
+        else if( m_ImageUrl.Lower().EndsWith( wxT( ".gif" ) ) )    // Removed because of some random segfaults
+          ImageType = wxBITMAP_TYPE_GIF;                                  // in gifs handler functions
+        else if( m_ImageUrl.Lower().EndsWith( wxT( ".bmp" ) ) )
+          ImageType = wxBITMAP_TYPE_BMP;
+        else
+          ImageType = wxBITMAP_TYPE_INVALID;
+
+        if( ImageType > wxBITMAP_TYPE_INVALID )
+        {
+            wxMemoryOutputStream Buffer;
+            wxCurlHTTP http;
+            if( http.Get( Buffer, m_ImageUrl ) )
+            {
+                if( Buffer.IsOk() && !TestDestroy() )
+                {
+                    wxMemoryInputStream Ins( Buffer );
+                    if( Ins.IsOk() && !TestDestroy() )
+                    {
+                        Image = new wxImage( Ins, ImageType );
+                        if( Image )
+                        {
+                            //guLogMessage( wxT( "Image loaded ok %u" ), Index );
+                            if( Image->IsOk() && !TestDestroy() )
+                            {
+                                Image->Rescale( guPODCASTS_IMAGE_SIZE, guPODCASTS_IMAGE_SIZE, wxIMAGE_QUALITY_HIGH );
+                            }
+                            else
+                            {
+                              delete Image;
+                              Image = NULL;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //
+    if( !TestDestroy() )
+    {
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PODCASTS_EDITOR_UPDATEIMAGE );
+        event.SetClientData( Image );
+        wxPostEvent( m_ChannelEditor, event );
+    }
+    else if( Image )
+    {
+        delete Image;
+    }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
