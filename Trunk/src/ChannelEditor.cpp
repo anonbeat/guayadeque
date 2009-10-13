@@ -64,7 +64,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
     // Check that the directory to store podcasts are created
     wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
-    wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/Images/" ) + channel->m_Title + wxT( ".jpg" ) );
+    wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) + channel->m_Title + wxT( "/" ) + channel->m_Title + wxT( ".jpg" ) );
     if( ImageFile.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
     {
         wxImage PodcastImage;
@@ -75,7 +75,9 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
             m_Image->SetBitmap( PodcastImage );
         }
         else
+        {
             m_Image->SetBitmap( guBitmap( guIMAGE_INDEX_tiny_podcast_icon ) );
+        }
     }
 
 	m_Title = new wxStaticText( this, wxID_ANY, channel->m_Title, wxDefaultPosition, wxDefaultSize, 0 );

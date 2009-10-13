@@ -524,16 +524,23 @@ void guListView::SetSelectedItems( const wxArrayInt &selection )
     int count = GetItemCount();
 
     ClearSelectedItems();
-    bool IsMultiple = m_ListBox->HasMultipleSelection();
-    for( index = 0; index < count; index++ )
+    if( selection.Count() )
     {
-        if( selection.Index( GetItemId( index ) ) != wxNOT_FOUND )
+        bool IsMultiple = m_ListBox->HasMultipleSelection();
+        for( index = 0; index < count; index++ )
         {
-            if( IsMultiple )
-                Select( index );
-            else
-                SetSelection( index );
+            if( selection.Index( GetItemId( index ) ) != wxNOT_FOUND )
+            {
+                if( IsMultiple )
+                    Select( index );
+                else
+                    SetSelection( index );
+            }
         }
+        wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, m_ListBox->GetId() );
+        event.SetEventObject( m_ListBox );
+        event.SetInt( selection[ 0 ] );
+        (void) GetEventHandler()->ProcessEvent( event );
     }
 }
 

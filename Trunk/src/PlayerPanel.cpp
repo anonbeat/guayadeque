@@ -1404,7 +1404,7 @@ void guPlayerPanel::OnPlayerPositionSliderBeginSeek( wxScrollEvent &event )
 void guPlayerPanel::OnPlayerPositionSliderEndSeek( wxScrollEvent &event )
 {
     wxFileOffset NewPos;
-    if( m_MediaSong.m_SongId )
+    if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
     {
         NewPos = event.GetPosition();
         //guLogMessage( wxT( "Slider Set Pos to %i Of %i" ), ( int ) NewPos, 1000 );

@@ -4538,7 +4538,7 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastChannel( guPodcastChannel * channel )
+void DbLibrary::SavePodcastChannel( guPodcastChannel * channel, bool onlynew )
 {
   wxASSERT( channel );
 
@@ -4573,7 +4573,7 @@ void DbLibrary::SavePodcastChannel( guPodcastChannel * channel )
     ChannelId = m_Db.GetLastRowId().GetLo();
     channel->m_Id = ChannelId;
   }
-  else
+  else if( !onlynew )
   {
     query = wxString::Format( wxT( "UPDATE podcastchs "
         "SET podcastch_url = '%s', podcastch_title = '%s', "
@@ -4602,19 +4602,19 @@ void DbLibrary::SavePodcastChannel( guPodcastChannel * channel )
   }
 
   // Save the Items
-  SavePodcastItems( ChannelId, &channel->m_Items );
+  SavePodcastItems( ChannelId, &channel->m_Items, onlynew );
 
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::SavePodcastChannels( guPodcastChannelArray * channels )
+int DbLibrary::SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew )
 {
     wxASSERT( channels );
     int Index;
     int Count = channels->Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        SavePodcastChannel( &channels->Item( Index ) );
+        SavePodcastChannel( &channels->Item( Index ), onlynew );
     }
 }
 
@@ -4851,7 +4851,7 @@ int DbLibrary::GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item )
+void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew )
 {
   wxASSERT( item );
 
@@ -4859,6 +4859,7 @@ void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item )
   int ItemId;
   if( ( ItemId = GetPodcastItemEnclosure( item->m_Enclosure ) ) == wxNOT_FOUND )
   {
+    guLogMessage( wxT( "Inserting podcastitem '%s'" ), item->m_Title.c_str() );
     query = wxString::Format( wxT( "INSERT INTO podcastitems( "
                 "podcastitem_id, podcastitem_chid, podcastitem_title, "
                 "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
@@ -4879,7 +4880,7 @@ void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item )
     ExecuteUpdate( query );
     ItemId = m_Db.GetLastRowId().GetLo();
   }
-  else
+  else if( !onlynew )
   {
     query = wxString::Format( wxT( "UPDATE podcastitems SET "
                 "podcastitem_chid = %u, podcastitem_title = '%s', "
@@ -4904,14 +4905,14 @@ void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * items )
+void DbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew )
 {
     wxASSERT( items );
     int Index;
     int Count = items->Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        SavePodcastItem( channelid, &items->Item( Index ) );
+        SavePodcastItem( channelid, &items->Item( Index ), onlynew );
     }
 }
 
@@ -5120,6 +5121,49 @@ void DbLibrary::SetPodcastOrder( int order )
     }
     else
         m_PodcastOrderDesc = !m_PodcastOrderDesc;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
+{
+  wxASSERT( items );
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id "
+            "AND podcastitem_status IN ( 1, 2 ) "
+            "ORDER BY podcastitem_status DESC;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastItem * Item = new guPodcastItem();
+    Item->m_Id = dbRes.GetInt( 0 );
+    Item->m_ChId = dbRes.GetInt( 1 );
+    Item->m_Title = dbRes.GetString( 2 );
+    Item->m_Summary = dbRes.GetString( 3 );
+    Item->m_Author = dbRes.GetString( 4 );
+    Item->m_Enclosure = dbRes.GetString( 5 );
+    Item->m_Time = dbRes.GetInt( 6 );
+    Item->m_FileName = dbRes.GetString( 7 );
+    Item->m_Length = dbRes.GetInt( 8 );
+    Item->m_PlayCount = dbRes.GetInt( 9 );
+    Item->m_LastPlay = dbRes.GetInt( 10 );
+    Item->m_Status = dbRes.GetInt( 11 );
+
+    Item->m_Channel = dbRes.GetString( 12 );
+    Item->m_Category = dbRes.GetString( 13 );
+    items->Add( Item );
+  }
+  dbRes.Finalize();
+  return items->Count();
 }
 
 // -------------------------------------------------------------------------------- //
