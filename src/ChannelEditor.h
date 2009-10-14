@@ -41,6 +41,8 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 
+extern const wxEventType guChannelEditorEvent;
+#define guCHANNELEDITOR_EVENT_UPDATE_IMAGE          1000
 
 // -------------------------------------------------------------------------------- //
 class guChannelEditor : public wxDialog
@@ -57,6 +59,7 @@ class guChannelEditor : public wxDialog
 	wxCheckBox      *   m_DeleteCheckBox;
 
 	void OnDownloadChoice( wxCommandEvent& event );
+	void OnChannelImageUpdated( wxCommandEvent &event );
 
   public:
 	guChannelEditor( wxWindow * parent, guPodcastChannel * channel );
