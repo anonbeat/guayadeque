@@ -27,6 +27,8 @@
 
 #include <wx/filename.h>
 
+const wxEventType guChannelEditorEvent = wxNewEventType();
+
 #define guPODCASTS_IMAGE_SIZE   60
 
 // -------------------------------------------------------------------------------- //
@@ -96,7 +98,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	FlexGridSizer->Add( m_Title, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	DescLabel = new wxStaticText( this, wxID_ANY, wxT("Description:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DescLabel = new wxStaticText( this, wxID_ANY, _( "Description:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	DescLabel->Wrap( -1 );
 	DescLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -106,7 +108,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	m_DescText->Wrap( 450 );
 	FlexGridSizer->Add( m_DescText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	AuthorLabel = new wxStaticText( this, wxID_ANY, wxT("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
+	AuthorLabel = new wxStaticText( this, wxID_ANY, _("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
 	AuthorLabel->Wrap( -1 );
 	AuthorLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -116,7 +118,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	m_AuthorText->Wrap( -1 );
 	FlexGridSizer->Add( m_AuthorText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	OwnerLabel = new wxStaticText( this, wxID_ANY, wxT("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
+	OwnerLabel = new wxStaticText( this, wxID_ANY, _("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
 	OwnerLabel->Wrap( -1 );
 	OwnerLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -127,14 +129,14 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	m_OwnerText->Wrap( -1 );
 	FlexGridSizer->Add( m_OwnerText, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	DownloadLabel = new wxStaticText( this, wxID_ANY, wxT("Download:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DownloadLabel = new wxStaticText( this, wxID_ANY, _("Download:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DownloadLabel->Wrap( -1 );
 	FlexGridSizer->Add( DownloadLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	wxBoxSizer* DownloadSizer;
 	DownloadSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxString m_DownloadChoiceChoices[] = { _( "Manually" ), _( "Only if contains" ), _( "All" ) };
+	wxString m_DownloadChoiceChoices[] = { _( "Manually" ), _( "Only if contains" ), _( "Everything" ) };
 	int m_DownloadChoiceNChoices = sizeof( m_DownloadChoiceChoices ) / sizeof( wxString );
 	m_DownloadChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_DownloadChoiceNChoices, m_DownloadChoiceChoices, 0 );
 	m_DownloadChoice->SetSelection( channel->m_DownloadType );
@@ -147,7 +149,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	FlexGridSizer->Add( DownloadSizer, 1, wxEXPAND, 5 );
 
-	DeleteLabel = new wxStaticText( this, wxID_ANY, wxT("Delete:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DeleteLabel = new wxStaticText( this, wxID_ANY, _("Delete:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DeleteLabel->Wrap( -1 );
 	FlexGridSizer->Add( DeleteLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -173,6 +175,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	// Connect Events
 	m_DownloadChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guChannelEditor::OnDownloadChoice ), NULL, this );
+    Connect( guCHANNELEDITOR_EVENT_UPDATE_IMAGE, guChannelEditorEvent, wxCommandEventHandler( guChannelEditor::OnChannelImageUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -195,6 +198,17 @@ void guChannelEditor::GetEditData( void )
     m_PodcastChannel->m_DownloadText = ( m_PodcastChannel->m_DownloadType == 1 ) ?
                                         m_DownloadText->GetValue() : wxT( "" );
     m_PodcastChannel->m_AllowDelete = m_DeleteCheckBox->IsChecked();
+}
+
+// -------------------------------------------------------------------------------- //
+void guChannelEditor::OnChannelImageUpdated( wxCommandEvent &event )
+{
+    wxImage * Image = ( wxImage * ) event.GetClientData();
+    if( Image )
+    {
+        m_Image->SetBitmap( * Image );
+        delete Image;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -273,7 +287,7 @@ guChannelUpdateImageThread::ExitCode guChannelUpdateImageThread::Entry()
     //
     if( !TestDestroy() )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PODCASTS_EDITOR_UPDATEIMAGE );
+        wxCommandEvent event( guChannelEditorEvent, guCHANNELEDITOR_EVENT_UPDATE_IMAGE );
         event.SetClientData( Image );
         wxPostEvent( m_ChannelEditor, event );
     }

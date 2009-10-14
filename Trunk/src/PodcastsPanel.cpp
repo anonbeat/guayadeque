@@ -1164,7 +1164,7 @@ guPodcastListBox::~guPodcastListBox()
 // -------------------------------------------------------------------------------- //
 void guPodcastListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-    if( col == guPODCASTS_COLUMN_STATUS )
+    if( ( * m_Columns )[ col ].m_Id == guPODCASTS_COLUMN_STATUS )
     {
         guPodcastItem * Podcast;
         Podcast = &m_PodItems[ row ];
@@ -1186,7 +1186,7 @@ wxString guPodcastListBox::OnGetItemText( const int row, const int col ) const
 {
     guPodcastItem * Podcast;
     Podcast = &m_PodItems[ row ];
-    switch( col )
+    switch( ( * m_Columns )[ col ].m_Id )
     {
         case guPODCASTS_COLUMN_TITLE :
           return Podcast->m_Title;

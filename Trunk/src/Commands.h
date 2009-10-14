@@ -185,7 +185,6 @@
 #define ID_PODCASTS_ITEM_ENQUEUE        1203
 #define ID_PODCASTS_ITEM_DOWNLOAD       1204
 
-#define ID_PODCASTS_EDITOR_UPDATEIMAGE  1210
 
 #endif
 // -------------------------------------------------------------------------------- //

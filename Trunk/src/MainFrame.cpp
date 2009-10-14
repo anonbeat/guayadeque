@@ -31,6 +31,10 @@
 
 #include <wx/statline.h>
 #include <wx/notebook.h>
+#include <wx/datetime.h>
+
+// The default update podcasts timeout is 15 minutes
+#define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
 
 // -------------------------------------------------------------------------------- //
 guMainFrame::guMainFrame( wxWindow * parent )
@@ -66,6 +70,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
                                       wxT( "LibPaths" ) ) );
 
     m_LibUpdateThread = NULL;
+    m_UpdatePodcastsTimer = new guUpdatePodcastsTimer( m_Db );
+    m_UpdatePodcastsTimer->Start( guPODCASTS_UPDATE_TIMEOUT );
 
     //
     // guMainFrame GUI components
@@ -1085,6 +1091,81 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
     wxPostEvent( wxTheApp->GetTopWindow(), event );
     //wxMessageBox( "Copy to dir finished" );
     return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+// guUpdatePodcastsTimer
+// -------------------------------------------------------------------------------- //
+guUpdatePodcastsTimer::guUpdatePodcastsTimer( DbLibrary * db ) : wxTimer()
+{
+    m_Db = db;
+}
+
+// -------------------------------------------------------------------------------- //
+void guUpdatePodcastsTimer::Notify()
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
+    {
+        wxDateTime LastUpdate;
+        LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastPodcastUpdate" ), wxEmptyString, wxT( "Podcasts" ) ) );
+
+        wxDateTime UpdateTime = wxDateTime::Now();
+
+        switch( Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "Podcasts" ) ) )
+        {
+            case 0 :    // Hour
+                UpdateTime.Subtract( wxTimeSpan::Hour() );
+                break;
+            case 1 :    // Day
+                LastUpdate.Subtract( wxDateSpan::Day() );
+                break;
+
+            case 2 :    // Week
+                LastUpdate.Subtract( wxDateSpan::Week() );
+                break;
+
+            case 3 :    // Month
+                LastUpdate.Subtract( wxDateSpan::Month() );
+                break;
+
+            default :
+                guLogError( wxT( "Unrecognized UpdatePeriod in podcasts" ) );
+                return;
+        }
+
+        if( UpdateTime.IsLaterThan( LastUpdate ) )
+        {
+            guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db );
+
+            Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "Podcasts" ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guUpdatePodcastThread
+// -------------------------------------------------------------------------------- //
+guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db ) : wxThread()
+{
+    m_Db = db;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guUpdatePodcastsThread::~guUpdatePodcastsThread()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
+{
+    guLogMessage( wxT( "Update Podcasts thread launched..." ) );
 }
 
 // -------------------------------------------------------------------------------- //

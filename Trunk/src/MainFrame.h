@@ -46,30 +46,33 @@
 
 class guTaskBarIcon;
 class guLibUpdateThread;
+class guUpdatePodcastsTimer;
 
 // -------------------------------------------------------------------------------- //
 class guMainFrame : public wxFrame
 {
   private:
-    wxNotebook *        m_CatNotebook;
-    wxSplitterWindow *  m_PlayerSplitter;
-    guPlayerPanel *     m_PlayerPanel;
-    guLibPanel *        m_LibPanel;
-    guRadioPanel *      m_RadioPanel;
-    guLastFMPanel *     m_LastFMPanel;
-    guLyricsPanel *     m_LyricsPanel;
-    guPlayListPanel *   m_PlayListPanel;
-    guPodcastPanel *    m_PodcastsPanel;
-    guTaskBarIcon *     m_TaskBarIcon;
-    guStatusBar *       m_MainStatusBar;
+    wxNotebook *                m_CatNotebook;
+    wxSplitterWindow *          m_PlayerSplitter;
+    guPlayerPanel *             m_PlayerPanel;
+    guLibPanel *                m_LibPanel;
+    guRadioPanel *              m_RadioPanel;
+    guLastFMPanel *             m_LastFMPanel;
+    guLyricsPanel *             m_LyricsPanel;
+    guPlayListPanel *           m_PlayListPanel;
+    guPodcastPanel *            m_PodcastsPanel;
+    guTaskBarIcon *             m_TaskBarIcon;
+    guStatusBar *               m_MainStatusBar;
 
-    DbLibrary *         m_Db;
-    guLibUpdateThread * m_LibUpdateThread;
+    DbLibrary *                 m_Db;
+    guLibUpdateThread *         m_LibUpdateThread;
 
-    guDBusServer *      m_DBusServer;
-    guMPRIS *           m_MPRIS;
-    guMMKeys *          m_MMKeys;
-    guGSession *        m_GSession;
+    guUpdatePodcastsTimer *     m_UpdatePodcastsTimer;
+
+    guDBusServer *              m_DBusServer;
+    guMPRIS *                   m_MPRIS;
+    guMMKeys *                  m_MMKeys;
+    guGSession *                m_GSession;
 
     void                OnUpdateLibrary( wxCommandEvent &event );
     void                OnUpdateCovers( wxCommandEvent &event );
@@ -151,6 +154,33 @@ class guCopyToDirThread : public wxThread
     ~guCopyToDirThread();
 
     virtual ExitCode Entry();
+};
+
+// -------------------------------------------------------------------------------- //
+class guUpdatePodcastsTimer : public wxTimer
+{
+  protected :
+    DbLibrary * m_Db;
+
+  public:
+    guUpdatePodcastsTimer( DbLibrary * db );
+
+    //Called each time the timer's timeout expires
+    void Notify();
+};
+
+// -------------------------------------------------------------------------------- //
+class guUpdatePodcastsThread : public wxThread
+{
+  protected :
+    DbLibrary * m_Db;
+
+  public :
+    guUpdatePodcastsThread( DbLibrary * db );
+    ~guUpdatePodcastsThread();
+
+    virtual ExitCode Entry();
+
 };
 
 #endif
