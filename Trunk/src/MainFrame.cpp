@@ -70,8 +70,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
                                       wxT( "LibPaths" ) ) );
 
     m_LibUpdateThread = NULL;
-    m_UpdatePodcastsTimer = new guUpdatePodcastsTimer( m_Db );
-    m_UpdatePodcastsTimer->Start( guPODCASTS_UPDATE_TIMEOUT );
+    m_UpdatePodcastsTimer = NULL;
 
     //
     // guMainFrame GUI components
@@ -233,6 +232,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
         wxPostEvent( this, event );
     }
 
+    // Update Podcasts
+    UpdatePodcasts();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -270,50 +271,6 @@ guMainFrame::~guMainFrame()
     {
         delete m_MPRIS;
     }
-
-    Disconnect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ) );
-    Disconnect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ) );
-    Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ) );
-    Disconnect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ) );
-    Disconnect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ) );
-    Disconnect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ) );
-    Disconnect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ) );
-    Disconnect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ) );
-    Disconnect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ) );
-
-	Disconnect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbumName ), NULL, this );
-	Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtistName ), NULL, this );
-
-	Disconnect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
-	Disconnect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
-	Disconnect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumSetSelection ), NULL, this );
-
-    Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
-    Disconnect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ) );
-
-    Disconnect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlay ) );
-    Disconnect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ) );
-    Disconnect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ) );
-    Disconnect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ) );
-    Disconnect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ) );
-    Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ) );
-    Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ) );
-    Disconnect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ) );
-
-    Disconnect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ) );
-
-    Disconnect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ) );
-
-    Disconnect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ) );
-    Disconnect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ) );
-    Disconnect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ) );
-    Disconnect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ) );
-    Disconnect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ) );
-
-    Disconnect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ) );
-    Disconnect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ) );
-    Disconnect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ) );
-    Disconnect( ID_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ) );
 }
 
 
@@ -894,6 +851,56 @@ void guMainFrame::CreateTaskBarIcon( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::UpdatePodcasts( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
+    {
+        if( !m_UpdatePodcastsTimer )
+        {
+            guLogMessage( wxT( "Creating the UpdatePodcasts timer..." ) );
+            m_UpdatePodcastsTimer = new guUpdatePodcastsTimer( this, m_Db );
+            m_UpdatePodcastsTimer->Start( guPODCASTS_UPDATE_TIMEOUT );
+        }
+
+        wxDateTime LastUpdate;
+        LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastPodcastUpdate" ), wxEmptyString, wxT( "Podcasts" ) ) );
+
+        wxDateTime UpdateTime = wxDateTime::Now();
+
+        switch( Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "Podcasts" ) ) )
+        {
+            case 0 :    // Hour
+                UpdateTime.Subtract( wxTimeSpan::Hour() );
+                break;
+            case 1 :    // Day
+                LastUpdate.Subtract( wxDateSpan::Day() );
+                break;
+
+            case 2 :    // Week
+                LastUpdate.Subtract( wxDateSpan::Week() );
+                break;
+
+            case 3 :    // Month
+                LastUpdate.Subtract( wxDateSpan::Month() );
+                break;
+
+            default :
+                guLogError( wxT( "Unrecognized UpdatePeriod in podcasts" ) );
+                return;
+        }
+
+        if( UpdateTime.IsLaterThan( LastUpdate ) )
+        {
+            guLogMessage( wxT( "Starting UpdatePodcastsThread Process..." ) );
+            guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db );
+
+            Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "Podcasts" ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guUpdateCoversThread
 // -------------------------------------------------------------------------------- //
 guUpdateCoversThread::guUpdateCoversThread( DbLibrary * db, int gaugeid ) : wxThread()
@@ -1096,51 +1103,16 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guUpdatePodcastsTimer
 // -------------------------------------------------------------------------------- //
-guUpdatePodcastsTimer::guUpdatePodcastsTimer( DbLibrary * db ) : wxTimer()
+guUpdatePodcastsTimer::guUpdatePodcastsTimer( guMainFrame * mainframe, DbLibrary * db ) : wxTimer()
 {
+    m_MainFrame = mainframe;
     m_Db = db;
 }
 
 // -------------------------------------------------------------------------------- //
 void guUpdatePodcastsTimer::Notify()
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
-    {
-        wxDateTime LastUpdate;
-        LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastPodcastUpdate" ), wxEmptyString, wxT( "Podcasts" ) ) );
-
-        wxDateTime UpdateTime = wxDateTime::Now();
-
-        switch( Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "Podcasts" ) ) )
-        {
-            case 0 :    // Hour
-                UpdateTime.Subtract( wxTimeSpan::Hour() );
-                break;
-            case 1 :    // Day
-                LastUpdate.Subtract( wxDateSpan::Day() );
-                break;
-
-            case 2 :    // Week
-                LastUpdate.Subtract( wxDateSpan::Week() );
-                break;
-
-            case 3 :    // Month
-                LastUpdate.Subtract( wxDateSpan::Month() );
-                break;
-
-            default :
-                guLogError( wxT( "Unrecognized UpdatePeriod in podcasts" ) );
-                return;
-        }
-
-        if( UpdateTime.IsLaterThan( LastUpdate ) )
-        {
-            guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db );
-
-            Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "Podcasts" ) );
-        }
-    }
+    m_MainFrame->UpdatePodcasts();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1165,7 +1137,18 @@ guUpdatePodcastsThread::~guUpdatePodcastsThread()
 // -------------------------------------------------------------------------------- //
 guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
 {
-    guLogMessage( wxT( "Update Podcasts thread launched..." ) );
+    guPodcastChannelArray PodcastChannels;
+    if( m_Db->GetPodcastChannels( &PodcastChannels ) )
+    {
+        int Index = 0;
+        while( !TestDestroy() && Index < PodcastChannels.Count() )
+        {
+            UpdateChannel( m_Db, PodcastChannels[ Index ].m_Url );
+            Index++;
+            Sleep( 20 );
+        }
+    }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //

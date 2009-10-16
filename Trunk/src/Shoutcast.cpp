@@ -79,6 +79,7 @@
 
 #include "Utils.h"
 
+#include <wx/arrimpl.cpp>
 #include <wx/curl/http.h>
 #include <wx/xml/xml.h>
 #include <wx/fileconf.h>

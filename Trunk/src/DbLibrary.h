@@ -21,6 +21,8 @@
 #ifndef DBLIBRARY_H
 #define DBLIBRARY_H
 
+#include "Podcasts.h"
+
 // wxWidgets
 #include <wx/wx.h>
 #include <wx/string.h>
@@ -28,7 +30,6 @@
 #include <wx/utils.h>
 #include <wx/filefn.h>
 #include <wx/dir.h>
-#include <wx/arrimpl.cpp>
 
 // wxSqlite3
 #include "wx/wxsqlite3.h"
@@ -221,62 +222,6 @@ class guAS_SubmitInfo //guAudioScrobbler_SubmitInfo
     int      m_MBTrackId;
 };
 WX_DECLARE_OBJARRAY(guAS_SubmitInfo, guAS_SubmitInfoArray);
-
-// -------------------------------------------------------------------------------- //
-class guPodcastItem
-{
-  public :
-    int         m_Id;
-    wxString    m_Title;
-    wxString    m_Author;
-    int         m_ChId;
-    wxString    m_Channel;
-    //wxString    m_Link;
-    wxString    m_Summary;
-    wxString    m_Enclosure;
-    int         m_Time;
-    int         m_Length;
-    wxString    m_FileName;
-    wxString    m_Category;
-
-    int         m_PlayCount;
-    int         m_LastPlay;
-    int         m_Status;
-
-    guPodcastItem()
-    {
-        m_Id = 0;
-        m_ChId = 0;
-        m_Time = 0;
-        m_Length = 0;
-        m_PlayCount = 0;
-        m_LastPlay = 0;
-        m_Status = 0;
-    }
-};
-WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
-
-class guPodcastChannel
-{
-  public :
-    int                 m_Id;
-    wxString            m_Url;
-    wxString            m_Title;
-    wxString            m_Link;
-    wxString            m_Description;
-    wxString            m_Lang;
-    wxString            m_Summary;
-    wxString            m_Category;
-    wxString            m_Image;
-    wxString            m_Author;
-    wxString            m_OwnerName;
-    wxString            m_OwnerEmail;
-    guPodcastItemArray  m_Items;
-    int                 m_DownloadType;
-    wxString            m_DownloadText;
-    bool                m_AllowDelete;
-};
-WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
 
 // -------------------------------------------------------------------------------- //
 void inline escape_query_str( wxString * Str )

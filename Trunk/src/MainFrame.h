@@ -34,6 +34,7 @@
 #include "RadioPanel.h"
 #include "StatusBar.h"
 #include "SplashWin.h"
+#include <curl/http.h>
 
 #include "dbus/gudbus.h"
 #include "dbus/mpris.h"
@@ -42,6 +43,11 @@
 
 #include <wx/wx.h>
 #include <wx/splitter.h>
+#include <wx/regex.h>
+#include <wx/sstream.h>
+#include <wx/uri.h>
+#include <wx/xml/xml.h>
+#include <wx/zstream.h>
 
 
 class guTaskBarIcon;
@@ -124,6 +130,7 @@ class guMainFrame : public wxFrame
                         ~guMainFrame();
     void                LibraryUpdated( wxCommandEvent &event );
     void                OnQuit( wxCommandEvent &WXUNUSED(event) );
+    void                UpdatePodcasts( void );
 
 };
 
@@ -161,9 +168,10 @@ class guUpdatePodcastsTimer : public wxTimer
 {
   protected :
     DbLibrary * m_Db;
+    guMainFrame * m_MainFrame;
 
   public:
-    guUpdatePodcastsTimer( DbLibrary * db );
+    guUpdatePodcastsTimer( guMainFrame * mainframe, DbLibrary * db );
 
     //Called each time the timer's timeout expires
     void Notify();

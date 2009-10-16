@@ -228,6 +228,8 @@ ADD_EXECUTABLE( guayadeque
 	MusicDns.h
 	MusicBrainz.cpp
 	MusicBrainz.h
+	Podcasts.cpp
+	Podcasts.h
 	PodcastsPanel.cpp
 	PodcastsPanel.h
 	ChannelEditor.cpp
