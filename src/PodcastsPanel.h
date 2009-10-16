@@ -131,6 +131,8 @@ class guPodcastDownloadQueueThread : public wxThread
 
 };
 
+void UpdateChannel( DbLibrary * db, const wxString &url );
+
 // -------------------------------------------------------------------------------- //
 class guPodcastPanel : public wxPanel
 {

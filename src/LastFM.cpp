@@ -24,9 +24,9 @@
 
 #include "curl/http.h"
 
-#include <wx/xml/xml.h>
+#include <wx/arrimpl.cpp>
 #include <wx/sstream.h>
-
+#include <wx/xml/xml.h>
 
 WX_DEFINE_OBJARRAY(guAlbumInfoArray);
 WX_DEFINE_OBJARRAY(guSimilarArtistInfoArray);

@@ -281,144 +281,6 @@ guPodcastPanel::~guPodcastPanel()
 }
 
 // -------------------------------------------------------------------------------- //
-int StrLengthToInt( const wxString &length )
-{
-    int RetVal = 0;
-    int Factor[] = { 1, 60, 3600, 86400 };
-    int FactorIndex = 0;
-
-    if( !length.IsEmpty() )
-    {
-        // 1:02:03:04
-        wxString Rest = length.Strip( wxString::both );
-        int element;
-        do {
-            Rest.AfterLast( wxT( ':' ) ).ToLong( ( long * ) &element );
-            if( !element )
-                break;
-            RetVal += Factor[ FactorIndex ] * element;
-            FactorIndex++;
-            if( ( FactorIndex > 3 ) )
-                break;
-            Rest = Rest.BeforeLast( wxT( ':' ) );
-        } while( !Rest.IsEmpty() );
-    }
-//    guLogMessage( wxT( "%s -> %i" ), length.c_str(), RetVal );
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadXmlPodcastOwner( wxXmlNode * XmlNode, guPodcastChannel * channel )
-{
-    while( XmlNode )
-    {
-        if( XmlNode->GetName() == wxT( "itunes:name" ) )
-        {
-            channel->m_OwnerName = XmlNode->GetNodeContent();
-        }
-        else if( XmlNode->GetName() == wxT( "itunes:email" ) )
-        {
-            channel->m_OwnerEmail = XmlNode->GetNodeContent();
-        }
-        XmlNode = XmlNode->GetNext();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadXmlPodcastItem( wxXmlNode * XmlNode, guPodcastItem * item )
-{
-    while( XmlNode )
-    {
-        if( XmlNode->GetName() == wxT( "title" ) )
-        {
-            item->m_Title = XmlNode->GetNodeContent();
-            guLogMessage( wxT( "Item: '%s'" ), item->m_Title.c_str() );
-        }
-        else if( XmlNode->GetName() == wxT( "enclosure" ) )
-        {
-            XmlNode->GetPropVal( wxT( "url" ), &item->m_Enclosure );
-        }
-        else if( item->m_Summary.IsEmpty() && ( XmlNode->GetName() == wxT( "itunes:summary" ) ) ||
-                 ( XmlNode->GetName() == wxT( "description" ) )
-         )
-        {
-            item->m_Summary= XmlNode->GetNodeContent();
-        }
-        else if( XmlNode->GetName() == wxT( "pubDate" ) )
-        {
-            wxDateTime DateTime;
-            DateTime.ParseRfc822Date( XmlNode->GetNodeContent() );
-            item->m_Time = DateTime.GetTicks();
-        }
-        else if( XmlNode->GetName() == wxT( "itunes:duration" ) )
-        {
-            item->m_Length = StrLengthToInt( XmlNode->GetNodeContent() );
-        }
-        else if( XmlNode->GetName() == wxT( "itunes:author" ) )
-        {
-            item->m_Author = XmlNode->GetNodeContent();
-        }
-        XmlNode = XmlNode->GetNext();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadXmlPodcastChannel( wxXmlNode * XmlNode, guPodcastChannel * channel )
-{
-    if( XmlNode && XmlNode->GetName() == wxT( "channel" ) )
-    {
-        XmlNode = XmlNode->GetChildren();
-        while( XmlNode )
-        {
-            if( XmlNode->GetName() == wxT( "title" ) )
-            {
-                channel->m_Title = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "link" ) )
-            {
-                channel->m_Link = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "language" ) )
-            {
-                channel->m_Lang = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "description" ) )
-            {
-                channel->m_Description = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:author" ) )
-            {
-                channel->m_Author = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:owner" ) )
-            {
-                ReadXmlPodcastOwner( XmlNode->GetChildren(), channel );
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:image" ) )
-            {
-                XmlNode->GetPropVal( wxT( "href" ), &channel->m_Image );
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:category" ) )
-            {
-                XmlNode->GetPropVal( wxT( "text" ), &channel->m_Category );
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:summary" ) )
-            {
-                channel->m_Summary = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "item" ) )
-            {
-                guPodcastItem * PodcastItem = new guPodcastItem();
-                ReadXmlPodcastItem( XmlNode->GetChildren(), PodcastItem );
-                guLogMessage( wxT( "Item Length: %i" ), PodcastItem->m_Length );
-                channel->m_Items.Add( PodcastItem );
-            }
-            XmlNode = XmlNode->GetNext();
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 void guPodcastPanel::AddDownloadItems( guPodcastItemArray * items )
 {
     wxASSERT( items );
@@ -642,11 +504,9 @@ void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::ProcessChannel( const wxString &url )
+void UpdateChannel( DbLibrary * db, const wxString &url )
 {
     wxCurlHTTP  http;
-    wxSetCursor( * wxHOURGLASS_CURSOR );
-    wxTheApp->Yield();
 
     guLogMessage( wxT( "The address is %s" ), url.c_str() );
 
@@ -659,7 +519,7 @@ void guPodcastPanel::ProcessChannel( const wxString &url )
     {
         wxMemoryInputStream ins( Buffer, Strlen( Buffer ) );
         wxXmlDocument XmlDoc( ins );
-        //wxSt
+        //
         wxXmlNode * XmlNode = XmlDoc.GetRoot();
         if( XmlNode && XmlNode->GetName() == wxT( "rss" ) )
         {
@@ -669,8 +529,13 @@ void guPodcastPanel::ProcessChannel( const wxString &url )
 
             if( !PodcastChannel.m_Image.IsEmpty() )
             {
+                guConfig * Config = ( guConfig * ) guConfig::Get();
+
+                wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
+                                            wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+
                 guLogMessage( wxT( "Downloading the Image..." ) );
-                wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
                                                    PodcastChannel.m_Title + wxT( "/" ) +
                                                    PodcastChannel.m_Title + wxT( ".jpg" ) );
                 if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
@@ -692,7 +557,7 @@ void guPodcastPanel::ProcessChannel( const wxString &url )
             }
 
             //
-            m_Db->SavePodcastChannel( &PodcastChannel, true );
+            db->SavePodcastChannel( &PodcastChannel, true );
 
 //            NormalizePodcastChannel( &PodcastChannel );
 
@@ -702,8 +567,6 @@ void guPodcastPanel::ProcessChannel( const wxString &url )
 //                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
 //                    }
 
-            m_ChannelsListBox->ReloadItems( false );
-            //m_PodcastsListBox->ReloadItems( false );
         }
 
         free( Buffer );
@@ -712,6 +575,18 @@ void guPodcastPanel::ProcessChannel( const wxString &url )
     {
         guLogError( wxT( "Could not get podcast content for %s" ), url.c_str() );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::ProcessChannel( const wxString &url )
+{
+    wxSetCursor( * wxHOURGLASS_CURSOR );
+    wxTheApp->Yield();
+
+    UpdateChannel( m_Db, url );
+
+    m_ChannelsListBox->ReloadItems( false );
+
     wxSetCursor( wxNullCursor );
 }
 
@@ -733,10 +608,9 @@ void guPodcastPanel::OnChannelsActivated( wxListEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPodcastPanel::OnPodcastsColClick( wxListEvent &event )
 {
-    int col = event.GetColumn();
-    if( col < 0 )
-        return;
-    m_PodcastsListBox->SetOrder( col );
+    int ColId = m_PodcastsListBox->GetColumnId( event.m_col );
+
+    m_PodcastsListBox->SetOrder( ColId );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1314,24 +1188,26 @@ wxString inline guPodcastListBox::GetItemName( const int row ) const
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastListBox::SetOrder( int order )
+void guPodcastListBox::SetOrder( int columnid )
 {
-    if( m_Order != order )
+    if( m_Order != columnid )
     {
-        m_Order = order;
-        m_OrderDesc = ( order != 0 );
+        m_Order = columnid;
+        m_OrderDesc = ( columnid != 0 );
     }
     else
         m_OrderDesc = !m_OrderDesc;
 
     m_Db->SetPodcastOrder( m_Order );
 
+    int CurColId;
     int index;
     int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
     {
+        CurColId = GetColumnId( index );
         SetColumnLabel( index,
-            guPODCASTS_COLUMN_NAMES[ index ]  + ( ( index == m_Order ) ?
+            guPODCASTS_COLUMN_NAMES[ CurColId ]  + ( ( CurColId == m_Order ) ?
                 ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
