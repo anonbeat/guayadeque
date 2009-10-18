@@ -20,6 +20,8 @@
 // -------------------------------------------------------------------------------- //
 #include "Podcasts.h"
 
+#include "Utils.h"
+
 #include <wx/arrimpl.cpp>
 
 WX_DEFINE_OBJARRAY(guPodcastChannelArray);
@@ -63,13 +65,13 @@ guPodcastChannel::guPodcastChannel( const wxString &url )
 void guPodcastChannel::ReadContent( void )
 {
     wxCurlHTTP  http;
-    guLogMessage( wxT( "The address is %s" ), EntryDialog->GetValue().c_str() );
+    guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
 
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: */*" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8;iso-8859-1" ) );
     char * Buffer = NULL;
-    http.Get( Buffer, EntryDialog->GetValue() );
+    http.Get( Buffer, m_Url );
     if( Buffer )
     {
         wxMemoryInputStream ins( Buffer, Strlen( Buffer ) );
@@ -84,7 +86,7 @@ void guPodcastChannel::ReadContent( void )
     }
     else
     {
-        guLogError( wxT( "Could not get podcast content for %s" ), EntryDialog->GetValue().c_str() );
+        guLogError( wxT( "Could not get podcast content for %s" ), m_Url.c_str() );
     }
 }
 
@@ -134,8 +136,8 @@ void guPodcastChannel::ReadXml( wxXmlNode * XmlNode )
             }
             else if( XmlNode->GetName() == wxT( "item" ) )
             {
-                guPodcastItem * PodcastItem = new guPodcastItem();
-                PodcastItem->ReadXml( XmlNode->GetChildren() );
+                guPodcastItem * PodcastItem = new guPodcastItem( XmlNode->GetChildren() );
+                //PodcastItem->ReadXml( XmlNode->GetChildren() );
                 //guLogMessage( wxT( "Item Length: %i" ), PodcastItem->m_Length );
                 m_Items.Add( PodcastItem );
             }
@@ -162,6 +164,22 @@ void guPodcastChannel::ReadXmlOwner( wxXmlNode * XmlNode )
 }
 
 // -------------------------------------------------------------------------------- //
+//
+// -------------------------------------------------------------------------------- //
+guPodcastItem::guPodcastItem( wxXmlNode * XmlNode )
+{
+    m_Id = 0;
+    m_ChId = 0;
+    m_Time = 0;
+    m_Length = 0;
+    m_PlayCount = 0;
+    m_LastPlay = 0;
+    m_Status = 0;
+
+    ReadXml( XmlNode );
+}
+
+// -------------------------------------------------------------------------------- //
 void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
 {
     while( XmlNode )
@@ -178,7 +196,7 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
             XmlNode->GetPropVal( wxT( "length" ), &LenStr );
             LenStr.ToULong( ( unsigned long * ) &m_FileSize );
         }
-        else if( item->m_Summary.IsEmpty() && ( XmlNode->GetName() == wxT( "itunes:summary" ) ) ||
+        else if( m_Summary.IsEmpty() && ( XmlNode->GetName() == wxT( "itunes:summary" ) ) ||
                  ( XmlNode->GetName() == wxT( "description" ) ) )
         {
             m_Summary= XmlNode->GetNodeContent();

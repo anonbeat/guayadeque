@@ -62,6 +62,8 @@ class guPodcastItem
         m_Status = 0;
     }
 
+    guPodcastItem( wxXmlNode * XmlNode );
+
 };
 WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
 

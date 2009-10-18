@@ -331,95 +331,71 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
     wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Channel Url: " ), _( "Please enter the channel url" ) );
     if( EntryDialog->ShowModal() == wxID_OK )
     {
-        wxCurlHTTP  http;
         wxSetCursor( * wxHOURGLASS_CURSOR );
         wxTheApp->Yield();
 
         guLogMessage( wxT( "The address is %s" ), EntryDialog->GetValue().c_str() );
 
-        http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-        http.AddHeader( wxT( "Accept: */*" ) );
-        http.AddHeader( wxT( "Accept-Charset: utf-8;iso-8859-1" ) );
-        char * Buffer = NULL;
-        http.Get( Buffer, EntryDialog->GetValue() );
-        if( Buffer )
-        {
-            wxMemoryInputStream ins( Buffer, Strlen( Buffer ) );
-            wxXmlDocument XmlDoc( ins );
-            //wxSt
-            wxXmlNode * XmlNode = XmlDoc.GetRoot();
-            if( XmlNode && XmlNode->GetName() == wxT( "rss" ) )
-            {
-                guPodcastChannel PodcastChannel;
-                PodcastChannel.m_Url = EntryDialog->GetValue();
-                ReadXmlPodcastChannel( XmlNode->GetChildren(), &PodcastChannel );
+        guPodcastChannel PodcastChannel( EntryDialog->GetValue() );
 
-                wxSetCursor( wxNullCursor );
+        wxSetCursor( wxNullCursor );
                 //
-                guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
-                if( ChannelEditor->ShowModal() == wxID_OK )
+        guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
+        if( ChannelEditor->ShowModal() == wxID_OK )
+        {
+            ChannelEditor->GetEditData();
+
+            // Create the channel dir
+            wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                      PodcastChannel.m_Title );
+            if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+            {
+                if( !wxDirExists( ChannelDir.GetFullPath() ) )
                 {
-                    ChannelEditor->GetEditData();
+                    wxMkdir( ChannelDir.GetFullPath(), 0770 );
+                }
+            }
 
-                    // Create the channel dir
-                    wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
-                                              PodcastChannel.m_Title );
-                    if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+            if( !PodcastChannel.m_Image.IsEmpty() )
+            {
+                guLogMessage( wxT( "Downloading the Image..." ) );
+                wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                                   PodcastChannel.m_Title + wxT( "/" ) +
+                                                   PodcastChannel.m_Title + wxT( ".jpg" ) );
+                if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+                {
+                    if( !wxFileExists( ImageFile.GetFullPath() ) )
                     {
-                        if( !wxDirExists( ChannelDir.GetFullPath() ) )
-                        {
-                            wxMkdir( ChannelDir.GetFullPath(), 0770 );
-                        }
+                        if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
+                            guLogMessage( wxT( "Download image failed..." ) );
                     }
-
-                    if( !PodcastChannel.m_Image.IsEmpty() )
+                    else
                     {
-                        guLogMessage( wxT( "Downloading the Image..." ) );
-                        wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
-                                                           PodcastChannel.m_Title + wxT( "/" ) +
-                                                           PodcastChannel.m_Title + wxT( ".jpg" ) );
-                        if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
-                        {
-                            if( !wxFileExists( ImageFile.GetFullPath() ) )
-                            {
-                                if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
-                                    guLogMessage( wxT( "Download image failed..." ) );
-                            }
-                            else
-                            {
-                                guLogMessage( wxT( "Image File already exists" ) );
-                            }
-                        }
-                        else
-                        {
-                            guLogMessage( wxT( "Error in normalize..." ) );
-                        }
+                        guLogMessage( wxT( "Image File already exists" ) );
                     }
+                }
+                else
+                {
+                    guLogMessage( wxT( "Error in normalize..." ) );
+                }
+            }
 
-                    //
-                    guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
+            //
+            guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
 
-                    m_Db->SavePodcastChannel( &PodcastChannel );
+            m_Db->SavePodcastChannel( &PodcastChannel );
 
-                    NormalizePodcastChannel( &PodcastChannel );
+            NormalizePodcastChannel( &PodcastChannel );
 
-                    // This should be a call to wake up the update thread
+            // This should be a call to wake up the update thread
 //                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
 //                    {
 //                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
 //                    }
 
-                    m_ChannelsListBox->ReloadItems();
-                }
-                ChannelEditor->Destroy();
-            }
-
-            free( Buffer );
+            m_ChannelsListBox->ReloadItems();
         }
-        else
-        {
-            guLogError( wxT( "Could not get podcast content for %s" ), EntryDialog->GetValue().c_str() );
-        }
+        ChannelEditor->Destroy();
         wxSetCursor( wxNullCursor );
     }
     EntryDialog->Destroy();
@@ -510,71 +486,48 @@ void UpdateChannel( DbLibrary * db, const wxString &url )
 
     guLogMessage( wxT( "The address is %s" ), url.c_str() );
 
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: */*" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8;iso-8859-1" ) );
-    char * Buffer = NULL;
-    http.Get( Buffer, url );
-    if( Buffer )
+    guPodcastChannel PodcastChannel( url );
+
+    if( !PodcastChannel.m_Image.IsEmpty() )
     {
-        wxMemoryInputStream ins( Buffer, Strlen( Buffer ) );
-        wxXmlDocument XmlDoc( ins );
-        //
-        wxXmlNode * XmlNode = XmlDoc.GetRoot();
-        if( XmlNode && XmlNode->GetName() == wxT( "rss" ) )
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+
+        wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
+                                    wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+
+        guLogMessage( wxT( "Downloading the Image..." ) );
+        wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
+                                           PodcastChannel.m_Title + wxT( "/" ) +
+                                           PodcastChannel.m_Title + wxT( ".jpg" ) );
+        if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
         {
-            guPodcastChannel PodcastChannel;
-            PodcastChannel.m_Url = url;
-            ReadXmlPodcastChannel( XmlNode->GetChildren(), &PodcastChannel );
-
-            if( !PodcastChannel.m_Image.IsEmpty() )
+            if( !wxFileExists( ImageFile.GetFullPath() ) )
             {
-                guConfig * Config = ( guConfig * ) guConfig::Get();
-
-                wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                            wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
-
-                guLogMessage( wxT( "Downloading the Image..." ) );
-                wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
-                                                   PodcastChannel.m_Title + wxT( "/" ) +
-                                                   PodcastChannel.m_Title + wxT( ".jpg" ) );
-                if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
-                {
-                    if( !wxFileExists( ImageFile.GetFullPath() ) )
-                    {
-                        if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
-                            guLogMessage( wxT( "Download image failed..." ) );
-                    }
-                    else
-                    {
-                        guLogMessage( wxT( "Image File already exists" ) );
-                    }
-                }
-                else
-                {
-                    guLogMessage( wxT( "Error in normalize..." ) );
-                }
+                if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
+                    guLogMessage( wxT( "Download image failed..." ) );
             }
+            else
+            {
+                guLogMessage( wxT( "Image File already exists" ) );
+            }
+        }
+        else
+        {
+            guLogMessage( wxT( "Error in normalize..." ) );
+        }
+    }
 
-            //
-            db->SavePodcastChannel( &PodcastChannel, true );
+    //
+    db->SavePodcastChannel( &PodcastChannel, true );
 
 //            NormalizePodcastChannel( &PodcastChannel );
 
-            // This should be a call to wake up the update thread
+    // This should be a call to wake up the update thread
 //                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
 //                    {
 //                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
 //                    }
 
-        }
-
-        free( Buffer );
-    }
-    else
-    {
-        guLogError( wxT( "Could not get podcast content for %s" ), url.c_str() );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
