@@ -1121,6 +1121,7 @@ void guUpdatePodcastsTimer::Notify()
 guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db ) : wxThread()
 {
     m_Db = db;
+    m_GaugeId = ( ( guStatusBar * ) ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->GetStatusBar() )->AddGauge();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1140,13 +1141,28 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
     guPodcastChannelArray PodcastChannels;
     if( m_Db->GetPodcastChannels( &PodcastChannels ) )
     {
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+        event.SetInt( m_GaugeId );
+        event.SetExtraLong( PodcastChannels.Count() );
+        wxPostEvent( wxTheApp->GetTopWindow(), event );
+
         int Index = 0;
         while( !TestDestroy() && Index < PodcastChannels.Count() )
         {
             PodcastChannels[ Index ].Update( m_Db );
             Index++;
+
+            event.SetId( ID_GAUGE_UPDATE );
+            event.SetInt( m_GaugeId );
+            event.SetExtraLong( Index );
+            wxPostEvent( wxTheApp->GetTopWindow(), event );
+
             Sleep( 20 );
         }
+
+        event.SetId( ID_GAUGE_REMOVE );
+        event.SetInt( m_GaugeId );
+        wxPostEvent( wxTheApp->GetTopWindow(), event );
     }
     return 0;
 }
