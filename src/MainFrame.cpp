@@ -1143,7 +1143,7 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
         int Index = 0;
         while( !TestDestroy() && Index < PodcastChannels.Count() )
         {
-            UpdateChannel( m_Db, PodcastChannels[ Index ].m_Url );
+            PodcastChannels[ Index ].Update( m_Db );
             Index++;
             Sleep( 20 );
         }

@@ -180,7 +180,7 @@ class guPodcastPanel : public wxPanel
     wxScrolledWindow *          m_DetailScrolledWindow;
 	wxFlexGridSizer *           m_DetailFlexGridSizer;
 
-    void ProcessChannel( const wxString &url );
+    void ProcessChannel( guPodcastChannel * channel );
 
     void AddChannel( wxCommandEvent &event );
     void DeleteChannels( wxCommandEvent &event );

@@ -459,7 +459,7 @@ void guPodcastPanel::UpdateChannels( wxCommandEvent &event )
         {
             if( m_Db->GetPodcastChannelId( Selected[ Index ], &PodcastChannel ) != wxNOT_FOUND )
             {
-                ProcessChannel( PodcastChannel.m_Url );
+                ProcessChannel( &PodcastChannel );
             }
         }
         wxSetCursor( wxNullCursor );
@@ -480,63 +480,12 @@ void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void UpdateChannel( DbLibrary * db, const wxString &url )
-{
-    wxCurlHTTP  http;
-
-    guLogMessage( wxT( "The address is %s" ), url.c_str() );
-
-    guPodcastChannel PodcastChannel( url );
-
-    if( !PodcastChannel.m_Image.IsEmpty() )
-    {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-
-        wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                    wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
-
-        guLogMessage( wxT( "Downloading the Image..." ) );
-        wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
-                                           PodcastChannel.m_Title + wxT( "/" ) +
-                                           PodcastChannel.m_Title + wxT( ".jpg" ) );
-        if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
-        {
-            if( !wxFileExists( ImageFile.GetFullPath() ) )
-            {
-                if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
-                    guLogMessage( wxT( "Download image failed..." ) );
-            }
-            else
-            {
-                guLogMessage( wxT( "Image File already exists" ) );
-            }
-        }
-        else
-        {
-            guLogMessage( wxT( "Error in normalize..." ) );
-        }
-    }
-
-    //
-    db->SavePodcastChannel( &PodcastChannel, true );
-
-//            NormalizePodcastChannel( &PodcastChannel );
-
-    // This should be a call to wake up the update thread
-//                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
-//                    {
-//                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
-//                    }
-
-}
-
-// -------------------------------------------------------------------------------- //
-void guPodcastPanel::ProcessChannel( const wxString &url )
+void guPodcastPanel::ProcessChannel( guPodcastChannel * channel )
 {
     wxSetCursor( * wxHOURGLASS_CURSOR );
     wxTheApp->Yield();
 
-    UpdateChannel( m_Db, url );
+    channel->Update( m_Db );
 
     m_ChannelsListBox->ReloadItems( false );
 
@@ -553,7 +502,7 @@ void guPodcastPanel::OnChannelsActivated( wxListEvent &event )
         guPodcastChannel PodcastChannel;
         if( m_Db->GetPodcastChannelId( Selected[ 0 ], &PodcastChannel ) != wxNOT_FOUND )
         {
-            ProcessChannel( PodcastChannel.m_Url );
+            ProcessChannel( &PodcastChannel );
         }
     }
 }

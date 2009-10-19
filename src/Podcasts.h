@@ -67,6 +67,8 @@ class guPodcastItem
 };
 WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
 
+class DbLibrary;
+
 // -------------------------------------------------------------------------------- //
 class guPodcastChannel
 {
@@ -95,6 +97,7 @@ class guPodcastChannel
 
     guPodcastChannel() {};
     guPodcastChannel( const wxString &url );
+    void Update( DbLibrary * db );
 
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
