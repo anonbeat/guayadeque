@@ -27,6 +27,22 @@
 #include <wx/xml/xml.h>
 
 // -------------------------------------------------------------------------------- //
+typedef enum {
+    guPODCAST_STATUS_NORMAL,
+    guPODCAST_STATUS_PENDING,
+    guPODCAST_STATUS_DOWNLOADING,
+    guPODCAST_STATUS_READY,
+    guPODCAST_STATUS_DELETED,
+    guPODCAST_STATUS_ERROR
+} guPodcastStatus;
+
+typedef enum {
+    guPODCAST_DOWNLOAD_MANUALLY,
+    guPODCAST_DOWNLOAD_FILTER,
+    guPODCAST_DOWNLOAD_ALL
+} guPodcastDownload;
+
+// -------------------------------------------------------------------------------- //
 class guPodcastItem
 {
   protected :
@@ -101,6 +117,27 @@ class guPodcastChannel
 
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
+
+// -------------------------------------------------------------------------------- //
+class guPodcastDownloadQueueThread : public wxThread
+{
+  protected :
+    guPodcastPanel *    m_PodcastPanel;
+    wxString            m_PodcastsPath;
+    guPodcastItemArray  m_Items;
+    wxMutex             m_ItemsMutex;
+    int                 m_CurPos;
+
+    void SendUpdateEvent( guPodcastItem * podcastitem );
+
+  public :
+    guPodcastDownloadQueueThread( guPodcastPanel * podcastpanel );
+    ~guPodcastDownloadQueueThread();
+
+    ExitCode Entry();
+    void AddPodcastItems( guPodcastItemArray * items, bool priority = false );
+
+};
 
 #endif
 // -------------------------------------------------------------------------------- //

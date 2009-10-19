@@ -181,6 +181,7 @@ class guUpdatePodcastsTimer : public wxTimer
 class guUpdatePodcastsThread : public wxThread
 {
   protected :
+    int         m_GaugeId;
     DbLibrary * m_Db;
 
   public :

@@ -203,21 +203,26 @@ void guPodcastChannel::Update( DbLibrary * db )
         }
     }
 
-    //
+    // Save only the new items in the channel
     db->SavePodcastChannel( this, true );
 
-//            NormalizePodcastChannel( &PodcastChannel );
+    if( m_DownloadType != guPODCAST_DOWNLOAD_MANUALLY )
+    {
+        int Index;
+        int Count = m_Items.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( m_DownloadType == guPODCAST_DOWNLOAD_ALL )
+            {
 
-    // This should be a call to wake up the update thread
-//                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
-//                    {
-//                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
-//                    }
+            }
+        }
+    }
 
 }
 
 // -------------------------------------------------------------------------------- //
-//
+// guPodcastItem
 // -------------------------------------------------------------------------------- //
 guPodcastItem::guPodcastItem( wxXmlNode * XmlNode )
 {
@@ -270,6 +275,144 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
         }
         XmlNode = XmlNode->GetNext();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+// guPodcastDownloadQueueThread
+// -------------------------------------------------------------------------------- //
+guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guPodcastPanel * podcastpanel )
+{
+    m_PodcastPanel = podcastpanel;
+    m_CurPos = 0;
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    // Check that the directory to store podcasts are created
+    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guPodcastDownloadQueueThread::~guPodcastDownloadQueueThread()
+{
+    m_PodcastPanel->ClearDownloadThread();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastDownloadQueueThread::SendUpdateEvent( guPodcastItem * podcastitem )
+{
+    wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
+    event.SetClientData( new guPodcastItem( * podcastitem ) );
+    wxPostEvent( m_PodcastPanel, event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, bool priority )
+{
+    wxASSERT( items );
+
+    int Index;
+    int Count = items->Count();
+    if( Count )
+    {
+        guLogMessage( wxT( "2) Adding the items to the download thread..." ) );
+        m_ItemsMutex.Lock();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( priority )
+                m_Items.Insert( new guPodcastItem( items->Item( Index ) ), m_CurPos + 1 );
+            else
+                m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
+        }
+        m_ItemsMutex.Unlock();
+        guLogMessage( wxT( "2) Added the items to the download thread..." ) );
+    }
+
+    if( !IsRunning() )
+    {
+        guLogMessage( wxT( "Launching download thread..." ) );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
+{
+    int Count;
+    while( !TestDestroy() )
+    {
+        m_ItemsMutex.Lock();
+        Count = m_Items.Count();
+        m_ItemsMutex.Unlock();
+        if( m_CurPos < Count )
+        {
+            //
+            guPodcastItem * PodcastItem = &m_Items[ m_CurPos ];
+            if( PodcastItem->m_Enclosure.IsEmpty() )
+            {
+                PodcastItem->m_Status = guPODCAST_STATUS_ERROR;
+                PodcastItem->m_FileName = wxEmptyString;
+                SendUpdateEvent( PodcastItem );
+            }
+            else
+            {
+                wxURI Uri( PodcastItem->m_Enclosure );
+                wxFileName PodcastFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                            PodcastItem->m_Channel + wxT( "/" ) +
+                                            Uri.GetPath().AfterLast( wxT( '/' ) ) );
+                if( PodcastFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+                {
+                    PodcastItem->m_FileName = PodcastFile.GetFullPath();
+                    if( !wxFileExists( PodcastFile.GetFullPath() ) ||
+                        !( guGetFileSize( PodcastFile.GetFullPath() ) != PodcastItem->m_FileSize ) )
+                    {
+                        PodcastItem->m_Status = guPODCAST_STATUS_DOWNLOADING;
+                        SendUpdateEvent( PodcastItem );
+
+                        if( DownloadFile( PodcastItem->m_Enclosure, PodcastFile.GetFullPath() ) )
+                        {
+                            PodcastItem->m_Status = guPODCAST_STATUS_READY;
+                            guLogMessage( wxT( "Finished downloading the file %s" ), PodcastFile.GetFullPath().c_str() );
+                        }
+                        else
+                        {
+                            PodcastItem->m_Status = guPODCAST_STATUS_ERROR;
+                            guLogMessage( wxT( "Podcast download failed..." ) );
+                        }
+                        SendUpdateEvent( PodcastItem );
+                    }
+                    else
+                    {
+                        PodcastItem->m_Status = guPODCAST_STATUS_READY;
+                        guLogMessage( wxT( "Podcast File already exists" ) );
+                        SendUpdateEvent( PodcastItem );
+                    }
+                }
+                else
+                {
+                    guLogMessage( wxT( "Error in normalizing the podcast filename..." ) );
+                }
+            }
+
+            //
+            m_CurPos++;
+        }
+        else
+        {
+            m_ItemsMutex.Lock();
+            if( m_CurPos == m_Items.Count() )
+            {
+                m_CurPos = 0;
+                m_Items.Clear();
+            }
+            m_ItemsMutex.Unlock();
+        }
+        Sleep( 40 );
+    }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
