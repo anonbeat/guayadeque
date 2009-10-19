@@ -20,6 +20,8 @@
 // -------------------------------------------------------------------------------- //
 #include "Podcasts.h"
 
+#include "Config.h"
+#include "DbLibrary.h"
 #include "Utils.h"
 
 #include <wx/arrimpl.cpp>
@@ -161,6 +163,57 @@ void guPodcastChannel::ReadXmlOwner( wxXmlNode * XmlNode )
         }
         XmlNode = XmlNode->GetNext();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastChannel::Update( DbLibrary * db )
+{
+    wxCurlHTTP  http;
+
+    guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
+
+    ReadContent();
+
+    if( !m_Image.IsEmpty() )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+
+        wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
+                                    wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+
+        guLogMessage( wxT( "Downloading the Image..." ) );
+        wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
+                                           m_Title + wxT( "/" ) +
+                                           m_Title + wxT( ".jpg" ) );
+        if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+        {
+            if( !wxFileExists( ImageFile.GetFullPath() ) )
+            {
+                if( !DownloadImage( m_Image, ImageFile.GetFullPath(), 60, 60 ) )
+                    guLogMessage( wxT( "Download image failed..." ) );
+            }
+            else
+            {
+                guLogMessage( wxT( "Image File already exists" ) );
+            }
+        }
+        else
+        {
+            guLogMessage( wxT( "Error in normalize..." ) );
+        }
+    }
+
+    //
+    db->SavePodcastChannel( this, true );
+
+//            NormalizePodcastChannel( &PodcastChannel );
+
+    // This should be a call to wake up the update thread
+//                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
+//                    {
+//                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
+//                    }
+
 }
 
 // -------------------------------------------------------------------------------- //
