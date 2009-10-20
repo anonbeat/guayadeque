@@ -22,12 +22,15 @@
 
 #include "Config.h"
 #include "DbLibrary.h"
+#include "MainFrame.h"
 #include "Utils.h"
 
 #include <wx/arrimpl.cpp>
 
 WX_DEFINE_OBJARRAY(guPodcastChannelArray);
 WX_DEFINE_OBJARRAY(guPodcastItemArray);
+
+const wxEventType guPodcastEvent = wxNewEventType();
 
 // -------------------------------------------------------------------------------- //
 int StrLengthToInt( const wxString &length )
@@ -280,9 +283,9 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
 // -------------------------------------------------------------------------------- //
 // guPodcastDownloadQueueThread
 // -------------------------------------------------------------------------------- //
-guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guPodcastPanel * podcastpanel )
+guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guMainFrame * mainframe )
 {
-    m_PodcastPanel = podcastpanel;
+    m_MainFrame = mainframe;
     m_CurPos = 0;
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -298,7 +301,7 @@ guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guPodcastPanel * pod
 // -------------------------------------------------------------------------------- //
 guPodcastDownloadQueueThread::~guPodcastDownloadQueueThread()
 {
-    m_PodcastPanel->ClearDownloadThread();
+    m_MainFrame->ClearPodcastsDownloadThread();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -306,7 +309,7 @@ void guPodcastDownloadQueueThread::SendUpdateEvent( guPodcastItem * podcastitem 
 {
     wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
     event.SetClientData( new guPodcastItem( * podcastitem ) );
-    wxPostEvent( m_PodcastPanel, event );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //

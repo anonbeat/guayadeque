@@ -29,7 +29,6 @@
 #include <wx/splitter.h>
 #include <wx/statline.h>
 
-
 #include "ItemListBox.h"
 
 // -------------------------------------------------------------------------------- //
@@ -89,11 +88,6 @@ class guPodcastListBox : public guListView
     void                        SetOrder( int order );
 };
 
-class guPodcastPanel;
-
-extern const wxEventType guPodcastEvent;
-#define guPODCAST_EVENT_UPDATE_ITEM         1000
-
 // -------------------------------------------------------------------------------- //
 class guPodcastPanel : public wxPanel
 {
@@ -116,11 +110,11 @@ class guPodcastPanel : public wxPanel
 
   protected:
     DbLibrary *                 m_Db;
+    guMainFrame *               m_MainFrame;
     guPlayerPanel *             m_PlayerPanel;
     wxString                    m_PodcastsPath;
     int                         m_LastChannelInfoId;
     int                         m_LastPodcastInfoId;
-    guPodcastDownloadQueueThread *   m_DownloadThread;
 
     wxSplitterWindow *          m_MainSplitter;
     wxSplitterWindow *          m_TopSplitter;
@@ -150,7 +144,6 @@ class guPodcastPanel : public wxPanel
     void UpdateChannels( wxCommandEvent &event );
 
     void ClearDownloadThread( void );
-    void AddDownloadItems( guPodcastItemArray * items );
     void OnSelectPodcasts( bool enqueue = false );
 
 public:

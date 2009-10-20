@@ -232,6 +232,12 @@ guMainFrame::guMainFrame( wxWindow * parent )
         wxPostEvent( this, event );
     }
 
+    // Add the previously pending podcasts to download
+    guPodcastItemArray Podcasts;
+    m_Db->GetPendingPodcasts( &Podcasts );
+    if( Podcasts.Count() )
+        AddPodcastsDownloadItems( &Podcasts );
+
     // Update Podcasts
     UpdatePodcasts();
 }
@@ -898,6 +904,41 @@ void guMainFrame::UpdatePodcasts( void )
             Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "Podcasts" ) );
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
+{
+    wxASSERT( items );
+
+    int Index;
+    int Count = items->Count();
+    if( Count )
+    {
+        if( !m_DownloadThread )
+        {
+            guLogMessage( wxT( "Creating Download thread..." ) );
+            m_DownloadThread = new guPodcastDownloadQueueThread( this );
+            guLogMessage( wxT( "Created Download thread..." ) );
+        }
+
+        for( Index = 0; Index < Count; Index++ )
+        {
+            items->Item( Index ).m_Status = guPODCAST_STATUS_PENDING;
+            m_Db->SetPodcastItemStatus( items->Item( Index ).m_Id, guPODCAST_STATUS_PENDING );
+        }
+
+        guLogMessage( wxT( "Adding Download Items... %u" ), Count );
+        m_DownloadThread->AddPodcastItems( items );
+        guLogMessage( wxT( "Added Download Items... %u" ), Count );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::ClearPodcastsDownloadThread( void )
+{
+    guLogMessage( wxT( "DownloadThread destroyed..." ) );
+    m_DownloadThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
