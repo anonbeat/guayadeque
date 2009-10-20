@@ -33,8 +33,6 @@
 #include <wx/xml/xml.h>
 #include <wx/zstream.h>
 
-const wxEventType guPodcastEvent = wxNewEventType();
-
 // -------------------------------------------------------------------------------- //
 // guPostcastPanel
 // -------------------------------------------------------------------------------- //
@@ -45,7 +43,6 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
     m_PlayerPanel = playerpanel;
     m_LastChannelInfoId = wxNOT_FOUND;
     m_LastPodcastInfoId = wxNOT_FOUND;
-    m_DownloadThread = NULL;
 
     wxPanel * ChannelsPanel;
     wxPanel * PodcastsPanel;
@@ -116,7 +113,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	m_DetailMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticBoxSizer* DetailSizer;
-	DetailSizer = new wxStaticBoxSizer( new wxStaticBox( BottomPanel, wxID_ANY, wxT(" Details ") ), wxVERTICAL );
+	DetailSizer = new wxStaticBoxSizer( new wxStaticBox( BottomPanel, wxID_ANY, _(" Details ") ), wxVERTICAL );
 
 	m_DetailScrolledWindow = new wxScrolledWindow( BottomPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxHSCROLL );
 	m_DetailScrolledWindow->SetScrollRate( 5, 5 );
@@ -136,7 +133,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 
 	m_DetailFlexGridSizer->Add( m_DetailChannelTitle, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	DetailDescLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Description:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailDescLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Description:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailDescLabel->Wrap( -1 );
 	DetailDescLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -146,7 +143,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	//m_DetailDescText->Wrap( 445 );
 	m_DetailFlexGridSizer->Add( m_DetailDescText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	DetailAuthorLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailAuthorLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailAuthorLabel->Wrap( -1 );
 	DetailAuthorLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -156,7 +153,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	m_DetailAuthorText->Wrap( -1 );
 	m_DetailFlexGridSizer->Add( m_DetailAuthorText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	DetailOwnerLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailOwnerLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailOwnerLabel->Wrap( -1 );
 	DetailOwnerLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -167,7 +164,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	m_DetailFlexGridSizer->Add( m_DetailOwnerText, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * DetailLinkLabel;
-	DetailLinkLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Link:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailLinkLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Link:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailLinkLabel->Wrap( -1 );
 	DetailLinkLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -182,7 +179,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	DetailStaticLine2 = new wxStaticLine( m_DetailScrolledWindow, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	m_DetailFlexGridSizer->Add( DetailStaticLine2, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
-	DetailItemTitleLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Title:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailItemTitleLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Title:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemTitleLabel->Wrap( -1 );
 	DetailItemTitleLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -192,7 +189,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	m_DetailItemTitleText->Wrap( -1 );
 	m_DetailFlexGridSizer->Add( m_DetailItemTitleText, 0, wxBOTTOM|wxRIGHT, 5 );
 
-	DetailItemSumaryLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Sumary:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailItemSumaryLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Sumary:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemSumaryLabel->Wrap( -1 );
 	DetailItemSumaryLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -202,7 +199,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	//m_DetailItemSumaryText->Wrap( 300 );
 	m_DetailFlexGridSizer->Add( m_DetailItemSumaryText, 0, wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
-	DetailItemDateLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Date:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailItemDateLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Date:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemDateLabel->Wrap( -1 );
 	DetailItemDateLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -212,7 +209,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
 	m_DetailItemDateText->Wrap( -1 );
 	m_DetailFlexGridSizer->Add( m_DetailItemDateText, 0, wxBOTTOM|wxRIGHT, 5 );
 
-	DetailItemLengthLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxT("Length:"), wxDefaultPosition, wxDefaultSize, 0 );
+	DetailItemLengthLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Length:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemLengthLabel->Wrap( -1 );
 	DetailItemLengthLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 
@@ -261,11 +258,6 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
     Connect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ) );
     Connect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ) );
 
-    // Add the previously pending podcasts to download
-    guPodcastItemArray Podcasts;
-    m_Db->GetPendingPodcasts( &Podcasts );
-    if( Podcasts.Count() )
-        AddDownloadItems( &Podcasts );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -277,34 +269,6 @@ guPodcastPanel::~guPodcastPanel()
     {
         Config->WriteNum( wxT( "PodcastsMainSashPos" ), m_MainSplitter->GetSashPosition(), wxT( "Positions" ) );
         Config->WriteNum( wxT( "PodcastsTopSashPos" ), m_TopSplitter->GetSashPosition(), wxT( "Positions" ) );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPodcastPanel::AddDownloadItems( guPodcastItemArray * items )
-{
-    wxASSERT( items );
-
-    int Index;
-    int Count = items->Count();
-    if( Count )
-    {
-        if( !m_DownloadThread )
-        {
-            guLogMessage( wxT( "Creating Download thread..." ) );
-            m_DownloadThread = new guPodcastDownloadQueueThread( this );
-            guLogMessage( wxT( "Created Download thread..." ) );
-        }
-
-        for( Index = 0; Index < Count; Index++ )
-        {
-            items->Item( Index ).m_Status = guPODCAST_STATUS_PENDING;
-            m_Db->SetPodcastItemStatus( items->Item( Index ).m_Id, guPODCAST_STATUS_PENDING );
-        }
-
-        guLogMessage( wxT( "Adding Download Items... %u" ), Count );
-        m_DownloadThread->AddPodcastItems( items );
-        guLogMessage( wxT( "Added Download Items... %u" ), Count );
     }
 }
 
@@ -635,13 +599,6 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
     m_DetailMainSizer->FitInside( m_DetailScrolledWindow );
     m_DetailScrolledWindow->SetVirtualSize( m_DetailMainSizer->GetSize() );
     //m_DetailFlexGridSizer->FitInside( m_DetailScrolledWindow );
-}
-
-// -------------------------------------------------------------------------------- //
-void guPodcastPanel::ClearDownloadThread( void )
-{
-    guLogMessage( wxT( "DownloadThread destroyed..." ) );
-    m_DownloadThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //

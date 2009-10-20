@@ -118,11 +118,17 @@ class guPodcastChannel
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
 
+
+extern const wxEventType guPodcastEvent;
+#define guPODCAST_EVENT_UPDATE_ITEM         1000
+
+class guMainFrame;
+
 // -------------------------------------------------------------------------------- //
 class guPodcastDownloadQueueThread : public wxThread
 {
   protected :
-    guPodcastPanel *    m_PodcastPanel;
+    guMainFrame *       m_MainFrame;
     wxString            m_PodcastsPath;
     guPodcastItemArray  m_Items;
     wxMutex             m_ItemsMutex;
@@ -131,7 +137,7 @@ class guPodcastDownloadQueueThread : public wxThread
     void SendUpdateEvent( guPodcastItem * podcastitem );
 
   public :
-    guPodcastDownloadQueueThread( guPodcastPanel * podcastpanel );
+    guPodcastDownloadQueueThread( guMainFrame * mainframe );
     ~guPodcastDownloadQueueThread();
 
     ExitCode Entry();
