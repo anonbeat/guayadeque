@@ -169,7 +169,7 @@ void guPodcastChannel::ReadXmlOwner( wxXmlNode * XmlNode )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastChannel::Update( DbLibrary * db )
+void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
 {
     wxCurlHTTP  http;
 
@@ -215,6 +215,7 @@ void guPodcastChannel::Update( DbLibrary * db )
         int Count = m_Items.Count();
         for( Index = 0; Index < Count; Index++ )
         {
+            guPodcastItem * PodcastItem = &m_Items[ Index ];
             if( m_DownloadType == guPODCAST_DOWNLOAD_ALL )
             {
 
@@ -307,6 +308,7 @@ guPodcastDownloadQueueThread::~guPodcastDownloadQueueThread()
 // -------------------------------------------------------------------------------- //
 void guPodcastDownloadQueueThread::SendUpdateEvent( guPodcastItem * podcastitem )
 {
+    guLogMessage( wxT( "Received the update event..." ) );
     wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
     event.SetClientData( new guPodcastItem( * podcastitem ) );
     wxPostEvent( m_MainFrame, event );
@@ -322,7 +324,7 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
     if( Count )
     {
         guLogMessage( wxT( "2) Adding the items to the download thread..." ) );
-        m_ItemsMutex.Lock();
+        //m_ItemsMutex.Lock();
         for( Index = 0; Index < Count; Index++ )
         {
             if( priority )
@@ -387,7 +389,7 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                         }
                         SendUpdateEvent( PodcastItem );
                     }
-                    else
+                    else if( PodcastItem->m_Status != guPODCAST_STATUS_READY )
                     {
                         PodcastItem->m_Status = guPODCAST_STATUS_READY;
                         guLogMessage( wxT( "Podcast File already exists" ) );

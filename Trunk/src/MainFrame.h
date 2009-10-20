@@ -82,6 +82,7 @@ class guMainFrame : public wxFrame
     guGSession *                m_GSession;
 
     void                OnUpdateLibrary( wxCommandEvent &event );
+    void                OnUpdatePodcasts( wxCommandEvent &event );
     void                OnUpdateCovers( wxCommandEvent &event );
     void                OnUpdateTrack( wxCommandEvent &event );
     void                OnPlayerStatusChanged( wxCommandEvent &event );
@@ -125,6 +126,8 @@ class guMainFrame : public wxFrame
     void                OnPlayListUpdated( wxCommandEvent &event );
 
     void                CreateTaskBarIcon( void );
+
+    void                OnPodcastItemUpdated( wxCommandEvent &event );
 
   public:
                         guMainFrame( wxWindow * parent );
@@ -184,11 +187,12 @@ class guUpdatePodcastsTimer : public wxTimer
 class guUpdatePodcastsThread : public wxThread
 {
   protected :
-    int         m_GaugeId;
-    DbLibrary * m_Db;
+    int             m_GaugeId;
+    DbLibrary *     m_Db;
+    guMainFrame *   m_MainFrame;
 
   public :
-    guUpdatePodcastsThread( DbLibrary * db );
+    guUpdatePodcastsThread( DbLibrary * db, guMainFrame * mainframe );
     ~guUpdatePodcastsThread();
 
     virtual ExitCode Entry();

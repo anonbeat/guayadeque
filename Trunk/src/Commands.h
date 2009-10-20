@@ -21,20 +21,22 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#define ID_GUAYADEQUE_VERSION           "0.1.5"
+#define ID_GUAYADEQUE_VERSION           "0.2.0"
 
 // -------------------------------------------------------------------------------- //
 //
 #define ID_MENU_UPDATE_LIBRARY          1000
-#define ID_MENU_UPDATE_COVERS           1001
-#define ID_MENU_QUIT                    1002
-#define ID_MENU_PREFERENCES             1003
-#define ID_MENU_VIEW_LIBRARY            1004
-#define ID_MENU_VIEW_LASTFM             1005
-#define ID_MENU_VIEW_RADIO              1006
-#define ID_MENU_VIEW_LYRICS             1007
-#define ID_MENU_VIEW_PLAYLISTS          1008
-#define ID_MENU_ABOUT                   1009
+#define ID_MENU_UPDATE_PODCASTS         1001
+#define ID_MENU_UPDATE_COVERS           1002
+#define ID_MENU_QUIT                    1003
+#define ID_MENU_PREFERENCES             1004
+#define ID_MENU_VIEW_LIBRARY            1005
+#define ID_MENU_VIEW_LASTFM             1006
+#define ID_MENU_VIEW_RADIO              1007
+#define ID_MENU_VIEW_LYRICS             1008
+#define ID_MENU_VIEW_PLAYLISTS          1009
+#define ID_MENU_VIEW_PODCASTS           1010
+#define ID_MENU_ABOUT                   1011
 
 #define ID_MAINFRAME_COPYTO             1018
 #define ID_LIBRARY_UPDATED              1019
