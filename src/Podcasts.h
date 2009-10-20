@@ -84,6 +84,7 @@ class guPodcastItem
 WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
 
 class DbLibrary;
+class guMainFrame;
 
 // -------------------------------------------------------------------------------- //
 class guPodcastChannel
@@ -113,7 +114,7 @@ class guPodcastChannel
 
     guPodcastChannel() {};
     guPodcastChannel( const wxString &url );
-    void Update( DbLibrary * db );
+    void Update( DbLibrary * db, guMainFrame * mainframe );
 
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
@@ -121,8 +122,6 @@ WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
 
 extern const wxEventType guPodcastEvent;
 #define guPODCAST_EVENT_UPDATE_ITEM         1000
-
-class guMainFrame;
 
 // -------------------------------------------------------------------------------- //
 class guPodcastDownloadQueueThread : public wxThread

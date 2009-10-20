@@ -88,6 +88,8 @@ class guPodcastListBox : public guListView
     void                        SetOrder( int order );
 };
 
+class guMainFrame;
+
 // -------------------------------------------------------------------------------- //
 class guPodcastPanel : public wxPanel
 {

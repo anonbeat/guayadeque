@@ -71,6 +71,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     m_LibUpdateThread = NULL;
     m_UpdatePodcastsTimer = NULL;
+    m_DownloadThread = NULL;
 
     //
     // guMainFrame GUI components
@@ -179,6 +180,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	m_PlayerSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::PlayerSplitterOnIdle ), NULL, this );
 
     Connect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ) );
+    Connect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ) );
     Connect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ) );
     Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ) );
     Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ) );
@@ -224,6 +226,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ) );
 
+    Connect( guPODCAST_EVENT_UPDATE_ITEM, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
+
+
     // If the database need to be updated
     if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
     {
@@ -232,14 +237,19 @@ guMainFrame::guMainFrame( wxWindow * parent )
         wxPostEvent( this, event );
     }
 
+    // If the Podcasts update is enable launch it...
+    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
+    {
+        guLogMessage( wxT( "Updating the podcasts..." ) );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
+        wxPostEvent( this, event );
+    }
+
     // Add the previously pending podcasts to download
     guPodcastItemArray Podcasts;
     m_Db->GetPendingPodcasts( &Podcasts );
     if( Podcasts.Count() )
         AddPodcastsDownloadItems( &Podcasts );
-
-    // Update Podcasts
-    UpdatePodcasts();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -291,6 +301,10 @@ void guMainFrame::CreateMenu()
 	MenuItem = new wxMenuItem( Menu, ID_MENU_UPDATE_LIBRARY, wxString( _("&Update Library" ) ) , _( "Update all songs from the directories configured" ), wxITEM_NORMAL );
 	Menu->Append( MenuItem );
 
+	MenuItem = new wxMenuItem( Menu, ID_MENU_UPDATE_PODCASTS, wxString( _("Update &Podcasts" ) ) , _( "Update the podcasts added" ), wxITEM_NORMAL );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+	Menu->Append( MenuItem );
+
 	MenuItem = new wxMenuItem( Menu, ID_MENU_UPDATE_COVERS, wxString( _("Update Covers") ) , _( "Try to download all missing covers" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
 	Menu->Append( MenuItem );
@@ -327,6 +341,10 @@ void guMainFrame::CreateMenu()
     MenuItem->Check( true );
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_PLAYLISTS, wxString( _( "&PlayLists" ) ), _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
+    Menu->Append( MenuItem );
+    MenuItem->Check( true );
+
+    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_PODCASTS, wxString( _( "P&odcasts" ) ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
     Menu->Append( MenuItem );
     MenuItem->Check( true );
 
@@ -531,6 +549,12 @@ void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
     if( m_LibUpdateThread )
         return;
     m_LibUpdateThread = new guLibUpdateThread( m_Db );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnUpdatePodcasts( wxCommandEvent& WXUNUSED(event) )
+{
+    UpdatePodcasts();
 }
 
 // ---------------------------------------------------------------------- //
@@ -899,7 +923,7 @@ void guMainFrame::UpdatePodcasts( void )
         if( UpdateTime.IsLaterThan( LastUpdate ) )
         {
             guLogMessage( wxT( "Starting UpdatePodcastsThread Process..." ) );
-            guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db );
+            guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db, this );
 
             Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "Podcasts" ) );
         }
@@ -939,6 +963,20 @@ void guMainFrame::ClearPodcastsDownloadThread( void )
 {
     guLogMessage( wxT( "DownloadThread destroyed..." ) );
     m_DownloadThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPodcastItemUpdated( wxCommandEvent &event )
+{
+    if( m_PodcastsPanel )
+    {
+        wxPostEvent( m_PodcastsPanel, event );
+    }
+    else
+    {
+        guPodcastItem * PodcastItem = ( guPodcastItem * ) event.GetClientData();
+        delete PodcastItem;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1159,10 +1197,11 @@ void guUpdatePodcastsTimer::Notify()
 // -------------------------------------------------------------------------------- //
 // guUpdatePodcastThread
 // -------------------------------------------------------------------------------- //
-guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db ) : wxThread()
+guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db, guMainFrame * mainframe ) : wxThread()
 {
     m_Db = db;
-    m_GaugeId = ( ( guStatusBar * ) ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->GetStatusBar() )->AddGauge();
+    m_MainFrame = mainframe;
+    m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1190,7 +1229,7 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
         int Index = 0;
         while( !TestDestroy() && Index < PodcastChannels.Count() )
         {
-            PodcastChannels[ Index ].Update( m_Db );
+            PodcastChannels[ Index ].Update( m_Db, m_MainFrame );
             Index++;
 
             event.SetId( ID_GAUGE_UPDATE );

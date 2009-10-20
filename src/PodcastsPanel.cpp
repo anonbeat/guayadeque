@@ -24,6 +24,7 @@
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
+#include "MainFrame.h"
 #include "Utils.h"
 
 #include <wx/curl/http.h>
@@ -40,6 +41,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 672,586 ), wxTAB_TRAVERSAL )
 {
     m_Db = db;
+    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     m_PlayerPanel = playerpanel;
     m_LastChannelInfoId = wxNOT_FOUND;
     m_LastPodcastInfoId = wxNOT_FOUND;
@@ -449,7 +451,7 @@ void guPodcastPanel::ProcessChannel( guPodcastChannel * channel )
     wxSetCursor( * wxHOURGLASS_CURSOR );
     wxTheApp->Yield();
 
-    channel->Update( m_Db );
+    channel->Update( m_Db, m_MainFrame );
 
     m_ChannelsListBox->ReloadItems( false );
 
@@ -661,7 +663,7 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue )
                     // Download the item
                     guPodcastItemArray AddList;
                     AddList.Add( PodcastItem );
-                    AddDownloadItems( &AddList );
+                    m_MainFrame->AddPodcastsDownloadItems( &AddList );
 
                     PodcastItem.m_Status = guPODCAST_STATUS_PENDING;
                     wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
@@ -735,7 +737,7 @@ void guPodcastPanel::OnPodcastItemDownload( wxCommandEvent &event )
         m_Db->GetPodcastItemId( Selection[ Index ], &PodcastItem );
         DownloadList.Add( new guPodcastItem( PodcastItem ) );
     }
-    AddDownloadItems( &DownloadList );
+    m_MainFrame->AddPodcastsDownloadItems( &DownloadList );
     m_PodcastsListBox->ReloadItems( false );
 }
 
