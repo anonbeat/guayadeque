@@ -66,7 +66,7 @@ void guGauge::SetTotal( int total )
     if( m_Gauge )
     {
         m_Gauge->SetRange( total );
-        SetValue( 0 );
+        //SetValue( 0 );
     }
 }
 

@@ -451,7 +451,7 @@ void guListView::OnBeginDrag( wxMouseEvent &event )
         for( index = 0; index < count; index++ )
         {
           Files.AddFile( Songs[ index ].m_FileName );
-          //printf( "Added file " ); printf( Songs[ index ].FileName.char_str() ); printf( "\n" );
+          guLogMessage( wxT( "Added file %s" ), Songs[ index ].m_FileName.c_str() );
         }
 
         wxDropSource source( Files, this );

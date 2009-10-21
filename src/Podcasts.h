@@ -132,6 +132,7 @@ class guPodcastDownloadQueueThread : public wxThread
     guPodcastItemArray  m_Items;
     wxMutex             m_ItemsMutex;
     int                 m_CurPos;
+    int                 m_GaugeId;
 
     void SendUpdateEvent( guPodcastItem * podcastitem );
 

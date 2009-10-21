@@ -37,11 +37,11 @@
 // -------------------------------------------------------------------------------- //
 // guPostcastPanel
 // -------------------------------------------------------------------------------- //
-guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 672,586 ), wxTAB_TRAVERSAL )
 {
     m_Db = db;
-    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    m_MainFrame = mainframe;
     m_PlayerPanel = playerpanel;
     m_LastChannelInfoId = wxNOT_FOUND;
     m_LastPodcastInfoId = wxNOT_FOUND;
@@ -1108,7 +1108,7 @@ int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
             }
         }
     }
-    return Count;
+    return tracks->Count();
 }
 
 // -------------------------------------------------------------------------------- //
