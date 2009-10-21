@@ -122,7 +122,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
 
     // Podcast Page
-    m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+    m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
     m_CatNotebook->AddPage( m_PodcastsPanel, _( "Podcasts" ), false );
 
     // FileSystem Page
@@ -1201,7 +1201,7 @@ guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db, guMainFrame * ma
 {
     m_Db = db;
     m_MainFrame = mainframe;
-    m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
+//    m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1213,6 +1213,9 @@ guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db, guMainFrame * ma
 // -------------------------------------------------------------------------------- //
 guUpdatePodcastsThread::~guUpdatePodcastsThread()
 {
+//    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
+//    event.SetInt( m_GaugeId );
+//    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1221,10 +1224,10 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
     guPodcastChannelArray PodcastChannels;
     if( m_Db->GetPodcastChannels( &PodcastChannels ) )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
-        event.SetInt( m_GaugeId );
-        event.SetExtraLong( PodcastChannels.Count() );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+//        event.SetInt( m_GaugeId );
+//        event.SetExtraLong( PodcastChannels.Count() );
+//        wxPostEvent( m_MainFrame, event );
 
         int Index = 0;
         while( !TestDestroy() && Index < PodcastChannels.Count() )
@@ -1232,17 +1235,13 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
             PodcastChannels[ Index ].Update( m_Db, m_MainFrame );
             Index++;
 
-            event.SetId( ID_GAUGE_UPDATE );
-            event.SetInt( m_GaugeId );
-            event.SetExtraLong( Index );
-            wxPostEvent( wxTheApp->GetTopWindow(), event );
+//            event.SetId( ID_GAUGE_UPDATE );
+//            event.SetInt( m_GaugeId );
+//            event.SetExtraLong( Index );
+//            wxPostEvent( m_MainFrame, event );
 
             Sleep( 20 );
         }
-
-        event.SetId( ID_GAUGE_REMOVE );
-        event.SetInt( m_GaugeId );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
     }
     return 0;
 }

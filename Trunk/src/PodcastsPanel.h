@@ -149,7 +149,7 @@ class guPodcastPanel : public wxPanel
     void OnSelectPodcasts( bool enqueue = false );
 
 public:
-    guPodcastPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
+    guPodcastPanel( wxWindow * parent, DbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel );
     ~guPodcastPanel();
 
     friend class guPodcastDownloadQueueThread;

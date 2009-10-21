@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "DbLibrary.h"
 #include "MainFrame.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 #include <wx/arrimpl.cpp>
@@ -290,6 +291,8 @@ guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guMainFrame * mainfr
     m_CurPos = 0;
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
+    m_GaugeId = wxNOT_FOUND;
+
     // Check that the directory to store podcasts are created
     m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
 
@@ -303,6 +306,13 @@ guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guMainFrame * mainfr
 guPodcastDownloadQueueThread::~guPodcastDownloadQueueThread()
 {
     m_MainFrame->ClearPodcastsDownloadThread();
+
+//    if( m_GaugeId != wxNOT_FOUND )
+//    {
+//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
+//        event.SetInt( m_GaugeId );
+//        wxPostEvent( m_MainFrame, event );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -323,8 +333,8 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
     int Count = items->Count();
     if( Count )
     {
-        guLogMessage( wxT( "2) Adding the items to the download thread..." ) );
-        //m_ItemsMutex.Lock();
+        guLogMessage( wxT( "2) Adding the items to the download thread... %u" ), Count );
+        m_ItemsMutex.Lock();
         for( Index = 0; Index < Count; Index++ )
         {
             if( priority )
@@ -332,6 +342,7 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
             else
                 m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
         }
+
         m_ItemsMutex.Unlock();
         guLogMessage( wxT( "2) Added the items to the download thread..." ) );
     }
@@ -352,8 +363,25 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
         m_ItemsMutex.Lock();
         Count = m_Items.Count();
         m_ItemsMutex.Unlock();
+
+        //guLogMessage( wxT( "DownloadThread %u : %u" ), m_CurPos, Count );
         if( m_CurPos < Count )
         {
+//            if( m_GaugeId == wxNOT_FOUND )
+//            {
+//                m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
+//
+//                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+//                event.SetInt( m_GaugeId );
+//                event.SetExtraLong( Count );
+//                wxPostEvent( m_MainFrame, event );
+//            }
+
+//            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
+//            event.SetInt( m_GaugeId );
+//            event.SetExtraLong( m_CurPos );
+//            wxPostEvent( m_MainFrame, event );
+
             //
             guPodcastItem * PodcastItem = &m_Items[ m_CurPos ];
             if( PodcastItem->m_Enclosure.IsEmpty() )
@@ -371,13 +399,15 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                 if( PodcastFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
                 {
                     PodcastItem->m_FileName = PodcastFile.GetFullPath();
+
                     if( !wxFileExists( PodcastFile.GetFullPath() ) ||
                         !( guGetFileSize( PodcastFile.GetFullPath() ) != PodcastItem->m_FileSize ) )
                     {
                         PodcastItem->m_Status = guPODCAST_STATUS_DOWNLOADING;
                         SendUpdateEvent( PodcastItem );
 
-                        if( DownloadFile( PodcastItem->m_Enclosure, PodcastFile.GetFullPath() ) )
+                        if( guIsValidAudioFile( PodcastItem->m_Enclosure ) &&
+                            DownloadFile( PodcastItem->m_Enclosure, PodcastFile.GetFullPath() ) )
                         {
                             PodcastItem->m_Status = guPODCAST_STATUS_READY;
                             guLogMessage( wxT( "Finished downloading the file %s" ), PodcastFile.GetFullPath().c_str() );
@@ -408,10 +438,15 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
         else
         {
             m_ItemsMutex.Lock();
-            if( m_CurPos == m_Items.Count() )
+            if( ( m_CurPos == m_Items.Count() ) && m_CurPos )
             {
                 m_CurPos = 0;
                 m_Items.Clear();
+
+//                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
+//                event.SetInt( m_GaugeId );
+//                wxPostEvent( m_MainFrame, event );
+//                m_GaugeId = wxNOT_FOUND;
             }
             m_ItemsMutex.Unlock();
         }
