@@ -322,29 +322,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                 }
             }
 
-            if( !PodcastChannel.m_Image.IsEmpty() )
-            {
-                guLogMessage( wxT( "Downloading the Image..." ) );
-                wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
-                                                   PodcastChannel.m_Title + wxT( "/" ) +
-                                                   PodcastChannel.m_Title + wxT( ".jpg" ) );
-                if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
-                {
-                    if( !wxFileExists( ImageFile.GetFullPath() ) )
-                    {
-                        if( !DownloadImage( PodcastChannel.m_Image, ImageFile.GetFullPath(), 60, 60 ) )
-                            guLogMessage( wxT( "Download image failed..." ) );
-                    }
-                    else
-                    {
-                        guLogMessage( wxT( "Image File already exists" ) );
-                    }
-                }
-                else
-                {
-                    guLogMessage( wxT( "Error in normalize..." ) );
-                }
-            }
+            PodcastChannel.CheckLogo();
 
             //
             guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );

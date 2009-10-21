@@ -112,9 +112,10 @@ class guPodcastChannel
     wxString            m_DownloadText;
     bool                m_AllowDelete;
 
-    guPodcastChannel() {};
-    guPodcastChannel( const wxString &url );
-    void Update( DbLibrary * db, guMainFrame * mainframe );
+                guPodcastChannel() {};
+                guPodcastChannel( const wxString &url );
+    void        Update( DbLibrary * db, guMainFrame * mainframe );
+    void        CheckLogo( void );
 
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
