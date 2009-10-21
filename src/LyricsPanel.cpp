@@ -133,7 +133,14 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
     if( m_UpdateEnabled )
     {
         const wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
-        SetTrack( ( * Params )[ 0 ], ( * Params )[ 1 ] );
+        if( !Params )
+        {
+            SetTrack( wxEmptyString, wxEmptyString );
+        }
+        else
+        {
+            SetTrack( ( * Params )[ 0 ], ( * Params )[ 1 ] );
+        }
     }
 }
 
@@ -186,26 +193,34 @@ void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
 {
     SetTitle( track + wxT( " / " ) + artist );
     //SetText( _( "No lyrics found for this song." ) );
-    SetText( _( "Searching the lyrics for this track" ) );
 
-    guConfig * Config = ( guConfig * ) Config->Get();
+    if( !artist.IsEmpty() && !track.IsEmpty() )
+    {
+        SetText( _( "Searching the lyrics for this track" ) );
 
-    int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
-    if( Engine == guLYRIC_ENGINE_LYRICWIKI )
-    {
-        m_LyricThread = new guLyrcComArEngine( this, artist.c_str(), track.c_str() );
+        guConfig * Config = ( guConfig * ) Config->Get();
+
+        int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
+        if( Engine == guLYRIC_ENGINE_LYRICWIKI )
+        {
+            m_LyricThread = new guLyrcComArEngine( this, artist.c_str(), track.c_str() );
+        }
+        else if( Engine == guLYRIC_ENGINE_LEOSLYRICS )
+        {
+            m_LyricThread = new guLeosLyricsEngine( this, artist.c_str(), track.c_str() );
+        }
+        else if( Engine == guLYRIC_ENGINE_LYRC_COM_AR )
+        {
+            m_LyricThread = new guLyrcComArEngine( this, artist.c_str(), track.c_str() );
+        }
+        else if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
+        {
+            m_LyricThread = new guCDUEngine( this, artist.c_str(), track.c_str() );
+        }
     }
-    else if( Engine == guLYRIC_ENGINE_LEOSLYRICS )
+    else
     {
-        m_LyricThread = new guLeosLyricsEngine( this, artist.c_str(), track.c_str() );
-    }
-    else if( Engine == guLYRIC_ENGINE_LYRC_COM_AR )
-    {
-        m_LyricThread = new guLyrcComArEngine( this, artist.c_str(), track.c_str() );
-    }
-    else if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
-    {
-        m_LyricThread = new guCDUEngine( this, artist.c_str(), track.c_str() );
+        SetText( wxEmptyString );
     }
 }
 

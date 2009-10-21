@@ -1365,10 +1365,19 @@ void guLastFMPanel::OnUpdatedTrack( wxCommandEvent &event )
 {
     if( !m_UpdateEnabled )
         return;
-    // Player informs there is a new track playing
-    //guLogMessage( wxT( "Received LastFMPanel::UpdateTrack event" ) );
+
     const wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
-    SetTrack( ( * Params )[ 0 ], ( * Params )[ 1 ] );
+
+    if( !Params )
+    {
+        SetTrack( wxEmptyString, wxEmptyString );
+    }
+    else
+    {
+        // Player informs there is a new track playing
+        //guLogMessage( wxT( "Received LastFMPanel::UpdateTrack event" ) );
+        SetTrack( ( * Params )[ 0 ], ( * Params )[ 1 ] );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

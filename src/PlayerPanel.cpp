@@ -1078,6 +1078,12 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
             event.SetClientData( Params );
             wxPostEvent( wxTheApp->GetTopWindow(), event );
         }
+        else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
+        {
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+            event.SetClientData( NULL );
+            wxPostEvent( wxTheApp->GetTopWindow(), event );
+        }
 
         //
         m_MediaCtrl->Play();

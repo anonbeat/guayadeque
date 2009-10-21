@@ -170,14 +170,8 @@ void guPodcastChannel::ReadXmlOwner( wxXmlNode * XmlNode )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
+void guPodcastChannel::CheckLogo( void )
 {
-    wxCurlHTTP  http;
-
-    guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
-
-    ReadContent();
-
     if( !m_Image.IsEmpty() )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -206,6 +200,18 @@ void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
             guLogMessage( wxT( "Error in normalize..." ) );
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
+{
+    wxCurlHTTP  http;
+
+    guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
+
+    ReadContent();
+
+    CheckLogo();
 
     // Save only the new items in the channel
     db->SavePodcastChannel( this, true );
@@ -216,14 +222,14 @@ void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
         int Count = m_Items.Count();
         for( Index = 0; Index < Count; Index++ )
         {
-            guPodcastItem * PodcastItem = &m_Items[ Index ];
+            guPodcastItem PodcastItem;
+            db->GetPodcastItemEnclosure( m_Items[ Index ].m_Enclosure, &PodcastItem );
             if( m_DownloadType == guPODCAST_DOWNLOAD_ALL )
             {
 
             }
         }
     }
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -364,7 +370,6 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
         Count = m_Items.Count();
         m_ItemsMutex.Unlock();
 
-        //guLogMessage( wxT( "DownloadThread %u : %u" ), m_CurPos, Count );
         if( m_CurPos < Count )
         {
 //            if( m_GaugeId == wxNOT_FOUND )
@@ -393,8 +398,12 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
             else
             {
                 wxURI Uri( PodcastItem->m_Enclosure );
+                wxDateTime PodcastTime;
+                PodcastTime.Set( ( time_t ) PodcastItem->m_Time );
+
                 wxFileName PodcastFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
                                             PodcastItem->m_Channel + wxT( "/" ) +
+                                            PodcastTime.Format( wxT( "%Y%m%d%H%M%S-" ) ) +
                                             Uri.GetPath().AfterLast( wxT( '/' ) ) );
                 if( PodcastFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
                 {
@@ -449,8 +458,9 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
 //                m_GaugeId = wxNOT_FOUND;
             }
             m_ItemsMutex.Unlock();
+            Sleep( 800 );
         }
-        Sleep( 40 );
+        Sleep( 200 );
     }
     return 0;
 }
