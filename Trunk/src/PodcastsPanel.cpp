@@ -453,6 +453,7 @@ void guPodcastPanel::ProcessChannel( guPodcastChannel * channel )
     channel->Update( m_Db, m_MainFrame );
 
     m_ChannelsListBox->ReloadItems( false );
+    m_PodcastsListBox->ReloadItems( false );
 
     wxSetCursor( wxNullCursor );
 }
@@ -607,7 +608,7 @@ void guPodcastPanel::OnPodcastItemUpdated( wxCommandEvent &event )
 {
     guPodcastItem * PodcastItem = ( guPodcastItem * ) event.GetClientData();
 
-    guLogMessage( wxT( "PodcastItem to Updated... Item: %u Status: %u" ), PodcastItem->m_Id, PodcastItem->m_Status );
+    guLogMessage( wxT( "PodcastItem Updated... Item: %s Status: %u" ), PodcastItem->m_Title.c_str(), PodcastItem->m_Status );
     m_Db->SavePodcastItem( PodcastItem->m_ChId, PodcastItem );
     m_PodcastsListBox->ReloadItems( false );
 
