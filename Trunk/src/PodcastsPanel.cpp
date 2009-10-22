@@ -309,6 +309,8 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
         guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
         if( ChannelEditor->ShowModal() == wxID_OK )
         {
+            wxSetCursor( * wxHOURGLASS_CURSOR );
+
             ChannelEditor->GetEditData();
 
             // Create the channel dir
@@ -329,13 +331,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
 
             m_Db->SavePodcastChannel( &PodcastChannel );
 
-            NormalizePodcastChannel( &PodcastChannel );
-
-            // This should be a call to wake up the update thread
-//                    if( PodcastChannel.m_DownloadType == guPODCAST_DOWNLOAD_ALL )
-//                    {
-//                        AddDownloadItems( PodcastChannel.m_Id, &PodcastChannel.m_Items );
-//                    }
+            PodcastChannel.CheckDownloadItems( m_Db, m_MainFrame );
 
             m_ChannelsListBox->ReloadItems();
         }
@@ -378,8 +374,33 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
     guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
     if( ChannelEditor->ShowModal() == wxID_OK )
     {
+        wxSetCursor( * wxHOURGLASS_CURSOR );
+
+        ChannelEditor->GetEditData();
+
+        // Create the channel dir
+        wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                  PodcastChannel.m_Title );
+        if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+        {
+            if( !wxDirExists( ChannelDir.GetFullPath() ) )
+            {
+                wxMkdir( ChannelDir.GetFullPath(), 0770 );
+            }
+        }
+
+        PodcastChannel.CheckLogo();
+
+        //
+        guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
+
         m_Db->SavePodcastChannel( &PodcastChannel );
-        //m_ChannelsListBox->ReloadItems();
+
+        PodcastChannel.CheckDownloadItems( m_Db, m_MainFrame );
+
+        m_ChannelsListBox->ReloadItems();
+
+        wxSetCursor( wxNullCursor );
     }
     ChannelEditor->Destroy();
 }
@@ -586,8 +607,8 @@ void guPodcastPanel::OnPodcastItemUpdated( wxCommandEvent &event )
 {
     guPodcastItem * PodcastItem = ( guPodcastItem * ) event.GetClientData();
 
-    m_Db->SavePodcastItem( PodcastItem->m_ChId, PodcastItem );
     guLogMessage( wxT( "PodcastItem to Updated... Item: %u Status: %u" ), PodcastItem->m_Id, PodcastItem->m_Status );
+    m_Db->SavePodcastItem( PodcastItem->m_ChId, PodcastItem );
     m_PodcastsListBox->ReloadItems( false );
 
     delete PodcastItem;

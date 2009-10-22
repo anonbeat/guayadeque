@@ -177,7 +177,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     }
 
     //
-	m_PlayerSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::PlayerSplitterOnIdle ), NULL, this );
+	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
     Connect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ) );
     Connect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ) );
@@ -228,28 +228,6 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     Connect( guPODCAST_EVENT_UPDATE_ITEM, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
 
-
-    // If the database need to be updated
-    if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
-    {
-        guLogMessage( wxT( "Database updating started." ) );
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
-        wxPostEvent( this, event );
-    }
-
-    // If the Podcasts update is enable launch it...
-    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
-    {
-        guLogMessage( wxT( "Updating the podcasts..." ) );
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
-        wxPostEvent( this, event );
-    }
-
-    // Add the previously pending podcasts to download
-    guPodcastItemArray Podcasts;
-    m_Db->GetPendingPodcasts( &Podcasts );
-    if( Podcasts.Count() )
-        AddPodcastsDownloadItems( &Podcasts );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -860,12 +838,35 @@ void guMainFrame::OnGaugeRemove( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::PlayerSplitterOnIdle( wxIdleEvent& WXUNUSED( event ) )
+void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
     //
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_PlayerSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
-    m_PlayerSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::PlayerSplitterOnIdle ), NULL, this );
+    Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
+
+
+    // If the database need to be updated
+    if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
+    {
+        guLogMessage( wxT( "Database updating started." ) );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
+        wxPostEvent( this, event );
+    }
+
+//    // If the Podcasts update is enable launch it...
+//    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
+//    {
+//        guLogMessage( wxT( "Updating the podcasts..." ) );
+//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
+//        wxPostEvent( this, event );
+//    }
+//
+//    // Add the previously pending podcasts to download
+//    guPodcastItemArray Podcasts;
+//    m_Db->GetPendingPodcasts( &Podcasts );
+//    if( Podcasts.Count() )
+//        AddPodcastsDownloadItems( &Podcasts );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -970,10 +971,13 @@ void guMainFrame::OnPodcastItemUpdated( wxCommandEvent &event )
 {
     if( m_PodcastsPanel )
     {
-        wxPostEvent( m_PodcastsPanel, event );
+        guLogMessage( wxT( "Send update podcast event to PodcastPanel..." ) );
+        wxCommandEvent evt( event );
+        wxPostEvent( m_PodcastsPanel, evt );
     }
     else
     {
+        guLogMessage( wxT( "Destroy the update podcast event..." ) );
         guPodcastItem * PodcastItem = ( guPodcastItem * ) event.GetClientData();
         delete PodcastItem;
     }

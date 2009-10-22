@@ -94,6 +94,8 @@ class guPodcastChannel
     void        ReadXml( wxXmlNode * XmlNode );
     void        ReadXmlOwner( wxXmlNode * XmlNode );
 
+    int         GetUpdateItems( DbLibrary * db, guPodcastItemArray * items );
+
   public :
     int                 m_Id;
     wxString            m_Url;
@@ -116,6 +118,7 @@ class guPodcastChannel
                 guPodcastChannel( const wxString &url );
     void        Update( DbLibrary * db, guMainFrame * mainframe );
     void        CheckLogo( void );
+    int         CheckDownloadItems( DbLibrary * db, guMainFrame * mainframe );
 
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
