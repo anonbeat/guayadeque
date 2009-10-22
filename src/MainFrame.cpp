@@ -862,11 +862,11 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
         wxPostEvent( this, event );
     }
 
-//    // Add the previously pending podcasts to download
-//    guPodcastItemArray Podcasts;
-//    m_Db->GetPendingPodcasts( &Podcasts );
-//    if( Podcasts.Count() )
-//        AddPodcastsDownloadItems( &Podcasts );
+    // Add the previously pending podcasts to download
+    guPodcastItemArray Podcasts;
+    m_Db->GetPendingPodcasts( &Podcasts );
+    if( Podcasts.Count() )
+        AddPodcastsDownloadItems( &Podcasts );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -951,8 +951,11 @@ void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
 
         for( Index = 0; Index < Count; Index++ )
         {
-            items->Item( Index ).m_Status = guPODCAST_STATUS_PENDING;
-            m_Db->SetPodcastItemStatus( items->Item( Index ).m_Id, guPODCAST_STATUS_PENDING );
+            if( items->Item( Index ).m_Status != guPODCAST_STATUS_PENDING )
+            {
+                items->Item( Index ).m_Status = guPODCAST_STATUS_PENDING;
+                m_Db->SetPodcastItemStatus( items->Item( Index ).m_Id, guPODCAST_STATUS_PENDING );
+            }
         }
 
         guLogMessage( wxT( "Adding Download Items... %u" ), Count );
@@ -974,8 +977,7 @@ void guMainFrame::OnPodcastItemUpdated( wxCommandEvent &event )
     if( m_PodcastsPanel )
     {
         guLogMessage( wxT( "Send update podcast event to PodcastPanel..." ) );
-        wxCommandEvent evt( event );
-        wxPostEvent( m_PodcastsPanel, evt );
+        wxPostEvent( m_PodcastsPanel, event );
     }
     else
     {
@@ -1238,13 +1240,13 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
         int Index = 0;
         while( !TestDestroy() && Index < PodcastChannels.Count() )
         {
-            PodcastChannels[ Index ].Update( m_Db, m_MainFrame );
-            Index++;
-
             event.SetId( ID_GAUGE_UPDATE );
             event.SetInt( m_GaugeId );
-            event.SetExtraLong( Index );
+            event.SetExtraLong( Index + 1 );
             wxPostEvent( m_MainFrame, event );
+
+            PodcastChannels[ Index ].Update( m_Db, m_MainFrame );
+            Index++;
 
             Sleep( 20 );
         }
