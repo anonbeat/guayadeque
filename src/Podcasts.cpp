@@ -68,8 +68,9 @@ guPodcastChannel::guPodcastChannel( const wxString &url )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastChannel::ReadContent( void )
+bool guPodcastChannel::ReadContent( void )
 {
+    bool RetVal = false;
     wxCurlHTTP  http;
     guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
 
@@ -86,7 +87,7 @@ void guPodcastChannel::ReadContent( void )
         wxXmlNode * XmlNode = XmlDoc.GetRoot();
         if( XmlNode && XmlNode->GetName() == wxT( "rss" ) )
         {
-            ReadXml( XmlNode->GetChildren() );
+            RetVal = ReadXml( XmlNode->GetChildren() );
         }
         free( Buffer );
     }
@@ -94,10 +95,11 @@ void guPodcastChannel::ReadContent( void )
     {
         guLogError( wxT( "Could not get podcast content for %s" ), m_Url.c_str() );
     }
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastChannel::ReadXml( wxXmlNode * XmlNode )
+bool guPodcastChannel::ReadXml( wxXmlNode * XmlNode )
 {
     if( XmlNode && XmlNode->GetName() == wxT( "channel" ) )
     {
@@ -149,7 +151,9 @@ void guPodcastChannel::ReadXml( wxXmlNode * XmlNode )
             }
             XmlNode = XmlNode->GetNext();
         }
+        return true;
     }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -417,7 +421,7 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
     if( Count )
     {
         guLogMessage( wxT( "2) Adding the items to the download thread... %u" ), Count );
-//        m_ItemsMutex.Lock();
+        m_ItemsMutex.Lock();
         for( Index = 0; Index < Count; Index++ )
         {
 //            if( priority )
@@ -426,7 +430,7 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
                 m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
         }
 
-//        m_ItemsMutex.Unlock();
+        m_ItemsMutex.Unlock();
         guLogMessage( wxT( "2) Added the items to the download thread..." ) );
     }
 
@@ -443,10 +447,10 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
     int Count;
     while( !TestDestroy() )
     {
-//        if( m_ItemsMutex.TryLock() == wxMUTEX_NO_ERROR )
+        if( m_ItemsMutex.TryLock() == wxMUTEX_NO_ERROR )
         {
             Count = m_Items.Count();
-//            m_ItemsMutex.Unlock();
+            m_ItemsMutex.Unlock();
 
             guLogMessage( wxT( "DownloadThread %u of %u" ), m_CurPos, Count );
             if( m_CurPos < Count )
