@@ -42,6 +42,13 @@ typedef enum {
     guPODCAST_DOWNLOAD_ALL
 } guPodcastDownload;
 
+typedef enum {
+    guPODCAST_UPDATE_HOUR,
+    guPODCAST_UPDATE_DAY,
+    guPODCAST_UPDATE_WEEK,
+    guPODCAST_UPDATE_MONTH
+} guPodcastUpdatePeriod;
+
 // -------------------------------------------------------------------------------- //
 class guPodcastItem
 {
@@ -90,8 +97,8 @@ class guMainFrame;
 class guPodcastChannel
 {
   protected :
-    void        ReadContent( void );
-    void        ReadXml( wxXmlNode * XmlNode );
+    bool        ReadContent( void );
+    bool        ReadXml( wxXmlNode * XmlNode );
     void        ReadXmlOwner( wxXmlNode * XmlNode );
 
     int         GetUpdateItems( DbLibrary * db, guPodcastItemArray * items );

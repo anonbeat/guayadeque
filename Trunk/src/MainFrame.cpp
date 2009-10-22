@@ -854,14 +854,14 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
         wxPostEvent( this, event );
     }
 
-//    // If the Podcasts update is enable launch it...
-//    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
-//    {
-//        guLogMessage( wxT( "Updating the podcasts..." ) );
-//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
-//        wxPostEvent( this, event );
-//    }
-//
+    // If the Podcasts update is enable launch it...
+    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
+    {
+        guLogMessage( wxT( "Updating the podcasts..." ) );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
+        wxPostEvent( this, event );
+    }
+
 //    // Add the previously pending podcasts to download
 //    guPodcastItemArray Podcasts;
 //    m_Db->GetPendingPodcasts( &Podcasts );
@@ -901,25 +901,27 @@ void guMainFrame::UpdatePodcasts( void )
 
         switch( Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "Podcasts" ) ) )
         {
-            case 0 :    // Hour
+            case guPODCAST_UPDATE_HOUR :    // Hour
                 UpdateTime.Subtract( wxTimeSpan::Hour() );
                 break;
-            case 1 :    // Day
-                LastUpdate.Subtract( wxDateSpan::Day() );
+            case guPODCAST_UPDATE_DAY :    // Day
+                UpdateTime.Subtract( wxDateSpan::Day() );
                 break;
 
-            case 2 :    // Week
-                LastUpdate.Subtract( wxDateSpan::Week() );
+            case guPODCAST_UPDATE_WEEK :    // Week
+                UpdateTime.Subtract( wxDateSpan::Week() );
                 break;
 
-            case 3 :    // Month
-                LastUpdate.Subtract( wxDateSpan::Month() );
+            case guPODCAST_UPDATE_MONTH :    // Month
+                UpdateTime.Subtract( wxDateSpan::Month() );
                 break;
 
             default :
                 guLogError( wxT( "Unrecognized UpdatePeriod in podcasts" ) );
                 return;
         }
+
+        //guLogMessage( wxT( "%s -- %s" ), LastUpdate.Format().c_str(), UpdateTime.Format().c_str() );
 
         if( UpdateTime.IsLaterThan( LastUpdate ) )
         {
@@ -1205,7 +1207,7 @@ guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db, guMainFrame * ma
 {
     m_Db = db;
     m_MainFrame = mainframe;
-//    m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
+    m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1217,9 +1219,9 @@ guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db, guMainFrame * ma
 // -------------------------------------------------------------------------------- //
 guUpdatePodcastsThread::~guUpdatePodcastsThread()
 {
-//    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
-//    event.SetInt( m_GaugeId );
-//    wxPostEvent( m_MainFrame, event );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
+    event.SetInt( m_GaugeId );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1228,10 +1230,10 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
     guPodcastChannelArray PodcastChannels;
     if( m_Db->GetPodcastChannels( &PodcastChannels ) )
     {
-//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
-//        event.SetInt( m_GaugeId );
-//        event.SetExtraLong( PodcastChannels.Count() );
-//        wxPostEvent( m_MainFrame, event );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+        event.SetInt( m_GaugeId );
+        event.SetExtraLong( PodcastChannels.Count() );
+        wxPostEvent( m_MainFrame, event );
 
         int Index = 0;
         while( !TestDestroy() && Index < PodcastChannels.Count() )
@@ -1239,10 +1241,10 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
             PodcastChannels[ Index ].Update( m_Db, m_MainFrame );
             Index++;
 
-//            event.SetId( ID_GAUGE_UPDATE );
-//            event.SetInt( m_GaugeId );
-//            event.SetExtraLong( Index );
-//            wxPostEvent( m_MainFrame, event );
+            event.SetId( ID_GAUGE_UPDATE );
+            event.SetInt( m_GaugeId );
+            event.SetExtraLong( Index );
+            wxPostEvent( m_MainFrame, event );
 
             Sleep( 20 );
         }
