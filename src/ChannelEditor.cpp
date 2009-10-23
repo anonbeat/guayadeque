@@ -125,7 +125,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	FlexGridSizer->Add( OwnerLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	m_OwnerText = new wxStaticText( this, wxID_ANY, channel->m_OwnerName +
-                  wxT( "( " ) + channel->m_OwnerEmail + wxT( " )" ) , wxDefaultPosition, wxDefaultSize, 0 );
+                  wxT( " ( " ) + channel->m_OwnerEmail + wxT( " )" ) , wxDefaultPosition, wxDefaultSize, 0 );
 	m_OwnerText->Wrap( -1 );
 	FlexGridSizer->Add( m_OwnerText, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -143,7 +143,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	DownloadSizer->Add( m_DownloadChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	m_DownloadText = new wxTextCtrl( this, wxID_ANY, channel->m_DownloadText, wxDefaultPosition, wxDefaultSize, 0 );
-	m_DownloadText->Enable( false );
+	m_DownloadText->Enable( ( channel->m_DownloadType == guPODCAST_DOWNLOAD_FILTER ) );
 
 	DownloadSizer->Add( m_DownloadText, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
