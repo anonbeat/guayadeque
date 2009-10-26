@@ -643,7 +643,8 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastitems( podcastitem_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "podcastitem_chid INTEGER, podcastitem_title VARCHAR, podcastitem_summary VARCHAR, "
                       "podcastitem_author VARCHAR, podcastitem_enclosure VARCHAR, podcastitem_time INTEGER, "
-                      "podcastitem_file VARCHAR, podcastitem_filesize INTEGER, podcastitem_length INTEGER, podcastitem_playcount INTEGER, "
+                      "podcastitem_file VARCHAR, podcastitem_filesize INTEGER, podcastitem_length INTEGER, "
+                      "podcastitem_addeddate INTEGER, podcastitem_playcount INTEGER, "
                       "podcastitem_lastplay INTEGER, podcastitem_status INTEGER );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_title' on podcastitems(podcastitem_title ASC);" ) );
@@ -4751,6 +4752,8 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
     query += wxT( "podcastitem_playcount" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_LASTPLAY )
     query += wxT( "podcastitem_lastplay" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_ADDEDDATE )
+    query += wxT( "podcastitem_addeddate" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_STATUS )
     query += wxT( "podcastitem_status" );
 
@@ -4863,10 +4866,11 @@ void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bool
     query = wxString::Format( wxT( "INSERT INTO podcastitems( "
                 "podcastitem_id, podcastitem_chid, podcastitem_title, "
                 "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-                "podcastitem_file, podcastitem_filesize, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+                "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+                "podcastitem_addeddate, podcastitem_playcount, podcastitem_lastplay, "
                 "podcastitem_status ) "
                 "VALUES( NULL, %u, '%s', '%s', '%s', '%s', %u, "
-                "'%s', %u, %u, %u, %u, %u );" ),
+                "'%s', %u, %u, %u, %u, %u, %u );" ),
                 channelid,
                 escape_query_str( item->m_Title ).c_str(),
                 escape_query_str( item->m_Summary ).c_str(),
@@ -4876,6 +4880,7 @@ void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bool
                 escape_query_str( item->m_FileName ).c_str(),
                 item->m_FileSize,
                 item->m_Length,
+                wxDateTime::GetTimeNow(),
                 0, 0, 0 );
 
     ExecuteUpdate( query );
