@@ -4724,7 +4724,8 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
 
   query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
             "podcastitem_status, "
             "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
@@ -4776,11 +4777,12 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
     Item->m_FileSize = dbRes.GetInt( 8 );
     Item->m_Length = dbRes.GetInt( 9 );
     Item->m_PlayCount = dbRes.GetInt( 10 );
-    Item->m_LastPlay = dbRes.GetInt( 11 );
-    Item->m_Status = dbRes.GetInt( 12 );
+    Item->m_AddedDate = dbRes.GetInt( 11 );
+    Item->m_LastPlay = dbRes.GetInt( 12 );
+    Item->m_Status = dbRes.GetInt( 13 );
 
-    Item->m_Channel = dbRes.GetString( 13 );
-    Item->m_Category = dbRes.GetString( 14 );
+    Item->m_Channel = dbRes.GetString( 14 );
+    Item->m_Category = dbRes.GetString( 15 );
     items->Add( Item );
   }
   dbRes.Finalize();
@@ -4796,7 +4798,8 @@ int DbLibrary::GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items )
 
   query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
             "podcastitem_status, "
             "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
@@ -4820,6 +4823,8 @@ int DbLibrary::GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items )
     query += wxT( "podcastitem_playcount" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_LASTPLAY )
     query += wxT( "podcastitem_lastplay" );
+  else if( m_PodcastOrder == guPODCASTS_COLUMN_ADDEDDATE )
+    query += wxT( "podcastitem_addeddate" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_STATUS )
     query += wxT( "podcastitem_status" );
 
@@ -4842,11 +4847,12 @@ int DbLibrary::GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items )
     Item->m_FileSize = dbRes.GetInt( 8 );
     Item->m_Length = dbRes.GetInt( 9 );
     Item->m_PlayCount = dbRes.GetInt( 10 );
-    Item->m_LastPlay = dbRes.GetInt( 11 );
-    Item->m_Status = dbRes.GetInt( 12 );
+    Item->m_AddedDate = dbRes.GetInt( 11 );
+    Item->m_LastPlay = dbRes.GetInt( 12 );
+    Item->m_Status = dbRes.GetInt( 13 );
 
-    Item->m_Channel = dbRes.GetString( 13 );
-    Item->m_Category = dbRes.GetString( 14 );
+    Item->m_Channel = dbRes.GetString( 14 );
+    Item->m_Category = dbRes.GetString( 15 );
     items->Add( Item );
   }
   dbRes.Finalize();
@@ -4954,7 +4960,8 @@ int DbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem
 
   query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
             "podcastitem_status, "
             "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
@@ -4980,11 +4987,12 @@ int DbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem
       item->m_FileSize = dbRes.GetInt( 8 );
       item->m_Length = dbRes.GetInt( 9 );
       item->m_PlayCount = dbRes.GetInt( 10 );
-      item->m_LastPlay = dbRes.GetInt( 11 );
-      item->m_Status = dbRes.GetInt( 12 );
+      item->m_AddedDate = dbRes.GetInt( 11 );
+      item->m_LastPlay = dbRes.GetInt( 12 );
+      item->m_Status = dbRes.GetInt( 13 );
 
-      item->m_Channel = dbRes.GetString( 13 );
-      item->m_Category = dbRes.GetString( 14 );
+      item->m_Channel = dbRes.GetString( 14 );
+      item->m_Category = dbRes.GetString( 15 );
     }
   }
   dbRes.Finalize();
@@ -5000,7 +5008,8 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
 
   query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
             "podcastitem_status, "
             "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
@@ -5027,11 +5036,12 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
       item->m_FileSize = dbRes.GetInt( 8 );
       item->m_Length = dbRes.GetInt( 9 );
       item->m_PlayCount = dbRes.GetInt( 10 );
-      item->m_LastPlay = dbRes.GetInt( 11 );
-      item->m_Status = dbRes.GetInt( 12 );
+      item->m_AddedDate = dbRes.GetInt( 11 );
+      item->m_LastPlay = dbRes.GetInt( 12 );
+      item->m_Status = dbRes.GetInt( 13 );
 
-      item->m_Channel = dbRes.GetString( 13 );
-      item->m_Category = dbRes.GetString( 14 );
+      item->m_Channel = dbRes.GetString( 14 );
+      item->m_Category = dbRes.GetString( 15 );
     }
   }
   dbRes.Finalize();
@@ -5047,7 +5057,8 @@ int DbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * ite
 
   query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
             "podcastitem_status, "
             "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
@@ -5074,11 +5085,12 @@ int DbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * ite
       item->m_FileSize = dbRes.GetInt( 8 );
       item->m_Length = dbRes.GetInt( 9 );
       item->m_PlayCount = dbRes.GetInt( 10 );
-      item->m_LastPlay = dbRes.GetInt( 11 );
-      item->m_Status = dbRes.GetInt( 12 );
+      item->m_AddedDate = dbRes.GetInt( 11 );
+      item->m_LastPlay = dbRes.GetInt( 12 );
+      item->m_Status = dbRes.GetInt( 13 );
 
-      item->m_Channel = dbRes.GetString( 13 );
-      item->m_Category = dbRes.GetString( 14 );
+      item->m_Channel = dbRes.GetString( 14 );
+      item->m_Category = dbRes.GetString( 15 );
     }
   }
   dbRes.Finalize();
@@ -5142,7 +5154,8 @@ int DbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
 
   query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
             "podcastitem_status, "
             "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
@@ -5166,11 +5179,12 @@ int DbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
     Item->m_FileSize = dbRes.GetInt( 8 );
     Item->m_Length = dbRes.GetInt( 9 );
     Item->m_PlayCount = dbRes.GetInt( 10 );
-    Item->m_LastPlay = dbRes.GetInt( 11 );
-    Item->m_Status = dbRes.GetInt( 12 );
+    Item->m_AddedDate = dbRes.GetInt( 11 );
+    Item->m_LastPlay = dbRes.GetInt( 12 );
+    Item->m_Status = dbRes.GetInt( 13 );
 
-    Item->m_Channel = dbRes.GetString( 13 );
-    Item->m_Category = dbRes.GetString( 14 );
+    Item->m_Channel = dbRes.GetString( 14 );
+    Item->m_Category = dbRes.GetString( 15 );
     items->Add( Item );
   }
   dbRes.Finalize();
