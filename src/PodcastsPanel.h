@@ -59,6 +59,7 @@ class guChannelsListBox : public guListBox
 #define guPODCASTS_COLUMN_AUTHOR        6
 #define guPODCASTS_COLUMN_PLAYCOUNT     7
 #define guPODCASTS_COLUMN_LASTPLAY      8
+#define guPODCASTS_COLUMN_ADDEDDATE     9
 
 // -------------------------------------------------------------------------------- //
 class guPodcastListBox : public guListView

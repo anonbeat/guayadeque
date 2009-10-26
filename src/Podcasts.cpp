@@ -220,7 +220,8 @@ int guPodcastChannel::GetUpdateItems( DbLibrary * db, guPodcastItemArray * items
 
   query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
             "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, podcastitem_playcount, podcastitem_lastplay, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
             "podcastitem_status, "
             "podcastch_title, podcastch_category "
             "FROM podcastitems, podcastchs "
@@ -270,11 +271,12 @@ int guPodcastChannel::GetUpdateItems( DbLibrary * db, guPodcastItemArray * items
     Item->m_FileSize = dbRes.GetInt( 8 );
     Item->m_Length = dbRes.GetInt( 9 );
     Item->m_PlayCount = dbRes.GetInt( 10 );
-    Item->m_LastPlay = dbRes.GetInt( 11 );
-    Item->m_Status = dbRes.GetInt( 12 );
+    Item->m_AddedDate = dbRes.GetInt( 11 );
+    Item->m_LastPlay = dbRes.GetInt( 12 );
+    Item->m_Status = dbRes.GetInt( 13 );
 
-    Item->m_Channel = dbRes.GetString( 13 );
-    Item->m_Category = dbRes.GetString( 14 );
+    Item->m_Channel = dbRes.GetString( 14 );
+    Item->m_Category = dbRes.GetString( 15 );
     items->Add( Item );
   }
   dbRes.Finalize();
@@ -304,6 +306,8 @@ void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
 {
     guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
 
+    CheckDir();
+
     if( ReadContent() )
     {
         CheckLogo();
@@ -312,6 +316,26 @@ void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
         db->SavePodcastChannel( this, true );
 
         CheckDownloadItems( db, mainframe );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastChannel::CheckDir( void )
+{
+    // Save the Splitter positions into the main config
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    // Check that the directory to store podcasts are created
+    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+
+    // Create the channel dir
+    wxFileName ChannelDir = wxFileName( PodcastsPath + wxT( "/" ) + m_Title );
+    if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+    {
+        if( !wxDirExists( ChannelDir.GetFullPath() ) )
+        {
+            wxMkdir( ChannelDir.GetFullPath(), 0770 );
+        }
     }
 }
 
@@ -480,6 +504,9 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                 if( PodcastFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
                 {
                     PodcastItem->m_FileName = PodcastFile.GetFullPath();
+
+                    wxFileName::Mkdir( m_PodcastsPath + wxT( "/" ) +
+                                       PodcastItem->m_Channel, 0770, wxPATH_MKDIR_FULL );
 
                     if( !wxFileExists( PodcastFile.GetFullPath() ) ||
                         !( guGetFileSize( PodcastFile.GetFullPath() ) != PodcastItem->m_FileSize ) )

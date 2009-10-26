@@ -822,7 +822,8 @@ wxString guPODCASTS_COLUMN_NAMES[] = {
     _( "Length" ),
     _( "Author" ),
     _( "PlayCount" ),
-    _( "LastPlay" )
+    _( "LastPlay" ),
+    _( "Added" )
 };
 
 // -------------------------------------------------------------------------------- //
@@ -958,6 +959,12 @@ wxString guPodcastListBox::OnGetItemText( const int row, const int col ) const
           }
           else
             return _( "Never" );
+
+        case guPODCASTS_COLUMN_ADDEDDATE :
+          wxDateTime AddedDate;
+          AddedDate.Set( ( time_t ) Podcast->m_AddedDate );
+          return AddedDate.FormatDate();
+
     }
     return wxEmptyString;
 }

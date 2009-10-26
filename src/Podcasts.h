@@ -72,6 +72,7 @@ class guPodcastItem
 
     int         m_PlayCount;
     int         m_LastPlay;
+    int         m_AddedDate;
     int         m_Status;
 
     guPodcastItem()
@@ -102,6 +103,7 @@ class guPodcastChannel
     void        ReadXmlOwner( wxXmlNode * XmlNode );
 
     int         GetUpdateItems( DbLibrary * db, guPodcastItemArray * items );
+    void        CheckDir( void );
 
   public :
     int                 m_Id;
