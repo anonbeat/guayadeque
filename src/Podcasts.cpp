@@ -302,6 +302,69 @@ int guPodcastChannel::CheckDownloadItems( DbLibrary * db, guMainFrame * mainfram
 }
 
 // -------------------------------------------------------------------------------- //
+void guPodcastChannel::CheckDeleteItems( DbLibrary * db )
+{
+    wxString query;
+    //wxSQLite3ResultSet dbRes;
+
+    // Get the config object
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+#if 0
+    m_Config->WriteBool( wxT( "Delete" ), m_PodcastDelete->GetValue(), wxT( "Podcasts" ) );
+    m_Config->WriteNum( wxT( "DeleteTime" ), m_PodcastDeleteTime->GetValue(), wxT( "Podcasts" ) );
+    m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "Podcasts" ) );
+    m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
+#endif
+
+    if( Config->ReadBool( wxT( "Delete" ), false, wxT( "Podcasts" ) ) )
+    {
+        query = wxT( "DELETE FROM podcastitems WHERE podcastitem_id IN ( "
+            "SELECT podcastitem_id FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND podcastch_allowdel = 1 " );
+
+        int TimeOption = Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "Podcasts" ) );
+
+        wxDateTime DeleteTime = wxDateTime::Now();
+
+        //
+        switch( Config->ReadNum( wxT( "DeletePeriod" ), guPODCAST_DELETE_DAY, wxT( "Podcasts" ) ) )
+        {
+            case guPODCAST_DELETE_DAY :
+                DeleteTime.Subtract( wxDateSpan::Days( TimeOption ) );
+                break;
+
+            case guPODCAST_DELETE_WEEK :
+                DeleteTime.Subtract( wxDateSpan::Weeks( TimeOption ) );
+                break;
+
+            case guPODCAST_DELETE_MONTH :
+                DeleteTime.Subtract( wxDateSpan::Months( TimeOption ) );
+                break;
+
+            default :
+                guLogError( wxT( "Invalid delete period entry in configuration file" ) );
+                return;
+        }
+
+        query += wxString::Format( wxT( "AND podcastitem_addeddate < %u " ), DeleteTime.GetTicks() );
+
+        //
+        if( Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "Podcasts" ) ) )
+        {
+            query += wxT( "AND podcasitem_playcount > 0" );
+        }
+
+        query += wxT( ");" );
+
+        guLogMessage( wxT( "Delete : %s" ), query.c_str() );
+
+        db->ExecuteUpdate( query );
+
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
 {
     guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
@@ -316,6 +379,8 @@ void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
         db->SavePodcastChannel( this, true );
 
         CheckDownloadItems( db, mainframe );
+
+        CheckDeleteItems( db );
     }
 }
 
