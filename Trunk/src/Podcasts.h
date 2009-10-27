@@ -49,6 +49,12 @@ typedef enum {
     guPODCAST_UPDATE_MONTH
 } guPodcastUpdatePeriod;
 
+typedef enum {
+    guPODCAST_DELETE_DAY,
+    guPODCAST_DELETE_WEEK,
+    guPODCAST_DELETE_MONTH
+} guPodcastDeletePeriod;
+
 // -------------------------------------------------------------------------------- //
 class guPodcastItem
 {
@@ -128,6 +134,7 @@ class guPodcastChannel
     void        Update( DbLibrary * db, guMainFrame * mainframe );
     void        CheckLogo( void );
     int         CheckDownloadItems( DbLibrary * db, guMainFrame * mainframe );
+    void        CheckDeleteItems( DbLibrary * db );
 
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);

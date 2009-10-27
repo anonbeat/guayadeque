@@ -259,6 +259,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guMainFrame *
     Connect( ID_PODCASTS_ITEM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ) );
     Connect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ) );
     Connect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ) );
+    Connect( ID_PODCASTS_ITEM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ) );
 
 }
 
@@ -408,6 +409,12 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
 {
+//    guTrackArray * Tracks = new guTrackArray();
+//    m_Db->GetSelectedSongs( Tracks );
+//
+//    event.SetId( ID_MAINFRAME_COPYTO );
+//    event.SetClientData( ( void * ) Tracks );
+//    wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -742,6 +749,17 @@ void guPodcastPanel::OnPodcastItemDownload( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastItemCopyTo( wxCommandEvent &event )
+{
+    guTrackArray * Tracks = new guTrackArray();
+    m_PodcastsListBox->GetSelectedSongs( Tracks );
+
+    event.SetId( ID_MAINFRAME_COPYTO );
+    event.SetClientData( ( void * ) Tracks );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
 void guPodcastPanel::MainSplitterOnIdle( wxIdleEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -1041,6 +1059,13 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
     }
+    else
+    {
+        wxMenuItem * MenuItem;
+        MenuItem = new wxMenuItem( Menu, wxID_ANY, _( "No selected items..." ), _( "Copy the current selected podcasts to a directory or device" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_status_error ) );
+        Menu->Append( MenuItem );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1090,28 +1115,27 @@ int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
     int Count = Selection.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        for( Index = 0; Index < Count; Index++ )
+        guPodcastItem PodcastItem;
+        if( ( m_Db->GetPodcastItemId( Selection[ Index ], &PodcastItem ) != wxNOT_FOUND ) &&
+            ( PodcastItem.m_Status == guPODCAST_STATUS_READY ) &&
+            ( wxFileExists( PodcastItem.m_FileName ) ) )
         {
-            guPodcastItem PodcastItem;
-            if( ( m_Db->GetPodcastItemId( Selection[ Index ], &PodcastItem ) != wxNOT_FOUND ) &&
-                ( PodcastItem.m_Status == guPODCAST_STATUS_READY ) &&
-                ( wxFileExists( PodcastItem.m_FileName ) ) )
+            guTrack * Track = new guTrack();
+            if( Track )
             {
-                guTrack * Track = new guTrack();
-                if( Track )
-                {
-                    Track->m_Type = guTRACK_TYPE_PODCAST;
-                    Track->m_SongId = PodcastItem.m_Id;
-                    Track->m_FileName = PodcastItem.m_FileName;
-                    Track->m_SongName = PodcastItem.m_Title;
-                    Track->m_ArtistName = PodcastItem.m_Author;
-                    Track->m_Length = PodcastItem.m_Length;
-                    Track->m_PlayCount = PodcastItem.m_PlayCount;
-                    Track->m_Rating = -1;
-                    Track->m_CoverId = 0;
-                    Track->m_Year = 0; // Get year from item date
-                    tracks->Add( Track );
-                }
+                Track->m_Type = guTRACK_TYPE_PODCAST;
+                Track->m_SongId = PodcastItem.m_Id;
+                Track->m_FileName = PodcastItem.m_FileName;
+                Track->m_SongName = PodcastItem.m_Title;
+                Track->m_ArtistName = PodcastItem.m_Author;
+                Track->m_Length = PodcastItem.m_Length;
+                Track->m_PlayCount = PodcastItem.m_PlayCount;
+                Track->m_GenreName = wxT( "Podcasts" );
+                Track->m_Number = Index;
+                Track->m_Rating = -1;
+                Track->m_CoverId = 0;
+                Track->m_Year = 0; // Get year from item date
+                tracks->Add( Track );
             }
         }
     }

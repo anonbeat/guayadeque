@@ -61,6 +61,8 @@ class guChannelsListBox : public guListBox
 #define guPODCASTS_COLUMN_LASTPLAY      8
 #define guPODCASTS_COLUMN_ADDEDDATE     9
 
+class guPodcastPanel;
+
 // -------------------------------------------------------------------------------- //
 class guPodcastListBox : public guListView
 {
@@ -87,6 +89,7 @@ class guPodcastListBox : public guListView
     virtual int inline      GetItemId( const int item ) const;
 
     void                        SetOrder( int order );
+    friend class guPodcastPanel;
 };
 
 class guMainFrame;
@@ -109,6 +112,7 @@ class guPodcastPanel : public wxPanel
     void                OnPodcastItemEnqueue( wxCommandEvent &event );
     void                OnPodcastItemDelete( wxCommandEvent &event );
     void                OnPodcastItemDownload( wxCommandEvent &event );
+    void                OnPodcastItemCopyTo( wxCommandEvent &event );
 
 
   protected:

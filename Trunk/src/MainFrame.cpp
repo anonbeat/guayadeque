@@ -624,10 +624,7 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
                 DirDialog->Destroy();
             }
         }
-        else
-        {
-            delete Tracks;
-        }
+        delete Tracks;
     }
 }
 
@@ -1138,7 +1135,8 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 
     for( index = 0; index < count; index++ )
     {
-        if( ( * m_Tracks )[ index ].m_Type < guTRACK_TYPE_RADIOSTATION )
+        if( ( * m_Tracks )[ index ].m_Type < guTRACK_TYPE_RADIOSTATION ||
+            ( * m_Tracks )[ index ].m_Type < guTRACK_TYPE_PODCAST )
         {
             FileName = FilePattern;
             FileName.Replace( wxT( "{a}" ), ( * m_Tracks )[ index ].m_ArtistName );
@@ -1148,29 +1146,23 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
             FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), ( * m_Tracks )[ index ].m_Number ) );
             FileName.Replace( wxT( "{t}" ), ( * m_Tracks )[ index ].m_SongName );
             FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), ( * m_Tracks )[ index ].m_Year ) );
-
-            if( ( * m_Tracks )[ index ].m_FileName.Lower().EndsWith( wxT( ".mp3" ) ) )
-            {
-                FileName = FileName + wxT( ".mp3" );
-            }
-
-            FileName = m_DestDir + FileName;
-
-            if( wxFileName::Mkdir( wxPathOnly( FileName ), 0777, wxPATH_MKDIR_FULL ) )
-            {
-                if( !wxCopyFile( ( * m_Tracks )[ index ].m_FileName, FileName, FileOverwrite ) )
-                {
-                    guLogError( wxT( "Could not copy the file '%s'" ), FileName.c_str() );
-                }
-            }
-            else
-            {
-                guLogError( wxT( "Could not create path for copy the file '%s'" ), FileName.c_str() );
-            }
             //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );
         }
-        else if( ( * m_Tracks )[ index ].m_Type == guTRACK_TYPE_PODCAST )
+
+        FileName += wxT( '.' ) + ( * m_Tracks )[ index ].m_FileName.Lower().AfterLast( wxT( '.' ) );
+
+        FileName = m_DestDir + FileName;
+
+        if( wxFileName::Mkdir( wxPathOnly( FileName ), 0777, wxPATH_MKDIR_FULL ) )
         {
+            if( !wxCopyFile( ( * m_Tracks )[ index ].m_FileName, FileName, FileOverwrite ) )
+            {
+                guLogError( wxT( "Could not copy the file '%s'" ), FileName.c_str() );
+            }
+        }
+        else
+        {
+            guLogError( wxT( "Could not create path for copy the file '%s'" ), FileName.c_str() );
         }
         //
         event.SetId( ID_GAUGE_UPDATE );
