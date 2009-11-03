@@ -38,8 +38,9 @@
 #define ID_MENU_VIEW_PODCASTS           1010
 #define ID_MENU_ABOUT                   1011
 
-#define ID_MAINFRAME_COPYTO             1018
-#define ID_LIBRARY_UPDATED              1019
+#define ID_MAINFRAME_COPYTO             1017
+#define ID_LIBRARY_UPDATED              1018
+#define ID_MAINFRAME_REMOVEPODCASTTHREAD 1019
 
 //
 #define ID_GENRE_PLAY                   1020

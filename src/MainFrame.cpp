@@ -227,6 +227,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ) );
 
     Connect( guPODCAST_EVENT_UPDATE_ITEM, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
+    Connect( ID_MAINFRAME_REMOVEPODCASTTHREAD, wxCommandEvent, wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ), NULL, this );
 
 }
 
@@ -962,10 +963,17 @@ void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::ClearPodcastsDownloadThread( void )
+void guMainFrame::RemovePodcastDownloadItems( void )
 {
-    guLogMessage( wxT( "DownloadThread destroyed..." ) );
-    m_DownloadThread = NULL;
+    wxMutexLocker Lock( m_DownloadThreadMutex );
+
+    if( m_DownloadThread )
+    {
+        m_DownloadThread->Pause();
+        m_DownloadThread->Delete();
+        guLogMessage( wxT( "Podcast Download Thread destroyed..." ) );
+        m_DownloadThread = NULL;
+    }
 }
 
 // -------------------------------------------------------------------------------- //

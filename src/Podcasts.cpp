@@ -310,13 +310,6 @@ void guPodcastChannel::CheckDeleteItems( DbLibrary * db )
     // Get the config object
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-#if 0
-    m_Config->WriteBool( wxT( "Delete" ), m_PodcastDelete->GetValue(), wxT( "Podcasts" ) );
-    m_Config->WriteNum( wxT( "DeleteTime" ), m_PodcastDeleteTime->GetValue(), wxT( "Podcasts" ) );
-    m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "Podcasts" ) );
-    m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
-#endif
-
     if( Config->ReadBool( wxT( "Delete" ), false, wxT( "Podcasts" ) ) )
     {
         query = wxT( "DELETE FROM podcastitems WHERE podcastitem_id IN ( "
@@ -483,8 +476,7 @@ guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guMainFrame * mainfr
 // -------------------------------------------------------------------------------- //
 guPodcastDownloadQueueThread::~guPodcastDownloadQueueThread()
 {
-    m_MainFrame->ClearPodcastsDownloadThread();
-
+//    m_MainFrame->ClearPodcastsDownloadThread();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -531,25 +523,32 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
 }
 
 // -------------------------------------------------------------------------------- //
+int guPodcastDownloadQueueThread::GetCount( void )
+{
+    Lock();
+    int Count = m_Items->Count();
+    Unlock();
+    return Count;
+}
+
+// -------------------------------------------------------------------------------- //
 guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
 {
     int Count;
-//    int IdleCount = 0;
+    int IdleCount = 0;
     while( !TestDestroy() )
     {
-        Lock();
-        Count = m_Items.Count();
-        Unlock();
+        Count = GetCount();
 
-        guLogMessage( wxT( "DownloadThread %u of %u" ), m_CurPos, Count );
+//        guLogMessage( wxT( "DownloadThread %u of %u" ), m_CurPos, Count );
         if( m_CurPos < Count )
         {
-//            IdleCount = 0;
+            IdleCount = 0;
             //
             guPodcastItem * PodcastItem = &m_Items[ m_CurPos ];
 
-            guLogMessage( wxT( "Ok so we have one item to download... %u %s" ),
-                   m_CurPos, PodcastItem->m_Enclosure.c_str() );
+//            guLogMessage( wxT( "Ok so we have one item to download... %u %s" ),
+//                   m_CurPos, PodcastItem->m_Enclosure.c_str() );
             if( PodcastItem->m_Enclosure.IsEmpty() )
             {
                 PodcastItem->m_Status = guPODCAST_STATUS_ERROR;
@@ -618,14 +617,20 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                     m_CurPos = 0;
                     m_Items.Clear();
                 }
-//                else
-//                {
-//                    if( ++IdleCount > 10 )
-//                    {
-//                        Unlock();
-//                        return 0;
-//                    }
-//                }
+                else
+                {
+                    if( ++IdleCount > 4 )
+                    {
+                        //ID_MAINFRAME_REMOVEPODCASTTHREAD
+                        wxCommandEvent event( wxCommandEvent, ID_MAINFRAME_REMOVEPODCASTTHREAD );
+                        wxPostEvent( m_MainFrame, event );
+                        IdleCount = 0;
+                    }
+                    else
+                    {
+                        Sleep( 500 );
+                    }
+                }
             }
             Unlock();
         }

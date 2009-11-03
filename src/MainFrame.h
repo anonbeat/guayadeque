@@ -74,7 +74,9 @@ class guMainFrame : public wxFrame
     guLibUpdateThread *         m_LibUpdateThread;
 
     guUpdatePodcastsTimer *     m_UpdatePodcastsTimer;
+
     guPodcastDownloadQueueThread    * m_DownloadThread;
+    wxMutex                     m_DownloadThreadMutex;
 
     guDBusServer *              m_DBusServer;
     guMPRIS *                   m_MPRIS;
@@ -135,8 +137,10 @@ class guMainFrame : public wxFrame
     void                LibraryUpdated( wxCommandEvent &event );
     void                OnQuit( wxCommandEvent &WXUNUSED(event) );
     void                UpdatePodcasts( void );
-    void                ClearPodcastsDownloadThread( void );
+
+    void                RemovePodcastsDownloadThread( void );
     void                AddPodcastsDownloadItems( guPodcastItemArray * items );
+    void                RemovePodcastDownloadItems( guPodcastItemArray * items );
 
 };
 
