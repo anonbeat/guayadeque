@@ -164,6 +164,7 @@ class guPodcastDownloadQueueThread : public wxThread
     void AddPodcastItems( guPodcastItemArray * items, bool priority = false );
     void inline Lock() { m_ItemsMutex.Lock(); }
     void inline Unlock() { m_ItemsMutex.Unlock(); }
+    int GetCount( void );
 
 };
 
