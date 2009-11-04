@@ -29,6 +29,7 @@
 #include "TaskBar.h"
 #include "Utils.h"
 
+#include <wx/event.h>
 #include <wx/statline.h>
 #include <wx/notebook.h>
 #include <wx/datetime.h>
@@ -227,7 +228,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ) );
 
     Connect( guPODCAST_EVENT_UPDATE_ITEM, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
-    Connect( ID_MAINFRAME_REMOVEPODCASTTHREAD, wxCommandEvent, wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ), NULL, this );
+    Connect( ID_MAINFRAME_REMOVEPODCASTTHREAD,
+             wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ),
+             NULL, this );
 
 }
 
@@ -963,11 +966,22 @@ void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::RemovePodcastDownloadItems( void )
+void guMainFrame::RemovePodcastDownloadItems( guPodcastItemArray * items )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnRemovePodcastThread( wxCommandEvent &event )
+{
+    RemovePodcastsDownloadThread();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::RemovePodcastsDownloadThread( void )
 {
     wxMutexLocker Lock( m_DownloadThreadMutex );
 
-    if( m_DownloadThread )
+    if( m_DownloadThread && !m_DownloadThread->GetCount() )
     {
         m_DownloadThread->Pause();
         m_DownloadThread->Delete();

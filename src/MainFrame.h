@@ -130,6 +130,7 @@ class guMainFrame : public wxFrame
     void                CreateTaskBarIcon( void );
 
     void                OnPodcastItemUpdated( wxCommandEvent &event );
+    void                OnRemovePodcastThread( wxCommandEvent &event );
 
   public:
                         guMainFrame( wxWindow * parent );
