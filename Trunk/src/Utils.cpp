@@ -303,11 +303,31 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
         http.AddHeader( wxT( "Referer: " ) + referer );
     }
 
+    guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
+
     wxMemoryOutputStream Buffer;
     http.Get( Buffer, url );
     if( Buffer.IsOk() )
     {
+        int ResponseCode = http.GetResponseCode();
+        if( ResponseCode >= 300  && ResponseCode < 400 )
+        {
+            wxString Location = http.GetResponseHeader();
+            int Pos = Location.Find( wxT( "Location: " ) );
+            if( Pos != wxNOT_FOUND )
+            {
+                Location = Location.Mid( Pos + 10 );
+                Location.Truncate( Location.Find( wxT( "\r\n" ) ) );
+                return GetUrlContent( Location, referer, gzipped );
+            }
+        }
+        else if( ResponseCode >= 400 )
+            return wxEmptyString;
+
         wxString ResponseHeaders = http.GetResponseHeader();
+//        guLogMessage( wxT( "Response %u:\n%s\n%s" ),
+//            http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
+
         if( ResponseHeaders.Find( wxT( "Content-Encoding: gzip" ) ) != wxNOT_FOUND )
         {
             //guLogMessage( wxT( "Response Headers:\n%s" ), ResponseHeaders.c_str() );

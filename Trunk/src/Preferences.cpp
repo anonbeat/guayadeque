@@ -385,8 +385,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 
 	wxString LyricsChoiceChoices[] = {
 	    wxT( "http://lyricwiki.org" ),
-	    wxT( "http://leoslyrics.com" ),
-	    wxT( "http://lyrc.com.ar" ),
+	    wxT( "http://leoslyrics.com" ), //wxT( "http://lyrc.com.ar" ),
 	    wxT( "http://cduniverse.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
