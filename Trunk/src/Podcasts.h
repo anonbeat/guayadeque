@@ -155,6 +155,7 @@ class guPodcastDownloadQueueThread : public wxThread
     int                 m_GaugeId;
 
     void SendUpdateEvent( guPodcastItem * podcastitem );
+    int  FindPodcastItem( guPodcastItem * podcastitem );
 
   public :
     guPodcastDownloadQueueThread( guMainFrame * mainframe );
@@ -162,6 +163,7 @@ class guPodcastDownloadQueueThread : public wxThread
 
     ExitCode Entry();
     void AddPodcastItems( guPodcastItemArray * items, bool priority = false );
+    void RemovePodcastItems( guPodcastItemArray * items );
     void inline Lock() { m_ItemsMutex.Lock(); }
     void inline Unlock() { m_ItemsMutex.Unlock(); }
     int GetCount( void );
