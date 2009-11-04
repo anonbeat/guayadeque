@@ -1,4 +1,7 @@
 
+  * Fixed LyricWiki lyric search engine
+  * Remove lyric.com.ar lyric search engine
+  * Added support for podcasts
   * Only allow to select one radiostation
   * Added support for musicbrainz searchs in Track Editor. Its Album
     oriented. Can search for tracks even when no metadata is not found
