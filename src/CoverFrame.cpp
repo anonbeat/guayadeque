@@ -51,6 +51,7 @@ guCoverFrame::~guCoverFrame()
     //printf( "guCoverFrame Destroyed\n" );
 }
 
+// -------------------------------------------------------------------------------- //
 void guCoverFrame::OnClick( wxMouseEvent &event )
 {
     Close();
@@ -71,7 +72,7 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
         else
             guLogError( wxT( "Could not retrieve the image from '%s'" ), CoverPath.c_str() );
     }
-    if( CoverType == GU_SONGCOVER_FILE )
+    else if( CoverType == GU_SONGCOVER_FILE )
     {
         CoverImage.LoadFile( CoverPath );
     }
@@ -82,6 +83,10 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
     else if( CoverType == GU_SONGCOVER_RADIO )
     {
         CoverImage = guImage( guIMAGE_INDEX_net_radio );
+    }
+    else if( CoverType == GU_SONGCOVER_PODCAST )
+    {
+        CoverImage = guImage( guIMAGE_INDEX_podcast_icon );
     }
     //
     if( CoverImage.IsOk() )
