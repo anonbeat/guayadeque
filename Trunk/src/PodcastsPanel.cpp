@@ -409,12 +409,39 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
 {
-//    guTrackArray * Tracks = new guTrackArray();
-//    m_Db->GetSelectedSongs( Tracks );
+    guPodcastItemArray PodcastItems;
+    guTrackArray * Tracks = new guTrackArray();
+
+    m_Db->GetPodcastItems( &PodcastItems );
+
+    int Index;
+    int Count = PodcastItems.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = new guTrack();
+        if( Track )
+        {
+            Track->m_Type = guTRACK_TYPE_PODCAST;
+            Track->m_SongId = PodcastItems[ Index ].m_Id;
+            Track->m_FileName = PodcastItems[ Index ].m_FileName;
+            Track->m_SongName = PodcastItems[ Index ].m_Title;
+            Track->m_ArtistName = PodcastItems[ Index ].m_Author;
+            Track->m_AlbumName = PodcastItems[ Index ].m_Channel;
+            Track->m_Length = PodcastItems[ Index ].m_Length;
+            Track->m_PlayCount = PodcastItems[ Index ].m_PlayCount;
+            Track->m_GenreName = wxT( "Podcasts" );
+            Track->m_Number = Index;
+            Track->m_Rating = -1;
+            Track->m_CoverId = 0;
+            Track->m_Year = 0; // Get year from item date
+            Tracks->Add( Track );
+        }
+    }
+
 //
-//    event.SetId( ID_MAINFRAME_COPYTO );
-//    event.SetClientData( ( void * ) Tracks );
-//    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    event.SetId( ID_MAINFRAME_COPYTO );
+    event.SetClientData( ( void * ) Tracks );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -648,6 +675,7 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue )
                             Track->m_FileName = PodcastItem.m_FileName;
                             Track->m_SongName = PodcastItem.m_Title;
                             Track->m_ArtistName = PodcastItem.m_Author;
+                            Track->m_AlbumName = PodcastItem.m_Channel;
                             Track->m_Length = PodcastItem.m_Length;
                             Track->m_PlayCount = PodcastItem.m_PlayCount;
                             Track->m_Rating = -1;
@@ -812,9 +840,9 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_del ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UNDELETE, _( "Undelete" ), _( "Show all deleted podcasts of the selected channels" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
+//        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UNDELETE, _( "Undelete" ), _( "Show all deleted podcasts of the selected channels" ) );
+//        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+//        Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UPDATE, _( "Update" ), _( "Update the podcast items of the selected channels" ) );
