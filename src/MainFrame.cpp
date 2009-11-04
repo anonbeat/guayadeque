@@ -626,7 +626,6 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
                 DirDialog->Destroy();
             }
         }
-        delete Tracks;
     }
 }
 
@@ -1159,8 +1158,16 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 
     for( index = 0; index < count; index++ )
     {
-        if( ( * m_Tracks )[ index ].m_Type < guTRACK_TYPE_RADIOSTATION ||
-            ( * m_Tracks )[ index ].m_Type < guTRACK_TYPE_PODCAST )
+        FileName = wxEmptyString;
+
+        if( ( * m_Tracks )[ index ].m_Type == guTRACK_TYPE_RADIOSTATION )
+            continue;
+
+        if( ( * m_Tracks )[ index ].m_Type == guTRACK_TYPE_PODCAST )
+        {
+            FileName = ( * m_Tracks )[ index ].m_AlbumName + wxT( "/" ) + wxFileNameFromPath( ( * m_Tracks )[ index ].m_FileName );
+        }
+        else
         {
             FileName = FilePattern;
             FileName.Replace( wxT( "{a}" ), ( * m_Tracks )[ index ].m_ArtistName );
@@ -1177,6 +1184,7 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 
         FileName = m_DestDir + FileName;
 
+        //guLogMessage( wxT( "Copy %s =>> %s" ), ( * m_Tracks )[ index ].m_FileName.c_str(), FileName.c_str() );
         if( wxFileName::Mkdir( wxPathOnly( FileName ), 0777, wxPATH_MKDIR_FULL ) )
         {
             if( !wxCopyFile( ( * m_Tracks )[ index ].m_FileName, FileName, FileOverwrite ) )
