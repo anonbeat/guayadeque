@@ -33,7 +33,13 @@
 #include <wx/tglbtn.h>
 
 // -------------------------------------------------------------------------------- //
-enum guSongCoverType { GU_SONGCOVER_NONE, GU_SONGCOVER_FILE, GU_SONGCOVER_RADIO, GU_SONGCOVER_ID3TAG, GU_SONGCOVER_PODCAST };
+enum guSongCoverType {
+    GU_SONGCOVER_NONE,
+    GU_SONGCOVER_FILE,
+    GU_SONGCOVER_ID3TAG,
+    GU_SONGCOVER_RADIO,
+    GU_SONGCOVER_PODCAST
+};
 
 // -------------------------------------------------------------------------------- //
 class guCurrentTrack : public guTrack
@@ -81,7 +87,7 @@ class guCurrentTrack : public guTrack
         }
         else if( m_Type == guTRACK_TYPE_PODCAST )
         {
-            m_CoverType = GU_SONGCOVER_NONE;
+            m_CoverType = GU_SONGCOVER_PODCAST;
         }
         else if( m_CoverId )
         {

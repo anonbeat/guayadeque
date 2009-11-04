@@ -818,7 +818,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
     {
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast_icon ) );
-        m_MediaSong.m_CoverType = GU_SONGCOVER_RADIO;
+        m_MediaSong.m_CoverType = GU_SONGCOVER_PODCAST;
     }
     else if( ( CoverImage = ID3TagGetPicture( m_MediaSong.m_FileName ) ) )
     {
@@ -836,19 +836,15 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         m_MediaSong.m_CoverPath = m_PlayListCtrl->FindCoverFile( wxPathOnly( m_MediaSong.m_FileName ) );
     }
 
-    guLogMessage( wxT( "   File : %s" ), m_MediaSong.m_FileName.c_str() );
-    guLogMessage( wxT( " Loaded : %i" ), m_MediaSong.m_Loaded );
-    guLogMessage( wxT( "   Type : %i" ), m_MediaSong.m_Type );
-    guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
-    guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
-    guLogMessage( wxT( "Co.Type : %i" ), m_MediaSong.m_CoverType );
-    guLogMessage( wxT( "  Cover : '%s'" ), m_MediaSong.m_CoverPath.c_str() );
-    guLogMessage( wxT( "===========================================" ) );
-    //{
-    //GU_SONGCOVER_NONE,
-    //GU_SONGCOVER_FILE,
-    //GU_SONGCOVER_RADIO,
-    //GU_SONGCOVER_ID3TAG };
+//    guLogMessage( wxT( "   File : %s" ), m_MediaSong.m_FileName.c_str() );
+//    guLogMessage( wxT( " Loaded : %i" ), m_MediaSong.m_Loaded );
+//    guLogMessage( wxT( "   Type : %i" ), m_MediaSong.m_Type );
+//    guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
+//    guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
+//    guLogMessage( wxT( "Co.Type : %i" ), m_MediaSong.m_CoverType );
+//    guLogMessage( wxT( "  Cover : '%s'" ), m_MediaSong.m_CoverPath.c_str() );
+//    guLogMessage( wxT( "===========================================" ) );
+
     if( !CoverImage )
     {
         if( m_MediaSong.m_CoverPath.IsEmpty() || !wxFileExists( m_MediaSong.m_CoverPath ) )
