@@ -343,7 +343,7 @@ void guLyricWikiEngine::SearchLyric( void )
     wxString    UrlStr = wxString::Format( wxT( "http://lyricwiki.org/index.php?title=%s:%s" ),
                         guURLEncode( ArtistName ).c_str(), guURLEncode( TrackName ).c_str() );
 
-    guLogMessage( wxT( "LyricWiky searching... %s" ), UrlStr.c_str() );
+    //guLogMessage( wxT( "LyricWiky searching... %s" ), UrlStr.c_str() );
 
     //while( !TestDestroy() )
     {
