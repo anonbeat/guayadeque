@@ -228,9 +228,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ) );
 
     Connect( guPODCAST_EVENT_UPDATE_ITEM, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
-    Connect( ID_MAINFRAME_REMOVEPODCASTTHREAD,
-             wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ),
-             NULL, this );
+    Connect( ID_MAINFRAME_REMOVEPODCASTTHREAD, wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ), NULL, this );
 
 }
 
@@ -968,6 +966,10 @@ void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::RemovePodcastDownloadItems( guPodcastItemArray * items )
 {
+    if( m_DownloadThread )
+    {
+        m_DownloadThread->RemovePodcastItems( items );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

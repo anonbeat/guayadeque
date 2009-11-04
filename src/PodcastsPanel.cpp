@@ -723,10 +723,17 @@ void guPodcastPanel::OnPodcastItemDelete( wxCommandEvent &event )
         wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
         int Index;
         int Count = Selection.Count();
+
+        // Check if in the download thread this items are included and delete them
+        guPodcastItemArray Podcasts;
+        m_Db->GetPodcastItems( Selection, &Podcasts );
+        m_MainFrame->RemovePodcastDownloadItems( &Podcasts );
+
         for( Index = 0; Index < Count; Index++ )
         {
             m_Db->SetPodcastItemStatus( Selection[ Index ], guPODCAST_STATUS_DELETED );
         }
+
         m_PodcastsListBox->ReloadItems();
     }
 }

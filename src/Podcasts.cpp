@@ -523,6 +523,52 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
 }
 
 // -------------------------------------------------------------------------------- //
+int guPodcastDownloadQueueThread::FindPodcastItem( guPodcastItem * podcastitem )
+{
+    wxASSERT( podcastitem );
+
+    int Index;
+    int Count = m_Items.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_Items[ Index ].m_Enclosure == podcastitem->m_Enclosure )
+            return Index;
+    }
+
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastDownloadQueueThread::RemovePodcastItems( guPodcastItemArray * items )
+{
+    wxASSERT( items );
+
+    int Index;
+    int ItemPos;
+    int Count = items->Count();
+    if( Count && m_Items.Count() )
+    {
+        Lock();
+        if( !TestDestroy() )
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                if( TestDestroy() )
+                    break;
+                if( ( ItemPos = FindPodcastItem( &items->Item( Index ) ) ) != wxNOT_FOUND )
+                {
+                    m_Items.RemoveAt( ItemPos );
+
+                    if( ItemPos < m_CurPos )
+                        m_CurPos--;
+                }
+            }
+        }
+        Unlock();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 int guPodcastDownloadQueueThread::GetCount( void )
 {
     Lock();
