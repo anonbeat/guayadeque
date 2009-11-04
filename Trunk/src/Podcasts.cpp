@@ -526,7 +526,7 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
 int guPodcastDownloadQueueThread::GetCount( void )
 {
     Lock();
-    int Count = m_Items->Count();
+    int Count = m_Items.Count();
     Unlock();
     return Count;
 }
@@ -622,7 +622,7 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                     if( ++IdleCount > 4 )
                     {
                         //ID_MAINFRAME_REMOVEPODCASTTHREAD
-                        wxCommandEvent event( wxCommandEvent, ID_MAINFRAME_REMOVEPODCASTTHREAD );
+                        wxCommandEvent event( ID_MAINFRAME_REMOVEPODCASTTHREAD );
                         wxPostEvent( m_MainFrame, event );
                         IdleCount = 0;
                     }
