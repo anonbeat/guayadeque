@@ -154,7 +154,6 @@ bool DownloadImage( const wxString &Source, const wxString &Target, int maxwidth
                     http.GetResponseCode(),
                     Source.c_str(),
                     http.GetResponseHeader().c_str() );
-
             }
             if( Buffer.IsOk() )
             {
@@ -303,7 +302,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
         http.AddHeader( wxT( "Referer: " ) + referer );
     }
 
-    guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
+    //guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
 
     wxMemoryOutputStream Buffer;
     http.Get( Buffer, url );

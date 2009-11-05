@@ -72,7 +72,7 @@ bool guPodcastChannel::ReadContent( void )
 {
     bool RetVal = false;
     wxCurlHTTP  http;
-    guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
+    //guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
 
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: */*" ) );
@@ -183,7 +183,7 @@ void guPodcastChannel::CheckLogo( void )
         wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
                                     wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
 
-        guLogMessage( wxT( "Downloading the Image..." ) );
+        //guLogMessage( wxT( "Downloading the Image..." ) );
         wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
                                            m_Title + wxT( "/" ) +
                                            m_Title + wxT( ".jpg" ) );
@@ -192,16 +192,16 @@ void guPodcastChannel::CheckLogo( void )
             if( !wxFileExists( ImageFile.GetFullPath() ) )
             {
                 if( !DownloadImage( m_Image, ImageFile.GetFullPath(), 60, 60 ) )
-                    guLogMessage( wxT( "Download image failed..." ) );
+                    guLogWarning( wxT( "Download image failed..." ) );
             }
-            else
-            {
-                guLogMessage( wxT( "Image File already exists" ) );
-            }
+//            else
+//            {
+//                guLogMessage( wxT( "Image File already exists" ) );
+//            }
         }
         else
         {
-            guLogMessage( wxT( "Error in normalize..." ) );
+            guLogError( wxT( "Error in normalize downloading the podcast image" ) );
         }
     }
 }
@@ -253,7 +253,7 @@ int guPodcastChannel::GetUpdateItems( DbLibrary * db, guPodcastItemArray * items
     }
   }
 
-  guLogMessage( wxT( "GetUpdateItems : %s" ), query.c_str() );
+  //guLogMessage( wxT( "GetUpdateItems : %s" ), query.c_str() );
 
   dbRes = db->ExecuteQuery( query );
 
@@ -350,7 +350,7 @@ void guPodcastChannel::CheckDeleteItems( DbLibrary * db )
 
         query += wxT( ");" );
 
-        guLogMessage( wxT( "Delete : %s" ), query.c_str() );
+        //guLogMessage( wxT( "Delete : %s" ), query.c_str() );
 
         db->ExecuteUpdate( query );
 
@@ -360,7 +360,7 @@ void guPodcastChannel::CheckDeleteItems( DbLibrary * db )
 // -------------------------------------------------------------------------------- //
 void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
 {
-    guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
+    //guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
 
     CheckDir();
 
@@ -421,7 +421,7 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
         if( XmlNode->GetName() == wxT( "title" ) )
         {
             m_Title = XmlNode->GetNodeContent();
-            guLogMessage( wxT( "Item: '%s'" ), m_Title.c_str() );
+            //guLogMessage( wxT( "Item: '%s'" ), m_Title.c_str() );
         }
         else if( XmlNode->GetName() == wxT( "enclosure" ) )
         {
@@ -482,7 +482,7 @@ guPodcastDownloadQueueThread::~guPodcastDownloadQueueThread()
 // -------------------------------------------------------------------------------- //
 void guPodcastDownloadQueueThread::SendUpdateEvent( guPodcastItem * podcastitem )
 {
-    guLogMessage( wxT( "Sending the update event..." ) );
+    //guLogMessage( wxT( "Sending the update event..." ) );
     wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
     event.SetClientData( new guPodcastItem( * podcastitem ) );
     wxPostEvent( m_MainFrame, event );
@@ -500,7 +500,6 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
         Lock();
         if( !TestDestroy() )
         {
-            guLogMessage( wxT( "2) Adding the items to the download thread... %u" ), Count );
             for( Index = 0; Index < Count; Index++ )
             {
                 if( TestDestroy() )
@@ -510,14 +509,13 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
                 else
                     m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
             }
-            guLogMessage( wxT( "2) Added the items to the download thread..." ) );
         }
         Unlock();
     }
 
     if( !IsRunning() )
     {
-        guLogMessage( wxT( "Launching download thread..." ) );
+        //guLogMessage( wxT( "Launching download thread..." ) );
         Run();
     }
 }
@@ -628,25 +626,24 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                             DownloadFile( PodcastItem->m_Enclosure, PodcastFile.GetFullPath() ) )
                         {
                             PodcastItem->m_Status = guPODCAST_STATUS_READY;
-                            guLogMessage( wxT( "Finished downloading the file %s" ), PodcastFile.GetFullPath().c_str() );
                         }
                         else
                         {
                             PodcastItem->m_Status = guPODCAST_STATUS_ERROR;
-                            guLogMessage( wxT( "Podcast download failed..." ) );
+                            guLogError( wxT( "Podcast download failed..." ) );
                         }
                         SendUpdateEvent( PodcastItem );
                     }
                     else if( PodcastItem->m_Status != guPODCAST_STATUS_READY )
                     {
                         PodcastItem->m_Status = guPODCAST_STATUS_READY;
-                        guLogMessage( wxT( "Podcast File already exists" ) );
+                        //guLogMessage( wxT( "Podcast File already exists" ) );
                         SendUpdateEvent( PodcastItem );
                     }
                 }
                 else
                 {
-                    guLogMessage( wxT( "Error in normalizing the podcast filename..." ) );
+                    guLogError( wxT( "Error in normalizing the podcast filename..." ) );
                 }
             }
 

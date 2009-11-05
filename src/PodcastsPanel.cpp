@@ -301,7 +301,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
         wxSetCursor( * wxHOURGLASS_CURSOR );
         wxTheApp->Yield();
 
-        guLogMessage( wxT( "The address is %s" ), EntryDialog->GetValue().c_str() );
+        //guLogMessage( wxT( "The address is %s" ), EntryDialog->GetValue().c_str() );
 
         guPodcastChannel PodcastChannel( EntryDialog->GetValue() );
 
@@ -328,7 +328,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
             PodcastChannel.CheckLogo();
 
             //
-            guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
+            //guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
 
             m_Db->SavePodcastChannel( &PodcastChannel );
 
@@ -393,7 +393,7 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
         PodcastChannel.CheckLogo();
 
         //
-        guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
+        //guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
 
         m_Db->SavePodcastChannel( &PodcastChannel );
 
@@ -532,7 +532,7 @@ void guPodcastPanel::UpdatePodcastInfo( int itemid )
 
     guPodcastItem       PodcastItem;
     //
-    guLogMessage( wxT( "Updating the podcast info of the item %u" ), itemid );
+    //guLogMessage( wxT( "Updating the podcast info of the item %u" ), itemid );
     if( itemid > 0 )
     {
         m_Db->GetPodcastItemId( itemid, &PodcastItem );
@@ -566,36 +566,10 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
 
     guPodcastChannel    PodcastChannel;
     //
-    guLogMessage( wxT( "Updating the channel info of the item %u" ), itemid );
+    //guLogMessage( wxT( "Updating the channel info of the item %u" ), itemid );
     if( itemid > 0 )
     {
-        //m_Db->GetPodcastItemId( itemid, &PodcastItem );
         m_Db->GetPodcastChannelId( itemid, &PodcastChannel );
-//        guLogMessage( wxT( "PodcastChannel:\n"
-//            "Id             : %u\n"
-//            "Url            : %s\n"
-//            "Title          : %s\n"
-//            "Link           : %s\n"
-//            "Description    : %s\n"
-//            "Lang           : %s\n"
-//            "Summary        : %s\n"
-//            "Category       : %s\n"
-//            "Image          : %s\n"
-//            "Author         : %s\n"
-//            "OwnerName      : %s\n"
-//            "OwnerEmail     : %s\n" ),
-//            PodcastChannel.m_Id,
-//            PodcastChannel.m_Url.c_str(),
-//            PodcastChannel.m_Title.c_str(),
-//            PodcastChannel.m_Link.c_str(),
-//            PodcastChannel.m_Description.c_str(),
-//            PodcastChannel.m_Lang.c_str(),
-//            PodcastChannel.m_Summary.c_str(),
-//            PodcastChannel.m_Category.c_str(),
-//            PodcastChannel.m_Image.c_str(),
-//            PodcastChannel.m_Author.c_str(),
-//            PodcastChannel.m_OwnerName.c_str(),
-//            PodcastChannel.m_OwnerEmail.c_str() );
 
         // Set Image...
         wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
@@ -642,7 +616,7 @@ void guPodcastPanel::OnPodcastItemUpdated( wxCommandEvent &event )
 {
     guPodcastItem * PodcastItem = ( guPodcastItem * ) event.GetClientData();
 
-    guLogMessage( wxT( "PodcastItem Updated... Item: %s Status: %u" ), PodcastItem->m_Title.c_str(), PodcastItem->m_Status );
+    //guLogMessage( wxT( "PodcastItem Updated... Item: %s Status: %u" ), PodcastItem->m_Title.c_str(), PodcastItem->m_Status );
     m_Db->SavePodcastItem( PodcastItem->m_ChId, PodcastItem );
     m_PodcastsListBox->ReloadItems( false );
 
