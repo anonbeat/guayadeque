@@ -1,7 +1,6 @@
 
   * Fixed LyricWiki lyric search engine
-  * Remove lyric.com.ar lyric search engine
-  * Added support for podcasts
+  * Added support for Podcasts
   * Only allow to select one radiostation
   * Added support for musicbrainz searchs in Track Editor. Its Album
     oriented. Can search for tracks even when no metadata is not found
@@ -17,11 +16,10 @@
   * Added support to mp4 using libmp4 library. Need libmp4v2 installed
   * Added column genre to songs list box
   * Added support to flac, ogg and mpc file formats.
-  * Added Lyrc.com.ar lyric search http://lirc.com.ar/
   * TaskBar Icon is created/removed if enabled/disabled from preferences
   * Fixed bug in playlist not allowing to delete more than one track if the
     first track is selected
-  * Albums list box will show the albums with the biggest track year only
+  * Albums list box will show the albums with the latest year only
   * Added LeoLyrics lyric search http://leoslyrics.com/
   * Fixed bug in radio stations list box ordering
 
