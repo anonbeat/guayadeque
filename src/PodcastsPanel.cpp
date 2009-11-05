@@ -63,7 +63,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guMainFrame *
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     // Check that the directory to store podcasts are created
-    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
     if( !wxDirExists( m_PodcastsPath ) )
     {
         wxMkdir( m_PodcastsPath, 0770 );
