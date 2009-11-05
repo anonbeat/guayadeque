@@ -887,7 +887,7 @@ void guMainFrame::UpdatePodcasts( void )
     {
         if( !m_UpdatePodcastsTimer )
         {
-            guLogMessage( wxT( "Creating the UpdatePodcasts timer..." ) );
+            //guLogMessage( wxT( "Creating the UpdatePodcasts timer..." ) );
             m_UpdatePodcastsTimer = new guUpdatePodcastsTimer( this, m_Db );
             m_UpdatePodcastsTimer->Start( guPODCASTS_UPDATE_TIMEOUT );
         }
@@ -923,7 +923,7 @@ void guMainFrame::UpdatePodcasts( void )
 
         if( UpdateTime.IsLaterThan( LastUpdate ) )
         {
-            guLogMessage( wxT( "Starting UpdatePodcastsThread Process..." ) );
+            //guLogMessage( wxT( "Starting UpdatePodcastsThread Process..." ) );
             guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db, this );
 
             Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "Podcasts" ) );
@@ -942,9 +942,7 @@ void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
     {
         if( !m_DownloadThread )
         {
-            guLogMessage( wxT( "Creating Download thread..." ) );
             m_DownloadThread = new guPodcastDownloadQueueThread( this );
-            guLogMessage( wxT( "Created Download thread..." ) );
         }
 
         for( Index = 0; Index < Count; Index++ )
@@ -956,9 +954,7 @@ void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
             }
         }
 
-        guLogMessage( wxT( "Adding Download Items... %u" ), Count );
         m_DownloadThread->AddPodcastItems( items );
-        guLogMessage( wxT( "Added Download Items... %u" ), Count );
     }
 }
 
@@ -986,7 +982,7 @@ void guMainFrame::RemovePodcastsDownloadThread( void )
     {
         m_DownloadThread->Pause();
         m_DownloadThread->Delete();
-        guLogMessage( wxT( "Podcast Download Thread destroyed..." ) );
+        //guLogMessage( wxT( "Podcast Download Thread destroyed..." ) );
         m_DownloadThread = NULL;
     }
 }
@@ -996,12 +992,10 @@ void guMainFrame::OnPodcastItemUpdated( wxCommandEvent &event )
 {
     if( m_PodcastsPanel )
     {
-        guLogMessage( wxT( "Send update podcast event to PodcastPanel..." ) );
         wxPostEvent( m_PodcastsPanel, event );
     }
     else
     {
-        guLogMessage( wxT( "Destroy the update podcast event..." ) );
         guPodcastItem * PodcastItem = ( guPodcastItem * ) event.GetClientData();
         delete PodcastItem;
     }

@@ -5026,7 +5026,6 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
     {
       item->m_Id = RetVal;
       item->m_ChId = dbRes.GetInt( 1 );
-      guLogMessage( wxT( "ChannelId: %u" ), item->m_ChId );
       item->m_Title = dbRes.GetString( 2 );
       item->m_Summary = dbRes.GetString( 3 );
       item->m_Author = dbRes.GetString( 4 );
@@ -5075,7 +5074,6 @@ int DbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * ite
     {
       item->m_Id = RetVal;
       item->m_ChId = dbRes.GetInt( 1 );
-      guLogMessage( wxT( "ChannelId: %u" ), item->m_ChId );
       item->m_Title = dbRes.GetString( 2 );
       item->m_Summary = dbRes.GetString( 3 );
       item->m_Author = dbRes.GetString( 4 );
