@@ -1,4 +1,7 @@
 
+  * Fixed bug deleting old podcasts
+
+2009-11-05 14:05:00
   * Fixed LyricWiki lyric search engine
   * Added support for Podcasts
   * Only allow to select one radiostation

@@ -144,6 +144,8 @@
 		<Unit filename="src/PlayListPanel.h" />
 		<Unit filename="src/PlayerPanel.cpp" />
 		<Unit filename="src/PlayerPanel.h" />
+		<Unit filename="src/Podcasts.cpp" />
+		<Unit filename="src/Podcasts.h" />
 		<Unit filename="src/PodcastsPanel.cpp" />
 		<Unit filename="src/PodcastsPanel.h" />
 		<Unit filename="src/Preferences.cpp" />
