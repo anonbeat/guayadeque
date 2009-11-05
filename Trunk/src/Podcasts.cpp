@@ -345,7 +345,7 @@ void guPodcastChannel::CheckDeleteItems( DbLibrary * db )
         //
         if( Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "Podcasts" ) ) )
         {
-            query += wxT( "AND podcasitem_playcount > 0" );
+            query += wxT( "AND podcastitem_playcount > 0" );
         }
 
         query += wxT( ");" );
