@@ -617,7 +617,7 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                                        PodcastItem->m_Channel, 0770, wxPATH_MKDIR_FULL );
 
                     if( !wxFileExists( PodcastFile.GetFullPath() ) ||
-                        !( guGetFileSize( PodcastFile.GetFullPath() ) != PodcastItem->m_FileSize ) )
+                        ( guGetFileSize( PodcastFile.GetFullPath() ) != PodcastItem->m_FileSize ) )
                     {
                         PodcastItem->m_Status = guPODCAST_STATUS_DOWNLOADING;
                         SendUpdateEvent( PodcastItem );
@@ -625,6 +625,7 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                         if( guIsValidAudioFile( PodcastItem->m_Enclosure ) &&
                             DownloadFile( PodcastItem->m_Enclosure, PodcastFile.GetFullPath() ) )
                         {
+                            // TODO : Correct the length and the size of the downloaded item...
                             PodcastItem->m_Status = guPODCAST_STATUS_READY;
                         }
                         else

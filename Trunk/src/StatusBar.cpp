@@ -38,13 +38,6 @@ guGauge::guGauge( wxWindow * parent, const wxString &label, wxWindowID id, unsig
     //m_Value     = 0;
     //m_Range     = max;
     m_Label     = label;
-    m_Locked    = false;
-    m_Style     = style;
-    m_Pen       = wxPen( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ),
-                        1,
-                        wxSOLID );
-    m_Brush     = wxBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ),
-                        wxSOLID );
     m_Font      = wxSystemSettings::GetFont( wxSYS_DEVICE_DEFAULT_FONT );
     m_FgColor1  = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
     m_FgColor2  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
@@ -74,25 +67,28 @@ void guGauge::OnPaint( wxPaintEvent &event )
     dc.DrawRectangle( 1, 1, s.x, s.y );
 
     dc.SetTextForeground( m_FgColor1 );
-    dc.DrawText( wxString::Format( m_Label + wxT( " %u%%" ), ( ( m_Value * 100 ) / s.x ) ), 4, 2 );
+    wxString LabelStr = m_Label + wxString::Format( wxT( " %u%%" ), ( ( m_Value * 100 ) / s.x ) );
+    dc.DrawText( LabelStr, 4, 2 );
 
     if( m_Value )
     {
         wxRect rect;
-        rect.x = 0;
-        rect.y = 0;
+        rect.x = 1;
+        rect.y = 1;
         rect.width = m_Value;
         rect.height = s.y;
 
         wxDCClipper clip( dc, rect );
 
-        //dc.SetPen( m_Pen );
-        dc.SetBrush( m_Brush );
-
-        dc.DrawRectangle( 1, 1, ( long ) m_Value, s.y );
+        //dc.DrawRectangle( 1, 1, ( long ) m_Value, s.y );
+        rect.width = s.x;
+        dc.GradientFillLinear( rect,
+                               wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ),
+                               wxSystemSettings::GetColour( wxSYS_COLOUR_HOTLIGHT ),
+                               wxEAST );
 
         dc.SetTextForeground( m_FgColor2 );
-        dc.DrawText( wxString::Format( m_Label + wxT( " %u%%" ), ( ( m_Value * 100 ) / s.x ) ), 4, 2 );
+        dc.DrawText( LabelStr, 4, 2 );
     }
 }
 
