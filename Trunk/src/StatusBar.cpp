@@ -41,6 +41,9 @@ guGauge::guGauge( wxWindow * parent, const wxString &label, wxWindowID id, unsig
     m_Font      = wxSystemSettings::GetFont( wxSYS_DEVICE_DEFAULT_FONT );
     m_FgColor1  = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
     m_FgColor2  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
+    m_GradStart = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
+    m_GradEnd   = wxSystemSettings::GetColour( wxSYS_COLOUR_HOTLIGHT );
+
 
     SetRange( max );
     SetValue( 0 );
@@ -82,10 +85,7 @@ void guGauge::OnPaint( wxPaintEvent &event )
 
         //dc.DrawRectangle( 1, 1, ( long ) m_Value, s.y );
         rect.width = s.x;
-        dc.GradientFillLinear( rect,
-                               wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ),
-                               wxSystemSettings::GetColour( wxSYS_COLOUR_HOTLIGHT ),
-                               wxEAST );
+        dc.GradientFillLinear( rect, m_GradStart, m_GradEnd, wxEAST );
 
         dc.SetTextForeground( m_FgColor2 );
         dc.DrawText( LabelStr, 4, 2 );

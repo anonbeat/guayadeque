@@ -33,6 +33,8 @@ class guGauge : public wxControl
     float       m_Factor;
     wxString    m_Label;
     wxFont      m_Font;
+    wxColour    m_GradStart;
+    wxColour    m_GradEnd;
     wxColour    m_FgColor1;
     wxColour    m_FgColor2;
 
