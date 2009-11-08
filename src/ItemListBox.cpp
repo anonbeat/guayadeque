@@ -49,16 +49,16 @@ wxString guListBox::OnGetItemText( const int row, const int col ) const
 }
 
 // -------------------------------------------------------------------------------- //
-wxString inline guListBox::GetItemName( const int row ) const
-{
-    return ( * m_Items )[ row ].m_Name;
-}
+//wxString inline guListBox::GetItemName( const int row ) const
+//{
+//    return ( * m_Items )[ row ].m_Name;
+//}
 
 // -------------------------------------------------------------------------------- //
-int inline guListBox::GetItemId( const int row ) const
-{
-    return ( * m_Items )[ row ].m_Id;
-}
+//int inline guListBox::GetItemId( const int row ) const
+//{
+//    return ( * m_Items )[ row ].m_Id;
+//}
 
 // -------------------------------------------------------------------------------- //
 void guListBox::ReloadItems( bool reset )

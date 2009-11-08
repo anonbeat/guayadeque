@@ -174,8 +174,8 @@ class guListView : public wxScrolledWindow
     virtual void            SetSelectedItems( const wxArrayInt &selection );
     virtual void            ClearSelectedItems();
 
-    virtual wxString inline GetItemName( const int item ) const = 0;
-    virtual int inline      GetItemId( const int item ) const = 0;
+    virtual wxString        GetItemName( const int item ) const = 0;
+    virtual int             GetItemId( const int item ) const = 0;
     long                    FindItem( long start, const wxString &str, bool partial );
 
     void                    SetImageList( wxImageList * imagelist );

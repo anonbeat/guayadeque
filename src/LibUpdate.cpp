@@ -35,11 +35,11 @@ int inline GetFileLastChange( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
-guLibUpdateThread::guLibUpdateThread( DbLibrary * db )
+guLibUpdateThread::guLibUpdateThread( DbLibrary * db, int gaugeid )
 {
     m_Db = db;
     m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-    m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
+    m_GaugeId = gaugeid;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )

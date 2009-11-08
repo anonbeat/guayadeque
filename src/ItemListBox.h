@@ -38,8 +38,16 @@ class guListBox : public guListView
     guListBox( wxWindow * parent, DbLibrary * db, const wxString &label = wxEmptyString );
     ~guListBox();
 
-    virtual wxString inline GetItemName( const int item ) const;
-    virtual int inline      GetItemId( const int item ) const;
+    virtual wxString inline GetItemName( const int item ) const
+    {
+        return ( * m_Items )[ item ].m_Name;
+    }
+
+    virtual int inline      GetItemId( const int item ) const
+    {
+        return ( * m_Items )[ item ].m_Id;
+    }
+
     virtual void            ReloadItems( bool reset = true );
 
     virtual void            SetSelectedItems( const wxArrayInt &selection );

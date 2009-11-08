@@ -40,7 +40,7 @@ class guLibUpdateThread : public wxThread
     int                 ScanDirectory( wxString dirname, bool includedir = false );
 
   public :
-    guLibUpdateThread( DbLibrary * db );
+    guLibUpdateThread( DbLibrary * db, int gaugeid );
     ~guLibUpdateThread();
 
     ExitCode Entry();
