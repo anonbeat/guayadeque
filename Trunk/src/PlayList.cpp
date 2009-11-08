@@ -409,7 +409,8 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     }
 
     // The DB or NODB Tracks
-    if( Item.m_Type < guTRACK_TYPE_RADIOSTATION )
+    if( Item.m_Type < guTRACK_TYPE_RADIOSTATION ||
+        Item.m_Type == guTRACK_TYPE_PODCAST )
     {
         CutRect.width -= ( 50 + 6 + 2 );
 
@@ -441,15 +442,19 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
         dc.DrawText( TimeStr, CutRect.x + ( ( 56 - TextSize.GetWidth() ) / 2 ), CutRect.y + 4 );
         //guLogMessage( wxT( "%i - %i" ), TextSize.GetWidth(), TextSize.GetHeight() );
 
-        // Draw the rating
-        int index;
-        //OffsetSecLine += 2;
-        CutRect.x += 3;
-        CutRect.y += 2;
-        for( index = 0; index < 5; index++ )
+
+        if( Item.m_Type < guTRACK_TYPE_RADIOSTATION )
         {
-           dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_GreyStar : * m_YellowStar,
-                          CutRect.x + ( 10 * index ), CutRect.y + m_SecondLineOffset, true );
+            // Draw the rating
+            int index;
+            //OffsetSecLine += 2;
+            CutRect.x += 3;
+            CutRect.y += 2;
+            for( index = 0; index < 5; index++ )
+            {
+               dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_GreyStar : * m_YellowStar,
+                              CutRect.x + ( 10 * index ), CutRect.y + m_SecondLineOffset, true );
+            }
         }
     }
     else

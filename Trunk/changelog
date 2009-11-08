@@ -1,4 +1,6 @@
 
+  * Paint podcasts in playlist with length, author and channel
+  * Progressbars in statusbar with labels
   * Fixed bug creating the podcast default dir
   * Fixed bug deleting old podcasts
 
