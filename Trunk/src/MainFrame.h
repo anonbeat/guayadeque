@@ -197,7 +197,7 @@ class guUpdatePodcastsThread : public wxThread
     guMainFrame *   m_MainFrame;
 
   public :
-    guUpdatePodcastsThread( DbLibrary * db, guMainFrame * mainframe );
+    guUpdatePodcastsThread( DbLibrary * db, guMainFrame * mainframe, int gaugeid );
     ~guUpdatePodcastsThread();
 
     virtual ExitCode Entry();

@@ -24,20 +24,36 @@
 #include <wx/wx.h>
 
 // -------------------------------------------------------------------------------- //
-class guGauge : public wxWindow
+class guGauge : public wxControl
 {
-    private :
+  private :
+    int         m_Value;
+    int         m_LastValue;
+    int         m_Range;
+    float       m_Factor;
+    int         m_Style;
+    bool        m_Locked;
+    wxString    m_Label;
+    wxBrush     m_Brush;
+    wxPen       m_Pen;
+    wxFont      m_Font;
+    wxColour    m_FgColor1;
+    wxColour    m_FgColor2;
 
-      wxGauge *         m_Gauge;
-      wxStaticText *    m_StaticText;
-    public :
-      guGauge( wxWindow * parent );
-      ~guGauge( void );
-      void SetText( const wxString text );
-      void SetValue( int value );
-      void SetTotal( int total );
-      void Pulse( void ) { m_Gauge->Pulse(); };
+    void OnPaint( wxPaintEvent &event );
 
+
+  public :
+    guGauge() : wxControl() {};
+    guGauge( wxWindow * parent, const wxString &label = wxEmptyString, wxWindowID id = wxID_ANY, unsigned int max = 100,
+               const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxGA_HORIZONTAL );
+    ~guGauge( void );
+
+    void    SetRange( int range );
+    int     GetValue( void ) { return m_Value; };
+    bool    SetValue( int value );
+
+  DECLARE_EVENT_TABLE()
 };
 WX_DEFINE_ARRAY_PTR( guGauge *, guGaugeArray );
 
@@ -57,10 +73,10 @@ class guStatusBar : public wxStatusBar
     virtual             ~guStatusBar();
 
     void                SetAudioScrobbleService( bool Enabled = false );
-    int                 AddGauge( void );
+    int                 AddGauge( const wxString &text = wxEmptyString );
     int                 RemoveGauge( int gaugeid );
-    void                Pulse( int id ) { m_Gauges[ id ]->Pulse(); };
-    void                SetTotal( int id, int total ) { m_Gauges[ id ]->SetTotal( total ); };
+    void                Pulse( int id ) { /*m_Gauges[ id ]->Pulse(); */ };
+    void                SetTotal( int id, int total ) { m_Gauges[ id ]->SetRange( total ); };
     void                SetValue( int id, int value ) { m_Gauges[ id ]->SetValue( value ); };
 
 };

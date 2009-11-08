@@ -23,24 +23,34 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guGauge::guGauge( wxWindow * parent ) :
-         wxWindow( parent, wxID_ANY, wxDefaultPosition, wxSize( -1, -1 ) )
+// guGauge
+// -------------------------------------------------------------------------------- //
+BEGIN_EVENT_TABLE(guGauge, wxControl)
+  EVT_PAINT          (guGauge::OnPaint)
+END_EVENT_TABLE()
+
+// -------------------------------------------------------------------------------- //
+guGauge::guGauge( wxWindow * parent, const wxString &label, wxWindowID id, unsigned int max,
+                  const wxPoint &pos, const wxSize &size, long style ) :
+         wxControl( parent, id, pos, size, style )
 {
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxHORIZONTAL );
+    m_LastValue = wxNOT_FOUND;
+    //m_Value     = 0;
+    //m_Range     = max;
+    m_Label     = label;
+    m_Locked    = false;
+    m_Style     = style;
+    m_Pen       = wxPen( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ),
+                        1,
+                        wxSOLID );
+    m_Brush     = wxBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ),
+                        wxSOLID );
+    m_Font      = wxSystemSettings::GetFont( wxSYS_DEVICE_DEFAULT_FONT );
+    m_FgColor1  = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
+    m_FgColor2  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
 
-	m_StaticText = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_StaticText->Wrap( -1 );
-	MainSizer->Add( m_StaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0 );
-
-	m_Gauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1, 15 ), wxGA_HORIZONTAL );
-	MainSizer->Add( m_Gauge, 1, wxALIGN_CENTER_VERTICAL|wxALL, 0 );
-
-	SetSizer( MainSizer );
-	Layout();
-	MainSizer->Fit( this );
-
-	//Gauge->Pulse();
+    SetRange( max );
+    SetValue( 0 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -49,27 +59,70 @@ guGauge::~guGauge()
 }
 
 // -------------------------------------------------------------------------------- //
-void guGauge::SetValue( int value )
+void guGauge::OnPaint( wxPaintEvent &event )
 {
-    if( m_Gauge )
+    //guLogMessage( wxT( "Gauge::OnPaint" ) );
+
+    wxSize s = GetSize();
+
+    wxPaintDC dc( this );
+
+    dc.SetFont( m_Font );
+
+    dc.SetPen( * wxTRANSPARENT_PEN );
+    dc.SetBrush( * wxTRANSPARENT_BRUSH );
+    dc.DrawRectangle( 1, 1, s.x, s.y );
+
+    dc.SetTextForeground( m_FgColor1 );
+    dc.DrawText( wxString::Format( m_Label + wxT( " %u%%" ), ( ( m_Value * 100 ) / s.x ) ), 4, 2 );
+
+    if( m_Value )
     {
-        m_Gauge->SetValue( value );
-        if( m_StaticText )
-            m_StaticText->SetLabel( wxString::Format( wxT( "%u/%u" ), m_Gauge->GetValue(), m_Gauge->GetRange() ) );
-        Layout();
+        wxRect rect;
+        rect.x = 0;
+        rect.y = 0;
+        rect.width = m_Value;
+        rect.height = s.y;
+
+        wxDCClipper clip( dc, rect );
+
+        //dc.SetPen( m_Pen );
+        dc.SetBrush( m_Brush );
+
+        dc.DrawRectangle( 1, 1, ( long ) m_Value, s.y );
+
+        dc.SetTextForeground( m_FgColor2 );
+        dc.DrawText( wxString::Format( m_Label + wxT( " %u%%" ), ( ( m_Value * 100 ) / s.x ) ), 4, 2 );
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guGauge::SetTotal( int total )
+bool guGauge::SetValue( int value )
 {
-    if( m_Gauge )
+    //guLogMessage( wxT( "Value: %u (%f) of %u -> %u%%" ), value, m_LastValue, m_Range, (value * 100) / m_Range );
+    m_Value = value * m_Factor;
+    if( m_Value != m_LastValue )
     {
-        m_Gauge->SetRange( total );
-        //SetValue( 0 );
+        m_LastValue = m_Value;
+        Refresh();
+        Update();
     }
+    return true;
 }
 
+// -------------------------------------------------------------------------------- //
+void guGauge::SetRange( int range )
+{
+    //guLogMessage( wxT( "Range: %u" ), range );
+    m_Range  = range;
+    m_Factor = (float) GetSize().x / (float) range;
+    SetValue( GetValue() );
+    Refresh();
+    Update();
+}
+
+// -------------------------------------------------------------------------------- //
+// guStatusBar
 // -------------------------------------------------------------------------------- //
 guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
 {
@@ -169,9 +222,9 @@ void guStatusBar::UpdateGauges( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guStatusBar::AddGauge( void )
+int guStatusBar::AddGauge( const wxString &text )
 {
-    m_Gauges.Add( new guGauge( this ) );
+    m_Gauges.Add( new guGauge( this, text ) );
     SetSizes( GetFieldsCount() + 1 );
 
     UpdateGauges();

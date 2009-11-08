@@ -512,7 +512,7 @@ void guMainFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateCovers( wxCommandEvent &WXUNUSED( event ) )
 {
-    int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge();
+    int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Covers" ) );
     //guLogMessage( wxT( "Created gauge id %u" ), GaugeId );
     guUpdateCoversThread * UpdateCoversThread = new guUpdateCoversThread( m_Db, GaugeId );
     if( UpdateCoversThread )
@@ -528,7 +528,8 @@ void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
 {
     if( m_LibUpdateThread )
         return;
-    m_LibUpdateThread = new guLibUpdateThread( m_Db );
+    int gaugeid = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Library" ) );
+    m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -610,7 +611,7 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
             {
                 if( DirDialog->ShowModal() == wxID_OK )
                 {
-                    int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge();
+                    int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Copy To..." ) );
                     guCopyToDirThread * CopyToDirThread = new guCopyToDirThread( DirDialog->GetPath().c_str(),
                         Tracks, GaugeId );
                     if( !CopyToDirThread )
@@ -924,7 +925,8 @@ void guMainFrame::UpdatePodcasts( void )
         if( UpdateTime.IsLaterThan( LastUpdate ) )
         {
             //guLogMessage( wxT( "Starting UpdatePodcastsThread Process..." ) );
-            guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db, this );
+            int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Podcasts" ) );
+            guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db, this, GaugeId );
 
             Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "Podcasts" ) );
         }
@@ -1223,11 +1225,12 @@ void guUpdatePodcastsTimer::Notify()
 // -------------------------------------------------------------------------------- //
 // guUpdatePodcastThread
 // -------------------------------------------------------------------------------- //
-guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db, guMainFrame * mainframe ) : wxThread()
+guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db, guMainFrame * mainframe,
+    int gaugeid ) : wxThread()
 {
     m_Db = db;
     m_MainFrame = mainframe;
-    m_GaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge();
+    m_GaugeId = gaugeid;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {

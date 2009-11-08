@@ -83,6 +83,8 @@
 		<Unit filename="src/AutoPulseGauge.h" />
 		<Unit filename="src/Base64.cpp" />
 		<Unit filename="src/Base64.h" />
+		<Unit filename="src/ChannelEditor.cpp" />
+		<Unit filename="src/ChannelEditor.h" />
 		<Unit filename="src/Commands.h" />
 		<Unit filename="src/Config.cpp" />
 		<Unit filename="src/Config.h" />
