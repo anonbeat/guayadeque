@@ -31,11 +31,7 @@ class guGauge : public wxControl
     int         m_LastValue;
     int         m_Range;
     float       m_Factor;
-    int         m_Style;
-    bool        m_Locked;
     wxString    m_Label;
-    wxBrush     m_Brush;
-    wxPen       m_Pen;
     wxFont      m_Font;
     wxColour    m_FgColor1;
     wxColour    m_FgColor2;

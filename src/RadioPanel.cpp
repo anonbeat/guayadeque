@@ -775,7 +775,7 @@ void guRadioPanel::OnRadioUpdate( wxCommandEvent &event )
     m_GenresListBox->SetCursor( wxCURSOR_WATCH );
 
     guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-    int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge();
+    int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Radios" ) );
     wxArrayInt GenresIds = m_GenresListBox->GetSelectedItems();
     if( !GenresIds.Count() )
     {

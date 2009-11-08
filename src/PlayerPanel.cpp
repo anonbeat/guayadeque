@@ -954,7 +954,7 @@ void guPlayerPanel::OnMediaBuffering( wxMediaEvent &event )
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
         if( m_BufferGaugeId == wxNOT_FOUND )
         {
-              m_BufferGaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge();
+              m_BufferGaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Buffering..." ) );
               GaugeEvent.SetId( ID_GAUGE_SETMAX );
               GaugeEvent.SetInt( m_BufferGaugeId );
               GaugeEvent.SetExtraLong( 100 );
