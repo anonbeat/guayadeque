@@ -771,6 +771,8 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
 void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 {
     wxListItem ListItem;
+    guTrack Song;
+    wxString Len;
 
     guTagInfo * TagInfo;
 
@@ -778,12 +780,10 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 
     if( TagInfo )
     {
-        guTrack Song;
-        wxString Len;
         wxURI UriPath( FileName );
         if( UriPath.IsReference() )
         {
-            //guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
+            guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
 
             //
             Song.m_FileName = FileName;
@@ -844,6 +844,8 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         }
         else
         {
+            guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
+
             Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
             Song.m_CoverId  = 0;
             Song.m_FileName = FileName;
@@ -856,6 +858,23 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         }
 
         delete TagInfo;
+    }
+    else // It could be a radio station
+    {
+        wxURI UriPath( FileName );
+        if( !UriPath.IsReference() )
+        {
+            guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
+
+            Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
+            Song.m_CoverId  = 0;
+            Song.m_FileName = FileName;
+            Song.m_SongName = FileName;
+            Song.m_Length   = 0;
+            Song.m_Year     = 0;
+            Song.m_Rating   = wxNOT_FOUND;
+            AddItem( Song );
+        }
     }
 }
 
