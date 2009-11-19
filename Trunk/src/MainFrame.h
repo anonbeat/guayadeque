@@ -113,6 +113,7 @@ class guMainFrame : public wxFrame
     void                OnViewLastFM( wxCommandEvent &event );
     void                OnViewLyrics( wxCommandEvent &event );
     void                OnViewPlayLists( wxCommandEvent &event );
+    void                OnViewPodcasts( wxCommandEvent &event );
 
     void                OnGaugePulse( wxCommandEvent &event );
     void                OnGaugeSetMax( wxCommandEvent &event );
