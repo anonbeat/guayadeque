@@ -704,14 +704,14 @@ void guListViewClient::OnPaint( wxPaintEvent &event )
 
     // iterate over all visible lines
     const size_t lineMax = GetVisibleEnd();
-    for ( size_t line = GetFirstVisibleLine(); line < lineMax; line++ )
+    for( size_t line = GetFirstVisibleLine(); line < lineMax; line++ )
     {
         const wxCoord hLine = OnGetLineHeight(line);
 
         rectLine.height = hLine;
 
         // and draw the ones which intersect the update rect
-        if ( rectLine.Intersects(rectUpdate) )
+        if( rectLine.Intersects( rectUpdate ) )
         {
             // don't allow drawing outside of the lines rectangle
             wxDCClipper clip(dc, rectLine);

@@ -64,12 +64,17 @@ wxString guListBox::OnGetItemText( const int row, const int col ) const
 void guListBox::ReloadItems( bool reset )
 {
     wxArrayInt Selection;
-    int FirstVisible = GetFirstVisibleLine();
+    int FirstVisible; // = GetFirstVisibleLine();
 
     if( reset )
+    {
         SetSelection( -1 );
+    }
     else
+    {
+        FirstVisible = GetFirstVisibleLine();
         Selection = GetSelectedItems( false );
+    }
 
     m_Items->Empty();
 
@@ -83,6 +88,7 @@ void guListBox::ReloadItems( bool reset )
       ScrollToLine( FirstVisible );
     }
     RefreshAll();
+
 }
 
 // -------------------------------------------------------------------------------- //

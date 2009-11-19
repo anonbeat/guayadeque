@@ -219,6 +219,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ) );
     Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ) );
     Connect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ) );
+    Connect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ) );
 
     Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ) );
     Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ) );
@@ -713,6 +714,23 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
     else
     {
         int PageIndex = GetPageIndex( m_CatNotebook, m_LyricsPanel );
+        if( PageIndex >= 0 )
+        {
+            m_CatNotebook->RemovePage( PageIndex );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
+{
+    if( event.IsChecked() )
+    {
+        m_CatNotebook->InsertPage( wxMin( 5, m_CatNotebook->GetPageCount() ), m_PodcastsPanel, _( "Podcasts" ), true );
+    }
+    else
+    {
+        int PageIndex = GetPageIndex( m_CatNotebook, m_PodcastsPanel );
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
