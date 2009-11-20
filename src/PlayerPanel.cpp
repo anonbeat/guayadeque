@@ -911,19 +911,43 @@ void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+wxString inline FileNameEncode( const wxString filename )
+{
+  wxString RetVal;
+  wxString HexCode;
+  size_t index;
+  wxCharBuffer CharBuffer = filename.ToUTF8();
+
+  for( index = 0; index < strlen( CharBuffer ); index++ )
+  {
+    unsigned char C = CharBuffer[ index ];
+    if( C == wxT( '%' ) )
+    {
+        HexCode.Printf( wxT( "%%%02X" ), C );
+        RetVal += HexCode;
+    }
+    else
+    {
+        RetVal += C;
+    }
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::LoadMedia( const wxString &FileName )
 {
     //m_MediaCtrl->Load( NextItem->FileName );
     wxURI UriPath( FileName );
-    wxString Uri;
     try {
         if( !UriPath.HasScheme() )
-            Uri = wxT( "file:////" ) + FileName;
-        else
-            Uri = FileName;
-        if( !m_MediaCtrl->Load( Uri ) )
         {
-            guLogError( wxT( "ee: Failed load of file '%s'" ), Uri.c_str() );
+            UriPath.Create( wxT( "file://" ) + FileName );
+        }
+
+        if( !m_MediaCtrl->Load( UriPath.BuildURI() ) )
+        {
+            guLogError( wxT( "ee: Failed load of file '%s'" ), UriPath.BuildURI().c_str() );
             //guLogError( wxT( "ee: The filename was '%s'" ), FileName.c_str() );
         }
     }
