@@ -5050,7 +5050,7 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
 // -------------------------------------------------------------------------------- //
 int DbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * item )
 {
-  int RetVal = wxNOT_FOUND;
+  int RetVal = 0;
   wxString query;
   wxSQLite3ResultSet dbRes;
 

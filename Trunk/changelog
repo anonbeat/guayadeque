@@ -1,4 +1,6 @@
 
+  * Fixed bug when the file path had some chars for ex. %
+  * Fixed bug loading tags from songs that didnt exist in library
   * Fixed loading saved radiostations playlists
   * Paint podcasts in playlist with length, author and channel
   * Progressbars in statusbar with labels

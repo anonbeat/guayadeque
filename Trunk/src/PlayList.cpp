@@ -783,7 +783,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         wxURI UriPath( FileName );
         if( UriPath.IsReference() )
         {
-            guLogMessage( wxT( "AddPlaylistItem: '%s'" ), FileName.c_str() );
+            guLogMessage( wxT( "AddPlaylistItem: (%u) '%s' " ), AddPath, FileName.c_str() );
 
             //
             Song.m_FileName = FileName;
@@ -792,6 +792,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
             {
                 Song.m_FileName = wxGetCwd() + wxT( "/" ) + FileName;
                 TagInfo->SetFileName( Song.m_FileName );
+                guLogMessage( wxT( "AddedPath: (%u) '%s' " ), AddPath, Song.m_FileName.c_str() );
             }
 
             if( wxFileExists( Song.m_FileName ) )
@@ -818,6 +819,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
                     }
                     else
                     {
+                        guLogMessage( wxT( "Reading tags from the file..." ) );
                         Song.m_Type = guTRACK_TYPE_NOTDB;
 
                         TagInfo->Read();

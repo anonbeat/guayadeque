@@ -245,7 +245,7 @@ bool guMediaCtrl::Load( const wxString &uri )
 
     // Make sure the passed URI is valid and tell playbin to load it
     // non-file uris are encoded
-    wxASSERT( gst_uri_protocol_is_valid( "file" ) );
+    //wxASSERT( gst_uri_protocol_is_valid( "file" ) );
     wxASSERT( gst_uri_is_valid( ( const char * ) uri.mb_str() ) );
 
     g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str(), NULL );
