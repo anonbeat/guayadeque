@@ -104,7 +104,9 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	FlexGridSizer->Add( DescLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DescText = new wxStaticText( this, wxID_ANY, channel->m_Description, wxDefaultPosition, wxDefaultSize, 0 );
+	m_DescText = new wxStaticText( this, wxID_ANY, ( channel->m_Description.Length() > 200 ?
+                        channel->m_Description.Mid( 0, 200 ) + wxT( " ..." ) :
+                        channel->m_Description ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_DescText->Wrap( 450 );
 	FlexGridSizer->Add( m_DescText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 

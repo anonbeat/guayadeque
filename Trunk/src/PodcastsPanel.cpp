@@ -25,6 +25,7 @@
 #include "Config.h"
 #include "Images.h"
 #include "MainFrame.h"
+#include "NewChannel.h"
 #include "Utils.h"
 
 #include <wx/curl/http.h>
@@ -295,51 +296,53 @@ void NormalizePodcastChannel( guPodcastChannel * PodcastChannel )
 // -------------------------------------------------------------------------------- //
 void guPodcastPanel::AddChannel( wxCommandEvent &event )
 {
-    wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Channel Url: " ), _( "Please enter the channel url" ) );
-    if( EntryDialog->ShowModal() == wxID_OK )
+    guNewPodcastChannelSelector * NewPodcastChannel = new guNewPodcastChannelSelector( this );
+    if( NewPodcastChannel->ShowModal() == wxID_OK )
     {
         wxSetCursor( * wxHOURGLASS_CURSOR );
         wxTheApp->Yield();
 
-        //guLogMessage( wxT( "The address is %s" ), EntryDialog->GetValue().c_str() );
-
-        guPodcastChannel PodcastChannel( EntryDialog->GetValue() );
-
-        wxSetCursor( wxNullCursor );
-                //
-        guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
-        if( ChannelEditor->ShowModal() == wxID_OK )
+        wxString PodcastUrl = NewPodcastChannel->GetValue();
+        if( !PodcastUrl.IsEmpty() )
         {
-            wxSetCursor( * wxHOURGLASS_CURSOR );
+            guPodcastChannel PodcastChannel( PodcastUrl );
 
-            ChannelEditor->GetEditData();
-
-            // Create the channel dir
-            wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
-                                      PodcastChannel.m_Title );
-            if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+            wxSetCursor( wxNullCursor );
+                    //
+            guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
+            if( ChannelEditor->ShowModal() == wxID_OK )
             {
-                if( !wxDirExists( ChannelDir.GetFullPath() ) )
+                wxSetCursor( * wxHOURGLASS_CURSOR );
+
+                ChannelEditor->GetEditData();
+
+                // Create the channel dir
+                wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                          PodcastChannel.m_Title );
+                if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
                 {
-                    wxMkdir( ChannelDir.GetFullPath(), 0770 );
+                    if( !wxDirExists( ChannelDir.GetFullPath() ) )
+                    {
+                        wxMkdir( ChannelDir.GetFullPath(), 0770 );
+                    }
                 }
+
+                PodcastChannel.CheckLogo();
+
+                //
+                //guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
+
+                m_Db->SavePodcastChannel( &PodcastChannel );
+
+                PodcastChannel.CheckDownloadItems( m_Db, m_MainFrame );
+
+                m_ChannelsListBox->ReloadItems();
             }
-
-            PodcastChannel.CheckLogo();
-
-            //
-            //guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
-
-            m_Db->SavePodcastChannel( &PodcastChannel );
-
-            PodcastChannel.CheckDownloadItems( m_Db, m_MainFrame );
-
-            m_ChannelsListBox->ReloadItems();
+            ChannelEditor->Destroy();
         }
-        ChannelEditor->Destroy();
         wxSetCursor( wxNullCursor );
     }
-    EntryDialog->Destroy();
+    NewPodcastChannel->Destroy();
 }
 
 // -------------------------------------------------------------------------------- //
