@@ -1,4 +1,6 @@
 
+  * Now can select from a podcast directory "digitalpodcast.com" when adding a new podcast
+  * Limited the length of the description in the podcast channel editor
   * Fixed bug when the file path had some chars for ex. %
   * Fixed bug loading tags from songs that didnt exist in library
   * Fixed loading saved radiostations playlists

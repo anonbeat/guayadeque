@@ -234,6 +234,8 @@ ADD_EXECUTABLE( guayadeque
 	PodcastsPanel.h
 	ChannelEditor.cpp
 	ChannelEditor.h
+	NewChannel.cpp
+	NewChannel.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
