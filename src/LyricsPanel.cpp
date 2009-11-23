@@ -53,6 +53,8 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 
 	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
+	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
@@ -111,6 +113,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 
 
 	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
+	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
@@ -164,6 +167,12 @@ void guLyricsPanel::OnUpdateChkBoxClicked( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
+{
+    SetTrack( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+}
+
+// -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnSearchBtnClick( wxCommandEvent& event )
 {
     SetTrack( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
@@ -194,6 +203,8 @@ void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
     SetTitle( track + wxT( " / " ) + artist );
     //SetText( _( "No lyrics found for this song." ) );
 
+    m_ArtistTextCtrl->SetValue( artist );
+    m_TrackTextCtrl->SetValue( track );
     if( !artist.IsEmpty() && !track.IsEmpty() )
     {
         SetText( _( "Searching the lyrics for this track" ) );
@@ -217,7 +228,6 @@ void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
         {
             m_LyricThread = new guCDUEngine( this, artist.c_str(), track.c_str() );
         }
-
     }
     else
     {

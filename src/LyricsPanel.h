@@ -54,6 +54,7 @@ class guLyricsPanel : public wxPanel
     wxHtmlWindow *          m_LyricText;
     guSearchLyricEngine *   m_LyricThread;
     wxCheckBox *            m_UpdateCheckBox;
+	wxBitmapButton *        m_ReloadButton;
 	wxTextCtrl *            m_ArtistTextCtrl;
 	wxTextCtrl *            m_TrackTextCtrl;
 	wxBitmapButton *        m_SearchButton;
@@ -62,6 +63,7 @@ class guLyricsPanel : public wxPanel
     void    SetTitle( const wxString &title );
     void    SetText( const wxString &text );
     void    OnDownloadedLyric( wxCommandEvent &event );
+	void    OnReloadBtnClick( wxCommandEvent& event );
 	void    OnUpdateChkBoxClicked( wxCommandEvent& event );
     void    OnTextUpdated( wxCommandEvent& event );
 	void    OnSearchBtnClick( wxCommandEvent& event );
