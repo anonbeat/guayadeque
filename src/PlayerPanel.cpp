@@ -249,7 +249,9 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
             if( m_TrackStartPos > 0 )
             {
                 wxCommandEvent event;
-                OnPlayButtonClick( event );
+                event.SetInt( Config->ReadNum( wxT( "PlayerCurItem" ), 0, wxT( "General" ) ) );
+                //OnPlayButtonClick( event );
+                OnPlayListDClick( event );
             }
         }
     }

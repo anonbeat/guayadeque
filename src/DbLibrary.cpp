@@ -2896,7 +2896,7 @@ int DbLibrary::GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums 
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs )
+int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2907,7 +2907,14 @@ int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs )
     query += GetSongsDBNamesSQL( m_TracksOrder );
     query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
     query += wxT( "song_albumid IN " ) + ArrayIntToStrList( Albums );
-    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc, m_AlOrder );
+    if( ordertoedit )
+    {
+        query += wxT( " ORDER BY song_number, song_filename" );
+    }
+    else
+    {
+        query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc, m_AlOrder );
+    }
 
     dbRes = ExecuteQuery( query );
 
