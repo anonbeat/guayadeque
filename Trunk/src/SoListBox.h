@@ -68,8 +68,8 @@ class guSoListBox : public guListView
     virtual int                 GetSelectedSongs( guTrackArray * Songs ) const;
     virtual void                GetAllSongs( guTrackArray * Songs ) const;
 
-    virtual int inline          GetItemId( const int row ) const;
-    virtual wxString inline     GetItemName( const int row ) const;
+    virtual int                 GetItemId( const int row ) const;
+    virtual wxString            GetItemName( const int row ) const;
 
 };
 

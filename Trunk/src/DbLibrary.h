@@ -353,7 +353,7 @@ class DbLibrary {
     guTRACKS_ORDER      GetSongsOrder( void ) const;
     bool                GetSongsOrderDesc( void ) const;
     void                UpdateSongs( guTrackArray * Songs );
-    int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs );
+    int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit = false );
     int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs, guTrackMode trackmode = guTRACK_MODE_USER );
     int                 GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums );
     int                 GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs );

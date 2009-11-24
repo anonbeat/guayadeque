@@ -478,13 +478,13 @@ wxString guSoListBox::GetSearchText( int item ) const
 }
 
 // -------------------------------------------------------------------------------- //
-wxString inline guSoListBox::GetItemName( const int row ) const
+wxString guSoListBox::GetItemName( const int row ) const
 {
     return m_Items[ row ].m_SongName;
 }
 
 // -------------------------------------------------------------------------------- //
-int inline guSoListBox::GetItemId( const int row ) const
+int guSoListBox::GetItemId( const int row ) const
 {
     return m_Items[ row ].m_SongId;
 }

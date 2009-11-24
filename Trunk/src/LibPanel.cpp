@@ -772,7 +772,8 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     guImagePtrArray Images;
-    m_AlbumListCtrl->GetSelectedSongs( &Songs );
+    //m_AlbumListCtrl->GetSelectedSongs( &Songs );
+    m_Db->GetAlbumsSongs( m_AlbumListCtrl->GetSelectedItems(), &Songs, true );
     if( !Songs.Count() )
         return;
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images );
