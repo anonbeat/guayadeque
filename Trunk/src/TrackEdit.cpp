@@ -66,10 +66,24 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 	SongsMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticBoxSizer* SongListSizer;
-	SongListSizer = new wxStaticBoxSizer( new wxStaticBox( SongListPanel, wxID_ANY, _( " Songs " ) ), wxVERTICAL );
+	SongListSizer = new wxStaticBoxSizer( new wxStaticBox( SongListPanel, wxID_ANY, _( " Songs " ) ), wxHORIZONTAL );
 
 	m_SongListBox = new wxListBox( SongListPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
 	SongListSizer->Add( m_SongListBox, 1, wxALL|wxEXPAND, 2 );
+
+	wxBoxSizer* OrderSizer;
+	OrderSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_MoveUpButton = new wxBitmapButton( SongListPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MoveUpButton->Enable( false );
+
+	OrderSizer->Add( m_MoveUpButton, 0, wxALL, 2 );
+
+	m_MoveDownButton = new wxBitmapButton( SongListPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MoveDownButton->Enable( false );
+	OrderSizer->Add( m_MoveDownButton, 0, wxALL, 2 );
+
+	SongListSizer->Add( OrderSizer, 0, wxEXPAND, 5 );
 
 	SongsMainSizer->Add( SongListSizer, 1, wxEXPAND|wxALL, 5 );
 
@@ -441,6 +455,8 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 //	Connect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
 
 	m_SongListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTrackEditor::OnSongListBoxSelected ), NULL, this );
+	m_MoveUpButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveUpBtnClick ), NULL, this );
+	m_MoveDownButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveDownBtnClick ), NULL, this );
 	m_ArCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnArCopyButtonClicked ), NULL, this );
 	m_AlCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAlCopyButtonClicked ), NULL, this );
 	m_TiCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnTiCopyButtonClicked ), NULL, this );
@@ -497,19 +513,6 @@ guTrackEditor::~guTrackEditor()
     if( m_MBrainzAlbums )
         delete m_MBrainzAlbums;
 
-	m_SongListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTrackEditor::OnSongListBoxSelected ), NULL, this );
-	m_ArCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnArCopyButtonClicked ), NULL, this );
-	m_AlCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAlCopyButtonClicked ), NULL, this );
-	m_TiCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnTiCopyButtonClicked ), NULL, this );
-	m_NuCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnNuCopyButtonClicked ), NULL, this );
-	m_GeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnGeCopyButtonClicked ), NULL, this );
-	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
-	m_RaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
-
-	m_AddPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
-	m_DelPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
-	m_SavePicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSaveImageClicked ), NULL, this );
-	m_CopyPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -525,6 +528,44 @@ void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
     WriteItemData();
     m_CurItem = event.GetInt();
     ReadItemData();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMoveUpBtnClick( wxCommandEvent &event )
+{
+    wxString FileName = m_SongListBox->GetString( m_CurItem );
+    guTrack * MovedTrack = m_Items->Detach( m_CurItem );
+    wxImage * MovedImage = ( * m_Images )[ m_CurItem ];
+    m_Images->RemoveAt( m_CurItem );
+    m_SongListBox->SetString( m_CurItem, m_SongListBox->GetString( m_CurItem - 1 ) );
+    m_CurItem--;
+    m_Items->Insert( MovedTrack, m_CurItem );
+    m_Images->Insert( MovedImage, m_CurItem );
+    m_SongListBox->SetString( m_CurItem, FileName );
+
+    m_SongListBox->SetSelection( m_CurItem );
+
+    event.SetInt( m_CurItem );
+    OnSongListBoxSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMoveDownBtnClick( wxCommandEvent &event )
+{
+    wxString FileName = m_SongListBox->GetString( m_CurItem );
+    guTrack * MovedTrack = m_Items->Detach( m_CurItem );
+    wxImage * MovedImage = ( * m_Images )[ m_CurItem ];
+    m_Images->RemoveAt( m_CurItem );
+    m_SongListBox->SetString( m_CurItem, m_SongListBox->GetString( m_CurItem + 1 ) );
+    m_CurItem++;
+    m_Items->Insert( MovedTrack, m_CurItem );
+    m_Images->Insert( MovedImage, m_CurItem );
+    m_SongListBox->SetString( m_CurItem, FileName );
+
+    m_SongListBox->SetSelection( m_CurItem );
+
+    event.SetInt( m_CurItem );
+    OnSongListBoxSelected( event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -554,6 +595,9 @@ void guTrackEditor::ReadItemData( void )
             m_MBQueryArtistTextCtrl->SetValue( Track->m_ArtistName );
             m_MBQueryTitleTextCtrl->SetValue( Track->m_AlbumName );
         }
+
+        m_MoveUpButton->Enable( m_CurItem > 0 );
+        m_MoveDownButton->Enable( m_CurItem < ( m_Items->Count() - 1 ) );
     }
     else
     {
@@ -567,6 +611,9 @@ void guTrackEditor::ReadItemData( void )
         m_DetailInfoStaticText->SetLabel( wxEmptyString );
         m_MBQueryArtistTextCtrl->SetValue( wxEmptyString );
         m_MBQueryTitleTextCtrl->SetValue( wxEmptyString );
+
+        m_MoveUpButton->Enable( false );
+        m_MoveDownButton->Enable( false );
     }
     RefreshImage();
     UpdateMBrainzTrackInfo();

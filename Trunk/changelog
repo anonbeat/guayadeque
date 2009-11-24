@@ -1,4 +1,5 @@
 
+  * Added option to change order of songs in the track editor
   * Fixed bug restoring saved position and current track index in playlist
   * Added reload button in lyrics and last.fm panels
   * Allow filters in the new podcasts dialog
