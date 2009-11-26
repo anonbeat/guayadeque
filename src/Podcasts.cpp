@@ -36,28 +36,27 @@ const wxEventType guPodcastEvent = wxNewEventType();
 // -------------------------------------------------------------------------------- //
 int StrLengthToInt( const wxString &length )
 {
-    int RetVal = 0;
-    int Factor[] = { 1, 60, 3600, 86400 };
-    int FactorIndex = 0;
-
     if( !length.IsEmpty() )
     {
         // 1:02:03:04
         wxString Rest = length.Strip( wxString::both );
         int element;
+        int FactorIndex = 0;
+        int RetVal = 0;
+        int Factor[] = { 1, 60, 3600, 86400 };
         do {
             Rest.AfterLast( wxT( ':' ) ).ToLong( ( long * ) &element );
             if( !element )
                 break;
-            RetVal += Factor[ FactorIndex ] * element;
-            FactorIndex++;
-            if( ( FactorIndex > 3 ) )
+            RetVal += ( Factor[ FactorIndex ] * element );
+            if( ( ++FactorIndex > 3 ) )
                 break;
             Rest = Rest.BeforeLast( wxT( ':' ) );
         } while( !Rest.IsEmpty() );
+        //guLogMessage( wxT( "%s -> %i" ), length.c_str(), RetVal );
+        return RetVal;
     }
-//    guLogMessage( wxT( "%s -> %i" ), length.c_str(), RetVal );
-    return RetVal;
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //

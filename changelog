@@ -1,4 +1,6 @@
 
+  * Fixed bug with lengths of the podcasts in some cases
+  * The album sort by year only affects now to the Albums list box
   * Added option to change order of songs in the track editor
   * Fixed bug restoring saved position and current track index in playlist
   * Added reload button in lyrics and last.fm panels
