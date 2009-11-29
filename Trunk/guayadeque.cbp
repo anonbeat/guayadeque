@@ -136,6 +136,8 @@
 		<Unit filename="src/MusicBrainz.h" />
 		<Unit filename="src/MusicDns.cpp" />
 		<Unit filename="src/MusicDns.h" />
+		<Unit filename="src/NewChannel.cpp" />
+		<Unit filename="src/NewChannel.h" />
 		<Unit filename="src/OnlineLinks.cpp" />
 		<Unit filename="src/OnlineLinks.h" />
 		<Unit filename="src/PLSoListBox.cpp" />
