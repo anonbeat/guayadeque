@@ -1,4 +1,7 @@
 
+  * Added posibility in progressbar to show counters instead of percent
+
+2009-11-27 0.2.1
   * Fixed bug with lengths of the podcasts in some cases
   * The album sort by year only affects now to the Albums list box
   * Added option to change order of songs in the track editor
@@ -15,7 +18,7 @@
   * Fixed bug creating the podcast default dir
   * Fixed bug deleting old podcasts
 
-2009-11-05 14:05:00
+2009-11-05 0.2.0
   * Fixed LyricWiki lyric search engine
   * Added support for Podcasts
   * Only allow to select one radiostation

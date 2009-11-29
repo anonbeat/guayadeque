@@ -513,7 +513,7 @@ void guMainFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateCovers( wxCommandEvent &WXUNUSED( event ) )
 {
-    int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Covers" ) );
+    int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Covers" ), false );
     //guLogMessage( wxT( "Created gauge id %u" ), GaugeId );
     guUpdateCoversThread * UpdateCoversThread = new guUpdateCoversThread( m_Db, GaugeId );
     if( UpdateCoversThread )
@@ -529,7 +529,7 @@ void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
 {
     if( m_LibUpdateThread )
         return;
-    int gaugeid = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Library" ) );
+    int gaugeid = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Library" ), false );
     m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid );
 }
 

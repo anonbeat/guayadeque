@@ -26,11 +26,13 @@
 // -------------------------------------------------------------------------------- //
 class guGauge : public wxControl
 {
-  private :
+  protected :
     int         m_Value;
     int         m_LastValue;
+    int         m_PaintWidth;
     int         m_Range;
     float       m_Factor;
+    bool        m_ShowPorcent;
     wxString    m_Label;
     wxFont      m_Font;
     wxColour    m_GradStart;
@@ -43,7 +45,7 @@ class guGauge : public wxControl
 
   public :
     guGauge() : wxControl() {};
-    guGauge( wxWindow * parent, const wxString &label = wxEmptyString, wxWindowID id = wxID_ANY, unsigned int max = 100,
+    guGauge( wxWindow * parent, const wxString &label = wxEmptyString, bool showporcent = true, wxWindowID id = wxID_ANY, unsigned int max = 100,
                const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxGA_HORIZONTAL );
     ~guGauge( void );
 
@@ -71,7 +73,7 @@ class guStatusBar : public wxStatusBar
     virtual             ~guStatusBar();
 
     void                SetAudioScrobbleService( bool Enabled = false );
-    int                 AddGauge( const wxString &text = wxEmptyString );
+    int                 AddGauge( const wxString &text = wxEmptyString, bool showporcent = true );
     int                 RemoveGauge( int gaugeid );
     void                Pulse( int id ) { /*m_Gauges[ id ]->Pulse(); */ };
     void                SetTotal( int id, int total ) { m_Gauges[ id ]->SetRange( total ); };

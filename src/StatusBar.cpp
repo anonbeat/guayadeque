@@ -30,11 +30,12 @@ BEGIN_EVENT_TABLE(guGauge, wxControl)
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
-guGauge::guGauge( wxWindow * parent, const wxString &label, wxWindowID id, unsigned int max,
-                  const wxPoint &pos, const wxSize &size, long style ) :
+guGauge::guGauge( wxWindow * parent, const wxString &label, bool showporcent,
+            wxWindowID id, unsigned int max, const wxPoint &pos, const wxSize &size, long style ) :
          wxControl( parent, id, pos, size, style )
 {
     m_LastValue = wxNOT_FOUND;
+    m_ShowPorcent = showporcent;
     //m_Value     = 0;
     //m_Range     = max;
     m_Label     = label;
@@ -70,15 +71,23 @@ void guGauge::OnPaint( wxPaintEvent &event )
     dc.DrawRectangle( 1, 1, s.x, s.y );
 
     dc.SetTextForeground( m_FgColor1 );
-    wxString LabelStr = m_Label + wxString::Format( wxT( " %u%%" ), ( ( m_Value * 100 ) / s.x ) );
+    wxString LabelStr;
+    if( m_ShowPorcent )
+    {
+        LabelStr = m_Label + wxString::Format( wxT( " %u%%" ), ( ( m_Value * 100 ) / s.x ) );
+    }
+    else
+    {
+        LabelStr = m_Label + wxString::Format( wxT( " %i / %i" ), m_Value, m_Range );
+    }
     dc.DrawText( LabelStr, 4, 2 );
 
-    if( m_Value )
+    if( m_PaintWidth )
     {
         wxRect rect;
         rect.x = 1;
         rect.y = 1;
-        rect.width = m_Value;
+        rect.width = m_PaintWidth;
         rect.height = s.y;
 
         wxDCClipper clip( dc, rect );
@@ -96,10 +105,11 @@ void guGauge::OnPaint( wxPaintEvent &event )
 bool guGauge::SetValue( int value )
 {
     //guLogMessage( wxT( "Value: %u (%f) of %u -> %u%%" ), value, m_LastValue, m_Range, (value * 100) / m_Range );
-    m_Value = value * m_Factor;
-    if( m_Value != m_LastValue )
+    m_Value = value;
+    m_PaintWidth = value * m_Factor;
+    if( m_LastValue != m_PaintWidth )
     {
-        m_LastValue = m_Value;
+        m_LastValue = m_PaintWidth;
         Refresh();
         Update();
     }
@@ -218,9 +228,9 @@ void guStatusBar::UpdateGauges( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guStatusBar::AddGauge( const wxString &text )
+int guStatusBar::AddGauge( const wxString &text, bool showporcent )
 {
-    m_Gauges.Add( new guGauge( this, text ) );
+    m_Gauges.Add( new guGauge( this, text, showporcent ) );
     SetSizes( GetFieldsCount() + 1 );
 
     UpdateGauges();
