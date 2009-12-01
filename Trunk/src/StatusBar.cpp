@@ -74,7 +74,7 @@ void guGauge::OnPaint( wxPaintEvent &event )
     wxString LabelStr;
     if( m_ShowPorcent )
     {
-        LabelStr = m_Label + wxString::Format( wxT( " %u%%" ), ( ( m_Value * 100 ) / s.x ) );
+        LabelStr = m_Label + wxString::Format( wxT( " %u%%" ), ( ( m_PaintWidth * 100 ) / s.x ) );
     }
     else
     {
