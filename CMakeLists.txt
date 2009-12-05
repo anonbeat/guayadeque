@@ -84,7 +84,7 @@ ENDIF( NOT LIBFLAC_LIBRARIES )
 INCLUDE(${wxWidgets_USE_FILE})
 
 #    
-ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
+#ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
  
 # We define the include paths here, our minimal source dir is one, 
 # and also the include dirs defined by wxWidgets
