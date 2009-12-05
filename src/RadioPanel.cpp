@@ -274,7 +274,7 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * db 
     m_StationsOrderDesc = Config->ReadNum( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );;
 
     // Create the Columns
-    int ColId;
+    //int ColId;
     int index;
     int count = sizeof( guRADIOSTATIONS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )

@@ -49,7 +49,7 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
     wxPanel *           PicturePanel;
     wxPanel *           MBrainzPanel;
     wxStaticText *      MBAlbumStaticText;
-    wxStaticText *      MBAlbumDetailStaticText;
+    //wxStaticText *      MBAlbumDetailStaticText;
     wxStaticLine *      MBrainzStaticLine;
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -632,7 +632,7 @@ void guTrackEditor::ReadItemData( void )
         }
 
         m_MoveUpButton->Enable( m_CurItem > 0 );
-        m_MoveDownButton->Enable( m_CurItem < ( m_Items->Count() - 1 ) );
+        m_MoveDownButton->Enable( m_CurItem < ( int ) ( m_Items->Count() - 1 ) );
     }
     else
     {
@@ -960,7 +960,7 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
         delete MusicBrainz;
         delete Releases;
     }
-    else if( m_MBrainzCurTrack < m_Items->Count() )
+    else if( m_MBrainzCurTrack < ( int ) m_Items->Count() )
     {
         wxSetCursor( * wxHOURGLASS_CURSOR );
         m_MBrainzAddButton->Enable( false );
@@ -1045,7 +1045,7 @@ void guTrackEditor::UpdateMBrainzTrackInfo( void )
     if( m_MBrainzCurAlbum >= 0 && m_CurItem >= 0 )
     {
         guMBTrackArray * MBTracks = &m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_Tracks;
-        if( m_CurItem < MBTracks->Count() )
+        if( m_CurItem < ( int ) MBTracks->Count() )
         {
             guMBTrack * MBTrack = &MBTracks->Item( m_CurItem );
             guTrack * Track = &m_Items->Item( m_CurItem );
@@ -1213,7 +1213,7 @@ void guTrackEditor::OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event )
     for( Index = 0; Index < Count; Index++ )
     {
         guTrack * Track = &m_Items->Item( Index );
-        guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        //guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
         Track->m_AlbumName = MBRelease->m_Title;
     }
     // Refresh the Details Window
@@ -1231,7 +1231,7 @@ void guTrackEditor::OnMBrainzDateCopyButtonClicked( wxCommandEvent& event )
     for( Index = 0; Index < Count; Index++ )
     {
         guTrack * Track = &m_Items->Item( Index );
-        guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        //guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
         if( m_MBrainzDateChoice->GetCount() )
         {
             wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_ADVANCED );

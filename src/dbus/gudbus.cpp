@@ -545,6 +545,7 @@ guDBusThread::ExitCode guDBusThread::Entry()
         dbus_connection_read_write_dispatch( m_DBusOwner->GetConnection(), 0 );
         Sleep( guDBUS_THREAD_IDLE_TIMEOUT );
     }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //

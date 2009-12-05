@@ -54,7 +54,7 @@ int guBase64Encode( const char * src, const size_t srclen, char * dst, const siz
     unsigned int Temp;
     const unsigned char * pData = ( unsigned char * ) src;
     int OutPos = 0;
-    for( Index = 0; Index < srclen / 3; Index++ )
+    for( Index = 0; Index < ( int ) srclen / 3; Index++ )
     {
         Temp  = ( * pData++ ) << 16;
         Temp |= ( ( * pData++ ) <<  8 );

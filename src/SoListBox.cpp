@@ -93,7 +93,7 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
 guSoListBox::~guSoListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    int ColId;
+    //int ColId;
     int index;
     int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )

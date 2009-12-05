@@ -123,10 +123,10 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
                 m_TrackFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
               }
               else if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) &&
-                  LowerFileName.EndsWith( wxT( ".jpg" ) ) ||
-                  LowerFileName.EndsWith( wxT( ".png" ) ) ||
-                  LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
-                  LowerFileName.EndsWith( wxT( ".gif" ) ) )
+                  ( LowerFileName.EndsWith( wxT( ".jpg" ) ) ||
+                    LowerFileName.EndsWith( wxT( ".png" ) ) ||
+                    LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
+                    LowerFileName.EndsWith( wxT( ".gif" ) ) ) )
               {
                 m_ImageFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
               }

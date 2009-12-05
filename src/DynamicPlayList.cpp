@@ -148,7 +148,6 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_FiltersListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_FiltersListBox->SetMinSize( wxSize( -1,80 ) );
 
-	index;
 	count = m_Filters->Count();
 	//guLogMessage( wxT( "Found %u filters" ), count );
 	for( index = 0; index < count; index++ )

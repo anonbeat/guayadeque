@@ -301,6 +301,7 @@ void guLastFMInfoCtrl::OnEnqueueClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 int guLastFMInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 {
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -566,6 +567,7 @@ int guArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
         Selections.Add( m_Info->m_ArtistId );
         return m_Db->GetArtistsSongs( Selections, tracks );
     }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -698,7 +700,7 @@ int guAlbumInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
         Selections.Add( m_Info->m_AlbumId );
         return m_Db->GetAlbumsSongs( Selections, tracks );
     }
-
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -845,6 +847,7 @@ int guSimilarArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
         Selections.Add( m_Info->m_ArtistId );
         return m_Db->GetArtistsSongs( Selections, tracks );
     }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -980,6 +983,7 @@ int guTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
         Selections.Add( m_Info->m_TrackId );
         return m_Db->GetSongs( Selections, tracks );
     }
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //

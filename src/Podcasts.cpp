@@ -429,8 +429,8 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
             XmlNode->GetPropVal( wxT( "length" ), &LenStr );
             LenStr.ToULong( ( unsigned long * ) &m_FileSize );
         }
-        else if( m_Summary.IsEmpty() && ( XmlNode->GetName() == wxT( "itunes:summary" ) ) ||
-                 ( XmlNode->GetName() == wxT( "description" ) ) )
+        else if( m_Summary.IsEmpty() && ( ( XmlNode->GetName() == wxT( "itunes:summary" ) ) ||
+                 ( XmlNode->GetName() == wxT( "description" ) ) ) )
         {
             m_Summary= XmlNode->GetNodeContent();
         }
@@ -662,7 +662,7 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
         else
         {
             Lock();
-            if( ( m_CurPos == m_Items.Count() ) )
+            if( ( m_CurPos == ( int ) m_Items.Count() ) )
             {
                 if( m_CurPos )
                 {

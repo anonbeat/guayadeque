@@ -1384,7 +1384,7 @@ void guListViewColEdit::OnColumnSelected( wxCommandEvent &event )
     if( m_SelItem != wxNOT_FOUND )
     {
         m_UpBitmapBtn->Enable( m_SelItem > 0 );
-        m_DownBitmapBtn->Enable( m_SelItem < ( m_ItemsData.Count() - 1 ) );
+        m_DownBitmapBtn->Enable( m_SelItem < ( int ) ( m_ItemsData.Count() - 1 ) );
     }
     else
     {

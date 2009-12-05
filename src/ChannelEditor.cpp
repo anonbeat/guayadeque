@@ -23,6 +23,8 @@
 #include "Config.h"
 #include "Commands.h"
 #include "Images.h"
+#include "Utils.h"
+
 #include <wx/curl/http.h>
 
 #include <wx/filename.h>
@@ -88,6 +90,10 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
             if( !channel->m_Image.IsEmpty() )
             {
                 guChannelUpdateImageThread * UpdateImageThread = new guChannelUpdateImageThread( this, channel->m_Image.c_str() );
+                if( !UpdateImageThread )
+                {
+                    guLogError( wxT( "Could not create the Channel Image Thread" ) );
+                }
             }
         }
     }

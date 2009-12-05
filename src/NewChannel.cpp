@@ -206,12 +206,12 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannels( wxXmlNode * XmlNode )
     wxASSERT( XmlNode );
     wxASSERT( podcastarray );
 
-    guNewPodcastCategory * NewPodcastChannel;
+    guNewPodcastCategory * NewPodcastChannel = NULL;
 
     while( XmlNode && XmlNode->GetName() == wxT( "outline" ) )
     {
-        if( !NewPodcastChannel )
-            return 0;
+//        if( !NewPodcastChannel )
+//            return 0;
         if( m_Filters.Count() )
         {
             if( !m_NewPodcasts.Count() )
@@ -226,6 +226,8 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannels( wxXmlNode * XmlNode )
             NewPodcastChannel =  new guNewPodcastCategory();
             XmlNode->GetPropVal( wxT( "text" ), &NewPodcastChannel->m_Name );
         }
+        if( !NewPodcastChannel )
+            return 0;
         if( ReadNewPodcastChannel( XmlNode->GetChildren(), NewPodcastChannel ) )
         {
             if( !m_Filters.Count() )

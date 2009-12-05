@@ -64,7 +64,7 @@ wxString guListBox::OnGetItemText( const int row, const int col ) const
 void guListBox::ReloadItems( bool reset )
 {
     wxArrayInt Selection;
-    int FirstVisible; // = GetFirstVisibleLine();
+    int FirstVisible = 0; // = GetFirstVisibleLine();
 
     if( reset )
     {

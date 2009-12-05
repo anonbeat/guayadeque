@@ -46,7 +46,7 @@ DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage *
     wxASSERT( msg );
 
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
-    const char *    Interface = msg->GetInterface();
+    //const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();

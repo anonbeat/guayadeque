@@ -904,7 +904,6 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, DbLibrary * db ) :
 guPodcastListBox::~guPodcastListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    int ColId;
     int index;
     int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
     for( index = 0; index < count; index++ )
@@ -1013,7 +1012,7 @@ void guPodcastListBox::ReloadItems( bool reset )
 
     //
     wxArrayInt Selection;
-    int FirstVisible;
+    int FirstVisible = 0;
 
     if( reset )
     {

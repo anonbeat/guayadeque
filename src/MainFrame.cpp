@@ -945,6 +945,10 @@ void guMainFrame::UpdatePodcasts( void )
             //guLogMessage( wxT( "Starting UpdatePodcastsThread Process..." ) );
             int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Podcasts" ) );
             guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db, this, GaugeId );
+            if( !UpdatePodcastThread )
+            {
+                guLogError( wxT( "Could not create the Update Podcasts thread" ) );
+            }
 
             Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "Podcasts" ) );
         }
@@ -1276,7 +1280,7 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
         event.SetExtraLong( PodcastChannels.Count() );
         wxPostEvent( m_MainFrame, event );
 
-        int Index = 0;
+        unsigned int Index = 0;
         while( !TestDestroy() && Index < PodcastChannels.Count() )
         {
             event.SetId( ID_GAUGE_UPDATE );
