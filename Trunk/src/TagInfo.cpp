@@ -862,11 +862,13 @@ bool guMp4TagInfo::Read( void )
         //guLogMessage( wxT( "Track %i    BitRate %i    Length %i" ), m_Track, m_Bitrate, m_Length );
 
         MP4Close( mp4_file );
+        return true;
     }
     else
     {
         guLogError( wxT( "Read : could not open the file %s" ), m_FileName.c_str() );
     }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //

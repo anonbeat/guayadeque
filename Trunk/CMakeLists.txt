@@ -85,6 +85,7 @@ INCLUDE(${wxWidgets_USE_FILE})
 
 #    
 #ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
+ADD_DEFINITIONS( -Wall -O2 )
  
 # We define the include paths here, our minimal source dir is one, 
 # and also the include dirs defined by wxWidgets

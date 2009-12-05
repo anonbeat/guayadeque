@@ -842,7 +842,7 @@ int DbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverhas
 void DbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash )
 {
   wxString query;
-  int CoverId = 0;
+  //int CoverId = 0;
   wxString CoverFile;
 
   // Create the Thumb image
@@ -1397,7 +1397,7 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
   guTrack * Song;
   int index;
   int count = Songs->Count();
-  guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+  //guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
 
   // Process each Track
   for( index = 0; index < count; index++ )
@@ -2942,7 +2942,7 @@ int DbLibrary::GetRandomTracks( guTrackArray * Tracks )
   wxString              query;
   wxSQLite3ResultSet    dbRes;
   guTrack *             Track;
-  int                   TrackCnt;
+  int                   TrackCnt = 0;
 
   query = wxT( "SELECT COUNT(*) FROM songs" );
   dbRes = ExecuteQuery( query );
@@ -3195,7 +3195,6 @@ wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
     case guTRACKS_ORDER_GENRE :
       query += wxT( ",genres WHERE song_genreid = genre_id " );
       break;
-
 //    case guTRACKS_ORDER_TITLE :
 //    case guTRACKS_ORDER_NUMBER :
 //    case guTRACKS_ORDER_LENGTH :
@@ -3206,6 +3205,8 @@ wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
 //    case guTRACKS_ORDER_LASTPLAY :
 //    case guTRACKS_ORDER_ADDEDDATE :
 //      break;
+    default:
+        break;
   }
   return query;
 }
@@ -3278,6 +3279,9 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
 
     case guTRACKS_ORDER_ALBUM :
       query += wxT( ",album_id,song_number;" );
+      break;
+
+    default:
       break;
 
   }
@@ -3966,8 +3970,6 @@ void DbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
   }
   else
   {
-//    query = wxT( "SELECT DISTINCT radiogenre_id, radiogenre_name FROM radiogenres, radiostations " ) \
-//            wxT( "WHERE radiogenre_id = radiostation_genreid AND " ) + RadioFiltersSQL() + wxT( " ORDER BY radiogenre_name;" );
     query = wxT( "SELECT DISTINCT radiogenre_id, radiogenre_name FROM radiogenres, radiostations " ) \
             wxT( "WHERE radiogenre_id = radiostation_genreid " );
     if( m_RaTeFilters.Count() )
@@ -4629,6 +4631,7 @@ int DbLibrary::SavePodcastChannels( guPodcastChannelArray * channels, bool onlyn
     {
         SavePodcastChannel( &channels->Item( Index ), onlynew );
     }
+    return 1;
 }
 
 // -------------------------------------------------------------------------------- //

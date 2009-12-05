@@ -344,7 +344,7 @@ void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
     if( ( int ) m_DragOverItem != wxNOT_FOUND )
     {
         //m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
-        m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * m_ItemHeight ) - ( m_ItemHeight / 2 ) ) );
+        m_DragOverAfter = ( wherey > ( int ) ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * m_ItemHeight ) - ( m_ItemHeight / 2 ) ) );
         RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetCount() ) );
     }
     int Width;
@@ -352,7 +352,7 @@ void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
     GetSize( &Width, &Height );
     Height -= h;
 
-    if( ( wherey > ( Height - 10 ) ) && GetLastVisibleLine() != GetCount() )
+    if( ( wherey > ( Height - 10 ) ) && ( int ) GetLastVisibleLine() != GetCount() )
     {
         ScrollLines( 1 );
     }
@@ -498,7 +498,7 @@ void guPlayList::DrawBackground( wxDC &dc, const wxRect &rect, const int row, co
 {
     wxRect LineRect;
 
-    if( row == m_DragOverItem )
+    if( row == ( int ) m_DragOverItem )
       dc.SetBrush( m_Attr.m_DragBgColor );
     //else if( n == ( size_t ) GetSelection() )
     else if( IsSelected( row ) )
@@ -511,7 +511,7 @@ void guPlayList::DrawBackground( wxDC &dc, const wxRect &rect, const int row, co
     dc.SetPen( * wxTRANSPARENT_PEN );
     dc.DrawRectangle( rect );
 
-    if( row == m_DragOverItem )
+    if( row == ( int ) m_DragOverItem )
     {
         LineRect = rect;
         if( m_DragOverAfter )
@@ -531,6 +531,7 @@ long guPlayList::GetCount()
 // -------------------------------------------------------------------------------- //
 wxString guPlayList::OnGetItemText( const int row, const int col ) const
 {
+    return wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1107,7 +1108,7 @@ int guPlayList::GetCaps()
     int Caps = MPRIS_CAPS_NONE;
     if( m_Items.Count() )
     {
-        if( m_CurItem < m_Items.Count() )
+        if( m_CurItem < ( int ) m_Items.Count() )
             Caps |= MPRIS_CAPS_CAN_GO_NEXT;
         if( m_CurItem > 0 )
             Caps |= MPRIS_CAPS_CAN_GO_PREV;
@@ -1157,7 +1158,7 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
 
                 if( !CoverPath.IsEmpty() )
                 {
-                    CurCmd.Replace( wxT( "{bc}" ), wxT( "\"" ) + CoverPath ) + wxT( "\"" );
+                    CurCmd.Replace( wxT( "{bc}" ), wxT( "\"" ) + CoverPath + wxT( "\"" ) );
                 }
             }
 

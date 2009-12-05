@@ -515,6 +515,10 @@ guFetchCoverLinksThread::ExitCode guFetchCoverLinksThread::Entry()
                 {
                     guDownloadCoverThread * DownloadThread = new guDownloadCoverThread( m_CoverEditor,
                                               &m_CoverLinks[ m_LastDownload ] );
+                    if( !DownloadThread )
+                    {
+                        guLogError( wxT( "Could not create the download covers thread" ) );
+                    }
                 }
                 m_CoverEditor->m_DownloadThreadMutex.Unlock();
                 m_LastDownload++;

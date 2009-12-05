@@ -463,11 +463,13 @@ bool guMusicDns::DoGetMetadata( void )
     if( http.Post( wxCURL_STRING2BUF( HtmlData ), HtmlData.Length(), wxT( guMUSICDNS_BASEURL ) ) )
     {
         SetXmlDoc( http.GetResponseBody() );
+        return true;
     }
     else
     {
         m_Status = guMDNS_STATUS_ERROR_HTTP;
     }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -517,10 +519,11 @@ bool guMusicDns::DoParseXmlDoc( void )
     wxXmlNode * XmlNode = XmlDoc.GetRoot();
     if( XmlNode && ( XmlNode->GetName() == wxT( "metadata" ) ) )
     {
-        ReadTrackInfo( XmlNode->GetChildren() );
+        return ReadTrackInfo( XmlNode->GetChildren() );
     }
     else
         m_Status = guMDNS_STATUS_ERROR_XMLERROR;
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //

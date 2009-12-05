@@ -123,6 +123,7 @@ static void WriteLittleEndianUint32( char * cp, wxUint32 i )
     cp[ 3 ] = i & 0xff;
 }
 
+// -------------------------------------------------------------------------------- //
 int guCompareApeItems( guApeItem * item1, guApeItem * item2 )
 {
     return item1->Key() > item2->Key();
@@ -431,7 +432,7 @@ void guApeFile::WriteApeItems( void )
 
         //guLogMessage( wxT( "writing item %u at %08X" ), index, m_File->Tell() );
 
-        int KeyLen = ApeItem->m_Key.size();
+        //int KeyLen = ApeItem->m_Key.size();
 
 
         int ValueLen = strlen( ValueBuf );
@@ -626,7 +627,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
     wxString Value;
     wxString Key;
     int index;
-    for( index = 0; index < ApeFooter.m_Items; index++ )
+    for( index = 0; index < ( int ) ApeFooter.m_Items; index++ )
     {
         const wxUint32 ValueLen = ReadLittleEndianUint32( CurBufPos );
         CurBufPos += sizeof( ValueLen );

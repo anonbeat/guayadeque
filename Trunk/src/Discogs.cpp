@@ -282,6 +282,7 @@ bool guDiscogs::GetArtist( const wxString &name, guDiscogsArtist * artist )
 // -------------------------------------------------------------------------------- //
 bool guDiscogs::GetReleaseImages( const int id, guDiscogsRelease * release )
 {
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -379,7 +380,7 @@ int guDiscogsCoverFetcher::AddCoverLinks( int pagenum )
     guDiscogsArtist Artist;
     Discogs.GetArtist( m_Artist, &Artist );
     int Index;
-    int Count = wxMin( Artist.m_Releases.Count(), ( pagenum + 1 ) * guDISCOGS_REQUEST_ITEMS );
+    int Count = wxMin( (int) Artist.m_Releases.Count(), ( pagenum + 1 ) * guDISCOGS_REQUEST_ITEMS );
     int CheckCount = 0;
 
     //guLogMessage( wxT( "Reading %s %i Releases..." ), m_Artist.c_str(), Count );

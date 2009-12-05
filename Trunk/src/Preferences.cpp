@@ -504,7 +504,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	m_LinksListBox->Append( SearchLinks );
 	m_LinksNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "SearchLinks" ) );
     int count = m_LinksListBox->GetCount();
-	while( m_LinksNames.Count() < count )
+	while( ( int ) m_LinksNames.Count() < count )
         m_LinksNames.Add( wxEmptyString );
     int index;
     for( index = 0; index < count; index++ )
@@ -616,7 +616,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
 	m_CmdListBox->Append( Commands );
 	m_CmdNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
     count = m_CmdListBox->GetCount();
-	while( m_CmdNames.Count() < count )
+	while( ( int ) m_CmdNames.Count() < count )
         m_CmdNames.Add( wxEmptyString );
     for( index = 0; index < count; index++ )
     {
