@@ -126,9 +126,23 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
     m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
 	BehaviSizer->Add( m_RndPlayChkBox, 0, wxALL, 5 );
 
-	m_AlYearOrderChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Albums ordered by Year. Default is by Name"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_AlYearOrderChkBox->SetValue( m_Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) ) );
-	BehaviSizer->Add( m_AlYearOrderChkBox, 0, wxALL, 5 );
+//	m_AlYearOrderChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Albums ordered by Year. Default is by Name"), wxDefaultPosition, wxDefaultSize, 0 );
+//	m_AlYearOrderChkBox->SetValue( m_Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) ) );
+//	BehaviSizer->Add( m_AlYearOrderChkBox, 0, wxALL, 5 );
+	wxBoxSizer * YearOrderSizer;
+	YearOrderSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * YearOrderText = new wxStaticText( m_GenPanel, wxID_ANY, _( "Order Albums  by" ), wxDefaultPosition, wxDefaultSize, 0 );
+	YearOrderText->Wrap( -1 );
+	YearOrderSizer->Add( YearOrderText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+
+	wxString m_AlbumOrderChoiceChoices[] = { _("Name"), _("Year"), _("Year Desc.") };
+	int m_AlbumOrderChoiceNChoices = sizeof( m_AlbumOrderChoiceChoices ) / sizeof( wxString );
+	m_AlYearOrderChoice = new wxChoice( m_GenPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_AlbumOrderChoiceNChoices, m_AlbumOrderChoiceChoices, 0 );
+	m_AlYearOrderChoice->SetSelection( m_Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) ) );
+	YearOrderSizer->Add( m_AlYearOrderChoice, 0, wxRIGHT, 5 );
+
+	BehaviSizer->Add( YearOrderSizer, 1, wxEXPAND, 5 );
 
 	GenMainSizer->Add( BehaviSizer, 0, wxEXPAND|wxALL, 5 );
 
@@ -852,7 +866,7 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "RndTrackOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChoice->GetSelection(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "SavePlayListOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "SaveCurrentTrackPos" ), m_SavePosCheckBox->GetValue(), wxT( "General" ) );
     m_Config->WriteNum( wxT( "MinSavePlayPosLength" ), m_MinLenSpinCtrl->GetValue(), wxT( "General" ) );

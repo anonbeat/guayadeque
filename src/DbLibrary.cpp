@@ -277,7 +277,7 @@ DbLibrary::DbLibrary()
   {
     m_TracksOrder = ( guTRACKS_ORDER ) Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
-    m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
+    m_AlbumsOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
     m_StationsOrderDesc = Config->ReadBool( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );
     m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
@@ -318,7 +318,7 @@ DbLibrary::DbLibrary( const wxString &DbName )
   {
     m_TracksOrder = ( guTRACKS_ORDER ) Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
-    m_AlOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
+    m_AlbumsOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
     m_StationsOrderDesc = Config->ReadBool( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );
     m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
@@ -2101,14 +2101,21 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
         query += wxT( "AND " ) + FiltersSQL( GULIBRARY_FILTER_ALBUMS );
       }
       query += wxT( " ORDER BY " );
-      if( m_AlOrder == ALBUMS_ORDER_YEAR )
+      if( m_AlbumsOrder == ALBUMS_ORDER_NAME )
       {
-        query += wxT( "song_year," );
+        query += wxT( "album_name " );
       }
-      query += wxT( "album_name;" );
+      else if( m_AlbumsOrder == ALBUMS_ORDER_YEAR )
+      {
+        query += wxT( "song_year, album_name" );
+      }
+      else //if( m_AlbumsOrder == ALBUMS_ORDER_YEAR_REVERSE )
+      {
+        query += wxT( "song_year DESC" );
+      }
   }
 
-//  guLogMessage( query );
+  //guLogMessage( query );
 
   dbRes = ExecuteQuery( query );
 

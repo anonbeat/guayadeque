@@ -203,8 +203,9 @@ enum guTRACKS_ORDER {
 #define guRADIOSTATIONS_ORDER_BITRATE     1
 #define guRADIOSTATIONS_ORDER_LISTENERS   2
 
-#define ALBUMS_ORDER_NAME   0
-#define ALBUMS_ORDER_YEAR   1
+#define ALBUMS_ORDER_NAME           0
+#define ALBUMS_ORDER_YEAR           1
+#define ALBUMS_ORDER_YEAR_REVERSE   2
 
 // -------------------------------------------------------------------------------- //
 class guAS_SubmitInfo //guAudioScrobbler_SubmitInfo
@@ -272,7 +273,7 @@ class DbLibrary {
     bool               m_TracksOrderDesc;
     int                m_StationsOrder; // 0 -> Name, 1 -> BitRate, 2 -> Listeners
     bool               m_StationsOrderDesc;
-    int                m_AlOrder; // 0 ->
+    int                m_AlbumsOrder;   // 0 ->
 
 //    guListItems         Labels;
     guListItems         m_GenresCache;
