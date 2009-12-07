@@ -1,4 +1,6 @@
 
+
+  * Fixed bug with cmake 2.8.0
   * Added posibility in progressbar to show counters instead of percent
 
 2009-11-27 0.2.1
