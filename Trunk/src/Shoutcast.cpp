@@ -181,6 +181,7 @@ void guShoutCast::GetStations( const wxString &GenreName, const int GenreId, guR
                                 //Value.ToLong( &RadioStation->m_BitRate );
                                 RadioStation->m_BitRate = BitRate;
                                 RadioStation->m_GenreId = GenreId;
+                                RadioStation->m_IsUser = false;
                                 XmlNode->GetPropVal( wxT( "lc" ), &Value );
                                 Value.ToLong( &RadioStation->m_Listeners );
 

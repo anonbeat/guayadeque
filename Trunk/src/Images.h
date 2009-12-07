@@ -90,7 +90,9 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_status_pending,
     guIMAGE_INDEX_tiny_status_error,
     guIMAGE_INDEX_tiny_doc_save,
-    guIMAGE_INDEX_tiny_reload
+    guIMAGE_INDEX_tiny_reload,
+    guIMAGE_INDEX_tiny_shoutcast,
+    guIMAGE_INDEX_tiny_net_radio
 };
 
 

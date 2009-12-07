@@ -42,7 +42,7 @@
 #include "PlayerPanel.h"
 #include "ItemListBox.h"
 
-class guRadioGenreListBox;
+class guRadioGenreTreeCtrl;
 class guRadioStationListBox;
 class guRadioLabelListBox;
 
@@ -58,7 +58,7 @@ class guRadioPanel : public wxPanel
       void OnRadioUpdateEnd( wxCommandEvent &event );
 	  void OnRadioUpdate( wxCommandEvent &Event );
 	  void OnRadioUpdated( wxCommandEvent &Event );
-	  void OnRadioGenreListSelected( wxListEvent &Event );
+	  void OnRadioGenreListSelected( wxTreeEvent &Event );
       void OnStationListActivated( wxListEvent &event );
       void OnStationListBoxColClick( wxListEvent &event );
       void OnStationsEditLabelsClicked( wxCommandEvent &event );
@@ -79,7 +79,7 @@ class guRadioPanel : public wxPanel
 		wxTextCtrl*             m_InputTextCtrl;
 		wxStaticBitmap*         m_InputTextClearBitmap;
 		wxSplitterWindow*       m_GenreSplitter;
-		guRadioGenreListBox *   m_GenresListBox;
+		guRadioGenreTreeCtrl *  m_GenresTreeCtrl;
 		guRadioLabelListBox *   m_LabelsListBox;
 		guRadioStationListBox * m_StationsListBox;
 		wxSplitterWindow *      m_StationsSplitter;

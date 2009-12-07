@@ -89,6 +89,8 @@
 #include "./images/tiny_status_error.h"
 #include "./images/tiny_doc_save.h"
 #include "./images/tiny_reload.h"
+#include "./images/tiny_shoutcast.h"
+#include "./images/tiny_net_radio.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -154,7 +156,7 @@ guImage_Item guImage_Items[] = {
     { guImage_track,                sizeof( guImage_track ),                wxBITMAP_TYPE_PNG },
     { guImage_tiny_search,          sizeof( guImage_tiny_search ),          wxBITMAP_TYPE_PNG },
     { guImage_search_engine,	    sizeof( guImage_search_engine ),        wxBITMAP_TYPE_PNG },
-    { guImage_musicbrainz,	        sizeof( guImage_musicbrainz ),          wxBITMAP_TYPE_PNG },
+    { guImage_musicbrainz,	    sizeof( guImage_musicbrainz ),          wxBITMAP_TYPE_PNG },
     { guImage_tiny_edit_copy,	    sizeof( guImage_tiny_edit_copy ), 	    wxBITMAP_TYPE_PNG },
     { guImage_tiny_search_again,    sizeof( guImage_tiny_search_again ),    wxBITMAP_TYPE_PNG },
     { guImage_tiny_numerate,	    sizeof( guImage_tiny_numerate ),        wxBITMAP_TYPE_PNG },
@@ -164,7 +166,9 @@ guImage_Item guImage_Items[] = {
     { guImage_tiny_status_pending,  sizeof( guImage_tiny_status_pending ),  wxBITMAP_TYPE_PNG },
     { guImage_tiny_status_error,    sizeof( guImage_tiny_status_error ),    wxBITMAP_TYPE_PNG },
     { guImage_tiny_doc_save,        sizeof( guImage_tiny_doc_save ),        wxBITMAP_TYPE_PNG },
-    { guImage_tiny_reload,          sizeof( guImage_tiny_reload ),          wxBITMAP_TYPE_PNG }
+    { guImage_tiny_reload,          sizeof( guImage_tiny_reload ),          wxBITMAP_TYPE_PNG },
+    { guImage_tiny_shoutcast,       sizeof( guImage_tiny_shoutcast ),       wxBITMAP_TYPE_PNG },
+    { guImage_tiny_net_radio,       sizeof( guImage_tiny_net_radio ),       wxBITMAP_TYPE_JPEG }
 };
 
 

@@ -178,6 +178,7 @@ class guRadioStation
     long        m_Id;
     wxString    m_Name;
     long        m_GenreId;
+    bool        m_IsUser;
     wxString    m_Type;
     long        m_BitRate;
     long        m_Listeners;
@@ -266,6 +267,7 @@ class DbLibrary {
 
     // Radio Filters Options
     wxArrayInt         m_RaGeFilters;
+    bool               m_RadioIsUser;
     wxArrayInt         m_RaLaFilters;
     wxArrayString      m_RaTeFilters;
 
@@ -425,6 +427,7 @@ class DbLibrary {
     void                    SetRaTeFilters( const wxArrayString &filters );
     void                    SetRadioLabelsFilters( const wxArrayInt &filters );
     void                    SetRadioGenresFilters( const wxArrayInt &filters );
+    void                    SetRadioIsUserFilter( bool isuserradio );
     void                    GetRadioGenresList( guListItems * RadioGenres, const wxArrayInt &GenreIds );
     void                    GetRadioGenres( guListItems * RadioGenres, bool AllowFilter = true );
     void                    SetRadioGenres( const wxArrayString &Genres );
