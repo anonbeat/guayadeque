@@ -69,6 +69,10 @@ class guRadioPanel : public wxPanel
 	  void OnRadioStationsEnqueue( wxCommandEvent &event );
 	  void OnSelectStations( bool enqueue = false );
 
+	  void OnRadioUserAdd( wxCommandEvent &event );
+	  void OnRadioUserEdit( wxCommandEvent &event );
+	  void OnRadioUserDel( wxCommandEvent &event );
+
       void GenreSplitterOnIdle( wxIdleEvent& );
       void StationsSplitterOnIdle( wxIdleEvent& );
 

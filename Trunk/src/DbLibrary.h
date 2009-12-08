@@ -175,8 +175,10 @@ WX_DECLARE_OBJARRAY(guAlbumItem,guAlbumItems);
 class guRadioStation
 {
   public :
-    long        m_Id;
+    int         m_Id;
+    long        m_SCId;
     wxString    m_Name;
+    wxString    m_Link;
     long        m_GenreId;
     bool        m_IsUser;
     wxString    m_Type;
@@ -432,10 +434,13 @@ class DbLibrary {
     void                    GetRadioGenres( guListItems * RadioGenres, bool AllowFilter = true );
     void                    SetRadioGenres( const wxArrayString &Genres );
     int                     GetRadioStations( guRadioStations * RadioStations );
-    void                    SetRadioStations( const guRadioStations &RadioStations );
+    void                    SetRadioStation( const guRadioStation * RadioStation );
+    bool                    GetRadioStation( const int id, guRadioStation * radiostation );
+    void                    SetRadioStations( const guRadioStations * RadioStations );
     guArrayListItems        GetStationsLabels( const wxArrayInt &Stations );
     void                    SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels );
     int                     DelRadioStations( const wxArrayInt &RadioGenresIds );
+    int                     DelRadioStation( const int radioid );
     void                    SetRadioStationsOrder( int OrderValue );
 
     int                     AddRadioGenre( wxString GenreName );
