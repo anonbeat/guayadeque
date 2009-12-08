@@ -74,7 +74,6 @@
 //    To tune into a station, find the id="" attribute in the xml and call
 //    http://yp.shoutcast.com/sbin/tunein-station.pls?id=1025
 //
-
 #include "Shoutcast.h"
 
 #include "Utils.h"
@@ -173,10 +172,12 @@ void guShoutCast::GetStations( const wxString &GenreName, const int GenreId, guR
                             guRadioStation * RadioStation = new guRadioStation();
                             if( RadioStation )
                             {
+                                RadioStation->m_Id = wxNOT_FOUND;
                                 XmlNode->GetPropVal( wxT( "name" ), &RadioStation->m_Name );
+                                RadioStation->m_Name.Replace( wxT( " - [SHOUTcast.com]" ), wxT( "" ) );
                                 XmlNode->GetPropVal( wxT( "mt" ), &RadioStation->m_Type );
                                 XmlNode->GetPropVal( wxT( "id" ), &Value );
-                                Value.ToLong( &RadioStation->m_Id );
+                                Value.ToLong( &RadioStation->m_SCId );
                                 //XmlNode->GetPropVal( wxT( "br" ), &Value );
                                 //Value.ToLong( &RadioStation->m_BitRate );
                                 RadioStation->m_BitRate = BitRate;
@@ -202,7 +203,7 @@ void guShoutCast::GetStations( const wxString &GenreName, const int GenreId, guR
 }
 
 // -------------------------------------------------------------------------------- //
-guStationPlayLists guShoutCast::GetStationPlayList( int StationId ) const
+guStationPlayLists guShoutCast::GetStationPlayList( const int StationId ) const
 {
     wxString            Content;
     guStationPlayLists  RetVal;
@@ -246,6 +247,81 @@ guStationPlayLists guShoutCast::GetStationPlayList( int StationId ) const
 
                                 Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Url );
                                 Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
+                                if( NewStation->m_Name.IsEmpty() )
+                                    NewStation->m_Name = NewStation->m_Url;
+                                RetVal.Add( NewStation );
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    guLogError( wxT( "ee: Station Playlist without 'playlist' group" ) );
+                }
+                delete Config;
+            }
+            else
+              guLogError( wxT( "ee: Station Playlist empty" ) );
+        }
+        else
+        {
+            guLogError( wxT( "Retrieving station playlist empty response" ) );
+        }
+    }
+    else
+    {
+        guLogError( wxT( "No response from server retrieving the station playlist." ) );
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+guStationPlayLists guShoutCast::GetStationPlayList( const wxString &stationurl ) const
+{
+    wxString            Content;
+    guStationPlayLists  RetVal;
+    guStationPlayList * NewStation;
+    wxFileConfig *      Config;
+    char *              Buffer = NULL;
+    wxCurlHTTP          http;
+    //
+    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "Accept: text/html" ) );
+    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.Get( Buffer, stationurl );
+    if( Buffer )
+    {
+        Content = wxString( Buffer, wxConvUTF8 );
+        free( Buffer );
+        if( Content.Length() )
+        {
+            //guLogMessage( Content );
+            wxStringInputStream ConfigData( Content );
+            Config = new wxFileConfig( ConfigData );
+            if( Config )
+            {
+                if( Config->HasGroup( wxT( "playlist" ) ) )
+                {
+                    Config->SetPath( wxT( "playlist" ) );
+                    int count;
+                    if( Config->Read( wxT( "numberofentries" ), &count ) )
+                    {
+                        if( !count )
+                        {
+                            guLogMessage( wxT( "This station playlist is empty" ) );
+                        }
+                        else
+                        {
+                            for( int index = 1; index <= count; index++ )
+                            {
+                                NewStation = new guStationPlayList();
+
+                                wxASSERT( NewStation );
+
+                                Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Url );
+                                Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
+                                if( NewStation->m_Name.IsEmpty() )
+                                    NewStation->m_Name = NewStation->m_Url;
                                 RetVal.Add( NewStation );
                             }
                         }

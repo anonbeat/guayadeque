@@ -614,7 +614,10 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Techno' );" ) );
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Top 40' );" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER, radiostation_isuser INTEGER, radiostation_genreid INTEGER, radiostation_name VARCHAR(255), radiostation_type VARCHAR(32), radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "radiostation_scid INTEGER, radiostation_isuser INTEGER, radiostation_genreid INTEGER, "
+                      "radiostation_name VARCHAR(255), radiostation_link VARCHAR(255), radiostation_type VARCHAR(32), "
+                      "radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_isuser,radiostation_genreid ASC);" ) );
 
@@ -660,7 +663,10 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
       query.Add( wxT( "DROP INDEX 'radiostation_id';" ) );
       query.Add( wxT( "DROP INDEX 'radiostation_genreid';" ) );
       query.Add( wxT( "DROP TABLE 'radiostations';" ) );
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER, radiostation_isuser INTEGER, radiostation_genreid INTEGER, radiostation_name VARCHAR(255), radiostation_type VARCHAR(32), radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "radiostation_scid INTEGER, radiostation_isuser INTEGER, radiostation_genreid INTEGER, "
+                      "radiostation_name VARCHAR(255), radiostation_link VARCHAR(255), radiostation_type VARCHAR(32), "
+                      "radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_isuser,radiostation_genreid ASC);" ) );
 
@@ -4142,55 +4148,53 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
 
   if( !GetRadioFiltersCount() && !m_RadioIsUser )
   {
-    query = wxT( "SELECT DISTINCT radiostation_id, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
+    query = wxT( "SELECT DISTINCT radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations " );
   }
   else
   {
     //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-    query = wxT( "SELECT DISTINCT radiostation_id, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_type, radiostation_br, radiostation_lc "\
+    query = wxT( "SELECT DISTINCT radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations, radiogenres" );
 
-    if( m_RadioIsUser )
+    //else
+    wxString subquery = wxEmptyString;
+    if( m_RaLaFilters.Count() )
     {
-        query += wxT( " WHERE radiostation_isuser = 1 " );
+        query += wxT( ", radiosetlabels WHERE radiostation_id = radiosetlabel_stationid AND " );
+        subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
     }
     else
     {
-        wxString subquery = wxEmptyString;
-        if( m_RaLaFilters.Count() )
-        {
-            query += wxT( ", radiosetlabels WHERE radiostation_isuser = 0 AND radiostation_id = radiosetlabel_stationid AND " );
-            subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
-        }
-        else
-        {
-            query += wxT( " WHERE radiostation_isuser = 0 " );
-        }
+        query += wxT( " WHERE " );
+    }
 
-        if( m_RaGeFilters.Count() )
-        {
-            //if( !subquery.IsEmpty() )
-            //{
-            //    subquery += wxT( " AND " );
-            //}
-            subquery += wxT( " AND radiostation_genreid = radiogenre_id AND " );
-            subquery += ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
-        }
+    if( !subquery.IsEmpty() )
+        subquery += wxT( " AND " );
+    subquery += wxString::Format( wxT( " radiostation_isuser = %u " ), m_RadioIsUser );
 
-        if( m_RaTeFilters.Count() )
-        {
-            //if( !subquery.IsEmpty() )
-            {
-                subquery += wxT( " AND " );
-            }
-            subquery += RadioFiltersSQL();
-        }
+    if( m_RaGeFilters.Count() )
+    {
+        //if( !subquery.IsEmpty() )
+        //{
+        //    subquery += wxT( " AND " );
+        //}
+        subquery += wxT( " AND radiostation_genreid = radiogenre_id AND " );
+        subquery += ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
+    }
 
-        if( !subquery.IsEmpty() )
-        {
-            query = query + subquery;
-        }
+    if( m_RaTeFilters.Count() )
+    {
+        //if( !subquery.IsEmpty() )
+        //{
+            subquery += wxT( " AND " );
+        //}
+        subquery += RadioFiltersSQL();
+    }
+
+    if( !subquery.IsEmpty() )
+    {
+        query = query + subquery;
     }
   }
 
@@ -4213,12 +4217,14 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
   {
     Station = new guRadioStation();
     Station->m_Id         = dbRes.GetInt( 0 );
-    Station->m_IsUser     = dbRes.GetBool( 1 );
-    Station->m_GenreId    = dbRes.GetInt( 2 );
-    Station->m_Name       = dbRes.GetString( 3 );
-    Station->m_Type       = dbRes.GetString( 4 );
-    Station->m_BitRate    = dbRes.GetInt( 5 );
-    Station->m_Listeners  = dbRes.GetInt( 6 );
+    Station->m_SCId       = dbRes.GetInt( 1 );
+    Station->m_IsUser     = dbRes.GetBool( 2 );
+    Station->m_GenreId    = dbRes.GetInt( 3 );
+    Station->m_Name       = dbRes.GetString( 4 );
+    Station->m_Link       = dbRes.GetString( 5 );
+    Station->m_Type       = dbRes.GetString( 6 );
+    Station->m_BitRate    = dbRes.GetInt( 7 );
+    Station->m_Listeners  = dbRes.GetInt( 8 );
     Stations->Add( Station );
   }
   dbRes.Finalize();
@@ -4239,38 +4245,91 @@ int DbLibrary::DelRadioStations( const wxArrayInt &RadioGenresIds )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioStations( const guRadioStations &RadioStations )
+int DbLibrary::DelRadioStation( const int radioid )
+{
+  wxString query;
+  query = wxString::Format( wxT( "DELETE FROM radiostations WHERE radiostation_id = %u" ), radioid );
+  return ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRadioStation( const guRadioStation * radiostation )
+{
+  wxString query;
+
+  if( radiostation->m_Id != wxNOT_FOUND )
+  {
+    query = wxString::Format( wxT( "UPDATE radiostations SET "
+                                   "radiostation_scid = %u, radiostation_isuser = %u, radiostation_genreid = %u, "
+                                   "radiostation_name = '%s', radiostation_link = '%s', radiostation_type = '%s', "
+                                   "radiostation_br = %u, radiostation_lc = %u WHERE radiostation_id = %u;" ),
+                                   radiostation->m_SCId,
+                                   radiostation->m_IsUser,
+                                   radiostation->m_GenreId,
+                                   escape_query_str( radiostation->m_Name ).c_str(),
+                                   escape_query_str( radiostation->m_Link ).c_str(),
+                                   escape_query_str( radiostation->m_Type ).c_str(),
+                                   radiostation->m_BitRate,
+                                   radiostation->m_Listeners,
+                                   radiostation->m_Id );
+  }
+  else
+  {
+    query = wxString::Format( wxT( "INSERT INTO radiostations( radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, "\
+                                   "radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc) "\
+                                   "VALUES( NULL, %u, %u, %u, '%s', '%s', '%s', %u, %u );" ),
+                                   radiostation->m_SCId,
+                                   radiostation->m_IsUser,
+                                   radiostation->m_GenreId,
+                                   escape_query_str( radiostation->m_Name ).c_str(),
+                                   escape_query_str( radiostation->m_Link ).c_str(),
+                                   escape_query_str( radiostation->m_Type ).c_str(),
+                                   radiostation->m_BitRate,
+                                   radiostation->m_Listeners );
+  }
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void DbLibrary::SetRadioStations( const guRadioStations * RadioStations )
+{
+  int index;
+  int count;
+
+  if( ( count = RadioStations->Count() ) )
+  {
+      for( index = 0; index < count; index++ )
+      {
+          SetRadioStation( &RadioStations->Item( index ) );
+      }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+bool DbLibrary::GetRadioStation( const int id, guRadioStation * radiostation )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
-  int index;
-  int count;
-  wxString StationName;
-  wxString StationType;
 
-//  query = wxT( "DELETE FROM radiostations;" );
-//  ExecuteUpdate( query );
+  query = wxT( "SELECT radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+                 "FROM radiostations WHERE " );
+  query += wxString::Format( wxT( "radiostation_id = %u LIMIT 1;" ), id );
 
-  count = RadioStations.Count();
-  for( index = 0; index < count; index++ )
+  dbRes = ExecuteQuery( query );
+  if( dbRes.NextRow() )
   {
-    StationName = RadioStations[ index ].m_Name;
-    escape_query_str( &StationName );
-    StationType = RadioStations[ index ].m_Type;
-    escape_query_str( &StationType );
-    query = wxString::Format( wxT( "INSERT INTO radiostations( radiostation_id, radiostation_isuser, radiostation_genreid, "\
-                                   "radiostation_name, radiostation_type, radiostation_br, radiostation_lc) "\
-                                   "VALUES( %u, %u, %u, '%s', '%s', %u, %u );" ),
-                                   RadioStations[ index ].m_Id,
-                                   RadioStations[ index ].m_IsUser,
-                                   RadioStations[ index ].m_GenreId,
-                                   StationName.c_str(),
-                                   StationType.c_str(),
-                                   RadioStations[ index ].m_BitRate,
-                                   RadioStations[ index ].m_Listeners );
-    ExecuteUpdate( query );
+    radiostation->m_Id         = dbRes.GetInt( 0 );
+    radiostation->m_SCId       = dbRes.GetInt( 1 );
+    radiostation->m_IsUser     = dbRes.GetBool( 2 );
+    radiostation->m_GenreId    = dbRes.GetInt( 3 );
+    radiostation->m_Name       = dbRes.GetString( 4 );
+    radiostation->m_Link       = dbRes.GetString( 5 );
+    radiostation->m_Type       = dbRes.GetString( 6 );
+    radiostation->m_BitRate    = dbRes.GetInt( 7 );
+    radiostation->m_Listeners  = dbRes.GetInt( 8 );
+    return true;
   }
-
+  return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4325,8 +4384,8 @@ void DbLibrary::SetRadioStationsLabels( const wxArrayInt &Stations, const wxArra
   int LaIndex;
   int LaCount;
 
-  query = wxT( "DELETE FROM radiosetlabels " ) \
-          wxT( "WHERE radiosetlabel_stationid IN " ) + ArrayIntToStrList( Stations );
+  query = wxT( "DELETE FROM radiosetlabels "
+               "WHERE radiosetlabel_stationid IN " ) + ArrayIntToStrList( Stations );
 
   ExecuteUpdate( query );
 

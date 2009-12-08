@@ -154,6 +154,7 @@ class guListView : public wxScrolledWindow
 
     int                     GetFirstSelected( unsigned long &cookie ) const;
     int                     GetNextSelected( unsigned long &cookie ) const;
+    int                     GetSelection() const;
     bool                    Select( size_t item, bool select = true );
     void                    SetSelection( int selection );
 

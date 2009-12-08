@@ -374,6 +374,12 @@ int guListView::GetNextSelected( unsigned long &cookie ) const
 }
 
 // -------------------------------------------------------------------------------- //
+int guListView::GetSelection() const
+{
+    return m_ListBox->GetSelection();
+}
+
+// -------------------------------------------------------------------------------- //
 bool guListView::Select( size_t item, bool select )
 {
     return m_ListBox->Select( item, select );
