@@ -41,6 +41,7 @@
 
 #include "PlayerPanel.h"
 #include "ItemListBox.h"
+#include "Shoutcast.h"
 
 class guRadioGenreTreeCtrl;
 class guRadioStationListBox;
@@ -75,6 +76,8 @@ class guRadioPanel : public wxPanel
 
       void GenreSplitterOnIdle( wxIdleEvent& );
       void StationsSplitterOnIdle( wxIdleEvent& );
+
+      guStationPlayLists GetPlayList( const guRadioStation * radiostation );
 
 	protected:
 		wxStaticText*           m_SearchStaticText;

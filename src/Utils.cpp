@@ -291,7 +291,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     wxString RetVal = wxEmptyString;
 
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: text/html" ) );
+    http.AddHeader( wxT( "Accept: */*" ) );
     if( gzipped )
     {
         http.AddHeader( wxT( "Accept Encoding: gzip" ) );
@@ -324,8 +324,8 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
             return wxEmptyString;
 
         wxString ResponseHeaders = http.GetResponseHeader();
-//        guLogMessage( wxT( "Response %u:\n%s\n%s" ),
-//            http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
+        guLogMessage( wxT( "Response %u:\n%s\n%s" ),
+            http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
 
         if( ResponseHeaders.Find( wxT( "Content-Encoding: gzip" ) ) != wxNOT_FOUND )
         {

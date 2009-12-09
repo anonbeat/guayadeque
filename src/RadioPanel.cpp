@@ -27,8 +27,8 @@
 #include "MainFrame.h"
 #include "RadioGenreEditor.h"
 #include "RadioEditor.h"
-#include "Shoutcast.h"
 #include "StatusBar.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 #include <wx/treectrl.h>
@@ -1003,9 +1003,96 @@ void guRadioPanel::OnRadioStationsEnqueue( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::OnSelectStations( bool enqueue )
+guStationPlayLists GetStationM3uPlayList( const guRadioStation * RadioStation )
+{
+    guStationPlayLists PlayList;
+    wxString M3uFile;
+    wxCurlHTTP          http;
+    char *              Buffer = NULL;
+    //
+    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "Accept: */*" ) );
+    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.Get( Buffer, link );
+    if( Buffer )
+    {
+        M3uFile = wxString( Buffer, wxConvUTF8 );
+        free( Buffer );
+        if( !M3uFile.IsEmpty() )
+        {
+            //guLogMessage( wxT( "Content...\n%s" ), M3uFile.c_str() );
+        }
+        else
+        {
+            guLogMessage( wxT( "M3u file content..." ), M3uFile.c_str() );
+        }
+    }
+    return PlayList;
+}
+
+// -------------------------------------------------------------------------------- //
+guStationPlayLists GetStationAsxPlayList( const guRadioStation * RadioStation )
+{
+    guStationPlayLists PlayList;
+    return PlayList;
+}
+
+// -------------------------------------------------------------------------------- //
+guStationPlayLists GetStationXspfPlayList( const guRadioStation * RadioStation )
+{
+    guStationPlayLists PlayList;
+    return PlayList;
+}
+
+// -------------------------------------------------------------------------------- //
+guStationPlayLists guRadioPanel::GetPlayList( const guRadioStation * RadioStation )
 {
     guShoutCast ShoutCast;
+    wxASSERT( RadioStation );
+
+    guStationPlayLists PlayList;
+    if( RadioStation->m_SCId != wxNOT_FOUND )
+    {
+        return ShoutCast.GetStationPlayList( RadioStation->m_SCId );
+    }
+
+    // Its not a Shoutcast radio so try to find out the playlist format
+    if( guIsValidAudioFile( RadioStation->m_Link ) )
+    {
+        guStationPlayList * NewStation = new guStationPlayList();
+        if( NewStation )
+        {
+            NewStation->m_Name = RadioStation->m_Name;
+            NewStation->m_Url  = RadioStation->m_Link;
+            PlayList.Add( NewStation );
+        }
+    }
+    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".pls" ) ) )
+    {
+        PlayList = ShoutCast.GetStationPlayList( RadioStation->m_Link );
+    }
+    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".m3u" ) ) )
+    {
+        PlayList = GetStationM3uPlayList( RadioStation );
+    }
+    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".asx" ) ) )
+    {
+        PlayList = GetStationAsxPlayList( RadioStation );
+    }
+    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".xspf" ) ) )
+    {
+        PlayList = GetStationXspfPlayList( RadioStation );
+    }
+    else
+    {
+        guLogMessage( wxT( "Dunno how to handle the radio %s" ), RadioStation->m_Link.c_str() );
+    }
+    return PlayList;
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnSelectStations( bool enqueue )
+{
     guTrackArray   Songs;
     guTrack *  NewSong;
     int index;
@@ -1016,14 +1103,7 @@ void guRadioPanel::OnSelectStations( bool enqueue )
 
     if( m_StationsListBox->GetSelected( &RadioStation ) )
     {
-        if( RadioStation.m_SCId != wxNOT_FOUND )
-        {
-            PlayList = ShoutCast.GetStationPlayList( RadioStation.m_SCId );
-        }
-        else
-        {
-            PlayList = ShoutCast.GetStationPlayList( RadioStation.m_Link );
-        }
+        PlayList = GetPlayList( &RadioStation );
 
         if( ( count = PlayList.Count() ) )
         {
