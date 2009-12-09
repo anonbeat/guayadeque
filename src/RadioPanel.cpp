@@ -32,6 +32,7 @@
 #include "Utils.h"
 
 #include <wx/treectrl.h>
+#include <wx/tokenzr.h>
 
 // -------------------------------------------------------------------------------- //
 // guRadioGenreTreeCtrl
@@ -1013,7 +1014,7 @@ guStationPlayLists GetStationM3uPlayList( const guRadioStation * RadioStation )
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: */*" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.Get( Buffer, link );
+    http.Get( Buffer, RadioStation->m_Link );
     if( Buffer )
     {
         M3uFile = wxString( Buffer, wxConvUTF8 );
@@ -1021,10 +1022,46 @@ guStationPlayLists GetStationM3uPlayList( const guRadioStation * RadioStation )
         if( !M3uFile.IsEmpty() )
         {
             //guLogMessage( wxT( "Content...\n%s" ), M3uFile.c_str() );
+            wxArrayString Lines = wxStringTokenize( M3uFile );
+
+            //if( Lines[ 0 ].Find( wxT( "#EXTM3U" ) ) != wxNOT_FOUND )
+            //{
+                int index;
+                int count = Lines.Count();
+                wxString StreamName = wxEmptyString;
+                for( index = 0; index < count; index++ )
+                {
+                    Lines[ index ].Trim( wxString::both );
+                    if( Lines[ index ].IsEmpty() || ( Lines[ index ].Find( wxT( "#EXTM3U" ) ) != wxNOT_FOUND ) )
+                    {
+                        continue;
+                    }
+                    else if( Lines[ index ].Find( wxT( "#EXTINF" ) ) != wxNOT_FOUND )
+                    {
+                        if( Lines[ index ].Find( wxT( "," ) ) != wxNOT_FOUND )
+                            StreamName = Lines[ index ].AfterLast( wxT( ',' ) );
+                    }
+                    else
+                    {
+                        guStationPlayList * StationPlayList = new guStationPlayList();
+                        if( StationPlayList )
+                        {
+                            StationPlayList->m_Name = StreamName.IsEmpty() ? RadioStation->m_Name : StreamName;
+                            StationPlayList->m_Url = Lines[ index ];
+                            StreamName = wxEmptyString;
+                            PlayList.Add( StationPlayList );
+                        }
+                    }
+                }
+            //}
+            //else
+            //{
+            //    guLogMessage( wxT( "M3u header tag not found...\n%s" ), M3uFile.c_str() );
+            //}
         }
         else
         {
-            guLogMessage( wxT( "M3u file content..." ), M3uFile.c_str() );
+            guLogMessage( wxT( "Empty M3u file %s" ), RadioStation->m_Link.c_str() );
         }
     }
     return PlayList;

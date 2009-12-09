@@ -324,8 +324,8 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
             return wxEmptyString;
 
         wxString ResponseHeaders = http.GetResponseHeader();
-        guLogMessage( wxT( "Response %u:\n%s\n%s" ),
-            http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
+//        guLogMessage( wxT( "Response %u:\n%s\n%s" ),
+//            http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
 
         if( ResponseHeaders.Find( wxT( "Content-Encoding: gzip" ) ) != wxNOT_FOUND )
         {
