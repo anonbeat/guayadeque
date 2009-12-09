@@ -1075,9 +1075,95 @@ guStationPlayLists GetStationAsxPlayList( const guRadioStation * RadioStation )
 }
 
 // -------------------------------------------------------------------------------- //
+void ReadXspfTrack( wxXmlNode * XmlNode, guStationPlayLists * playlist, wxString &title )
+{
+    wxString StreamLink;
+    wxString StreamTitle;
+    while( XmlNode )
+    {
+        if( XmlNode->GetName().Lower() == wxT( "location" ) )
+        {
+            StreamLink = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName().Lower() == wxT( "title" ) )
+        {
+            StreamTitle = XmlNode->GetNodeContent();
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+
+    if( !StreamLink.IsEmpty() )
+    {
+        guStationPlayList * StationPlayList = new guStationPlayList();
+        if( StationPlayList )
+        {
+            StationPlayList->m_Name = StreamTitle.IsEmpty() ? title : StreamTitle;
+            StationPlayList->m_Url = StreamLink;
+            playlist->Add( StationPlayList );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXspfTrackList( wxXmlNode * XmlNode, guStationPlayLists * playlist, wxString &title )
+{
+    while( XmlNode )
+    {
+        if( XmlNode->GetName().Lower() == wxT( "track" ) )
+        {
+            ReadXspfTrack( XmlNode->GetChildren(), playlist, title );
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXspfPlayList( wxXmlNode * XmlNode, guStationPlayLists * playlist )
+{
+    wxString Title;
+    while( XmlNode )
+    {
+        if( XmlNode->GetName().Lower() == wxT( "title" ) )
+        {
+            Title = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName().Lower() == wxT( "tracklist" ) )
+        {
+            ReadXspfTrackList( XmlNode->GetChildren(), playlist, Title );
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 guStationPlayLists GetStationXspfPlayList( const guRadioStation * RadioStation )
 {
     guStationPlayLists PlayList;
+    wxCurlHTTP          http;
+    char *              Buffer = NULL;
+    wxString Content;
+    //
+    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "Accept: */*" ) );
+    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.Get( Buffer, RadioStation->m_Link );
+    if( Buffer )
+    {
+        Content = wxString( Buffer, wxConvUTF8 );
+        free( Buffer );
+        //guLogMessage( wxT( "%s" ), Content.c_str() );
+        if( !Content.IsEmpty() )
+        {
+            wxStringInputStream InStr( Content );
+            wxXmlDocument XmlDoc( InStr );
+            wxXmlNode * XmlNode = XmlDoc.GetRoot();
+            if( XmlNode && XmlNode->GetName().Lower() == wxT( "playlist" ) )
+            {
+                ReadXspfPlayList( XmlNode->GetChildren(), &PlayList );
+            }
+        }
+    }
     return PlayList;
 }
 
