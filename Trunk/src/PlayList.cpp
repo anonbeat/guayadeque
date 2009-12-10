@@ -25,6 +25,7 @@
 #include "Images.h"
 #include "LabelEditor.h"
 #include "MainApp.h"
+#include "OnlineLinks.h"
 #include "Shoutcast.h"
 #include "TagInfo.h"
 #include "Utils.h"
@@ -108,6 +109,8 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     Connect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
     Connect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Connect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
+
+    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Connect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 
     ReloadItems();
@@ -145,6 +148,8 @@ guPlayList::~guPlayList()
     Disconnect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
+
+    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 }
 
@@ -923,7 +928,8 @@ void AddPlayListCommands( wxMenu * Menu, int SelCount )
 void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
-    int SelCount = GetSelectedItems( false ).Count();
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    int SelCount = SelectedItems.Count();
 
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
@@ -955,6 +961,12 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     Menu->Append( MenuItem );
 
+    Menu->AppendSeparator();
+
+    if( SelCount == 1 && ( m_Items[ SelectedItems[ 0 ] ].m_Type < guTRACK_TYPE_RADIOSTATION ) )
+    {
+        AddOnlineLinksMenu( Menu );
+    }
     AddPlayListCommands( Menu, SelCount );
 
 }
@@ -1119,6 +1131,37 @@ int guPlayList::GetCaps()
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayList::OnSearchLinkClicked( wxCommandEvent &event )
+{
+    int Item;
+    unsigned long cookie;
+    Item = GetFirstSelected( cookie );
+    if( Item != wxNOT_FOUND )
+    {
+        int index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
+            wxASSERT( Links.Count() > 0 );
+
+            index -= ID_LASTFM_SEARCH_LINK;
+            wxString SearchLink = Links[ index ];
+            wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
+            if( Lang.IsEmpty() )
+            {
+                Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
+                //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
+            }
+            SearchLink.Replace( wxT( "{lang}" ), Lang );
+            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
+            guWebExecute( SearchLink );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::OnCommandClicked( wxCommandEvent &event )
 {
     int index;
@@ -1249,6 +1292,13 @@ int inline guPlayList::GetItemId( const int row ) const
     return row;
 }
 
+// -------------------------------------------------------------------------------- //
+wxString guPlayList::GetSearchText( int item ) const
+{
+    return wxString::Format( wxT( "\"%s\" \"%s\"" ),
+        m_Items[ item ].m_ArtistName.c_str(),
+        m_Items[ item ].m_SongName.c_str() );
+}
 
 // -------------------------------------------------------------------------------- //
 // guAddDropFilesThread

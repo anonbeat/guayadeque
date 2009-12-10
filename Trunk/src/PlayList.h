@@ -72,7 +72,9 @@ class guPlayList : public guListView
     void                        OnSaveClicked( wxCommandEvent &event );
     void                        OnCopyToClicked( wxCommandEvent &event );
     void                        OnEditLabelsClicked( wxCommandEvent &event );
+    void                        OnSearchLinkClicked( wxCommandEvent &event );
     void                        OnCommandClicked( wxCommandEvent &event );
+    wxString                    GetSearchText( int item ) const;
 
   protected:
     virtual void                OnKeyDown( wxKeyEvent &event );
