@@ -1068,9 +1068,86 @@ guStationPlayLists GetStationM3uPlayList( const guRadioStation * RadioStation )
 }
 
 // -------------------------------------------------------------------------------- //
+void ReadAsxEntry( wxXmlNode * XmlNode, guStationPlayLists * playlist, const wxString &title )
+{
+    wxString StreamLink;
+    wxString StreamTitle;
+    while( XmlNode )
+    {
+        if( XmlNode->GetName().Lower() == wxT( "ref" ) )
+        {
+            XmlNode->GetPropVal( wxT( "href" ), &StreamLink );
+        }
+        else if( XmlNode->GetName().Lower() == wxT( "title" ) )
+        {
+            StreamTitle = XmlNode->GetNodeContent();
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+
+    if( !StreamLink.IsEmpty() )
+    {
+        guStationPlayList * StationPlayList = new guStationPlayList();
+        if( StationPlayList )
+        {
+            StationPlayList->m_Name = StreamTitle.IsEmpty() ? title : StreamTitle;
+            StationPlayList->m_Url = StreamLink;
+            playlist->Add( StationPlayList );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadAsxPlayList( wxXmlNode * XmlNode, guStationPlayLists * playlist )
+{
+    wxString Title;
+    while( XmlNode )
+    {
+        if( XmlNode->GetName().Lower() == wxT( "title" ) )
+        {
+            Title = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName().Lower() == wxT( "entry" ) )
+        {
+            ReadAsxEntry( XmlNode->GetChildren(), playlist, Title );
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 guStationPlayLists GetStationAsxPlayList( const guRadioStation * RadioStation )
 {
     guStationPlayLists PlayList;
+    wxCurlHTTP          http;
+    char *              Buffer = NULL;
+    wxString Content;
+    //
+    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "Accept: */*" ) );
+    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.Get( Buffer, RadioStation->m_Link );
+    if( Buffer )
+    {
+        guLogMessage( wxT( "Got the asx web content...%s" ), RadioStation->m_Link.c_str() );
+        Content = wxString( Buffer, wxConvUTF8 );
+        if( Content.IsEmpty() )
+            Content = wxString( Buffer, wxConvISO8859_1 );
+        if( Content.IsEmpty() )
+            Content = wxString( Buffer, wxConvLibc );
+        free( Buffer );
+        guLogMessage( wxT( "ASX:\n%s" ), Content.c_str() );
+        if( !Content.IsEmpty() )
+        {
+            wxStringInputStream InStr( Content );
+            wxXmlDocument XmlDoc( InStr );
+            wxXmlNode * XmlNode = XmlDoc.GetRoot();
+            if( XmlNode && XmlNode->GetName().Lower() == wxT( "asx" ) )
+            {
+                ReadAsxPlayList( XmlNode->GetChildren(), &PlayList );
+            }
+        }
+    }
     return PlayList;
 }
 
@@ -1180,17 +1257,18 @@ guStationPlayLists guRadioPanel::GetPlayList( const guRadioStation * RadioStatio
     }
 
     // Its not a Shoutcast radio so try to find out the playlist format
-    if( guIsValidAudioFile( RadioStation->m_Link ) )
-    {
-        guStationPlayList * NewStation = new guStationPlayList();
-        if( NewStation )
-        {
-            NewStation->m_Name = RadioStation->m_Name;
-            NewStation->m_Url  = RadioStation->m_Link;
-            PlayList.Add( NewStation );
-        }
-    }
-    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".pls" ) ) )
+//    if( guIsValidAudioFile( RadioStation->m_Link ) )
+//    {
+//        guStationPlayList * NewStation = new guStationPlayList();
+//        if( NewStation )
+//        {
+//            NewStation->m_Name = RadioStation->m_Name;
+//            NewStation->m_Url  = RadioStation->m_Link;
+//            PlayList.Add( NewStation );
+//        }
+//    }
+//    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".pls" ) ) )
+    if( RadioStation->m_Link.Lower().EndsWith( wxT( ".pls" ) ) )
     {
         PlayList = ShoutCast.GetStationPlayList( RadioStation->m_Link );
     }
@@ -1208,7 +1286,14 @@ guStationPlayLists guRadioPanel::GetPlayList( const guRadioStation * RadioStatio
     }
     else
     {
-        guLogMessage( wxT( "Dunno how to handle the radio %s" ), RadioStation->m_Link.c_str() );
+        //guLogMessage( wxT( "Dunno how to handle the radio %s" ), RadioStation->m_Link.c_str() );
+        guStationPlayList * NewStation = new guStationPlayList();
+        if( NewStation )
+        {
+            NewStation->m_Name = RadioStation->m_Name;
+            NewStation->m_Url  = RadioStation->m_Link;
+            PlayList.Add( NewStation );
+        }
     }
     return PlayList;
 }
@@ -1237,7 +1322,9 @@ void guRadioPanel::OnSelectStations( bool enqueue )
                 {
                     NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
                     NewSong->m_FileName = PlayList[ index ].m_Url;
-                    NewSong->m_SongName = PlayList[ index ].m_Name;
+                    //NewSong->m_SongName = PlayList[ index ].m_Name;
+                    NewSong->m_SongName = PlayList[ index ].m_Name.IsEmpty() ?
+                                              RadioStation.m_Name : PlayList[ index ].m_Name;
                     NewSong->m_Length = 0;
                     NewSong->m_Rating = -1;
                     //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
