@@ -283,6 +283,7 @@ DbLibrary::DbLibrary()
     m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
     m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
+  m_RadioIsUser = 0;
 
   m_NeedUpdate = false;
 
@@ -324,6 +325,7 @@ DbLibrary::DbLibrary( const wxString &DbName )
     m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
     m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
+  m_RadioIsUser = 0;
 
   m_GeFilters.Empty();
   m_LaFilters.Empty();
@@ -4146,10 +4148,11 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
   wxSQLite3ResultSet dbRes;
   guRadioStation * Station;
 
-  if( !GetRadioFiltersCount() && !m_RadioIsUser )
+  if( !GetRadioFiltersCount() )
   {
     query = wxT( "SELECT DISTINCT radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
-                 "FROM radiostations " );
+                 "FROM radiostations WHERE " );
+    query += wxString::Format( wxT( "radiostation_isuser = %u " ), m_RadioIsUser );
   }
   else
   {
