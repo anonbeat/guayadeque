@@ -107,28 +107,56 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true );
 
     // Radio Page
-	m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false );
+    if( Config->ReadBool( wxT( "ShowRadio" ), true, wxT( "ViewPanels" ) ) )
+    {
+        m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+        m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false );
+    }
+    else
+        m_RadioPanel = NULL;
 
     // LastFM Info Panel
-	m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_LastFMPanel, _( "Last.fm" ), false );
+    if( Config->ReadBool( wxT( "ShowLastfm" ), true, wxT( "ViewPanels" ) ) )
+    {
+        m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+        m_CatNotebook->AddPage( m_LastFMPanel, _( "Last.fm" ), false );
+    }
+    else
+        m_LastFMPanel = NULL;
 
     // Lyrics Panel
-    m_LyricsPanel = new guLyricsPanel( m_CatNotebook );
-    m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
+    if( Config->ReadBool( wxT( "ShowLyrics" ), true, wxT( "ViewPanels" ) ) )
+    {
+        m_LyricsPanel = new guLyricsPanel( m_CatNotebook );
+        m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
+    }
+    else
+        m_LyricsPanel = NULL;
 
     // PlayList Page
-    m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
+    if( Config->ReadBool( wxT( "ShowPlayLists" ), true, wxT( "ViewPanels" ) ) )
+    {
+        m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+        m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
+    }
+    else
+        m_PlayListPanel = NULL;
 
     // Podcast Page
-    m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
-    m_CatNotebook->AddPage( m_PodcastsPanel, _( "Podcasts" ), false );
+    if( Config->ReadBool( wxT( "ShowPodcasts" ), true, wxT( "ViewPanels" ) ) )
+    {
+        m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
+        m_CatNotebook->AddPage( m_PodcastsPanel, _( "Podcasts" ), false );
+    }
+    else
+        m_PodcastsPanel = NULL;
 
     // FileSystem Page
-//	FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//	CatNotebook->AddPage( FileSysPanel, wxT("FileSystem"), false );
+//    if( Config->ReadBool( wxT( "ShowFileSys" ), true, wxT( "ViewPanels" ) ) )
+//    {
+//	      FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+//	      CatNotebook->AddPage( FileSysPanel, wxT("FileSystem"), false );
+//    }
 
 	MultiSizer->Add( m_CatNotebook, 1, wxEXPAND | wxALL, 2 );
 
@@ -277,6 +305,7 @@ void guMainFrame::CreateMenu()
 	wxMenuBar * MenuBar;
 	wxMenu * Menu;
 	wxMenuItem * MenuItem;
+	guConfig *      Config = ( guConfig * ) guConfig::Get();
 
 	Menu = new wxMenu();
 	MenuItem = new wxMenuItem( Menu, ID_MENU_UPDATE_LIBRARY, wxString( _("&Update Library" ) ) , _( "Update all songs from the directories configured" ), wxITEM_NORMAL );
@@ -311,23 +340,23 @@ void guMainFrame::CreateMenu()
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_RADIO, wxString( _( "&Radio" ) ), _( "Show/Hide the radio panel" ), wxITEM_CHECK );
     Menu->Append( MenuItem );
-    MenuItem->Check( true );
+    MenuItem->Check( Config->ReadBool( wxT( "ShowRadio" ), true, wxT( "ViewPanels" ) ) );
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_LASTFM, wxString( _( "Last.&fm" ) ), _( "Show/Hide the Last.fm panel" ), wxITEM_CHECK );
     Menu->Append( MenuItem );
-    MenuItem->Check( true );
+    MenuItem->Check( Config->ReadBool( wxT( "ShowLastfm" ), true, wxT( "ViewPanels" ) ) );
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_LYRICS, wxString( _( "L&yrics" ) ), _( "Show/Hide the lyrics panel" ), wxITEM_CHECK );
     Menu->Append( MenuItem );
-    MenuItem->Check( true );
+    MenuItem->Check( Config->ReadBool( wxT( "ShowLyrics" ), true, wxT( "ViewPanels" ) ) );
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_PLAYLISTS, wxString( _( "&PlayLists" ) ), _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
     Menu->Append( MenuItem );
-    MenuItem->Check( true );
+    MenuItem->Check( Config->ReadBool( wxT( "ShowPlayLists" ), true, wxT( "ViewPanels" ) ) );
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_PODCASTS, wxString( _( "P&odcasts" ) ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
     Menu->Append( MenuItem );
-    MenuItem->Check( true );
+    MenuItem->Check( Config->ReadBool( wxT( "ShowPodcasts" ), true, wxT( "ViewPanels" ) ) );
 
     MenuBar->Append( Menu, _( "&View" ) );
 
@@ -668,13 +697,20 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
             m_CatNotebook->RemovePage( PageIndex );
         }
     }
+
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewRadio( wxCommandEvent &event )
 {
+	guConfig *      Config = ( guConfig * ) guConfig::Get();
+	Config->WriteBool( wxT( "ShowRadio" ), event.IsChecked(), wxT( "ViewPanels" ) );
+
     if( event.IsChecked() )
     {
+        if( !m_RadioPanel )
+            m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+
         m_CatNotebook->InsertPage( wxMin( 1, m_CatNotebook->GetPageCount() ), m_RadioPanel, _( "Radio" ), true );
     }
     else
@@ -690,8 +726,14 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 {
+	guConfig *      Config = ( guConfig * ) guConfig::Get();
+	Config->WriteBool( wxT( "ShowLastfm" ), event.IsChecked(), wxT( "ViewPanels" ) );
+
     if( event.IsChecked() )
     {
+        if( !m_LastFMPanel )
+            m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+
         m_CatNotebook->InsertPage( wxMin( 2, m_CatNotebook->GetPageCount() ), m_LastFMPanel, _( "Last.fm" ), true );
     }
     else
@@ -707,8 +749,14 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 {
+	guConfig *      Config = ( guConfig * ) guConfig::Get();
+	Config->WriteBool( wxT( "ShowLyrics" ), event.IsChecked(), wxT( "ViewPanels" ) );
+
     if( event.IsChecked() )
     {
+        if( !m_LyricsPanel )
+            m_LyricsPanel = new guLyricsPanel( m_CatNotebook );
+
         m_CatNotebook->InsertPage( wxMin( 3, m_CatNotebook->GetPageCount() ), m_LyricsPanel, _( "Lyrics" ), true );
     }
     else
@@ -724,8 +772,14 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 {
+	guConfig *      Config = ( guConfig * ) guConfig::Get();
+	Config->WriteBool( wxT( "ShowPodcasts" ), event.IsChecked(), wxT( "ViewPanels" ) );
+
     if( event.IsChecked() )
     {
+        if( !m_PodcastsPanel )
+            m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
+
         m_CatNotebook->InsertPage( wxMin( 5, m_CatNotebook->GetPageCount() ), m_PodcastsPanel, _( "Podcasts" ), true );
     }
     else
@@ -741,8 +795,14 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 {
+	guConfig *      Config = ( guConfig * ) guConfig::Get();
+	Config->WriteBool( wxT( "ShowPlayLists" ), event.IsChecked(), wxT( "ViewPanels" ) );
+
     if( event.IsChecked() )
     {
+        if( !m_PlayListPanel )
+            m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+
         m_CatNotebook->InsertPage( wxMin( 4, m_CatNotebook->GetPageCount() ), m_PlayListPanel, _( "PlayLists" ), true );
     }
     else
