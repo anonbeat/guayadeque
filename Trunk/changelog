@@ -1,4 +1,5 @@
 
+  * Saved in config the showed/hidden panels
   * Added support to m3u, pls, xspf radio playlists
   * Added user defined radios
   * Fixed bug with cmake 2.8.0
