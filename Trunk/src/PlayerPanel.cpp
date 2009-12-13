@@ -1128,24 +1128,6 @@ void guPlayerPanel::OnAboutToFinish( void )
         //m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         m_AboutToFinishPending = true;
     }
-//    else
-//    {
-//        // If the option to play a random track is set
-//        guConfig * Config = ( guConfig * ) guConfig::Get();
-//        if( Config )
-//        {
-//            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
-//            {
-//                guTrackArray Tracks;
-//                if( m_Db->GetRandomTracks( &Tracks ) )
-//                {
-//                    AddToPlayList( Tracks );
-//
-//                    OnAboutToFinish();
-//                }
-//            }
-//        }
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1154,8 +1136,8 @@ void guPlayerPanel::OnMediaAboutToFinish( wxMediaEvent &event )
     if( m_AboutToFinishPending )
     {
         SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
-        m_AboutToFinishPending = false;
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+        m_AboutToFinishPending = false;
         return;
     }
 //    guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
@@ -1545,6 +1527,8 @@ bool guPlayerPanel::SetPosition( int pos )
 // -------------------------------------------------------------------------------- //
 int guPlayerPanel::GetPosition()
 {
+    if( m_AboutToFinishPending )
+        return 0;
     return m_MediaCtrl->Tell();
 }
 
