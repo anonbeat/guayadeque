@@ -154,6 +154,8 @@
 		<Unit filename="src/PodcastsPanel.h" />
 		<Unit filename="src/Preferences.cpp" />
 		<Unit filename="src/Preferences.h" />
+		<Unit filename="src/RadioEditor.cpp" />
+		<Unit filename="src/RadioEditor.h" />
 		<Unit filename="src/RadioGenreEditor.cpp" />
 		<Unit filename="src/RadioGenreEditor.h" />
 		<Unit filename="src/RadioPanel.cpp" />
