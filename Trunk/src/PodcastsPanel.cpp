@@ -302,9 +302,15 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
         wxSetCursor( * wxHOURGLASS_CURSOR );
         wxTheApp->Yield();
 
-        wxString PodcastUrl = NewPodcastChannel->GetValue();
+        wxString PodcastUrl = NewPodcastChannel->GetValue().Trim( wxString::both );
         if( !PodcastUrl.IsEmpty() )
         {
+            // If we find an itunes link we replace the itpc to the standard http
+            if( PodcastUrl.StartsWith( wxT( "itpc://" ) ) )
+            {
+                PodcastUrl.Replace( wxT( "itpc://" ), wxT( "http://" ) );
+            }
+
             guPodcastChannel PodcastChannel( PodcastUrl );
 
             wxSetCursor( wxNullCursor );
@@ -331,7 +337,6 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
 
                 //
                 //guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
-
                 m_Db->SavePodcastChannel( &PodcastChannel );
 
                 PodcastChannel.CheckDownloadItems( m_Db, m_MainFrame );

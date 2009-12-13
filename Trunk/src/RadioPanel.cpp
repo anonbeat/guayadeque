@@ -184,7 +184,7 @@ guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, DbLibrary * db ) 
 
     m_RootId   = AddRoot( wxT( "Radios" ), -1, -1, NULL );
     m_ShoutcastId = AppendItem( m_RootId, _( "Shoutcast" ), 0, 0, NULL );
-    m_ManualId = AppendItem( m_RootId, _( "Other" ), 1, 1, NULL );
+    m_ManualId = AppendItem( m_RootId, _( "User Defined" ), 1, 1, NULL );
 
     SetIndent( 5 );
 
