@@ -54,6 +54,8 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             GstState oldstate, newstate, pendingstate;
             gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
 
+            //guLogMessage( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
+
             wxMediaEvent event( wxEVT_MEDIA_STATECHANGED );
             ctrl->AddPendingEvent( event );
             break;
@@ -145,6 +147,7 @@ static void gst_about_to_finish( GstElement * playbin, guMediaCtrl * ctrl )
     ctrl->AboutToFinish();
     wxMediaEvent event( wxEVT_MEDIA_ABOUT_TO_FINISH );
     ctrl->AddPendingEvent( event );
+//    g_object_set( playbin, "uri", "file:///Datos/Music/ChillOut/Various/MOS%20-%20Chillout%20Sessions%20Vol.%206/cd2/02%20-%20Soldiers%20of%20Twilight%20-%20Believe%20(Martin%20Solveig%20Vocal%20Dub).mp3", NULL );
 }
 
 
@@ -250,7 +253,7 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
     // Reset positions & rate
     m_llPausedPos = 0;
 
-    //guLogMessage( wxT( "uri set to %s" ), uri.c_str() );
+    //guLogMessage( wxT( "uri set to %u %s" ), restart, uri.c_str() );
 
     if( restart )
     {
@@ -277,11 +280,11 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
         {
             return false; // no real error message needed here as this is
         }
-
-        wxMediaEvent event( wxEVT_MEDIA_LOADED );
-        event.SetInt( restart );
-        AddPendingEvent( event );
     }
+
+    wxMediaEvent event( wxEVT_MEDIA_LOADED );
+    event.SetInt( restart );
+    AddPendingEvent( event );
 
     return true;
 }
@@ -296,7 +299,7 @@ bool guMediaCtrl::Play()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Pause()
 {
-    //guLogMessage( wxT( "MediaCtrl->Plause" ) );
+    //guLogMessage( wxT( "MediaCtrl->Pause" ) );
     m_llPausedPos = Tell();
     return gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE;
 }
