@@ -21,9 +21,11 @@
 #include "MediaCtrl.h"
 
 #include "Utils.h"
+#include "PlayerPanel.h"
 
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_LOADED )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_STATECHANGED )
+DEFINE_EVENT_TYPE( wxEVT_MEDIA_ABOUT_TO_FINISH )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_FINISHED )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_TAG )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING )
@@ -34,9 +36,8 @@ extern "C" {
 
 static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMediaCtrl * ctrl )
 {
-    switch( GST_MESSAGE_TYPE ( message ) )
+    switch( GST_MESSAGE_TYPE( message ) )
     {
-
         case GST_MESSAGE_ERROR :
         {
             GError * err;
@@ -52,6 +53,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
         {
             GstState oldstate, newstate, pendingstate;
             gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
+
             wxMediaEvent event( wxEVT_MEDIA_STATECHANGED );
             ctrl->AddPendingEvent( event );
             break;
@@ -138,6 +140,14 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
     return TRUE;
 }
 
+static void gst_about_to_finish( GstElement * playbin, guMediaCtrl * ctrl )
+{
+    ctrl->AboutToFinish();
+    wxMediaEvent event( wxEVT_MEDIA_ABOUT_TO_FINISH );
+    ctrl->AddPendingEvent( event );
+}
+
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -153,8 +163,9 @@ bool IsValidOutput( GstElement * outputsink )
 }
 
 // -------------------------------------------------------------------------------- //
-guMediaCtrl::guMediaCtrl()
+guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 {
+    m_PlayerPanel = playerpanel;
     m_Playbin = NULL;
     m_Buffering = false;
     m_WasPlaying = false;
@@ -184,7 +195,7 @@ guMediaCtrl::guMediaCtrl()
         }
 
         //
-        m_Playbin = gst_element_factory_make( "playbin", "play" );
+        m_Playbin = gst_element_factory_make( "playbin2", "play" );
         if( !GST_IS_ELEMENT( m_Playbin ) )
         {
             if( G_IS_OBJECT( m_Playbin ) )
@@ -211,6 +222,11 @@ guMediaCtrl::guMediaCtrl()
         gst_bin_add( GST_BIN( m_Playbin ), replay );
         g_object_set( G_OBJECT( m_Playbin ), "audio-sink", outputsink, NULL );
 
+//        GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
+//        gst_bus_add_signal_watch( bus );
+
+        g_signal_connect( G_OBJECT( m_Playbin ), "about-to-finish",
+				 G_CALLBACK( gst_about_to_finish ), ( void * ) this );
         //
         gst_bus_add_watch( gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) ), ( GstBusFunc ) gst_bus_async_callback, this );
 
@@ -229,19 +245,24 @@ guMediaCtrl::~guMediaCtrl()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMediaCtrl::Load( const wxString &uri )
+bool guMediaCtrl::Load( const wxString &uri, bool restart )
 {
     // Reset positions & rate
     m_llPausedPos = 0;
 
-    // Set playbin to ready to stop the current media...
-    if( gst_element_set_state( m_Playbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
-    {
-        return false;
-    }
+    //guLogMessage( wxT( "uri set to %s" ), uri.c_str() );
 
-    // free current media resources
-    gst_element_set_state( m_Playbin, GST_STATE_NULL );
+    if( restart )
+    {
+        // Set playbin to ready to stop the current media...
+        if( gst_element_set_state( m_Playbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
+        {
+            return false;
+        }
+
+        // free current media resources
+        gst_element_set_state( m_Playbin, GST_STATE_NULL );
+    }
 
     // Make sure the passed URI is valid and tell playbin to load it
     // non-file uris are encoded
@@ -250,25 +271,32 @@ bool guMediaCtrl::Load( const wxString &uri )
 
     g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str(), NULL );
 
-    if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
+    if( restart )
     {
-        return false; // no real error message needed here as this is
+        if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
+        {
+            return false; // no real error message needed here as this is
+        }
+
+        wxMediaEvent event( wxEVT_MEDIA_LOADED );
+        event.SetInt( restart );
+        AddPendingEvent( event );
     }
 
-    wxMediaEvent event( wxEVT_MEDIA_LOADED );
-    AddPendingEvent( event );
     return true;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Play()
 {
+    //guLogMessage( wxT( "MediaCtrl->Play" ) );
     return gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) != GST_STATE_CHANGE_FAILURE;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Pause()
 {
+    //guLogMessage( wxT( "MediaCtrl->Plause" ) );
     m_llPausedPos = Tell();
     return gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE;
 }
@@ -276,6 +304,7 @@ bool guMediaCtrl::Pause()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Stop()
 {
+    //guLogMessage( wxT( "MediaCtrl->Stop" ) );
     if( Pause() && Seek( 0 ) )
     {
         m_llPausedPos = 0;
@@ -287,6 +316,7 @@ bool guMediaCtrl::Stop()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Seek( wxLongLong where )
 {
+    //guLogMessage( wxT( "MediaCtrl->Seek" ) );
     gst_element_seek( m_Playbin, 1, GST_FORMAT_TIME,
           ( GstSeekFlags ) ( GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
           GST_SEEK_TYPE_SET, where.GetValue() * GST_MSECOND,
@@ -299,6 +329,7 @@ bool guMediaCtrl::Seek( wxLongLong where )
 // -------------------------------------------------------------------------------- //
 wxFileOffset guMediaCtrl::Tell()
 {
+    //guLogMessage( wxT( "MediaCtrl->Tell" ) );
     if( GetState() != wxMEDIASTATE_PLAYING )
         return m_llPausedPos.ToLong();
     else
@@ -316,6 +347,7 @@ wxFileOffset guMediaCtrl::Tell()
 // -------------------------------------------------------------------------------- //
 wxMediaState guMediaCtrl::GetState()
 {
+    //guLogMessage( wxT( "MediaCtrl->GetState" ) );
     switch( GST_STATE( m_Playbin ) )
     {
         case GST_STATE_PLAYING:
@@ -344,6 +376,12 @@ double guMediaCtrl::GetVolume()
     double dVolume = 1.0;
     g_object_get( G_OBJECT( m_Playbin ), "volume", &dVolume, NULL );
     return dVolume;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::AboutToFinish( void )
+{
+    m_PlayerPanel->OnAboutToFinish();
 }
 
 // -------------------------------------------------------------------------------- //

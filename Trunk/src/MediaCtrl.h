@@ -85,9 +85,11 @@ DECLARE_EVENT_TYPE( wxEVT_MEDIA_LOADED,     wxMEDIA_LOADED_ID )
 #define EVT_MEDIA_LOADED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_LOADED, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 
 //Event ID to give to our events
+#define wxMEDIA_ABOUT_TO_FINISH_ID 13006
 #define wxMEDIA_FINISHED_ID    13000
 #define wxMEDIA_STOP_ID    13001
 //Define our event types - we need to call DEFINE_EVENT_TYPE(EVT) later
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_ABOUT_TO_FINISH, wxMEDIA_ABOUT_TO_FINISH_ID )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_FINISHED, wxMEDIA_FINISHED_ID )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_STOP,     wxMEDIA_STOP_ID )
 
@@ -98,6 +100,7 @@ typedef void (wxEvtHandler::*wxMediaEventFunction)(wxMediaEvent&);
     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxMediaEventFunction, &func)
 
 //Macro for usage with message maps
+#define EVT_MEDIA_ABOUT_TO_FINISH(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_ABOUT_TO_FINISH, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_FINISHED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_FINISHED, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_STOP(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_STOP, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 
@@ -120,6 +123,7 @@ DECLARE_EVENT_TYPE( wxEVT_MEDIA_BITRATE, wxID_ANY )
 #define EVT_MEDIA_BUFFERING(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BUFFERING, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_BITRATE(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BITRATE, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 
+class guPlayerPanel;
 
 // -------------------------------------------------------------------------------- //
 // guMediaCtrl : Interface class for gstreamer
@@ -127,20 +131,21 @@ DECLARE_EVENT_TYPE( wxEVT_MEDIA_BITRATE, wxID_ANY )
 class guMediaCtrl : public wxEvtHandler
 {
   private :
-    wxLongLong   m_llPausedPos;
+    guPlayerPanel * m_PlayerPanel;
+    wxLongLong      m_llPausedPos;
 
   public :
     GstElement * m_Playbin;
     bool         m_Buffering;
     bool         m_WasPlaying;
 
-    guMediaCtrl();
+    guMediaCtrl( guPlayerPanel * playerpanel );
     ~guMediaCtrl();
 
     static bool Init();
 
     //bool Load( const wxURI &uri );
-    bool Load( const wxString &uri );
+    bool Load( const wxString &uri, bool restart = true );
     bool Stop();
     bool Play();
     bool Pause();
@@ -152,6 +157,7 @@ class guMediaCtrl : public wxEvtHandler
 
     double GetVolume();
     bool SetVolume( double volume );
+    void AboutToFinish( void );
 
 };
 

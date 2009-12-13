@@ -69,6 +69,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     m_LastPlayState = wxMEDIASTATE_STOPPED;
     m_LastTotalLen = -1;
 
+    m_AboutToFinishPending = false;
+
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -219,7 +221,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	this->SetSizer( PlayerMainSizer );
 	this->Layout();
 
-    m_MediaCtrl = new guMediaCtrl();
+    m_MediaCtrl = new guMediaCtrl( this );
     //m_MediaCtrl->Create( this, wxID_ANY );
 
     //
@@ -288,6 +290,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
     m_PlayListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
 
     m_MediaCtrl->Connect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
+    m_MediaCtrl->Connect( wxEVT_MEDIA_ABOUT_TO_FINISH, wxMediaEventHandler( guPlayerPanel::OnMediaAboutToFinish ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTag ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
@@ -921,7 +924,7 @@ wxString inline FileNameEncode( const wxString filename )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::LoadMedia( const wxString &FileName )
+void guPlayerPanel::LoadMedia( const wxString &FileName, bool restart )
 {
     //m_MediaCtrl->Load( NextItem->FileName );
     wxURI UriPath( FileName );
@@ -932,7 +935,7 @@ void guPlayerPanel::LoadMedia( const wxString &FileName )
         else
             Uri = FileName;
 
-        if( !m_MediaCtrl->Load( FileNameEncode( Uri ) ) )
+        if( !m_MediaCtrl->Load( FileNameEncode( Uri ), restart ) )
         {
             guLogError( wxT( "ee: Failed load of file '%s'" ), Uri.c_str() );
             //guLogError( wxT( "ee: The filename was '%s'" ), FileName.c_str() );
@@ -1092,8 +1095,12 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
             wxPostEvent( wxTheApp->GetTopWindow(), event );
         }
 
-        //
-        m_MediaCtrl->Play();
+        if( event.GetInt() )
+        {
+            //
+            m_MediaCtrl->Play();
+        }
+
         if( m_TrackStartPos )
         {
             SetPosition( m_TrackStartPos );
@@ -1101,6 +1108,7 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
         }
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         //SetVolume( m_CurVolume );
+
     }
     catch(...)
     {
@@ -1109,8 +1117,85 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnAboutToFinish( void )
+{
+    guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
+    if( NextItem )
+    {
+        //m_MediaSong = * NextItem;
+        //SetCurrentTrack( NextItem );
+        LoadMedia( NextItem->m_FileName, false );
+        //m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+        m_AboutToFinishPending = true;
+    }
+//    else
+//    {
+//        // If the option to play a random track is set
+//        guConfig * Config = ( guConfig * ) guConfig::Get();
+//        if( Config )
+//        {
+//            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
+//            {
+//                guTrackArray Tracks;
+//                if( m_Db->GetRandomTracks( &Tracks ) )
+//                {
+//                    AddToPlayList( Tracks );
+//
+//                    OnAboutToFinish();
+//                }
+//            }
+//        }
+//    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnMediaAboutToFinish( wxMediaEvent &event )
+{
+    if( m_AboutToFinishPending )
+    {
+        SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
+        m_AboutToFinishPending = false;
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+        return;
+    }
+//    guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
+//    if( NextItem )
+//    {
+//        //m_MediaSong = * NextItem;
+//        SetCurrentTrack( NextItem );
+//        LoadMedia( NextItem->m_FileName, false );
+//        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+//    }
+//    else
+//    {
+//        // If the option to play a random track is set
+//        guConfig * Config = ( guConfig * ) guConfig::Get();
+//        if( Config )
+//        {
+//            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
+//            {
+//                guTrackArray Tracks;
+//                if( m_Db->GetRandomTracks( &Tracks ) )
+//                {
+//                    AddToPlayList( Tracks );
+//
+//                    OnMediaAboutToFinish( event );
+//                }
+//            }
+//        }
+//    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
 {
+    if( m_AboutToFinishPending )
+    {
+        m_AboutToFinishPending = false;
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+        return;
+    }
+
     guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
     if( NextItem )
     {
