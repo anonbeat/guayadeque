@@ -23,6 +23,7 @@
 
 #include "DbLibrary.h"
 #include "ListView.h"
+#include "StatusBar.h"
 
 #define guSONGS_COLUMN_NUMBER       0
 #define guSONGS_COLUMN_TITLE        1
@@ -49,6 +50,8 @@ class guSoListBox : public guListView
 
     wxBitmap *          m_GreyStar;
     wxBitmap *          m_YellowStar;
+
+    guStatusBar *       m_StatusBar;
 
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;

@@ -132,11 +132,15 @@ void guGauge::SetRange( int range )
 // -------------------------------------------------------------------------------- //
 guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
 {
-    int FieldWidths[] = { -1, 50 };
-    SetFieldsCount( 2 );
-    SetStatusWidths( 2, FieldWidths );
+    int FieldWidths[] = { -1, 60, 50 };
+    SetFieldsCount( 3 );
+    SetStatusWidths( 3, FieldWidths );
     m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
     m_ASBitmap->SetToolTip( _( "Shows the status of the LastFM connection." ) );
+
+    m_TrackCount = new wxStaticText( this, wxID_ANY, wxEmptyString );
+    m_TrackCount->SetToolTip( _( "Shows the number of the selected tracks." ) );
+
     Connect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
 }
 
@@ -163,6 +167,14 @@ void guStatusBar::OnSize( wxSizeEvent &event )
         m_ASBitmap->Move( rect.x + 3,
                         rect.y + 3 );
     }
+
+    if( m_TrackCount )
+    {
+        GetFieldRect( GetFieldsCount() - 2, rect );
+        m_TrackCount->Move( rect.x + 2,
+                        rect.y + 2 );
+    }
+
     event.Skip();
 }
 
@@ -189,6 +201,8 @@ void guStatusBar::SetSizes( int FieldCnt )
                 FieldWidths[ index ] = -1;
             else if( index == ( FieldCnt - 1 ) )
                 FieldWidths[ index ] = 50;
+            else if( index == ( FieldCnt - 2 ) )
+                FieldWidths[ index ] = 60;
             else
                 FieldWidths[ index ] = 200;
             //printf( "Width: %i\n", FieldWidths[ index ] );
@@ -262,6 +276,15 @@ int guStatusBar::RemoveGauge( int gaugeid )
     UpdateGauges();
 
     return m_Gauges.Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::SetTrackCount( const int trackcnt )
+{
+    if( m_TrackCount )
+    {
+        m_TrackCount->SetLabel( wxString::Format( wxT( "%u" ), trackcnt ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
