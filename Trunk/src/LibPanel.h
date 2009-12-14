@@ -61,6 +61,9 @@ class guLibPanel : public wxPanel
     bool                m_UpdateLock;
     guPlayerPanel *     m_PlayerPanel;
 
+    int                 m_LastTrackCount;
+    guStatusBar *       m_StatusBar;
+
     // Search Str events
     void OnSearchActivated( wxCommandEvent& event );
     void OnSearchCancelled( wxMouseEvent &event );
@@ -117,10 +120,8 @@ class guLibPanel : public wxPanel
     void OnSongSelectAlbum( wxCommandEvent &event );
 
     // Idle event handlers
-    void SelGenreSplitterOnIdle( wxIdleEvent &event );
-    void GenreLabelsSplitterOnIdle( wxIdleEvent &event );
-    void ArtistAlbumSplitterOnIdle( wxIdleEvent &event );
-    void SongListSplitterOnIdle( wxIdleEvent &event );
+    void OnIdleSetSashPos( wxIdleEvent &event );
+    void OnIdle( wxIdleEvent &event );
 
   public :
     guLibPanel( wxWindow * parent, DbLibrary * NewDb, guPlayerPanel * NewPlayerPanel );
