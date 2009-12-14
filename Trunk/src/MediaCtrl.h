@@ -157,7 +157,7 @@ class guMediaCtrl : public wxEvtHandler
 
     double GetVolume();
     bool SetVolume( double volume );
-    void AboutToFinish( void );
+    void inline AboutToFinish( void );
 
 };
 
