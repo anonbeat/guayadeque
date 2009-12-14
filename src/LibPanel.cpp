@@ -23,6 +23,7 @@
 #include "Utils.h"
 #include "Commands.h"
 #include "LabelEditor.h"
+#include "MainFrame.h"
 #include "TagInfo.h"
 #include "TrackEdit.h"
 #include "CoverEdit.h"
@@ -60,6 +61,8 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 
     m_Db = NewDb;
     m_PlayerPanel = NewPlayerPanel;
+    m_LastTrackCount = wxNOT_FOUND;
+    m_StatusBar = NULL;
 
     //
     //
@@ -102,24 +105,17 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 	m_SongListSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
     m_SongListSplitter->SetMinimumPaneSize( 200 );
 
-	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::SongListSplitterOnIdle ), NULL, this );
-
-
 	SelectorPanel = new wxPanel( m_SongListSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	SelectorSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_SelGenreSplitter = new wxSplitterWindow( SelectorPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
     m_SelGenreSplitter->SetMinimumPaneSize( 180 );
 
-	m_SelGenreSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::SelGenreSplitterOnIdle ), NULL, this );
-
 	GenreLabelsPanel = new wxPanel( m_SelGenreSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	GenreLabelsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_GenreLabelsSplitter = new wxSplitterWindow( GenreLabelsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
     m_GenreLabelsSplitter->SetMinimumPaneSize( 75 );
-
-	m_GenreLabelsSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::GenreLabelsSplitterOnIdle ), NULL, this );
 
 	m_GenrePanel = new wxPanel( m_GenreLabelsSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
     //m_GenrePanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
@@ -157,7 +153,6 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 	m_ArtistAlbumSplitter = new wxSplitterWindow( ArtistAlbumPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
 	m_ArtistAlbumSplitter->SetMinimumPaneSize( 75 );
 
-	m_ArtistAlbumSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::ArtistAlbumSplitterOnIdle ), NULL, this );
 	m_ArtistPanel = new wxPanel( m_ArtistAlbumSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	//m_ArtistPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
 	ArtistSizer = new wxBoxSizer( wxVERTICAL );
@@ -215,6 +210,9 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
     m_UpdateLock = false;
 
     //
+	Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::OnIdle ), NULL, this );
+	m_GenreLabelsSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::OnIdleSetSashPos ), NULL, this );
+
     //
     m_GenreListCtrl->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnGenreListSelected ), NULL, this );
     //m_GenreListCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED,  wxListEventHandler( guLibPanel::OnGenreListSelected ), NULL, this );
@@ -1169,39 +1167,30 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
 }
 
 // -------------------------------------------------------------------------------- //
-// OnIdle Events
-// -------------------------------------------------------------------------------- //
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::SongListSplitterOnIdle( wxIdleEvent& event )
+void guLibPanel::OnIdleSetSashPos( wxIdleEvent& event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_SongListSplitter->SetSashPosition( Config->ReadNum( wxT( "SongSashPos" ), 300, wxT( "Positions" ) ) );
-    m_SongListSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::SongListSplitterOnIdle ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::SelGenreSplitterOnIdle( wxIdleEvent& event )
-{
-    guConfig * Config = ( guConfig * ) guConfig::Get();
     m_SelGenreSplitter->SetSashPosition( Config->ReadNum( wxT( "GenreSashPos" ), 180, wxT( "Positions" ) ) );
-    m_SelGenreSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::SelGenreSplitterOnIdle ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::GenreLabelsSplitterOnIdle( wxIdleEvent& event )
-{
-    guConfig * Config = ( guConfig * ) guConfig::Get();
     m_GenreLabelsSplitter->SetSashPosition( Config->ReadNum( wxT( "LabelSashPos" ), 145, wxT( "Positions" ) ) );
-    m_GenreLabelsSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::GenreLabelsSplitterOnIdle ), NULL, this );
+    m_ArtistAlbumSplitter->SetSashPosition( Config->ReadNum( wxT( "ArtistSashPos" ), 145, wxT( "Positions" ) ) );
+
+	m_GenreLabelsSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::OnIdleSetSashPos ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::ArtistAlbumSplitterOnIdle( wxIdleEvent& event )
+void guLibPanel::OnIdle( wxIdleEvent& event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_ArtistAlbumSplitter->SetSashPosition( Config->ReadNum( wxT( "ArtistSashPos" ), 145, wxT( "Positions" ) ) );
-    m_ArtistAlbumSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::ArtistAlbumSplitterOnIdle ), NULL, this );
+    int Count = m_SongListCtrl->GetItemCount();
+    if( m_LastTrackCount != Count )
+    {
+        m_LastTrackCount = Count;
+        if( !m_StatusBar )
+        {
+            m_StatusBar = ( guStatusBar * ) ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->GetStatusBar();
+        }
+        m_StatusBar->SetTrackCount( Count );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -59,8 +59,6 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
     int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
 
-    m_StatusBar = NULL;
-
     int ColId;
     wxString ColName;
     int index;
@@ -230,13 +228,6 @@ void guSoListBox::ReloadItems( bool reset )
     GetItemsList();
 
     SetItemCount( m_Items.Count() );
-    if( !m_StatusBar )
-    {
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-        m_StatusBar = ( guStatusBar * ) MainFrame->GetStatusBar();
-    }
-    else
-        m_StatusBar->SetTrackCount( m_Items.Count() );
 
     if( !reset )
     {
