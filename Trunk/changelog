@@ -1,4 +1,5 @@
 
+  * Added Ukrainian language translation. Thanks  yupadmin at gmail dot com
   * Resizeable track editor. Remembers last position and size
   * Added gapless play support
   * Saved in config the showed/hidden panels
