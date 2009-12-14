@@ -33,8 +33,7 @@
 const wxEventType guTrackEditEvent = wxNewEventType();
 
 // -------------------------------------------------------------------------------- //
-guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray * NewSongs, guImagePtrArray * images ) :
-               wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE )
+guTrackEditor::guTrackEditor( wxWindow * parent, DbLibrary * NewDb, guTrackArray * NewSongs, guImagePtrArray * images )
 {
     wxPanel *           SongListPanel;
     wxPanel *           MainDetailPanel;
@@ -52,7 +51,18 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
     //wxStaticText *      MBAlbumDetailStaticText;
     wxStaticLine *      MBrainzStaticLine;
 
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxPoint WindowPos;
+    WindowPos.x = Config->ReadNum( wxT( "TrackEditPosX" ), -1, wxT( "Positions" ) );
+    WindowPos.y = Config->ReadNum( wxT( "TrackEditPosY" ), -1, wxT( "Positions" ) );
+    wxSize WindowSize;
+    WindowSize.x = Config->ReadNum( wxT( "TrackEditSizeWidth" ), 625, wxT( "Positions" ) );
+    WindowSize.y = Config->ReadNum( wxT( "TrackEditSizeHeight" ), 440, wxT( "Positions" ) );
+
+    //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+    Create( parent, wxID_ANY, _( "Songs Editor" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+
+//	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
@@ -502,6 +512,17 @@ guTrackEditor::guTrackEditor( wxWindow* parent, DbLibrary * NewDb, guTrackArray 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::~guTrackEditor()
 {
+    // Save the window position and size
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteNum( wxT( "TrackEditSashPos" ), m_SongListSplitter->GetSashPosition(), wxT( "Positions" ) );
+    wxPoint WindowPos = GetPosition();
+    Config->WriteNum( wxT( "TrackEditPosX" ), WindowPos.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "TrackEditPosY" ), WindowPos.y, wxT( "Positions" ) );
+    wxSize WindowSize = GetSize();
+    Config->WriteNum( wxT( "TrackEditSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "TrackEditSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
+
+    // Disconnect all events
 	m_SongListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTrackEditor::OnSongListBoxSelected ), NULL, this );
 	m_MoveUpButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveUpBtnClick ), NULL, this );
 	m_MoveDownButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveDownBtnClick ), NULL, this );
@@ -533,9 +554,6 @@ guTrackEditor::~guTrackEditor()
 	m_MBrainzDaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzDateCopyButtonClicked ), NULL, this );
 	m_MBrainzTiCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzTitleCopyButtonClicked ), NULL, this );
 	m_MBrainzNuCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzNumberCopyButtonClicked ), NULL, this );
-
-    // Idle Events
-	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
 
     if( m_MBrainzThread )
     {
@@ -1300,7 +1318,8 @@ void guTrackEditor::OnMBQueryTextCtrlChanged( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
 {
-    m_SongListSplitter->SetSashPosition( 200 );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_SongListSplitter->SetSashPosition( Config->ReadNum( wxT( "TrackEditSashPos" ), 200, wxT( "Positions" ) ) );
     m_SongListSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
 }
 
