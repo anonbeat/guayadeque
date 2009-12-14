@@ -147,9 +147,7 @@ static void gst_about_to_finish( GstElement * playbin, guMediaCtrl * ctrl )
     ctrl->AboutToFinish();
     wxMediaEvent event( wxEVT_MEDIA_ABOUT_TO_FINISH );
     ctrl->AddPendingEvent( event );
-//    g_object_set( playbin, "uri", "file:///Datos/Music/ChillOut/Various/MOS%20-%20Chillout%20Sessions%20Vol.%206/cd2/02%20-%20Soldiers%20of%20Twilight%20-%20Believe%20(Martin%20Solveig%20Vocal%20Dub).mp3", NULL );
 }
-
 
 }
 

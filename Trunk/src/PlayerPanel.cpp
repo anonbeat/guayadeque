@@ -426,6 +426,14 @@ void guPlayerPanel::SetRatingLabel( const int rating )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetLengthLabel( const int length )
+{
+    wxFileOffset CurPos = GetPosition();
+    m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( length ) );
+    m_PosLabelSizer->Layout();
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetBitRate( int bitrate )
 {
     if( bitrate )
@@ -795,6 +803,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     SetTitleLabel( m_MediaSong.m_SongName );
     SetAlbumLabel( m_MediaSong.m_AlbumName );
     SetArtistLabel( m_MediaSong.m_ArtistName );
+    SetLengthLabel( m_MediaSong.m_Length );
     SetRatingLabel( m_MediaSong.m_Rating );
 
     if( m_MediaSong.m_Year > 0 )
@@ -1122,11 +1131,8 @@ void guPlayerPanel::OnAboutToFinish( void )
     guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
     if( NextItem )
     {
-        //m_MediaSong = * NextItem;
-        //SetCurrentTrack( NextItem );
-        LoadMedia( NextItem->m_FileName, false );
-        //m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         m_AboutToFinishPending = true;
+        LoadMedia( NextItem->m_FileName, false );
     }
 }
 
@@ -1140,32 +1146,6 @@ void guPlayerPanel::OnMediaAboutToFinish( wxMediaEvent &event )
         m_AboutToFinishPending = false;
         return;
     }
-//    guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
-//    if( NextItem )
-//    {
-//        //m_MediaSong = * NextItem;
-//        SetCurrentTrack( NextItem );
-//        LoadMedia( NextItem->m_FileName, false );
-//        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-//    }
-//    else
-//    {
-//        // If the option to play a random track is set
-//        guConfig * Config = ( guConfig * ) guConfig::Get();
-//        if( Config )
-//        {
-//            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
-//            {
-//                guTrackArray Tracks;
-//                if( m_Db->GetRandomTracks( &Tracks ) )
-//                {
-//                    AddToPlayList( Tracks );
-//
-//                    OnMediaAboutToFinish( event );
-//                }
-//            }
-//        }
-//    }
 }
 
 // -------------------------------------------------------------------------------- //

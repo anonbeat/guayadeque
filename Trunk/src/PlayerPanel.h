@@ -231,6 +231,7 @@ class guPlayerPanel : public wxPanel
     void                SetAlbumLabel( const wxString &albumname );
     void                SetTitleLabel( const wxString &trackname );
     void                SetRatingLabel( const int Rating );
+    void                SetLengthLabel( const int length );
     void                SetBitRate( int bitrate );
 
     void                UpdatedTracks( const guTrackArray * tracks );
