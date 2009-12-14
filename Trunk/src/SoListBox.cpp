@@ -24,6 +24,7 @@
 #include "Commands.h"
 #include "Images.h"
 #include "MainApp.h"
+#include "MainFrame.h"
 #include "OnlineLinks.h"
 #include "PlayList.h" // LenToString
 #include "Utils.h"
@@ -57,6 +58,8 @@ guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confnam
 
     int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
+
+    m_StatusBar = NULL;
 
     int ColId;
     wxString ColName;
@@ -227,6 +230,13 @@ void guSoListBox::ReloadItems( bool reset )
     GetItemsList();
 
     SetItemCount( m_Items.Count() );
+    if( !m_StatusBar )
+    {
+        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        m_StatusBar = ( guStatusBar * ) MainFrame->GetStatusBar();
+    }
+    else
+        m_StatusBar->SetTrackCount( m_Items.Count() );
 
     if( !reset )
     {
