@@ -1,4 +1,6 @@
 
+  * Changed Save to playlist allowing to append to existing playlist. You
+    can select the playlist and where to append ( begin, end )
   * Added track counter in the status bar
   * Added Ukrainian language translation. Thanks  yupadmin at gmail dot com
   * Resizeable track editor. Remembers last position and size

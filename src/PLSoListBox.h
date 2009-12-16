@@ -31,6 +31,7 @@ class guPLSoListBox : public guSoListBox
     int  m_PLType;
 
     virtual void                GetItemsList( void );
+    virtual void                CreateContextMenu( wxMenu * Menu ) const;
 
   public :
     guPLSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, int style = 0 );

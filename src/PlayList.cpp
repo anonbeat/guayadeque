@@ -22,14 +22,15 @@
 
 #include "Config.h"
 #include "Commands.h"
+#include "dbus/mpris.h"
 #include "Images.h"
 #include "LabelEditor.h"
 #include "MainApp.h"
 #include "OnlineLinks.h"
+#include "PlayListAppend.h"
 #include "Shoutcast.h"
 #include "TagInfo.h"
 #include "Utils.h"
-#include "dbus/mpris.h"
 
 //#include <id3/tag.h>
 //#include <id3/misc_support.h>
@@ -986,19 +987,24 @@ void guPlayList::OnRemoveClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayList::OnAppendToPlaylistClicked( wxCommandEvent &event )
+{
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::OnSaveClicked( wxCommandEvent &event )
 {
     int index;
     int count;
     wxArrayInt SelectedItems = GetSelectedItems( false );
-    wxArrayInt Songs;
+    wxArrayInt NewSongs;
 
     if( ( count = SelectedItems.Count() ) )
     {
         for( index = 0; index < count; index++ )
         {
             if( m_Items[ SelectedItems[ index ] ].m_SongId > 0 )
-                Songs.Add( m_Items[ SelectedItems[ index ] ].m_SongId );
+                NewSongs.Add( m_Items[ SelectedItems[ index ] ].m_SongId );
         }
     }
     else
@@ -1007,20 +1013,46 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
         for( index = 0; index < count; index++ )
         {
             if( m_Items[ index ].m_SongId > 0 )
-                Songs.Add( m_Items[ index ].m_SongId );
+                NewSongs.Add( m_Items[ index ].m_SongId );
         }
     }
 
-    if( Songs.Count() )
+    if( NewSongs.Count() )
     {
-        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( wxTheApp->GetTopWindow(), _( "PlayList Name: " ), _( "Enter the new playlist name" ) );
-        if( EntryDialog->ShowModal() == wxID_OK )
+        guListItems PlayLists;
+        m_Db->GetPlayLists( &PlayLists,GUPLAYLIST_STATIC );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &NewSongs, &PlayLists );
+        if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
-            m_Db->CreateStaticPlayList( EntryDialog->GetValue(), Songs );
+            int Selected = PlayListAppendDlg->GetSelectedPlayList();
+            if( Selected == -1 )
+            {
+                wxString PLName = PlayListAppendDlg->GetPlaylistName();
+                if( PLName.IsEmpty() )
+                {
+                    PLName = _( "UnNamed" );
+                }
+                m_Db->CreateStaticPlayList( PLName, NewSongs );
+            }
+            else
+            {
+                int PLId = PlayLists[ Selected ].m_Id;
+                wxArrayInt OldSongs;
+                m_Db->GetPlayListSongIds( PLId, &OldSongs );
+                if( PlayListAppendDlg->GetSelectedPosition() == 0 ) // BEGIN
+                {
+                    m_Db->UpdateStaticPlayList( PLId, NewSongs );
+                    m_Db->AppendStaticPlayList( PLId, OldSongs );
+                }
+                else                                                // END
+                {
+                    m_Db->AppendStaticPlayList( PLId, NewSongs );
+                }
+            }
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
             wxPostEvent( wxTheApp->GetTopWindow(), evt );
         }
-        EntryDialog->Destroy();
+        PlayListAppendDlg->Destroy();
     }
 }
 

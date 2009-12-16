@@ -2227,6 +2227,45 @@ int DbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &son
 }
 
 // -------------------------------------------------------------------------------- //
+int DbLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &tracks )
+{
+  wxString query;
+
+  query = wxString::Format( wxT( "DELETE FROM plsets WHERE plset_plid = %u;" ), plid );
+  ExecuteUpdate( query );
+
+  return AppendStaticPlayList( plid, tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks )
+{
+  wxString query;
+
+  int index;
+  int count = tracks.Count();
+  for( index = 0; index < count; index++ )
+  {
+    query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_type, plset_option, plset_text, plset_option2 ) "
+                                   "VALUES( NULL, %u, %u, 0, 0, \"\", 0 );" ),
+                  plid,
+                  tracks[ index ] );
+    ExecuteUpdate( query );
+  }
+  return tracks.Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::DeleteStaticPlaylistTracks( const int plid, const wxArrayInt &tracks )
+{
+    wxString query;
+    query = wxString::Format( wxT( "DELETE FROM plsets WHERE plset_plid = %u AND " ), plid );
+    query += ArrayToFilter( tracks, wxT( "plset_songid" ) );
+
+    return ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
 int DbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist )
 {
   wxASSERT( playlist );
@@ -2603,6 +2642,25 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
   //guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
 
   return GU_TRACKS_QUERYSTR + dbNames + query + sort;
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPlayListSongIds( const int plid, wxArrayInt * tracks )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query += wxString::Format( wxT( "SELECT plset_songid FROM plsets WHERE plset_plid = %u" ), plid );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    tracks->Add( dbRes.GetInt( 0 ) );;
+  }
+  dbRes.Finalize();
+
+  return tracks->Count();
 }
 
 // -------------------------------------------------------------------------------- //

@@ -321,6 +321,16 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, ID_SONG_SAVEPLAYLIST, _( "Save Playlist" ), _( "Save all selected tracks as a playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+    Menu->Append( MenuItem );
+
     if( SelCount )
     {
         Menu->AppendSeparator();
@@ -331,16 +341,6 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
         MenuItem = new wxMenuItem( Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-        Menu->Append( MenuItem );
-
-        Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_SONG_SAVEPLAYLIST, _( "Save Playlist" ), _( "Save all selected tracks as a playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-        Menu->Append( MenuItem );
-
-        MenuItem = new wxMenuItem( Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();

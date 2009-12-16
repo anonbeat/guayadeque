@@ -242,7 +242,7 @@ msgstr "Meses"
 
 #: src/Preferences.cpp:461
 msgid "Only if played"
-msgstr "Sólo si reproducido"
+msgstr "Sólo oídos"
 
 #: src/Preferences.cpp:483
 msgid " Links "
@@ -495,11 +495,11 @@ msgstr "Elimina todas las canciones de la lista de reproducción"
 
 #: src/PlayList.cpp:937
 msgid "Save PlayList"
-msgstr "Guarda la lista"
+msgstr "Guardar"
 
 #: src/PlayList.cpp:937
 msgid "Save the PlayList"
-msgstr "Guarda la lista de reproducción"
+msgstr "Guardar"
 
 #: src/PlayList.cpp:941
 msgid "Remove selected songs"
@@ -650,7 +650,7 @@ msgstr "Edita las canciones seleccionadas"
 
 #: src/SoListBox.cpp:337
 msgid "Save Playlist"
-msgstr "Guarda la lista"
+msgstr "Guardar"
 
 #: src/SoListBox.cpp:337
 msgid "Save all selected tracks as a playlist"
@@ -1526,7 +1526,7 @@ msgstr "Edita la lista seleccionada"
 
 #: src/PlayListPanel.cpp:150
 msgid "Save the selected playlist as a Static Playlist"
-msgstr "Guarda la lista seleccionada como una lista estática"
+msgstr "Guarda la lista seleccionada en una lista estática"
 
 #: src/PlayListPanel.cpp:155
 msgid "Rename Playlist"
