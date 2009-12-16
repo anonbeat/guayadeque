@@ -86,11 +86,13 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
   wxString      FileName;
   wxString      LowerFileName;
   wxString      SavedDir( wxGetCwd() );
+  wxString      WorkingDir;
 
 
   Dir.Open( dirname );
   wxSetWorkingDirectory( dirname );
   //guLogMessage( wxT( "Scanning dir '%s'" ), dirname.c_str() );
+  WorkingDir = wxGetCwd();
 
   if( !TestDestroy() && Dir.IsOpened() )
   {
@@ -120,7 +122,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
               // TODO: add other file formats
               if( guIsValidAudioFile( LowerFileName ) )
               {
-                m_TrackFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
+                m_TrackFiles.Add( WorkingDir + wxT( '/' ) + FileName );
               }
               else if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) &&
                   ( LowerFileName.EndsWith( wxT( ".jpg" ) ) ||
@@ -128,7 +130,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
                     LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
                     LowerFileName.EndsWith( wxT( ".gif" ) ) ) )
               {
-                m_ImageFiles.Add( SavedDir + wxT( '/' ) + dirname + wxT( '/' ) + FileName );
+                m_ImageFiles.Add( WorkingDir + wxT( '/' ) + FileName );
               }
             }
           }
