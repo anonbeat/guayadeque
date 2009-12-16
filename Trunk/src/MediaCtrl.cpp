@@ -382,7 +382,7 @@ double guMediaCtrl::GetVolume()
 // -------------------------------------------------------------------------------- //
 void inline guMediaCtrl::AboutToFinish( void )
 {
-    m_PlayerPanel->OnAboutToFinish();
+    //m_PlayerPanel->OnAboutToFinish();
 }
 
 // -------------------------------------------------------------------------------- //

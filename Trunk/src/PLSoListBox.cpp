@@ -63,3 +63,21 @@ void guPLSoListBox::SetPlayList( int plid, int pltype )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPLSoListBox::CreateContextMenu( wxMenu * Menu ) const
+{
+    wxMenuItem * MenuItem;
+    int SelCount = GetSelectedItems().Count();
+
+    if( SelCount )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE, _( "Delete" ), _( "Delete the current selected tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_del ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+    }
+
+    guSoListBox::CreateContextMenu( Menu );
+}
+
+// -------------------------------------------------------------------------------- //

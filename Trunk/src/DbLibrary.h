@@ -339,8 +339,12 @@ class DbLibrary {
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
     wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );
 
-    int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &songs );
+    int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
+    int                 UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
+    int                 AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
+    int                 DeleteStaticPlaylistTracks( const int plid, const wxArrayInt &tracks );
     void                GetPlayLists( guListItems * PlayLists, const int type );
+    int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
     int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks );
     void                DeletePlayList( const int plid );
     void                SetPlayListName( const int plid, const wxString &plname );
@@ -348,9 +352,7 @@ class DbLibrary {
     int                 CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist );
     void                UpdateDynPlayList( const int plid, const guDynPlayList * playlist );
 
-
     void                GetPaths( guListItems * Paths, bool FullList = false );
-
 
     int                 GetSongs( wxArrayInt SongIds, guTrackArray * Songs );
     int                 GetSongs( guTrackArray * Songs );

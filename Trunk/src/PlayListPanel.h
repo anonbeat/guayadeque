@@ -105,6 +105,7 @@ class guPlayListPanel : public wxPanel
     void                OnPLNamesCopyTo( wxCommandEvent &event );
 
     void                OnPLTracksActivated( wxListEvent &event );
+    void                OnPLTracksDeleteClicked( wxCommandEvent &event );
     void                OnPLTracksPlayClicked( wxCommandEvent &event );
     void                OnPLTracksPlayAllClicked( wxCommandEvent &event );
     void                OnPLTracksQueueClicked( wxCommandEvent &event );

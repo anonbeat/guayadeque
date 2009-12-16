@@ -238,6 +238,8 @@ ADD_EXECUTABLE( guayadeque
 	NewChannel.h
 	RadioEditor.cpp
 	RadioEditor.h
+	PlayListAppend.cpp
+	PlayListAppend.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

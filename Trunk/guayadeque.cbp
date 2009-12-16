@@ -144,6 +144,8 @@
 		<Unit filename="src/PLSoListBox.h" />
 		<Unit filename="src/PlayList.cpp" />
 		<Unit filename="src/PlayList.h" />
+		<Unit filename="src/PlayListAppend.cpp" />
+		<Unit filename="src/PlayListAppend.h" />
 		<Unit filename="src/PlayListPanel.cpp" />
 		<Unit filename="src/PlayListPanel.h" />
 		<Unit filename="src/PlayerPanel.cpp" />

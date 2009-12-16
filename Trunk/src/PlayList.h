@@ -70,6 +70,7 @@ class guPlayList : public guListView
     void                        OnClearClicked( wxCommandEvent &event );
     void                        OnRemoveClicked( wxCommandEvent &event );
     void                        OnSaveClicked( wxCommandEvent &event );
+    void                        OnAppendToPlaylistClicked( wxCommandEvent &event );
     void                        OnCopyToClicked( wxCommandEvent &event );
     void                        OnEditLabelsClicked( wxCommandEvent &event );
     void                        OnSearchLinkClicked( wxCommandEvent &event );

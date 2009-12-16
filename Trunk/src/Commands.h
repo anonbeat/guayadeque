@@ -21,7 +21,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#define ID_GUAYADEQUE_VERSION           "0.2.2"
+#define ID_GUAYADEQUE_VERSION           "0.2.3"
 
 // -------------------------------------------------------------------------------- //
 //
@@ -87,6 +87,7 @@ enum guCommandIds {
     ID_SONG_EDITTRACKS,
     ID_SONG_COPYTO,
     ID_SONG_SAVEPLAYLIST,
+    ID_SONG_DELETE,
     ID_SONG_BROWSE_GENRE,
     ID_SONG_BROWSE_ARTIST,
     ID_SONG_BROWSE_ALBUM,
@@ -172,10 +173,10 @@ enum guCommandIds {
     ID_PODCASTS_ITEM_ENQUEUE,
     ID_PODCASTS_ITEM_DOWNLOAD,
     //
-    ID_ARTIST_COMMANDS = 3000,
-    ID_ALBUM_COMMANDS = 3100, // 3000...3099
-    ID_SONGS_COMMANDS = 3200, // 3000...3099
-    ID_PLAYER_PLAYLIST_COMMANDS = 3300, // 3000...3099
+    ID_ARTIST_COMMANDS = 3000,          // 3000...3099
+    ID_ALBUM_COMMANDS = 3100,           // 3100...3199
+    ID_SONGS_COMMANDS = 3200,           // 3200...3299
+    ID_PLAYER_PLAYLIST_COMMANDS = 3300, // 3300...3399
     //
     ID_LASTFM_SEARCH_LINK = 4000    // From 4000 for Link #0 to 4999
 };
