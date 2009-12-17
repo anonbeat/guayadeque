@@ -462,7 +462,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, DbLibrary * NewDb, guTrackArray
 	m_SongListBox->SetFocus();
 
 	// Connect Events
-//	Connect( wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnButton ) );
+	Connect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnOKButton ) );
 
 	m_SongListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTrackEditor::OnSongListBoxSelected ), NULL, this );
 	m_MoveUpButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveUpBtnClick ), NULL, this );
@@ -569,11 +569,11 @@ guTrackEditor::~guTrackEditor()
 }
 
 // -------------------------------------------------------------------------------- //
-//void guTrackEditor::OnButton( wxCommandEvent& event )
-//{
-//    WriteItemData();
-//    event.Skip();
-//}
+void guTrackEditor::OnOKButton( wxCommandEvent& event )
+{
+    WriteItemData();
+    event.Skip();
+}
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
