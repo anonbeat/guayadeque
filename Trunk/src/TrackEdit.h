@@ -161,6 +161,7 @@ class guTrackEditor : public wxDialog
 	void OnMBQueryTextCtrlChanged( wxCommandEvent& event );
 
 
+    void OnOKButton( wxCommandEvent& event );
     void ReadItemData( void );
     void WriteItemData( void );
 
