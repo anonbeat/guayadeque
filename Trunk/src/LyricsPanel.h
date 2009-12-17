@@ -21,6 +21,8 @@
 #ifndef LYRICSPANEL_H
 #define LYRICSPANEL_H
 
+#include "TrackChangeInfo.h"
+
 #include <wx/bitmap.h>
 #include <wx/checkbox.h>
 #include <wx/colour.h>
@@ -74,7 +76,7 @@ class guLyricsPanel : public wxPanel
     ~guLyricsPanel();
 
     void    OnUpdatedTrack( wxCommandEvent &event );
-    void    SetTrack( const wxString &artistname, const wxString &trackname );
+    void    SetTrack( const guTrackChangeInfo * trackchangeinfo );
     void    ClearLyricThread( void );
 
 };

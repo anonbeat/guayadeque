@@ -91,6 +91,8 @@
 #include "./images/tiny_reload.h"
 #include "./images/tiny_shoutcast.h"
 #include "./images/tiny_net_radio.h"
+#include "./images/tiny_left.h"
+#include "./images/tiny_right.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -168,7 +170,9 @@ guImage_Item guImage_Items[] = {
     { guImage_tiny_doc_save,        sizeof( guImage_tiny_doc_save ),        wxBITMAP_TYPE_PNG },
     { guImage_tiny_reload,          sizeof( guImage_tiny_reload ),          wxBITMAP_TYPE_PNG },
     { guImage_tiny_shoutcast,       sizeof( guImage_tiny_shoutcast ),       wxBITMAP_TYPE_PNG },
-    { guImage_tiny_net_radio,       sizeof( guImage_tiny_net_radio ),       wxBITMAP_TYPE_JPEG }
+    { guImage_tiny_net_radio,       sizeof( guImage_tiny_net_radio ),       wxBITMAP_TYPE_JPEG },
+    { guImage_tiny_left,            sizeof( guImage_tiny_left ),            wxBITMAP_TYPE_PNG },
+    { guImage_tiny_right,           sizeof( guImage_tiny_right ),           wxBITMAP_TYPE_PNG }
 };
 
 

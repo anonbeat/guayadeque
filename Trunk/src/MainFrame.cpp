@@ -26,6 +26,7 @@
 #include "LibUpdate.h"
 #include "Preferences.h"
 #include "SplashWin.h"
+#include "TrackChangeInfo.h"
 #include "TaskBar.h"
 #include "Utils.h"
 
@@ -487,9 +488,7 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
 
     if( event.GetClientData() )
     {
-        wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
-        //Params->Clear();
-        delete Params;
+        delete ( guTrackChangeInfo * ) event.GetClientData();
     }
 }
 
