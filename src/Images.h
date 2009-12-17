@@ -92,7 +92,9 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_doc_save,
     guIMAGE_INDEX_tiny_reload,
     guIMAGE_INDEX_tiny_shoutcast,
-    guIMAGE_INDEX_tiny_net_radio
+    guIMAGE_INDEX_tiny_net_radio,
+    guIMAGE_INDEX_tiny_left,
+    guIMAGE_INDEX_tiny_right
 };
 
 

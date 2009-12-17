@@ -135,14 +135,15 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
 {
     if( m_UpdateEnabled )
     {
-        const wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
-        if( !Params )
+        const guTrackChangeInfo * TrackChangeInfo = ( guTrackChangeInfo * ) event.GetClientData();
+        if( !TrackChangeInfo )
         {
-            SetTrack( wxEmptyString, wxEmptyString );
+            guTrackChangeInfo ChangeInfo;
+            SetTrack( &ChangeInfo );
         }
         else
         {
-            SetTrack( ( * Params )[ 0 ], ( * Params )[ 1 ] );
+            SetTrack( TrackChangeInfo );
         }
     }
 }
@@ -169,13 +170,15 @@ void guLyricsPanel::OnUpdateChkBoxClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
 {
-    SetTrack( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+    guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+    SetTrack( &TrackChangeInfo );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnSearchBtnClick( wxCommandEvent& event )
 {
-    SetTrack( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+    guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+    SetTrack( &TrackChangeInfo );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -198,14 +201,18 @@ void guLyricsPanel::SetText( const wxString &text )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
+void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo )
 {
-    SetTitle( track + wxT( " / " ) + artist );
+    //const wxString &artist, const wxString &track
+    wxString Artist = trackchangeinfo->m_ArtistName;
+    wxString Track = trackchangeinfo->m_TrackName;
+
+    SetTitle( Track + wxT( " / " ) + Artist );
     //SetText( _( "No lyrics found for this song." ) );
 
-    m_ArtistTextCtrl->SetValue( artist );
-    m_TrackTextCtrl->SetValue( track );
-    if( !artist.IsEmpty() && !track.IsEmpty() )
+    m_ArtistTextCtrl->SetValue( Artist );
+    m_TrackTextCtrl->SetValue( Track );
+    if( !Artist.IsEmpty() && !Track.IsEmpty() )
     {
         SetText( _( "Searching the lyrics for this track" ) );
 
@@ -214,19 +221,15 @@ void guLyricsPanel::SetTrack( const wxString &artist, const wxString &track )
         int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
         if( Engine == guLYRIC_ENGINE_LYRICWIKI )
         {
-            m_LyricThread = new guLyricWikiEngine( this, artist.c_str(), track.c_str() );
+            m_LyricThread = new guLyricWikiEngine( this, Artist.c_str(), Track.c_str() );
         }
         else if( Engine == guLYRIC_ENGINE_LEOSLYRICS )
         {
-            m_LyricThread = new guLeosLyricsEngine( this, artist.c_str(), track.c_str() );
+            m_LyricThread = new guLeosLyricsEngine( this, Artist.c_str(), Track.c_str() );
         }
-//        else if( Engine == guLYRIC_ENGINE_LYRC_COM_AR )
-//        {
-//            m_LyricThread = new guLyrcComArEngine( this, artist.c_str(), track.c_str() );
-//        }
         else //if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
         {
-            m_LyricThread = new guCDUEngine( this, artist.c_str(), track.c_str() );
+            m_LyricThread = new guCDUEngine( this, Artist.c_str(), Track.c_str() );
         }
     }
     else

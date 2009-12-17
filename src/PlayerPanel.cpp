@@ -28,6 +28,7 @@
 #include "LastFM.h"
 #include "MainFrame.h"
 #include "TagInfo.h"
+#include "TrackChangeInfo.h"
 #include "Utils.h"
 #include "VolumeFrame.h"
 
@@ -1047,10 +1048,7 @@ void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
 
                 //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-                wxArrayString * Params = new wxArrayString();
-                Params->Add( m_MediaSong.m_ArtistName );
-                Params->Add( m_MediaSong.m_SongName );
-                event.SetClientData( Params );
+                event.SetClientData( new guTrackChangeInfo( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName ) );
                 wxPostEvent( wxTheApp->GetTopWindow(), event );
             }
         }
@@ -1091,10 +1089,7 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
             // Send an event so the LastFMPanel update its content.
             //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-            wxArrayString * Params = new wxArrayString();
-            Params->Add( m_MediaSong.m_ArtistName );
-            Params->Add( m_MediaSong.m_SongName );
-            event.SetClientData( Params );
+            event.SetClientData( new guTrackChangeInfo( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName ) );
             wxPostEvent( wxTheApp->GetTopWindow(), event );
         }
         else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )

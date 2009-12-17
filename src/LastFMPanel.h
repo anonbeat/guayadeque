@@ -24,6 +24,7 @@
 #include "LastFM.h"
 #include "PlayerPanel.h"
 #include "ThreadArray.h"
+#include "TrackChangeInfo.h"
 
 #include <wx/image.h>
 #include <wx/panel.h>
@@ -384,15 +385,17 @@ WX_DEFINE_ARRAY_PTR( guTrackInfoCtrl *, guTrackInfoCtrlArray );
 class guLastFMPanel : public wxScrolledWindow
 {
   private :
-    DbLibrary *         m_Db;
-    guPlayerPanel *     m_PlayerPanel;
-	wxString            m_ArtistName;
-	wxString            m_LastArtistName;
-	wxString            m_TrackName;
-	wxString            m_LastTrackName;
-	wxString            m_ShortBio;
-	wxString            m_LongBio;
-	bool                m_UpdateEnabled;
+    DbLibrary *             m_Db;
+    guPlayerPanel *         m_PlayerPanel;
+    guTrackChangeInfoArray  m_TrackChangeItems;
+    int                     m_CurrentTrackInfo;
+	wxString                m_ArtistName;
+	wxString                m_LastArtistName;
+	wxString                m_TrackName;
+	wxString                m_LastTrackName;
+	wxString                m_ShortBio;
+	wxString                m_LongBio;
+	bool                    m_UpdateEnabled;
 
 	guFetchAlbumInfoThread *            m_AlbumsUpdateThread;
 	wxMutex                             m_AlbumsUpdateThreadMutex;
@@ -410,6 +413,8 @@ class guLastFMPanel : public wxScrolledWindow
 	wxBoxSizer *                        m_MainSizer;
 
     wxCheckBox *                        m_UpdateCheckBox;
+	wxBitmapButton *                    m_PrevButton;
+	wxBitmapButton *                    m_NextButton;
 	wxBitmapButton *                    m_ReloadButton;
     wxTextCtrl *                        m_ArtistTextCtrl;
     wxTextCtrl *                        m_TrackTextCtrl;
@@ -454,6 +459,8 @@ class guLastFMPanel : public wxScrolledWindow
 	void    OnSimTrTitleDClick( wxMouseEvent &event );
 
 	void    OnUpdateChkBoxClick( wxCommandEvent &event );
+    void    OnPrevBtnClick( wxCommandEvent &event );
+    void    OnNextBtnClick( wxCommandEvent &event );
     void    OnReloadBtnClick( wxCommandEvent &event );
     void    OnTextUpdated( wxCommandEvent& event );
     void    OnSearchBtnClick( wxCommandEvent &event );
@@ -465,13 +472,15 @@ class guLastFMPanel : public wxScrolledWindow
 	void    OnArtistTextRightClicked( wxMouseEvent &event );
 	void    OnTrackTextRightClicked( wxMouseEvent &event );
 
+    void    UpdateTrackChangeButtons( void );
 
   public :
             guLastFMPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
             ~guLastFMPanel();
 
     void    OnUpdatedTrack( wxCommandEvent &event );
-	void    SetTrack( const wxString &artistname, const wxString &trackname );
+    void    AppendTrackChangeInfo( const guTrackChangeInfo * trackchangeinfo );
+	void    ShowCurrentTrack( void );
 	void    SetUpdateEnable( bool value );
 	void    UpdateLayout( void );
 

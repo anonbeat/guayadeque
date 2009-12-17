@@ -1,4 +1,6 @@
 
+  * Added a navigator in last.fm so you can go to the previous or next track
+    info.
   * Fixed a bug in TrackEditor not saving alls changes made.
   * Changed Save to playlist allowing to append to existing playlist. You
     can select the playlist and where to append ( begin, end )
