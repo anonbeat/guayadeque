@@ -76,6 +76,7 @@ class guListViewHeader : public wxWindow
     void OnSetFocus( wxFocusEvent &event );
     void AdjustDC( wxDC &dc );
     void OnEditColumns( void );
+    void OnCaptureLost( wxMouseCaptureLostEvent &event );
 
   public:
     guListViewHeader();
@@ -982,9 +983,10 @@ void guListViewClient::AdjustDC( wxDC &dc )
 //  guListViewHeader
 // -------------------------------------------------------------------------------- //
 BEGIN_EVENT_TABLE(guListViewHeader,wxWindow)
-    EVT_PAINT         (guListViewHeader::OnPaint)
-    EVT_MOUSE_EVENTS  (guListViewHeader::OnMouse)
-    EVT_SET_FOCUS     (guListViewHeader::OnSetFocus)
+    EVT_PAINT               (guListViewHeader::OnPaint)
+    EVT_MOUSE_EVENTS        (guListViewHeader::OnMouse)
+    EVT_SET_FOCUS           (guListViewHeader::OnSetFocus)
+    EVT_MOUSE_CAPTURE_LOST  (guListViewHeader::OnCaptureLost)
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
@@ -1082,6 +1084,12 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
         cRect.width = w - m_Width;
         wxRendererNative::Get().DrawHeaderButton( this, dc, cRect, flags );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guListViewHeader::OnCaptureLost( wxMouseCaptureLostEvent &event )
+{
+    m_IsDragging = false;
 }
 
 // -------------------------------------------------------------------------------- //
