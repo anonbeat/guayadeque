@@ -166,8 +166,8 @@ bool IsValidOutput( GstElement * outputsink )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetProperty( GstElement * element, const char * name, gint64 value )
 {
-  bool done = false;
-  bool ret = false;
+    bool Done = false;
+    bool RetVal = false;
 
     if( g_object_class_find_property( G_OBJECT_GET_CLASS( element ), name ) )
     {
@@ -178,38 +178,38 @@ bool guMediaCtrl::SetProperty( GstElement * element, const char * name, gint64 v
     if( GST_IS_BIN( element ) )
     {
         // Iterate in sorted order, so we look at sinks first
-        GstIterator * it = gst_bin_iterate_sorted( ( GstBin * ) element );
+        GstIterator * It = gst_bin_iterate_sorted( ( GstBin * ) element );
 
-        while( !done )
+        while( !Done )
         {
-            gpointer data;
-            GstElement * child;
-            switch( gst_iterator_next( it, &data ) )
+            gpointer Data;
+            GstElement * Child;
+            switch( gst_iterator_next( It, &Data ) )
             {
                 case GST_ITERATOR_OK:
-                    child = GST_ELEMENT_CAST( data );
-                    if( SetProperty( child, name, value ) )
+                    Child = GST_ELEMENT_CAST( Data );
+                    if( SetProperty( Child, name, value ) )
                     {
-                        ret = true;
-                        done = true;
+                        RetVal = true;
+                        Done = true;
                     }
-                    gst_object_unref( child );
+                    gst_object_unref( Child );
                     break;
                 case GST_ITERATOR_DONE:
-                    done = TRUE;
+                    Done = TRUE;
                     break;
                 case GST_ITERATOR_RESYNC:
-                    gst_iterator_resync( it );
+                    gst_iterator_resync( It );
                     break;
                 case GST_ITERATOR_ERROR:
-                    done = true;
+                    Done = true;
                     break;
             }
         }
 
-        gst_iterator_free( it );
+        gst_iterator_free( It );
     }
-    return ret;
+    return RetVal;
 }
 
 
@@ -274,24 +274,19 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         gst_bin_add( GST_BIN( m_Playbin ), replay );
         g_object_set( G_OBJECT( m_Playbin ), "audio-sink", outputsink, NULL );
 
+        // This dont make any difference in gapless playback :(
 //        if( !SetProperty( outputsink, "buffer-time", (gint64) 5000*1000 ) )
 //            guLogMessage( wxT( "Could not set buffer time to gstreamer object." ) );
 
+        // Be sure we only play audio
         g_object_set( G_OBJECT( m_Playbin ), "flags", 0x02|0x10, NULL );
         //g_object_set( G_OBJECT( m_Playbin ), "buffer-size", 256*1024, NULL );
 
-//        GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
-//        g_object_set( m_Playbin, "auto-flush-bus", FALSE, NULL );
-//
-//        g_object_unref( ( GObject * ) bus );
-
-
-//        gst_bus_add_signal_watch( bus );
-
         g_signal_connect( G_OBJECT( m_Playbin ), "about-to-finish",
-				 G_CALLBACK( gst_about_to_finish ), ( void * ) this );
+            G_CALLBACK( gst_about_to_finish ), ( void * ) this );
         //
-        gst_bus_add_watch( gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) ), ( GstBusFunc ) gst_bus_async_callback, this );
+        gst_bus_add_watch( gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) ),
+            ( GstBusFunc ) gst_bus_async_callback, this );
 
     }
 }
@@ -388,14 +383,10 @@ bool guMediaCtrl::Seek( wxLongLong where )
 // -------------------------------------------------------------------------------- //
 wxFileOffset guMediaCtrl::Tell()
 {
-//    if( GetState() != wxMEDIASTATE_PLAYING )
-//        return m_llPausedPos.ToLong();
-//    else
-//    {
     gint64 pos;
     GstFormat format = GST_FORMAT_TIME;
 
-    if( gst_element_query_position ( m_Playbin, &format, &pos ) && pos != -1 )
+    if( gst_element_query_position( m_Playbin, &format, &pos ) && pos != -1 )
     {
         return pos / GST_MSECOND;
     }
@@ -403,13 +394,6 @@ wxFileOffset guMediaCtrl::Tell()
     {
         return m_llPausedPos.ToLong();
     }
-//        GstFormat fmtTime = GST_FORMAT_TIME;
-//
-//        if( !gst_element_query_position( m_Playbin, &fmtTime, &pos ) ||
-//            fmtTime != GST_FORMAT_TIME || pos == -1 )
-//            return 0;
-//        return pos / GST_MSECOND ;
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
