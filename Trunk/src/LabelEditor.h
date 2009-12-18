@@ -44,17 +44,12 @@ class guLabelEditor : public wxDialog
 
   protected:
     DbLibrary *         m_Db;
-    wxStaticText *      m_LabelsStaticText;
     wxCheckListBox *    m_CheckListBox;
     wxBitmapButton *    m_AddLabelBtn;
 	wxBitmapButton *    m_DelLabelBtn;
 
     wxArrayInt          m_LabelIds;
     int                 m_SelectedItem;
-
-    wxStdDialogButtonSizer * m_LabelEditorBtnSizer;
-    wxButton * m_LabelEditorBtnSizerOK;
-    wxButton * m_LabelEditorBtnSizerCancel;
 
 	void SetCheckedItems( const wxArrayInt &Checked );
     void OnAddLabelBtnClick( wxCommandEvent &event );

@@ -29,26 +29,92 @@ guLabelEditor::guLabelEditor( wxWindow* parent, DbLibrary * db, const wxString &
     m_Db = db;
     m_SelectedItem = wxNOT_FOUND;
 
-	wxBoxSizer *    LabelEditorSizer;
-	wxBoxSizer *    CheckListBoxSizer;
-	wxBoxSizer *    OptionsSizer;
 	wxArrayString   Choices;
 	wxArrayInt      EnabledIds;
 	int index;
 	int count;
 
-	SetSizeHints( wxDefaultSize, wxDefaultSize );
+//	SetSizeHints( wxDefaultSize, wxDefaultSize );
+//
+//	LabelEditorSizer = new wxBoxSizer( wxVERTICAL );
+//
+//
+//	LabelEditorSizer->Add( 0, 15, 0, wxEXPAND, 5 );
+//
+//	m_LabelsStaticText = new wxStaticText( this, wxID_ANY, _( "Labels" ), wxDefaultPosition, wxDefaultSize, 0 );
+//	m_LabelsStaticText->Wrap( -1 );
+//	LabelEditorSizer->Add( m_LabelsStaticText, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
+//
+//	CheckListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
+//
+//    count = listitems.Count();
+//    for( index = 0; index < count; index++ )
+//    {
+//        Choices.Add( listitems[ index ].m_Name );
+//        m_LabelIds.Add( listitems[ index ].m_Id );
+//    }
+//
+//	m_CheckListBox = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, Choices, wxLB_MULTIPLE|wxLB_NEEDED_SB );
+//	CheckListBoxSizer->Add( m_CheckListBox, 1, wxALL|wxEXPAND, 5 );
+//
+//	wxBoxSizer* ButtonsSizer;
+//	ButtonsSizer = new wxBoxSizer( wxVERTICAL );
+//
+//	m_AddLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_AddLabelBtn->SetToolTip( _( "Add a new label" ) );
+//
+//	ButtonsSizer->Add( m_AddLabelBtn, 0, wxALL, 5 );
+//
+//	m_DelLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_DelLabelBtn->SetToolTip( _( "Delete the selected labels" ) );
+//	m_DelLabelBtn->Enable( false );
+//
+//	ButtonsSizer->Add( m_DelLabelBtn, 0, wxALL, 5 );
+//
+//	CheckListBoxSizer->Add( ButtonsSizer, 0, wxEXPAND, 5 );
+//
+//
+//	LabelEditorSizer->Add( CheckListBoxSizer, 1, wxEXPAND, 5 );
+//
+//	OptionsSizer = new wxBoxSizer( wxHORIZONTAL );
+//
+//	OptionsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+//
+//	m_LabelEditorBtnSizer = new wxStdDialogButtonSizer();
+//	m_LabelEditorBtnSizerOK = new wxButton( this, wxID_OK );
+//	m_LabelEditorBtnSizer->AddButton( m_LabelEditorBtnSizerOK );
+//	m_LabelEditorBtnSizerCancel = new wxButton( this, wxID_CANCEL );
+//	m_LabelEditorBtnSizer->AddButton( m_LabelEditorBtnSizerCancel );
+//	m_LabelEditorBtnSizer->Realize();
+//	LabelEditorSizer->Add( m_LabelEditorBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+//
+//	SetSizer( LabelEditorSizer );
+//	Layout();
 
-	LabelEditorSizer = new wxBoxSizer( wxVERTICAL );
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
+	wxBoxSizer* MainSizer;
+	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	LabelEditorSizer->Add( 0, 15, 0, wxEXPAND, 5 );
+	wxBoxSizer* TopSizer;
+	TopSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_LabelsStaticText = new wxStaticText( this, wxID_ANY, _( "Labels" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_LabelsStaticText->Wrap( -1 );
-	LabelEditorSizer->Add( m_LabelsStaticText, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
+	wxStaticText * LabelStaticText = new wxStaticText( this, wxID_ANY, _( "Labels" ), wxDefaultPosition, wxDefaultSize, 0 );
+	LabelStaticText->Wrap( -1 );
+	TopSizer->Add( LabelStaticText, 1, wxALIGN_BOTTOM|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	CheckListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_AddLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddLabelBtn->SetToolTip( _( "Add a new label" ) );
+
+	TopSizer->Add( m_AddLabelBtn, 0, wxALL, 5 );
+
+	m_DelLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelLabelBtn->SetToolTip( _( "Delete the selected labels" ) );
+	m_DelLabelBtn->Enable( false );
+
+	TopSizer->Add( m_DelLabelBtn, 0, wxALL, 5 );
+
+	MainSizer->Add( TopSizer, 0, wxEXPAND, 5 );
 
     count = listitems.Count();
     for( index = 0; index < count; index++ )
@@ -58,41 +124,22 @@ guLabelEditor::guLabelEditor( wxWindow* parent, DbLibrary * db, const wxString &
     }
 
 	m_CheckListBox = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, Choices, wxLB_MULTIPLE|wxLB_NEEDED_SB );
-	CheckListBoxSizer->Add( m_CheckListBox, 1, wxALL|wxEXPAND, 5 );
+	MainSizer->Add( m_CheckListBox, 1, wxALL|wxEXPAND, 5 );
 
-	wxBoxSizer* ButtonsSizer;
-	ButtonsSizer = new wxBoxSizer( wxVERTICAL );
+    wxStdDialogButtonSizer * LabelEditorBtnSizer;
+    wxButton * LabelEditorBtnSizerOK;
+    wxButton * LabelEditorBtnSizerCancel;
 
-	m_AddLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_AddLabelBtn->SetToolTip( _( "Add a new label" ) );
+	LabelEditorBtnSizer = new wxStdDialogButtonSizer();
+	LabelEditorBtnSizerOK = new wxButton( this, wxID_OK );
+	LabelEditorBtnSizer->AddButton( LabelEditorBtnSizerOK );
+	LabelEditorBtnSizerCancel = new wxButton( this, wxID_CANCEL );
+	LabelEditorBtnSizer->AddButton( LabelEditorBtnSizerCancel );
+	LabelEditorBtnSizer->Realize();
+	MainSizer->Add( LabelEditorBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	ButtonsSizer->Add( m_AddLabelBtn, 0, wxALL, 5 );
-
-	m_DelLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_DelLabelBtn->SetToolTip( _( "Delete the selected labels" ) );
-	m_DelLabelBtn->Enable( false );
-
-	ButtonsSizer->Add( m_DelLabelBtn, 0, wxALL, 5 );
-
-	CheckListBoxSizer->Add( ButtonsSizer, 0, wxEXPAND, 5 );
-
-
-	LabelEditorSizer->Add( CheckListBoxSizer, 1, wxEXPAND, 5 );
-
-	OptionsSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	OptionsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
-	m_LabelEditorBtnSizer = new wxStdDialogButtonSizer();
-	m_LabelEditorBtnSizerOK = new wxButton( this, wxID_OK );
-	m_LabelEditorBtnSizer->AddButton( m_LabelEditorBtnSizerOK );
-	m_LabelEditorBtnSizerCancel = new wxButton( this, wxID_CANCEL );
-	m_LabelEditorBtnSizer->AddButton( m_LabelEditorBtnSizerCancel );
-	m_LabelEditorBtnSizer->Realize();
-	LabelEditorSizer->Add( m_LabelEditorBtnSizer, 0, wxEXPAND, 5 );
-
-	SetSizer( LabelEditorSizer );
-	Layout();
+	this->SetSizer( MainSizer );
+	this->Layout();
 
     //
     count = selitems.Count();
