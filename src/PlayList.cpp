@@ -337,6 +337,18 @@ void guPlayList::SetPlayList( const guTrackArray &NewItems )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayList::OnLeave( void )
+{
+    if( ( int ) m_DragOverItem != wxNOT_FOUND )
+    {
+        int RefreshLine = m_DragOverItem;
+        m_DragOverItem = wxNOT_FOUND;
+        //RefreshLines( wxMax( ( int ) RefreshLine - 1, 0 ), wxMin( ( ( int ) RefreshLine + 3 ), GetCount() ) );
+        RefreshLines( RefreshLine, RefreshLine );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
 {
     int w, h, d;
@@ -1494,6 +1506,12 @@ bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
         }
     }
     return true;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListDropTarget::OnLeave()
+{
+    m_PlayList->OnLeave();
 }
 
 // -------------------------------------------------------------------------------- //
