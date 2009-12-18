@@ -119,9 +119,9 @@ class guOggTagInfo : public guTagInfo
     guOggTagInfo( const wxString &filename = wxEmptyString );
     ~guOggTagInfo();
 
-//    virtual bool        CanHandleImages( void );
-//    virtual wxImage *   GetImage( const wxString &filename );
-//    virtual bool        SetImage( const wxString &filename, const wxImage * image );
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
 };
 
 // -------------------------------------------------------------------------------- //
