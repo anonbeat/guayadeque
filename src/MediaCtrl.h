@@ -134,6 +134,8 @@ class guMediaCtrl : public wxEvtHandler
     guPlayerPanel * m_PlayerPanel;
     wxLongLong      m_llPausedPos;
 
+    bool            SetProperty( GstElement * element, const char * name, gint64 value );
+
   public :
     GstElement * m_Playbin;
     bool         m_Buffering;

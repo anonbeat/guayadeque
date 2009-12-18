@@ -1126,6 +1126,7 @@ void guPlayerPanel::OnAboutToFinish( void )
     guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
     if( NextItem )
     {
+        //guLogMessage( wxT( "Starting of About-To-Finish" ) );
         m_AboutToFinishPending = true;
         LoadMedia( NextItem->m_FileName, false );
     }
@@ -1136,6 +1137,7 @@ void guPlayerPanel::OnMediaAboutToFinish( wxMediaEvent &event )
 {
     if( m_AboutToFinishPending )
     {
+        //guLogMessage( wxT( "Ending About-To-Finish" ) );
         SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         m_AboutToFinishPending = false;
@@ -1150,6 +1152,7 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
     {
         m_AboutToFinishPending = false;
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+        guLogMessage( wxT( "EOS cancelled..." ) );
         return;
     }
 

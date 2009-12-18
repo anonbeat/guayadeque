@@ -179,6 +179,8 @@
 		<Unit filename="src/TaskBar.cpp" />
 		<Unit filename="src/TaskBar.h" />
 		<Unit filename="src/ThreadArray.h" />
+		<Unit filename="src/TrackChangeInfo.cpp" />
+		<Unit filename="src/TrackChangeInfo.h" />
 		<Unit filename="src/TrackEdit.cpp" />
 		<Unit filename="src/TrackEdit.h" />
 		<Unit filename="src/Utils.cpp" />

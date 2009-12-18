@@ -164,6 +164,56 @@ bool IsValidOutput( GstElement * outputsink )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guMediaCtrl::SetProperty( GstElement * element, const char * name, gint64 value )
+{
+  bool done = false;
+  bool ret = false;
+
+    if( g_object_class_find_property( G_OBJECT_GET_CLASS( element ), name ) )
+    {
+        g_object_set( element, name, value, NULL );
+        return true;
+    }
+
+    if( GST_IS_BIN( element ) )
+    {
+        // Iterate in sorted order, so we look at sinks first
+        GstIterator * it = gst_bin_iterate_sorted( ( GstBin * ) element );
+
+        while( !done )
+        {
+            gpointer data;
+            GstElement * child;
+            switch( gst_iterator_next( it, &data ) )
+            {
+                case GST_ITERATOR_OK:
+                    child = GST_ELEMENT_CAST( data );
+                    if( SetProperty( child, name, value ) )
+                    {
+                        ret = true;
+                        done = true;
+                    }
+                    gst_object_unref( child );
+                    break;
+                case GST_ITERATOR_DONE:
+                    done = TRUE;
+                    break;
+                case GST_ITERATOR_RESYNC:
+                    gst_iterator_resync( it );
+                    break;
+                case GST_ITERATOR_ERROR:
+                    done = true;
+                    break;
+            }
+        }
+
+        gst_iterator_free( it );
+    }
+    return ret;
+}
+
+
+// -------------------------------------------------------------------------------- //
 guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 {
     m_PlayerPanel = playerpanel;
@@ -175,7 +225,8 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     if( Init() )
     {
         // Get the audio output sink
-        GstElement * outputsink = gst_element_factory_make( "gconfaudiosink", "audio-sink" );
+        GstElement * outputsink;
+        outputsink = gst_element_factory_make( "gconfaudiosink", "audio-sink" );
         if( !IsValidOutput( outputsink ) )
         {
             // fallback to autodetection, then alsa, then oss as a stopgap
@@ -223,7 +274,18 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         gst_bin_add( GST_BIN( m_Playbin ), replay );
         g_object_set( G_OBJECT( m_Playbin ), "audio-sink", outputsink, NULL );
 
+//        if( !SetProperty( outputsink, "buffer-time", (gint64) 5000*1000 ) )
+//            guLogMessage( wxT( "Could not set buffer time to gstreamer object." ) );
+
+        g_object_set( G_OBJECT( m_Playbin ), "flags", 0x02|0x10, NULL );
+        //g_object_set( G_OBJECT( m_Playbin ), "buffer-size", 256*1024, NULL );
+
 //        GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
+//        g_object_set( m_Playbin, "auto-flush-bus", FALSE, NULL );
+//
+//        g_object_unref( ( GObject * ) bus );
+
+
 //        gst_bus_add_signal_watch( bus );
 
         g_signal_connect( G_OBJECT( m_Playbin ), "about-to-finish",
@@ -290,14 +352,12 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Play()
 {
-    //guLogMessage( wxT( "MediaCtrl->Play" ) );
     return gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) != GST_STATE_CHANGE_FAILURE;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Pause()
 {
-    //guLogMessage( wxT( "MediaCtrl->Pause" ) );
     m_llPausedPos = Tell();
     return gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE;
 }
@@ -305,7 +365,6 @@ bool guMediaCtrl::Pause()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Stop()
 {
-    //guLogMessage( wxT( "MediaCtrl->Stop" ) );
     if( Pause() && Seek( 0 ) )
     {
         m_llPausedPos = 0;
@@ -317,7 +376,6 @@ bool guMediaCtrl::Stop()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Seek( wxLongLong where )
 {
-    //guLogMessage( wxT( "MediaCtrl->Seek" ) );
     gst_element_seek( m_Playbin, 1, GST_FORMAT_TIME,
           ( GstSeekFlags ) ( GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
           GST_SEEK_TYPE_SET, where.GetValue() * GST_MSECOND,
@@ -330,19 +388,28 @@ bool guMediaCtrl::Seek( wxLongLong where )
 // -------------------------------------------------------------------------------- //
 wxFileOffset guMediaCtrl::Tell()
 {
-    //guLogMessage( wxT( "MediaCtrl->Tell" ) );
-    if( GetState() != wxMEDIASTATE_PLAYING )
-        return m_llPausedPos.ToLong();
+//    if( GetState() != wxMEDIASTATE_PLAYING )
+//        return m_llPausedPos.ToLong();
+//    else
+//    {
+    gint64 pos;
+    GstFormat format = GST_FORMAT_TIME;
+
+    if( gst_element_query_position ( m_Playbin, &format, &pos ) && pos != -1 )
+    {
+        return pos / GST_MSECOND;
+    }
     else
     {
-        gint64 pos;
-        GstFormat fmtTime = GST_FORMAT_TIME;
-
-        if( !gst_element_query_position( m_Playbin, &fmtTime, &pos ) ||
-            fmtTime != GST_FORMAT_TIME || pos == -1 )
-            return 0;
-        return pos / GST_MSECOND ;
+        return m_llPausedPos.ToLong();
     }
+//        GstFormat fmtTime = GST_FORMAT_TIME;
+//
+//        if( !gst_element_query_position( m_Playbin, &fmtTime, &pos ) ||
+//            fmtTime != GST_FORMAT_TIME || pos == -1 )
+//            return 0;
+//        return pos / GST_MSECOND ;
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -382,7 +449,7 @@ double guMediaCtrl::GetVolume()
 // -------------------------------------------------------------------------------- //
 void inline guMediaCtrl::AboutToFinish( void )
 {
-    //m_PlayerPanel->OnAboutToFinish();
+    m_PlayerPanel->OnAboutToFinish();
 }
 
 // -------------------------------------------------------------------------------- //
