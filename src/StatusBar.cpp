@@ -171,8 +171,8 @@ void guStatusBar::OnSize( wxSizeEvent &event )
     if( m_TrackCount )
     {
         GetFieldRect( GetFieldsCount() - 2, rect );
-        m_TrackCount->Move( rect.x + 2,
-                        rect.y + 2 );
+        m_TrackCount->Move( rect.x + 3,
+                        rect.y + 3 );
     }
 
     event.Skip();

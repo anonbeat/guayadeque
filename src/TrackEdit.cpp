@@ -428,7 +428,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, DbLibrary * NewDb, guTrackArray
 	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
-	MainSizer->Add( ButtonsSizer, 0, wxEXPAND, 5 );
+	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
