@@ -1152,7 +1152,7 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
     {
         m_AboutToFinishPending = false;
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-        guLogMessage( wxT( "EOS cancelled..." ) );
+        //guLogMessage( wxT( "EOS cancelled..." ) );
         return;
     }
 
