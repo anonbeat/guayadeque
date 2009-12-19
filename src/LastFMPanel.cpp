@@ -1436,6 +1436,7 @@ void guLastFMPanel::OnUpdatedTrack( wxCommandEvent &event )
     }
     else
     {
+        //guLogMessage( wxT( "%s - %s" ), TrackChangeInfo->m_ArtistName.c_str(), TrackChangeInfo->m_TrackName.c_str() );
         AppendTrackChangeInfo( TrackChangeInfo );
     }
     ShowCurrentTrack();
