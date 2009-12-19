@@ -402,6 +402,7 @@ void guPlayerPanel::SetArtistLabel( const wxString &artistname )
     wxString Label = artistname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_ArtistLabel->SetLabel( Label );
+    m_ArtistLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -410,6 +411,7 @@ void guPlayerPanel::SetAlbumLabel( const wxString &albumname )
     wxString Label = albumname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_AlbumLabel->SetLabel( Label );
+    m_AlbumLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -418,6 +420,7 @@ void guPlayerPanel::SetTitleLabel( const wxString &trackname )
     wxString Label = trackname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_TitleLabel->SetLabel( Label );
+    m_TitleLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
