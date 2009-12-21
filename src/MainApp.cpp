@@ -87,8 +87,6 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
     dbus_error_init( &dberr );
     dbconn = dbus_bus_get( DBUS_BUS_SESSION, &dberr );
 
-    wxMilliSleep( 1000 );
-
     if( dbus_error_is_set( &dberr ) )
     {
          printf( "getting session bus failed: %s\n", dberr.message );
@@ -105,7 +103,6 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
          guLogError( wxT( "Couldn’t create a DBusMessage" ) );
          return false;
     }
-
 
     wxString FilePath;
     bool PlayTrack = false;
@@ -157,7 +154,13 @@ bool guMainApp::OnInit()
     {
         if( argc > 1 )
         {
-            SendFilesByMPRIS( argc, argv );
+            int RetryCnt = 0;
+            while( RetryCnt < 5 )
+            {
+                if( SendFilesByMPRIS( argc, argv ) )
+                    break;
+                wxMilliSleep( 500 );
+            }
         }
 
         guLogError( wxT( "Another program instance is already running, aborting." ) );
