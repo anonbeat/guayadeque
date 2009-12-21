@@ -55,9 +55,11 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
 
             //guLogMessage( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
-
-            wxMediaEvent event( wxEVT_MEDIA_STATECHANGED );
-            ctrl->AddPendingEvent( event );
+            if( pendingstate == GST_STATE_VOID_PENDING )
+            {
+                wxMediaEvent event( wxEVT_MEDIA_STATECHANGED );
+                ctrl->AddPendingEvent( event );
+            }
             break;
         }
 
