@@ -1,4 +1,5 @@
 
+  * Allow to load multiple files from file manager
   * Fixed a bug while dragging files over the playlist
   * Fixed the support to images in ogg files
   * Added a navigator in last.fm so you can go to the previous or next track
