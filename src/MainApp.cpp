@@ -24,6 +24,7 @@
 #include "MainFrame.h"
 #include "Config.h"
 #include "Utils.h"
+#include "mpris.h"
 
 #include "taglib-extras/tplugins.h"
 
@@ -76,6 +77,74 @@ guMainApp::~guMainApp()
 
 
 // -------------------------------------------------------------------------------- //
+bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
+{
+    DBusError dberr;
+    DBusConnection * dbconn;
+    DBusMessage * dbmsg, * dbreply;
+    DBusMessageIter dbiter;
+
+    dbus_error_init( &dberr );
+    dbconn = dbus_bus_get( DBUS_BUS_SESSION, &dberr );
+
+    wxMilliSleep( 1000 );
+
+    if( dbus_error_is_set( &dberr ) )
+    {
+         printf( "getting session bus failed: %s\n", dberr.message );
+         dbus_error_free( &dberr );
+         return false;
+    }
+
+    dbmsg = dbus_message_new_method_call( GUAYADEQUE_MPRIS_SERVICENAME,
+                                          GUAYADEQUE_MPRIS_TRACKLIST_PATH,
+                                          GUAYADEQUE_MPRIS_INTERFACE,
+                                          "AddTrack" );
+    if( dbmsg == NULL )
+    {
+         guLogError( wxT( "Couldn’t create a DBusMessage" ) );
+         return false;
+    }
+
+
+    wxString FilePath;
+    bool PlayTrack = false;
+    int index;
+    for( index = 1; index < argc; index++ )
+    {
+        FilePath = argv[ index ];
+        //guLogMessage( wxT( "Trying to add file '%s'" ), argv[ index ] );
+
+        dbus_message_iter_init_append( dbmsg, &dbiter );
+
+        dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_STRING, &FilePath.char_str() );
+        dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_BOOLEAN, &PlayTrack );
+
+        dbus_error_init( &dberr );
+
+        dbreply = dbus_connection_send_with_reply_and_block( dbconn, dbmsg, 5000, &dberr );
+        if( dbus_error_is_set( &dberr ) )
+        {
+              guLogMessage( wxT( "Error adding file %s" ), FilePath.c_str() );
+              printf( "Error getting a reply: %s\n", dberr.message );
+              dbus_message_unref( dbmsg );
+              dbus_error_free( &dberr );
+              return false;
+        }
+
+        dbus_message_unref( dbreply );
+
+        /* Don’t need this anymore */
+        dbus_message_unref( dbmsg );
+    }
+
+    dbus_connection_close( dbconn );
+    dbus_connection_unref( dbconn );
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
 bool guMainApp::OnInit()
 {
     guRandomInit();
@@ -86,6 +155,11 @@ bool guMainApp::OnInit()
     m_SingleInstanceChecker = new wxSingleInstanceChecker( AppName );
     if( m_SingleInstanceChecker->IsAnotherRunning() )
     {
+        if( argc > 1 )
+        {
+            SendFilesByMPRIS( argc, argv );
+        }
+
         guLogError( wxT( "Another program instance is already running, aborting." ) );
         return false;
     }

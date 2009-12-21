@@ -28,7 +28,7 @@
 #define GUAYADEQUE_MPRIS_INTERFACE          "org.freedesktop.MediaPlayer"
 #define GUAYADEQUE_MPRIS_ROOT_PATH          "/"
 #define GUAYADEQUE_MPRIS_PLAYER_PATH        "/Player"
-#define GUAYADEQUE_MPRIS_TRACKLIST_PATH     "/Tracklist"
+#define GUAYADEQUE_MPRIS_TRACKLIST_PATH     "/TrackList"
 
 #define GUAYADEQUE_MPRIS_VERSION_MAJOR      1
 #define GUAYADEQUE_MPRIS_VERSION_MINOR      0

@@ -665,10 +665,12 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                         DBusMessageIter args;
                         dbus_message_iter_init_append( reply->GetMessage(), &args );
 
+                        //printf( "AddTrack: %s\n", TrackPath );
+
                         m_PlayerPanel->AddToPlayList( wxString( TrackPath, wxConvUTF8 ) );
                         // For now this player dont allow to play current loaded track
 
-                        int TrackAdded = 0;
+                        int TrackAdded = 1;
                         if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &TrackAdded ) )
                         {
                             guLogError( wxT( "Failed to attach the AddTrack return code" ) );
