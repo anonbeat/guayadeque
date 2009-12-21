@@ -61,7 +61,6 @@ class guPlayList : public guListView
     virtual wxCoord             OnMeasureItem( size_t row ) const;
 
     void            OnDragOver( const wxCoord x, const wxCoord y );
-    void            OnLeave( void );
 //    void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
     virtual void                OnBeginDrag( wxMouseEvent &event );
 //    void            OnMouse( wxMouseEvent &event );
@@ -153,7 +152,6 @@ class guPlayListDropTarget : public wxFileDropTarget
     guAddDropFilesThread *  m_AddDropFilesThread;
 
     void ClearAddDropFilesThread( void ) { m_AddDropFilesThread = NULL; };
-    virtual void OnLeave();
 
   public:
     guPlayListDropTarget( guPlayList * NewPlayList );

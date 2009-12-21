@@ -214,7 +214,7 @@ void guPlayList::RemoveSelected()
 }
 
 //// -------------------------------------------------------------------------------- //
-//static void PrintItems( guTrackArray Songs, int IP, int SI, int CI )
+//static void PrintItems( const guTrackArray &Songs, int IP, int SI, int CI )
 //{
 //    int Index;
 //    int Count = Songs.Count();
@@ -267,7 +267,7 @@ void guPlayList::MoveSelected()
             }
         }
 
-//        PrintItems( Items, InsertPos, Selection[ 0 ], CurItem );
+        //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
 
         // Insert every element at the InsertPos
         for( Index = 0; Index < Count; Index++ )
@@ -277,7 +277,7 @@ void guPlayList::MoveSelected()
                 m_CurItem++;
             InsertPos++;
         }
-//        PrintItems( Items, InsertPos, Selection[ 0 ], CurItem );
+        //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
     }
     ClearSelectedItems();
 }
@@ -334,18 +334,6 @@ void guPlayList::SetPlayList( const guTrackArray &NewItems )
       m_TotalLen += m_Items[ Index ].m_Length;
     }
     ReloadItems();
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayList::OnLeave( void )
-{
-    if( ( int ) m_DragOverItem != wxNOT_FOUND )
-    {
-        int RefreshLine = m_DragOverItem;
-        m_DragOverItem = wxNOT_FOUND;
-        //RefreshLines( wxMax( ( int ) RefreshLine - 1, 0 ), wxMin( ( ( int ) RefreshLine + 3 ), GetCount() ) );
-        RefreshLines( RefreshLine, RefreshLine );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -434,7 +422,8 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 
         dc.SetClippingRegion( CutRect );
 
-        dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
+        dc.DrawText( ( Item.m_Number ? wxString::Format( wxT( "%02u - " ), Item.m_Number ) :
+                          wxT( "" ) ) + Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
         //m_Attr.m_Font->SetPointSize( 7 );
         //m_Attr.m_Font->SetStyle( wxFONTSTYLE_ITALIC );
         m_Attr.m_Font->SetWeight( wxFONTWEIGHT_NORMAL );
@@ -802,7 +791,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         wxURI UriPath( FileName );
         if( UriPath.IsReference() )
         {
-            guLogMessage( wxT( "AddPlaylistItem: (%u) '%s' " ), AddPath, FileName.c_str() );
+            //guLogMessage( wxT( "AddPlaylistItem: (%u) '%s' " ), AddPath, FileName.c_str() );
 
             //
             Song.m_FileName = FileName;
@@ -811,7 +800,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
             {
                 Song.m_FileName = wxGetCwd() + wxT( "/" ) + FileName;
                 TagInfo->SetFileName( Song.m_FileName );
-                guLogMessage( wxT( "AddedPath: (%u) '%s' " ), AddPath, Song.m_FileName.c_str() );
+                //guLogMessage( wxT( "AddedPath: (%u) '%s' " ), AddPath, Song.m_FileName.c_str() );
             }
 
             if( wxFileExists( Song.m_FileName ) )
@@ -838,7 +827,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
                     }
                     else
                     {
-                        guLogMessage( wxT( "Reading tags from the file..." ) );
+                        //guLogMessage( wxT( "Reading tags from the file..." ) );
                         Song.m_Type = guTRACK_TYPE_NOTDB;
 
                         TagInfo->Read();
@@ -865,7 +854,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         }
         else
         {
-            guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
+            //guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
 
             Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
             Song.m_CoverId  = 0;
@@ -885,7 +874,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         wxURI UriPath( FileName );
         if( !UriPath.IsReference() )
         {
-            guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
+            //guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
 
             Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
             Song.m_CoverId  = 0;
@@ -1466,6 +1455,7 @@ guPlayListDropTarget::~guPlayListDropTarget()
 // -------------------------------------------------------------------------------- //
 bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
 {
+    //guLogMessage( wxT( "OnDropFiles..." ) );
     // We are moving items inside this object.
     if( m_PlayList->m_DragSelfItems )
     {
@@ -1506,12 +1496,6 @@ bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
         }
     }
     return true;
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayListDropTarget::OnLeave()
-{
-    m_PlayList->OnLeave();
 }
 
 // -------------------------------------------------------------------------------- //
