@@ -105,7 +105,8 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
         return new guMp4TagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".wma" ) ) ||
-             filename.Lower().EndsWith( wxT( ".asf" ) ) )
+             filename.Lower().EndsWith( wxT( ".asf" ) ) ||
+             filename.Lower().EndsWith( wxT( ".wav" ) ) )
     {
         return new guTagInfo( filename );
     }
@@ -800,99 +801,6 @@ guMp4TagInfo::guMp4TagInfo( const wxString &filename ) : guTagInfo( filename )
 guMp4TagInfo::~guMp4TagInfo()
 {
 }
-
-
-//// -------------------------------------------------------------------------------- //
-//bool guMp4TagInfo::Read( void )
-//{
-//    char * Value;
-//    MP4FileHandle mp4_file = MP4Read( m_FileName.ToUTF8() );
-//    if( mp4_file != MP4_INVALID_FILE_HANDLE )
-//    {
-//        if( MP4GetMetadataName( mp4_file, &Value ) && Value )
-//        {
-//            m_TrackName = wxString( Value, wxConvUTF8 );
-//            free( Value );
-//        }
-//
-//        if( MP4GetMetadataArtist( mp4_file, &Value ) && Value )
-//        {
-//            m_ArtistName = wxString( Value, wxConvUTF8 );
-//            free( Value );
-//        }
-//
-//        if( MP4GetMetadataAlbum( mp4_file,  &Value ) && Value )
-//        {
-//            m_AlbumName = wxString( Value, wxConvUTF8 );
-//            free( Value );
-//        }
-//
-//        if( MP4GetMetadataGenre( mp4_file, &Value ) && Value )
-//        {
-//            m_GenreName = wxString( Value, wxConvUTF8 );
-//            free( Value );
-//        }
-//
-//        u_int16_t TotTracks;
-//        MP4GetMetadataTrack( mp4_file, ( u_int16_t * ) &m_Track, &TotTracks );
-//
-//        if( MP4GetMetadataYear( mp4_file, &Value ) && Value )
-//        {
-//            wxString( Value, wxConvUTF8 ).ToLong( ( long int * ) &m_Year );
-//            free( Value );
-//        }
-//
-//        MP4Duration Duration = MP4GetTrackDuration( mp4_file, 1 );
-//        double sDuration = UINT64_TO_DOUBLE( MP4ConvertFromTrackDuration( mp4_file, 1, Duration, MP4_SECS_TIME_SCALE ) );
-//        m_Length = sDuration;
-//
-//        m_Bitrate = MP4GetTrackBitRate( mp4_file, 1 ) / 1000;
-//
-//        //guLogMessage( wxT( "Track %i    BitRate %i    Length %i" ), m_Track, m_Bitrate, m_Length );
-//
-//        MP4Close( mp4_file );
-//        return true;
-//    }
-//    else
-//    {
-//        guLogError( wxT( "Read : could not open the file %s" ), m_FileName.c_str() );
-//    }
-//    return false;
-//}
-
-//// -------------------------------------------------------------------------------- //
-//bool guMp4TagInfo::Write( void )
-//{
-//    MP4FileHandle mp4_file = MP4Modify( m_FileName.ToUTF8() );
-//    if( mp4_file != MP4_INVALID_FILE_HANDLE )
-//    {
-//        uint8_t * CoverData = NULL;
-//        uint32_t CoverSize;
-//        // If the cover have cover save it
-//        if( MP4GetMetadataCoverArtCount( mp4_file ) )
-//        {
-//            MP4GetMetadataCoverArt( mp4_file, &CoverData, &CoverSize );
-//        }
-//
-//        MP4SetMetadataName( mp4_file, m_TrackName.ToUTF8() );
-//        MP4SetMetadataArtist( mp4_file, m_ArtistName.ToUTF8() );
-//        MP4SetMetadataAlbum( mp4_file, m_AlbumName.ToUTF8() );
-//        MP4SetMetadataGenre( mp4_file, m_GenreName.ToUTF8() );
-//        MP4SetMetadataTrack( mp4_file, m_Track, 0 );
-//        MP4SetMetadataYear( mp4_file, wxString::Format( wxT( "%d" ), m_Year ).ToUTF8() );
-//        if( CoverData )
-//        {
-//            MP4SetMetadataCoverArt( mp4_file, CoverData, CoverSize );
-//        }
-//        MP4Close( mp4_file );
-//        return true;
-//    }
-//    else
-//    {
-//        guLogError( wxT( "Write : could not open the file %s" ), m_FileName.c_str() );
-//    }
-//    return false;
-//}
 
 //// -------------------------------------------------------------------------------- //
 //bool guMp4TagInfo::CanHandleImages( void )
