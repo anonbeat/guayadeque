@@ -154,12 +154,13 @@ bool guMainApp::OnInit()
     {
         if( argc > 1 )
         {
+            wxMilliSleep( 100 );
             int RetryCnt = 0;
-            while( RetryCnt < 5 )
+            while( RetryCnt < 20 )
             {
                 if( SendFilesByMPRIS( argc, argv ) )
                     break;
-                wxMilliSleep( 500 );
+                wxMilliSleep( 100 );
             }
         }
 

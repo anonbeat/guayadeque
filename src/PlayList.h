@@ -29,7 +29,7 @@
 #include <wx/dnd.h>
 #include <wx/dir.h>
 #include <wx/arrimpl.cpp>
-
+#include <wx/thread.h>
 
 wxString LenToString( int Len );
 
@@ -41,6 +41,7 @@ class guPlayList : public guListView
   private :
     DbLibrary *     m_Db;
     guTrackArray    m_Items;
+    wxMutex         m_ItemsMutex;
     bool            m_StartPlaying;
     long            m_CurItem;
     long            m_TotalLen;

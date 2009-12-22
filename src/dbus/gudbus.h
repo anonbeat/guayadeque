@@ -149,6 +149,7 @@ class guDBusServer
 
     bool                        RegisterClient( guDBusClient * client );
     bool                        UnRegisterClient( guDBusClient * client );
+    void                        Run();
 
     static void Set( guDBusServer * server )
     {
