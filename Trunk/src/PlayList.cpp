@@ -187,6 +187,7 @@ void guPlayList::OnBeginDrag( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayList::RemoveItem( int itemnum )
 {
+    wxMutexLocker Lock( m_ItemsMutex );
     int count = m_Items.Count();
     if( count && ( itemnum < count ) )
     {
@@ -240,6 +241,8 @@ void guPlayList::MoveSelected()
     wxArrayInt Selection = GetSelectedItems( false );
     if( m_DragOverItem != ( size_t ) wxNOT_FOUND )
     {
+        m_ItemsMutex.Lock();
+
         // Where is the Items to be moved
         InsertPos = m_DragOverAfter ? m_DragOverItem + 1 : m_DragOverItem;
         // How Many elements to move
@@ -250,6 +253,7 @@ void guPlayList::MoveSelected()
         {
             MoveItems.Add( m_Items[ Selection[ Index ] ] );
         }
+
         // Remove the Items and move CurItem and InsertPos
         // We move from last (bigger) to first
         for( Index = Count - 1; Index >= 0; Index-- )
@@ -277,7 +281,9 @@ void guPlayList::MoveSelected()
                 m_CurItem++;
             InsertPos++;
         }
+
         //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
+        m_ItemsMutex.Unlock();
     }
     ClearSelectedItems();
 }
@@ -297,6 +303,7 @@ void guPlayList::OnKeyDown( wxKeyEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold )
 {
+    wxMutexLocker Lock( m_ItemsMutex );
     int Index;
     int Count;
 //    if( m_CurItem == wxNOT_FOUND )
@@ -320,6 +327,7 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold 
 // -------------------------------------------------------------------------------- //
 void guPlayList::SetPlayList( const guTrackArray &NewItems )
 {
+    wxMutexLocker Lock( m_ItemsMutex );
     int Index;
     int Count;
     m_Items = NewItems;

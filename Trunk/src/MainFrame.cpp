@@ -206,6 +206,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
         guLogError( wxT( "Could not create the gnome session dbus object" ) );
     }
 
+    //m_DBusServer->Run();
+
     //
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
@@ -943,6 +945,9 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     m_Db->GetPendingPodcasts( &Podcasts );
     if( Podcasts.Count() )
         AddPodcastsDownloadItems( &Podcasts );
+
+    // Now we can start the dbus server
+    m_DBusServer->Run();
 }
 
 // -------------------------------------------------------------------------------- //

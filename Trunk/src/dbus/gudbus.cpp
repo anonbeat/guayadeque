@@ -243,6 +243,11 @@ bool guDBusServer::UnRegisterClient( guDBusClient * client )
     return false;
 }
 
+// -------------------------------------------------------------------------------- //
+void guDBusServer::Run()
+{
+    m_DBusThread->Run();
+}
 
 // -------------------------------------------------------------------------------- //
 // guDBusClient
@@ -528,7 +533,7 @@ guDBusThread::guDBusThread( guDBusServer * dbusowner ) : wxThread( wxTHREAD_DETA
     if( Create() == wxTHREAD_NO_ERROR )
     {
         SetPriority( WXTHREAD_DEFAULT_PRIORITY );
-        Run();
+        //Run();
     }
 }
 
