@@ -140,11 +140,11 @@ class guMp4TagInfo : public guTagInfo
     guMp4TagInfo( const wxString &filename = wxEmptyString );
     ~guMp4TagInfo();
 
-    virtual bool        Read( void );
-    virtual bool        Write( void );
-    virtual bool        CanHandleImages( void );
-    virtual wxImage *   GetImage( void );
-    virtual bool        SetImage( const wxImage * image );
+//    virtual bool        Read( void );
+//    virtual bool        Write( void );
+//    virtual bool        CanHandleImages( void );
+//    virtual wxImage *   GetImage( void );
+//    virtual bool        SetImage( const wxImage * image );
 };
 
 // -------------------------------------------------------------------------------- //

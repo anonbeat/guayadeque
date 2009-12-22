@@ -51,76 +51,6 @@ SET( HMAC_SHA2_SOURCES
 	hmac/sha2.h
 )
 
-ADD_SUBDIRECTORY( taglib-extras )
-
-SET( TAGLIB_EXTRAS_SOURCES
-#	taglib-extras/config-taglib-extras.h
-	taglib-extras/taglib-extras_export.h
-	taglib-extras/tfile_helper.cpp
-	taglib-extras/tfile_helper.h
-	taglib-extras/tdebug.cpp
-	taglib-extras/tdebug.h
-	taglib-extras/tplugins.cpp
-	taglib-extras/tplugins.h
-)
-
-SET( TAGLIB_EXTRAS_ASF_SOURCES
-	taglib-extras/asf/asfattribute.cpp
-	taglib-extras/asf/asfattribute.h
-	taglib-extras/asf/asffile.cpp
-	taglib-extras/asf/asffile.h
-	taglib-extras/asf/asffiletyperesolver.cpp
-	taglib-extras/asf/asffiletyperesolver.h
-	taglib-extras/asf/asfproperties.cpp
-	taglib-extras/asf/asfproperties.h
-	taglib-extras/asf/asftag.cpp
-	taglib-extras/asf/asftag.h
-)
-
-SET( TAGLIB_EXTRAS_MP4_SOURCES
-	taglib-extras/mp4/mp4atom.cpp
-	taglib-extras/mp4/mp4atom.h
-	taglib-extras/mp4/mp4file.cpp
-	taglib-extras/mp4/mp4file.h
-	taglib-extras/mp4/mp4filetyperesolver.cpp
-	taglib-extras/mp4/mp4filetyperesolver.h
-	taglib-extras/mp4/mp4item.cpp
-	taglib-extras/mp4/mp4item.h
-	taglib-extras/mp4/mp4properties.cpp
-	taglib-extras/mp4/mp4properties.h
-	taglib-extras/mp4/mp4tag.cpp
-	taglib-extras/mp4/mp4tag.h
-)	
-
-SET( TAGLIB_EXTRAS_WAV_SOURCES
-	taglib-extras/wav/wavfile.cpp
-	taglib-extras/wav/wavfile.h
-	taglib-extras/wav/wavfiletyperesolver.cpp
-	taglib-extras/wav/wavfiletyperesolver.h
-	taglib-extras/wav/wavproperties.cpp
-	taglib-extras/wav/wavproperties.h
-)
-
-SET( TAGLIB_EXTRAS_AUDIBLE_SOURCES
-	taglib-extras/audible/audiblefile.cpp
-	taglib-extras/audible/audiblefile.h
-	taglib-extras/audible/audiblefiletyperesolver.cpp
-	taglib-extras/audible/audiblefiletyperesolver.h
-	taglib-extras/audible/audibleproperties.cpp
-	taglib-extras/audible/audibleproperties.h
-	taglib-extras/audible/audibletag.cpp
-	taglib-extras/audible/audibletag.h
-)
-
-SET( TAGLIB_EXTRAS_RMFF_SOURCES
-	taglib-extras/rmff/realmediafile.cpp
-	taglib-extras/rmff/realmediafile.h
-	taglib-extras/rmff/realmediafiletyperesolver.cpp
-	taglib-extras/rmff/realmediafiletyperesolver.h
-	taglib-extras/rmff/rmff.cpp
-	taglib-extras/rmff/rmff.h
-)
-
 ADD_EXECUTABLE( guayadeque
 	AlListBox.cpp
 	AlListBox.h
@@ -246,12 +176,6 @@ ADD_EXECUTABLE( guayadeque
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
 	${HMAC_SHA2_SOURCES}
-	${TAGLIB_EXTRAS_SOURCES}
-	${TAGLIB_EXTRAS_ASF_SOURCES}
-	${TAGLIB_EXTRAS_MP4_SOURCES}
-	${TAGLIB_EXTRAS_WAV_SOURCES}
-	${TAGLIB_EXTRAS_AUDIBLE_SOURCES}
-	${TAGLIB_EXTRAS_RMFF_SOURCES}
        )
 
 TARGET_LINK_LIBRARIES( guayadeque
