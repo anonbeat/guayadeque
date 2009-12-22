@@ -2,9 +2,9 @@ Guayadeque Music Player 0.0.4 Beta
 J.Rios anonbeat@gmail.com
 see LICENSE
 
-Need installed taglib, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1, libmp4v2, libflac
+Need installed taglib, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1, libflac
 
-Have been developed in Fedora core 9, 10 and Ubuntu 8.10
+Its been developed in Ubuntu 9.10 32 and 64 bits
 
 To build run 
 ./build 
@@ -12,6 +12,3 @@ sudo make install
 
 Please email with bugs and suggestions or to add a translation to anonbeat@gmail.com
 
-
-Support to mp4, m4p, m4a, aac files format have been added using libmp4v2
-library. Play is done using the gstreamer backend.

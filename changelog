@@ -1,4 +1,6 @@
 
+  * Removed mp4v2 library dependency
+  * Removed taglib-extras as taglib now support most of the formats
   * Allow to load multiple files from file manager
   * Fixed a bug while dragging files over the playlist
   * Fixed the support to images in ogg files

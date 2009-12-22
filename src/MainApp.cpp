@@ -26,8 +26,6 @@
 #include "Utils.h"
 #include "mpris.h"
 
-#include "taglib-extras/tplugins.h"
-
 #include "wx/clipbrd.h"
 #include <wx/curl/base.h>
 #include <wx/image.h>
@@ -154,9 +152,8 @@ bool guMainApp::OnInit()
     {
         if( argc > 1 )
         {
-            wxMilliSleep( 100 );
             int RetryCnt = 0;
-            while( RetryCnt < 20 )
+            while( RetryCnt < 25 )
             {
                 if( SendFilesByMPRIS( argc, argv ) )
                     break;
@@ -177,10 +174,6 @@ bool guMainApp::OnInit()
 
     // Init the wxCurl Lib
     wxCurlBase::Init();
-
-    // Register the asf plugin for taglib
-    registerTaglibPlugins();
-
 
     //
     if( m_Locale.Init( wxLANGUAGE_DEFAULT,
