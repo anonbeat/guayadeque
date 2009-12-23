@@ -31,6 +31,7 @@
 #include <fileref.h>
 #include <id3v2framefactory.h>
 #include <textidentificationframe.h>
+#include <unsynchronizedlyricsframe.h>
 #include <id3v2tag.h>
 #include <mpegfile.h>
 #include <flacfile.h>
@@ -176,6 +177,39 @@ void SetID3v2Image( ID3v2::Tag * tagv2, const wxImage * image )
         {
             PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
             tagv2->removeFrame( PicFrame, TRUE );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString GetID3v2Lyrics( ID3v2::Tag * tagv2 )
+{
+	TagLib::ID3v2::FrameList frameList = tagv2->frameList( "USLT" );
+	if( !frameList.isEmpty() )
+	{
+		TagLib::ID3v2::UnsynchronizedLyricsFrame * LyricsFrame = static_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame * >( frameList.front() );
+        if( LyricsFrame )
+            return TStringTowxString( LyricsFrame->text() );
+	}
+	return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+void SetID3v2Lyrics( ID3v2::Tag * tagv2, const wxString &lyrics )
+{
+    TagLib::ID3v2::UnsynchronizedLyricsFrame * LyricsFrame;
+    if( !lyrics.IsEmpty() )
+    {
+        LyricsFrame = new TagLib::ID3v2::UnsynchronizedLyricsFrame( TagLib::String::UTF8 );
+        LyricsFrame->setText( wxStringToTString( lyrics ) );
+    }
+    else
+    {
+        TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["USLT"];
+        for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
+        {
+            LyricsFrame = static_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame*>( *iter );
+            tagv2->removeFrame( LyricsFrame, TRUE );
         }
     }
 }
@@ -354,6 +388,24 @@ bool guTagInfo::SetImage( const wxImage * image )
     return false;
 }
 
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::CanHandleLyrics( void )
+{
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guTagInfo::GetLyrics( void )
+{
+	return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::SetLyrics( const wxString &lyrics )
+{
+    return false;
+}
+
 
 
 
@@ -521,45 +573,22 @@ bool guMp3TagInfo::Write( void )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guMp3TagInfo::CanHandleImages( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
 wxImage * guMp3TagInfo::GetImage( void )
 {
     TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
-    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( false );
-    if( !tagv2 )
+    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
+
+	if( !tagv2 )
         return NULL;
 
-	TagLib::ID3v2::FrameList frameList = tagv2->frameList( "APIC" );
-	if( !frameList.isEmpty() )
-	{
-		TagLib::ID3v2::AttachedPictureFrame * PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame * >( frameList.front() );
-        int ImgDataSize = PicFrame->picture().size();
-
-		if( ImgDataSize > 0 )
-		{
-			//guLogMessage( wxT( "ID3v2 header contains APIC frame with %u bytes." ), ImgDataSize );
-            wxMemoryOutputStream ImgOutStream;
-            ImgOutStream.Write( PicFrame->picture().data(), ImgDataSize );
-            wxMemoryInputStream ImgInputStream( ImgOutStream );
-            wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 ) );
-            if( CoverImage )
-            {
-                if( CoverImage->IsOk() )
-                {
-                    return CoverImage;
-                }
-                else
-                {
-                    delete CoverImage;
-                }
-            }
-//		    wxFileOutputStream FOut( wxT( "~/test.jpg" ) );
-//		    FOut.Write( PicFrame->picture().data(), ImgDataSize );
-//		    FOut.Close();
-		}
-	}
-	return NULL;
+    return GetID3v2Image( tagv2  );
 }
-
 
 // -------------------------------------------------------------------------------- //
 bool guMp3TagInfo::SetImage( const wxImage * image )
@@ -576,10 +605,37 @@ bool guMp3TagInfo::SetImage( const wxImage * image )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMp3TagInfo::CanHandleImages( void )
+bool guMp3TagInfo::CanHandleLyrics( void )
 {
     return true;
 }
+
+// -------------------------------------------------------------------------------- //
+wxString guMp3TagInfo::GetLyrics( void )
+{
+    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
+    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
+
+	if( !tagv2 )
+        return wxEmptyString;
+
+    return GetID3v2Lyrics( tagv2  );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMp3TagInfo::SetLyrics( const wxString &lyrics )
+{
+    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
+    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
+
+	if( !tagv2 )
+        return false;
+
+    SetID3v2Lyrics( tagv2, lyrics );
+
+    return tagfile.save();
+}
+
 
 
 

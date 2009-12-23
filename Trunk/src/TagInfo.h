@@ -73,12 +73,17 @@ class guTagInfo
 
     ~guTagInfo(){};
 
-    void                SetFileName( const wxString &filename ) { m_FileName = filename; };
-    virtual bool        Read( void );
-    virtual bool        Write( void );
-    virtual bool        CanHandleImages( void );
-    virtual wxImage *   GetImage( void );
-    virtual bool        SetImage( const wxImage * image );
+    void                    SetFileName( const wxString &filename ) { m_FileName = filename; };
+    virtual bool            Read( void );
+    virtual bool            Write( void );
+
+    virtual bool            CanHandleImages( void );
+    virtual wxImage *       GetImage( void );
+    virtual bool            SetImage( const wxImage * image );
+
+    virtual bool            CanHandleLyrics( void );
+    virtual wxString        GetLyrics( void );
+    virtual bool            SetLyrics( const wxString &lyrics );
 
 };
 
@@ -97,6 +102,10 @@ class guMp3TagInfo : public guTagInfo
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
     virtual bool        SetImage( const wxImage * image );
+
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
 
 };
 

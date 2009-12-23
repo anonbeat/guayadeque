@@ -95,6 +95,7 @@ class guTrackEditor : public wxDialog
     wxBitmapButton *    m_AddPicButton;
     wxBitmapButton *    m_DelPicButton;
     wxBitmapButton *    m_SavePicButton;
+    wxBitmapButton *    m_SearchPicButton;
     wxBitmapButton *    m_CopyPicButton;
     int                 m_CurrentRating;
     int                 m_RatingStartY;
@@ -171,6 +172,7 @@ class guTrackEditor : public wxDialog
     void OnAddImageClicked( wxCommandEvent &event );
     void OnDelImageClicked( wxCommandEvent &event );
     void OnSaveImageClicked( wxCommandEvent &event );
+    void OnSearchImageClicked( wxCommandEvent &event );
     void OnCopyImageClicked( wxCommandEvent &event );
 
     void OnRatingChanged( guRatingEvent &event );
