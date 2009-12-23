@@ -1,4 +1,5 @@
 
+  * Added option to search cover from the track editor image section
   * Removed mp4v2 library dependency
   * Removed taglib-extras as taglib now support most of the formats
   * Allow to load multiple files from file manager
