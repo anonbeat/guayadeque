@@ -106,7 +106,7 @@
   * Playlist current track now follow theme color
   * Last.fm preferences shouldn't be enabled if the user or pass is not
     filled
-  * Mouse wheel support in the volumen control window
+  * Mouse wheel support in the volume control window
   * Create ~/.guayadeque/LinkIcons dir if doesnt exists to store the
     Links Icons
 

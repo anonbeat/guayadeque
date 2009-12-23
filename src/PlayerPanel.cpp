@@ -139,6 +139,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID
 	PlayerLabelsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_TitleLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	//m_TitleLabel = new guAutoScrollText( this, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_TitleLabel->SetToolTip( _( "Show the name of the current track" ) );
 	m_TitleLabel->Wrap( -1 );
 	CurrentFont.SetPointSize( 16 );
@@ -402,7 +403,7 @@ void guPlayerPanel::SetArtistLabel( const wxString &artistname )
     wxString Label = artistname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_ArtistLabel->SetLabel( Label );
-    m_ArtistLabel->SetToolTip( Label );
+    //m_ArtistLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -411,7 +412,7 @@ void guPlayerPanel::SetAlbumLabel( const wxString &albumname )
     wxString Label = albumname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_AlbumLabel->SetLabel( Label );
-    m_AlbumLabel->SetToolTip( Label );
+    //m_AlbumLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -420,7 +421,7 @@ void guPlayerPanel::SetTitleLabel( const wxString &trackname )
     wxString Label = trackname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_TitleLabel->SetLabel( Label );
-    m_TitleLabel->SetToolTip( Label );
+    //m_TitleLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
