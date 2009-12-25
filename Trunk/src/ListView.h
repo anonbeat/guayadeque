@@ -134,7 +134,9 @@ class guListView : public wxScrolledWindow
     bool                    m_AllowDrop;
     bool                    m_AllowDrag;
     int                     m_DragOverItem;
+    int                     m_LastDragOverItem;
     bool                    m_DragOverAfter;
+    bool                    m_LastDragOverAfter;
     bool                    m_DragSelfItemsEnabled;
     bool                    m_DragSelfItems;
 

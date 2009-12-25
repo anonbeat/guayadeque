@@ -27,18 +27,26 @@
 class guPLSoListBox : public guSoListBox
 {
   protected :
-    int  m_PLId;
-    int  m_PLType;
+    int             m_PLId;     // The PlayList id
+    int             m_PLType;   // The PlayList type
+    wxArrayInt      m_PLSetIds; // The array containing the list of plset_id
+    wxArrayInt      m_DropIds;  // The array containing the id of the songs dropped
 
     virtual void                GetItemsList( void );
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
+
     virtual void                OnKeyDown( wxKeyEvent &event );
+
+    virtual void                OnDropFile( const wxString &filename );
+    virtual void                OnDropEnd( void );
 
   public :
     guPLSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, int style = 0 );
     ~guPLSoListBox();
 
     void    SetPlayList( int plid, int pltype );
+    int     GetPlayListSetIds( wxArrayInt * setids ) const;
+
 };
 
 #endif

@@ -26,12 +26,13 @@
 #include "MainApp.h"
 #include "OnlineLinks.h"
 #include "PlayList.h" // LenToString
-#include "Utils.h"
 #include "RatingCtrl.h"
+#include "TagInfo.h"
+#include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
 guPLSoListBox::guPLSoListBox( wxWindow * parent, DbLibrary * db, wxString confname, int style ) :
-             guSoListBox( parent, db, confname, style )
+             guSoListBox( parent, db, confname, style | guLISTVIEW_ALLOWDROP )
 {
     m_PLId = wxNOT_FOUND;
     m_PLType = wxNOT_FOUND;
@@ -47,12 +48,16 @@ guPLSoListBox::~guPLSoListBox()
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::GetItemsList( void )
 {
+    m_PLSetIds.Empty();
     if( m_PLId > 0 )
     {
         m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Items );
+        m_Db->GetPlayListSetIds( m_PLId, &m_PLSetIds );
     }
     else
+    {
         m_Items.Empty();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -92,6 +97,54 @@ void guPLSoListBox::OnKeyDown( wxKeyEvent &event )
     }
 
     event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::OnDropFile( const wxString &filename )
+{
+    if( m_PLId > 0 && m_PLType == GUPLAYLIST_STATIC )
+    {
+        guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
+        if( guIsValidAudioFile( filename ) )
+        {
+            if( wxFileExists( filename ) )
+            {
+                guTrack Track;
+                if( m_Db->FindTrackFile( filename, &Track ) )
+                {
+                    m_DropIds.Add( Track.m_SongId );
+                }
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::OnDropEnd( void )
+{
+    if( m_PLId > 0 && m_PLType == GUPLAYLIST_STATIC )
+    {
+        if( m_DropIds.Count() )
+        {
+            m_Db->AppendStaticPlayList( m_PLId, m_DropIds );
+
+            m_DropIds.Clear();
+        }
+        ReloadItems();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+int guPLSoListBox::GetPlayListSetIds( wxArrayInt * setids ) const
+{
+    unsigned long cookie;
+    int item = GetFirstSelected( cookie );
+    while( item != wxNOT_FOUND )
+    {
+        setids->Add( m_PLSetIds[ item ] );
+        item = GetNextSelected( cookie );
+    }
+    return setids->Count();
 }
 
 // -------------------------------------------------------------------------------- //
