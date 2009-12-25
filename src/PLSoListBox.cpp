@@ -35,6 +35,7 @@ guPLSoListBox::guPLSoListBox( wxWindow * parent, DbLibrary * db, wxString confna
 {
     m_PLId = wxNOT_FOUND;
     m_PLType = wxNOT_FOUND;
+
     ReloadItems();
 }
 
@@ -78,6 +79,19 @@ void guPLSoListBox::CreateContextMenu( wxMenu * Menu ) const
     }
 
     guSoListBox::CreateContextMenu( Menu );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::OnKeyDown( wxKeyEvent &event )
+{
+    if( event.GetKeyCode() == WXK_DELETE )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_SONG_DELETE );
+        GetParent()->AddPendingEvent( evt );
+        return;
+    }
+
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
