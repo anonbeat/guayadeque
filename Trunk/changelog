@@ -1,4 +1,6 @@
 
+  * Fixed bug with library paths. After remove a library path the files
+    kept in the library.
   * Added drag&drop support to playlists and podcasts panels
   * Added option to search cover from the track editor image section
   * Removed mp4v2 library dependency
