@@ -227,10 +227,9 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
 // -------------------------------------------------------------------------------- //
 void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
 {
+    guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
     if( guIsValidAudioFile( filename ) )
     {
-        guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
-
         if( wxFileExists( filename ) )
         {
             guTrack Track;
@@ -254,6 +253,10 @@ void guPLNamesTreeCtrl::OnDropEnd( void )
 
         m_DropIds.Clear();
     }
+    SetItemDropHighlight( m_DragOverItem, false );
+    SelectItem( m_StaticId );
+    SelectItem( m_DragOverItem );
+    m_DragOverItem = wxTreeItemId();
 }
 
 
@@ -311,7 +314,7 @@ void guPLNamesDropFilesThread::AddDropFiles( const wxString &DirName )
                         }
                         else
                         {
-                            //m_ListView->OnDropFile( DirName + wxT( "/" ) + FileName );
+                            m_PLNamesTreeCtrl->OnDropFile( DirName + wxT( "/" ) + FileName );
                         }
                     }
                 } while( Dir.GetNext( &FileName ) && !TestDestroy() );
@@ -320,7 +323,7 @@ void guPLNamesDropFilesThread::AddDropFiles( const wxString &DirName )
     }
     else
     {
-        //m_ListView->OnDropFile( DirName );
+        m_PLNamesTreeCtrl->OnDropFile( DirName );
     }
     wxSetWorkingDirectory( SavedDir );
 }
@@ -337,8 +340,11 @@ guPLNamesDropFilesThread::ExitCode guPLNamesDropFilesThread::Entry()
         AddDropFiles( m_Files[ index ] );
     }
 
-    //
-    m_PLNamesTreeCtrl->m_DragOverItem = wxTreeItemId();
+    if( !TestDestroy() )
+    {
+        //
+        m_PLNamesTreeCtrl->OnDropEnd();
+    }
 
     return 0;
 }
@@ -361,6 +367,7 @@ guPLNamesDropTarget::~guPLNamesDropTarget()
 // -------------------------------------------------------------------------------- //
 bool guPLNamesDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
 {
+    guLogMessage( wxT( "guPLNamesDropTarget::OnDropFiles" ) );
     if( m_PLNamesDropFilesThread )
     {
         m_PLNamesDropFilesThread->Pause();
