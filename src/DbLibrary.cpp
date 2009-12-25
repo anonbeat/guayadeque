@@ -408,12 +408,29 @@ unsigned long DbLibrary::GetDbVersion( void )
 }
 
 // -------------------------------------------------------------------------------- //
+bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename )
+{
+    int index;
+    int count = LibPaths.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( filename.StartsWith( LibPaths[ index ] ) )
+            return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 void DbLibrary::DoCleanUp( void )
 {
   wxString query;
   wxArrayInt SongsToDel;
   wxArrayInt CoversToDel;
   wxSQLite3ResultSet dbRes;
+  wxString FileName;
+
+  guConfig * Config = ( guConfig * ) guConfig::Get();
+  wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
 
   query = wxT( "SELECT DISTINCT song_id, song_filename, path_value FROM songs, paths " \
                "WHERE song_pathid = path_id;" );
@@ -422,7 +439,9 @@ void DbLibrary::DoCleanUp( void )
 
   while( dbRes.NextRow() )
   {
-    if( !wxFileExists( dbRes.GetString( 2 ) + wxT( "/" ) + dbRes.GetString( 1 ) ) )
+    FileName = dbRes.GetString( 2 ) + wxT( "/" ) + dbRes.GetString( 1 );
+
+    if( !wxFileExists( FileName ) || !CheckFileLibPath( LibPaths, FileName ) )
     {
       SongsToDel.Add( dbRes.GetInt( 0 ) );
     }
