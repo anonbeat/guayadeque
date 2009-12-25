@@ -227,7 +227,9 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     m_DragSelfItemsEnabled = ( flags & guLISTVIEW_DRAGSELFITEMS );
 
     m_DragOverItem = wxNOT_FOUND;
+    m_LastDragOverAfter = wxNOT_FOUND;
     m_DragOverAfter = false;
+    m_LastDragOverAfter = false;
     m_DragSelfItems = false;
 
     if( m_AllowDrop )
@@ -662,6 +664,7 @@ void guListView::OnDropEnd( void )
 // -------------------------------------------------------------------------------- //
 void guListView::OnDragOver( wxCoord x, wxCoord y )
 {
+    //guLogMessage( wxT( "guListView::OnDragOver( %u, %u )" ), x, y );
     // TODO Change this for the m_Header size
     int w, h, d;
     GetTextExtent( wxT("Hg"), &w, &h, &d );
@@ -669,14 +672,26 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
     int wherey = y - h;
 
     m_DragOverItem = HitTest( x, wherey );
-    // Check if its over a item if its in the upper or lower part
-    // to determine if will be inserted before or after
+
     if( ( int ) m_DragOverItem != wxNOT_FOUND )
     {
         int ItemHeight = m_ListBox->OnMeasureItem( m_DragOverItem );
         m_DragOverAfter = ( wherey > ( int ) ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * ItemHeight   ) - ( ItemHeight / 2 ) ) );
-        RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetItemCount() ) );
     }
+
+    if( ( m_DragOverItem != m_LastDragOverItem ) || ( m_DragOverAfter != m_LastDragOverAfter ) )
+    {
+        //guLogMessage( wxT( "%u -> %u" ), m_DragOverItem, m_LastDragOverItem );
+        if( ( m_LastDragOverAfter != wxNOT_FOUND ) && ( m_DragOverItem != wxNOT_FOUND ) )
+            RefreshLines( wxMax( ( int ) m_LastDragOverItem, 0 ), wxMin( ( ( int ) m_LastDragOverItem ), GetItemCount() ) );
+        if( m_DragOverItem != wxNOT_FOUND )
+            RefreshLines( m_DragOverItem, m_DragOverItem );
+        m_LastDragOverItem = m_DragOverItem;
+        m_LastDragOverAfter = m_DragOverAfter;
+    }
+
+
+    // Scroll items if we are in the top or bottom borders
     int Width;
     int Height;
     GetSize( &Width, &Height );
@@ -693,7 +708,6 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
             ScrollLines( -1 );
         }
     }
-    //printf( "DragOverItem: %d ( %d, %d )\n", DragOverItem, x, y );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -823,14 +837,14 @@ void guListViewClient::DoDrawItem( wxDC &dc, const wxRect &rect, const int row, 
     dc.SetFont( * m_Attr->m_Font );
     dc.SetBackgroundMode( wxTRANSPARENT );
     dc.SetTextForeground( IsSelected( row ) ? m_Attr->m_SelFgColor : m_Attr->m_TextFgColor );
-    dc.DrawText( ( ( guListView * ) GetParent() )->OnGetItemText( row, col ),
+    dc.DrawText( m_Owner->OnGetItemText( row, col ),
                   rect.x + guLISTVIEW_ITEM_MARGIN, rect.y + guLISTVIEW_ITEM_MARGIN );
 }
 
 // -------------------------------------------------------------------------------- //
 void guListViewClient::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-    ( ( guListView * ) GetParent() )->DrawItem( dc, rect, row, col );
+    m_Owner->DrawItem( dc, rect, row, col );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -882,26 +896,40 @@ wxCoord guListViewClient::OnMeasureItem( size_t n ) const
     }
     else
     {
-        return ( ( guListView * ) GetParent() )->OnMeasureItem( n );
+        return m_Owner->OnMeasureItem( n );
     }
 }
 
 // -------------------------------------------------------------------------------- //
 void guListViewClient::DoDrawBackground( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
+    wxRect LineRect;
+
     if( IsSelected( row ) )
       dc.SetBrush( wxBrush( m_Attr->m_SelBgColor ) );
+    else if( row == ( int ) m_Owner->m_DragOverItem )
+      dc.SetBrush( m_Attr->m_DragBgColor );
     else
       dc.SetBrush( wxBrush( row & 1 ? m_Attr->m_OddBgColor : m_Attr->m_EveBgColor ) );
 
     dc.SetPen( * wxTRANSPARENT_PEN );
     dc.DrawRectangle( rect );
+
+    if( row == ( int ) m_Owner->m_DragOverItem )
+    {
+        LineRect = rect;
+        if( m_Owner->m_DragOverAfter )
+            LineRect.y += ( LineRect.height - 2 );
+        LineRect.height = 2;
+        dc.SetBrush( * wxBLACK_BRUSH );
+        dc.DrawRectangle( LineRect );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guListViewClient::DrawBackground( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-    ( ( guListView * ) GetParent() )->DrawBackground( dc, rect, row, col );
+    m_Owner->DrawBackground( dc, rect, row, col );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -964,7 +992,7 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 wxString guListViewClient::GetItemSearchText( const int row )
 {
-    return ( ( guListView * ) GetParent() )->GetItemName( row );
+    return m_Owner->GetItemName( row );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1656,10 +1684,14 @@ guListViewDropTarget::~guListViewDropTarget()
 // -------------------------------------------------------------------------------- //
 bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
 {
+    //guLogMessage( wxT( "guListViewDropTarget::OnDropFiles" ) );
     // We are moving items inside this object.
-    if( m_ListView->m_DragSelfItemsEnabled && m_ListView->m_DragSelfItems )
+    if( m_ListView->m_DragSelfItems )
     {
-        m_ListView->MoveSelection();
+        if( m_ListView->m_DragSelfItemsEnabled )
+        {
+            m_ListView->MoveSelection();
+        }
         m_ListView->RefreshAll();
     }
     else

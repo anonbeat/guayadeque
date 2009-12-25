@@ -2256,11 +2256,13 @@ int DbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::DeleteStaticPlaylistTracks( const int plid, const wxArrayInt &tracks )
+int DbLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &setids )
 {
     wxString query;
     query = wxString::Format( wxT( "DELETE FROM plsets WHERE plset_plid = %u AND " ), plid );
-    query += ArrayToFilter( tracks, wxT( "plset_songid" ) );
+    query += ArrayToFilter( setids, wxT( "plset_id" ) );
+
+    //guLogMessage( wxT( "DelPlayListSetIds:\n%s" ), query.c_str() );
 
     return ExecuteUpdate( query );
 }
@@ -2275,7 +2277,7 @@ int DbLibrary::GetPlayListFiles( const int plid, wxFileDataObject * files )
                "WHERE plset_songid = song_id AND song_pathid = path_id AND plset_plid = " );
   query += wxString::Format( wxT( "%u" ), plid );
 
-  guLogMessage( wxT( "GetPlayListFiles:\n%s" ), query.c_str() );
+  //guLogMessage( wxT( "GetPlayListFiles:\n%s" ), query.c_str() );
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )
@@ -2773,6 +2775,26 @@ int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray 
     }
   }
   return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPlayListSetIds( const int plid, wxArrayInt * setids )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT plset_id FROM plsets WHERE plset_plid = " );
+  query += wxString::Format( wxT( "%u" ), plid );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+      setids->Add( dbRes.GetInt( 0 ) );
+  }
+  dbRes.Finalize();
+
+  return setids->Count();
 }
 
 // -------------------------------------------------------------------------------- //

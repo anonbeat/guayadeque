@@ -342,11 +342,12 @@ class DbLibrary {
     int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
     int                 UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
     int                 AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
-    int                 DeleteStaticPlaylistTracks( const int plid, const wxArrayInt &tracks );
+    int                 DelPlaylistSetIds( const int plid, const wxArrayInt &setids );
     int                 GetPlayListFiles( const int plid, wxFileDataObject * Files );
     void                GetPlayLists( guListItems * PlayLists, const int type );
     int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
     int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks );
+    int                 GetPlayListSetIds( const int plid, wxArrayInt * setids );
     void                DeletePlayList( const int plid );
     void                SetPlayListName( const int plid, const wxString &plname );
     void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
