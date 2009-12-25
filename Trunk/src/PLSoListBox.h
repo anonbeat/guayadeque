@@ -32,6 +32,7 @@ class guPLSoListBox : public guSoListBox
 
     virtual void                GetItemsList( void );
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
+    virtual void                OnKeyDown( wxKeyEvent &event );
 
   public :
     guPLSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, int style = 0 );
