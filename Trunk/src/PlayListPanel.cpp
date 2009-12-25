@@ -235,12 +235,16 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
             }
         }
     }
+    else
+    {
+        SetItemDropHighlight( m_DragOverItem, false );
+        m_DragOverItem = wxTreeItemId();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
 {
-    guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
     if( guIsValidAudioFile( filename ) )
     {
         if( wxFileExists( filename ) )
@@ -250,7 +254,6 @@ void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
             {
                 m_DropIds.Add( Track.m_SongId );
             }
-
         }
     }
 }
@@ -258,21 +261,23 @@ void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guPLNamesTreeCtrl::OnDropEnd( void )
 {
-    if( m_DropIds.Count() )
+    if( m_DragOverItem.IsOk() )
     {
-        guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( m_DragOverItem );
-        if( ItemData && ItemData->GetType() == GUPLAYLIST_STATIC )
+        SetItemDropHighlight( m_DragOverItem, false );
+        if( m_DropIds.Count() )
         {
-            m_Db->AppendStaticPlayList( ItemData->GetData(), m_DropIds );
+            guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( m_DragOverItem );
+            if( ItemData && ItemData->GetType() == GUPLAYLIST_STATIC )
+            {
+                m_Db->AppendStaticPlayList( ItemData->GetData(), m_DropIds );
+            }
 
-            SetItemDropHighlight( m_DragOverItem, false );
             SelectItem( m_StaticId );
             SelectItem( m_DragOverItem );
-            m_DragOverItem = wxTreeItemId();
         }
-
-        m_DropIds.Clear();
+        m_DragOverItem = wxTreeItemId();
     }
+    m_DropIds.Clear();
 }
 
 
@@ -383,7 +388,6 @@ guPLNamesDropTarget::~guPLNamesDropTarget()
 // -------------------------------------------------------------------------------- //
 bool guPLNamesDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
 {
-    guLogMessage( wxT( "guPLNamesDropTarget::OnDropFiles" ) );
     if( m_PLNamesDropFilesThread )
     {
         m_PLNamesDropFilesThread->Pause();
@@ -703,8 +707,6 @@ void guPlayListPanel::OnPLTracksDeleteClicked( wxCommandEvent &event )
     wxArrayInt DelTracks;
 
     m_PLTracksListBox->GetPlayListSetIds( &DelTracks );
-
-    guLogMessage( wxT( "Selected %u tracks with it %u" ), DelTracks.Count(), DelTracks[ 0 ] );
 
     if( DelTracks.Count() )
     {
