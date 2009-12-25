@@ -232,7 +232,7 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
 
     if( m_AllowDrop )
     {
-        SetDropTarget( new guPlayListDropTarget( this ) );
+        SetDropTarget( new guListViewDropTarget( this ) );
     }
 
     parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guListView::OnChangedSize ), NULL, this );
@@ -1552,15 +1552,15 @@ void guListViewClientTimer::Notify()
 
 
 // -------------------------------------------------------------------------------- //
-// guPlayListDropFilesThread
+// guListViewDropFilesThread
 // -------------------------------------------------------------------------------- //
-guPlayListDropFilesThread::guPlayListDropFilesThread( guPlayListDropTarget * playlistdroptarget,
+guListViewDropFilesThread::guListViewDropFilesThread( guListViewDropTarget * playlistdroptarget,
                              guListView * listview, const wxArrayString &files ) :
     wxThread()
 {
     m_ListView = listview;
     m_Files = files;
-    m_PlayListDropTarget = playlistdroptarget;
+    m_ListViewDropTarget = playlistdroptarget;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1570,17 +1570,17 @@ guPlayListDropFilesThread::guPlayListDropFilesThread( guPlayListDropTarget * pla
 }
 
 // -------------------------------------------------------------------------------- //
-guPlayListDropFilesThread::~guPlayListDropFilesThread()
+guListViewDropFilesThread::~guListViewDropFilesThread()
 {
-//    printf( "guPlayListDropFilesThread Object destroyed\n" );
+//    printf( "guListViewDropFilesThread Object destroyed\n" );
     if( !TestDestroy() )
     {
-        m_PlayListDropTarget->ClearPlayListFilesThread();
+        m_ListViewDropTarget->ClearPlayListFilesThread();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayListDropFilesThread::AddDropFiles( const wxString &DirName )
+void guListViewDropFilesThread::AddDropFiles( const wxString &DirName )
 {
     wxDir Dir;
     wxString FileName;
@@ -1620,7 +1620,7 @@ void guPlayListDropFilesThread::AddDropFiles( const wxString &DirName )
 }
 
 // -------------------------------------------------------------------------------- //
-guPlayListDropFilesThread::ExitCode guPlayListDropFilesThread::Entry()
+guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
 {
     int index;
     int Count = m_Files.Count();
@@ -1639,24 +1639,23 @@ guPlayListDropFilesThread::ExitCode guPlayListDropFilesThread::Entry()
 }
 
 // -------------------------------------------------------------------------------- //
-// guPlayListDropTarget
+// guListViewDropTarget
 // -------------------------------------------------------------------------------- //
-guPlayListDropTarget::guPlayListDropTarget( guListView * listview )
+guListViewDropTarget::guListViewDropTarget( guListView * listview )
 {
     m_ListView = listview;
-    m_PlayListDropFilesThread = NULL;
+    m_ListViewDropFilesThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
-guPlayListDropTarget::~guPlayListDropTarget()
+guListViewDropTarget::~guListViewDropTarget()
 {
-//    printf( "guPlayListDropTarget Object destroyed\n" );
+//    printf( "guListViewDropTarget Object destroyed\n" );
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
 {
-    guLogMessage( wxT( "guPlayListDropTarget:OnDropFiles..." ) );
     // We are moving items inside this object.
     if( m_ListView->m_DragSelfItemsEnabled && m_ListView->m_DragSelfItems )
     {
@@ -1667,13 +1666,13 @@ bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
     {
         m_ListView->OnDropBegin();
 
-        if( m_PlayListDropFilesThread )
+        if( m_ListViewDropFilesThread )
         {
-            m_PlayListDropFilesThread->Pause();
-            m_PlayListDropFilesThread->Delete();
+            m_ListViewDropFilesThread->Pause();
+            m_ListViewDropFilesThread->Delete();
         }
-        m_PlayListDropFilesThread = new guPlayListDropFilesThread( this, m_ListView, files );
-        if( !m_PlayListDropFilesThread )
+        m_ListViewDropFilesThread = new guListViewDropFilesThread( this, m_ListView, files );
+        if( !m_ListViewDropFilesThread )
         {
             guLogError( wxT( "Could not create the add files thread." ) );
         }
@@ -1682,9 +1681,9 @@ bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
 }
 
 // -------------------------------------------------------------------------------- //
-wxDragResult guPlayListDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
+wxDragResult guListViewDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
 {
-    //printf( "guPlayListDropTarget::OnDragOver... %d - %d\n", x, y );
+    //printf( "guListViewDropTarget::OnDragOver... %d - %d\n", x, y );
     m_ListView->OnDragOver( x, y );
     return wxDragCopy;
 }

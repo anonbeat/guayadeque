@@ -68,6 +68,8 @@ guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db ) :
 
     SetIndent( 5 );
 
+    SetDropTarget( new guPLNamesDropTarget( this ) );
+
     Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guPLNamesTreeCtrl::OnContextMenu ), NULL, this );
 
     ReloadItems();
@@ -84,7 +86,6 @@ void guPLNamesTreeCtrl::ReloadItems( void )
 {
     int index;
     int count;
-//    wxTreeItemId Selected = GetSelection();
 
     DeleteChildren( m_StaticId );
     DeleteChildren( m_DynamicId );
@@ -187,7 +188,7 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
         guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( ItemId );
         if( ItemData )
         {
-            wxFileDataObject Files; // = wxFileDataObject();
+            wxFileDataObject Files;
 
             if( m_Db->GetPlayListFiles( ItemData->GetData(), &Files ) )
             {
@@ -201,6 +202,191 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
         }
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
+{
+    int HitFlags;
+    wxTreeItemId TreeItemId = HitTest( wxPoint( x, y ), HitFlags );
+
+    if( TreeItemId.IsOk() )
+    {
+        if( TreeItemId != m_DragOverItem )
+        {
+            SetItemDropHighlight( m_DragOverItem, false );
+            guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( TreeItemId );
+            if( ItemData && ItemData->GetType() == GUPLAYLIST_STATIC )
+            {
+                SetItemDropHighlight( TreeItemId, true );
+                m_DragOverItem = TreeItemId;
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
+{
+    if( guIsValidAudioFile( filename ) )
+    {
+        guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
+
+        if( wxFileExists( filename ) )
+        {
+            guTrack Track;
+            if( m_Db->FindTrackFile( filename, &Track ) )
+            {
+                m_DropIds.Add( Track.m_SongId );
+            }
+
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::OnDropEnd( void )
+{
+    if( m_DropIds.Count() )
+    {
+        guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( m_DragOverItem );
+
+        m_Db->AppendStaticPlayList( ItemData->GetData(), m_DropIds );
+
+        m_DropIds.Clear();
+    }
+}
+
+
+// -------------------------------------------------------------------------------- //
+// guPLNamesDropFilesThread
+// -------------------------------------------------------------------------------- //
+guPLNamesDropFilesThread::guPLNamesDropFilesThread( guPLNamesDropTarget * plnamesdroptarget,
+                             guPLNamesTreeCtrl * plnamestreectrl, const wxArrayString &files ) :
+    wxThread()
+{
+    m_PLNamesTreeCtrl = plnamestreectrl;
+    m_Files = files;
+    m_PLNamesDropTarget = plnamesdroptarget;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guPLNamesDropFilesThread::~guPLNamesDropFilesThread()
+{
+//    printf( "guPLNamesDropFilesThread Object destroyed\n" );
+    if( !TestDestroy() )
+    {
+        m_PLNamesDropTarget->ClearPlayListFilesThread();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesDropFilesThread::AddDropFiles( const wxString &DirName )
+{
+    wxDir Dir;
+    wxString FileName;
+    wxString SavedDir( wxGetCwd() );
+
+    //printf( "Entering Dir : " ); printf( ( char * ) DirName.char_str() );  ; printf( "\n" );
+    if( wxDirExists( DirName ) )
+    {
+        //wxMessageBox( DirName, wxT( "DirName" ) );
+        Dir.Open( DirName );
+        wxSetWorkingDirectory( DirName );
+        if( Dir.IsOpened() )
+        {
+            if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+            {
+                do {
+                    if( ( FileName[ 0 ] != '.' ) )
+                    {
+                        if( Dir.Exists( FileName ) )
+                        {
+                            AddDropFiles( DirName + wxT( "/" ) + FileName );
+                        }
+                        else
+                        {
+                            //m_ListView->OnDropFile( DirName + wxT( "/" ) + FileName );
+                        }
+                    }
+                } while( Dir.GetNext( &FileName ) && !TestDestroy() );
+            }
+        }
+    }
+    else
+    {
+        //m_ListView->OnDropFile( DirName );
+    }
+    wxSetWorkingDirectory( SavedDir );
+}
+
+// -------------------------------------------------------------------------------- //
+guPLNamesDropFilesThread::ExitCode guPLNamesDropFilesThread::Entry()
+{
+    int index;
+    int Count = m_Files.Count();
+    for( index = 0; index < Count; ++index )
+    {
+        if( TestDestroy() )
+            break;
+        AddDropFiles( m_Files[ index ] );
+    }
+
+    //
+    m_PLNamesTreeCtrl->m_DragOverItem = wxTreeItemId();
+
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+// guPLNamesDropTarget
+// -------------------------------------------------------------------------------- //
+guPLNamesDropTarget::guPLNamesDropTarget( guPLNamesTreeCtrl * plnamestreectrl )
+{
+    m_PLNamesTreeCtrl = plnamestreectrl;
+    m_PLNamesDropFilesThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+guPLNamesDropTarget::~guPLNamesDropTarget()
+{
+//    printf( "guPLNamesDropTarget Object destroyed\n" );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPLNamesDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+{
+    if( m_PLNamesDropFilesThread )
+    {
+        m_PLNamesDropFilesThread->Pause();
+        m_PLNamesDropFilesThread->Delete();
+    }
+
+    m_PLNamesDropFilesThread = new guPLNamesDropFilesThread( this, m_PLNamesTreeCtrl, files );
+
+    if( !m_PLNamesDropFilesThread )
+    {
+        guLogError( wxT( "Could not create the add files thread." ) );
+    }
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxDragResult guPLNamesDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
+{
+    //printf( "guPLNamesDropTarget::OnDragOver... %d - %d\n", x, y );
+    m_PLNamesTreeCtrl->OnDragOver( x, y );
+    return wxDragCopy;
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guPlayListPanel

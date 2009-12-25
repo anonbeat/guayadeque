@@ -119,8 +119,8 @@ class guListViewAttr
 
 };
 
-class guPlayListDropTarget;
-class guPlayListDropFilesThread;
+class guListViewDropTarget;
+class guListViewDropFilesThread;
 
 // -------------------------------------------------------------------------------- //
 class guListView : public wxScrolledWindow
@@ -213,48 +213,48 @@ class guListView : public wxScrolledWindow
     bool                    IsAllowedColumnSelect( void ) const;
 
     friend class guListViewClient;
-    friend class guPlayListDropTarget;
-    friend class guPlayListDropFilesThread;
+    friend class guListViewDropTarget;
+    friend class guListViewDropFilesThread;
 
 };
 
 // -------------------------------------------------------------------------------- //
-class guPlayListDropFilesThread : public wxThread
+class guListViewDropFilesThread : public wxThread
 {
   protected :
     guListView *            m_ListView;                 // To add the files
-    guPlayListDropTarget *  m_PlayListDropTarget;       // To clear the thread pointer once its finished
+    guListViewDropTarget *  m_ListViewDropTarget;       // To clear the thread pointer once its finished
     wxArrayString           m_Files;
 
     void AddDropFiles( const wxString &DirName );
 
   public :
-    guPlayListDropFilesThread( guPlayListDropTarget * playlistdroptarget,
+    guListViewDropFilesThread( guListViewDropTarget * playlistdroptarget,
                                  guListView * listview, const wxArrayString &files );
-    ~guPlayListDropFilesThread();
+    ~guListViewDropFilesThread();
 
     virtual ExitCode Entry();
 };
 
 // -------------------------------------------------------------------------------- //
-class guPlayListDropTarget : public wxFileDropTarget
+class guListViewDropTarget : public wxFileDropTarget
 {
   private:
     guListView *                    m_ListView;
-    guPlayListDropFilesThread *     m_PlayListDropFilesThread;
+    guListViewDropFilesThread *     m_ListViewDropFilesThread;
 
-    void ClearPlayListFilesThread( void ) { m_PlayListDropFilesThread = NULL; };
+    void ClearPlayListFilesThread( void ) { m_ListViewDropFilesThread = NULL; };
 
   public:
-    guPlayListDropTarget( guListView * listview );
-    ~guPlayListDropTarget();
+    guListViewDropTarget( guListView * listview );
+    ~guListViewDropTarget();
 
     virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
 
     virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
 
 
-    friend class guPlayListDropFilesThread;
+    friend class guListViewDropFilesThread;
 };
 
 

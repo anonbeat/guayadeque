@@ -22,7 +22,6 @@
 #define MUSICPLAYER_H
 
 #include "AudioScrobble.h"
-#include "AutoScrollText.h"
 #include "MediaCtrl.h"
 #include "PlayList.h"
 #include "RatingCtrl.h"
