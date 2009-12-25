@@ -174,7 +174,7 @@ void guPlayList::OnDropFile( const wxString &filename )
 {
     if( guIsValidAudioFile( filename ) )
     {
-        guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
+        //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
         AddPlayListItem( filename, false );
     }
 }

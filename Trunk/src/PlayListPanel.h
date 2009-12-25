@@ -47,6 +47,8 @@
 #include <wx/treectrl.h>
 #include <wx/imaglist.h>
 
+class guPLNamesDropTarget;
+
 // -------------------------------------------------------------------------------- //
 // guPLNamesTreeCtrl
 // -------------------------------------------------------------------------------- //
@@ -59,8 +61,15 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     wxTreeItemId    m_StaticId;
     wxTreeItemId    m_DynamicId;
 
+    wxTreeItemId    m_DragOverItem;
+    wxArrayInt      m_DropIds;
+
     void            OnContextMenu( wxTreeEvent &event );
+
     void            OnBeginDrag( wxTreeEvent &event );
+    void            OnDragOver( const wxCoord x, const wxCoord y );
+    void            OnDropFile( const wxString &filename );
+    void            OnDropEnd( void );
 
   public :
     guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db );
@@ -69,6 +78,48 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     void            ReloadItems( void );
 
     DECLARE_EVENT_TABLE()
+
+    friend class guPLNamesDropTarget;
+    friend class guPLNamesDropFilesThread;
+};
+
+// -------------------------------------------------------------------------------- //
+class guPLNamesDropFilesThread : public wxThread
+{
+  protected :
+    guPLNamesTreeCtrl *     m_PLNamesTreeCtrl;          // To add the files
+    guPLNamesDropTarget *   m_PLNamesDropTarget;        // To clear the thread pointer once its finished
+    wxArrayString           m_Files;
+
+    void AddDropFiles( const wxString &DirName );
+
+  public :
+    guPLNamesDropFilesThread( guPLNamesDropTarget * plnamesdroptarget,
+                                 guPLNamesTreeCtrl * plnamestreectrl, const wxArrayString &files );
+    ~guPLNamesDropFilesThread();
+
+    virtual ExitCode Entry();
+};
+
+// -------------------------------------------------------------------------------- //
+class guPLNamesDropTarget : public wxFileDropTarget
+{
+  private:
+    guPLNamesTreeCtrl *             m_PLNamesTreeCtrl;
+    guPLNamesDropFilesThread *      m_PLNamesDropFilesThread;
+
+    void ClearPlayListFilesThread( void ) { m_PLNamesDropFilesThread = NULL; };
+
+  public:
+    guPLNamesDropTarget( guPLNamesTreeCtrl * plnamestreectrl );
+    ~guPLNamesDropTarget();
+
+    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
+
+    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
+
+
+    friend class guPLNamesDropFilesThread;
 };
 
 // -------------------------------------------------------------------------------- //
