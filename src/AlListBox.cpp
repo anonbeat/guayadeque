@@ -36,7 +36,7 @@
 // guAlListBox
 // -------------------------------------------------------------------------------- //
 guAlListBox::guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
-    guListView( parent )
+    guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG )
 {
     m_Db = db;
     m_Items = new guAlbumItems();
@@ -372,6 +372,19 @@ void  guAlListBox::SetSelectedItems( const wxArrayInt &selection )
     event.SetEventObject( this );
     event.SetInt( -1 );
     (void) GetEventHandler()->ProcessEvent( event );
+}
+
+// -------------------------------------------------------------------------------- //
+int guAlListBox::GetDragFiles( wxFileDataObject * files )
+{
+    guTrackArray Songs;
+    int index;
+    int count = GetSelectedSongs( &Songs );
+    for( index = 0; index < count; index++ )
+    {
+       files->AddFile( Songs[ index ].m_FileName );
+    }
+    return count;
 }
 
 // -------------------------------------------------------------------------------- //

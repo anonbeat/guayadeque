@@ -56,6 +56,8 @@ class guSoListBox : public guListView
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
 
+    virtual int                 GetDragFiles( wxFileDataObject * files );
+
     void                        OnSearchLinkClicked( wxCommandEvent &event );
     void                        OnCommandClicked( wxCommandEvent &event );
     wxString                    GetSearchText( int item ) const;

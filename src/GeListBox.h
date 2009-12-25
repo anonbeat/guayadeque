@@ -27,20 +27,22 @@
 class guGeListBox : public guListBox
 {
 
-    protected :
+  protected :
 
-      virtual void GetItemsList( void );
-      virtual void CreateContextMenu( wxMenu * Menu ) const;
+    virtual void    GetItemsList( void );
+    virtual void    CreateContextMenu( wxMenu * Menu ) const;
 
-    public :
+    virtual int     GetDragFiles( wxFileDataObject * files );
 
-      guGeListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label ) :
+  public :
+
+    guGeListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label ) :
         guListBox( parent, NewDb, Label )
-      {
+    {
           ReloadItems();
-      };
+    };
 
-      virtual int GetSelectedSongs( guTrackArray * Songs ) const;
+    virtual int GetSelectedSongs( guTrackArray * Songs ) const;
 
 };
 

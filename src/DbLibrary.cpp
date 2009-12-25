@@ -2266,6 +2266,29 @@ int DbLibrary::DeleteStaticPlaylistTracks( const int plid, const wxArrayInt &tra
 }
 
 // -------------------------------------------------------------------------------- //
+int DbLibrary::GetPlayListFiles( const int plid, wxFileDataObject * files )
+{
+  int Count = 0;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  query = wxT( "SELECT song_filename, path_value FROM plsets, songs, paths "
+               "WHERE plset_songid = song_id AND song_pathid = path_id AND plset_plid = " );
+  query += wxString::Format( wxT( "%u" ), plid );
+
+  guLogMessage( wxT( "GetPlayListFiles:\n%s" ), query.c_str() );
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+      files->AddFile( dbRes.GetString( 1 ) + dbRes.GetString( 0 ) );
+      Count++;
+  }
+
+  dbRes.Finalize();
+  return Count;
+}
+
+// -------------------------------------------------------------------------------- //
 int DbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist )
 {
   wxASSERT( playlist );
@@ -3369,7 +3392,7 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetSongs( wxArrayInt SongIds, guTrackArray * Songs )
+int DbLibrary::GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4947,7 +4970,7 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items )
+int DbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items )
 {
   wxASSERT( items );
   wxString query;
@@ -5344,6 +5367,28 @@ int DbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
   }
   dbRes.Finalize();
   return items->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int DbLibrary::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject * files )
+{
+  int Count = 0;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastitem_file FROM podcastitems WHERE " ) +
+          ArrayToFilter( channels, wxT( "podcastitem_chid" ) );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+      files->AddFile( dbRes.GetString( 0 ) );
+      Count++;
+  }
+
+  dbRes.Finalize();
+  return Count;
 }
 
 // -------------------------------------------------------------------------------- //

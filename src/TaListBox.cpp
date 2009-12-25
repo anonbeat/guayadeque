@@ -154,3 +154,16 @@ void guTaListBox::EditLabel( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+int guTaListBox::GetDragFiles( wxFileDataObject * files )
+{
+    guTrackArray Songs;
+    int index;
+    int count = GetSelectedSongs( &Songs );
+    for( index = 0; index < count; index++ )
+    {
+       files->AddFile( Songs[ index ].m_FileName );
+    }
+    return count;
+}
+
+// -------------------------------------------------------------------------------- //

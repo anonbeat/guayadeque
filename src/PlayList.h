@@ -48,11 +48,6 @@ class guPlayList : public guListView
     long            m_SmartPlayMaxPlayListTracks;
     int             m_ItemHeight;
 
-    size_t          m_DragOverItem;
-    bool            m_DragOverAfter;
-    bool            m_DragSelfItems;
-    wxPoint         m_DragStart;
-    int             m_DragCount;
     wxBitmap *      m_PlayBitmap;
     wxBitmap *      m_GreyStar;
     wxBitmap *      m_YellowStar;
@@ -61,12 +56,18 @@ class guPlayList : public guListView
 
     virtual wxCoord             OnMeasureItem( size_t row ) const;
 
-    void            OnDragOver( const wxCoord x, const wxCoord y );
-//    void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
-    virtual void                OnBeginDrag( wxMouseEvent &event );
-//    void            OnMouse( wxMouseEvent &event );
+//    void                        OnDragOver( const wxCoord x, const wxCoord y );
+//    void                        OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
+    virtual int                 GetDragFiles( wxFileDataObject * files );
+    virtual void                OnDropFile( const wxString &filename );
+    virtual void                OnDropBegin( void );
+    virtual void                OnDropEnd( void );
+
+
+
+//    void                        OnMouse( wxMouseEvent &event );
     void                        RemoveSelected();
-    void                        MoveSelected();
+    virtual void                MoveSelection( void );
 
     void                        OnClearClicked( wxCommandEvent &event );
     void                        OnRemoveClicked( wxCommandEvent &event );
@@ -128,43 +129,43 @@ class guPlayList : public guListView
 
 class guPlayListDropTarget;
 
-// -------------------------------------------------------------------------------- //
-class guAddDropFilesThread : public wxThread
-{
-  private:
-    guPlayList *            m_PlayList;
-    guPlayListDropTarget *  m_PlayListDropTarget;
-    wxSortedArrayString     m_Files;
-
-  public:
-    guAddDropFilesThread( guPlayListDropTarget * playlistdroptarget,
-                                 guPlayList * playlist, const wxArrayString &files );
-    ~guAddDropFilesThread();
-
-    void AddDropFiles( const wxString &DirName );
-    virtual ExitCode Entry();
-};
-
-// -------------------------------------------------------------------------------- //
-class guPlayListDropTarget : public wxFileDropTarget
-{
-  private:
-    guPlayList *            m_PlayList;
-    guAddDropFilesThread *  m_AddDropFilesThread;
-
-    void ClearAddDropFilesThread( void ) { m_AddDropFilesThread = NULL; };
-
-  public:
-    guPlayListDropTarget( guPlayList * NewPlayList );
-    ~guPlayListDropTarget();
-
-    virtual bool OnDropFiles( wxCoord WXUNUSED( x ), wxCoord WXUNUSED( y ), const wxArrayString &files );
-
-    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
-
-    friend class guAddDropFilesThread;
-
-};
+//// -------------------------------------------------------------------------------- //
+//class guAddDropFilesThread : public wxThread
+//{
+//  private:
+//    guPlayList *            m_PlayList;
+//    guPlayListDropTarget *  m_PlayListDropTarget;
+//    wxSortedArrayString     m_Files;
+//
+//  public:
+//    guAddDropFilesThread( guPlayListDropTarget * playlistdroptarget,
+//                                 guPlayList * playlist, const wxArrayString &files );
+//    ~guAddDropFilesThread();
+//
+//    void AddDropFiles( const wxString &DirName );
+//    virtual ExitCode Entry();
+//};
+//
+//// -------------------------------------------------------------------------------- //
+//class guPlayListDropTarget : public wxFileDropTarget
+//{
+//  private:
+//    guPlayList *            m_PlayList;
+//    guAddDropFilesThread *  m_AddDropFilesThread;
+//
+//    void ClearAddDropFilesThread( void ) { m_AddDropFilesThread = NULL; };
+//
+//  public:
+//    guPlayListDropTarget( guPlayList * NewPlayList );
+//    ~guPlayListDropTarget();
+//
+//    virtual bool OnDropFiles( wxCoord WXUNUSED( x ), wxCoord WXUNUSED( y ), const wxArrayString &files );
+//
+//    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
+//
+//    friend class guAddDropFilesThread;
+//
+//};
 
 #endif // PLAYLIST_H
 // -------------------------------------------------------------------------------- //

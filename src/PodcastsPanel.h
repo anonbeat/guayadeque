@@ -40,6 +40,8 @@ class guChannelsListBox : public guListBox
     virtual void GetItemsList( void );
     virtual void CreateContextMenu( wxMenu * Menu ) const;
 
+    virtual int     GetDragFiles( wxFileDataObject * files );
+
   public :
     guChannelsListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
       guListBox( parent, db, label )
@@ -78,6 +80,8 @@ class guPodcastListBox : public guListView
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
     virtual int                 GetSelectedSongs( guTrackArray * tracks ) const;
+
+    virtual int                 GetDragFiles( wxFileDataObject * files );
 
   public :
     guPodcastListBox( wxWindow * parent, DbLibrary * NewDb );

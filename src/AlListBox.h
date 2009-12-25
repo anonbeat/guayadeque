@@ -42,6 +42,8 @@ class guAlListBox : public  guListView
     void                OnCommandClicked( wxCommandEvent &event );
     wxString            GetSearchText( int item ) const;
 
+    virtual int         GetDragFiles( wxFileDataObject * files );
+
   public :
                         guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
                         ~guAlListBox();

@@ -49,7 +49,7 @@ wxString guSONGS_COLUMN_NAMES[ guSONGS_COLUMN_ADDEDDATE + 1 ] = {
 
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, long style ) :
-             guListView( parent, style|wxLB_MULTIPLE, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER )
+             guListView( parent, style|wxLB_MULTIPLE|guLISTVIEW_ALLOWDRAG, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -259,6 +259,19 @@ void guSoListBox::GetAllSongs( guTrackArray * tracks ) const
     {
         tracks->Add( new guTrack( m_Items[ index ] ) );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+int guSoListBox::GetDragFiles( wxFileDataObject * files )
+{
+    guTrackArray Songs;
+    int index;
+    int count = GetSelectedSongs( &Songs );
+    for( index = 0; index < count; index++ )
+    {
+       files->AddFile( Songs[ index ].m_FileName );
+    }
+    return count;
 }
 
 // -------------------------------------------------------------------------------- //

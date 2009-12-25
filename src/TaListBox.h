@@ -27,20 +27,23 @@
 class guTaListBox : public guListBox
 {
 
-    protected :
+  protected :
 
-      virtual void GetItemsList( void );
-      virtual void CreateContextMenu( wxMenu * Menu ) const;
-      void AddLabel( wxCommandEvent &event );
-      void DelLabel( wxCommandEvent &event );
-      void EditLabel( wxCommandEvent &event );
+    virtual void    GetItemsList( void );
+    virtual void    CreateContextMenu( wxMenu * Menu ) const;
+    void            AddLabel( wxCommandEvent &event );
+    void            DelLabel( wxCommandEvent &event );
+    void            EditLabel( wxCommandEvent &event );
 
-    public :
+    virtual int     GetDragFiles( wxFileDataObject * files );
 
-      guTaListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label );
-      ~guTaListBox();
 
-      virtual int GetSelectedSongs( guTrackArray * Songs ) const;
+  public :
+
+    guTaListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label );
+    ~guTaListBox();
+
+    virtual int GetSelectedSongs( guTrackArray * Songs ) const;
 
 };
 
