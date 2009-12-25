@@ -45,6 +45,11 @@ class guPLNamesData : public wxTreeItemData
     void    SetType( int type ) { m_Type = type; };
 };
 
+
+BEGIN_EVENT_TABLE( guPLNamesTreeCtrl, wxTreeCtrl )
+    EVT_TREE_BEGIN_DRAG( wxID_ANY, guPLNamesTreeCtrl::OnBeginDrag )
+END_EVENT_TABLE()
+
 // -------------------------------------------------------------------------------- //
 guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
@@ -171,6 +176,30 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
     PopupMenu( &Menu, Point );
 
     event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
+{
+    wxTreeItemId ItemId = GetSelection();
+    if( ItemId.IsOk() )
+    {
+        guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( ItemId );
+        if( ItemData )
+        {
+            wxFileDataObject Files; // = wxFileDataObject();
+
+            if( m_Db->GetPlayListFiles( ItemData->GetData(), &Files ) )
+            {
+                wxDropSource source( Files, this );
+
+                wxDragResult Result = source.DoDragDrop();
+                if( Result )
+                {
+                }
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

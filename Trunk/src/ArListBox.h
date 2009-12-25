@@ -35,6 +35,8 @@ class guArListBox : public guListBox
     void            OnCommandClicked( wxCommandEvent &event );
     wxString        GetSearchText( int Item ) const;
 
+    virtual int     GetDragFiles( wxFileDataObject * files );
+
   public :
                     guArListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
                     ~guArListBox();

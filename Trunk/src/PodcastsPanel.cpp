@@ -785,6 +785,9 @@ void guPodcastPanel::MainSplitterOnIdle( wxIdleEvent &event )
     m_TopSplitter->SetSashPosition( Config->ReadNum( wxT( "PodcastsTopSashPos" ), 150, wxT( "Positions" ) ) );
 }
 
+
+
+
 // -------------------------------------------------------------------------------- //
 // guChannelsListBox
 // -------------------------------------------------------------------------------- //
@@ -804,6 +807,12 @@ void guChannelsListBox::GetItemsList( void )
 int guChannelsListBox::GetSelectedSongs( guTrackArray * Songs ) const
 {
     return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+int guChannelsListBox::GetDragFiles( wxFileDataObject * files )
+{
+    return m_Db->GetPodcastFiles( GetSelectedItems(), files );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -863,7 +872,7 @@ wxString guPODCASTS_COLUMN_NAMES[] = {
 
 // -------------------------------------------------------------------------------- //
 guPodcastListBox::guPodcastListBox( wxWindow * parent, DbLibrary * db ) :
-    guListView( parent, wxLB_MULTIPLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING )
+    guListView( parent, wxLB_MULTIPLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING | guLISTVIEW_ALLOWDRAG )
 {
     m_Db = db;
 
@@ -1156,6 +1165,19 @@ int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
         }
     }
     return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int guPodcastListBox::GetDragFiles( wxFileDataObject * files )
+{
+    guTrackArray Songs;
+    int index;
+    int count = GetSelectedSongs( &Songs );
+    for( index = 0; index < count; index++ )
+    {
+       files->AddFile( Songs[ index ].m_FileName );
+    }
+    return count;
 }
 
 // -------------------------------------------------------------------------------- //

@@ -343,6 +343,7 @@ class DbLibrary {
     int                 UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
     int                 AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
     int                 DeleteStaticPlaylistTracks( const int plid, const wxArrayInt &tracks );
+    int                 GetPlayListFiles( const int plid, wxFileDataObject * Files );
     void                GetPlayLists( guListItems * PlayLists, const int type );
     int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
     int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks );
@@ -354,7 +355,7 @@ class DbLibrary {
 
     void                GetPaths( guListItems * Paths, bool FullList = false );
 
-    int                 GetSongs( wxArrayInt SongIds, guTrackArray * Songs );
+    int                 GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs );
     int                 GetSongs( guTrackArray * Songs );
     void                SetSongsOrder( const guTRACKS_ORDER order );
     guTRACKS_ORDER      GetSongsOrder( void ) const;
@@ -473,7 +474,7 @@ class DbLibrary {
     void                    DelPodcastChannel( const int id );
 
     int                     GetPodcastItems( guPodcastItemArray * items );
-    int                     GetPodcastItems( wxArrayInt ids, guPodcastItemArray * items );
+    int                     GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items );
     void                    SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew = false );
     void                    SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew = false );
     void                    SetPodcastItemStatus( const int itemid, const int status );
@@ -486,6 +487,7 @@ class DbLibrary {
     void                    SetPodcastChannelFilters( const wxArrayInt &filters );
     void                    SetPodcastOrder( int order );
     int                     GetPendingPodcasts( guPodcastItemArray * items );
+    int                     GetPodcastFiles( const wxArrayInt &channelid, wxFileDataObject * files );
 
 };
 

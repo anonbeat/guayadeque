@@ -24,8 +24,8 @@
 #include <wx/dnd.h>
 
 // -------------------------------------------------------------------------------- //
-guListBox::guListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
-             guListView( parent )
+guListBox::guListBox( wxWindow * parent, DbLibrary * db, const wxString &label, int flags ) :
+             guListView( parent, flags )
 {
     m_Db = db;
     m_Items = new guListItems();

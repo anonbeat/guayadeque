@@ -52,7 +52,7 @@
 // -------------------------------------------------------------------------------- //
 class guPLNamesTreeCtrl : public wxTreeCtrl
 {
-  private :
+  protected :
     DbLibrary *     m_Db;
     wxImageList *   m_ImageList;
     wxTreeItemId    m_RootId;
@@ -60,6 +60,7 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     wxTreeItemId    m_DynamicId;
 
     void            OnContextMenu( wxTreeEvent &event );
+    void            OnBeginDrag( wxTreeEvent &event );
 
   public :
     guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db );
@@ -67,21 +68,8 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
 
     void            ReloadItems( void );
 
+    DECLARE_EVENT_TABLE()
 };
-
-//// -------------------------------------------------------------------------------- //
-//class guPLTracksListBox : public guSoListBox
-//{
-//  private :
-//    int  m_PLId;
-//    int  m_PLType;
-//    virtual void FillTracks( void );
-//
-//  public :
-//    guPLTracksListBox( wxWindow * parent, DbLibrary * db, wxString confname );
-//    ~guPLTracksListBox();
-//    void SetPlayList( int plid, int pltype );
-//};
 
 // -------------------------------------------------------------------------------- //
 class guPlayListPanel : public wxPanel

@@ -41,7 +41,7 @@
 
 // -------------------------------------------------------------------------------- //
 guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
-            guListView( parent )
+            guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
     wxArrayString Songs;
     int Count;
@@ -57,11 +57,11 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
     m_StartPlaying = false;
 
     //CurItem = wxNOT_FOUND;
-    m_DragOverItem = wxNOT_FOUND;
-    m_DragOverAfter = false;
-    m_DragSelfItems = false;
-    m_DragStart = wxPoint( -1, -1 );
-    m_DragCount = 0;
+//    m_DragOverItem = wxNOT_FOUND;
+//    m_DragOverAfter = false;
+//    m_DragSelfItems = false;
+//    m_DragStart = wxPoint( -1, -1 );
+//    m_DragCount = 0;
 
     guMainApp * MainApp = ( guMainApp * ) wxTheApp;
     if( MainApp && MainApp->argc > 1 )
@@ -97,8 +97,6 @@ guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
             wxPostEvent( this, event );
         }
     }
-
-    SetDropTarget( new guPlayListDropTarget( this ) );
 
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     m_GreyStar   = new wxBitmap( guImage( guIMAGE_INDEX_grey_star_tiny ) );
@@ -155,33 +153,57 @@ guPlayList::~guPlayList()
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::OnBeginDrag( wxMouseEvent &event )
+void guPlayList::OnDropBegin( void )
 {
-    //printf( "Drag started\n" );
-    wxFileDataObject Files; // = wxFileDataObject();
+    if( GetItemCount() )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) )
+        {
+            ClearItems();
+            RefreshAll();
+            m_DragOverItem = wxNOT_FOUND;
+            m_CurItem = 0;
+            //guLogMessage( wxT( "ClearPlaylist set on config. Playlist cleared" ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnDropFile( const wxString &filename )
+{
+    if( guIsValidAudioFile( filename ) )
+    {
+        guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
+        AddPlayListItem( filename, false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnDropEnd( void )
+{
+    // Once finished send the update guPlayList event to the guPlayList object
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) )
+    {
+        event.SetExtraLong( 1 );
+    }
+    AddPendingEvent( event );
+}
+
+// -------------------------------------------------------------------------------- //
+int  guPlayList::GetDragFiles( wxFileDataObject * files )
+{
     int index;
     int count;
     wxArrayInt Selection = GetSelectedItems( false );
-
     count = Selection.Count();
-    //printf( "OnBeginDraw: %d\n", count );
-
     for( index = 0; index < count; index++ )
     {
-       Files.AddFile( m_Items[ Selection[ index ] ].m_FileName );
-       //printf( Items[ Selection[ index ] ].FileName.char_str() ); printf( "\n" );
+       files->AddFile( m_Items[ Selection[ index ] ].m_FileName );
     }
-
-    wxDropSource source( Files, this );
-
-    m_DragSelfItems = true;
-    wxDragResult Result = source.DoDragDrop();
-    if( Result )
-    {
-    }
-    m_DragSelfItems = false;
-    m_DragOverItem = wxNOT_FOUND;
-    //printf( "DoDragDrop Done" );
+    return count;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -228,7 +250,7 @@ void guPlayList::RemoveSelected()
 //}
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::MoveSelected()
+void guPlayList::MoveSelection( void )
 {
     //
     // Move the Selected Items to the DragOverItem and DragOverFirst
@@ -239,7 +261,7 @@ void guPlayList::MoveSelected()
     bool    CurItemSet = false;
     guTrackArray MoveItems;
     wxArrayInt Selection = GetSelectedItems( false );
-    if( m_DragOverItem != ( size_t ) wxNOT_FOUND )
+    if( m_DragOverItem != wxNOT_FOUND )
     {
         m_ItemsMutex.Lock();
 
@@ -344,41 +366,41 @@ void guPlayList::SetPlayList( const guTrackArray &NewItems )
     ReloadItems();
 }
 
-// -------------------------------------------------------------------------------- //
-void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
-{
-    int w, h, d;
-    GetTextExtent( wxT("Hg"), &w, &h, &d );
-    h += d + 4;
-    int wherey = y - h;
-
-    m_DragOverItem = HitTest( x, wherey );
-    // Check if its over a item if its in the upper or lower part
-    // to determine if will be inserted before or after
-    if( ( int ) m_DragOverItem != wxNOT_FOUND )
-    {
-        //m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
-        m_DragOverAfter = ( wherey > ( int ) ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * m_ItemHeight ) - ( m_ItemHeight / 2 ) ) );
-        RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetCount() ) );
-    }
-    int Width;
-    int Height;
-    GetSize( &Width, &Height );
-    Height -= h;
-
-    if( ( wherey > ( Height - 10 ) ) && ( int ) GetLastVisibleLine() != GetCount() )
-    {
-        ScrollLines( 1 );
-    }
-    else
-    {
-        if( ( wherey < 10 ) && GetFirstVisibleLine() > 0 )
-        {
-            ScrollLines( -1 );
-        }
-    }
-    //printf( "DragOverItem: %d ( %d, %d )\n", DragOverItem, x, y );
-}
+//// -------------------------------------------------------------------------------- //
+//void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
+//{
+//    int w, h, d;
+//    GetTextExtent( wxT("Hg"), &w, &h, &d );
+//    h += d + 4;
+//    int wherey = y - h;
+//
+//    m_DragOverItem = HitTest( x, wherey );
+//    // Check if its over a item if its in the upper or lower part
+//    // to determine if will be inserted before or after
+//    if( ( int ) m_DragOverItem != wxNOT_FOUND )
+//    {
+//        //m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
+//        m_DragOverAfter = ( wherey > ( int ) ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * m_ItemHeight ) - ( m_ItemHeight / 2 ) ) );
+//        RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetCount() ) );
+//    }
+//    int Width;
+//    int Height;
+//    GetSize( &Width, &Height );
+//    Height -= h;
+//
+//    if( ( wherey > ( Height - 10 ) ) && ( int ) GetLastVisibleLine() != GetCount() )
+//    {
+//        ScrollLines( 1 );
+//    }
+//    else
+//    {
+//        if( ( wherey < 10 ) && GetFirstVisibleLine() > 0 )
+//        {
+//            ScrollLines( -1 );
+//        }
+//    }
+//    //printf( "DragOverItem: %d ( %d, %d )\n", DragOverItem, x, y );
+//}
 
 // -------------------------------------------------------------------------------- //
 void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
@@ -565,7 +587,7 @@ void guPlayList::ReloadItems( bool reset )
 void guPlayList::AddItem( const guTrack &NewItem )
 {
     int InsertPos;
-    if( m_DragOverItem != ( size_t ) wxNOT_FOUND )
+    if( m_DragOverItem != wxNOT_FOUND )
     {
         InsertPos = m_DragOverAfter ? m_DragOverItem + 1 : m_DragOverItem;
         if( InsertPos <= m_CurItem )
@@ -1341,177 +1363,177 @@ wxString guPlayList::GetSearchText( int item ) const
         m_Items[ item ].m_SongName.c_str() );
 }
 
-// -------------------------------------------------------------------------------- //
-// guAddDropFilesThread
-// -------------------------------------------------------------------------------- //
-guAddDropFilesThread::guAddDropFilesThread( guPlayListDropTarget * playlistdroptarget,
-                             guPlayList * playlist, const wxArrayString &files ) :
-    wxThread()
-{
-    m_PlayList = playlist;
-    m_Files = files;
-    m_PlayListDropTarget = playlistdroptarget;
-}
-
-// -------------------------------------------------------------------------------- //
-guAddDropFilesThread::~guAddDropFilesThread()
-{
-//    printf( "guAddDropFilesThread Object destroyed\n" );
-    if( !TestDestroy() )
-    {
-        m_PlayListDropTarget->ClearAddDropFilesThread();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guAddDropFilesThread::AddDropFiles( const wxString &DirName )
-{
-    wxDir Dir;
-    wxString FileName;
-    wxString SavedDir( wxGetCwd() );
-
-    //printf( "Entering Dir : " ); printf( ( char * ) DirName.char_str() );  ; printf( "\n" );
-    if( wxDirExists( DirName ) )
-    {
-        //wxMessageBox( DirName, wxT( "DirName" ) );
-        Dir.Open( DirName );
-        wxSetWorkingDirectory( DirName );
-        if( Dir.IsOpened() )
-        {
-            if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
-            {
-                do {
-                    if( ( FileName[ 0 ] != '.' ) )
-                    {
-                        if( Dir.Exists( FileName ) )
-                        {
-                            AddDropFiles( FileName );
-                            // Update the guPlayList Object on every dir
-                            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
-                            wxPostEvent( m_PlayList, event );
-                        }
-                        else
-                        {
-                            if( guIsValidAudioFile( FileName ) )
-                            {
-                                //guLogMessage( wxT( "Adding file %i '%s'" ), m_PlayList->GetCount(), FileName.c_str() );
-                                m_PlayList->AddPlayListItem( FileName, true );
-                            }
-                        }
-                    }
-                } while( Dir.GetNext( &FileName ) && !TestDestroy() );
-            }
-        }
-    }
-    else
-    {
-        if( guIsValidAudioFile( DirName ) )
-        {
-            //guLogMessage( wxT( "Adding file %i '%s'" ), m_PlayList->GetCount(), FileName.c_str() );
-            m_PlayList->AddPlayListItem( DirName, false );
-        }
-    }
-    wxSetWorkingDirectory( SavedDir );
-}
-
-// -------------------------------------------------------------------------------- //
-guAddDropFilesThread::ExitCode guAddDropFilesThread::Entry()
-{
-    int index;
-    int Count = m_Files.Count();
-    for( index = 0; index < Count; ++index )
-    {
-        if( TestDestroy() )
-            break;
-        AddDropFiles( m_Files[ index ] );
-    }
-
-    if( !TestDestroy() )
-    {
-        // Once finished send the update guPlayList event to the guPlayList object
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
-        //event.SetEventObject( ( wxObject * ) this );
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) )
-        {
-            event.SetExtraLong( 1 );
-        }
-        wxPostEvent( m_PlayList, event );
-    }
-    //
-    m_PlayList->m_DragOverItem = wxNOT_FOUND;
-
-
-    return 0;
-}
-
-// -------------------------------------------------------------------------------- //
-// guPlayListDropTarget
-// -------------------------------------------------------------------------------- //
-guPlayListDropTarget::guPlayListDropTarget( guPlayList * playlist )
-{
-    m_PlayList = playlist;
-    m_AddDropFilesThread = NULL;
-}
-
-// -------------------------------------------------------------------------------- //
-guPlayListDropTarget::~guPlayListDropTarget()
-{
-//    printf( "guPlayListDropTarget Object destroyed\n" );
-}
-
-// -------------------------------------------------------------------------------- //
-bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
-{
-    //guLogMessage( wxT( "OnDropFiles..." ) );
-    // We are moving items inside this object.
-    if( m_PlayList->m_DragSelfItems )
-    {
-        m_PlayList->MoveSelected();
-        m_PlayList->RefreshAll();
-    }
-    else
-    {
-        if( m_PlayList->GetCount() )
-        {
-            guConfig * Config = ( guConfig * ) guConfig::Get();
-            if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) )
-            {
-                m_PlayList->ClearItems();
-                m_PlayList->RefreshAll();
-                m_PlayList->m_DragOverItem = wxNOT_FOUND;
-                m_PlayList->m_CurItem = 0;
-            }
-            //guLogMessage( wxT( "ClearPlaylist set on config. Playlist cleared" ) );
-        }
-
-        //
-        if( m_AddDropFilesThread )
-        {
-            m_AddDropFilesThread->Pause();
-            m_AddDropFilesThread->Delete();
-        }
-        m_AddDropFilesThread = new guAddDropFilesThread( this, m_PlayList, files );
-        if( m_AddDropFilesThread )
-        {
-            m_AddDropFilesThread->Create();
-            m_AddDropFilesThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY );
-            m_AddDropFilesThread->Run();
-        }
-        else
-        {
-            guLogError( wxT( "Could not create the add files thread." ) );
-        }
-    }
-    return true;
-}
-
-// -------------------------------------------------------------------------------- //
-wxDragResult guPlayListDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
-{
-    //printf( "guPlayListDropTarget::OnDragOver... %d - %d\n", x, y );
-    m_PlayList->OnDragOver( x, y );
-    return wxDragCopy;
-}
+//// -------------------------------------------------------------------------------- //
+//// guAddDropFilesThread
+//// -------------------------------------------------------------------------------- //
+//guAddDropFilesThread::guAddDropFilesThread( guPlayListDropTarget * playlistdroptarget,
+//                             guPlayList * playlist, const wxArrayString &files ) :
+//    wxThread()
+//{
+//    m_PlayList = playlist;
+//    m_Files = files;
+//    m_PlayListDropTarget = playlistdroptarget;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guAddDropFilesThread::~guAddDropFilesThread()
+//{
+////    printf( "guAddDropFilesThread Object destroyed\n" );
+//    if( !TestDestroy() )
+//    {
+//        m_PlayListDropTarget->ClearAddDropFilesThread();
+//    }
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guAddDropFilesThread::AddDropFiles( const wxString &DirName )
+//{
+//    wxDir Dir;
+//    wxString FileName;
+//    wxString SavedDir( wxGetCwd() );
+//
+//    //printf( "Entering Dir : " ); printf( ( char * ) DirName.char_str() );  ; printf( "\n" );
+//    if( wxDirExists( DirName ) )
+//    {
+//        //wxMessageBox( DirName, wxT( "DirName" ) );
+//        Dir.Open( DirName );
+//        wxSetWorkingDirectory( DirName );
+//        if( Dir.IsOpened() )
+//        {
+//            if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+//            {
+//                do {
+//                    if( ( FileName[ 0 ] != '.' ) )
+//                    {
+//                        if( Dir.Exists( FileName ) )
+//                        {
+//                            AddDropFiles( FileName );
+//                            // Update the guPlayList Object on every dir
+//                            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
+//                            wxPostEvent( m_PlayList, event );
+//                        }
+//                        else
+//                        {
+//                            if( guIsValidAudioFile( FileName ) )
+//                            {
+//                                //guLogMessage( wxT( "Adding file %i '%s'" ), m_PlayList->GetCount(), FileName.c_str() );
+//                                m_PlayList->AddPlayListItem( FileName, true );
+//                            }
+//                        }
+//                    }
+//                } while( Dir.GetNext( &FileName ) && !TestDestroy() );
+//            }
+//        }
+//    }
+//    else
+//    {
+//        if( guIsValidAudioFile( DirName ) )
+//        {
+//            //guLogMessage( wxT( "Adding file %i '%s'" ), m_PlayList->GetCount(), FileName.c_str() );
+//            m_PlayList->AddPlayListItem( DirName, false );
+//        }
+//    }
+//    wxSetWorkingDirectory( SavedDir );
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guAddDropFilesThread::ExitCode guAddDropFilesThread::Entry()
+//{
+//    int index;
+//    int Count = m_Files.Count();
+//    for( index = 0; index < Count; ++index )
+//    {
+//        if( TestDestroy() )
+//            break;
+//        AddDropFiles( m_Files[ index ] );
+//    }
+//
+//    if( !TestDestroy() )
+//    {
+//        // Once finished send the update guPlayList event to the guPlayList object
+//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
+//        //event.SetEventObject( ( wxObject * ) this );
+//        guConfig * Config = ( guConfig * ) guConfig::Get();
+//        if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) )
+//        {
+//            event.SetExtraLong( 1 );
+//        }
+//        wxPostEvent( m_PlayList, event );
+//    }
+//    //
+//    m_PlayList->m_DragOverItem = wxNOT_FOUND;
+//
+//
+//    return 0;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//// guPlayListDropTarget
+//// -------------------------------------------------------------------------------- //
+//guPlayListDropTarget::guPlayListDropTarget( guPlayList * playlist )
+//{
+//    m_PlayList = playlist;
+//    m_AddDropFilesThread = NULL;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guPlayListDropTarget::~guPlayListDropTarget()
+//{
+////    printf( "guPlayListDropTarget Object destroyed\n" );
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//bool guPlayListDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+//{
+//    //guLogMessage( wxT( "OnDropFiles..." ) );
+//    // We are moving items inside this object.
+//    if( m_PlayList->m_DragSelfItems )
+//    {
+//        m_PlayList->MoveSelected();
+//        m_PlayList->RefreshAll();
+//    }
+//    else
+//    {
+//        if( m_PlayList->GetCount() )
+//        {
+//            guConfig * Config = ( guConfig * ) guConfig::Get();
+//            if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) )
+//            {
+//                m_PlayList->ClearItems();
+//                m_PlayList->RefreshAll();
+//                m_PlayList->m_DragOverItem = wxNOT_FOUND;
+//                m_PlayList->m_CurItem = 0;
+//            }
+//            //guLogMessage( wxT( "ClearPlaylist set on config. Playlist cleared" ) );
+//        }
+//
+//        //
+//        if( m_AddDropFilesThread )
+//        {
+//            m_AddDropFilesThread->Pause();
+//            m_AddDropFilesThread->Delete();
+//        }
+//        m_AddDropFilesThread = new guAddDropFilesThread( this, m_PlayList, files );
+//        if( m_AddDropFilesThread )
+//        {
+//            m_AddDropFilesThread->Create();
+//            m_AddDropFilesThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+//            m_AddDropFilesThread->Run();
+//        }
+//        else
+//        {
+//            guLogError( wxT( "Could not create the add files thread." ) );
+//        }
+//    }
+//    return true;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//wxDragResult guPlayListDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
+//{
+//    //printf( "guPlayListDropTarget::OnDragOver... %d - %d\n", x, y );
+//    m_PlayList->OnDragOver( x, y );
+//    return wxDragCopy;
+//}
 
 // -------------------------------------------------------------------------------- //

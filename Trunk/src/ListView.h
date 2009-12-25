@@ -23,6 +23,7 @@
 
 #include "DbLibrary.h"
 
+#include <wx/dnd.h>
 #include <wx/scrolwin.h>
 #include <wx/vlbox.h>
 #include <wx/settings.h>
@@ -31,8 +32,11 @@ class guListViewClient;
 class guListViewHeader;
 
 // Own style flags
-#define guLISTVIEW_COLUMN_SELECT        0x1000
-#define guLISTVIEW_COLUMN_SORTING       0X2000
+#define guLISTVIEW_COLUMN_SELECT        0x01000
+#define guLISTVIEW_COLUMN_SORTING       0x02000
+#define guLISTVIEW_ALLOWDRAG            0x04000
+#define guLISTVIEW_ALLOWDROP            0x08000
+#define guLISTVIEW_DRAGSELFITEMS        0x10000
 
 // -------------------------------------------------------------------------------- //
 // guListViewColumn
@@ -115,6 +119,9 @@ class guListViewAttr
 
 };
 
+class guPlayListDropTarget;
+class guPlayListDropFilesThread;
+
 // -------------------------------------------------------------------------------- //
 class guListView : public wxScrolledWindow
 {
@@ -124,6 +131,13 @@ class guListView : public wxScrolledWindow
     guListViewColumnArray * m_Columns;
     wxImageList *           m_ImageList;
 
+    bool                    m_AllowDrop;
+    bool                    m_AllowDrag;
+    int                     m_DragOverItem;
+    bool                    m_DragOverAfter;
+    bool                    m_DragSelfItemsEnabled;
+    bool                    m_DragSelfItems;
+
     virtual void        OnKeyDown( wxKeyEvent &event );
     virtual void        GetItemsList( void ) = 0;
     virtual void        DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
@@ -131,7 +145,14 @@ class guListView : public wxScrolledWindow
     virtual wxString    OnGetItemText( const int row, const int column ) const;
     virtual void        CreateContextMenu( wxMenu * menu ) const;
     virtual wxCoord     OnMeasureItem( size_t row ) const;
+
     virtual void        OnBeginDrag( wxMouseEvent &event );
+    virtual void        OnDragOver( const wxCoord x, const wxCoord y );
+    virtual void        OnDropBegin( void );
+    virtual void        OnDropFile( const wxString &filename );
+    virtual void        OnDropEnd( void );
+    virtual int         GetDragFiles( wxFileDataObject * files );
+    virtual void        MoveSelection( void );
 
   private :
     guListViewClient *      m_ListBox;
@@ -192,8 +213,50 @@ class guListView : public wxScrolledWindow
     bool                    IsAllowedColumnSelect( void ) const;
 
     friend class guListViewClient;
+    friend class guPlayListDropTarget;
+    friend class guPlayListDropFilesThread;
 
 };
+
+// -------------------------------------------------------------------------------- //
+class guPlayListDropFilesThread : public wxThread
+{
+  protected :
+    guListView *            m_ListView;                 // To add the files
+    guPlayListDropTarget *  m_PlayListDropTarget;       // To clear the thread pointer once its finished
+    wxArrayString           m_Files;
+
+    void AddDropFiles( const wxString &DirName );
+
+  public :
+    guPlayListDropFilesThread( guPlayListDropTarget * playlistdroptarget,
+                                 guListView * listview, const wxArrayString &files );
+    ~guPlayListDropFilesThread();
+
+    virtual ExitCode Entry();
+};
+
+// -------------------------------------------------------------------------------- //
+class guPlayListDropTarget : public wxFileDropTarget
+{
+  private:
+    guListView *                    m_ListView;
+    guPlayListDropFilesThread *     m_PlayListDropFilesThread;
+
+    void ClearPlayListFilesThread( void ) { m_PlayListDropFilesThread = NULL; };
+
+  public:
+    guPlayListDropTarget( guListView * listview );
+    ~guPlayListDropTarget();
+
+    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
+
+    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
+
+
+    friend class guPlayListDropFilesThread;
+};
+
 
 #endif
 // -------------------------------------------------------------------------------- //

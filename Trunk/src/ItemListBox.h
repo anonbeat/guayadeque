@@ -35,7 +35,8 @@ class guListBox : public guListView
     virtual wxString    GetSearchText( const int item ) const;
 
   public :
-    guListBox( wxWindow * parent, DbLibrary * db, const wxString &label = wxEmptyString );
+    guListBox( wxWindow * parent, DbLibrary * db, const wxString &label = wxEmptyString,
+                    int flags = wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG );
     ~guListBox();
 
     virtual wxString inline GetItemName( const int item ) const
