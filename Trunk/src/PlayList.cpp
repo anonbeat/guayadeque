@@ -336,6 +336,7 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold 
     {
       m_Items.Add( items[ Index ] );
       m_TotalLen += items[ Index ].m_Length;
+
       if( deleteold && ( m_CurItem != 0 ) && ( m_Items.Count() > ( size_t ) m_SmartPlayMaxPlayListTracks ) )
       {
         m_TotalLen -= m_Items[ 0 ].m_Length;

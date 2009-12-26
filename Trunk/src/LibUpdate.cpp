@@ -104,7 +104,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           if( Dir.Exists( FileName ) )
           {
             int FileDate = GetFileLastChange( FileName );
-            //guLogMessage( wxT( "Scanning dir '%s'" ), FileName.c_str() );
+            //guLogMessage( wxT( "Scanning dir '%s'\n%u Tracks found" ), ( WorkingDir + wxT( '/' ) + FileName ).c_str(), m_TrackFiles.Count() );
             ScanDirectory( FileName, includedir || ( FileDate > m_LastUpdate ) );
 
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
@@ -155,6 +155,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
     int count = m_LibPaths.Count();
     if( !count )
     {
+        guLogError( wxT( "No library directories to scan" ) );
         return 0;
     }
 
@@ -162,6 +163,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
     index = 0;
     while( !TestDestroy() && ( index < count ) )
     {
+        //guLogMessage( wxT( "Doing Library Update in %s" ), m_LibPaths[ index ].c_str() );
         ScanDirectory( m_LibPaths[ index ] );
         index++;
     }

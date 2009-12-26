@@ -32,7 +32,7 @@
 
 // -------------------------------------------------------------------------------- //
 guPLSoListBox::guPLSoListBox( wxWindow * parent, DbLibrary * db, wxString confname, int style ) :
-             guSoListBox( parent, db, confname, style | guLISTVIEW_ALLOWDROP )
+             guSoListBox( parent, db, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
     m_PLId = wxNOT_FOUND;
     m_PLType = wxNOT_FOUND;
@@ -132,6 +132,60 @@ void guPLSoListBox::OnDropEnd( void )
         }
         ReloadItems();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::MoveSelection( void )
+{
+    wxArrayInt   MoveIds;
+    wxArrayInt   MoveIndex;
+    wxArrayInt   ItemIds;
+
+    if( m_DragOverItem == wxNOT_FOUND )
+        return;
+
+    // Copy the elements we are going to move
+    unsigned long cookie;
+    int item = GetFirstSelected( cookie );
+    while( item != wxNOT_FOUND )
+    {
+        MoveIndex.Add( item );
+        MoveIds.Add( m_Items[ item ].m_SongId );
+        item = GetNextSelected( cookie );
+    }
+
+    // Get the position where to move it
+    int InsertPos = m_DragOverItem;
+    if( m_DragOverAfter )
+        InsertPos++;
+
+    // Remove the elements from the original position
+    int index;
+    int count = MoveIndex.Count();
+    for( index = count - 1; index >= 0; index-- )
+    {
+        m_Items.RemoveAt( MoveIndex[ index ] );
+
+        if( MoveIndex[ index ] < InsertPos )
+            InsertPos--;
+    }
+
+    count = m_Items.Count();
+    for( index = 0; index < count; index++ )
+    {
+        ItemIds.Add( m_Items[ index ].m_SongId );
+    }
+
+    count = MoveIds.Count();
+    for( index = 0; index < count; index++ )
+    {
+        ItemIds.Insert( MoveIds[ index ], InsertPos + index );
+    }
+
+    // Save it to the database
+    m_Db->UpdateStaticPlayList( m_PLId, ItemIds );
+
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
