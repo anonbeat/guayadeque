@@ -227,7 +227,7 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     m_DragSelfItemsEnabled = ( flags & guLISTVIEW_DRAGSELFITEMS );
 
     m_DragOverItem = wxNOT_FOUND;
-    m_LastDragOverAfter = wxNOT_FOUND;
+    m_LastDragOverItem = wxNOT_FOUND;
     m_DragOverAfter = false;
     m_LastDragOverAfter = false;
     m_DragSelfItems = false;
@@ -482,6 +482,8 @@ void guListView::OnBeginDrag( wxMouseEvent &event )
         }
         m_DragSelfItems = false;
         m_DragOverItem = wxNOT_FOUND;
+
+        RefreshAll();
         //wxMessageBox( wxT( "DoDragDrop Done" ) );
     }
 }
@@ -664,7 +666,7 @@ void guListView::OnDropEnd( void )
 // -------------------------------------------------------------------------------- //
 void guListView::OnDragOver( wxCoord x, wxCoord y )
 {
-    //guLogMessage( wxT( "guListView::OnDragOver( %u, %u )" ), x, y );
+    //guLogMessage( wxT( ">>guListView::OnDragOver( %u, %u )" ), x, y );
     // TODO Change this for the m_Header size
     int w, h, d;
     GetTextExtent( wxT("Hg"), &w, &h, &d );
@@ -1662,6 +1664,8 @@ guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
     m_ListView->OnDropEnd();
     //
     m_ListView->m_DragOverItem = wxNOT_FOUND;
+
+    m_ListView->RefreshAll();
 
     return 0;
 }

@@ -39,6 +39,7 @@ class guPLSoListBox : public guSoListBox
 
     virtual void                OnDropFile( const wxString &filename );
     virtual void                OnDropEnd( void );
+    virtual void                MoveSelection( void );
 
   public :
     guPLSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, int style = 0 );
