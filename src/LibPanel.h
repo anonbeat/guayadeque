@@ -61,8 +61,7 @@ class guLibPanel : public wxPanel
     bool                m_UpdateLock;
     guPlayerPanel *     m_PlayerPanel;
 
-    int                 m_LastTrackCount;
-    guStatusBar *       m_StatusBar;
+    //guStatusBar *       m_StatusBar;
 
     // Search Str events
     void OnSearchActivated( wxCommandEvent& event );
@@ -121,7 +120,7 @@ class guLibPanel : public wxPanel
 
     // Idle event handlers
     void OnIdleSetSashPos( wxIdleEvent &event );
-    void OnIdle( wxIdleEvent &event );
+    //void OnIdle( wxIdleEvent &event );
 
   public :
     guLibPanel( wxWindow * parent, DbLibrary * NewDb, guPlayerPanel * NewPlayerPanel );

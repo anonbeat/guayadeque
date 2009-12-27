@@ -1017,6 +1017,10 @@ wxString guPodcastListBox::OnGetItemText( const int row, const int col ) const
 void guPodcastListBox::GetItemsList( void )
 {
     m_Db->GetPodcastItems( &m_PodItems );
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SET_PODCASTS );
+    event.SetInt( m_PodItems.Count() );
+    AddPendingEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //

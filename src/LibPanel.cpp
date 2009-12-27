@@ -62,8 +62,6 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
 
     m_Db = NewDb;
     m_PlayerPanel = NewPlayerPanel;
-    m_LastTrackCount = wxNOT_FOUND;
-    m_StatusBar = NULL;
 
     //
     //
@@ -211,7 +209,7 @@ guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * New
     m_UpdateLock = false;
 
     //
-	Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::OnIdle ), NULL, this );
+	//Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::OnIdle ), NULL, this );
 	m_GenreLabelsSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::OnIdleSetSashPos ), NULL, this );
 
     //
@@ -1224,21 +1222,6 @@ void guLibPanel::OnIdleSetSashPos( wxIdleEvent& event )
     m_ArtistAlbumSplitter->SetSashPosition( Config->ReadNum( wxT( "ArtistSashPos" ), 145, wxT( "Positions" ) ) );
 
 	m_GenreLabelsSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::OnIdleSetSashPos ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::OnIdle( wxIdleEvent& event )
-{
-    int Count = m_SongListCtrl->GetItemCount();
-    if( m_LastTrackCount != Count )
-    {
-        m_LastTrackCount = Count;
-        if( !m_StatusBar )
-        {
-            m_StatusBar = ( guStatusBar * ) ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->GetStatusBar();
-        }
-        m_StatusBar->SetTrackCount( Count );
-    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -75,6 +75,12 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_UpdatePodcastsTimer = NULL;
     m_DownloadThread = NULL;
 
+    m_Initiated = false;
+    m_LibCount = 0;
+    m_RadCount = 0;
+    m_PLCount = 0;
+    m_PodCount = 0;
+
     //
     // guMainFrame GUI components
     //
@@ -171,6 +177,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	this->SetSizer( MainFrameSizer );
 	this->Layout();
 
+
+    m_CurrentPage = m_LibPanel;
+
     //
     m_TaskBarIcon = NULL;
     if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
@@ -211,19 +220,19 @@ guMainFrame::guMainFrame( wxWindow * parent )
     //
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
-    Connect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ) );
-    Connect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ) );
-    Connect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ) );
-    Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ) );
-    Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ) );
-    Connect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ) );
+    Connect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ), NULL, this );
+    Connect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ), NULL, this );
+    Connect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ), NULL, this );
+    Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
+    Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
+    Connect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
     Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
-    Connect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ) );
+    Connect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
 
-    Connect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ) );
-    Connect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ) );
-    Connect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ) );
-    Connect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ) );
+    Connect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ), NULL, this );
+    Connect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ), NULL, this );
+    Connect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
+    Connect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
 
 	Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbumName ), NULL, this );
 	Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtistName ), NULL, this );
@@ -232,35 +241,42 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
 	Connect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumSetSelection ), NULL, this );
 
-    Connect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlay ) );
-    Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ) );
-    Connect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ) );
-    Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ) );
-    Connect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ) );
-    Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ) );
-    Connect( ID_PLAYER_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ) );
-    Connect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ) );
+    Connect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlay ), NULL, this );
+    Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ), NULL, this );
+    Connect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ), NULL, this );
+    Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
+    Connect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
 
-    Connect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ) );
+    Connect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
 
-    Connect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ) );
+    Connect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ), NULL, this );
 
-    Connect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ) );
-    Connect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ) );
-    Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ) );
-    Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ) );
-    Connect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ) );
-    Connect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ) );
+    Connect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ), NULL, this );
+    Connect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ), NULL, this );
+    Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ), NULL, this );
+    Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ), NULL, this );
+    Connect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ), NULL, this );
+    Connect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ), NULL, this );
 
-    Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ) );
-    Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ) );
-    Connect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ) );
-    Connect( ID_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ) );
+    Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
+    Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
+    Connect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
+    Connect( ID_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ), NULL, this );
 
-    Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ) );
+    Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ), NULL, this );
 
     Connect( guPODCAST_EVENT_UPDATE_ITEM, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
     Connect( ID_MAINFRAME_REMOVEPODCASTTHREAD, wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ), NULL, this );
+
+	m_CatNotebook->Connect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
+
+    Connect( ID_MAINFRAME_SET_LIBTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetLibTracks ), NULL, this );
+    Connect( ID_MAINFRAME_SET_RADIOSTATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetRadioStations ), NULL, this );
+    Connect( ID_MAINFRAME_SET_PLAYLISTTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPlayListTracks ), NULL, this );
+    Connect( ID_MAINFRAME_SET_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPodcasts ), NULL, this );
 
 }
 
@@ -294,10 +310,27 @@ guMainFrame::~guMainFrame()
         delete m_Db;
     }
 
+
     // destroy the mpris object
     if( m_MPRIS )
     {
         delete m_MPRIS;
+    }
+
+    if( m_GSession )
+    {
+        delete m_GSession;
+    }
+
+    if( m_MMKeys )
+    {
+        delete m_MMKeys;
+    }
+
+
+    if( m_DBusServer )
+    {
+        delete m_DBusServer;
     }
 }
 
@@ -543,7 +576,7 @@ void guMainFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateCovers( wxCommandEvent &WXUNUSED( event ) )
 {
-    int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Covers" ), false );
+    int GaugeId = m_MainStatusBar->AddGauge( _( "Covers" ), false );
     //guLogMessage( wxT( "Created gauge id %u" ), GaugeId );
     guUpdateCoversThread * UpdateCoversThread = new guUpdateCoversThread( m_Db, GaugeId );
     if( UpdateCoversThread )
@@ -559,7 +592,7 @@ void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
 {
     if( m_LibUpdateThread )
         return;
-    int gaugeid = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Library" ), false );
+    int gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
     m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid );
 }
 
@@ -642,7 +675,7 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
             {
                 if( DirDialog->ShowModal() == wxID_OK )
                 {
-                    int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Copy To..." ) );
+                    int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ) );
                     guCopyToDirThread * CopyToDirThread = new guCopyToDirThread( DirDialog->GetPath().c_str(),
                         Tracks, GaugeId );
                     if( !CopyToDirThread )
@@ -887,67 +920,109 @@ void guMainFrame::OnPlayListUpdated( wxCommandEvent &event )
 void guMainFrame::OnGaugePulse( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "Pulse message for gauge %u" ), event.GetInt() );
-    guStatusBar * StatusBar = ( guStatusBar * ) GetStatusBar();
-    StatusBar->Pulse( event.GetInt() );
+    m_MainStatusBar->Pulse( event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnGaugeSetMax( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "SetMax message for gauge %u to %u" ), event.GetInt(), event.GetExtraLong() );
-    guStatusBar * StatusBar = ( guStatusBar * ) GetStatusBar();
-    StatusBar->SetTotal( event.GetInt(), event.GetExtraLong() );
+    m_MainStatusBar->SetTotal( event.GetInt(), event.GetExtraLong() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnGaugeUpdate( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "Update message for gauge %u" ), event.GetInt() );
-    guStatusBar * StatusBar = ( guStatusBar * ) GetStatusBar();
-    StatusBar->SetValue( event.GetInt(), event.GetExtraLong() );
+    m_MainStatusBar->SetValue( event.GetInt(), event.GetExtraLong() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnGaugeRemove( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "Remove message for gauge %u" ), event.GetInt() );
-    guStatusBar * StatusBar = ( guStatusBar * ) GetStatusBar();
-    StatusBar->RemoveGauge( event.GetInt() );
+    m_MainStatusBar->RemoveGauge( event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPageChanged( wxNotebookEvent &event )
+{
+    m_CurrentPage = m_CatNotebook->GetCurrentPage();
+    m_MainStatusBar->SetTrackCount( wxNOT_FOUND );
+    m_LastCount = wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
-    //
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_PlayerSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
-    Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
-
-
-    // If the database need to be updated
-    if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
+    if( !m_Initiated )
     {
-        guLogMessage( wxT( "Database updating started." ) );
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
-        wxPostEvent( this, event );
+        m_Initiated = true;
+        //
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_PlayerSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
+        //Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
+
+
+        // If the database need to be updated
+        if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
+        {
+            guLogMessage( wxT( "Database updating started." ) );
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
+            AddPendingEvent( event );
+        }
+
+        // If the Podcasts update is enable launch it...
+        if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
+        {
+            guLogMessage( wxT( "Updating the podcasts..." ) );
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
+            AddPendingEvent( event );
+        }
+
+        // Add the previously pending podcasts to download
+        guPodcastItemArray Podcasts;
+        m_Db->GetPendingPodcasts( &Podcasts );
+        if( Podcasts.Count() )
+            AddPodcastsDownloadItems( &Podcasts );
+
+        // Now we can start the dbus server
+        m_DBusServer->Run();
+
     }
 
-    // If the Podcasts update is enable launch it...
-    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
+    if( m_CurrentPage == ( wxWindow * ) m_LibPanel )
     {
-        guLogMessage( wxT( "Updating the podcasts..." ) );
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
-        wxPostEvent( this, event );
+        if( m_LastCount != m_LibCount )
+        {
+            m_MainStatusBar->SetTrackCount( m_LibCount, wxT( "tracks" ) );
+            m_LastCount = m_LibCount;
+        }
     }
-
-    // Add the previously pending podcasts to download
-    guPodcastItemArray Podcasts;
-    m_Db->GetPendingPodcasts( &Podcasts );
-    if( Podcasts.Count() )
-        AddPodcastsDownloadItems( &Podcasts );
-
-    // Now we can start the dbus server
-    m_DBusServer->Run();
+    else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
+    {
+        if( m_LastCount != m_RadCount )
+        {
+            m_MainStatusBar->SetTrackCount( m_RadCount, wxT( "stations" ) );
+            m_LastCount = m_RadCount;
+        }
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_PlayListPanel )
+    {
+        if( m_LastCount != m_PLCount )
+        {
+            m_MainStatusBar->SetTrackCount( m_PLCount, wxT( "tracks" ) );
+            m_LastCount = m_PLCount;
+        }
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_PodcastsPanel )
+    {
+        if( m_LastCount != m_PodCount )
+        {
+            m_MainStatusBar->SetTrackCount( m_PodCount, wxT( "podcasts" ) );
+            m_LastCount = m_PodCount;
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1007,7 +1082,7 @@ void guMainFrame::UpdatePodcasts( void )
         if( UpdateTime.IsLaterThan( LastUpdate ) )
         {
             //guLogMessage( wxT( "Starting UpdatePodcastsThread Process..." ) );
-            int GaugeId = ( ( guStatusBar * ) GetStatusBar() )->AddGauge( _( "Podcasts" ) );
+            int GaugeId = m_MainStatusBar->AddGauge( _( "Podcasts" ) );
             guUpdatePodcastsThread * UpdatePodcastThread = new guUpdatePodcastsThread( m_Db, this, GaugeId );
             if( !UpdatePodcastThread )
             {
@@ -1087,6 +1162,34 @@ void guMainFrame::OnPodcastItemUpdated( wxCommandEvent &event )
         guPodcastItem * PodcastItem = ( guPodcastItem * ) event.GetClientData();
         delete PodcastItem;
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::SetLibTracks( wxCommandEvent &event )
+{
+    m_LibCount = event.GetInt();
+    m_LastCount = wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::SetRadioStations( wxCommandEvent &event )
+{
+    m_RadCount = event.GetInt();
+    m_LastCount = wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::SetPlayListTracks( wxCommandEvent &event )
+{
+    m_PLCount = event.GetInt();
+    m_LastCount = wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::SetPodcasts( wxCommandEvent &event )
+{
+    m_PodCount = event.GetInt();
+    m_LastCount = wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //

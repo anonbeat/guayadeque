@@ -209,6 +209,10 @@ void guSoListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 void guSoListBox::GetItemsList( void )
 {
     m_Db->GetSongs( &m_Items );
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SET_LIBTRACKS );
+    event.SetInt( m_Items.Count() );
+    AddPendingEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //
