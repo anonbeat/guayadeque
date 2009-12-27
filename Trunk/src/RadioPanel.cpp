@@ -421,6 +421,10 @@ wxString guRadioStationListBox::OnGetItemText( const int row, const int col ) co
 void guRadioStationListBox::GetItemsList( void )
 {
     m_Db->GetRadioStations( &m_Radios );
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SET_RADIOSTATIONS );
+    event.SetInt( m_Radios.Count() );
+    AddPendingEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //

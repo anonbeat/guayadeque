@@ -79,7 +79,7 @@ class guStatusBar : public wxStatusBar
     void                Pulse( int id ) { /*m_Gauges[ id ]->Pulse(); */ };
     void                SetTotal( int id, int total ) { m_Gauges[ id ]->SetRange( total ); };
     void                SetValue( int id, int value ) { m_Gauges[ id ]->SetValue( value ); };
-    void                SetTrackCount( const int trackcnt );
+    void                SetTrackCount( const int trackcnt, const wxString &label = wxEmptyString );
 
 };
 

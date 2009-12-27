@@ -58,6 +58,10 @@ void guPLSoListBox::GetItemsList( void )
     {
         m_Items.Empty();
     }
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SET_PLAYLISTTRACKS );
+    event.SetInt( m_Items.Count() );
+    AddPendingEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //

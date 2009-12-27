@@ -83,6 +83,14 @@ class guMainFrame : public wxFrame
     guMMKeys *                  m_MMKeys;
     guGSession *                m_GSession;
 
+    bool                        m_Initiated;
+    wxWindow *                  m_CurrentPage;
+    int                         m_LastCount;
+    int                         m_LibCount;
+    int                         m_RadCount;
+    int                         m_PLCount;
+    int                         m_PodCount;
+
     void                OnUpdateLibrary( wxCommandEvent &event );
     void                OnUpdatePodcasts( wxCommandEvent &event );
     void                OnUpdateCovers( wxCommandEvent &event );
@@ -91,7 +99,6 @@ class guMainFrame : public wxFrame
     void                OnPlayerTrackListChanged( wxCommandEvent &event );
     void                OnPlayerCapsChanged( wxCommandEvent &event );
     void                OnAudioScrobbleUpdate( wxCommandEvent &event );
-    void                OnIdle( wxIdleEvent &event );
     void                CreateMenu();
     void                DoCreateStatusBar( int kind );
     void                OnCloseWindow( wxCloseEvent &event );
@@ -132,6 +139,14 @@ class guMainFrame : public wxFrame
 
     void                OnPodcastItemUpdated( wxCommandEvent &event );
     void                OnRemovePodcastThread( wxCommandEvent &event );
+
+    void                OnIdle( wxIdleEvent &event );
+    void                OnPageChanged( wxNotebookEvent& event );
+
+    void                SetLibTracks( wxCommandEvent &event );
+    void                SetRadioStations( wxCommandEvent &event );
+    void                SetPlayListTracks( wxCommandEvent &event );
+    void                SetPodcasts( wxCommandEvent &event );
 
   public:
                         guMainFrame( wxWindow * parent );

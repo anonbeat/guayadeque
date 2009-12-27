@@ -22,6 +22,8 @@
 #include "Images.h"
 #include "Utils.h"
 
+#define guTRACKCOUNT_SIZE   120
+
 // -------------------------------------------------------------------------------- //
 // guGauge
 // -------------------------------------------------------------------------------- //
@@ -132,7 +134,7 @@ void guGauge::SetRange( int range )
 // -------------------------------------------------------------------------------- //
 guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
 {
-    int FieldWidths[] = { -1, 60, 50 };
+    int FieldWidths[] = { -1, guTRACKCOUNT_SIZE, 50 };
     SetFieldsCount( 3 );
     SetStatusWidths( 3, FieldWidths );
     m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
@@ -202,7 +204,7 @@ void guStatusBar::SetSizes( int FieldCnt )
             else if( index == ( FieldCnt - 1 ) )
                 FieldWidths[ index ] = 50;
             else if( index == ( FieldCnt - 2 ) )
-                FieldWidths[ index ] = 60;
+                FieldWidths[ index ] = guTRACKCOUNT_SIZE;
             else
                 FieldWidths[ index ] = 200;
             //printf( "Width: %i\n", FieldWidths[ index ] );
@@ -279,11 +281,17 @@ int guStatusBar::RemoveGauge( int gaugeid )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::SetTrackCount( const int trackcnt )
+void guStatusBar::SetTrackCount( const int trackcnt, const wxString &label )
 {
-    if( m_TrackCount )
+    wxASSERT( m_TrackCount );
+
+    if( trackcnt != wxNOT_FOUND )
     {
-        m_TrackCount->SetLabel( wxString::Format( wxT( "%u" ), trackcnt ) );
+        m_TrackCount->SetLabel( wxString::Format( wxT( "%u " ), trackcnt ) + label );
+    }
+    else
+    {
+        m_TrackCount->SetLabel( wxEmptyString );
     }
 }
 
