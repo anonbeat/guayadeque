@@ -102,6 +102,7 @@ class guMainFrame : public wxFrame
     void                CreateMenu();
     void                DoCreateStatusBar( int kind );
     void                OnCloseWindow( wxCloseEvent &event );
+    void                OnIconizeWindow( wxIconizeEvent &event );
     void                OnPreferences( wxCommandEvent &event );
 
     void                OnPlay( wxCommandEvent &event );

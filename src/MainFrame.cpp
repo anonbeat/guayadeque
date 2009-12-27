@@ -227,6 +227,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
     Connect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
     Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
+    Connect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
     Connect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
 
     Connect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ), NULL, this );
@@ -489,6 +490,27 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 
                 if( Result != wxID_OK )
                     return;
+            }
+        }
+    }
+    event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        // If the icon
+        if( m_TaskBarIcon &&
+            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
+            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
+        {
+            if( event.Iconized() )
+            {
+                Show( false );
+                return;
             }
         }
     }
