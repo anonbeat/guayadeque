@@ -299,6 +299,10 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
     // If its a method call
     if( Type == DBUS_MESSAGE_TYPE_METHOD_CALL )
     {
+        // Some buggie applications send incomplete message calls
+        if( !Interface || !Member || !Path )
+            return RetVal;
+
         // INTROSPECT
         if( !strcmp( Interface, "org.freedesktop.DBus.Introspectable" ) &&
             !strcmp( Member, "Introspect" ) )
