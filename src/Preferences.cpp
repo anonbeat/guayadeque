@@ -61,6 +61,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
     m_Db = db;
     m_LinkSelected = wxNOT_FOUND;
     m_CmdSelected = wxNOT_FOUND;
+    m_LibPathsChanged = false;
 
     m_Config = ( guConfig * ) guConfig::Get();
     if( !m_Config )
@@ -877,6 +878,11 @@ void guPrefDialog::SaveSettings( void )
     {
         m_Db->SetLibPath( m_PathsListBox->GetStrings() );
     }
+    if( m_LibPathsChanged )
+    {
+        Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) )
+    }
+
     m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
     m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
 //        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );
@@ -982,6 +988,7 @@ void guPrefDialog::OnAddPathBtnClick( wxCommandEvent& event )
             if( m_PathsListBox->FindString( DirDialog->GetPath(), true ) == wxNOT_FOUND )
             {
                 m_PathsListBox->Append( DirDialog->GetPath() );
+                m_LibPathsChanged = true;
             }
         }
         DirDialog->Destroy();
@@ -995,6 +1002,7 @@ void guPrefDialog::OnDelPathBtnClick( wxCommandEvent& event )
     {
         m_PathsListBox->Delete( m_PathSelected );
         m_PathSelected = wxNOT_FOUND;
+        m_LibPathsChanged = true;
     }
 }
 
@@ -1012,6 +1020,7 @@ void guPrefDialog::OnPathsListBoxDClicked( wxCommandEvent &event )
                 if( m_PathsListBox->FindString( DirDialog->GetPath(), true ) == wxNOT_FOUND )
                 {
                     m_PathsListBox->SetString( index, DirDialog->GetPath() );
+                    m_LibPathsChanged = true;
                 }
             }
             DirDialog->Destroy();

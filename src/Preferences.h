@@ -147,6 +147,7 @@ class guPrefDialog : public wxDialog
     int                         m_FilterSelected;
     int                         m_LinkSelected;
     int                         m_CmdSelected;
+    bool                        m_LibPathsChanged;
 
     // Event Handlers
     void OnActivateTaskBarIcon( wxCommandEvent& event );
