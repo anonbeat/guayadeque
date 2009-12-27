@@ -880,7 +880,7 @@ void guPrefDialog::SaveSettings( void )
     }
     if( m_LibPathsChanged )
     {
-        Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) )
+        m_Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) );
     }
 
     m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
