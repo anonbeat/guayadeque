@@ -264,6 +264,11 @@ wxString LabelFilterToSQL( const wxArrayInt &LaFilters )
 // -------------------------------------------------------------------------------- //
 guDbLibrary::guDbLibrary() : guDb()
 {
+  guLogMessage( wxT( "guDbLibrary::guDbLibrary" ) );
+
+  m_NeedUpdate = false;
+  CheckDbVersion();
+
   guConfig * Config = ( guConfig * ) guConfig::Get();
   if( Config )
   {
@@ -277,8 +282,6 @@ guDbLibrary::guDbLibrary() : guDb()
   }
   m_RadioIsUser = 0;
 
-  m_NeedUpdate = false;
-
   m_GeFilters.Empty();
   m_LaFilters.Empty();
   m_ArFilters.Empty();
@@ -289,7 +292,6 @@ guDbLibrary::guDbLibrary() : guDb()
   m_RaLaFilters.Empty();
 
   m_PodChFilters.Empty();
-  //m_UpTag = wxEmptyString;
 
   LoadCache();
 }
@@ -297,10 +299,10 @@ guDbLibrary::guDbLibrary() : guDb()
 // -------------------------------------------------------------------------------- //
 guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
 {
-  m_NeedUpdate = false;
+  guLogMessage( wxT( "guDbLibrary::guDbLibrary" ) );
 
-//  // Check the version and if needed update or create it
-//  CheckDbVersion( DbName );
+  m_NeedUpdate = false;
+  CheckDbVersion();
 
   //
   guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -365,6 +367,7 @@ void guDbLibrary::LoadCache( void )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetDbVersion( void )
 {
+  guLogMessage( wxT( "guDbLibrary::GetDbVersion" ) );
   wxString query;
   wxSQLite3ResultSet dbRes;
   unsigned long RetVal = 0;
@@ -478,17 +481,16 @@ void guDbLibrary::DoCleanUp( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDbLibrary::CheckDbVersion( const wxString &DbName )
+bool guDbLibrary::CheckDbVersion( void )
 {
+  guLogMessage( wxT( "guDbLibrary::CheckDbVersion" ) );
   wxArrayString query;
   int Index;
   int Count;
   unsigned long dbVer;
 
-  //
-  Open( DbName );
-
   dbVer = GetDbVersion();
+  guLogMessage( wxT( "Library Db Version %u" ), dbVer );
 
   switch( dbVer )
   {
@@ -496,9 +498,9 @@ bool guDbLibrary::CheckDbVersion( const wxString &DbName )
     {
       Close();
       guLogMessage( wxT( "Update of database needed. Old database renamed to guayadeque.db.save" ) );
-      wxRenameFile( DbName, DbName + wxT( ".save" ), true );
+      wxRenameFile( m_DbName, m_DbName + wxT( ".save" ), true );
       m_NeedUpdate = true;
-      Open( DbName );
+      Open( m_DbName );
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS Version( version INTEGER );" ) );
     }
 
@@ -697,79 +699,6 @@ bool guDbLibrary::CheckDbVersion( const wxString &DbName )
 
   return true;
 }
-
-//// -------------------------------------------------------------------------------- //
-//int guDbLibrary::Open( const wxString &DbName )
-//{
-//  wxString query;
-//
-//  m_Db.Open( DbName );
-//
-//  if( m_Db.IsOpen() )
-//  {
-//    //query = wxT( "PRAGMA synchronous=OFF" );
-//    query = wxT( "PRAGMA page_size=8192; PRAGMA cache_size=4096; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
-//    ExecuteUpdate( query );
-//    return true;
-//  }
-//  return false;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//int guDbLibrary::Close()
-//{
-//  if( m_Db.IsOpen() )
-//    m_Db.Close();
-//  return 1;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//wxSQLite3ResultSet guDbLibrary::ExecuteQuery( const wxString &query )
-//{
-//#ifdef  DBLIBRARY_SHOW_QUERIES
-//  guLogMessage( query );
-//#endif
-//  wxSQLite3ResultSet RetVal;
-//  try {
-//    RetVal = m_Db.ExecuteQuery( query );
-//  }
-//  catch( wxSQLite3Exception &e )
-//  {
-//    guLogError( wxT( "guDbLibrary::ExecuteQuery exception '%s'\n%u: %s" ),
-//        query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
-//  }
-//  return RetVal;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//int inline guDbLibrary::ExecuteUpdate( const wxString &query )
-//{
-//#ifdef  DBLIBRARY_SHOW_QUERIES
-//  guLogMessage( query );
-//#endif
-//  int RetVal = 0;
-//  try {
-//    RetVal = m_Db.ExecuteUpdate( query );
-//  }
-//  catch( wxSQLite3Exception &e )
-//  {
-//    guLogError( wxT( "guDbLibrary::ExecuteUpdate exception '%s'\n%u: %s" ),
-//        query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
-//  }
-//  return RetVal;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//wxSQLite3ResultSet guDbLibrary::ExecuteQuery( const wxSQLite3StatementBuffer &query )
-//{
-//  return m_Db.ExecuteQuery( query );
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//int inline guDbLibrary::ExecuteUpdate( const wxSQLite3StatementBuffer &query )
-//{
-//  return m_Db.ExecuteUpdate( query );
-//}
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
