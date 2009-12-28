@@ -28,7 +28,7 @@
 class guLibUpdateThread : public wxThread
 {
   private :
-    DbLibrary *         m_Db;
+    guDbLibrary *       m_Db;
     guMainFrame *       m_MainFrame;
     wxArrayString       m_TrackFiles;
     wxArrayString       m_ImageFiles;
@@ -40,7 +40,7 @@ class guLibUpdateThread : public wxThread
     int                 ScanDirectory( wxString dirname, bool includedir = false );
 
   public :
-    guLibUpdateThread( DbLibrary * db, int gaugeid );
+    guLibUpdateThread( guDbLibrary * db, int gaugeid );
     ~guLibUpdateThread();
 
     ExitCode Entry();

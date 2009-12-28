@@ -21,6 +21,7 @@
 #ifndef DBLIBRARY_H
 #define DBLIBRARY_H
 
+#include "Db.h"
 #include "Podcasts.h"
 
 // wxWidgets
@@ -252,9 +253,10 @@ wxString inline escape_query_str( const wxString &str )
 class guDynPlayList;
 
 // -------------------------------------------------------------------------------- //
-class DbLibrary {
-  private :
-    wxSQLite3Database  m_Db;
+class guDbLibrary : public guDb
+{
+  protected :
+//    wxSQLite3Database  m_Db;
     wxArrayString      m_LibPaths;
     guTrack            m_CurSong;
     bool               m_NeedUpdate;
@@ -300,14 +302,15 @@ class DbLibrary {
     wxString            RadioFiltersSQL( void );
 
   public :
-                        DbLibrary();
-                        DbLibrary( const wxString &DbName );
-                        ~DbLibrary();
-    int                 Open( const wxString &DbPath );
-    int                 Close();
+                        guDbLibrary();
+                        guDbLibrary( const wxString &DbName );
+                        ~guDbLibrary();
+//    int                 Open( const wxString &DbPath );
+//    int                 Close();
+    virtual int         GetDbVersion( void );
+
     bool                NeedUpdate( void ) { return m_NeedUpdate; };
 
-    unsigned long       GetDbVersion( void );
     void                DoCleanUp( void );
     bool                CheckDbVersion( const wxString &DbName );
     void                LoadCache( void );
@@ -413,10 +416,11 @@ class DbLibrary {
     void                SetTrackPlayCount( const int songid, const int playcount );
 
 
-    wxSQLite3ResultSet  ExecuteQuery(  const wxSQLite3StatementBuffer &query );
-    int                 ExecuteUpdate( const wxString &query );
-    int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
-    wxSQLite3ResultSet  ExecuteQuery( const wxString &query );
+//    wxSQLite3ResultSet  ExecuteQuery(  const wxSQLite3StatementBuffer &query );
+//    int                 ExecuteUpdate( const wxString &query );
+//    int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
+//    wxSQLite3ResultSet  ExecuteQuery( const wxString &query );
+
     wxBitmap *          GetCoverThumb( int CoverId );
     guCoverInfos        GetEmptyCovers( void );
 

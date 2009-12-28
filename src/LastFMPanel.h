@@ -244,7 +244,7 @@ class guFetchTrackInfoThread : public guFetchLastFMInfoThread
 class guLastFMInfoCtrl : public wxPanel
 {
   protected :
-    DbLibrary *         m_Db;
+    guDbLibrary *         m_Db;
     guPlayerPanel *     m_PlayerPanel;
     wxStaticBitmap *    m_Bitmap;
 	wxStaticText *      m_Text;
@@ -266,7 +266,7 @@ class guLastFMInfoCtrl : public wxPanel
     virtual void        OnAlbumSelectName( wxCommandEvent &event );
 
   public :
-	guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel, bool createcontrols = true );
+	guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, bool createcontrols = true );
 	~guLastFMInfoCtrl();
 
     virtual void Clear( void );
@@ -299,7 +299,7 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnArtistSelectName( wxCommandEvent &event );
 
   public :
-    guArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
+    guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guArtistInfoCtrl();
 
     void SetInfo( guLastFMArtistInfo * info );
@@ -323,7 +323,7 @@ class guAlbumInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnAlbumSelectName( wxCommandEvent &event );
 
   public :
-    guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
+    guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guAlbumInfoCtrl();
 
     void SetInfo( guLastFMAlbumInfo * info );
@@ -348,7 +348,7 @@ class guSimilarArtistInfoCtrl : public guLastFMInfoCtrl
     void                OnSelectArtist( wxCommandEvent &event );
 
   public :
-    guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
+    guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guSimilarArtistInfoCtrl();
 
     void SetInfo( guLastFMSimilarArtistInfo * info );
@@ -372,7 +372,7 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnArtistSelectName( wxCommandEvent &event );
 
   public :
-    guTrackInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
+    guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guTrackInfoCtrl();
 
     void SetInfo( guLastFMTrackInfo * info );
@@ -385,7 +385,7 @@ WX_DEFINE_ARRAY_PTR( guTrackInfoCtrl *, guTrackInfoCtrlArray );
 class guLastFMPanel : public wxScrolledWindow
 {
   private :
-    DbLibrary *             m_Db;
+    guDbLibrary *             m_Db;
     guPlayerPanel *         m_PlayerPanel;
     guTrackChangeInfoArray  m_TrackChangeItems;
     int                     m_CurrentTrackInfo;
@@ -475,7 +475,7 @@ class guLastFMPanel : public wxScrolledWindow
     void    UpdateTrackChangeButtons( void );
 
   public :
-            guLastFMPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
+            guLastFMPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
             ~guLastFMPanel();
 
     void    OnUpdatedTrack( wxCommandEvent &event );

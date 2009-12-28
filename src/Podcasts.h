@@ -97,7 +97,7 @@ class guPodcastItem
 };
 WX_DECLARE_OBJARRAY(guPodcastItem, guPodcastItemArray);
 
-class DbLibrary;
+class guDbLibrary;
 class guMainFrame;
 
 // -------------------------------------------------------------------------------- //
@@ -108,7 +108,7 @@ class guPodcastChannel
     bool        ReadXml( wxXmlNode * XmlNode );
     void        ReadXmlOwner( wxXmlNode * XmlNode );
 
-    int         GetUpdateItems( DbLibrary * db, guPodcastItemArray * items );
+    int         GetUpdateItems( guDbLibrary * db, guPodcastItemArray * items );
     void        CheckDir( void );
 
   public :
@@ -131,10 +131,10 @@ class guPodcastChannel
 
                 guPodcastChannel() {};
                 guPodcastChannel( const wxString &url );
-    void        Update( DbLibrary * db, guMainFrame * mainframe );
+    void        Update( guDbLibrary * db, guMainFrame * mainframe );
     void        CheckLogo( void );
-    int         CheckDownloadItems( DbLibrary * db, guMainFrame * mainframe );
-    void        CheckDeleteItems( DbLibrary * db );
+    int         CheckDownloadItems( guDbLibrary * db, guMainFrame * mainframe );
+    void        CheckDeleteItems( guDbLibrary * db );
 
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);

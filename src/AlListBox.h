@@ -28,7 +28,7 @@
 class guAlListBox : public  guListView
 {
   private :
-    DbLibrary * m_Db;
+    guDbLibrary * m_Db;
     guAlbumItems * m_Items;
 
     void                OnAlbumListActivated( wxListEvent &event );
@@ -45,7 +45,7 @@ class guAlListBox : public  guListView
     virtual int         GetDragFiles( wxFileDataObject * files );
 
   public :
-                        guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
+                        guAlListBox( wxWindow * parent, guDbLibrary * db, const wxString &label );
                         ~guAlListBox();
     bool                SelectAlbumName( const wxString &AlbumName );
 //    void                ReloadItems( const bool reset = true );

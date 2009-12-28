@@ -137,7 +137,7 @@ class guPlayerPanel : public wxPanel
 //	wxStaticText *          m_PlayListLenStaticText;
 //    wxBoxSizer *            m_PlayListLabelsSizer;
 
-    DbLibrary *             m_Db;
+    guDbLibrary *             m_Db;
 	guPlayList *            m_PlayListCtrl;
 	guMediaCtrl *           m_MediaCtrl;
 	guPlayerPanelTimer *    m_PlayerTimer;
@@ -194,7 +194,7 @@ class guPlayerPanel : public wxPanel
     void                OnRatingChanged( guRatingEvent &event );
 
   public:
-                        guPlayerPanel( wxWindow* parent, DbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
+                        guPlayerPanel( wxWindow* parent, guDbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
                         ~guPlayerPanel();
     void                UpdateStatus();
     void                SetPlayList( const guTrackArray &SongList );
@@ -260,12 +260,12 @@ public:
 class guSmartAddTracksThread : public wxThread
 {
   private:
-    DbLibrary *     m_Db;
+    guDbLibrary *     m_Db;
     guPlayerPanel * m_PlayerPanel;
     const guTrack * m_CurSong;
 
   public:
-    guSmartAddTracksThread( DbLibrary * NewDb, guPlayerPanel * NewPlayer, const guTrack * NewSong );
+    guSmartAddTracksThread( guDbLibrary * NewDb, guPlayerPanel * NewPlayer, const guTrack * NewSong );
     ~guSmartAddTracksThread();
 
     virtual ExitCode Entry();

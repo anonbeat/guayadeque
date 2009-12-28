@@ -39,7 +39,7 @@ class guPlayerPanel;
 class guPlayList : public guListView
 {
   private :
-    DbLibrary *     m_Db;
+    guDbLibrary *   m_Db;
     guTrackArray    m_Items;
     wxMutex         m_ItemsMutex;
     bool            m_StartPlaying;
@@ -88,7 +88,7 @@ class guPlayList : public guListView
     virtual void                GetItemsList( void );
 
   public :
-    guPlayList( wxWindow * parent, DbLibrary * db );
+    guPlayList( wxWindow * parent, guDbLibrary * db );
     ~guPlayList();
 
     void                        AddItem( const guTrack &NewItem );

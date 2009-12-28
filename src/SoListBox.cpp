@@ -48,7 +48,7 @@ wxString guSONGS_COLUMN_NAMES[ guSONGS_COLUMN_ADDEDDATE + 1 ] = {
 };
 
 // -------------------------------------------------------------------------------- //
-guSoListBox::guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, long style ) :
+guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style ) :
              guListView( parent, style|wxLB_MULTIPLE|guLISTVIEW_ALLOWDRAG, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();

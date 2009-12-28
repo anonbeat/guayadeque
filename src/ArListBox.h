@@ -38,7 +38,7 @@ class guArListBox : public guListBox
     virtual int     GetDragFiles( wxFileDataObject * files );
 
   public :
-                    guArListBox( wxWindow * parent, DbLibrary * db, const wxString &label );
+                    guArListBox( wxWindow * parent, guDbLibrary * db, const wxString &label );
                     ~guArListBox();
     virtual int     GetSelectedSongs( guTrackArray * songs ) const;
     bool            SelectArtistName( const wxString &ArtistName );

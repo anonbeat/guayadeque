@@ -35,7 +35,7 @@
 #define LISTCTRL_BORDER 1
 
 // -------------------------------------------------------------------------------- //
-guLibPanel::guLibPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * NewPlayerPanel )
+guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel )
        : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL )
 {
     wxStaticText *      SearchStaticText;
@@ -881,7 +881,7 @@ void guLibPanel::OnAlbumDeleteCoverClicked( wxCommandEvent &event )
             }
             m_Db->SetAlbumCover( Albums[ 0 ], wxEmptyString );
             m_AlbumListCtrl->ReloadItems( false );
-            //bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath )
+            //bool guDbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath )
         }
     }
 }

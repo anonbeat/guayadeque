@@ -206,7 +206,7 @@ void guPodcastChannel::CheckLogo( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guPodcastChannel::GetUpdateItems( DbLibrary * db, guPodcastItemArray * items )
+int guPodcastChannel::GetUpdateItems( guDbLibrary * db, guPodcastItemArray * items )
 {
   wxASSERT( items );
 
@@ -283,7 +283,7 @@ int guPodcastChannel::GetUpdateItems( DbLibrary * db, guPodcastItemArray * items
 }
 
 // -------------------------------------------------------------------------------- //
-int guPodcastChannel::CheckDownloadItems( DbLibrary * db, guMainFrame * mainframe )
+int guPodcastChannel::CheckDownloadItems( guDbLibrary * db, guMainFrame * mainframe )
 {
     if( m_DownloadType != guPODCAST_DOWNLOAD_MANUALLY )
     {
@@ -301,7 +301,7 @@ int guPodcastChannel::CheckDownloadItems( DbLibrary * db, guMainFrame * mainfram
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastChannel::CheckDeleteItems( DbLibrary * db )
+void guPodcastChannel::CheckDeleteItems( guDbLibrary * db )
 {
     wxString query;
     //wxSQLite3ResultSet dbRes;
@@ -357,7 +357,7 @@ void guPodcastChannel::CheckDeleteItems( DbLibrary * db )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastChannel::Update( DbLibrary * db, guMainFrame * mainframe )
+void guPodcastChannel::Update( guDbLibrary * db, guMainFrame * mainframe )
 {
     //guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
 

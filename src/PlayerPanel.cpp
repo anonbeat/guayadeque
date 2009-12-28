@@ -42,7 +42,7 @@
 #define GUPLAYER_SMART_CACHEITEMS       100
 
 // -------------------------------------------------------------------------------- //
-guPlayerPanel::guPlayerPanel( wxWindow* parent, DbLibrary * NewDb ) //wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
+guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
        : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL )
 {
 	wxBoxSizer* PlayerMainSizer;
@@ -1606,7 +1606,7 @@ void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 // guSmartAddTracksThread
 // -------------------------------------------------------------------------------- //
-guSmartAddTracksThread::guSmartAddTracksThread( DbLibrary * NewDb,
+guSmartAddTracksThread::guSmartAddTracksThread( guDbLibrary * NewDb,
                        guPlayerPanel * NewPlayer, const guTrack * NewSong ) : wxThread()
 {
     m_Db = NewDb;

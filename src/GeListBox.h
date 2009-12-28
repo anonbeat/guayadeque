@@ -36,7 +36,7 @@ class guGeListBox : public guListBox
 
   public :
 
-    guGeListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label ) :
+    guGeListBox( wxWindow * parent, guDbLibrary * NewDb, const wxString &Label ) :
         guListBox( parent, NewDb, Label )
     {
           ReloadItems();

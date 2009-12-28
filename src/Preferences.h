@@ -51,7 +51,7 @@
 class guPrefDialog : public wxDialog
 {
   private:
-    DbLibrary *                 m_Db;
+    guDbLibrary *                 m_Db;
 
   protected:
     wxNotebook *                m_MainNotebook;
@@ -185,7 +185,7 @@ class guPrefDialog : public wxDialog
 	void OnCopyToFileNameUpdated( wxCommandEvent &event );
 
   public:
-    guPrefDialog( wxWindow * parent, DbLibrary * db );
+    guPrefDialog( wxWindow * parent, guDbLibrary * db );
     ~guPrefDialog();
 
     void SaveSettings( void );

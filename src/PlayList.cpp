@@ -40,7 +40,7 @@
 //#define GUPLAYLIST_ITEM_SIZE        40
 
 // -------------------------------------------------------------------------------- //
-guPlayList::guPlayList( wxWindow * parent, DbLibrary * db ) :
+guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db ) :
             guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
     wxArrayString Songs;

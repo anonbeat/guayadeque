@@ -24,7 +24,7 @@
 #include <wx/dnd.h>
 
 // -------------------------------------------------------------------------------- //
-guListBox::guListBox( wxWindow * parent, DbLibrary * db, const wxString &label, int flags ) :
+guListBox::guListBox( wxWindow * parent, guDbLibrary * db, const wxString &label, int flags ) :
              guListView( parent, flags )
 {
     m_Db = db;

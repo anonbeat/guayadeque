@@ -40,7 +40,7 @@ class guTaListBox : public guListBox
 
   public :
 
-    guTaListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label );
+    guTaListBox( wxWindow * parent, guDbLibrary * NewDb, const wxString &Label );
     ~guTaListBox();
 
     virtual int GetSelectedSongs( guTrackArray * Songs ) const;

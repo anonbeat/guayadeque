@@ -29,7 +29,7 @@
 #include <wx/tokenzr.h>
 
 // -------------------------------------------------------------------------------- //
-guAudioScrobble::guAudioScrobble( DbLibrary * db )
+guAudioScrobble::guAudioScrobble( guDbLibrary * db )
 {
     m_Db              = db;
     // Read the configuration saved from previous session
@@ -415,7 +415,7 @@ guASNowPlayingThread::ExitCode guASNowPlayingThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guASPlayedThread
 // -------------------------------------------------------------------------------- //
-guASPlayedThread::guASPlayedThread( guAudioScrobble * audioscrobble, DbLibrary * db )
+guASPlayedThread::guASPlayedThread( guAudioScrobble * audioscrobble, guDbLibrary * db )
 {
     m_AudioScrobble = audioscrobble;
     m_Db = db;

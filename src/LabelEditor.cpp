@@ -22,7 +22,7 @@
 #include "Images.h"
 
 // -------------------------------------------------------------------------------- //
-guLabelEditor::guLabelEditor( wxWindow* parent, DbLibrary * db, const wxString &Title,
+guLabelEditor::guLabelEditor( wxWindow* parent, guDbLibrary * db, const wxString &Title,
                      const guListItems &listitems, const guArrayListItems &selitems ) :
              wxDialog( parent, wxID_ANY, Title, wxDefaultPosition, wxSize( 250,300 ), wxDEFAULT_DIALOG_STYLE )
 {

@@ -34,7 +34,7 @@
 const wxEventType guTrackEditEvent = wxNewEventType();
 
 // -------------------------------------------------------------------------------- //
-guTrackEditor::guTrackEditor( wxWindow * parent, DbLibrary * NewDb, guTrackArray * NewSongs, guImagePtrArray * images )
+guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * NewDb, guTrackArray * NewSongs, guImagePtrArray * images )
 {
     wxPanel *           SongListPanel;
     wxPanel *           MainDetailPanel;

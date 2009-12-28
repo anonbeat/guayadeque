@@ -43,7 +43,7 @@ class guChannelsListBox : public guListBox
     virtual int     GetDragFiles( wxFileDataObject * files );
 
   public :
-    guChannelsListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
+    guChannelsListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
       guListBox( parent, db, label )
     {
         ReloadItems();
@@ -69,7 +69,7 @@ class guPodcastPanel;
 class guPodcastListBox : public guListView
 {
   protected :
-    DbLibrary *         m_Db;
+    guDbLibrary *         m_Db;
     guPodcastItemArray  m_PodItems;
     int                 m_Order;
     bool                m_OrderDesc;
@@ -84,7 +84,7 @@ class guPodcastListBox : public guListView
     virtual int                 GetDragFiles( wxFileDataObject * files );
 
   public :
-    guPodcastListBox( wxWindow * parent, DbLibrary * NewDb );
+    guPodcastListBox( wxWindow * parent, guDbLibrary * NewDb );
     ~guPodcastListBox();
 
     virtual void                ReloadItems( bool reset = true );
@@ -120,7 +120,7 @@ class guPodcastPanel : public wxPanel
 
 
   protected:
-    DbLibrary *                 m_Db;
+    guDbLibrary *                 m_Db;
     guMainFrame *               m_MainFrame;
     guPlayerPanel *             m_PlayerPanel;
     wxString                    m_PodcastsPath;
@@ -158,7 +158,7 @@ class guPodcastPanel : public wxPanel
     void OnSelectPodcasts( bool enqueue = false );
 
 public:
-    guPodcastPanel( wxWindow * parent, DbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel );
+    guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel );
     ~guPodcastPanel();
 
     friend class guPodcastDownloadQueueThread;

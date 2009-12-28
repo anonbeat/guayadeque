@@ -38,7 +38,7 @@
 // -------------------------------------------------------------------------------- //
 // guPostcastPanel
 // -------------------------------------------------------------------------------- //
-guPodcastPanel::guPodcastPanel( wxWindow * parent, DbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel ) :
+guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 672,586 ), wxTAB_TRAVERSAL )
 {
     m_Db = db;
@@ -871,7 +871,7 @@ wxString guPODCASTS_COLUMN_NAMES[] = {
 };
 
 // -------------------------------------------------------------------------------- //
-guPodcastListBox::guPodcastListBox( wxWindow * parent, DbLibrary * db ) :
+guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbLibrary * db ) :
     guListView( parent, wxLB_MULTIPLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING | guLISTVIEW_ALLOWDRAG )
 {
     m_Db = db;

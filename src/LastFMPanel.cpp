@@ -39,7 +39,7 @@ WX_DEFINE_OBJARRAY(guLastFMTrackInfoArray);
 WX_DEFINE_OBJARRAY(guLastFMAlbumInfoArray);
 
 // -------------------------------------------------------------------------------- //
-guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel, bool createcontrols ) :
+guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, bool createcontrols ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL )
 {
     m_Db = db;
@@ -317,7 +317,7 @@ void guLastFMInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guArtistInfoCtrl
 // -------------------------------------------------------------------------------- //
-guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
                  guLastFMInfoCtrl( parent, db, playerpanel, false )
 {
     m_Info = NULL;
@@ -582,7 +582,7 @@ void guArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guAlbumInfoCtrl
 // -------------------------------------------------------------------------------- //
-guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
                  guLastFMInfoCtrl( parent, db, playerpanel )
 {
     m_Info = NULL;
@@ -715,7 +715,7 @@ void guAlbumInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guSimilarArtistInfoCtrl
 // -------------------------------------------------------------------------------- //
-guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
                   guLastFMInfoCtrl( parent, db, playerpanel )
 {
     m_Info = NULL;
@@ -866,7 +866,7 @@ void guSimilarArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guTrackInfoCtrl
 // -------------------------------------------------------------------------------- //
-guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
                  guLastFMInfoCtrl( parent, db, playerpanel )
 {
     m_Info = NULL;
@@ -1002,7 +1002,7 @@ void guTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guLastFMPanel
 // -------------------------------------------------------------------------------- //
-guLastFMPanel::guLastFMPanel( wxWindow * Parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
     wxScrolledWindow( Parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL )
 {
     m_Db = db;

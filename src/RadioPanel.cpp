@@ -56,7 +56,7 @@ class guRadioGenreData : public wxTreeItemData
 class guRadioGenreTreeCtrl : public wxTreeCtrl
 {
   private :
-    DbLibrary *     m_Db;
+    guDbLibrary *     m_Db;
     wxImageList *   m_ImageList;
     wxTreeItemId    m_RootId;
     wxTreeItemId    m_ManualId;
@@ -68,7 +68,7 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
     void            OnRadioGenreDelete( wxCommandEvent &event );
 
   public :
-    guRadioGenreTreeCtrl( wxWindow * parent, DbLibrary * db );
+    guRadioGenreTreeCtrl( wxWindow * parent, guDbLibrary * db );
     ~guRadioGenreTreeCtrl();
 
     void            ReloadItems( void );
@@ -92,7 +92,7 @@ class guRadioLabelListBox : public guListBox
 
     public :
 
-      guRadioLabelListBox( wxWindow * parent, DbLibrary * NewDb, wxString Label );
+      guRadioLabelListBox( wxWindow * parent, guDbLibrary * NewDb, wxString Label );
       ~guRadioLabelListBox();
 
 };
@@ -103,13 +103,13 @@ class guRadioLabelListBox : public guListBox
 class guUpdateRadiosThread : public wxThread
 {
   private:
-    DbLibrary *     m_Db;
+    guDbLibrary *     m_Db;
     guRadioPanel *  m_RadioPanel;
     int             m_GaugeId;
     wxArrayInt      m_GenresIds;
 
   public:
-    guUpdateRadiosThread( DbLibrary * db, guRadioPanel * radiopanel,
+    guUpdateRadiosThread( guDbLibrary * db, guRadioPanel * radiopanel,
                                 const wxArrayInt &genres, int gaugeid = wxNOT_FOUND )
     {
         m_Db = db;
@@ -143,7 +143,7 @@ wxString guRADIOSTATIONS_COLUMN_NAMES[] = {
 class guRadioStationListBox : public guListView
 {
   protected :
-    DbLibrary *       m_Db;
+    guDbLibrary *       m_Db;
     guRadioStations   m_Radios;
     int               m_StationsOrder;
     bool              m_StationsOrderDesc;
@@ -153,7 +153,7 @@ class guRadioStationListBox : public guListView
     virtual void                GetItemsList( void );
 
   public :
-    guRadioStationListBox( wxWindow * parent, DbLibrary * NewDb );
+    guRadioStationListBox( wxWindow * parent, guDbLibrary * NewDb );
     ~guRadioStationListBox();
 
     virtual void                ReloadItems( bool reset = true );
@@ -171,7 +171,7 @@ class guRadioStationListBox : public guListView
 // -------------------------------------------------------------------------------- //
 // guRadioGenreTreeCtrl
 // -------------------------------------------------------------------------------- //
-guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, DbLibrary * db ) :
+guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbLibrary * db ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_MULTIPLE|wxSUNKEN_BORDER )
 {
@@ -350,7 +350,7 @@ void guRadioGenreTreeCtrl::OnRadioGenreDelete( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guRadioStationListBox
 // -------------------------------------------------------------------------------- //
-guRadioStationListBox::guRadioStationListBox( wxWindow * parent, DbLibrary * db ) :
+guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbLibrary * db ) :
     guListView( parent, wxLB_SINGLE )
 {
     m_Db = db;
@@ -561,7 +561,7 @@ bool guRadioStationListBox::GetSelected( guRadioStation * radiostation ) const
 // -------------------------------------------------------------------------------- //
 // guRadioLabelListBox
 // -------------------------------------------------------------------------------- //
-guRadioLabelListBox::guRadioLabelListBox( wxWindow * parent, DbLibrary * NewDb, wxString Label ) : guListBox( parent, NewDb, Label )
+guRadioLabelListBox::guRadioLabelListBox( wxWindow * parent, guDbLibrary * NewDb, wxString Label ) : guListBox( parent, NewDb, Label )
 {
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::AddLabel ) );
     Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::DelLabel ) );
@@ -662,7 +662,7 @@ void guRadioLabelListBox::EditLabel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 
 // -------------------------------------------------------------------------------- //
-guRadioPanel::guRadioPanel( wxWindow* parent, DbLibrary * NewDb, guPlayerPanel * NewPlayerPanel ) :
+guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel ) :
               wxPanel( parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
     m_Db = NewDb;

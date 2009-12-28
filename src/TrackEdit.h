@@ -61,7 +61,7 @@ class guTrackEditor : public wxDialog
     guTrackArray *      m_Items;
     guImagePtrArray *   m_Images;
     int                 m_CurItem;
-    DbLibrary *         m_Db;
+    guDbLibrary *         m_Db;
     guMBTrackArray *    m_MBrainzAlbums;
     guMBReleaseArray *  m_MBrainzReleases;
     int                 m_MBrainzCurTrack;
@@ -183,7 +183,7 @@ class guTrackEditor : public wxDialog
     int  CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray * tracks );
 
 public:
-    guTrackEditor( wxWindow * parent, DbLibrary * Db, guTrackArray * Songs, guImagePtrArray * m_Images );
+    guTrackEditor( wxWindow * parent, guDbLibrary * Db, guTrackArray * Songs, guImagePtrArray * m_Images );
     ~guTrackEditor();
 
     friend class guMusicBrainzMetadataThread;

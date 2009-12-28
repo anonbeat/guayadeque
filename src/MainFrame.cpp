@@ -60,7 +60,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     //
     // Init the Database Object
     //
-    m_Db = new DbLibrary( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.db" ) );
+    m_Db = new guDbLibrary( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.db" ) );
     if( !m_Db )
     {
         guLogError( wxT( "Could not open the guayadeque database" ) );
@@ -509,6 +509,7 @@ void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
         {
             if( event.Iconized() )
             {
+                Iconize( false );
                 Show( false );
                 return;
             }
@@ -1217,7 +1218,7 @@ void guMainFrame::SetPodcasts( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guUpdateCoversThread
 // -------------------------------------------------------------------------------- //
-guUpdateCoversThread::guUpdateCoversThread( DbLibrary * db, int gaugeid ) : wxThread()
+guUpdateCoversThread::guUpdateCoversThread( guDbLibrary * db, int gaugeid ) : wxThread()
 {
     m_Db = db;
     m_GaugeId = gaugeid;
@@ -1231,7 +1232,7 @@ guUpdateCoversThread::~guUpdateCoversThread()
 
 
 // -------------------------------------------------------------------------------- //
-bool FindCoverLink( DbLibrary * Db, int AlbumId, const wxString &Album, const wxString &Artist, const wxString &Path )
+bool FindCoverLink( guDbLibrary * Db, int AlbumId, const wxString &Album, const wxString &Artist, const wxString &Path )
 {
     bool RetVal = false;
     guLastFM * LastFM;
@@ -1421,7 +1422,7 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guUpdatePodcastsTimer
 // -------------------------------------------------------------------------------- //
-guUpdatePodcastsTimer::guUpdatePodcastsTimer( guMainFrame * mainframe, DbLibrary * db ) : wxTimer()
+guUpdatePodcastsTimer::guUpdatePodcastsTimer( guMainFrame * mainframe, guDbLibrary * db ) : wxTimer()
 {
     m_MainFrame = mainframe;
     m_Db = db;
@@ -1436,7 +1437,7 @@ void guUpdatePodcastsTimer::Notify()
 // -------------------------------------------------------------------------------- //
 // guUpdatePodcastThread
 // -------------------------------------------------------------------------------- //
-guUpdatePodcastsThread::guUpdatePodcastsThread( DbLibrary * db, guMainFrame * mainframe,
+guUpdatePodcastsThread::guUpdatePodcastsThread( guDbLibrary * db, guMainFrame * mainframe,
     int gaugeid ) : wxThread()
 {
     m_Db = db;

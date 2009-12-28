@@ -69,6 +69,8 @@ ADD_EXECUTABLE( guayadeque
 	CoverEdit.h
 	CoverFrame.cpp
 	CoverFrame.h
+	Db.cpp
+	Db.h
 	DbLibrary.cpp
 	DbLibrary.h
 	AutoPulseGauge.cpp

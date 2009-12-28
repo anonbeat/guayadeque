@@ -35,7 +35,7 @@
 // -------------------------------------------------------------------------------- //
 // guAlListBox
 // -------------------------------------------------------------------------------- //
-guAlListBox::guAlListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
+guAlListBox::guAlListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
     guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG )
 {
     m_Db = db;

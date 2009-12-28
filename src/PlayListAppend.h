@@ -43,11 +43,11 @@ class guPlayListAppend : public wxDialog
     wxComboBox *    m_PlayListComboBox;
     wxStaticText *  m_TracksStaticText;
 
-    DbLibrary *     m_Db;
+    guDbLibrary *   m_Db;
     wxArrayInt *    m_Tracks;
 
   public:
-    guPlayListAppend( wxWindow * parent, DbLibrary * db, wxArrayInt * songs, guListItems * items );
+    guPlayListAppend( wxWindow * parent, guDbLibrary * db, wxArrayInt * songs, guListItems * items );
     ~guPlayListAppend();
 
     int         GetSelectedPosition( void );
