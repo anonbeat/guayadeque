@@ -67,6 +67,14 @@ guMainFrame::guMainFrame( wxWindow * parent )
         return;
     }
 
+    m_DbCache = new guDbCache( wxGetHomeDir() + wxT( "/.guayadeque/cache.db" ) );
+    if( !m_DbCache )
+    {
+        guLogError( wxT( "Could not open the guayadeque cache database" ) );
+        return;
+    }
+
+    //
     m_Db->SetLibPath( Config->ReadAStr( wxT( "LibPath" ),
                                       wxGetHomeDir() + wxT( "/Music" ),
                                       wxT( "LibPaths" ) ) );

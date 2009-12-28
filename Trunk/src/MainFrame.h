@@ -23,6 +23,7 @@
 
 #include "Config.h"
 #include "DbLibrary.h"
+#include "DbCache.h"
 #include "LastFM.h"
 #include "LastFMPanel.h"
 #include "LibPanel.h"
@@ -70,7 +71,8 @@ class guMainFrame : public wxFrame
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
 
-    guDbLibrary *                 m_Db;
+    guDbLibrary *               m_Db;
+    guDbCache *                 m_DbCache;
     guLibUpdateThread *         m_LibUpdateThread;
 
     guUpdatePodcastsTimer *     m_UpdatePodcastsTimer;
