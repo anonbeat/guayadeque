@@ -32,6 +32,7 @@
 class guDb
 {
   protected :
+    wxString           m_DbName;
     wxSQLite3Database  m_Db;
 
   public :
@@ -48,7 +49,6 @@ class guDb
     int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
 
     virtual void        SetInitParams( void );
-    virtual int         GetVersion( void );
 
 };
 

@@ -312,7 +312,7 @@ class guDbLibrary : public guDb
     bool                NeedUpdate( void ) { return m_NeedUpdate; };
 
     void                DoCleanUp( void );
-    bool                CheckDbVersion( const wxString &DbName );
+    virtual bool        CheckDbVersion( void );
     void                LoadCache( void );
 
     int                 GetGenreId( int * GenreId, wxString &GenreName );
