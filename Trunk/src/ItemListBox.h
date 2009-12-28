@@ -28,14 +28,14 @@
 class guListBox : public guListView
 {
   protected :
-    DbLibrary *         m_Db;
+    guDbLibrary *       m_Db;
     guListItems *       m_Items;
 
     virtual wxString    OnGetItemText( const int row, const int col ) const;
     virtual wxString    GetSearchText( const int item ) const;
 
   public :
-    guListBox( wxWindow * parent, DbLibrary * db, const wxString &label = wxEmptyString,
+    guListBox( wxWindow * parent, guDbLibrary * db, const wxString &label = wxEmptyString,
                     int flags = wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG );
     ~guListBox();
 

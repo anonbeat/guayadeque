@@ -57,7 +57,7 @@ class guLibPanel : public wxPanel
     wxTextCtrl *        m_InputTextCtrl;
 
     //
-    DbLibrary *         m_Db;
+    guDbLibrary *         m_Db;
     bool                m_UpdateLock;
     guPlayerPanel *     m_PlayerPanel;
 
@@ -123,7 +123,7 @@ class guLibPanel : public wxPanel
     //void OnIdle( wxIdleEvent &event );
 
   public :
-    guLibPanel( wxWindow * parent, DbLibrary * NewDb, guPlayerPanel * NewPlayerPanel );
+    guLibPanel( wxWindow * parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel );
     ~guLibPanel();
     void ReloadControls( wxCommandEvent &event );
     void UpdateLabels( void );

@@ -27,7 +27,7 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guArListBox::guArListBox( wxWindow * parent, DbLibrary * db, const wxString &label ) :
+guArListBox::guArListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
              guListBox( parent, db, label )
 {
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );

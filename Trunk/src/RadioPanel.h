@@ -53,7 +53,7 @@ class guRadioLabelListBox;
 class guRadioPanel : public wxPanel
 {
 	private:
-	  DbLibrary * m_Db;
+	  guDbLibrary * m_Db;
 	  guPlayerPanel * m_PlayerPanel;
 
       void OnRadioUpdateEnd( wxCommandEvent &event );
@@ -92,7 +92,7 @@ class guRadioPanel : public wxPanel
 		wxSplitterWindow *      m_StationsSplitter;
 
 	public:
-		guRadioPanel( wxWindow* parent, DbLibrary * Db, guPlayerPanel * NewPlayerPanel ); //wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 579,465 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		guRadioPanel( wxWindow* parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel ); //wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 579,465 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		~guRadioPanel();
 
 };

@@ -51,7 +51,7 @@ BEGIN_EVENT_TABLE( guPLNamesTreeCtrl, wxTreeCtrl )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
-guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db ) :
+guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_SINGLE|wxSUNKEN_BORDER )
 {
@@ -418,7 +418,7 @@ wxDragResult guPLNamesDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult
 // -------------------------------------------------------------------------------- //
 // guPlayListPanel
 // -------------------------------------------------------------------------------- //
-guPlayListPanel::guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel ) :
+guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
                  wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
     m_Db = db;

@@ -64,7 +64,7 @@ class guASPlayedThread;
 class guAudioScrobble
 {
   private:
-    DbLibrary *                 m_Db;
+    guDbLibrary *               m_Db;
     wxString                    m_UserName;
     wxString                    m_Password;
     wxString                    m_SessionId;
@@ -78,7 +78,7 @@ class guAudioScrobble
     int                         ProcessError( const wxString &ErrorStr );
 
   public:
-                                guAudioScrobble( DbLibrary * NewDb );
+                                guAudioScrobble( guDbLibrary * NewDb );
                                 ~guAudioScrobble();
 
     void                        SetUserName( const wxString &username ) { m_UserName = username; }
@@ -117,10 +117,10 @@ class guASPlayedThread : public wxThread
 {
   private:
     guAudioScrobble * m_AudioScrobble;
-    DbLibrary * m_Db;
+    guDbLibrary * m_Db;
 
   public:
-    guASPlayedThread( guAudioScrobble * audioscrobble, DbLibrary * db );
+    guASPlayedThread( guAudioScrobble * audioscrobble, guDbLibrary * db );
     ~guASPlayedThread();
 
     virtual ExitCode Entry();

@@ -55,7 +55,7 @@ class guPLNamesDropTarget;
 class guPLNamesTreeCtrl : public wxTreeCtrl
 {
   protected :
-    DbLibrary *     m_Db;
+    guDbLibrary *     m_Db;
     wxImageList *   m_ImageList;
     wxTreeItemId    m_RootId;
     wxTreeItemId    m_StaticId;
@@ -72,7 +72,7 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     void            OnDropEnd( void );
 
   public :
-    guPLNamesTreeCtrl( wxWindow * parent, DbLibrary * db );
+    guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db );
     ~guPLNamesTreeCtrl();
 
     void            ReloadItems( void );
@@ -126,7 +126,7 @@ class guPLNamesDropTarget : public wxFileDropTarget
 class guPlayListPanel : public wxPanel
 {
   private :
-    DbLibrary *         m_Db;
+    guDbLibrary *         m_Db;
     guPlayerPanel *     m_PlayerPanel;
 
     wxSplitterWindow *  m_MainSplitter;
@@ -161,7 +161,7 @@ class guPlayListPanel : public wxPanel
     void                MainSplitterOnIdle( wxIdleEvent &event );
 
   public :
-    guPlayListPanel( wxWindow * parent, DbLibrary * db, guPlayerPanel * playerpanel );
+    guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();
 
     void                PlayListUpdated( void );

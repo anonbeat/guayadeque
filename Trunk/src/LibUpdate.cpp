@@ -35,7 +35,7 @@ int inline GetFileLastChange( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
-guLibUpdateThread::guLibUpdateThread( DbLibrary * db, int gaugeid )
+guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid )
 {
     m_Db = db;
     m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();

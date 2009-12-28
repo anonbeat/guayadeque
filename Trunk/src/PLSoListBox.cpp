@@ -31,7 +31,7 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guPLSoListBox::guPLSoListBox( wxWindow * parent, DbLibrary * db, wxString confname, int style ) :
+guPLSoListBox::guPLSoListBox( wxWindow * parent, guDbLibrary * db, wxString confname, int style ) :
              guSoListBox( parent, db, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
     m_PLId = wxNOT_FOUND;

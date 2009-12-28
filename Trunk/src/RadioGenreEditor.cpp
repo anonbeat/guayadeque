@@ -23,7 +23,7 @@
 #include "Shoutcast.h"
 
 // -------------------------------------------------------------------------------- //
-guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, DbLibrary * db ) :
+guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbLibrary * db ) :
     wxDialog( parent, wxID_ANY, wxT("Radio Genre Editor"), wxDefaultPosition, wxSize( 280,360 ), wxDEFAULT_DIALOG_STYLE )
 {
     m_Db = db;

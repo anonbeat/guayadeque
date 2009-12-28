@@ -21,7 +21,7 @@
 #include "PlayListAppend.h"
 
 // -------------------------------------------------------------------------------- //
-guPlayListAppend::guPlayListAppend( wxWindow * parent, DbLibrary * db, wxArrayInt * tracks, guListItems * plitems ) :
+guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, wxArrayInt * tracks, guListItems * plitems ) :
     wxDialog( parent, wxID_ANY, _( "Save to Playlist" ), wxDefaultPosition, wxSize( 387,198 ), wxDEFAULT_DIALOG_STYLE )
 {
     wxStaticText *              PosLabel;

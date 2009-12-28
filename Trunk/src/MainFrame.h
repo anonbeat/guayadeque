@@ -70,7 +70,7 @@ class guMainFrame : public wxFrame
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
 
-    DbLibrary *                 m_Db;
+    guDbLibrary *                 m_Db;
     guLibUpdateThread *         m_LibUpdateThread;
 
     guUpdatePodcastsTimer *     m_UpdatePodcastsTimer;
@@ -166,11 +166,11 @@ class guMainFrame : public wxFrame
 class guUpdateCoversThread : public wxThread
 {
   private:
-    DbLibrary * m_Db;
+    guDbLibrary * m_Db;
     int         m_GaugeId;
 
   public:
-    guUpdateCoversThread( DbLibrary * db, int gaugeid );
+    guUpdateCoversThread( guDbLibrary * db, int gaugeid );
     ~guUpdateCoversThread();
 
     virtual ExitCode Entry();
@@ -195,11 +195,11 @@ class guCopyToDirThread : public wxThread
 class guUpdatePodcastsTimer : public wxTimer
 {
   protected :
-    DbLibrary * m_Db;
+    guDbLibrary * m_Db;
     guMainFrame * m_MainFrame;
 
   public:
-    guUpdatePodcastsTimer( guMainFrame * mainframe, DbLibrary * db );
+    guUpdatePodcastsTimer( guMainFrame * mainframe, guDbLibrary * db );
 
     //Called each time the timer's timeout expires
     void Notify();
@@ -210,11 +210,11 @@ class guUpdatePodcastsThread : public wxThread
 {
   protected :
     int             m_GaugeId;
-    DbLibrary *     m_Db;
+    guDbLibrary *     m_Db;
     guMainFrame *   m_MainFrame;
 
   public :
-    guUpdatePodcastsThread( DbLibrary * db, guMainFrame * mainframe, int gaugeid );
+    guUpdatePodcastsThread( guDbLibrary * db, guMainFrame * mainframe, int gaugeid );
     ~guUpdatePodcastsThread();
 
     virtual ExitCode Entry();

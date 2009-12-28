@@ -42,7 +42,7 @@ class guPLSoListBox : public guSoListBox
     virtual void                MoveSelection( void );
 
   public :
-    guPLSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, int style = 0 );
+    guPLSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, int style = 0 );
     ~guPLSoListBox();
 
     void    SetPlayList( int plid, int pltype );

@@ -82,7 +82,6 @@
 		<Unit filename="src/AutoPulseGauge.cpp" />
 		<Unit filename="src/AutoPulseGauge.h" />
 		<Unit filename="src/AutoScrollText.cpp" />
-		<Unit filename="src/AutoScrollText.h" />
 		<Unit filename="src/Base64.cpp" />
 		<Unit filename="src/Base64.h" />
 		<Unit filename="src/ChannelEditor.cpp" />
@@ -98,6 +97,10 @@
 		<Unit filename="src/CoverFetcher.h" />
 		<Unit filename="src/CoverFrame.cpp" />
 		<Unit filename="src/CoverFrame.h" />
+		<Unit filename="src/Db.cpp" />
+		<Unit filename="src/Db.h" />
+		<Unit filename="src/DbCache.cpp" />
+		<Unit filename="src/DbCache.h" />
 		<Unit filename="src/DbLibrary.cpp" />
 		<Unit filename="src/DbLibrary.h" />
 		<Unit filename="src/Discogs.cpp" />

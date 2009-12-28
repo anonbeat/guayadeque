@@ -30,7 +30,7 @@
 wxString PatternToExample( const wxString &Pattern );
 
 // -------------------------------------------------------------------------------- //
-guPrefDialog::guPrefDialog( wxWindow* parent, DbLibrary * db ) :
+guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
     wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 530, 515 ), wxDEFAULT_DIALOG_STYLE )
 {
 	wxBoxSizer *        MainSizer;

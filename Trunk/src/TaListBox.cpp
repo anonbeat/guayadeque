@@ -25,7 +25,7 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guTaListBox::guTaListBox( wxWindow * parent, DbLibrary * NewDb, const wxString &Label ) :
+guTaListBox::guTaListBox( wxWindow * parent, guDbLibrary * NewDb, const wxString &Label ) :
              guListBox( parent, NewDb, Label )
 {
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::AddLabel ) );

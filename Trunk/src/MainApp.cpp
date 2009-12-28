@@ -144,7 +144,7 @@ bool guMainApp::OnInit()
 {
     guRandomInit();
 
-    wxLog::SetActiveTarget( new wxLogStderr );
+    wxLog::SetActiveTarget( new wxLogStderr( stdout ) );
 
     const wxString AppName = wxString::Format( wxT( "guayadeque-%s" ), wxGetUserId().c_str() );
     m_SingleInstanceChecker = new wxSingleInstanceChecker( AppName );

@@ -18,48 +18,37 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LABELEDITOR_H
-#define LABELEDITOR_H
+#ifndef guDB_H
+#define guDB_H
 
-#include "DbLibrary.h"
-
+// wxWidgets
 #include <wx/string.h>
-#include <wx/stattext.h>
-#include <wx/gdicmn.h>
-#include <wx/font.h>
-#include <wx/colour.h>
-#include <wx/settings.h>
-#include <wx/checklst.h>
-#include <wx/sizer.h>
-#include <wx/checkbox.h>
-#include <wx/button.h>
-#include <wx/dialog.h>
+#include <wx/utils.h>
+
+// wxSqlite3
+#include "wx/wxsqlite3.h"
 
 // -------------------------------------------------------------------------------- //
-// Class guLabelEditor
-// -------------------------------------------------------------------------------- //
-class guLabelEditor : public wxDialog
+class guDb
 {
-  private:
+  protected :
+    wxSQLite3Database  m_Db;
 
-  protected:
-    guDbLibrary *       m_Db;
-    wxCheckListBox *    m_CheckListBox;
-    wxBitmapButton *    m_AddLabelBtn;
-	wxBitmapButton *    m_DelLabelBtn;
+  public :
+    guDb( void );
+    guDb( const wxString &dbname );
+    ~guDb();
 
-    wxArrayInt          m_LabelIds;
-    int                 m_SelectedItem;
+    int                 Open( const wxString &dbname );
+    int                 Close( void );
 
-	void SetCheckedItems( const wxArrayInt &Checked );
-    void OnAddLabelBtnClick( wxCommandEvent &event );
-	void OnDelLabelBtnClick( wxCommandEvent &event );
-	void OnCheckListBoxSelected( wxCommandEvent& event );
+    wxSQLite3ResultSet  ExecuteQuery( const wxString &query );
+    int                 ExecuteUpdate( const wxString &query );
+    wxSQLite3ResultSet  ExecuteQuery( const wxSQLite3StatementBuffer &query );
+    int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
 
-  public:
-	guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxString &title, const guListItems &labels, const guArrayListItems &enabelditems );
-	~guLabelEditor();
-    wxArrayInt GetCheckedIds( void );
+    virtual void        SetInitParams( void );
+    virtual int         GetVersion( void );
 
 };
 

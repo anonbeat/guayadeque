@@ -44,7 +44,7 @@ extern wxString guSONGS_COLUMN_NAMES[ guSONGS_COLUMN_ADDEDDATE + 1 ];
 class guSoListBox : public guListView
 {
   protected :
-    DbLibrary *         m_Db;
+    guDbLibrary *         m_Db;
     guTrackArray        m_Items;
     wxString            m_ConfName;
 
@@ -63,7 +63,7 @@ class guSoListBox : public guListView
     wxString                    GetSearchText( int item ) const;
 
   public :
-    guSoListBox( wxWindow * parent, DbLibrary * NewDb, wxString confname, long style = 0 );
+    guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style = 0 );
     ~guSoListBox();
 
     virtual void                ReloadItems( bool reset = true );

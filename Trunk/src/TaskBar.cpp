@@ -21,6 +21,7 @@
 #include "TaskBar.h"
 #include "Images.h"
 #include "Commands.h"
+#include "Utils.h"
 
 #include <wx/menu.h>
 
@@ -89,16 +90,19 @@ void guTaskBarIcon::OnClick( wxTaskBarIconEvent &event )
 {
     if( m_MainFrame )
     {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
         if( !m_MainFrame->IsShown() )
         {
             m_MainFrame->Show( true );
         }
-        else if( m_MainFrame->IsIconized() )
+        else if( Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
         {
-            m_MainFrame->Iconize( false );
+            m_MainFrame->Show( false );
         }
         else
-            m_MainFrame->Iconize( true );
+        {
+            m_MainFrame->Iconize( !m_MainFrame->IsIconized() );
+        }
     }
 }
 

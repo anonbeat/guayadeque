@@ -62,6 +62,7 @@ bool guIsValidAudioFile( const wxString &filename )
         FileName.EndsWith( wxT( ".oga"  ) ) ||
         FileName.EndsWith( wxT( ".mp4"  ) ) ||  // MP4 files
         FileName.EndsWith( wxT( ".m4a"  ) ) ||
+        FileName.EndsWith( wxT( ".m4b"  ) ) ||
         FileName.EndsWith( wxT( ".m4p"  ) ) ||
         FileName.EndsWith( wxT( ".wma"  ) ) ||
         FileName.EndsWith( wxT( ".aac"  ) ) ||
@@ -100,6 +101,7 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     }
     else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
             filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
+            filename.Lower().EndsWith( wxT( ".m4b" ) ) ||
             filename.Lower().EndsWith( wxT( ".m4p" ) ) ||
             filename.Lower().EndsWith( wxT( ".aac" ) ) )
     {

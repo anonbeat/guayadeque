@@ -190,14 +190,6 @@ wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper )
 };
 
 // -------------------------------------------------------------------------------- //
-wxString GenerateRandomTag()
-{
-    guMD5 md5;
-    wxDateTime Now = wxDateTime::UNow();
-    return md5.MD5( Now.Format() ).SubString( 0, 7 );
-}
-
-// -------------------------------------------------------------------------------- //
 wxString inline ArrayIntToStrList( const wxArrayInt &Data )
 {
   int index;
@@ -268,9 +260,9 @@ wxString LabelFilterToSQL( const wxArrayInt &LaFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-// DbLibrary
+// guDbLibrary
 // -------------------------------------------------------------------------------- //
-DbLibrary::DbLibrary()
+guDbLibrary::guDbLibrary() : guDb()
 {
   guConfig * Config = ( guConfig * ) guConfig::Get();
   if( Config )
@@ -303,15 +295,12 @@ DbLibrary::DbLibrary()
 }
 
 // -------------------------------------------------------------------------------- //
-DbLibrary::DbLibrary( const wxString &DbName )
+guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
 {
   m_NeedUpdate = false;
 
-  // Check the version and if needed update or create it
-  CheckDbVersion( DbName );
-
-  // Once its checked open it
-  Open( DbName );
+//  // Check the version and if needed update or create it
+//  CheckDbVersion( DbName );
 
   //
   guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -342,7 +331,7 @@ DbLibrary::DbLibrary( const wxString &DbName )
 }
 
 // -------------------------------------------------------------------------------- //
-DbLibrary::~DbLibrary()
+guDbLibrary::~guDbLibrary()
 {
   guConfig * Config = ( guConfig * ) guConfig::Get();
   if( Config )
@@ -359,7 +348,7 @@ DbLibrary::~DbLibrary()
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::LoadCache( void )
+void guDbLibrary::LoadCache( void )
 {
 //    Labels.Empty();
 //    GetLabels( &Labels );
@@ -374,7 +363,7 @@ void DbLibrary::LoadCache( void )
 }
 
 // -------------------------------------------------------------------------------- //
-unsigned long DbLibrary::GetDbVersion( void )
+int guDbLibrary::GetDbVersion( void )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -421,7 +410,7 @@ bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::DoCleanUp( void )
+void guDbLibrary::DoCleanUp( void )
 {
   wxString query;
   wxArrayInt SongsToDel;
@@ -489,7 +478,7 @@ void DbLibrary::DoCleanUp( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::CheckDbVersion( const wxString &DbName )
+bool guDbLibrary::CheckDbVersion( const wxString &DbName )
 {
   wxArrayString query;
   int Index;
@@ -709,81 +698,81 @@ bool DbLibrary::CheckDbVersion( const wxString &DbName )
   return true;
 }
 
+//// -------------------------------------------------------------------------------- //
+//int guDbLibrary::Open( const wxString &DbName )
+//{
+//  wxString query;
+//
+//  m_Db.Open( DbName );
+//
+//  if( m_Db.IsOpen() )
+//  {
+//    //query = wxT( "PRAGMA synchronous=OFF" );
+//    query = wxT( "PRAGMA page_size=8192; PRAGMA cache_size=4096; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
+//    ExecuteUpdate( query );
+//    return true;
+//  }
+//  return false;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//int guDbLibrary::Close()
+//{
+//  if( m_Db.IsOpen() )
+//    m_Db.Close();
+//  return 1;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//wxSQLite3ResultSet guDbLibrary::ExecuteQuery( const wxString &query )
+//{
+//#ifdef  DBLIBRARY_SHOW_QUERIES
+//  guLogMessage( query );
+//#endif
+//  wxSQLite3ResultSet RetVal;
+//  try {
+//    RetVal = m_Db.ExecuteQuery( query );
+//  }
+//  catch( wxSQLite3Exception &e )
+//  {
+//    guLogError( wxT( "guDbLibrary::ExecuteQuery exception '%s'\n%u: %s" ),
+//        query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
+//  }
+//  return RetVal;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//int inline guDbLibrary::ExecuteUpdate( const wxString &query )
+//{
+//#ifdef  DBLIBRARY_SHOW_QUERIES
+//  guLogMessage( query );
+//#endif
+//  int RetVal = 0;
+//  try {
+//    RetVal = m_Db.ExecuteUpdate( query );
+//  }
+//  catch( wxSQLite3Exception &e )
+//  {
+//    guLogError( wxT( "guDbLibrary::ExecuteUpdate exception '%s'\n%u: %s" ),
+//        query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
+//  }
+//  return RetVal;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//wxSQLite3ResultSet guDbLibrary::ExecuteQuery( const wxSQLite3StatementBuffer &query )
+//{
+//  return m_Db.ExecuteQuery( query );
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//int inline guDbLibrary::ExecuteUpdate( const wxSQLite3StatementBuffer &query )
+//{
+//  return m_Db.ExecuteUpdate( query );
+//}
+
 // -------------------------------------------------------------------------------- //
-int DbLibrary::Open( const wxString &DbName )
-{
-  wxString query;
-
-  m_Db.Open( DbName );
-
-  if( m_Db.IsOpen() )
-  {
-    //query = wxT( "PRAGMA synchronous=OFF" );
-    query = wxT( "PRAGMA page_size=8192; PRAGMA cache_size=4096; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
-    ExecuteUpdate( query );
-    return true;
-  }
-  return false;
-}
-
-// -------------------------------------------------------------------------------- //
-int DbLibrary::Close()
-{
-  if( m_Db.IsOpen() )
-    m_Db.Close();
-  return 1;
-}
-
-// -------------------------------------------------------------------------------- //
-wxSQLite3ResultSet DbLibrary::ExecuteQuery( const wxString &query )
-{
-#ifdef  DBLIBRARY_SHOW_QUERIES
-  guLogMessage( query );
-#endif
-  wxSQLite3ResultSet RetVal;
-  try {
-    RetVal = m_Db.ExecuteQuery( query );
-  }
-  catch( wxSQLite3Exception &e )
-  {
-    guLogError( wxT( "DbLibrary::ExecuteQuery exception '%s'\n%u: %s" ),
-        query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
-  }
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-int inline DbLibrary::ExecuteUpdate( const wxString &query )
-{
-#ifdef  DBLIBRARY_SHOW_QUERIES
-  guLogMessage( query );
-#endif
-  int RetVal = 0;
-  try {
-    RetVal = m_Db.ExecuteUpdate( query );
-  }
-  catch( wxSQLite3Exception &e )
-  {
-    guLogError( wxT( "DbLibrary::ExecuteUpdate exception '%s'\n%u: %s" ),
-        query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
-  }
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-wxSQLite3ResultSet DbLibrary::ExecuteQuery( const wxSQLite3StatementBuffer &query )
-{
-  return m_Db.ExecuteQuery( query );
-}
-
-// -------------------------------------------------------------------------------- //
-int inline DbLibrary::ExecuteUpdate( const wxSQLite3StatementBuffer &query )
-{
-  return m_Db.ExecuteUpdate( query );
-}
-
-// -------------------------------------------------------------------------------- //
-int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
+int guDbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
 {
   static wxString LastGenre = wxEmptyString;
   static int LastGenreId;
@@ -827,7 +816,7 @@ int DbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverhash )
+int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverhash )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -879,7 +868,7 @@ int DbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverhas
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash )
+void guDbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash )
 {
   wxString query;
   //int CoverId = 0;
@@ -917,7 +906,7 @@ void DbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const w
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::FindCoverFile( const wxString &DirName )
+int guDbLibrary::FindCoverFile( const wxString &DirName )
 {
     wxString query;
     wxSQLite3ResultSet dbRes;
@@ -983,7 +972,7 @@ int DbLibrary::FindCoverFile( const wxString &DirName )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString DbLibrary::GetCoverPath( const int CoverId )
+wxString guDbLibrary::GetCoverPath( const int CoverId )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -1040,7 +1029,7 @@ wxString DbLibrary::GetCoverPath( const int CoverId )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, const wxString &coverhash )
+int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, const wxString &coverhash )
 {
   long CoverId = 0;
   wxSQLite3ResultSet dbRes;
@@ -1089,7 +1078,7 @@ int DbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, cons
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, const int ArtistId, const int PathId )
+int guDbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, const int ArtistId, const int PathId )
 {
   static wxString LastAlbum = wxEmptyString;
   static int LastAlbumId;
@@ -1190,7 +1179,7 @@ int DbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, co
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayInt DbLibrary::GetLabelIds( const wxArrayString &Labels )
+wxArrayInt guDbLibrary::GetLabelIds( const wxArrayString &Labels )
 {
   wxArrayInt RetVal;
   wxString LabelName;
@@ -1207,7 +1196,7 @@ wxArrayInt DbLibrary::GetLabelIds( const wxArrayString &Labels )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetLabelId( int * LabelId, wxString &LabelName )
+int guDbLibrary::GetLabelId( int * LabelId, wxString &LabelName )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -1241,7 +1230,7 @@ int DbLibrary::GetLabelId( int * LabelId, wxString &LabelName )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPathId( int * PathId, wxString &PathValue )
+int guDbLibrary::GetPathId( int * PathId, wxString &PathValue )
 {
   static wxString LastPath = wxEmptyString;
   static int      LastPathId;
@@ -1288,7 +1277,7 @@ int DbLibrary::GetPathId( int * PathId, wxString &PathValue )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
+int guDbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
 {
   //wxSQLite3StatementBuffer query;
   wxString query;
@@ -1327,7 +1316,7 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetSongId( int * SongId, wxString &FileName, wxString &FilePath )
+int guDbLibrary::GetSongId( int * SongId, wxString &FileName, wxString &FilePath )
 {
   //wxString query;
   //wxSQLite3ResultSet dbRes;
@@ -1341,7 +1330,7 @@ int DbLibrary::GetSongId( int * SongId, wxString &FileName, wxString &FilePath )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::ReadFileTags( const char * filename )
+int guDbLibrary::ReadFileTags( const char * filename )
 {
   guTagInfo * TagInfo;
 
@@ -1432,7 +1421,7 @@ int DbLibrary::ReadFileTags( const char * filename )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::UpdateSongs( guTrackArray * Songs )
+void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 {
   guTrack * Song;
   int index;
@@ -1551,7 +1540,7 @@ void DbLibrary::UpdateSongs( guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::UpdateSong()
+int guDbLibrary::UpdateSong()
 {
   wxString query;
 //  printf( "UpdateSong\n" );
@@ -1604,7 +1593,7 @@ int DbLibrary::UpdateSong()
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::UpdateImageFile( const char * filename )
+void guDbLibrary::UpdateImageFile( const char * filename )
 {
   wxString              query;
   wxSQLite3ResultSet    dbRes;
@@ -1667,7 +1656,7 @@ void DbLibrary::UpdateImageFile( const char * filename )
 
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetLibPath( const wxArrayString &NewPaths )
+void guDbLibrary::SetLibPath( const wxArrayString &NewPaths )
 {
   m_LibPaths = NewPaths;
   //
@@ -1686,15 +1675,15 @@ void DbLibrary::SetLibPath( const wxArrayString &NewPaths )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetFiltersCount() const
+int guDbLibrary::GetFiltersCount() const
 {
     return m_TeFilters.Count() + m_GeFilters.Count() + m_LaFilters.Count() + m_ArFilters.Count() + m_AlFilters.Count();
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetTeFilters( const wxArrayString &NewTeFilters )
+void guDbLibrary::SetTeFilters( const wxArrayString &NewTeFilters )
 {
-    //guLogMessage( wxT( "DbLibrary::SetTeFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetTeFilters" ) );
     m_TeFilters = NewTeFilters;
     m_LaFilters.Empty();
     m_GeFilters.Empty();
@@ -1703,9 +1692,9 @@ void DbLibrary::SetTeFilters( const wxArrayString &NewTeFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetTaFilters( const wxArrayInt &NewTaFilters )
+void guDbLibrary::SetTaFilters( const wxArrayInt &NewTaFilters )
 {
-    //guLogMessage( wxT( "DbLibrary::SetTaFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetTaFilters" ) );
     if( NewTaFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_LaFilters.Empty();
@@ -1720,9 +1709,9 @@ void DbLibrary::SetTaFilters( const wxArrayInt &NewTaFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters )
+void guDbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters )
 {
-    //guLogMessage( wxT( "DbLibrary::SetGeFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetGeFilters" ) );
     if( NewGeFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_GeFilters.Empty();
@@ -1736,9 +1725,9 @@ void DbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetArFilters( const wxArrayInt &NewArFilters )
+void guDbLibrary::SetArFilters( const wxArrayInt &NewArFilters )
 {
-    //guLogMessage( wxT( "DbLibrary::SetArFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetArFilters" ) );
     if( NewArFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_ArFilters.Empty();
@@ -1751,9 +1740,9 @@ void DbLibrary::SetArFilters( const wxArrayInt &NewArFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters )
+void guDbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters )
 {
-    //guLogMessage( wxT( "DbLibrary::SetAlFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetAlFilters" ) );
     if( NewAlFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_AlFilters.Empty();
@@ -1765,7 +1754,7 @@ void DbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString DbLibrary::FiltersSQL( int Level )
+wxString guDbLibrary::FiltersSQL( int Level )
 {
   wxString subquery;
   wxString query;
@@ -1819,7 +1808,7 @@ wxString DbLibrary::FiltersSQL( int Level )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::AddLabel( wxString LabelName )
+int guDbLibrary::AddLabel( wxString LabelName )
 {
     wxString query;
     escape_query_str( &LabelName );
@@ -1835,7 +1824,7 @@ int DbLibrary::AddLabel( wxString LabelName )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::SetLabelName( const int labelid, const wxString &oldlabel, const wxString &newlabel )
+int guDbLibrary::SetLabelName( const int labelid, const wxString &oldlabel, const wxString &newlabel )
 {
   wxString query;
   guListItems   LaItems;
@@ -1860,7 +1849,7 @@ int DbLibrary::SetLabelName( const int labelid, const wxString &oldlabel, const 
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::DelLabel( const int LabelId )
+int guDbLibrary::DelLabel( const int LabelId )
 {
   guListItems   LaItems;
   wxString      query;
@@ -1884,7 +1873,7 @@ int DbLibrary::DelLabel( const int LabelId )
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayInt DbLibrary::GetLabels( void )
+wxArrayInt guDbLibrary::GetLabels( void )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -1903,12 +1892,12 @@ wxArrayInt DbLibrary::GetLabels( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetLabels( guListItems * Labels, bool FullList )
+void guDbLibrary::GetLabels( guListItems * Labels, bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
 //  guListItems RetVal;
-  //guLogMessage( wxT( "DbLibrary::GetLabels" ) );
+  //guLogMessage( wxT( "guDbLibrary::GetLabels" ) );
 
   query = wxT( "SELECT tag_id, tag_name FROM tags ORDER BY " );
   query += FullList ? wxT( "tag_id;" ) : wxT( "tag_name;" );
@@ -1924,7 +1913,7 @@ void DbLibrary::GetLabels( guListItems * Labels, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetRadioLabels( guListItems * Labels, bool FullList )
+void guDbLibrary::GetRadioLabels( guListItems * Labels, bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -1944,7 +1933,7 @@ void DbLibrary::GetRadioLabels( guListItems * Labels, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::AddRadioLabel( wxString LabelName )
+int guDbLibrary::AddRadioLabel( wxString LabelName )
 {
     wxString query;
     escape_query_str( &LabelName );
@@ -1960,7 +1949,7 @@ int DbLibrary::AddRadioLabel( wxString LabelName )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::SetRadioLabelName( const int LabelId, wxString LabelName )
+int guDbLibrary::SetRadioLabelName( const int LabelId, wxString LabelName )
 {
     wxString query;
     escape_query_str( &LabelName );
@@ -1975,7 +1964,7 @@ int DbLibrary::SetRadioLabelName( const int LabelId, wxString LabelName )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::DelRadioLabel( const int labelid )
+int guDbLibrary::DelRadioLabel( const int labelid )
 {
   wxString query;
 
@@ -1992,12 +1981,12 @@ int DbLibrary::DelRadioLabel( const int labelid )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetGenres( guListItems * Genres, bool FullList )
+void guDbLibrary::GetGenres( guListItems * Genres, bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
 //  guListItems RetVal;
-  //guLogMessage( wxT( "DbLibrary::GetGenres" ) );
+  //guLogMessage( wxT( "guDbLibrary::GetGenres" ) );
 
   //if( !GetFiltersCount() )
   if( FullList )
@@ -2027,11 +2016,11 @@ void DbLibrary::GetGenres( guListItems * Genres, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetArtists( guListItems * Artists, bool FullList )
+void guDbLibrary::GetArtists( guListItems * Artists, bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
-  //guLogMessage( wxT( "DbLibrary::GetArtists" ) );
+  //guLogMessage( wxT( "guDbLibrary::GetArtists" ) );
 //  guListItems RetVal;
 
   if( FullList )
@@ -2061,7 +2050,7 @@ void DbLibrary::GetArtists( guListItems * Artists, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
-wxBitmap * DbLibrary::GetCoverThumb( int CoverId )
+wxBitmap * guDbLibrary::GetCoverThumb( int CoverId )
 {
   if( !CoverId )
     return NULL;
@@ -2098,12 +2087,12 @@ wxBitmap * DbLibrary::GetCoverThumb( int CoverId )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetPaths( guListItems * Paths, bool FullList )
+void guDbLibrary::GetPaths( guListItems * Paths, bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
   wxString CoverPath;
-  //guLogMessage( wxT( "DbLibrary::GetPaths" ) );
+  //guLogMessage( wxT( "guDbLibrary::GetPaths" ) );
 
   query = wxT( "SELECT path_id, path_value FROM paths ORDER BY path_id;" );
 
@@ -2117,7 +2106,7 @@ void DbLibrary::GetPaths( guListItems * Paths, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
+void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 {
   wxString              query;
   wxSQLite3ResultSet    dbRes;
@@ -2125,7 +2114,7 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   int                   AlbumId;
   int                   AlbumFound;
   wxString              CoverPath;
-  //guLogMessage( wxT( "DbLibrary::GetAlbums" )
+  //guLogMessage( wxT( "guDbLibrary::GetAlbums" )
 
   query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year "
                "FROM albums, songs WHERE album_id = song_albumid " );
@@ -2185,7 +2174,7 @@ void DbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString DbLibrary::GetAlbumsPaths( const wxArrayInt &AlbumIds )
+wxArrayString guDbLibrary::GetAlbumsPaths( const wxArrayInt &AlbumIds )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2206,7 +2195,7 @@ wxArrayString DbLibrary::GetAlbumsPaths( const wxArrayInt &AlbumIds )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &songs )
+int guDbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &songs )
 {
   int PlayListId = 0;
   wxString query;
@@ -2246,7 +2235,7 @@ int DbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &son
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &tracks )
+int guDbLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &tracks )
 {
   wxString query;
 
@@ -2257,7 +2246,7 @@ int DbLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &tracks )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks )
+int guDbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks )
 {
   wxString query;
 
@@ -2275,7 +2264,7 @@ int DbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &setids )
+int guDbLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &setids )
 {
     wxString query;
     query = wxString::Format( wxT( "DELETE FROM plsets WHERE plset_plid = %u AND " ), plid );
@@ -2287,7 +2276,7 @@ int DbLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &setids )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPlayListFiles( const int plid, wxFileDataObject * files )
+int guDbLibrary::GetPlayListFiles( const int plid, wxFileDataObject * files )
 {
   int Count = 0;
   wxString query;
@@ -2310,7 +2299,7 @@ int DbLibrary::GetPlayListFiles( const int plid, wxFileDataObject * files )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist )
+int guDbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist )
 {
   wxASSERT( playlist );
 
@@ -2366,7 +2355,7 @@ int DbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * play
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetPlayLists( guListItems * PlayLists, const int type )
+void guDbLibrary::GetPlayLists( guListItems * PlayLists, const int type )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2385,7 +2374,7 @@ void DbLibrary::GetPlayLists( guListItems * PlayLists, const int type )
 }
 
 // -------------------------------------------------------------------------------- //
-void inline DbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes )
+void inline guDbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes )
 {
   Song->m_SongId     = dbRes->GetInt( 0 );
   Song->m_SongName   = dbRes->GetString( 1 );
@@ -2689,7 +2678,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPlayListSongIds( const int plid, wxArrayInt * tracks )
+int guDbLibrary::GetPlayListSongIds( const int plid, wxArrayInt * tracks )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2708,7 +2697,7 @@ int DbLibrary::GetPlayListSongIds( const int plid, wxArrayInt * tracks )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks )
+int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2797,7 +2786,7 @@ int DbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray 
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPlayListSetIds( const int plid, wxArrayInt * setids )
+int guDbLibrary::GetPlayListSetIds( const int plid, wxArrayInt * setids )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2817,7 +2806,7 @@ int DbLibrary::GetPlayListSetIds( const int plid, wxArrayInt * setids )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetDynamicPlayList( const int plid, guDynPlayList * playlist )
+void guDbLibrary::GetDynamicPlayList( const int plid, guDynPlayList * playlist )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2860,7 +2849,7 @@ void DbLibrary::GetDynamicPlayList( const int plid, guDynPlayList * playlist )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::UpdateDynPlayList( const int plid, const guDynPlayList * playlist )
+void guDbLibrary::UpdateDynPlayList( const int plid, const guDynPlayList * playlist )
 {
   wxASSERT( playlist );
 
@@ -2902,7 +2891,7 @@ void DbLibrary::UpdateDynPlayList( const int plid, const guDynPlayList * playlis
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::DeletePlayList( const int plid )
+void guDbLibrary::DeletePlayList( const int plid )
 {
   wxString query;
 
@@ -2917,7 +2906,7 @@ void DbLibrary::DeletePlayList( const int plid )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetPlayListName( const int plid, const wxString &plname )
+void guDbLibrary::SetPlayListName( const int plid, const wxString &plname )
 {
   wxString query;
   wxString PlayListName = plname;
@@ -2933,7 +2922,7 @@ void DbLibrary::SetPlayListName( const int plid, const wxString &plname )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
+int guDbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
 {
   wxString subquery;
   wxString query;
@@ -2969,7 +2958,7 @@ int DbLibrary::GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs )
+int guDbLibrary::GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2997,7 +2986,7 @@ int DbLibrary::GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs, guTrackMode trackmode )
+int guDbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs, guTrackMode trackmode )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3024,7 +3013,7 @@ int DbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums )
+int guDbLibrary::GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3046,7 +3035,7 @@ int DbLibrary::GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums 
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit )
+int guDbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3080,7 +3069,7 @@ int DbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, b
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetRandomTracks( guTrackArray * Tracks )
+int guDbLibrary::GetRandomTracks( guTrackArray * Tracks )
 {
   wxString              query;
   wxSQLite3ResultSet    dbRes;
@@ -3117,7 +3106,7 @@ int DbLibrary::GetRandomTracks( guTrackArray * Tracks )
 }
 
 // -------------------------------------------------------------------------------- //
-const wxString DbLibrary::GetArtistName( const int ArtistId )
+const wxString guDbLibrary::GetArtistName( const int ArtistId )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3136,7 +3125,7 @@ const wxString DbLibrary::GetArtistName( const int ArtistId )
 }
 
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
+bool guDbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
 {
   static wxString LastArtist = wxEmptyString;
   static int LastArtistId = wxNOT_FOUND;
@@ -3181,7 +3170,7 @@ bool DbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::FindArtist( const wxString &Artist )
+int guDbLibrary::FindArtist( const wxString &Artist )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3201,7 +3190,7 @@ int DbLibrary::FindArtist( const wxString &Artist )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::FindAlbum( const wxString &Artist, const wxString &Album )
+int guDbLibrary::FindAlbum( const wxString &Artist, const wxString &Album )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3226,7 +3215,7 @@ int DbLibrary::FindAlbum( const wxString &Artist, const wxString &Album )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::FindTrack( const wxString &Artist, const wxString &Name )
+int guDbLibrary::FindTrack( const wxString &Artist, const wxString &Name )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3251,7 +3240,7 @@ int DbLibrary::FindTrack( const wxString &Artist, const wxString &Name )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * DbLibrary::FindSong( const wxString &Artist, const wxString &Track )
+guTrack * guDbLibrary::FindSong( const wxString &Artist, const wxString &Track )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3279,7 +3268,7 @@ guTrack * DbLibrary::FindSong( const wxString &Artist, const wxString &Track )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::FindTrackFile( const wxString &filename, guTrack * song )
+int guDbLibrary::FindTrackFile( const wxString &filename, guTrack * song )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3433,7 +3422,7 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs )
+int guDbLibrary::GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3461,12 +3450,12 @@ int DbLibrary::GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetSongs( guTrackArray * Songs )
+int guDbLibrary::GetSongs( guTrackArray * Songs )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
   guTrack * Song;
-  //guLogMessage( wxT( "DbLibrary::GetSongs" ) );
+  //guLogMessage( wxT( "guDbLibrary::GetSongs" ) );
 
   query = GU_TRACKS_QUERYSTR;
   query += GetSongsDBNamesSQL( m_TracksOrder );
@@ -3493,7 +3482,7 @@ int DbLibrary::GetSongs( guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetSongsOrder( const guTRACKS_ORDER order )
+void guDbLibrary::SetSongsOrder( const guTRACKS_ORDER order )
 {
     if( m_TracksOrder != order )
     {
@@ -3506,19 +3495,19 @@ void DbLibrary::SetSongsOrder( const guTRACKS_ORDER order )
 }
 
 // -------------------------------------------------------------------------------- //
-guTRACKS_ORDER DbLibrary::GetSongsOrder( void ) const
+guTRACKS_ORDER guDbLibrary::GetSongsOrder( void ) const
 {
     return m_TracksOrder;
 }
 
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::GetSongsOrderDesc( void ) const
+bool guDbLibrary::GetSongsOrderDesc( void ) const
 {
     return m_TracksOrderDesc;
 }
 
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath )
+bool guDbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3543,7 +3532,7 @@ bool DbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString 
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetAlbumCoverId( const int AlbumId )
+int guDbLibrary::GetAlbumCoverId( const int AlbumId )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3563,7 +3552,7 @@ int DbLibrary::GetAlbumCoverId( const int AlbumId )
 }
 
 // -------------------------------------------------------------------------------- //
-guArrayListItems DbLibrary::GetArtistsLabels( const wxArrayInt &Artists )
+guArrayListItems guDbLibrary::GetArtistsLabels( const wxArrayInt &Artists )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3608,7 +3597,7 @@ guArrayListItems DbLibrary::GetArtistsLabels( const wxArrayInt &Artists )
 }
 
 // -------------------------------------------------------------------------------- //
-guArrayListItems DbLibrary::GetAlbumsLabels( const wxArrayInt &Albums )
+guArrayListItems guDbLibrary::GetAlbumsLabels( const wxArrayInt &Albums )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3650,7 +3639,7 @@ guArrayListItems DbLibrary::GetAlbumsLabels( const wxArrayInt &Albums )
 }
 
 // -------------------------------------------------------------------------------- //
-guArrayListItems DbLibrary::GetSongsLabels( const wxArrayInt &Songs )
+guArrayListItems guDbLibrary::GetSongsLabels( const wxArrayInt &Songs )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3693,7 +3682,7 @@ guArrayListItems DbLibrary::GetSongsLabels( const wxArrayInt &Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels )
+void guDbLibrary::SetArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels )
 {
   wxString query;
   int ArIndex;
@@ -3721,7 +3710,7 @@ void DbLibrary::SetArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &L
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels )
+void guDbLibrary::SetAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels )
 {
   wxString query;
   int AlIndex;
@@ -3748,7 +3737,7 @@ void DbLibrary::SetAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Lab
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Labels )
+void guDbLibrary::SetSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Labels )
 {
   wxString query;
   int SoIndex;
@@ -3775,7 +3764,7 @@ void DbLibrary::SetSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Label
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels )
+void guDbLibrary::UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels )
 {
   guListItems   LaItems;
   guTrackArray  Songs;
@@ -3830,7 +3819,7 @@ void DbLibrary::UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels )
+void guDbLibrary::UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels )
 {
   guListItems   AlItems;
   guTrackArray  Songs;
@@ -3884,7 +3873,7 @@ void DbLibrary::UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::UpdateSongsLabels( const wxArrayInt &SongIds, const wxArrayInt &Labels )
+void guDbLibrary::UpdateSongsLabels( const wxArrayInt &SongIds, const wxArrayInt &Labels )
 {
   guListItems   LaItems;
   guTrackArray  Songs;
@@ -3951,7 +3940,7 @@ void inline RemoveLabel( wxString * labelstr, const wxString * labelname, const 
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newname )
+void guDbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newname )
 {
   wxASSERT( tracks );
   guTrack *     Song;
@@ -3987,7 +3976,7 @@ void DbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString &l
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetTrackRating( const int songid, const int rating )
+void guDbLibrary::SetTrackRating( const int songid, const int rating )
 {
   wxString query;
   query = wxString::Format( wxT( "UPDATE songs SET song_rating = %u WHERE song_id = %u;" ),
@@ -3996,7 +3985,7 @@ void DbLibrary::SetTrackRating( const int songid, const int rating )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating )
+void guDbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating )
 {
   wxString query;
   if( songids.Count() )
@@ -4009,7 +3998,7 @@ void DbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetTrackPlayCount( const int songid, const int playcount )
+void guDbLibrary::SetTrackPlayCount( const int songid, const int playcount )
 {
   wxString query;
   query = wxString::Format( wxT( "UPDATE songs SET song_playcount = %u, song_lastplay = %u WHERE song_id = %u;" ),
@@ -4018,7 +4007,7 @@ void DbLibrary::SetTrackPlayCount( const int songid, const int playcount )
 }
 
 // -------------------------------------------------------------------------------- //
-guCoverInfos DbLibrary::GetEmptyCovers( void )
+guCoverInfos guDbLibrary::GetEmptyCovers( void )
 {
     wxString query;
     wxSQLite3ResultSet dbRes;
@@ -4057,13 +4046,13 @@ wxString RadioTextFilterToSQL( const wxArrayString &TeFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetRadioFiltersCount( void ) const
+int guDbLibrary::GetRadioFiltersCount( void ) const
 {
     return m_RaTeFilters.Count() + m_RaGeFilters.Count() + m_RaLaFilters.Count();
 }
 
 // -------------------------------------------------------------------------------- //
-wxString DbLibrary::RadioFiltersSQL( void )
+wxString guDbLibrary::RadioFiltersSQL( void )
 {
   wxString query;
   wxString RetVal = wxEmptyString;
@@ -4077,7 +4066,7 @@ wxString DbLibrary::RadioFiltersSQL( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetRadioGenresList( guListItems * RadioGenres, const wxArrayInt &GenreIds )
+void guDbLibrary::GetRadioGenresList( guListItems * RadioGenres, const wxArrayInt &GenreIds )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4101,7 +4090,7 @@ void DbLibrary::GetRadioGenresList( guListItems * RadioGenres, const wxArrayInt 
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
+void guDbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4140,7 +4129,7 @@ void DbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::AddRadioGenre( wxString GenreName )
+int guDbLibrary::AddRadioGenre( wxString GenreName )
 {
     wxString query;
     escape_query_str( &GenreName );
@@ -4156,7 +4145,7 @@ int DbLibrary::AddRadioGenre( wxString GenreName )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::SetRadioGenreName( const int GenreId, wxString GenreName )
+int guDbLibrary::SetRadioGenreName( const int GenreId, wxString GenreName )
 {
     wxString query;
     escape_query_str( &GenreName );
@@ -4171,7 +4160,7 @@ int DbLibrary::SetRadioGenreName( const int GenreId, wxString GenreName )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::DelRadioGenre( const int GenreId )
+int guDbLibrary::DelRadioGenre( const int GenreId )
 {
   wxString query;
 
@@ -4186,7 +4175,7 @@ int DbLibrary::DelRadioGenre( const int GenreId )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRaTeFilters( const wxArrayString &NewTeFilters )
+void guDbLibrary::SetRaTeFilters( const wxArrayString &NewTeFilters )
 {
     m_RaTeFilters = NewTeFilters;
     m_RaLaFilters.Empty();
@@ -4194,7 +4183,7 @@ void DbLibrary::SetRaTeFilters( const wxArrayString &NewTeFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioLabelsFilters( const wxArrayInt &filters )
+void guDbLibrary::SetRadioLabelsFilters( const wxArrayInt &filters )
 {
     if( filters.Index( 0 ) != wxNOT_FOUND )
     {
@@ -4208,7 +4197,7 @@ void DbLibrary::SetRadioLabelsFilters( const wxArrayInt &filters )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioGenresFilters( const wxArrayInt &filters )
+void guDbLibrary::SetRadioGenresFilters( const wxArrayInt &filters )
 {
     if( filters.Index( 0 ) != wxNOT_FOUND )
     {
@@ -4222,14 +4211,14 @@ void DbLibrary::SetRadioGenresFilters( const wxArrayInt &filters )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioIsUserFilter( bool isuserradio )
+void guDbLibrary::SetRadioIsUserFilter( bool isuserradio )
 {
     m_RadioIsUser = isuserradio;
     m_RaGeFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioGenres( const wxArrayString &Genres )
+void guDbLibrary::SetRadioGenres( const wxArrayString &Genres )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4252,7 +4241,7 @@ void DbLibrary::SetRadioGenres( const wxArrayString &Genres )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioStationsOrder( int order )
+void guDbLibrary::SetRadioStationsOrder( int order )
 {
     if( m_StationsOrder != order )
     {
@@ -4264,7 +4253,7 @@ void DbLibrary::SetRadioStationsOrder( int order )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetRadioStations( guRadioStations * Stations )
+int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4357,7 +4346,7 @@ int DbLibrary::GetRadioStations( guRadioStations * Stations )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::DelRadioStations( const wxArrayInt &RadioGenresIds )
+int guDbLibrary::DelRadioStations( const wxArrayInt &RadioGenresIds )
 {
   wxString query;
   if( RadioGenresIds.Count() )
@@ -4370,7 +4359,7 @@ int DbLibrary::DelRadioStations( const wxArrayInt &RadioGenresIds )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::DelRadioStation( const int radioid )
+int guDbLibrary::DelRadioStation( const int radioid )
 {
   wxString query;
   query = wxString::Format( wxT( "DELETE FROM radiostations WHERE radiostation_id = %u" ), radioid );
@@ -4378,7 +4367,7 @@ int DbLibrary::DelRadioStation( const int radioid )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioStation( const guRadioStation * radiostation )
+void guDbLibrary::SetRadioStation( const guRadioStation * radiostation )
 {
   wxString query;
 
@@ -4416,7 +4405,7 @@ void DbLibrary::SetRadioStation( const guRadioStation * radiostation )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioStations( const guRadioStations * RadioStations )
+void guDbLibrary::SetRadioStations( const guRadioStations * RadioStations )
 {
   int index;
   int count;
@@ -4431,7 +4420,7 @@ void DbLibrary::SetRadioStations( const guRadioStations * RadioStations )
 }
 
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::GetRadioStation( const int id, guRadioStation * radiostation )
+bool guDbLibrary::GetRadioStation( const int id, guRadioStation * radiostation )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4458,7 +4447,7 @@ bool DbLibrary::GetRadioStation( const int id, guRadioStation * radiostation )
 }
 
 // -------------------------------------------------------------------------------- //
-guArrayListItems DbLibrary::GetStationsLabels( const wxArrayInt &Stations )
+guArrayListItems guDbLibrary::GetStationsLabels( const wxArrayInt &Stations )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4501,7 +4490,7 @@ guArrayListItems DbLibrary::GetStationsLabels( const wxArrayInt &Stations )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels )
+void guDbLibrary::SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels )
 {
   wxString query;
   int StaIndex;
@@ -4528,7 +4517,7 @@ void DbLibrary::SetRadioStationsLabels( const wxArrayInt &Stations, const wxArra
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
+int guDbLibrary::GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs )
 {
   wxString subquery;
   wxString query;
@@ -4561,7 +4550,7 @@ int DbLibrary::GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * Son
 //    audiosc_tracknum INTEGER,
 //    audiosc_mbtrackid INTEGER
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::AddCachedPlayedSong( const guTrack &Song )
+bool guDbLibrary::AddCachedPlayedSong( const guTrack &Song )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4604,7 +4593,7 @@ bool DbLibrary::AddCachedPlayedSong( const guTrack &Song )
 }
 
 // -------------------------------------------------------------------------------- //
-guAS_SubmitInfoArray DbLibrary::GetCachedPlayedSongs( int MaxCount )
+guAS_SubmitInfoArray guDbLibrary::GetCachedPlayedSongs( int MaxCount )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4639,7 +4628,7 @@ guAS_SubmitInfoArray DbLibrary::GetCachedPlayedSongs( int MaxCount )
 }
 
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo )
+bool guDbLibrary::DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo )
 {
   wxString query;
 //  wxSQLite3ResultSet dbRes;
@@ -4663,7 +4652,7 @@ bool DbLibrary::DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo 
 }
 
 // -------------------------------------------------------------------------------- //
-wxString DbLibrary::SearchLyric( const wxString &artist, const wxString &trackname )
+wxString guDbLibrary::SearchLyric( const wxString &artist, const wxString &trackname )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4693,7 +4682,7 @@ wxString DbLibrary::SearchLyric( const wxString &artist, const wxString &trackna
 }
 
 // -------------------------------------------------------------------------------- //
-bool DbLibrary::CreateLyric( const wxString &artist, const wxString &trackname, const wxString &text )
+bool guDbLibrary::CreateLyric( const wxString &artist, const wxString &trackname, const wxString &text )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4719,7 +4708,7 @@ bool DbLibrary::CreateLyric( const wxString &artist, const wxString &trackname, 
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
+int guDbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4757,7 +4746,7 @@ int DbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastChannel( guPodcastChannel * channel, bool onlynew )
+void guDbLibrary::SavePodcastChannel( guPodcastChannel * channel, bool onlynew )
 {
   wxASSERT( channel );
 
@@ -4826,7 +4815,7 @@ void DbLibrary::SavePodcastChannel( guPodcastChannel * channel, bool onlynew )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew )
+int guDbLibrary::SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew )
 {
     wxASSERT( channels );
     int Index;
@@ -4839,7 +4828,7 @@ int DbLibrary::SavePodcastChannels( guPodcastChannelArray * channels, bool onlyn
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel )
+int guDbLibrary::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel )
 {
   int RetVal = wxNOT_FOUND;
   wxString query;
@@ -4882,7 +4871,7 @@ int DbLibrary::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * cha
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
+int guDbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
 {
   int RetVal = wxNOT_FOUND;
   wxString query;
@@ -4925,7 +4914,7 @@ int DbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::DelPodcastChannel( const int id )
+void guDbLibrary::DelPodcastChannel( const int id )
 {
   wxString query;
 
@@ -4937,7 +4926,7 @@ void DbLibrary::DelPodcastChannel( const int id )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
+int guDbLibrary::GetPodcastItems( guPodcastItemArray * items )
 {
   wxASSERT( items );
   wxString query;
@@ -5011,7 +5000,7 @@ int DbLibrary::GetPodcastItems( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items )
+int guDbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items )
 {
   wxASSERT( items );
   wxString query;
@@ -5081,7 +5070,7 @@ int DbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * item
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew )
+void guDbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew )
 {
   wxASSERT( item );
 
@@ -5139,7 +5128,7 @@ void DbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bool
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew )
+void guDbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew )
 {
     wxASSERT( items );
     int Index;
@@ -5151,7 +5140,7 @@ void DbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * item
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetPodcastItemStatus( const int itemid, const int status )
+void guDbLibrary::SetPodcastItemStatus( const int itemid, const int status )
 {
   wxString query;
   query = wxString::Format( wxT( "UPDATE podcastitems SET "
@@ -5162,7 +5151,7 @@ void DbLibrary::SetPodcastItemStatus( const int itemid, const int status )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetPodcastItemPlayCount( const int itemid, const int playcount )
+void guDbLibrary::SetPodcastItemPlayCount( const int itemid, const int playcount )
 {
   wxString query;
   query = wxString::Format( wxT( "UPDATE podcastitems SET "
@@ -5173,7 +5162,7 @@ void DbLibrary::SetPodcastItemPlayCount( const int itemid, const int playcount )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item )
+int guDbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item )
 {
   int RetVal = wxNOT_FOUND;
   wxString query;
@@ -5221,7 +5210,7 @@ int DbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
+int guDbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
 {
   int RetVal = wxNOT_FOUND;
   wxString query;
@@ -5269,7 +5258,7 @@ int DbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * item )
+int guDbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * item )
 {
   int RetVal = 0;
   wxString query;
@@ -5317,7 +5306,7 @@ int DbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * ite
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::DelPodcastItem( const int itemid )
+void guDbLibrary::DelPodcastItem( const int itemid )
 {
   wxString query;
 
@@ -5329,7 +5318,7 @@ void DbLibrary::DelPodcastItem( const int itemid )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::DelPodcastItems( const int channelid )
+void guDbLibrary::DelPodcastItems( const int channelid )
 {
   wxString query;
 
@@ -5340,7 +5329,7 @@ void DbLibrary::DelPodcastItems( const int channelid )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetPodcastChannelFilters( const wxArrayInt &filters )
+void guDbLibrary::SetPodcastChannelFilters( const wxArrayInt &filters )
 {
     if( filters.Index( 0 ) != wxNOT_FOUND )
     {
@@ -5353,7 +5342,7 @@ void DbLibrary::SetPodcastChannelFilters( const wxArrayInt &filters )
 }
 
 // -------------------------------------------------------------------------------- //
-void DbLibrary::SetPodcastOrder( int order )
+void guDbLibrary::SetPodcastOrder( int order )
 {
     if( m_PodcastOrder != order )
     {
@@ -5365,7 +5354,7 @@ void DbLibrary::SetPodcastOrder( int order )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
+int guDbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
 {
   wxASSERT( items );
   wxString query;
@@ -5411,7 +5400,7 @@ int DbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-int DbLibrary::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject * files )
+int guDbLibrary::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject * files )
 {
   int Count = 0;
   wxString query;

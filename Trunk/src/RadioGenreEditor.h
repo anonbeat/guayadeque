@@ -40,7 +40,7 @@
 class guRadioGenreEditor : public wxDialog
 {
   private:
-    DbLibrary *             m_Db;
+    guDbLibrary *             m_Db;
     guListItems             m_AddedGenres;
     wxArrayString           m_RadioGenres;
 
@@ -50,7 +50,7 @@ class guRadioGenreEditor : public wxDialog
     wxTextCtrl*             m_InputTextCtrl;
 
   public:
-    guRadioGenreEditor( wxWindow* parent, DbLibrary * db ); //
+    guRadioGenreEditor( wxWindow* parent, guDbLibrary * db ); //
     ~guRadioGenreEditor();
     wxArrayString GetGenres( void );
 
