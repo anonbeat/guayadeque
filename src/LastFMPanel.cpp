@@ -1002,10 +1002,12 @@ void guTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guLastFMPanel
 // -------------------------------------------------------------------------------- //
-guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
+guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
+                                guDbCache * dbcache, guPlayerPanel * playerpanel ) :
     wxScrolledWindow( Parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL )
 {
     m_Db = db;
+    m_DbCache = dbcache;
     m_PlayerPanel = playerpanel;
     m_UpdateEnabled = true;
 
@@ -1325,9 +1327,9 @@ void guLastFMPanel::ShowCurrentTrack( void )
         m_LastArtistName = m_ArtistName;
         if( !m_ArtistName.IsEmpty() )
         {
-            m_ArtistsUpdateThread = new guFetchSimilarArtistInfoThread( this, m_ArtistName.c_str() );
+            m_ArtistsUpdateThread = new guFetchSimilarArtistInfoThread( this, m_DbCache, m_ArtistName.c_str() );
 
-            m_AlbumsUpdateThread = new guFetchAlbumInfoThread( this, m_ArtistName.c_str() );
+            m_AlbumsUpdateThread = new guFetchAlbumInfoThread( this, m_DbCache, m_ArtistName.c_str() );
         }
         m_ArtistTextCtrl->SetValue( m_ArtistName );
     }
@@ -1350,7 +1352,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
         m_LastTrackName = m_TrackName;
         if( !m_ArtistName.IsEmpty() && !m_TrackName.IsEmpty() )
         {
-            m_TracksUpdateThread = new guFetchTrackInfoThread( this, m_ArtistName.c_str(), m_TrackName.c_str() );
+            m_TracksUpdateThread = new guFetchTrackInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_TrackName.c_str() );
         }
         m_TrackTextCtrl->SetValue( m_TrackName );
     }
@@ -1666,10 +1668,12 @@ void guFetchLastFMInfoThread::WaitDownloadThreads( void )
 // -------------------------------------------------------------------------------- //
 // guDownloadImageThread
 // -------------------------------------------------------------------------------- //
-guDownloadImageThread::guDownloadImageThread( guLastFMPanel * lastfmpanel, guFetchLastFMInfoThread * mainthread,
-    const int index, const wxChar * imageurl, int commandid, void * commanddata, wxImage ** pimage, const wxSize &scalesize ) :
+guDownloadImageThread::guDownloadImageThread( guLastFMPanel * lastfmpanel,
+    guFetchLastFMInfoThread * mainthread, guDbCache * dbcache, const int index, const wxChar * imageurl,
+    int commandid, void * commanddata, wxImage ** pimage, const wxSize &scalesize ) :
     wxThread( wxTHREAD_DETACHED )
 {
+    m_DbCache     = dbcache;
     m_LastFMPanel = lastfmpanel;
     m_MainThread  = mainthread;
     m_CommandId   = commandid;
@@ -1683,7 +1687,8 @@ guDownloadImageThread::guDownloadImageThread( guLastFMPanel * lastfmpanel, guFet
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        //SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
         Run();
     }
 }
@@ -1702,62 +1707,38 @@ guDownloadImageThread::~guDownloadImageThread()
 // -------------------------------------------------------------------------------- //
 guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
 {
+    int             ImageType;
     wxImage *       Image = NULL;
-    long            ImageType;
 
-    //wxASSERT( pImage );
-
-    if( !m_ImageUrl.IsEmpty() )
+    if( !TestDestroy() && !m_ImageUrl.IsEmpty() )
     {
-        if( m_ImageUrl.Lower().EndsWith( wxT( ".jpg" ) ) )
-          ImageType = wxBITMAP_TYPE_JPEG;
-        else if( m_ImageUrl.Lower().EndsWith( wxT( ".png" ) ) )
-          ImageType = wxBITMAP_TYPE_PNG;
-        else if( m_ImageUrl.Lower().EndsWith( wxT( ".gif" ) ) )    // Removed because of some random segfaults
-          ImageType = wxBITMAP_TYPE_GIF;                                  // in gifs handler functions
-        else if( m_ImageUrl.Lower().EndsWith( wxT( ".bmp" ) ) )
-          ImageType = wxBITMAP_TYPE_BMP;
-        else
-          ImageType = wxBITMAP_TYPE_INVALID;
+        // We could be running while the database have been closed
+        // in this case we are leaving the app so just leave thread
+        try {
+            Image = m_DbCache->GetImage( m_ImageUrl, ImageType );
 
-        if( ImageType > wxBITMAP_TYPE_INVALID )
-        {
-            wxMemoryOutputStream Buffer;
-            wxCurlHTTP http;
-            if( http.Get( Buffer, m_ImageUrl ) )
+            if( !TestDestroy() && !Image )
             {
-                if( Buffer.IsOk() && !TestDestroy() )
-                {
-//                    if( http.GetResponseCode() != 200 )
-//                    {
-//                        guLogMessage( wxT( "Error %u getting the image '%s'\n%s" ),
-//                            http.GetResponseCode(),
-//                            m_ImageUrl.c_str(),
-//                            http.GetResponseHeader().c_str() );
-//
-//                    }
-                    wxMemoryInputStream Ins( Buffer );
-                    if( Ins.IsOk() && !TestDestroy() )
-                    {
-                        Image = new wxImage( Ins, ImageType );
-                        if( Image )
-                        {
-                            //guLogMessage( wxT( "Image loaded ok %u" ), Index );
-                            if( Image->IsOk() && ( m_ScaleSize.x > 0 ) && !TestDestroy() )
-                            {
-                                Image->Rescale( m_ScaleSize.x, m_ScaleSize.y, wxIMAGE_QUALITY_HIGH );
-                            }
-                            else
-                            {
-                              delete Image;
-                              Image = NULL;
-                            }
-                        }
-                    }
-                }
+                Image = guGetRemoteImage( m_ImageUrl, ImageType );
+
+                if( Image )
+                    m_DbCache->SetImage( m_ImageUrl, Image, ImageType );
+                else
+                    guLogMessage( wxT( "Could not get '%s'" ), m_ImageUrl.c_str() );
             }
+
+        }
+        catch(...)
+        {
+            return 0;
+        }
+
+        if( !TestDestroy() && Image && ( m_ScaleSize.x > 0 ) )
+        {
+            Image->Rescale( m_ScaleSize.x, m_ScaleSize.y, wxIMAGE_QUALITY_HIGH );
         }
     }
+
     //
     if( !TestDestroy() )
     {
@@ -1778,15 +1759,17 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
         delete Image;
     }
     return 0;
+
 }
 
 // -------------------------------------------------------------------------------- //
 // guFetchAlbumInfoThread
 // -------------------------------------------------------------------------------- //
 guFetchAlbumInfoThread::guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel,
-                            const wxChar * artistname ) :
+           guDbCache * dbcache, const wxChar * artistname ) :
     guFetchLastFMInfoThread( lastfmpanel )
 {
+    m_DbCache = dbcache;
     m_ArtistName = wxString( artistname );
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1823,6 +1806,7 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
                 //guLogMessage( wxT( "Top Albums: %u" ), count );
                 if( count > GULASTFMINFO_MAXITEMS )
                     count = GULASTFMINFO_MAXITEMS;
+
                 for( index = 0; index < count; index++ )
                 {
                     m_DownloadThreadsMutex.Lock();
@@ -1835,6 +1819,7 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
                             guDownloadImageThread * DownloadImageThread = new guDownloadImageThread(
                                     m_LastFMPanel,
                                     this,
+                                    m_DbCache,
                                     index,
                                     TopAlbums[ index ].m_ImageLink.c_str(),
                                     ID_LASTFM_UPDATE_ALBUMINFO,
@@ -1865,9 +1850,10 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
 // guFetchSimilarArtistInfoThread
 // -------------------------------------------------------------------------------- //
 guFetchSimilarArtistInfoThread::guFetchSimilarArtistInfoThread( guLastFMPanel * lastfmpanel,
-                                                      const wxChar * artistname ) :
+                    guDbCache * dbcache, const wxChar * artistname ) :
     guFetchLastFMInfoThread( lastfmpanel )
 {
+    m_DbCache = dbcache;
     //guLogMessage( wxT( "guFetchSimilarArtistInfoThread : '%s'" ), artistname );
     m_ArtistName  = wxString( artistname );
     if( Create() == wxTHREAD_NO_ERROR )
@@ -1912,6 +1898,7 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
                     guDownloadImageThread * DownloadImageThread = new guDownloadImageThread(
                         m_LastFMPanel,
                         this,
+                        m_DbCache,
                         0,
                         ArtistInfo.m_ImageLink.c_str(),
                         ID_LASTFM_UPDATE_ARTISTINFO,
@@ -1944,6 +1931,7 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
                             guDownloadImageThread* DownloadImageThread = new guDownloadImageThread(
                                 m_LastFMPanel,
                                 this,
+                                m_DbCache,
                                 index,
                                 SimilarArtists[ index ].m_ImageLink.c_str(),
                                 ID_LASTFM_UPDATE_SIMARTIST,
@@ -1974,9 +1962,10 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
 // guFetchTrackInfoThread
 // -------------------------------------------------------------------------------- //
 guFetchTrackInfoThread::guFetchTrackInfoThread( guLastFMPanel * lastfmpanel,
-                            const wxChar * artistname, const wxChar * trackname ) :
+         guDbCache * dbcache, const wxChar * artistname, const wxChar * trackname ) :
     guFetchLastFMInfoThread( lastfmpanel )
 {
+    m_DbCache = dbcache;
     m_ArtistName = wxString( artistname );
     m_TrackName  = wxString( trackname );
 
@@ -2026,7 +2015,9 @@ guFetchTrackInfoThread::ExitCode guFetchTrackInfoThread::Entry()
                         {
                             guDownloadImageThread * DownloadImageThread = new guDownloadImageThread(
                                     m_LastFMPanel,
-                                    this, index, SimilarTracks[ index ].m_ImageLink.c_str(),
+                                    this,
+                                    m_DbCache,
+                                    index, SimilarTracks[ index ].m_ImageLink.c_str(),
                                     ID_LASTFM_UPDATE_SIMTRACK,
                                     LastFMTrackInfo,
                                     &LastFMTrackInfo->m_Image, wxSize( 50, 50 ) );

@@ -38,7 +38,8 @@
 // -------------------------------------------------------------------------------- //
 wxString LenToString( int Len );
 wxArrayString guSplitWords( const wxString &InputStr );
-bool DownloadImage( const wxString &Source, const wxString &Target, int maxwidth = -1, int maxheight = -1 );
+wxImage * guGetRemoteImage( const wxString &url, int &imgtype );
+bool DownloadImage( const wxString &source, const wxString &taget, int maxwidth = -1, int maxheight = -1 );
 int DownloadFile( const wxString &Source, const wxString &Target );
 wxString RemoveSearchFilters( const wxString &Album );
 bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings );

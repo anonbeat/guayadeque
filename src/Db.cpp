@@ -32,7 +32,6 @@ guDb::guDb()
 // -------------------------------------------------------------------------------- //
 guDb::guDb( const wxString &dbname )
 {
-    guLogMessage( wxT( "guDb::guDb" ) );
     Open( dbname );
 }
 
@@ -48,7 +47,6 @@ guDb::~guDb()
 // -------------------------------------------------------------------------------- //
 int guDb::Open( const wxString &dbname )
 {
-  guLogMessage( wxT( "guDb::Open" ) );
   m_DbName = dbname;
   m_Db.Open( dbname );
 
@@ -120,7 +118,6 @@ int guDb::ExecuteUpdate( const wxSQLite3StatementBuffer &query )
 // -------------------------------------------------------------------------------- //
 void guDb::SetInitParams( void )
 {
-  guLogMessage( wxT( "guDb::SetInitParams" ) );
   wxString query;
   query = wxT( "PRAGMA page_size=8192; PRAGMA cache_size=4096; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
   ExecuteUpdate( query );
