@@ -21,6 +21,7 @@
 #ifndef LASTFMPANEL_H
 #define LASTFMPANEL_H
 
+#include "DbCache.h"
 #include "LastFM.h"
 #include "PlayerPanel.h"
 #include "ThreadArray.h"
@@ -176,6 +177,7 @@ class guFetchLastFMInfoThread : public wxThread
 class guDownloadImageThread : public wxThread
 {
   protected:
+    guDbCache *                 m_DbCache;
     guLastFMPanel *             m_LastFMPanel;
     guFetchLastFMInfoThread *   m_MainThread;
     int                         m_CommandId;
@@ -187,7 +189,8 @@ class guDownloadImageThread : public wxThread
 
   public:
     guDownloadImageThread( guLastFMPanel * lastfmpanel, guFetchLastFMInfoThread * mainthread,
-            int index, const wxChar * imageurl, int commandid, void * commanddata, wxImage ** pimage, const wxSize &scalesize = wxDefaultSize );
+            guDbCache * dbcache, int index, const wxChar * imageurl, int commandid,
+            void * commanddata, wxImage ** pimage, const wxSize &scalesize = wxDefaultSize );
     ~guDownloadImageThread();
 
     virtual ExitCode Entry();
@@ -197,10 +200,11 @@ class guDownloadImageThread : public wxThread
 class guFetchAlbumInfoThread : public guFetchLastFMInfoThread
 {
   protected:
+    guDbCache *             m_DbCache;
     wxString                m_ArtistName;
 
   public:
-    guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel, const wxChar * artistname );
+    guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname );
     ~guFetchAlbumInfoThread();
 
     virtual ExitCode Entry();
@@ -212,10 +216,11 @@ class guFetchAlbumInfoThread : public guFetchLastFMInfoThread
 class guFetchSimilarArtistInfoThread : public guFetchLastFMInfoThread
 {
   private:
+    guDbCache *             m_DbCache;
     wxString                m_ArtistName;
 
   public:
-    guFetchSimilarArtistInfoThread( guLastFMPanel * lastfmpanel, const wxChar * artistname );
+    guFetchSimilarArtistInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname );
     ~guFetchSimilarArtistInfoThread();
 
     virtual ExitCode Entry();
@@ -227,11 +232,12 @@ class guFetchSimilarArtistInfoThread : public guFetchLastFMInfoThread
 class guFetchTrackInfoThread : public guFetchLastFMInfoThread
 {
   private:
+    guDbCache *             m_DbCache;
     wxString                m_ArtistName;
     wxString                m_TrackName;
 
   public:
-    guFetchTrackInfoThread( guLastFMPanel * lastfmpanel, const wxChar * artistname, const wxChar * trackname );
+    guFetchTrackInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname, const wxChar * trackname );
     ~guFetchTrackInfoThread();
 
     virtual ExitCode Entry();
@@ -385,7 +391,8 @@ WX_DEFINE_ARRAY_PTR( guTrackInfoCtrl *, guTrackInfoCtrlArray );
 class guLastFMPanel : public wxScrolledWindow
 {
   private :
-    guDbLibrary *             m_Db;
+    guDbLibrary *           m_Db;
+    guDbCache *             m_DbCache;
     guPlayerPanel *         m_PlayerPanel;
     guTrackChangeInfoArray  m_TrackChangeItems;
     int                     m_CurrentTrackInfo;
@@ -475,7 +482,8 @@ class guLastFMPanel : public wxScrolledWindow
     void    UpdateTrackChangeButtons( void );
 
   public :
-            guLastFMPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+            guLastFMPanel( wxWindow * parent, guDbLibrary * db,
+                guDbCache * dbcache, guPlayerPanel * playerpanel );
             ~guLastFMPanel();
 
     void    OnUpdatedTrack( wxCommandEvent &event );

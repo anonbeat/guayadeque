@@ -23,12 +23,19 @@
 
 #include "Db.h"
 
+#include <wx/image.h>
+
 // -------------------------------------------------------------------------------- //
 class guDbCache : public guDb
 {
   public :
     guDbCache( const wxString &dbname );
     ~guDbCache();
+
+    wxImage *   GetImage( const wxString &url, int &imagetype );
+    bool        SetImage( const wxString &url, wxImage * img, int imgtype );
+    wxString    GetContent( const wxString &url );
+    bool        SetContent( const wxString &url, const wxString &content );
 
 };
 

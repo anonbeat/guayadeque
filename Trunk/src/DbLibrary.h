@@ -228,22 +228,6 @@ class guAS_SubmitInfo //guAudioScrobbler_SubmitInfo
 };
 WX_DECLARE_OBJARRAY(guAS_SubmitInfo, guAS_SubmitInfoArray);
 
-// -------------------------------------------------------------------------------- //
-void inline escape_query_str( wxString * Str )
-{
-  Str->Replace( _T( "'" ), _T( "''" ) );
-  Str->Replace( _T( "\"" ), _T( "\"\"" ) );
-  Str->Replace( _T( "\\" ), _T( "\\\\" ) );
-}
-
-// -------------------------------------------------------------------------------- //
-wxString inline escape_query_str( const wxString &str )
-{
-    wxString QueryStr = str;
-    escape_query_str( &QueryStr );
-    return QueryStr;
-}
-
 #define GULIBRARY_FILTER_LABELS     0
 #define GULIBRARY_FILTER_GENRES     1
 #define GULIBRARY_FILTER_ARTISTS    2

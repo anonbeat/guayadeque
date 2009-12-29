@@ -29,6 +29,22 @@
 #include "wx/wxsqlite3.h"
 
 // -------------------------------------------------------------------------------- //
+void inline escape_query_str( wxString * Str )
+{
+  Str->Replace( _T( "'" ), _T( "''" ) );
+  Str->Replace( _T( "\"" ), _T( "\"\"" ) );
+  Str->Replace( _T( "\\" ), _T( "\\\\" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline escape_query_str( const wxString &str )
+{
+    wxString QueryStr = str;
+    escape_query_str( &QueryStr );
+    return QueryStr;
+}
+
+// -------------------------------------------------------------------------------- //
 class guDb
 {
   protected :

@@ -23,6 +23,7 @@
 
 #include <wx/curl/http.h>
 #include <wx/regex.h>
+#include <wx/uri.h>
 #include <wx/zstream.h>
 
 // -------------------------------------------------------------------------------- //
@@ -123,62 +124,79 @@ bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings )
 }
 
 // -------------------------------------------------------------------------------- //
-bool DownloadImage( const wxString &Source, const wxString &Target, int maxwidth, int maxheight )
+wxImage * guGetRemoteImage( const wxString &url, int &imgtype )
 {
-    bool        RetVal = false;
-    long        ImageType;
     wxImage *   Image = NULL;
+    wxURI       Uri( url );
 
-    guLogMessage( wxT( "Downloading the file '%s'" ), Source.c_str() );
-    if( Source.Lower().EndsWith( wxT( ".jpg" ) ) ||
-        Source.Lower().EndsWith( wxT( ".jpeg" ) ) )
-      ImageType = wxBITMAP_TYPE_JPEG;
-    else if( Source.Lower().EndsWith( wxT( ".png" ) ) )
-      ImageType = wxBITMAP_TYPE_PNG;
-    else if( Source.Lower().EndsWith( wxT( ".gif" ) ) ) // Removed because of some random segfaults
-      ImageType = wxBITMAP_TYPE_GIF;                    // in gifs handler functions
-    else if( Source.Lower().EndsWith( wxT( ".bmp" ) ) )
-      ImageType = wxBITMAP_TYPE_BMP;
+    wxString FileName = Uri.GetPath().Lower();
+
+    if( FileName.EndsWith( wxT( ".jpg" ) ) ||
+        FileName.EndsWith( wxT( ".jpeg" ) ) )
+      imgtype = wxBITMAP_TYPE_JPEG;
+    else if( FileName.EndsWith( wxT( ".png" ) ) )
+      imgtype = wxBITMAP_TYPE_PNG;
+    else if( FileName.EndsWith( wxT( ".gif" ) ) )
+      imgtype = wxBITMAP_TYPE_GIF;
+    else if( FileName.EndsWith( wxT( ".bmp" ) ) )
+      imgtype = wxBITMAP_TYPE_BMP;
     else
-      ImageType = wxBITMAP_TYPE_INVALID;
+      imgtype = wxBITMAP_TYPE_INVALID;
 
-    if( ImageType > wxBITMAP_TYPE_INVALID )
+    if( imgtype != wxBITMAP_TYPE_INVALID )
     {
         wxMemoryOutputStream Buffer;
         wxCurlHTTP http;
-        if( http.Get( Buffer, Source ) )
+        if( http.Get( Buffer, url ) )
         {
             if( http.GetResponseCode() != 200 )
             {
-                guLogMessage( wxT( "Error %u getting the image '%s'\n%s" ),
+                guLogMessage( wxT( "Error %u getting remote image '%s'\n%s" ),
                     http.GetResponseCode(),
-                    Source.c_str(),
+                    url.c_str(),
                     http.GetResponseHeader().c_str() );
             }
+
             if( Buffer.IsOk() )
             {
                 wxMemoryInputStream Ins( Buffer );
                 if( Ins.IsOk() )
                 {
-                    Image = new wxImage( Ins, ImageType );
+                    Image = new wxImage( Ins, imgtype );
                     if( Image )
                     {
                         if( Image->IsOk() )
                         {
-                            if( maxwidth != -1 )
-                            {
-                                if( maxheight != -1 )
-                                    Image->Rescale( maxwidth, maxheight, wxIMAGE_QUALITY_HIGH );
-                                else
-                                    Image->Rescale( maxwidth, maxwidth, wxIMAGE_QUALITY_HIGH );
-                            }
-                            RetVal = Image->SaveFile( Target, wxBITMAP_TYPE_JPEG );
+                            return Image;
                         }
                         delete Image;
                     }
                 }
             }
         }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+bool DownloadImage( const wxString &source, const wxString &target, int maxwidth, int maxheight )
+{
+    bool        RetVal = false;
+    int         ImageType;
+    wxImage *   Image = guGetRemoteImage( source, ImageType );
+
+    if( Image )
+    {
+        if( maxwidth != -1 )
+        {
+            if( maxheight != -1 )
+                Image->Rescale( maxwidth, maxheight, wxIMAGE_QUALITY_HIGH );
+            else
+                Image->Rescale( maxwidth, maxwidth, wxIMAGE_QUALITY_HIGH );
+        }
+        RetVal = Image->SaveFile( target, wxBITMAP_TYPE_JPEG );
+
+        delete Image;
     }
     return RetVal;
 }

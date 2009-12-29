@@ -574,52 +574,23 @@ guDownloadCoverThread::~guDownloadCoverThread()
 // -------------------------------------------------------------------------------- //
 guDownloadCoverThread::ExitCode guDownloadCoverThread::Entry()
 {
-    //wxURL       url;
-    long        ImageType;
-    wxImage *   Image = NULL;
-    guCoverImage * CoverImage = NULL;
+    int             ImageType;
+    guCoverImage *  CoverImage = NULL;
+    wxImage *   Image = guGetRemoteImage( m_UrlStr, ImageType );
 
-    if( m_UrlStr.Lower().EndsWith( wxT( ".jpeg" ) ) ||
-        m_UrlStr.Lower().EndsWith( wxT( ".jpg" ) ) )
-      ImageType = wxBITMAP_TYPE_JPEG;
-    else if( m_UrlStr.Lower().EndsWith( wxT( ".png" ) ) )
-      ImageType = wxBITMAP_TYPE_PNG;
-//    else if( UrlStr.Lower().EndsWith( wxT( ".gif" ) ) ) // Removed because of some random segfaults
-//      ImageType = wxBITMAP_TYPE_GIF;                    // in gifs handler functions
-    else if( m_UrlStr.Lower().EndsWith( wxT( ".bmp" ) ) )
-      ImageType = wxBITMAP_TYPE_BMP;
-    else
-      ImageType = wxBITMAP_TYPE_INVALID;
-
-    if( !TestDestroy() && ImageType > wxBITMAP_TYPE_INVALID )
+    if( Image )
     {
-        wxMemoryOutputStream Buffer;
-        wxCurlHTTP http;
-        //guLogMessage( wxT( "Init: '%s'" ), m_UrlStr.c_str() );
-        if( http.Get( Buffer, m_UrlStr ) )
+        if( !TestDestroy() )
         {
-            if( Buffer.IsOk() && !TestDestroy() )
-            {
-                wxMemoryInputStream Ins( Buffer );
-                if( Ins.IsOk() && !TestDestroy() )
-                {
-                    Image = new wxImage( Ins, ImageType );
-                    if( Image )
-                    {
-                        if( Image->IsOk() && !TestDestroy() )
-                        {
-                            CoverImage = new guCoverImage( m_UrlStr, m_SizeStr, Image );
-                        }
-                        else
-                        {
-                          //guLogWarning( wxT( "Could not load image from the net index %u." ), LastDownload );
-                          delete Image;
-                        }
-                    }
-                }
-            }
+            CoverImage = new guCoverImage( m_UrlStr, m_SizeStr, Image );
+        }
+        else
+        {
+          //guLogWarning( wxT( "Could not load image from the net index %u." ), LastDownload );
+          delete Image;
         }
     }
+
     if( !TestDestroy() )
     {
         //guLogMessage( wxT( "Done: '%s'" ), m_UrlStr.c_str() );
