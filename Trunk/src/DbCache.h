@@ -25,15 +25,24 @@
 
 #include <wx/image.h>
 
+enum guDBCacheImageSize {
+    guDBCACHE_IMAGE_SIZE_TINY      = 0,
+    guDBCACHE_IMAGE_SIZE_MID,
+    guDBCACHE_IMAGE_SIZE_BIG
+};
+
 // -------------------------------------------------------------------------------- //
 class guDbCache : public guDb
 {
+  protected :
+    bool        DoSetImage( const wxString &url, wxImage * img, const int imgtype, int imagesize );
+
   public :
     guDbCache( const wxString &dbname );
     ~guDbCache();
 
-    wxImage *   GetImage( const wxString &url, int &imagetype );
-    bool        SetImage( const wxString &url, wxImage * img, int imgtype );
+    wxImage *   GetImage( const wxString &url, int &imagetype, const int imagesize );
+    bool        SetImage( const wxString &url, wxImage * img, const int imgtype );
     wxString    GetContent( const wxString &url );
     bool        SetContent( const wxString &url, const wxString &content );
 
