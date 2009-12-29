@@ -33,6 +33,8 @@
 
 #define GULASTFM_TITLE_FONT_SIZE 12
 
+#define GULASTFM_DOWNLOAD_IMAGE_DELAY    10
+
 WX_DEFINE_OBJARRAY(guLastFMInfoArray);
 WX_DEFINE_OBJARRAY(guLastFMSimilarArtistInfoArray);
 WX_DEFINE_OBJARRAY(guLastFMTrackInfoArray);
@@ -1498,8 +1500,7 @@ void guLastFMPanel::OnUpdateArtistInfo( wxCommandEvent &event )
     if( ArtistInfo )
     {
         m_ArtistInfoCtrl->SetInfo( ArtistInfo );
-        //m_MainSizer->FitInside( this );
-        Layout();
+        m_MainSizer->FitInside( this );
     }
     else
     {
@@ -1519,8 +1520,7 @@ void guLastFMPanel::OnUpdateAlbumItem( wxCommandEvent &event )
     {
         m_AlbumInfoCtrls[ index ]->SetInfo( AlbumInfo );
         //Layout();
-        //m_MainSizer->FitInside( this );
-        Layout();
+        m_MainSizer->FitInside( this );
     }
     else
     {
@@ -1540,8 +1540,7 @@ void guLastFMPanel::OnUpdateArtistItem( wxCommandEvent &event )
     {
         m_ArtistInfoCtrls[ index ]->SetInfo( ArtistInfo );
         //Layout();
-        //m_MainSizer->FitInside( this );
-        Layout();
+        m_MainSizer->FitInside( this );
     }
     else
     {
@@ -1562,8 +1561,7 @@ void guLastFMPanel::OnUpdateTrackItem( wxCommandEvent &event )
     {
         m_TrackInfoCtrls[ index ]->SetInfo( TrackInfo );
         //Layout();
-        //m_MainSizer->FitInside( this );
-        Layout();
+        m_MainSizer->FitInside( this );
     }
     else
     {
@@ -1664,7 +1662,7 @@ void guFetchLastFMInfoThread::WaitDownloadThreads( void )
         m_DownloadThreadsMutex.Unlock();
         if( !count )
             break;
-        Sleep( 10 );
+        Sleep( GULASTFM_DOWNLOAD_IMAGE_DELAY );
     }
 }
 
@@ -1861,7 +1859,7 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
                     m_DownloadThreadsMutex.Unlock();
                     if( TestDestroy() )
                         break;
-                    Sleep( 100 );
+                    Sleep( GULASTFM_DOWNLOAD_IMAGE_DELAY );
                 }
             }
         }
@@ -1975,7 +1973,7 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
                     m_DownloadThreadsMutex.Unlock();
                     if( TestDestroy() )
                         break;
-                    Sleep( 100 );
+                    Sleep( GULASTFM_DOWNLOAD_IMAGE_DELAY );
                 }
             }
         }
@@ -2060,7 +2058,7 @@ guFetchTrackInfoThread::ExitCode guFetchTrackInfoThread::Entry()
                     m_DownloadThreadsMutex.Unlock();
                     if( TestDestroy() )
                         break;
-                    Sleep( 100 );
+                    Sleep( GULASTFM_DOWNLOAD_IMAGE_DELAY );
                 }
             }
         }

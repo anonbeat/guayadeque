@@ -74,6 +74,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
         return;
     }
 
+    m_DbCache->SetDbCache();
+
     //
     m_Db->SetLibPath( Config->ReadAStr( wxT( "LibPath" ),
                                       wxGetHomeDir() + wxT( "/Music" ),
