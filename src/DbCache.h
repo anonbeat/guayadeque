@@ -34,6 +34,9 @@ enum guDBCacheImageSize {
 // -------------------------------------------------------------------------------- //
 class guDbCache : public guDb
 {
+  private :
+    static guDbCache * m_DbCache;
+
   protected :
     bool        DoSetImage( const wxString &url, wxImage * img, const int imgtype, int imagesize );
 
@@ -41,10 +44,13 @@ class guDbCache : public guDb
     guDbCache( const wxString &dbname );
     ~guDbCache();
 
-    wxImage *   GetImage( const wxString &url, int &imagetype, const int imagesize );
-    bool        SetImage( const wxString &url, wxImage * img, const int imgtype );
-    wxString    GetContent( const wxString &url );
-    bool        SetContent( const wxString &url, const wxString &content );
+    wxImage *           GetImage( const wxString &url, int &imagetype, const int imagesize );
+    bool                SetImage( const wxString &url, wxImage * img, const int imgtype );
+    wxString            GetContent( const wxString &url );
+    bool                SetContent( const wxString &url, const wxString &content );
+
+    static guDbCache *  GetDbCache( void ) { return m_DbCache; }
+    void                SetDbCache( void ) { m_DbCache = this; }
 
 };
 

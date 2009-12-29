@@ -133,15 +133,14 @@ WX_DECLARE_OBJARRAY(guSimilarTrackInfo,guSimilarTrackInfoArray);
 class guLastFM
 {
   private:
-    guTrackArray   m_Songs;
-
-    wxString    m_UserName;
-    wxString    m_Password;
-    wxString    m_AuthToken;
-    wxString    m_AuthSession;
-    wxString    m_AuthKey;
-    wxString    m_Language;
-    int         m_ErrorCode;
+    guTrackArray    m_Songs;
+    wxString        m_UserName;
+    wxString        m_Password;
+    wxString        m_AuthToken;
+    wxString        m_AuthSession;
+    wxString        m_AuthKey;
+    wxString        m_Language;
+    int             m_ErrorCode;
 
   public:
     guLastFM();

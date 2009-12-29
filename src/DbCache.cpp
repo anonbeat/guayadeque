@@ -24,6 +24,8 @@
 
 #include <wx/mstream.h>
 
+guDbCache * guDbCache::m_DbCache = NULL;
+
 // -------------------------------------------------------------------------------- //
 guDbCache::guDbCache( const wxString &dbname ) : guDb( dbname )
 {
@@ -175,7 +177,20 @@ wxString guDbCache::GetContent( const wxString &url )
 // -------------------------------------------------------------------------------- //
 bool guDbCache::SetContent( const wxString &url, const wxString &content )
 {
-    return wxEmptyString;
+//  wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT(
+//          "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
+//          "VALUES( NULL, '%s', ?, %u, %u, %u );" ),
+//          escape_query_str( url ).c_str(), 0, wxDateTime::Now().GetTicks(), 0 ) );
+//  try {
+//    stmt.Bind( 1, ( const unsigned char * ) Outs.GetOutputStreamBuffer()->GetBufferStart(), Outs.GetSize() );
+//    //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
+//    stmt.ExecuteQuery();
+//    return true;
+//  }
+//  catch( wxSQLite3Exception &e )
+//  {
+//    guLogError( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+//  }
 }
 
 // -------------------------------------------------------------------------------- //

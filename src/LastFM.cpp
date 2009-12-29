@@ -19,7 +19,9 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "LastFM.h"
+
 #include "Config.h"
+#include "DbCache.h"
 #include "Utils.h"
 
 #include "curl/http.h"
@@ -114,23 +116,42 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
     if( IsGetAction )
     {
         UrlStr = LASTFM_API_ROOT + UrlStr;
-        // Only with a UserAgent is accepted the Charset requested
-        http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-        http.AddHeader( wxT( "Accept: text/html" ) );
-        http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-        //guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
-        http.Get( Buffer, UrlStr );
+
+        guDbCache * DbCache = guDbCache::GetDbCache();
+
+        if( DbCache )
+        {
+            RetVal = DbCache->GetContent( UrlStr );
+        }
+
+        if( RetVal.IsEmpty() )
+        {
+            // Only with a UserAgent is accepted the Charset requested
+            http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+            http.AddHeader( wxT( "Accept: text/html" ) );
+            http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+
+            guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
+
+            http.Get( Buffer, UrlStr );
+
+            if( Buffer )
+            {
+                RetVal = wxString( Buffer, wxConvUTF8 );
+                free( Buffer );
+            }
+
+            if( !RetVal.IsEmpty() )
+            {
+                DbCache->SetContent( UrlStr, RetVal );
+            }
+        }
     }
     else
     {
         http.Post( UrlStr.Mid( 1 ).char_str(), UrlStr.Length() - 1, LASTFM_API_ROOT );
     }
 
-    if( Buffer )
-    {
-        RetVal = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
-    }
 //    else
 //    {
 //        guLogError( wxT( "DoRequest() : %s\nError: (%d) %s\nHeaders: %s\nBody: %s" ),
@@ -140,7 +161,9 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
 //                http.GetResponseHeader().c_str(),
 //                http.GetResponseBody().c_str() );
 //    }
+
     //guLogMessage( wxT( "%s" ), RetVal.c_str() );
+
     return RetVal;
 }
 
@@ -381,7 +404,7 @@ bool guLastFM::AlbumAddTags( const wxString &Artist, const wxString &Album, cons
 // -------------------------------------------------------------------------------- //
 guAlbumInfo guLastFM::AlbumGetInfo( const wxString &Artist, const wxString &Album )
 {
-    guLastFMRequest      Req; // = guLastFMRequest();
+    guLastFMRequest         Req; // = guLastFMRequest();
     wxString                Res;
     wxString                Status;
     guAlbumInfo             RetVal;
