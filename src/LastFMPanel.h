@@ -185,12 +185,12 @@ class guDownloadImageThread : public wxThread
     wxImage * *                 m_pImage;
     int                         m_Index;
     wxString                    m_ImageUrl;
-    wxSize                      m_ScaleSize;
+    int                         m_ImageSize;
 
   public:
     guDownloadImageThread( guLastFMPanel * lastfmpanel, guFetchLastFMInfoThread * mainthread,
             guDbCache * dbcache, int index, const wxChar * imageurl, int commandid,
-            void * commanddata, wxImage ** pimage, const wxSize &scalesize = wxDefaultSize );
+            void * commanddata, wxImage ** pimage, const int imagesize = guDBCACHE_IMAGE_SIZE_TINY );
     ~guDownloadImageThread();
 
     virtual ExitCode Entry();

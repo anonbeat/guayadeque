@@ -31,7 +31,7 @@ guDbCache::guDbCache( const wxString &dbname ) : guDb( dbname )
 
   query.Add( wxT( "CREATE TABLE IF NOT EXISTS cache( cache_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                   "cache_key varchar, cache_data BLOB, cache_time INTEGER, "
-                  "cache_type INTEGER  );" ) );
+                  "cache_type INTEGER, cache_size INTEGER  );" ) );
 
   query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cache_id' on cache( cache_id ASC );" ) );
   query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'cache_key' on cache( cache_key ASC );" ) );
@@ -53,7 +53,7 @@ guDbCache::~guDbCache()
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * guDbCache::GetImage( const wxString &url, int &imgtype )
+wxImage * guDbCache::GetImage( const wxString &url, int &imgtype, const int imgsize )
 {
   wxImage *             Img = NULL;
   wxString              query;
@@ -61,9 +61,9 @@ wxImage * guDbCache::GetImage( const wxString &url, int &imgtype )
   const unsigned char * Data;
   int                   DataLen = 0;
 
-  query = wxString::Format( wxT( "SELECT cache_data, cache_type FROM cache WHERE cache_key = '%s' LIMIT 1;" ),
-      escape_query_str( url ).c_str() );
-
+  query = wxString::Format( wxT( "SELECT cache_data, cache_type FROM cache WHERE cache_key = '%s' "
+                                 "AND cache_size = %u LIMIT 1;" ),
+      escape_query_str( url ).c_str(), imgsize );
 
   dbRes = ExecuteQuery( query );
 
@@ -99,27 +99,55 @@ wxImage * guDbCache::GetImage( const wxString &url, int &imgtype )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDbCache::SetImage( const wxString &url, wxImage * img, int imgtype )
+bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const int imgtype, const int imagesize )
 {
   wxMemoryOutputStream Outs;
   if( img->SaveFile( Outs, imgtype ) )
   {
       wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT(
-              "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time ) "
-              "VALUES( NULL, '%s', ?, %u, %u );" ),
-              escape_query_str( url ).c_str(), imgtype, wxDateTime::Now().GetTicks() ) );
+              "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
+              "VALUES( NULL, '%s', ?, %u, %u, %u );" ),
+              escape_query_str( url ).c_str(), imgtype, wxDateTime::Now().GetTicks(), imagesize ) );
       try {
         stmt.Bind( 1, ( const unsigned char * ) Outs.GetOutputStreamBuffer()->GetBufferStart(), Outs.GetSize() );
         //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
         stmt.ExecuteQuery();
         return true;
       }
-      catch( wxSQLite3Exception& e )
+      catch( wxSQLite3Exception &e )
       {
         guLogError( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
       }
   }
   return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDbCache::SetImage( const wxString &url, wxImage * img, const int imgtype )
+{
+    int Width = 150;
+    int Height = 150;
+    int ImageSize = guDBCACHE_IMAGE_SIZE_BIG;
+    img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+    if( !DoSetImage( url, img, imgtype, ImageSize ) )
+        return false;
+
+
+    Width = 100;
+    Height = 100;
+    ImageSize = guDBCACHE_IMAGE_SIZE_MID;
+    img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+    if( !DoSetImage( url, img, imgtype, ImageSize ) )
+        return false;
+
+    Width = 50;
+    Height = 50;
+    ImageSize = guDBCACHE_IMAGE_SIZE_TINY;
+    img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+    if( !DoSetImage( url, img, imgtype, ImageSize ) )
+        return false;
+
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //

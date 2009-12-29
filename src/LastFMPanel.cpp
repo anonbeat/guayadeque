@@ -1498,7 +1498,8 @@ void guLastFMPanel::OnUpdateArtistInfo( wxCommandEvent &event )
     if( ArtistInfo )
     {
         m_ArtistInfoCtrl->SetInfo( ArtistInfo );
-        m_MainSizer->FitInside( this );
+        //m_MainSizer->FitInside( this );
+        Layout();
     }
     else
     {
@@ -1518,7 +1519,8 @@ void guLastFMPanel::OnUpdateAlbumItem( wxCommandEvent &event )
     {
         m_AlbumInfoCtrls[ index ]->SetInfo( AlbumInfo );
         //Layout();
-        m_MainSizer->FitInside( this );
+        //m_MainSizer->FitInside( this );
+        Layout();
     }
     else
     {
@@ -1538,7 +1540,8 @@ void guLastFMPanel::OnUpdateArtistItem( wxCommandEvent &event )
     {
         m_ArtistInfoCtrls[ index ]->SetInfo( ArtistInfo );
         //Layout();
-        m_MainSizer->FitInside( this );
+        //m_MainSizer->FitInside( this );
+        Layout();
     }
     else
     {
@@ -1559,7 +1562,8 @@ void guLastFMPanel::OnUpdateTrackItem( wxCommandEvent &event )
     {
         m_TrackInfoCtrls[ index ]->SetInfo( TrackInfo );
         //Layout();
-        m_MainSizer->FitInside( this );
+        //m_MainSizer->FitInside( this );
+        Layout();
     }
     else
     {
@@ -1670,7 +1674,7 @@ void guFetchLastFMInfoThread::WaitDownloadThreads( void )
 // -------------------------------------------------------------------------------- //
 guDownloadImageThread::guDownloadImageThread( guLastFMPanel * lastfmpanel,
     guFetchLastFMInfoThread * mainthread, guDbCache * dbcache, const int index, const wxChar * imageurl,
-    int commandid, void * commanddata, wxImage ** pimage, const wxSize &scalesize ) :
+    int commandid, void * commanddata, wxImage ** pimage, const int imagesize ) :
     wxThread( wxTHREAD_DETACHED )
 {
     m_DbCache     = dbcache;
@@ -1681,7 +1685,7 @@ guDownloadImageThread::guDownloadImageThread( guLastFMPanel * lastfmpanel,
     m_pImage      = pimage;
     m_Index       = index;
     m_ImageUrl    = wxString( imageurl );
-    m_ScaleSize   = scalesize;
+    m_ImageSize   = imagesize;
     // We dont need to lock here as its locked in the Mainthread when the thread is created
     m_MainThread->m_DownloadThreads.Add( this );
 
@@ -1715,7 +1719,7 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
         // We could be running while the database have been closed
         // in this case we are leaving the app so just leave thread
         try {
-            Image = m_DbCache->GetImage( m_ImageUrl, ImageType );
+            Image = m_DbCache->GetImage( m_ImageUrl, ImageType, m_ImageSize );
 
             if( !TestDestroy() && !Image )
             {
@@ -1725,17 +1729,39 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
                     m_DbCache->SetImage( m_ImageUrl, Image, ImageType );
                 else
                     guLogMessage( wxT( "Could not get '%s'" ), m_ImageUrl.c_str() );
+
+                if( !TestDestroy() && Image )
+                {
+                    int Width;
+                    int Height;
+                    switch( m_ImageSize )
+                    {
+                        case guDBCACHE_IMAGE_SIZE_TINY  :
+                        {
+                            Width = Height = 50;
+                            break;
+                        }
+
+                        case guDBCACHE_IMAGE_SIZE_MID   :
+                        {
+                            Width = Height = 100;
+                            break;
+                        }
+
+                        default : //case guDBCACHE_IMAGE_SIZE_BIG    :
+                        {
+                            Width = Height = 150;
+                            break;
+                        }
+                    }
+                    Image->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+                }
             }
 
         }
         catch(...)
         {
             return 0;
-        }
-
-        if( !TestDestroy() && Image && ( m_ScaleSize.x > 0 ) )
-        {
-            Image->Rescale( m_ScaleSize.x, m_ScaleSize.y, wxIMAGE_QUALITY_HIGH );
         }
     }
 
@@ -1824,7 +1850,8 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
                                     TopAlbums[ index ].m_ImageLink.c_str(),
                                     ID_LASTFM_UPDATE_ALBUMINFO,
                                     LastFMAlbumInfo,
-                                    &LastFMAlbumInfo->m_Image, wxSize( 50, 50 ) );
+                                    &LastFMAlbumInfo->m_Image,
+                                    guDBCACHE_IMAGE_SIZE_TINY );
                             if( !DownloadImageThread )
                             {
                                 guLogError( wxT( "Could not create the album image download thread %u" ), index );
@@ -1903,7 +1930,8 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
                         ArtistInfo.m_ImageLink.c_str(),
                         ID_LASTFM_UPDATE_ARTISTINFO,
                         LastFMArtistInfo,
-                        &LastFMArtistInfo->m_Image, wxSize( 100, 100 ) );
+                        &LastFMArtistInfo->m_Image,
+                        guDBCACHE_IMAGE_SIZE_MID );
                     if( !DownloadImageThread )
                     {
                         guLogError( wxT( "Could not create the artist image download thread" ) );
@@ -1936,7 +1964,8 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
                                 SimilarArtists[ index ].m_ImageLink.c_str(),
                                 ID_LASTFM_UPDATE_SIMARTIST,
                                 LastFMArtistInfo,
-                                &LastFMArtistInfo->m_Image, wxSize( 50, 50 ) );
+                                &LastFMArtistInfo->m_Image,
+                                guDBCACHE_IMAGE_SIZE_TINY );
                             if( !DownloadImageThread )
                             {
                                 guLogError( wxT( "Could not create the similar artist image download thread %u" ), index );
@@ -2020,7 +2049,8 @@ guFetchTrackInfoThread::ExitCode guFetchTrackInfoThread::Entry()
                                     index, SimilarTracks[ index ].m_ImageLink.c_str(),
                                     ID_LASTFM_UPDATE_SIMTRACK,
                                     LastFMTrackInfo,
-                                    &LastFMTrackInfo->m_Image, wxSize( 50, 50 ) );
+                                    &LastFMTrackInfo->m_Image,
+                                    guDBCACHE_IMAGE_SIZE_TINY );
                             if( !DownloadImageThread )
                             {
                                 guLogError( wxT( "Could not create the track image download thread %u" ), index );
