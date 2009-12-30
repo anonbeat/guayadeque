@@ -94,12 +94,12 @@ void guTaskBarIcon::OnClick( wxTaskBarIconEvent &event )
         if( !m_MainFrame->IsShown() )
         {
             m_MainFrame->Show( true );
-            m_MainFrame->Iconize( false );
+            if( m_MainFrame->IsIconized() )
+                m_MainFrame->Iconize( false );
         }
         else if( Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
         {
             m_MainFrame->Show( false );
-            m_MainFrame->Iconize( false );
         }
         else
         {
