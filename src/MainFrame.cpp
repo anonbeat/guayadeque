@@ -538,7 +538,7 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 {
-    //guLogMessage( wxT( "OnCloseWindow called..." ) );
+    guLogMessage( wxT( "OnCloseWindow called... %u" ), event.CanVeto() );
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
@@ -584,11 +584,15 @@ void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
             Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
             Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
         {
-            if( event.Iconized() )
+            if( event.IsIconized() )
             {
-                Iconize( false );
-                Show( false );
-                return;
+                if( IsShown() )
+                    Show( false );
+            }
+            else
+            {
+                if( !IsShown() )
+                    Show( true );
             }
         }
     }
