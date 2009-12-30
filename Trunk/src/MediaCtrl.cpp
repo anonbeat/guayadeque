@@ -136,14 +136,14 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             break;
         }
 
-        case GST_MESSAGE_ELEMENT :
-        {
-            const GstStructure * s = gst_message_get_structure( message );
-            const gchar * name = gst_structure_get_name( s );
-
-            printf( "ELEMENT MSG %s\n", name );
-            break;
-        }
+//        case GST_MESSAGE_ELEMENT :
+//        {
+//            const GstStructure * s = gst_message_get_structure( message );
+//            const gchar * name = gst_structure_get_name( s );
+//
+//            printf( "ELEMENT MSG %s\n", name );
+//            break;
+//        }
 
         default:
             break;
@@ -267,19 +267,19 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
             return;
         }
 
-        GstElement * level = gst_element_factory_make( "level", "levelctrl" );
-        if( !GST_IS_ELEMENT( level ) )
-        {
-            if( G_IS_OBJECT( level ) )
-                g_object_unref( level );
-            level = NULL;
-            guLogError( wxT( "Could not create the level object" ) );
-            return;
-        }
-        else
-        {
-            g_object_set( level, "message", true, NULL );
-        }
+//        GstElement * level = gst_element_factory_make( "level", "levelctrl" );
+//        if( !GST_IS_ELEMENT( level ) )
+//        {
+//            if( G_IS_OBJECT( level ) )
+//                g_object_unref( level );
+//            level = NULL;
+//            guLogError( wxT( "Could not create the level object" ) );
+//            return;
+//        }
+//        else
+//        {
+//            g_object_set( level, "message", true, NULL );
+//        }
 
         GstElement * replay = gst_element_factory_make( "rgvolume", "replaygain" );
         if( !GST_IS_ELEMENT( replay ) )
@@ -295,11 +295,17 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
             g_object_set( replay, "album-mode", false, NULL );
         }
 
-        gst_bin_add( GST_BIN( m_Playbin ), level );
+//        GstCaps *caps;
+//        caps = gst_caps_from_string( "audio/x-raw-int,channels=2" );
+//
+//        gst_bin_add( GST_BIN( m_Playbin ), level );
         gst_bin_add( GST_BIN( m_Playbin ), replay );
+//        gst_element_link_filtered( replay, level, caps );
+
         g_object_set( G_OBJECT( m_Playbin ), "audio-sink", outputsink, NULL );
 
-        // This dont make any difference in gapless playback :(
+
+            // This dont make any difference in gapless playback :(
 //        if( !SetProperty( outputsink, "buffer-time", (gint64) 5000*1000 ) )
 //            guLogMessage( wxT( "Could not set buffer time to gstreamer object." ) );
 

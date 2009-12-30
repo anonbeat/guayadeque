@@ -173,6 +173,7 @@ wxString guDbCache::GetContent( const wxString &url )
       RetVal = dbRes.GetString( 0 );
   }
   dbRes.Finalize();
+
   return RetVal;
 }
 
@@ -220,17 +221,19 @@ bool guDbCache::SetContent( const wxString &url, const wxString &content )
 // -------------------------------------------------------------------------------- //
 void guDbCache::ClearExpired( void )
 {
+    // last.fm queries are kept only 7 days
     wxString query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
         wxDateTime::Now().GetTicks() - 604800, guDBCACHE_TYPE_TEXT );
 
     ExecuteUpdate( query );
 
+    // Images are kept 30 days
     query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
         wxDateTime::Now().GetTicks() - 2592000, guDBCACHE_TYPE_TEXT );
 
     ExecuteUpdate( query );
 
-    guLogMessage( wxT( "Delete expired Cache elements done" ) );
+    //guLogMessage( wxT( "Delete expired Cache elements done" ) );
 }
 
 // -------------------------------------------------------------------------------- //
