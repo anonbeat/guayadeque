@@ -122,6 +122,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
         if( DbCache )
         {
             RetVal = DbCache->GetContent( UrlStr );
+            //guLogMessage( wxT( "DbCache::GetContent:\n%s" ), RetVal.Mid( 0, 100 ).c_str() );
         }
 
         if( RetVal.IsEmpty() )
@@ -131,19 +132,26 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
             http.AddHeader( wxT( "Accept: text/html" ) );
             http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
 
-            guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
+            //guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
 
             http.Get( Buffer, UrlStr );
 
             if( Buffer )
             {
                 RetVal = wxString( Buffer, wxConvUTF8 );
-                free( Buffer );
-            }
+                if( RetVal.IsEmpty() )
+                {
+                    RetVal = wxString( Buffer, wxConvISO8859_1 );
+                    if( RetVal.IsEmpty() )
+                        RetVal = wxString( Buffer, wxConvLibc );
+                }
 
-            if( !RetVal.IsEmpty() )
-            {
-                DbCache->SetContent( UrlStr, RetVal );
+                if( !RetVal.IsEmpty() )
+                {
+                    DbCache->SetContent( UrlStr, RetVal );
+                }
+
+                free( Buffer );
             }
         }
     }

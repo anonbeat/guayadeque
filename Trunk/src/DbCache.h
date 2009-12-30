@@ -31,6 +31,8 @@ enum guDBCacheImageSize {
     guDBCACHE_IMAGE_SIZE_BIG
 };
 
+#define guDBCACHE_TYPE_TEXT     0x45545458
+
 // -------------------------------------------------------------------------------- //
 class guDbCache : public guDb
 {
@@ -47,10 +49,12 @@ class guDbCache : public guDb
     wxImage *           GetImage( const wxString &url, int &imagetype, const int imagesize );
     bool                SetImage( const wxString &url, wxImage * img, const int imgtype );
     wxString            GetContent( const wxString &url );
+    bool                SetContent( const wxString &url, const char * str, const int len );
     bool                SetContent( const wxString &url, const wxString &content );
 
     static guDbCache *  GetDbCache( void ) { return m_DbCache; }
     void                SetDbCache( void ) { m_DbCache = this; }
+    void                ClearExpired( void );
 
 };
 

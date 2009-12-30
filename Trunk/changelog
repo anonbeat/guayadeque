@@ -1,4 +1,5 @@
 
+  * Added a cache for last.fm queries and online images
   * Fixed crash in mpris when application send incomplete method calls
   * Fixed bug with library update when library paths changed
   * Allow to move items in playlists using dragging with mouse
