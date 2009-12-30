@@ -1689,8 +1689,7 @@ guDownloadImageThread::guDownloadImageThread( guLastFMPanel * lastfmpanel,
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
-        //SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
         Run();
     }
 }

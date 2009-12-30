@@ -90,10 +90,10 @@ wxImage * guDbCache::GetImage( const wxString &url, int &imgtype, const int imgs
       }
     }
   }
-  else
-  {
-      guLogMessage( wxT( "DbCache failed '%s'" ), url.c_str() );
-  }
+//  else
+//  {
+//      guLogMessage( wxT( "DbCache failed '%s'" ), url.c_str() );
+//  }
 
   dbRes.Finalize();
 
@@ -127,38 +127,41 @@ bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const int imgtyp
 // -------------------------------------------------------------------------------- //
 bool guDbCache::SetImage( const wxString &url, wxImage * img, const int imgtype )
 {
-    int Width = 150;
-    int Height = 150;
-    int ImageSize = guDBCACHE_IMAGE_SIZE_BIG;
-    img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
-    if( !DoSetImage( url, img, imgtype, ImageSize ) )
-        return false;
+  int Width = 150;
+  int Height = 150;
+  int ImageSize = guDBCACHE_IMAGE_SIZE_BIG;
+  img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+  if( !DoSetImage( url, img, imgtype, ImageSize ) )
+    return false;
 
 
-    Width = 100;
-    Height = 100;
-    ImageSize = guDBCACHE_IMAGE_SIZE_MID;
-    img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
-    if( !DoSetImage( url, img, imgtype, ImageSize ) )
-        return false;
+  Width = 100;
+  Height = 100;
+  ImageSize = guDBCACHE_IMAGE_SIZE_MID;
+  img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+  if( !DoSetImage( url, img, imgtype, ImageSize ) )
+    return false;
 
-    Width = 50;
-    Height = 50;
-    ImageSize = guDBCACHE_IMAGE_SIZE_TINY;
-    img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
-    if( !DoSetImage( url, img, imgtype, ImageSize ) )
-        return false;
+  Width = 50;
+  Height = 50;
+  ImageSize = guDBCACHE_IMAGE_SIZE_TINY;
+  img->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+  if( !DoSetImage( url, img, imgtype, ImageSize ) )
+    return false;
 
-    return true;
+  // delete the expired entries but call it only 5% of the times
+  if( guRandom( 1000 ) < 20 )
+    ClearExpired();
+
+  return true;
 }
 
 // -------------------------------------------------------------------------------- //
 wxString guDbCache::GetContent( const wxString &url )
 {
+  wxString              RetVal = wxEmptyString;
   wxString              query;
   wxSQLite3ResultSet    dbRes;
-  const char *          Data = NULL;
-  int                   DataLen = 0;
 
   query = wxString::Format( wxT( "SELECT cache_data FROM cache WHERE cache_key = '%s' LIMIT 1;" ),
              escape_query_str( url ).c_str() );
@@ -167,30 +170,67 @@ wxString guDbCache::GetContent( const wxString &url )
 
   if( dbRes.NextRow() )
   {
-    Data = ( const char * ) dbRes.GetBlob( 0, DataLen );
+      RetVal = dbRes.GetString( 0 );
   }
   dbRes.Finalize();
+  return RetVal;
+}
 
-  return wxString( Data, wxConvUTF8 );
+// -------------------------------------------------------------------------------- //
+bool guDbCache::SetContent( const wxString &url, const char * str, const int len )
+{
+  try {
+    wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT(
+          "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
+          "VALUES( NULL, '%s', ?, %u, %u, %u );" ),
+          escape_query_str( url ).c_str(), guDBCACHE_TYPE_TEXT, wxDateTime::Now().GetTicks(), 0 ) );
+
+    stmt.Bind( 1, ( const unsigned char * ) str, len );
+    //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
+    stmt.ExecuteQuery();
+    return true;
+  }
+  catch( wxSQLite3Exception &e )
+  {
+    guLogError( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+  }
+  return false;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guDbCache::SetContent( const wxString &url, const wxString &content )
 {
-//  wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT(
-//          "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
-//          "VALUES( NULL, '%s', ?, %u, %u, %u );" ),
-//          escape_query_str( url ).c_str(), 0, wxDateTime::Now().GetTicks(), 0 ) );
-//  try {
-//    stmt.Bind( 1, ( const unsigned char * ) Outs.GetOutputStreamBuffer()->GetBufferStart(), Outs.GetSize() );
-//    //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
-//    stmt.ExecuteQuery();
-//    return true;
-//  }
-//  catch( wxSQLite3Exception &e )
-//  {
-//    guLogError( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
-//  }
+  wxString query = wxString::Format( wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, "
+                "cache_type, cache_time, cache_size ) VALUES( NULL, '%s', '%s', %u, %u, %u );" ),
+          escape_query_str( url ).c_str(),
+          escape_query_str( content ).c_str(),
+          guDBCACHE_TYPE_TEXT,
+          wxDateTime::Now().GetTicks(),
+          0 );
+
+  ExecuteUpdate( query );
+
+  // delete the expired entries but call it only 2% of the times
+  if( guRandom( 1000 ) < 20 )
+    ClearExpired();
+
+  return true;
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbCache::ClearExpired( void )
+{
+    wxString query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
+        wxDateTime::Now().GetTicks() - 604800, guDBCACHE_TYPE_TEXT );
+
+    ExecuteUpdate( query );
+
+    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
+        wxDateTime::Now().GetTicks() - 2592000, guDBCACHE_TYPE_TEXT );
+
+    ExecuteUpdate( query );
+
+    guLogMessage( wxT( "Delete expired Cache elements done" ) );
 }
 
 // -------------------------------------------------------------------------------- //
