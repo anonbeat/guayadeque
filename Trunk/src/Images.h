@@ -67,10 +67,10 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_playback_pause,
     guIMAGE_INDEX_tiny_playback_start,
     guIMAGE_INDEX_up,
-    guIMAGE_INDEX_volume_high,
-    guIMAGE_INDEX_volume_low,
-    guIMAGE_INDEX_volume_medium,
-    guIMAGE_INDEX_volume_muted,
+    guIMAGE_INDEX_tiny_volume_high,
+    guIMAGE_INDEX_tiny_volume_low,
+    guIMAGE_INDEX_tiny_volume_medium,
+    guIMAGE_INDEX_tiny_volume_muted,
     guIMAGE_INDEX_grey_star_tiny,
     guIMAGE_INDEX_grey_star_mid,
     guIMAGE_INDEX_grey_star_big,
@@ -94,7 +94,13 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_shoutcast,
     guIMAGE_INDEX_tiny_net_radio,
     guIMAGE_INDEX_tiny_left,
-    guIMAGE_INDEX_tiny_right
+    guIMAGE_INDEX_tiny_right,
+    guIMAGE_INDEX_tiny_skip_backward,
+    guIMAGE_INDEX_tiny_skip_forward,
+    guIMAGE_INDEX_tiny_search_engine,
+    guIMAGE_INDEX_tiny_playlist_shuffle,
+    guIMAGE_INDEX_tiny_playlist_repeat,
+    guIMAGE_INDEX_tiny_mixer
 };
 
 

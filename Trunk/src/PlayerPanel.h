@@ -118,6 +118,7 @@ class guPlayerPanel : public wxPanel
 	wxToggleBitmapButton *  m_SmartPlayButton;
 	wxBitmapButton *        m_RandomPlayButton;
 	wxToggleBitmapButton *  m_RepeatPlayButton;
+	wxBitmapButton *        m_EqualizerButton;
 	//
 	wxStaticBitmap *        m_PlayerCoverBitmap;
 //	guAutoScrollText *      m_TitleLabel;
@@ -226,6 +227,7 @@ class guPlayerPanel : public wxPanel
 	void                OnSmartPlayButtonClick( wxCommandEvent &event );
 	void                OnRandomPlayButtonClick( wxCommandEvent &event );
 	void                OnRepeatPlayButtonClick( wxCommandEvent &event );
+	void                OnEqualizerButtonClicked( wxCommandEvent &event );
 
     void                OnAboutToFinish( void );
 

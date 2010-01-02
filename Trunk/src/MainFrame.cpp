@@ -538,7 +538,6 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 {
-    guLogMessage( wxT( "OnCloseWindow called... %u" ), event.CanVeto() );
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
