@@ -42,6 +42,7 @@ guMainApp::guMainApp() : wxApp()
         wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque" ), 0770 );
         guLogMessage( wxT( "Created the configuration directory" ) );
     }
+
     if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ) ) )
     {
         if( wxFileExists( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ) ) )
@@ -55,6 +56,21 @@ guMainApp::guMainApp() : wxApp()
                         wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ), false );
         }
         guLogMessage( wxT( "Created the default configuration file" ) );
+    }
+
+    if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/equalizers.conf" ) ) )
+    {
+        if( wxFileExists( wxT( "/usr/share/guayadeque/equalizers.default.conf" ) ) )
+        {
+            wxCopyFile( wxT( "/usr/share/guayadeque/equalizers.default.conf" ),
+                        wxGetHomeDir() + wxT( "/.guayadeque/equalizers.conf" ), false );
+        }
+        else if( wxFileExists( wxT( "/usr/local/share/guayadeque/equalizers.default.conf" ) ) )
+        {
+            wxCopyFile( wxT( "/usr/local/share/guayadeque/equalizers.default.conf" ),
+                        wxGetHomeDir() + wxT( "/.guayadeque/equalizers.conf" ), false );
+        }
+        guLogMessage( wxT( "Created the default equalizers file" ) );
     }
 
 
