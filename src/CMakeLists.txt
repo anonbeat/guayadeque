@@ -176,6 +176,8 @@ ADD_EXECUTABLE( guayadeque
 	PlayListAppend.h
 	TrackChangeInfo.cpp
 	TrackChangeInfo.h
+	Equalizer.cpp
+	Equalizer.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

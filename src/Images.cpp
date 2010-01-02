@@ -37,11 +37,15 @@
 #include "./images/edit_delete_png.h"
 #include "./images/edit_png.h"
 #include "./images/exit_png.h"
+#include "./images/grey_star_big.h"
+#include "./images/grey_star_mid.h"
+#include "./images/grey_star_tiny.h"
 #include "./images/guayadeque_png.h"
 #include "./images/lastfm_as_off_png.h"
 #include "./images/lastfm_as_on_png.h"
 #include "./images/lastfm_on.h"
 #include "./images/left_png.h"
+#include "./images/musicbrainz.h"
 #include "./images/net_radio_jpg.h"
 #include "./images/no_cover_jpg.h"
 #include "./images/no_photo_png.h"
@@ -52,7 +56,9 @@
 #include "./images/playlist_repeat_png.h"
 #include "./images/playlist_shuffle_png.h"
 #include "./images/playlist_smart_png.h"
+#include "./images/podcast_icon.h"
 #include "./images/right_png.h"
+#include "./images/search_engine.h"
 #include "./images/search_png.h"
 #include "./images/skip_backward_png.h"
 #include "./images/skip_forward_png.h"
@@ -62,37 +68,37 @@
 #include "./images/tiny_accept_png.h"
 #include "./images/tiny_add_png.h"
 #include "./images/tiny_del_png.h"
+#include "./images/tiny_doc_save.h"
+#include "./images/tiny_edit_clear.h"
+#include "./images/tiny_edit_copy.h"
+#include "./images/tiny_left.h"
+#include "./images/tiny_mixer.h"
+#include "./images/tiny_net_radio.h"
+#include "./images/tiny_numerate.h"
 #include "./images/tiny_playback_pause_png.h"
 #include "./images/tiny_playback_start_png.h"
-#include "./images/up_png.h"
-#include "./images/volume_high_png.h"
-#include "./images/volume_low_png.h"
-#include "./images/volume_medium_png.h"
-#include "./images/volume_muted_png.h"
-#include "./images/grey_star_tiny.h"
-#include "./images/grey_star_mid.h"
-#include "./images/grey_star_big.h"
-#include "./images/yellow_star_tiny.h"
-#include "./images/yellow_star_mid.h"
-#include "./images/yellow_star_big.h"
-#include "./images/track_png.h"
-#include "./images/tiny_search.h"
-#include "./images/search_engine.h"
-#include "./images/musicbrainz.h"
-#include "./images/tiny_edit_copy.h"
-#include "./images/tiny_search_again.h"
-#include "./images/tiny_numerate.h"
-#include "./images/tiny_edit_clear.h"
-#include "./images/podcast_icon.h"
+#include "./images/tiny_playlist_repeat.h"
+#include "./images/tiny_playlist_shufle.h"
 #include "./images/tiny_podcast_icon.h"
-#include "./images/tiny_status_pending.h"
-#include "./images/tiny_status_error.h"
-#include "./images/tiny_doc_save.h"
 #include "./images/tiny_reload.h"
-#include "./images/tiny_shoutcast.h"
-#include "./images/tiny_net_radio.h"
-#include "./images/tiny_left.h"
 #include "./images/tiny_right.h"
+#include "./images/tiny_search.h"
+#include "./images/tiny_search_again.h"
+#include "./images/tiny_search_engine.h"
+#include "./images/tiny_shoutcast.h"
+#include "./images/tiny_skip_backward.h"
+#include "./images/tiny_skip_forward.h"
+#include "./images/tiny_status_error.h"
+#include "./images/tiny_status_pending.h"
+#include "./images/tiny_volume_high.h"
+#include "./images/tiny_volume_low.h"
+#include "./images/tiny_volume_medium.h"
+#include "./images/tiny_volume_muted.h"
+#include "./images/track_png.h"
+#include "./images/up_png.h"
+#include "./images/yellow_star_big.h"
+#include "./images/yellow_star_mid.h"
+#include "./images/yellow_star_tiny.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -101,78 +107,86 @@ typedef struct {
     long                  imgtype;
 } guImage_Item;
 
+#define GUIMAGE( IMAGENAME, IMAGETYPE )    { IMAGENAME, sizeof( IMAGENAME ), IMAGETYPE }
+
 // -------------------------------------------------------------------------------- //
 guImage_Item guImage_Items[] = {
-    { guImage_add,                  sizeof( guImage_add ),                  wxBITMAP_TYPE_PNG },
-    { guImage_blank_cd_cover,       sizeof( guImage_blank_cd_cover ),       wxBITMAP_TYPE_PNG },
-    { guImage_bookmark,             sizeof( guImage_bookmark ),             wxBITMAP_TYPE_PNG },
-    { guImage_default_lastfm_image, sizeof( guImage_default_lastfm_image ), wxBITMAP_TYPE_PNG },
-    { guImage_del,                  sizeof( guImage_del ),                  wxBITMAP_TYPE_PNG },
-    { guImage_doc_new,              sizeof( guImage_doc_new ),              wxBITMAP_TYPE_PNG },
-    { guImage_doc_save,             sizeof( guImage_doc_save ),             wxBITMAP_TYPE_PNG },
-    { guImage_download_covers,      sizeof( guImage_download_covers ),      wxBITMAP_TYPE_PNG },
-    { guImage_down,                 sizeof( guImage_down ),                 wxBITMAP_TYPE_PNG },
-    { guImage_edit_clear,           sizeof( guImage_edit_clear ),           wxBITMAP_TYPE_PNG },
-    { guImage_edit_copy,            sizeof( guImage_edit_copy ),            wxBITMAP_TYPE_PNG },
-    { guImage_edit_delete,          sizeof( guImage_edit_delete ),          wxBITMAP_TYPE_PNG },
-    { guImage_edit,                 sizeof( guImage_edit ),                 wxBITMAP_TYPE_PNG },
-    { guImage_exit,                 sizeof( guImage_exit ),                 wxBITMAP_TYPE_PNG },
-    { guImage_guayadeque,           sizeof( guImage_guayadeque ),           wxBITMAP_TYPE_PNG },
-    { guImage_lastfm_as_off,        sizeof( guImage_lastfm_as_off ),        wxBITMAP_TYPE_PNG },
-    { guImage_lastfm_as_on,         sizeof( guImage_lastfm_as_on ),         wxBITMAP_TYPE_PNG },
-    { guImage_lastfm_on,            sizeof( guImage_lastfm_on ),            wxBITMAP_TYPE_PNG },
-    { guImage_left,                 sizeof( guImage_left ),                 wxBITMAP_TYPE_PNG },
-    { guImage_net_radio,            sizeof( guImage_net_radio ),            wxBITMAP_TYPE_JPEG },
-    { guImage_no_cover,             sizeof( guImage_no_cover ),             wxBITMAP_TYPE_JPEG },
-    { guImage_no_photo,             sizeof( guImage_no_photo ),             wxBITMAP_TYPE_PNG },
-    { guImage_numerate,             sizeof( guImage_numerate ),             wxBITMAP_TYPE_PNG },
-    { guImage_playback_pause,       sizeof( guImage_playback_pause ),       wxBITMAP_TYPE_PNG },
-    { guImage_playback_start,       sizeof( guImage_playback_start ),       wxBITMAP_TYPE_PNG },
-    { guImage_playback_stop,        sizeof( guImage_playback_stop ),        wxBITMAP_TYPE_PNG },
-    { guImage_playlist_repeat,      sizeof( guImage_playlist_repeat ),      wxBITMAP_TYPE_PNG },
-    { guImage_playlist_shuffle,     sizeof( guImage_playlist_shuffle ),     wxBITMAP_TYPE_PNG },
-    { guImage_playlist_smart,       sizeof( guImage_playlist_smart ),       wxBITMAP_TYPE_PNG },
-    { guImage_right,                sizeof( guImage_right ),                wxBITMAP_TYPE_PNG },
-    { guImage_search,               sizeof( guImage_search ),               wxBITMAP_TYPE_PNG },
-    { guImage_skip_backward,        sizeof( guImage_skip_backward ),        wxBITMAP_TYPE_PNG },
-    { guImage_skip_forward,         sizeof( guImage_skip_forward ),         wxBITMAP_TYPE_PNG },
-    { guImage_splash,               sizeof( guImage_splash ),               wxBITMAP_TYPE_PNG },
-    { guImage_system_run,           sizeof( guImage_system_run ),           wxBITMAP_TYPE_PNG },
-    { guImage_tags,                 sizeof( guImage_tags ),                 wxBITMAP_TYPE_PNG },
-    { guImage_tiny_accept,          sizeof( guImage_tiny_accept ),          wxBITMAP_TYPE_PNG },
-    { guImage_tiny_add,             sizeof( guImage_tiny_add ),             wxBITMAP_TYPE_PNG },
-    { guImage_tiny_del,             sizeof( guImage_tiny_del ),             wxBITMAP_TYPE_PNG },
-    { guImage_tiny_playback_pause,  sizeof( guImage_tiny_playback_pause ),  wxBITMAP_TYPE_PNG },
-    { guImage_tiny_playback_start,  sizeof( guImage_tiny_playback_start ),  wxBITMAP_TYPE_PNG },
-    { guImage_up,                   sizeof( guImage_up ),                   wxBITMAP_TYPE_PNG },
-    { guImage_volume_high,          sizeof( guImage_volume_high ),          wxBITMAP_TYPE_PNG },
-    { guImage_volume_low,           sizeof( guImage_volume_low ),           wxBITMAP_TYPE_PNG },
-    { guImage_volume_medium,        sizeof( guImage_volume_medium ),        wxBITMAP_TYPE_PNG },
-    { guImage_volume_muted,         sizeof( guImage_volume_muted ),         wxBITMAP_TYPE_PNG },
-    { guImage_grey_star_tiny,       sizeof( guImage_grey_star_tiny ),       wxBITMAP_TYPE_PNG },
-    { guImage_grey_star_mid,        sizeof( guImage_grey_star_mid ),        wxBITMAP_TYPE_PNG },
-    { guImage_grey_star_big,        sizeof( guImage_grey_star_big ),        wxBITMAP_TYPE_PNG },
-    { guImage_yellow_star_tiny,     sizeof( guImage_yellow_star_tiny ),     wxBITMAP_TYPE_PNG },
-    { guImage_yellow_star_mid,      sizeof( guImage_yellow_star_mid ),      wxBITMAP_TYPE_PNG },
-    { guImage_yellow_star_big,      sizeof( guImage_yellow_star_big ),      wxBITMAP_TYPE_PNG },
-    { guImage_track,                sizeof( guImage_track ),                wxBITMAP_TYPE_PNG },
-    { guImage_tiny_search,          sizeof( guImage_tiny_search ),          wxBITMAP_TYPE_PNG },
-    { guImage_search_engine,	    sizeof( guImage_search_engine ),        wxBITMAP_TYPE_PNG },
-    { guImage_musicbrainz,	    sizeof( guImage_musicbrainz ),          wxBITMAP_TYPE_PNG },
-    { guImage_tiny_edit_copy,	    sizeof( guImage_tiny_edit_copy ), 	    wxBITMAP_TYPE_PNG },
-    { guImage_tiny_search_again,    sizeof( guImage_tiny_search_again ),    wxBITMAP_TYPE_PNG },
-    { guImage_tiny_numerate,	    sizeof( guImage_tiny_numerate ),        wxBITMAP_TYPE_PNG },
-    { guImage_tiny_edit_clear,      sizeof( guImage_tiny_edit_clear ),      wxBITMAP_TYPE_PNG },
-    { guImage_podcast_icon,         sizeof( guImage_podcast_icon ),         wxBITMAP_TYPE_JPEG },
-    { guImage_tiny_podcast_icon,    sizeof( guImage_tiny_podcast_icon ),    wxBITMAP_TYPE_JPEG },
-    { guImage_tiny_status_pending,  sizeof( guImage_tiny_status_pending ),  wxBITMAP_TYPE_PNG },
-    { guImage_tiny_status_error,    sizeof( guImage_tiny_status_error ),    wxBITMAP_TYPE_PNG },
-    { guImage_tiny_doc_save,        sizeof( guImage_tiny_doc_save ),        wxBITMAP_TYPE_PNG },
-    { guImage_tiny_reload,          sizeof( guImage_tiny_reload ),          wxBITMAP_TYPE_PNG },
-    { guImage_tiny_shoutcast,       sizeof( guImage_tiny_shoutcast ),       wxBITMAP_TYPE_PNG },
-    { guImage_tiny_net_radio,       sizeof( guImage_tiny_net_radio ),       wxBITMAP_TYPE_JPEG },
-    { guImage_tiny_left,            sizeof( guImage_tiny_left ),            wxBITMAP_TYPE_PNG },
-    { guImage_tiny_right,           sizeof( guImage_tiny_right ),           wxBITMAP_TYPE_PNG }
+    GUIMAGE( guImage_add,                   wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_blank_cd_cover,        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_bookmark,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_default_lastfm_image,  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_del,                   wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_doc_new,               wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_doc_save,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_download_covers,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_down,                  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_edit_clear,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_edit_copy,             wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_edit_delete,           wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_edit,                  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_exit,                  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_guayadeque,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_lastfm_as_off,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_lastfm_as_on,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_lastfm_on,             wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_left,                  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_net_radio,             wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_no_cover,              wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_no_photo,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_numerate,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_playback_pause,        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_playback_start,        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_playback_stop,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_playlist_repeat,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_playlist_shuffle,      wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_playlist_smart,        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_right,                 wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_search,                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_skip_backward,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_skip_forward,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_splash,                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_system_run,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tags,                  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_accept,           wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_add,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_del,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_playback_pause,   wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_playback_start,   wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_up,                    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_volume_high,      wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_volume_low,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_volume_medium,    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_volume_muted,     wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_grey_star_tiny,        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_grey_star_mid,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_grey_star_big,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_yellow_star_tiny,      wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_yellow_star_mid,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_yellow_star_big,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_track,                 wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_search,           wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_search_engine,	        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_musicbrainz,	        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_edit_copy,	    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_search_again,     wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_numerate,	        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_edit_clear,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_podcast_icon,          wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_tiny_podcast_icon,     wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_tiny_status_pending,   wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_status_error,     wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_doc_save,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_reload,           wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_shoutcast,        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_net_radio,        wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_tiny_left,             wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_right,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_skip_backward,    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_skip_forward,     wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_search_engine,    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_playlist_shuffle, wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_playlist_repeat,  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_mixer,            wxBITMAP_TYPE_PNG )
 };
 
 

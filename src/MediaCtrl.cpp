@@ -136,14 +136,54 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             break;
         }
 
-//        case GST_MESSAGE_ELEMENT :
-//        {
-//            const GstStructure * s = gst_message_get_structure( message );
-//            const gchar * name = gst_structure_get_name( s );
+        case GST_MESSAGE_ELEMENT :
+        {
+            const GstStructure * s = gst_message_get_structure( message );
+            const gchar * name = gst_structure_get_name( s );
+
+            //guLogMessage( wxT( "MESSAGE_ELEMENT %s" ), wxString( element ).c_str() );
+//            if( !strcmp( name, "level" ) )
+//            {
+//                gint channels;
+//                GstClockTime endtime;
+//                gdouble rms_dB, peak_dB, decay_dB;
+////                gdouble rms;
+//                const GValue * list;
+//                const GValue * value;
 //
-//            printf( "ELEMENT MSG %s\n", name );
-//            break;
-//        }
+//                gint i;
+//
+//                if( !gst_structure_get_clock_time( s, "endtime", &endtime ) )
+//                    guLogWarning( wxT( "Could not parse endtime" ) );
+//
+//                /* we can get the number of channels as the length of any of the value
+//                * lists */
+//                list = gst_structure_get_value( s, "rms" );
+//                channels = gst_value_list_get_size( list );
+//
+//                //guLogMessage( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
+//
+//                for( i = 0; i < channels; ++i )
+//                {
+//                    //guLogMessage( wxT( "channel %d" ), i );
+//                    list = gst_structure_get_value( s, "rms" );
+//                    value = gst_value_list_get_value( list, i );
+//                    rms_dB = g_value_get_double( value );
+//                    list = gst_structure_get_value( s, "peak" );
+//                    value = gst_value_list_get_value( list, i );
+//                    peak_dB = g_value_get_double( value );
+//                    list = gst_structure_get_value( s, "decay" );
+//                    value = gst_value_list_get_value( list, i );
+//                    decay_dB = g_value_get_double( value );
+//                    guLogMessage( wxT( "(%i)    RMS: %f dB, peak: %f dB, decay: %f dB" ), i, rms_dB, peak_dB, decay_dB );
+//
+////                    /* converting from dB to normal gives us a value between 0.0 and 1.0 */
+////                    rms = pow( 10, rms_dB / 20 );
+////                    guLogMessage( wxT( "    normalized rms value: %f" ), rms );
+//                }
+//            }
+            break;
+        }
 
         default:
             break;
@@ -267,20 +307,6 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
             return;
         }
 
-//        GstElement * level = gst_element_factory_make( "level", "levelctrl" );
-//        if( !GST_IS_ELEMENT( level ) )
-//        {
-//            if( G_IS_OBJECT( level ) )
-//                g_object_unref( level );
-//            level = NULL;
-//            guLogError( wxT( "Could not create the level object" ) );
-//            return;
-//        }
-//        else
-//        {
-//            g_object_set( level, "message", true, NULL );
-//        }
-
         GstElement * replay = gst_element_factory_make( "rgvolume", "replaygain" );
         if( !GST_IS_ELEMENT( replay ) )
         {
@@ -302,8 +328,73 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         gst_bin_add( GST_BIN( m_Playbin ), replay );
 //        gst_element_link_filtered( replay, level, caps );
 
-        g_object_set( G_OBJECT( m_Playbin ), "audio-sink", outputsink, NULL );
+        GstElement * sinkbin = gst_bin_new( "outsinkbin" );
+        if( !GST_IS_ELEMENT( sinkbin ) )
+        {
+            if( G_IS_OBJECT( sinkbin ) )
+                g_object_unref( sinkbin );
+            sinkbin = NULL;
+            guLogError( wxT( "Could not create the outsinkbin object" ) );
+            return;
+        }
 
+        GstElement * converter = gst_element_factory_make( "audioconvert", "aconvert" );
+        if( !GST_IS_ELEMENT( converter ) )
+        {
+            if( G_IS_OBJECT( converter ) )
+                g_object_unref( converter );
+            converter = NULL;
+            guLogError( wxT( "Could not create the audioconvert object" ) );
+            return;
+        }
+
+        GstElement * level = gst_element_factory_make( "level", "gulevelctrl" );
+        if( !GST_IS_ELEMENT( level ) )
+        {
+            if( G_IS_OBJECT( level ) )
+                g_object_unref( level );
+            level = NULL;
+            guLogError( wxT( "Could not create the level object" ) );
+            return;
+        }
+        else
+        {
+            g_object_set( level, "message", TRUE, NULL );
+            g_object_set( level, "interval", gint64( 250000000 ), NULL );
+        }
+
+        m_Volume = gst_element_factory_make( "volume", "mastervolume" );
+        if( !GST_IS_ELEMENT( m_Volume ) )
+        {
+            if( G_IS_OBJECT( m_Volume ) )
+                g_object_unref( m_Volume );
+            m_Volume = NULL;
+            guLogError( wxT( "Could not create the volume object" ) );
+            return;
+        }
+
+        m_Equalizer = gst_element_factory_make( "equalizer-10bands", "equalizer" );
+        if( !GST_IS_ELEMENT( m_Equalizer ) )
+        {
+            if( G_IS_OBJECT( m_Equalizer ) )
+                g_object_unref( m_Equalizer );
+            m_Equalizer = NULL;
+            guLogError( wxT( "Could not create the equalizer object" ) );
+            return;
+        }
+
+        GstPad * pad;
+        GstPad * ghostpad;
+
+        gst_bin_add_many( GST_BIN( sinkbin ), converter, level, m_Equalizer, m_Volume, outputsink, NULL );
+        gst_element_link_many( converter, level, m_Equalizer, m_Volume, outputsink, NULL );
+
+        pad = gst_element_get_pad( converter, "sink" );
+        ghostpad = gst_ghost_pad_new( "sink", pad );
+        gst_element_add_pad( sinkbin, ghostpad );
+        gst_object_unref( pad );
+
+        g_object_set( G_OBJECT( m_Playbin ), "audio-sink", sinkbin, NULL );
 
             // This dont make any difference in gapless playback :(
 //        if( !SetProperty( outputsink, "buffer-time", (gint64) 5000*1000 ) )
@@ -318,7 +409,6 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         //
         gst_bus_add_watch( gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) ),
             ( GstBusFunc ) gst_bus_async_callback, this );
-
     }
 }
 
@@ -449,7 +539,7 @@ wxMediaState guMediaCtrl::GetState()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetVolume( double dVolume )
 {
-    g_object_set( G_OBJECT( m_Playbin ), "volume", dVolume, NULL );
+    g_object_set( G_OBJECT( m_Volume ), "volume", dVolume, NULL );
     return true;
 }
 
@@ -457,14 +547,46 @@ bool guMediaCtrl::SetVolume( double dVolume )
 double guMediaCtrl::GetVolume()
 {
     double dVolume = 1.0;
-    g_object_get( G_OBJECT( m_Playbin ), "volume", &dVolume, NULL );
+    g_object_get( G_OBJECT( m_Volume ), "volume", &dVolume, NULL );
     return dVolume;
 }
 
 // -------------------------------------------------------------------------------- //
-void inline guMediaCtrl::AboutToFinish( void )
+int guMediaCtrl::GetEqualizerBand( const int band )
 {
-    m_PlayerPanel->OnAboutToFinish();
+    gdouble value;
+    g_object_get( G_OBJECT( m_Equalizer ), wxString::Format( wxT( "band%u" ),
+                   band ).char_str(), &value, NULL );
+    return value;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::SetEqualizerBand( const int band, const int value )
+{
+    g_object_set( G_OBJECT( m_Equalizer ), wxString::Format( wxT( "band%u" ),
+                   band ).char_str(), gdouble( value ), NULL );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaCtrl::SetEqualizer( const wxArrayInt &eqset )
+{
+    if( m_Equalizer && ( eqset.Count() == 10 ) )
+    {
+        int index;
+        int count = eqset.Count();
+        for( index = 0; index < count; index++ )
+        {
+            SetEqualizerBand( index, eqset[ index ] );
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::AboutToFinish( void )
+{
+     m_PlayerPanel->OnAboutToFinish();
 }
 
 // -------------------------------------------------------------------------------- //

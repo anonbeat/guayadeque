@@ -31,7 +31,7 @@ class guConfig : public wxConfig
     wxMutex m_ConfigMutex;
 
   public :
-    guConfig();
+    guConfig( const wxString &conffile = wxT( ".guayadeque/guayadeque.conf" ) );
     ~guConfig();
 
     long            ReadNum( const wxString &KeyName, long Default = 0, const wxString &Category = wxEmptyString );

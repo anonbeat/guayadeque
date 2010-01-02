@@ -24,6 +24,7 @@
 #include "CoverFrame.h"
 #include "Config.h"
 #include "DbLibrary.h"
+#include "Equalizer.h"
 #include "Images.h"
 #include "LastFM.h"
 #include "MainFrame.h"
@@ -72,6 +73,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
     m_AboutToFinishPending = false;
 
+    wxArrayInt Equalizer;
+
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -83,6 +86,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "SmartPlayAddTracks" ), 3, wxT( "SmartPlayList" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "SmartPlayMinTracksToPlay" ), 4, wxT( "SmartPlayList" ) );
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
+        Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
     }
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
@@ -104,28 +108,34 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	m_PlayButton->SetToolTip( _( "Start playing or pauses current track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_PlayButton, 0, wxALL, 2 );
 
-	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
-	PlayerBtnSizer->Add( m_StopButton, 0, wxALL, 2 );
+//	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
+//	PlayerBtnSizer->Add( m_StopButton, 0, wxALL, 2 );
 
-	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_volume_medium ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	PlayerBtnSizer->Add( 2, 0, 0, wxALL, 2 );
+
+	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_volume_medium ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_VolumeButton->SetToolTip( _( "Volume 0%" ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
-	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playlist_smart ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist bassed on LastFM" ) );
 	// Get this value from config file
 	m_SmartPlayButton->SetValue( m_PlaySmart );
 	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALL, 2 );
 
-	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playlist_shuffle ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_shuffle ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in the playlist" ) );
 	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxALL, 2 );
 
-	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playlist_repeat ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_repeat ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_RepeatPlayButton->SetToolTip( _( "Repeats the current playlist" ) );
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
 	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALL, 2 );
+
+	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mixer ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
+	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALL, 2 );
 
 
 	PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 5 );
@@ -239,6 +249,11 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         //guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
     }
 
+    if( Equalizer.Count() ==guEQUALIZER_BAND_COUNT )
+    {
+        m_MediaCtrl->SetEqualizer( Equalizer );
+    }
+
     // There was a track passed as argument that we will play
     if( m_PlayListCtrl->StartPlaying() )
     {
@@ -264,12 +279,13 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
 	m_NextTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
 	m_PlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
-	m_StopButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
+// 	m_StopButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
 	m_VolumeButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
 	m_VolumeButton->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnVolumenMouseWheel ), NULL, this );
 	m_SmartPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
 	m_RandomPlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
 	m_RepeatPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
+	m_EqualizerButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnEqualizerButtonClicked ), NULL, this );
 
     Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
 
@@ -350,17 +366,27 @@ guPlayerPanel::~guPlayerPanel()
             }
         }
         //printf( PlaySmart ? "Smart Enabled" : "Smart Disabled" );  printf( "\n" );
+
+        int index;
+        wxArrayInt Equalizer;
+        for( index = 0; index < guEQUALIZER_BAND_COUNT; index++ )
+        {
+            Equalizer.Add( m_MediaCtrl->GetEqualizerBand( index ) );
+        }
+        Config->WriteANum( wxT( "Band" ), Equalizer, wxT( "Equalizer" ) );
+
     }
 
 	// Connect Events
 	m_PrevTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
 	m_NextTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
 	m_PlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
-	m_StopButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
+//	m_StopButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
 	m_VolumeButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
 	m_SmartPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
 	m_RandomPlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
 	m_RepeatPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
+	m_EqualizerButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnEqualizerButtonClicked ), NULL, this );
 
     Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
 
@@ -403,7 +429,7 @@ void guPlayerPanel::SetArtistLabel( const wxString &artistname )
     wxString Label = artistname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_ArtistLabel->SetLabel( Label );
-    //m_ArtistLabel->SetToolTip( Label );
+    m_ArtistLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -412,7 +438,7 @@ void guPlayerPanel::SetAlbumLabel( const wxString &albumname )
     wxString Label = albumname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_AlbumLabel->SetLabel( Label );
-    //m_AlbumLabel->SetToolTip( Label );
+    m_AlbumLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -421,7 +447,7 @@ void guPlayerPanel::SetTitleLabel( const wxString &trackname )
     wxString Label = trackname;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
     m_TitleLabel->SetLabel( Label );
-    //m_TitleLabel->SetToolTip( Label );
+    m_TitleLabel->SetToolTip( Label );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -622,13 +648,13 @@ void guPlayerPanel::UpdateStatus()
     if( m_CurVolume != m_LastVolume )
     {
         if( m_CurVolume > 75 )
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_high ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_tiny_volume_high ) );
         else if( m_CurVolume > 50 )
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_medium ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_tiny_volume_medium ) );
         else if( m_CurVolume == 0 )
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_muted ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_tiny_volume_muted ) );
         else
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_volume_low ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_tiny_volume_low ) );
         m_VolumeButton->Refresh();
         m_LastVolume = m_CurVolume;
     }
@@ -1427,6 +1453,19 @@ void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 void guPlayerPanel::OnRepeatPlayButtonClick( wxCommandEvent &event )
 {
     SetPlayLoop( !GetPlayLoop() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
+{
+    guEq10Band * Eq10Band = new guEq10Band( this, m_MediaCtrl );
+    if( Eq10Band )
+    {
+        if( Eq10Band->ShowModal() == wxID_OK )
+        {
+        }
+        Eq10Band->Destroy();
+    }
 }
 
 // -------------------------------------------------------------------------------- //

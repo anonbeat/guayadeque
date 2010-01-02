@@ -138,6 +138,8 @@ class guMediaCtrl : public wxEvtHandler
 
   public :
     GstElement * m_Playbin;
+    GstElement * m_Volume;
+    GstElement * m_Equalizer;
     bool         m_Buffering;
     bool         m_WasPlaying;
 
@@ -159,6 +161,11 @@ class guMediaCtrl : public wxEvtHandler
 
     double GetVolume();
     bool SetVolume( double volume );
+
+    int GetEqualizerBand( const int band );
+    bool SetEqualizer( const wxArrayInt &eqset );
+    void SetEqualizerBand( const int band, const int value );
+
     void inline AboutToFinish( void );
 
 };

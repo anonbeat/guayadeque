@@ -21,8 +21,8 @@
 #include "Config.h"
 
 // -------------------------------------------------------------------------------- //
-guConfig::guConfig() :
-          wxFileConfig( wxT( "guayadeque" ), wxEmptyString, wxT( ".guayadeque/guayadeque.conf" ), wxEmptyString, wxCONFIG_USE_SUBDIR )
+guConfig::guConfig( const wxString &conffile ) :
+          wxFileConfig( wxT( "guayadeque" ), wxEmptyString, conffile, wxEmptyString, wxCONFIG_USE_SUBDIR )
 {
     //SetRecordDefaults( true );
 }
@@ -157,7 +157,6 @@ bool guConfig::WriteAStr( const wxString &Key, const wxArrayString &Value, const
     return ( index = count );
 }
 
-// -------------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------------- //
 wxArrayInt guConfig::ReadANum( const wxString &Key, const int Default, const wxString &Category  )
 {
