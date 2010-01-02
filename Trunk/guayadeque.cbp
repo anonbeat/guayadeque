@@ -81,7 +81,6 @@
 		<Unit filename="src/AudioScrobble.h" />
 		<Unit filename="src/AutoPulseGauge.cpp" />
 		<Unit filename="src/AutoPulseGauge.h" />
-		<Unit filename="src/AutoScrollText.cpp" />
 		<Unit filename="src/Base64.cpp" />
 		<Unit filename="src/Base64.h" />
 		<Unit filename="src/ChannelEditor.cpp" />
@@ -107,6 +106,8 @@
 		<Unit filename="src/Discogs.h" />
 		<Unit filename="src/DynamicPlayList.cpp" />
 		<Unit filename="src/DynamicPlayList.h" />
+		<Unit filename="src/Equalizer.cpp" />
+		<Unit filename="src/Equalizer.h" />
 		<Unit filename="src/GeListBox.cpp" />
 		<Unit filename="src/GeListBox.h" />
 		<Unit filename="src/Google.cpp" />

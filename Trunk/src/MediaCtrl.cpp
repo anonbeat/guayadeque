@@ -318,7 +318,8 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         }
         else
         {
-            g_object_set( replay, "album-mode", false, NULL );
+            g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
+            g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
         }
 
 //        GstCaps *caps;
@@ -383,11 +384,25 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
             return;
         }
 
+        GstElement * limiter = gst_element_factory_make( "rglimiter", "limiter" );
+        if( !GST_IS_ELEMENT( limiter ) )
+        {
+            if( G_IS_OBJECT( limiter ) )
+                g_object_unref( limiter );
+            limiter = NULL;
+            guLogError( wxT( "Could not create the limiter object" ) );
+            return;
+        }
+//        else
+//        {
+//            g_object_set( G_OBJECT( limiter ), "enabled", TRUE, NULL );
+//        }
+
         GstPad * pad;
         GstPad * ghostpad;
 
-        gst_bin_add_many( GST_BIN( sinkbin ), converter, level, m_Equalizer, m_Volume, outputsink, NULL );
-        gst_element_link_many( converter, level, m_Equalizer, m_Volume, outputsink, NULL );
+        gst_bin_add_many( GST_BIN( sinkbin ), converter, level, m_Equalizer, limiter, m_Volume, outputsink, NULL );
+        gst_element_link_many( converter, level, m_Equalizer, limiter, m_Volume, outputsink, NULL );
 
         pad = gst_element_get_pad( converter, "sink" );
         ghostpad = gst_ghost_pad_new( "sink", pad );
