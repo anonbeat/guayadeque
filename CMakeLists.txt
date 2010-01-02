@@ -91,6 +91,7 @@ ADD_SUBDIRECTORY( po )
 INSTALL( FILES guayadeque.desktop DESTINATION share/applications )
 INSTALL( FILES guayadeque.png DESTINATION share/pixmaps/ )
 INSTALL( FILES guayadeque.default.conf DESTINATION share/guayadeque )
+INSTALL( FILES equalizers.default.conf DESTINATION share/guayadeque )
 
 CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
