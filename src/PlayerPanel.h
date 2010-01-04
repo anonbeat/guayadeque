@@ -183,6 +183,7 @@ class guPlayerPanel : public wxPanel
     void                OnMediaTag( wxMediaEvent &event );
     void                OnMediaBitrate( wxMediaEvent &event );
     void                OnMediaBuffering( wxMediaEvent &event );
+    void                OnMediaLevel( wxMediaEvent &event );
     void                SetCurrentTrack( const guTrack * Song );
 
     // SmartPlay Events

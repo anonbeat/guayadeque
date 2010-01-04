@@ -145,8 +145,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             //guLogMessage( wxT( "MESSAGE_ELEMENT %s" ), wxString( element ).c_str() );
             if( !strcmp( name, "level" ) )
             {
-
-                wxMediaEvent event( wxEVT_MEDIA_BUFFERING );
+                wxMediaEvent event( wxEVT_MEDIA_LEVEL );
                 gint channels;
                 const GValue * list;
                 const GValue * value;
@@ -185,12 +184,16 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 }
 
 
-//                guLogMessage( wxT( "(%i)    RMS: %f dB, peak: %f dB, decay: %f dB" ), i, rms_dB, peak_dB, decay_dB );
+//                guLogMessage( wxT( "    RMS: %f dB, peak: %f dB, decay: %f dB" ),
+//                    event.m_LevelInfo.m_RMS_L,
+//                    event.m_LevelInfo.m_Peak_L,
+//                    event.m_LevelInfo.m_Decay_L );
 
 //                // converting from dB to normal gives us a value between 0.0 and 1.0 */
 //                rms = pow( 10, rms_dB / 20 );
 //                  guLogMessage( wxT( "    normalized rms value: %f" ), rms );
-                ctrl->AddPendingEvent( event );
+                //ctrl->AddPendingEvent( event );
+                wxPostEvent( ctrl, event );
             }
             break;
         }
@@ -408,11 +411,21 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 //            g_object_set( G_OBJECT( limiter ), "enabled", TRUE, NULL );
 //        }
 
+        GstElement * outconverter = gst_element_factory_make( "audioconvert", "outconvert" );
+        if( !GST_IS_ELEMENT( outconverter ) )
+        {
+            if( G_IS_OBJECT( outconverter ) )
+                g_object_unref( outconverter );
+            outconverter = NULL;
+            guLogError( wxT( "Could not create the output audioconvert object" ) );
+            return;
+        }
+
         GstPad * pad;
         GstPad * ghostpad;
 
-        gst_bin_add_many( GST_BIN( sinkbin ), converter, level, m_Equalizer, limiter, m_Volume, outputsink, NULL );
-        gst_element_link_many( converter, level, m_Equalizer, limiter, m_Volume, outputsink, NULL );
+        gst_bin_add_many( GST_BIN( sinkbin ), converter, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
+        gst_element_link_many( converter, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
 
         pad = gst_element_get_pad( converter, "sink" );
         ghostpad = gst_ghost_pad_new( "sink", pad );
