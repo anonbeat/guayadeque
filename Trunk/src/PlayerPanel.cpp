@@ -102,17 +102,17 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_skip_forward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_NextTrackButton->SetToolTip( _( "Go to Next Track in the Playlist" ) );
-	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_PlayButton->SetToolTip( _( "Start playing or pauses current track in the Playlist" ) );
-	PlayerBtnSizer->Add( m_PlayButton, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( m_PlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 //	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 //	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
 //	PlayerBtnSizer->Add( m_StopButton, 0, wxALL, 2 );
 
-	PlayerBtnSizer->Add( 2, 0, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( 0, 0, 0, wxALL, 2 );
 
 	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_volume_medium ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
     m_VolumeButton->SetToolTip( _( "Volume 0%" ) );
@@ -120,7 +120,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mixer ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
-	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist bassed on LastFM" ) );
@@ -130,12 +130,12 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_shuffle ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in the playlist" ) );
-	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_repeat ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	m_RepeatPlayButton->SetToolTip( _( "Repeats the current playlist" ) );
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
-	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 5 );
 
