@@ -90,7 +90,12 @@ class wxMediaEvent : public wxNotifyEvent
     // Required for wxEvtHandler::AddPendingEvent
     // ------------------------------------------------------------------------
     virtual wxEvent *Clone() const
-    {   return new wxMediaEvent(*this);     }
+    {
+        wxMediaEvent * pEvent = new wxMediaEvent(*this);
+        if( pEvent )
+            pEvent->m_LevelInfo = m_LevelInfo;
+        return pEvent;
+    }
 
 
 //    // Put this class on wxWidget's RTTI table
