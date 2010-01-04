@@ -29,10 +29,25 @@
 #undef ATTRIBUTE_PRINTF // there are warnings about redefined ATTRIBUTE_PRINTF in Fedora
 #include <gst/gst.h>
 
+// ----------------------------------------------------------------------------
+class guLevelInfo
+{
+  public :
+    GstClockTime    m_EndTime;
+    gint            m_Channels;
+    double          m_RMS_L;
+    double          m_RMS_R;
+    double          m_Peak_L;
+    double          m_Peak_R;
+    double          m_Decay_L;
+    double          m_Decay_R;
+};
+
 // Start_of_Ripped_Code_From_mediactrl_h
 // This code is from mediactrl.h to avoid the need of the wxWidgets media library because its
 // not included in many distributions by default.
 
+// ----------------------------------------------------------------------------
 enum wxMediaState
 {
     wxMEDIASTATE_STOPPED,
@@ -47,7 +62,9 @@ enum wxMediaState
 // ----------------------------------------------------------------------------
 class wxMediaEvent : public wxNotifyEvent
 {
-public:
+  public:
+    guLevelInfo m_LevelInfo;
+
     // ------------------------------------------------------------------------
     // wxMediaEvent Constructor
     //
@@ -119,9 +136,11 @@ DECLARE_EVENT_TYPE( wxEVT_MEDIA_PAUSE, wxMEDIA_PAUSE_ID)
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_TAG, wxID_ANY )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING, wxID_ANY )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_BITRATE, wxID_ANY )
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_LEVEL, wxID_ANY )
 #define EVT_MEDIA_TAG(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_TAG, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_BUFFERING(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BUFFERING, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_BITRATE(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BITRATE, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+#define EVT_MEDIA_LEVEL(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_LEVEL, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 
 class guPlayerPanel;
 

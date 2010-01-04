@@ -30,6 +30,7 @@ DEFINE_EVENT_TYPE( wxEVT_MEDIA_FINISHED )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_TAG )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_BITRATE )
+DEFINE_EVENT_TYPE( wxEVT_MEDIA_LEVEL )
 
 // -------------------------------------------------------------------------------- //
 extern "C" {
@@ -142,46 +143,55 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             const gchar * name = gst_structure_get_name( s );
 
             //guLogMessage( wxT( "MESSAGE_ELEMENT %s" ), wxString( element ).c_str() );
-//            if( !strcmp( name, "level" ) )
-//            {
-//                gint channels;
-//                GstClockTime endtime;
-//                gdouble rms_dB, peak_dB, decay_dB;
-////                gdouble rms;
-//                const GValue * list;
-//                const GValue * value;
-//
-//                gint i;
-//
-//                if( !gst_structure_get_clock_time( s, "endtime", &endtime ) )
-//                    guLogWarning( wxT( "Could not parse endtime" ) );
-//
-//                /* we can get the number of channels as the length of any of the value
-//                * lists */
-//                list = gst_structure_get_value( s, "rms" );
-//                channels = gst_value_list_get_size( list );
-//
-//                //guLogMessage( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
-//
-//                for( i = 0; i < channels; ++i )
-//                {
-//                    //guLogMessage( wxT( "channel %d" ), i );
-//                    list = gst_structure_get_value( s, "rms" );
-//                    value = gst_value_list_get_value( list, i );
-//                    rms_dB = g_value_get_double( value );
-//                    list = gst_structure_get_value( s, "peak" );
-//                    value = gst_value_list_get_value( list, i );
-//                    peak_dB = g_value_get_double( value );
-//                    list = gst_structure_get_value( s, "decay" );
-//                    value = gst_value_list_get_value( list, i );
-//                    decay_dB = g_value_get_double( value );
-//                    guLogMessage( wxT( "(%i)    RMS: %f dB, peak: %f dB, decay: %f dB" ), i, rms_dB, peak_dB, decay_dB );
-//
-////                    /* converting from dB to normal gives us a value between 0.0 and 1.0 */
-////                    rms = pow( 10, rms_dB / 20 );
-////                    guLogMessage( wxT( "    normalized rms value: %f" ), rms );
-//                }
-//            }
+            if( !strcmp( name, "level" ) )
+            {
+
+                wxMediaEvent event( wxEVT_MEDIA_BUFFERING );
+                gint channels;
+                const GValue * list;
+                const GValue * value;
+                if( !gst_structure_get_clock_time( s, "endtime", &event.m_LevelInfo.m_EndTime ) )
+                    guLogWarning( wxT( "Could not parse endtime" ) );
+
+                //guLogMessage( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
+
+                // we can get the number of channels as the length of any of the value lists
+                list = gst_structure_get_value( s, "rms" );
+                channels = event.m_LevelInfo.m_Channels = gst_value_list_get_size( list );
+                value = gst_value_list_get_value( list, 0 );
+                event.m_LevelInfo.m_RMS_L = g_value_get_double( value );
+                if( channels > 1 )
+                {
+                    value = gst_value_list_get_value( list, 1 );
+                    event.m_LevelInfo.m_RMS_R = g_value_get_double( value );
+                }
+
+                list = gst_structure_get_value( s, "peak" );
+                value = gst_value_list_get_value( list, 0 );
+                event.m_LevelInfo.m_Peak_L = g_value_get_double( value );
+                if( channels > 1 )
+                {
+                    value = gst_value_list_get_value( list, 1 );
+                    event.m_LevelInfo.m_Peak_R = g_value_get_double( value );
+                }
+
+                list = gst_structure_get_value( s, "decay" );
+                value = gst_value_list_get_value( list, 0 );
+                event.m_LevelInfo.m_Decay_L = g_value_get_double( value );
+                if( channels > 1 )
+                {
+                    value = gst_value_list_get_value( list, 1 );
+                    event.m_LevelInfo.m_Decay_R = g_value_get_double( value );
+                }
+
+
+//                guLogMessage( wxT( "(%i)    RMS: %f dB, peak: %f dB, decay: %f dB" ), i, rms_dB, peak_dB, decay_dB );
+
+//                // converting from dB to normal gives us a value between 0.0 and 1.0 */
+//                rms = pow( 10, rms_dB / 20 );
+//                  guLogMessage( wxT( "    normalized rms value: %f" ), rms );
+                ctrl->AddPendingEvent( event );
+            }
             break;
         }
 
