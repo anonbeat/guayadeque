@@ -1029,7 +1029,7 @@ void guPlayerPanel::OnMediaBuffering( wxMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 {
-    guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
+    //guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
 }
 
 // -------------------------------------------------------------------------------- //
