@@ -96,7 +96,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
         if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "Playback" ) ) )
         {
-            m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) );
+            m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
         }
     }
     m_SliderIsDragged = false;
@@ -1042,11 +1042,14 @@ void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 {
     if( m_SilenceDetector && m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
     {
-        //guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
-        if( event.m_LevelInfo.m_Decay_L < m_SilenceDetectorLevel )
+        guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
+        if( int( event.m_LevelInfo.m_Decay_L ) < m_SilenceDetectorLevel )
         {
+            //guLogMessage( wxT( "The level is now lower than triger level" ) );
+            guLogMessage( wxT( "(%i) %i : %i" ), m_SilenceDetectorTime, m_SilenceDetectorTime, ( m_MediaSong.m_Length * 1000 ) - m_LastCurPos );
+
             if( !m_SilenceDetectorTime ||
-                ( m_SilenceDetectorTime > ( m_LastCurPos - m_MediaSong.m_Length ) ) )
+                ( m_SilenceDetectorTime > ( ( m_MediaSong.m_Length * 1000 ) - m_LastCurPos ) ) )
             {
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
