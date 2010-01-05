@@ -99,6 +99,14 @@
 #include "./images/yellow_star_big.h"
 #include "./images/yellow_star_mid.h"
 #include "./images/yellow_star_tiny.h"
+#include "./images/pref_commands.h"
+#include "./images/pref_copy_to.h"
+#include "./images/pref_general.h"
+#include "./images/pref_last_fm.h"
+#include "./images/pref_library.h"
+#include "./images/pref_links.h"
+#include "./images/pref_online_services.h"
+#include "./images/pref_podcasts.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -186,7 +194,15 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_tiny_search_engine,    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_playlist_shuffle, wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_playlist_repeat,  wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_tiny_mixer,            wxBITMAP_TYPE_PNG )
+    GUIMAGE( guImage_tiny_mixer,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_commands,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_copy_to,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_general,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_last_fm,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_library,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_links,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_online_services,  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_podcasts,         wxBITMAP_TYPE_JPEG )
 };
 
 

@@ -31,7 +31,7 @@ wxString PatternToExample( const wxString &Pattern );
 
 // -------------------------------------------------------------------------------- //
 guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
-    wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 530, 515 ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 600, 530 ), wxDEFAULT_DIALOG_STYLE )
 {
 	wxBoxSizer *        MainSizer;
 	wxBoxSizer *        GenMainSizer;
@@ -90,7 +90,19 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_MainNotebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_MainNotebook = new wxListbook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_LEFT|wxSUNKEN_BORDER );
+
+    m_ImageList = new wxImageList( 32, 32 );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_general ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_library ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_last_fm ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_online_services ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_podcasts ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_links ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_commands ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_copy_to ) );
+    m_MainNotebook->AssignImageList( m_ImageList );
+
 
     //
     // General Preferences Panel
@@ -156,13 +168,14 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	wxBoxSizer* StartPlayingSizer;
 	StartPlayingSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, wxT("Save position when track length is at least (minutes)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, wxT("Restore position for tracks longer than"), wxDefaultPosition, wxDefaultSize, 0 );
     m_SavePosCheckBox->SetValue( m_Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) );
 
 	StartPlayingSizer->Add( m_SavePosCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	m_MinLenSpinCtrl = new wxSpinCtrl( m_GenPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 9999, 10 );
 	m_MinLenSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) );
+	m_MinLenSpinCtrl->SetToolTip( wxT( "set the minimun length in minutes to save track position" ) );
 	StartPlayingSizer->Add( m_MinLenSpinCtrl, 0, wxALIGN_CENTER_VERTICAL, 5 );
 
 	OnCloseSizer->Add( StartPlayingSizer, 1, wxEXPAND, 5 );
@@ -177,12 +190,13 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
     m_ExitConfirmChkBox->SetValue( m_Config->ReadBool( wxT( "ShowCloseConfirm" ), true, wxT( "General" ) ) );
 	OnCloseSizer->Add( m_ExitConfirmChkBox, 0, wxALL, 5 );
 
-	GenMainSizer->Add( OnCloseSizer, 1, wxEXPAND|wxALL, 5 );
+	GenMainSizer->Add( OnCloseSizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_GenPanel->SetSizer( GenMainSizer );
 	m_GenPanel->Layout();
 	GenMainSizer->Fit( m_GenPanel );
 	m_MainNotebook->AddPage( m_GenPanel, _("General"), true );
+	m_MainNotebook->SetPageImage( 0, 0 );
 
     //
     // Library Preferences Panel
@@ -243,6 +257,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_LibPanel->Layout();
 	LibMainSizer->Fit( m_LibPanel );
 	m_MainNotebook->AddPage( m_LibPanel, _("Library"), false );
+	m_MainNotebook->SetPageImage( 1, 1 );
 
     //
     // LastFM Panel
@@ -284,7 +299,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 
 	LastFMASSizer->Add( ASLoginSizer, 1, wxEXPAND, 5 );
 
-	ASMainSizer->Add( LastFMASSizer, 1, wxEXPAND|wxALL, 5 );
+	ASMainSizer->Add( LastFMASSizer, 0, wxEXPAND|wxALL, 5 );
 
 	SmartPlayListSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _( " Smart Playlists " ) ), wxVERTICAL );
 
@@ -318,12 +333,13 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 
 	SmartPlayListSizer->Add( SmartPlayListFlexGridSizer, 1, wxEXPAND, 5 );
 
-	ASMainSizer->Add( SmartPlayListSizer, 1, wxALL|wxEXPAND, 5 );
+	ASMainSizer->Add( SmartPlayListSizer, 0, wxALL|wxEXPAND, 5 );
 
 	m_LastFMPanel->SetSizer( ASMainSizer );
 	m_LastFMPanel->Layout();
 	ASMainSizer->Fit( m_LastFMPanel );
 	m_MainNotebook->AddPage( m_LastFMPanel, wxT( "LastFM" ), false );
+	m_MainNotebook->SetPageImage( 2, 2 );
 
     //
     // Online Services Filter
@@ -413,7 +429,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_OnlinePanel->SetSizer( OnlineMainSizer );
 	m_OnlinePanel->Layout();
 	OnlineMainSizer->Fit( m_OnlinePanel );
-	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online Services" ), false );
+	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online" ), false );
+	m_MainNotebook->SetPageImage( 3, 3 );
 
     //
     // Podcasts
@@ -486,6 +503,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	PodcastPanel->Layout();
 	PodcastsMainSizer->Fit( PodcastPanel );
 	m_MainNotebook->AddPage( PodcastPanel, wxT("Podcasts"), false );
+	m_MainNotebook->SetPageImage( 4, 4 );
 
     //
     // Links
@@ -593,6 +611,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_LinksPanel->Layout();
 	LinksMainSizer->Fit( m_LinksPanel );
 	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
+	m_MainNotebook->SetPageImage( 5, 5 );
 
 
     //
@@ -699,6 +718,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_CmdPanel->Layout();
 	CmdMainSizer->Fit( m_CmdPanel );
 	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
+	m_MainNotebook->SetPageImage( 6, 6 );
 
 
     //
@@ -733,12 +753,13 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 
 	CopyToHelpSizer->Add( CopyToExampleSizer, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 
-	CopyToMainSizer->Add( CopyToHelpSizer, 1, wxEXPAND|wxALL, 5 );
+	CopyToMainSizer->Add( CopyToHelpSizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_CopyPanel->SetSizer( CopyToMainSizer );
 	m_CopyPanel->Layout();
 	CopyToMainSizer->Fit( m_CopyPanel );
 	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
+	m_MainNotebook->SetPageImage( 7, 7 );
 
 
     //
@@ -850,6 +871,7 @@ guPrefDialog::~guPrefDialog()
 	m_CmdAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
 
 	m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
+
 }
 
 

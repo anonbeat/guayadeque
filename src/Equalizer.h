@@ -40,8 +40,6 @@
 #include <wx/dialog.h>
 #include <wx/dynarray.h>
 
-#define guEQUALIZER_BAND_COUNT      10
-
 // -------------------------------------------------------------------------------- //
 class guEQPreset
 {
@@ -68,6 +66,7 @@ class guEq10Band : public wxDialog
 
   protected:
     wxComboBox *        m_PresetComboBox;
+    wxBitmapButton *    m_ResetButton;
     wxBitmapButton *    m_SaveButton;
     wxBitmapButton *    m_DelButton;
     wxSlider *          m_Band0;
@@ -89,6 +88,7 @@ class guEq10Band : public wxDialog
     void OnPresetText( wxCommandEvent& event );
     void OnAddPreset( wxCommandEvent& event );
     void OnDelPreset( wxCommandEvent& event );
+    void OnResetPreset( wxCommandEvent &event );
     void OnBandChanged( wxScrollEvent& event );
 
   public:

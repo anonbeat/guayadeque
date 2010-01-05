@@ -29,6 +29,8 @@
 #undef ATTRIBUTE_PRINTF // there are warnings about redefined ATTRIBUTE_PRINTF in Fedora
 #include <gst/gst.h>
 
+#define guEQUALIZER_BAND_COUNT  10
+
 // ----------------------------------------------------------------------------
 class guLevelInfo
 {
@@ -188,6 +190,7 @@ class guMediaCtrl : public wxEvtHandler
 
     int GetEqualizerBand( const int band );
     bool SetEqualizer( const wxArrayInt &eqset );
+    void ResetEqualizer( void );
     void SetEqualizerBand( const int band, const int value );
 
     void inline AboutToFinish( void );
