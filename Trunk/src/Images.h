@@ -100,7 +100,15 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_search_engine,
     guIMAGE_INDEX_tiny_playlist_shuffle,
     guIMAGE_INDEX_tiny_playlist_repeat,
-    guIMAGE_INDEX_tiny_mixer
+    guIMAGE_INDEX_tiny_mixer,
+    guIMAGE_INDEX_pref_commands,
+    guIMAGE_INDEX_pref_copy_to,
+    guIMAGE_INDEX_pref_general,
+    guIMAGE_INDEX_pref_last_fm,
+    guIMAGE_INDEX_pref_library,
+    guIMAGE_INDEX_pref_links,
+    guIMAGE_INDEX_pref_online_services,
+    guIMAGE_INDEX_pref_podcasts
 };
 
 

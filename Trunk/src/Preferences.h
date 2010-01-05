@@ -32,6 +32,7 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/spinctrl.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -42,10 +43,12 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/choice.h>
-#include <wx/spinctrl.h>
-#include <wx/notebook.h>
-#include <wx/dialog.h>
+#include <wx/radiobox.h>
 #include <wx/filepicker.h>
+#include <wx/listbook.h>
+#include <wx/listctrl.h>
+#include <wx/imaglist.h>
+#include <wx/dialog.h>
 
 // -------------------------------------------------------------------------------- //
 class guPrefDialog : public wxDialog
@@ -54,7 +57,8 @@ class guPrefDialog : public wxDialog
     guDbLibrary *                 m_Db;
 
   protected:
-    wxNotebook *                m_MainNotebook;
+    wxListbook *                m_MainNotebook;
+    wxImageList *               m_ImageList;
     wxPanel *                   m_GenPanel;
     wxCheckBox *                m_ShowSplashChkBox;
     wxCheckBox *                m_MinStartChkBox;

@@ -608,7 +608,7 @@ void guMediaCtrl::SetEqualizerBand( const int band, const int value )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetEqualizer( const wxArrayInt &eqset )
 {
-    if( m_Equalizer && ( eqset.Count() == 10 ) )
+    if( m_Equalizer && ( eqset.Count() == guEQUALIZER_BAND_COUNT ) )
     {
         int index;
         int count = eqset.Count();
@@ -619,6 +619,16 @@ bool guMediaCtrl::SetEqualizer( const wxArrayInt &eqset )
         return true;
     }
     return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::ResetEqualizer( void )
+{
+    int index;
+    for( index = 0; index < guEQUALIZER_BAND_COUNT; index++ )
+    {
+        SetEqualizerBand( index, 0 );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

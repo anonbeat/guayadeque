@@ -2703,7 +2703,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
             {
                 Count += Track->m_FileSize;
             }
-            if( Count >= Limit )
+            if( Count > Limit )
                 break;
         }
         tracks->Add( Track );
