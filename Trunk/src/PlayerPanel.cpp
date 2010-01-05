@@ -75,6 +75,10 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
     wxArrayInt Equalizer;
 
+    m_SilenceDetector = false;
+    m_SilenceDetectorLevel = wxNOT_FOUND;
+    m_SilenceDetectorTime = 0;
+
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -87,6 +91,13 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "SmartPlayMinTracksToPlay" ), 4, wxT( "SmartPlayList" ) );
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
         Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
+
+        m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
+        m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
+        if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "Playback" ) ) )
+        {
+            m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) );
+        }
     }
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
@@ -1029,7 +1040,21 @@ void guPlayerPanel::OnMediaBuffering( wxMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 {
-    //guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
+    if( m_SilenceDetector && m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+    {
+        //guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
+        if( event.m_LevelInfo.m_Decay_L < m_SilenceDetectorLevel )
+        {
+            if( !m_SilenceDetectorTime ||
+                ( m_SilenceDetectorTime > ( m_LastCurPos - m_MediaSong.m_Length ) ) )
+            {
+                wxCommandEvent evt;
+                OnNextTrackButtonClick( evt );
+
+                guLogMessage( wxT( "Silence detected. Changed to next track" ) );
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
