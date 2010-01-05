@@ -138,7 +138,7 @@ class guPlayerPanel : public wxPanel
 //	wxStaticText *          m_PlayListLenStaticText;
 //    wxBoxSizer *            m_PlayListLabelsSizer;
 
-    guDbLibrary *             m_Db;
+    guDbLibrary *           m_Db;
 	guPlayList *            m_PlayListCtrl;
 	guMediaCtrl *           m_MediaCtrl;
 	guPlayerPanelTimer *    m_PlayerTimer;
@@ -158,6 +158,10 @@ class guPlayerPanel : public wxPanel
     int                     m_SmartPlayMinTracksToPlay;
     unsigned int            m_TrackStartPos;
 
+    bool                    m_SilenceDetector;
+    int                     m_SilenceDetectorLevel;
+    int                     m_SilenceDetectorTime;
+
     // AudioScrobble
     guAudioScrobble *       m_AudioScrobble;
     bool                    m_AudioScrobbleEnabled;
@@ -166,6 +170,7 @@ class guPlayerPanel : public wxPanel
     int                     m_BufferGaugeId;
 
     bool                    m_AboutToFinishPending;
+
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
