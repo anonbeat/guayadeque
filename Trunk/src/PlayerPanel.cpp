@@ -1042,7 +1042,7 @@ void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 {
     if( m_SilenceDetector && m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
     {
-        guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
+        //guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
         if( int( event.m_LevelInfo.m_Decay_L ) < m_SilenceDetectorLevel )
         {
             //guLogMessage( wxT( "The level is now lower than triger level" ) );
