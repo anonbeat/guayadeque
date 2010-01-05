@@ -575,26 +575,26 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
-    {
-        // If the icon
-        if( m_TaskBarIcon &&
-            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
-            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
-        {
-            if( event.IsIconized() )
-            {
-                if( IsShown() )
-                    Show( false );
-            }
-            else
-            {
-                if( !IsShown() )
-                    Show( true );
-            }
-        }
-    }
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    if( Config )
+//    {
+//        // If the icon
+//        if( m_TaskBarIcon &&
+//            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
+//            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
+//        {
+//            if( event.IsIconized() )
+//            {
+//                if( IsShown() )
+//                    Show( false );
+//            }
+//            else
+//            {
+//                if( !IsShown() )
+//                    Show( true );
+//            }
+//        }
+//    }
     event.Skip();
 }
 
