@@ -1376,7 +1376,7 @@ void guListViewHeader::SetImageList( wxImageList * imagelist )
 }
 
 // -------------------------------------------------------------------------------- //
-// guListViewClientTimer
+// guListViewColEdit
 // -------------------------------------------------------------------------------- //
 guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray * columns ) :
     wxDialog( parent, wxID_ANY, _( "Select Columns" ), wxDefaultPosition, wxSize( 246,340 ), wxDEFAULT_DIALOG_STYLE )

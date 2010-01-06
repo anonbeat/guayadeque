@@ -74,20 +74,23 @@ wxImage * guDbCache::GetImage( const wxString &url, int &imgtype, const int imgs
     Data = dbRes.GetBlob( 0, DataLen );
     imgtype = dbRes.GetInt( 1 );
 
-
     if( DataLen )
     {
       wxMemoryInputStream Ins( Data, DataLen );
-      wxImage * Img = new wxImage( Ins, imgtype );
+      Img = new wxImage( Ins, imgtype );
       if( Img )
       {
         if( !Img->IsOk() )
         {
-          guLogMessage( wxT( "Image is not OK" ) );
-          delete Img;
-          Img = NULL;
+            guLogMessage( wxT( "Image is not OK" ) );
+            delete Img;
+            Img = NULL;
         }
       }
+//      else
+//      {
+//        guLogMessage( wxT( "Could not create the image" ) );
+//      }
     }
   }
 //  else
