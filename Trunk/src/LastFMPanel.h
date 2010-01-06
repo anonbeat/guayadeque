@@ -40,6 +40,7 @@ class guLastFMInfo
   public:
     int                     m_Index;
     wxImage *               m_Image;
+    wxString                m_ImageUrl;
 
     guLastFMInfo() {};
 
@@ -246,13 +247,49 @@ class guFetchTrackInfoThread : public guFetchLastFMInfoThread
 };
 
 
+class guLastFMBitmap;
+
+// -------------------------------------------------------------------------------- //
+class guLastFMBitmapTimer : public wxTimer
+{
+  public :
+    guLastFMBitmap * m_Bitmap;
+
+    guLastFMBitmapTimer( guLastFMBitmap * bitmap ) { m_Bitmap = bitmap; };
+
+    void Notify();
+};
+
+class guLastFMInfoCtrl;
+
+// -------------------------------------------------------------------------------- //
+class guLastFMBitmap : public wxStaticBitmap
+{
+  public :
+    guLastFMBitmap( wxWindow * parent, wxWindowID id, const wxBitmap &label, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0 );
+    ~guLastFMBitmap();
+
+    void inline ShowBigImage( void );
+
+  protected :
+    guLastFMInfoCtrl *      m_LastFMInfoCtrl;
+    guLastFMBitmapTimer *   m_MouseTimer;
+
+    void OnMouse( wxMouseEvent &event );
+
+  private :
+    DECLARE_EVENT_TABLE()
+};
+
 // -------------------------------------------------------------------------------- //
 class guLastFMInfoCtrl : public wxPanel
 {
   protected :
-    guDbLibrary *         m_Db;
+    guDbLibrary *       m_Db;
+    guDbCache *         m_DbCache;
     guPlayerPanel *     m_PlayerPanel;
-    wxStaticBitmap *    m_Bitmap;
+    //wxStaticBitmap *    m_Bitmap;
+    guLastFMBitmap *    m_Bitmap;
 	wxStaticText *      m_Text;
 	wxColor             m_NormalColor;
 	wxColor             m_NotFoundColor;
@@ -272,12 +309,14 @@ class guLastFMInfoCtrl : public wxPanel
     virtual void        OnAlbumSelectName( wxCommandEvent &event );
 
   public :
-	guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, bool createcontrols = true );
+	guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel, bool createcontrols = true );
 	~guLastFMInfoCtrl();
 
     virtual void Clear( void );
     virtual void SetBitmap( const wxImage * image );
     virtual void SetLabel( const wxString &label );
+
+    virtual void ShowBigImage( void ) {};
 };
 WX_DEFINE_ARRAY_PTR( guLastFMInfoCtrl *, guLastFMInfoCtrlArray );
 
@@ -305,12 +344,15 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnArtistSelectName( wxCommandEvent &event );
 
   public :
-    guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guArtistInfoCtrl();
 
     void SetInfo( guLastFMArtistInfo * info );
     virtual void Clear( void );
     virtual void SetBitmap( const wxImage * image );
+
+    virtual void ShowBigImage( void );
+
 };
 
 // -------------------------------------------------------------------------------- //
@@ -329,12 +371,13 @@ class guAlbumInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnAlbumSelectName( wxCommandEvent &event );
 
   public :
-    guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guAlbumInfoCtrl();
 
     void SetInfo( guLastFMAlbumInfo * info );
     virtual void Clear( void );
 
+    virtual void ShowBigImage( void );
 };
 WX_DEFINE_ARRAY_PTR( guAlbumInfoCtrl *, guAlbumInfoCtrlArray );
 
@@ -354,11 +397,13 @@ class guSimilarArtistInfoCtrl : public guLastFMInfoCtrl
     void                OnSelectArtist( wxCommandEvent &event );
 
   public :
-    guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guSimilarArtistInfoCtrl();
 
     void SetInfo( guLastFMSimilarArtistInfo * info );
     virtual void Clear( void );
+
+    virtual void ShowBigImage( void );
 
 };
 WX_DEFINE_ARRAY_PTR( guSimilarArtistInfoCtrl *, guSimilarArtistInfoCtrlArray );
@@ -378,12 +423,13 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnArtistSelectName( wxCommandEvent &event );
 
   public :
-    guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guTrackInfoCtrl();
 
     void SetInfo( guLastFMTrackInfo * info );
     virtual void Clear( void );
 
+    virtual void ShowBigImage( void );
 };
 WX_DEFINE_ARRAY_PTR( guTrackInfoCtrl *, guTrackInfoCtrlArray );
 

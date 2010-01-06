@@ -22,8 +22,9 @@
 
 #include "Commands.h"
 #include "Images.h"
-#include "Utils.h"
 #include "MainApp.h"
+#include "ShowImage.h"
+#include "Utils.h"
 
 #include <wx/arrimpl.cpp>
 #include "wx/clipbrd.h"
@@ -41,10 +42,72 @@ WX_DEFINE_OBJARRAY(guLastFMTrackInfoArray);
 WX_DEFINE_OBJARRAY(guLastFMAlbumInfoArray);
 
 // -------------------------------------------------------------------------------- //
-guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, bool createcontrols ) :
+// guLastFMBitmap
+// -------------------------------------------------------------------------------- //
+BEGIN_EVENT_TABLE(guLastFMBitmap,wxStaticBitmap)
+    //EVT_MOUSE_EVENTS        (guLastFMBitmap::OnMouse)
+    EVT_MOTION                (guLastFMBitmap::OnMouse)
+//    EVT_MOUSE_CAPTURE_LOST  (guListViewHeader::OnCaptureLost)
+END_EVENT_TABLE()
+
+// -------------------------------------------------------------------------------- //
+guLastFMBitmap::guLastFMBitmap( wxWindow * parent, wxWindowID id, const wxBitmap &label, const wxPoint &pos, const wxSize &size, long style ) :
+    wxStaticBitmap( parent, id, label, pos, size, style )
+{
+    m_LastFMInfoCtrl = ( guLastFMInfoCtrl * ) parent;
+    m_MouseTimer = new guLastFMBitmapTimer( this );
+}
+
+// -------------------------------------------------------------------------------- //
+guLastFMBitmap::~guLastFMBitmap()
+{
+    if( m_MouseTimer )
+    {
+        delete m_MouseTimer;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMBitmap::OnMouse( wxMouseEvent &event )
+{
+    //guLogMessage( wxT( "OnMouse: E: %u   L: %u   M: %u" ), event.Entering(), event.Leaving(), event.Moving() );
+    if( m_MouseTimer->IsRunning() )
+        m_MouseTimer->Stop();
+    m_MouseTimer->Start( 1000, wxTIMER_ONE_SHOT );
+    event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
+void inline guLastFMBitmap::ShowBigImage( void )
+{
+    m_LastFMInfoCtrl->ShowBigImage();
+}
+
+// -------------------------------------------------------------------------------- //
+// guLastFMBitmapTimer
+// -------------------------------------------------------------------------------- //
+void guLastFMBitmapTimer::Notify()
+{
+    int MouseX, MouseY;
+    wxGetMousePosition( &MouseX, &MouseY );
+
+    wxRect WinRect = m_Bitmap->GetScreenRect();
+    if( WinRect.Contains( MouseX, MouseY ) )
+    {
+        //guLogMessage( wxT( "Mouse Event fired..." ) );
+        m_Bitmap->ShowBigImage();
+        // The Mouse is over the window
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guLastFMInfoCtrl
+// -------------------------------------------------------------------------------- //
+guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel, bool createcontrols ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL )
 {
     m_Db = db;
+    m_DbCache = dbcache;
     m_PlayerPanel = playerpanel;
     m_NormalColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
     m_NotFoundColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
@@ -84,7 +147,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_default_lastfm_image ),
+	m_Bitmap = new guLastFMBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_default_lastfm_image ),
 	                                            wxDefaultPosition, wxSize( 50, 50 ), 0 );
     //Bitmap->SetCursor( wxCURSOR_HAND );
 	MainSizer->Add( m_Bitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 2 );
@@ -319,8 +382,8 @@ void guLastFMInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guArtistInfoCtrl
 // -------------------------------------------------------------------------------- //
-guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-                 guLastFMInfoCtrl( parent, db, playerpanel, false )
+guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel ) :
+                 guLastFMInfoCtrl( parent, db, dbcache, playerpanel, false )
 {
     m_Info = NULL;
 
@@ -351,7 +414,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 {
 	m_MainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_photo ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_Bitmap = new guLastFMBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_photo ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	m_MainSizer->Add( m_Bitmap, 0, wxALL, 5 );
 
 //	wxBoxSizer * DetailSizer;
@@ -582,10 +645,26 @@ void guArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guArtistInfoCtrl::ShowBigImage( void )
+{
+    //guLogMessage( wxT( "ShowBigImage... %s" ), m_Info->m_ImageUrl.c_str() );
+    int ImageType;
+    wxImage * Image = m_DbCache->GetImage( m_Info->m_ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
+    if( Image )
+    {
+        guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
+        if( ShowImage )
+        {
+            ShowImage->Show();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guAlbumInfoCtrl
 // -------------------------------------------------------------------------------- //
-guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-                 guLastFMInfoCtrl( parent, db, playerpanel )
+guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel ) :
+                 guLastFMInfoCtrl( parent, db, dbcache, playerpanel )
 {
     m_Info = NULL;
 };
@@ -715,10 +794,27 @@ void guAlbumInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guAlbumInfoCtrl::ShowBigImage( void )
+{
+    //guLogMessage( wxT( "ShowBigImage... %s" ), m_Info->m_ImageUrl.c_str() );
+    int ImageType;
+    wxImage * Image = m_DbCache->GetImage( m_Info->m_ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
+    if( Image )
+    {
+        guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
+        if( ShowImage )
+        {
+            ShowImage->Show();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guSimilarArtistInfoCtrl
 // -------------------------------------------------------------------------------- //
-guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-                  guLastFMInfoCtrl( parent, db, playerpanel )
+guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db,
+        guDbCache * dbcache, guPlayerPanel * playerpanel ) :
+            guLastFMInfoCtrl( parent, db, dbcache, playerpanel )
 {
     m_Info = NULL;
 
@@ -866,10 +962,26 @@ void guSimilarArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guSimilarArtistInfoCtrl::ShowBigImage( void )
+{
+    //guLogMessage( wxT( "ShowBigImage... %s" ), m_Info->m_ImageUrl.c_str() );
+    int ImageType;
+    wxImage * Image = m_DbCache->GetImage( m_Info->m_ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
+    if( Image )
+    {
+        guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
+        if( ShowImage )
+        {
+            ShowImage->Show();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guTrackInfoCtrl
 // -------------------------------------------------------------------------------- //
-guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-                 guLastFMInfoCtrl( parent, db, playerpanel )
+guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel ) :
+                 guLastFMInfoCtrl( parent, db, dbcache, playerpanel )
 {
     m_Info = NULL;
 }
@@ -1002,6 +1114,22 @@ void guTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guTrackInfoCtrl::ShowBigImage( void )
+{
+    //guLogMessage( wxT( "ShowBigImage... %s" ), m_Info->m_ImageUrl.c_str() );
+    int ImageType;
+    wxImage * Image = m_DbCache->GetImage( m_Info->m_ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
+    if( Image )
+    {
+        guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
+        if( ShowImage )
+        {
+            ShowImage->Show();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guLastFMPanel
 // -------------------------------------------------------------------------------- //
 guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
@@ -1112,7 +1240,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	m_ArtistInfoMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_ArtistInfoCtrl = new guArtistInfoCtrl( this, m_Db, m_PlayerPanel );
+	m_ArtistInfoCtrl = new guArtistInfoCtrl( this, m_Db, m_DbCache, m_PlayerPanel );
 
 	m_ArtistInfoMainSizer->Add( m_ArtistInfoCtrl, 1, wxEXPAND, 5 );
 
@@ -1144,7 +1272,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     int index;
     for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
     {
-        m_AlbumInfoCtrls.Add( new guAlbumInfoCtrl( this, m_Db, m_PlayerPanel ) );
+        m_AlbumInfoCtrls.Add( new guAlbumInfoCtrl( this, m_Db, m_DbCache, m_PlayerPanel ) );
         m_AlbumsSizer->Add( m_AlbumInfoCtrls[ index ], 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
     }
 
@@ -1174,7 +1302,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
     for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
     {
-        m_ArtistInfoCtrls.Add( new guSimilarArtistInfoCtrl( this, m_Db, m_PlayerPanel ) );
+        m_ArtistInfoCtrls.Add( new guSimilarArtistInfoCtrl( this, m_Db, m_DbCache, m_PlayerPanel ) );
         m_ArtistsSizer->Add( m_ArtistInfoCtrls[ index ], 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
     }
 
@@ -1204,7 +1332,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
     for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
     {
-        m_TrackInfoCtrls.Add( new guTrackInfoCtrl( this, m_Db, m_PlayerPanel ) );
+        m_TrackInfoCtrls.Add( new guTrackInfoCtrl( this, m_Db, m_DbCache, m_PlayerPanel ) );
         m_TracksSizer->Add( m_TrackInfoCtrls[ index ], 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
     }
 
@@ -1839,6 +1967,7 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
                               new guAlbumInfo( TopAlbums[ index ] ) );
                         if( LastFMAlbumInfo )
                         {
+                            LastFMAlbumInfo->m_ImageUrl = TopAlbums[ index ].m_ImageLink;
                             guDownloadImageThread * DownloadImageThread = new guDownloadImageThread(
                                     m_LastFMPanel,
                                     this,
@@ -1919,6 +2048,7 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
                     new guArtistInfo( ArtistInfo ) );
                 if( LastFMArtistInfo )
                 {
+                    LastFMArtistInfo->m_ImageUrl = ArtistInfo.m_ImageLink;
                     guDownloadImageThread * DownloadImageThread = new guDownloadImageThread(
                         m_LastFMPanel,
                         this,
@@ -1953,6 +2083,7 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
                             new guSimilarArtistInfo( SimilarArtists[ index ] ) );
                         if( LastFMArtistInfo )
                         {
+                            LastFMArtistInfo->m_ImageUrl = SimilarArtists[ index ].m_ImageLink;
                             guDownloadImageThread* DownloadImageThread = new guDownloadImageThread(
                                 m_LastFMPanel,
                                 this,
@@ -2039,6 +2170,7 @@ guFetchTrackInfoThread::ExitCode guFetchTrackInfoThread::Entry()
                               new guSimilarTrackInfo( SimilarTracks[ index ] ) );
                         if( LastFMTrackInfo )
                         {
+                            LastFMTrackInfo->m_ImageUrl = SimilarTracks[ index ].m_ImageLink;
                             guDownloadImageThread * DownloadImageThread = new guDownloadImageThread(
                                     m_LastFMPanel,
                                     this,

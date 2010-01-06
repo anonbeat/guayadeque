@@ -178,6 +178,8 @@ ADD_EXECUTABLE( guayadeque
 	TrackChangeInfo.h
 	Equalizer.cpp
 	Equalizer.h
+	ShowImage.cpp
+	ShowImage.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

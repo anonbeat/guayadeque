@@ -1,4 +1,6 @@
 
+  * When you stop the mouse over an image in the last.fm panel it will show 
+    a larger image.
   * Added a Limiter to the sound output
   * Added a 10 band equalizer
   * Added a cache for last.fm queries and online images
