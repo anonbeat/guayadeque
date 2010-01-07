@@ -95,6 +95,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
     m_ImageList = new wxImageList( 32, 32 );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_general ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_library ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_playback ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_last_fm ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_online_services ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_podcasts ) );
@@ -260,6 +261,69 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_MainNotebook->SetPageImage( 1, 1 );
 
     //
+    // Playback Panel
+    //
+	m_PlayPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
+	wxBoxSizer * PlayMainSizer;
+	PlayMainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer * PlaySilenceSizer;
+	PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
+
+	m_PlayLevelEnabled = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enabled" ), wxDefaultPosition, wxDefaultSize, 0 );
+	bool IsPlayLevelEnabled = m_Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
+    m_PlayLevelEnabled->SetValue( IsPlayLevelEnabled );
+
+	PlaySilenceSizer->Add( m_PlayLevelEnabled, 0, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* PlayLevelSizer;
+	PlayLevelSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * LevelStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "Level:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	LevelStaticText->Wrap( -1 );
+
+	PlayLevelSizer->Add( LevelStaticText, 0, wxALL|wxALIGN_BOTTOM, 5 );
+
+	m_PlayLevelSlider = new wxSlider( m_PlayPanel, wxID_ANY, m_Config->ReadNum( wxT( "SilenceLevel" ), -50, wxT( "Playback" ) ), -65, 0, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+	m_PlayLevelSlider->Enable( IsPlayLevelEnabled );
+
+	PlayLevelSizer->Add( m_PlayLevelSlider, 1, wxEXPAND|wxALIGN_BOTTOM|wxBOTTOM, 5 );
+
+	PlaySilenceSizer->Add( PlayLevelSizer, 0, wxEXPAND, 5 );
+
+	wxBoxSizer* PlayEndTimeSizer;
+	PlayEndTimeSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_PlayEndTimeCheckBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Only in the last" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PlayEndTimeCheckBox->SetValue( m_Config->ReadBool( wxT( "SilenceAtEnd" ), true, wxT( "Playback" ) ) );
+	m_PlayEndTimeCheckBox->Enable( IsPlayLevelEnabled );
+
+	PlayEndTimeSizer->Add( m_PlayEndTimeCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	m_PlayEndTimeSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 360,
+	    m_Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) );
+	m_PlayEndTimeSpinCtrl->Enable( IsPlayLevelEnabled );
+
+	PlayEndTimeSizer->Add( m_PlayEndTimeSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * PlayEndTimeStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "seconds" ), wxDefaultPosition, wxDefaultSize, 0 );
+	PlayEndTimeStaticText->Wrap( -1 );
+
+	PlayEndTimeSizer->Add( PlayEndTimeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	PlaySilenceSizer->Add( PlayEndTimeSizer, 0, wxEXPAND, 5 );
+
+	PlayMainSizer->Add( PlaySilenceSizer, 0, wxEXPAND|wxALL, 5 );
+
+	m_PlayPanel->SetSizer( PlayMainSizer );
+	m_PlayPanel->Layout();
+	PlayMainSizer->Fit( m_PlayPanel );
+	m_MainNotebook->AddPage( m_PlayPanel, _( "Playback" ), false );
+	m_MainNotebook->SetPageImage( 2, 2 );
+
+
+    //
     // LastFM Panel
     //
 	m_LastFMPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -339,7 +403,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_LastFMPanel->Layout();
 	ASMainSizer->Fit( m_LastFMPanel );
 	m_MainNotebook->AddPage( m_LastFMPanel, wxT( "LastFM" ), false );
-	m_MainNotebook->SetPageImage( 2, 2 );
+	m_MainNotebook->SetPageImage( 3, 3 );
 
     //
     // Online Services Filter
@@ -430,7 +494,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_OnlinePanel->Layout();
 	OnlineMainSizer->Fit( m_OnlinePanel );
 	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online" ), false );
-	m_MainNotebook->SetPageImage( 3, 3 );
+	m_MainNotebook->SetPageImage( 4, 4 );
 
     //
     // Podcasts
@@ -503,7 +567,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	PodcastPanel->Layout();
 	PodcastsMainSizer->Fit( PodcastPanel );
 	m_MainNotebook->AddPage( PodcastPanel, wxT("Podcasts"), false );
-	m_MainNotebook->SetPageImage( 4, 4 );
+	m_MainNotebook->SetPageImage( 5, 5 );
 
     //
     // Links
@@ -611,7 +675,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_LinksPanel->Layout();
 	LinksMainSizer->Fit( m_LinksPanel );
 	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
-	m_MainNotebook->SetPageImage( 5, 5 );
+	m_MainNotebook->SetPageImage( 6, 6 );
 
 
     //
@@ -718,7 +782,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_CmdPanel->Layout();
 	CmdMainSizer->Fit( m_CmdPanel );
 	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
-	m_MainNotebook->SetPageImage( 6, 6 );
+	m_MainNotebook->SetPageImage( 7, 7 );
 
 
     //
@@ -759,7 +823,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_CopyPanel->Layout();
 	CopyToMainSizer->Fit( m_CopyPanel );
 	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
-	m_MainNotebook->SetPageImage( 7, 7 );
+	m_MainNotebook->SetPageImage( 8, 8 );
 
 
     //
@@ -792,6 +856,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	m_AddPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
 	m_DelPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
 	m_PathsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
+
+	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
+	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 
 	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
 	m_AddCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
@@ -842,6 +909,9 @@ guPrefDialog::~guPrefDialog()
 	m_AddCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
 	m_DelCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
+
+	m_PlayLevelEnabled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
+	m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 
 	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
 	m_OnlineAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
@@ -908,6 +978,13 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
     m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
 //        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );
+
+    m_Config->WriteBool( wxT( "SilenceDetector" ), m_PlayLevelEnabled->GetValue(), wxT( "Playback" ) );
+    m_Config->WriteNum( wxT( "SilenceLevel" ), m_PlayLevelSlider->GetValue(), wxT( "Playback" ) );
+    m_Config->WriteBool( wxT( "SilenceAtEnd" ), m_PlayEndTimeCheckBox->GetValue(), wxT( "Playback" ) );
+    m_Config->WriteNum( wxT( "SilenceEndTime" ), m_PlayEndTimeSpinCtrl->GetValue(), wxT( "Playback" ) );
+
+
     m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->IsEnabled() && m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
     m_Config->WriteStr( wxT( "UserName" ), m_UserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
     if( !m_PasswdTextCtrl->IsEmpty() && m_PasswdTextCtrl->GetValue() != wxT( "******" ) )
@@ -1124,6 +1201,20 @@ void guPrefDialog::OnFiltersListBoxSelected( wxCommandEvent &event )
     {
         m_OnlineDelBtn->Disable();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnPlayLevelEnabled( wxCommandEvent& event )
+{
+	m_PlayLevelSlider->Enable( event.IsChecked() );
+	m_PlayEndTimeCheckBox->Enable( event.IsChecked() );
+	m_PlayEndTimeSpinCtrl->Enable( event.IsChecked() && m_PlayEndTimeCheckBox->IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnPlayEndTimeEnabled( wxCommandEvent& event )
+{
+	m_PlayEndTimeSpinCtrl->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

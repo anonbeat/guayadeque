@@ -59,6 +59,7 @@ class guPrefDialog : public wxDialog
   protected:
     wxListbook *                m_MainNotebook;
     wxImageList *               m_ImageList;
+
     wxPanel *                   m_GenPanel;
     wxCheckBox *                m_ShowSplashChkBox;
     wxCheckBox *                m_MinStartChkBox;
@@ -72,6 +73,7 @@ class guPrefDialog : public wxDialog
 	wxSpinCtrl *                m_MinLenSpinCtrl;
     wxCheckBox *                m_CloseTaskBarChkBox;
     wxCheckBox *                m_ExitConfirmChkBox;
+
     wxPanel *                   m_LibPanel;
     wxListBox *                 m_PathsListBox;
     wxBitmapButton *            m_AddPathButton;
@@ -81,6 +83,13 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_DelCoverButton;
     wxCheckBox *                m_UpdateLibChkBox;
     wxCheckBox *                m_CoverSearchChkBox;
+
+    wxPanel *                   m_PlayPanel;
+    wxCheckBox *                m_PlayLevelEnabled;
+    wxSlider *                  m_PlayLevelSlider;
+    wxCheckBox *                m_PlayEndTimeCheckBox;
+    wxSpinCtrl *                m_PlayEndTimeSpinCtrl;
+
     wxPanel *                   m_LastFMPanel;
     wxCheckBox *                m_ASEnableChkBox;
     wxStaticText *              m_UserNameStaticText;
@@ -163,6 +172,8 @@ class guPrefDialog : public wxDialog
     void OnCoversListBoxSelected( wxCommandEvent& event );
     void OnAddCoverBtnClick( wxCommandEvent& event );
 	void OnDelCoverBtnClick( wxCommandEvent& event );
+    void OnPlayLevelEnabled( wxCommandEvent& event );
+    void OnPlayEndTimeEnabled( wxCommandEvent& event );
 	void OnFiltersListBoxSelected( wxCommandEvent &event );
 	void OnASUserNameChanged( wxCommandEvent &event );
     void OnOnlineAddBtnClick( wxCommandEvent& event );

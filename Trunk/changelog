@@ -1,4 +1,7 @@
 
+  * Added option in preferences to configure the silence detector. To
+    automatically skip track when the sound level gets lower than the one
+    you configure.
   * To view the large cover image you just need to put the mouse over the
     player cover image.
   * When you put the mouse over an image in the last.fm panel it will show 
