@@ -1,5 +1,7 @@
 
-  * When you stop the mouse over an image in the last.fm panel it will show 
+  * To view the large cover image you just need to put the mouse over the
+    player cover image.
+  * When you put the mouse over an image in the last.fm panel it will show 
     a larger image.
   * Added a Limiter to the sound output
   * Added a 10 band equalizer

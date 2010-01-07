@@ -28,6 +28,8 @@
 guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & title, const wxPoint & pos, const wxSize & size, long style ) :
      wxFrame( parent, id, title, pos, size, style | wxFRAME_NO_TASKBAR )
 {
+    m_CapturedMouse = false;
+
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer * CoverSizer;
@@ -42,13 +44,16 @@ guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & t
 	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guCoverFrame::CoverFrameActivate ) );
 	m_CoverBitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
 
-    //printf( "guCoverFrame Constructed\n" );
+	m_CoverBitmap->Connect( wxEVT_MOTION, wxMouseEventHandler( guCoverFrame::OnMouse ), NULL, this );
+	Connect( wxEVT_MOTION, wxMouseEventHandler( guCoverFrame::OnMouse ), NULL, this );
+	Connect( wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler( guCoverFrame::OnCaptureLost ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guCoverFrame::~guCoverFrame()
 {
-    //printf( "guCoverFrame Destroyed\n" );
+    if( m_CapturedMouse )
+        ReleaseMouse();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -115,6 +120,34 @@ void guCoverFrame::CoverFrameActivate( wxActivateEvent &event )
 {
     if( !event.GetActive() )
       Close();
+}
+
+// -------------------------------------------------------------------------------- //
+void guCoverFrame::OnCaptureLost( wxMouseCaptureLostEvent &event )
+{
+    Close();
+}
+
+// -------------------------------------------------------------------------------- //
+void guCoverFrame::OnMouse( wxMouseEvent &event )
+{
+    int MouseX, MouseY;
+    wxGetMousePosition( &MouseX, &MouseY );
+
+    wxRect WinRect = m_CoverBitmap->GetScreenRect();
+    if( !WinRect.Contains( MouseX, MouseY ) )
+    {
+        Close();
+    }
+    else
+    {
+        if( !m_CapturedMouse )
+        {
+            m_CapturedMouse = true;
+            CaptureMouse();
+        }
+    }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //

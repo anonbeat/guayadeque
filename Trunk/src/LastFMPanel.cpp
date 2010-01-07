@@ -42,65 +42,6 @@ WX_DEFINE_OBJARRAY(guLastFMTrackInfoArray);
 WX_DEFINE_OBJARRAY(guLastFMAlbumInfoArray);
 
 // -------------------------------------------------------------------------------- //
-// guLastFMBitmap
-// -------------------------------------------------------------------------------- //
-BEGIN_EVENT_TABLE(guLastFMBitmap,wxStaticBitmap)
-    //EVT_MOUSE_EVENTS        (guLastFMBitmap::OnMouse)
-    EVT_MOTION                (guLastFMBitmap::OnMouse)
-//    EVT_MOUSE_CAPTURE_LOST  (guListViewHeader::OnCaptureLost)
-END_EVENT_TABLE()
-
-// -------------------------------------------------------------------------------- //
-guLastFMBitmap::guLastFMBitmap( wxWindow * parent, wxWindowID id, const wxBitmap &label, const wxPoint &pos, const wxSize &size, long style ) :
-    wxStaticBitmap( parent, id, label, pos, size, style )
-{
-    m_LastFMInfoCtrl = ( guLastFMInfoCtrl * ) parent;
-    m_MouseTimer = new guLastFMBitmapTimer( this );
-}
-
-// -------------------------------------------------------------------------------- //
-guLastFMBitmap::~guLastFMBitmap()
-{
-    if( m_MouseTimer )
-    {
-        delete m_MouseTimer;
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guLastFMBitmap::OnMouse( wxMouseEvent &event )
-{
-    //guLogMessage( wxT( "OnMouse: E: %u   L: %u   M: %u" ), event.Entering(), event.Leaving(), event.Moving() );
-    if( m_MouseTimer->IsRunning() )
-        m_MouseTimer->Stop();
-    m_MouseTimer->Start( 1000, wxTIMER_ONE_SHOT );
-    event.Skip();
-}
-
-// -------------------------------------------------------------------------------- //
-void inline guLastFMBitmap::ShowBigImage( void )
-{
-    m_LastFMInfoCtrl->ShowBigImage();
-}
-
-// -------------------------------------------------------------------------------- //
-// guLastFMBitmapTimer
-// -------------------------------------------------------------------------------- //
-void guLastFMBitmapTimer::Notify()
-{
-    int MouseX, MouseY;
-    wxGetMousePosition( &MouseX, &MouseY );
-
-    wxRect WinRect = m_Bitmap->GetScreenRect();
-    if( WinRect.Contains( MouseX, MouseY ) )
-    {
-        //guLogMessage( wxT( "Mouse Event fired..." ) );
-        m_Bitmap->ShowBigImage();
-        // The Mouse is over the window
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 // guLastFMInfoCtrl
 // -------------------------------------------------------------------------------- //
 guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel, bool createcontrols ) :
@@ -125,6 +66,8 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
     Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
     Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
     Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
+
+    Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -139,6 +82,8 @@ guLastFMInfoCtrl::~guLastFMInfoCtrl()
     Disconnect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
     Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
     Disconnect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
+
+    Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -147,7 +92,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Bitmap = new guLastFMBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_default_lastfm_image ),
+	m_Bitmap = new guStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_default_lastfm_image ),
 	                                            wxDefaultPosition, wxSize( 50, 50 ), 0 );
     //Bitmap->SetCursor( wxCURSOR_HAND );
 	MainSizer->Add( m_Bitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 2 );
@@ -380,6 +325,31 @@ void guLastFMInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLastFMInfoCtrl::OnBitmapMouseOver( wxCommandEvent &event )
+{
+    int ImageType;
+    wxString ImageUrl = GetBitmapImageUrl();
+    if( !ImageUrl.IsEmpty() )
+    {
+        wxImage * Image = m_DbCache->GetImage( ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
+        if( Image )
+        {
+            guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
+            if( ShowImage )
+            {
+                ShowImage->Show();
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guLastFMInfoCtrl::GetBitmapImageUrl( void )
+{
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
 // guArtistInfoCtrl
 // -------------------------------------------------------------------------------- //
 guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel ) :
@@ -414,7 +384,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 {
 	m_MainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Bitmap = new guLastFMBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_photo ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_Bitmap = new guStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_photo ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	m_MainSizer->Add( m_Bitmap, 0, wxALL, 5 );
 
 //	wxBoxSizer * DetailSizer;
@@ -645,22 +615,6 @@ void guArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guArtistInfoCtrl::ShowBigImage( void )
-{
-    //guLogMessage( wxT( "ShowBigImage... %s" ), m_Info->m_ImageUrl.c_str() );
-    int ImageType;
-    wxImage * Image = m_DbCache->GetImage( m_Info->m_ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
-    if( Image )
-    {
-        guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
-        if( ShowImage )
-        {
-            ShowImage->Show();
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 // guAlbumInfoCtrl
 // -------------------------------------------------------------------------------- //
 guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel ) :
@@ -791,22 +745,6 @@ void guAlbumInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
     wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_SELECTNAME );
     evt.SetClientData( ( void * ) AlbumName );
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
-}
-
-// -------------------------------------------------------------------------------- //
-void guAlbumInfoCtrl::ShowBigImage( void )
-{
-    //guLogMessage( wxT( "ShowBigImage... %s" ), m_Info->m_ImageUrl.c_str() );
-    int ImageType;
-    wxImage * Image = m_DbCache->GetImage( m_Info->m_ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
-    if( Image )
-    {
-        guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
-        if( ShowImage )
-        {
-            ShowImage->Show();
-        }
-    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -962,22 +900,6 @@ void guSimilarArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guSimilarArtistInfoCtrl::ShowBigImage( void )
-{
-    //guLogMessage( wxT( "ShowBigImage... %s" ), m_Info->m_ImageUrl.c_str() );
-    int ImageType;
-    wxImage * Image = m_DbCache->GetImage( m_Info->m_ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
-    if( Image )
-    {
-        guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
-        if( ShowImage )
-        {
-            ShowImage->Show();
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 // guTrackInfoCtrl
 // -------------------------------------------------------------------------------- //
 guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel ) :
@@ -1111,22 +1033,6 @@ void guTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
     wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SELECTNAME );
     evt.SetClientData( ( void * ) ArtistName );
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
-}
-
-// -------------------------------------------------------------------------------- //
-void guTrackInfoCtrl::ShowBigImage( void )
-{
-    //guLogMessage( wxT( "ShowBigImage... %s" ), m_Info->m_ImageUrl.c_str() );
-    int ImageType;
-    wxImage * Image = m_DbCache->GetImage( m_Info->m_ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
-    if( Image )
-    {
-        guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
-        if( ShowImage )
-        {
-            ShowImage->Show();
-        }
-    }
 }
 
 // -------------------------------------------------------------------------------- //

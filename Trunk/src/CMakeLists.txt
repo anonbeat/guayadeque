@@ -180,6 +180,8 @@ ADD_EXECUTABLE( guayadeque
 	Equalizer.h
 	ShowImage.cpp
 	ShowImage.h
+	StaticBitmap.cpp
+	StaticBitmap.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

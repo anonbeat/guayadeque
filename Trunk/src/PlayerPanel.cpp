@@ -152,7 +152,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_PlayerCoverBitmap = new guStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	m_PlayerCoverBitmap->SetToolTip( _( "Shows the current track album cover if available" ) );
 	PlayerDetailsSizer->Add( m_PlayerCoverBitmap, 0, wxALL, 2 );
 
@@ -305,6 +305,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
     //
 	m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
+    Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
+
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
@@ -407,6 +409,8 @@ guPlayerPanel::~guPlayerPanel()
 
     //
 	m_PlayerCoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
+    Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
+
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
@@ -1505,6 +1509,22 @@ void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnLeftDClickPlayerCoverBitmap( wxMouseEvent& event )
+{
+    wxPoint Pos;
+    Pos = ClientToScreen( m_PlayerCoverBitmap->GetPosition() );
+    guCoverFrame * BigCover = new guCoverFrame( this, wxID_ANY, wxEmptyString, Pos );
+    if( BigCover )
+    {
+        if( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG )
+            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_FileName );
+        else
+            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
+        BigCover->Show();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnPlayerCoverBitmapMouseOver( wxCommandEvent &event )
 {
     wxPoint Pos;
     Pos = ClientToScreen( m_PlayerCoverBitmap->GetPosition() );
