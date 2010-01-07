@@ -25,6 +25,7 @@
 #include "MediaCtrl.h"
 #include "PlayList.h"
 #include "RatingCtrl.h"
+#include "StaticBitmap.h"
 
 
 #include <wx/wx.h>
@@ -120,7 +121,7 @@ class guPlayerPanel : public wxPanel
 	wxToggleBitmapButton *  m_RepeatPlayButton;
 	wxBitmapButton *        m_EqualizerButton;
 	//
-	wxStaticBitmap *        m_PlayerCoverBitmap;
+	guStaticBitmap *        m_PlayerCoverBitmap;
 //	guAutoScrollText *      m_TitleLabel;
 //	guAutoScrollText *      m_AlbumLabel;
 //	guAutoScrollText *      m_ArtistLabel;
@@ -175,6 +176,7 @@ class guPlayerPanel : public wxPanel
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
     void                OnLeftDClickPlayerCoverBitmap( wxMouseEvent &event );
+    void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
     void                OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
     void                OnPlayerPositionSliderEndSeek( wxScrollEvent &event );
 

@@ -18,32 +18,41 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef COVERFRAME_H
-#define COVERFRAME_H
+#ifndef STATICBITMAP_H
+#define STATICBITMAP_H
 
 #include <wx/wx.h>
-#include "PlayerPanel.h"
+
+extern const wxEventType guStaticBitmapMouseOverEvent;
+#define guEVT_STATICBITMAP_MOUSE_OVER           1000
+
+class guStaticBitmapTimer;
 
 // -------------------------------------------------------------------------------- //
-class guCoverFrame : public wxFrame
+class guStaticBitmap : public wxStaticBitmap
 {
-  protected:
-    wxStaticBitmap * m_CoverBitmap;
-    bool             m_CapturedMouse;
+  public :
+    guStaticBitmap( wxWindow * parent, wxWindowID id, const wxBitmap &label, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0 );
+    ~guStaticBitmap();
 
-    void CoverFrameActivate( wxActivateEvent &event );
-    void OnClick( wxMouseEvent &event );
-    void OnCaptureLost( wxMouseCaptureLostEvent &event );
+  protected :
+    guStaticBitmapTimer *   m_MouseOverTimer;
+
     void OnMouse( wxMouseEvent &event );
 
-  public:
-    guCoverFrame( wxWindow * parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 293, 258 ), long style = 0|wxTAB_TRAVERSAL );
-    ~guCoverFrame();
-    void SetBitmap( const guSongCoverType CoverType, const wxString &CoverPath = wxEmptyString );
+};
 
+// -------------------------------------------------------------------------------- //
+class guStaticBitmapTimer : public wxTimer
+{
+  protected :
+    guStaticBitmap * m_Bitmap;
+
+  public :
+    guStaticBitmapTimer( guStaticBitmap * bitmap ) { m_Bitmap = bitmap; };
+
+    void Notify();
 };
 
 #endif
 // -------------------------------------------------------------------------------- //
-
-
