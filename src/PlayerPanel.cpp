@@ -1046,19 +1046,23 @@ void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 {
     if( m_SilenceDetector && m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
     {
-        //guLogMessage( wxT( "Decay Level: %f" ), event.m_LevelInfo.m_Decay_L );
+        //guLogMessage( wxT( "Decay Level: %f  %s" ), event.m_LevelInfo.m_Decay_L, LenToString( event.m_LevelInfo.m_EndTime / 1000000000 ).c_str() );
         if( int( event.m_LevelInfo.m_Decay_L ) < m_SilenceDetectorLevel )
         {
+            unsigned long EventTime = event.m_LevelInfo.m_EndTime / 1000000;
+            unsigned long TrackLength = m_MediaSong.m_Length * 1000;
             //guLogMessage( wxT( "The level is now lower than triger level" ) );
-            guLogMessage( wxT( "(%i) %i : %i" ), m_SilenceDetectorTime, m_SilenceDetectorTime, ( m_MediaSong.m_Length * 1000 ) - m_LastCurPos );
+            //guLogMessage( wxT( "(%f) %u : %u , %i" ), event.m_LevelInfo.m_Decay_L, m_SilenceDetectorTime, EventTime, TrackLength - EventTime );
 
+            // We only skip to next track if the level is lower than the triger one and also if
+            // we are at the end time period (if configured this way) and the time left is more than 500msecs
             if( !m_SilenceDetectorTime ||
-                ( m_SilenceDetectorTime > ( ( m_MediaSong.m_Length * 1000 ) - m_LastCurPos ) ) )
+                ( ( ( unsigned int ) m_SilenceDetectorTime > ( TrackLength - EventTime ) ) &&
+                  ( ( EventTime + 500 ) < TrackLength ) ) )
             {
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
-
-                guLogMessage( wxT( "Silence detected. Changed to next track" ) );
+                //guLogMessage( wxT( "Silence detected. Changed to next track" ) );
             }
         }
     }
