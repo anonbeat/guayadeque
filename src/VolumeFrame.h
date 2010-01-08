@@ -27,25 +27,28 @@
 // -------------------------------------------------------------------------------- //
 class guVolumeFrame : public wxFrame
 {
-	private:
-        guPlayerPanel * m_PlayerPanel;
+  protected:
+    guPlayerPanel * m_PlayerPanel;
+    wxButton * m_IncVolButton;
+    wxSlider * m_VolSlider;
+    wxButton * m_DecVolButton;
+    wxTimer *  m_MouseTimer;
 
-	protected:
-		wxButton* m_IncVolButton;
-		wxSlider* m_VolSlider;
-		wxButton* m_DecVolButton;
+    // Virtual event handlers, overide them in your derived class
+    void VolFrameActivate( wxActivateEvent& event );
+    void IncVolButtonClick( wxCommandEvent& event );
+    void VolSliderChanged( wxScrollEvent& event );
+    void DecVolButtonClick( wxCommandEvent& event );
+    void SetVolume( void );
+    void OnMouseWheel( wxMouseEvent &event );
 
-		// Virtual event handlers, overide them in your derived class
-		void VolFrameActivate( wxActivateEvent& event );
-		void IncVolButtonClick( wxCommandEvent& event );
-		void VolSliderChanged( wxScrollEvent& event );
-		void DecVolButtonClick( wxCommandEvent& event );
-		void SetVolume( void );
-		void OnMouseWheel( wxMouseEvent &event );
+    void OnMouse( wxMouseEvent &event );
+    void OnTimer( wxTimerEvent &event );
 
-	public:
-		guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 26,200 ), long style = 0|wxTAB_TRAVERSAL );
-		~guVolumeFrame();
+
+  public:
+    guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 26,200 ), long style = 0|wxTAB_TRAVERSAL );
+    ~guVolumeFrame();
 
 };
 

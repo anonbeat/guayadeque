@@ -429,17 +429,17 @@ void guMainFrame::CreateMenu()
 	Menu->Append( MenuItem );
 
 	MenuItem = new wxMenuItem( Menu, ID_MENU_UPDATE_PODCASTS, wxString( _("Update &Podcasts" ) ) , _( "Update the podcasts added" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
 	Menu->Append( MenuItem );
 
 	MenuItem = new wxMenuItem( Menu, ID_MENU_UPDATE_COVERS, wxString( _("Update Covers") ) , _( "Try to download all missing covers" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
 	Menu->Append( MenuItem );
 
 	Menu->AppendSeparator();
 
 	MenuItem = new wxMenuItem( Menu, ID_MENU_PREFERENCES, wxString( _( "&Preferences" ) ) , _( "Change the options of the application" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_pref_general ) );
 	Menu->Append( MenuItem );
 
 	Menu->AppendSeparator();
@@ -479,33 +479,33 @@ void guMainFrame::CreateMenu()
 
     Menu = new wxMenu();
     MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_NEXTTRACK, wxString( _( "&Next Track" ) ), _( "Play the next track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_skip_forward ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_forward ) );
     Menu->Append( MenuItem );
     MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVTRACK, wxString( _( "&Prev. Track" ) ), _( "Play the previous track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_skip_backward ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_backward ) );
     Menu->Append( MenuItem );
     Menu->AppendSeparator();
     MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PLAY, wxString( _( "&Play" ) ), _( "Play or Pause the current track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     Menu->Append( MenuItem );
-    MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_STOP, wxString( _( "&Stop" ) ), _( "Stop the current played track" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );
-    Menu->Append( MenuItem );
+//    MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_STOP, wxString( _( "&Stop" ) ), _( "Stop the current played track" ), wxITEM_NORMAL );
+//    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_pause ) );
+//    Menu->Append( MenuItem );
     Menu->AppendSeparator();
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on Last.fm statics" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_smart ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search_engine ) );
     Menu->Append( MenuItem );
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, wxString( _( "R&andomize" ) ), _( "Randomize the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_shuffle ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_shuffle ) );
     Menu->Append( MenuItem );
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATPLAY, wxString( _( "&Repeat" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playlist_repeat ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_repeat ) );
     Menu->Append( MenuItem );
     MenuBar->Append( Menu, _( "&Control" ) );
 
     Menu = new wxMenu();
     MenuItem = new wxMenuItem( Menu, ID_MENU_ABOUT, wxString( _( "&About" ) ), _( "Show information about guayadeque music player" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_volume_high ) );
     Menu->Append( MenuItem );
     MenuBar->Append( Menu, _( "&Help" ) );
 
