@@ -134,6 +134,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer00 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band0 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 0 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band0->SetLabel( wxT( "0" ) );
 	BandSizer00->Add( m_Band0, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label0 = new wxStaticText( this, wxID_ANY, wxT("30"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -146,6 +147,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer01 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band1 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 1 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band1->SetLabel( wxT( "1" ) );
 	BandSizer01->Add( m_Band1, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label1 = new wxStaticText( this, wxID_ANY, wxT("60"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -158,6 +160,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer02 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band2 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 2 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band2->SetLabel( wxT( "2" ) );
 	BandSizer02->Add( m_Band2, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label2 = new wxStaticText( this, wxID_ANY, wxT("120"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -170,6 +173,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer03 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band3 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 3 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band3->SetLabel( wxT( "3" ) );
 	BandSizer03->Add( m_Band3, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label3 = new wxStaticText( this, wxID_ANY, wxT("250"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -182,6 +186,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer04 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band4 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 4 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band4->SetLabel( wxT( "4" ) );
 	BandSizer04->Add( m_Band4, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label4 = new wxStaticText( this, wxID_ANY, wxT("500"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -194,6 +199,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer05 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band5 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 5 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band5->SetLabel( wxT( "5" ) );
 	BandSizer05->Add( m_Band5, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label5 = new wxStaticText( this, wxID_ANY, wxT("1K"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -206,6 +212,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer06 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band6 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 6 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band6->SetLabel( wxT( "6" ) );
 	BandSizer06->Add( m_Band6, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label6 = new wxStaticText( this, wxID_ANY, wxT("2K"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -218,6 +225,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer07 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band7 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 7 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band7->SetLabel( wxT( "7" ) );
 	BandSizer07->Add( m_Band7, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label7 = new wxStaticText( this, wxID_ANY, wxT("4K"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -230,6 +238,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer08 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band8 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 8 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band8->SetLabel( wxT( "8" ) );
 	BandSizer08->Add( m_Band8, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label8 = new wxStaticText( this, wxID_ANY, wxT("8K"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -242,6 +251,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	BandSizer09 = new wxBoxSizer( wxVERTICAL );
 
 	m_Band9 = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 9 ), -24, 12, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_LABELS|wxSL_VERTICAL );
+	m_Band9->SetLabel( wxT( "9" ) );
 	BandSizer09->Add( m_Band9, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * Label9 = new wxStaticText( this, wxID_ANY, wxT("16K"), wxDefaultPosition, wxDefaultSize, 0 );
