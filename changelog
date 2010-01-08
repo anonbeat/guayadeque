@@ -1,4 +1,6 @@
 
+  * Double click over the time can switch between time current track pos or
+    time left
   * Added option in preferences to configure the silence detector. To
     automatically skip track when the sound level gets lower than the one
     you configure.

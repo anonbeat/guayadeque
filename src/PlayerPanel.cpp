@@ -79,6 +79,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     m_SilenceDetectorLevel = wxNOT_FOUND;
     m_SilenceDetectorTime = 0;
 
+    m_ShowRevTime = false;
+
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -301,6 +303,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	m_AlbumLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+	m_PositionLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 
     //
@@ -405,6 +408,7 @@ guPlayerPanel::~guPlayerPanel()
 
 	m_AlbumLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+	m_PositionLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 
     //
@@ -473,10 +477,25 @@ void guPlayerPanel::SetRatingLabel( const int rating )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetLengthLabel( const int length )
+void guPlayerPanel::UpdatePositionLabel( const int curpos )
 {
-    wxFileOffset CurPos = GetPosition();
-    m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( length ) );
+    wxString Label;
+    if( !m_ShowRevTime || !m_MediaSong.m_Length )
+    {
+        Label = LenToString( curpos );
+    }
+    else if( m_MediaSong.m_Length )
+    {
+        Label = wxT( "-" ) + LenToString( m_MediaSong.m_Length - curpos );
+    }
+
+    if( m_MediaSong.m_Length )
+    {
+        Label += _( " of " ) + LenToString( m_MediaSong.m_Length );
+    }
+
+    m_PositionLabel->SetLabel( Label );
+
     m_PosLabelSizer->Layout();
 }
 
@@ -649,8 +668,16 @@ void guPlayerPanel::UpdateStatus()
         CurPos = GetPosition();
         if( ( CurPos != m_LastCurPos ) && !m_SliderIsDragged )
         {
-            m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
-            m_PosLabelSizer->Layout();
+//            if( !m_ShowRevTime )
+//            {
+//                m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
+//            }
+//            else
+//                m_PositionLabel->SetLabel( wxT( "-" ) + LenToString( m_MediaSong.m_Length - ( CurPos / 1000 ) ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
+//
+//            m_PosLabelSizer->Layout();
+
+            UpdatePositionLabel( CurPos / 1000 );
 
             if( m_MediaSong.m_Length )
                 m_PlayerPositionSlider->SetValue( CurPos / m_MediaSong.m_Length );
@@ -850,7 +877,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     SetTitleLabel( m_MediaSong.m_SongName );
     SetAlbumLabel( m_MediaSong.m_AlbumName );
     SetArtistLabel( m_MediaSong.m_ArtistName );
-    SetLengthLabel( m_MediaSong.m_Length );
+    UpdatePositionLabel( 0 );
     SetRatingLabel( m_MediaSong.m_Rating );
 
     if( m_MediaSong.m_Year > 0 )
@@ -1552,8 +1579,9 @@ void guPlayerPanel::OnPlayerPositionSliderBeginSeek( wxScrollEvent &event )
     {
         int CurPos = event.GetPosition() * m_MediaSong.m_Length;
 
-        m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
-        m_PosLabelSizer->Layout();
+//        m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
+//        m_PosLabelSizer->Layout();
+        UpdatePositionLabel( CurPos / 1000 );
         //printf( "Slider Tracking %d\n", CurPos );
 
         //m_MediaCtrl->Seek( CurPos * m_MediaSong.Length );
