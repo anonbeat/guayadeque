@@ -66,7 +66,7 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbLibrary * db ) :
 	TagEditorBtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	TagEditorBtnSizer->AddButton( TagEditorBtnSizerCancel );
 	TagEditorBtnSizer->Realize();
-	MainSizer->Add( TagEditorBtnSizer, 0, wxEXPAND, 5 );
+	MainSizer->Add( TagEditorBtnSizer, 0, wxRIGHT|wxBOTTOM|wxEXPAND, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
