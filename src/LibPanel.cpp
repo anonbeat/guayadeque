@@ -614,7 +614,7 @@ void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
     {
         m_Db->GetLabels( &Labels, true );
 
-        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Artist Labels Editor" ), Labels, m_Db->GetArtistsLabels( Artists ) );
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Artist Labels Editor" ), false, Labels, m_Db->GetArtistsLabels( Artists ) );
         if( LabelEditor )
         {
             if( LabelEditor->ShowModal() == wxID_OK )
@@ -639,7 +639,7 @@ void guLibPanel::OnAlbumEditLabelsClicked( wxCommandEvent &event )
     m_Db->GetLabels( &Labels, true );
 
     Albums = m_AlbumListCtrl->GetSelectedItems();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Albums Labels Editor" ),
+    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Albums Labels Editor" ), false,
                                          Labels, m_Db->GetAlbumsLabels( Albums ) );
     if( LabelEditor )
     {
@@ -663,7 +663,7 @@ void guLibPanel::OnSongsEditLabelsClicked( wxCommandEvent &event )
     m_Db->GetLabels( &Labels, true );
 
     SongIds = m_SongListCtrl->GetSelectedItems();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ),
+    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ), false,
                          Labels, m_Db->GetSongsLabels( SongIds ) );
     if( LabelEditor )
     {

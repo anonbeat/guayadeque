@@ -1155,7 +1155,7 @@ void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
         m_Db->GetLabels( &Labels, true );
 
         //SongIds = m_SongListCtrl->GetSelection();
-        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ),
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ), false,
                              Labels, m_Db->GetSongsLabels( SongIds ) );
         if( LabelEditor )
         {

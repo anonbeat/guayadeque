@@ -40,8 +40,6 @@
 // -------------------------------------------------------------------------------- //
 class guLabelEditor : public wxDialog
 {
-  private:
-
   protected:
     guDbLibrary *       m_Db;
     wxCheckListBox *    m_CheckListBox;
@@ -51,13 +49,15 @@ class guLabelEditor : public wxDialog
     wxArrayInt          m_LabelIds;
     int                 m_SelectedItem;
 
+    bool                m_IsRadioLabel;
+
 	void SetCheckedItems( const wxArrayInt &Checked );
     void OnAddLabelBtnClick( wxCommandEvent &event );
 	void OnDelLabelBtnClick( wxCommandEvent &event );
 	void OnCheckListBoxSelected( wxCommandEvent& event );
 
   public:
-	guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxString &title, const guListItems &labels, const guArrayListItems &enabelditems );
+	guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxString &title, const bool isradiolabel, const guListItems &labels, const guArrayListItems &enabelditems );
 	~guLabelEditor();
     wxArrayInt GetCheckedIds( void );
 
