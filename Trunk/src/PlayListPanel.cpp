@@ -769,7 +769,7 @@ void guPlayListPanel::OnPLTracksEditLabelsClicked( wxCommandEvent &event )
 
     SongIds = m_PLTracksListBox->GetSelectedItems();
 
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ),
+    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ), false,
                          Labels, m_Db->GetSongsLabels( SongIds ) );
     if( LabelEditor )
     {
