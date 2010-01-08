@@ -92,6 +92,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_PodCount = 0;
 
     //
+    m_AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
+
+    //
     // guMainFrame GUI components
     //
     wxPoint MainWindowPos;
@@ -611,6 +614,17 @@ void guMainFrame::LibraryUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
 {
+    if( m_TaskBarIcon )
+    {
+        guTrackChangeInfo * TrackChangeInfo = ( guTrackChangeInfo * ) event.GetClientData();
+        if( TrackChangeInfo )
+        {
+            m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "\r" ) +
+                                               TrackChangeInfo->m_ArtistName + wxT( "\n" ) +
+                                               TrackChangeInfo->m_TrackName );
+        }
+    }
+
     if( m_LastFMPanel )
     {
         m_LastFMPanel->OnUpdatedTrack( event );
@@ -1134,9 +1148,7 @@ void guMainFrame::CreateTaskBarIcon( void )
     m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
     if( m_TaskBarIcon )
     {
-        wxIcon AppIcon;
-        AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
-        m_TaskBarIcon->SetIcon( AppIcon );
+        m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
     }
 }
 

@@ -29,7 +29,7 @@
 class guTaskBarIcon : public wxTaskBarIcon
 {
   protected :
-    guMainFrame * m_MainFrame;
+    guMainFrame *   m_MainFrame;
     guPlayerPanel * m_PlayerPanel;
 
     virtual wxMenu * CreatePopupMenu();
