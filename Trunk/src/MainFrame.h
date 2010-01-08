@@ -75,6 +75,8 @@ class guMainFrame : public wxFrame
     guDbCache *                 m_DbCache;
     guLibUpdateThread *         m_LibUpdateThread;
 
+    wxIcon                      m_AppIcon;
+
     guUpdatePodcastsTimer *     m_UpdatePodcastsTimer;
 
     guPodcastDownloadQueueThread    * m_DownloadThread;
