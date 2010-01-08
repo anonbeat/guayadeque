@@ -134,7 +134,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
-	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist bassed on LastFM" ) );
+	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
 	// Get this value from config file
 	m_SmartPlayButton->SetValue( m_PlaySmart );
 	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALL, 2 );
