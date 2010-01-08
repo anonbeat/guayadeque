@@ -100,6 +100,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         {
             m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
         }
+
+        m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
     }
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
@@ -391,6 +393,7 @@ guPlayerPanel::~guPlayerPanel()
         }
         Config->WriteANum( wxT( "Band" ), Equalizer, wxT( "Equalizer" ) );
 
+        Config->WriteBool( wxT( "ShowRevTime" ), m_ShowRevTime, wxT( "General" ) );
     }
 
 	// Connect Events
