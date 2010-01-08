@@ -172,6 +172,8 @@ class guPlayerPanel : public wxPanel
 
     bool                    m_AboutToFinishPending;
 
+    bool                    m_ShowRevTime;
+
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
@@ -200,6 +202,8 @@ class guPlayerPanel : public wxPanel
 
     void                OnAlbumNameDClicked( wxMouseEvent &event );
     void                OnArtistNameDClicked( wxMouseEvent &event );
+    void                OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime; };
+
     void                OnRatingChanged( guRatingEvent &event );
 
   public:
@@ -244,7 +248,7 @@ class guPlayerPanel : public wxPanel
     void                SetAlbumLabel( const wxString &albumname );
     void                SetTitleLabel( const wxString &trackname );
     void                SetRatingLabel( const int Rating );
-    void                SetLengthLabel( const int length );
+    void                UpdatePositionLabel( const int curpos );
     void                SetBitRate( int bitrate );
 
     void                UpdatedTracks( const guTrackArray * tracks );
