@@ -48,6 +48,7 @@ int guWebExecute( const wxString &Url );
 int guExecute( const wxString &Command );
 unsigned int guGetFileSize( const wxString &FileName );
 wxString GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString, bool encoding = false );
+void CheckSymLinks( wxArrayString &libpaths );
 
 // -------------------------------------------------------------------------------- //
 #endif

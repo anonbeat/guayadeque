@@ -616,12 +616,12 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
 {
     if( m_TaskBarIcon )
     {
-        guTrackChangeInfo * TrackChangeInfo = ( guTrackChangeInfo * ) event.GetClientData();
-        if( TrackChangeInfo )
+        guTrack * Track = ( guTrack * ) event.GetClientData();
+        if( Track )
         {
             m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "\r" ) +
-                                               TrackChangeInfo->m_ArtistName + wxT( "\n" ) +
-                                               TrackChangeInfo->m_TrackName );
+                                               Track->m_ArtistName + wxT( "\n" ) +
+                                               Track->m_SongName );
         }
     }
 
@@ -640,7 +640,7 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
 
     if( event.GetClientData() )
     {
-        delete ( guTrackChangeInfo * ) event.GetClientData();
+        delete ( guTrack * ) event.GetClientData();
     }
 }
 
