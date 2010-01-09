@@ -280,7 +280,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 	wxBoxSizer* PlayLevelSizer;
 	PlayLevelSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxStaticText * LevelStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "Level:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * LevelStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "Level(db):" ), wxDefaultPosition, wxDefaultSize, 0 );
 	LevelStaticText->Wrap( -1 );
 
 	PlayLevelSizer->Add( LevelStaticText, 0, wxALL|wxALIGN_BOTTOM, 5 );

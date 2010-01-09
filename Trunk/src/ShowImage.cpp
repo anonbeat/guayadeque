@@ -33,7 +33,7 @@ guShowImage::guShowImage( wxWindow * parent, wxImage * image, const wxPoint &pos
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 150, 150 ), 0 );
 	MainSizer->Add( m_Bitmap, 1, wxEXPAND, 5 );
 
 	this->SetSizer( MainSizer );
