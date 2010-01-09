@@ -424,6 +424,8 @@ void guDbLibrary::DoCleanUp( void )
   guConfig * Config = ( guConfig * ) guConfig::Get();
   wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
 
+  CheckSymLinks( LibPaths );
+
   query = wxT( "SELECT DISTINCT song_id, song_filename, path_value FROM songs, paths " \
                "WHERE song_pathid = path_id;" );
 

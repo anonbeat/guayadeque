@@ -1465,18 +1465,16 @@ void guLastFMPanel::OnUpdatedTrack( wxCommandEvent &event )
     // Player informs there is a new track playing
     //guLogMessage( wxT( "Received LastFMPanel::UpdateTrack event" ) );
 
-    const guTrackChangeInfo * TrackChangeInfo = ( guTrackChangeInfo * ) event.GetClientData();
+    const guTrack * Track = ( guTrack * ) event.GetClientData();
+    guTrackChangeInfo ChangeInfo;
 
-    if( !TrackChangeInfo )
+    if( Track )
     {
-        guTrackChangeInfo ChangeInfo;
-        AppendTrackChangeInfo( &ChangeInfo );
+        ChangeInfo.m_ArtistName = Track->m_ArtistName;
+        ChangeInfo.m_TrackName = Track->m_SongName;
     }
-    else
-    {
-        //guLogMessage( wxT( "%s - %s" ), TrackChangeInfo->m_ArtistName.c_str(), TrackChangeInfo->m_TrackName.c_str() );
-        AppendTrackChangeInfo( TrackChangeInfo );
-    }
+    //guLogMessage( wxT( "%s - %s" ), TrackChangeInfo->m_ArtistName.c_str(), TrackChangeInfo->m_TrackName.c_str() );
+    AppendTrackChangeInfo( &ChangeInfo );
     ShowCurrentTrack();
 }
 

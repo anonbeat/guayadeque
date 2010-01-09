@@ -375,3 +375,23 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
 }
 
 // -------------------------------------------------------------------------------- //
+void CheckSymLinks( wxArrayString &libpaths )
+{
+    char TmpBuf[ 4096 ];
+    int Result;
+
+    int Index;
+    int Count = libpaths.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        Result = readlink( libpaths[ Index ].char_str(), TmpBuf, WXSIZEOF( TmpBuf ) - sizeof( char ) );
+        if( Result != -1 )
+        {
+            TmpBuf[ Result ] = 0;
+            libpaths[ Index ] = wxString::FromUTF8( TmpBuf );
+            guLogMessage( wxT( "Detected symbolic link pointing to %s" ), libpaths[ Index ].c_str() );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //

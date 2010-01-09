@@ -26,6 +26,8 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
+#include <unistd.h>
+
 // -------------------------------------------------------------------------------- //
 int inline GetFileLastChange( const wxString &FileName )
 {
@@ -45,6 +47,9 @@ guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid )
     if( Config )
     {
         m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+
+        CheckSymLinks( m_LibPaths );
+
         wxDateTime LastTime;
         LastTime.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
         m_LastUpdate = LastTime.GetTicks();

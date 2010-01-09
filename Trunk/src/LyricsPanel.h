@@ -43,10 +43,12 @@
 
 class guSearchLyricEngine;
 
-#define guLYRIC_ENGINE_LYRICWIKI        0
-#define guLYRIC_ENGINE_LEOSLYRICS       1
-//#define guLYRIC_ENGINE_LYRC_COM_AR      2
-#define guLYRIC_ENGINE_CDUNIVERSE       2
+enum guLYRIC_ENGINE_ID {
+    guLYRIC_ENGINE_LYRICWIKI = 0,
+    guLYRIC_ENGINE_LEOSLYRICS,
+    guLYRIC_ENGINE_LYRC_COM_AR,
+    guLYRIC_ENGINE_CDUNIVERSE
+};
 
 // -------------------------------------------------------------------------------- //
 class guLyricsPanel : public wxPanel
@@ -123,15 +125,15 @@ class guLeosLyricsEngine : public guSearchLyricEngine
     virtual void SearchLyric( void );
 };
 
-//// -------------------------------------------------------------------------------- //
-//class guLyrcComArEngine : public guSearchLyricEngine
-//{
-//  public:
-//    guLyrcComArEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
-//    ~guLyrcComArEngine();
-//
-//    virtual void SearchLyric( void );
-//};
+// -------------------------------------------------------------------------------- //
+class guLyrcComArEngine : public guSearchLyricEngine
+{
+  public:
+    guLyrcComArEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    ~guLyrcComArEngine();
+
+    virtual void SearchLyric( void );
+};
 
 // -------------------------------------------------------------------------------- //
 class guCDUEngine : public guSearchLyricEngine
