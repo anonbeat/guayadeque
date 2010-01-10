@@ -470,26 +470,26 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
     }
 	OnlineMainSizer->Add( m_RadioMinBitRateRadBox, 0, wxALL|wxEXPAND, 5 );
 
-	wxStaticBoxSizer * LyricsSizer;
-	LyricsSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Lyrics Provider ") ), wxHORIZONTAL );
-
-	wxStaticText * LyricsProviderStaticText;
-	LyricsProviderStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Lyrics Provider:"), wxDefaultPosition, wxDefaultSize, 0 );
-	LyricsProviderStaticText->Wrap( -1 );
-	LyricsSizer->Add( LyricsProviderStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	wxString LyricsChoiceChoices[] = {
-	    wxT( "http://lyricwiki.org" ),
-	    wxT( "http://leoslyrics.com" ),
-	    wxT( "http://lyrc.com.ar" ),
-	    wxT( "http://cduniverse.com" )
-	    };
-	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
-	m_LyricsChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
-	m_LyricsChoice->SetSelection( m_Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) ) );
-	LyricsSizer->Add( m_LyricsChoice, 0, wxALL, 5 );
-
-	OnlineMainSizer->Add( LyricsSizer, 0, wxEXPAND|wxALL, 5 );
+//	wxStaticBoxSizer * LyricsSizer;
+//	LyricsSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Lyrics Provider ") ), wxHORIZONTAL );
+//
+//	wxStaticText * LyricsProviderStaticText;
+//	LyricsProviderStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Lyrics Provider:"), wxDefaultPosition, wxDefaultSize, 0 );
+//	LyricsProviderStaticText->Wrap( -1 );
+//	LyricsSizer->Add( LyricsProviderStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+//
+//	wxString LyricsChoiceChoices[] = {
+//	    wxT( "http://lyricwiki.org" ),
+//	    wxT( "http://leoslyrics.com" ),
+//	    wxT( "http://lyrc.com.ar" ),
+//	    wxT( "http://cduniverse.com" )
+//	    };
+//	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
+//	m_LyricsChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
+//	m_LyricsChoice->SetSelection( m_Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) ) );
+//	LyricsSizer->Add( m_LyricsChoice, 0, wxALL, 5 );
+//
+//	OnlineMainSizer->Add( LyricsSizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_OnlinePanel->SetSizer( OnlineMainSizer );
 	m_OnlinePanel->Layout();
@@ -1003,7 +1003,7 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "SearchFilters" ) );
     m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
     m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
-    m_Config->WriteNum( wxT( "LyricSearchEngine" ), m_LyricsChoice->GetSelection(), wxT( "General" ) );
+//    m_Config->WriteNum( wxT( "LyricSearchEngine" ), m_LyricsChoice->GetSelection(), wxT( "General" ) );
     m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "Podcasts" ) );
     m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "Podcasts" ) );
     m_Config->WriteNum( wxT( "UpdatePeriod" ), m_PodcastUpdatePeriod->GetSelection(), wxT( "Podcasts" ) );

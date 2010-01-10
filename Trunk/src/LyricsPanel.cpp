@@ -21,7 +21,6 @@
 #include "LyricsPanel.h"
 
 #include "Base64.h"
-#include "DbLibrary.h"
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
@@ -37,6 +36,9 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 {
     m_LyricThread = NULL;
     m_UpdateEnabled = true;
+    m_CurrentTrack = NULL;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
 
     wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
@@ -57,7 +59,21 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+//	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	wxStaticText * ServerStaticText = new wxStaticText( this, wxID_ANY, wxT("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
+	ServerStaticText->Wrap( -1 );
+	EditorSizer->Add( ServerStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+
+	wxString LyricsChoiceChoices[] = {
+	    wxT( "http://lyricwiki.org" ),
+	    wxT( "http://leoslyrics.com" ),
+	    wxT( "http://lyrc.com.ar" ),
+	    wxT( "http://cduniverse.com" )
+	    };
+	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
+	m_ServerChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
+	m_ServerChoice->SetSelection( Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) ) );
+	EditorSizer->Add( m_ServerChoice, 1, wxTOP|wxRIGHT, 5 );
 
 	wxStaticText * ArtistStaticText;
 	ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -81,7 +97,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 
 	EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_SearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SearchButton->Enable( false );
 
 	EditorSizer->Add( m_SearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
@@ -124,11 +140,22 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::~guLyricsPanel()
 {
+	m_UpdateCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
+	m_ReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
+	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
+	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
+	m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
+    Disconnect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ) );
+
     if( m_LyricThread )
     {
         m_LyricThread->Pause();
         m_LyricThread->Delete();
     }
+
+    // Save the current selected server
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -136,12 +163,12 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
 {
     if( m_UpdateEnabled )
     {
-        const guTrack * Track = ( guTrack * ) event.GetClientData();
+        m_CurrentTrack = ( guTrack * ) event.GetClientData();
         guTrackChangeInfo ChangeInfo;
-        if( Track )
+        if( m_CurrentTrack )
         {
-            ChangeInfo.m_ArtistName = Track->m_ArtistName;
-            ChangeInfo.m_TrackName = Track->m_SongName;
+            ChangeInfo.m_ArtistName = m_CurrentTrack->m_ArtistName;
+            ChangeInfo.m_TrackName = m_CurrentTrack->m_SongName;
         }
         SetTrack( &ChangeInfo );
     }
@@ -215,9 +242,10 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo )
     {
         SetText( _( "Searching the lyrics for this track" ) );
 
-        guConfig * Config = ( guConfig * ) Config->Get();
-
-        int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
+//        guConfig * Config = ( guConfig * ) Config->Get();
+//
+//        int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
+        int Engine = m_ServerChoice->GetSelection();
         if( Engine == guLYRIC_ENGINE_LYRICWIKI )
         {
             m_LyricThread = new guLyricWikiEngine( this, Artist.c_str(), Track.c_str() );
@@ -253,6 +281,13 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
+//        if( m_CurrentTrack )
+//        {
+//            // Only if its a File
+//            if( m_CurrentTrack->m_Type < guTRACK_TYPE_RADIOSTATION )
+//            {
+//            }
+//        }
         SetText( * Content );
         delete Content;
     }

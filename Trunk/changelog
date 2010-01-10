@@ -1,4 +1,5 @@
 
+  * You can now select lyrics provider from the lyrics panel
   * Fixed bug adding a label in the radio label editor
   * Double click over the time can switch between time current track pos or
     time left

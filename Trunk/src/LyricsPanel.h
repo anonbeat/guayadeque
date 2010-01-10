@@ -21,6 +21,7 @@
 #ifndef LYRICSPANEL_H
 #define LYRICSPANEL_H
 
+#include "DbLibrary.h"
 #include "TrackChangeInfo.h"
 
 #include <wx/bitmap.h>
@@ -59,10 +60,13 @@ class guLyricsPanel : public wxPanel
     guSearchLyricEngine *   m_LyricThread;
     wxCheckBox *            m_UpdateCheckBox;
 	wxBitmapButton *        m_ReloadButton;
+	wxChoice *              m_ServerChoice;
 	wxTextCtrl *            m_ArtistTextCtrl;
 	wxTextCtrl *            m_TrackTextCtrl;
 	wxBitmapButton *        m_SearchButton;
+
 	bool                    m_UpdateEnabled;
+	guTrack *               m_CurrentTrack;
 
     void    SetTitle( const wxString &title );
     void    SetText( const wxString &text );
