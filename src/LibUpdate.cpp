@@ -29,7 +29,7 @@
 #include <unistd.h>
 
 // -------------------------------------------------------------------------------- //
-int inline GetFileLastChange( const wxString &FileName )
+int inline GetFileLastChangeTime( const wxString &FileName )
 {
     wxStructStat St;
     wxStat( FileName, &St );
@@ -108,7 +108,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
         {
           if( Dir.Exists( FileName ) )
           {
-            int FileDate = GetFileLastChange( FileName );
+            int FileDate = GetFileLastChangeTime( FileName );
             //guLogMessage( wxT( "Scanning dir '%s'\n%u Tracks found" ), ( WorkingDir + wxT( '/' ) + FileName ).c_str(), m_TrackFiles.Count() );
             ScanDirectory( FileName, includedir || ( FileDate > m_LastUpdate ) );
 
@@ -119,7 +119,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           }
           else
           {
-            int FileDate = GetFileLastChange( FileName );
+            int FileDate = GetFileLastChangeTime( FileName );
             //guLogMessage( wxT( "FileDate: %u  -> %u" ), m_LastUpdate, FileDate );
             if( includedir || ( FileDate > m_LastUpdate ) )
             {
