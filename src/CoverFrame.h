@@ -30,11 +30,13 @@ class guCoverFrame : public wxFrame
   protected:
     wxStaticBitmap * m_CoverBitmap;
     bool             m_CapturedMouse;
+    wxTimer *        m_AutoCloseTimer;
 
     void CoverFrameActivate( wxActivateEvent &event );
     void OnClick( wxMouseEvent &event );
     void OnCaptureLost( wxMouseCaptureLostEvent &event );
     void OnMouse( wxMouseEvent &event );
+    void OnTimer( wxTimerEvent &event );
 
   public:
     guCoverFrame( wxWindow * parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 293, 258 ), long style = 0|wxTAB_TRAVERSAL );

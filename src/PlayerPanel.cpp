@@ -309,7 +309,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 
     //
-	m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
+	//m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
     Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
 
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
@@ -415,7 +415,7 @@ guPlayerPanel::~guPlayerPanel()
 	m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 
     //
-	m_PlayerCoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
+	//m_PlayerCoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
     Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
 
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
@@ -1541,21 +1541,21 @@ void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
     }
 }
 
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnLeftDClickPlayerCoverBitmap( wxMouseEvent& event )
-{
-    wxPoint Pos;
-    Pos = ClientToScreen( m_PlayerCoverBitmap->GetPosition() );
-    guCoverFrame * BigCover = new guCoverFrame( this, wxID_ANY, wxEmptyString, Pos );
-    if( BigCover )
-    {
-        if( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG )
-            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_FileName );
-        else
-            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
-        BigCover->Show();
-    }
-}
+//// -------------------------------------------------------------------------------- //
+//void guPlayerPanel::OnLeftDClickPlayerCoverBitmap( wxMouseEvent& event )
+//{
+//    wxPoint Pos;
+//    Pos = ClientToScreen( m_PlayerCoverBitmap->GetPosition() );
+//    guCoverFrame * BigCover = new guCoverFrame( this, wxID_ANY, wxEmptyString, Pos );
+//    if( BigCover )
+//    {
+//        if( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG )
+//            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_FileName );
+//        else
+//            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
+//        BigCover->Show();
+//    }
+//}
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayerCoverBitmapMouseOver( wxCommandEvent &event )
