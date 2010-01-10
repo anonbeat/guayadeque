@@ -177,7 +177,7 @@ class guPlayerPanel : public wxPanel
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
-    void                OnLeftDClickPlayerCoverBitmap( wxMouseEvent &event );
+//    void                OnLeftDClickPlayerCoverBitmap( wxMouseEvent &event );
     void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
     void                OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
     void                OnPlayerPositionSliderEndSeek( wxScrollEvent &event );

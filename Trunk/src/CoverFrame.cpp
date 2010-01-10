@@ -29,6 +29,7 @@ guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & t
      wxFrame( parent, id, title, pos, size, style | wxFRAME_NO_TASKBAR )
 {
     m_CapturedMouse = false;
+    m_AutoCloseTimer = new wxTimer( this );
 
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -41,12 +42,16 @@ guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & t
 	SetSizer( CoverSizer );
 	Layout();
 
+    m_AutoCloseTimer->Start( 3000, wxTIMER_ONE_SHOT );
+
 	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guCoverFrame::CoverFrameActivate ) );
 	m_CoverBitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
 
 	m_CoverBitmap->Connect( wxEVT_MOTION, wxMouseEventHandler( guCoverFrame::OnMouse ), NULL, this );
 	Connect( wxEVT_MOTION, wxMouseEventHandler( guCoverFrame::OnMouse ), NULL, this );
 	Connect( wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler( guCoverFrame::OnCaptureLost ), NULL, this );
+
+	Connect( wxEVT_TIMER, wxTimerEventHandler( guCoverFrame::OnTimer ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -54,6 +59,22 @@ guCoverFrame::~guCoverFrame()
 {
     if( m_CapturedMouse )
         ReleaseMouse();
+
+    if( m_AutoCloseTimer )
+        delete m_AutoCloseTimer;
+}
+
+// -------------------------------------------------------------------------------- //
+void guCoverFrame::OnTimer( wxTimerEvent &event )
+{
+    int MouseX, MouseY;
+    wxGetMousePosition( &MouseX, &MouseY );
+
+    wxRect WinRect = m_CoverBitmap->GetScreenRect();
+    if( !WinRect.Contains( MouseX, MouseY ) )
+    {
+        Close();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -147,6 +168,10 @@ void guCoverFrame::OnMouse( wxMouseEvent &event )
             CaptureMouse();
         }
     }
+
+    if( m_AutoCloseTimer )
+        m_AutoCloseTimer->Stop();
+
     event.Skip();
 }
 
