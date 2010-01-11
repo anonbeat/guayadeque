@@ -446,7 +446,6 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
         }
     }
 
-//
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( m_MainFrame, event );
@@ -1157,6 +1156,7 @@ int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
                 Track->m_FileName = PodcastItem.m_FileName;
                 Track->m_SongName = PodcastItem.m_Title;
                 Track->m_ArtistName = PodcastItem.m_Author;
+                Track->m_AlbumName = PodcastItem.m_Channel;
                 Track->m_Length = PodcastItem.m_Length;
                 Track->m_PlayCount = PodcastItem.m_PlayCount;
                 Track->m_GenreName = wxT( "Podcasts" );
