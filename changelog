@@ -1,8 +1,10 @@
 
+2010-01-11 0.2.3
+
   * Preferences dialog can be resized
   * You can now select lyrics provider from the lyrics panel
   * Fixed bug adding a label in the radio label editor
-  * Double click over the time can switch between time current track pos or
+  * Click over the time can switch between time current track pos or
     time left
   * Added option in preferences to configure the silence detector. To
     automatically skip track when the sound level gets lower than the one

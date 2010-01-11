@@ -172,10 +172,13 @@
 		<Unit filename="src/RatingCtrl.h" />
 		<Unit filename="src/Shoutcast.cpp" />
 		<Unit filename="src/Shoutcast.h" />
+		<Unit filename="src/ShowImage.cpp" />
 		<Unit filename="src/SoListBox.cpp" />
 		<Unit filename="src/SoListBox.h" />
 		<Unit filename="src/SplashWin.cpp" />
 		<Unit filename="src/SplashWin.h" />
+		<Unit filename="src/StaticBitmap.cpp" />
+		<Unit filename="src/StaticBitmap.h" />
 		<Unit filename="src/StatusBar.cpp" />
 		<Unit filename="src/StatusBar.h" />
 		<Unit filename="src/TaListBox.cpp" />
