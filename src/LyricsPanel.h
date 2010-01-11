@@ -66,7 +66,8 @@ class guLyricsPanel : public wxPanel
 	wxBitmapButton *        m_SearchButton;
 
 	bool                    m_UpdateEnabled;
-	guTrack *               m_CurrentTrack;
+    guTrackChangeInfo       m_CurrentTrackInfo;
+	wxString                m_CurrentFileName;
 
     void    SetTitle( const wxString &title );
     void    SetText( const wxString &text );
@@ -74,7 +75,7 @@ class guLyricsPanel : public wxPanel
 	void    OnReloadBtnClick( wxCommandEvent& event );
 	void    OnUpdateChkBoxClicked( wxCommandEvent& event );
     void    OnTextUpdated( wxCommandEvent& event );
-	void    OnSearchBtnClick( wxCommandEvent& event );
+//	void    OnSearchBtnClick( wxCommandEvent& event );
 
 
   public :

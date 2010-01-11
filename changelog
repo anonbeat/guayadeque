@@ -1,6 +1,5 @@
 
-2010-01-11 0.2.3
-
+  * Fix 'Copy to...' when filenames contains reserved chars
   * Preferences dialog can be resized
   * You can now select lyrics provider from the lyrics panel
   * Fixed bug adding a label in the radio label editor

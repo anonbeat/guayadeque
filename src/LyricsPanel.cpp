@@ -36,7 +36,6 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 {
     m_LyricThread = NULL;
     m_UpdateEnabled = true;
-    m_CurrentTrack = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -55,9 +54,6 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	m_UpdateCheckBox->SetValue( m_UpdateEnabled );
 
 	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-
-	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 //	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 	wxStaticText * ServerStaticText = new wxStaticText( this, wxID_ANY, wxT("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -97,10 +93,13 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 
 	EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_SearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_SearchButton->Enable( false );
+	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	EditorSizer->Add( m_SearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+//	m_SearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_SearchButton->Enable( false );
+
+//	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	TitleSizer->Add( EditorSizer, 1, wxEXPAND, 5 );
 
@@ -133,7 +132,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
-	m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
+	//m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
     Connect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ) );
 }
 
@@ -144,7 +143,7 @@ guLyricsPanel::~guLyricsPanel()
 	m_ReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
-	m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
+	//m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
     Disconnect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ) );
 
     if( m_LyricThread )
@@ -163,13 +162,20 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
 {
     if( m_UpdateEnabled )
     {
-        m_CurrentTrack = ( guTrack * ) event.GetClientData();
+        m_CurrentFileName = wxEmptyString;
+
+        guTrack * Track = ( guTrack * ) event.GetClientData();
         guTrackChangeInfo ChangeInfo;
-        if( m_CurrentTrack )
+        if( Track )
         {
-            ChangeInfo.m_ArtistName = m_CurrentTrack->m_ArtistName;
-            ChangeInfo.m_TrackName = m_CurrentTrack->m_SongName;
+            ChangeInfo.m_ArtistName = Track->m_ArtistName;
+            ChangeInfo.m_TrackName = Track->m_SongName;
+            if( Track->m_Type < guTRACK_TYPE_RADIOSTATION )
+            {
+                m_CurrentFileName = Track->m_FileName;
+            }
         }
+        m_CurrentTrackInfo = ChangeInfo;
         SetTrack( &ChangeInfo );
     }
 }
@@ -177,8 +183,7 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnTextUpdated( wxCommandEvent& event )
 {
-    m_SearchButton->Enable( !m_UpdateEnabled &&
-                            !m_ArtistTextCtrl->GetValue().IsEmpty() &&
+    m_ReloadButton->Enable( !m_ArtistTextCtrl->GetValue().IsEmpty() &&
                             !m_TrackTextCtrl->GetValue().IsEmpty() );
 }
 
@@ -186,10 +191,14 @@ void guLyricsPanel::OnTextUpdated( wxCommandEvent& event )
 void guLyricsPanel::OnUpdateChkBoxClicked( wxCommandEvent& event )
 {
     m_UpdateEnabled = m_UpdateCheckBox->IsChecked();
+    if( m_UpdateEnabled )
+    {
+        m_ArtistTextCtrl->SetValue( m_CurrentTrackInfo.m_ArtistName );
+        m_TrackTextCtrl->SetValue( m_CurrentTrackInfo.m_TrackName );
+    }
     m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
     m_TrackTextCtrl->Enable( !m_UpdateEnabled );
-    m_SearchButton->Enable( !m_UpdateEnabled &&
-                            !m_ArtistTextCtrl->GetValue().IsEmpty() &&
+    m_ReloadButton->Enable( !m_ArtistTextCtrl->GetValue().IsEmpty() &&
                             !m_TrackTextCtrl->GetValue().IsEmpty() );
 }
 
@@ -200,12 +209,12 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
     SetTrack( &TrackChangeInfo );
 }
 
-// -------------------------------------------------------------------------------- //
-void guLyricsPanel::OnSearchBtnClick( wxCommandEvent& event )
-{
-    guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
-    SetTrack( &TrackChangeInfo );
-}
+//// -------------------------------------------------------------------------------- //
+//void guLyricsPanel::OnSearchBtnClick( wxCommandEvent& event )
+//{
+//    guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+//    SetTrack( &TrackChangeInfo );
+//}
 
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::SetTitle( const wxString &title )
@@ -281,13 +290,8 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
-//        if( m_CurrentTrack )
-//        {
-//            // Only if its a File
-//            if( m_CurrentTrack->m_Type < guTRACK_TYPE_RADIOSTATION )
-//            {
-//            }
-//        }
+// TODO UPdate the lyrics in the file
+
         SetText( * Content );
         delete Content;
     }

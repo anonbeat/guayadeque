@@ -1484,7 +1484,16 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 
         FileName = m_DestDir + FileName;
 
-        //guLogMessage( wxT( "Copy %s =>> %s" ), ( * m_Tracks )[ index ].m_FileName.c_str(), FileName.c_str() );
+        // Replace all the special chars < > : " / \ | ? *
+        FileName.Replace( wxT( "<" ), wxT( "_" ) );
+        FileName.Replace( wxT( ">" ), wxT( "_" ) );
+        FileName.Replace( wxT( ":" ), wxT( "_" ) );
+        FileName.Replace( wxT( "\"" ), wxT( "_" ) );
+        FileName.Replace( wxT( "|" ), wxT( "_" ) );
+        FileName.Replace( wxT( "?" ), wxT( "_" ) );
+        FileName.Replace( wxT( "*" ), wxT( "_" ) );
+
+        guLogMessage( wxT( "Copy %s =>> %s" ), ( * m_Tracks )[ index ].m_FileName.c_str(), FileName.c_str() );
         if( wxFileName::Mkdir( wxPathOnly( FileName ), 0777, wxPATH_MKDIR_FULL ) )
         {
             if( !wxCopyFile( ( * m_Tracks )[ index ].m_FileName, FileName, FileOverwrite ) )
