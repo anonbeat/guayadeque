@@ -30,8 +30,7 @@
 wxString PatternToExample( const wxString &Pattern );
 
 // -------------------------------------------------------------------------------- //
-guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
-    wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 600, 530 ), wxDEFAULT_DIALOG_STYLE )
+guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 600, 530 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
 {
 	wxBoxSizer *        MainSizer;
 	wxBoxSizer *        GenMainSizer;
@@ -67,6 +66,18 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
     if( !m_Config )
         guLogError( wxT( "Invalid m_Config object in preferences dialog" ) );
 
+
+    wxPoint WindowPos;
+    WindowPos.x = m_Config->ReadNum( wxT( "PreferencesPosX" ), -1, wxT( "Positions" ) );
+    WindowPos.y = m_Config->ReadNum( wxT( "PreferencesPosY" ), -1, wxT( "Positions" ) );
+    wxSize WindowSize;
+    WindowSize.x = m_Config->ReadNum( wxT( "PreferencesSizeWidth" ), 600, wxT( "Positions" ) );
+    WindowSize.y = m_Config->ReadNum( wxT( "PreferencesSizeHeight" ), 530, wxT( "Positions" ) );
+
+    //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+    Create( parent, wxID_ANY, _( "Preferences" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+
+
 	m_RadioMinBitRateRadBoxChoices.Add( wxT(   "0" ) );
 	m_RadioMinBitRateRadBoxChoices.Add( wxT(  "16" ) );
 	m_RadioMinBitRateRadBoxChoices.Add( wxT(  "32" ) );
@@ -85,6 +96,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
     m_LangNames.Add( _( "Italian" ) );        m_LangIds.Add( wxT( "it" ) );
     m_LangNames.Add( _( "Portuguese" ) );     m_LangIds.Add( wxT( "pt" ) );
     m_LangNames.Add( _( "Spanish" ) );        m_LangIds.Add( wxT( "es" ) );
+
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -898,6 +910,15 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) :
 // -------------------------------------------------------------------------------- //
 guPrefDialog::~guPrefDialog()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    // Save the window position and size
+    wxPoint WindowPos = GetPosition();
+    Config->WriteNum( wxT( "PreferencesPosX" ), WindowPos.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "PreferencesPosY" ), WindowPos.y, wxT( "Positions" ) );
+    wxSize WindowSize = GetSize();
+    Config->WriteNum( wxT( "PreferencesSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "PreferencesSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
+
     //
 	m_TaskIconChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
 
@@ -952,6 +973,7 @@ void guPrefDialog::SaveSettings( void )
     m_Config = ( guConfig * ) guConfig::Get();
     if( !m_Config )
         guLogError( wxT( "Invalid m_Config object in preferences dialog" ) );
+
 
     // Save all configurations
     m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "General" ) );

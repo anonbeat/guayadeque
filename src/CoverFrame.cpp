@@ -42,7 +42,7 @@ guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & t
 	SetSizer( CoverSizer );
 	Layout();
 
-    m_AutoCloseTimer->Start( 3000, wxTIMER_ONE_SHOT );
+    m_AutoCloseTimer->Start( 1000, wxTIMER_ONE_SHOT );
 
 	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guCoverFrame::CoverFrameActivate ) );
 	m_CoverBitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
