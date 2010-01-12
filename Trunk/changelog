@@ -1,4 +1,5 @@
 
+  * Fix bug when searching text with a ' in it
   * Fix 'Copy to...' when filenames contains reserved chars
   * Preferences dialog can be resized
   * You can now select lyrics provider from the lyrics panel

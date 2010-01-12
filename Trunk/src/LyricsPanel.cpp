@@ -251,9 +251,8 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo )
     {
         SetText( _( "Searching the lyrics for this track" ) );
 
-//        guConfig * Config = ( guConfig * ) Config->Get();
-//
-//        int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
+        //guConfig * Config = ( guConfig * ) Config->Get();
+        //int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
         int Engine = m_ServerChoice->GetSelection();
         if( Engine == guLYRIC_ENGINE_LYRICWIKI )
         {
@@ -290,10 +289,14 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
-// TODO UPdate the lyrics in the file
-
         SetText( * Content );
         delete Content;
+
+//        // TODO UPdate the lyrics in the file
+//        if( m_UpdateEnabled && !m_CurrentFileName.IsEmpty() )
+//        {
+////            guLogMessage( wxT( "We now should try to save the Lyrics:\n%s" ), m_LyricText->ToText().c_str() );
+//        }
     }
     else
     {
