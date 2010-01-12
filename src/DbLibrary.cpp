@@ -223,9 +223,9 @@ wxString TextFilterToSQL( const wxArrayString &TeFilters )
   {
     for( index = 0; index < count; index++ )
     {
-        RetVal += wxT( "( song_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' OR " );
-        RetVal += wxT( " song_artistid IN ( SELECT artist_id FROM artists WHERE artist_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' ) OR " );
-        RetVal += wxT( " song_albumid IN ( SELECT album_id FROM albums WHERE album_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' ) ) " );
+        RetVal += wxT( "( song_name LIKE '%" ) + escape_query_str( TeFilters[ index ] ) + wxT( "%' OR " );
+        RetVal += wxT( " song_artistid IN ( SELECT artist_id FROM artists WHERE artist_name LIKE '%" ) + escape_query_str( TeFilters[ index ] ) + wxT( "%' ) OR " );
+        RetVal += wxT( " song_albumid IN ( SELECT album_id FROM albums WHERE album_name LIKE '%" ) + escape_query_str( TeFilters[ index ] ) + wxT( "%' ) ) " );
         RetVal += wxT( "AND " );
     }
     RetVal = RetVal.RemoveLast( 4 );
@@ -3968,8 +3968,8 @@ wxString RadioTextFilterToSQL( const wxArrayString &TeFilters )
   {
     for( index = 0; index < count; index++ )
     {
-        RetVal += wxT( "( radiogenre_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' OR " );
-        RetVal += wxT( " radiostation_name LIKE '%" ) + TeFilters[ index ] + wxT( "%' ) AND " );
+        RetVal += wxT( "( radiogenre_name LIKE '%" ) + escape_query_str( TeFilters[ index ] ) + wxT( "%' OR " );
+        RetVal += wxT( " radiostation_name LIKE '%" ) + escape_query_str( TeFilters[ index ] ) + wxT( "%' ) AND " );
     }
     RetVal = RetVal.RemoveLast( 4 );
   }
