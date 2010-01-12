@@ -46,7 +46,6 @@
 guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
        : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL )
 {
-	wxBoxSizer* PlayerMainSizer;
 	wxBoxSizer* PlayerBtnSizer;
 	wxBoxSizer* PlayerDetailsSizer;
 	wxBoxSizer* PlayerLabelsSizer;
@@ -78,6 +77,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     m_SilenceDetectorTime = 0;
 
     m_ShowRevTime = false;
+    m_PlayRandom = false;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -87,6 +87,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         m_CurVolume = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
         m_PlayLoop = Config->ReadBool( wxT( "PlayerLoop" ), false, wxT( "General" )  );
         m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
+        m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "SmartPlayAddTracks" ), 3, wxT( "SmartPlayList" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "SmartPlayMinTracksToPlay" ), 4, wxT( "SmartPlayList" ) );
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
@@ -105,7 +106,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     m_SmartSearchEnabled = false;
     m_SmartAddTracksThread = NULL;
 
-	PlayerMainSizer = new wxBoxSizer( wxVERTICAL );
+	m_PlayerMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	PlayerBtnSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -150,7 +151,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
 	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 5 );
+	m_PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 5 );
 
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -220,19 +221,50 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	PlayerDetailsSizer->Add( PlayerLabelsSizer, 1, wxEXPAND, 5 );
 
-	PlayerMainSizer->Add( PlayerDetailsSizer, 0, wxEXPAND, 5 );
+	m_PlayerMainSizer->Add( PlayerDetailsSizer, 0, wxEXPAND, 5 );
 
 	m_PlayerPositionSlider = new wxSlider( this, wxID_ANY, 0, 0, 1000, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-	PlayerMainSizer->Add( m_PlayerPositionSlider, 0, wxALL|wxEXPAND, 0 );
+	m_PlayerMainSizer->Add( m_PlayerPositionSlider, 0, wxALL|wxEXPAND, 0 );
 
 	PlayListSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_PlayListCtrl = new guPlayList( this, m_Db );
     PlayListSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
 
-	PlayerMainSizer->Add( PlayListSizer, 1, wxEXPAND, 5 );
+	m_PlayerMainSizer->Add( PlayListSizer, 1, wxEXPAND, 5 );
 
-	this->SetSizer( PlayerMainSizer );
+
+	m_FiltersSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Filters " ) ), wxVERTICAL );
+
+	wxFlexGridSizer * FiltersFlexSizer;
+	FiltersFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	FiltersFlexSizer->AddGrowableCol( 1 );
+	FiltersFlexSizer->SetFlexibleDirection( wxBOTH );
+	FiltersFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxStaticText * FiltersAllowLabel = new wxStaticText( this, wxID_ANY, wxT("Allow:"), wxDefaultPosition, wxDefaultSize, 0 );
+	FiltersAllowLabel->Wrap( -1 );
+	FiltersFlexSizer->Add( FiltersAllowLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+
+	wxArrayString m_FilterAllowChoiceChoices;
+	m_FilterAllowChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterAllowChoiceChoices, 0 );
+	m_FilterAllowChoice->SetSelection( 0 );
+	FiltersFlexSizer->Add( m_FilterAllowChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * FiltersDenyLabel = new wxStaticText( this, wxID_ANY, wxT("Deny:"), wxDefaultPosition, wxDefaultSize, 0 );
+	FiltersDenyLabel->Wrap( -1 );
+	FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	wxArrayString m_FilterDenyChoiceChoices;
+	m_FilterDenyChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDenyChoiceChoices, 0 );
+	m_FilterDenyChoice->SetSelection( 0 );
+	FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+
+	m_FiltersSizer->Add( FiltersFlexSizer, 1, wxEXPAND, 2 );
+
+	m_PlayerMainSizer->Add( m_FiltersSizer, 0, wxEXPAND|wxALL, 2 );
+
+	this->SetSizer( m_PlayerMainSizer );
 	this->Layout();
 
     m_MediaCtrl = new guMediaCtrl( this );
@@ -276,6 +308,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
             }
         }
     }
+
+    CheckFiltersVisible();
 
 	// Connect Events
 	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
@@ -1258,18 +1292,14 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
     else
     {
         // If the option to play a random track is set
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        if( Config )
+        if( m_PlayRandom )
         {
-            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
+            guTrackArray Tracks;
+            if( m_Db->GetRandomTracks( &Tracks ) )
             {
-                guTrackArray Tracks;
-                if( m_Db->GetRandomTracks( &Tracks ) )
-                {
-                    AddToPlayList( Tracks );
+                AddToPlayList( Tracks );
 
-                    OnMediaFinished( event );
-                }
+                OnMediaFinished( event );
             }
         }
     }
@@ -1282,6 +1312,31 @@ const wxMediaState guPlayerPanel::GetState( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::CheckFiltersVisible( void )
+{
+    if( m_PlaySmart || ( !m_PlayLoop && m_PlayRandom ) )
+    {
+        guListItems PlayLists;
+
+        m_Db->GetPlayLists( &PlayLists, GUPLAYLIST_STATIC );
+        m_Db->GetPlayLists( &PlayLists, GUPLAYLIST_DYNAMIC );
+//        int index;
+//        int count = PlayLists->Count();
+//        for( index = 0; index < count; index++ )
+//            m_FilterAllowChoice
+
+        if( !m_PlayerMainSizer->IsShown( m_FiltersSizer ) )
+            m_PlayerMainSizer->Show( m_FiltersSizer );
+    }
+    else
+    {
+        if( m_PlayerMainSizer->IsShown( m_FiltersSizer ) )
+            m_PlayerMainSizer->Hide( m_FiltersSizer );
+    }
+    m_PlayerMainSizer->Layout();
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetPlaySmart( bool playsmart )
 {
     m_PlaySmart = playsmart;
@@ -1290,6 +1345,7 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
     {
         SetPlayLoop( false );
     }
+    CheckFiltersVisible();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1307,7 +1363,10 @@ void guPlayerPanel::SetPlayLoop( bool playloop )
     {
         SetPlaySmart( false );
     }
-    //
+
+    CheckFiltersVisible();
+
+    // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
@@ -1396,19 +1455,15 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     }
     else
     {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        if( Config )
+        if( m_PlayRandom )
         {
-            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
+            SetPlayLoop( false );
+            guTrackArray Tracks;
+            if( m_Db->GetRandomTracks( &Tracks ) )
             {
-                SetPlayLoop( false );
-                guTrackArray Tracks;
-                if( m_Db->GetRandomTracks( &Tracks ) )
-                {
-                    AddToPlayList( Tracks );
+                AddToPlayList( Tracks );
 
-                    OnNextTrackButtonClick( event );
-                }
+                OnNextTrackButtonClick( event );
             }
         }
     }
@@ -1450,19 +1505,15 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     else
     {
         // If the option to play a random track is set
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        if( Config )
+        if( m_PlayRandom )
         {
-            if( Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) )
+            SetPlayLoop( false );
+            guTrackArray Tracks;
+            if( m_Db->GetRandomTracks( &Tracks ) )
             {
-                SetPlayLoop( false );
-                guTrackArray Tracks;
-                if( m_Db->GetRandomTracks( &Tracks ) )
-                {
-                    AddToPlayList( Tracks );
+                AddToPlayList( Tracks );
 
-                    OnPlayButtonClick( event );
-                }
+                OnPlayButtonClick( event );
             }
         }
     }
