@@ -129,43 +129,5 @@ class guPlayList : public guListView
 
 class guPlayListDropTarget;
 
-//// -------------------------------------------------------------------------------- //
-//class guAddDropFilesThread : public wxThread
-//{
-//  private:
-//    guPlayList *            m_PlayList;
-//    guPlayListDropTarget *  m_PlayListDropTarget;
-//    wxSortedArrayString     m_Files;
-//
-//  public:
-//    guAddDropFilesThread( guPlayListDropTarget * playlistdroptarget,
-//                                 guPlayList * playlist, const wxArrayString &files );
-//    ~guAddDropFilesThread();
-//
-//    void AddDropFiles( const wxString &DirName );
-//    virtual ExitCode Entry();
-//};
-//
-//// -------------------------------------------------------------------------------- //
-//class guPlayListDropTarget : public wxFileDropTarget
-//{
-//  private:
-//    guPlayList *            m_PlayList;
-//    guAddDropFilesThread *  m_AddDropFilesThread;
-//
-//    void ClearAddDropFilesThread( void ) { m_AddDropFilesThread = NULL; };
-//
-//  public:
-//    guPlayListDropTarget( guPlayList * NewPlayList );
-//    ~guPlayListDropTarget();
-//
-//    virtual bool OnDropFiles( wxCoord WXUNUSED( x ), wxCoord WXUNUSED( y ), const wxArrayString &files );
-//
-//    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
-//
-//    friend class guAddDropFilesThread;
-//
-//};
-
 #endif // PLAYLIST_H
 // -------------------------------------------------------------------------------- //
