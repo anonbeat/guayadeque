@@ -51,8 +51,6 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	wxBoxSizer* PlayerDetailsSizer;
 	wxBoxSizer* PlayerLabelsSizer;
 	wxBoxSizer* PlayListSizer;
-    wxPanel * PlayListPanel;
-	wxBoxSizer* PlayListPanelSizer;
 
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
@@ -216,7 +214,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	CurrentFont.SetPointSize( 8 );
 	m_BitRateLabel->SetFont( CurrentFont );
 
-    m_BitRateSizer->Add( m_BitRateLabel, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_BitRateSizer->Add( m_BitRateLabel, 0, wxEXPAND|wxRIGHT|wxLEFT, 2 );
 
 	PlayerLabelsSizer->Add( m_BitRateSizer, 0, wxEXPAND, 2 );
 
@@ -229,18 +227,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	PlayListSizer = new wxBoxSizer( wxVERTICAL );
 
-	PlayListPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-
-	PlayListPanelSizer = new wxBoxSizer( wxVERTICAL );
-
-	m_PlayListCtrl = new guPlayList( PlayListPanel, m_Db );
-	PlayListPanelSizer->Add( m_PlayListCtrl );
-
-	PlayListPanel->SetSizer( PlayListPanelSizer );
-	PlayListPanel->Layout();
-
-	PlayListPanelSizer->Fit( PlayListPanel );
-	PlayListSizer->Add( PlayListPanel, 1, wxEXPAND | wxALL, 2 );
+	m_PlayListCtrl = new guPlayList( this, m_Db );
+    PlayListSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
 
 	PlayerMainSizer->Add( PlayListSizer, 1, wxEXPAND, 5 );
 
