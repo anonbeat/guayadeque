@@ -27,7 +27,8 @@
 #include <wx/curl/http.h>
 #include <wx/statline.h>
 
-#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
+//#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
+#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&start=%u" )
 
 #define GOOGLE_COVERS_PER_PAGE      15
 #define GOOGLE_COVERINFO_LINK       3           // 3 -> Link
