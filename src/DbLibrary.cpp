@@ -29,6 +29,7 @@
 #include "Utils.h"
 
 #include <wx/mstream.h>
+#include <wx/wfstream.h>
 
 //#define DBLIBRARY_SHOW_QUERIES          1
 
@@ -687,8 +688,8 @@ bool guDbLibrary::CheckDbVersion( void )
       guLogMessage( wxT( "Updating database version to "GU_CURRENT_DBVERSION ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
-    }
 
+    }
 
   }
 
@@ -747,6 +748,47 @@ int guDbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
 }
 
 // -------------------------------------------------------------------------------- //
+wxBitmap * guDbLibrary::GetCoverThumb( int CoverId )
+{
+  if( !CoverId )
+    return NULL;
+
+  wxImage *             Img = NULL;
+  wxBitmap *            RetVal = NULL;
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+  const unsigned char * Data;
+  int                   DataLen = 0;
+
+  query = wxString::Format( wxT( "SELECT cover_thumb FROM covers "
+                                 "WHERE cover_id = %u LIMIT 1;" ), CoverId );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    Data = dbRes.GetBlob( 0, DataLen );
+
+    if( DataLen )
+    {
+      //guLogMessage( wxT( "Read %i bytes for image %i" ), len, CoverId );
+      unsigned char * ImgData = ( unsigned char * ) malloc( DataLen );
+      memcpy( ImgData, Data, DataLen );
+
+      Img = new wxImage( 38, 38, ImgData );
+      //TmpImg->SaveFile( wxString::Format( wxT( "/home/jrios/%u.jpg" ), CoverId ), wxBITMAP_TYPE_JPEG );
+      RetVal = new wxBitmap( * Img );
+      delete Img;
+
+    }
+  }
+
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverhash )
 {
   wxString query;
@@ -773,11 +815,12 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
       else
         CoverHash = coverhash;
 
-      CoverFile = coverfile;
-      escape_query_str( &CoverFile );
+//      wxFileOutputStream FOut( wxString::Format( wxT( "/home/jrios/%s.jpg" ), coverhash.c_str() ) );
+//      TmpImg.SaveFile( FOut, wxBITMAP_TYPE_JPEG );
+//      FOut.Close();
 
       wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_hash ) "
-                         "VALUES( NULL, '%s', ?, '%s' );" ), CoverFile.c_str(), CoverHash.c_str() ) );
+                         "VALUES( NULL, '%s', ?, '%s' );" ), escape_query_str( coverfile ).c_str(), CoverHash.c_str() ) );
       try {
         stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
         //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
@@ -1978,43 +2021,6 @@ void guDbLibrary::GetArtists( guListItems * Artists, bool FullList )
   }
   dbRes.Finalize();
 //  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-wxBitmap * guDbLibrary::GetCoverThumb( int CoverId )
-{
-  if( !CoverId )
-    return NULL;
-
-  wxBitmap * RetVal = NULL;
-  wxImage * TmpImg;
-  const unsigned char * tmpimgdata;
-  int len;
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-  query = wxString::Format( wxT( "SELECT cover_thumb FROM covers WHERE cover_id = %u LIMIT 1;" ), CoverId );
-
-  dbRes = m_Db.ExecuteQuery( query );
-  if( dbRes.NextRow() )
-  {
-    tmpimgdata = dbRes.GetBlob( 0, len );
-  }
-  else
-    return NULL;
-  dbRes.Finalize();
-
-  // if the blob field is empty
-  if( !len )
-    return NULL;
-
-  unsigned char * imgdata = ( unsigned char * ) malloc( len );
-  memcpy( imgdata, tmpimgdata, len );
-
-  TmpImg = new wxImage( 38, 38, imgdata );
-  RetVal = new wxBitmap( * TmpImg );
-  delete TmpImg;
-
-  return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
