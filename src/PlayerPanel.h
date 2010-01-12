@@ -110,6 +110,7 @@ class guSmartAddTracksThread;
 class guPlayerPanel : public wxPanel
 {
   private:
+    wxSizer *               m_PlayerMainSizer;
 	wxBitmapButton *        m_PrevTrackButton;
 	wxBitmapButton *        m_NextTrackButton;
 	wxBitmapButton *        m_PlayButton;
@@ -135,9 +136,10 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_PositionLabel;
 	wxBoxSizer *            m_PosLabelSizer;
 	wxSlider *              m_PlayerPositionSlider;
-//	wxStaticText *          m_PlayListStaticText;
-//	wxStaticText *          m_PlayListLenStaticText;
-//    wxBoxSizer *            m_PlayListLabelsSizer;
+
+	wxStaticBoxSizer *      m_FiltersSizer;
+	wxChoice *              m_FilterAllowChoice;
+	wxChoice *              m_FilterDenyChoice;
 
     guDbLibrary *           m_Db;
 	guPlayList *            m_PlayListCtrl;
@@ -151,6 +153,7 @@ class guPlayerPanel : public wxPanel
 	float                   m_CurVolume;
 	bool                    m_PlayLoop;
 	bool                    m_PlaySmart;
+	bool                    m_PlayRandom;
 	bool                    m_SliderIsDragged;
 	long                    m_LastTotalLen;
 	wxArrayString           m_SmartAddedSongs;
@@ -228,6 +231,7 @@ class guPlayerPanel : public wxPanel
     void                SetPlayLoop( bool playloop );
     bool                GetPlaySmart();
     void                SetPlaySmart( bool playsmart );
+    void                CheckFiltersVisible( void );
 
     int                 GetCaps();
 
