@@ -71,6 +71,7 @@
 #define guDYNAMIC_FILTER_ORDER_PLAYCOUNT                8
 #define guDYNAMIC_FILTER_ORDER_LASTPLAY                 9
 #define guDYNAMIC_FILTER_ORDER_ADDEDDATE                10
+#define guDYNAMIC_FILTER_ORDER_RANDOM                   11
 
 #define guDYNAMIC_FILTER_OPTION_STRING_CONTAINS         0
 #define guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS     1

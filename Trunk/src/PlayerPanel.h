@@ -156,7 +156,7 @@ class guPlayerPanel : public wxPanel
 	bool                    m_PlayRandom;
 	bool                    m_SliderIsDragged;
 	long                    m_LastTotalLen;
-	wxArrayString           m_SmartAddedSongs;
+	//wxArrayString           m_SmartAddedSongs;
 	bool                    m_SmartSearchEnabled;
     int                     m_SmartPlayAddTracks;
     int                     m_SmartPlayMinTracksToPlay;
@@ -176,6 +176,8 @@ class guPlayerPanel : public wxPanel
     bool                    m_AboutToFinishPending;
 
     bool                    m_ShowRevTime;
+
+    guListItems             m_FilterPlayLists;
 
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
@@ -200,7 +202,7 @@ class guPlayerPanel : public wxPanel
 
     // SmartPlay Events
     void                SmartAddTracks( const guTrack &CurSong );
-    void                OnSmartAddTracksClicked( wxCommandEvent &event );
+    void                OnSmartAddTracks( wxCommandEvent &event );
     void                OnUpdatedRadioTrack( wxCommandEvent &event );
 
     void                OnAlbumNameDClicked( wxMouseEvent &event );
@@ -208,6 +210,8 @@ class guPlayerPanel : public wxPanel
     void                OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime; };
 
     void                OnRatingChanged( guRatingEvent &event );
+    void                CheckFiltersVisible( void );
+
 
   public:
                         guPlayerPanel( wxWindow* parent, guDbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
@@ -231,7 +235,7 @@ class guPlayerPanel : public wxPanel
     void                SetPlayLoop( bool playloop );
     bool                GetPlaySmart();
     void                SetPlaySmart( bool playsmart );
-    void                CheckFiltersVisible( void );
+    void                UpdatePlayListFilters( void );
 
     int                 GetCaps();
 
@@ -278,12 +282,16 @@ public:
 class guSmartAddTracksThread : public wxThread
 {
   private:
-    guDbLibrary *     m_Db;
+    guDbLibrary *   m_Db;
     guPlayerPanel * m_PlayerPanel;
     const guTrack * m_CurSong;
+    int             m_TrackCount;
+    int             m_FilterAllowPlayList;
+    int             m_FilterDenyPlayList;
 
   public:
-    guSmartAddTracksThread( guDbLibrary * NewDb, guPlayerPanel * NewPlayer, const guTrack * NewSong );
+    guSmartAddTracksThread( guDbLibrary * db, guPlayerPanel * playerpanel, const guTrack * track,
+             const int trackcount, const int filterallow, const int filterdeny );
     ~guSmartAddTracksThread();
 
     virtual ExitCode Entry();

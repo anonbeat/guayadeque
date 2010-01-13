@@ -340,6 +340,8 @@ class guDbLibrary : public guDb
     void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
     int                 CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist );
     void                UpdateDynPlayList( const int plid, const guDynPlayList * playlist );
+    wxString            GetPlayListQuery( const int plid );
+    int                 GetPlayListType( const int plid );
 
     void                GetPaths( guListItems * Paths, bool FullList = false );
 
@@ -350,11 +352,12 @@ class guDbLibrary : public guDb
     bool                GetSongsOrderDesc( void ) const;
     void                UpdateSongs( guTrackArray * Songs );
     int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit = false );
-    int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs, guTrackMode trackmode = guTRACK_MODE_USER );
+    int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
+                                         guTrackMode trackmode = guTRACK_MODE_USER );
     int                 GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums );
     int                 GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs );
-    int                 GetRandomTracks( guTrackArray * Tracks );
-
+    int                 GetRandomTracks( guTrackArray * Tracks, const int count,
+                                         const int allowplaylist, const int denyplaylist );
     int                 GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs );
     int                 AddLabel( wxString LabelName );
     int                 SetLabelName( const int labelid, const wxString &oldlabel, const wxString &newlabel );
@@ -412,7 +415,8 @@ class guDbLibrary : public guDb
     int                 FindArtist( const wxString &Artist );
     int                 FindAlbum( const wxString &Artist, const wxString &Album );
     int                 FindTrack( const wxString &Artist, const wxString &m_Name );
-    guTrack *           FindSong( const wxString &Artist, const wxString &Track );
+    guTrack *           FindSong( const wxString &artist, const wxString &track,
+                                  const int filterallow, const int filterdeny );
     int                 FindTrackFile( const wxString &filename, guTrack * song );
 
     //

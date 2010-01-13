@@ -2598,6 +2598,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         case guDYNAMIC_FILTER_ORDER_PLAYCOUNT : sort += wxT( "song_playcount" ); break;
         case guDYNAMIC_FILTER_ORDER_LASTPLAY : sort += wxT( "song_lastplay" ); break;
         case guDYNAMIC_FILTER_ORDER_ADDEDDATE : sort += wxT( "song_addedtime" ); break;
+        case guDYNAMIC_FILTER_ORDER_RANDOM : sort += wxT( "RANDOM()" ); break;
     }
     if( playlist->m_SortDesc )
         sort += wxT( " DESC" );
@@ -2605,7 +2606,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 
   //guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
 
-  return GU_TRACKS_QUERYSTR + dbNames + query + sort;
+  return dbNames + query + sort;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2625,6 +2626,26 @@ int guDbLibrary::GetPlayListSongIds( const int plid, wxArrayInt * tracks )
   dbRes.Finalize();
 
   return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guDbLibrary::GetPlayListQuery( const int plid )
+{
+    wxString RetVal = wxEmptyString;
+    int PlType = GetPlayListType( plid );
+
+    if( PlType == GUPLAYLIST_STATIC )
+    {
+        RetVal = wxString::Format( wxT( "SELECT plset_songid FROM plsets WHERE plset_plid = %u" ), plid );
+    }
+    else if( PlType == GUPLAYLIST_DYNAMIC )
+    {
+      guDynPlayList PlayList;
+      GetDynamicPlayList( plid, &PlayList );
+
+      RetVal = wxT( "SELECT song_id FROM songs " ) + DynPlayListToSQLQuery( &PlayList );
+    }
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2681,7 +2702,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
           }
       }
 
-      query = DynPlayListToSQLQuery( &PlayList );
+      query = GU_TRACKS_QUERYSTR + DynPlayListToSQLQuery( &PlayList );
 
       dbRes = ExecuteQuery( query );
 
@@ -2936,6 +2957,7 @@ int guDbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Song
     {
       Song = new guTrack();
       FillTrackFromDb( Song, &dbRes );
+      Song->m_TrackMode = trackmode;
       Songs->Add( Song );
     }
     dbRes.Finalize();
@@ -3000,28 +3022,55 @@ int guDbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs,
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetRandomTracks( guTrackArray * Tracks )
+int guDbLibrary::GetPlayListType( const int plid )
+{
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+  int                   RetVal = wxNOT_FOUND;
+
+  query = wxString::Format( wxT( "SELECT playlist_type FROM playlists WHERE playlist_id = %u LIMIT 1;" ), plid );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      RetVal = dbRes.GetInt( 0 );
+  }
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetRandomTracks( guTrackArray * tracks, const int count,
+                                     const int allowplaylist, const int denyplaylist )
 {
   wxString              query;
   wxSQLite3ResultSet    dbRes;
   guTrack *             Track;
-  int                   TrackCnt = 0;
+  wxString              AllowPlQuery = wxEmptyString;
+  wxString              DenyPlQuery = wxEmptyString;
 
-  query = wxT( "SELECT COUNT(*) FROM songs" );
-  dbRes = ExecuteQuery( query );
-  if( dbRes.NextRow() )
+
+  AllowPlQuery = GetPlayListQuery( allowplaylist );
+  DenyPlQuery = GetPlayListQuery( denyplaylist );
+
+  wxString Filters = wxEmptyString;
+  if( !AllowPlQuery.IsEmpty() )
   {
-    TrackCnt = dbRes.GetInt( 0 );
+      Filters += wxT( "WHERE song_id IN ( " ) + AllowPlQuery + wxT( " ) " );
   }
-  dbRes.Finalize();
 
-  if( !TrackCnt )
-    return 0;
+  if( !DenyPlQuery.IsEmpty() )
+  {
+    Filters += Filters.IsEmpty() ? wxT( "WHERE " ) : wxT( "AND " );
+    Filters += wxT( "song_id NOT IN ( " ) + DenyPlQuery + wxT( " ) " );
+  }
 
-  query = GU_TRACKS_QUERYSTR;
-  query += wxT( " LIMIT %u, 1;" );
+  query = GU_TRACKS_QUERYSTR + Filters;
+  query += wxString::Format( wxT( " ORDER BY RANDOM() LIMIT %u;" ), count );
 
-  query = wxString::Format( query, guRandom( TrackCnt ) );
+  //guLogMessage( wxT( "GetRandomTracks:\n%s" ), query.c_str() );
 
   dbRes = ExecuteQuery( query );
 
@@ -3029,11 +3078,11 @@ int guDbLibrary::GetRandomTracks( guTrackArray * Tracks )
   {
     Track = new guTrack();
     FillTrackFromDb( Track, &dbRes );
-    Tracks->Add( Track );
+    tracks->Add( Track );
   }
   dbRes.Finalize();
 
-  return Tracks->Count();
+  return tracks->Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3171,20 +3220,40 @@ int guDbLibrary::FindTrack( const wxString &Artist, const wxString &Name )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guDbLibrary::FindSong( const wxString &Artist, const wxString &Track )
+guTrack * guDbLibrary::FindSong( const wxString &artist, const wxString &trackname,
+              const int filterallow, const int filterdeny )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
   guTrack * RetVal = NULL;
+  wxString ArtistName = artist.Upper();
+  wxString TrackName = trackname.Upper();
 
-  wxString ArtistName = Artist.Upper();
-  wxString TrackName = Track.Upper();
+
+  wxString AllowPlQuery = GetPlayListQuery( filterallow );
+  wxString DenyPlQuery = GetPlayListQuery( filterdeny );
+
+  wxString Filters = wxEmptyString;
+  if( !AllowPlQuery.IsEmpty() )
+  {
+      Filters += wxT( "WHERE song_id IN ( " ) + AllowPlQuery + wxT( " ) " );
+  }
+
+  if( !DenyPlQuery.IsEmpty() )
+  {
+    Filters += Filters.IsEmpty() ? wxT( "WHERE " ) : wxT( "AND " );
+    Filters += wxT( "song_id NOT IN ( " ) + DenyPlQuery + wxT( " ) " );
+  }
+
+
   escape_query_str( &ArtistName );
   escape_query_str( &TrackName );
 
   query = GU_TRACKS_QUERYSTR wxT( ", artists " );
 
-  query += wxString::Format( wxT( "WHERE artist_id = song_artistid AND UPPER(artist_name) = '%s' AND UPPER(song_name) = '%s' LIMIT 1;" ), ArtistName.c_str(), TrackName.c_str() );
+  query += Filters + wxString::Format( wxT( "AND artist_id = song_artistid AND UPPER(artist_name) = '%s' AND UPPER(song_name) = '%s' LIMIT 1;" ), ArtistName.c_str(), TrackName.c_str() );
+
+  //guLogMessage( wxT( "FindSong:\n%s" ), query.c_str() );
 
   dbRes = ExecuteQuery( query );
 
