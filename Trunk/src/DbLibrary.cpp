@@ -265,8 +265,6 @@ wxString LabelFilterToSQL( const wxArrayInt &LaFilters )
 // -------------------------------------------------------------------------------- //
 guDbLibrary::guDbLibrary() : guDb()
 {
-  guLogMessage( wxT( "guDbLibrary::guDbLibrary" ) );
-
   m_NeedUpdate = false;
   CheckDbVersion();
 
@@ -300,8 +298,6 @@ guDbLibrary::guDbLibrary() : guDb()
 // -------------------------------------------------------------------------------- //
 guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
 {
-  guLogMessage( wxT( "guDbLibrary::guDbLibrary" ) );
-
   m_NeedUpdate = false;
   CheckDbVersion();
 
@@ -368,7 +364,6 @@ void guDbLibrary::LoadCache( void )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetDbVersion( void )
 {
-  guLogMessage( wxT( "guDbLibrary::GetDbVersion" ) );
   wxString query;
   wxSQLite3ResultSet dbRes;
   unsigned long RetVal = 0;
@@ -486,7 +481,6 @@ void guDbLibrary::DoCleanUp( void )
 // -------------------------------------------------------------------------------- //
 bool guDbLibrary::CheckDbVersion( void )
 {
-  guLogMessage( wxT( "guDbLibrary::CheckDbVersion" ) );
   wxArrayString query;
   int Index;
   int Count;
