@@ -1031,6 +1031,9 @@ void guMainFrame::OnPlayListUpdated( wxCommandEvent &event )
 {
     if( m_PlayListPanel )
         m_PlayListPanel->PlayListUpdated();
+
+    if( m_PlayerPanel )
+        m_PlayerPanel->UpdatePlayListFilters();
 }
 
 // -------------------------------------------------------------------------------- //

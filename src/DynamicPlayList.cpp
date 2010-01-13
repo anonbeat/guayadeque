@@ -46,7 +46,7 @@ wxString m_LimitChoices[] = { _("Tracks"), _("Minutes"), wxT("MB"), wxT("GB") };
 wxString m_SortChoices[] = {
     _("Title"), _("Artist"), _( "Album" ), _( "Genre" ), _( "Label" ),
     _( "Year" ), _( "Rating" ), _( "Length" ),
-    _( "Play Count" ), _( "Last Play Time" ), _( "Added Time" )
+    _( "Play Count" ), _( "Last Play Time" ), _( "Added Time" ), _( "Random" )
 };
 
 wxString m_FilterDateOption2Choices[] = { _( "minutes" ), _( "hours" ), _( "days" ), _( "weeks" ), _( "months" ) };
