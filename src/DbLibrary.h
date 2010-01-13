@@ -354,6 +354,8 @@ class guDbLibrary : public guDb
     int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit = false );
     int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
                                          guTrackMode trackmode = guTRACK_MODE_USER );
+    int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
+                                         const int count, const int filterallow, const int filterdeny );
     int                 GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums );
     int                 GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs );
     int                 GetRandomTracks( guTrackArray * Tracks, const int count,

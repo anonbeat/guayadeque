@@ -156,7 +156,7 @@ class guPlayerPanel : public wxPanel
 	bool                    m_PlayRandom;
 	bool                    m_SliderIsDragged;
 	long                    m_LastTotalLen;
-	//wxArrayString           m_SmartAddedSongs;
+	wxArrayInt              m_SmartAddedTracks;
 	bool                    m_SmartSearchEnabled;
     int                     m_SmartPlayAddTracks;
     int                     m_SmartPlayMinTracksToPlay;
@@ -288,10 +288,11 @@ class guSmartAddTracksThread : public wxThread
     int             m_TrackCount;
     int             m_FilterAllowPlayList;
     int             m_FilterDenyPlayList;
+    wxArrayInt *    m_SmartAddedTracks;
 
   public:
     guSmartAddTracksThread( guDbLibrary * db, guPlayerPanel * playerpanel, const guTrack * track,
-             const int trackcount, const int filterallow, const int filterdeny );
+             wxArrayInt * smartaddedtracks, const int trackcount, const int filterallow, const int filterdeny );
     ~guSmartAddTracksThread();
 
     virtual ExitCode Entry();
