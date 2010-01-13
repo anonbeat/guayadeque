@@ -40,7 +40,7 @@
 #define GUPLAYER_MIN_PREVTRACK_POS      5000
 #define GUPLAYER_SMART_ADDTRACKS        3
 #define GUPLAYER_SMART_ADDTRACKSPOS     4
-#define GUPLAYER_SMART_CACHEITEMS       100
+#define GUPLAYER_SMART_CACHEITEMS       200
 
 // -------------------------------------------------------------------------------- //
 guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
@@ -228,8 +228,18 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	PlayListSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_PlayListCtrl = new guPlayList( this, m_Db );
-    PlayListSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
+//	m_PlayListCtrl = new guPlayList( this, m_Db );
+//    PlayListSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
+	wxPanel * PlayListPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * PlayListPanelSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_PlayListCtrl = new guPlayList( PlayListPanel, m_Db );
+	PlayListPanelSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
+
+	PlayListPanel->SetSizer( PlayListPanelSizer );
+	PlayListPanel->Layout();
+	PlayListPanelSizer->Fit( PlayListPanel );
+	PlayListSizer->Add( PlayListPanel, 1, wxEXPAND | wxALL, 0 );
 
 	m_PlayerMainSizer->Add( PlayListSizer, 1, wxEXPAND, 5 );
 
@@ -557,21 +567,21 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
     OnPlayButtonClick( event );
     TrackListChanged();
 
-//    if( m_PlaySmart )
-//    {
-//        // Reset the Smart added songs cache
-//        m_SmartAddedSongs.Empty();
-//        int count;
-//        int index = 0;
-//        count = SongList.Count();
-//        // We only insert the last CACHEITEMS as the rest should be forgiven
-//        if( count > GUPLAYER_SMART_CACHEITEMS )
-//            index = count - GUPLAYER_SMART_CACHEITEMS;
-//        for( ; index < count; index++ )
-//        {
-//            m_SmartAddedSongs.Add( SongList[ index ].m_ArtistName.Upper() + SongList[ index ].m_SongName.Upper() );
-//        }
-//    }
+    if( m_PlaySmart )
+    {
+        // Reset the Smart added songs cache
+        m_SmartAddedTracks.Empty();
+        int count;
+        int index = 0;
+        count = SongList.Count();
+        // We only insert the last CACHEITEMS as the rest should be forgiven
+        if( count > GUPLAYER_SMART_CACHEITEMS )
+            index = count - GUPLAYER_SMART_CACHEITEMS;
+        for( ; index < count; index++ )
+        {
+            m_SmartAddedTracks.Add( SongList[ index ].m_SongId );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -626,22 +636,22 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
         OnStopButtonClick( event );
         OnPlayButtonClick( event );
 
-//        if( m_PlaySmart )
-//        {
-//            // Reset the Smart added songs cache
-//            m_SmartAddedSongs.Empty();
-//            int count;
-//            int index = 0;
-//            count = m_PlayListCtrl->GetCount();
-//            // We only insert the last CACHEITEMS as the rest should be forgiven
-//            if( count > GUPLAYER_SMART_CACHEITEMS )
-//                index = count - GUPLAYER_SMART_CACHEITEMS;
-//            for( ; index < count; index++ )
-//            {
-//                guTrack * Track = m_PlayListCtrl->GetItem( index );
-//                m_SmartAddedSongs.Add( Track->m_ArtistName.Upper() + Track->m_SongName.Upper() );
-//            }
-//        }
+        if( m_PlaySmart )
+        {
+            // Reset the Smart added songs cache
+            m_SmartAddedTracks.Empty();
+            int count;
+            int index = 0;
+            count = m_PlayListCtrl->GetCount();
+            // We only insert the last CACHEITEMS as the rest should be forgiven
+            if( count > GUPLAYER_SMART_CACHEITEMS )
+                index = count - GUPLAYER_SMART_CACHEITEMS;
+            for( ; index < count; index++ )
+            {
+                guTrack * Track = m_PlayListCtrl->GetItem( index );
+                m_SmartAddedTracks.Add( Track->m_SongId );
+            }
+        }
     }
     TrackListChanged();
 }
@@ -803,7 +813,7 @@ void guPlayerPanel::SmartAddTracks( const guTrack &CurSong )
 
     m_SmartSearchEnabled = true;
     m_SmartAddTracksThread = new guSmartAddTracksThread( m_Db, this, &CurSong,
-        m_SmartPlayAddTracks,
+        &m_SmartAddedTracks, m_SmartPlayAddTracks,
         m_FilterPlayLists[ m_FilterAllowChoice->GetSelection() ].m_Id,
         m_FilterPlayLists[ m_FilterDenyChoice->GetSelection() ].m_Id );
 
@@ -1828,12 +1838,13 @@ void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
 // guSmartAddTracksThread
 // -------------------------------------------------------------------------------- //
 guSmartAddTracksThread::guSmartAddTracksThread( guDbLibrary * db,
-        guPlayerPanel * playerpanel, const guTrack * track,
+        guPlayerPanel * playerpanel, const guTrack * track, wxArrayInt * smartaddedtracks,
         const int trackcount, const int filterallow, const int filterdeny ) : wxThread()
 {
     m_Db = db;
     m_PlayerPanel = playerpanel;
     m_CurSong = track;
+    m_SmartAddedTracks = smartaddedtracks;
     m_TrackCount = trackcount;
     m_FilterAllowPlayList = filterallow;
     m_FilterDenyPlayList = filterdeny;
@@ -1862,66 +1873,80 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
         //guLogMessage( wxT( "==== Getting Similar Tracks ====" ) );
         guSimilarTrackInfoArray SimilarTracks = LastFM->TrackGetSimilar( m_CurSong->m_ArtistName,
                                                                          m_CurSong->m_SongName );
-        guTrackArray * Songs = NULL;
+        guTrackArray * Songs = new guTrackArray();
         guTrack * Song;
-        if( SimilarTracks.Count() && !TestDestroy() )
+        int Index;
+        int Count;
+        if( !TestDestroy() && Songs && SimilarTracks.Count() )
         {
-            Songs = new guTrackArray();
-            if( Songs )
+            Count = SimilarTracks.Count();
+            for( Index = 0; Index < Count; Index++ )
             {
-                int Count = SimilarTracks.Count();
-                for( int Index = 0; Index < Count; Index++ )
-                {
-                  if( TestDestroy() )
+              if( TestDestroy() )
+                break;
+              //guLogMessage( wxT( "Similar: '%s' - '%s'" ), SimilarTracks[ index ].ArtistName.c_str(), SimilarTracks[ index ].TrackName.c_str() );
+              Song = m_Db->FindSong( SimilarTracks[ Index ].m_ArtistName,
+                                     SimilarTracks[ Index ].m_TrackName,
+                                     m_FilterAllowPlayList,
+                                     m_FilterDenyPlayList );
+              if( Song && m_SmartAddedTracks->Index( Song->m_SongId ) == wxNOT_FOUND )
+              {
+                  Song->m_TrackMode = guTRACK_MODE_SMART;
+                  //guLogMessage( wxT( "Found this song in the Songs Library" ) );
+                  Songs->Add( Song );
+                  m_SmartAddedTracks->Add( Song->m_SongId );
+                  if( ( int ) Songs->Count() == m_TrackCount )
                     break;
-                  //guLogMessage( wxT( "Similar: '%s' - '%s'" ), SimilarTracks[ index ].ArtistName.c_str(), SimilarTracks[ index ].TrackName.c_str() );
-                  Song = m_Db->FindSong( SimilarTracks[ Index ].m_ArtistName,
-                                         SimilarTracks[ Index ].m_TrackName,
-                                         m_FilterAllowPlayList,
-                                         m_FilterDenyPlayList );
-                  if( Song )
-                  {
-                      Song->m_TrackMode = guTRACK_MODE_SMART;
-                      //guLogMessage( wxT( "Found this song in the Songs Library" ) );
-                      Songs->Add( Song );
-                      if( ( int ) Songs->Count() == m_TrackCount )
+              }
+            }
+        }
+
+        if( !TestDestroy() && Songs && ( ( int ) Songs->Count() < m_TrackCount ) )
+        {
+            guSimilarArtistInfoArray SimilarArtists = LastFM->ArtistGetSimilar( m_CurSong->m_ArtistName );
+            if( SimilarArtists.Count() && !TestDestroy() )
+            {
+                int ArtistId;
+                Count = SimilarArtists.Count();
+                wxArrayInt Artists;
+                guTrackArray ArtistsTracks;
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    if( TestDestroy() )
                         break;
-                  }
+
+                    if( m_Db->GetArtistId( &ArtistId, SimilarArtists[ Index ].m_Name, false ) )
+                    {
+                        Artists.Add( ArtistId );
+                    }
+                }
+
+                m_Db->GetArtistsSongs( Artists, &ArtistsTracks, 15, m_FilterAllowPlayList, m_FilterDenyPlayList );
+
+                Count = ArtistsTracks.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    if( m_SmartAddedTracks->Index( ArtistsTracks[ Index ].m_SongId ) == wxNOT_FOUND )
+                    {
+                        m_SmartAddedTracks->Add( ArtistsTracks[ Index ].m_SongId );
+                        Songs->Add( new guTrack( ArtistsTracks[ Index ] ) );
+                        if( ( int ) Songs->Count() == m_TrackCount )
+                            break;
+                    }
                 }
             }
         }
 
-//        else if( !TestDestroy() )// No similar tracks so try to find similar artists
-//        {
-//            guSimilarArtistInfoArray SimilarArtists = LastFM->ArtistGetSimilar( m_CurSong->m_ArtistName );
-//            if( SimilarArtists.Count() && !TestDestroy() )
-//            {
-//                Songs = new guTrackArray();
-//                if( Songs )
-//                {
-//                    int ArtistId;
-//                    int count = SimilarArtists.Count();
-//                    for( int index = 0; index < count; index++ )
-//                    {
-//                        if( TestDestroy() )
-//                            break;
-//                        if( m_Db->GetArtistId( &ArtistId, SimilarArtists[ index ].m_Name, false ) )
-//                        {
-//                            wxArrayInt Artists;
-//                            Artists.Add( ArtistId );
-//                            m_Db->GetArtistsSongs( Artists, Songs, guTRACK_MODE_SMART );
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        while( m_SmartAddedTracks->Count() > GUPLAYER_SMART_CACHEITEMS )
+            m_SmartAddedTracks->RemoveAt( 0 );
 
-        if( !TestDestroy() )
+
+        if( !TestDestroy() && Songs->Count() )
         {
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_SMART_ADDTRACK );
             //event.SetEventObject( ( wxObject * ) this );
             event.SetClientData( ( void * ) Songs );
-            wxPostEvent( m_PlayerPanel, event );
+            m_PlayerPanel->AddPendingEvent( event );
         }
         else
         {
