@@ -1,4 +1,5 @@
 
+  * Added Random as a ordering method for dynamic playlists
   * Added a filter for the random or smart play mode so you can select a
     playlist for the Allow filter and another playlist for the deny filter.
     This way you can for example fix the genre or a label for the Smart
