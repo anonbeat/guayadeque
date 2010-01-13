@@ -78,6 +78,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
     m_ShowRevTime = false;
     m_PlayRandom = false;
+    m_ShowFiltersChoices = true;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -101,6 +102,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         }
 
         m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
+        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
     }
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
@@ -244,35 +246,78 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	m_PlayerMainSizer->Add( PlayListSizer, 1, wxEXPAND, 5 );
 
 
-	m_FiltersSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Filters " ) ), wxVERTICAL );
+//	wxFlexGridSizer * FiltersFlexSizer;
+//	FiltersFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+//	FiltersFlexSizer->AddGrowableCol( 1 );
+//	FiltersFlexSizer->SetFlexibleDirection( wxBOTH );
+//	FiltersFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+//
+//	wxStaticText * FiltersAllowLabel = new wxStaticText( this, wxID_ANY, wxT("Allow:"), wxDefaultPosition, wxDefaultSize, 0 );
+//	FiltersAllowLabel->Wrap( -1 );
+//	FiltersFlexSizer->Add( FiltersAllowLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+//
+//	wxArrayString m_FilterAllowChoiceChoices;
+//	m_FilterAllowChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterAllowChoiceChoices, 0 );
+//	m_FilterAllowChoice->SetSelection( 0 );
+//	FiltersFlexSizer->Add( m_FilterAllowChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+//
+//	wxStaticText * FiltersDenyLabel = new wxStaticText( this, wxID_ANY, wxT("Deny:"), wxDefaultPosition, wxDefaultSize, 0 );
+//	FiltersDenyLabel->Wrap( -1 );
+//	FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+//
+//	wxArrayString m_FilterDenyChoiceChoices;
+//	m_FilterDenyChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDenyChoiceChoices, 0 );
+//	m_FilterDenyChoice->SetSelection( 0 );
+//	FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+//
+//	m_FiltersSizer->Add( FiltersFlexSizer, 1, wxEXPAND, 2 );
+//
+//	m_PlayerMainSizer->Add( m_FiltersSizer, 0, wxEXPAND|wxALL, 2 );
 
-	wxFlexGridSizer * FiltersFlexSizer;
-	FiltersFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
-	FiltersFlexSizer->AddGrowableCol( 1 );
-	FiltersFlexSizer->SetFlexibleDirection( wxBOTH );
-	FiltersFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	m_FiltersSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticText * FiltersAllowLabel = new wxStaticText( this, wxID_ANY, wxT("Allow:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxBoxSizer * FiltersLabelSizer;
+	FiltersLabelSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_FiltersLabel = new wxStaticText( this, wxID_ANY, _( "Filters" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_FiltersLabel->Wrap( -1 );
+	m_FiltersLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
+
+	FiltersLabelSizer->Add( m_FiltersLabel, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	wxStaticLine * FiltersStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	FiltersLabelSizer->Add( FiltersStaticLine, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 2 );
+
+	m_FiltersSizer->Add( FiltersLabelSizer, 0, wxEXPAND, 5 );
+
+	m_FiltersFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	m_FiltersFlexSizer->AddGrowableCol( 1 );
+	m_FiltersFlexSizer->SetFlexibleDirection( wxBOTH );
+	m_FiltersFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxStaticText * FiltersAllowLabel = new wxStaticText( this, wxID_ANY, _( "Allow:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	FiltersAllowLabel->Wrap( -1 );
-	FiltersFlexSizer->Add( FiltersAllowLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+	m_FiltersFlexSizer->Add( FiltersAllowLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
 
 	wxArrayString m_FilterAllowChoiceChoices;
 	m_FilterAllowChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterAllowChoiceChoices, 0 );
 	m_FilterAllowChoice->SetSelection( 0 );
-	FiltersFlexSizer->Add( m_FilterAllowChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+	m_FiltersFlexSizer->Add( m_FilterAllowChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
-	wxStaticText * FiltersDenyLabel = new wxStaticText( this, wxID_ANY, wxT("Deny:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * FiltersDenyLabel = new wxStaticText( this, wxID_ANY, _( "Deny:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	FiltersDenyLabel->Wrap( -1 );
-	FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	wxArrayString m_FilterDenyChoiceChoices;
 	m_FilterDenyChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDenyChoiceChoices, 0 );
 	m_FilterDenyChoice->SetSelection( 0 );
-	FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+	m_FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	m_FiltersSizer->Add( FiltersFlexSizer, 1, wxEXPAND, 2 );
+	m_FiltersSizer->Add( m_FiltersFlexSizer, 0, wxEXPAND, 2 );
+	if( !m_ShowFiltersChoices )
+        m_FiltersSizer->Hide( m_FiltersFlexSizer );
 
-	m_PlayerMainSizer->Add( m_FiltersSizer, 0, wxEXPAND|wxALL, 2 );
+	m_PlayerMainSizer->Add( m_FiltersSizer, 0, wxEXPAND, 5 );
 
 	this->SetSizer( m_PlayerMainSizer );
 	this->Layout();
@@ -372,6 +417,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 //    Connect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
 
+	m_FiltersLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnFiltersLabelDClick ), NULL, this );
+
     m_PlayerTimer = new guPlayerPanelTimer( this );
     m_PlayerTimer->Start( 400 );
 
@@ -433,6 +480,7 @@ guPlayerPanel::~guPlayerPanel()
 
         Config->WriteNum( wxT( "PlayListAllowFilter" ), m_FilterAllowChoice->GetSelection(), wxT( "Playback" ) );
         Config->WriteNum( wxT( "PlayListDenyFilter" ), m_FilterDenyChoice->GetSelection(), wxT( "Playback" ) );
+        Config->WriteBool( wxT( "ShowFiltersChoices" ), m_ShowFiltersChoices, wxT( "Positions" ) );
     }
 
 	// Connect Events
@@ -1375,7 +1423,11 @@ void guPlayerPanel::CheckFiltersVisible( void )
     if( m_PlaySmart || ( !m_PlayLoop && m_PlayRandom ) )
     {
         if( !m_PlayerMainSizer->IsShown( m_FiltersSizer ) )
+        {
             m_PlayerMainSizer->Show( m_FiltersSizer );
+            if( !m_ShowFiltersChoices )
+                m_FiltersSizer->Hide( m_FiltersFlexSizer );
+        }
     }
     else
     {
@@ -1813,6 +1865,19 @@ void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
     {
         m_PlayListCtrl->UpdatedTracks( tracks );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void  guPlayerPanel::OnFiltersLabelDClick( wxMouseEvent &event )
+{
+    m_ShowFiltersChoices = !m_ShowFiltersChoices;
+    if( m_ShowFiltersChoices )
+        m_FiltersSizer->Show( m_FiltersFlexSizer );
+    else
+        m_FiltersSizer->Hide( m_FiltersFlexSizer );
+
+    //m_FiltersSizer->Layout();
+    m_PlayerMainSizer->Layout();
 }
 
 // -------------------------------------------------------------------------------- //

@@ -137,7 +137,9 @@ class guPlayerPanel : public wxPanel
 	wxBoxSizer *            m_PosLabelSizer;
 	wxSlider *              m_PlayerPositionSlider;
 
-	wxStaticBoxSizer *      m_FiltersSizer;
+    wxSizer *               m_FiltersSizer;
+	wxFlexGridSizer *       m_FiltersFlexSizer;
+	wxStaticText *          m_FiltersLabel;
 	wxChoice *              m_FilterAllowChoice;
 	wxChoice *              m_FilterDenyChoice;
 
@@ -165,6 +167,8 @@ class guPlayerPanel : public wxPanel
     bool                    m_SilenceDetector;
     int                     m_SilenceDetectorLevel;
     int                     m_SilenceDetectorTime;
+
+    bool                    m_ShowFiltersChoices;
 
     // AudioScrobble
     guAudioScrobble *       m_AudioScrobble;
@@ -212,6 +216,7 @@ class guPlayerPanel : public wxPanel
     void                OnRatingChanged( guRatingEvent &event );
     void                CheckFiltersVisible( void );
 
+    void                OnFiltersLabelDClick( wxMouseEvent &event );
 
   public:
                         guPlayerPanel( wxWindow* parent, guDbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
