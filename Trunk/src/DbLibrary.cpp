@@ -2996,7 +2996,11 @@ int guDbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Song
 
     query += Filters;
 
-    query += wxT( " AND song_artistid IN " ) + ArrayIntToStrList( Artists );
+    if( !Filters.IsEmpty() )
+        query += wxT( " AND" );
+    else
+        query += wxT( " WHERE" );
+    query += wxT( " song_artistid IN " ) + ArrayIntToStrList( Artists );
     query += wxString::Format( wxT( " ORDER BY RANDOM() LIMIT %u" ), trackcount );
 
     //guLogMessage( wxT( "GetArtistsSongs:\n%s" ), query.c_str() );
@@ -3301,7 +3305,12 @@ guTrack * guDbLibrary::FindSong( const wxString &artist, const wxString &trackna
 
   query = GU_TRACKS_QUERYSTR wxT( ", artists " );
 
-  query += Filters + wxString::Format( wxT( "AND artist_id = song_artistid AND UPPER(artist_name) = '%s' AND UPPER(song_name) = '%s' LIMIT 1;" ), ArtistName.c_str(), TrackName.c_str() );
+  query += Filters;
+  if( !Filters.IsEmpty() )
+    query += wxT( " AND" );
+  else
+    query += wxT( " WHERE" );
+  query += wxString::Format( wxT( " artist_id = song_artistid AND UPPER(artist_name) = '%s' AND UPPER(song_name) = '%s' LIMIT 1;" ), ArtistName.c_str(), TrackName.c_str() );
 
   //guLogMessage( wxT( "FindSong:\n%s" ), query.c_str() );
 
