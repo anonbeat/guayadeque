@@ -2999,7 +2999,7 @@ int guDbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Song
     query += wxT( " AND song_artistid IN " ) + ArrayIntToStrList( Artists );
     query += wxString::Format( wxT( " ORDER BY RANDOM() LIMIT %u" ), trackcount );
 
-    guLogMessage( wxT( "GetArtistsSongs:\n%s" ), query.c_str() );
+    //guLogMessage( wxT( "GetArtistsSongs:\n%s" ), query.c_str() );
 
     dbRes = ExecuteQuery( query );
 
