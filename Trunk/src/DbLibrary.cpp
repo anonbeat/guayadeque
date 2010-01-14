@@ -3132,6 +3132,7 @@ int guDbLibrary::GetRandomTracks( guTrackArray * tracks, const int count,
   {
     Track = new guTrack();
     FillTrackFromDb( Track, &dbRes );
+    Track->m_TrackMode = guTRACK_MODE_RANDOM;
     tracks->Add( Track );
   }
   dbRes.Finalize();
