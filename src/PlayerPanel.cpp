@@ -1349,7 +1349,7 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
             if( m_PlayLoop )
                 SetPlayLoop( false );
 
-            guLogMessage( wxT( "Getting Random Tracks..." ) );
+            //guLogMessage( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
             if( m_Db->GetRandomTracks( &Tracks, m_SmartPlayAddTracks,
                   m_FilterPlayLists[ m_FilterAllowChoice->GetSelection() ].m_Id,
