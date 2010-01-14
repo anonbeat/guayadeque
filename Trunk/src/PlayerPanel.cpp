@@ -581,7 +581,7 @@ void guPlayerPanel::UpdatePositionLabel( const int curpos )
 
     if( m_MediaSong.m_Length )
     {
-        Label += _( " of " ) + LenToString( m_MediaSong.m_Length );
+        Label += ( m_ShowRevTime ? _( " to " ) : _( " of " ) ) + LenToString( m_MediaSong.m_Length );
     }
 
     m_PositionLabel->SetLabel( Label );
