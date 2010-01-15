@@ -1430,64 +1430,68 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
         delete TagInfo;
         //TagInfo = NULL;
 
-        //
-        // Update the Library
-        //
-        wxString PathName;
-        int      PathId;
-        int      ArtistId;
-        int      AlbumId;
-        int      CoverId;
-        int      GenreId;
-        //int      SongId;
-        //wxString FileName;
 
-        PathName = wxPathOnly( Song->m_FileName );
-
-        wxSetWorkingDirectory( PathName );
-
-        if( !GetPathId( &PathId, PathName ) )
+        if( Song->m_Type == guTRACK_TYPE_DB )
         {
-          guLogWarning( wxT( "Could not get the PathId" ) );
-          continue;
+            //
+            // Update the Library
+            //
+            wxString PathName;
+            int      PathId;
+            int      ArtistId;
+            int      AlbumId;
+            int      CoverId;
+            int      GenreId;
+            //int      SongId;
+            //wxString FileName;
+
+            PathName = wxPathOnly( Song->m_FileName );
+
+            wxSetWorkingDirectory( PathName );
+
+            if( !GetPathId( &PathId, PathName ) )
+            {
+              guLogWarning( wxT( "Could not get the PathId" ) );
+              continue;
+            }
+
+            if( !GetArtistId( &ArtistId, Song->m_ArtistName ) )
+            {
+              guLogMessage( wxT( "Could not get the ArtistId" ) );
+              continue;
+            }
+
+            if( !GetAlbumId( &AlbumId, &CoverId, Song->m_AlbumName, ArtistId, PathId ) )
+            {
+              guLogMessage( wxT( "Could not get the AlbumId" ) );
+              continue;
+            }
+
+            if( !GetGenreId( &GenreId, Song->m_GenreName ) )
+            {
+              guLogMessage( wxT( "Could not get the GenreId" ) );
+              continue;
+            }
+
+            //FileName = Song->FileName.AfterLast( '/' );
+            //printf( ( wxT( "FileName: " ) + CurSong.FileName ).ToAscii() ); printf( "\n" );
+
+            //GetSongId( &SongId, FileName, PathId );
+
+            m_CurSong = * Song;
+            m_CurSong.m_GenreId = GenreId;
+            m_CurSong.m_ArtistId = ArtistId;
+            m_CurSong.m_AlbumId = AlbumId;
+            m_CurSong.m_PathId = PathId;
+            m_CurSong.m_FileName = Song->m_FileName.AfterLast( '/' );
+            escape_query_str( &m_CurSong.m_FileName );
+            //CurSong.SongId = SongId;
+            //CurSong.FileName.c_str(),
+            //CurSong.Number
+            //CurSong.Year,
+            //CurSong.Length,
+            UpdateSong();
         }
-
-        if( !GetArtistId( &ArtistId, Song->m_ArtistName ) )
-        {
-          guLogMessage( wxT( "Could not get the ArtistId" ) );
-          continue;
-        }
-
-        if( !GetAlbumId( &AlbumId, &CoverId, Song->m_AlbumName, ArtistId, PathId ) )
-        {
-          guLogMessage( wxT( "Could not get the AlbumId" ) );
-          continue;
-        }
-
-        if( !GetGenreId( &GenreId, Song->m_GenreName ) )
-        {
-          guLogMessage( wxT( "Could not get the GenreId" ) );
-          continue;
-        }
-
-        //FileName = Song->FileName.AfterLast( '/' );
-        //printf( ( wxT( "FileName: " ) + CurSong.FileName ).ToAscii() ); printf( "\n" );
-
-        //GetSongId( &SongId, FileName, PathId );
-
-        m_CurSong = * Song;
-        m_CurSong.m_GenreId = GenreId;
-        m_CurSong.m_ArtistId = ArtistId;
-        m_CurSong.m_AlbumId = AlbumId;
-        m_CurSong.m_PathId = PathId;
-        m_CurSong.m_FileName = Song->m_FileName.AfterLast( '/' );
-        escape_query_str( &m_CurSong.m_FileName );
-        //CurSong.SongId = SongId;
-        //CurSong.FileName.c_str(),
-        //CurSong.Number
-        //CurSong.Year,
-        //CurSong.Length,
-        UpdateSong();
     }
     else
     {
