@@ -86,11 +86,13 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * NewDb, guTrackArr
 	OrderSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_MoveUpButton = new wxBitmapButton( SongListPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_MoveUpButton->SetToolTip( _( "Move the track to the previous position" ) );
 	m_MoveUpButton->Enable( false );
 
 	OrderSizer->Add( m_MoveUpButton, 0, wxALL, 2 );
 
 	m_MoveDownButton = new wxBitmapButton( SongListPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_MoveUpButton->SetToolTip( _( "Move the track to the next position" ) );
 	m_MoveDownButton->Enable( false );
 	OrderSizer->Add( m_MoveDownButton, 0, wxALL, 2 );
 
