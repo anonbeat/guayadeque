@@ -1,4 +1,7 @@
 
+  * Fixed bug in smart play mode
+
+2010-01-15 0.2.3
   * Added Random as a ordering method for dynamic playlists
   * Added a filter for the random or smart play mode so you can select a
     playlist for the Allow filter and another playlist for the deny filter.

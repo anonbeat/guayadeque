@@ -787,67 +787,14 @@ void guPlayerPanel::UpdateStatus()
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnSmartAddTracks( wxCommandEvent &event )
 {
-//    guTrackArray NewSongs;
-//    guTrackArray InsertSongs;
-//    guTrack Song;
-//    guTrackArray * Songs = ( guTrackArray * ) event.GetClientData();
-//    int count;
-//    int index;
-//    if( Songs )
-//    {
-//        count = Songs->Count();
-//        for( index = 0; index < count; index++ )
-//        {
-//            Song = ( * Songs )[ index ];
-//            if( m_SmartAddedSongs.Index( Song.m_ArtistName.Upper() +
-//                             Song.m_SongName.Upper() ) == wxNOT_FOUND )
-//            {
-//                NewSongs.Add( Song );
-//            }
-//        }
-//
-//        // Free the Songs object
-//        delete Songs;
-//
-//        wxArrayInt AddedItems;
-//        count = NewSongs.Count();
-//        int SelIndex;
-//        // we try to find GUPLAYER_SMART_ADDTRACKS or all NewSongs if not enought
-//        for( index = 0; index < m_SmartPlayAddTracks; index++ )
-//        {
-//            // Only use random when dont need to add all tracks
-//            if( count > m_SmartPlayAddTracks )
-//            {
-//                do {
-//                    SelIndex = guRandom( count );
-//                } while( AddedItems.Index( SelIndex ) != wxNOT_FOUND );
-//                AddedItems.Add( SelIndex );
-//            }
-//            else
-//            {
-//                SelIndex = index;
-//                if( SelIndex >= count )
-//                  break;
-//            }
-//
-//            // Add the track to the cache list
-//            m_SmartAddedSongs.Add( NewSongs[ SelIndex ].m_ArtistName.Upper() + NewSongs[ SelIndex ].m_SongName.Upper() );
-//            if( m_SmartAddedSongs.Count() > GUPLAYER_SMART_CACHEITEMS )
-//            {
-//                m_SmartAddedSongs.RemoveAt( 0 );
-//            }
-//            // Save the track to be Inserted later
-//            InsertSongs.Add( NewSongs[ SelIndex ] );
-//        }
-//        // If there was tracks to insert
-//        if( InsertSongs.Count() )
-//            AddToPlayList( InsertSongs );
-//    }
-
     guTrackArray * Songs = ( guTrackArray * ) event.GetClientData();
     if( Songs )
     {
-        AddToPlayList( * Songs );
+        if( Songs->Count() )
+        {
+            AddToPlayList( * Songs );
+        }
+        delete Songs;
     }
     m_SmartSearchEnabled = false;
 }
@@ -2006,7 +1953,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
             m_SmartAddedTracks->RemoveAt( 0 );
 
 
-        if( !TestDestroy() && Songs->Count() )
+        if( !TestDestroy() )
         {
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_SMART_ADDTRACK );
             //event.SetEventObject( ( wxObject * ) this );
