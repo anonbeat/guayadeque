@@ -66,7 +66,6 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_TaskIconChkBox;
     wxCheckBox *                m_DropFilesChkBox;
     wxCheckBox *                m_EnqueueChkBox;
-    wxCheckBox *                m_RndPlayChkBox;
     wxChoice *                  m_AlYearOrderChoice;
     wxCheckBox *                m_SavePlayListChkBox;
     wxCheckBox *                m_SavePosCheckBox;
@@ -85,6 +84,8 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_CoverSearchChkBox;
 
     wxPanel *                   m_PlayPanel;
+    wxCheckBox *                m_RndPlayChkBox;
+    wxCheckBox *                m_PlayDelPlayedTrack;
     wxCheckBox *                m_PlayLevelEnabled;
     wxSlider *                  m_PlayLevelSlider;
     wxCheckBox *                m_PlayEndTimeCheckBox;

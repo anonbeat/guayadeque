@@ -1,4 +1,5 @@
 
+  * When some preferences are modified the settings are propagated where its needed
   * Fixed bug in smart play mode
 
 2010-01-15 0.2.3

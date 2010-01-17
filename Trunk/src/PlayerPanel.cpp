@@ -84,6 +84,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
+        Config->RegisterObject( this );
+
         //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
         m_CurVolume = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
         m_PlayLoop = Config->ReadBool( wxT( "PlayerLoop" ), false, wxT( "General" )  );
@@ -104,6 +106,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
         m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
     }
+
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
     m_SmartAddTracksThread = NULL;
@@ -413,7 +416,10 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     m_MediaCtrl->Connect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_LEVEL, wxMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
 
-    Connect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ) );
+    Connect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
+
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
+
 
 //    Connect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
 
@@ -448,6 +454,8 @@ guPlayerPanel::~guPlayerPanel()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
+        Config->UnRegisterObject( this );
+
         //printf( "guPlayerPanel::guConfig Save\n" );
         Config->WriteBool( wxT( "PlayerStopped" ), m_MediaCtrl->GetState() != wxMEDIASTATE_PLAYING, wxT( "General" ) );
         Config->WriteNum( wxT( "PlayerCurVol" ), m_CurVolume, wxT( "General" ) );
@@ -516,6 +524,7 @@ guPlayerPanel::~guPlayerPanel()
 
     m_PlayListCtrl->Disconnect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
     m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
 
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
@@ -528,9 +537,28 @@ guPlayerPanel::~guPlayerPanel()
 
 //    Disconnect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
 
-
     if( m_MediaCtrl )
         delete m_MediaCtrl;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
+        m_SmartPlayAddTracks = Config->ReadNum( wxT( "SmartPlayAddTracks" ), 3, wxT( "SmartPlayList" ) );
+        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "SmartPlayMinTracksToPlay" ), 4, wxT( "SmartPlayList" ) );
+        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
+
+        m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
+        m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
+        if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "Playback" ) ) )
+        {
+            m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

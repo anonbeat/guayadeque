@@ -46,7 +46,6 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db ) :
     wxArrayString Songs;
     int Count;
     int Index;
-    guConfig * Config;
     m_ItemHeight = 40;
 
     InsertColumn( new guListViewColumn( _( "Now Playing" ), 0 ) );
@@ -56,12 +55,12 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db ) :
     m_CurItem = wxNOT_FOUND;
     m_StartPlaying = false;
 
-    //CurItem = wxNOT_FOUND;
-//    m_DragOverItem = wxNOT_FOUND;
-//    m_DragOverAfter = false;
-//    m_DragSelfItems = false;
-//    m_DragStart = wxPoint( -1, -1 );
-//    m_DragCount = 0;
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
+
+    m_CurItem = Config->ReadNum( wxT( "PlayerCurItem" ), -1l, wxT( "General" ) );
+    m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxPlayListTracks" ), 15, wxT( "SmartPlayList" ) );
+    m_MinPlayListTracks = Config->ReadNum( wxT( "MinPlayListTracks" ), 4, wxT( "SmartPlayList" ) );
 
     guMainApp * MainApp = ( guMainApp * ) wxTheApp;
     if( MainApp && MainApp->argc > 1 )
@@ -80,22 +79,16 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db ) :
     else
     {
         // Load the saved guPlayList
-        Config = ( guConfig * ) guConfig::Get();
-        if( Config )
+        Songs = Config->ReadAStr( wxT( "PlayListSong" ), wxEmptyString, wxT( "PlayList" ) );
+        Count = Songs.Count();
+        for( Index = 0; Index < Count; Index++ )
         {
-            Songs = Config->ReadAStr( wxT( "PlayListSong" ), wxEmptyString, wxT( "PlayList" ) );
-            Count = Songs.Count();
-            for( Index = 0; Index < Count; Index++ )
-            {
-                AddPlayListItem( Songs[ Index ], false );
-            }
-            m_CurItem = Config->ReadNum( wxT( "PlayerCurItem" ), -1l, wxT( "General" ) );
-            m_SmartPlayMaxPlayListTracks = Config->ReadNum( wxT( "MaxPlayListTracks" ), 15, wxT( "SmartPlayList" ) );
-            //
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
-            //event.SetEventObject( ( wxObject * ) this );
-            wxPostEvent( this, event );
+            AddPlayListItem( Songs[ Index ], false );
         }
+        //
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
+        //event.SetEventObject( ( wxObject * ) this );
+        wxPostEvent( this, event );
     }
 
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
@@ -112,6 +105,8 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db ) :
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Connect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayList::OnConfigUpdated ), NULL, this );
+
     ReloadItems();
 }
 
@@ -125,6 +120,8 @@ guPlayList::~guPlayList()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config && Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) )
     {
+        Config->UnRegisterObject( this );
+
         Count = m_Items.Count();
         for( Index = 0; Index < Count; Index++ )
         {
@@ -150,6 +147,19 @@ guPlayList::~guPlayList()
 
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayList::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnConfigUpdated( wxCommandEvent &event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxPlayListTracks" ), 15, wxT( "SmartPlayList" ) );
+        m_MinPlayListTracks = Config->ReadNum( wxT( "MinPlayListTracks" ), 4, wxT( "SmartPlayList" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -337,7 +347,7 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold 
       m_Items.Add( items[ Index ] );
       m_TotalLen += items[ Index ].m_Length;
 
-      while( deleteold && ( m_CurItem != 0 ) && ( m_Items.Count() > ( size_t ) m_SmartPlayMaxPlayListTracks ) )
+      while( deleteold && ( m_CurItem != 0 ) && ( m_Items.Count() > ( size_t ) m_MaxPlayedTracks + m_MinPlayListTracks ) )
       {
         m_TotalLen -= m_Items[ 0 ].m_Length;
         m_Items.RemoveAt( 0 );

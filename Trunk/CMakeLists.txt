@@ -94,11 +94,6 @@ INSTALL( FILES guayadeque.default.conf DESTINATION share/guayadeque )
 INSTALL( FILES equalizers.default.conf DESTINATION share/guayadeque )
 
 CONFIGURE_FILE(
-    ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h
-    )
-
-CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)

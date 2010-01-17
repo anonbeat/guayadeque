@@ -141,7 +141,6 @@ WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
 
 
 extern const wxEventType guPodcastEvent;
-#define guPODCAST_EVENT_UPDATE_ITEM         1000
 
 // -------------------------------------------------------------------------------- //
 class guPodcastDownloadQueueThread : public wxThread

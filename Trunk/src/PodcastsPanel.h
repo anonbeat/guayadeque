@@ -157,6 +157,8 @@ class guPodcastPanel : public wxPanel
     void ClearDownloadThread( void );
     void OnSelectPodcasts( bool enqueue = false );
 
+    void OnConfigUpdated( wxCommandEvent &event );
+
 public:
     guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel );
     ~guPodcastPanel();
