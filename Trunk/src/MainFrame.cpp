@@ -292,6 +292,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_MAINFRAME_SET_PLAYLISTTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPlayListTracks ), NULL, this );
     Connect( ID_MAINFRAME_SET_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPodcasts ), NULL, this );
 
+    //Connect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guMainFrame::OnSysColorChanged ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -358,6 +360,7 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MAINFRAME_SET_PLAYLISTTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPlayListTracks ), NULL, this );
     Disconnect( ID_MAINFRAME_SET_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPodcasts ), NULL, this );
 
+    //Disconnect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guMainFrame::OnSysColorChanged ), NULL, this );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -415,6 +418,15 @@ guMainFrame::~guMainFrame()
     }
 }
 
+extern void wxClearGtkSystemObjects();
+
+//// -------------------------------------------------------------------------------- //
+//void guMainFrame::OnSysColorChanged( wxSysColourChangedEvent &event )
+//{
+//    guLogMessage( wxT( "Clear syssettings cache" ) );
+//    wxClearGtkSystemObjects();
+//    event.Skip();
+//}
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::CreateMenu()

@@ -238,7 +238,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	wxPanel * PlayListPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer * PlayListPanelSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_PlayListCtrl = new guPlayList( PlayListPanel, m_Db );
+	m_PlayListCtrl = new guPlayList( PlayListPanel, m_Db, this );
 	PlayListPanelSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
 
 	PlayListPanel->SetSizer( PlayListPanelSizer );

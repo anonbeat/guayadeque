@@ -13,18 +13,20 @@
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
-					<Add option="-march=pentium4" />
 					<Add option="-O2" />
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-I./" />
+					<Add option="-I." />
 					<Add option="-I./src" />
+					<Add option="-I./src/curl" />
+					<Add option="-I./src/dbus" />
+					<Add option="-I./src/wxsqlite3" />
+					<Add option="-I./src/wx" />
+					<Add option="-I./src/hmac" />
 				</Compiler>
 				<Linker>
 					<Add option="`wx-config --libs`" />
 					<Add option="`pkg-config gstreamer-0.10 --libs`" />
-					<Add library="id3" />
-					<Add library="sqlite3" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -40,8 +42,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="id3" />
-					<Add library="sqlite3" />
 				</Linker>
 			</Target>
 		</Build>
@@ -60,9 +60,9 @@
 		</Compiler>
 		<Linker>
 			<Add option="`wx-config --libs`" />
-			<Add option="-lwx_gtk2u_media-2.8" />
 			<Add option="`pkg-config gstreamer-0.10 --libs`" />
-			<Add library="id3" />
+			<Add option="`pkg-config dbus-1 --libs`" />
+			<Add option="`pkg-config flac --libs`" />
 			<Add library="sqlite3" />
 			<Add library="libcurl" />
 			<Add library="/usr/lib/libtag.so" />
@@ -206,6 +206,12 @@
 		<Unit filename="src/dbus/mmkeys.h" />
 		<Unit filename="src/dbus/mpris.cpp" />
 		<Unit filename="src/dbus/mpris.h" />
+		<Unit filename="src/hmac/hmac_sha2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/hmac/sha2.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/wx/curl/base.h" />
 		<Unit filename="src/wx/curl/http.h" />
 		<Unit filename="src/wx/wxsqlite3.h" />
@@ -223,6 +229,10 @@
 			<lib_finder disable_auto="1">
 				<lib name="sqlite3" />
 				<lib name="libcurl" />
+				<lib name="taglib" />
+				<lib name="flac" />
+				<lib name="gstreamer-0.10" />
+				<lib name="dbus-1" />
 			</lib_finder>
 			<AutoVersioning>
 				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="10000" />

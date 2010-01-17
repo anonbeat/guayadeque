@@ -22,6 +22,7 @@
 #define GULISTVIEW_H
 
 #include "DbLibrary.h"
+#include "Utils.h"
 
 #include <wx/dnd.h>
 #include <wx/scrolwin.h>
@@ -102,6 +103,7 @@ class guListViewAttr
     void LoadSysColors( void )
     {
         m_SelBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
+        //guLogMessage( wxT( "SelBgColor: %s" ), m_SelBgColor.GetAsString( wxC2S_HTML_SYNTAX ).c_str() );
         m_SelFgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
         m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
         if( m_EveBgColor.Red() > 0x0A && m_EveBgColor.Green() > 0x0A && m_EveBgColor.Blue() > 0x0A )
@@ -158,7 +160,7 @@ class guListView : public wxScrolledWindow
     virtual void        OnDropEnd( void );
     virtual int         GetDragFiles( wxFileDataObject * files );
     virtual void        MoveSelection( void );
-    virtual void        OnSysColorChanged( wxSysColourChangedEvent &event );
+    //virtual void        OnSysColorChanged( wxSysColourChangedEvent &event );
 
   private :
     guListViewClient *      m_ListBox;
