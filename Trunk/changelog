@@ -1,4 +1,5 @@
 
+  * Added print and copy to clipboard of lyrics
   * Enabled option to edit tracks from the player playlist
   * When some preferences are modified the settings are propagated where its needed
   * Fixed bug in smart play mode

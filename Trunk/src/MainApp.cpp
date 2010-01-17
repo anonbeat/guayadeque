@@ -162,7 +162,7 @@ bool guMainApp::OnInit()
 
     wxLog::SetActiveTarget( new wxLogStderr( stdout ) );
 
-    const wxString AppName = wxString::Format( wxT( "guayadeque-%s" ), wxGetUserId().c_str() );
+    const wxString AppName = wxString::Format( wxT( ".guayadeque/.guayadeque-%s" ), wxGetUserId().c_str() );
     m_SingleInstanceChecker = new wxSingleInstanceChecker( AppName );
     if( m_SingleInstanceChecker->IsAnotherRunning() )
     {

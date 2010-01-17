@@ -23,10 +23,14 @@
 #include "Base64.h"
 #include "Commands.h"
 #include "Config.h"
+#include "curl/http.h"
 #include "Images.h"
 #include "Utils.h"
 
-#include <wx/curl/http.h>
+#include <wx/clipbrd.h>
+#include <wx/html/htmprint.h>
+#include <wx/print.h>
+#include <wx/printdlg.h>
 #include <wx/settings.h>
 #include <wx/xml/xml.h>
 
@@ -133,7 +137,11 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	//m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
-    Connect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ) );
+    Connect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ), NULL, this );
+
+    m_LyricText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
+    Connect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
+    Connect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -144,7 +152,11 @@ guLyricsPanel::~guLyricsPanel()
 	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	//m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
-    Disconnect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ) );
+    Disconnect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ), NULL, this );
+
+    m_LyricText->Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
+    Disconnect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
+    Disconnect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
 
     if( m_LyricThread )
     {
@@ -155,6 +167,40 @@ guLyricsPanel::~guLyricsPanel()
     // Save the current selected server
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnContextMenu( wxContextMenuEvent &event )
+{
+    wxMenu Menu;
+    wxPoint Point = event.GetPosition();
+    // If from keyboard
+    if( Point.x == -1 && Point.y == -1 )
+    {
+        wxSize Size = GetSize();
+        Point.x = Size.x / 2;
+        Point.y = Size.y / 2;
+    }
+    else
+    {
+        Point = ScreenToClient( Point );
+    }
+
+    CreateContextMenu( &Menu );
+    PopupMenu( &Menu, Point.x, Point.y );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::CreateContextMenu( wxMenu * menu )
+{
+    wxMenuItem * MenuItem;
+    MenuItem = new wxMenuItem( menu, ID_LYRICS_COPY, _( "Copy" ), _( "Copy the content of the lyric to clipboard" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+    menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( menu, ID_LYRICS_PRINT, _( "Print" ), _( "Print the content of the lyrics" ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_ ) );
+    menu->Append( MenuItem );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -301,6 +347,67 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     else
     {
         SetText( _( "No lyrics found for this song." ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnLyricsCopy( wxCommandEvent &event )
+{
+    if( wxTheClipboard->Open() )
+    {
+        wxTheClipboard->Clear();
+        if ( !wxTheClipboard->AddData( new wxTextDataObject( m_TrackTextCtrl->GetValue() + wxT( " / " ) +
+                                                             m_ArtistTextCtrl->GetValue() + wxT( "\n\n" ) +
+                                                             m_LyricText->ToText() ) ) )
+        {
+            guLogError( wxT( "Can't copy data to the clipboard" ) );
+        }
+        wxTheClipboard->Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the clipboard object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnLyricsPrint( wxCommandEvent &event )
+{
+    wxPrintData * PrintData = new wxPrintData;
+
+    if( PrintData )
+    {
+        PrintData->SetPaperId( wxPAPER_A4 );
+
+        wxPrintDialogData * PrintDialogData = new wxPrintDialogData( * PrintData );
+        if( PrintDialogData )
+        {
+            wxString TrackName = m_TrackTextCtrl->GetValue() + wxT( " / " ) + m_ArtistTextCtrl->GetValue();
+            wxHtmlPrintout Printout( TrackName );
+
+            wxString LyricText = m_LyricText->ToText();
+            LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
+
+            Printout.SetHtmlText( wxString::Format( wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\"><b>%s</b><br><br>%s</font></center></body></html>" ),
+                wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+                wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+                TrackName.c_str(),
+                LyricText.c_str() ) );
+
+            wxPrinter Printer( PrintDialogData );
+
+            Printout.SetFooter( wxT( "<center>Guayadeque Music Player   @DATE@ @TIME@   @PAGENUM@ - @PAGESCNT@</center>" ) );
+
+            if( Printer.Print( this, &Printout, true ) )
+            {
+                if( wxPrinter::GetLastError() == wxPRINTER_ERROR )
+                    guLogMessage( wxT( "There was a problem printing the lyric" ) );
+            }
+
+            delete PrintDialogData;
+        }
+
+        delete PrintData;
     }
 }
 

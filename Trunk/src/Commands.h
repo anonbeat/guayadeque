@@ -153,6 +153,8 @@ enum guCommandIds {
     ID_GAUGE_REMOVE,
     //
     ID_LYRICS_UPDATE_LYRICINFO,
+    ID_LYRICS_COPY,
+    ID_LYRICS_PRINT,
     //
     ID_MULTIMEDIAKEYS_DBUS,
     //
