@@ -242,6 +242,7 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
     if( m_AllowDrag )
         Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListView::OnBeginDrag ), NULL, this );
+    Connect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guListView::OnSysColorChanged ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -258,6 +259,7 @@ guListView::~guListView()
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
     if( m_AllowDrag )
         Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListView::OnBeginDrag ), NULL, this );
+    Disconnect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guListView::OnSysColorChanged ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -717,6 +719,14 @@ void guListView::MoveSelection( void )
 {
 }
 
+
+// -------------------------------------------------------------------------------- //
+void guListView::OnSysColorChanged( wxSysColourChangedEvent &event )
+{
+    //guLogMessage( wxT( "The sys color changed" ) );
+    m_Attr.LoadSysColors();
+    event.Skip();
+}
 
 // -------------------------------------------------------------------------------- //
 // guListViewClient

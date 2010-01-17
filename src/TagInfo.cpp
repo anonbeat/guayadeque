@@ -23,7 +23,6 @@
 
 #include "ApeTag.h"
 #include "Base64.h"
-#include "config.h"
 #include "TrackEdit.h"
 
 #include <tag.h>
