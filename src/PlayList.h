@@ -40,6 +40,7 @@ class guPlayList : public guListView
 {
   private :
     guDbLibrary *   m_Db;
+    guPlayerPanel * m_PlayerPanel;
     guTrackArray    m_Items;
     wxMutex         m_ItemsMutex;
     bool            m_StartPlaying;
@@ -76,6 +77,7 @@ class guPlayList : public guListView
     void                        OnAppendToPlaylistClicked( wxCommandEvent &event );
     void                        OnCopyToClicked( wxCommandEvent &event );
     void                        OnEditLabelsClicked( wxCommandEvent &event );
+    void                        OnEditTracksClicked( wxCommandEvent &event );
     void                        OnSearchLinkClicked( wxCommandEvent &event );
     void                        OnCommandClicked( wxCommandEvent &event );
     wxString                    GetSearchText( int item ) const;
@@ -91,7 +93,7 @@ class guPlayList : public guListView
     void                        OnConfigUpdated( wxCommandEvent &event );
 
   public :
-    guPlayList( wxWindow * parent, guDbLibrary * db );
+    guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayList();
 
     void                        AddItem( const guTrack &NewItem );

@@ -153,6 +153,8 @@ class guMainFrame : public wxFrame
     void                SetPlayListTracks( wxCommandEvent &event );
     void                SetPodcasts( wxCommandEvent &event );
 
+    //void                OnSysColorChanged( wxSysColourChangedEvent &event );
+
   public:
                         guMainFrame( wxWindow * parent );
                         ~guMainFrame();

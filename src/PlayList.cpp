@@ -27,9 +27,11 @@
 #include "LabelEditor.h"
 #include "MainApp.h"
 #include "OnlineLinks.h"
+#include "PlayerPanel.h"
 #include "PlayListAppend.h"
 #include "Shoutcast.h"
 #include "TagInfo.h"
+#include "TrackEdit.h"
 #include "Utils.h"
 
 //#include <id3/tag.h>
@@ -40,7 +42,7 @@
 //#define GUPLAYLIST_ITEM_SIZE        40
 
 // -------------------------------------------------------------------------------- //
-guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db ) :
+guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
             guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
     wxArrayString Songs;
@@ -51,6 +53,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db ) :
     InsertColumn( new guListViewColumn( _( "Now Playing" ), 0 ) );
 
     m_Db = db;
+    m_PlayerPanel = playerpanel;
     m_TotalLen = 0;
     m_CurItem = wxNOT_FOUND;
     m_StartPlaying = false;
@@ -101,6 +104,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db ) :
     Connect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
     Connect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Connect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ) );
 
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Connect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
@@ -144,6 +148,7 @@ guPlayList::~guPlayList()
     Disconnect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ) );
 
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
@@ -974,6 +979,10 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     wxArrayInt SelectedItems = GetSelectedItems( false );
     int SelCount = SelectedItems.Count();
 
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_EDITTRACKS, _( "Edit Songs" ), _( "Edit the current selected songs" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+    Menu->Append( MenuItem );
+
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels of the current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
     Menu->Append( MenuItem );
@@ -1180,6 +1189,63 @@ void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LABEL_UPDATELABELS );
             wxPostEvent( wxTheApp->GetTopWindow(), event );
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
+{
+    guTrackArray Songs;
+    guImagePtrArray Images;
+
+    guListItems Labels;
+    wxArrayInt SongIds;
+    //
+    guTrack * Track;
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    int index;
+
+    int count = SelectedItems.Count();
+    if( count )
+    {
+        for( index = 0; index < count; index++ )
+        {
+            Track = &m_Items[ SelectedItems[ index ] ];
+            if( Track->m_Type < guTRACK_TYPE_RADIOSTATION )
+            {
+                Songs.Add( new guTrack( * Track ) );
+            }
+        }
+    }
+    else
+    {
+        // If there is no selection then use all songs that are
+        // recognized in the database.
+        count = m_Items.Count();
+        for( index = 0; index < count; index++ )
+        {
+            Track = &m_Items[ index ];
+            if( Track->m_Type < guTRACK_TYPE_RADIOSTATION )
+            {
+                Songs.Add( new guTrack( * Track ) );
+            }
+        }
+    }
+
+    if( !Songs.Count() )
+        return;
+
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images );
+
+    if( TrackEditor )
+    {
+        if( TrackEditor->ShowModal() == wxID_OK )
+        {
+            m_Db->UpdateSongs( &Songs );
+            UpdateImages( Songs, Images );
+            //m_PlayerPanel->UpdatedTracks( &Songs );
+        }
+        TrackEditor->Destroy();
     }
 }
 
