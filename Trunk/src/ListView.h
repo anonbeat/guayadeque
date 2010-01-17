@@ -79,25 +79,7 @@ class guListViewAttr
     wxBrush     m_DragBgColor;
     wxFont *    m_Font;
 
-    guListViewAttr() {
-        m_SelBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
-        m_SelFgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
-        m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
-        if( m_EveBgColor.Red() > 0x0A && m_EveBgColor.Green() > 0x0A && m_EveBgColor.Blue() > 0x0A )
-        {
-            m_OddBgColor.Set( m_EveBgColor.Red() - 0xA, m_EveBgColor.Green() - 0x0A, m_EveBgColor.Blue() - 0x0A );
-        }
-        else
-        {
-            m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
-        }
-        m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
-
-        //m_PlayFgColor  = m_SelBgColor;
-        m_DragBgColor  = * wxGREY_BRUSH;
-
-        m_Font = new wxFont( wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT ) );
-    };
+    guListViewAttr() { LoadSysColors(); };
 
     ~guListViewAttr()
     {
@@ -116,6 +98,27 @@ class guListViewAttr
         m_TextFgColor = textfg;
         m_Font = font;
     };
+
+    void LoadSysColors( void )
+    {
+        m_SelBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
+        m_SelFgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
+        m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
+        if( m_EveBgColor.Red() > 0x0A && m_EveBgColor.Green() > 0x0A && m_EveBgColor.Blue() > 0x0A )
+        {
+            m_OddBgColor.Set( m_EveBgColor.Red() - 0xA, m_EveBgColor.Green() - 0x0A, m_EveBgColor.Blue() - 0x0A );
+        }
+        else
+        {
+            m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
+        }
+        m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
+
+        //m_PlayFgColor  = m_SelBgColor;
+        m_DragBgColor  = * wxGREY_BRUSH;
+
+        m_Font = new wxFont( wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT ) );
+    }
 
 };
 
@@ -155,6 +158,7 @@ class guListView : public wxScrolledWindow
     virtual void        OnDropEnd( void );
     virtual int         GetDragFiles( wxFileDataObject * files );
     virtual void        MoveSelection( void );
+    virtual void        OnSysColorChanged( wxSysColourChangedEvent &event );
 
   private :
     guListViewClient *      m_ListBox;
