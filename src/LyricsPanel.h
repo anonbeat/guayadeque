@@ -76,7 +76,11 @@ class guLyricsPanel : public wxPanel
 	void    OnUpdateChkBoxClicked( wxCommandEvent& event );
     void    OnTextUpdated( wxCommandEvent& event );
 //	void    OnSearchBtnClick( wxCommandEvent& event );
+    void    OnContextMenu( wxContextMenuEvent &event );
+    void    CreateContextMenu( wxMenu * menu );
 
+    void    OnLyricsCopy( wxCommandEvent &event );
+    void    OnLyricsPrint( wxCommandEvent &event );
 
   public :
     guLyricsPanel( wxWindow * parent );

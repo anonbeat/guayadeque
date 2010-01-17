@@ -21,6 +21,7 @@
 #include "LastFMPanel.h"
 
 #include "Commands.h"
+#include "curl/http.h"
 #include "Images.h"
 #include "MainApp.h"
 #include "ShowImage.h"
@@ -28,7 +29,6 @@
 
 #include <wx/arrimpl.cpp>
 #include "wx/clipbrd.h"
-#include <wx/curl/http.h>
 #include <wx/statline.h>
 #include <wx/uri.h>
 
