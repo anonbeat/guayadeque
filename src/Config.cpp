@@ -20,6 +20,10 @@
 // -------------------------------------------------------------------------------- //
 #include "Config.h"
 
+#include "Commands.h"
+
+const wxEventType guConfigUpdatedEvent = wxNewEventType();
+
 // -------------------------------------------------------------------------------- //
 guConfig::guConfig( const wxString &conffile ) :
           wxFileConfig( wxT( "guayadeque" ), wxEmptyString, conffile, wxEmptyString, wxCONFIG_USE_SUBDIR )
@@ -194,6 +198,38 @@ bool guConfig::WriteANum( const wxString &Key, const wxArrayInt &Value, const wx
     }
     SetPath( wxT( "/" ) );
     return ( index = count );
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::RegisterObject( wxEvtHandler * object )
+{
+    if( m_Objects.Index( object ) == wxNOT_FOUND )
+    {
+        m_Objects.Add( object );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::UnRegisterObject( wxEvtHandler * object )
+{
+    int Index = m_Objects.Index( object );
+    if( Index != wxNOT_FOUND )
+    {
+        m_Objects.RemoveAt( Index );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::SendConfigChangedEvent( void )
+{
+    wxCommandEvent event( guConfigUpdatedEvent, ID_CONFIG_UPDATED );
+
+    int Index;
+    int Count = m_Objects.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_Objects[ Index ]->AddPendingEvent( event );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

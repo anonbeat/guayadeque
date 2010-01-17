@@ -45,7 +45,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	wxBoxSizer *        ASMainSizer;
 	wxStaticBoxSizer *  LastFMASSizer;
 	wxFlexGridSizer *   ASLoginSizer;
-	wxStaticBoxSizer*   SmartPlayListSizer;
 	wxFlexGridSizer *   SmartPlayListFlexGridSizer;
 	wxStaticBoxSizer *  OnlineFiltersSizer;
 	wxBoxSizer *        OnlineBtnSizer;
@@ -132,6 +131,21 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_MinStartChkBox->SetValue( m_Config->ReadBool( wxT( "StartMinimized" ), false, wxT( "General" ) ) );
 	StartSizer->Add( m_MinStartChkBox, 0, wxALL, 5 );
 
+	wxBoxSizer* StartPlayingSizer;
+	StartPlayingSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, wxT("Restore position for tracks longer than"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_SavePosCheckBox->SetValue( m_Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) );
+
+	StartPlayingSizer->Add( m_SavePosCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+
+	m_MinLenSpinCtrl = new wxSpinCtrl( m_GenPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 9999, 10 );
+	m_MinLenSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) );
+	m_MinLenSpinCtrl->SetToolTip( wxT( "set the minimun length in minutes to save track position" ) );
+	StartPlayingSizer->Add( m_MinLenSpinCtrl, 0, wxALIGN_CENTER_VERTICAL, 5 );
+
+	StartSizer->Add( StartPlayingSizer, 1, wxEXPAND, 5 );
+
 	GenMainSizer->Add( StartSizer, 0, wxEXPAND|wxALL, 5 );
 
 	BehaviSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" Behaviour ") ), wxVERTICAL );
@@ -147,10 +161,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_DropFilesChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Drop files clear playlist"), wxDefaultPosition, wxDefaultSize, 0 );
     m_DropFilesChkBox->SetValue( m_Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) );
 	BehaviSizer->Add( m_DropFilesChkBox, 0, wxALL, 5 );
-
-	m_RndPlayChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Play random track when playlist is empty"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
-	BehaviSizer->Add( m_RndPlayChkBox, 0, wxALL, 5 );
 
 //	m_AlYearOrderChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Albums ordered by Year. Default is by Name"), wxDefaultPosition, wxDefaultSize, 0 );
 //	m_AlYearOrderChkBox->SetValue( m_Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) ) );
@@ -177,22 +187,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_SavePlayListChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Save playlist on close"), wxDefaultPosition, wxDefaultSize, 0 );
     m_SavePlayListChkBox->SetValue( m_Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) );
 	OnCloseSizer->Add( m_SavePlayListChkBox, 0, wxALL, 5 );
-
-	wxBoxSizer* StartPlayingSizer;
-	StartPlayingSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, wxT("Restore position for tracks longer than"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_SavePosCheckBox->SetValue( m_Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) );
-
-	StartPlayingSizer->Add( m_SavePosCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
-
-	m_MinLenSpinCtrl = new wxSpinCtrl( m_GenPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 9999, 10 );
-	m_MinLenSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) );
-	m_MinLenSpinCtrl->SetToolTip( wxT( "set the minimun length in minutes to save track position" ) );
-	StartPlayingSizer->Add( m_MinLenSpinCtrl, 0, wxALIGN_CENTER_VERTICAL, 5 );
-
-	OnCloseSizer->Add( StartPlayingSizer, 1, wxEXPAND, 5 );
-
 
 	m_CloseTaskBarChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Close to task bar icon"), wxDefaultPosition, wxDefaultSize, 0 );
     m_CloseTaskBarChkBox->SetValue( m_Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) );
@@ -280,6 +274,15 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	wxBoxSizer * PlayMainSizer;
 	PlayMainSizer = new wxBoxSizer( wxVERTICAL );
 
+	wxStaticBoxSizer * PlayGenSizer;
+	PlayGenSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
+
+	m_RndPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Play random track when playlist is empty"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
+	PlayGenSizer->Add( m_RndPlayChkBox, 0, wxALL, 5 );
+
+	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
+
 	wxStaticBoxSizer * PlaySilenceSizer;
 	PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
 
@@ -288,6 +291,43 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_PlayLevelEnabled->SetValue( IsPlayLevelEnabled );
 
 	PlaySilenceSizer->Add( m_PlayLevelEnabled, 0, wxALL|wxEXPAND, 5 );
+
+
+	wxStaticBoxSizer*   SmartPlayListSizer;
+	SmartPlayListSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Random / Smart Play Modes " ) ), wxVERTICAL );
+
+	SmartPlayListFlexGridSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
+	SmartPlayListFlexGridSizer->SetFlexibleDirection( wxBOTH );
+	SmartPlayListFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	m_SmartPlayListMinTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 4 );
+    m_SmartPlayListMinTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinPlayListTracks" ), 4, wxT( "SmartPlayList" ) ) );
+	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMinTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
+
+	m_SmartPlayListMinTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Tracks left to start search"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SmartPlayListMinTracksStaticText->Wrap( -1 );
+	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMinTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_SmartPlayListAddTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 3 );
+    m_SmartPlayListAddTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "AddPlayListTracks" ), 3, wxT( "SmartPlayList" ) ) );
+	SmartPlayListFlexGridSizer->Add( m_SmartPlayListAddTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
+
+	m_SmartPlayListAddTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Tracks added each time"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SmartPlayListAddTracksStaticText->Wrap( -1 );
+	SmartPlayListFlexGridSizer->Add( m_SmartPlayListAddTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_SmartPlayListMaxTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 999, 20 );
+    m_SmartPlayListMaxTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MaxPlayListTracks" ), 20, wxT( "SmartPlayList" ) ) );
+	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMaxTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
+
+	m_SmartPlayListMaxTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Max played tracks kept in playlist"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SmartPlayListMaxTracksStaticText->Wrap( -1 );
+	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMaxTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	SmartPlayListSizer->Add( SmartPlayListFlexGridSizer, 1, wxEXPAND, 5 );
+
+	PlayMainSizer->Add( SmartPlayListSizer, 0, wxALL|wxEXPAND, 5 );
+
 
 	wxBoxSizer* PlayLevelSizer;
 	PlayLevelSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -327,6 +367,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	PlaySilenceSizer->Add( PlayEndTimeSizer, 0, wxEXPAND, 5 );
 
 	PlayMainSizer->Add( PlaySilenceSizer, 0, wxEXPAND|wxALL, 5 );
+
 
 	m_PlayPanel->SetSizer( PlayMainSizer );
 	m_PlayPanel->Layout();
@@ -376,40 +417,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	LastFMASSizer->Add( ASLoginSizer, 1, wxEXPAND, 5 );
 
 	ASMainSizer->Add( LastFMASSizer, 0, wxEXPAND|wxALL, 5 );
-
-	SmartPlayListSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _( " Smart Playlists " ) ), wxVERTICAL );
-
-	SmartPlayListFlexGridSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
-	SmartPlayListFlexGridSizer->SetFlexibleDirection( wxBOTH );
-	SmartPlayListFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-
-	m_SmartPlayListMinTracksSpinCtrl = new wxSpinCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 4 );
-    m_SmartPlayListMinTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinPlayListTracks" ), 4, wxT( "SmartPlayList" ) ) );
-	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMinTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
-
-	m_SmartPlayListMinTracksStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Tracks left to start search"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SmartPlayListMinTracksStaticText->Wrap( -1 );
-	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMinTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_SmartPlayListAddTracksSpinCtrl = new wxSpinCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 3 );
-    m_SmartPlayListAddTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "AddPlayListTracks" ), 3, wxT( "SmartPlayList" ) ) );
-	SmartPlayListFlexGridSizer->Add( m_SmartPlayListAddTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
-
-	m_SmartPlayListAddTracksStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Tracks added each time"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SmartPlayListAddTracksStaticText->Wrap( -1 );
-	SmartPlayListFlexGridSizer->Add( m_SmartPlayListAddTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_SmartPlayListMaxTracksSpinCtrl = new wxSpinCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 5, 99, 20 );
-    m_SmartPlayListMaxTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MaxPlayListTracks" ), 20, wxT( "SmartPlayList" ) ) );
-	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMaxTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
-
-	m_SmartPlayListMaxTracksStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Max tracks kept in playlist"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SmartPlayListMaxTracksStaticText->Wrap( -1 );
-	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMaxTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	SmartPlayListSizer->Add( SmartPlayListFlexGridSizer, 1, wxEXPAND, 5 );
-
-	ASMainSizer->Add( SmartPlayListSizer, 0, wxALL|wxEXPAND, 5 );
 
 	m_LastFMPanel->SetSizer( ASMainSizer );
 	m_LastFMPanel->Layout();
@@ -482,26 +489,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     }
 	OnlineMainSizer->Add( m_RadioMinBitRateRadBox, 0, wxALL|wxEXPAND, 5 );
 
-//	wxStaticBoxSizer * LyricsSizer;
-//	LyricsSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Lyrics Provider ") ), wxHORIZONTAL );
-//
-//	wxStaticText * LyricsProviderStaticText;
-//	LyricsProviderStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Lyrics Provider:"), wxDefaultPosition, wxDefaultSize, 0 );
-//	LyricsProviderStaticText->Wrap( -1 );
-//	LyricsSizer->Add( LyricsProviderStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-//
-//	wxString LyricsChoiceChoices[] = {
-//	    wxT( "http://lyricwiki.org" ),
-//	    wxT( "http://leoslyrics.com" ),
-//	    wxT( "http://lyrc.com.ar" ),
-//	    wxT( "http://cduniverse.com" )
-//	    };
-//	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
-//	m_LyricsChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
-//	m_LyricsChoice->SetSelection( m_Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) ) );
-//	LyricsSizer->Add( m_LyricsChoice, 0, wxALL, 5 );
-//
-//	OnlineMainSizer->Add( LyricsSizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_OnlinePanel->SetSizer( OnlineMainSizer );
 	m_OnlinePanel->Layout();

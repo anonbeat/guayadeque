@@ -482,7 +482,7 @@ guPodcastDownloadQueueThread::~guPodcastDownloadQueueThread()
 void guPodcastDownloadQueueThread::SendUpdateEvent( guPodcastItem * podcastitem )
 {
     //guLogMessage( wxT( "Sending the update event..." ) );
-    wxCommandEvent event( guPodcastEvent, guPODCAST_EVENT_UPDATE_ITEM );
+    wxCommandEvent event( guPodcastEvent, ID_PODCASTS_ITEM_UPDATED );
     event.SetClientData( new guPodcastItem( * podcastitem ) );
     wxPostEvent( m_MainFrame, event );
 }

@@ -218,6 +218,8 @@ class guPlayerPanel : public wxPanel
 
     void                OnFiltersLabelDClick( wxMouseEvent &event );
 
+    void                OnConfigUpdated( wxCommandEvent &event );
+
   public:
                         guPlayerPanel( wxWindow* parent, guDbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
                         ~guPlayerPanel();

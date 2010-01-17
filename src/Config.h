@@ -24,11 +24,16 @@
 #include <wx/wx.h>
 #include <wx/fileconf.h>
 
+WX_DEFINE_ARRAY_PTR( wxEvtHandler *, guEvtHandlerArray );
+extern const wxEventType guConfigUpdatedEvent;
+
+
 // -------------------------------------------------------------------------------- //
 class guConfig : public wxConfig
 {
   protected :
-    wxMutex m_ConfigMutex;
+    wxMutex             m_ConfigMutex;
+    guEvtHandlerArray   m_Objects;
 
   public :
     guConfig( const wxString &conffile = wxT( ".guayadeque/guayadeque.conf" ) );
@@ -44,6 +49,10 @@ class guConfig : public wxConfig
     bool            WriteAStr( const wxString &Key, const wxArrayString &Value, const wxString &Category = wxEmptyString, bool ResetGroup = true );
     wxArrayInt      ReadANum( const wxString &Key, const int Default, const wxString &Category = wxEmptyString );
     bool            WriteANum( const wxString &Key, const wxArrayInt &Value, const wxString &Category = wxEmptyString, bool ResetGroup = true );
+
+    void            RegisterObject( wxEvtHandler * object );
+    void            UnRegisterObject( wxEvtHandler * object );
+    void            SendConfigChangedEvent( void );
 
 };
 

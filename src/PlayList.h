@@ -45,7 +45,8 @@ class guPlayList : public guListView
     bool            m_StartPlaying;
     long            m_CurItem;
     long            m_TotalLen;
-    long            m_SmartPlayMaxPlayListTracks;
+    long            m_MaxPlayedTracks;
+    int             m_MinPlayListTracks;
     int             m_ItemHeight;
 
     wxBitmap *      m_PlayBitmap;
@@ -86,6 +87,8 @@ class guPlayList : public guListView
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
+
+    void                        OnConfigUpdated( wxCommandEvent &event );
 
   public :
     guPlayList( wxWindow * parent, guDbLibrary * db );
