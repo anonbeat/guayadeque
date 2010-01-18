@@ -194,9 +194,11 @@ void guLyricsPanel::OnContextMenu( wxContextMenuEvent &event )
 void guLyricsPanel::CreateContextMenu( wxMenu * menu )
 {
     wxMenuItem * MenuItem;
-    MenuItem = new wxMenuItem( menu, ID_LYRICS_COPY, _( "Copy" ), _( "Copy the content of the lyric to clipboard" ) );
+    MenuItem = new wxMenuItem( menu, ID_LYRICS_COPY, _( "Copy to clipboard" ), _( "Copy the content of the lyric to clipboard" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     menu->Append( MenuItem );
+
+    menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( menu, ID_LYRICS_PRINT, _( "Print" ), _( "Print the content of the lyrics" ) );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_ ) );
