@@ -1,0 +1,4 @@
+cd src
+xgettext -d guayadeque -o guayadeque.pot -C --keyword=_ *.cpp
+mv guayadeque.pot ../po
+cd ..
