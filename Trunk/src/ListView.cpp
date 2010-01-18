@@ -996,7 +996,9 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
         return;
     }
     else
+    {
       m_DragCount = 0;
+    }
 
     event.Skip();
 }
