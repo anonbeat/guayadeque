@@ -162,6 +162,7 @@ class guPlayerPanel : public wxPanel
 	bool                    m_SmartSearchEnabled;
     int                     m_SmartPlayAddTracks;
     int                     m_SmartPlayMinTracksToPlay;
+    bool                    m_DelTracksPlayed;
     unsigned int            m_TrackStartPos;
 
     bool                    m_SilenceDetector;

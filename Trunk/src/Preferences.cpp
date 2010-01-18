@@ -281,6 +281,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
 	PlayGenSizer->Add( m_RndPlayChkBox, 0, wxALL, 5 );
 
+	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Delete played tracks from playlist"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) ) );
+	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxALL, 5 );
+
 	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
 
 	wxStaticBoxSizer * PlaySilenceSizer;
@@ -318,6 +322,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_SmartPlayListMaxTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 999, 20 );
     m_SmartPlayListMaxTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MaxTracksPlayed" ), 20, wxT( "Playback" ) ) );
+    m_SmartPlayListMaxTracksSpinCtrl->Enable( !m_DelPlayChkBox->IsChecked() );
 	SmartPlayListFlexGridSizer->Add( m_SmartPlayListMaxTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	m_SmartPlayListMaxTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Max played tracks kept in playlist"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -857,6 +862,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_DelPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
 	m_PathsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
 
+	m_DelPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
 	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
 	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 
@@ -968,7 +974,6 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "RndTrackOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChoice->GetSelection(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "SavePlayListOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "SaveCurrentTrackPos" ), m_SavePosCheckBox->GetValue(), wxT( "General" ) );
@@ -988,6 +993,9 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
     m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
 //        m_Config->WriteBool( wxT( "CoverSearchOnStart" ), m_CoverSearchChkBox->GetValue(), wxT( "General" ) );
+
+    m_Config->WriteBool( wxT( "RndTrackOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "DelTracksPlayed" ), m_DelPlayChkBox->GetValue(), wxT( "Playback" ) );
 
     m_Config->WriteBool( wxT( "SilenceDetector" ), m_PlayLevelEnabled->GetValue(), wxT( "Playback" ) );
     m_Config->WriteNum( wxT( "SilenceLevel" ), m_PlayLevelSlider->GetValue(), wxT( "Playback" ) );
@@ -1070,6 +1078,12 @@ void guPrefDialog::SaveSettings( void )
 void guPrefDialog::OnActivateTaskBarIcon( wxCommandEvent& event )
 {
     m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnDelPlayedTracksChecked( wxCommandEvent& event )
+{
+    m_SmartPlayListMaxTracksSpinCtrl->Enable( !m_DelPlayChkBox->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

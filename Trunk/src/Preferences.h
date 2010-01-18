@@ -85,6 +85,7 @@ class guPrefDialog : public wxDialog
 
     wxPanel *                   m_PlayPanel;
     wxCheckBox *                m_RndPlayChkBox;
+    wxCheckBox *                m_DelPlayChkBox;
     wxCheckBox *                m_PlayDelPlayedTrack;
     wxCheckBox *                m_PlayLevelEnabled;
     wxSlider *                  m_PlayLevelSlider;
@@ -165,6 +166,7 @@ class guPrefDialog : public wxDialog
 
     // Event Handlers
     void OnActivateTaskBarIcon( wxCommandEvent& event );
+    void OnDelPlayedTracksChecked( wxCommandEvent& event );
     void OnPathsListBoxSelected( wxCommandEvent& event );
     void OnAddPathBtnClick( wxCommandEvent& event );
 	void OnDelPathBtnClick( wxCommandEvent& event );
