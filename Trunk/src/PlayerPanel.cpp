@@ -547,6 +547,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
+        m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
         //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "SmartPlayAddTracks" ), 3, wxT( "SmartPlayList" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "SmartPlayMinTracksToPlay" ), 4, wxT( "SmartPlayList" ) );
@@ -558,6 +559,9 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         {
             m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
         }
+
+        if( !m_PlaySmart )
+            CheckFiltersVisible();
     }
 }
 
