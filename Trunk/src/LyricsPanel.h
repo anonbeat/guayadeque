@@ -60,6 +60,7 @@ class guLyricsPanel : public wxPanel
     guSearchLyricEngine *   m_LyricThread;
     wxCheckBox *            m_UpdateCheckBox;
 	wxBitmapButton *        m_ReloadButton;
+	wxBitmapButton *        m_SaveButton;
 	wxChoice *              m_ServerChoice;
 	wxTextCtrl *            m_ArtistTextCtrl;
 	wxTextCtrl *            m_TrackTextCtrl;
@@ -68,11 +69,13 @@ class guLyricsPanel : public wxPanel
 	bool                    m_UpdateEnabled;
     guTrackChangeInfo       m_CurrentTrackInfo;
 	wxString                m_CurrentFileName;
+	bool                    m_WriteLyrics;
 
     void    SetTitle( const wxString &title );
     void    SetText( const wxString &text );
     void    OnDownloadedLyric( wxCommandEvent &event );
 	void    OnReloadBtnClick( wxCommandEvent& event );
+    void    OnSaveBtnClick( wxCommandEvent& event );
 	void    OnUpdateChkBoxClicked( wxCommandEvent& event );
     void    OnTextUpdated( wxCommandEvent& event );
 //	void    OnSearchBtnClick( wxCommandEvent& event );
@@ -82,12 +85,15 @@ class guLyricsPanel : public wxPanel
     void    OnLyricsCopy( wxCommandEvent &event );
     void    OnLyricsPrint( wxCommandEvent &event );
 
+    void    OnConfigUpdated( wxCommandEvent &event );
+    void    SaveLyrics( void );
+
   public :
     guLyricsPanel( wxWindow * parent );
     ~guLyricsPanel();
 
     void    OnUpdatedTrack( wxCommandEvent &event );
-    void    SetTrack( const guTrackChangeInfo * trackchangeinfo );
+    void    SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch = false );
     void    ClearLyricThread( void );
 
 };

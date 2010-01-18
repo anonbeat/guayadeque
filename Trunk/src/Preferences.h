@@ -81,7 +81,7 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_AddCoverButton;
     wxBitmapButton *            m_DelCoverButton;
     wxCheckBox *                m_UpdateLibChkBox;
-    wxCheckBox *                m_CoverSearchChkBox;
+    wxCheckBox *                m_SaveLyricsChkBox;
 
     wxPanel *                   m_PlayPanel;
     wxCheckBox *                m_RndPlayChkBox;
@@ -102,12 +102,9 @@ class guPrefDialog : public wxDialog
     wxChoice *                  m_LangChoice;
     wxArrayString               m_LangNames;
     wxArrayString               m_LangIds;
-    wxSpinCtrl *                m_SmartPlayListMinTracksSpinCtrl;
-    wxStaticText *              m_SmartPlayListMinTracksStaticText;
-    wxSpinCtrl *                m_SmartPlayListAddTracksSpinCtrl;
-    wxStaticText *              m_SmartPlayListAddTracksStaticText;
-    wxSpinCtrl *                m_SmartPlayListMaxTracksSpinCtrl;
-    wxStaticText *              m_SmartPlayListMaxTracksStaticText;
+    wxSpinCtrl *                m_MinTracksSpinCtrl;
+    wxSpinCtrl *                m_NumTracksSpinCtrl;
+    wxSpinCtrl *                m_MaxTracksPlayed;
 
     wxPanel *                   m_OnlinePanel;
     wxListBox *                 m_OnlineFiltersListBox;

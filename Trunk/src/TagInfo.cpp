@@ -190,7 +190,10 @@ wxString GetID3v2Lyrics( ID3v2::Tag * tagv2 )
 	{
 		TagLib::ID3v2::UnsynchronizedLyricsFrame * LyricsFrame = static_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame * >( frameList.front() );
         if( LyricsFrame )
+        {
+            //guLogMessage( wxT( "Found lyrics" ) );
             return TStringTowxString( LyricsFrame->text() );
+        }
 	}
 	return wxEmptyString;
 }
@@ -198,20 +201,21 @@ wxString GetID3v2Lyrics( ID3v2::Tag * tagv2 )
 // -------------------------------------------------------------------------------- //
 void SetID3v2Lyrics( ID3v2::Tag * tagv2, const wxString &lyrics )
 {
+    //guLogMessage( wxT( "Saving lyrics..." ) );
     TagLib::ID3v2::UnsynchronizedLyricsFrame * LyricsFrame;
+
+    TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["USLT"];
+    for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
+    {
+        LyricsFrame = static_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame*>( *iter );
+        tagv2->removeFrame( LyricsFrame, TRUE );
+    }
+
     if( !lyrics.IsEmpty() )
     {
         LyricsFrame = new TagLib::ID3v2::UnsynchronizedLyricsFrame( TagLib::String::UTF8 );
         LyricsFrame->setText( wxStringToTString( lyrics ) );
-    }
-    else
-    {
-        TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["USLT"];
-        for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
-        {
-            LyricsFrame = static_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame*>( *iter );
-            tagv2->removeFrame( LyricsFrame, TRUE );
-        }
+        tagv2->addFrame( LyricsFrame );
     }
 }
 
