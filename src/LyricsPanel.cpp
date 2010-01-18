@@ -25,6 +25,7 @@
 #include "Config.h"
 #include "curl/http.h"
 #include "Images.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 #include <wx/clipbrd.h>
@@ -42,6 +43,8 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
     m_UpdateEnabled = true;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    m_WriteLyrics = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "General" ) );
 
     wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
@@ -76,7 +79,11 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	EditorSizer->Add( m_ServerChoice, 1, wxTOP|wxRIGHT, 5 );
 
 	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+
+	m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SaveButton->Enable( false );
+	EditorSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	wxStaticText * ArtistStaticText;
 	ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -134,6 +141,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 
 	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
 	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
+	m_SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	//m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
@@ -142,6 +150,8 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
     m_LyricText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
     Connect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
     Connect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
+
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLyricsPanel::OnConfigUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -149,6 +159,7 @@ guLyricsPanel::~guLyricsPanel()
 {
 	m_UpdateCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
 	m_ReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
+	m_SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	//m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
@@ -157,6 +168,8 @@ guLyricsPanel::~guLyricsPanel()
     m_LyricText->Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
     Disconnect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
     Disconnect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLyricsPanel::OnConfigUpdated ), NULL, this );
 
     if( m_LyricThread )
     {
@@ -167,6 +180,16 @@ guLyricsPanel::~guLyricsPanel()
     // Save the current selected server
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        m_WriteLyrics = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "General" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -254,7 +277,34 @@ void guLyricsPanel::OnUpdateChkBoxClicked( wxCommandEvent& event )
 void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
 {
     guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
-    SetTrack( &TrackChangeInfo );
+    SetTrack( &TrackChangeInfo, true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::SaveLyrics( void )
+{
+    if( !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) )
+    {
+        guTagInfo * TagInfo;
+
+        TagInfo = guGetTagInfoHandler( m_CurrentFileName );
+
+        if( TagInfo )
+        {
+            if( TagInfo->CanHandleLyrics() )
+            {
+                TagInfo->SetLyrics( m_LyricText->ToText() );
+            }
+            delete TagInfo;
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnSaveBtnClick( wxCommandEvent& event )
+{
+    SaveLyrics();
+    m_SaveButton->Enable( false );
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -284,18 +334,43 @@ void guLyricsPanel::SetText( const wxString &text )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo )
+void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch )
 {
     //const wxString &artist, const wxString &track
     wxString Artist = trackchangeinfo->m_ArtistName;
     wxString Track = trackchangeinfo->m_TrackName;
+    wxString LyricText;
 
     SetTitle( Track + wxT( " / " ) + Artist );
     //SetText( _( "No lyrics found for this song." ) );
 
     m_ArtistTextCtrl->SetValue( Artist );
     m_TrackTextCtrl->SetValue( Track );
-    if( !Artist.IsEmpty() && !Track.IsEmpty() )
+
+    m_SaveButton->Enable( false );
+
+    if( !onlinesearch && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) )
+    {
+        guTagInfo * TagInfo;
+
+        TagInfo = guGetTagInfoHandler( m_CurrentFileName );
+
+        if( TagInfo )
+        {
+            if( TagInfo->CanHandleLyrics() )
+            {
+                LyricText = TagInfo->GetLyrics();
+            }
+            delete TagInfo;
+        }
+    }
+
+    if( !LyricText.IsEmpty() )
+    {
+        LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
+        SetText( LyricText );
+    }
+    else if( !Artist.IsEmpty() && !Track.IsEmpty() )
     {
         SetText( _( "Searching the lyrics for this track" ) );
 
@@ -340,11 +415,14 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
         SetText( * Content );
         delete Content;
 
-//        // TODO UPdate the lyrics in the file
-//        if( m_UpdateEnabled && !m_CurrentFileName.IsEmpty() )
-//        {
-////            guLogMessage( wxT( "We now should try to save the Lyrics:\n%s" ), m_LyricText->ToText().c_str() );
-//        }
+        if( m_WriteLyrics )
+        {
+            SaveLyrics();
+        }
+        else
+        {
+            m_SaveButton->Enable( !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
+        }
     }
     else
     {
