@@ -79,6 +79,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     m_ShowRevTime = false;
     m_PlayRandom = false;
     m_ShowFiltersChoices = true;
+    m_DelTracksPlayed = false;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -93,6 +94,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
+        m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
         Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
 
@@ -551,6 +553,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
+        m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
 
         m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
@@ -679,8 +682,8 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
     if( SongList.Count() )
     {
         guTrack * Track = &SongList[ 0 ];
-        bool ClearPlayList = Track->m_TrackMode == guTRACK_MODE_RANDOM ||
-                             Track->m_TrackMode == guTRACK_MODE_SMART;
+        bool ClearPlayList = ( Track->m_TrackMode == guTRACK_MODE_RANDOM ||
+                               Track->m_TrackMode == guTRACK_MODE_SMART ) && !m_DelTracksPlayed;
 
         m_PlayListCtrl->AddToPlayList( SongList, ClearPlayList );
 
@@ -1045,7 +1048,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
 {
     int item = event.GetInt();
-    m_PlayListCtrl->SetCurrent( item );
+    m_PlayListCtrl->SetCurrent( item, m_DelTracksPlayed && !m_PlayLoop );
     //m_MediaSong = * m_PlayListCtrl->GetCurrent();
     SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
     //wxLogMessage( wxT( "Selected %i : %s - %s" ), m_MediaSong.SongId, m_MediaSong.ArtistName.c_str(), m_MediaSong.SongName.c_str() );
@@ -1466,11 +1469,14 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 
     // If we are already in the first Item start again the song from the begining
     State = m_MediaCtrl->GetState();
+    CurPos = m_MediaCtrl->Tell();
     int CurItem = m_PlayListCtrl->GetCurItem();
-    if( ( CurItem == 0 ) && ( State == wxMEDIASTATE_PLAYING ) )
+    if( ( ( CurItem == 0 ) && ( State == wxMEDIASTATE_PLAYING ) ) ||
+        ( ( State != wxMEDIASTATE_STOPPED ) && ( CurPos  > GUPLAYER_MIN_PREVTRACK_POS ) ) )
     {
-        m_MediaCtrl->Stop();
-        m_MediaCtrl->Play();
+        //m_MediaCtrl->Stop();
+        SetPosition( 0 );
+        //m_MediaCtrl->Play();
         return;
     }
 
@@ -1480,25 +1486,12 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         //State = m_MediaCtrl->GetState();
         if( State != wxMEDIASTATE_STOPPED )
         {
-            CurPos = m_MediaCtrl->Tell();
-            if( CurPos > GUPLAYER_MIN_PREVTRACK_POS ) // 5000
+            m_MediaCtrl->Stop();
+            //m_MediaSong = * PrevItem;
+            SetCurrentTrack( PrevItem );
+            if( State == wxMEDIASTATE_PLAYING )
             {
-                m_PlayListCtrl->GetNext( m_PlayLoop ); // <- Restore current track
-                m_MediaCtrl->Stop();
-                if( State == wxMEDIASTATE_PLAYING )
-                {
-                    m_MediaCtrl->Play();
-                }
-            }
-            else
-            {
-                m_MediaCtrl->Stop();
-                //m_MediaSong = * PrevItem;
-                SetCurrentTrack( PrevItem );
-                if( State == wxMEDIASTATE_PLAYING )
-                {
-                    LoadMedia( m_MediaSong.m_FileName );
-                }
+                LoadMedia( m_MediaSong.m_FileName );
             }
         }
         else
@@ -1507,7 +1500,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         }
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
-    //event.Skip();
+//    //event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1566,7 +1559,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     //if( !m_MediaSong.m_SongId && m_PlayListCtrl->GetItemCount() )
     if( !m_MediaSong.m_Loaded && m_PlayListCtrl->GetItemCount() )
     {
-        m_PlayListCtrl->SetCurrent( 0 );
+        m_PlayListCtrl->SetCurrent( 0, m_DelTracksPlayed && !m_PlayLoop );
         //m_MediaSong = * m_PlayListCtrl->GetCurrent();
         SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
     }

@@ -64,6 +64,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     m_CurItem = Config->ReadNum( wxT( "PlayerCurItem" ), -1l, wxT( "General" ) );
     m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxTracksPlayed" ), 15, wxT( "Playback" ) );
     m_MinPlayListTracks = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
+    m_DelTracksPLayed = Config->ReadNum( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
 
     guMainApp * MainApp = ( guMainApp * ) wxTheApp;
     if( MainApp && MainApp->argc > 1 )
@@ -164,6 +165,7 @@ void guPlayList::OnConfigUpdated( wxCommandEvent &event )
     {
         m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxTracksPlayed" ), 15, wxT( "Playback" ) );
         m_MinPlayListTracks = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
+        m_DelTracksPLayed = Config->ReadNum( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
     }
 }
 
@@ -627,10 +629,19 @@ void guPlayList::AddItem( const guTrack * NewItem )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::SetCurrent( const int NewCurItem )
+void guPlayList::SetCurrent( int curitem, bool delold )
 {
-    if( NewCurItem >= 0 && NewCurItem <= GetCount() )
-        m_CurItem = NewCurItem;
+    if( delold && ( curitem != m_CurItem ) && ( m_CurItem != wxNOT_FOUND ) )
+    {
+        m_TotalLen -= m_Items[ m_CurItem ].m_Length;
+        m_Items.RemoveAt( m_CurItem );
+        if( m_CurItem < curitem )
+            curitem--;
+        ReloadItems();
+    }
+
+    if( curitem >= 0 && curitem <= GetCount() )
+        m_CurItem = curitem;
     else
         m_CurItem = wxNOT_FOUND;
 }
@@ -650,7 +661,7 @@ guTrack * guPlayList::GetCurrent( void )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guPlayList::GetNext( const bool PlayLoop )
+guTrack * guPlayList::GetNext( const bool playloop )
 {
     if( m_Items.Count() )
     {
@@ -661,10 +672,18 @@ guTrack * guPlayList::GetNext( const bool PlayLoop )
         }
         else if( ( m_CurItem < ( ( int ) m_Items.Count() - 1 ) ) )
         {
-            m_CurItem++;
+            if( m_DelTracksPLayed && !playloop )
+            {
+                m_TotalLen -= m_Items[ m_CurItem ].m_Length;
+                m_Items.RemoveAt( m_CurItem );
+                ReloadItems();
+            }
+            else
+                m_CurItem++;
             return &m_Items[ m_CurItem ];
+
         }
-        else if( PlayLoop )
+        else if( playloop )
         {
             m_CurItem = 0;
             return &m_Items[ m_CurItem ];
@@ -674,7 +693,7 @@ guTrack * guPlayList::GetNext( const bool PlayLoop )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guPlayList::GetPrev( const bool bLoop )
+guTrack * guPlayList::GetPrev( const bool playloop )
 {
     if( m_Items.Count() )
     {
@@ -685,10 +704,16 @@ guTrack * guPlayList::GetPrev( const bool bLoop )
         }
         else if( m_CurItem > 0 )
         {
+            if( m_DelTracksPLayed && !playloop )
+            {
+                m_TotalLen -= m_Items[ m_CurItem ].m_Length;
+                m_Items.RemoveAt( m_CurItem );
+                ReloadItems();
+            }
             m_CurItem--;
             return &m_Items[ m_CurItem ];
         }
-        else if( bLoop )
+        else if( playloop )
         {
             m_CurItem = m_Items.Count() - 1;
             return &m_Items[ m_CurItem ];

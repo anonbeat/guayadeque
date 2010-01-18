@@ -48,6 +48,7 @@ class guPlayList : public guListView
     long            m_TotalLen;
     long            m_MaxPlayedTracks;
     int             m_MinPlayListTracks;
+    bool            m_DelTracksPLayed;
     int             m_ItemHeight;
 
     wxBitmap *      m_PlayBitmap;
@@ -110,7 +111,7 @@ class guPlayList : public guListView
     long                        GetCount();
     guTrack *                   GetCurrent();
     int                         GetCurItem();
-    void                        SetCurrent( const int NewCurItem );
+    void                        SetCurrent( int curitem, bool delold = false );
     guTrack *                   GetNext( bool bLoop );
     guTrack *                   GetPrev( bool bLoop );
     void                        ClearItems();
