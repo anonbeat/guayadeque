@@ -91,8 +91,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         m_PlayLoop = Config->ReadBool( wxT( "PlayerLoop" ), false, wxT( "General" )  );
         m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
         m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
-        m_SmartPlayAddTracks = Config->ReadNum( wxT( "SmartPlayAddTracks" ), 3, wxT( "SmartPlayList" ) );
-        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "SmartPlayMinTracksToPlay" ), 4, wxT( "SmartPlayList" ) );
+        m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
+        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
         Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
 
@@ -549,8 +549,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
     {
         m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
         //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
-        m_SmartPlayAddTracks = Config->ReadNum( wxT( "SmartPlayAddTracks" ), 3, wxT( "SmartPlayList" ) );
-        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "SmartPlayMinTracksToPlay" ), 4, wxT( "SmartPlayList" ) );
+        m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
+        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
 
         m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );

@@ -62,8 +62,8 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     Config->RegisterObject( this );
 
     m_CurItem = Config->ReadNum( wxT( "PlayerCurItem" ), -1l, wxT( "General" ) );
-    m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxPlayListTracks" ), 15, wxT( "SmartPlayList" ) );
-    m_MinPlayListTracks = Config->ReadNum( wxT( "MinPlayListTracks" ), 4, wxT( "SmartPlayList" ) );
+    m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxTracksPlayed" ), 15, wxT( "Playback" ) );
+    m_MinPlayListTracks = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
 
     guMainApp * MainApp = ( guMainApp * ) wxTheApp;
     if( MainApp && MainApp->argc > 1 )
@@ -162,8 +162,8 @@ void guPlayList::OnConfigUpdated( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxPlayListTracks" ), 15, wxT( "SmartPlayList" ) );
-        m_MinPlayListTracks = Config->ReadNum( wxT( "MinPlayListTracks" ), 4, wxT( "SmartPlayList" ) );
+        m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxTracksPlayed" ), 15, wxT( "Playback" ) );
+        m_MinPlayListTracks = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
     }
 }
 
@@ -352,7 +352,7 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold 
       m_Items.Add( items[ Index ] );
       m_TotalLen += items[ Index ].m_Length;
 
-      while( deleteold && ( m_CurItem != 0 ) && ( m_Items.Count() > ( size_t ) m_MaxPlayedTracks + m_MinPlayListTracks ) )
+      while( deleteold && ( m_CurItem != 0 ) && ( ( m_CurItem ) > m_MaxPlayedTracks ) )
       {
         m_TotalLen -= m_Items[ 0 ].m_Length;
         m_Items.RemoveAt( 0 );
