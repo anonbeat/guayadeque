@@ -1916,11 +1916,14 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
         int Count;
         if( !TestDestroy() && Songs && SimilarTracks.Count() )
         {
+            guTrackArray FoundTracks;
+
             Count = SimilarTracks.Count();
             for( Index = 0; Index < Count; Index++ )
             {
               if( TestDestroy() )
                 break;
+
               //guLogMessage( wxT( "Similar: '%s' - '%s'" ), SimilarTracks[ index ].ArtistName.c_str(), SimilarTracks[ index ].TrackName.c_str() );
               Song = m_Db->FindSong( SimilarTracks[ Index ].m_ArtistName,
                                      SimilarTracks[ Index ].m_TrackName,
@@ -1930,11 +1933,21 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
               {
                   Song->m_TrackMode = guTRACK_MODE_SMART;
                   //guLogMessage( wxT( "Found this song in the Songs Library" ) );
-                  Songs->Add( Song );
+                  FoundTracks.Add( Song );
                   m_SmartAddedTracks->Add( Song->m_SongId );
-                  if( ( int ) Songs->Count() == m_TrackCount )
+                  if( FoundTracks.Count() > 20 )
                     break;
               }
+            }
+
+            // Aleatorize tracks
+            Count = FoundTracks.Count();
+            for( Index = 0; Index < m_TrackCount; Index++ )
+            {
+                int Selected = guRandom( Count );
+                Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
+                FoundTracks.RemoveAt( Selected );
+                Count--;
             }
         }
 

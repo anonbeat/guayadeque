@@ -69,6 +69,7 @@ class guLyricsPanel : public wxPanel
 	bool                    m_UpdateEnabled;
     guTrackChangeInfo       m_CurrentTrackInfo;
 	wxString                m_CurrentFileName;
+	wxString                m_CurrentLyricText;
 	bool                    m_WriteLyrics;
 
     void    SetTitle( const wxString &title );
