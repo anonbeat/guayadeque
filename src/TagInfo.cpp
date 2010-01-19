@@ -694,49 +694,45 @@ bool guFlacTagInfo::CanHandleImages( void )
 // -------------------------------------------------------------------------------- //
 wxImage * guFlacTagInfo::GetImage( void )
 {
-    //guLogMessage( wxT( "guFlacTagInfo::GetImage()" ) );
+    wxImage * CoverImage = NULL;
 
-    FLAC__StreamMetadata * Picture = NULL;
-
-    if( !FLAC__metadata_get_picture( m_FileName.ToUTF8(),
-            &Picture,
-            FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER,
-            NULL, NULL, -1, -1, -1, -1 ) ||
-          FLAC__metadata_get_picture( m_FileName.ToUTF8(),
-            &Picture,
-            FLAC__STREAM_METADATA_PICTURE_TYPE_OTHER,
-            NULL, NULL, -1, -1, -1, -1 ) )
+    FLAC__Metadata_SimpleIterator * iter = FLAC__metadata_simple_iterator_new();
+    if( iter )
     {
-        if( Picture )
+        if( FLAC__metadata_simple_iterator_init( iter, m_FileName.ToUTF8(), true, false ) )
         {
-
-            wxMemoryOutputStream ImgOutStream;
-            FLAC__StreamMetadata_Picture * PicInfo = &Picture->data.picture;
-            ImgOutStream.Write( PicInfo->data, PicInfo->data_length );
-            wxMemoryInputStream ImgInputStream( ImgOutStream );
-            wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicInfo->mime_type, wxConvUTF8 ) );
-
-            FLAC__metadata_object_delete( Picture );
-
-            if( CoverImage )
+            while( FLAC__metadata_simple_iterator_next( iter ) )
             {
-                if( CoverImage->IsOk() )
+                if( FLAC__metadata_simple_iterator_get_block_type( iter ) == FLAC__METADATA_TYPE_PICTURE )
                 {
-                    return CoverImage;
-                }
-                else
-                {
-                    delete CoverImage;
+                    FLAC__StreamMetadata * block = FLAC__metadata_simple_iterator_get_block( iter );
+
+                    wxMemoryOutputStream ImgOutStream;
+
+                    FLAC__StreamMetadata_Picture * PicInfo = &block->data.picture;
+
+                    ImgOutStream.Write( PicInfo->data, PicInfo->data_length );
+                    wxMemoryInputStream ImgInputStream( ImgOutStream );
+                    CoverImage = new wxImage( ImgInputStream, wxString( PicInfo->mime_type, wxConvUTF8 ) );
+
+                    if( CoverImage )
+                    {
+                        if( !CoverImage->IsOk() )
+                        {
+                            delete CoverImage;
+                            CoverImage = NULL;
+                        }
+                    }
+
+                    FLAC__metadata_object_delete( block );
                 }
             }
         }
-    }
-//    else
-//    {
-//        guLogMessage( wxT( "Flac file does not contain any image file." ) );
-//    }
 
-    return NULL;
+        FLAC__metadata_simple_iterator_delete( iter );
+    }
+
+    return CoverImage;
 }
 
 // -------------------------------------------------------------------------------- //
