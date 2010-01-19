@@ -295,7 +295,7 @@ void guLyricsPanel::SaveLyrics( void )
         {
             if( TagInfo->CanHandleLyrics() )
             {
-                TagInfo->SetLyrics( m_LyricText->ToText() );
+                TagInfo->SetLyrics( m_CurrentLyricText );
             }
             delete TagInfo;
         }
@@ -328,10 +328,12 @@ void guLyricsPanel::SetTitle( const wxString &title )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::SetText( const wxString &text )
 {
+    wxString LyricText = text;
+    LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
     m_LyricText->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\">%s</font></center></body></html>" ),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-          text.c_str() ) );
+          LyricText.c_str() ) );
     Layout();
 }
 
@@ -349,7 +351,7 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     m_ArtistTextCtrl->SetValue( Artist );
     m_TrackTextCtrl->SetValue( Track );
 
-    m_SaveButton->Enable( onlinesearch );
+    m_SaveButton->Enable( false );
 
     // If the search was done manually ( m_UpdateEnable == false
     // Then we dont save it automatically
@@ -371,7 +373,8 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
 
     if( !LyricText.IsEmpty() )
     {
-        LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
+        m_CurrentLyricText = LyricText;
+
         SetText( LyricText );
     }
     else if( !Artist.IsEmpty() && !Track.IsEmpty() )
@@ -422,6 +425,8 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
+        m_CurrentLyricText = * Content;
+
         SetText( * Content );
 
         if( m_WriteLyrics && m_UpdateEnabled )
@@ -546,6 +551,7 @@ void guSearchLyricEngine::SetLyric( wxString * lyrictext )
 {
     if( !TestDestroy() )
     {
+        //guLogMessage( wxT( "==== Lyrics ====\n%s" ), lyrictext->c_str() );
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
         event.SetClientData( ( void * ) lyrictext );
         wxPostEvent( m_LyricsPanel, event );
@@ -570,19 +576,20 @@ guLyricWikiEngine::~guLyricWikiEngine()
 {
 }
 
-//// -------------------------------------------------------------------------------- //
-//wxString ProcessHexData( const wxString hexstr )
-//{
-//    int index;
-//    wxString RetVal = hexstr;
-//    for( index = 0; index < 256; index++ )
-//    {
-//        wxString Old = wxString::Format( wxT( "&#%u;" ), index );
-//        wxString New = wxString::Format( wxT( "%c" ), index );
-//        RetVal.Replace( Old, New );
-//    }
-//    return RetVal;
-//}
+// -------------------------------------------------------------------------------- //
+wxString ProcessHexData( const wxString &hexstr )
+{
+    int index;
+    wxString RetVal = hexstr;
+    for( index = 0; index < 256; index++ )
+    {
+        wxString Old = wxString::Format( wxT( "&#%u;" ), index );
+        wxString New = wxString::Format( wxT( "%c" ), index );
+        RetVal.Replace( Old, New );
+    }
+    RetVal.Replace( wxT( "<br />" ), wxT( "\n" ) );
+    return RetVal;
+}
 
 // -------------------------------------------------------------------------------- //
 void guLyricWikiEngine::SearchLyric( void )
@@ -618,21 +625,22 @@ void guLyricWikiEngine::SearchLyric( void )
             {
                 Content = Content.Mid( StartPos + 6 );
 
-                //Content = ProcessHexData( Content );
-                Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
+                Content = ProcessHexData( Content );
                 SetLyric( new wxString( Content.c_str() ) );
+                return;
             }
         }
     }
-    else
+
+//    else
+//    {
+    guLogError( wxT( "Could not get the content of the lyrics." ) );
+    if( !TestDestroy() )
     {
-        guLogError( wxT( "Could not get the content of the lyrics." ) );
-        if( !TestDestroy() )
-        {
-            SetLyric( NULL );
-            //break;
-        }
+        SetLyric( NULL );
+        //break;
     }
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -787,8 +795,6 @@ wxString guLeosLyricsEngine::GetLyricText( const wxString &lyricid )
                 {
                     RetVal = XmlNode->GetNodeContent();
                     //RetVal.Replace( wxT( "&#xD" ), wxT( "<br>" ) );
-                    RetVal.Replace( wxT( "\n" ), wxT( "<br>" ) );
-                    //guLogMessage( wxT( "Result: %s" ), RetVal.c_str() );
                     break;
                 }
                 XmlNode = XmlNode->GetNext();
@@ -861,7 +867,7 @@ void guLyrcComArEngine::SearchLyric( void )
             Content = Content.Mid( StartPos + 27 );
             EndPos = Content.Find( wxT( "<a href=\"#\"" ) );
             Content = Content.Mid( 0, EndPos );
-            //Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
+
             SetLyric( new wxString( Content.c_str() ) );
             return;
         }
@@ -915,9 +921,6 @@ void guCDUEngine::SearchLyric( void )
                 wxMemoryBuffer LyricBuffer = guBase64Decode( Content );
 
                 Content = wxString::FromUTF8( ( char * ) LyricBuffer.GetData(), LyricBuffer.GetDataLen() );
-                Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
-
-                //printf( "Lyrics : %s\n", ( char * ) LyricBuffer.GetData() );
 
                 SetLyric( new wxString( Content ) );
             }
