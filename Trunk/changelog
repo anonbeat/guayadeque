@@ -1,5 +1,5 @@
 
-  * Added option to automatically save lyrics to files. Also you can
+  * Added option to automatically save lyrics to mp3, ogg files. Also you can
     manually save it from the lyrics panel
   * Added an option in Preferences -> Playback to remove played tracks
   * Added print and copy to clipboard of lyrics

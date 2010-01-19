@@ -54,7 +54,7 @@
 class guPrefDialog : public wxDialog
 {
   private:
-    guDbLibrary *                 m_Db;
+    guDbLibrary *               m_Db;
 
   protected:
     wxListbook *                m_MainNotebook;

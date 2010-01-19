@@ -252,6 +252,7 @@ wxString guURLEncode( const wxString &Source )
     else
     {
       static const wxChar marks[] = wxT( "-_.\"+!~*()'" );
+      //static const wxChar marks[] = wxT( "-_.\"+!~*()" );
 
       //if( !wxIsalnum( C ) && !wxStrchr( marks, C ) /*&& !wxStrchr( delims, C )*/ )
       if( ( C >= 'a' && C <= 'z' ) ||

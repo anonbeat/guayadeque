@@ -101,7 +101,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_MainNotebook = new wxListbook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_LEFT|wxSUNKEN_BORDER );
+	m_MainNotebook = new wxListbook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_LEFT );
 
     m_ImageList = new wxImageList( 32, 32 );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_general ) );
@@ -202,8 +202,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_GenPanel->SetSizer( GenMainSizer );
 	m_GenPanel->Layout();
 	GenMainSizer->Fit( m_GenPanel );
-	m_MainNotebook->AddPage( m_GenPanel, _("General"), true );
-	m_MainNotebook->SetPageImage( 0, 0 );
+	m_MainNotebook->AddPage( m_GenPanel, _("General"), true, 0 );
+	//m_MainNotebook->SetPageImage( 0, 0 );
 
     //
     // Library Preferences Panel
