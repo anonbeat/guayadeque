@@ -295,6 +295,37 @@ bool SetXiphCommentCoverArt( Ogg::XiphComment * xiphcomment, const wxImage * ima
 }
 
 // -------------------------------------------------------------------------------- //
+wxString GetXiphCommentLyrics( Ogg::XiphComment * xiphcomment )
+{
+    if( xiphcomment && xiphcomment->contains( "LYRICS" ) )
+    {
+        return TStringTowxString( xiphcomment->fieldListMap()[ "LYRICS" ].front() );
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyrics )
+{
+    guLogMessage( wxT( "Saving lyrics" ) );
+    if( xiphcomment )
+    {
+        while( xiphcomment->contains( "LYRICS" ) )
+        {
+            xiphcomment->removeField( "LYRICS" );
+        }
+
+        if( !lyrics.IsEmpty() )
+        {
+            guLogMessage( wxT( "Added lyrics" ) );
+            xiphcomment->addField( "LYRICS", wxStringToTString( lyrics ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 bool guTagInfo::Read( void )
 {
     FileRef fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
@@ -834,6 +865,27 @@ bool guOggTagInfo::SetImage( const wxImage * image )
     TagLib::Ogg::Vorbis::File tagfile( m_FileName.ToUTF8() );
 
     return SetXiphCommentCoverArt( tagfile.tag(), image ) && tagfile.save();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guOggTagInfo::CanHandleLyrics( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guOggTagInfo::GetLyrics( void )
+{
+    TagLib::Ogg::Vorbis::File tagfile( m_FileName.ToUTF8() );
+    return GetXiphCommentLyrics( tagfile.tag() );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guOggTagInfo::SetLyrics( const wxString &lyrics )
+{
+    TagLib::Ogg::Vorbis::File tagfile( m_FileName.ToUTF8() );
+
+    return SetXiphCommentLyrics( tagfile.tag(), lyrics ) && tagfile.save();
 }
 
 

@@ -131,6 +131,10 @@ class guOggTagInfo : public guTagInfo
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
     virtual bool        SetImage( const wxImage * image );
+
+    virtual bool            CanHandleLyrics( void );
+    virtual wxString        GetLyrics( void );
+    virtual bool            SetLyrics( const wxString &lyrics );
 };
 
 // -------------------------------------------------------------------------------- //

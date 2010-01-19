@@ -43,6 +43,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
     m_UpdateEnabled = true;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
     m_WriteLyrics = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "General" ) );
 
@@ -180,6 +181,7 @@ guLyricsPanel::~guLyricsPanel()
     // Save the current selected server
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
+    Config->UnRegisterObject( this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -347,9 +349,11 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     m_ArtistTextCtrl->SetValue( Artist );
     m_TrackTextCtrl->SetValue( Track );
 
-    m_SaveButton->Enable( false );
+    m_SaveButton->Enable( onlinesearch );
 
-    if( !onlinesearch && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) )
+    // If the search was done manually ( m_UpdateEnable == false
+    // Then we dont save it automatically
+    if( !onlinesearch && m_UpdateEnabled && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) )
     {
         guTagInfo * TagInfo;
 
@@ -413,16 +417,17 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     if( Content )
     {
         SetText( * Content );
-        delete Content;
 
-        if( m_WriteLyrics )
+        if( m_WriteLyrics && m_UpdateEnabled )
         {
             SaveLyrics();
         }
         else
         {
-            m_SaveButton->Enable( !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
+            m_SaveButton->Enable( !Content->IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
         }
+
+        delete Content;
     }
     else
     {
@@ -887,6 +892,7 @@ void guCDUEngine::SearchLyric( void )
     wxString    UrlStr = wxString::Format( wxT( "http://www.cduniverse.com/lyricsearch.asp?artist=%s&song=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
 
+    guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
     Content = GetUrlContent( UrlStr, wxT( "http://www.cduniverse.com/lyrics.asp?id=&style=music&pid=" ) );
     //
     if( !Content.IsEmpty() )
