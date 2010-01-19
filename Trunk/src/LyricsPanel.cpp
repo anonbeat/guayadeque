@@ -378,6 +378,12 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     {
         SetText( _( "Searching the lyrics for this track" ) );
 
+        if( m_LyricThread )
+        {
+            m_LyricThread->Pause();
+            m_LyricThread->Delete();
+        }
+
         //guConfig * Config = ( guConfig * ) Config->Get();
         //int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
         int Engine = m_ServerChoice->GetSelection();
@@ -892,7 +898,7 @@ void guCDUEngine::SearchLyric( void )
     wxString    UrlStr = wxString::Format( wxT( "http://www.cduniverse.com/lyricsearch.asp?artist=%s&song=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
 
-    guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
+    //guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
     Content = GetUrlContent( UrlStr, wxT( "http://www.cduniverse.com/lyrics.asp?id=&style=music&pid=" ) );
     //
     if( !Content.IsEmpty() )

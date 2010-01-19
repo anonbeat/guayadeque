@@ -307,7 +307,6 @@ wxString GetXiphCommentLyrics( Ogg::XiphComment * xiphcomment )
 // -------------------------------------------------------------------------------- //
 bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyrics )
 {
-    guLogMessage( wxT( "Saving lyrics" ) );
     if( xiphcomment )
     {
         while( xiphcomment->contains( "LYRICS" ) )
@@ -317,7 +316,6 @@ bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyric
 
         if( !lyrics.IsEmpty() )
         {
-            guLogMessage( wxT( "Added lyrics" ) );
             xiphcomment->addField( "LYRICS", wxStringToTString( lyrics ) );
         }
         return true;
@@ -828,6 +826,28 @@ bool guFlacTagInfo::SetImage( const wxImage * image )
         guLogError( wxT( "Could not create a FLAC chain." ) );
     }
     return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guFlacTagInfo::CanHandleLyrics( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guFlacTagInfo::GetLyrics( void )
+{
+    TagLib::FLAC::File tagfile( m_FileName.ToUTF8() );
+
+    return GetXiphCommentLyrics( tagfile.xiphComment() );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guFlacTagInfo::SetLyrics( const wxString &lyrics )
+{
+    TagLib::FLAC::File tagfile( m_FileName.ToUTF8() );
+
+    return SetXiphCommentLyrics( tagfile.xiphComment(), lyrics ) && tagfile.save();
 }
 
 
