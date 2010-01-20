@@ -1935,7 +1935,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                   //guLogMessage( wxT( "Found this song in the Songs Library" ) );
                   FoundTracks.Add( Song );
                   m_SmartAddedTracks->Add( Song->m_SongId );
-                  if( FoundTracks.Count() > 20 )
+                  if( FoundTracks.Count() > 50 )
                     break;
               }
             }
@@ -1945,6 +1945,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
             for( Index = 0; Index < m_TrackCount; Index++ )
             {
                 int Selected = guRandom( Count );
+                guLogMessage( wxT( "%i (%i)" ), Selected, Count );
                 Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
                 FoundTracks.RemoveAt( Selected );
                 Count--;
