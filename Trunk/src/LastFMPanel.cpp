@@ -97,7 +97,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
     //Bitmap->SetCursor( wxCURSOR_HAND );
 	MainSizer->Add( m_Bitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 2 );
 
-	m_Text = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_Text = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200, -1 ), 0 );
 	m_Text->Wrap( -1 );
 	//Text->SetCursor( wxCursor( wxCURSOR_HAND ) );
 	m_Text->SetMaxSize( wxSize( 250, -1 ) );
@@ -390,6 +390,8 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 //	wxBoxSizer * DetailSizer;
 	m_DetailSizer = new wxBoxSizer( wxVERTICAL );
 
+	wxSizer * TopSizer = new wxBoxSizer( wxHORIZONTAL );
+
 	m_Text = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Text->Wrap( -1 );
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
@@ -397,7 +399,21 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	m_Text->SetFont( CurrentFont );
 
-	m_DetailSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	TopSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	TopSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_ShowMoreHyperLink = new wxHyperlinkCtrl( this, wxID_ANY, m_ShowLongBioText ? _( "Less..." ) : _("More..."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_ShowMoreHyperLink->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+	m_ShowMoreHyperLink->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+	m_ShowMoreHyperLink->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+	//m_DetailSizer->Add( m_ShowMoreHyperLink, 0, wxALL|wxALIGN_RIGHT, 5 );
+
+	TopSizer->Add( m_ShowMoreHyperLink, 0, wxALIGN_RIGHT|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+
+	//m_DetailSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_DetailSizer->Add( TopSizer, 0, wxEXPAND, 5 );
 
 	m_ArtistDetails = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
 	m_ArtistDetails->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
@@ -411,11 +427,11 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	m_ArtistDetails->SetBorders( 0 );
 	m_DetailSizer->Add( m_ArtistDetails, 1, wxALL|wxEXPAND, 5 );
 
-	m_ShowMoreHyperLink = new wxHyperlinkCtrl( this, wxID_ANY, m_ShowLongBioText ? _( "Less..." ) : _("More..."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
-	m_ShowMoreHyperLink->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-	m_ShowMoreHyperLink->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-	m_ShowMoreHyperLink->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-	m_DetailSizer->Add( m_ShowMoreHyperLink, 0, wxALL|wxALIGN_RIGHT, 5 );
+//	m_ShowMoreHyperLink = new wxHyperlinkCtrl( this, wxID_ANY, m_ShowLongBioText ? _( "Less..." ) : _("More..."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+//	m_ShowMoreHyperLink->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+//	m_ShowMoreHyperLink->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+//	m_ShowMoreHyperLink->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+//	m_DetailSizer->Add( m_ShowMoreHyperLink, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	m_MainSizer->Add( m_DetailSizer, 1, wxEXPAND, 5 );
 
