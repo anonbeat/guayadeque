@@ -328,6 +328,18 @@ bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyric
     return false;
 }
 
+//// -------------------------------------------------------------------------------- //
+//wxImage * GetMp4Image( TagLib::MP4::Tag * mp4tag )
+//{
+//    return NULL;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//bool SetMp4Image( TagLib::MP4::Tag * mp4tag, const wxImage * image )
+//{
+//    return false;
+//}
+
 // -------------------------------------------------------------------------------- //
 wxString GetMp4Lyrics( TagLib::MP4::Tag * mp4tag )
 {
@@ -1042,6 +1054,26 @@ guMp4TagInfo::~guMp4TagInfo()
 //        guLogError( wxT( "SetImage : could not open the file %s" ), m_FileName.c_str() );
 //    }
 //    return RetVal;
+//}
+
+//// -------------------------------------------------------------------------------- //
+//bool guMp4TagInfo::CanHandleImages( void )
+//{
+//    return true;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//wxImage * guMp4TagInfo::GetImage( void )
+//{
+//    TagLib::MP4::File tagfile( m_FileName.ToUTF8() );
+//    return GetMp4Image( tagfile.tag() );
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//bool guMp4TagInfo::SetImage( const wxImage * image )
+//{
+//    TagLib::MP4::File tagfile( m_FileName.ToUTF8() );
+//    return SetMp4Image( tagfile.tag(), image ) && tagfile.save();
 //}
 
 // -------------------------------------------------------------------------------- //
