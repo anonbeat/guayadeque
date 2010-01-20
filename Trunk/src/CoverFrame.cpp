@@ -89,7 +89,7 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
     wxImage CoverImage;
     if( CoverType == GU_SONGCOVER_ID3TAG )
     {
-        wxImage * id3cover = ID3TagGetPicture( CoverPath );
+        wxImage * id3cover = guTagGetPicture( CoverPath );
         if( id3cover )
         {
             CoverImage = * id3cover;

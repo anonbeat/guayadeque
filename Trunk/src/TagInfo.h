@@ -180,8 +180,11 @@ class guApeTagInfo : public guTagInfo
 
 class guImagePtrArray;
 
-wxImage *   ID3TagGetPicture( const wxString &filename );
-bool        ID3TagSetPicture( const wxString &filename, wxImage * picture );
+// -------------------------------------------------------------------------------- //
+wxImage *   guTagGetPicture( const wxString &filename );
+bool        guTagSetPicture( const wxString &filename, wxImage * picture );
+wxString    guTagGetLyrics( const wxString &filename );
+bool        guTagSetPicture( const wxString &filename, wxString &lyrics );
 void        UpdateImages( const guTrackArray &Songs, const guImagePtrArray &Images );
 
 

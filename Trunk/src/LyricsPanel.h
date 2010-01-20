@@ -96,21 +96,21 @@ class guLyricsPanel : public wxPanel
 
     void    OnUpdatedTrack( wxCommandEvent &event );
     void    SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch = false );
-    void    ClearLyricThread( void );
+    //void    ClearLyricThread( void );
 
 };
 
 // -------------------------------------------------------------------------------- //
 class guSearchLyricEngine : public wxThread
 {
-  private :
-    guLyricsPanel *         m_LyricsPanel;
   protected :
+    wxEvtHandler *          m_Owner;
+    guSearchLyricEngine **  m_ThreadPointer;
     wxString                m_ArtistName;
     wxString                m_TrackName;
 
   public:
-    guSearchLyricEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    guSearchLyricEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guSearchLyricEngine();
 
     virtual ExitCode Entry();
@@ -122,7 +122,7 @@ class guSearchLyricEngine : public wxThread
 class guLyricWikiEngine : public guSearchLyricEngine
 {
   public:
-    guLyricWikiEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    guLyricWikiEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guLyricWikiEngine();
 
     virtual void SearchLyric( void );
@@ -136,7 +136,7 @@ class guLeosLyricsEngine : public guSearchLyricEngine
     wxString GetLyricText( const wxString &lyricid );
 
   public:
-    guLeosLyricsEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    guLeosLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guLeosLyricsEngine();
 
     virtual void SearchLyric( void );
@@ -146,7 +146,7 @@ class guLeosLyricsEngine : public guSearchLyricEngine
 class guLyrcComArEngine : public guSearchLyricEngine
 {
   public:
-    guLyrcComArEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    guLyrcComArEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guLyrcComArEngine();
 
     virtual void SearchLyric( void );
@@ -156,7 +156,7 @@ class guLyrcComArEngine : public guSearchLyricEngine
 class guCDUEngine : public guSearchLyricEngine
 {
   public:
-    guCDUEngine( guLyricsPanel * lyricspanel, const wxChar * artistname, const wxChar * trackname );
+    guCDUEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guCDUEngine();
 
     virtual void SearchLyric( void );

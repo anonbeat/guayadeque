@@ -1222,6 +1222,7 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     guImagePtrArray Images;
+    wxArrayString Lyrics;
 
     guListItems Labels;
     wxArrayInt SongIds;
@@ -1260,7 +1261,7 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
     if( !Songs.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
 
     if( TrackEditor )
     {
