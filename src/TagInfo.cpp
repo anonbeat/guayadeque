@@ -1170,31 +1170,68 @@ bool guApeTagInfo::Write( void )
 // -------------------------------------------------------------------------------- //
 // Other functions
 // -------------------------------------------------------------------------------- //
-wxImage * ID3TagGetPicture( const wxString &filename )
+wxImage * guTagGetPicture( const wxString &filename )
 {
+    wxImage * RetVal = NULL;
     guTagInfo * TagInfo = guGetTagInfoHandler( filename );
     if( TagInfo )
     {
-        wxImage * RetVal = TagInfo->GetImage();
+        if( TagInfo->CanHandleImages() )
+        {
+            RetVal = TagInfo->GetImage();
+        }
         delete TagInfo;
-        return RetVal;
     }
-    return NULL;
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-bool ID3TagSetPicture( const wxString &filename, wxImage * picture )
+bool guTagSetPicture( const wxString &filename, wxImage * picture )
 {
+    bool RetVal = false;
     guTagInfo * TagInfo = guGetTagInfoHandler( filename );
     if( TagInfo )
     {
-        bool RetVal = TagInfo->CanHandleImages() && TagInfo->SetImage( picture );
+        if( TagInfo->CanHandleImages() )
+        {
+            RetVal = TagInfo->SetImage( picture );
+        }
         delete TagInfo;
-        return RetVal;
     }
-    return false;
+    return RetVal;
 }
 
+// -------------------------------------------------------------------------------- //
+wxString guTagGetLyrics( const wxString &filename )
+{
+    wxString RetVal = wxEmptyString;
+    guTagInfo * TagInfo = guGetTagInfoHandler( filename );
+    if( TagInfo )
+    {
+        if( TagInfo->CanHandleLyrics() )
+        {
+            RetVal = TagInfo->GetLyrics();
+        }
+        delete TagInfo;
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagSetPicture( const wxString &filename, wxString &lyrics )
+{
+    bool RetVal = false;
+    guTagInfo * TagInfo = guGetTagInfoHandler( filename );
+    if( TagInfo )
+    {
+        if( TagInfo->CanHandleLyrics() )
+        {
+            RetVal = TagInfo->SetLyrics( lyrics );
+        }
+        delete TagInfo;
+    }
+    return RetVal;
+}
 
 // -------------------------------------------------------------------------------- //
 void UpdateImages( const guTrackArray &Songs, const guImagePtrArray &Images )
@@ -1203,7 +1240,7 @@ void UpdateImages( const guTrackArray &Songs, const guImagePtrArray &Images )
     int count = Images.Count();
     for( index = 0; index < count; index++ )
     {
-        ID3TagSetPicture( Songs[ index ].m_FileName, Images[ index ] );
+        guTagSetPicture( Songs[ index ].m_FileName, Images[ index ] );
     }
 }
 

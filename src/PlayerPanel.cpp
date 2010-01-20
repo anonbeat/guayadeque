@@ -966,7 +966,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast_icon ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_PODCAST;
     }
-    else if( ( CoverImage = ID3TagGetPicture( m_MediaSong.m_FileName ) ) )
+    else if( ( CoverImage = guTagGetPicture( m_MediaSong.m_FileName ) ) )
     {
         m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
     }

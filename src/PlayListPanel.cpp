@@ -796,8 +796,9 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
     guImagePtrArray Images;
+    wxArrayString Lyrics;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )

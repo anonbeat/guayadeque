@@ -399,31 +399,25 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
         int Engine = m_ServerChoice->GetSelection();
         if( Engine == guLYRIC_ENGINE_LYRICWIKI )
         {
-            m_LyricThread = new guLyricWikiEngine( this, Artist.c_str(), Track.c_str() );
+            m_LyricThread = new guLyricWikiEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
         else if( Engine == guLYRIC_ENGINE_LEOSLYRICS )
         {
-            m_LyricThread = new guLeosLyricsEngine( this, Artist.c_str(), Track.c_str() );
+            m_LyricThread = new guLeosLyricsEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
         else if( Engine == guLYRIC_ENGINE_LYRC_COM_AR )
         {
-            m_LyricThread = new guLyrcComArEngine( this, Artist.c_str(), Track.c_str() );
+            m_LyricThread = new guLyrcComArEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
         else //if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
         {
-            m_LyricThread = new guCDUEngine( this, Artist.c_str(), Track.c_str() );
+            m_LyricThread = new guCDUEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
     }
     else
     {
         SetText( wxEmptyString );
     }
-}
-
-// -------------------------------------------------------------------------------- //
-void guLyricsPanel::ClearLyricThread( void )
-{
-    m_LyricThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -517,14 +511,16 @@ void guLyricsPanel::OnLyricsPrint( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 //
 // -------------------------------------------------------------------------------- //
-guSearchLyricEngine::guSearchLyricEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
+guSearchLyricEngine::guSearchLyricEngine( wxEvtHandler * owner,
+        guSearchLyricEngine ** threadpointer, const wxChar * artistname, const wxChar * trackname ) :
     wxThread()
 {
-    wxASSERT( lyricpanel );
+    wxASSERT( owner );
     wxASSERT( artistname );
     wxASSERT( trackname );
 
-    m_LyricsPanel = lyricpanel;
+    m_Owner = owner;
+    m_ThreadPointer = threadpointer;
     m_ArtistName = artistname;
     m_TrackName = trackname;
 }
@@ -532,9 +528,9 @@ guSearchLyricEngine::guSearchLyricEngine( guLyricsPanel * lyricpanel, const wxCh
 // -------------------------------------------------------------------------------- //
 guSearchLyricEngine::~guSearchLyricEngine()
 {
-    if( !TestDestroy() )
+    if( !TestDestroy() && m_ThreadPointer )
     {
-        m_LyricsPanel->ClearLyricThread();
+        * m_ThreadPointer = NULL;
     }
 }
 
@@ -561,7 +557,7 @@ void guSearchLyricEngine::SetLyric( wxString * lyrictext )
         //guLogMessage( wxT( "==== Lyrics ====\n%s" ), lyrictext->c_str() );
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_UPDATE_LYRICINFO );
         event.SetClientData( ( void * ) lyrictext );
-        wxPostEvent( m_LyricsPanel, event );
+        wxPostEvent( m_Owner, event );
     }
 }
 
@@ -569,8 +565,9 @@ void guSearchLyricEngine::SetLyric( wxString * lyrictext )
 // -------------------------------------------------------------------------------- //
 // guLyricWikiEngine
 // -------------------------------------------------------------------------------- //
-guLyricWikiEngine::guLyricWikiEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
-    guSearchLyricEngine( lyricpanel, artistname, trackname )
+guLyricWikiEngine::guLyricWikiEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
+         const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
 {
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -653,8 +650,9 @@ void guLyricWikiEngine::SearchLyric( void )
 // -------------------------------------------------------------------------------- //
 // guLyricWikiEngine
 // -------------------------------------------------------------------------------- //
-guLeosLyricsEngine::guLeosLyricsEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
-    guSearchLyricEngine( lyricpanel, artistname, trackname )
+guLeosLyricsEngine::guLeosLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
+         const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
 {
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -841,8 +839,9 @@ void guLeosLyricsEngine::SearchLyric( void )
 // -------------------------------------------------------------------------------- //
 // guLyrcComArEngine
 // -------------------------------------------------------------------------------- //
-guLyrcComArEngine::guLyrcComArEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
-    guSearchLyricEngine( lyricpanel, artistname, trackname )
+guLyrcComArEngine::guLyrcComArEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
+         const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
 {
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -888,8 +887,9 @@ void guLyrcComArEngine::SearchLyric( void )
 // -------------------------------------------------------------------------------- //
 // guCDUEngine
 // -------------------------------------------------------------------------------- //
-guCDUEngine::guCDUEngine( guLyricsPanel * lyricpanel, const wxChar * artistname, const wxChar * trackname ) :
-    guSearchLyricEngine( lyricpanel, artistname, trackname )
+guCDUEngine::guCDUEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
+         const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
 {
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -911,7 +911,7 @@ void guCDUEngine::SearchLyric( void )
     wxString    UrlStr = wxString::Format( wxT( "http://www.cduniverse.com/lyricsearch.asp?artist=%s&song=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
 
-    //guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
+    guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
     Content = GetUrlContent( UrlStr, wxT( "http://www.cduniverse.com/lyrics.asp?id=&style=music&pid=" ) );
     //
     if( !Content.IsEmpty() )

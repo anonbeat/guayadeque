@@ -748,10 +748,11 @@ void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     guImagePtrArray Images;
+    wxArrayString Lyrics;
     m_ArtistListCtrl->GetSelectedSongs( &Songs );
     if( !Songs.Count() )
         return;
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
@@ -769,11 +770,12 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     guImagePtrArray Images;
+    wxArrayString Lyrics;
     //m_AlbumListCtrl->GetSelectedSongs( &Songs );
     m_Db->GetAlbumsSongs( m_AlbumListCtrl->GetSelectedItems(), &Songs, true );
     if( !Songs.Count() )
         return;
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
@@ -969,9 +971,10 @@ void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
     guTrackArray Songs;
     m_SongListCtrl->GetSelectedSongs( &Songs );
     guImagePtrArray Images;
+    wxArrayString Lyrics;
     if( !Songs.Count() )
         return;
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
