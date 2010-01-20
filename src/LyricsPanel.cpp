@@ -145,7 +145,6 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	m_SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
-	//m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
     Connect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ), NULL, this );
 
     m_LyricText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
@@ -153,6 +152,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
     Connect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLyricsPanel::OnConfigUpdated ), NULL, this );
+	m_ServerChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guLyricsPanel::OnServerSelected ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -171,6 +171,7 @@ guLyricsPanel::~guLyricsPanel()
     Disconnect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLyricsPanel::OnConfigUpdated ), NULL, this );
+	m_ServerChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guLyricsPanel::OnServerSelected ), NULL, this );
 
     if( m_LyricThread )
     {
@@ -273,6 +274,12 @@ void guLyricsPanel::OnUpdateChkBoxClicked( wxCommandEvent& event )
     m_TrackTextCtrl->Enable( !m_UpdateEnabled );
     m_ReloadButton->Enable( !m_ArtistTextCtrl->GetValue().IsEmpty() &&
                             !m_TrackTextCtrl->GetValue().IsEmpty() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnServerSelected( wxCommandEvent &event )
+{
+    OnReloadBtnClick( event );
 }
 
 // -------------------------------------------------------------------------------- //

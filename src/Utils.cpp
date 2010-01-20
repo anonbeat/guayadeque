@@ -30,9 +30,15 @@
 wxString LenToString( int Len )
 {
     wxString LenStr;
+    int w = 0;
     int d = 0;
     int h = 0;
     int m = 0;
+    if( Len >= ( 7 * 24 * 60 * 60 ) )
+    {
+        w = Len / ( 7 * 24 * 60 * 60 );
+        Len %= ( 7 * 24 * 60 * 60 );
+    }
     if( Len >= ( 24 * 60 * 60 ) )
     {
         d = Len / ( 24 * 60 * 60 );
@@ -49,6 +55,10 @@ wxString LenToString( int Len )
         Len %= 60;
     }
     LenStr = wxEmptyString;
+    if( w > 0 )
+    {
+        LenStr += LenStr.Format( wxT( "%uw " ), w );
+    }
     if( d > 0 )
     {
         LenStr += LenStr.Format( wxT( "%ud " ), d );

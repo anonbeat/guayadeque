@@ -88,6 +88,7 @@ class guLyricsPanel : public wxPanel
 
     void    OnConfigUpdated( wxCommandEvent &event );
     void    SaveLyrics( void );
+    void    OnServerSelected( wxCommandEvent &event );
 
   public :
     guLyricsPanel( wxWindow * parent );
