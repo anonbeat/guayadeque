@@ -73,17 +73,17 @@ class guTagInfo
 
     ~guTagInfo(){};
 
-    void                    SetFileName( const wxString &filename ) { m_FileName = filename; };
-    virtual bool            Read( void );
-    virtual bool            Write( void );
+    void                SetFileName( const wxString &filename ) { m_FileName = filename; };
+    virtual bool        Read( void );
+    virtual bool        Write( void );
 
-    virtual bool            CanHandleImages( void );
-    virtual wxImage *       GetImage( void );
-    virtual bool            SetImage( const wxImage * image );
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
 
-    virtual bool            CanHandleLyrics( void );
-    virtual wxString        GetLyrics( void );
-    virtual bool            SetLyrics( const wxString &lyrics );
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
 
 };
 
@@ -120,9 +120,9 @@ class guFlacTagInfo : public guTagInfo
     virtual wxImage *   GetImage();
     virtual bool        SetImage( const wxImage * image );
 
-    virtual bool            CanHandleLyrics( void );
-    virtual wxString        GetLyrics( void );
-    virtual bool            SetLyrics( const wxString &lyrics );
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -136,9 +136,9 @@ class guOggTagInfo : public guTagInfo
     virtual wxImage *   GetImage( void );
     virtual bool        SetImage( const wxImage * image );
 
-    virtual bool            CanHandleLyrics( void );
-    virtual wxString        GetLyrics( void );
-    virtual bool            SetLyrics( const wxString &lyrics );
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -152,9 +152,9 @@ class guMp4TagInfo : public guTagInfo
 //    virtual wxImage *   GetImage( void );
 //    virtual bool        SetImage( const wxImage * image );
 
-    virtual bool            CanHandleLyrics( void );
-    virtual wxString        GetLyrics( void );
-    virtual bool            SetLyrics( const wxString &lyrics );
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
 };
 
 // -------------------------------------------------------------------------------- //
