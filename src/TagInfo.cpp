@@ -37,7 +37,11 @@
 #include <mpcfile.h>
 #include <oggfile.h>
 #include <vorbisfile.h>
+
 #include <xiphcomment.h>
+
+#include <mp4tag.h>
+#include <mp4file.h>
 
 // FLAC Dev files
 #include <FLAC/metadata.h>
@@ -67,6 +71,7 @@ bool guIsValidAudioFile( const wxString &filename )
         FileName.EndsWith( wxT( ".aac"  ) ) ||
         FileName.EndsWith( wxT( ".ape"  ) ) ||
         FileName.EndsWith( wxT( ".wav"  ) ) ||
+        FileName.EndsWith( wxT( ".aif"  ) ) ||
         FileName.EndsWith( wxT( ".mpc"  ) ) )
     {
         return true;
@@ -317,6 +322,36 @@ bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyric
         if( !lyrics.IsEmpty() )
         {
             xiphcomment->addField( "LYRICS", wxStringToTString( lyrics ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString GetMp4Lyrics( TagLib::MP4::Tag * mp4tag )
+{
+    if( mp4tag )
+    {
+        if( mp4tag->itemListMap().contains( "\xa9lyr" ) )
+            return TStringTowxString( mp4tag->itemListMap()[ "\xa9lyr" ].toStringList().front() );
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+bool SetMp4Lyrics( TagLib::MP4::Tag * mp4tag, const wxString &lyrics )
+{
+    if( mp4tag )
+    {
+        if( mp4tag->itemListMap().contains( "\xa9lyr" ) )
+        {
+            mp4tag->itemListMap().erase( "\xa9lyr" );
+        }
+        if( !lyrics.IsEmpty() )
+        {
+            const TagLib::String Lyrics = wxStringToTString( lyrics );
+            mp4tag->itemListMap()[ "\xa9lyr" ] = TagLib::StringList( Lyrics );
         }
         return true;
     }
@@ -908,18 +943,6 @@ bool guOggTagInfo::SetLyrics( const wxString &lyrics )
 
 
 // -------------------------------------------------------------------------------- //
-// guMpcTagInfo
-// -------------------------------------------------------------------------------- //
-guMpcTagInfo::guMpcTagInfo( const wxString &filename ) : guTagInfo( filename )
-{
-}
-
-// -------------------------------------------------------------------------------- //
-guMpcTagInfo::~guMpcTagInfo()
-{
-}
-
-// -------------------------------------------------------------------------------- //
 // guMp4TagInfo
 // -------------------------------------------------------------------------------- //
 guMp4TagInfo::guMp4TagInfo( const wxString &filename ) : guTagInfo( filename )
@@ -1021,6 +1044,41 @@ guMp4TagInfo::~guMp4TagInfo()
 //    return RetVal;
 //}
 
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::CanHandleLyrics( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMp4TagInfo::GetLyrics( void )
+{
+    TagLib::MP4::File tagfile( m_FileName.ToUTF8() );
+    return GetMp4Lyrics( tagfile.tag() );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::SetLyrics( const wxString &lyrics )
+{
+    TagLib::MP4::File tagfile( m_FileName.ToUTF8() );
+
+    return SetMp4Lyrics( tagfile.tag(), lyrics ) && tagfile.save();
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guMpcTagInfo
+// -------------------------------------------------------------------------------- //
+guMpcTagInfo::guMpcTagInfo( const wxString &filename ) : guTagInfo( filename )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guMpcTagInfo::~guMpcTagInfo()
+{
+}
 
 // -------------------------------------------------------------------------------- //
 // guApeTagInfo

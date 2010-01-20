@@ -142,26 +142,28 @@ class guOggTagInfo : public guTagInfo
 };
 
 // -------------------------------------------------------------------------------- //
-class guMpcTagInfo : public guTagInfo
-{
-  public :
-    guMpcTagInfo( const wxString &filename = wxEmptyString );
-    ~guMpcTagInfo();
-
-};
-
-// -------------------------------------------------------------------------------- //
 class guMp4TagInfo : public guTagInfo
 {
   public :
     guMp4TagInfo( const wxString &filename = wxEmptyString );
     ~guMp4TagInfo();
 
-//    virtual bool        Read( void );
-//    virtual bool        Write( void );
 //    virtual bool        CanHandleImages( void );
 //    virtual wxImage *   GetImage( void );
 //    virtual bool        SetImage( const wxImage * image );
+
+    virtual bool            CanHandleLyrics( void );
+    virtual wxString        GetLyrics( void );
+    virtual bool            SetLyrics( const wxString &lyrics );
+};
+
+// -------------------------------------------------------------------------------- //
+class guMpcTagInfo : public guTagInfo
+{
+  public :
+    guMpcTagInfo( const wxString &filename = wxEmptyString );
+    ~guMpcTagInfo();
+
 };
 
 // -------------------------------------------------------------------------------- //
