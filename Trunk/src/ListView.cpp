@@ -117,14 +117,11 @@ class guListViewClient : public wxVListBox
     int                         m_ItemHeight;
     int                         m_HScrollPos;
 
-    wxPoint                     m_DragStart;
-    int                         m_DragCount;
-
     void            OnPaint( wxPaintEvent &event );
     void            AdjustDC( wxDC &dc );
     void            OnDragOver( const wxCoord x, const wxCoord y );
     void            OnKeyDown( wxKeyEvent &event );
-    void            OnMouse( wxMouseEvent &event );
+    //void            OnMouse( wxMouseEvent &event );
     void            OnContextMenu( wxContextMenuEvent& event );
     long            FindItem( long start, const wxString& str, bool partial );
 
@@ -242,7 +239,23 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
     if( m_AllowDrag )
         Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListView::OnBeginDrag ), NULL, this );
+
+	m_ListBox->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+
     //Connect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guListView::OnSysColorChanged ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -259,6 +272,21 @@ guListView::~guListView()
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
     if( m_AllowDrag )
         Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListView::OnBeginDrag ), NULL, this );
+
+	m_ListBox->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_MIDDLE_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_RIGHT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	m_ListBox->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+
     //Disconnect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guListView::OnSysColorChanged ), NULL, this );
 }
 
@@ -719,6 +747,33 @@ void guListView::MoveSelection( void )
 {
 }
 
+// -------------------------------------------------------------------------------- //
+void guListView::OnMouse( wxMouseEvent &event )
+{
+    if( event.Dragging() )
+    {
+        if( !m_DragCount )
+        {
+            m_DragStart = event.GetPosition();
+        }
+
+        if( ++m_DragCount == 3 )
+        {
+            wxListEvent le( wxEVT_COMMAND_LIST_BEGIN_DRAG, GetId() );
+            le.SetEventObject( this );
+            le.m_pointDrag = m_DragStart;
+            GetEventHandler()->ProcessEvent( le );
+        }
+        return;
+    }
+    else
+    {
+      m_DragCount = 0;
+    }
+
+    event.Skip();
+}
+
 //// -------------------------------------------------------------------------------- //
 //void guListView::OnSysColorChanged( wxSysColourChangedEvent &event )
 //{
@@ -733,7 +788,7 @@ void guListView::MoveSelection( void )
 // -------------------------------------------------------------------------------- //
 BEGIN_EVENT_TABLE(guListViewClient,wxVListBox)
   EVT_PAINT          (guListViewClient::OnPaint)
-  EVT_MOUSE_EVENTS   (guListViewClient::OnMouse)
+  //EVT_MOUSE_EVENTS   (guListViewClient::OnMouse)
   EVT_SCROLLWIN      (guListViewClient::OnHScroll)
 END_EVENT_TABLE()
 
@@ -973,34 +1028,6 @@ void guListViewClient::OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n 
                 break;
         }
     }
-}
-
-// -------------------------------------------------------------------------------- //
-void guListViewClient::OnMouse( wxMouseEvent &event )
-{
-    if( event.Dragging() )
-    {
-        if( !m_DragCount )
-        {
-            m_DragStart = event.GetPosition();
-        }
-
-        if( ++m_DragCount == 3 )
-        {
-            wxListEvent le( wxEVT_COMMAND_LIST_BEGIN_DRAG, GetId() );
-            le.SetEventObject( this );
-            //le.m_itemIndex = m_lineLastClicked;
-            le.m_pointDrag = m_DragStart;
-            GetEventHandler()->ProcessEvent( le );
-        }
-        return;
-    }
-    else
-    {
-      m_DragCount = 0;
-    }
-
-    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
