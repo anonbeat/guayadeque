@@ -136,6 +136,9 @@ class guListView : public wxScrolledWindow
     guListViewColumnArray * m_Columns;
     wxImageList *           m_ImageList;
 
+    wxPoint                 m_DragStart;
+    int                     m_DragCount;
+
     bool                    m_AllowDrop;
     bool                    m_AllowDrag;
     int                     m_DragOverItem;
@@ -144,6 +147,7 @@ class guListView : public wxScrolledWindow
     bool                    m_LastDragOverAfter;
     bool                    m_DragSelfItemsEnabled;
     bool                    m_DragSelfItems;
+
 
     virtual void        OnKeyDown( wxKeyEvent &event );
     virtual void        GetItemsList( void ) = 0;
@@ -161,6 +165,7 @@ class guListView : public wxScrolledWindow
     virtual int         GetDragFiles( wxFileDataObject * files );
     virtual void        MoveSelection( void );
     //virtual void        OnSysColorChanged( wxSysColourChangedEvent &event );
+    virtual void        OnMouse( wxMouseEvent &event );
 
   private :
     guListViewClient *      m_ListBox;

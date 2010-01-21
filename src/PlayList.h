@@ -90,6 +90,7 @@ class guPlayList : public guListView
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
+    virtual void                OnMouse( wxMouseEvent &event );
 
     void                        OnConfigUpdated( wxCommandEvent &event );
 

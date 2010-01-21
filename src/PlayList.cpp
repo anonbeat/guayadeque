@@ -519,6 +519,30 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayList::OnMouse( wxMouseEvent &event )
+{
+//    if( event.LeftDown() )
+//    {
+//        int x = event.m_x;
+//        int y = event.m_y;
+//        wxSize Size = GetSize();
+//        if( GetItemCount() >
+//        if( x >= ( Size.GetWidth() - ( 50 + 6 ) ) )
+//        {
+//            int Item = HitTest( x, y );
+//            if( y > ( ( Item - GetFirstVisibleLine() ) * m_ItemHeight ) + m_SecondLineOffset )
+//            {
+//                guLogMessage( wxT( "Looks like its in the are of the item %i" ), Item );
+//            }
+//        }
+//
+//    }
+
+    // Do the inherited procedure
+    guListView::OnMouse( event );
+}
+
+// -------------------------------------------------------------------------------- //
 wxCoord guPlayList::OnMeasureItem( size_t n ) const
 {
     int Height = 4;
