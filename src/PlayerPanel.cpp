@@ -1933,26 +1933,27 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                                      SimilarTracks[ Index ].m_TrackName,
                                      m_FilterAllowPlayList,
                                      m_FilterDenyPlayList );
-              if( Song && m_SmartAddedTracks->Index( Song->m_SongId ) == wxNOT_FOUND )
+              if( Song && ( m_SmartAddedTracks->Index( Song->m_SongId ) == wxNOT_FOUND ) )
               {
                   Song->m_TrackMode = guTRACK_MODE_SMART;
                   //guLogMessage( wxT( "Found this song in the Songs Library" ) );
                   FoundTracks.Add( Song );
-                  if( FoundTracks.Count() > 50 )
-                    break;
+//                  if( FoundTracks.Count() > 50 )
+//                    break;
               }
             }
 
             // Aleatorize tracks
-            Count = FoundTracks.Count() - 1;
+            Count = FoundTracks.Count();
+            guLogMessage( wxT( "Found %i similar tracks..." ), Count );
             if( Count )
             {
                 for( Index = 0; Index < m_TrackCount; Index++ )
                 {
-                    if( Count > 0 )
+                    if( Count > 1 )
                     {
                         int Selected = guRandom( Count );
-                        //guLogMessage( wxT( "%i (%i) %s" ), Selected, Count, FoundTracks[ Selected ].m_SongName.c_str() );
+                        guLogMessage( wxT( "%i (%i) %s" ), Selected, Count, FoundTracks[ Selected ].m_SongName.c_str() );
                         Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
                         m_SmartAddedTracks->Add( FoundTracks[ Selected ].m_SongId );
                         FoundTracks.RemoveAt( Selected );
@@ -2005,9 +2006,8 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
             }
         }
 
-        while( m_SmartAddedTracks->Count() > GUPLAYER_SMART_CACHEITEMS )
-            m_SmartAddedTracks->RemoveAt( 0 );
-
+        if( m_SmartAddedTracks->Count() > GUPLAYER_SMART_CACHEITEMS )
+            m_SmartAddedTracks->RemoveAt( 0, m_SmartAddedTracks->Count() - GUPLAYER_SMART_CACHEITEMS );
 
         if( !TestDestroy() )
         {
