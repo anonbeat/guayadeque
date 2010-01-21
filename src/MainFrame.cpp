@@ -671,6 +671,12 @@ void guMainFrame::OnPlayerStatusChanged( wxCommandEvent &event )
     {
         m_MPRIS->OnPlayerStatusChange();
     }
+
+    if( m_PlayerPanel )
+    {
+        m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
+        m_PlayLoopMenuItem->Check( m_PlayerPanel->GetPlayLoop() );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

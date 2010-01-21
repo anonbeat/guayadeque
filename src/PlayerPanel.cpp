@@ -1429,6 +1429,10 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
         SetPlayLoop( false );
     }
     CheckFiltersVisible();
+
+    // Send Notification for the mpris interface
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
 // -------------------------------------------------------------------------------- //
