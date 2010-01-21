@@ -105,8 +105,6 @@ guMainFrame::guMainFrame( wxWindow * parent )
     MainWindowSize.y = Config->ReadNum( wxT( "MainWindowSizeHeight" ), 600, wxT( "Positions" ) );
     Create( parent, wxID_ANY, wxT("Guayadeque Player"), MainWindowPos, MainWindowSize, wxDEFAULT_FRAME_STYLE );
 
-    CreateMenu();
-
 	m_MainStatusBar = new guStatusBar( this );
 	SetStatusBar(  m_MainStatusBar );
 	MainFrameSizer = new wxBoxSizer( wxVERTICAL );
@@ -227,6 +225,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
     {
         guLogError( wxT( "Could not create the gnome session dbus object" ) );
     }
+
+
+    CreateMenu();
 
     //m_DBusServer->Run();
 
@@ -504,15 +505,19 @@ void guMainFrame::CreateMenu()
 //    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_pause ) );
 //    Menu->Append( MenuItem );
     Menu->AppendSeparator();
-    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on Last.fm statics" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search_engine ) );
-    Menu->Append( MenuItem );
+    m_PlaySmartMenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search_engine ) );
+    Menu->Append( m_PlaySmartMenuItem );
+    m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
+
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, wxString( _( "R&andomize" ) ), _( "Randomize the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_shuffle ) );
     Menu->Append( MenuItem );
-    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATPLAY, wxString( _( "&Repeat" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_repeat ) );
-    Menu->Append( MenuItem );
+    m_PlayLoopMenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATPLAY, wxString( _( "&Repeat" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_repeat ) );
+    Menu->Append( m_PlayLoopMenuItem );
+    m_PlayLoopMenuItem->Check( m_PlayerPanel->GetPlayLoop() );
+
     MenuBar->Append( Menu, _( "&Control" ) );
 
     Menu = new wxMenu();
@@ -765,7 +770,11 @@ void guMainFrame::OnPrevTrack( wxCommandEvent &event )
 void guMainFrame::OnSmartPlay( wxCommandEvent &event )
 {
     if( m_PlayerPanel )
+    {
         m_PlayerPanel->OnSmartPlayButtonClick( event );
+        m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
+        m_PlayLoopMenuItem->Check( m_PlayerPanel->GetPlayLoop() );
+    }
 }
 
 // ---------------------------------------------------------------------- //
@@ -779,7 +788,11 @@ void guMainFrame::OnRandomize( wxCommandEvent &event )
 void guMainFrame::OnRepeat( wxCommandEvent &event )
 {
     if( m_PlayerPanel )
+    {
         m_PlayerPanel->OnRepeatPlayButtonClick( event );
+        m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
+        m_PlayLoopMenuItem->Check( m_PlayerPanel->GetPlayLoop() );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

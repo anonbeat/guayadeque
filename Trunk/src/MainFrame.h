@@ -70,6 +70,9 @@ class guMainFrame : public wxFrame
     guPodcastPanel *            m_PodcastsPanel;
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
+    wxMenuItem *                m_PlaySmartMenuItem;
+    wxMenuItem *                m_PlayLoopMenuItem;
+
 
     guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
