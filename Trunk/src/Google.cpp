@@ -35,7 +35,7 @@
 #define GOOGLE_COVERINFO_COMMENT    6           // 6 -> Comment
 #define GOOGLE_COVERINFO_SIZE       9           // 9 -> Size >> 425 x 283 - 130 KB
 
-////// -------------------------------------------------------------------------------- //
+// -------------------------------------------------------------------------------- //
 guGoogleCoverFetcher::guGoogleCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
                                     const wxChar * artist, const wxChar * album ) :
     guCoverFetcher( mainthread, coverlinks, artist, album )

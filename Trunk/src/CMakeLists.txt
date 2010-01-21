@@ -186,6 +186,8 @@ ADD_EXECUTABLE( guayadeque
 	ShowImage.h
 	StaticBitmap.cpp
 	StaticBitmap.h
+	LastFMCovers.cpp
+	LastFMCovers.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

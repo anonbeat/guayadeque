@@ -805,6 +805,7 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
         {
             m_Db->UpdateSongs( &Tracks );
             UpdateImages( Tracks, Images );
+            UpdateLyrics( Tracks, Lyrics );
             m_PLTracksListBox->ReloadItems();
             m_PlayerPanel->UpdatedTracks( &Tracks );
         }
