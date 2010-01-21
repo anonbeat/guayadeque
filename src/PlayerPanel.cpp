@@ -1942,13 +1942,24 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
 
             // Aleatorize tracks
             Count = FoundTracks.Count();
-            for( Index = 0; Index < m_TrackCount; Index++ )
+            if( Count )
             {
-                int Selected = guRandom( Count );
-                //guLogMessage( wxT( "%i (%i)" ), Selected, Count );
-                Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
-                FoundTracks.RemoveAt( Selected );
-                Count--;
+                for( Index = 0; Index < m_TrackCount; Index++ )
+                {
+                    if( Count > 0 )
+                    {
+                        int Selected = guRandom( Count );
+                        //guLogMessage( wxT( "%i (%i)" ), Selected, Count );
+                        Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
+                        FoundTracks.RemoveAt( Selected );
+                        Count--;
+                    }
+                    else
+                    {
+                        Songs->Add( new guTrack( FoundTracks[ 0 ] ) );
+                        break;
+                    }
+                }
             }
         }
 
