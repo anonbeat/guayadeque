@@ -1945,7 +1945,6 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
 
             // Aleatorize tracks
             Count = FoundTracks.Count();
-            guLogMessage( wxT( "Found %i similar tracks..." ), Count );
             if( Count )
             {
                 for( Index = 0; Index < m_TrackCount; Index++ )
@@ -1953,7 +1952,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                     if( Count > 1 )
                     {
                         int Selected = guRandom( Count );
-                        guLogMessage( wxT( "%i (%i) %s" ), Selected, Count, FoundTracks[ Selected ].m_SongName.c_str() );
+                        //guLogMessage( wxT( "%i (%i) %s" ), Selected, Count, FoundTracks[ Selected ].m_SongName.c_str() );
                         Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
                         m_SmartAddedTracks->Add( FoundTracks[ Selected ].m_SongId );
                         FoundTracks.RemoveAt( Selected );
