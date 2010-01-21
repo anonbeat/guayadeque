@@ -1269,6 +1269,7 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
         {
             m_Db->UpdateSongs( &Songs );
             UpdateImages( Songs, Images );
+            UpdateLyrics( Songs, Lyrics );
             //m_PlayerPanel->UpdatedTracks( &Songs );
         }
         TrackEditor->Destroy();

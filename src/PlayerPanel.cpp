@@ -1945,7 +1945,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
             for( Index = 0; Index < m_TrackCount; Index++ )
             {
                 int Selected = guRandom( Count );
-                guLogMessage( wxT( "%i (%i)" ), Selected, Count );
+                //guLogMessage( wxT( "%i (%i)" ), Selected, Count );
                 Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
                 FoundTracks.RemoveAt( Selected );
                 Count--;

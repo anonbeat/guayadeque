@@ -229,19 +229,19 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	wxBoxSizer* PictureButtonSizer;
 	PictureButtonSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_AddPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_AddPicButton->SetToolTip( _( "Add a picture from file to the current track" ) );
 	PictureButtonSizer->Add( m_AddPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_DelPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelPicButton->SetToolTip( _( "Delete the picture from the current track" ) );
 	PictureButtonSizer->Add( m_DelPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_SavePicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SavePicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SavePicButton->SetToolTip( _( "Save the current picture to file" ) );
 	PictureButtonSizer->Add( m_SavePicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_SearchPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SearchPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SearchPicButton->SetToolTip( _( "Search the album cover" ) );
 	PictureButtonSizer->Add( m_SearchPicButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -250,7 +250,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 	PictureButtonSizer->Add( 10, 0, 0, wxEXPAND, 5 );
 
-	m_CopyPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CopyPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CopyPicButton->SetToolTip( _( "Copy the current picute to all the tracks you are editing" ) );
 	PictureButtonSizer->Add( m_CopyPicButton, 0, wxALL, 5 );
 
@@ -271,9 +271,9 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	wxBoxSizer* LyricsTopSizer;
 	LyricsTopSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxStaticText * ServerStaticText = new wxStaticText( LyricsPanel, wxID_ANY, wxT("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
-	ServerStaticText->Wrap( -1 );
-	LyricsTopSizer->Add( ServerStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+//	wxStaticText * ServerStaticText = new wxStaticText( LyricsPanel, wxID_ANY, _( "Server:" ), wxDefaultPosition, wxDefaultSize, 0 );
+//	ServerStaticText->Wrap( -1 );
+//	LyricsTopSizer->Add( ServerStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
 
 	wxString LyricsChoiceChoices[] = {
@@ -285,12 +285,12 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
 	m_LyricSrvChoice = new wxChoice( LyricsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
 	m_LyricSrvChoice->SetSelection( Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) ) );
-	LyricsTopSizer->Add( m_LyricSrvChoice, 1, wxTOP|wxRIGHT, 5 );
+	LyricsTopSizer->Add( m_LyricSrvChoice, 1, wxLEFT|wxTOP|wxRIGHT, 5 );
 
 	m_LyricReloadButton = new wxBitmapButton( LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	LyricsTopSizer->Add( m_LyricReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	wxStaticText * ArtistStaticText = new wxStaticText( LyricsPanel, wxID_ANY, wxT("Artist:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * ArtistStaticText = new wxStaticText( LyricsPanel, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	ArtistStaticText->Wrap( -1 );
 	LyricsTopSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
@@ -299,7 +299,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 	LyricsTopSizer->Add( m_LyricArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	wxStaticText * TrackStaticText = new wxStaticText( LyricsPanel, wxID_ANY, wxT("Track:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * TrackStaticText = new wxStaticText( LyricsPanel, wxID_ANY, _( "Track:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	TrackStaticText->Wrap( -1 );
 	LyricsTopSizer->Add( TrackStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
@@ -555,6 +555,8 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 	m_LyricSrvChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guTrackEditor::OnSearchLyrics ), NULL, this );
 	m_LyricReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSearchLyrics ), NULL, this );
+	m_LyricArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnTextUpdated ), NULL, this );
+	m_LyricTrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnTextUpdated ), NULL, this );
 
 	m_MBQueryArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnMBQueryTextCtrlChanged ), NULL, this );
 	m_MBQueryTitleTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnMBQueryTextCtrlChanged ), NULL, this );
@@ -760,6 +762,8 @@ void guTrackEditor::ReadItemData( void )
         m_MoveUpButton->Enable( false );
         m_MoveDownButton->Enable( false );
 
+        m_LyricArtistTextCtrl->SetValue( wxEmptyString );
+        m_LyricTrackTextCtrl->SetValue( wxEmptyString );
         m_LyricsTextCtrl->SetValue( wxEmptyString );
     }
     RefreshImage();
@@ -1444,20 +1448,32 @@ void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
 }
 
 // -------------------------------------------------------------------------------- //
+void guTrackEditor::OnTextUpdated( wxCommandEvent& event )
+{
+    bool Enabled = !m_LyricArtistTextCtrl->GetValue().IsEmpty() &&
+        !m_LyricTrackTextCtrl->GetValue().IsEmpty();
+
+    m_LyricSrvChoice->Enable( Enabled);
+    m_LyricReloadButton->Enable( Enabled );
+}
+
+// -------------------------------------------------------------------------------- //
 void guTrackEditor::OnSearchLyrics( wxCommandEvent &event )
 {
+    if( m_LyricArtistTextCtrl->GetValue().IsEmpty() ||
+        m_LyricTrackTextCtrl->GetValue().IsEmpty() )
+        return;
+
     m_LyricsTextCtrl->SetValue( wxEmptyString );
 
     if( m_LyricThread )
     {
-        guLogMessage( wxT( "Deleting old lyric search thread" ) );
         m_LyricThread->Pause();
         m_LyricThread->Delete();
     }
 
     int Engine = m_LyricSrvChoice->GetSelection();
 
-    guLogMessage( wxT( "Starting new lyric search thread" ) );
     if( Engine == guLYRIC_ENGINE_LYRICWIKI )
     {
         m_LyricThread = new guLyricWikiEngine( this, &m_LyricThread,
@@ -1482,12 +1498,12 @@ void guTrackEditor::OnSearchLyrics( wxCommandEvent &event )
                                 m_LyricArtistTextCtrl->GetValue().c_str(),
                                 m_LyricTrackTextCtrl->GetValue().c_str() );
     }
+    m_LyricReloadButton->Enable( false );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "Lyric search thread finished..." ) );
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
@@ -1495,6 +1511,7 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
         ( * m_Lyrics )[ m_CurItem ] = * Content;
         delete Content;
     }
+    m_LyricReloadButton->Enable( true );
 }
 
 // -------------------------------------------------------------------------------- //

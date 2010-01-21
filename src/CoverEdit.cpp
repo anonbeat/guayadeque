@@ -27,6 +27,7 @@
 #include "Discogs.h"
 #include "Google.h"
 #include "Images.h"
+#include "LastFMCovers.h"
 #include "MainFrame.h"
 #include "Utils.h"
 
@@ -36,9 +37,12 @@
 
 #define MAX_COVERLINKS_ITEMS            30
 
-#define guCOVER_SEARCH_ENGINE_GOOGLE      0
-#define guCOVER_SEARCH_ENGINE_AMAZON      1
-#define guCOVER_SEARCH_ENGINE_DISCOGS     2
+enum guCOVER_SEARCH_ENGINE {
+    guCOVER_SEARCH_ENGINE_GOOGLE = 0,
+    guCOVER_SEARCH_ENGINE_AMAZON,
+    guCOVER_SEARCH_ENGINE_LASTFM,
+    guCOVER_SEARCH_ENGINE_DISCOGS
+};
 
 WX_DEFINE_OBJARRAY(guCoverImageArray);
 
@@ -79,7 +83,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	FromStaticText->Wrap( -1 );
 	EditsSizer->Add( FromStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	wxString m_EngineChoiceChoices[] = { wxT( "Google" ), wxT( "Amazon" ), wxT( "Discogs" ) /*, wxT("Last.fm") */ };
+	wxString m_EngineChoiceChoices[] = { wxT( "Google" ), wxT( "Amazon" ), wxT("Last.fm"), wxT( "Discogs" ) };
 	int m_EngineChoiceNChoices = sizeof( m_EngineChoiceChoices ) / sizeof( wxString );
 	m_EngineChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_EngineChoiceNChoices, m_EngineChoiceChoices, 0 );
 	EditsSizer->Add( m_EngineChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -475,11 +479,14 @@ guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * owner,
     {
         m_CoverFetcher = ( guCoverFetcher * ) new guAmazonCoverFetcher( this, &m_CoverLinks, artist, album );
     }
+    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_LASTFM )
+    {
+        m_CoverFetcher = ( guCoverFetcher * ) new guLastFMCoverFetcher( this, &m_CoverLinks, artist, album );
+    }
     else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_DISCOGS )
     {
         m_CoverFetcher = ( guCoverFetcher * ) new guDiscogsCoverFetcher( this, &m_CoverLinks, artist, album );
     }
-
 
     if( Create() == wxTHREAD_NO_ERROR )
     {

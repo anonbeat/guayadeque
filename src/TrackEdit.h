@@ -190,6 +190,7 @@ class guTrackEditor : public wxDialog
     void UpdateMBrainzTrackInfo( void );
     int  CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray * tracks );
 
+    void OnTextUpdated( wxCommandEvent& event );
     void OnSearchLyrics( wxCommandEvent &event );
     void OnDownloadedLyric( wxCommandEvent &event );
 

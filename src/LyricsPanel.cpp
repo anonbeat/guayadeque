@@ -911,7 +911,7 @@ void guCDUEngine::SearchLyric( void )
     wxString    UrlStr = wxString::Format( wxT( "http://www.cduniverse.com/lyricsearch.asp?artist=%s&song=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
 
-    guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
+    //guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
     Content = GetUrlContent( UrlStr, wxT( "http://www.cduniverse.com/lyrics.asp?id=&style=music&pid=" ) );
     //
     if( !Content.IsEmpty() )

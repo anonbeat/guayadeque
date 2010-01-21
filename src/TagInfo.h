@@ -185,8 +185,8 @@ wxImage *   guTagGetPicture( const wxString &filename );
 bool        guTagSetPicture( const wxString &filename, wxImage * picture );
 wxString    guTagGetLyrics( const wxString &filename );
 bool        guTagSetPicture( const wxString &filename, wxString &lyrics );
-void        UpdateImages( const guTrackArray &Songs, const guImagePtrArray &Images );
-
+void        UpdateImages( const guTrackArray &songs, const guImagePtrArray &images );
+void        UpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics );
 
 #endif
 // -------------------------------------------------------------------------------- //
