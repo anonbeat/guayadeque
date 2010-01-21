@@ -1934,14 +1934,13 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                   Song->m_TrackMode = guTRACK_MODE_SMART;
                   //guLogMessage( wxT( "Found this song in the Songs Library" ) );
                   FoundTracks.Add( Song );
-                  m_SmartAddedTracks->Add( Song->m_SongId );
                   if( FoundTracks.Count() > 50 )
                     break;
               }
             }
 
             // Aleatorize tracks
-            Count = FoundTracks.Count();
+            Count = FoundTracks.Count() - 1;
             if( Count )
             {
                 for( Index = 0; Index < m_TrackCount; Index++ )
@@ -1949,14 +1948,17 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                     if( Count > 0 )
                     {
                         int Selected = guRandom( Count );
-                        //guLogMessage( wxT( "%i (%i)" ), Selected, Count );
+                        //guLogMessage( wxT( "%i (%i) %s" ), Selected, Count, FoundTracks[ Selected ].m_SongName.c_str() );
                         Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
+                        m_SmartAddedTracks->Add( FoundTracks[ Selected ].m_SongId );
                         FoundTracks.RemoveAt( Selected );
                         Count--;
                     }
                     else
                     {
+                        //guLogMessage( wxT( "%i (%i) %s" ), 0, Count, FoundTracks[ 0 ].m_SongName.c_str() );
                         Songs->Add( new guTrack( FoundTracks[ 0 ] ) );
+                        m_SmartAddedTracks->Add( FoundTracks[ 0 ].m_SongId );
                         break;
                     }
                 }
@@ -1990,8 +1992,8 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                 {
                     if( m_SmartAddedTracks->Index( ArtistsTracks[ Index ].m_SongId ) == wxNOT_FOUND )
                     {
-                        m_SmartAddedTracks->Add( ArtistsTracks[ Index ].m_SongId );
                         Songs->Add( new guTrack( ArtistsTracks[ Index ] ) );
+                        m_SmartAddedTracks->Add( ArtistsTracks[ Index ].m_SongId );
                         if( ( int ) Songs->Count() == m_TrackCount )
                             break;
                     }
