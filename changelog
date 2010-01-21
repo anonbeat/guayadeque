@@ -1,4 +1,5 @@
 
+  * Control Menu show the status of the Smart or Loop mode
   * Added last.fm as cover source in the cover download dialog
   * Added a lyric editor in the track editor
   * Added option to automatically save lyrics to mp3, flac, ogg, m4a files. 
