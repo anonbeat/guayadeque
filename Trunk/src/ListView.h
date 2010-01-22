@@ -126,11 +126,116 @@ class guListViewAttr
 
 class guListViewDropTarget;
 class guListViewDropFilesThread;
+class guListView;
+class guListViewClient;
+
+// -------------------------------------------------------------------------------- //
+// guListViewHeader
+// -------------------------------------------------------------------------------- //
+class guListViewHeader : public wxWindow
+{
+  protected:
+    guListView *            m_Owner;
+    guListViewClient *      m_ListViewClient;
+    wxImageList *           m_ImageList;
+    guListViewColumnArray * m_Columns;
+    int                     m_Width;
+    wxCursor *              m_ResizeCursor;
+    int                     m_IsDragging;
+    int                     m_DragOfset;
+
+    void OnMouse( wxMouseEvent &event );
+    void OnPaint( wxPaintEvent &event );
+    void OnSetFocus( wxFocusEvent &event );
+    void AdjustDC( wxDC &dc );
+    void OnEditColumns( void );
+    void OnCaptureLost( wxMouseCaptureLostEvent &event );
+
+  public:
+    guListViewHeader();
+
+    guListViewHeader( wxWindow * parent,
+                        guListViewClient * owner,
+                        guListViewColumnArray * columns,
+                        const wxPoint &pos = wxDefaultPosition,
+                        const wxSize &size = wxDefaultSize );
+
+    virtual ~guListViewHeader();
+
+    int     RefreshWidth( void );
+    void    SetImageList( wxImageList * imagelist );
+
+private:
+
+    DECLARE_EVENT_TABLE()
+};
+
+class guListViewClientTimer;
+
+
+
+// -------------------------------------------------------------------------------- //
+// guListViewClient
+// -------------------------------------------------------------------------------- //
+class guListViewClient : public wxVListBox
+{
+  private :
+    guListView *                m_Owner;
+    guListViewHeader *          m_Header;
+    guListViewColumnArray *     m_Columns;
+    guListViewClientTimer *     m_SearchStrTimer;
+    wxString                    m_SearchStr;
+    guListViewAttr *            m_Attr;
+    int                         m_ItemHeight;
+    int                         m_HScrollPos;
+
+    void            OnPaint( wxPaintEvent &event );
+    void            AdjustDC( wxDC &dc );
+    void            OnDragOver( const wxCoord x, const wxCoord y );
+    void            OnKeyDown( wxKeyEvent &event );
+    //void            OnMouse( wxMouseEvent &event );
+    void            OnContextMenu( wxContextMenuEvent& event );
+    long            FindItem( long start, const wxString& str, bool partial );
+
+    void            OnSearchLinkClicked( wxCommandEvent &event );
+    void            OnCommandClicked( wxCommandEvent &event );
+    //wxString        GetSearchText( int Item );
+
+    void            OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
+    void            DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    void            DoDrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    void            OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n ) const;
+    void            DrawBackground( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    void            DoDrawBackground( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
+    wxCoord         OnMeasureItem( size_t n ) const;
+    virtual wxString GetItemSearchText( const int row );
+    void            OnHScroll( wxScrollWinEvent &event );
+
+    DECLARE_EVENT_TABLE()
+
+  public :
+    guListViewClient( wxWindow * parent, const int flags, guListViewColumnArray * columns, guListViewAttr * attr );
+    ~guListViewClient();
+
+    void SetItemHeigth( const int height );
+
+    void SetHScrollbar( const int width );
+    virtual void SetScrollPos( int orientation, int pos, bool refresh = true );
+    //int  GetHScrollPosition( void );
+
+
+    friend class guListView;
+    friend class guListViewHeader;
+    friend class guListViewClientTimer;
+};
 
 // -------------------------------------------------------------------------------- //
 class guListView : public wxScrolledWindow
 {
   protected :
+    guListViewClient *      m_ListBox;
+    guListViewHeader *      m_Header;
+
     guListViewAttr          m_Attr;
     bool                    m_ColSelect;
     guListViewColumnArray * m_Columns;
@@ -167,10 +272,6 @@ class guListView : public wxScrolledWindow
     //virtual void        OnSysColorChanged( wxSysColourChangedEvent &event );
     virtual void        OnMouse( wxMouseEvent &event );
 
-  private :
-    guListViewClient *      m_ListBox;
-    guListViewHeader *      m_Header;
-
     void                OnChangedSize( wxSizeEvent &event );
     void                OnContextMenu( wxContextMenuEvent &event );
     void                OnHScroll( wxScrollWinEvent &event );
@@ -199,6 +300,7 @@ class guListView : public wxScrolledWindow
     bool                    ScrollToLine( size_t line );
     void                    RefreshAll( int scroll = wxNOT_FOUND );
     void                    RefreshLines( const int from, const int to );
+    void                    RefreshLine( const int line );
     bool                    IsSelected( size_t row ) const;
     virtual int             GetSelectedSongs( guTrackArray * Songs ) const;
     int                     HitTest( wxCoord x, wxCoord y ) const;

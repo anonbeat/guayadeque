@@ -521,22 +521,38 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnMouse( wxMouseEvent &event )
 {
-//    if( event.LeftDown() )
-//    {
-//        int x = event.m_x;
-//        int y = event.m_y;
-//        wxSize Size = GetSize();
-//        if( GetItemCount() >
-//        if( x >= ( Size.GetWidth() - ( 50 + 6 ) ) )
-//        {
-//            int Item = HitTest( x, y );
-//            if( y > ( ( Item - GetFirstVisibleLine() ) * m_ItemHeight ) + m_SecondLineOffset )
-//            {
-//                guLogMessage( wxT( "Looks like its in the are of the item %i" ), Item );
-//            }
-//        }
-//
-//    }
+    if( event.LeftIsDown() )
+    {
+        int x = event.m_x;
+        int y = event.m_y;
+        wxSize Size = m_ListBox->GetClientSize();
+        if( x >= ( Size.GetWidth() - ( 50 + 6 ) ) )
+        {
+            int Item = HitTest( x, y );
+            if( m_Items[ Item ].m_Type == guTRACK_TYPE_DB )
+            {
+                if( ( size_t ) y > ( ( Item - GetFirstVisibleLine() ) * m_ItemHeight ) + m_SecondLineOffset )
+                {
+                    int Rating;
+                    x -= ( Size.GetWidth() - ( 50 + 6 ) );
+
+                    if( x < 3 )
+                        Rating = 0;
+                    else
+                        Rating = wxMin( 5, ( wxMax( 0, x - 3 ) / 10 ) + 1 );
+
+                    m_Items[ Item ].m_Rating = Rating;
+                    RefreshLine( Item );
+                    if( Item == m_CurItem )
+                    {
+                        m_PlayerPanel->SetRatingLabel( Rating );
+                    }
+                    m_Db->SetTrackRating( m_Items[ Item ].m_SongId, Rating );
+                    return;
+                }
+            }
+        }
+    }
 
     // Do the inherited procedure
     guListView::OnMouse( event );
