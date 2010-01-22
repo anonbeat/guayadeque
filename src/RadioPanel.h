@@ -74,6 +74,9 @@ class guRadioPanel : public wxPanel
 	  void OnRadioUserEdit( wxCommandEvent &event );
 	  void OnRadioUserDel( wxCommandEvent &event );
 
+	  void OnRadioUserExport( wxCommandEvent &event );
+	  void OnRadioUserImport( wxCommandEvent &event );
+
       void GenreSplitterOnIdle( wxIdleEvent& );
       void StationsSplitterOnIdle( wxIdleEvent& );
 
