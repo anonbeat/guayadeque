@@ -652,6 +652,41 @@ void guListView::MoveSelection( void )
 // -------------------------------------------------------------------------------- //
 void guListView::OnMouse( wxMouseEvent &event )
 {
+    // We want to get a better experience for dragging as before
+    // when you click over selected items the items was unselected
+    // even when you tried to drag then.
+    // Here we check if the item was selected and if so wait for the button up
+    // to unselecte the item
+    if( !m_WasLeftUp && !event.ShiftDown() && !event.ControlDown() )
+    {
+        m_WasLeftUp = event.LeftUp();
+        if( ( event.LeftDown() || m_WasLeftUp ) )
+        {
+            int x = event.m_x;
+            int y = event.m_y;
+            int Item = HitTest( x, y );
+            if( Item != wxNOT_FOUND )
+            {
+                if( IsSelected( Item ) )
+                {
+                    if( event.LeftUp() )
+                    {
+                        //guLogMessage( wxT( "Event Left Up converted to left down..." ) );
+                        // Its a LeftUp event
+                        event.SetEventType( wxEVT_LEFT_DOWN );
+                        event.m_leftDown = true;
+                        m_ListBox->AddPendingEvent( event );
+                    }
+                    return;
+                }
+            }
+        }
+    }
+    else
+    {
+        m_WasLeftUp = false;
+    }
+
     if( event.Dragging() )
     {
         if( !m_DragCount )
