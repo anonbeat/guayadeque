@@ -63,7 +63,7 @@ guRadioEditor::guRadioEditor( wxWindow* parent, const wxString& title, const wxS
 	StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	StdBtnSizer->AddButton( StdBtnSizerCancel );
 	StdBtnSizer->Realize();
-	MainSizer->Add( StdBtnSizer, 0, wxEXPAND|wxRIGHT, 5 );
+	MainSizer->Add( StdBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();

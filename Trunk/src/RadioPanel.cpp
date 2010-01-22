@@ -31,8 +31,10 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
+#include <wx/wfstream.h>
 #include <wx/treectrl.h>
 #include <wx/tokenzr.h>
+#include <wx/xml/xml.h>
 
 // -------------------------------------------------------------------------------- //
 // guRadioGenreTreeCtrl
@@ -56,7 +58,7 @@ class guRadioGenreData : public wxTreeItemData
 class guRadioGenreTreeCtrl : public wxTreeCtrl
 {
   private :
-    guDbLibrary *     m_Db;
+    guDbLibrary *   m_Db;
     wxImageList *   m_ImageList;
     wxTreeItemId    m_RootId;
     wxTreeItemId    m_ManualId;
@@ -263,6 +265,16 @@ void guRadioGenreTreeCtrl::OnContextMenu( wxTreeEvent &event )
     {
         MenuItem = new wxMenuItem( &Menu, ID_RADIO_USER_ADD, _( "Add Radio" ), _( "Create a new radio" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
+        Menu.Append( MenuItem );
+
+        Menu.AppendSeparator();
+
+        MenuItem = new wxMenuItem( &Menu, ID_RADIO_USER_IMPORT, _( "Import" ), _( "Import the radio stations" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+        Menu.Append( MenuItem );
+
+        MenuItem = new wxMenuItem( &Menu, ID_RADIO_USER_EXPORT, _( "Export" ), _( "Export all the radio stations" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
         Menu.Append( MenuItem );
     }
 
@@ -790,6 +802,9 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
     Connect( ID_RADIO_USER_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserAdd ) );
     Connect( ID_RADIO_USER_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserEdit ) );
     Connect( ID_RADIO_USER_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserDel ) );
+
+    Connect( ID_RADIO_USER_EXPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserExport ) );
+    Connect( ID_RADIO_USER_IMPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserImport ) );
 
     Connect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdate ) );
     Connect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ) );
@@ -1428,6 +1443,122 @@ void guRadioPanel::OnRadioUserDel( wxCommandEvent &event )
     m_StationsListBox->GetSelected( &RadioStation );
     m_Db->DelRadioStation( RadioStation.m_Id );
     m_StationsListBox->ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioUserExport( wxCommandEvent &event )
+{
+    guRadioStations UserStations;
+    m_Db->GetUserRadioStations( &UserStations );
+    int Index;
+    int Count;
+    if( ( Count = UserStations.Count() ) )
+    {
+
+        wxFileDialog * FileDialog = new wxFileDialog( this,
+            wxT( "Select the output xml filename" ),
+            wxGetHomeDir(),
+            wxT( "output.xml" ),
+            wxT( "*.xml;*.xml" ),
+            wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
+
+        if( FileDialog )
+        {
+            if( FileDialog->ShowModal() == wxID_OK )
+            {
+                wxXmlDocument OutXml;
+                //OutXml.SetRoot(  );
+                wxXmlNode * RootNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "RadioStations" ) );
+
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    //guLogMessage( wxT( "Adding %s" ), UserStations[ Index ].m_Name.c_str() );
+                    wxXmlNode * RadioNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "RadioStation" ) );
+
+                    wxXmlNode * RadioName = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "Name" ) );
+                    wxXmlNode * RadioNameVal = new wxXmlNode( wxXML_TEXT_NODE, wxT( "Name" ), UserStations[ Index ].m_Name );
+                    RadioName->AddChild( RadioNameVal );
+                    RadioNode->AddChild( RadioName );
+
+                    wxXmlNode * RadioUrl = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "Url" ) );
+                    wxXmlNode * RadioUrlVal = new wxXmlNode( wxXML_TEXT_NODE, wxT( "Url" ), UserStations[ Index ].m_Link );
+                    RadioUrl->AddChild( RadioUrlVal );
+                    RadioNode->AddChild( RadioUrl );
+
+                    RootNode->AddChild( RadioNode );
+                }
+                OutXml.SetRoot( RootNode );
+                OutXml.Save( FileDialog->GetFilename() );
+            }
+            FileDialog->Destroy();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXmlRadioStation( wxXmlNode * node, guRadioStation * station )
+{
+    while( node )
+    {
+        if( node->GetName() == wxT( "Name" ) )
+        {
+            station->m_Name = node->GetNodeContent();
+        }
+        else if( node->GetName() == wxT( "Url" ) )
+        {
+            station->m_Link = node->GetNodeContent();
+        }
+        node = node->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXmlRadioStations( wxXmlNode * node, guRadioStations * stations )
+{
+    while( node && node->GetName() == wxT( "RadioStation" ) )
+    {
+        guRadioStation * RadioStation = new guRadioStation();
+
+        ReadXmlRadioStation( node->GetChildren(), RadioStation );
+
+        if( !RadioStation->m_Name.IsEmpty() && !RadioStation->m_Link.IsEmpty() )
+            stations->Add( RadioStation );
+        else
+            delete RadioStation;
+
+        node = node->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioUserImport( wxCommandEvent &event )
+{
+    guRadioStations UserStations;
+
+    wxFileDialog * FileDialog = new wxFileDialog( this,
+        wxT( "Select the output xml filename" ),
+        wxGetHomeDir(),
+        wxEmptyString,
+        wxT( "*.xml;*.xml" ),
+        wxFD_OPEN | wxFD_FILE_MUST_EXIST );
+
+    if( FileDialog )
+    {
+        if( FileDialog->ShowModal() == wxID_OK )
+        {
+            wxFileInputStream Ins( FileDialog->GetFilename() );
+            wxXmlDocument XmlDoc( Ins );
+            wxXmlNode * XmlNode = XmlDoc.GetRoot();
+            if( XmlNode && XmlNode->GetName() == wxT( "RadioStations" ) )
+            {
+                ReadXmlRadioStations( XmlNode->GetChildren(), &UserStations );
+                if( UserStations.Count() )
+                {
+                }
+            }
+        }
+        FileDialog->Destroy();
+    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -4317,6 +4317,29 @@ void guDbLibrary::SetRadioStationsOrder( int order )
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::GetUserRadioStations( guRadioStations * stations )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guRadioStation * Station;
+
+  query = wxT( "SELECT DISTINCT radiostation_name, radiostation_link "
+               "FROM radiostations WHERE radiostation_isuser = 1 " );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Station = new guRadioStation();
+    Station->m_Name       = dbRes.GetString( 0 );
+    Station->m_Link       = dbRes.GetString( 1 );
+    stations->Add( Station );
+  }
+  dbRes.Finalize();
+  return stations->Count();
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 {
   wxString query;

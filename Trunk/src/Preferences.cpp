@@ -142,7 +142,12 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_MinLenSpinCtrl = new wxSpinCtrl( m_GenPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 9999, 10 );
 	m_MinLenSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) );
 	m_MinLenSpinCtrl->SetToolTip( wxT( "set the minimun length in minutes to save track position" ) );
+
 	StartPlayingSizer->Add( m_MinLenSpinCtrl, 0, wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * MinLenStaticText = new wxStaticText( m_GenPanel, wxID_ANY, _("minutes"), wxDefaultPosition, wxDefaultSize, 0 );
+	MinLenStaticText->Wrap( -1 );
+	StartPlayingSizer->Add( MinLenStaticText, 0, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	StartSizer->Add( StartPlayingSizer, 1, wxEXPAND, 5 );
 
