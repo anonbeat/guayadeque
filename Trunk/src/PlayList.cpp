@@ -551,6 +551,7 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                     return;
                 }
             }
+
         }
     }
 

@@ -253,6 +253,8 @@ class guListView : public wxScrolledWindow
     bool                    m_DragSelfItemsEnabled;
     bool                    m_DragSelfItems;
 
+    bool                    m_WasLeftUp;
+
 
     virtual void        OnKeyDown( wxKeyEvent &event );
     virtual void        GetItemsList( void ) = 0;
