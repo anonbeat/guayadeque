@@ -1,4 +1,15 @@
 
+  * Added an option to export/import user defined radio stations
+    The format is a xml like this. 
+	<RadioStations>
+	  <RadioStation>
+	    <Name>StationName0</Name>
+	    <Url>StationLink</Url>
+          </RadioStation>
+          ...
+       </RadioStations>
+    This way you can do a tool to export radios from other formats and
+    import them in guayadeque
   * You can select the order of the albums in the albums listbox context menu
   * You can set the ratings of tracks in playlist directly clicking in the stars
   * Control Menu show the status of the Smart or Loop mode
