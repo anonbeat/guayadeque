@@ -138,17 +138,17 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
 
 	m_ListBox->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 	m_ListBox->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 	m_ListBox->Connect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 
     //Connect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guListView::OnSysColorChanged ), NULL, this );
 
@@ -171,17 +171,17 @@ guListView::~guListView()
 
 	m_ListBox->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 	m_ListBox->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_MIDDLE_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_RIGHT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_MIDDLE_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_RIGHT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 	m_ListBox->Disconnect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+	//m_ListBox->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 
     //Disconnect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guListView::OnSysColorChanged ), NULL, this );
 }
@@ -652,41 +652,6 @@ void guListView::MoveSelection( void )
 // -------------------------------------------------------------------------------- //
 void guListView::OnMouse( wxMouseEvent &event )
 {
-    // We want to get a better experience for dragging as before
-    // when you click over selected items the items was unselected
-    // even when you tried to drag then.
-    // Here we check if the item was selected and if so wait for the button up
-    // to unselecte the item
-    if( !m_WasLeftUp && !event.ShiftDown() && !event.ControlDown() )
-    {
-        m_WasLeftUp = event.LeftUp();
-        if( ( event.LeftDown() || m_WasLeftUp ) )
-        {
-            int x = event.m_x;
-            int y = event.m_y;
-            int Item = HitTest( x, y );
-            if( Item != wxNOT_FOUND )
-            {
-                if( IsSelected( Item ) )
-                {
-                    if( event.LeftUp() )
-                    {
-                        //guLogMessage( wxT( "Event Left Up converted to left down..." ) );
-                        // Its a LeftUp event
-                        event.SetEventType( wxEVT_LEFT_DOWN );
-                        event.m_leftDown = true;
-                        m_ListBox->AddPendingEvent( event );
-                    }
-                    return;
-                }
-            }
-        }
-    }
-    else
-    {
-        m_WasLeftUp = false;
-    }
-
     if( event.Dragging() )
     {
         if( !m_DragCount )
@@ -725,7 +690,7 @@ void guListView::OnMouse( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 BEGIN_EVENT_TABLE(guListViewClient,wxVListBox)
   EVT_PAINT          (guListViewClient::OnPaint)
-  //EVT_MOUSE_EVENTS   (guListViewClient::OnMouse)
+  EVT_MOUSE_EVENTS   (guListViewClient::OnMouse)
   EVT_SCROLLWIN      (guListViewClient::OnHScroll)
 END_EVENT_TABLE()
 
@@ -741,6 +706,8 @@ guListViewClient::guListViewClient( wxWindow * parent, const int flags,
     m_SearchStr = wxEmptyString;
     m_ItemHeight = wxNOT_FOUND;
     m_HScrollPos = 0;
+    m_MouseWasLeftUp = false;
+    m_MouseSelecting = false;
 
     SetBackgroundColour( m_Attr->m_EveBgColor );
 
@@ -754,6 +721,50 @@ guListViewClient::~guListViewClient()
       delete m_SearchStrTimer;
 
     Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListViewClient::OnKeyDown ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guListViewClient::OnMouse( wxMouseEvent &event )
+{
+    // We want to get a better experience for dragging as before
+    // when you click over selected items the items was unselected
+    // even when you tried to drag then.
+    // Here we check if the item was selected and if so wait for the button up
+    // to unselecte the item
+    //guLogMessage( wxT( "WasLeftUp: %i  Selecting: %i" ), m_MouseWasLeftUp, m_MouseSelecting );
+    if( !m_MouseWasLeftUp && !event.ShiftDown() && !event.ControlDown() )
+    {
+        m_MouseWasLeftUp = event.LeftUp();
+        if( ( event.LeftDown() || m_MouseWasLeftUp ) )
+        {
+            int x = event.m_x;
+            int y = event.m_y;
+            int Item = HitTest( x, y );
+            if( Item != wxNOT_FOUND )
+            {
+                if( IsSelected( Item ) )
+                {
+                    //guLogMessage( wxT( "Event Left Down/Up..." ) );
+                    if( !m_MouseSelecting && event.LeftUp() )
+                    {
+                        // Its a LeftUp event
+                        event.SetEventType( wxEVT_LEFT_DOWN );
+                        event.m_leftDown = true;
+                        AddPendingEvent( event );
+                    }
+                    return;
+                }
+                m_MouseSelecting = event.LeftDown();
+            }
+        }
+    }
+    else
+    {
+        m_MouseWasLeftUp = false;
+        m_MouseSelecting = false;
+    }
+
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //

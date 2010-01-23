@@ -188,12 +188,14 @@ class guListViewClient : public wxVListBox
     guListViewAttr *            m_Attr;
     int                         m_ItemHeight;
     int                         m_HScrollPos;
+    bool                        m_MouseWasLeftUp;
+    bool                        m_MouseSelecting;
 
     void            OnPaint( wxPaintEvent &event );
     void            AdjustDC( wxDC &dc );
     void            OnDragOver( const wxCoord x, const wxCoord y );
     void            OnKeyDown( wxKeyEvent &event );
-    //void            OnMouse( wxMouseEvent &event );
+    void            OnMouse( wxMouseEvent &event );
     void            OnContextMenu( wxContextMenuEvent& event );
     long            FindItem( long start, const wxString& str, bool partial );
 
@@ -253,7 +255,7 @@ class guListView : public wxScrolledWindow
     bool                    m_DragSelfItemsEnabled;
     bool                    m_DragSelfItems;
 
-    bool                    m_WasLeftUp;
+    //bool                    m_WasLeftUp;
 
 
     virtual void        OnKeyDown( wxKeyEvent &event );

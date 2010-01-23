@@ -207,9 +207,14 @@ enum guTRACKS_ORDER {
 #define guRADIOSTATIONS_ORDER_BITRATE     1
 #define guRADIOSTATIONS_ORDER_LISTENERS   2
 
-#define ALBUMS_ORDER_NAME           0
-#define ALBUMS_ORDER_YEAR           1
-#define ALBUMS_ORDER_YEAR_REVERSE   2
+enum guALBUMS_ORDER {
+    guALBUMS_ORDER_NAME = 0,
+    guALBUMS_ORDER_YEAR,
+    guALBUMS_ORDER_YEAR_REVERSE,
+    guALBUMS_ORDER_ARTIST_NAME,
+    guALBUMS_ORDER_ARTIST_YEAR,
+    guALBUMS_ORDER_ARTIST_YEAR_REVERSE
+};
 
 // -------------------------------------------------------------------------------- //
 class guAS_SubmitInfo //guAudioScrobbler_SubmitInfo
@@ -293,6 +298,8 @@ class guDbLibrary : public guDb
 //    int                 Close();
     virtual int         GetDbVersion( void );
 
+    void                ConfigChanged( void );
+
     bool                NeedUpdate( void ) { return m_NeedUpdate; };
 
     void                DoCleanUp( void );
@@ -323,6 +330,8 @@ class guDbLibrary : public guDb
     void                GetLabels( guListItems * Labels, bool FullList = false );
     void                GetRadioLabels( guListItems * Labels, bool FullList = false );
     void                GetArtists( guListItems * Artists, bool FullList = false );
+    void                SetAlbumsOrder( const int order );
+    int                 GetAlbumsOrder( void ) { return m_AlbumsOrder; };
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
     wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );
 
