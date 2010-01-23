@@ -1,4 +1,5 @@
 
+  * You can select the order of the albums in the albums listbox context menu
   * You can set the ratings of tracks in playlist directly clicking in the stars
   * Control Menu show the status of the Smart or Loop mode
   * Added last.fm as cover source in the cover download dialog

@@ -28,8 +28,8 @@
 class guAlListBox : public  guListView
 {
   private :
-    guDbLibrary * m_Db;
-    guAlbumItems * m_Items;
+    guDbLibrary *       m_Db;
+    guAlbumItems *      m_Items;
 
     void                OnAlbumListActivated( wxListEvent &event );
     void                OnAlbumListSelected( wxListEvent &event );
@@ -40,6 +40,7 @@ class guAlListBox : public  guListView
     virtual void        GetItemsList( void );
     void                OnSearchLinkClicked( wxCommandEvent &event );
     void                OnCommandClicked( wxCommandEvent &event );
+    void                OnOrderSelected( wxCommandEvent &event );
     wxString            GetSearchText( int item ) const;
 
     virtual int         GetDragFiles( wxFileDataObject * files );

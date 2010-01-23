@@ -341,6 +341,7 @@ guDbLibrary::~guDbLibrary()
     Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "General" ) );
     Config->WriteNum( wxT( "Order" ), m_PodcastOrder, wxT( "Podcasts" ) );
     Config->WriteBool( wxT( "OrderDesc" ), m_PodcastOrderDesc, wxT( "Podcasts" ) );
+    Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlbumsOrder, wxT( "General" ) );
   }
 
   Close();
@@ -1628,6 +1629,18 @@ void guDbLibrary::UpdateImageFile( const char * filename )
 
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::ConfigChanged( void )
+{
+  guConfig * Config = ( guConfig * ) guConfig::Get();
+  if( Config )
+  {
+    SetLibPath( Config->ReadAStr( wxT( "LibPath" ), wxGetHomeDir() + wxT( "/Music" ),
+                                      wxT( "LibPaths" ) ) );
+    //m_AlbumsOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
+  }
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::SetLibPath( const wxArrayString &NewPaths )
 {
   m_LibPaths = NewPaths;
@@ -2041,6 +2054,12 @@ void guDbLibrary::GetPaths( guListItems * Paths, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::SetAlbumsOrder( const int order )
+{
+    m_AlbumsOrder = order;
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 {
   wxString              query;
@@ -2052,7 +2071,7 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   //guLogMessage( wxT( "guDbLibrary::GetAlbums" )
 
   query = wxT( "SELECT DISTINCT album_id, album_name, album_artistid, album_coverid, song_year "
-               "FROM albums, songs WHERE album_id = song_albumid " );
+               "FROM albums, songs, artists WHERE album_id = song_albumid AND artist_id = song_artistid " );
 
   if( FullList )
   {
@@ -2060,26 +2079,43 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   }
   else
   {
-      if( m_LaFilters.Count() || m_GeFilters.Count() || m_ArFilters.Count() || m_TeFilters.Count() )
-      {
-        query += wxT( "AND " ) + FiltersSQL( GULIBRARY_FILTER_ALBUMS );
-      }
-      query += wxT( " ORDER BY " );
-      if( m_AlbumsOrder == ALBUMS_ORDER_NAME )
-      {
-        query += wxT( "album_name " );
-      }
-      else if( m_AlbumsOrder == ALBUMS_ORDER_YEAR )
-      {
-        query += wxT( "song_year, album_name" );
-      }
-      else //if( m_AlbumsOrder == ALBUMS_ORDER_YEAR_REVERSE )
-      {
-        query += wxT( "song_year DESC" );
-      }
+    if( m_LaFilters.Count() || m_GeFilters.Count() || m_ArFilters.Count() || m_TeFilters.Count() )
+    {
+      query += wxT( "AND " ) + FiltersSQL( GULIBRARY_FILTER_ALBUMS );
+    }
+    query += wxT( " ORDER BY " );
+
+    switch( m_AlbumsOrder )
+    {
+        case guALBUMS_ORDER_NAME :
+            query += wxT( "album_name " );
+            break;
+
+        case guALBUMS_ORDER_YEAR :
+            query += wxT( "song_year" );
+            break;
+
+        case guALBUMS_ORDER_YEAR_REVERSE :
+            query += wxT( "song_year DESC" );
+            break;
+
+        case guALBUMS_ORDER_ARTIST_NAME :
+            query += wxT( "artist_name, album_name" );
+            break;
+
+        case guALBUMS_ORDER_ARTIST_YEAR :
+            query += wxT( "artist_name, song_year" );
+            break;
+
+        case guALBUMS_ORDER_ARTIST_YEAR_REVERSE :
+        default :
+            query += wxT( "artist_name, song_year DESC" );
+            break;
+    }
+
   }
 
-  //guLogMessage( query );
+  //guLogMessage( wxT( "GetAlbums: %s" ), query.c_str() );
 
   dbRes = ExecuteQuery( query );
 

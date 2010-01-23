@@ -46,6 +46,7 @@ guAlListBox::guAlListBox( wxWindow * parent, guDbLibrary * db, const wxString &l
 
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
     Connect( ID_ALBUM_COMMANDS, ID_ALBUM_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
+    Connect( ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnOrderSelected ) );
 
     ReloadItems();
 }
@@ -112,6 +113,13 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
     {
         guLogError( wxT( "Thumb image corrupt or not correctly loaded" ) );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlListBox::OnOrderSelected( wxCommandEvent &event )
+{
+    m_Db->SetAlbumsOrder( event.GetId() - ID_ALBUM_ORDER_NAME );
+    ReloadItems( false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -207,7 +215,39 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
             Menu->Append( MenuItem );
         }
+    }
 
+    Menu->AppendSeparator();
+
+    wxMenu * SubMenu = new wxMenu();
+
+//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_NAME, _( "Name" ), _( "Albums are sorted by name" ) );
+//    SubMenu->Append( MenuItem );
+//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_YEAR, _( "Year" ), _( "Albums are sorted by year" ) );
+//    SubMenu->Append( MenuItem );
+//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_YEAR_REVERSE, _( "Year descending" ), _( "Albums are sorted by year descending" ) );
+//    SubMenu->Append( MenuItem );
+//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_ARTIST_NAME, _( "Artist, Name" ), _( "Albums are sorted by artist and album name" ) );
+//    SubMenu->Append( MenuItem );
+//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_ARTIST_YEAR, _( "Artist, Year" ), _( "Albums are sorted by artist and year" ) );
+//    SubMenu->Append( MenuItem );
+//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, _( "Artist, Year descending" ), _( "Albums are sorted by artist and year descending" ) );
+//    SubMenu->Append( MenuItem );
+
+    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_NAME, _( "Name" ), _( "Albums are sorted by name" ) );
+    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_YEAR, _( "Year" ), _( "Albums are sorted by year" ) );
+    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_YEAR_REVERSE, _( "Year descending" ), _( "Albums are sorted by year descending" ) );
+    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_ARTIST_NAME, _( "Artist, Name" ), _( "Albums are sorted by artist and album name" ) );
+    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_ARTIST_YEAR, _( "Artist, Year" ), _( "Albums are sorted by artist and year" ) );
+    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, _( "Artist, Year descending" ), _( "Albums are sorted by artist and year descending" ) );
+
+    MenuItem = SubMenu->FindItemByPosition( m_Db->GetAlbumsOrder() );
+    MenuItem->Check( true );
+
+    Menu->Append( wxID_ANY, _( "Ordered by" ), SubMenu, _( "Sets the albums order" ) );
+
+    if( SelCount )
+    {
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_ALBUM_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );

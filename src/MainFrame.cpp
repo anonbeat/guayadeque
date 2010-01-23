@@ -552,6 +552,7 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
             }
 
             Config->SendConfigChangedEvent();
+            m_Db->ConfigChanged();
         }
         PrefDialog->Destroy();
     }
