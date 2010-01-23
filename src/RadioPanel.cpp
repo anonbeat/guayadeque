@@ -1458,7 +1458,7 @@ void guRadioPanel::OnRadioUserExport( wxCommandEvent &event )
         wxFileDialog * FileDialog = new wxFileDialog( this,
             wxT( "Select the output xml filename" ),
             wxGetHomeDir(),
-            wxT( "output.xml" ),
+            wxT( "RadioStations.xml" ),
             wxT( "*.xml;*.xml" ),
             wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
 
@@ -1488,7 +1488,7 @@ void guRadioPanel::OnRadioUserExport( wxCommandEvent &event )
                     RootNode->AddChild( RadioNode );
                 }
                 OutXml.SetRoot( RootNode );
-                OutXml.Save( FileDialog->GetFilename() );
+                OutXml.Save( FileDialog->GetPath() );
             }
             FileDialog->Destroy();
         }
@@ -1519,6 +1519,14 @@ void ReadXmlRadioStations( wxXmlNode * node, guRadioStations * stations )
     {
         guRadioStation * RadioStation = new guRadioStation();
 
+        RadioStation->m_Id = wxNOT_FOUND;
+        RadioStation->m_SCId = wxNOT_FOUND;
+        RadioStation->m_BitRate = 0;
+        RadioStation->m_GenreId = wxNOT_FOUND;
+        RadioStation->m_IsUser = true;
+        RadioStation->m_Listeners = 0;
+        RadioStation->m_Type = wxEmptyString;
+
         ReadXmlRadioStation( node->GetChildren(), RadioStation );
 
         if( !RadioStation->m_Name.IsEmpty() && !RadioStation->m_Link.IsEmpty() )
@@ -1546,14 +1554,22 @@ void guRadioPanel::OnRadioUserImport( wxCommandEvent &event )
     {
         if( FileDialog->ShowModal() == wxID_OK )
         {
-            wxFileInputStream Ins( FileDialog->GetFilename() );
+            wxFileInputStream Ins( FileDialog->GetPath() );
             wxXmlDocument XmlDoc( Ins );
             wxXmlNode * XmlNode = XmlDoc.GetRoot();
             if( XmlNode && XmlNode->GetName() == wxT( "RadioStations" ) )
             {
                 ReadXmlRadioStations( XmlNode->GetChildren(), &UserStations );
-                if( UserStations.Count() )
+                int Index;
+                int Count;
+                if( ( Count = UserStations.Count() ) )
                 {
+                    for( Index = 0; Index < Count; Index++ )
+                    {
+                        m_Db->SetRadioStation( &UserStations[ Index ] );
+                    }
+                    //
+                    m_StationsListBox->ReloadItems();
                 }
             }
         }
