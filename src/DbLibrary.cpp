@@ -3522,6 +3522,28 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guDbLibrary::GetSong( const int songid, guTrack * song )
+{
+  bool RetVal = false;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = GU_TRACKS_QUERYSTR;
+  query += wxString::Format( wxT( "WHERE song_id = %i LIMIT 1;" ), songid );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    FillTrackFromDb( song, &dbRes );
+    RetVal = true;
+  }
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs )
 {
   wxString query;

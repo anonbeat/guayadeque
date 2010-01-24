@@ -354,6 +354,7 @@ class guDbLibrary : public guDb
 
     void                GetPaths( guListItems * Paths, bool FullList = false );
 
+    bool                GetSong( const int songid, guTrack * song );
     int                 GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs );
     int                 GetSongs( guTrackArray * Songs );
     void                SetSongsOrder( const guTRACKS_ORDER order );
