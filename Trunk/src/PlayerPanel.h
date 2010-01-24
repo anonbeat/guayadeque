@@ -158,11 +158,15 @@ class guPlayerPanel : public wxPanel
 	bool                    m_PlayRandom;
 	bool                    m_SliderIsDragged;
 	long                    m_LastTotalLen;
+
 	wxArrayInt              m_SmartAddedTracks;
+	wxArrayString           m_SmartAddedArtists;
 	bool                    m_SmartSearchEnabled;
     int                     m_SmartPlayAddTracks;
     int                     m_SmartPlayMinTracksToPlay;
+
     bool                    m_DelTracksPlayed;
+
     unsigned int            m_TrackStartPos;
 
     bool                    m_SilenceDetector;
@@ -289,7 +293,7 @@ public:
 // -------------------------------------------------------------------------------- //
 class guSmartAddTracksThread : public wxThread
 {
-  private:
+  protected :
     guDbLibrary *   m_Db;
     guPlayerPanel * m_PlayerPanel;
     const guTrack * m_CurSong;
@@ -297,10 +301,14 @@ class guSmartAddTracksThread : public wxThread
     int             m_FilterAllowPlayList;
     int             m_FilterDenyPlayList;
     wxArrayInt *    m_SmartAddedTracks;
+    wxArrayString * m_SmartAddedArtists;
+
+    void           AddSimilarTracks( const wxString &artist, const wxString &track, guTrackArray * songs );
 
   public:
     guSmartAddTracksThread( guDbLibrary * db, guPlayerPanel * playerpanel, const guTrack * track,
-             wxArrayInt * smartaddedtracks, const int trackcount, const int filterallow, const int filterdeny );
+             wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
+             const int trackcount, const int filterallow, const int filterdeny );
     ~guSmartAddTracksThread();
 
     virtual ExitCode Entry();
