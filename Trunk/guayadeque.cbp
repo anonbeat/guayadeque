@@ -120,6 +120,8 @@
 		<Unit filename="src/LabelEditor.h" />
 		<Unit filename="src/LastFM.cpp" />
 		<Unit filename="src/LastFM.h" />
+		<Unit filename="src/LastFMCovers.cpp" />
+		<Unit filename="src/LastFMCovers.h" />
 		<Unit filename="src/LastFMPanel.cpp" />
 		<Unit filename="src/LastFMPanel.h" />
 		<Unit filename="src/LibPanel.cpp" />

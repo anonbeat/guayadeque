@@ -53,6 +53,9 @@
 #define guLISTVIEW_TIMER_TIMEOUT    500
 #define guLISTVIEW_MIN_COL_SIZE     20
 
+DEFINE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_CLICKED )
+DEFINE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_RCLICKED )
+
 WX_DEFINE_OBJARRAY(guListViewColumnArray);
 
 
@@ -708,6 +711,7 @@ guListViewClient::guListViewClient( wxWindow * parent, const int flags,
     m_HScrollPos = 0;
     m_MouseWasLeftUp = false;
     m_MouseSelecting = false;
+    m_ColumnClickEvents = ( flags & guLISTVIEW_COLUMN_CLICK_EVENTS );
 
     SetBackgroundColour( m_Attr->m_EveBgColor );
 
@@ -726,6 +730,9 @@ guListViewClient::~guListViewClient()
 // -------------------------------------------------------------------------------- //
 void guListViewClient::OnMouse( wxMouseEvent &event )
 {
+    int MouseX = event.m_x;
+    int MouseY = event.m_y;
+    int Item = HitTest( MouseX, MouseY );
     // We want to get a better experience for dragging as before
     // when you click over selected items the items was unselected
     // even when you tried to drag then.
@@ -737,9 +744,6 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
         m_MouseWasLeftUp = event.LeftUp();
         if( ( event.LeftDown() || m_MouseWasLeftUp ) )
         {
-            int x = event.m_x;
-            int y = event.m_y;
-            int Item = HitTest( x, y );
             if( Item != wxNOT_FOUND )
             {
                 if( IsSelected( Item ) )
@@ -762,6 +766,50 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
     {
         m_MouseWasLeftUp = false;
         m_MouseSelecting = false;
+    }
+
+    // Only when the left or right is down and the click events are enabled
+    if( ( event.LeftDown() || event.RightDown() ) &&
+        m_ColumnClickEvents &&
+        ( Item != wxNOT_FOUND ) )
+    {
+        // We want get the left click events, calculate which column clicked on and
+        // send a Column_Clicked event
+        int Col_Num = wxNOT_FOUND;
+
+        MouseX += GetScrollPos( wxHORIZONTAL );
+
+        int Index;
+        int Col_Start = 0;
+        int Col_Border = 0;
+        int Count = m_Columns->Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( ( * m_Columns )[ Index ].m_Enabled )
+            {
+                Col_Border += ( * m_Columns )[ Index ].m_Width;
+                if( MouseX < Col_Border )
+                {
+                    Col_Num = Index;
+                    break;
+                }
+                Col_Start = Col_Border;
+            }
+        }
+
+        if( Col_Num != wxNOT_FOUND )
+        {
+            wxListEvent le( event.LeftDown() ? guEVT_LISTBOX_ITEM_COL_CLICKED :
+                                               guEVT_LISTBOX_ITEM_COL_RCLICKED, m_Owner->GetId() );
+            le.SetEventObject( m_Owner );
+            le.m_pointDrag.x = MouseX - Col_Start;
+            le.m_pointDrag.y = MouseY;
+            le.SetInt( Item );
+            le.m_col = Col_Num;
+            m_Owner->GetEventHandler()->ProcessEvent( le );
+            //guLogMessage( wxT( "Col %i have been clicked (%i-%i) %i-%i" ), Col_Num, Col_Start, Col_Border, MouseX - Col_Start, MouseY );
+            //return;
+        }
     }
 
     event.Skip();

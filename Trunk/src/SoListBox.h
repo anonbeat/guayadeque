@@ -62,6 +62,8 @@ class guSoListBox : public guListView
     void                        OnCommandClicked( wxCommandEvent &event );
     wxString                    GetSearchText( int item ) const;
 
+    void                        OnItemColumnClicked( wxListEvent &event );
+
   public :
     guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style = 0 );
     ~guSoListBox();
