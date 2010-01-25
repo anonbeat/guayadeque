@@ -27,6 +27,7 @@
 #include "Images.h"
 #include "LabelEditor.h"
 #include "PlayListAppend.h"
+#include "PlayListFile.h"
 #include "TagInfo.h"
 #include "TrackEdit.h"
 #include "Utils.h"
@@ -146,8 +147,20 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
     Menu.Append( MenuItem );
 
+    Menu.AppendSeparator();
+
+    MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_IMPORT, _( "Import" ), _( "Import a playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
+    Menu.Append( MenuItem );
+
     if( ItemData )
     {
+        MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EXPORT, _( "Export" ), _( "Export the playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        Menu.Append( MenuItem );
+
+        Menu.AppendSeparator();
+
         if( ItemData->GetType() == GUPLAYLIST_DYNAMIC )
         {
             MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDIT, _( "Edit Playlist" ), _( "Edit the selected playlist" ) );
@@ -471,6 +484,8 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_PLAYLIST_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesDeletePlaylist ) );
     Connect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
 
+    Connect( ID_PLAYLIST_IMPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesImport ) );
+    Connect( ID_PLAYLIST_EXPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesExport ) );
 
     m_PLTracksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
     Connect( ID_SONG_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksDeleteClicked ) );
@@ -503,6 +518,8 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_PLAYLIST_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesDeletePlaylist ) );
     Disconnect( ID_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesCopyTo ) );
 
+    Disconnect( ID_PLAYLIST_IMPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesImport ) );
+    Disconnect( ID_PLAYLIST_EXPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesExport ) );
 
     m_PLTracksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
     Disconnect( ID_SONG_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksDeleteClicked ) );
@@ -683,6 +700,85 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
         event.SetClientData( ( void * ) Tracks );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
+{
+    int Index;
+    int Count;
+
+    wxFileDialog * FileDialog = new wxFileDialog( this,
+        wxT( "Select the playlist file" ),
+        wxGetHomeDir(),
+        wxEmptyString,
+        wxT( "*.m3u;*.pls;*.asx;*.xspf" ),
+        wxFD_OPEN | wxFD_FILE_MUST_EXIST );
+
+    if( FileDialog )
+    {
+        if( FileDialog->ShowModal() == wxID_OK )
+        {
+            guPlayListFile PlayListFile( FileDialog->GetPath() );
+            if( ( Count = PlayListFile.Count() ) )
+            {
+                if( PlayListFile.GetName().IsEmpty() )
+                {
+                    wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "PlayList Name: " ),
+                      _( "Enter the new playlist name" ), _( "New PlayList" ) );
+                    if( EntryDialog->ShowModal() == wxID_OK )
+                    {
+                        PlayListFile.SetName( EntryDialog->GetValue() );
+                    }
+                    delete EntryDialog;
+                }
+
+                //
+                if( PlayListFile.GetName().IsEmpty() )
+                {
+                    PlayListFile.SetName( _( "New PlayList" ) );
+                }
+
+                wxArrayInt Songs;
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    //guLogMessage( wxT( "Trying to add file '%s'" ), PlayListFile.Item( Index ).c_str() );
+                    int SongId = m_Db->FindTrackFile( PlayListFile.Item( Index ), NULL );
+                    if( SongId )
+                    {
+                        Songs.Add( SongId );
+                        //guLogMessage( wxT( "Found it!" ) );
+                    }
+                    //else
+                    //    guLogMessage( wxT( "Not Found it!" ) );
+                }
+
+                if( Songs.Count() )
+                {
+                    m_Db->CreateStaticPlayList( PlayListFile.GetName(), Songs );
+                }
+
+                //m_NamesTreeCtrl->ReloadItems();
+                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+                wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            }
+        }
+        FileDialog->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
+{
+//    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+//    if( ItemId.IsOk() )
+//    {
+//        guTrackArray * Tracks = new guTrackArray();
+//        m_PLTracksListBox->GetAllSongs( Tracks );
+//        event.SetId( ID_MAINFRAME_COPYTO );
+//        event.SetClientData( ( void * ) Tracks );
+//        wxPostEvent( wxTheApp->GetTopWindow(), event );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
