@@ -1149,14 +1149,14 @@ guStationPlayLists GetStationAsxPlayList( const guRadioStation * RadioStation )
     http.Get( Buffer, RadioStation->m_Link );
     if( Buffer )
     {
-        guLogMessage( wxT( "Got the asx web content...%s" ), RadioStation->m_Link.c_str() );
+        //guLogMessage( wxT( "Got the asx web content...%s" ), RadioStation->m_Link.c_str() );
         Content = wxString( Buffer, wxConvUTF8 );
         if( Content.IsEmpty() )
             Content = wxString( Buffer, wxConvISO8859_1 );
         if( Content.IsEmpty() )
             Content = wxString( Buffer, wxConvLibc );
         free( Buffer );
-        guLogMessage( wxT( "ASX:\n%s" ), Content.c_str() );
+        //guLogMessage( wxT( "ASX:\n%s" ), Content.c_str() );
         if( !Content.IsEmpty() )
         {
             wxStringInputStream InStr( Content );
@@ -1544,7 +1544,7 @@ void guRadioPanel::OnRadioUserImport( wxCommandEvent &event )
     guRadioStations UserStations;
 
     wxFileDialog * FileDialog = new wxFileDialog( this,
-        wxT( "Select the output xml filename" ),
+        wxT( "Select the xml file" ),
         wxGetHomeDir(),
         wxEmptyString,
         wxT( "*.xml;*.xml" ),

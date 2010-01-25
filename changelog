@@ -1,4 +1,5 @@
 
+  * Implemented PlayList import from m3u, pls, axs, xspf playlist file formats
   * Ratings of tracks can be set clicking over the stars in tracks listboxes
     in library and playlists panel
   * Added an option to export/import user defined radio stations
