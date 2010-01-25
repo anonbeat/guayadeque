@@ -979,10 +979,14 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         if( //( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
             ( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) ) )  // If have played at least the half
         {
+            m_MediaSong.m_PlayCount++;
+
             if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
-                m_Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount + 1 );
+                m_Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
             else
-                m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount + 1 );
+                m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+
+            m_PlayListCtrl->UpdatedTrack( ( guTrack * ) &m_MediaSong );
         }
     }
 
