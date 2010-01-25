@@ -976,7 +976,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )  // If its a song from the library
     {
-        if( ( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
+        if( //( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
             ( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) ) )  // If have played at least the half
         {
             if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
