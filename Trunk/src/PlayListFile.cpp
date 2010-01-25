@@ -30,7 +30,8 @@
 // -------------------------------------------------------------------------------- //
 guPlayListFile::guPlayListFile( const wxString &filename )
 {
-    Load( filename );
+    if( !filename.IsEmpty() )
+        Load( filename );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -347,8 +348,8 @@ bool guPlayListFile::WritePlsFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool guPlayListFile::WriteM3uFile( const wxString &filename )
 {
-    wxFile M3uFile( filename, wxFile::read_write );
-    if( M3uFile.IsOpened() )
+    wxFile M3uFile;
+    if( M3uFile.Create( filename, true ) && M3uFile.IsOpened() )
     {
         M3uFile.Write( wxT( "#EXTM3U\n" ) );
         int Count = m_Files.Count();
@@ -379,7 +380,6 @@ bool guPlayListFile::WriteXspfFile( const wxString &filename )
     RootNode->AddChild( TitleNode );
 
     wxXmlNode * TrackListNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "trackList" ) );
-    RootNode->AddChild( TrackListNode );
 
     int Count = m_Files.Count();
     for( int Index = 0; Index < Count; Index++ )
@@ -391,8 +391,9 @@ bool guPlayListFile::WriteXspfFile( const wxString &filename )
         LocationNode->AddChild( LocationNodeVal );
         TrackNode->AddChild( LocationNode );
 
-        RootNode->AddChild( TrackNode );
+        TrackListNode->AddChild( TrackNode );
     }
+    RootNode->AddChild( TrackListNode );
     OutXml.SetRoot( RootNode );
     return OutXml.Save( filename );
 }

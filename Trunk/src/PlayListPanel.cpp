@@ -770,15 +770,43 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
 {
-//    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
-//    if( ItemId.IsOk() )
-//    {
-//        guTrackArray * Tracks = new guTrackArray();
-//        m_PLTracksListBox->GetAllSongs( Tracks );
-//        event.SetId( ID_MAINFRAME_COPYTO );
-//        event.SetClientData( ( void * ) Tracks );
-//        wxPostEvent( wxTheApp->GetTopWindow(), event );
-//    }
+    int Index;
+    int Count;
+
+    wxFileDialog * FileDialog = new wxFileDialog( this,
+        wxT( "Select the playlist file" ),
+        wxGetHomeDir(),
+        wxEmptyString,
+        wxT( "*.m3u;*.pls;*.asx;*.xspf" ),
+        wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
+
+    if( FileDialog )
+    {
+        if( FileDialog->ShowModal() == wxID_OK )
+        {
+            guPlayListFile PlayListFile;
+
+            wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+            if( ItemId.IsOk() )
+            {
+                PlayListFile.SetName( m_NamesTreeCtrl->GetItemText( ItemId ) );
+
+                guTrackArray Tracks;
+
+                m_PLTracksListBox->GetAllSongs( &Tracks );
+                if( ( Count = Tracks.Count() ) )
+                {
+                    for( Index = 0; Index < Count; Index++ )
+                    {
+                        PlayListFile.AddFile( Tracks[ Index ].m_FileName );
+                    }
+
+                    PlayListFile.Save( FileDialog->GetPath() );
+                }
+            }
+        }
+        FileDialog->Destroy();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
