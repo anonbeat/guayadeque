@@ -1,4 +1,6 @@
 
+  * Ratings of tracks can be set clicking over the stars in tracks listboxes
+    in library and playlists panel
   * Added an option to export/import user defined radio stations
     The format is a xml like this. 
 	<RadioStations>

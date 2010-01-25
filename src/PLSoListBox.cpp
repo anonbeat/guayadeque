@@ -145,7 +145,8 @@ void guPLSoListBox::MoveSelection( void )
     wxArrayInt   MoveIndex;
     wxArrayInt   ItemIds;
 
-    if( m_DragOverItem == wxNOT_FOUND )
+    if( m_DragOverItem == wxNOT_FOUND ||
+        m_PLId != GUPLAYLIST_STATIC )
         return;
 
     // Copy the elements we are going to move

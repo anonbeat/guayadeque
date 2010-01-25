@@ -38,6 +38,12 @@ class guListViewHeader;
 #define guLISTVIEW_ALLOWDRAG            0x04000
 #define guLISTVIEW_ALLOWDROP            0x08000
 #define guLISTVIEW_DRAGSELFITEMS        0x10000
+#define guLISTVIEW_COLUMN_CLICK_EVENTS  0x20000
+
+DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_CLICKED, wxID_ANY )
+#define EVT_LISTBOX_ITEM_COL_CLICKED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( guEVT_LISTBOX_ITEM_COL_CLICKED, winid, wxID_ANY, wxListEventHandler(fn), (wxObject *) NULL ),
+DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxID_ANY )
+#define EVT_LISTBOX_ITEM_COL_RCLICKED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( guEVT_LISTBOX_ITEM_COL_RCLICKED, winid, wxID_ANY, wxListEventHandler(fn), (wxObject *) NULL ),
 
 // -------------------------------------------------------------------------------- //
 // guListViewColumn
@@ -127,7 +133,7 @@ class guListViewAttr
 class guListViewDropTarget;
 class guListViewDropFilesThread;
 class guListView;
-class guListViewClient;
+
 
 // -------------------------------------------------------------------------------- //
 // guListViewHeader
@@ -190,6 +196,7 @@ class guListViewClient : public wxVListBox
     int                         m_HScrollPos;
     bool                        m_MouseWasLeftUp;
     bool                        m_MouseSelecting;
+    bool                        m_ColumnClickEvents;
 
     void            OnPaint( wxPaintEvent &event );
     void            AdjustDC( wxDC &dc );

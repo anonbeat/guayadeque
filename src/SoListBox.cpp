@@ -49,7 +49,8 @@ wxString guSONGS_COLUMN_NAMES[ guSONGS_COLUMN_ADDEDDATE + 1 ] = {
 
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style ) :
-             guListView( parent, style|wxLB_MULTIPLE|guLISTVIEW_ALLOWDRAG, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER )
+    guListView( parent, style|wxLB_MULTIPLE|guLISTVIEW_ALLOWDRAG|guLISTVIEW_COLUMN_CLICK_EVENTS,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -86,6 +87,8 @@ guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confn
 
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Connect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
+    Connect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
+
     ReloadItems();
 }
 
@@ -117,6 +120,7 @@ guSoListBox::~guSoListBox()
 
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Disconnect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
+    Disconnect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -505,6 +509,29 @@ wxString guSoListBox::GetItemName( const int row ) const
 int guSoListBox::GetItemId( const int row ) const
 {
     return m_Items[ row ].m_SongId;
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::OnItemColumnClicked( wxListEvent &event )
+{
+    int ColId = GetColumnId( event.m_col );
+    if( ColId == guSONGS_COLUMN_RATING )
+    {
+        //guLogMessage( wxT( "The rating have been clicked... %i" ), event.GetPoint().x );
+        int w = ( ( GURATING_STYLE_MID * 2 ) + GURATING_IMAGE_SIZE );
+        int MouseX = event.GetPoint().x;
+        int Rating;
+
+        if( MouseX < 3 )
+            Rating = 0;
+        else
+            Rating = wxMin( 5, ( wxMax( 0, MouseX - 3 ) / w ) + 1 );
+
+        int Row = event.GetInt();
+        m_Items[ Row ].m_Rating = Rating;
+        m_Db->SetTrackRating( m_Items[ Row ].m_SongId, Rating );
+        RefreshLine( Row );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
