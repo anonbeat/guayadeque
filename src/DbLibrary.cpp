@@ -4711,10 +4711,13 @@ bool guDbLibrary::AddCachedPlayedSong( const guTrack &Song )
       break;
     case guTRACK_MODE_SMART :
       Source = 'L';
+      break;
     case guTRACK_MODE_RANDOM :
       Source = 'S';
+      break;
     default :
       Source = 'U';
+      break;
   }
 
   escape_query_str( &Title );
