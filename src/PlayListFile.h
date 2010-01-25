@@ -51,6 +51,7 @@ class guPlayListFile
     bool            WriteAsxFile( const wxString &filename );
 
   public :
+    guPlayListFile( void ) {};
     guPlayListFile( const wxString &filename );
     ~guPlayListFile();
 
@@ -64,6 +65,7 @@ class guPlayListFile
 
     size_t          Count( void ) const { return m_Files.Count(); };
     wxString        Item( const size_t index ) const { return m_Files[ index ]; };
+    void            AddFile( const wxString &filename ) { m_Files.Add( filename ); };
 
 };
 
