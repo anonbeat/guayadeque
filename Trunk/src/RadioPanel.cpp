@@ -1042,7 +1042,7 @@ guStationPlayLists GetStationM3uPlayList( const guRadioStation * RadioStation )
         if( !M3uFile.IsEmpty() )
         {
             //guLogMessage( wxT( "Content...\n%s" ), M3uFile.c_str() );
-            wxArrayString Lines = wxStringTokenize( M3uFile );
+            wxArrayString Lines = wxStringTokenize( M3uFile, wxT( "\n" ) );
 
             //if( Lines[ 0 ].Find( wxT( "#EXTM3U" ) ) != wxNOT_FOUND )
             //{

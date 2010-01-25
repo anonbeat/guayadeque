@@ -146,7 +146,7 @@ bool guPlayListFile::ReadM3uFile( const wxString &filename )
         if( !M3uFile.IsEmpty() )
         {
             //guLogMessage( wxT( "Content...\n%s" ), M3uFile.c_str() );
-            wxArrayString Lines = wxStringTokenize( M3uFile );
+            wxArrayString Lines = wxStringTokenize( M3uFile, wxT( "\n" ) );
 
             int Index;
             int Count = Lines.Count();
@@ -308,39 +308,21 @@ bool guPlayListFile::ReadAsxFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool guPlayListFile::WritePlsFile( const wxString &filename )
 {
-    wxFileInputStream Ins( filename );
-    if( Ins.IsOk() )
+    wxFile PlsFile;
+    if( PlsFile.Create( filename, true ) && PlsFile.IsOpened() )
     {
-        wxFileConfig * Config = new wxFileConfig( Ins );
-        if( Config )
+        PlsFile.Write( wxT( "[playlist]\n" ) );
+        int Count = m_Files.Count();
+        PlsFile.Write( wxString::Format( wxT( "numberofentries=%u\n" ), Count ) );
+        for( int Index = 0; Index < Count; Index++ )
         {
-            if( Config->HasGroup( wxT( "playlist" ) ) )
-            {
-                Config->DeleteGroup( wxT( "playlist" ) );
-            }
-
-            Config->SetPath( wxT( "playlist" ) );
-            int Count = m_Files.Count();
-            Config->Write( wxT( "numberofentries" ), Count );
-            for( int Index = 1; Index <= Count; Index++ )
-            {
-                Config->Write( wxString::Format( wxT( "File%u" ), Index ), m_Files[ Index - 1 ] );
-            }
-
-            wxFileOutputStream Outs( filename );
-
-            Config->Save( Outs );
-
-            delete Config;
+            PlsFile.Write( wxString::Format( wxT( "File%u=%s\n" ), Index + 1, m_Files[ Index ].c_str() ) );
         }
-        else
-        {
-            guLogError( wxT( "Could not read the playlist file '%s'" ), filename.c_str() );
-        }
+        PlsFile.Close();
     }
     else
     {
-        guLogError( wxT( "Could not open the playlist file '%s'" ), filename.c_str() );
+        guLogError( wxT( "Could not open the m3ufile '%s'" ), filename.c_str() );
     }
     return false;
 }
