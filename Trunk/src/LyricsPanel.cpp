@@ -826,16 +826,14 @@ void guLeosLyricsEngine::SearchLyric( void )
     if( !LyricId.IsEmpty() )
     {
         wxString LyricText = GetLyricText( LyricId );
-        if( LyricText.IsEmpty() )
-        {
-            SetLyric( NULL );
-        }
-        else
+        if( !LyricText.IsEmpty() )
         {
             SetLyric( new wxString( LyricText ) );
+            return;
         }
     }
-    else
+
+    if( !TestDestroy() )
     {
         SetLyric( NULL );
     }
@@ -935,8 +933,8 @@ void guCDUEngine::SearchLyric( void )
                 Content = wxString::FromUTF8( ( char * ) LyricBuffer.GetData(), LyricBuffer.GetDataLen() );
 
                 SetLyric( new wxString( Content ) );
+                return;
             }
-            return;
         }
     }
     if( !TestDestroy() )
