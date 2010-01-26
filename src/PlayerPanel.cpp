@@ -629,8 +629,19 @@ void guPlayerPanel::SetBitRate( int bitrate )
 {
     if( bitrate )
     {
+        bitrate = bitrate / 1000;
         //guLogMessage( wxT( "Bitrate: %u" ), bitrate );
-        m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate / 1000 ) );
+        m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate ) );
+        if( !m_MediaSong.m_Bitrate )
+        {
+            m_MediaSong.m_Bitrate = bitrate;
+            m_PlayListCtrl->UpdatedTrack( &m_MediaSong );
+
+            if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+                m_Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
+            else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
+                m_Db->UpdatePodcastItemBitRate( m_MediaSong.m_SongId, bitrate );
+        }
     }
     else
         m_BitRateLabel->SetLabel( wxT( "[kbps]" ) );
