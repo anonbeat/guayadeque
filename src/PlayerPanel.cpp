@@ -667,7 +667,7 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
         m_SmartAddedTracks.Empty();
         m_SmartAddedArtists.Empty();
 
-        guLogMessage( wxT( "SetPlayLIst adding track to smart cache..." ) );
+        //guLogMessage( wxT( "SetPlayList adding track to smart cache..." ) );
         int Count;
         int Index = 0;
         Count = SongList.Count();
