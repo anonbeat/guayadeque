@@ -79,6 +79,10 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
                 m_StartPlaying = true;
             }
         }
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
+        //event.SetEventObject( ( wxObject * ) this );
+        event.SetInt( 1 );
+        wxPostEvent( this, event );
     }
     else
     {
@@ -92,6 +96,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
         //
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
         //event.SetEventObject( ( wxObject * ) this );
+        event.SetInt( 1 );
         wxPostEvent( this, event );
     }
 
