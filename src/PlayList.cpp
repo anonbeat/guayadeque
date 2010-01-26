@@ -1456,7 +1456,6 @@ void guPlayList::UpdatedTracks( const guTrackArray * tracks )
             {
                 m_Items[ item ] = ( * tracks )[ index ];
                 found = true;
-                break;
             }
         }
     }
@@ -1482,7 +1481,6 @@ void guPlayList::UpdatedTrack( const guTrack * track )
         {
             m_Items[ item ] = * track;
             found = true;
-            break;
         }
     }
     if( found )

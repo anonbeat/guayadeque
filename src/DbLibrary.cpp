@@ -1390,6 +1390,14 @@ int guDbLibrary::ReadFileTags( const char * filename )
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::UpdateTrackLength( const int trackid, const int length )
+{
+    wxString query = wxString::Format( wxT( "UPDATE songs SET song_length = %i "
+        "WHERE song_id = %i" ), length, trackid );
+    ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 {
   guTrack * Song;
@@ -5305,6 +5313,17 @@ void guDbLibrary::SetPodcastItemPlayCount( const int itemid, const int playcount
   query = wxString::Format( wxT( "UPDATE podcastitems SET "
                 "podcastitem_playcount = %u, podcastitem_lastplay = %u WHERE podcastitem_id = %u;" ),
             playcount, wxDateTime::GetTimeNow(), itemid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::UpdatePodcastItemLength( const int itemid, const int length )
+{
+  wxString query;
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_length = %u WHERE podcastitem_id = %u;" ),
+            length, itemid );
 
   ExecuteUpdate( query );
 }

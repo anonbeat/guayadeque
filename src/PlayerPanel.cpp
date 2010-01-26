@@ -830,6 +830,23 @@ void guPlayerPanel::UpdateStatus()
 
     if( State == wxMEDIASTATE_PLAYING )
     {
+        // Some track lengths are not correctly read by taglib so
+        // we try to find the length from gstreamer and update the database
+        // We need to not do this for radiostations or online streams
+        if( m_MediaSong.m_Length == 0 &&
+            m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+        {
+            m_MediaSong.m_Length = m_MediaCtrl->GetLength();
+            m_PlayListCtrl->UpdatedTrack( &m_MediaSong );
+            if( m_MediaSong.m_SongId )
+            {
+                if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+                    m_Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+                else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
+                    m_Db->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+            }
+        }
+
         //CurPos = m_MediaCtrl->Tell();
         CurPos = GetPosition();
         if( ( CurPos != m_LastCurPos ) && !m_SliderIsDragged )
