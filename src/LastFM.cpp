@@ -33,6 +33,7 @@
 WX_DEFINE_OBJARRAY(guAlbumInfoArray);
 WX_DEFINE_OBJARRAY(guSimilarArtistInfoArray);
 WX_DEFINE_OBJARRAY(guSimilarTrackInfoArray);
+WX_DEFINE_OBJARRAY(guEventInfoArray);
 
 // -------------------------------------------------------------------------------- //
 // guLastFMRequest
@@ -1146,6 +1147,204 @@ wxArrayString guLastFM::ArtistGetTopTracks( const wxString &Artist )
                             }
                             XmlSubNode = XmlSubNode->GetNext();
                         }
+                    }
+                }
+                else if( Status == wxT( "failed" ) )
+                {
+                    XmlNode = XmlNode->GetChildren();
+                    if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
+                    {
+                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        Status.ToLong( ( long * ) &m_ErrorCode );
+                    }
+                }
+            }
+        }
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXmlArtistEventArtists( wxXmlNode * XmlNode, wxArrayString * Artists )
+{
+    while( XmlNode && XmlNode->GetName() == wxT( "artist" ) )
+    {
+        Artists->Add( XmlNode->GetNodeContent() );
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXmlArtistEventVenueLocationGeo( wxXmlNode * XmlNode, guEventInfo * Event )
+{
+    while( XmlNode )
+    {
+        if( XmlNode->GetName() == wxT( "geo:lat" ) )
+        {
+            Event->m_LocationGeoLat = XmlNode->GetNodeContent();
+        }
+        if( XmlNode->GetName() == wxT( "geo:long" ) )
+        {
+            Event->m_LocationGeoLong = XmlNode->GetNodeContent();
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXmlArtistEventVenueLocation( wxXmlNode * XmlNode, guEventInfo * Event )
+{
+    while( XmlNode )
+    {
+        if( XmlNode->GetName() == wxT( "city" ) )
+        {
+            Event->m_LocationCity = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "country" ) )
+        {
+            Event->m_LocationCountry = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "street" ) )
+        {
+            Event->m_LocationStreet = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "postalcode" ) )
+        {
+            Event->m_LocationZipCode = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "geo:point" ) )
+        {
+            ReadXmlArtistEventVenueLocationGeo( XmlNode->GetChildren(), Event );
+        }
+        else if( XmlNode->GetName() == wxT( "timezone" ) )
+        {
+            Event->m_LocationTimeZone = XmlNode->GetNodeContent();
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXmlArtistEventVenue( wxXmlNode * XmlNode, guEventInfo * Event )
+{
+    while( XmlNode )
+    {
+        if( XmlNode->GetName() == wxT( "name" ) )
+        {
+            Event->m_LocationName = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "location" ) )
+        {
+            ReadXmlArtistEventVenueLocation( XmlNode->GetChildren(), Event );
+        }
+        else if( XmlNode->GetName() == wxT( "url" ) )
+        {
+            Event->m_LocationLink = XmlNode->GetNodeContent();
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXmlArtistEvent( wxXmlNode * XmlNode, guEventInfo * Event )
+{
+    while( XmlNode )
+    {
+        //guLogMessage( wxT( "%s = %s" ), XmlNode->GetName().c_str(), XmlNode->GetNodeContent().c_str() );
+        if( XmlNode->GetName() == wxT( "id" ) )
+        {
+            long Id;
+            XmlNode->GetNodeContent().ToLong( &Id );
+            Event->m_Id = Id;
+        }
+        else if( XmlNode->GetName() == wxT( "title" ) )
+        {
+            Event->m_Title = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "artists" ) )
+        {
+            ReadXmlArtistEventArtists( XmlNode->GetChildren(), &Event->m_Artists );
+        }
+        else if( XmlNode->GetName() == wxT( "venue" ) )
+        {
+            ReadXmlArtistEventVenue( XmlNode->GetChildren(), Event );
+        }
+        else if( XmlNode->GetName() == wxT( "startDate" ) )
+        {
+            Event->m_Date = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "startTime" ) )
+        {
+            Event->m_Time = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "description" ) )
+        {
+            Event->m_Description = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "description" ) )
+        {
+            Event->m_Description = XmlNode->GetNodeContent();
+        }
+        else if( XmlNode->GetName() == wxT( "image" ) )
+        {
+            wxString LastUrl = Event->m_ImageLink;
+            Event->m_ImageLink = XmlNode->GetNodeContent();
+            if( Event->m_ImageLink.IsEmpty() )
+                Event->m_ImageLink = LastUrl;
+        }
+        else if( XmlNode->GetName() == wxT( "url" ) )
+        {
+            Event->m_Url = XmlNode->GetNodeContent();
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadXmlArtistEvents( wxXmlNode * XmlNode, guEventInfoArray * Events )
+{
+    while( XmlNode && XmlNode->GetName() == wxT( "event" ) )
+    {
+        guEventInfo * Event = new guEventInfo;
+        ReadXmlArtistEvent( XmlNode->GetChildren(), Event );
+        Events->Add( Event );
+
+        XmlNode = XmlNode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guEventInfoArray guLastFM::ArtistGetEvents( const wxString &Artist )
+{
+    guLastFMRequest Req; // = guLastFMRequest();
+    wxString Res;
+    wxString Status;
+    guEventInfoArray RetVal;
+
+    Req.SetMethod( wxT( "artist.getEvents" ) );
+    Req.AddArgument( wxT( "api_key" ), LASTFM_API_KEY );
+    Req.AddArgument( wxT( "artist" ), Artist, true );
+    Res = Req.DoRequest( false );
+
+    m_ErrorCode = wxNOT_FOUND;
+    if( Res.Length() )
+    {
+        wxStringInputStream ins( Res );
+        wxXmlDocument XmlDoc( ins );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        if( XmlNode )
+        {
+            if( XmlNode->GetName() == wxT( "lfm" ) )
+            {
+                //printf( XmlNode->GetName().char_str() ); printf( "\n" );
+                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                //printf( Status.char_str() ); printf( "\n" );
+                if( Status == wxT( "ok" ) )
+                {
+                    XmlNode = XmlNode->GetChildren();
+                    if( XmlNode && XmlNode->GetName() == wxT( "events" ) )
+                    {
+                        ReadXmlArtistEvents( XmlNode->GetChildren(), &RetVal );
                     }
                 }
                 else if( Status == wxT( "failed" ) )

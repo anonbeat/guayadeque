@@ -155,6 +155,29 @@ class guLastFMTrackInfo : public guLastFMInfo
 };
 WX_DECLARE_OBJARRAY(guLastFMTrackInfo, guLastFMTrackInfoArray);
 
+// -------------------------------------------------------------------------------- //
+class guLastFMEventInfo : public guLastFMInfo
+{
+  public:
+    guEventInfo *       m_Event;
+
+    guLastFMEventInfo() { m_Event = NULL; };
+
+    guLastFMEventInfo( int index, wxImage * image = NULL,
+                  guEventInfo * event = NULL ) :
+            guLastFMInfo( index, image )
+    {
+        m_Event = event;
+    };
+
+    ~guLastFMEventInfo()
+    {
+        if( m_Event )
+            delete m_Event;
+    };
+};
+WX_DECLARE_OBJARRAY(guLastFMEventInfo, guLastFMEventInfoArray);
+
 class guLastFMPanel;
 
 // -------------------------------------------------------------------------------- //
@@ -403,6 +426,31 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
 WX_DEFINE_ARRAY_PTR( guTrackInfoCtrl *, guTrackInfoCtrlArray );
 
 // -------------------------------------------------------------------------------- //
+class guEventInfoCtrl : public guLastFMInfoCtrl
+{
+  private :
+    guLastFMEventInfo * m_Info;
+
+    virtual void        OnContextMenu( wxContextMenuEvent& event );
+    virtual void        CreateContextMenu( wxMenu * Menu );
+    virtual wxString    GetSearchText( void );
+    virtual wxString    GetItemUrl( void );
+    //void                OnClick( wxMouseEvent &event );
+    virtual int         GetSelectedTracks( guTrackArray * tracks );
+
+    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+
+  public :
+    guEventInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
+    ~guEventInfoCtrl();
+
+    void SetInfo( guLastFMEventInfo * info );
+    virtual void Clear( void );
+
+};
+WX_DEFINE_ARRAY_PTR( guEventInfoCtrl *, guEventInfoCtrlArray );
+
+// -------------------------------------------------------------------------------- //
 class guLastFMPanel : public wxScrolledWindow
 {
   private :
@@ -464,6 +512,11 @@ class guLastFMPanel : public wxScrolledWindow
 	wxGridSizer *                       m_TracksSizer;
 	guTrackInfoCtrlArray                m_TrackInfoCtrls;
 
+	bool                                m_ShowEvents;
+    wxStaticText *                      m_EventsStaticText;
+	wxGridSizer *                       m_EventsSizer;
+	guEventInfoCtrlArray                m_EventsInfoCtrls;
+
 
 	// TODO : Check if its really necesary
 	wxMutex                             m_UpdateInfoMutex;
@@ -472,6 +525,7 @@ class guLastFMPanel : public wxScrolledWindow
     void    OnUpdateAlbumItem( wxCommandEvent &event );
     void    OnUpdateArtistItem( wxCommandEvent &event );
     void    OnUpdateTrackItem( wxCommandEvent &event );
+    void    OnUpdateEventItem( wxCommandEvent &event );
 
 //    void    OnShowMoreLinkClicked( wxHyperlinkEvent &event );
 //	  void    OnHtmlLinkClicked( wxHtmlLinkEvent& event );
@@ -479,6 +533,7 @@ class guLastFMPanel : public wxScrolledWindow
     void    OnTopAlbumsTitleDClick( wxMouseEvent &event );
 	void    OnSimArTitleDClick( wxMouseEvent &event );
 	void    OnSimTrTitleDClick( wxMouseEvent &event );
+	void    OnEventsTitleDClick( wxMouseEvent &event );
 
 	void    OnUpdateChkBoxClick( wxCommandEvent &event );
     void    OnPrevBtnClick( wxCommandEvent &event );

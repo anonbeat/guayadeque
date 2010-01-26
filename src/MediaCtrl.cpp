@@ -556,6 +556,22 @@ wxFileOffset guMediaCtrl::Tell()
 }
 
 // -------------------------------------------------------------------------------- //
+wxFileOffset guMediaCtrl::GetLength()
+{
+    gint64 len;
+    GstFormat format = GST_FORMAT_TIME;
+
+    if( gst_element_query_duration( m_Playbin, &format, &len ) && len != -1 )
+    {
+        return len / GST_MSECOND;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 wxMediaState guMediaCtrl::GetState()
 {
     //guLogMessage( wxT( "MediaCtrl->GetState" ) );

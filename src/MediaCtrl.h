@@ -182,6 +182,7 @@ class guMediaCtrl : public wxEvtHandler
 
     bool Seek( wxLongLong where );
     wxFileOffset Tell();
+    wxFileOffset GetLength();
 
     wxMediaState GetState();
 
