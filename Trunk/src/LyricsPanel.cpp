@@ -948,6 +948,12 @@ void guCDUEngine::SearchLyric( void )
 // -------------------------------------------------------------------------------- //
 // guUltGuitarEngine
 // -------------------------------------------------------------------------------- //
+
+#define guULTIMATE_GUITAR_BASE_URL      wxT( "http://www.ultimate-guitar.com" )
+#define guULTIMAGE_GUITAR_SEARCH_URL    guULTIMATE_GUITAR_BASE_URL wxT( "/search.php?view_state=advanced&band_name=%s&song_name=%s&type[]=200&type2[]=40000&version_la=" )
+
+
+// -------------------------------------------------------------------------------- //
 guUltGuitarEngine::guUltGuitarEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
          const wxChar * artistname, const wxChar * trackname ) :
     guSearchLyricEngine( owner, psearchengine, artistname, trackname )
@@ -962,9 +968,6 @@ guUltGuitarEngine::guUltGuitarEngine( wxEvtHandler * owner, guSearchLyricEngine 
 guUltGuitarEngine::~guUltGuitarEngine()
 {
 }
-
-#define guULTIMATE_GUITAR_BASE_URL      wxT( "http://www.ultimate-guitar.com" )
-#define guULTIMAGE_GUITAR_SEARCH_URL    guULTIMATE_GUITAR_BASE_URL wxT( "/search.php?view_state=advanced&band_name=%s&song_name=%s&type[]=200&type2[]=40000&version_la=" )
 
 // -------------------------------------------------------------------------------- //
 void guUltGuitarEngine::SearchLyric( void )
