@@ -1398,6 +1398,14 @@ void guDbLibrary::UpdateTrackLength( const int trackid, const int length )
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::UpdateTrackBitRate( const int trackid, const int bitrate )
+{
+    wxString query = wxString::Format( wxT( "UPDATE songs SET song_bitrate = %i "
+        "WHERE song_id = %i" ), bitrate, trackid );
+    ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 {
   guTrack * Song;
@@ -5324,6 +5332,17 @@ void guDbLibrary::UpdatePodcastItemLength( const int itemid, const int length )
   query = wxString::Format( wxT( "UPDATE podcastitems SET "
                 "podcastitem_length = %u WHERE podcastitem_id = %u;" ),
             length, itemid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::UpdatePodcastItemBitRate( const int itemid, const int bitrate )
+{
+  wxString query;
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_bitrate = %u WHERE podcastitem_id = %u;" ),
+            bitrate, itemid );
 
   ExecuteUpdate( query );
 }
