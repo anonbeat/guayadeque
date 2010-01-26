@@ -563,7 +563,8 @@ wxFileOffset guMediaCtrl::GetLength()
 
     if( gst_element_query_duration( m_Playbin, &format, &len ) && len != -1 )
     {
-        return len / GST_MSECOND;
+        //guLogMessage( wxT( "TrackLength: %lld / %lld = %lld" ), len, GST_SECOND, len / GST_SECOND );
+        return ( len / GST_SECOND );
     }
     else
     {

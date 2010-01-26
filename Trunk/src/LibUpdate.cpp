@@ -50,9 +50,7 @@ guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid )
 
         CheckSymLinks( m_LibPaths );
 
-        wxDateTime LastTime;
-        LastTime.ParseDateTime( Config->ReadStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) ) );
-        m_LastUpdate = LastTime.GetTicks();
+        m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
         //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
         m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
     }
@@ -71,7 +69,7 @@ guLibUpdateThread::~guLibUpdateThread()
     if( Config )
     {
         wxDateTime Now = wxDateTime::Now();
-        Config->WriteStr( wxT( "LastUpdate" ), Now.Format(), wxT( "General" ) );
+        Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "General" ) );
         Config->Flush();
     }
 
@@ -90,14 +88,12 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
   wxDir         Dir;
   wxString      FileName;
   wxString      LowerFileName;
-  wxString      SavedDir( wxGetCwd() );
-  wxString      WorkingDir;
 
+  if( !dirname.EndsWith( wxT( "/" ) ) )
+    dirname += wxT( "/" );
 
-  Dir.Open( dirname );
-  wxSetWorkingDirectory( dirname );
   //guLogMessage( wxT( "Scanning dir '%s'" ), dirname.c_str() );
-  WorkingDir = wxGetCwd();
+  Dir.Open( dirname );
 
   if( !TestDestroy() && Dir.IsOpened() )
   {
@@ -106,11 +102,11 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
       do {
         if( ( FileName[ 0 ] != '.' ) )
         {
-          if( Dir.Exists( FileName ) )
+          if( Dir.Exists( dirname + FileName ) )
           {
-            int FileDate = GetFileLastChangeTime( FileName );
-            //guLogMessage( wxT( "Scanning dir '%s'\n%u Tracks found" ), ( WorkingDir + wxT( '/' ) + FileName ).c_str(), m_TrackFiles.Count() );
-            ScanDirectory( FileName, includedir || ( FileDate > m_LastUpdate ) );
+            int FileDate = GetFileLastChangeTime( dirname + FileName );
+            //guLogMessage( wxT( "Scanning dir '%s' : FileDate: %u  -> %u\n%u Tracks found" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate, m_TrackFiles.Count() );
+            ScanDirectory( dirname + FileName, includedir || ( FileDate > m_LastUpdate ) );
 
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
             event.SetInt( m_GaugeId );
@@ -119,15 +115,15 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           }
           else
           {
-            int FileDate = GetFileLastChangeTime( FileName );
-            //guLogMessage( wxT( "FileDate: %u  -> %u" ), m_LastUpdate, FileDate );
+            int FileDate = GetFileLastChangeTime( dirname + FileName );
+            //guLogMessage( wxT( "%s : FileDate: %u  -> %u" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate );
             if( includedir || ( FileDate > m_LastUpdate ) )
             {
               LowerFileName = FileName.Lower();
-              // TODO: add other file formats
+
               if( guIsValidAudioFile( LowerFileName ) )
               {
-                m_TrackFiles.Add( WorkingDir + wxT( '/' ) + FileName );
+                m_TrackFiles.Add( dirname + FileName );
               }
               else if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) &&
                   ( LowerFileName.EndsWith( wxT( ".jpg" ) ) ||
@@ -135,7 +131,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
                     LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
                     LowerFileName.EndsWith( wxT( ".gif" ) ) ) )
               {
-                m_ImageFiles.Add( WorkingDir + wxT( '/' ) + FileName );
+                m_ImageFiles.Add( dirname + FileName );
               }
             }
           }
@@ -143,7 +139,10 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
       } while( !TestDestroy() && Dir.GetNext( &FileName ) );
     }
   }
-  wxSetWorkingDirectory( SavedDir );
+  else
+  {
+      guLogMessage( wxT( "Could not open the dir '%s'" ), dirname.c_str() );
+  }
   return 1;
 }
 

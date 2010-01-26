@@ -361,6 +361,7 @@ class guDbLibrary : public guDb
     guTRACKS_ORDER      GetSongsOrder( void ) const;
     bool                GetSongsOrderDesc( void ) const;
     void                UpdateSongs( guTrackArray * Songs );
+    void                UpdateTrackLength( const int trackid, const int length );
     int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit = false );
     int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
                                          guTrackMode trackmode = guTRACK_MODE_USER );
@@ -485,6 +486,7 @@ class guDbLibrary : public guDb
     void                    SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew = false );
     void                    SetPodcastItemStatus( const int itemid, const int status );
     void                    SetPodcastItemPlayCount( const int itemid, const int playcount );
+    void                    UpdatePodcastItemLength( const int itemid, const int length );
     int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );
     int                     GetPodcastItemId( const int itemid, guPodcastItem * item = NULL );
     int                     GetPodcastItemFile( const wxString &filename, guPodcastItem * item = NULL );
