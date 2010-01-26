@@ -507,7 +507,7 @@ bool guMp3TagInfo::Read( void )
 {
     wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".mp3" ) ) )
 
-    FileRef fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
+    FileRef fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Accurate );
     Tag * tag;
     AudioProperties * apro;
 

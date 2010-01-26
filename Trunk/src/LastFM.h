@@ -130,6 +130,29 @@ class guSimilarTrackInfo {
 WX_DECLARE_OBJARRAY(guSimilarTrackInfo,guSimilarTrackInfoArray);
 
 // -------------------------------------------------------------------------------- //
+class guEventInfo {
+  public :
+    int             m_Id;
+    wxString        m_Title;
+    wxArrayString   m_Artists;
+    wxString        m_LocationName;
+    wxString        m_LocationCity;
+    wxString        m_LocationCountry;
+    wxString        m_LocationStreet;
+    wxString        m_LocationZipCode;
+    wxString        m_LocationGeoLat;
+    wxString        m_LocationGeoLong;
+    wxString        m_LocationTimeZone;
+    wxString        m_LocationLink;
+    wxString        m_Date;
+    wxString        m_Time;
+    wxString        m_Description;
+    wxString        m_ImageLink;
+    wxString        m_Url;
+};
+WX_DECLARE_OBJARRAY(guEventInfo,guEventInfoArray);
+
+// -------------------------------------------------------------------------------- //
 class guLastFM
 {
   private:
@@ -171,6 +194,8 @@ class guLastFM
     guAlbumInfoArray            ArtistGetTopAlbums( const wxString &Artist );
     wxArrayString               ArtistGetTopTags( const wxString &Artist );
     wxArrayString               ArtistGetTopTracks( const wxString &Artist );
+    guEventInfoArray            ArtistGetEvents( const wxString &Artist );
+
 
     // Track Methods
     guTrackInfo                 TrackGetInfo( const wxString &Artist, const wxString &Track );
