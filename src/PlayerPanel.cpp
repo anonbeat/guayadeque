@@ -765,34 +765,33 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
     {
         OnStopButtonClick( event );
         OnPlayButtonClick( event );
+    }
+    if( ( event.GetExtraLong() || event.GetInt() ) && m_PlaySmart )
+    {
+        // Reset the Smart added songs cache
+        m_SmartAddedTracks.Empty();
+        m_SmartAddedArtists.Empty();
 
-        if( m_PlaySmart )
+        int Count;
+        int Index = 0;
+        Count = m_PlayListCtrl->GetCount();
+        // We only insert the last CACHEITEMS as the rest should be forgiven
+        if( Count > guPLAYER_SMART_CACHEITEMS )
+            Index = Count - guPLAYER_SMART_CACHEITEMS;
+        for( ; Index < Count; Index++ )
         {
-            // Reset the Smart added songs cache
-            m_SmartAddedTracks.Empty();
-            m_SmartAddedArtists.Empty();
+            guTrack * Track = m_PlayListCtrl->GetItem( Index );
+            m_SmartAddedTracks.Add( Track->m_SongId );
+        }
 
-            int Count;
-            int Index = 0;
-            Count = m_PlayListCtrl->GetCount();
-            // We only insert the last CACHEITEMS as the rest should be forgiven
-            if( Count > guPLAYER_SMART_CACHEITEMS )
-                Index = Count - guPLAYER_SMART_CACHEITEMS;
-            for( ; Index < Count; Index++ )
-            {
-                guTrack * Track = m_PlayListCtrl->GetItem( Index );
-                m_SmartAddedTracks.Add( Track->m_SongId );
-            }
-
-            Index = 0;
-            Count = m_PlayListCtrl->GetCount();
-            if( Count > guPLAYER_SMART_CACHEARTISTS )
-                Index = Count - guPLAYER_SMART_CACHEARTISTS;
-            for( ; Index < Count; Index++ )
-            {
-                guTrack * Track = m_PlayListCtrl->GetItem( Index );
-                m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
-            }
+        Index = 0;
+        Count = m_PlayListCtrl->GetCount();
+        if( Count > guPLAYER_SMART_CACHEARTISTS )
+            Index = Count - guPLAYER_SMART_CACHEARTISTS;
+        for( ; Index < Count; Index++ )
+        {
+            guTrack * Track = m_PlayListCtrl->GetItem( Index );
+            m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
         }
     }
     TrackListChanged();
