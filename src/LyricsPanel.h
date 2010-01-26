@@ -48,7 +48,8 @@ enum guLYRIC_ENGINE_ID {
     guLYRIC_ENGINE_LYRICWIKI = 0,
     guLYRIC_ENGINE_LEOSLYRICS,
     guLYRIC_ENGINE_LYRC_COM_AR,
-    guLYRIC_ENGINE_CDUNIVERSE
+    guLYRIC_ENGINE_CDUNIVERSE,
+    guLYRIC_ENGINE_ULTGUITAR
 };
 
 // -------------------------------------------------------------------------------- //
@@ -158,6 +159,16 @@ class guCDUEngine : public guSearchLyricEngine
   public:
     guCDUEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guCDUEngine();
+
+    virtual void SearchLyric( void );
+};
+
+// -------------------------------------------------------------------------------- //
+class guUltGuitarEngine : public guSearchLyricEngine
+{
+  public:
+    guUltGuitarEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
+    ~guUltGuitarEngine();
 
     virtual void SearchLyric( void );
 };

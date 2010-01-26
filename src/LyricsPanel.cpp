@@ -72,7 +72,8 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	    wxT( "http://lyricwiki.org" ),
 	    wxT( "http://leoslyrics.com" ),
 	    wxT( "http://lyrc.com.ar" ),
-	    wxT( "http://cduniverse.com" )
+	    wxT( "http://cduniverse.com" ),
+	    wxT( "http://ultimate-guitar.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
 	m_ServerChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
@@ -409,9 +410,13 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
         {
             m_LyricThread = new guLyrcComArEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
-        else //if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
+        else if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
         {
             m_LyricThread = new guCDUEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
+        }
+        else //if( Engine == guLYRIC_ENGINE_ULTGUITAR )
+        {
+            m_LyricThread = new guUltGuitarEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
     }
     else
@@ -932,6 +937,83 @@ void guCDUEngine::SearchLyric( void )
                 SetLyric( new wxString( Content ) );
             }
             return;
+        }
+    }
+    if( !TestDestroy() )
+    {
+        SetLyric( NULL );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guUltGuitarEngine
+// -------------------------------------------------------------------------------- //
+guUltGuitarEngine::guUltGuitarEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
+         const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
+{
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guUltGuitarEngine::~guUltGuitarEngine()
+{
+}
+
+#define guULTIMATE_GUITAR_BASE_URL      wxT( "http://www.ultimate-guitar.com" )
+#define guULTIMAGE_GUITAR_SEARCH_URL    guULTIMATE_GUITAR_BASE_URL wxT( "/search.php?view_state=advanced&band_name=%s&song_name=%s&type[]=200&type2[]=40000&version_la=" )
+
+// -------------------------------------------------------------------------------- //
+void guUltGuitarEngine::SearchLyric( void )
+{
+    wxString    Content;
+    wxString    UrlStr = wxString::Format( guULTIMAGE_GUITAR_SEARCH_URL,
+                        guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+
+    //guLogMessage( wxT( "Url: %s" ), UrlStr.c_str() );
+    Content = GetUrlContent( UrlStr );
+    //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
+    //
+    if( !Content.IsEmpty() )
+    {
+        wxString ArtistName = m_ArtistName.Lower();
+        ArtistName.Replace( wxT( " " ), wxT( "_" ) );
+        wxString TrackName = m_TrackName.Lower();
+        TrackName.Replace( wxT( " " ), wxT( "_" ) );
+
+        int Pos = Content.Find( wxString::Format( wxT( "/tabs/%c/%s/%s" ),
+                    ArtistName[ 0 ],
+                    ArtistName.c_str(),
+                    TrackName.c_str() ) );
+
+        if( Pos != wxNOT_FOUND )
+        {
+            Content = Content.Mid( Pos );
+            Pos = Content.Find( wxT( ".htm" ) );
+            if( Pos != wxNOT_FOUND )
+            {
+                Content = Content.Mid( 0, Pos + 4 );
+                Content = guULTIMATE_GUITAR_BASE_URL + Content;
+                Content = GetUrlContent( Content );
+                if( !Content.IsEmpty() )
+                {
+                    Pos = Content.Find( wxT( "<pre>" ) );
+                    if( Pos != wxNOT_FOUND )
+                    {
+                        Content = Content.Mid( Pos + 5 );
+                        Pos = Content.Find( wxT( "</pre>" ) );
+                        if( Pos != wxNOT_FOUND )
+                        {
+                            Content = Content.Mid( 0, Pos );
+                            SetLyric( new wxString( Content ) );
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
     if( !TestDestroy() )
