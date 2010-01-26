@@ -796,7 +796,16 @@ void guSimilarArtistInfoCtrl::SetInfo( guLastFMSimilarArtistInfo * info )
     m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
                                        m_NotFoundColor : m_NormalColor );
     SetBitmap( m_Info->m_Image );
-    SetLabel( wxString::Format( wxT( "%s\n%s%%" ), m_Info->m_Artist->m_Name.c_str(), m_Info->m_Artist->m_Match.c_str() ) );
+    double Match;
+
+    if( !m_Info->m_Artist->m_Match.ToDouble( &Match ) )
+    {
+        m_Info->m_Artist->m_Match.Replace( wxT( "." ), wxT( "," ) );
+        m_Info->m_Artist->m_Match.ToDouble( &Match );
+        //guLogError( wxT( "Error converting %s to float" ), m_Info->m_Artist->m_Match.c_str() );
+    }
+
+    SetLabel( wxString::Format( wxT( "%s\n%i%%" ), m_Info->m_Artist->m_Name.c_str(), int( Match * 100 ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -943,10 +952,19 @@ void guTrackInfoCtrl::SetInfo( guLastFMTrackInfo * info )
                                        m_NotFoundColor : m_NormalColor );
 
     SetBitmap( m_Info->m_Image );
-    SetLabel( wxString::Format( wxT( "%s\n%s\n%s%%" ),
+
+    double Match;
+    if( !m_Info->m_Track->m_Match.ToDouble( &Match ) )
+    {
+        m_Info->m_Track->m_Match.Replace( wxT( "." ), wxT( "," ) );
+        m_Info->m_Track->m_Match.ToDouble( &Match );
+        //guLogError( wxT( "Error converting %s to float" ), m_Info->m_Track->m_Match.c_str() );
+    }
+
+    SetLabel( wxString::Format( wxT( "%s\n%s\n%i%%" ),
         m_Info->m_Track->m_TrackName.c_str(),
         m_Info->m_Track->m_ArtistName.c_str(),
-        m_Info->m_Track->m_Match.c_str() ) );
+        int( Match * 100 ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
