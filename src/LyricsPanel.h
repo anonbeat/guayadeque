@@ -69,35 +69,36 @@ class guLyricsPanel : public wxPanel
 
 	bool                    m_UpdateEnabled;
     guTrackChangeInfo       m_CurrentTrackInfo;
+    wxString                m_LyricsTemplate;
 	wxString                m_CurrentFileName;
 	wxString                m_CurrentLyricText;
 	bool                    m_WriteLyrics;
 
-    void    SetTitle( const wxString &title );
-    void    SetText( const wxString &text );
-    void    OnDownloadedLyric( wxCommandEvent &event );
-	void    OnReloadBtnClick( wxCommandEvent& event );
-    void    OnSaveBtnClick( wxCommandEvent& event );
-	void    OnUpdateChkBoxClicked( wxCommandEvent& event );
-    void    OnTextUpdated( wxCommandEvent& event );
-//	void    OnSearchBtnClick( wxCommandEvent& event );
-    void    OnContextMenu( wxContextMenuEvent &event );
-    void    CreateContextMenu( wxMenu * menu );
+    void                    SetTitle( const wxString &title );
+    void                    SetText( const wxString &text );
+    void                    OnDownloadedLyric( wxCommandEvent &event );
+	void                    OnReloadBtnClick( wxCommandEvent& event );
+    void                    OnSaveBtnClick( wxCommandEvent& event );
+	void                    OnUpdateChkBoxClicked( wxCommandEvent& event );
+    void                    OnTextUpdated( wxCommandEvent& event );
+//	void                      OnSearchBtnClick( wxCommandEvent& event );
+    void                    OnContextMenu( wxContextMenuEvent &event );
+    void                    CreateContextMenu( wxMenu * menu );
 
-    void    OnLyricsCopy( wxCommandEvent &event );
-    void    OnLyricsPrint( wxCommandEvent &event );
+    void                    OnLyricsCopy( wxCommandEvent &event );
+    void                    OnLyricsPrint( wxCommandEvent &event );
 
-    void    OnConfigUpdated( wxCommandEvent &event );
-    void    SaveLyrics( void );
-    void    OnServerSelected( wxCommandEvent &event );
+    void                    OnConfigUpdated( wxCommandEvent &event );
+    void                    SaveLyrics( void );
+    void                    OnServerSelected( wxCommandEvent &event );
 
   public :
     guLyricsPanel( wxWindow * parent );
     ~guLyricsPanel();
 
-    void    OnUpdatedTrack( wxCommandEvent &event );
-    void    SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch = false );
-    //void    ClearLyricThread( void );
+    void                    OnUpdatedTrack( wxCommandEvent &event );
+    void                    SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch = false );
+    //void                    ClearLyricThread( void );
 
 };
 
@@ -114,9 +115,10 @@ class guSearchLyricEngine : public wxThread
     guSearchLyricEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guSearchLyricEngine();
 
-    virtual ExitCode Entry();
-    virtual void SearchLyric( void ) = 0;
-    virtual void SetLyric( wxString * lyrictext );
+    virtual ExitCode        Entry();
+    virtual void            SearchLyric( void ) = 0;
+    virtual void            SetLyric( wxString * lyrictext );
+    virtual wxString        GetTemplate( void );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -126,21 +128,21 @@ class guLyricWikiEngine : public guSearchLyricEngine
     guLyricWikiEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guLyricWikiEngine();
 
-    virtual void SearchLyric( void );
+    virtual void            SearchLyric( void );
 };
 
 // -------------------------------------------------------------------------------- //
 class guLeosLyricsEngine : public guSearchLyricEngine
 {
   private:
-    wxString GetLyricId( void );
-    wxString GetLyricText( const wxString &lyricid );
+    wxString                GetLyricId( void );
+    wxString                GetLyricText( const wxString &lyricid );
 
   public:
     guLeosLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guLeosLyricsEngine();
 
-    virtual void SearchLyric( void );
+    virtual void            SearchLyric( void );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -150,7 +152,7 @@ class guLyrcComArEngine : public guSearchLyricEngine
     guLyrcComArEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guLyrcComArEngine();
 
-    virtual void SearchLyric( void );
+    virtual void            SearchLyric( void );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -160,7 +162,7 @@ class guCDUEngine : public guSearchLyricEngine
     guCDUEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guCDUEngine();
 
-    virtual void SearchLyric( void );
+    virtual void            SearchLyric( void );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -170,7 +172,8 @@ class guUltGuitarEngine : public guSearchLyricEngine
     guUltGuitarEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guUltGuitarEngine();
 
-    virtual void SearchLyric( void );
+    virtual void            SearchLyric( void );
+    virtual wxString        GetTemplate( void );
 };
 
 #endif

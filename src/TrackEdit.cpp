@@ -280,7 +280,8 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	    wxT( "http://lyricwiki.org" ),
 	    wxT( "http://leoslyrics.com" ),
 	    wxT( "http://lyrc.com.ar" ),
-	    wxT( "http://cduniverse.com" )
+	    wxT( "http://cduniverse.com" ),
+	    wxT( "http://ultimate-guitar.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
 	m_LyricSrvChoice = new wxChoice( LyricsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
@@ -1492,9 +1493,15 @@ void guTrackEditor::OnSearchLyrics( wxCommandEvent &event )
                                 m_LyricArtistTextCtrl->GetValue().c_str(),
                                 m_LyricTrackTextCtrl->GetValue().c_str() );
     }
-    else //if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
+    else if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
     {
         m_LyricThread = new guCDUEngine( this, &m_LyricThread,
+                                m_LyricArtistTextCtrl->GetValue().c_str(),
+                                m_LyricTrackTextCtrl->GetValue().c_str() );
+    }
+    else //if( Engine == guLYRIC_ENGINE_ULTGUITAR )
+    {
+        m_LyricThread = new guUltGuitarEngine( this, &m_LyricThread,
                                 m_LyricArtistTextCtrl->GetValue().c_str(),
                                 m_LyricTrackTextCtrl->GetValue().c_str() );
     }
