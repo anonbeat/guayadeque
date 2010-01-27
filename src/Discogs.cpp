@@ -288,9 +288,6 @@ bool guDiscogs::GetReleaseImages( const int id, guDiscogsRelease * release )
 // -------------------------------------------------------------------------------- //
 bool guDiscogs::GetRelease( const int id, guDiscogsRelease * release )
 {
-    wxASSERT( !name.IsEmpty() );
-    wxASSERT( artist );
-
     wxString SearchUrl;
     SearchUrl = wxString::Format( wxT( guDISCOGS_QUERY_RELEASE ), id );
 
