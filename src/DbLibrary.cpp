@@ -5337,17 +5337,6 @@ void guDbLibrary::UpdatePodcastItemLength( const int itemid, const int length )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdatePodcastItemBitRate( const int itemid, const int bitrate )
-{
-  wxString query;
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
-                "podcastitem_bitrate = %u WHERE podcastitem_id = %u;" ),
-            bitrate, itemid );
-
-  ExecuteUpdate( query );
-}
-
-// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item )
 {
   int RetVal = wxNOT_FOUND;
