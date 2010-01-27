@@ -35,12 +35,16 @@
 #include <wx/settings.h>
 #include <wx/xml/xml.h>
 
+#define guLYRICS_TEMPLATE_DEFAULT       wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\"><TT>%s</TT></font></center></body></html>" )
+#define guLYRICS_TEMPLATE_ULTGUITAR     wxT( "<html><body bgcolor=%s><font color=%s size=\"+1\"><TT>%s</TT></font></body></html>" )
+
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
     m_LyricThread = NULL;
     m_UpdateEnabled = true;
+    m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -338,7 +342,7 @@ void guLyricsPanel::SetText( const wxString &text )
 {
     wxString LyricText = text;
     LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
-    m_LyricText->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\">%s</font></center></body></html>" ),
+    m_LyricText->SetPage( wxString::Format( m_LyricsTemplate,
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           LyricText.c_str() ) );
@@ -382,6 +386,7 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     if( !LyricText.IsEmpty() )
     {
         m_CurrentLyricText = LyricText;
+        m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
 
         SetText( LyricText );
     }
@@ -418,6 +423,7 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
         {
             m_LyricThread = new guUltGuitarEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
+        m_LyricsTemplate = m_LyricThread->GetTemplate();
     }
     else
     {
@@ -460,7 +466,7 @@ void guLyricsPanel::OnLyricsCopy( wxCommandEvent &event )
         wxTheClipboard->Clear();
         if ( !wxTheClipboard->AddData( new wxTextDataObject( m_TrackTextCtrl->GetValue() + wxT( " / " ) +
                                                              m_ArtistTextCtrl->GetValue() + wxT( "\n\n" ) +
-                                                             m_LyricText->ToText() ) ) )
+                                                             m_CurrentLyricText.c_str() ) ) )
         {
             guLogError( wxT( "Can't copy data to the clipboard" ) );
         }
@@ -487,13 +493,13 @@ void guLyricsPanel::OnLyricsPrint( wxCommandEvent &event )
             wxString TrackName = m_TrackTextCtrl->GetValue() + wxT( " / " ) + m_ArtistTextCtrl->GetValue();
             wxHtmlPrintout Printout( TrackName );
 
-            wxString LyricText = m_LyricText->ToText();
+            wxString LyricText = wxString::Format( wxT( "<b>%s</b><br><br>" ), TrackName.c_str() ) +
+                                 m_CurrentLyricText;
             LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
-            Printout.SetHtmlText( wxString::Format( wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\"><b>%s</b><br><br>%s</font></center></body></html>" ),
+            Printout.SetHtmlText( wxString::Format( m_LyricsTemplate,
                 wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
                 wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-                TrackName.c_str(),
                 LyricText.c_str() ) );
 
             wxPrinter Printer( PrintDialogData );
@@ -514,7 +520,7 @@ void guLyricsPanel::OnLyricsPrint( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-//
+// guSearchLyricEngine
 // -------------------------------------------------------------------------------- //
 guSearchLyricEngine::guSearchLyricEngine( wxEvtHandler * owner,
         guSearchLyricEngine ** threadpointer, const wxChar * artistname, const wxChar * trackname ) :
@@ -549,11 +555,6 @@ guSearchLyricEngine::ExitCode guSearchLyricEngine::Entry()
     return 0;
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guSearchLyricEngine::SearchLyric( void )
-//{
-//}
-
 // -------------------------------------------------------------------------------- //
 void guSearchLyricEngine::SetLyric( wxString * lyrictext )
 {
@@ -566,6 +567,11 @@ void guSearchLyricEngine::SetLyric( wxString * lyrictext )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+wxString guSearchLyricEngine::GetTemplate( void )
+{
+    return guLYRICS_TEMPLATE_DEFAULT;
+}
 
 // -------------------------------------------------------------------------------- //
 // guLyricWikiEngine
@@ -1021,6 +1027,12 @@ void guUltGuitarEngine::SearchLyric( void )
     {
         SetLyric( NULL );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guUltGuitarEngine::GetTemplate( void )
+{
+    return guLYRICS_TEMPLATE_DEFAULT; //guLYRICS_TEMPLATE_ULTGUITAR;
 }
 
 // -------------------------------------------------------------------------------- //
