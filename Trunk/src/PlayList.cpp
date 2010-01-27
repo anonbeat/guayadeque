@@ -661,11 +661,9 @@ void guPlayList::AddItem( const guTrack &NewItem )
     }
     else
     {
-        //printf( "Added at %d\n", DragOverItem );
         m_Items.Add( NewItem );
+        guLogMessage( wxT( "Adding Item %i" ), m_Items.Count() );
     }
-//    if( m_CurItem == wxNOT_FOUND )
-//        m_CurItem = 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -908,7 +906,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
         wxURI UriPath( FileName );
         if( UriPath.IsReference() )
         {
-            //guLogMessage( wxT( "AddPlaylistItem: (%u) '%s' " ), AddPath, FileName.c_str() );
+            guLogMessage( wxT( "AddPlaylistItem: (%u) '%s' " ), AddPath, FileName.c_str() );
 
             //
             Song.m_FileName = FileName;
@@ -933,6 +931,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
                     guPodcastItem PodcastItem;
                     if( m_Db->GetPodcastItemFile( Song.m_FileName, &PodcastItem ) )
                     {
+                        guLogMessage( wxT( "Its a podcast item" ) );
                         Song.m_Type = guTRACK_TYPE_PODCAST;
                         Song.m_SongName = PodcastItem.m_Title;
                         Song.m_ArtistName = PodcastItem.m_Author;
@@ -940,11 +939,17 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
                         Song.m_Length = PodcastItem.m_Length;
                         Song.m_Year = 0;
                         Song.m_Rating = wxNOT_FOUND;
-
+                        guLogMessage( wxT( "%i (%i) %s - %s - %s\n%s" ),
+                            Song.m_Type,
+                            Song.m_Length,
+                            Song.m_ArtistName.c_str(),
+                            Song.m_AlbumName.c_str(),
+                            Song.m_SongName.c_str(),
+                            Song.m_FileName.c_str() );
                     }
                     else
                     {
-                        //guLogMessage( wxT( "Reading tags from the file..." ) );
+                        guLogMessage( wxT( "Reading tags from the file..." ) );
                         Song.m_Type = guTRACK_TYPE_NOTDB;
 
                         TagInfo->Read();
