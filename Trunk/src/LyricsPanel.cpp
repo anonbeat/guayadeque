@@ -342,6 +342,7 @@ void guLyricsPanel::SetText( const wxString &text )
 {
     wxString LyricText = text;
     LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
+    LyricText.Replace( wxT( " " ), wxT( "&nbsp;" ) );
     m_LyricText->SetPage( wxString::Format( m_LyricsTemplate,
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
@@ -1032,7 +1033,7 @@ void guUltGuitarEngine::SearchLyric( void )
 // -------------------------------------------------------------------------------- //
 wxString guUltGuitarEngine::GetTemplate( void )
 {
-    return guLYRICS_TEMPLATE_DEFAULT; //guLYRICS_TEMPLATE_ULTGUITAR;
+    return guLYRICS_TEMPLATE_ULTGUITAR;
 }
 
 // -------------------------------------------------------------------------------- //
