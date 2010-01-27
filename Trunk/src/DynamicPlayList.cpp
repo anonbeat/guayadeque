@@ -25,31 +25,14 @@
 
 WX_DEFINE_OBJARRAY(guFilterItemArray);
 
-
-wxString m_FilterFieldChoices[] = {
-    _("Title"), _("Artist"), _("Album"), _("Genre"), _( "Label" ),
-    _("Path"), _("Year"), _("Rating"), _("Length"),
-    _("Play Count"), _("Last Play Time"), _("Added Date")
-};
-
-wxString m_FilterTextOptionChoices[] = { _("Contains"), _("Does not contains"), _("Equals"),
-                                           _("Begins with"), _("Ends with") };
-
-wxString m_FilterNumberOptionChoices[] = { _( "equals" ), _( "at least" ), _( "at most" ) };
-
-wxString m_FilterYearOptionChoices[] = { _( "in" ), _( "after" ), _( "before" ) };
-
-wxString m_FilterDateOptionChoices[] = { _( "in the last" ), _( "before the last" ) };
-
-wxString m_LimitChoices[] = { _("Tracks"), _("Minutes"), wxT("MB"), wxT("GB") };
-
-wxString m_SortChoices[] = {
-    _("Title"), _("Artist"), _( "Album" ), _( "Genre" ), _( "Label" ),
-    _( "Year" ), _( "Rating" ), _( "Length" ),
-    _( "Play Count" ), _( "Last Play Time" ), _( "Added Time" ), _( "Random" )
-};
-
-wxString m_FilterDateOption2Choices[] = { _( "minutes" ), _( "hours" ), _( "days" ), _( "weeks" ), _( "months" ) };
+wxArrayString m_FilterFieldChoices;
+wxArrayString m_FilterTextOptionChoices;
+wxArrayString m_FilterNumberOptionChoices;
+wxArrayString m_FilterYearOptionChoices;
+wxArrayString m_FilterDateOptionChoices;
+wxArrayString m_LimitChoices;
+wxArrayString m_SortChoices;
+wxArrayString m_FilterDateOption2Choices;
 
 // -------------------------------------------------------------------------------- //
 // guFilterItem
@@ -137,6 +120,84 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_CurFilter = wxNOT_FOUND;
 	m_HasChanged = false;
 
+    if( !m_FilterFieldChoices.Count() )
+    {
+        m_FilterFieldChoices.Add( _("Title") );
+        m_FilterFieldChoices.Add( _("Artist") );
+        m_FilterFieldChoices.Add( _("Album") );
+        m_FilterFieldChoices.Add( _("Genre") );
+        m_FilterFieldChoices.Add( _( "Label" ) );
+        m_FilterFieldChoices.Add( _("Path") );
+        m_FilterFieldChoices.Add( _("Year") );
+        m_FilterFieldChoices.Add( _("Rating") );
+        m_FilterFieldChoices.Add( _("Length") );
+        m_FilterFieldChoices.Add( _("Play Count") );
+        m_FilterFieldChoices.Add( _("Last Play Time") );
+        m_FilterFieldChoices.Add( _("Added Date") );
+//    }
+//
+//    if( !m_FilterTextOptionChoices.Count() )
+//    {
+        m_FilterTextOptionChoices.Add( _("Contains") );
+        m_FilterTextOptionChoices.Add( _("Does not contains") );
+        m_FilterTextOptionChoices.Add( _("Equals") );
+        m_FilterTextOptionChoices.Add( _("Begins with") );
+        m_FilterTextOptionChoices.Add( _("Ends with") );
+//    }
+//
+//    if( !m_FilterNumberOptionChoices.Count() )
+//    {
+        m_FilterNumberOptionChoices.Add( _( "equals" ) );
+        m_FilterNumberOptionChoices.Add( _( "at least" ) );
+        m_FilterNumberOptionChoices.Add( _( "at most" ) );
+//    }
+//
+//    if( !m_FilterYearOptionChoices.Count() )
+//    {
+        m_FilterYearOptionChoices.Add( _( "in" ) );
+        m_FilterYearOptionChoices.Add( _( "after" ) );
+        m_FilterYearOptionChoices.Add( _( "before" ) );
+//    }
+//
+//    if( !m_FilterDateOptionChoices.Count() )
+//    {
+        m_FilterDateOptionChoices.Add( _( "in the last" ) );
+        m_FilterDateOptionChoices.Add( _( "before the last" ) );
+//    }
+//
+//    if( !m_LimitChoices.Count() )
+//    {
+        m_LimitChoices.Add( _("Tracks") );
+        m_LimitChoices.Add( _("Minutes") );
+        m_LimitChoices.Add( wxT("MB") );
+        m_LimitChoices.Add( wxT("GB") );
+//    }
+//
+//    if( !m_SortChoices.Count() )
+//    {
+        m_SortChoices.Add( _("Title") );
+        m_SortChoices.Add( _("Artist") );
+        m_SortChoices.Add( _( "Album" ) );
+        m_SortChoices.Add( _( "Genre" ) );
+        m_SortChoices.Add( _( "Label" ) );
+        m_SortChoices.Add( _( "Year" ) );
+        m_SortChoices.Add( _( "Rating" ) );
+        m_SortChoices.Add( _( "Length" ) );
+        m_SortChoices.Add( _( "Play Count" ) );
+        m_SortChoices.Add( _( "Last Play Time" ) );
+        m_SortChoices.Add( _( "Added Time" ) );
+        m_SortChoices.Add( _( "Random" ) );
+//    }
+//
+//    if( !m_FilterDateOption2Choices.Count() )
+//    {
+        m_FilterDateOption2Choices.Add( _( "minutes" ) );
+        m_FilterDateOption2Choices.Add( _( "hours" ) );
+        m_FilterDateOption2Choices.Add( _( "days" ) );
+        m_FilterDateOption2Choices.Add( _( "weeks" ) );
+        m_FilterDateOption2Choices.Add( _( "months" ) );
+    }
+
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer * MainSizer;
@@ -160,13 +221,11 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
 	m_FilterEditSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	int ChoiceCount = sizeof( m_FilterFieldChoices ) / sizeof( wxString );
-	m_FilterFieldChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, ChoiceCount, m_FilterFieldChoices, 0 );
+	m_FilterFieldChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterFieldChoices, 0 );
 	m_FilterFieldChoice->SetSelection( 0 );
 	m_FilterEditSizer->Add( m_FilterFieldChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	ChoiceCount = sizeof( m_FilterTextOptionChoices ) / sizeof( wxString );
-	m_FilterOptionChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, ChoiceCount, m_FilterTextOptionChoices, 0 );
+	m_FilterOptionChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterTextOptionChoices, 0 );
 	m_FilterOptionChoice->SetSelection( 0 );
 	m_FilterEditSizer->Add( m_FilterOptionChoice, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -177,8 +236,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_FilterRating->Show( false );
 	m_FilterEditSizer->Add( m_FilterRating, 1, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	ChoiceCount = sizeof( m_FilterDateOption2Choices ) / sizeof( wxString );
-	m_FilterDateOption2Choice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, ChoiceCount, m_FilterDateOption2Choices, 0 );
+	m_FilterDateOption2Choice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDateOption2Choices, 0 );
 	m_FilterDateOption2Choice->SetSelection( 0 );
 	m_FilterDateOption2Choice->Show( false );
 	m_FilterEditSizer->Add( m_FilterDateOption2Choice, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
@@ -236,8 +294,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
 	LimitSizer->Add( m_LimitSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	int m_LimitChoiceNChoices = sizeof( m_LimitChoices ) / sizeof( wxString );
-	m_LimitChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LimitChoiceNChoices, m_LimitChoices, 0 );
+	m_LimitChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LimitChoices, 0 );
 	m_LimitChoice->SetSelection( m_PlayList->m_LimitType );
 	m_LimitChoice->Enable( m_LimitCheckBox->IsChecked() );
 
@@ -252,8 +309,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_SortCheckBox->SetValue( m_PlayList->m_Sorted );
 	SortSizer->Add( m_SortCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
-	ChoiceCount = sizeof( m_SortChoices ) / sizeof( wxString );
-	m_SortChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, ChoiceCount, m_SortChoices, 0 );
+	m_SortChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_SortChoices, 0 );
 	m_SortChoice->SetSelection( m_PlayList->m_SortType );
 	m_SortChoice->Enable( m_SortCheckBox->IsChecked() );
 
@@ -460,7 +516,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
 
     if( FilterType < guDYNAMIC_FILTER_TYPE_YEAR )
     {
-        count = sizeof( m_FilterTextOptionChoices ) / sizeof( wxString );
+        count = m_FilterTextOptionChoices.Count();
         for( index = 0; index < count; index++ )
         {
             m_FilterOptionChoice->Append( m_FilterTextOptionChoices[ index ] );
@@ -468,7 +524,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
     }
     else if( FilterType == guDYNAMIC_FILTER_TYPE_YEAR )
     {
-        count = sizeof( m_FilterYearOptionChoices ) / sizeof( wxString );
+        count = m_FilterYearOptionChoices.Count();
         for( index = 0; index < count; index++ )
         {
             m_FilterOptionChoice->Append( m_FilterYearOptionChoices[ index ] );
@@ -476,7 +532,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
     }
     else if( FilterType < guDYNAMIC_FILTER_TYPE_LASTPLAY )
     {
-        count = sizeof( m_FilterNumberOptionChoices ) / sizeof( wxString );
+        count = m_FilterNumberOptionChoices.Count();
         for( index = 0; index < count; index++ )
         {
             m_FilterOptionChoice->Append( m_FilterNumberOptionChoices[ index ] );
@@ -484,7 +540,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
     }
     else if( FilterType > guDYNAMIC_FILTER_TYPE_PLAYCOUNT )
     {
-        count = sizeof( m_FilterDateOptionChoices ) / sizeof( wxString );
+        count = m_FilterDateOptionChoices.Count();
         for( index = 0; index < count; index++ )
         {
             m_FilterOptionChoice->Append( m_FilterDateOptionChoices[ index ] );
