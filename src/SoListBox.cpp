@@ -32,21 +32,6 @@
 
 #include <wx/imaglist.h>
 
-wxString guSONGS_COLUMN_NAMES[ guSONGS_COLUMN_ADDEDDATE + 1 ] = {
-    wxT( "#" ),
-    _( "Title" ),
-    _( "Artist" ),
-    _( "Album" ),
-    _( "Genre" ),
-    _( "Length" ),
-    _( "Year" ),
-    _( "BitRate" ),
-    _( "Rating" ),
-    _( "PlayCount" ),
-    _( "Last Play" ),
-    _( "Added Date" )
-};
-
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style ) :
     guListView( parent, style|wxLB_MULTIPLE|guLISTVIEW_ALLOWDRAG|guLISTVIEW_COLUMN_CLICK_EVENTS,
@@ -60,15 +45,17 @@ guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confn
     int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
 
+    wxArrayString ColumnNames = GetColumnNames();
+
     int ColId;
     wxString ColName;
     int index;
-    int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
+    int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         ColId = Config->ReadNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ), index, m_ConfName + wxT( "Columns" ) );
 
-        ColName = guSONGS_COLUMN_NAMES[ ColId ];
+        ColName = ColumnNames[ ColId ];
 
         if( style & guLISTVIEW_COLUMN_SORTING )
             ColName += ( ( ColId == ColOrder ) ? ( ColOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
@@ -99,7 +86,7 @@ guSoListBox::~guSoListBox()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     //int ColId;
     int index;
-    int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
+    int count = guSONGS_COLUMN_COUNT;
     for( index = 0; index < count; index++ )
     {
         Config->WriteNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ),
@@ -280,6 +267,25 @@ int guSoListBox::GetDragFiles( wxFileDataObject * files )
        files->AddFile( Songs[ index ].m_FileName );
     }
     return count;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayString guSoListBox::GetColumnNames( void )
+{
+    wxArrayString ColumnNames;
+    ColumnNames.Add( wxT( "#" ) );
+    ColumnNames.Add( _( "Title" ) );
+    ColumnNames.Add( _( "Artist" ) );
+    ColumnNames.Add( _( "Album" ) );
+    ColumnNames.Add( _( "Genre" ) );
+    ColumnNames.Add( _( "Length" ) );
+    ColumnNames.Add( _( "Year" ) );
+    ColumnNames.Add( _( "BitRate" ) );
+    ColumnNames.Add( _( "Rating" ) );
+    ColumnNames.Add( _( "PlayCount" ) );
+    ColumnNames.Add( _( "Last Play" ) );
+    ColumnNames.Add( _( "Added Date" ) );
+    return ColumnNames;
 }
 
 // -------------------------------------------------------------------------------- //

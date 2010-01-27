@@ -38,7 +38,7 @@
 #define guSONGS_COLUMN_LASTPLAY     10
 #define guSONGS_COLUMN_ADDEDDATE    11
 
-extern wxString guSONGS_COLUMN_NAMES[ guSONGS_COLUMN_ADDEDDATE + 1 ];
+#define guSONGS_COLUMN_COUNT        12
 
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public guListView
@@ -75,6 +75,8 @@ class guSoListBox : public guListView
 
     virtual int                 GetItemId( const int row ) const;
     virtual wxString            GetItemName( const int row ) const;
+
+    virtual wxArrayString       GetColumnNames( void );
 
 };
 

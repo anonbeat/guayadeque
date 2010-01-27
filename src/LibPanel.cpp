@@ -1079,14 +1079,15 @@ void guLibPanel::OnSongListColClicked( wxListEvent &event )
     m_Db->SetSongsOrder( ( guTRACKS_ORDER ) ColId );
 
     // Create the Columns
+    wxArrayString ColumnNames = m_SongListCtrl->GetColumnNames();
     int CurColId;
     int index;
-    int count = sizeof( guSONGS_COLUMN_NAMES ) / sizeof( wxString );
+    int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         CurColId = m_SongListCtrl->GetColumnId( index );
         m_SongListCtrl->SetColumnLabel( index,
-            guSONGS_COLUMN_NAMES[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_Db->GetSongsOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+            ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_Db->GetSongsOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
     m_SongListCtrl->ReloadItems();

@@ -129,15 +129,11 @@ class guUpdateRadiosThread : public wxThread
 
 
 
-wxString guRADIOSTATIONS_COLUMN_NAMES[] = {
-    _( "Name" ),
-    _( "BitRate" ),
-    _( "Listeners" )
-};
-
 #define guRADIOSTATIONS_COLUMN_NAME         0
 #define guRADIOSTATIONS_COLUMN_BITRATE      1
 #define guRADIOSTATIONS_COLUMN_LISTENERS    2
+
+#define guRADIOSTATIONS_COLUMN_COUNT        3
 
 // -------------------------------------------------------------------------------- //
 // guRadioStationListBox
@@ -153,6 +149,8 @@ class guRadioStationListBox : public guListView
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
+
+    virtual wxArrayString       GetColumnNames( void );
 
   public :
     guRadioStationListBox( wxWindow * parent, guDbLibrary * NewDb );
@@ -372,14 +370,15 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbLibrary * d
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
     m_StationsOrderDesc = Config->ReadNum( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );;
 
+    wxArrayString ColumnNames = GetColumnNames();
     // Create the Columns
     //int ColId;
     int index;
-    int count = sizeof( guRADIOSTATIONS_COLUMN_NAMES ) / sizeof( wxString );
+    int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         guListViewColumn * Column = new guListViewColumn(
-            guRADIOSTATIONS_COLUMN_NAMES[ index ] + ( ( index == m_StationsOrder ) ? ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ),
+            ColumnNames[ index ] + ( ( index == m_StationsOrder ) ? ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ),
             index,
             Config->ReadNum( wxString::Format( wxT( "RadioColSize%u" ), index ), 80, wxT( "Positions" ) )
         );
@@ -396,7 +395,7 @@ guRadioStationListBox::~guRadioStationListBox()
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     int index;
-    int count = sizeof( guRADIOSTATIONS_COLUMN_NAMES ) / sizeof( wxString );
+    int count = guRADIOSTATIONS_COLUMN_COUNT;
     for( index = 0; index < count; index++ )
     {
         Config->WriteNum( wxString::Format( wxT( "RadioColSize%u" ), index ), GetColumnWidth( index ), wxT( "Positions" ) );
@@ -404,6 +403,16 @@ guRadioStationListBox::~guRadioStationListBox()
 
     Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "General" ) );
     Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "General" ) );;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayString guRadioStationListBox::GetColumnNames( void )
+{
+    wxArrayString ColumnNames;
+    ColumnNames.Add( _( "Name" ) );
+    ColumnNames.Add( _( "BitRate" ) );
+    ColumnNames.Add( _( "Listeners" ) );
+    return ColumnNames;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -538,12 +547,13 @@ void guRadioStationListBox::SetStationsOrder( int order )
 
     m_Db->SetRadioStationsOrder( m_StationsOrder );
 
+    wxArrayString ColumnNames = GetColumnNames();
     int index;
-    int count = 3;
+    int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         SetColumnLabel( index,
-            guRADIOSTATIONS_COLUMN_NAMES[ index ]  + ( ( index == m_StationsOrder ) ?
+            ColumnNames[ index ]  + ( ( index == m_StationsOrder ) ?
                 ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
