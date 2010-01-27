@@ -35,91 +35,8 @@ wxArrayString m_SortChoices;
 wxArrayString m_FilterDateOption2Choices;
 
 // -------------------------------------------------------------------------------- //
-// guFilterItem
-// -------------------------------------------------------------------------------- //
-void guFilterItem::Set( int type, int option, const wxString &text )
+void inline InitArrayStrings( void )
 {
-    m_Type = type;
-    m_Option = option;
-    m_Text = text;
-    m_Number = 0;
-    SetFilterLabel();
-}
-
-// -------------------------------------------------------------------------------- //
-void guFilterItem::Set( int type, int option, int number, int option2 )
-{
-    m_Type = type;
-    m_Option = option;
-    m_Number = number;
-    m_Option2 = option2;
-    m_Text = wxEmptyString;
-    SetFilterLabel();
-}
-
-// -------------------------------------------------------------------------------- //
-void guFilterItem::SetFilterLabel( void )
-{
-    m_Label = m_FilterFieldChoices[ m_Type ] + wxT( " " );
-    switch( m_Type )
-    {
-        case guDYNAMIC_FILTER_TYPE_TITLE : // String
-        case guDYNAMIC_FILTER_TYPE_ARTIST :
-        case guDYNAMIC_FILTER_TYPE_ALBUM :
-        case guDYNAMIC_FILTER_TYPE_GENRE :
-        case guDYNAMIC_FILTER_TYPE_LABEL :
-        case guDYNAMIC_FILTER_TYPE_PATH :
-        {
-            m_Label += m_FilterTextOptionChoices[ m_Option ] + wxT( " " );
-            m_Label += m_Text;
-            break;
-        }
-
-        case guDYNAMIC_FILTER_TYPE_YEAR : // Year
-        {
-            m_Label += m_FilterYearOptionChoices[ m_Option ];
-            m_Label += wxString::Format( wxT( " %u" ), m_Number );
-            break;
-        }
-
-        case guDYNAMIC_FILTER_TYPE_RATING : // Numbers
-        case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :
-        {
-            m_Label += m_FilterNumberOptionChoices[ m_Option ];
-            m_Label += wxString::Format( wxT( " %u" ), m_Number );
-            break;
-        }
-
-        case guDYNAMIC_FILTER_TYPE_LENGTH : // Time
-        {
-            m_Label += m_FilterNumberOptionChoices[ m_Option ] + wxT( " " );
-            m_Label += LenToString( m_Number );
-            break;
-        }
-
-        case guDYNAMIC_FILTER_TYPE_LASTPLAY :
-        case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
-        {
-            m_Label += m_FilterDateOptionChoices[ m_Option ];
-            m_Label += wxString::Format( wxT( " %u " ), m_Number );
-            m_Label += m_FilterDateOption2Choices[ m_Option2 ];
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-// guDynPlayLIstEditor
-// -------------------------------------------------------------------------------- //
-guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist ) :
-  wxDialog( parent, wxID_ANY, _( "Dynamic Playlist Editor" ), wxDefaultPosition, wxSize( 600,400 ), wxDEFAULT_DIALOG_STYLE )
-{
-	int index;
-	int count;
-	m_PlayList = playlist;
-	m_Filters = &m_PlayList->m_Filters;
-	m_CurFilter = wxNOT_FOUND;
-	m_HasChanged = false;
-
     if( !m_FilterFieldChoices.Count() )
     {
         m_FilterFieldChoices.Add( _("Title") );
@@ -197,6 +114,96 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
         m_FilterDateOption2Choices.Add( _( "weeks" ) );
         m_FilterDateOption2Choices.Add( _( "months" ) );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+// guFilterItem
+// -------------------------------------------------------------------------------- //
+void guFilterItem::Set( int type, int option, const wxString &text )
+{
+    m_Type = type;
+    m_Option = option;
+    m_Text = text;
+    m_Number = 0;
+    SetFilterLabel();
+}
+
+// -------------------------------------------------------------------------------- //
+void guFilterItem::Set( int type, int option, int number, int option2 )
+{
+    m_Type = type;
+    m_Option = option;
+    m_Number = number;
+    m_Option2 = option2;
+    m_Text = wxEmptyString;
+    SetFilterLabel();
+}
+
+// -------------------------------------------------------------------------------- //
+void guFilterItem::SetFilterLabel( void )
+{
+    InitArrayStrings();
+    m_Label = m_FilterFieldChoices[ m_Type ] + wxT( " " );
+    switch( m_Type )
+    {
+        case guDYNAMIC_FILTER_TYPE_TITLE : // String
+        case guDYNAMIC_FILTER_TYPE_ARTIST :
+        case guDYNAMIC_FILTER_TYPE_ALBUM :
+        case guDYNAMIC_FILTER_TYPE_GENRE :
+        case guDYNAMIC_FILTER_TYPE_LABEL :
+        case guDYNAMIC_FILTER_TYPE_PATH :
+        {
+            m_Label += m_FilterTextOptionChoices[ m_Option ] + wxT( " " );
+            m_Label += m_Text;
+            break;
+        }
+
+        case guDYNAMIC_FILTER_TYPE_YEAR : // Year
+        {
+            m_Label += m_FilterYearOptionChoices[ m_Option ];
+            m_Label += wxString::Format( wxT( " %u" ), m_Number );
+            break;
+        }
+
+        case guDYNAMIC_FILTER_TYPE_RATING : // Numbers
+        case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :
+        {
+            m_Label += m_FilterNumberOptionChoices[ m_Option ];
+            m_Label += wxString::Format( wxT( " %u" ), m_Number );
+            break;
+        }
+
+        case guDYNAMIC_FILTER_TYPE_LENGTH : // Time
+        {
+            m_Label += m_FilterNumberOptionChoices[ m_Option ] + wxT( " " );
+            m_Label += LenToString( m_Number );
+            break;
+        }
+
+        case guDYNAMIC_FILTER_TYPE_LASTPLAY :
+        case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
+        {
+            m_Label += m_FilterDateOptionChoices[ m_Option ];
+            m_Label += wxString::Format( wxT( " %u " ), m_Number );
+            m_Label += m_FilterDateOption2Choices[ m_Option2 ];
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guDynPlayLIstEditor
+// -------------------------------------------------------------------------------- //
+guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist ) :
+  wxDialog( parent, wxID_ANY, _( "Dynamic Playlist Editor" ), wxDefaultPosition, wxSize( 600,400 ), wxDEFAULT_DIALOG_STYLE )
+{
+	int index;
+	int count;
+	m_PlayList = playlist;
+	m_Filters = &m_PlayList->m_Filters;
+	m_CurFilter = wxNOT_FOUND;
+	m_HasChanged = false;
+
+    InitArrayStrings();
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
