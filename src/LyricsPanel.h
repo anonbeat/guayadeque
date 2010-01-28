@@ -27,6 +27,7 @@
 #include <wx/bitmap.h>
 #include <wx/checkbox.h>
 #include <wx/colour.h>
+#include <wx/dnd.h>
 #include <wx/font.h>
 #include <wx/gdicmn.h>
 #include <wx/image.h>
@@ -56,6 +57,8 @@ enum guLYRIC_ENGINE_ID {
 class guLyricsPanel : public wxPanel
 {
   protected :
+    guDbLibrary *           m_Db;
+
     wxStaticText *          m_LyricTitle;
     wxHtmlWindow *          m_LyricText;
     guSearchLyricEngine *   m_LyricThread;
@@ -80,8 +83,8 @@ class guLyricsPanel : public wxPanel
 	void                    OnReloadBtnClick( wxCommandEvent& event );
     void                    OnSaveBtnClick( wxCommandEvent& event );
 	void                    OnUpdateChkBoxClicked( wxCommandEvent& event );
+	void                    SetAutoUpdate( const bool autoupdate );
     void                    OnTextUpdated( wxCommandEvent& event );
-//	void                      OnSearchBtnClick( wxCommandEvent& event );
     void                    OnContextMenu( wxContextMenuEvent &event );
     void                    CreateContextMenu( wxMenu * menu );
 
@@ -93,13 +96,29 @@ class guLyricsPanel : public wxPanel
     void                    OnServerSelected( wxCommandEvent &event );
 
   public :
-    guLyricsPanel( wxWindow * parent );
+    guLyricsPanel( wxWindow * parent, guDbLibrary * db );
     ~guLyricsPanel();
 
     void                    OnUpdatedTrack( wxCommandEvent &event );
     void                    SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch = false );
     //void                    ClearLyricThread( void );
+    void                    OnDropFiles( const wxArrayString &files );
 
+};
+
+// -------------------------------------------------------------------------------- //
+class guLyricsPanelDropTarget : public wxFileDropTarget
+{
+  private:
+    guLyricsPanel *         m_LyricsPanel;
+
+  public:
+    guLyricsPanelDropTarget( guLyricsPanel * lyricspanel );
+    ~guLyricsPanelDropTarget();
+
+    virtual bool            OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
+
+    virtual wxDragResult    OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
 };
 
 // -------------------------------------------------------------------------------- //

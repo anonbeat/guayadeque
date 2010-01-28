@@ -145,7 +145,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     // Lyrics Panel
     if( Config->ReadBool( wxT( "ShowLyrics" ), true, wxT( "ViewPanels" ) ) )
     {
-        m_LyricsPanel = new guLyricsPanel( m_CatNotebook );
+        m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db );
         m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
     }
     else
@@ -940,7 +940,7 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
     if( event.IsChecked() )
     {
         if( !m_LyricsPanel )
-            m_LyricsPanel = new guLyricsPanel( m_CatNotebook );
+            m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db );
 
         m_CatNotebook->InsertPage( wxMin( 3, m_CatNotebook->GetPageCount() ), m_LyricsPanel, _( "Lyrics" ), true );
     }
