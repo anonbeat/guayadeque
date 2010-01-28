@@ -22,7 +22,7 @@
 #include "Images.h"
 #include "Utils.h"
 
-#define guTRACKCOUNT_SIZE   120
+#define guTRACKCOUNT_SIZE   300
 
 // -------------------------------------------------------------------------------- //
 // guGauge
@@ -140,8 +140,8 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
     m_ASBitmap->SetToolTip( _( "Shows the status of the LastFM connection." ) );
 
-    m_TrackCount = new wxStaticText( this, wxID_ANY, wxEmptyString );
-    m_TrackCount->SetToolTip( _( "Shows the number of the selected tracks." ) );
+    m_SelInfo = new wxStaticText( this, wxID_ANY, wxEmptyString );
+    m_SelInfo->SetToolTip( _( "Shows information about the selected items." ) );
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
 }
@@ -170,11 +170,10 @@ void guStatusBar::OnSize( wxSizeEvent &event )
                         rect.y + 3 );
     }
 
-    if( m_TrackCount )
+    if( m_SelInfo )
     {
         GetFieldRect( GetFieldsCount() - 2, rect );
-        m_TrackCount->Move( rect.x + 3,
-                        rect.y + 3 );
+        m_SelInfo->Move( rect.x + 3, rect.y + 3 );
     }
 
     event.Skip();
@@ -281,18 +280,10 @@ int guStatusBar::RemoveGauge( int gaugeid )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::SetTrackCount( const int trackcnt, const wxString &label )
+void guStatusBar::SetSelInfo( const wxString &label )
 {
-    wxASSERT( m_TrackCount );
-
-    if( trackcnt != wxNOT_FOUND )
-    {
-        m_TrackCount->SetLabel( wxString::Format( wxT( "%u " ), trackcnt ) + label );
-    }
-    else
-    {
-        m_TrackCount->SetLabel( wxEmptyString );
-    }
+    wxASSERT( m_SelInfo );
+    m_SelInfo->SetLabel( label );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -36,7 +36,8 @@
 #define guRandom(x) (rand() % x)
 
 // -------------------------------------------------------------------------------- //
-wxString LenToString( int Len );
+wxString LenToString( unsigned int len );
+wxString SizeToString( wxFileOffset size );
 wxArrayString guSplitWords( const wxString &InputStr );
 wxImage * guGetRemoteImage( const wxString &url, int &imgtype );
 bool DownloadImage( const wxString &source, const wxString &taget, int maxwidth = -1, int maxheight = -1 );
@@ -46,7 +47,7 @@ bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings );
 wxString guURLEncode( const wxString &Source );
 int guWebExecute( const wxString &Url );
 int guExecute( const wxString &Command );
-unsigned int guGetFileSize( const wxString &FileName );
+wxFileOffset guGetFileSize( const wxString &FileName );
 wxString GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString, bool encoding = false );
 void CheckSymLinks( wxArrayString &libpaths );
 

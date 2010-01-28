@@ -71,7 +71,7 @@ class guTrack
     unsigned int    m_FileSize;
     int             m_Number;             // the track num of the song into the album
     int             m_Year;               // the year of the song
-    int             m_Length;             // the length of the song in seconds
+    unsigned int    m_Length;             // the length of the song in seconds
     int             m_Bitrate;
     int             m_Rating;
     int             m_PlayCount;
@@ -335,28 +335,13 @@ class guDbLibrary : public guDb
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
     wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );
 
-    int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
-    int                 UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
-    int                 AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
-    int                 DelPlaylistSetIds( const int plid, const wxArrayInt &setids );
-    int                 GetPlayListFiles( const int plid, wxFileDataObject * Files );
-    void                GetPlayLists( guListItems * PlayLists, const int type );
-    int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
-    int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks );
-    int                 GetPlayListSetIds( const int plid, wxArrayInt * setids );
-    void                DeletePlayList( const int plid );
-    void                SetPlayListName( const int plid, const wxString &plname );
-    void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
-    int                 CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist );
-    void                UpdateDynPlayList( const int plid, const guDynPlayList * playlist );
-    wxString            GetPlayListQuery( const int plid );
-    int                 GetPlayListType( const int plid );
-
     void                GetPaths( guListItems * Paths, bool FullList = false );
 
     bool                GetSong( const int songid, guTrack * song );
     int                 GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs );
     int                 GetSongs( guTrackArray * Songs );
+    void                GetTracksCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
+
     void                SetSongsOrder( const guTRACKS_ORDER order );
     guTRACKS_ORDER      GetSongsOrder( void ) const;
     bool                GetSongsOrderDesc( void ) const;
@@ -384,8 +369,22 @@ class guDbLibrary : public guDb
     int                 DelRadioLabel( const int LabelId );
     wxArrayInt          GetRadioLabels( void );
 
-    int                 SongCount( void );
-
+    int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
+    int                 UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
+    int                 AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
+    int                 DelPlaylistSetIds( const int plid, const wxArrayInt &setids );
+    int                 GetPlayListFiles( const int plid, wxFileDataObject * Files );
+    void                GetPlayLists( guListItems * PlayLists, const int type );
+    int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
+    int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks );
+    int                 GetPlayListSetIds( const int plid, wxArrayInt * setids );
+    void                DeletePlayList( const int plid );
+    void                SetPlayListName( const int plid, const wxString &plname );
+    void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
+    int                 CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist );
+    void                UpdateDynPlayList( const int plid, const guDynPlayList * playlist );
+    wxString            GetPlayListQuery( const int plid );
+    int                 GetPlayListType( const int plid );
 
     void                SetLibPath( const wxArrayString &NewPaths );
     int                 ReadFileTags( const char * filename );

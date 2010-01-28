@@ -45,7 +45,7 @@ class guPlayList : public guListView
     wxMutex         m_ItemsMutex;
     bool            m_StartPlaying;
     long            m_CurItem;
-    long            m_TotalLen;
+    unsigned int    m_TotalLen;
     long            m_MaxPlayedTracks;
     int             m_MinPlayListTracks;
     bool            m_DelTracksPLayed;

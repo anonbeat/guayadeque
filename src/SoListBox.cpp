@@ -201,8 +201,7 @@ void guSoListBox::GetItemsList( void )
 {
     m_Db->GetSongs( &m_Items );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SET_LIBTRACKS );
-    event.SetInt( m_Items.Count() );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 

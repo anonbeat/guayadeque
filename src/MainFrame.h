@@ -90,13 +90,13 @@ class guMainFrame : public wxFrame
     guMMKeys *                  m_MMKeys;
     guGSession *                m_GSession;
 
-    bool                        m_Initiated;
+//    bool                        m_Initiated;
     wxWindow *                  m_CurrentPage;
-    int                         m_LastCount;
-    int                         m_LibCount;
-    int                         m_RadCount;
-    int                         m_PLCount;
-    int                         m_PodCount;
+
+//    bool                        m_CountNeedUpdate;
+    wxLongLong                  m_SelCount;
+    wxLongLong                  m_SelLength;
+    wxLongLong                  m_SelSize;
 
     void                OnUpdateLibrary( wxCommandEvent &event );
     void                OnUpdatePodcasts( wxCommandEvent &event );
@@ -151,10 +151,11 @@ class guMainFrame : public wxFrame
     void                OnIdle( wxIdleEvent &event );
     void                OnPageChanged( wxNotebookEvent& event );
 
-    void                SetLibTracks( wxCommandEvent &event );
-    void                SetRadioStations( wxCommandEvent &event );
-    void                SetPlayListTracks( wxCommandEvent &event );
-    void                SetPodcasts( wxCommandEvent &event );
+//    void                SetLibTracks( wxCommandEvent &event );
+//    void                SetRadioStations( wxCommandEvent &event );
+//    void                SetPlayListTracks( wxCommandEvent &event );
+//    void                SetPodcasts( wxCommandEvent &event );
+    void                OnUpdateSelInfo( wxCommandEvent &event );
 
     //void                OnSysColorChanged( wxSysColourChangedEvent &event );
 

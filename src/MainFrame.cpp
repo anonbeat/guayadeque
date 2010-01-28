@@ -85,11 +85,10 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_UpdatePodcastsTimer = NULL;
     m_DownloadThread = NULL;
 
-    m_Initiated = false;
-    m_LibCount = 0;
-    m_RadCount = 0;
-    m_PLCount = 0;
-    m_PodCount = 0;
+//    m_Initiated = false;
+    m_SelCount = 0;
+    m_SelLength = 0;
+    m_SelSize = 0;
 
     //
     m_AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
@@ -183,7 +182,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	MultiSizer->Fit( MultiPanel );
 
 	m_PlayerSplitter->SplitVertically( m_PlayerPanel, MultiPanel, Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
-	MainFrameSizer->Add( m_PlayerSplitter, 1, wxEXPAND, 2 );
+	MainFrameSizer->Add( m_PlayerSplitter, 1, wxEXPAND, 5 );
 
 	this->SetSizer( MainFrameSizer );
 	this->Layout();
@@ -288,10 +287,10 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
 	m_CatNotebook->Connect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
 
-    Connect( ID_MAINFRAME_SET_LIBTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetLibTracks ), NULL, this );
-    Connect( ID_MAINFRAME_SET_RADIOSTATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetRadioStations ), NULL, this );
-    Connect( ID_MAINFRAME_SET_PLAYLISTTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPlayListTracks ), NULL, this );
-    Connect( ID_MAINFRAME_SET_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPodcasts ), NULL, this );
+    Connect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
+//    Connect( ID_MAINFRAME_SET_RADIOSTATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetRadioStations ), NULL, this );
+//    Connect( ID_MAINFRAME_SET_PLAYLISTTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPlayListTracks ), NULL, this );
+//    Connect( ID_MAINFRAME_SET_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPodcasts ), NULL, this );
 
     //Connect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guMainFrame::OnSysColorChanged ), NULL, this );
 
@@ -356,10 +355,10 @@ guMainFrame::~guMainFrame()
 
 	m_CatNotebook->Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
 
-    Disconnect( ID_MAINFRAME_SET_LIBTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetLibTracks ), NULL, this );
-    Disconnect( ID_MAINFRAME_SET_RADIOSTATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetRadioStations ), NULL, this );
-    Disconnect( ID_MAINFRAME_SET_PLAYLISTTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPlayListTracks ), NULL, this );
-    Disconnect( ID_MAINFRAME_SET_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPodcasts ), NULL, this );
+    Disconnect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
+//    Disconnect( ID_MAINFRAME_SET_RADIOSTATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetRadioStations ), NULL, this );
+//    Disconnect( ID_MAINFRAME_SET_PLAYLISTTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPlayListTracks ), NULL, this );
+//    Disconnect( ID_MAINFRAME_SET_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPodcasts ), NULL, this );
 
     //Disconnect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guMainFrame::OnSysColorChanged ), NULL, this );
 
@@ -1102,20 +1101,64 @@ void guMainFrame::OnGaugeRemove( wxCommandEvent &event )
 void guMainFrame::OnPageChanged( wxNotebookEvent &event )
 {
     m_CurrentPage = m_CatNotebook->GetCurrentPage();
-    m_MainStatusBar->SetTrackCount( wxNOT_FOUND );
-    m_LastCount = wxNOT_FOUND;
+    if( m_CurrentPage == ( wxWindow * ) m_LibPanel )
+    {
+        m_Db->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+        m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu tracks,   %s,   %s" ),
+            m_SelCount.GetValue(),
+            LenToString( m_SelLength.GetLo() ).c_str(),
+            SizeToString( m_SelSize.GetValue() ).c_str() ) );
+    }
+    else
+    {
+        m_MainStatusBar->SetSelInfo( wxEmptyString );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
+{
+    if( m_CurrentPage == ( wxWindow * ) m_LibPanel )
+    {
+        m_Db->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+        m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu tracks,   %s,   %s" ),
+            m_SelCount.GetValue(),
+            LenToString( m_SelLength.GetLo() ).c_str(),
+            SizeToString( m_SelSize.GetValue() ).c_str() ) );
+    }
+//    else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
+//    {
+//        m_Db->GetRadioCounters( &m_SelCount );
+//        m_SelLength = wxNOT_FOUND;
+//        m_SelSize = wxNOT_FOUND;
+//    }
+//    else if( m_CurrentPage == ( wxWindow * ) m_PlayListPanel )
+//    {
+////        m_Db->GetPlayListCounters( &m_SelCount, &m_SelLength, m_SelSize );
+//    }
+//    else if( m_CurrentPage == ( wxWindow * ) m_PodcastsPanel )
+//    {
+////        m_Db->GetPodcastsCounters( &m_SelCount, &m_SelLength, m_SelSize );
+//    }
+    else
+    {
+        //m_SelCount = wxNOT_FOUND;
+        //m_SelLength = wxNOT_FOUND;
+        //m_SelSize = wxNOT_FOUND;
+        m_MainStatusBar->SetSelInfo( wxEmptyString );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
-    if( !m_Initiated )
-    {
-        m_Initiated = true;
+//    if( !m_Initiated )
+//    {
+//        m_Initiated = true;
         //
         guConfig * Config = ( guConfig * ) guConfig::Get();
         m_PlayerSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
-        //Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
+        Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
 
         // If the database need to be updated
@@ -1143,40 +1186,40 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
         // Now we can start the dbus server
         m_DBusServer->Run();
 
-    }
+//    }
 
-    if( m_CurrentPage == ( wxWindow * ) m_LibPanel )
-    {
-        if( m_LastCount != m_LibCount )
-        {
-            m_MainStatusBar->SetTrackCount( m_LibCount, wxT( "tracks" ) );
-            m_LastCount = m_LibCount;
-        }
-    }
-    else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
-    {
-        if( m_LastCount != m_RadCount )
-        {
-            m_MainStatusBar->SetTrackCount( m_RadCount, wxT( "stations" ) );
-            m_LastCount = m_RadCount;
-        }
-    }
-    else if( m_CurrentPage == ( wxWindow * ) m_PlayListPanel )
-    {
-        if( m_LastCount != m_PLCount )
-        {
-            m_MainStatusBar->SetTrackCount( m_PLCount, wxT( "tracks" ) );
-            m_LastCount = m_PLCount;
-        }
-    }
-    else if( m_CurrentPage == ( wxWindow * ) m_PodcastsPanel )
-    {
-        if( m_LastCount != m_PodCount )
-        {
-            m_MainStatusBar->SetTrackCount( m_PodCount, wxT( "podcasts" ) );
-            m_LastCount = m_PodCount;
-        }
-    }
+//    if( m_CurrentPage == ( wxWindow * ) m_LibPanel )
+//    {
+//        if( m_LastCount != m_LibCount )
+//        {
+//            m_MainStatusBar->SetTrackCount( m_LibCount, wxT( "tracks" ) );
+//            m_LastCount = m_LibCount;
+//        }
+//    }
+//    else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
+//    {
+//        if( m_LastCount != m_RadCount )
+//        {
+//            m_MainStatusBar->SetTrackCount( m_RadCount, wxT( "stations" ) );
+//            m_LastCount = m_RadCount;
+//        }
+//    }
+//    else if( m_CurrentPage == ( wxWindow * ) m_PlayListPanel )
+//    {
+//        if( m_LastCount != m_PLCount )
+//        {
+//            m_MainStatusBar->SetTrackCount( m_PLCount, wxT( "tracks" ) );
+//            m_LastCount = m_PLCount;
+//        }
+//    }
+//    else if( m_CurrentPage == ( wxWindow * ) m_PodcastsPanel )
+//    {
+//        if( m_LastCount != m_PodCount )
+//        {
+//            m_MainStatusBar->SetTrackCount( m_PodCount, wxT( "podcasts" ) );
+//            m_LastCount = m_PodCount;
+//        }
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1316,33 +1359,26 @@ void guMainFrame::OnPodcastItemUpdated( wxCommandEvent &event )
     }
 }
 
-// -------------------------------------------------------------------------------- //
-void guMainFrame::SetLibTracks( wxCommandEvent &event )
-{
-    m_LibCount = event.GetInt();
-    m_LastCount = wxNOT_FOUND;
-}
-
-// -------------------------------------------------------------------------------- //
-void guMainFrame::SetRadioStations( wxCommandEvent &event )
-{
-    m_RadCount = event.GetInt();
-    m_LastCount = wxNOT_FOUND;
-}
-
-// -------------------------------------------------------------------------------- //
-void guMainFrame::SetPlayListTracks( wxCommandEvent &event )
-{
-    m_PLCount = event.GetInt();
-    m_LastCount = wxNOT_FOUND;
-}
-
-// -------------------------------------------------------------------------------- //
-void guMainFrame::SetPodcasts( wxCommandEvent &event )
-{
-    m_PodCount = event.GetInt();
-    m_LastCount = wxNOT_FOUND;
-}
+//// -------------------------------------------------------------------------------- //
+//void guMainFrame::SetRadioStations( wxCommandEvent &event )
+//{
+//    m_RadCount = event.GetInt();
+//    m_LastCount = wxNOT_FOUND;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guMainFrame::SetPlayListTracks( wxCommandEvent &event )
+//{
+//    m_PLCount = event.GetInt();
+//    m_LastCount = wxNOT_FOUND;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guMainFrame::SetPodcasts( wxCommandEvent &event )
+//{
+//    m_PodCount = event.GetInt();
+//    m_LastCount = wxNOT_FOUND;
+//}
 
 // -------------------------------------------------------------------------------- //
 // guUpdateCoversThread
