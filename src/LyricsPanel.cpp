@@ -35,8 +35,8 @@
 #include <wx/settings.h>
 #include <wx/xml/xml.h>
 
-#define guLYRICS_TEMPLATE_DEFAULT       wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\"><TT>%s</TT></font></center></body></html>" )
-#define guLYRICS_TEMPLATE_ULTGUITAR     wxT( "<html><body bgcolor=%s><font color=%s size=\"+1\"><TT>%s</TT></font></body></html>" )
+#define guLYRICS_TEMPLATE_DEFAULT       wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\">%s</font></center></body></html>" )
+#define guLYRICS_TEMPLATE_ULTGUITAR     wxT( "<html><body bgcolor=%s><font color=%s><TT>%s</TT></font></body></html>" )
 
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
@@ -387,7 +387,15 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     if( !LyricText.IsEmpty() )
     {
         m_CurrentLyricText = LyricText;
-        m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
+
+        // When reading lyrics from an mp3 file I have no way to know if its a
+        // Tab or a regular lyric so I search for what its usually used
+        // for tab representation to decide the template to use
+        // I know this is an ugly hack :/
+        if( LyricText.Find( wxT( "-----" ) ) != wxNOT_FOUND )
+            m_LyricsTemplate = guLYRICS_TEMPLATE_ULTGUITAR;
+        else
+            m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
 
         SetText( LyricText );
     }
