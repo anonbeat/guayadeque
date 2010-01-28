@@ -437,6 +437,8 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     m_Db = db;
     m_PlayerPanel = playerpanel;
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
@@ -468,7 +470,9 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 	DetailsPanel->SetSizer( DetailsSizer );
 	DetailsPanel->Layout();
 	DetailsSizer->Fit( DetailsPanel );
-	m_MainSplitter->SplitVertically( NamesPanel, DetailsPanel, 176 );
+	m_MainSplitter->SplitVertically( NamesPanel, DetailsPanel,
+        Config->ReadNum( wxT( "PlayListSashPos" ), 175, wxT( "Positions" ) ) );
+
 	MainSizer->Add( m_MainSplitter, 1, wxEXPAND, 5 );
 
 	this->SetSizer( MainSizer );
@@ -508,6 +512,13 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 // -------------------------------------------------------------------------------- //
 guPlayListPanel::~guPlayListPanel()
 {
+    // Save the Splitter positions into the main config
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        Config->WriteNum( wxT( "PlayListSashPos" ), m_MainSplitter->GetSashPosition(), wxT( "Positions" ) );
+    }
+
 	Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guPlayListPanel::OnPLNamesSelected ), NULL, this );
 	Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guPlayListPanel::OnPLNamesActivated ), NULL, this );
     Disconnect( ID_PLAYLIST_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLNamesPlay ) );
@@ -1086,7 +1097,8 @@ void guPlayListPanel::OnPLTracksSelectAlbum( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::MainSplitterOnIdle( wxIdleEvent &event )
 {
-    m_MainSplitter->SetSashPosition( 176 );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_MainSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayListSashPos" ), 175, wxT( "Positions" ) ) );
 	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
 

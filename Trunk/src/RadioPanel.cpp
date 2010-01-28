@@ -750,7 +750,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 	wxBoxSizer* GenreSizer;
 	GenreSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticText * GenreLabel = new wxStaticText( GenrePanel, wxID_ANY, _( "Genres " ), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText * GenreLabel = new wxStaticText( GenrePanel, wxID_ANY, _( "Genres" ), wxDefaultPosition, wxDefaultSize, 0 );
     GenreSizer->Add( GenreLabel, 0, wxALL|wxEXPAND, 5 );
 
     m_GenresTreeCtrl = new guRadioGenreTreeCtrl( GenrePanel, m_Db );
