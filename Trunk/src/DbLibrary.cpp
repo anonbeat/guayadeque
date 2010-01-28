@@ -3620,6 +3620,29 @@ int guDbLibrary::GetSongs( guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::GetTracksCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT COUNT(), SUM(song_length), SUM(song_filesize) FROM songs " );
+  if( GetFiltersCount() )
+  {
+    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      * count = dbRes.GetInt64( 0 );
+      * len   = dbRes.GetInt64( 1 );
+      * size  = dbRes.GetInt64( 2 );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::SetSongsOrder( const guTRACKS_ORDER order )
 {
     if( m_TracksOrder != order )

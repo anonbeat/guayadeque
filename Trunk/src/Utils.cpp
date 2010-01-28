@@ -27,13 +27,13 @@
 #include <wx/zstream.h>
 
 // -------------------------------------------------------------------------------- //
-wxString LenToString( int Len )
+wxString LenToString( unsigned int Len )
 {
     wxString LenStr;
-    int w = 0;
-    int d = 0;
-    int h = 0;
-    int m = 0;
+    unsigned int w = 0;
+    unsigned int d = 0;
+    unsigned int h = 0;
+    unsigned int m = 0;
     if( Len >= ( 7 * 24 * 60 * 60 ) )
     {
         w = Len / ( 7 * 24 * 60 * 60 );
@@ -70,6 +70,28 @@ wxString LenToString( int Len )
     LenStr += LenStr.Format( wxT( "%02u:%02u" ), m, Len );
 //    guLogMessage( wxT( "%i -> %s" ), Len, LenStr.c_str() );
     return LenStr;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString SizeToString( wxFileOffset size )
+{
+    double s = size;
+    wxString Formats[] = { wxT( "%f Bytes" ),
+                           wxT( "%.2f KB" ),
+                           wxT( "%.2f MB" ),
+                           wxT( "%.2f GB" ),
+                           wxT( "%.2f TB" ),
+                           wxT( "%.2f PB" ),
+                           wxT( "%.2f EB" ),
+                           wxT( "%.2f ZB" ),
+                           wxT( "%.2f YB" ) };
+    int i = 0;
+    while( i < 9 && s >= 1024 )
+    {
+       s = ( 100 * s / 1024 ) / 100.0;
+       i++;
+    }
+    return wxString::Format( Formats[ i ], s );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -309,7 +331,7 @@ int guExecute( const wxString &Command )
 }
 
 // -------------------------------------------------------------------------------- //
-unsigned int guGetFileSize( const wxString &FileName )
+wxFileOffset guGetFileSize( const wxString &FileName )
 {
     wxStructStat St;
     wxStat( FileName, &St );

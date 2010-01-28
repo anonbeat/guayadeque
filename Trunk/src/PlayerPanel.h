@@ -48,7 +48,7 @@ class guCurrentTrack : public guTrack
   public:
     // Only for the Current Played song
     bool            m_Loaded;
-    int             m_PlayTime;           // how many secs the song have been played
+    unsigned int    m_PlayTime;           // how many secs the song have been played
     guSongCoverType m_CoverType;
     wxString        m_CoverPath;
 
@@ -268,7 +268,7 @@ class guPlayerPanel : public wxPanel
     void                SetAlbumLabel( const wxString &albumname );
     void                SetTitleLabel( const wxString &trackname );
     void                SetRatingLabel( const int Rating );
-    void                UpdatePositionLabel( const int curpos );
+    void                UpdatePositionLabel( const unsigned int curpos );
     void                SetBitRate( int bitrate );
 
     void                UpdatedTracks( const guTrackArray * tracks );

@@ -729,11 +729,11 @@ void guTrackEditor::ReadItemData( void )
         m_DetailInfoStaticText->SetLabel( wxString::Format( wxT( "File Type\t: %s\n"
                                                "BitRate\t: %u Kbps\n"
                                                "Length\t: %s\n"
-                                               "File Size\t: %.1f MB" ),
+                                               "File Size\t: %s" ),
                                                Track->m_FileName.AfterLast( wxT( '.' ) ).c_str(),
                                                Track->m_Bitrate,
                                                LenToString( Track->m_Length ).c_str(),
-                                               float( guGetFileSize( Track->m_FileName ) ) / float( 1000000 ) ) );
+                                               SizeToString( guGetFileSize( Track->m_FileName ) ).c_str() ) );
         if( m_MBQuerySetArtistEnabled )
         {
             m_MBQueryArtistTextCtrl->SetValue( Track->m_ArtistName );

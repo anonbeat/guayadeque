@@ -307,6 +307,14 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
 	LimitSizer->Add( m_LimitChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
+
+	LimitSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_AddOnAnyCheckBox = new wxCheckBox( this, wxID_ANY, _("Add tracks on any criteria"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_AddOnAnyCheckBox->SetValue( m_PlayList->m_AnyOption );
+
+	LimitSizer->Add( m_AddOnAnyCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
 	ResultSizer->Add( LimitSizer, 1, wxEXPAND, 5 );
 
 	wxBoxSizer* SortSizer;
@@ -327,14 +335,6 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_DescCheckBox->Enable( m_SortCheckBox->IsChecked() );
 
 	SortSizer->Add( m_DescCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
-
-
-	SortSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
-	m_AddOnAnyCheckBox = new wxCheckBox( this, wxID_ANY, _("Add tracks on any criteria"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_AddOnAnyCheckBox->SetValue( m_PlayList->m_AnyOption );
-
-	SortSizer->Add( m_AddOnAnyCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	ResultSizer->Add( SortSizer, 1, wxEXPAND, 5 );
 

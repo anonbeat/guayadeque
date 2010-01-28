@@ -602,7 +602,7 @@ void guPlayerPanel::SetRatingLabel( const int rating )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::UpdatePositionLabel( const int curpos )
+void guPlayerPanel::UpdatePositionLabel( const unsigned int curpos )
 {
     wxString Label;
     if( !m_ShowRevTime || !m_MediaSong.m_Length )

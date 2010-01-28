@@ -62,24 +62,24 @@ class guPodcastItem
     void ReadXml( wxXmlNode * XmlNode );
 
   public :
-    int         m_Id;
-    wxString    m_Title;
-    wxString    m_Author;
-    int         m_ChId;
-    wxString    m_Channel;
-    //wxString    m_Link;
-    wxString    m_Summary;
-    wxString    m_Enclosure;
-    int         m_Time;
-    int         m_Length;
-    wxString    m_FileName;
-    int         m_FileSize;
-    wxString    m_Category;
+    int             m_Id;
+    wxString        m_Title;
+    wxString        m_Author;
+    int             m_ChId;
+    wxString        m_Channel;
+    //wxString        m_Link;
+    wxString        m_Summary;
+    wxString        m_Enclosure;
+    int             m_Time;
+    unsigned int    m_Length;
+    wxString        m_FileName;
+    unsigned int    m_FileSize;
+    wxString        m_Category;
 
-    int         m_PlayCount;
-    int         m_LastPlay;
-    int         m_AddedDate;
-    int         m_Status;
+    int             m_PlayCount;
+    int             m_LastPlay;
+    int             m_AddedDate;
+    int             m_Status;
 
     guPodcastItem()
     {
