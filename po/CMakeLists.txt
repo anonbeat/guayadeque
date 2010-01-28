@@ -9,10 +9,11 @@ MACRO(GETTEXT_PROCESS_POFILE _lang _moFile _poFile )
    ADD_CUSTOM_COMMAND(
       OUTPUT ${_gmoFile}
       COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o ${_absmoFile} ${_absFile}
-      DEPENDS ${_absmoFile} ${_absFile}
+      #DEPENDS ${_absmoFile} ${_absFile}
    )
    INSTALL(FILES ${_gmoFile} DESTINATION share/locale/${_lang}/LC_MESSAGES )
-   ADD_CUSTOM_TARGET( translations ALL DEPENDS ${_gmoFile})
+   #ADD_CUSTOM_TARGET( translations ALL DEPENDS ${_gmoFile})
+   ADD_CUSTOM_TARGET( ${_moBasename}.${_lang}.mo ALL DEPENDS ${_gmoFile} )
 ENDMACRO(GETTEXT_PROCESS_POFILE )
 
 # Current languages
