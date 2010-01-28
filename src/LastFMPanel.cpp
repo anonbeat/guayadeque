@@ -25,6 +25,7 @@
 #include "Images.h"
 #include "MainApp.h"
 #include "ShowImage.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 #include <wx/arrimpl.cpp>
@@ -1425,6 +1426,9 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     m_ArtistsUpdateThread = NULL;
     m_TracksUpdateThread = NULL;
 
+
+    SetDropTarget( new guLastFMPanelDropTarget( this ) );
+
     Connect( ID_LASTFM_UPDATE_ALBUMINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateAlbumItem ) );
     Connect( ID_LASTFM_UPDATE_ARTISTINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistInfo ) );
     Connect( ID_LASTFM_UPDATE_SIMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistItem ) );
@@ -1856,6 +1860,57 @@ void guLastFMPanel::OnEventsTitleDClick( wxMouseEvent &event )
     UpdateLayout();
 }
 
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnDropFiles( const wxArrayString &files )
+{
+    //guLogMessage( wxT( "guLastFMPanelDropTarget::OnDropFiles" ) );
+    guTrack Track;
+    if( m_Db->FindTrackFile( files[ 0 ], &Track ) )
+    {
+        guTrackChangeInfo ChangeInfo;
+
+        ChangeInfo.m_ArtistName = Track.m_ArtistName;
+        ChangeInfo.m_TrackName = Track.m_SongName;
+
+        SetUpdateEnable( false );
+        AppendTrackChangeInfo( &ChangeInfo );
+        ShowCurrentTrack();
+    }
+    else
+    {
+        guTagInfo * TagInfo;
+        TagInfo = guGetTagInfoHandler( files[ 0 ] );
+
+        if( TagInfo )
+        {
+            //guLogMessage( wxT( "Reading tags from the file..." ) );
+            if( TagInfo->Read() )
+            {
+                Track.m_FileName = files[ 0 ];
+                Track.m_Type = guTRACK_TYPE_NOTDB;
+                Track.m_ArtistName = TagInfo->m_ArtistName;
+                Track.m_AlbumName = TagInfo->m_AlbumName;
+                Track.m_SongName = TagInfo->m_TrackName;
+                Track.m_Number = TagInfo->m_Track;
+                Track.m_GenreName = TagInfo->m_GenreName;
+                Track.m_Length = TagInfo->m_Length;
+                Track.m_Year = TagInfo->m_Year;
+                Track.m_Rating = wxNOT_FOUND;
+
+                guTrackChangeInfo ChangeInfo;
+
+                ChangeInfo.m_ArtistName = Track.m_ArtistName;
+                ChangeInfo.m_TrackName = Track.m_SongName;
+
+                SetUpdateEnable( false );
+                AppendTrackChangeInfo( &ChangeInfo );
+                ShowCurrentTrack();
+            }
+
+            delete TagInfo;
+        }
+    }
+}
 
 // -------------------------------------------------------------------------------- //
 // guFetchLastFMInfoThread
@@ -2344,6 +2399,33 @@ guFetchTrackInfoThread::ExitCode guFetchTrackInfoThread::Entry()
         WaitDownloadThreads();
     }
     return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+// guLastFMPanelDropTarget
+// -------------------------------------------------------------------------------- //
+guLastFMPanelDropTarget::guLastFMPanelDropTarget( guLastFMPanel * lastfmpanel )
+{
+    m_LastFMPanel = lastfmpanel;
+}
+
+// -------------------------------------------------------------------------------- //
+guLastFMPanelDropTarget::~guLastFMPanelDropTarget()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLastFMPanelDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+{
+    m_LastFMPanel->OnDropFiles( files );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxDragResult guLastFMPanelDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
+{
+    //printf( "guLastFMPanelDropTarget::OnDragOver... %d - %d\n", x, y );
+    return wxDragCopy;
 }
 
 // -------------------------------------------------------------------------------- //
