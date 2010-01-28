@@ -1,5 +1,6 @@
 
-  * Last.fm accept now drop audio files on it to show the information about the file
+  * LyricsPanel accept now drop audio files on it to show the lyrics
+  * Last.fm panel accept now drop audio files on it to show the information
   * Added italian translation
   * Added Ultimate-guitar.com as lyrics source for guitar tabs
   * If the track length is not correctly read by taglib read at play time using gstreamer

@@ -39,9 +39,10 @@
 #define guLYRICS_TEMPLATE_ULTGUITAR     wxT( "<html><body bgcolor=%s><font color=%s><TT>%s</TT></font></body></html>" )
 
 // -------------------------------------------------------------------------------- //
-guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
+guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
+    m_Db = db;
     m_LyricThread = NULL;
     m_UpdateEnabled = true;
     m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
@@ -144,6 +145,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent ) :
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+    SetDropTarget( new guLyricsPanelDropTarget( this ) );
 
 	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
 	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
@@ -269,7 +271,17 @@ void guLyricsPanel::OnTextUpdated( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnUpdateChkBoxClicked( wxCommandEvent& event )
 {
-    m_UpdateEnabled = m_UpdateCheckBox->IsChecked();
+    SetAutoUpdate( m_UpdateCheckBox->IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
+{
+    m_UpdateEnabled = autoupdate;
+    if( m_UpdateEnabled != m_UpdateCheckBox->IsChecked() )
+    {
+        m_UpdateCheckBox->SetValue( autoupdate );
+    }
     if( m_UpdateEnabled )
     {
         m_ArtistTextCtrl->SetValue( m_CurrentTrackInfo.m_ArtistName );
@@ -526,6 +538,91 @@ void guLyricsPanel::OnLyricsPrint( wxCommandEvent &event )
 
         delete PrintData;
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnDropFiles( const wxArrayString &files )
+{
+    //guLogMessage( wxT( "guLastFMPanelDropTarget::OnDropFiles" ) );
+    guTrack Track;
+    if( m_Db->FindTrackFile( files[ 0 ], &Track ) )
+    {
+        guTrackChangeInfo ChangeInfo;
+
+        ChangeInfo.m_ArtistName = Track.m_ArtistName;
+        ChangeInfo.m_TrackName = Track.m_SongName;
+
+        m_CurrentFileName = files[ 0 ];
+
+        SetAutoUpdate( false );
+
+        m_CurrentTrackInfo = ChangeInfo;
+        SetTrack( &ChangeInfo );
+    }
+    else
+    {
+        guTagInfo * TagInfo;
+        TagInfo = guGetTagInfoHandler( files[ 0 ] );
+
+        if( TagInfo )
+        {
+            //guLogMessage( wxT( "Reading tags from the file..." ) );
+            if( TagInfo->Read() )
+            {
+                Track.m_FileName = files[ 0 ];
+                Track.m_Type = guTRACK_TYPE_NOTDB;
+                Track.m_ArtistName = TagInfo->m_ArtistName;
+                Track.m_AlbumName = TagInfo->m_AlbumName;
+                Track.m_SongName = TagInfo->m_TrackName;
+                Track.m_Number = TagInfo->m_Track;
+                Track.m_GenreName = TagInfo->m_GenreName;
+                Track.m_Length = TagInfo->m_Length;
+                Track.m_Year = TagInfo->m_Year;
+                Track.m_Rating = wxNOT_FOUND;
+
+                guTrackChangeInfo ChangeInfo;
+
+                ChangeInfo.m_ArtistName = Track.m_ArtistName;
+                ChangeInfo.m_TrackName = Track.m_SongName;
+
+                m_CurrentFileName = files[ 0 ];
+
+                SetAutoUpdate( false );
+
+                m_CurrentTrackInfo = ChangeInfo;
+                SetTrack( &ChangeInfo );
+            }
+
+            delete TagInfo;
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guLyricsPanelDropTarget
+// -------------------------------------------------------------------------------- //
+guLyricsPanelDropTarget::guLyricsPanelDropTarget( guLyricsPanel * lyricspanel )
+{
+    m_LyricsPanel = lyricspanel;
+}
+
+// -------------------------------------------------------------------------------- //
+guLyricsPanelDropTarget::~guLyricsPanelDropTarget()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLyricsPanelDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+{
+    m_LyricsPanel->OnDropFiles( files );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxDragResult guLyricsPanelDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
+{
+    //printf( "guLyricsPanelDropTarget::OnDragOver... %d - %d\n", x, y );
+    return wxDragCopy;
 }
 
 // -------------------------------------------------------------------------------- //
