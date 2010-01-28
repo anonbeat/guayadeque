@@ -561,12 +561,27 @@ class guLastFMPanel : public wxScrolledWindow
 	void    ShowCurrentTrack( void );
 	void    SetUpdateEnable( bool value );
 	void    UpdateLayout( void );
+	void    OnDropFiles( const wxArrayString &files );
 
     friend class guFetchLastFMInfoThread;
     friend class guFetchAlbumInfoThread;
     friend class guFetchSimilarArtistInfoThread;
     friend class guFetchTrackInfoThread;
     friend class guDownloadImageThread;
+};
+
+// -------------------------------------------------------------------------------- //
+class guLastFMPanelDropTarget : public wxFileDropTarget
+{
+  private:
+    guLastFMPanel *     m_LastFMPanel;
+  public:
+    guLastFMPanelDropTarget( guLastFMPanel * lastfmpanel );
+    ~guLastFMPanelDropTarget();
+
+    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
+
+    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
 };
 
 #endif
