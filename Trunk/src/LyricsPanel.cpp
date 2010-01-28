@@ -304,6 +304,7 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
 {
     guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
     SetTrack( &TrackChangeInfo, true );
+    m_ReloadButton->Enable( false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -477,6 +478,7 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     {
         SetText( _( "No lyrics found for this song." ) );
     }
+    m_ReloadButton->Enable( true );
 }
 
 // -------------------------------------------------------------------------------- //
