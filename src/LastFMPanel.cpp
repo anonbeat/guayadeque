@@ -263,7 +263,7 @@ void guLastFMInfoCtrl::OnCopyToClipboard( wxCommandEvent &event )
     if( wxTheClipboard->Open() )
     {
         wxTheClipboard->Clear();
-        if ( !wxTheClipboard->AddData( new wxTextDataObject( GetSearchText() ) ) )
+        if( !wxTheClipboard->AddData( new wxTextDataObject( GetSearchText() ) ) )
         {
             guLogError( wxT( "Can't copy data to the clipboard" ) );
         }

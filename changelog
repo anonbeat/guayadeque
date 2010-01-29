@@ -1,4 +1,5 @@
 
+  * In Lyrics you can paste the content of the clipboard
   * LyricsPanel accept now drop audio files on it to show the lyrics
   * Last.fm panel accept now drop audio files on it to show the information
   * Added italian translation

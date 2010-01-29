@@ -467,7 +467,7 @@ guPlayerPanel::~guPlayerPanel()
         if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) )
         {
             if( ( m_LastPlayState != wxMEDIASTATE_STOPPED ) &&
-                ( m_MediaSong.m_Length >= ( Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) * 60 ) ) )
+                ( m_MediaSong.m_Length >= ( unsigned int ) ( Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) * 60 ) ) )
             {
                 Config->WriteNum( wxT( "CurrentTrackPos" ), m_LastCurPos, wxT( "General" ) );
             }
