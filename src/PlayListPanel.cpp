@@ -1095,6 +1095,22 @@ void guPlayListPanel::OnPLTracksSelectAlbum( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guPlayListPanel::GetPlayListCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+{
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    if( ItemId.IsOk() )
+    {
+        guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
+        if( ItemData )
+        {
+            m_Db->GetPlayListCounters( ItemData->GetData(), ItemData->GetType(), count, len, size );
+            return true;
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayListPanel::MainSplitterOnIdle( wxIdleEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();

@@ -1101,18 +1101,8 @@ void guMainFrame::OnGaugeRemove( wxCommandEvent &event )
 void guMainFrame::OnPageChanged( wxNotebookEvent &event )
 {
     m_CurrentPage = m_CatNotebook->GetCurrentPage();
-    if( m_CurrentPage == ( wxWindow * ) m_LibPanel )
-    {
-        m_Db->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
-        m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu tracks,   %s,   %s" ),
-            m_SelCount.GetValue(),
-            LenToString( m_SelLength.GetLo() ).c_str(),
-            SizeToString( m_SelSize.GetValue() ).c_str() ) );
-    }
-    else
-    {
-        m_MainStatusBar->SetSelInfo( wxEmptyString );
-    }
+
+    OnUpdateSelInfo( event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1121,25 +1111,40 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     if( m_CurrentPage == ( wxWindow * ) m_LibPanel )
     {
         m_Db->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+
         m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu tracks,   %s,   %s" ),
             m_SelCount.GetValue(),
             LenToString( m_SelLength.GetLo() ).c_str(),
             SizeToString( m_SelSize.GetValue() ).c_str() ) );
     }
-//    else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
-//    {
-//        m_Db->GetRadioCounters( &m_SelCount );
-//        m_SelLength = wxNOT_FOUND;
-//        m_SelSize = wxNOT_FOUND;
-//    }
-//    else if( m_CurrentPage == ( wxWindow * ) m_PlayListPanel )
-//    {
-////        m_Db->GetPlayListCounters( &m_SelCount, &m_SelLength, m_SelSize );
-//    }
-//    else if( m_CurrentPage == ( wxWindow * ) m_PodcastsPanel )
-//    {
-////        m_Db->GetPodcastsCounters( &m_SelCount, &m_SelLength, m_SelSize );
-//    }
+    else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
+    {
+        m_Db->GetRadioCounter( &m_SelCount );
+        m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu stations" ), m_SelCount.GetValue() ) );
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_PlayListPanel )
+    {
+        if( m_PlayListPanel->GetPlayListCounters( &m_SelCount, &m_SelLength, &m_SelSize ) )
+        {
+            m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu tracks,   %s,   %s" ),
+                m_SelCount.GetValue(),
+                LenToString( m_SelLength.GetLo() ).c_str(),
+                SizeToString( m_SelSize.GetValue() ).c_str() ) );
+        }
+        else
+        {
+            m_MainStatusBar->SetSelInfo( wxEmptyString );
+        }
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_PodcastsPanel )
+    {
+        m_Db->GetPodcastCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+
+        m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu podcasts,   %s,   %s" ),
+            m_SelCount.GetValue(),
+            LenToString( m_SelLength.GetLo() ).c_str(),
+            SizeToString( m_SelSize.GetValue() ).c_str() ) );
+    }
     else
     {
         //m_SelCount = wxNOT_FOUND;

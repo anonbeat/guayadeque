@@ -1059,9 +1059,8 @@ void guPodcastListBox::GetItemsList( void )
 {
     m_Db->GetPodcastItems( &m_PodItems );
 
-//    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SET_PODCASTS );
-//    event.SetInt( m_PodItems.Count() );
-//    AddPendingEvent( event );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    AddPendingEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -2794,6 +2794,85 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::GetPlayListCounters( const int plid, const int pltype,
+                            wxLongLong * count, wxLongLong * len, wxLongLong * size )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  if( plid )
+  {
+    if( pltype == GUPLAYLIST_STATIC )
+    {
+      query = wxT( "SELECT COUNT(), SUM( song_length ), SUM( song_filesize ) FROM songs " );
+      query += wxString::Format( wxT( ", plsets WHERE plset_songid = song_id AND plset_plid = %u" ), plid );
+
+      dbRes = ExecuteQuery( query );
+
+      if( dbRes.NextRow() )
+      {
+          * count = dbRes.GetInt64( 0 );
+          * len   = dbRes.GetInt64( 1 );
+          * size  = dbRes.GetInt64( 2 );
+      }
+      dbRes.Finalize();
+    }
+    else //GUPLAYLIST_DYNAMIC
+    {
+      guDynPlayList PlayList;
+      GetDynamicPlayList( plid, &PlayList );
+
+      query = wxT( "SELECT COUNT(), SUM( song_length ), SUM( song_filesize ) FROM songs " ) +
+              DynPlayListToSQLQuery( &PlayList );
+
+      dbRes = ExecuteQuery( query );
+
+      //guLogMessage( wxT( "%s" ), query.c_str() );
+
+      if( dbRes.NextRow() )
+      {
+          if( PlayList.m_Limited )
+          {
+              switch( PlayList.m_LimitType )
+              {
+                  case guDYNAMIC_FILTER_LIMIT_TRACKS : // TRACKS
+                    * count = PlayList.m_LimitValue;
+                    * len   = dbRes.GetInt64( 1 );
+                    * size  = dbRes.GetInt64( 2 );
+                    break;
+
+                  case guDYNAMIC_FILTER_LIMIT_MINUTES : // Minutes -> to seconds
+                    * count = dbRes.GetInt64( 0 );
+                    * len   = PlayList.m_LimitValue * 60;
+                    * size  = dbRes.GetInt64( 2 );
+                    break;
+
+                  case guDYNAMIC_FILTER_LIMIT_MEGABYTES : // MB -> To bytes
+                    * count = dbRes.GetInt64( 0 );
+                    * len   = dbRes.GetInt64( 1 );
+                    * size  = PlayList.m_LimitValue * 1000;
+                    break;
+
+                  case guDYNAMIC_FILTER_LIMIT_GIGABYTES : // GB -> to bytes
+                    * count = dbRes.GetInt64( 0 );
+                    * len   = dbRes.GetInt64( 1 );
+                    * size  = PlayList.m_LimitValue * 1000000;
+                    break;
+              }
+          }
+          else
+          {
+              * count = dbRes.GetInt64( 0 );
+              * len   = dbRes.GetInt64( 1 );
+              * size  = dbRes.GetInt64( 2 );
+          }
+      }
+      dbRes.Finalize();
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPlayListSetIds( const int plid, wxArrayInt * setids )
 {
   wxString query;
@@ -4530,6 +4609,73 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::GetRadioCounter( wxLongLong * count )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  if( !GetRadioFiltersCount() )
+  {
+    query = wxT( "SELECT COUNT() FROM radiostations WHERE " );
+    query += wxString::Format( wxT( "radiostation_isuser = %u " ), m_RadioIsUser );
+  }
+  else
+  {
+    //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
+    query = wxT( "SELECT COUNT() FROM radiostations, radiogenres" );
+
+    //else
+    wxString subquery = wxEmptyString;
+    if( m_RaLaFilters.Count() )
+    {
+        query += wxT( ", radiosetlabels WHERE radiostation_id = radiosetlabel_stationid AND " );
+        subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
+    }
+    else
+    {
+        query += wxT( " WHERE " );
+    }
+
+    if( !subquery.IsEmpty() )
+        subquery += wxT( " AND " );
+    subquery += wxString::Format( wxT( " radiostation_isuser = %u " ), m_RadioIsUser );
+
+    if( m_RaGeFilters.Count() )
+    {
+        //if( !subquery.IsEmpty() )
+        //{
+        //    subquery += wxT( " AND " );
+        //}
+        subquery += wxT( " AND radiostation_genreid = radiogenre_id AND " );
+        subquery += ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
+    }
+
+    if( m_RaTeFilters.Count() )
+    {
+        //if( !subquery.IsEmpty() )
+        //{
+            subquery += wxT( " AND " );
+        //}
+        subquery += RadioFiltersSQL();
+    }
+
+    if( !subquery.IsEmpty() )
+    {
+        query = query + subquery;
+    }
+  }
+
+  //guLogMessage( wxT( "GetRadioStations\n%s" ), query.c_str() );
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      * count = dbRes.GetInt64( 0 );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::DelRadioStations( const wxArrayInt &RadioGenresIds )
 {
   wxString query;
@@ -5184,6 +5330,32 @@ int guDbLibrary::GetPodcastItems( guPodcastItemArray * items )
   }
   dbRes.Finalize();
   return items->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetPodcastCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT COUNT(), SUM( podcastitem_length ), SUM( podcastitem_filesize ) "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
+
+  if( m_PodChFilters.Count() )
+  {
+        query += wxT( " AND " ) + ArrayToFilter( m_PodChFilters, wxT( "podcastitem_chid" ) );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      * count = dbRes.GetInt64( 0 );
+      * len   = dbRes.GetInt64( 1 );
+      * size  = dbRes.GetInt64( 2 );
+  }
+  dbRes.Finalize();
 }
 
 // -------------------------------------------------------------------------------- //
