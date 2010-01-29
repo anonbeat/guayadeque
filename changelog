@@ -1,5 +1,6 @@
 
   * The genre edit field shows now all existing genres to choose one of them 
+  * In status bar now is shown the leng of the current selection and the size 
   * If a filter is set the label is highlighted to indicate it even when its hidden
   * In Lyrics you can paste the content of the clipboard
   * LyricsPanel accept now drop audio files on it to show the lyrics
