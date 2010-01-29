@@ -38,6 +38,10 @@ const wxEventType guTrackEditEvent = wxNewEventType();
 guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray * songs,
     guImagePtrArray * images, wxArrayString * lyrics )
 {
+    int index;
+    int count;
+	m_Db = db;
+
     wxPanel *           SongListPanel;
     wxPanel *           MainDetailPanel;
     wxNotebook *        MainNoteBook;
@@ -174,8 +178,19 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	GeStaticText->Wrap( -1 );
 	DataFlexSizer->Add( GeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-	m_GenreTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_GenreTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+//	m_GenreTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+//	DataFlexSizer->Add( m_GenreTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+    guListItems Genres;
+    m_Db->GetGenres( &Genres, true );
+    count = Genres.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !Genres[ index ].m_Name.IsEmpty() )
+            m_Genres.Add( Genres[ index ].m_Name );
+    }
+
+	m_GenreComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Genres, wxCB_DROPDOWN );
+	DataFlexSizer->Add( m_GenreComboBox, 1, wxEXPAND|wxTOP|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_YeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_YeCopyButton->SetToolTip( _( "Copy the Year to all songs you are editing" ) );
@@ -515,14 +530,12 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_CurItem = 0;
 	m_Items = songs;
 	m_Images = images;
-	m_Db = db;
 	m_Lyrics = lyrics;
 	m_LyricThread = NULL;
 	m_CurrentRating = -1;
 	m_RatingChanged = false;
 	wxArrayString ItemsText;
-	int index;
-	int count = m_Items->Count();
+	count = m_Items->Count();
 	for( index = 0; index < count; index++ )
 	{
         ItemsText.Add( ( * m_Items )[ index ].m_FileName );
@@ -547,6 +560,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_YeCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
     m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guTrackEditor::OnRatingChanged ), NULL, this );
+	m_GenreComboBox->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnGenreTextChanged ), NULL, this );
 
 	m_AddPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
@@ -582,11 +596,13 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	//
     // Force the 1st listbox item to be selected
 	m_SongListBox->SetSelection( 0 );
-    wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, m_SongListBox->GetId() );
-    event.SetEventObject( m_SongListBox );
-    event.SetExtraLong( 1 );
-    event.SetInt( 0 );
-    wxPostEvent( m_SongListBox, event );
+//    wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, m_SongListBox->GetId() );
+//    event.SetEventObject( m_SongListBox );
+//    event.SetExtraLong( 1 );
+//    event.SetInt( 0 );
+//    wxPostEvent( m_SongListBox, event );
+    m_CurItem = 0;
+    ReadItemData();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -614,6 +630,7 @@ guTrackEditor::~guTrackEditor()
 	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
     m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guTrackEditor::OnRatingChanged ), NULL, this );
+	m_GenreComboBox->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnGenreTextChanged ), NULL, this );
 
 	m_AddPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
@@ -723,7 +740,7 @@ void guTrackEditor::ReadItemData( void )
         m_AlbumTextCtrl->SetValue( Track->m_AlbumName );
         m_TitleTextCtrl->SetValue( Track->m_SongName );
         m_NumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Number ) );
-        m_GenreTextCtrl->SetValue( Track->m_GenreName );
+        m_GenreComboBox->SetValue( Track->m_GenreName );
         m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
         m_Rating->SetRating( Track->m_Rating );
         m_DetailInfoStaticText->SetLabel( wxString::Format( wxT( "File Type\t: %s\n"
@@ -753,7 +770,7 @@ void guTrackEditor::ReadItemData( void )
         m_AlbumTextCtrl->SetValue( wxEmptyString );
         m_TitleTextCtrl->SetValue( wxEmptyString );
         m_NumberTextCtrl->SetValue( wxEmptyString );
-        m_GenreTextCtrl->SetValue( wxEmptyString );
+        m_GenreComboBox->SetValue( wxEmptyString );
         m_YearTextCtrl->SetValue( wxEmptyString );
         m_Rating->SetRating( -1 );
         m_DetailInfoStaticText->SetLabel( wxEmptyString );
@@ -785,8 +802,8 @@ void guTrackEditor::WriteItemData( void )
           ( * m_Items )[ m_CurItem ].m_SongName = m_TitleTextCtrl->GetLineText( 0 );
         if( m_NumberTextCtrl->IsModified() )
           m_NumberTextCtrl->GetLineText( 0 ).ToLong( ( long int * ) &( * m_Items )[ m_CurItem ].m_Number );
-        if( m_GenreTextCtrl->IsModified() )
-          ( * m_Items )[ m_CurItem ].m_GenreName = m_GenreTextCtrl->GetLineText( 0 );
+        //if( m_GenreComboBox->IsModified() )
+          ( * m_Items )[ m_CurItem ].m_GenreName = m_GenreComboBox->GetValue();
         if( m_YearTextCtrl->IsModified() )
            m_YearTextCtrl->GetLineText( 0 ).ToLong( ( long * ) &( * m_Items )[ m_CurItem ].m_Year );
         if( m_RatingChanged )
@@ -843,7 +860,7 @@ void guTrackEditor::OnNuCopyButtonClicked( wxCommandEvent& event )
 void guTrackEditor::OnGeCopyButtonClicked( wxCommandEvent& event )
 {
     int index;
-    wxString CurData = m_GenreTextCtrl->GetLineText( 0 );
+    wxString CurData = m_GenreComboBox->GetValue();
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_GenreName = CurData;
@@ -1519,6 +1536,24 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
         delete Content;
     }
     m_LyricReloadButton->Enable( true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnGenreTextChanged( wxCommandEvent &event )
+{
+    wxString GenreText = m_GenreComboBox->GetValue().Lower();
+    int index;
+    int count = m_Genres.Count();
+    wxArrayString SetGenres;
+    for( index = 0; index < count; index++ )
+    {
+        if( m_Genres[ index ].Lower().Find( GenreText ) != wxNOT_FOUND )
+        {
+            SetGenres.Add( m_Genres[ index ] );
+        }
+    }
+    m_GenreComboBox->Clear();
+    m_GenreComboBox->Append( SetGenres );
 }
 
 // -------------------------------------------------------------------------------- //
