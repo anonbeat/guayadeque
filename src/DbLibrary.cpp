@@ -391,8 +391,6 @@ int guDbLibrary::GetDbVersion( void )
   }
   dbRes.Finalize();
 
-  guLogMessage( wxT( "DbVersion %u" ), RetVal );
-
   return RetVal;
 }
 
