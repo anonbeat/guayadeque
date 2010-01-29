@@ -60,6 +60,7 @@ class guTrackEditor : public wxDialog
 {
   private:
     guTrackArray *          m_Items;
+    wxArrayString           m_Genres;
     guImagePtrArray *       m_Images;
     wxArrayString *         m_Lyrics;
     guSearchLyricEngine *   m_LyricThread;
@@ -87,7 +88,8 @@ class guTrackEditor : public wxDialog
     wxBitmapButton *        m_NuCopyButton;
     wxTextCtrl *            m_NumberTextCtrl;
     wxBitmapButton *        m_GeCopyButton;
-    wxTextCtrl *            m_GenreTextCtrl;
+    //wxTextCtrl *            m_GenreTextCtrl;
+    wxComboBox *            m_GenreComboBox;
     wxBitmapButton *        m_YeCopyButton;
     wxTextCtrl *            m_YearTextCtrl;
     wxBitmapButton *        m_RaCopyButton;
@@ -152,6 +154,8 @@ class guTrackEditor : public wxDialog
     void OnGeCopyButtonClicked( wxCommandEvent &event );
     void OnYeCopyButtonClicked( wxCommandEvent &event );
     void OnRaCopyButtonClicked( wxCommandEvent &event );
+    void OnGenreTextChanged( wxCommandEvent& event );
+
 
     void OnMBrainzAddButtonClicked( wxCommandEvent &event );
     void OnMBrainzAlbumsFound( wxCommandEvent &event );
