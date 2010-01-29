@@ -89,6 +89,7 @@ class guLyricsPanel : public wxPanel
     void                    CreateContextMenu( wxMenu * menu );
 
     void                    OnLyricsCopy( wxCommandEvent &event );
+    void                    OnLyricsPaste( wxCommandEvent &event );
     void                    OnLyricsPrint( wxCommandEvent &event );
 
     void                    OnConfigUpdated( wxCommandEvent &event );

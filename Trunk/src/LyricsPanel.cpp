@@ -156,6 +156,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 
     m_LyricText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
     Connect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
+    Connect( ID_LYRICS_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPaste ), NULL, this );
     Connect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLyricsPanel::OnConfigUpdated ), NULL, this );
@@ -175,6 +176,7 @@ guLyricsPanel::~guLyricsPanel()
 
     m_LyricText->Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
     Disconnect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
+    Disconnect( ID_LYRICS_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPaste ), NULL, this );
     Disconnect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLyricsPanel::OnConfigUpdated ), NULL, this );
@@ -230,6 +232,20 @@ void guLyricsPanel::CreateContextMenu( wxMenu * menu )
     MenuItem = new wxMenuItem( menu, ID_LYRICS_COPY, _( "Copy to clipboard" ), _( "Copy the content of the lyric to clipboard" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     menu->Append( MenuItem );
+
+    if( wxTheClipboard->Open() )
+    {
+        if( wxTheClipboard->IsSupported( wxDF_TEXT ) )
+        {
+            wxTextDataObject data;
+            if( wxTheClipboard->GetData( data ) )
+            {
+                MenuItem = new wxMenuItem( menu, ID_LYRICS_PASTE, _( "Paste" ), _( "Paste the content of the lyric from clipboard" ) );
+                menu->Append( MenuItem );
+            }
+        }
+        wxTheClipboard->Close();
+    }
 
     menu->AppendSeparator();
 
@@ -487,11 +503,43 @@ void guLyricsPanel::OnLyricsCopy( wxCommandEvent &event )
     if( wxTheClipboard->Open() )
     {
         wxTheClipboard->Clear();
-        if ( !wxTheClipboard->AddData( new wxTextDataObject( m_TrackTextCtrl->GetValue() + wxT( " / " ) +
+        if( !wxTheClipboard->AddData( new wxTextDataObject( m_TrackTextCtrl->GetValue() + wxT( " / " ) +
                                                              m_ArtistTextCtrl->GetValue() + wxT( "\n\n" ) +
-                                                             m_CurrentLyricText.c_str() ) ) )
+                                                             m_CurrentLyricText ) ) )
         {
             guLogError( wxT( "Can't copy data to the clipboard" ) );
+        }
+        wxTheClipboard->Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the clipboard object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnLyricsPaste( wxCommandEvent &event )
+{
+    if( wxTheClipboard->Open() )
+    {
+        if( wxTheClipboard->IsSupported( wxDF_TEXT ) )
+        {
+            wxTextDataObject data;
+            if( wxTheClipboard->GetData( data ) )
+            {
+                m_CurrentLyricText = data.GetText();
+
+                SetText( m_CurrentLyricText );
+
+                if( m_WriteLyrics && m_UpdateEnabled )
+                {
+                    SaveLyrics();
+                }
+                else
+                {
+                    m_SaveButton->Enable( !m_CurrentLyricText.IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
+                }
+            }
         }
         wxTheClipboard->Close();
     }
