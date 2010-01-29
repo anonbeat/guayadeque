@@ -188,6 +188,9 @@ class guPlayerPanel : public wxPanel
 
     guListItems             m_FilterPlayLists;
 
+	wxColor                 m_NormalColor;
+	wxColor                 m_SetColor;
+
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
@@ -222,6 +225,8 @@ class guPlayerPanel : public wxPanel
     void                CheckFiltersVisible( void );
 
     void                OnFiltersLabelDClick( wxMouseEvent &event );
+    void                OnFiltersChanged( wxCommandEvent &event );
+    void                UpdateFilterStatus( void );
 
     void                OnConfigUpdated( wxCommandEvent &event );
 

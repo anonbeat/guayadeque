@@ -52,6 +52,8 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	wxBoxSizer* PlayListSizer;
 
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
+    m_NormalColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
+    m_SetColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
 
     m_Db = NewDb;
     m_BufferGaugeId = wxNOT_FOUND;
@@ -372,6 +374,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     UpdatePlayListFilters();
     m_FilterAllowChoice->SetSelection( Config->ReadNum( wxT( "PlayListAllowFilter" ), 0, wxT( "Playback" ) ) );
     m_FilterDenyChoice->SetSelection( Config->ReadNum( wxT( "PlayListDenyFilter" ), 0, wxT( "Playback" ) ) );
+    UpdateFilterStatus();
     CheckFiltersVisible();
 
 
@@ -426,6 +429,10 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 //    Connect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
 
 	m_FiltersLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnFiltersLabelDClick ), NULL, this );
+
+	m_FilterAllowChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPlayerPanel::OnFiltersChanged ), NULL, this );
+	m_FilterDenyChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPlayerPanel::OnFiltersChanged ), NULL, this );
+
 
     m_PlayerTimer = new guPlayerPanelTimer( this );
     m_PlayerTimer->Start( 400 );
@@ -538,6 +545,9 @@ guPlayerPanel::~guPlayerPanel()
     Disconnect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ) );
 
 //    Disconnect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
+
+	m_FilterAllowChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPlayerPanel::OnFiltersChanged ), NULL, this );
+	m_FilterDenyChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPlayerPanel::OnFiltersChanged ), NULL, this );
 
     if( m_MediaCtrl )
         delete m_MediaCtrl;
@@ -1487,6 +1497,7 @@ void guPlayerPanel::UpdatePlayListFilters( void )
     m_FilterDenyChoice->Clear();
     m_FilterDenyChoice->Append( ChoiceItems );
     m_FilterDenyChoice->SetSelection( GetListItemsIdIndex( m_FilterPlayLists, CurDenyFilter ) );
+    UpdateFilterStatus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1944,6 +1955,20 @@ void  guPlayerPanel::OnFiltersLabelDClick( wxMouseEvent &event )
 
     //m_FiltersSizer->Layout();
     m_PlayerMainSizer->Layout();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnFiltersChanged( wxCommandEvent &event )
+{
+    UpdateFilterStatus();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::UpdateFilterStatus( void )
+{
+    m_FiltersLabel->SetForegroundColour( ( m_FilterAllowChoice->GetSelection() ||
+                                          m_FilterDenyChoice->GetSelection() ) ?
+            m_SetColor : m_NormalColor );
 }
 
 // -------------------------------------------------------------------------------- //
