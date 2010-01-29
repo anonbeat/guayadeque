@@ -733,7 +733,6 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 
 	m_StationsSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
 	m_StationsSplitter->SetMinimumPaneSize( 110 );
-	m_StationsSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guRadioPanel::StationsSplitterOnIdle ), NULL, this );
 
 	wxPanel * LeftPanel;
 	LeftPanel = new wxPanel( m_StationsSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -1386,16 +1385,9 @@ void guRadioPanel::OnSelectStations( bool enqueue )
 void guRadioPanel::GenreSplitterOnIdle( wxIdleEvent& )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_StationsSplitter->SetSashPosition( Config->ReadNum( wxT( "RadioStationSashPos" ), 180, wxT( "Positions" ) ) );
     m_GenreSplitter->SetSashPosition( Config->ReadNum( wxT( "RadioGenreSashPos" ), 100, wxT( "Positions" ) ) );
     m_GenreSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guRadioPanel::GenreSplitterOnIdle ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
-void guRadioPanel::StationsSplitterOnIdle( wxIdleEvent& )
-{
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_StationsSplitter->SetSashPosition( Config->ReadNum( wxT( "RadioStationsSashPos" ), 180, wxT( "Positions" ) ) );
-    m_StationsSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guRadioPanel::StationsSplitterOnIdle ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //

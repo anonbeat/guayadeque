@@ -78,7 +78,6 @@ class guRadioPanel : public wxPanel
 	  void OnRadioUserImport( wxCommandEvent &event );
 
       void GenreSplitterOnIdle( wxIdleEvent& );
-      void StationsSplitterOnIdle( wxIdleEvent& );
 
       guStationPlayLists GetPlayList( const guRadioStation * radiostation );
 
