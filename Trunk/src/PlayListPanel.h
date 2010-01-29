@@ -169,6 +169,8 @@ class guPlayListPanel : public wxPanel
 
     void                PlayListUpdated( void );
 
+    bool                GetPlayListCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
+
 };
 
 #endif

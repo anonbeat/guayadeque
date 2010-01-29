@@ -377,6 +377,8 @@ class guDbLibrary : public guDb
     void                GetPlayLists( guListItems * PlayLists, const int type );
     int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
     int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks );
+    void                GetPlayListCounters( const int plid, const int pltype,
+                            wxLongLong * count, wxLongLong * len, wxLongLong * size );
     int                 GetPlayListSetIds( const int plid, wxArrayInt * setids );
     void                DeletePlayList( const int plid );
     void                SetPlayListName( const int plid, const wxString &plname );
@@ -443,6 +445,7 @@ class guDbLibrary : public guDb
     void                    GetRadioGenres( guListItems * RadioGenres, bool AllowFilter = true );
     void                    SetRadioGenres( const wxArrayString &Genres );
     int                     GetRadioStations( guRadioStations * stations );
+    void                    GetRadioCounter( wxLongLong * count );
     int                     GetUserRadioStations( guRadioStations * stations );
     void                    SetRadioStation( const guRadioStation * RadioStation );
     bool                    GetRadioStation( const int id, guRadioStation * radiostation );
@@ -481,6 +484,7 @@ class guDbLibrary : public guDb
     void                    DelPodcastChannel( const int id );
 
     int                     GetPodcastItems( guPodcastItemArray * items );
+    void                    GetPodcastCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
     int                     GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items );
     void                    SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew = false );
     void                    SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew = false );
