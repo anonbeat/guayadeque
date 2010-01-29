@@ -90,10 +90,8 @@ class guMainFrame : public wxFrame
     guMMKeys *                  m_MMKeys;
     guGSession *                m_GSession;
 
-//    bool                        m_Initiated;
     wxWindow *                  m_CurrentPage;
 
-//    bool                        m_CountNeedUpdate;
     wxLongLong                  m_SelCount;
     wxLongLong                  m_SelLength;
     wxLongLong                  m_SelSize;

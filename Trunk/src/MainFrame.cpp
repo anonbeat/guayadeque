@@ -85,7 +85,6 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_UpdatePodcastsTimer = NULL;
     m_DownloadThread = NULL;
 
-//    m_Initiated = false;
     m_SelCount = 0;
     m_SelLength = 0;
     m_SelSize = 0;
@@ -1157,74 +1156,35 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
-//    if( !m_Initiated )
-//    {
-//        m_Initiated = true;
-        //
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_PlayerSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
-        Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_PlayerSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayerSashPos" ), 280, wxT( "Positions" ) ) );
+    Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
 
-        // If the database need to be updated
-        if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
-        {
-            guLogMessage( wxT( "Database updating started." ) );
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
-            AddPendingEvent( event );
-        }
+    // If the database need to be updated
+    if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
+    {
+        guLogMessage( wxT( "Database updating started." ) );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
+        AddPendingEvent( event );
+    }
 
-        // If the Podcasts update is enable launch it...
-        if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
-        {
-            guLogMessage( wxT( "Updating the podcasts..." ) );
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
-            AddPendingEvent( event );
-        }
+    // If the Podcasts update is enable launch it...
+    if( Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) )
+    {
+        guLogMessage( wxT( "Updating the podcasts..." ) );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
+        AddPendingEvent( event );
+    }
 
-        // Add the previously pending podcasts to download
-        guPodcastItemArray Podcasts;
-        m_Db->GetPendingPodcasts( &Podcasts );
-        if( Podcasts.Count() )
-            AddPodcastsDownloadItems( &Podcasts );
+    // Add the previously pending podcasts to download
+    guPodcastItemArray Podcasts;
+    m_Db->GetPendingPodcasts( &Podcasts );
+    if( Podcasts.Count() )
+        AddPodcastsDownloadItems( &Podcasts );
 
-        // Now we can start the dbus server
-        m_DBusServer->Run();
-
-//    }
-
-//    if( m_CurrentPage == ( wxWindow * ) m_LibPanel )
-//    {
-//        if( m_LastCount != m_LibCount )
-//        {
-//            m_MainStatusBar->SetTrackCount( m_LibCount, wxT( "tracks" ) );
-//            m_LastCount = m_LibCount;
-//        }
-//    }
-//    else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
-//    {
-//        if( m_LastCount != m_RadCount )
-//        {
-//            m_MainStatusBar->SetTrackCount( m_RadCount, wxT( "stations" ) );
-//            m_LastCount = m_RadCount;
-//        }
-//    }
-//    else if( m_CurrentPage == ( wxWindow * ) m_PlayListPanel )
-//    {
-//        if( m_LastCount != m_PLCount )
-//        {
-//            m_MainStatusBar->SetTrackCount( m_PLCount, wxT( "tracks" ) );
-//            m_LastCount = m_PLCount;
-//        }
-//    }
-//    else if( m_CurrentPage == ( wxWindow * ) m_PodcastsPanel )
-//    {
-//        if( m_LastCount != m_PodCount )
-//        {
-//            m_MainStatusBar->SetTrackCount( m_PodCount, wxT( "podcasts" ) );
-//            m_LastCount = m_PodCount;
-//        }
-//    }
+    // Now we can start the dbus server
+    m_DBusServer->Run();
 }
 
 // -------------------------------------------------------------------------------- //
