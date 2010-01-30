@@ -716,6 +716,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     count = m_CmdListBox->GetCount();
 	while( ( int ) m_CmdNames.Count() < count )
         m_CmdNames.Add( wxEmptyString );
+    if( ( int ) m_CmdNames.Count() > count )
+        m_CmdNames.RemoveAt( count, m_CmdNames.Count() - count );
     for( index = 0; index < count; index++ )
     {
         if( m_CmdNames[ index ].IsEmpty() )
@@ -1356,8 +1358,8 @@ void guPrefDialog::OnLinksDelBtnClick( wxCommandEvent& event )
 {
     if( m_LinkSelected != wxNOT_FOUND )
     {
-        m_LinksListBox->Delete( m_LinkSelected );
         m_LinksNames.RemoveAt( m_LinkSelected );
+        m_LinksListBox->Delete( m_LinkSelected );
         m_LinkSelected = wxNOT_FOUND;
     }
 }
@@ -1475,8 +1477,8 @@ void guPrefDialog::OnCmdDelBtnClick( wxCommandEvent& event )
 {
     if( m_CmdSelected != wxNOT_FOUND )
     {
-        m_CmdListBox->Delete( m_CmdSelected );
         m_CmdNames.RemoveAt( m_CmdSelected );
+        m_CmdListBox->Delete( m_CmdSelected );
         m_CmdSelected = wxNOT_FOUND;
     }
 }
