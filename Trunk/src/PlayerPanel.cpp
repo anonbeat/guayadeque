@@ -1770,7 +1770,6 @@ void guPlayerPanel::OnRepeatPlayButtonClick( wxCommandEvent &event )
     m_PlayLoop = m_PlayLoop++;
     if( m_PlayLoop > guPLAYER_PLAYLOOP_TRACK )
         m_PlayLoop = guPLAYER_PLAYLOOP_NONE;
-    guLogMessage( wxT( "PlayLoop: %i" ), m_PlayLoop );
     SetPlayLoop( m_PlayLoop );
 }
 
