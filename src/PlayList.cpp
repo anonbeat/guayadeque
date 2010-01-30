@@ -534,7 +534,7 @@ void guPlayList::OnMouse( wxMouseEvent &event )
         if( x >= ( Size.GetWidth() - ( 50 + 6 ) ) )
         {
             int Item = HitTest( x, y );
-            if( m_Items[ Item ].m_Type == guTRACK_TYPE_DB )
+            if( Item != wxNOT_FOUND && m_Items[ Item ].m_Type == guTRACK_TYPE_DB )
             {
                 if( ( size_t ) y > ( ( Item - GetFirstVisibleLine() ) * m_ItemHeight ) + m_SecondLineOffset )
                 {
@@ -546,6 +546,10 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                     else
                         Rating = wxMin( 5, ( wxMax( 0, x - 3 ) / 10 ) + 1 );
 
+                    if( m_Items[ Item ].m_Rating == Rating )
+                    {
+                        Rating = 0;
+                    }
                     m_Items[ Item ].m_Rating = Rating;
                     RefreshLine( Item );
                     if( Item == m_CurItem )
@@ -556,7 +560,6 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                     return;
                 }
             }
-
         }
     }
 
