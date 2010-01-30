@@ -35,11 +35,18 @@
 
 // -------------------------------------------------------------------------------- //
 enum guSongCoverType {
-    GU_SONGCOVER_NONE,
+    GU_SONGCOVER_NONE = 0,
     GU_SONGCOVER_FILE,
     GU_SONGCOVER_ID3TAG,
     GU_SONGCOVER_RADIO,
     GU_SONGCOVER_PODCAST
+};
+
+// -------------------------------------------------------------------------------- //
+enum guPlayLoopMode {
+    guPLAYER_PLAYLOOP_NONE = 0,
+    guPLAYER_PLAYLOOP_PLAYLIST,
+    guPLAYER_PLAYLOOP_TRACK
 };
 
 // -------------------------------------------------------------------------------- //
@@ -153,7 +160,7 @@ class guPlayerPanel : public wxPanel
 	wxFileOffset            m_LastCurPos;
 
 	float                   m_CurVolume;
-	bool                    m_PlayLoop;
+	int                     m_PlayLoop;
 	bool                    m_PlaySmart;
 	bool                    m_PlayRandom;
 	bool                    m_SliderIsDragged;
@@ -248,8 +255,8 @@ class guPlayerPanel : public wxPanel
     const guTrack *     GetTrack( int index );
     void                RemoveItem( int itemnum );
 
-    bool                GetPlayLoop();
-    void                SetPlayLoop( bool playloop );
+    int                 GetPlayLoop();
+    void                SetPlayLoop( int playloop );
     bool                GetPlaySmart();
     void                SetPlaySmart( bool playsmart );
     void                UpdatePlayListFilters( void );

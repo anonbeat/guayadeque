@@ -260,7 +260,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
     Connect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
 
     Connect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
@@ -328,7 +329,8 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ), NULL, this );
-    Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
     Disconnect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
 
     Disconnect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
@@ -511,10 +513,15 @@ void guMainFrame::CreateMenu()
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, wxString( _( "R&andomize" ) ), _( "Randomize the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_shuffle ) );
     Menu->Append( MenuItem );
-    m_PlayLoopMenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATPLAY, wxString( _( "&Repeat" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
+    m_LoopPlayListMenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxString( _( "&Repeat Playlist" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_repeat ) );
-    Menu->Append( m_PlayLoopMenuItem );
-    m_PlayLoopMenuItem->Check( m_PlayerPanel->GetPlayLoop() );
+    Menu->Append( m_LoopPlayListMenuItem );
+    m_LoopPlayListMenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
+
+    m_LoopTrackMenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATTRACK, wxString( _( "&Repeat Track" ) ), _( "Repeat the current track in the playlist" ), wxITEM_CHECK );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_repeat ) );
+    Menu->Append( m_LoopTrackMenuItem );
+    m_LoopTrackMenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
 
     MenuBar->Append( Menu, _( "&Control" ) );
 
@@ -674,7 +681,8 @@ void guMainFrame::OnPlayerStatusChanged( wxCommandEvent &event )
     if( m_PlayerPanel )
     {
         m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
-        m_PlayLoopMenuItem->Check( m_PlayerPanel->GetPlayLoop() );
+        m_LoopPlayListMenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
+        m_LoopTrackMenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
     }
 }
 
@@ -778,7 +786,8 @@ void guMainFrame::OnSmartPlay( wxCommandEvent &event )
     {
         m_PlayerPanel->OnSmartPlayButtonClick( event );
         m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
-        m_PlayLoopMenuItem->Check( m_PlayerPanel->GetPlayLoop() );
+        m_LoopPlayListMenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
+        m_LoopTrackMenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
     }
 }
 
@@ -794,9 +803,28 @@ void guMainFrame::OnRepeat( wxCommandEvent &event )
 {
     if( m_PlayerPanel )
     {
-        m_PlayerPanel->OnRepeatPlayButtonClick( event );
+        int RepeatMode = m_PlayerPanel->GetPlayLoop();
+        if( event.GetId() == ID_PLAYER_PLAYLIST_REPEATPLAYLIST )
+        {
+            if( RepeatMode != guPLAYER_PLAYLOOP_PLAYLIST )
+                RepeatMode = guPLAYER_PLAYLOOP_PLAYLIST;
+            else
+                RepeatMode = guPLAYER_PLAYLOOP_NONE;
+        }
+        else if( event.GetId() == ID_PLAYER_PLAYLIST_REPEATTRACK )
+        {
+            if( RepeatMode != guPLAYER_PLAYLOOP_TRACK )
+                RepeatMode = guPLAYER_PLAYLOOP_TRACK;
+            else
+                RepeatMode = guPLAYER_PLAYLOOP_NONE;
+        }
+
+        m_PlayerPanel->SetPlayLoop( RepeatMode );
+
+        //m_PlayerPanel->OnRepeatPlayButtonClick( event );
         m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
-        m_PlayLoopMenuItem->Check( m_PlayerPanel->GetPlayLoop() );
+        m_LoopPlayListMenuItem->Check( RepeatMode == guPLAYER_PLAYLOOP_PLAYLIST );
+        m_LoopTrackMenuItem->Check( RepeatMode == guPLAYER_PLAYLOOP_TRACK );
     }
 }
 

@@ -71,7 +71,8 @@ class guMainFrame : public wxFrame
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
     wxMenuItem *                m_PlaySmartMenuItem;
-    wxMenuItem *                m_PlayLoopMenuItem;
+    wxMenuItem *                m_LoopPlayListMenuItem;
+    wxMenuItem *                m_LoopTrackMenuItem;
 
 
     guDbLibrary *               m_Db;
