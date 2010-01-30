@@ -60,7 +60,7 @@ class guTrackEditor : public wxDialog
 {
   private:
     guTrackArray *          m_Items;
-    wxArrayString           m_Genres;
+    wxSortedArrayString     m_Genres;
     guImagePtrArray *       m_Images;
     wxArrayString *         m_Lyrics;
     guSearchLyricEngine *   m_LyricThread;
