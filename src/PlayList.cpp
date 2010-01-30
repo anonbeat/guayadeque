@@ -704,13 +704,17 @@ guTrack * guPlayList::GetCurrent( void )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guPlayList::GetNext( const bool playloop )
+guTrack * guPlayList::GetNext( const int playloop, const bool forceskip )
 {
     if( m_Items.Count() )
     {
         if( m_CurItem == wxNOT_FOUND )
         {
             m_CurItem = 0;
+            return &m_Items[ m_CurItem ];
+        }
+        else if( !forceskip && playloop == guPLAYER_PLAYLOOP_TRACK )
+        {
             return &m_Items[ m_CurItem ];
         }
         else if( ( m_CurItem < ( ( int ) m_Items.Count() - 1 ) ) )
@@ -726,7 +730,7 @@ guTrack * guPlayList::GetNext( const bool playloop )
             return &m_Items[ m_CurItem ];
 
         }
-        else if( playloop )
+        else if( playloop == guPLAYER_PLAYLOOP_PLAYLIST )
         {
             m_CurItem = 0;
             return &m_Items[ m_CurItem ];
@@ -736,13 +740,17 @@ guTrack * guPlayList::GetNext( const bool playloop )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guPlayList::GetPrev( const bool playloop )
+guTrack * guPlayList::GetPrev( const int playloop, const bool forceskip )
 {
     if( m_Items.Count() )
     {
         if( m_CurItem == wxNOT_FOUND )
         {
             m_CurItem = 0;
+            return &m_Items[ m_CurItem ];
+        }
+        else if( !forceskip && playloop == guPLAYER_PLAYLOOP_TRACK )
+        {
             return &m_Items[ m_CurItem ];
         }
         else if( m_CurItem > 0 )
@@ -756,7 +764,7 @@ guTrack * guPlayList::GetPrev( const bool playloop )
             m_CurItem--;
             return &m_Items[ m_CurItem ];
         }
-        else if( playloop )
+        else if( playloop == guPLAYER_PLAYLOOP_PLAYLIST )
         {
             m_CurItem = m_Items.Count() - 1;
             return &m_Items[ m_CurItem ];

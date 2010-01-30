@@ -113,8 +113,8 @@ class guPlayList : public guListView
     guTrack *                   GetCurrent();
     int                         GetCurItem();
     void                        SetCurrent( int curitem, bool delold = false );
-    guTrack *                   GetNext( bool bLoop );
-    guTrack *                   GetPrev( bool bLoop );
+    guTrack *                   GetNext( const int playloop, const bool forceskip = false );
+    guTrack *                   GetPrev( const int playloop, const bool forceskip = false );
     void                        ClearItems();
     long                        GetLength( void ) const;
     wxString                    GetLengthStr( void ) const;

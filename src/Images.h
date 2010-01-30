@@ -100,6 +100,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_search_engine,
     guIMAGE_INDEX_tiny_playlist_shuffle,
     guIMAGE_INDEX_tiny_playlist_repeat,
+    guIMAGE_INDEX_tiny_playlist_repeat_single,
     guIMAGE_INDEX_tiny_mixer,
     guIMAGE_INDEX_pref_commands,
     guIMAGE_INDEX_pref_copy_to,

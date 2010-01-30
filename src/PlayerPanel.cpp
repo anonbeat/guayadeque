@@ -91,7 +91,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
         //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
         m_CurVolume = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
-        m_PlayLoop = Config->ReadBool( wxT( "PlayerLoop" ), false, wxT( "General" )  );
+        m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
         m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
         m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
@@ -468,7 +468,7 @@ guPlayerPanel::~guPlayerPanel()
         //printf( "guPlayerPanel::guConfig Save\n" );
         Config->WriteBool( wxT( "PlayerStopped" ), m_MediaCtrl->GetState() != wxMEDIASTATE_PLAYING, wxT( "General" ) );
         Config->WriteNum( wxT( "PlayerCurVol" ), m_CurVolume, wxT( "General" ) );
-        Config->WriteBool( wxT( "PlayerLoop" ), m_PlayLoop, wxT( "General" ) );
+        Config->WriteNum( wxT( "PlayerLoop" ), m_PlayLoop, wxT( "General" ) );
         Config->WriteBool( wxT( "PlayerSmart" ), m_PlaySmart, wxT( "General" ) );
         // If the track length is at least the configured minimun track length save the pos offset
         if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) )
@@ -1429,7 +1429,7 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
         {
             // If Repeat was enabled disable it
             if( m_PlayLoop )
-                SetPlayLoop( false );
+                SetPlayLoop( 0 );
 
             //guLogMessage( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
@@ -1527,7 +1527,7 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
     m_SmartPlayButton->SetValue( m_PlaySmart );
     if( m_PlaySmart && GetPlayLoop() )
     {
-        SetPlayLoop( false );
+        SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
     }
     CheckFiltersVisible();
 
@@ -1543,9 +1543,14 @@ bool guPlayerPanel::GetPlaySmart()
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetPlayLoop( bool playloop )
+void guPlayerPanel::SetPlayLoop( int playloop )
 {
     m_PlayLoop = playloop;
+
+    m_RepeatPlayButton->SetLabel( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
+        guImage( guIMAGE_INDEX_tiny_playlist_repeat ) :
+        guImage( guIMAGE_INDEX_tiny_playlist_repeat_single ) );
+
     m_RepeatPlayButton->SetValue( m_PlayLoop );
     if( m_PlayLoop && GetPlaySmart() )
     {
@@ -1560,7 +1565,7 @@ void guPlayerPanel::SetPlayLoop( bool playloop )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPlayerPanel::GetPlayLoop()
+int guPlayerPanel::GetPlayLoop()
 {
     return m_PlayLoop;
 }
@@ -1585,7 +1590,10 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         return;
     }
 
-    PrevItem = m_PlayListCtrl->GetPrev( m_PlayLoop );
+    bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_PREVTRACK ) ||
+                      ( event.GetEventObject() == m_PrevTrackButton );
+
+    PrevItem = m_PlayListCtrl->GetPrev( m_PlayLoop, ForceSkip );
     if( PrevItem )
     {
         //State = m_MediaCtrl->GetState();
@@ -1615,7 +1623,10 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     guTrack * NextItem;
 
 //    wxMessageBox( wxT("OnPrevTrackButtonClick"), wxT("Event") );
-    NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
+    bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_NEXTTRACK ) ||
+                      ( event.GetEventObject() == m_NextTrackButton );
+
+    NextItem = m_PlayListCtrl->GetNext( m_PlayLoop, ForceSkip );
     if( NextItem )
     {
         State = m_MediaCtrl->GetState();
@@ -1638,7 +1649,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         {
             // If Repeat was enabled disable it
             if( m_PlayLoop )
-                SetPlayLoop( false );
+                SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
 
             //guLogMessage( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
@@ -1695,7 +1706,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
         {
             // If Repeat was enabled disable it
             if( m_PlayLoop )
-                SetPlayLoop( false );
+                SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
 
             //guLogMessage( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
@@ -1756,7 +1767,11 @@ void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRepeatPlayButtonClick( wxCommandEvent &event )
 {
-    SetPlayLoop( !GetPlayLoop() );
+    m_PlayLoop = m_PlayLoop++;
+    if( m_PlayLoop > guPLAYER_PLAYLOOP_TRACK )
+        m_PlayLoop = guPLAYER_PLAYLOOP_NONE;
+    guLogMessage( wxT( "PlayLoop: %i" ), m_PlayLoop );
+    SetPlayLoop( m_PlayLoop );
 }
 
 // -------------------------------------------------------------------------------- //
