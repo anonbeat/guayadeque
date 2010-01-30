@@ -533,6 +533,8 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
             Rating = wxMin( 5, ( wxMax( 0, MouseX - 3 ) / w ) + 1 );
 
         int Row = event.GetInt();
+        if( m_Items[ Row ].m_Rating == Rating )
+            Rating = 0;
         m_Items[ Row ].m_Rating = Rating;
         m_Db->SetTrackRating( m_Items[ Row ].m_SongId, Rating );
         RefreshLine( Row );
