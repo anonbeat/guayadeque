@@ -47,6 +47,8 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             guLogError( wxT( "Gstreamer error '%s'" ), wxString( err->message, wxConvUTF8 ).c_str() );
             g_error_free( err );
             g_free( debug );
+
+            ctrl->Stop();
             break;
         }
 
@@ -484,7 +486,9 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
     // Make sure the passed URI is valid and tell playbin to load it
     // non-file uris are encoded
     //wxASSERT( gst_uri_protocol_is_valid( "file" ) );
-    wxASSERT( gst_uri_is_valid( ( const char * ) uri.mb_str() ) );
+    //wxASSERT( gst_uri_is_valid( ( const char * ) uri.mb_str() ) );
+    if( !gst_uri_is_valid( ( const char * ) uri.mb_str() ) )
+        return false;
 
     g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str(), NULL );
 

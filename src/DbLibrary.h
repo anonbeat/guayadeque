@@ -317,7 +317,7 @@ class guDbLibrary : public guDb
     int                 GetAlbumCoverId( const int AlbumId );
 
     wxString            GetCoverPath( const int CoverId );
-    int                 GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, const int ArtistId, const int PathId );
+    int                 GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, const int ArtistId, const int PathId, const wxString &Path );
     int                 GetSongId( int * SongId, wxString &FileName, const int PathId );
     int                 GetSongId( int * SongId, wxString &FileName, wxString &FilePath );
     wxArrayInt          GetLabelIds( const wxArrayString &Labels );
