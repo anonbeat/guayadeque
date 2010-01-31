@@ -131,9 +131,9 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	m_PlayButton->SetToolTip( _( "Start playing or pauses current track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_PlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-//	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-//	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
-//	PlayerBtnSizer->Add( m_StopButton, 0, wxALL, 2 );
+	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
+	PlayerBtnSizer->Add( m_StopButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	PlayerBtnSizer->Add( 0, 0, 0, wxALL, 2 );
 
@@ -382,7 +382,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
 	m_NextTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
 	m_PlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
-// 	m_StopButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
+ 	m_StopButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
 	m_VolumeButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
 	m_VolumeButton->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnVolumenMouseWheel ), NULL, this );
 	m_SmartPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
@@ -504,7 +504,7 @@ guPlayerPanel::~guPlayerPanel()
 	m_PrevTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
 	m_NextTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
 	m_PlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
-//	m_StopButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
+	m_StopButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
 	m_VolumeButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
 	m_SmartPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
 	m_RandomPlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
@@ -1728,6 +1728,7 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 {
     wxMediaState State;
     State = m_MediaCtrl->GetState();
+    //guLogMessage( wxT( "State: %i" ), State );
     if( State != wxMEDIASTATE_STOPPED )
     {
         m_MediaCtrl->Stop();
