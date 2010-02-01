@@ -42,6 +42,7 @@
 #include "dbus/mmkeys.h"
 #include "dbus/gsession.h"
 
+#include <wx/aui/aui.h>
 #include <wx/wx.h>
 #include <wx/splitter.h>
 #include <wx/regex.h>
@@ -59,7 +60,7 @@ class guUpdatePodcastsTimer;
 class guMainFrame : public wxFrame
 {
   private:
-    wxNotebook *                m_CatNotebook;
+    wxAuiNotebook *             m_CatNotebook;
     wxSplitterWindow *          m_PlayerSplitter;
     guPlayerPanel *             m_PlayerPanel;
     guLibPanel *                m_LibPanel;
@@ -70,10 +71,17 @@ class guMainFrame : public wxFrame
     guPodcastPanel *            m_PodcastsPanel;
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
+
     wxMenuItem *                m_PlaySmartMenuItem;
     wxMenuItem *                m_LoopPlayListMenuItem;
     wxMenuItem *                m_LoopTrackMenuItem;
 
+    wxMenuItem *                m_ViewLibrary;
+    wxMenuItem *                m_ViewRadios;
+    wxMenuItem *                m_ViewLastFM;
+    wxMenuItem *                m_ViewLyrics;
+    wxMenuItem *                m_ViewPlayLists;
+    wxMenuItem *                m_ViewPodcasts;
 
     guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
@@ -148,7 +156,8 @@ class guMainFrame : public wxFrame
     void                OnRemovePodcastThread( wxCommandEvent &event );
 
     void                OnIdle( wxIdleEvent &event );
-    void                OnPageChanged( wxNotebookEvent& event );
+    void                OnPageChanged( wxAuiNotebookEvent& event );
+    void                OnPageClosed( wxAuiNotebookEvent& event );
 
 //    void                SetLibTracks( wxCommandEvent &event );
 //    void                SetRadioStations( wxCommandEvent &event );
