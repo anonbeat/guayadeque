@@ -911,6 +911,7 @@ void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
 
     TagInfo = guGetTagInfoHandler( FileName );
 
+    //guLogMessage( wxT( "Adding to Playlist %s" ), FileName.c_str() );
     if( TagInfo )
     {
         wxURI UriPath( FileName );
