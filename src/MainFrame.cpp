@@ -112,15 +112,23 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_PlayerSplitter->SetMinimumPaneSize( 200 );
 
 	m_PlayerPanel = new guPlayerPanel( m_PlayerSplitter, m_Db ); //wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
+
 	MultiPanel = new wxPanel( m_PlayerSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
 	MultiSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_CatNotebook = new wxNotebook( MultiPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	//m_CatNotebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_CatNotebook = new wxAuiNotebook( MultiPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE );
 
     // Library Page
-	m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-	m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true );
+    if( Config->ReadBool( wxT( "ShowLibrary" ), true, wxT( "ViewPanels" ) ) )
+    {
+        m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+        m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true );
+    }
+    else
+        m_LibPanel = NULL;
 
     // Radio Page
     if( Config->ReadBool( wxT( "ShowRadio" ), true, wxT( "ViewPanels" ) ) )
@@ -285,7 +293,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
     Connect( ID_MAINFRAME_REMOVEPODCASTTHREAD, wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ), NULL, this );
 
-	m_CatNotebook->Connect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
+	m_CatNotebook->Connect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
+	m_CatNotebook->Connect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler( guMainFrame::OnPageClosed ), NULL, this );
 
     Connect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
 //    Connect( ID_MAINFRAME_SET_RADIOSTATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetRadioStations ), NULL, this );
@@ -354,7 +363,8 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
     Disconnect( ID_MAINFRAME_REMOVEPODCASTTHREAD, wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ), NULL, this );
 
-	m_CatNotebook->Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
+	m_CatNotebook->Disconnect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
+	m_CatNotebook->Disconnect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler( guMainFrame::OnPageClosed ), NULL, this );
 
     Disconnect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
 //    Disconnect( ID_MAINFRAME_SET_RADIOSTATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetRadioStations ), NULL, this );
@@ -373,6 +383,14 @@ guMainFrame::~guMainFrame()
         wxSize MainWindowSize = GetSize();
         Config->WriteNum( wxT( "MainWindowSizeWidth" ), MainWindowSize.x, wxT( "Positions" ) );
         Config->WriteNum( wxT( "MainWindowSizeHeight" ), MainWindowSize.y, wxT( "Positions" ) );
+
+
+        Config->WriteBool( wxT( "ShowLibrary" ), m_ViewLibrary->IsChecked(), wxT( "ViewPanels" ) );
+        Config->WriteBool( wxT( "ShowRadio" ), m_ViewRadios->IsChecked(), wxT( "ViewPanels" ) );
+        Config->WriteBool( wxT( "ShowLastfm" ), m_ViewLastFM->IsChecked(), wxT( "ViewPanels" ) );
+        Config->WriteBool( wxT( "ShowLyrics" ), m_ViewLyrics->IsChecked(), wxT( "ViewPanels" ) );
+        Config->WriteBool( wxT( "ShowPodcasts" ), m_ViewPodcasts->IsChecked(), wxT( "ViewPanels" ) );
+        Config->WriteBool( wxT( "ShowPlayLists" ), m_ViewPlayLists->IsChecked(), wxT( "ViewPanels" ) );
     }
 
     if( m_LibUpdateThread )
@@ -464,29 +482,30 @@ void guMainFrame::CreateMenu()
 	MenuBar->Append( Menu, _( "&Library" ) );
 
     Menu = new wxMenu();
-//    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_LIBRARY, wxString( _( "&Library" ) ), _( "Show/Hide the library panel" ), wxITEM_CHECK );
-//    Menu->Append( MenuItem );
-//    MenuItem->Check( true );
 
-    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_RADIO, wxString( _( "&Radio" ) ), _( "Show/Hide the radio panel" ), wxITEM_CHECK );
-    Menu->Append( MenuItem );
-    MenuItem->Check( Config->ReadBool( wxT( "ShowRadio" ), true, wxT( "ViewPanels" ) ) );
+    m_ViewLibrary = new wxMenuItem( Menu, ID_MENU_VIEW_LIBRARY, wxString( _( "&Library" ) ), _( "Show/Hide the library panel" ), wxITEM_CHECK );
+    Menu->Append( m_ViewLibrary );
+    m_ViewLibrary->Check( Config->ReadBool( wxT( "ShowLibrary" ), true, wxT( "ViewPanels" ) ) );
 
-    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_LASTFM, wxString( _( "Last.&fm" ) ), _( "Show/Hide the Last.fm panel" ), wxITEM_CHECK );
-    Menu->Append( MenuItem );
-    MenuItem->Check( Config->ReadBool( wxT( "ShowLastfm" ), true, wxT( "ViewPanels" ) ) );
+    m_ViewRadios = new wxMenuItem( Menu, ID_MENU_VIEW_RADIO, wxString( _( "&Radio" ) ), _( "Show/Hide the radio panel" ), wxITEM_CHECK );
+    Menu->Append( m_ViewRadios );
+    m_ViewRadios->Check( Config->ReadBool( wxT( "ShowRadio" ), true, wxT( "ViewPanels" ) ) );
 
-    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_LYRICS, wxString( _( "L&yrics" ) ), _( "Show/Hide the lyrics panel" ), wxITEM_CHECK );
-    Menu->Append( MenuItem );
-    MenuItem->Check( Config->ReadBool( wxT( "ShowLyrics" ), true, wxT( "ViewPanels" ) ) );
+    m_ViewLastFM = new wxMenuItem( Menu, ID_MENU_VIEW_LASTFM, wxString( _( "Last.&fm" ) ), _( "Show/Hide the Last.fm panel" ), wxITEM_CHECK );
+    Menu->Append( m_ViewLastFM );
+    m_ViewLastFM->Check( Config->ReadBool( wxT( "ShowLastfm" ), true, wxT( "ViewPanels" ) ) );
 
-    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_PLAYLISTS, wxString( _( "&PlayLists" ) ), _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
-    Menu->Append( MenuItem );
-    MenuItem->Check( Config->ReadBool( wxT( "ShowPlayLists" ), true, wxT( "ViewPanels" ) ) );
+    m_ViewLyrics = new wxMenuItem( Menu, ID_MENU_VIEW_LYRICS, wxString( _( "L&yrics" ) ), _( "Show/Hide the lyrics panel" ), wxITEM_CHECK );
+    Menu->Append( m_ViewLyrics );
+    m_ViewLyrics->Check( Config->ReadBool( wxT( "ShowLyrics" ), true, wxT( "ViewPanels" ) ) );
 
-    MenuItem = new wxMenuItem( Menu, ID_MENU_VIEW_PODCASTS, wxString( _( "P&odcasts" ) ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
-    Menu->Append( MenuItem );
-    MenuItem->Check( Config->ReadBool( wxT( "ShowPodcasts" ), true, wxT( "ViewPanels" ) ) );
+    m_ViewPlayLists = new wxMenuItem( Menu, ID_MENU_VIEW_PLAYLISTS, wxString( _( "&PlayLists" ) ), _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
+    Menu->Append( m_ViewPlayLists );
+    m_ViewPlayLists->Check( Config->ReadBool( wxT( "ShowPlayLists" ), true, wxT( "ViewPanels" ) ) );
+
+    m_ViewPodcasts = new wxMenuItem( Menu, ID_MENU_VIEW_PODCASTS, wxString( _( "P&odcasts" ) ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
+    Menu->Append( m_ViewPodcasts );
+    m_ViewPodcasts->Check( Config->ReadBool( wxT( "ShowPodcasts" ), true, wxT( "ViewPanels" ) ) );
 
     MenuBar->Append( Menu, _( "&View" ) );
 
@@ -501,9 +520,9 @@ void guMainFrame::CreateMenu()
     MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PLAY, wxString( _( "&Play" ) ), _( "Play or Pause the current track in the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     Menu->Append( MenuItem );
-//    MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_STOP, wxString( _( "&Stop" ) ), _( "Stop the current played track" ), wxITEM_NORMAL );
-//    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_pause ) );
-//    Menu->Append( MenuItem );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_STOP, wxString( _( "&Stop" ) ), _( "Stop the current played track" ), wxITEM_NORMAL );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_ ) );
+    Menu->Append( MenuItem );
     Menu->AppendSeparator();
     m_PlaySmartMenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search_engine ) );
@@ -880,42 +899,47 @@ void guMainFrame::OnUpdateLabels( wxCommandEvent &event )
     }
 }
 
-// -------------------------------------------------------------------------------- //
-int GetPageIndex( wxNotebook * Notebook, wxPanel * Page )
-{
-    int index;
-    int count = Notebook->GetPageCount();
-    for( index = 0; index < count; index++ )
-    {
-        if( Notebook->GetPage( index ) == Page )
-            return index;
-    }
-    return -1;
-}
+//// -------------------------------------------------------------------------------- //
+//int GetPageIndex( wxAuiNotebook * Notebook, wxPanel * Page )
+//{
+//    int index;
+//    int count = Notebook->GetPageCount();
+//    for( index = 0; index < count; index++ )
+//    {
+//        if( Notebook->GetPage( index ) == Page )
+//            return index;
+//    }
+//    return -1;
+//}
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 {
+//	guConfig *      Config = ( guConfig * ) guConfig::Get();
+//	Config->WriteBool( wxT( "ShowLibrary" ), event.IsChecked(), wxT( "ViewPanels" ) );
+
     if( event.IsChecked() )
     {
+        if( !m_LibPanel )
+            m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+
         m_CatNotebook->InsertPage( 0, m_LibPanel, _( "Library" ), true );
     }
     else
     {
-        int PageIndex = GetPageIndex( m_CatNotebook, m_LibPanel );
+        int PageIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
         }
     }
-
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewRadio( wxCommandEvent &event )
 {
-	guConfig *      Config = ( guConfig * ) guConfig::Get();
-	Config->WriteBool( wxT( "ShowRadio" ), event.IsChecked(), wxT( "ViewPanels" ) );
+//	guConfig *      Config = ( guConfig * ) guConfig::Get();
+//	Config->WriteBool( wxT( "ShowRadio" ), event.IsChecked(), wxT( "ViewPanels" ) );
 
     if( event.IsChecked() )
     {
@@ -926,7 +950,7 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
     }
     else
     {
-        int PageIndex = GetPageIndex( m_CatNotebook, m_RadioPanel );
+        int PageIndex = m_CatNotebook->GetPageIndex( m_RadioPanel );
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
@@ -937,8 +961,8 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 {
-	guConfig *      Config = ( guConfig * ) guConfig::Get();
-	Config->WriteBool( wxT( "ShowLastfm" ), event.IsChecked(), wxT( "ViewPanels" ) );
+//	guConfig *      Config = ( guConfig * ) guConfig::Get();
+//	Config->WriteBool( wxT( "ShowLastfm" ), event.IsChecked(), wxT( "ViewPanels" ) );
 
     if( event.IsChecked() )
     {
@@ -949,7 +973,7 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
     }
     else
     {
-        int PageIndex = GetPageIndex( m_CatNotebook, m_LastFMPanel );
+        int PageIndex = m_CatNotebook->GetPageIndex( m_LastFMPanel );
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
@@ -960,8 +984,8 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 {
-	guConfig *      Config = ( guConfig * ) guConfig::Get();
-	Config->WriteBool( wxT( "ShowLyrics" ), event.IsChecked(), wxT( "ViewPanels" ) );
+//	guConfig *      Config = ( guConfig * ) guConfig::Get();
+//	Config->WriteBool( wxT( "ShowLyrics" ), event.IsChecked(), wxT( "ViewPanels" ) );
 
     if( event.IsChecked() )
     {
@@ -972,7 +996,7 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
     }
     else
     {
-        int PageIndex = GetPageIndex( m_CatNotebook, m_LyricsPanel );
+        int PageIndex = m_CatNotebook->GetPageIndex( m_LyricsPanel );
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
@@ -983,8 +1007,8 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 {
-	guConfig *      Config = ( guConfig * ) guConfig::Get();
-	Config->WriteBool( wxT( "ShowPodcasts" ), event.IsChecked(), wxT( "ViewPanels" ) );
+//	guConfig *      Config = ( guConfig * ) guConfig::Get();
+//	Config->WriteBool( wxT( "ShowPodcasts" ), event.IsChecked(), wxT( "ViewPanels" ) );
 
     if( event.IsChecked() )
     {
@@ -995,7 +1019,7 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
     }
     else
     {
-        int PageIndex = GetPageIndex( m_CatNotebook, m_PodcastsPanel );
+        int PageIndex = m_CatNotebook->GetPageIndex( m_PodcastsPanel );
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
@@ -1006,8 +1030,8 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 {
-	guConfig *      Config = ( guConfig * ) guConfig::Get();
-	Config->WriteBool( wxT( "ShowPlayLists" ), event.IsChecked(), wxT( "ViewPanels" ) );
+//	guConfig *      Config = ( guConfig * ) guConfig::Get();
+//	Config->WriteBool( wxT( "ShowPlayLists" ), event.IsChecked(), wxT( "ViewPanels" ) );
 
     if( event.IsChecked() )
     {
@@ -1018,7 +1042,7 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
     }
     else
     {
-        int PageIndex = GetPageIndex( m_CatNotebook, m_PlayListPanel );
+        int PageIndex = m_CatNotebook->GetPageIndex( m_PlayListPanel );
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
@@ -1125,11 +1149,51 @@ void guMainFrame::OnGaugeRemove( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnPageChanged( wxNotebookEvent &event )
+void guMainFrame::OnPageChanged( wxAuiNotebookEvent& event )
 {
-    m_CurrentPage = m_CatNotebook->GetCurrentPage();
+    m_CurrentPage = m_CatNotebook->GetPage( m_CatNotebook->GetSelection() );
 
     OnUpdateSelInfo( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
+{
+    wxAuiNotebook * ctrl = ( wxAuiNotebook * ) event.GetEventObject();
+
+    wxPanel * CurPage = ( wxPanel * ) ctrl->GetPage( event.GetSelection() );
+
+    if( CurPage == m_LibPanel )
+    {
+        m_LibPanel = NULL;
+        m_ViewLibrary->Check( false );
+    }
+    else if( CurPage == m_RadioPanel )
+    {
+        m_RadioPanel = NULL;
+        m_ViewRadios->Check( false );
+    }
+    else if( CurPage == m_LastFMPanel )
+    {
+        m_LastFMPanel = NULL;
+        m_ViewLastFM->Check( false );
+    }
+    else if( CurPage == m_LyricsPanel )
+    {
+        m_LyricsPanel = NULL;
+        m_ViewLyrics->Check( false );
+    }
+    else if( CurPage == m_PlayListPanel )
+    {
+        m_PlayListPanel = NULL;
+        m_ViewPlayLists->Check( false );
+    }
+    else if( CurPage == m_PodcastsPanel )
+    {
+        m_PodcastsPanel = NULL;
+        m_ViewPodcasts->Check( false );
+    }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
