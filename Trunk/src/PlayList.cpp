@@ -526,7 +526,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnMouse( wxMouseEvent &event )
 {
-    if( event.LeftIsDown() )
+    if( event.LeftDown() )
     {
         int x = event.m_x;
         int y = event.m_y;
