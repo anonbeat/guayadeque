@@ -708,16 +708,20 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
     {
         int Count = m_PlayListCtrl->GetCount();
 
-        guTrack * Track = m_PlayListCtrl->GetItem( Count - 1 );
+        // TODO : Check if the track was really added or not
+        if( Count )
+        {
+            guTrack * Track = m_PlayListCtrl->GetItem( Count - 1 );
 
-        m_SmartAddedTracks.Add( Track->m_SongId );
-        m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
+            m_SmartAddedTracks.Add( Track->m_SongId );
+            m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
 
-        if( m_SmartAddedTracks.Count() > guPLAYER_SMART_CACHEITEMS )
-            m_SmartAddedTracks.RemoveAt( 0 );
+            if( m_SmartAddedTracks.Count() > guPLAYER_SMART_CACHEITEMS )
+                m_SmartAddedTracks.RemoveAt( 0 );
 
-        if( m_SmartAddedArtists.Count() > guPLAYER_SMART_CACHEARTISTS )
-            m_SmartAddedArtists.RemoveAt( 0 );
+            if( m_SmartAddedArtists.Count() > guPLAYER_SMART_CACHEARTISTS )
+                m_SmartAddedArtists.RemoveAt( 0 );
+        }
     }
 }
 
