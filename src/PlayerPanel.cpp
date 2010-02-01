@@ -1732,6 +1732,9 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
     if( State != wxMEDIASTATE_STOPPED )
     {
         m_MediaCtrl->Stop();
+        UpdatePositionLabel( 0 );
+        if( m_MediaSong.m_Length )
+            m_PlayerPositionSlider->SetValue( 0 );
     }
 }
 
