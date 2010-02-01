@@ -443,6 +443,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_MainSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
+    m_MainSplitter->SetMinimumPaneSize( 60 );
 
     wxPanel *           NamesPanel;
 	NamesPanel = new wxPanel( m_MainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );

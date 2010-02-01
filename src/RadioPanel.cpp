@@ -732,7 +732,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 	ListsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_StationsSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_StationsSplitter->SetMinimumPaneSize( 110 );
+	m_StationsSplitter->SetMinimumPaneSize( 60 );
 
 	wxPanel * LeftPanel;
 	LeftPanel = new wxPanel( m_StationsSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -740,7 +740,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 	GenMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_GenreSplitter = new wxSplitterWindow( LeftPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_GenreSplitter->SetMinimumPaneSize( 100 );
+	m_GenreSplitter->SetMinimumPaneSize( 60 );
 	m_GenreSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guRadioPanel::GenreSplitterOnIdle ), NULL, this );
 
     wxPanel * GenrePanel;

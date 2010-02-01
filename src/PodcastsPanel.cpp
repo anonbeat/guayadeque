@@ -75,7 +75,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_MainSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_MainSplitter->SetMinimumPaneSize( 150 );
+	m_MainSplitter->SetMinimumPaneSize( 60 );
 
     wxPanel * TopPanel;
 	TopPanel = new wxPanel( m_MainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -83,7 +83,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 	TopPanelSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_TopSplitter = new wxSplitterWindow( TopPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_TopSplitter->SetMinimumPaneSize( 150 );
+	m_TopSplitter->SetMinimumPaneSize( 60 );
 	ChannelsPanel = new wxPanel( m_TopSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* ChannelsMainSizer;
 	ChannelsMainSizer = new wxBoxSizer( wxVERTICAL );

@@ -109,7 +109,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	SetStatusText( _( "Welcome to guayadeque!" ) );
 
 	m_PlayerSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-    m_PlayerSplitter->SetMinimumPaneSize( 200 );
+    m_PlayerSplitter->SetMinimumPaneSize( 100 );
 
 	m_PlayerPanel = new guPlayerPanel( m_PlayerSplitter, m_Db ); //wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
