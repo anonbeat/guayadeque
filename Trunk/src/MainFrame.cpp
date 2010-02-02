@@ -127,7 +127,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
 //	MultiSizer = new wxBoxSizer( wxVERTICAL );
 
 	//m_CatNotebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	m_CatNotebook = new guAuiNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE );
+	m_CatNotebook = new guAuiNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_TOP );
 
     // Library Page
     if( Config->ReadBool( wxT( "ShowLibrary" ), true, wxT( "ViewPanels" ) ) )
@@ -543,8 +544,11 @@ void guMainFrame::CreateMenu()
         {
             MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_LOAD + Index, m_LayoutName[ Index ], _( "Load this user defined layout" ) );
             m_LayoutLoadMenu->Append( MenuItem );
-            MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
-            m_LayoutDelMenu->Append( MenuItem );
+            if( Index > 4 )
+            {
+                MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
+                m_LayoutDelMenu->Append( MenuItem );
+            }
         }
     }
 
@@ -983,6 +987,31 @@ void guMainFrame::OnUpdateLabels( wxCommandEvent &event )
 //}
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::CheckShowNotebook( void )
+{
+    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
+    if( !PaneInfo.IsShown() )
+    {
+        PaneInfo.Show();
+        if( !m_NBPerspective.IsEmpty() )
+            m_CatNotebook->LoadPerspective( m_NBPerspective );
+        m_AuiManager.Update();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::CheckHideNotebook( void )
+{
+    if( !m_CatNotebook->GetPageCount() )
+    {
+        m_NBPerspective = m_CatNotebook->SavePerspective();
+        wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
+        PaneInfo.Hide();
+        m_AuiManager.Update();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 {
     guLogMessage( wxT( "View/Hide Library Panel called..." ) );
@@ -990,21 +1019,7 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 //	Config->WriteBool( wxT( "ShowLibrary" ), event.IsChecked(), wxT( "ViewPanels" ) );
     if( event.IsChecked() )
     {
-        //if( !m_CatNotebook )
-        //{
-        //    m_CatNotebook = new wxAuiNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE );
-        //    m_AuiManager.AddPane( m_CatNotebook, wxAuiPaneInfo().Name( wxT("Selector") ).CaptionVisible( false ).CloseButton( false ).DestroyOnClose( false ).Resizable( true ).Floatable( false ).Right() );
-        //    m_AuiManager.Update();
-        //}
-        wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
-        if( !PaneInfo.IsShown() )
-        {
-            PaneInfo.Show();
-            if( !m_NBPerspective.IsEmpty() )
-                m_AuiManager.LoadPerspective( m_NBPerspective, true );
-            else
-                m_AuiManager.Update();
-        }
+        CheckShowNotebook();
 
         if( !m_LibPanel )
             m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
@@ -1014,21 +1029,12 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
     else
     {
         int PageIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
-        if( PageIndex >= 0 )
+        if( PageIndex != wxNOT_FOUND )
         {
             m_CatNotebook->RemovePage( PageIndex );
         }
-        if( !m_CatNotebook->GetPageCount() )
-        {
-            //m_AuiManager.DetachPane( m_CatNotebook );
-            //delete m_CatNotebook;
-            //m_CatNotebook = NULL;
-            //m_AuiManager.Update();
-            m_NBPerspective = m_AuiManager.SavePerspective();
-            wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
-            PaneInfo.Hide();
-            m_AuiManager.Update();
-        }
+
+        CheckHideNotebook();
     }
 }
 
@@ -1040,6 +1046,8 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
 
     if( event.IsChecked() )
     {
+        CheckShowNotebook();
+
         if( !m_RadioPanel )
             m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
 
@@ -1051,8 +1059,9 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
-            m_RadioPanel = NULL;
         }
+
+        CheckHideNotebook();
     }
 }
 
@@ -1064,6 +1073,8 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 
     if( event.IsChecked() )
     {
+        CheckShowNotebook();
+
         if( !m_LastFMPanel )
             m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_DbCache, m_PlayerPanel );
 
@@ -1075,8 +1086,9 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
-            m_LastFMPanel = NULL;
         }
+
+        CheckHideNotebook();
     }
 }
 
@@ -1088,6 +1100,8 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 
     if( event.IsChecked() )
     {
+        CheckShowNotebook();
+
         if( !m_LyricsPanel )
             m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db );
 
@@ -1099,8 +1113,9 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
-            m_LyricsPanel = NULL;
         }
+
+        CheckHideNotebook();
     }
 }
 
@@ -1112,6 +1127,8 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 
     if( event.IsChecked() )
     {
+        CheckShowNotebook();
+
         if( !m_PodcastsPanel )
             m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
 
@@ -1123,8 +1140,9 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
-            m_PodcastsPanel = NULL;
         }
+
+        CheckHideNotebook();
     }
 }
 
@@ -1136,6 +1154,8 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 
     if( event.IsChecked() )
     {
+        CheckShowNotebook();
+
         if( !m_PlayListPanel )
             m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
 
@@ -1147,8 +1167,9 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
         if( PageIndex >= 0 )
         {
             m_CatNotebook->RemovePage( PageIndex );
-            m_PlayListPanel = NULL;
         }
+
+        CheckHideNotebook();
     }
 }
 
@@ -1577,6 +1598,7 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
     m_CatNotebook->LoadPerspective( m_LayoutTabs[ Layout ] );
 
     bool NBIsShown = m_AuiManager.GetPane( m_CatNotebook ).IsShown();
+    guLogMessage( wxT( "LibraryPanel" ) );
     guLogMessage( wxT( "NB IsShown: %i" ), NBIsShown );
     guLogMessage( wxT( "PageIndex : %i" ), m_CatNotebook->GetPageIndex( m_LibPanel ) );
     guLogMessage( wxT( "PageShown : %i" ), m_CatNotebook->GetPane( m_LibPanel ).IsShown() );
@@ -1587,74 +1609,63 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
 //        m_CatNotebook->RemovePage( PageIndex );
 //    }
 
-    int PageIndex;
+//    int PageIndex;
+//
+//    if( !NBIsShown )
+//    {
+////        guLogMessage( wxT( "Library should not be in perspective..." ) );
+//        if( ( PageIndex = m_CatNotebook->GetPageIndex( m_LibPanel ) ) != wxNOT_FOUND )
+//        {
+//            m_CatNotebook->RemovePage( PageIndex );
+//        }
+//        m_ViewLibrary->Check( false );
+//    }
+//
+//    if( !NBIsShown )
+//    {
+//        if( ( PageIndex = m_CatNotebook->GetPageIndex( m_RadioPanel ) ) != wxNOT_FOUND )
+//        {
+//            m_CatNotebook->RemovePage( PageIndex );
+//        }
+//        m_ViewRadios->Check( false );
+//    }
+//
+//    if( !NBIsShown )
+//    {
+//        if( ( PageIndex = m_CatNotebook->GetPageIndex( m_LastFMPanel ) ) != wxNOT_FOUND )
+//        {
+//            m_CatNotebook->RemovePage( PageIndex );
+//        }
+//        m_ViewLastFM->Check( false );
+//    }
+//
+//    if( !NBIsShown )
+//    {
+//        if( ( PageIndex = m_CatNotebook->GetPageIndex( m_LyricsPanel ) ) != wxNOT_FOUND )
+//        {
+//            m_CatNotebook->RemovePage( PageIndex );
+//        }
+//        m_ViewLyrics->Check( false );
+//    }
+//
+//    if( !NBIsShown )
+//    {
+//        if( ( PageIndex = m_CatNotebook->GetPageIndex( m_PlayListPanel ) ) == wxNOT_FOUND )
+//        {
+//            m_CatNotebook->RemovePage( PageIndex );
+//        }
+//        m_ViewPlayLists->Check( false );
+//    }
+//
+//    if( !NBIsShown )
+//    {
+//        if( ( PageIndex = m_CatNotebook->GetPageIndex( m_PodcastsPanel ) ) != wxNOT_FOUND )
+//        {
+//            m_CatNotebook->RemovePage( PageIndex );
+//        }
+//        m_ViewPodcasts->Check( false );
+//    }
 
-    if( !NBIsShown )
-    {
-        guLogMessage( wxT( "Library should not be in perspective..." ) );
-        if( m_LibPanel && ( ( PageIndex = m_CatNotebook->GetPageIndex( m_LibPanel ) ) != wxNOT_FOUND ) )
-        {
-            m_CatNotebook->RemovePage( PageIndex );
-            delete m_LibPanel;
-            m_LibPanel = NULL;
-        }
-        m_ViewLibrary->Check( false );
-    }
-
-    if( !NBIsShown )
-    {
-        if( m_RadioPanel && ( ( PageIndex = m_CatNotebook->GetPageIndex( m_RadioPanel ) ) != wxNOT_FOUND ) )
-        {
-            m_CatNotebook->RemovePage( PageIndex );
-            delete m_RadioPanel;
-            m_RadioPanel = NULL;
-        }
-        m_ViewRadios->Check( false );
-    }
-
-    if( !NBIsShown )
-    {
-        if( m_LastFMPanel && ( ( PageIndex = m_CatNotebook->GetPageIndex( m_LastFMPanel ) ) != wxNOT_FOUND ) )
-        {
-            m_CatNotebook->RemovePage( PageIndex );
-            delete m_LastFMPanel;
-            m_LastFMPanel = NULL;
-        }
-        m_ViewLastFM->Check( false );
-    }
-
-    if( !NBIsShown )
-    {
-        if( m_LyricsPanel && ( ( PageIndex = m_CatNotebook->GetPageIndex( m_LyricsPanel ) ) != wxNOT_FOUND ) )
-        {
-            m_CatNotebook->RemovePage( PageIndex );
-            delete m_LyricsPanel;
-            m_LyricsPanel = NULL;
-        }
-        m_ViewLyrics->Check( false );
-    }
-
-    if( !NBIsShown )
-    {
-        if( m_PlayListPanel && ( ( PageIndex = m_CatNotebook->GetPageIndex( m_PlayListPanel ) ) == wxNOT_FOUND ) )
-        {
-            m_CatNotebook->RemovePage( PageIndex );
-            delete m_PlayListPanel;
-            m_PlayListPanel = NULL;
-        }
-        m_ViewPlayLists->Check( false );
-    }
-
-    if( !NBIsShown )
-    {
-        if( m_PodcastsPanel && ( ( PageIndex = m_CatNotebook->GetPageIndex( m_PodcastsPanel ) ) != wxNOT_FOUND ) )
-        {
-            m_CatNotebook->RemovePage( PageIndex );
-            delete m_PodcastsPanel;
-            m_PodcastsPanel = NULL;
-        }
-        m_ViewPodcasts->Check( false );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
