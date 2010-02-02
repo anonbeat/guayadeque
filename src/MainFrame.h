@@ -142,6 +142,9 @@ class guMainFrame : public wxFrame
     void                OnCopyTracksTo( wxCommandEvent &event );
     void                OnUpdateLabels( wxCommandEvent &event );
 
+    void                CheckShowNotebook( void );
+    void                CheckHideNotebook( void );
+
     void                OnViewLibrary( wxCommandEvent &event );
     void                OnViewRadio( wxCommandEvent &event );
     void                OnViewLastFM( wxCommandEvent &event );
