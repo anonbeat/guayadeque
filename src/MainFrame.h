@@ -21,6 +21,7 @@
 #ifndef MAINFRAME_H
 #define MAINFRAME_H
 
+#include "AuiNotebook.h"
 #include "Config.h"
 #include "DbLibrary.h"
 #include "DbCache.h"
@@ -35,7 +36,7 @@
 #include "RadioPanel.h"
 #include "StatusBar.h"
 #include "SplashWin.h"
-#include <curl/http.h>
+#include "curl/http.h"
 
 #include "dbus/gudbus.h"
 #include "dbus/mpris.h"
@@ -60,7 +61,9 @@ class guUpdatePodcastsTimer;
 class guMainFrame : public wxFrame
 {
   private:
-    wxAuiNotebook *             m_CatNotebook;
+    wxAuiManager                m_AuiManager;
+    guAuiNotebook *             m_CatNotebook;
+    wxString                    m_NBPerspective;
     wxSplitterWindow *          m_PlayerSplitter;
     guPlayerPanel *             m_PlayerPanel;
     guLibPanel *                m_LibPanel;
@@ -76,6 +79,9 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_LoopPlayListMenuItem;
     wxMenuItem *                m_LoopTrackMenuItem;
 
+    wxMenu *                    m_MainMenu;
+    wxMenu *                    m_LayoutLoadMenu;
+    wxMenu *                    m_LayoutDelMenu;
     wxMenuItem *                m_ViewLibrary;
     wxMenuItem *                m_ViewRadios;
     wxMenuItem *                m_ViewLastFM;
@@ -104,6 +110,12 @@ class guMainFrame : public wxFrame
     wxLongLong                  m_SelCount;
     wxLongLong                  m_SelLength;
     wxLongLong                  m_SelSize;
+
+    // Layouts
+    wxArrayString               m_LayoutName;
+    wxArrayString               m_LayoutData;
+    wxArrayString               m_LayoutTabs;
+
 
     void                OnUpdateLibrary( wxCommandEvent &event );
     void                OnUpdatePodcasts( wxCommandEvent &event );
@@ -166,6 +178,12 @@ class guMainFrame : public wxFrame
     void                OnUpdateSelInfo( wxCommandEvent &event );
 
     //void                OnSysColorChanged( wxSysColourChangedEvent &event );
+
+    void                OnCreateNewLayout( wxCommandEvent &event );
+    void                LoadLayouts( void );
+    void                SaveLayouts( void );
+    void                OnLoadLayout( wxCommandEvent &event );
+    void                OnDeleteLayout( wxCommandEvent &event );
 
   public:
                         guMainFrame( wxWindow * parent );

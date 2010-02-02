@@ -156,7 +156,6 @@
 		<Unit filename="src/PlayListAppend.h" />
 		<Unit filename="src/PlayListFile.cpp" />
 		<Unit filename="src/PlayListFile.h" />
-		<Unit filename="src/PlayListFiles.h" />
 		<Unit filename="src/PlayListPanel.cpp" />
 		<Unit filename="src/PlayListPanel.h" />
 		<Unit filename="src/PlayerPanel.cpp" />
