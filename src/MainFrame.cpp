@@ -1575,6 +1575,66 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
     guLogMessage( wxT( "Load Layout %i" ), Layout );
     m_AuiManager.LoadPerspective( m_LayoutData[ Layout ] );
     m_CatNotebook->LoadPerspective( m_LayoutTabs[ Layout ] );
+
+    if( m_CatNotebook->GetPageIndex( m_LibPanel ) == wxNOT_FOUND )
+    {
+        if( m_LibPanel )
+        {
+            delete m_LibPanel;
+            m_LibPanel = NULL;
+        }
+        m_ViewLibrary->Check( false );
+    }
+
+    if( m_CatNotebook->GetPageIndex( m_RadioPanel ) == wxNOT_FOUND )
+    {
+        if( m_RadioPanel )
+        {
+            delete m_RadioPanel;
+            m_RadioPanel = NULL;
+        }
+        m_ViewRadios->Check( false );
+    }
+
+    if( m_CatNotebook->GetPageIndex( m_LastFMPanel ) == wxNOT_FOUND )
+    {
+        if( m_LastFMPanel )
+        {
+            delete m_LastFMPanel;
+            m_LastFMPanel = NULL;
+        }
+        m_ViewLastFM->Check( false );
+    }
+
+    if( m_CatNotebook->GetPageIndex( m_LyricsPanel ) == wxNOT_FOUND )
+    {
+        if( m_LyricsPanel )
+        {
+            delete m_LyricsPanel;
+            m_LyricsPanel = NULL;
+        }
+        m_ViewLyrics->Check( false );
+    }
+
+    if( m_CatNotebook->GetPageIndex( m_PlayListPanel ) == wxNOT_FOUND )
+    {
+        if( m_PlayListPanel )
+        {
+            delete m_PlayListPanel;
+            m_PlayListPanel = NULL;
+        }
+        m_ViewPlayLists->Check( false );
+    }
+
+    if( m_CatNotebook->GetPageIndex( m_PodcastsPanel ) == wxNOT_FOUND )
+    {
+        if( m_PodcastsPanel )
+        {
+            delete m_PodcastsPanel;
+            m_PodcastsPanel = NULL;
+        }
+        m_ViewPodcasts->Check( false );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
