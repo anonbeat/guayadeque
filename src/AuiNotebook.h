@@ -165,6 +165,7 @@ public:
     wxString SavePerspective( void );
  	bool LoadPerspective( const wxString &layout );
 
+    wxAuiPaneInfo & GetPane( wxWindow * window );
 };
 
 

@@ -173,3 +173,9 @@ bool guAuiNotebook::LoadPerspective(const wxString& layout) {
 }
 
 // -------------------------------------------------------------------------------- //
+wxAuiPaneInfo & guAuiNotebook::GetPane( wxWindow * window )
+{
+    return m_mgr.GetPane( window );
+}
+
+// -------------------------------------------------------------------------------- //
