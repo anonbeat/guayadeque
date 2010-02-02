@@ -275,6 +275,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 // -------------------------------------------------------------------------------- //
 guLibPanel::~guLibPanel()
 {
+    guLogMessage( wxT( "LibPanel destroyed..." ) );
     // Save the Splitter positions into the main config
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )

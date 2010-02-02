@@ -37,6 +37,7 @@ enum guCommandIds {
     ID_MENU_VIEW_LYRICS,
     ID_MENU_VIEW_PLAYLISTS,
     ID_MENU_VIEW_PODCASTS,
+    ID_MENU_LAYOUT_CREATE,
     ID_MENU_ABOUT,
 
     //
@@ -202,6 +203,8 @@ enum guCommandIds {
     ID_ALBUM_COMMANDS = 3100,           // 3100...3199
     ID_SONGS_COMMANDS = 3200,           // 3200...3299
     ID_PLAYER_PLAYLIST_COMMANDS = 3300, // 3300...3399
+    ID_MENU_LAYOUT_LOAD = 3400,
+    ID_MENU_LAYOUT_DELETE = 3500,
     //
     ID_LASTFM_SEARCH_LINK = 4000    // From 4000 for Link #0 to 4999
 };

@@ -190,6 +190,8 @@ ADD_EXECUTABLE( guayadeque
 	LastFMCovers.h
 	PlayListFile.cpp
 	PlayListFile.h
+	AuiNotebook.cpp
+	AuiNotebook.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
