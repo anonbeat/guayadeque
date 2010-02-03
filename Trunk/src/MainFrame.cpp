@@ -544,7 +544,7 @@ void guMainFrame::CreateMenu()
         {
             MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_LOAD + Index, m_LayoutName[ Index ], _( "Load this user defined layout" ) );
             m_LayoutLoadMenu->Append( MenuItem );
-            if( Index > 4 )
+            if( Index > 3 )
             {
                 MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
                 m_LayoutDelMenu->Append( MenuItem );
@@ -1691,8 +1691,11 @@ void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
     {
         MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_LOAD + Index, m_LayoutName[ Index ], _( "Load this user defined layout" ) );
         m_LayoutLoadMenu->Append( MenuItem );
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
-        m_LayoutDelMenu->Append( MenuItem );
+        if( Index > 3 )
+        {
+            MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
+            m_LayoutDelMenu->Append( MenuItem );
+        }
     }
 }
 
