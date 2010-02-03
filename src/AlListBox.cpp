@@ -36,7 +36,7 @@
 // guAlListBox
 // -------------------------------------------------------------------------------- //
 guAlListBox::guAlListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
-    guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG )
+    guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
 {
     m_Db = db;
     m_Items = new guAlbumItems();

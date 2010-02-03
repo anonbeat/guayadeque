@@ -25,8 +25,8 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guTaListBox::guTaListBox( wxWindow * parent, guDbLibrary * NewDb, const wxString &Label ) :
-             guListBox( parent, NewDb, Label )
+guTaListBox::guTaListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
+     guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
 {
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::AddLabel ) );
     Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::DelLabel ) );

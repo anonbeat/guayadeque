@@ -36,8 +36,8 @@ class guGeListBox : public guListBox
 
   public :
 
-    guGeListBox( wxWindow * parent, guDbLibrary * NewDb, const wxString &Label ) :
-        guListBox( parent, NewDb, Label )
+    guGeListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
+         guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
     {
           ReloadItems();
     };

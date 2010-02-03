@@ -38,13 +38,10 @@
 guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel )
        : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL )
 {
-    wxStaticText *      SearchStaticText;
-    wxStaticLine *      SearchStaticline;
     wxPanel *           SelectorPanel;
     wxPanel *           GenreLabelsPanel;
     wxPanel *           ArtistAlbumPanel;
     wxPanel *           SongListPanel;
-    wxPanel *           InputTextPanel;
 
    	wxBoxSizer *        LibraryMainSizer;
 	wxBoxSizer *        SearchSizer;
@@ -56,7 +53,6 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 	wxBoxSizer *        ArtistSizer;
 	wxBoxSizer *        AlbumSizer;
 	wxBoxSizer *        SongListSizer;
-	wxBoxSizer *        InputTextSizer;
 
     guConfig *  Config = ( guConfig * ) guConfig::Get();
 
@@ -70,34 +66,17 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 
 	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
 
+    wxStaticText *      SearchStaticText;
 	SearchStaticText = new wxStaticText( this, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	SearchStaticText->Wrap( -1 );
 	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
 
-	InputTextPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
-	InputTextPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
-
-	InputTextSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	m_InputTextLeftBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, guImage( guIMAGE_INDEX_search ), wxDefaultPosition, wxDefaultSize, 0 );
-	InputTextSizer->Add( m_InputTextLeftBitmap, 0, wxALL, 0 );
-
-	m_InputTextCtrl = new wxTextCtrl( InputTextPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxNO_BORDER );
-	//m_InputTextCtrl->SetBackgroundColour( wxColor( 250, 250, 250 ) );
-	InputTextSizer->Add( m_InputTextCtrl, 1, wxALL, 2 );
-
-	m_InputTextClearBitmap = new wxStaticBitmap( InputTextPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_InputTextClearBitmap->Disable();
-	InputTextSizer->Add( m_InputTextClearBitmap, 0, wxALL, 0 );
-
-	InputTextPanel->SetSizer( InputTextSizer );
-	InputTextPanel->Layout();
-	InputTextSizer->Fit( InputTextPanel );
-
-	SearchSizer->Add( InputTextPanel, 1, wxEXPAND | wxALL, 2 );
+    m_InputTextCtrl = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+    SearchSizer->Add( m_InputTextCtrl, 1, wxALL, 2 );
 
 	LibraryMainSizer->Add( SearchSizer, 0, wxEXPAND, 2 );
 
+    wxStaticLine *      SearchStaticline;
 	SearchStaticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	LibraryMainSizer->Add( SearchStaticline, 0, wxEXPAND, 5 );
 
@@ -232,7 +211,8 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_SongListCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
     m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
-    m_InputTextClearBitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guLibPanel::OnSearchCancelled ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guLibPanel::OnSearchCancelled ), NULL, this );
 
     Connect( ID_GENRE_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenrePlayClicked ) );
     Connect( ID_GENRE_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenreQueueClicked ) );
@@ -304,7 +284,8 @@ guLibPanel::~guLibPanel()
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
-    m_InputTextClearBitmap->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guLibPanel::OnSearchCancelled ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guLibPanel::OnSearchCancelled ), NULL, this );
 
     Disconnect( ID_GENRE_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenrePlayClicked ) );
     Disconnect( ID_GENRE_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenreQueueClicked ) );
@@ -374,11 +355,11 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
     m_AlbumListCtrl->ReloadItems();
     m_SongListCtrl->ReloadItems();
     m_UpdateLock = false;
-    m_InputTextClearBitmap->Enable();
+    m_InputTextCtrl->ShowCancelButton( true );
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
+void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
     wxArrayString Words;
     //guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
@@ -391,7 +372,7 @@ void guLibPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
     m_AlbumListCtrl->ReloadItems();
     m_SongListCtrl->ReloadItems();
     m_UpdateLock = false;
-    m_InputTextClearBitmap->Disable();
+    m_InputTextCtrl->ShowCancelButton( false );
 }
 
 // -------------------------------------------------------------------------------- //

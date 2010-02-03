@@ -21,18 +21,19 @@
 #ifndef LIBPANEL_H
 #define LIBPANEL_H
 
+#include "AlListBox.h"
+#include "ArListBox.h"
+#include "DbLibrary.h"
+#include "GeListBox.h"
+#include "PlayerPanel.h"
+#include "SoListBox.h"
+#include "TaListBox.h"
+
 #include <wx/wx.h>
 #include <wx/statline.h>
 #include <wx/notebook.h>
 #include <wx/splitter.h>
-
-#include "DbLibrary.h"
-#include "PlayerPanel.h"
-#include "GeListBox.h"
-#include "TaListBox.h"
-#include "ArListBox.h"
-#include "AlListBox.h"
-#include "SoListBox.h"
+#include <wx/srchctrl.h>
 
 // -------------------------------------------------------------------------------- //
 class guLibPanel : public wxPanel
@@ -52,9 +53,9 @@ class guLibPanel : public wxPanel
     guArListBox *       m_ArtistListCtrl;
     guAlListBox *       m_AlbumListCtrl;
     guSoListBox *       m_SongListCtrl;
-    wxStaticBitmap *    m_InputTextLeftBitmap;
-    wxStaticBitmap *    m_InputTextClearBitmap;
-    wxTextCtrl *        m_InputTextCtrl;
+    //wxStaticBitmap *    m_InputTextLeftBitmap;
+    //wxStaticBitmap *    m_InputTextClearBitmap;
+    wxSearchCtrl *      m_InputTextCtrl;
 
     //
     guDbLibrary *         m_Db;
@@ -64,8 +65,8 @@ class guLibPanel : public wxPanel
     //guStatusBar *       m_StatusBar;
 
     // Search Str events
-    void OnSearchActivated( wxCommandEvent& event );
-    void OnSearchCancelled( wxMouseEvent &event );
+    void OnSearchActivated( wxCommandEvent &event );
+    void OnSearchCancelled( wxCommandEvent &event );
 
     // GenreListBox Events
     void OnGenreListActivated( wxListEvent &event );

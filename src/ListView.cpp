@@ -116,7 +116,10 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     m_Columns = new guListViewColumnArray();
     m_ImageList = ( wxImageList * ) NULL;
     m_ListBox = new guListViewClient( this, flags, m_Columns, &m_Attr );
-    m_Header = new guListViewHeader( this, m_ListBox, m_Columns, wxPoint( 0, 0 ) );
+    if( !( flags & guLISTVIEW_HIDE_HEADER ) )
+        m_Header = new guListViewHeader( this, m_ListBox, m_Columns, wxPoint( 0, 0 ) );
+    else
+        m_Header = NULL;
     m_ColSelect = ( flags & guLISTVIEW_COLUMN_SELECT );
     m_AllowDrag = ( flags & guLISTVIEW_ALLOWDRAG );
     m_AllowDrop = ( flags & guLISTVIEW_ALLOWDROP );
@@ -193,13 +196,16 @@ guListView::~guListView()
 void guListView::InsertColumn( guListViewColumn * column )
 {
     m_Columns->Add( column );
-    m_Header->RefreshWidth();
+    if( m_Header )
+        m_Header->RefreshWidth();
 }
 
 // -------------------------------------------------------------------------------- //
 void guListView::OnChangedSize( wxSizeEvent &event )
 {
-    int w, h, d;
+    int w;
+    int h = 0;
+    int d;
     wxSize Size = event.GetSize();
     Size.x -= 6;
     Size.y -= 6;
@@ -282,7 +288,8 @@ int guListView::GetItemCount( void ) const
 void guListView::SetItemCount( const int count )
 {
     m_ListBox->SetItemCount( count );
-    m_Header->RefreshWidth();
+    if( m_Header )
+        m_Header->RefreshWidth();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -519,7 +526,8 @@ long guListView::FindItem( long start, const wxString &str, bool partial )
 void guListView::SetColumnWidth( const int col, const int width )
 {
     ( * m_Columns )[ col ].m_Width = width;
-    m_Header->RefreshWidth();
+    if( m_Header )
+        m_Header->RefreshWidth();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -550,14 +558,16 @@ int guListView::GetColumnId( const int col ) const
 void  guListView::SetColumnLabel( const int col, const wxString &label )
 {
     m_Columns->Item( col ).m_Label = label;
-    m_Header->Refresh();
+    if( m_Header )
+        m_Header->Refresh();
 }
 
 // -------------------------------------------------------------------------------- //
 void guListView::SetColumnImage( const int col, const int imageindex )
 {
     m_Columns->Item( col ).m_ImageIndex = imageindex;
-    m_Header->Refresh();
+    if( m_Header )
+        m_Header->Refresh();
 }
 
 // -------------------------------------------------------------------------------- //
