@@ -11,7 +11,7 @@
   * Added Ultimate-guitar.com as lyrics source for guitar tabs
   * If the track length is not correctly read by taglib read at play time using gstreamer
   * Added Events to last.fm information panel
-  * Implemented PlayList import from m3u, pls, axs, xspf playlist file formats
+  * Implemented PlayList import/export from m3u, pls, axs, xspf playlist file formats
   * Ratings of tracks can be set clicking over the stars in tracks listboxes
     in library and playlists panel
   * Added an option to export/import user defined radio stations
