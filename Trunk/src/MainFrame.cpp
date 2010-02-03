@@ -128,7 +128,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
 	//m_CatNotebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	m_CatNotebook = new guAuiNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_TOP );
+                                        wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_WINDOWLIST_BUTTON );
 
     // Library Page
     if( Config->ReadBool( wxT( "ShowLibrary" ), true, wxT( "ViewPanels" ) ) )
@@ -1285,38 +1285,35 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
     wxAuiNotebook * ctrl = ( wxAuiNotebook * ) event.GetEventObject();
 
     wxPanel * CurPage = ( wxPanel * ) ctrl->GetPage( event.GetSelection() );
+    m_CatNotebook->RemovePage( event.GetSelection() );
 
     if( CurPage == m_LibPanel )
     {
-        m_LibPanel = NULL;
         m_ViewLibrary->Check( false );
     }
     else if( CurPage == m_RadioPanel )
     {
-        m_RadioPanel = NULL;
         m_ViewRadios->Check( false );
     }
     else if( CurPage == m_LastFMPanel )
     {
-        m_LastFMPanel = NULL;
         m_ViewLastFM->Check( false );
     }
     else if( CurPage == m_LyricsPanel )
     {
-        m_LyricsPanel = NULL;
         m_ViewLyrics->Check( false );
     }
     else if( CurPage == m_PlayListPanel )
     {
-        m_PlayListPanel = NULL;
         m_ViewPlayLists->Check( false );
     }
     else if( CurPage == m_PodcastsPanel )
     {
-        m_PodcastsPanel = NULL;
         m_ViewPodcasts->Check( false );
     }
-    event.Skip();
+
+    CheckHideNotebook();
+    event.Veto();
 }
 
 // -------------------------------------------------------------------------------- //
