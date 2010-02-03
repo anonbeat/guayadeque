@@ -29,6 +29,7 @@
 #include "OnlineLinks.h"
 #include "PlayerPanel.h"
 #include "PlayListAppend.h"
+#include "PlayListFile.h"
 #include "Shoutcast.h"
 #include "TagInfo.h"
 #include "TrackEdit.h"
@@ -73,7 +74,8 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
         for( Index = 1; Index < Count; Index++ )
         {
             //wxMessageBox( wxString::Format( wxT( "%u-%u %s" ), Index, MainApp->argc, MainApp->argv[ Index ] ), wxT( "Song" ) );
-            if( wxFileExists( MainApp->argv[ Index ] ) )
+            if( guIsValidAudioFile( MainApp->argv[ Index ] ) ||
+                guPlayListFile::IsValidPlayList( MainApp->argv[ Index ] ) )
             {
                 AddPlayListItem( MainApp->argv[ Index ] );
                 m_StartPlaying = true;
@@ -194,7 +196,8 @@ void guPlayList::OnDropBegin( void )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnDropFile( const wxString &filename )
 {
-    if( guIsValidAudioFile( filename ) )
+    if( guIsValidAudioFile( filename ) ||
+        guPlayListFile::IsValidPlayList( filename ) )
     {
         //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
         AddPlayListItem( filename, false );
@@ -901,116 +904,215 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::AddPlayListItem( const wxString &FileName, bool AddPath )
+void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
 {
-    wxListItem ListItem;
-    guTrack Song;
-    wxString Len;
+//    wxListItem ListItem;
+//    guTrack Song;
+//    wxString Len;
+//
+//    guTagInfo * TagInfo;
+//
+//    TagInfo = guGetTagInfoHandler( FileName );
+//
+//    //guLogMessage( wxT( "Adding to Playlist %s" ), FileName.c_str() );
+//    if( TagInfo )
+//    {
+//        wxURI UriPath( FileName );
+//        if( UriPath.IsReference() )
+//        {
+//            //guLogMessage( wxT( "AddPlaylistItem: (%u) '%s' " ), AddPath, FileName.c_str() );
+//
+//            //
+//            Song.m_FileName = FileName;
+//
+//            if( AddPath )
+//            {
+//                Song.m_FileName = wxGetCwd() + wxT( "/" ) + FileName;
+//                TagInfo->SetFileName( Song.m_FileName );
+//                //guLogMessage( wxT( "AddedPath: (%u) '%s' " ), AddPath, Song.m_FileName.c_str() );
+//            }
+//
+//            if( wxFileExists( Song.m_FileName ) )
+//            {
+//                Song.m_SongId = 0;
+//                Song.m_CoverId = 0;
+//                //Song.m_Number = -1;
+//
+//                //Song.m_SongId = 1;
+//                //guLogMessage( wxT( "Loading : %s" ), Song.m_FileName.c_str() );
+//                if( !m_Db->FindTrackFile( Song.m_FileName, &Song ) )
+//                {
+//                    guPodcastItem PodcastItem;
+//                    if( m_Db->GetPodcastItemFile( Song.m_FileName, &PodcastItem ) )
+//                    {
+//                        //guLogMessage( wxT( "Its a podcast item" ) );
+//                        Song.m_Type = guTRACK_TYPE_PODCAST;
+//                        Song.m_SongName = PodcastItem.m_Title;
+//                        Song.m_ArtistName = PodcastItem.m_Author;
+//                        Song.m_AlbumName = PodcastItem.m_Channel;
+//                        Song.m_Length = PodcastItem.m_Length;
+//                        Song.m_Year = 0;
+//                        Song.m_Rating = wxNOT_FOUND;
+//                    }
+//                    else
+//                    {
+//                        //guLogMessage( wxT( "Reading tags from the file..." ) );
+//                        Song.m_Type = guTRACK_TYPE_NOTDB;
+//
+//                        TagInfo->Read();
+//
+//                        Song.m_ArtistName = TagInfo->m_ArtistName;
+//                        Song.m_AlbumName = TagInfo->m_AlbumName;
+//                        Song.m_SongName = TagInfo->m_TrackName;
+//                        Song.m_Number = TagInfo->m_Track;
+//                        Song.m_GenreName = TagInfo->m_GenreName;
+//                        Song.m_Length = TagInfo->m_Length;
+//                        Song.m_Year = TagInfo->m_Year;
+//                        Song.m_Rating = wxNOT_FOUND;
+//                    }
+//                }
+//
+//                m_TotalLen += Song.m_Length;
+//
+//                AddItem( Song );
+//            }
+//            else
+//            {
+//                guLogWarning( wxT( "Could not open the file '%s'" ), Song.m_FileName.c_str() );
+//            }
+//        }
+//        else
+//        {
+//            //guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
+//
+//            Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
+//            Song.m_CoverId  = 0;
+//            Song.m_FileName = FileName;
+//            Song.m_SongName = FileName;
+//            Song.m_Length   = 0;
+//            Song.m_Year     = 0;
+//            Song.m_Rating   = wxNOT_FOUND;
+//            AddItem( Song );
+//            //guLogMessage( wxT( "Added a radio stream" ) );
+//        }
+//
+//        delete TagInfo;
+//    }
+//    else // It could be a radio station
+//    {
+//        wxURI UriPath( FileName );
+//        if( !UriPath.IsReference() )
+//        {
+//            //guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
+//
+//            Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
+//            Song.m_CoverId  = 0;
+//            Song.m_FileName = FileName;
+//            Song.m_SongName = FileName;
+//            Song.m_Length   = 0;
+//            Song.m_Year     = 0;
+//            Song.m_Rating   = wxNOT_FOUND;
+//            AddItem( Song );
+//        }
+//    }
 
-    guTagInfo * TagInfo;
+    // Check if its a uri or a filename
+    int Index;
+    int Count;
+    wxString FileName;
+    guTrack Track;
+    guPodcastItem PodcastItem;
+    FileName = ( addpath ? wxGetCwd() + wxT( "/" ) : wxT( "" ) ) + filename;
 
-    TagInfo = guGetTagInfoHandler( FileName );
+    wxURI Uri( FileName );
 
-    //guLogMessage( wxT( "Adding to Playlist %s" ), FileName.c_str() );
-    if( TagInfo )
+    guLogMessage( wxT( "Loading %s" ), FileName.c_str() );
+
+
+    // If its a playlist
+    if( guPlayListFile::IsValidPlayList( Uri.GetPath() ) )
     {
-        wxURI UriPath( FileName );
-        if( UriPath.IsReference() )
+        guPlayListFile PlayList( FileName );
+        if( ( Count = PlayList.Count() ) )
         {
-            //guLogMessage( wxT( "AddPlaylistItem: (%u) '%s' " ), AddPath, FileName.c_str() );
-
-            //
-            Song.m_FileName = FileName;
-
-            if( AddPath )
+            for( Index = 0; Index < Count; Index++ )
             {
-                Song.m_FileName = wxGetCwd() + wxT( "/" ) + FileName;
-                TagInfo->SetFileName( Song.m_FileName );
-                //guLogMessage( wxT( "AddedPath: (%u) '%s' " ), AddPath, Song.m_FileName.c_str() );
+                AddPlayListItem( PlayList.GetItem( Index ).m_Location );
             }
-
-            if( wxFileExists( Song.m_FileName ) )
+        }
+    }
+    else if( Uri.IsReference() )    // Its a file
+    {
+        if( wxFileExists( FileName ) )
+        {
+            if( guIsValidAudioFile( FileName ) )
             {
-                Song.m_SongId = 0;
-                Song.m_CoverId = 0;
-                //Song.m_Number = -1;
+                Track.m_FileName = FileName;
 
-                //Song.m_SongId = 1;
-                //guLogMessage( wxT( "Loading : %s" ), Song.m_FileName.c_str() );
-                if( !m_Db->FindTrackFile( Song.m_FileName, &Song ) )
+                if( !m_Db->FindTrackFile( FileName, &Track ) )
                 {
-                    guPodcastItem PodcastItem;
-                    if( m_Db->GetPodcastItemFile( Song.m_FileName, &PodcastItem ) )
+                    if( !m_Db->GetPodcastItemFile( FileName, &PodcastItem ) )
                     {
-                        //guLogMessage( wxT( "Its a podcast item" ) );
-                        Song.m_Type = guTRACK_TYPE_PODCAST;
-                        Song.m_SongName = PodcastItem.m_Title;
-                        Song.m_ArtistName = PodcastItem.m_Author;
-                        Song.m_AlbumName = PodcastItem.m_Channel;
-                        Song.m_Length = PodcastItem.m_Length;
-                        Song.m_Year = 0;
-                        Song.m_Rating = wxNOT_FOUND;
+                        Track.m_Type = guTRACK_TYPE_PODCAST;
+                        Track.m_SongName = PodcastItem.m_Title;
+                        Track.m_ArtistName = PodcastItem.m_Author;
+                        Track.m_AlbumName = PodcastItem.m_Channel;
+                        Track.m_Length = PodcastItem.m_Length;
+                        Track.m_Year = 0;
+                        Track.m_Rating = wxNOT_FOUND;
                     }
                     else
                     {
                         //guLogMessage( wxT( "Reading tags from the file..." ) );
-                        Song.m_Type = guTRACK_TYPE_NOTDB;
+                        guTagInfo * TagInfo = guGetTagInfoHandler( FileName );
+                        if( TagInfo )
+                        {
+                            Track.m_Type = guTRACK_TYPE_NOTDB;
 
-                        TagInfo->Read();
+                            TagInfo->Read();
 
-                        Song.m_ArtistName = TagInfo->m_ArtistName;
-                        Song.m_AlbumName = TagInfo->m_AlbumName;
-                        Song.m_SongName = TagInfo->m_TrackName;
-                        Song.m_Number = TagInfo->m_Track;
-                        Song.m_GenreName = TagInfo->m_GenreName;
-                        Song.m_Length = TagInfo->m_Length;
-                        Song.m_Year = TagInfo->m_Year;
-                        Song.m_Rating = wxNOT_FOUND;
+                            Track.m_ArtistName  = TagInfo->m_ArtistName;
+                            Track.m_AlbumName   = TagInfo->m_AlbumName;
+                            Track.m_SongName    = TagInfo->m_TrackName;
+                            Track.m_Number      = TagInfo->m_Track;
+                            Track.m_GenreName   = TagInfo->m_GenreName;
+                            Track.m_Length      = TagInfo->m_Length;
+                            Track.m_Year        = TagInfo->m_Year;
+                            Track.m_Rating      = wxNOT_FOUND;
+
+                            delete TagInfo;
+                        }
+                        else
+                        {
+                            guLogError( wxT( "Could not read tags from file '%s'" ), FileName.c_str() );
+                        }
                     }
                 }
 
-                m_TotalLen += Song.m_Length;
+                m_TotalLen += Track.m_Length;
 
-                AddItem( Song );
+                AddItem( Track );
             }
             else
             {
-                guLogWarning( wxT( "Could not open the file '%s'" ), Song.m_FileName.c_str() );
+                guLogError( wxT( "Could not open the file '%s'" ), FileName.c_str() );
             }
         }
         else
         {
-            //guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
-
-            Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
-            Song.m_CoverId  = 0;
-            Song.m_FileName = FileName;
-            Song.m_SongName = FileName;
-            Song.m_Length   = 0;
-            Song.m_Year     = 0;
-            Song.m_Rating   = wxNOT_FOUND;
-            AddItem( Song );
-            //guLogMessage( wxT( "Added a radio stream" ) );
+            guLogError( wxT( "File doesnt exist '%s'" ), FileName.c_str() );
         }
-
-        delete TagInfo;
     }
-    else // It could be a radio station
+    else    // This should be a radiostation
     {
-        wxURI UriPath( FileName );
-        if( !UriPath.IsReference() )
-        {
-            //guLogMessage( wxT( "AddPlaylistItem Radio: '%s'" ), FileName.c_str() );
-
-            Song.m_Type     = guTRACK_TYPE_RADIOSTATION;
-            Song.m_CoverId  = 0;
-            Song.m_FileName = FileName;
-            Song.m_SongName = FileName;
-            Song.m_Length   = 0;
-            Song.m_Year     = 0;
-            Song.m_Rating   = wxNOT_FOUND;
-            AddItem( Song );
-        }
+        Track.m_Type     = guTRACK_TYPE_RADIOSTATION;
+        Track.m_CoverId  = 0;
+        Track.m_FileName = FileName;
+        Track.m_SongName = FileName;
+        Track.m_Length   = 0;
+        Track.m_Year     = 0;
+        Track.m_Rating   = wxNOT_FOUND;
+        AddItem( Track );
     }
 }
 

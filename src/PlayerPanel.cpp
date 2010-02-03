@@ -353,8 +353,9 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     // There was a track passed as argument that we will play
     if( m_PlayListCtrl->StartPlaying() )
     {
-        wxCommandEvent event;
-        OnPlayButtonClick( event );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+        wxTheApp->GetTopWindow()->AddPendingEvent( event );
+        //OnPlayButtonClick( event );
     }
     else
     {
@@ -703,7 +704,7 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
     m_PlayListCtrl->AddPlayListItem( FileName );
     m_PlayListCtrl->ReloadItems();
     TrackListChanged();
-    // TODO Need to add the track to the smart cache
+    // Add the added track to the smart cache
     if( m_PlaySmart )
     {
         int Count = m_PlayListCtrl->GetCount();

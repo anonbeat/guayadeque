@@ -22,50 +22,87 @@
 #define PLAYLISTFILE_H
 
 #include <wx/arrstr.h>
+#include <wx/dynarray.h>
 #include <wx/string.h>
 #include <wx/xml/xml.h>
+
+class guStationPlayListItem
+{
+  public:
+    wxString m_Name;
+    wxString m_Location;
+
+    guStationPlayListItem() {};
+
+    guStationPlayListItem( const wxString &location, const wxString &title )
+    {
+        m_Name = title;
+        m_Location = location;
+    }
+};
+WX_DECLARE_OBJARRAY(guStationPlayListItem, guStationPlayList);
 
 // -------------------------------------------------------------------------------- //
 class guPlayListFile
 {
   private :
-    void            ReadXspfPlayList( wxXmlNode * XmlNode );
-    void            ReadXspfTrackList( wxXmlNode * XmlNode );
-    void            ReadXspfTrack( wxXmlNode * XmlNode );
+    void                ReadXspfPlayList( wxXmlNode * XmlNode );
+    void                ReadXspfTrackList( wxXmlNode * XmlNode );
+    void                ReadXspfTrack( wxXmlNode * XmlNode );
 
-    void            ReadAsxEntry( wxXmlNode * XmlNode );
-    void            ReadAsxPlayList( wxXmlNode * XmlNode );
+    void                ReadAsxEntry( wxXmlNode * XmlNode );
+    void                ReadAsxPlayList( wxXmlNode * XmlNode );
 
   protected :
-    wxString        m_Name;
-    wxArrayString   m_Files;
+    wxString            m_Name;
+    guStationPlayList   m_PlayList;
 
-    bool            ReadPlsFile( const wxString &filename );
-    bool            ReadM3uFile( const wxString &filename );
-    bool            ReadXspfFile( const wxString &filename );
-    bool            ReadAsxFile( const wxString &filename );
+    bool                ReadPlsStream( wxInputStream &playlist );
+    bool                ReadM3uStream( wxInputStream &playlist, const wxString &path = wxEmptyString );
+    bool                ReadXspfStream( wxInputStream &playlist );
+    bool                ReadAsxStream( wxInputStream &playlist );
 
-    bool            WritePlsFile( const wxString &filename );
-    bool            WriteM3uFile( const wxString &filename );
-    bool            WriteXspfFile( const wxString &filename );
-    bool            WriteAsxFile( const wxString &filename );
+    bool                ReadPlsFile( const wxString &filename );
+    bool                ReadM3uFile( const wxString &filename );
+    bool                ReadXspfFile( const wxString &filename );
+    bool                ReadAsxFile( const wxString &filename );
+
+    bool                WritePlsFile( const wxString &filename );
+    bool                WriteM3uFile( const wxString &filename );
+    bool                WriteXspfFile( const wxString &filename );
+    bool                WriteAsxFile( const wxString &filename );
 
   public :
     guPlayListFile( void ) {};
-    guPlayListFile( const wxString &filename );
+    guPlayListFile( const wxString &uri );
     ~guPlayListFile();
 
-    bool            Load( const wxString &filename );
-    bool            Save( const wxString &filename );
+    bool                    Load( const wxString &uri );
+    bool                    Save( const wxString &filename );
 
-    wxString        GetName( void ) { return m_Name; };
-    void            SetName( const wxString &name ) { m_Name = name; };
-    wxArrayString   GetFiles( void ) { return m_Files; };
-    void            SetFiles( const wxArrayString &files ) { m_Files = files; };
+    wxString                GetName( void ) { return m_Name; };
+    void                    SetName( const wxString &name ) { m_Name = name; };
+    guStationPlayList       GetPlayList( void ) { return m_PlayList; };
+    void                    SetPlayList( const guStationPlayList &playlist ) { m_PlayList = playlist; };
 
-    size_t          Count( void ) const { return m_Files.Count(); };
-    wxString        Item( const size_t index ) const { return m_Files[ index ]; };
-    void            AddFile( const wxString &filename ) { m_Files.Add( filename ); };
+    size_t                  Count( void ) const { return m_PlayList.Count(); };
+
+    guStationPlayListItem   GetItem( const size_t index )
+    {
+        return m_PlayList[ index ];
+    }
+
+    void                    AddItem( const wxString &location, const wxString &title = wxEmptyString )
+    {
+        m_PlayList.Add( new guStationPlayListItem( location, title ) );
+    }
+
+    void                    AddItem( const guStationPlayListItem &item )
+    {
+        m_PlayList.Add( new guStationPlayListItem( item ) );
+    };
+
+    static bool             IsValidPlayList( const wxString &uri );
 
 };
 

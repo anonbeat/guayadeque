@@ -22,16 +22,7 @@
 #define SHOUTCAST_H
 
 #include "DbLibrary.h"
-
-class guStationPlayList
-{
-  public:
-    wxString m_Name;
-    wxString m_Url;
-
-};
-
-WX_DECLARE_OBJARRAY(guStationPlayList, guStationPlayLists);
+#include "PlayListFile.h"
 
 #define SHOUTCAST_STATION_STATUS_NAME       0
 #define SHOUTCAST_STATION_STATUS_GENRE      1
@@ -53,8 +44,9 @@ class guShoutCast
     guShoutCast() { m_LastServerUrl = wxEmptyString; };
     wxArrayString       GetGenres( void ) const;
     void                GetStations( const wxString &GenreName, const int GenreId, guRadioStations * Stations, long MinBitrate = SHOUTCAST_STATION_ALLBITRATES ) const;
-    guStationPlayLists  GetStationPlayList( const int StationId ) const;
-    guStationPlayLists  GetStationPlayList( const wxString &stationurl ) const;
+    wxString            GetStationUrl( const int id ) const;
+    guStationPlayList   GetStationPlayList( const int StationId ) const;
+    guStationPlayList   GetStationPlayList( const wxString &stationurl ) const;
     wxArrayString       GetStationStatus( const wxString ServerUrl );
 };
 

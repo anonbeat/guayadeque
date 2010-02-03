@@ -79,6 +79,8 @@
 		<Unit filename="src/ArrayStringArray.h" />
 		<Unit filename="src/AudioScrobble.cpp" />
 		<Unit filename="src/AudioScrobble.h" />
+		<Unit filename="src/AuiNotebook.cpp" />
+		<Unit filename="src/AuiNotebook.h" />
 		<Unit filename="src/AutoPulseGauge.cpp" />
 		<Unit filename="src/AutoPulseGauge.h" />
 		<Unit filename="src/Base64.cpp" />
