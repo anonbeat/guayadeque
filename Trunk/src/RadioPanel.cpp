@@ -25,6 +25,7 @@
 #include "Images.h"
 #include "LabelEditor.h"
 #include "MainFrame.h"
+#include "PlayListFile.h"
 #include "RadioGenreEditor.h"
 #include "RadioEditor.h"
 #include "StatusBar.h"
@@ -1032,346 +1033,61 @@ void guRadioPanel::OnRadioStationsEnqueue( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-guStationPlayLists GetStationM3uPlayList( const guRadioStation * RadioStation )
-{
-    guStationPlayLists PlayList;
-    wxString M3uFile;
-    wxCurlHTTP          http;
-    char *              Buffer = NULL;
-    //
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: */*" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.Get( Buffer, RadioStation->m_Link );
-    if( Buffer )
-    {
-        M3uFile = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
-        if( !M3uFile.IsEmpty() )
-        {
-            //guLogMessage( wxT( "Content...\n%s" ), M3uFile.c_str() );
-            wxArrayString Lines = wxStringTokenize( M3uFile, wxT( "\n" ) );
-
-            //if( Lines[ 0 ].Find( wxT( "#EXTM3U" ) ) != wxNOT_FOUND )
-            //{
-                int index;
-                int count = Lines.Count();
-                wxString StreamName = wxEmptyString;
-                for( index = 0; index < count; index++ )
-                {
-                    Lines[ index ].Trim( wxString::both );
-                    if( Lines[ index ].IsEmpty() || ( Lines[ index ].Find( wxT( "#EXTM3U" ) ) != wxNOT_FOUND ) )
-                    {
-                        continue;
-                    }
-                    else if( Lines[ index ].Find( wxT( "#EXTINF" ) ) != wxNOT_FOUND )
-                    {
-                        if( Lines[ index ].Find( wxT( "," ) ) != wxNOT_FOUND )
-                            StreamName = Lines[ index ].AfterLast( wxT( ',' ) );
-                    }
-                    else
-                    {
-                        guStationPlayList * StationPlayList = new guStationPlayList();
-                        if( StationPlayList )
-                        {
-                            StationPlayList->m_Name = StreamName.IsEmpty() ? RadioStation->m_Name : StreamName;
-                            StationPlayList->m_Url = Lines[ index ];
-                            StreamName = wxEmptyString;
-                            PlayList.Add( StationPlayList );
-                        }
-                    }
-                }
-            //}
-            //else
-            //{
-            //    guLogMessage( wxT( "M3u header tag not found...\n%s" ), M3uFile.c_str() );
-            //}
-        }
-        else
-        {
-            guLogMessage( wxT( "Empty M3u file %s" ), RadioStation->m_Link.c_str() );
-        }
-    }
-    return PlayList;
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadAsxEntry( wxXmlNode * XmlNode, guStationPlayLists * playlist, const wxString &title )
-{
-    wxString StreamLink;
-    wxString StreamTitle;
-    while( XmlNode )
-    {
-        if( XmlNode->GetName().Lower() == wxT( "ref" ) )
-        {
-            XmlNode->GetPropVal( wxT( "href" ), &StreamLink );
-        }
-        else if( XmlNode->GetName().Lower() == wxT( "title" ) )
-        {
-            StreamTitle = XmlNode->GetNodeContent();
-        }
-        XmlNode = XmlNode->GetNext();
-    }
-
-    if( !StreamLink.IsEmpty() )
-    {
-        guStationPlayList * StationPlayList = new guStationPlayList();
-        if( StationPlayList )
-        {
-            StationPlayList->m_Name = StreamTitle.IsEmpty() ? title : StreamTitle;
-            StationPlayList->m_Url = StreamLink;
-            playlist->Add( StationPlayList );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadAsxPlayList( wxXmlNode * XmlNode, guStationPlayLists * playlist )
-{
-    wxString Title;
-    while( XmlNode )
-    {
-        if( XmlNode->GetName().Lower() == wxT( "title" ) )
-        {
-            Title = XmlNode->GetNodeContent();
-        }
-        else if( XmlNode->GetName().Lower() == wxT( "entry" ) )
-        {
-            ReadAsxEntry( XmlNode->GetChildren(), playlist, Title );
-        }
-        XmlNode = XmlNode->GetNext();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guStationPlayLists GetStationAsxPlayList( const guRadioStation * RadioStation )
-{
-    guStationPlayLists PlayList;
-    wxCurlHTTP          http;
-    char *              Buffer = NULL;
-    wxString Content;
-    //
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: */*" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.Get( Buffer, RadioStation->m_Link );
-    if( Buffer )
-    {
-        //guLogMessage( wxT( "Got the asx web content...%s" ), RadioStation->m_Link.c_str() );
-        Content = wxString( Buffer, wxConvUTF8 );
-        if( Content.IsEmpty() )
-            Content = wxString( Buffer, wxConvISO8859_1 );
-        if( Content.IsEmpty() )
-            Content = wxString( Buffer, wxConvLibc );
-        free( Buffer );
-        //guLogMessage( wxT( "ASX:\n%s" ), Content.c_str() );
-        if( !Content.IsEmpty() )
-        {
-            wxStringInputStream InStr( Content );
-            wxXmlDocument XmlDoc( InStr );
-            wxXmlNode * XmlNode = XmlDoc.GetRoot();
-            if( XmlNode && XmlNode->GetName().Lower() == wxT( "asx" ) )
-            {
-                ReadAsxPlayList( XmlNode->GetChildren(), &PlayList );
-            }
-        }
-    }
-    return PlayList;
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadXspfTrack( wxXmlNode * XmlNode, guStationPlayLists * playlist, wxString &title )
-{
-    wxString StreamLink;
-    wxString StreamTitle;
-    while( XmlNode )
-    {
-        if( XmlNode->GetName().Lower() == wxT( "location" ) )
-        {
-            StreamLink = XmlNode->GetNodeContent();
-        }
-        else if( XmlNode->GetName().Lower() == wxT( "title" ) )
-        {
-            StreamTitle = XmlNode->GetNodeContent();
-        }
-        XmlNode = XmlNode->GetNext();
-    }
-
-    if( !StreamLink.IsEmpty() )
-    {
-        guStationPlayList * StationPlayList = new guStationPlayList();
-        if( StationPlayList )
-        {
-            StationPlayList->m_Name = StreamTitle.IsEmpty() ? title : StreamTitle;
-            StationPlayList->m_Url = StreamLink;
-            playlist->Add( StationPlayList );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadXspfTrackList( wxXmlNode * XmlNode, guStationPlayLists * playlist, wxString &title )
-{
-    while( XmlNode )
-    {
-        if( XmlNode->GetName().Lower() == wxT( "track" ) )
-        {
-            ReadXspfTrack( XmlNode->GetChildren(), playlist, title );
-        }
-        XmlNode = XmlNode->GetNext();
-    }
-
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadXspfPlayList( wxXmlNode * XmlNode, guStationPlayLists * playlist )
-{
-    wxString Title;
-    while( XmlNode )
-    {
-        if( XmlNode->GetName().Lower() == wxT( "title" ) )
-        {
-            Title = XmlNode->GetNodeContent();
-        }
-        else if( XmlNode->GetName().Lower() == wxT( "tracklist" ) )
-        {
-            ReadXspfTrackList( XmlNode->GetChildren(), playlist, Title );
-        }
-        XmlNode = XmlNode->GetNext();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guStationPlayLists GetStationXspfPlayList( const guRadioStation * RadioStation )
-{
-    guStationPlayLists PlayList;
-    wxCurlHTTP          http;
-    char *              Buffer = NULL;
-    wxString Content;
-    //
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: */*" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.Get( Buffer, RadioStation->m_Link );
-    if( Buffer )
-    {
-        Content = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
-        //guLogMessage( wxT( "%s" ), Content.c_str() );
-        if( !Content.IsEmpty() )
-        {
-            wxStringInputStream InStr( Content );
-            wxXmlDocument XmlDoc( InStr );
-            wxXmlNode * XmlNode = XmlDoc.GetRoot();
-            if( XmlNode && XmlNode->GetName().Lower() == wxT( "playlist" ) )
-            {
-                ReadXspfPlayList( XmlNode->GetChildren(), &PlayList );
-            }
-        }
-    }
-    return PlayList;
-}
-
-// -------------------------------------------------------------------------------- //
-guStationPlayLists guRadioPanel::GetPlayList( const guRadioStation * RadioStation )
-{
-    guShoutCast ShoutCast;
-    wxASSERT( RadioStation );
-
-    guStationPlayLists PlayList;
-    if( RadioStation->m_SCId != wxNOT_FOUND )
-    {
-        return ShoutCast.GetStationPlayList( RadioStation->m_SCId );
-    }
-
-    // Its not a Shoutcast radio so try to find out the playlist format
-//    if( guIsValidAudioFile( RadioStation->m_Link ) )
-//    {
-//        guStationPlayList * NewStation = new guStationPlayList();
-//        if( NewStation )
-//        {
-//            NewStation->m_Name = RadioStation->m_Name;
-//            NewStation->m_Url  = RadioStation->m_Link;
-//            PlayList.Add( NewStation );
-//        }
-//    }
-//    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".pls" ) ) )
-    if( RadioStation->m_Link.Lower().EndsWith( wxT( ".pls" ) ) )
-    {
-        PlayList = ShoutCast.GetStationPlayList( RadioStation->m_Link );
-    }
-    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".m3u" ) ) )
-    {
-        PlayList = GetStationM3uPlayList( RadioStation );
-    }
-    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".asx" ) ) )
-    {
-        PlayList = GetStationAsxPlayList( RadioStation );
-    }
-    else if( RadioStation->m_Link.Lower().EndsWith( wxT( ".xspf" ) ) )
-    {
-        PlayList = GetStationXspfPlayList( RadioStation );
-    }
-    else
-    {
-        //guLogMessage( wxT( "Dunno how to handle the radio %s" ), RadioStation->m_Link.c_str() );
-        guStationPlayList * NewStation = new guStationPlayList();
-        if( NewStation )
-        {
-            NewStation->m_Name = RadioStation->m_Name;
-            NewStation->m_Url  = RadioStation->m_Link;
-            PlayList.Add( NewStation );
-        }
-    }
-    return PlayList;
-}
-
-// -------------------------------------------------------------------------------- //
 void guRadioPanel::OnSelectStations( bool enqueue )
 {
-    guTrackArray   Songs;
+    guTrackArray   Tracks;
     guTrack *  NewSong;
-    int index;
-    int count;
+    int Index;
+    int Count;
 
     guRadioStation RadioStation;
-    guStationPlayLists PlayList;
+    guStationPlayList PlayList;
 
     if( m_StationsListBox->GetSelected( &RadioStation ) )
     {
-        PlayList = GetPlayList( &RadioStation );
-
-        if( ( count = PlayList.Count() ) )
+        guShoutCast ShoutCast;
+        wxString StationUrl = ShoutCast.GetStationUrl( RadioStation.m_SCId );
+        if( !StationUrl.IsEmpty() )
         {
-            for( index = 0; index < count; index++ )
+            guPlayListFile PlayListFile( StationUrl );
+
+            if( ( Count = PlayListFile.Count() ) )
             {
-                NewSong = new guTrack();
-                if( NewSong )
+                for( Index = 0; Index < Count; Index++ )
                 {
-                    NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
-                    NewSong->m_FileName = PlayList[ index ].m_Url;
-                    //NewSong->m_SongName = PlayList[ index ].m_Name;
-                    NewSong->m_SongName = PlayList[ index ].m_Name.IsEmpty() ?
-                                              RadioStation.m_Name : PlayList[ index ].m_Name;
-                    NewSong->m_Length = 0;
-                    NewSong->m_Rating = -1;
-                    //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
-                    NewSong->m_CoverId = 0;
-                    NewSong->m_Year = 0;
-                    Songs.Add( NewSong );
+                    NewSong = new guTrack();
+                    if( NewSong )
+                    {
+                        guStationPlayListItem PlayListItem = PlayListFile.GetItem( Index );
+                        NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
+                        NewSong->m_FileName = PlayListItem.m_Location;
+                        //NewSong->m_SongName = PlayList[ index ].m_Name;
+                        NewSong->m_SongName = PlayListItem.m_Name.IsEmpty() ?
+                                                 RadioStation.m_Name : PlayListItem.m_Name;
+                        NewSong->m_Length = 0;
+                        NewSong->m_Rating = -1;
+                        //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
+                        NewSong->m_CoverId = 0;
+                        NewSong->m_Year = 0;
+                        Tracks.Add( NewSong );
+                    }
+                }
+
+                if( Tracks.Count() )
+                {
+                    if( enqueue )
+                    {
+                        m_PlayerPanel->AddToPlayList( Tracks );
+                    }
+                    else
+                    {
+                        m_PlayerPanel->SetPlayList( Tracks );
+                    }
                 }
             }
-
-            if( Songs.Count() )
+            else
             {
-                if( enqueue )
-                {
-                    m_PlayerPanel->AddToPlayList( Songs );
-                }
-                else
-                {
-                    m_PlayerPanel->SetPlayList( Songs );
-                }
+                wxMessageBox( wxT( "There are not entries for this Radio Station" ) );
             }
         }
         else

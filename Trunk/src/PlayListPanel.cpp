@@ -754,15 +754,15 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
                 wxArrayInt Songs;
                 for( Index = 0; Index < Count; Index++ )
                 {
-                    guLogMessage( wxT( "Trying to add file '%s'" ), PlayListFile.Item( Index ).c_str() );
-                    int SongId = m_Db->FindTrackFile( PlayListFile.Item( Index ), NULL );
+                    //guLogMessage( wxT( "Trying to add file '%s'" ), PlayListFile.Item( Index ).c_str() );
+                    int SongId = m_Db->FindTrackFile( PlayListFile.GetItem( Index ).m_Location, NULL );
                     if( SongId )
                     {
                         Songs.Add( SongId );
-                        guLogMessage( wxT( "Found it!" ) );
+                    //    guLogMessage( wxT( "Found it!" ) );
                     }
-                    else
-                        guLogMessage( wxT( "Not Found it!" ) );
+                    //else
+                    //    guLogMessage( wxT( "Not Found it!" ) );
                 }
 
                 if( Songs.Count() )
@@ -810,7 +810,8 @@ void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
                 {
                     for( Index = 0; Index < Count; Index++ )
                     {
-                        PlayListFile.AddFile( Tracks[ Index ].m_FileName );
+                        PlayListFile.AddItem( Tracks[ Index ].m_FileName,
+                            Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
                     }
 
                     PlayListFile.Save( FileDialog->GetPath() );

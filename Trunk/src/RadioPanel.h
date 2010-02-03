@@ -79,8 +79,6 @@ class guRadioPanel : public wxPanel
 
       void GenreSplitterOnIdle( wxIdleEvent& );
 
-      guStationPlayLists GetPlayList( const guRadioStation * radiostation );
-
 	protected:
 		wxStaticText*           m_SearchStaticText;
 		wxPanel*                m_InputTextPanel;

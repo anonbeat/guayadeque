@@ -77,8 +77,8 @@
 #include "Shoutcast.h"
 
 #include "Utils.h"
+#include "PlayListFile.h"
 
-#include <wx/arrimpl.cpp>
 #include <wx/curl/http.h>
 #include <wx/xml/xml.h>
 #include <wx/fileconf.h>
@@ -88,7 +88,6 @@
 #define SHOUTCAST_GET_STATIONS_URL      wxT( "http://yp.shoutcast.com/sbin/newxml.phtml?genre=%s" )
 #define SHOUTCAST_GET_STATION_PLAYLIST  wxT( "http://yp.shoutcast.com/sbin/tunein-station.pls?id=%u" )
 
-WX_DEFINE_OBJARRAY(guStationPlayLists);
 
 // -------------------------------------------------------------------------------- //
 wxArrayString guShoutCast::GetGenres( void ) const
@@ -203,14 +202,20 @@ void guShoutCast::GetStations( const wxString &GenreName, const int GenreId, guR
 }
 
 // -------------------------------------------------------------------------------- //
-guStationPlayLists guShoutCast::GetStationPlayList( const int StationId ) const
+wxString guShoutCast::GetStationUrl( const int id ) const
 {
-    wxString            Content;
-    guStationPlayLists  RetVal;
-    guStationPlayList * NewStation;
-    wxFileConfig *      Config;
-    char *              Buffer = NULL;
-    wxCurlHTTP          http;
+    return wxString::Format( SHOUTCAST_GET_STATION_PLAYLIST, id );
+}
+
+// -------------------------------------------------------------------------------- //
+guStationPlayList guShoutCast::GetStationPlayList( const int StationId ) const
+{
+    wxString                Content;
+    guStationPlayList       RetVal;
+    guStationPlayListItem * NewStation;
+    wxFileConfig *          Config;
+    char *                  Buffer = NULL;
+    wxCurlHTTP              http;
     //
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: text/html" ) );
@@ -241,14 +246,14 @@ guStationPlayLists guShoutCast::GetStationPlayList( const int StationId ) const
                         {
                             for( int index = 1; index <= count; index++ )
                             {
-                                NewStation = new guStationPlayList();
+                                NewStation = new guStationPlayListItem();
 
                                 wxASSERT( NewStation );
 
-                                Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Url );
+                                Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
                                 Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
                                 if( NewStation->m_Name.IsEmpty() )
-                                    NewStation->m_Name = NewStation->m_Url;
+                                    NewStation->m_Name = NewStation->m_Location;
                                 RetVal.Add( NewStation );
                             }
                         }
@@ -276,14 +281,14 @@ guStationPlayLists guShoutCast::GetStationPlayList( const int StationId ) const
 }
 
 // -------------------------------------------------------------------------------- //
-guStationPlayLists guShoutCast::GetStationPlayList( const wxString &stationurl ) const
+guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) const
 {
-    wxString            Content;
-    guStationPlayLists  RetVal;
-    guStationPlayList * NewStation;
-    wxFileConfig *      Config;
-    char *              Buffer = NULL;
-    wxCurlHTTP          http;
+    wxString                Content;
+    guStationPlayList       RetVal;
+    guStationPlayListItem * NewStation;
+    wxFileConfig *          Config;
+    char *                  Buffer = NULL;
+    wxCurlHTTP              http;
     //
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     http.AddHeader( wxT( "Accept: text/html" ) );
@@ -314,14 +319,14 @@ guStationPlayLists guShoutCast::GetStationPlayList( const wxString &stationurl )
                         {
                             for( int index = 1; index <= count; index++ )
                             {
-                                NewStation = new guStationPlayList();
+                                NewStation = new guStationPlayListItem();
 
                                 wxASSERT( NewStation );
 
-                                Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Url );
+                                Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
                                 Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
                                 if( NewStation->m_Name.IsEmpty() )
-                                    NewStation->m_Name = NewStation->m_Url;
+                                    NewStation->m_Name = NewStation->m_Location;
                                 RetVal.Add( NewStation );
                             }
                         }
