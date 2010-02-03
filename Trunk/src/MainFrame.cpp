@@ -1593,11 +1593,18 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
 void guMainFrame::OnLoadLayout( wxCommandEvent &event )
 {
     int Layout = event.GetId() - ID_MENU_LAYOUT_LOAD;
+    wxAuiPaneInfo &NBPaneInfo = m_AuiManager.GetPane( m_CatNotebook );
+    bool NBIsShown = NBPaneInfo.IsShown();
+
     guLogMessage( wxT( "Load Layout %i" ), Layout );
     m_AuiManager.LoadPerspective( m_LayoutData[ Layout ] );
     m_CatNotebook->LoadPerspective( m_LayoutTabs[ Layout ] );
+    if( !NBIsShown )
+    {
+        NBPaneInfo.Hide();
+        m_AuiManager.Update();
+    }
 
-    bool NBIsShown = m_AuiManager.GetPane( m_CatNotebook ).IsShown();
     guLogMessage( wxT( "LibraryPanel" ) );
     guLogMessage( wxT( "NB IsShown: %i" ), NBIsShown );
     guLogMessage( wxT( "PageIndex : %i" ), m_CatNotebook->GetPageIndex( m_LibPanel ) );
