@@ -219,17 +219,6 @@ bool guMainApp::OnInit()
     wxToolTip::Enable( true );
 
 
-    // If enabled Show the Splash Screen on Startup
-    guSplashFrame * SplashFrame = NULL;
-    if( m_Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "General" ) ) )
-    {
-        SplashFrame = new guSplashFrame( 0 );
-        if( !SplashFrame )
-            guLogError( wxT( "Could not create splash object" ) );
-        SplashFrame->Show( true );
-        wxYield();
-    }
-
     // Initialize the MainFrame object
     guMainFrame* Frame = new guMainFrame( 0 );
     wxIcon MainIcon;
