@@ -608,10 +608,10 @@ void guMainFrame::CreateMenu()
     m_ViewLibAlbums->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
     m_ViewLibAlbums->Enable( m_ViewLibrary->IsChecked() );
 
-    m_ViewLibTracks = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_TRACKS, _( "Tracks" ), _( "Show/Hide the library tracks" ), wxITEM_CHECK );
-    SubMenu->Append( m_ViewLibTracks );
-    m_ViewLibTracks->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TRACKS ) );
-    m_ViewLibTracks->Enable( m_ViewLibrary->IsChecked() );
+//    m_ViewLibTracks = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_TRACKS, _( "Tracks" ), _( "Show/Hide the library tracks" ), wxITEM_CHECK );
+//    SubMenu->Append( m_ViewLibTracks );
+//    m_ViewLibTracks->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TRACKS ) );
+//    m_ViewLibTracks->Enable( m_ViewLibrary->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "Library" ), _( "Set the library visible panels" ) );
 
@@ -1107,8 +1107,8 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
     m_ViewLibAlbums->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
     m_ViewLibAlbums->Enable( IsEnabled );
 
-    m_ViewLibTracks->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TRACKS ) );
-    m_ViewLibTracks->Enable( IsEnabled );
+//    m_ViewLibTracks->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TRACKS ) );
+//    m_ViewLibTracks->Enable( IsEnabled );
 
 }
 
