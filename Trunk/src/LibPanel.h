@@ -123,6 +123,8 @@ class guLibPanel : public wxPanel
     void OnSongSelectArtist( wxCommandEvent &event );
     void OnSongSelectAlbum( wxCommandEvent &event );
 
+    void OnPaneClose( wxAuiManagerEvent &event );
+
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel );
     ~guLibPanel();

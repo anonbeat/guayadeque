@@ -1121,31 +1121,38 @@ void guMainFrame::OnLibraryShowPanel( wxCommandEvent &event )
     {
         case ID_MENU_VIEW_LIB_TEXTSEARCH :
             PanelId = guPANEL_LIBRARY_TEXTSEARCH;
+            m_ViewLibTextSearch->Check( event.IsChecked() );
             break;
 
         case ID_MENU_VIEW_LIB_LABELS :
             PanelId = guPANEL_LIBRARY_LABELS;
+            m_ViewLibLabels->Check( event.IsChecked() );
             break;
 
         case ID_MENU_VIEW_LIB_GENRES :
             PanelId = guPANEL_LIBRARY_GENRES;
+            m_ViewLibGenres->Check( event.IsChecked() );
             break;
 
         case ID_MENU_VIEW_LIB_ARTISTS :
             PanelId = guPANEL_LIBRARY_ARTISTS;
+            m_ViewLibArtists->Check( event.IsChecked() );
             break;
 
         case ID_MENU_VIEW_LIB_ALBUMS :
             PanelId = guPANEL_LIBRARY_ALBUMS;
+            m_ViewLibAlbums->Check( event.IsChecked() );
             break;
 
-        case ID_MENU_VIEW_LIB_TRACKS :
-            PanelId = guPANEL_LIBRARY_TRACKS;
-            break;
+//        case ID_MENU_VIEW_LIB_TRACKS :
+//            PanelId = guPANEL_LIBRARY_TRACKS;
+//            m_ViewLibTracks->Check( event.IsChecked() );
+//            break;
 
     }
 
-    m_LibPanel->ShowPanel( PanelId, event.IsChecked() );
+    if( PanelId )
+        m_LibPanel->ShowPanel( PanelId, event.IsChecked() );
 
 }
 
