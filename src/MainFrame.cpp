@@ -1515,6 +1515,17 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 
     // Now we can start the dbus server
     m_DBusServer->Run();
+
+    // If enabled Show the Splash Screen on Startup
+    guSplashFrame * SplashFrame = NULL;
+    if( Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "General" ) ) )
+    {
+        SplashFrame = new guSplashFrame( 0 );
+        if( !SplashFrame )
+            guLogError( wxT( "Could not create splash object" ) );
+        SplashFrame->Show( true );
+        //wxYield();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
