@@ -573,7 +573,7 @@ msgstr "Configuración"
 
 #: src/LyricsPanel.cpp:51
 msgid "Follow player"
-msgstr "Seguir al reproductor"
+msgstr "Seguir"
 
 #: src/LyricsPanel.cpp:62
 msgid "Artist:"
