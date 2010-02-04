@@ -37,31 +37,36 @@
 #include <wx/srchctrl.h>
 
 // -------------------------------------------------------------------------------- //
+#define     guPANEL_LIBRARY_TEXTSEARCH      ( 1 << 0 )
+#define     guPANEL_LIBRARY_LABELS          ( 1 << 1 )
+#define     guPANEL_LIBRARY_GENRES          ( 1 << 2 )
+#define     guPANEL_LIBRARY_ARTISTS         ( 1 << 3 )
+#define     guPANEL_LIBRARY_ALBUMS          ( 1 << 4 )
+#define     guPANEL_LIBRARY_TRACKS          ( 1 << 5 )
+#define     guPANEL_LIBRARY_YEARS           ( 1 << 6 )
+#define     guPANEL_LIBRARY_RATINGS         ( 1 << 7 )
+#define     guPANEL_LIBRARY_COVERBROWSER    ( 1 << 8 )
+#define     guPANEL_LIBRARY_COVERFLOW       ( 1 << 9 )
+
+// -------------------------------------------------------------------------------- //
 class guLibPanel : public wxPanel
 {
   protected :
     wxAuiManager        m_AuiManager;
 
-//    wxSplitterWindow *  m_SongListSplitter;
-//    wxSplitterWindow *  m_SelGenreSplitter;
-//    wxSplitterWindow *  m_GenreLabelsSplitter;
-//    wxSplitterWindow *  m_ArtistAlbumSplitter;
-    //
+    wxSearchCtrl *      m_InputTextCtrl;
     guGeListBox *       m_GenreListCtrl;
     guTaListBox *       m_LabelsListCtrl;
     guArListBox *       m_ArtistListCtrl;
     guAlListBox *       m_AlbumListCtrl;
     guSoListBox *       m_SongListCtrl;
-    //wxStaticBitmap *    m_InputTextLeftBitmap;
-    //wxStaticBitmap *    m_InputTextClearBitmap;
-    wxSearchCtrl *      m_InputTextCtrl;
 
     //
-    guDbLibrary *         m_Db;
+    guDbLibrary *       m_Db;
     bool                m_UpdateLock;
     guPlayerPanel *     m_PlayerPanel;
 
-    //guStatusBar *       m_StatusBar;
+    unsigned int        m_VisiblePanels;
 
     // Search Str events
     void OnSearchActivated( wxCommandEvent &event );
@@ -118,10 +123,6 @@ class guLibPanel : public wxPanel
     void OnSongSelectArtist( wxCommandEvent &event );
     void OnSongSelectAlbum( wxCommandEvent &event );
 
-    // Idle event handlers
-    void OnIdleSetSashPos( wxIdleEvent &event );
-    //void OnIdle( wxIdleEvent &event );
-
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel );
     ~guLibPanel();
@@ -133,6 +134,9 @@ class guLibPanel : public wxPanel
     void SelectGenres( wxArrayInt * genres );
     void SelectArtists( wxArrayInt * artits );
     void SelectAlbums( wxArrayInt * albums );
+
+    bool IsShown( const int panelid ) const;
+    void Show( const int panelid, bool show );
 
 };
 

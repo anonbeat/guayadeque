@@ -80,7 +80,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 
     m_AuiManager.AddPane( SearchPanel,
             wxAuiPaneInfo().Name( wxT( "TextSearch" ) ).Caption( _( "Text Search" ) ).
-            MinSize( 60, 28 ).MaxSize( -1, 28 ).Row( 0 ).
+            MinSize( 60, 28 ).MaxSize( -1, 28 ).Row( 0 ).CloseButton( false ).
             Dockable( true ).Top() );
 
 
@@ -95,7 +95,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 	GenreSizer->Fit( GenrePanel );
 
     m_AuiManager.AddPane( GenrePanel, wxAuiPaneInfo().Name( wxT( "Genres" ) ).Caption( _( "Genres" ) ).
-            MinSize( 50, 50 ).Row( 1 ).
+            MinSize( 50, 50 ).Row( 1 ).CloseButton( false ).
             Position( 1 ).
             Dockable( true ).Top() );
 
@@ -112,7 +112,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 	LabelsSizer->Fit( LabelsPanel );
 
     m_AuiManager.AddPane( LabelsPanel, wxAuiPaneInfo().Name( wxT( "Labels" ) ).Caption( _( "Labels" ) ).
-            MinSize( 50, 50 ).Row( 1 ).
+            MinSize( 50, 50 ).Row( 1 ).CloseButton( false ).
             Position( 0 ).
             Dockable( true ).Top() );
 
@@ -127,7 +127,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 	ArtistSizer->Fit( ArtistPanel );
 
     m_AuiManager.AddPane( ArtistPanel, wxAuiPaneInfo().Name( wxT( "Artists" ) ).Caption( _( "Artists" ) ).
-            MinSize( 50, 50 ).Row( 1 ).
+            MinSize( 50, 50 ).Row( 1 ).CloseButton( false ).
             Position( 2 ).
             Dockable( true ).Top() );
 
@@ -143,7 +143,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 	AlbumSizer->Fit( AlbumPanel );
 
     m_AuiManager.AddPane( AlbumPanel, wxAuiPaneInfo().Name( wxT( "Albums" ) ).Caption( _( "Albums" ) ).
-            MinSize( 50, 50 ).Row( 1 ).
+            MinSize( 50, 50 ).Row( 1 ).CloseButton( false ).
             Position( 3 ).
             Dockable( true ).Top() );
 
@@ -160,7 +160,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 	SongListSizer->Fit( SongListPanel );
 
     m_AuiManager.AddPane( SongListPanel, wxAuiPaneInfo().Name( wxT( "Tracks" ) ).Caption( _( "Tracks" ) ).
-            MinSize( 50, 50 ).
+            MinSize( 50, 50 ).CloseButton( false ).
             CenterPane() );
 
 
@@ -1182,15 +1182,74 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::OnIdleSetSashPos( wxIdleEvent& event )
+bool guLibPanel::IsShown( const int panelid ) const
 {
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    m_SongListSplitter->SetSashPosition( Config->ReadNum( wxT( "SongSashPos" ), 300, wxT( "Positions" ) ) );
-//    m_SelGenreSplitter->SetSashPosition( Config->ReadNum( wxT( "GenreSashPos" ), 180, wxT( "Positions" ) ) );
-//    m_GenreLabelsSplitter->SetSashPosition( Config->ReadNum( wxT( "LabelSashPos" ), 145, wxT( "Positions" ) ) );
-//    m_ArtistAlbumSplitter->SetSashPosition( Config->ReadNum( wxT( "ArtistSashPos" ), 145, wxT( "Positions" ) ) );
+    return ( m_VisiblePanels & panelid );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::Show( const int panelid, bool show )
+{
+    wxString PaneName;
+
+    switch( panelid )
+    {
+        case guPANEL_LIBRARY_TEXTSEARCH :
+            PaneName = wxT( "TextSearch" );
+            break;
+
+        case guPANEL_LIBRARY_LABELS :
+            PaneName = wxT( "Labels" );
+            break;
+
+        case guPANEL_LIBRARY_GENRES :
+            PaneName = wxT( "Genres" );
+            break;
+
+        case guPANEL_LIBRARY_ARTISTS :
+            PaneName = wxT( "Artists" );
+            break;
+
+        case guPANEL_LIBRARY_ALBUMS :
+            PaneName = wxT( "Albums" );
+            break;
+
+        case guPANEL_LIBRARY_TRACKS :
+            PaneName = wxT( "Tracks" );
+            break;
+
+//        case guPANEL_LIBRARY_YEARS :
+//            PaneName = wxT( "Years" );
+//            break;
 //
-//	m_GenreLabelsSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLibPanel::OnIdleSetSashPos ), NULL, this );
+//        case guPANEL_LIBRARY_RATINGS :
+//            PaneName = wxT( "Rattings" );
+//            break;
+//
+//        case guPANEL_LIBRARY_COVERBROWSER :
+//            PaneName = wxT( "CoverBrowser" );
+//            break;
+//
+//        case guPANEL_LIBRARY_COVERFLOW :
+//            PaneName = wxT( "CoverFlow" );
+//            break;
+
+    }
+
+    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
+    if( PaneInfo.IsOk() )
+    {
+        if( show )
+            PaneInfo.Show();
+        else
+            PaneInfo.Hide();
+    }
+
+    if( show )
+        m_VisiblePanels |= panelid;
+    else
+        m_VisiblePanels ^= panelid;
+
 }
 
 // -------------------------------------------------------------------------------- //
