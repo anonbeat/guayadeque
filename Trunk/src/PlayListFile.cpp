@@ -165,7 +165,19 @@ bool guPlayListFile::ReadPlsStream( wxInputStream &playlist, const wxString &pat
                             !Location.IsEmpty() )
                         {
                             Config->Read( wxString::Format( wxT( "Title%u" ), Index ), &Title );
-                            m_PlayList.Add( new guStationPlayListItem( Location, Title ) );
+
+                            wxURI Uri( Location );
+                            if( Uri.HasScheme() || path.IsEmpty() )
+                            {
+                                m_PlayList.Add( new guStationPlayListItem( Location, Title ) );
+                            }
+                            else
+                            {
+                                wxFileName FileName( Location );
+                                FileName.Normalize( wxPATH_NORM_ALL, path );
+
+                                m_PlayList.Add( new guStationPlayListItem( FileName.GetFullPath(), Title ) );
+                            }
                         }
                     }
                     return true;
@@ -229,12 +241,19 @@ bool guPlayListFile::ReadM3uStream( wxInputStream &playlist, const wxString &pat
             }
             else
             {
-                wxFileName FileName( Lines[ Index ] );
-                if( !path.IsEmpty() )
+
+                wxURI Uri( Lines[ Index ] );
+                if( Uri.HasScheme() || path.IsEmpty() )
                 {
-                    FileName.Normalize( wxPATH_NORM_ALL, path );
+                    m_PlayList.Add( new guStationPlayListItem( Lines[ Index ], ItemName ) );
                 }
-                m_PlayList.Add( new guStationPlayListItem( FileName.GetFullPath(), m_Name ) );
+                else
+                {
+                    wxFileName FileName( Lines[ Index ] );
+                    FileName.Normalize( wxPATH_NORM_ALL, path );
+                    m_PlayList.Add( new guStationPlayListItem( FileName.GetFullPath(), ItemName ) );
+                }
+
                 //guLogMessage( wxT( "%s - %s -> %s" ), path.c_str(), Lines[ Index ].c_str(), ( FileName.GetPathWithSep() + FileName.GetFullName() ).c_str() );
                 ItemName = wxEmptyString;
             }

@@ -71,6 +71,19 @@ guAudioScrobble::~guAudioScrobble()
 }
 
 // -------------------------------------------------------------------------------- //
+void guAudioScrobble::OnConfigUpdated( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        m_UserName    = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) );
+        m_Password    = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) );
+        //m_SessionId   = Config->ReadStr( wxT( "ASSessionKey" ), wxEmptyString, wxT( "LastFM" ) );
+        //m_SubmitUrl   = Config->ReadStr( wxT( "SubmitUrl" ), wxEmptyString, wxT( "LastFM" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 int guAudioScrobble::ProcessError( const wxString &ErrorStr )
 {
     if( ErrorStr.Contains( wxT( "BANNED" ) ) )

@@ -560,8 +560,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
+        guLogMessage( wxT( "Reading PlayerPanel Config Updated" ) );
         m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
-        //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
@@ -576,6 +576,20 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
 
         if( !m_PlaySmart )
             CheckFiltersVisible();
+
+        if( m_AudioScrobbleEnabled )
+        {
+            if( !m_AudioScrobble )
+                m_AudioScrobble = new guAudioScrobble( m_Db );
+            else
+                m_AudioScrobble->OnConfigUpdated();
+        }
+        else
+        {
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+            event.SetInt( 1 );
+            wxTheApp->GetTopWindow()->AddPendingEvent( event );
+        }
     }
 }
 
