@@ -57,7 +57,7 @@ class guPlayListFile
     wxString            m_Name;
     guStationPlayList   m_PlayList;
 
-    bool                ReadPlsStream( wxInputStream &playlist );
+    bool                ReadPlsStream( wxInputStream &playlist, const wxString &path = wxEmptyString );
     bool                ReadM3uStream( wxInputStream &playlist, const wxString &path = wxEmptyString );
     bool                ReadXspfStream( wxInputStream &playlist );
     bool                ReadAsxStream( wxInputStream &playlist );
