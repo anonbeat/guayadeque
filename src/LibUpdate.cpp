@@ -185,6 +185,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             if( ( index >= count ) )
                 break;
 
+             //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ index ].c_str() );
              m_Db->ReadFileTags( m_TrackFiles[ index ].char_str() );
                 //Sleep( 1 );
             index++;
