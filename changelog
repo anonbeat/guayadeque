@@ -1,4 +1,6 @@
 
+  * You can rearrange the panels in the screen
+  * You can select which filters to show in the library
   * Added support to playlist (m3u,pls,axs,xpfs) to Player. You can drop it
     to player playlist or load it from command line.
   * Corrected a bug editing commands and links in preferences
