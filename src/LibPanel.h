@@ -135,8 +135,8 @@ class guLibPanel : public wxPanel
     void SelectArtists( wxArrayInt * artits );
     void SelectAlbums( wxArrayInt * albums );
 
-    bool IsShown( const int panelid ) const;
-    void Show( const int panelid, bool show );
+    bool IsPanelShown( const int panelid ) const;
+    void ShowPanel( const int panelid, bool show );
 
 };
 
