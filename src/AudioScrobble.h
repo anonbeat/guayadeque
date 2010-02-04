@@ -95,6 +95,8 @@ class guAudioScrobble
     int                         GetErrorCode() { return m_ErrorCode; };
     void                        EndSubmitThread();
 
+    void                        OnConfigUpdated( void );
+
 };
 
 // -------------------------------------------------------------------------------- //
