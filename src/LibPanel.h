@@ -30,6 +30,7 @@
 #include "TaListBox.h"
 
 #include <wx/wx.h>
+#include <wx/aui/aui.h>
 #include <wx/statline.h>
 #include <wx/notebook.h>
 #include <wx/splitter.h>
@@ -38,16 +39,14 @@
 // -------------------------------------------------------------------------------- //
 class guLibPanel : public wxPanel
 {
-  private :
-    wxSplitterWindow *  m_SongListSplitter;
-    wxSplitterWindow *  m_SelGenreSplitter;
-    wxSplitterWindow *  m_GenreLabelsSplitter;
-    wxSplitterWindow *  m_ArtistAlbumSplitter;
+  protected :
+    wxAuiManager        m_AuiManager;
+
+//    wxSplitterWindow *  m_SongListSplitter;
+//    wxSplitterWindow *  m_SelGenreSplitter;
+//    wxSplitterWindow *  m_GenreLabelsSplitter;
+//    wxSplitterWindow *  m_ArtistAlbumSplitter;
     //
-    wxPanel *           m_GenrePanel;
-    wxPanel *           m_LabelsPanel;
-    wxPanel *           m_AlbumPanel;
-    wxPanel *           m_ArtistPanel;
     guGeListBox *       m_GenreListCtrl;
     guTaListBox *       m_LabelsListCtrl;
     guArListBox *       m_ArtistListCtrl;
