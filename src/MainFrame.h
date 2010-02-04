@@ -88,7 +88,7 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewLibGenres;
     wxMenuItem *                m_ViewLibArtists;
     wxMenuItem *                m_ViewLibAlbums;
-    wxMenuItem *                m_ViewLibTracks;
+//    wxMenuItem *                m_ViewLibTracks;
 //    wxMenuItem *                m_ViewLibYears;
 //    wxMenuItem *                m_ViewLibRattings;
     wxMenuItem *                m_ViewRadios;
