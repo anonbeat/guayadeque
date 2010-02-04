@@ -83,6 +83,14 @@ class guMainFrame : public wxFrame
     wxMenu *                    m_LayoutLoadMenu;
     wxMenu *                    m_LayoutDelMenu;
     wxMenuItem *                m_ViewLibrary;
+    wxMenuItem *                m_ViewLibTextSearch;
+    wxMenuItem *                m_ViewLibLabels;
+    wxMenuItem *                m_ViewLibGenres;
+    wxMenuItem *                m_ViewLibArtists;
+    wxMenuItem *                m_ViewLibAlbums;
+    wxMenuItem *                m_ViewLibTracks;
+//    wxMenuItem *                m_ViewLibYears;
+//    wxMenuItem *                m_ViewLibRattings;
     wxMenuItem *                m_ViewRadios;
     wxMenuItem *                m_ViewLastFM;
     wxMenuItem *                m_ViewLyrics;
@@ -145,13 +153,6 @@ class guMainFrame : public wxFrame
     void                CheckShowNotebook( void );
     void                CheckHideNotebook( void );
 
-    void                OnViewLibrary( wxCommandEvent &event );
-    void                OnViewRadio( wxCommandEvent &event );
-    void                OnViewLastFM( wxCommandEvent &event );
-    void                OnViewLyrics( wxCommandEvent &event );
-    void                OnViewPlayLists( wxCommandEvent &event );
-    void                OnViewPodcasts( wxCommandEvent &event );
-
     void                OnGaugePulse( wxCommandEvent &event );
     void                OnGaugeSetMax( wxCommandEvent &event );
     void                OnGaugeUpdate( wxCommandEvent &event );
@@ -187,6 +188,16 @@ class guMainFrame : public wxFrame
     void                SaveLayouts( void );
     void                OnLoadLayout( wxCommandEvent &event );
     void                OnDeleteLayout( wxCommandEvent &event );
+
+    void                OnViewLibrary( wxCommandEvent &event );
+    void                OnLibraryShowPanel( wxCommandEvent &event );
+
+    void                OnViewRadio( wxCommandEvent &event );
+    void                OnViewLastFM( wxCommandEvent &event );
+    void                OnViewLyrics( wxCommandEvent &event );
+    void                OnViewPlayLists( wxCommandEvent &event );
+    void                OnViewPodcasts( wxCommandEvent &event );
+
 
   public:
                         guMainFrame( wxWindow * parent );

@@ -309,6 +309,13 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_MENU_LAYOUT_DELETE, ID_MENU_LAYOUT_DELETE + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnDeleteLayout ), NULL, this );
 
     Connect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ), NULL, this );
+    Connect( ID_MENU_VIEW_LIB_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_LIB_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_LIB_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_LIB_ARTISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_LIB_ALBUMS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_LIB_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+
     Connect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ), NULL, this );
     Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ), NULL, this );
     Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ), NULL, this );
@@ -386,6 +393,13 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_LAYOUT_DELETE, ID_MENU_LAYOUT_DELETE + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnDeleteLayout ), NULL, this );
 
     Disconnect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_ARTISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_ALBUMS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+
     Disconnect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ), NULL, this );
     Disconnect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ), NULL, this );
     Disconnect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ), NULL, this );
@@ -501,6 +515,8 @@ void guMainFrame::CreateMenu()
 {
 	wxMenuBar * MenuBar;
 	wxMenuItem * MenuItem;
+	wxMenu *     SubMenu;
+
 	guConfig *      Config = ( guConfig * ) guConfig::Get();
 
 	m_MainMenu = new wxMenu();
@@ -559,61 +575,99 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSeparator();
 
-    m_ViewLibrary = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_LIBRARY, wxString( _( "&Library" ) ), _( "Show/Hide the library panel" ), wxITEM_CHECK );
-    m_MainMenu->Append( m_ViewLibrary );
+    SubMenu = new wxMenu();
+
+    m_ViewLibrary = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIBRARY, _( "&Library" ), _( "Show/Hide the library panel" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibrary );
     m_ViewLibrary->Check( Config->ReadBool( wxT( "ShowLibrary" ), true, wxT( "ViewPanels" ) ) );
 
-    m_ViewRadios = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_RADIO, wxString( _( "&Radio" ) ), _( "Show/Hide the radio panel" ), wxITEM_CHECK );
+    SubMenu->AppendSeparator();
+
+    m_ViewLibTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the library text search" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibTextSearch );
+    m_ViewLibTextSearch->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
+    m_ViewLibTextSearch->Enable( m_ViewLibrary->IsChecked() );
+
+    m_ViewLibLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_LABELS, _( "Labels" ), _( "Show/Hide the library labels" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibLabels );
+    m_ViewLibLabels->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
+    m_ViewLibLabels->Enable( m_ViewLibrary->IsChecked() );
+
+    m_ViewLibGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_GENRES, _( "Genres" ), _( "Show/Hide the library genres" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibGenres );
+    m_ViewLibGenres->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
+    m_ViewLibGenres->Enable( m_ViewLibrary->IsChecked() );
+
+    m_ViewLibArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_ARTISTS, _( "Artists" ), _( "Show/Hide the library artists" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibArtists );
+    m_ViewLibArtists->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
+    m_ViewLibArtists->Enable( m_ViewLibrary->IsChecked() );
+
+    m_ViewLibAlbums = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_ALBUMS, _( "Albums" ), _( "Show/Hide the library albums" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibAlbums );
+    m_ViewLibAlbums->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
+    m_ViewLibAlbums->Enable( m_ViewLibrary->IsChecked() );
+
+    m_ViewLibTracks = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_TRACKS, _( "Tracks" ), _( "Show/Hide the library tracks" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibTracks );
+    m_ViewLibTracks->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TRACKS ) );
+    m_ViewLibTracks->Enable( m_ViewLibrary->IsChecked() );
+
+    m_MainMenu->AppendSubMenu( SubMenu, _( "Library" ), _( "Set the library visible panels" ) );
+
+
+
+    m_ViewRadios = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_RADIO, _( "&Radio" ), _( "Show/Hide the radio panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewRadios );
     m_ViewRadios->Check( Config->ReadBool( wxT( "ShowRadio" ), true, wxT( "ViewPanels" ) ) );
 
-    m_ViewLastFM = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_LASTFM, wxString( _( "Last.&fm" ) ), _( "Show/Hide the Last.fm panel" ), wxITEM_CHECK );
+    m_ViewLastFM = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_LASTFM, _( "Last.&fm" ), _( "Show/Hide the Last.fm panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewLastFM );
     m_ViewLastFM->Check( Config->ReadBool( wxT( "ShowLastfm" ), true, wxT( "ViewPanels" ) ) );
 
-    m_ViewLyrics = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_LYRICS, wxString( _( "L&yrics" ) ), _( "Show/Hide the lyrics panel" ), wxITEM_CHECK );
+    m_ViewLyrics = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_LYRICS, _( "L&yrics" ), _( "Show/Hide the lyrics panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewLyrics );
     m_ViewLyrics->Check( Config->ReadBool( wxT( "ShowLyrics" ), true, wxT( "ViewPanels" ) ) );
 
-    m_ViewPlayLists = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYLISTS, wxString( _( "&PlayLists" ) ), _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
+    m_ViewPlayLists = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYLISTS, _( "&PlayLists" ), _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewPlayLists );
     m_ViewPlayLists->Check( Config->ReadBool( wxT( "ShowPlayLists" ), true, wxT( "ViewPanels" ) ) );
 
-    m_ViewPodcasts = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PODCASTS, wxString( _( "P&odcasts" ) ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
+    m_ViewPodcasts = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PODCASTS, _( "P&odcasts" ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewPodcasts );
     m_ViewPodcasts->Check( Config->ReadBool( wxT( "ShowPodcasts" ), true, wxT( "ViewPanels" ) ) );
 
     MenuBar->Append( m_MainMenu, _( "&View" ) );
 
     m_MainMenu = new wxMenu();
-    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_NEXTTRACK, wxString( _( "&Next Track" ) ), _( "Play the next track in the playlist" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_NEXTTRACK, _( "&Next Track" ), _( "Play the next track in the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_forward ) );
     m_MainMenu->Append( MenuItem );
-    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PREVTRACK, wxString( _( "&Prev. Track" ) ), _( "Play the previous track in the playlist" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PREVTRACK, _( "&Prev. Track" ), _( "Play the previous track in the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_backward ) );
     m_MainMenu->Append( MenuItem );
     m_MainMenu->AppendSeparator();
-    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PLAY, wxString( _( "&Play" ) ), _( "Play or Pause the current track in the playlist" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PLAY, _( "&Play" ), _( "Play or Pause the current track in the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     m_MainMenu->Append( MenuItem );
-    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_STOP, wxString( _( "&Stop" ) ), _( "Stop the current played track" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_STOP, _( "&Stop" ), _( "Stop the current played track" ), wxITEM_NORMAL );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_ ) );
     m_MainMenu->Append( MenuItem );
     m_MainMenu->AppendSeparator();
-    m_PlaySmartMenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_SMARTPLAY, wxString( _( "&Smart Mode" ) ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
+    m_PlaySmartMenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_SMARTPLAY, _( "&Smart Mode" ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search_engine ) );
     m_MainMenu->Append( m_PlaySmartMenuItem );
     m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
 
-    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_RANDOMPLAY, wxString( _( "R&andomize" ) ), _( "Randomize the playlist" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_RANDOMPLAY, _( "R&andomize" ), _( "Randomize the playlist" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_shuffle ) );
     m_MainMenu->Append( MenuItem );
-    m_LoopPlayListMenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxString( _( "&Repeat Playlist" ) ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
+    m_LoopPlayListMenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_REPEATPLAYLIST, _( "&Repeat Playlist" ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_repeat ) );
     m_MainMenu->Append( m_LoopPlayListMenuItem );
     m_LoopPlayListMenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
 
-    m_LoopTrackMenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_REPEATTRACK, wxString( _( "&Repeat Track" ) ), _( "Repeat the current track in the playlist" ), wxITEM_CHECK );
+    m_LoopTrackMenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_REPEATTRACK, _( "&Repeat Track" ), _( "Repeat the current track in the playlist" ), wxITEM_CHECK );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_repeat ) );
     m_MainMenu->Append( m_LoopTrackMenuItem );
     m_LoopTrackMenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
@@ -621,7 +675,7 @@ void guMainFrame::CreateMenu()
     MenuBar->Append( m_MainMenu, _( "&Control" ) );
 
     m_MainMenu = new wxMenu();
-    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_ABOUT, wxString( _( "&About" ) ), _( "Show information about guayadeque music player" ), wxITEM_NORMAL );
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_ABOUT, _( "&About" ), _( "Show information about guayadeque music player" ), wxITEM_NORMAL );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_volume_high ) );
     m_MainMenu->Append( MenuItem );
     MenuBar->Append( m_MainMenu, _( "&Help" ) );
@@ -1016,10 +1070,9 @@ void guMainFrame::CheckHideNotebook( void )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "View/Hide Library Panel called..." ) );
-//	guConfig *      Config = ( guConfig * ) guConfig::Get();
-//	Config->WriteBool( wxT( "ShowLibrary" ), event.IsChecked(), wxT( "ViewPanels" ) );
-    if( event.IsChecked() )
+    bool IsEnabled = event.IsChecked();
+
+    if( IsEnabled )
     {
         CheckShowNotebook();
 
@@ -1038,6 +1091,62 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 
         CheckHideNotebook();
     }
+
+    m_ViewLibTextSearch->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
+    m_ViewLibTextSearch->Enable( IsEnabled );
+
+    m_ViewLibLabels->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
+    m_ViewLibLabels->Enable( IsEnabled );
+
+    m_ViewLibGenres->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
+    m_ViewLibGenres->Enable( IsEnabled );
+
+    m_ViewLibArtists->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
+    m_ViewLibArtists->Enable( IsEnabled );
+
+    m_ViewLibAlbums->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
+    m_ViewLibAlbums->Enable( IsEnabled );
+
+    m_ViewLibTracks->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TRACKS ) );
+    m_ViewLibTracks->Enable( IsEnabled );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLibraryShowPanel( wxCommandEvent &event )
+{
+    unsigned int PanelId = 0;
+
+    switch( event.GetId() )
+    {
+        case ID_MENU_VIEW_LIB_TEXTSEARCH :
+            PanelId = guPANEL_LIBRARY_TEXTSEARCH;
+            break;
+
+        case ID_MENU_VIEW_LIB_LABELS :
+            PanelId = guPANEL_LIBRARY_LABELS;
+            break;
+
+        case ID_MENU_VIEW_LIB_GENRES :
+            PanelId = guPANEL_LIBRARY_GENRES;
+            break;
+
+        case ID_MENU_VIEW_LIB_ARTISTS :
+            PanelId = guPANEL_LIBRARY_ARTISTS;
+            break;
+
+        case ID_MENU_VIEW_LIB_ALBUMS :
+            PanelId = guPANEL_LIBRARY_ALBUMS;
+            break;
+
+        case ID_MENU_VIEW_LIB_TRACKS :
+            PanelId = guPANEL_LIBRARY_TRACKS;
+            break;
+
+    }
+
+    m_LibPanel->ShowPanel( PanelId, event.IsChecked() );
+
 }
 
 // -------------------------------------------------------------------------------- //

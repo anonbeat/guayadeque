@@ -57,6 +57,8 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_PlayerPanel = NewPlayerPanel;
 
     m_AuiManager.SetManagedWindow( this );
+
+    m_VisiblePanels = Config->ReadNum( wxT( "LibVisiblePanels" ), -1, wxT( "Positions" ) );
     //
     //
     //
@@ -238,12 +240,11 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 // -------------------------------------------------------------------------------- //
 guLibPanel::~guLibPanel()
 {
-    guLogMessage( wxT( "LibPanel destroyed..." ) );
-
     // Save the Splitter positions into the main config
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
+        Config->WriteNum( wxT( "LibVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
         Config->WriteStr( wxT( "Library" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
     }
 
@@ -1182,13 +1183,13 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guLibPanel::IsShown( const int panelid ) const
+bool guLibPanel::IsPanelShown( const int panelid ) const
 {
     return ( m_VisiblePanels & panelid );
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::Show( const int panelid, bool show )
+void guLibPanel::ShowPanel( const int panelid, bool show )
 {
     wxString PaneName;
 
@@ -1214,9 +1215,9 @@ void guLibPanel::Show( const int panelid, bool show )
             PaneName = wxT( "Albums" );
             break;
 
-        case guPANEL_LIBRARY_TRACKS :
-            PaneName = wxT( "Tracks" );
-            break;
+////        case guPANEL_LIBRARY_TRACKS :
+////            PaneName = wxT( "Tracks" );
+////            break;
 
 //        case guPANEL_LIBRARY_YEARS :
 //            PaneName = wxT( "Years" );
@@ -1233,6 +1234,8 @@ void guLibPanel::Show( const int panelid, bool show )
 //        case guPANEL_LIBRARY_COVERFLOW :
 //            PaneName = wxT( "CoverFlow" );
 //            break;
+        default :
+            return;
 
     }
 
@@ -1243,6 +1246,8 @@ void guLibPanel::Show( const int panelid, bool show )
             PaneInfo.Show();
         else
             PaneInfo.Hide();
+
+        m_AuiManager.Update();
     }
 
     if( show )
@@ -1250,6 +1255,7 @@ void guLibPanel::Show( const int panelid, bool show )
     else
         m_VisiblePanels ^= panelid;
 
+    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
 }
 
 // -------------------------------------------------------------------------------- //
