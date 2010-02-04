@@ -24,6 +24,7 @@
 
 #include <wx/arrimpl.cpp>
 #include <wx/fileconf.h>
+#include <wx/filename.h>
 #include <wx/sstream.h>
 #include <wx/tokenzr.h>
 #include <wx/uri.h>
@@ -138,7 +139,7 @@ bool guPlayListFile::Save( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPlayListFile::ReadPlsStream( wxInputStream &playlist )
+bool guPlayListFile::ReadPlsStream( wxInputStream &playlist, const wxString &path )
 {
     wxFileConfig * Config = new wxFileConfig( playlist );
     if( Config )
@@ -161,9 +162,9 @@ bool guPlayListFile::ReadPlsStream( wxInputStream &playlist )
                         wxString Title;
 
                         if( Config->Read( wxString::Format( wxT( "File%u" ), Index ), &Location ) &&
-                            Config->Read( wxString::Format( wxT( "Title%u" ), Index ), &Title ) &&
                             !Location.IsEmpty() )
                         {
+                            Config->Read( wxString::Format( wxT( "Title%u" ), Index ), &Title );
                             m_PlayList.Add( new guStationPlayListItem( Location, Title ) );
                         }
                     }
@@ -190,7 +191,7 @@ bool guPlayListFile::ReadPlsFile( const wxString &filename )
     wxFileInputStream Ins( filename );
     if( Ins.IsOk() )
     {
-        return ReadPlsStream( Ins );
+        return ReadPlsStream( Ins, wxPathOnly( filename ) );
     }
     else
     {
@@ -228,9 +229,13 @@ bool guPlayListFile::ReadM3uStream( wxInputStream &playlist, const wxString &pat
             }
             else
             {
-                if( !path.IsEmpty() && wxPathOnly( Lines[ Index ] ).IsEmpty() )
-                    Lines[ Index ] = path + wxT( "/" ) + Lines[ Index ];
-                m_PlayList.Add( new guStationPlayListItem( Lines[ Index ], m_Name ) );
+                wxFileName FileName( Lines[ Index ] );
+                if( !path.IsEmpty() )
+                {
+                    FileName.Normalize( wxPATH_NORM_ALL, path );
+                }
+                m_PlayList.Add( new guStationPlayListItem( FileName.GetFullPath(), m_Name ) );
+                //guLogMessage( wxT( "%s - %s -> %s" ), path.c_str(), Lines[ Index ].c_str(), ( FileName.GetPathWithSep() + FileName.GetFullName() ).c_str() );
                 ItemName = wxEmptyString;
             }
         }
