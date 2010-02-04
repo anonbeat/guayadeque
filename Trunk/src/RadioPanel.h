@@ -21,6 +21,7 @@
 #ifndef RADIOPANEL_H
 #define RADIOPANEL_H
 
+#include <wx/aui/aui.h>
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -38,10 +39,16 @@
 #include <wx/listctrl.h>
 #include <wx/splitter.h>
 #include <wx/frame.h>
+#include <wx/srchctrl.h>
 
 #include "PlayerPanel.h"
 #include "ItemListBox.h"
 #include "Shoutcast.h"
+
+#define     guPANEL_RADIO_TEXTSEARCH        ( 1 << 0 )
+#define     guPANEL_RADIO_GENRES            ( 1 << 1 )
+#define     guPANEL_RADIO_LABELS            ( 1 << 2 )
+#define     guPANEL_RADIO_STATIONS          ( 1 << 3 )
 
 class guRadioGenreTreeCtrl;
 class guRadioStationListBox;
@@ -52,49 +59,48 @@ class guRadioLabelListBox;
 // -------------------------------------------------------------------------------- //
 class guRadioPanel : public wxPanel
 {
-	private:
-	  guDbLibrary * m_Db;
-	  guPlayerPanel * m_PlayerPanel;
+  private:
+    wxAuiManager        m_AuiManager;
+	guDbLibrary *       m_Db;
+	guPlayerPanel *     m_PlayerPanel;
 
-      void OnRadioUpdateEnd( wxCommandEvent &event );
-	  void OnRadioUpdate( wxCommandEvent &Event );
-	  void OnRadioUpdated( wxCommandEvent &Event );
-	  void OnRadioGenreListSelected( wxTreeEvent &Event );
-      void OnStationListActivated( wxListEvent &event );
-      void OnStationListBoxColClick( wxListEvent &event );
-      void OnStationsEditLabelsClicked( wxCommandEvent &event );
-      void OnSearchActivated( wxCommandEvent& event );
-      void OnSearchCancelled( wxMouseEvent &event );
-	  void OnRadioLabelListSelected( wxListEvent &Event );
-	  void OnRadioStationsPlay( wxCommandEvent &event );
-	  void OnRadioStationsEnqueue( wxCommandEvent &event );
-	  void OnSelectStations( bool enqueue = false );
+    unsigned int        m_VisiblePanels;
 
-	  void OnRadioUserAdd( wxCommandEvent &event );
-	  void OnRadioUserEdit( wxCommandEvent &event );
-	  void OnRadioUserDel( wxCommandEvent &event );
+    void OnRadioUpdateEnd( wxCommandEvent &event );
+	void OnRadioUpdate( wxCommandEvent &Event );
+	void OnRadioUpdated( wxCommandEvent &Event );
+	void OnRadioGenreListSelected( wxTreeEvent &Event );
+    void OnStationListActivated( wxListEvent &event );
+    void OnStationListBoxColClick( wxListEvent &event );
+    void OnStationsEditLabelsClicked( wxCommandEvent &event );
+    void OnSearchActivated( wxCommandEvent &event );
+    void OnSearchCancelled( wxCommandEvent &event );
+	void OnRadioLabelListSelected( wxListEvent &Event );
+	void OnRadioStationsPlay( wxCommandEvent &event );
+	void OnRadioStationsEnqueue( wxCommandEvent &event );
+	void OnSelectStations( bool enqueue = false );
 
-	  void OnRadioUserExport( wxCommandEvent &event );
-	  void OnRadioUserImport( wxCommandEvent &event );
+	void OnRadioUserAdd( wxCommandEvent &event );
+	void OnRadioUserEdit( wxCommandEvent &event );
+	void OnRadioUserDel( wxCommandEvent &event );
 
-      void GenreSplitterOnIdle( wxIdleEvent& );
+	void OnRadioUserExport( wxCommandEvent &event );
+	void OnRadioUserImport( wxCommandEvent &event );
 
-	protected:
-		wxStaticText*           m_SearchStaticText;
-		wxPanel*                m_InputTextPanel;
-		wxStaticBitmap*         m_InputTextLeftBitmap;
-		wxTextCtrl*             m_InputTextCtrl;
-		wxStaticBitmap*         m_InputTextClearBitmap;
-		wxSplitterWindow*       m_GenreSplitter;
-		guRadioGenreTreeCtrl *  m_GenresTreeCtrl;
-		guRadioLabelListBox *   m_LabelsListBox;
-		guRadioStationListBox * m_StationsListBox;
-		wxSplitterWindow *      m_StationsSplitter;
+    void OnPaneClose( wxAuiManagerEvent &event );
 
-	public:
-		guRadioPanel( wxWindow* parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel ); //wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 579,465 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
-		~guRadioPanel();
+  protected:
+    wxSearchCtrl *          m_InputTextCtrl;
+	guRadioGenreTreeCtrl *  m_GenresTreeCtrl;
+	guRadioLabelListBox *   m_LabelsListBox;
+	guRadioStationListBox * m_StationsListBox;
 
+  public:
+	guRadioPanel( wxWindow* parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel ); //wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 579,465 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+	~guRadioPanel();
+
+    bool IsPanelShown( const int panelid ) const;
+    void ShowPanel( const int panelid, bool show );
 };
 
 #endif

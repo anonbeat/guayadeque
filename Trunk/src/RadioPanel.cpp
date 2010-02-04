@@ -583,7 +583,8 @@ bool guRadioStationListBox::GetSelected( guRadioStation * radiostation ) const
 // -------------------------------------------------------------------------------- //
 // guRadioLabelListBox
 // -------------------------------------------------------------------------------- //
-guRadioLabelListBox::guRadioLabelListBox( wxWindow * parent, guDbLibrary * NewDb, wxString Label ) : guListBox( parent, NewDb, Label )
+guRadioLabelListBox::guRadioLabelListBox( wxWindow * parent, guDbLibrary * NewDb, wxString Label ) :
+    guListBox( parent, NewDb, Label, wxLB_MULTIPLE | guLISTVIEW_HIDE_HEADER )
 {
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::AddLabel ) );
     Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::DelLabel ) );
@@ -692,116 +693,101 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 
     guConfig *  Config = ( guConfig * ) guConfig::Get();
 
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+    m_AuiManager.SetManagedWindow( this );
 
-	wxBoxSizer* SearchSizer;
+    m_VisiblePanels = Config->ReadNum( wxT( "RadVisiblePanels" ), -1, wxT( "Positions" ) );
+
+
+	wxBoxSizer * SearchSizer;
 	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxPanel * SearchPanel;
+	SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
-	m_SearchStaticText = new wxStaticText( this, wxID_ANY, _("Search:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SearchStaticText->Wrap( -1 );
-	SearchSizer->Add( m_SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
+    wxStaticText *      SearchStaticText;
+	SearchStaticText = new wxStaticText( SearchPanel, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	SearchStaticText->Wrap( -1 );
+	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
 
-	m_InputTextPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL );
-	m_InputTextPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+    m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxRIGHT|wxTOP|wxBOTTOM, 5 );
 
-	wxBoxSizer* m_InputTextSizer;
-	m_InputTextSizer = new wxBoxSizer( wxHORIZONTAL );
+    SearchPanel->SetSizer( SearchSizer );
+    SearchPanel->Layout();
+	SearchSizer->Fit( SearchPanel );
 
-	m_InputTextLeftBitmap = new wxStaticBitmap( m_InputTextPanel, wxID_ANY, guImage( guIMAGE_INDEX_search ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_InputTextSizer->Add( m_InputTextLeftBitmap, 0, wxALL, 0 );
+    m_AuiManager.AddPane( SearchPanel,
+            wxAuiPaneInfo().Name( wxT( "RadioTextSearch" ) ).Caption( _( "Text Search" ) ).
+            MinSize( 60, 28 ).MaxSize( -1, 28 ).Row( 0 ).Layer( 2 ).Position( 0 ).
+            Dockable( true ).Top() );
 
-	m_InputTextCtrl = new wxTextCtrl( m_InputTextPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxNO_BORDER );
-	m_InputTextSizer->Add( m_InputTextCtrl, 1, wxALL, 2 );
 
-	m_InputTextClearBitmap = new wxStaticBitmap( m_InputTextPanel, wxID_ANY, guImage( guIMAGE_INDEX_edit_clear ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_InputTextSizer->Add( m_InputTextClearBitmap, 0, wxALL, 0 );
-	m_InputTextClearBitmap->Enable( false );
-
-	m_InputTextPanel->SetSizer( m_InputTextSizer );
-	m_InputTextPanel->Layout();
-	m_InputTextSizer->Fit( m_InputTextPanel );
-	SearchSizer->Add( m_InputTextPanel, 1, wxEXPAND | wxALL, 2 );
-
-	MainSizer->Add( SearchSizer, 0, wxEXPAND, 5 );
-
-	wxStaticLine * SearchStaticline;
-	SearchStaticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	MainSizer->Add( SearchStaticline, 0, wxEXPAND | wxALL, 5 );
-
-	wxBoxSizer* ListsSizer;
-	ListsSizer = new wxBoxSizer( wxVERTICAL );
-
-	m_StationsSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_StationsSplitter->SetMinimumPaneSize( 60 );
-
-	wxPanel * LeftPanel;
-	LeftPanel = new wxPanel( m_StationsSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* GenMainSizer;
-	GenMainSizer = new wxBoxSizer( wxVERTICAL );
-
-	m_GenreSplitter = new wxSplitterWindow( LeftPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_GenreSplitter->SetMinimumPaneSize( 60 );
-	m_GenreSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guRadioPanel::GenreSplitterOnIdle ), NULL, this );
 
     wxPanel * GenrePanel;
-	GenrePanel = new wxPanel( m_GenreSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* GenreSizer;
+	GenrePanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * GenreSizer;
 	GenreSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticText * GenreLabel = new wxStaticText( GenrePanel, wxID_ANY, _( "Genres" ), wxDefaultPosition, wxDefaultSize, 0 );
-    GenreSizer->Add( GenreLabel, 0, wxALL|wxEXPAND, 5 );
 
     m_GenresTreeCtrl = new guRadioGenreTreeCtrl( GenrePanel, m_Db );
-	//m_GenresListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
-
 	GenreSizer->Add( m_GenresTreeCtrl, 1, wxALL|wxEXPAND, 1 );
 
 	GenrePanel->SetSizer( GenreSizer );
 	GenrePanel->Layout();
 	GenreSizer->Fit( GenrePanel );
 
+	m_AuiManager.AddPane( GenrePanel,
+            wxAuiPaneInfo().Name( wxT( "RadioGenres" ) ).Caption( _( "Genres" ) ).
+            MinSize( 60, 60 ).Layer( 1 ).Row( 0 ).Position( 0 ).
+            Dockable( true ).Left() );
+
+
+
     wxPanel * LabelsPanel;
-	LabelsPanel = new wxPanel( m_GenreSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* LabelsSizer;
+	LabelsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * LabelsSizer;
 	LabelsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_LabelsListBox = new guRadioLabelListBox( LabelsPanel, m_Db, _( "Labels" ) );
-	//m_LabelsListBox->SetBackgroundColour( wxColour( 250, 250, 250 ) );
-
 	LabelsSizer->Add( m_LabelsListBox, 1, wxALL|wxEXPAND, 1 );
 
 	LabelsPanel->SetSizer( LabelsSizer );
 	LabelsPanel->Layout();
 	LabelsSizer->Fit( LabelsPanel );
-	m_GenreSplitter->SplitHorizontally( GenrePanel, LabelsPanel, Config->ReadNum( wxT( "RadioGenreSashPos" ), 200, wxT( "Positions" ) ) );
-	GenMainSizer->Add( m_GenreSplitter, 1, wxEXPAND, 5 );
 
-	LeftPanel->SetSizer( GenMainSizer );
-	LeftPanel->Layout();
-	GenMainSizer->Fit( LeftPanel );
+	m_AuiManager.AddPane( LabelsPanel,
+            wxAuiPaneInfo().Name( wxT( "RadioLabels" ) ).Caption( _( "Labels" ) ).
+            MinSize( 60, 60 ).Layer( 1 ).Row( 0 ).Position( 1 ).
+            Dockable( true ).Left() );
+
+
 
     wxPanel * StationsPanel;
-	StationsPanel = new wxPanel( m_StationsSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//	StationsPanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) );
+	StationsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
-	wxBoxSizer* StationsSizer;
+	wxBoxSizer * StationsSizer;
 	StationsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_StationsListBox = new guRadioStationListBox( StationsPanel, m_Db );
 
-	StationsSizer->Add( m_StationsListBox, 1, wxALL|wxEXPAND, 1 );
+	StationsSizer->Add( m_StationsListBox, 1, wxEXPAND, 5 );
 
 	StationsPanel->SetSizer( StationsSizer );
 	StationsPanel->Layout();
 	StationsSizer->Fit( StationsPanel );
-	m_StationsSplitter->SplitVertically( LeftPanel, StationsPanel, Config->ReadNum( wxT( "RadioStationsSashPos" ), 180, wxT( "Positions" ) ) );
-	ListsSizer->Add( m_StationsSplitter, 1, wxEXPAND, 0 );
 
-	MainSizer->Add( ListsSizer, 1, wxEXPAND, 5 );
+    m_AuiManager.AddPane( StationsPanel, wxAuiPaneInfo().Name( wxT( "RadioStations" ) ).Caption( _( "Stations" ) ).
+            MinSize( 50, 50 ).
+            CenterPane() );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+
+
+    wxString RadioLayout = Config->ReadStr( wxT( "Radio" ), wxEmptyString, wxT( "Positions" ) );
+    if( RadioLayout.IsEmpty() )
+        m_AuiManager.Update();
+    else
+        m_AuiManager.LoadPerspective( RadioLayout, true );
+
+
 
     Connect( wxEVT_COMMAND_TREE_SEL_CHANGED,  wxTreeEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
 
@@ -824,21 +810,23 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
     Connect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
     m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
-    m_InputTextClearBitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
     Connect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
     Connect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ) );
+
+    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guRadioPanel::~guRadioPanel()
 {
-    // Save the Splitter positions into the main config
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        Config->WriteNum( wxT( "RadioGenreSashPos" ), m_GenreSplitter->GetSashPosition(), wxT( "Positions" ) );
-        Config->WriteNum( wxT( "RadioStationSashPos" ), m_StationsSplitter->GetSashPosition(), wxT( "Positions" ) );
+        Config->WriteNum( wxT( "RadVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
+        Config->WriteStr( wxT( "Radio" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
     }
 
     //
@@ -859,10 +847,15 @@ guRadioPanel::~guRadioPanel()
     Disconnect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
-    m_InputTextClearBitmap->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
     Disconnect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
     Disconnect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ) );
+
+    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
+
+    m_AuiManager.UnInit();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -873,11 +866,11 @@ void guRadioPanel::OnSearchActivated( wxCommandEvent& event )
     m_LabelsListBox->ReloadItems();
     m_GenresTreeCtrl->ReloadItems();
     m_StationsListBox->ReloadItems();
-    m_InputTextClearBitmap->Enable();
+    m_InputTextCtrl->ShowCancelButton( true );
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
+void guRadioPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
     wxArrayString Words;
     m_InputTextCtrl->Clear();
@@ -885,7 +878,7 @@ void guRadioPanel::OnSearchCancelled( wxMouseEvent &event ) // CLEAN SEARCH STR
     m_LabelsListBox->ReloadItems();
     m_GenresTreeCtrl->ReloadItems();
     m_StationsListBox->ReloadItems();
-    m_InputTextClearBitmap->Disable();
+    m_InputTextCtrl->ShowCancelButton( false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1098,15 +1091,6 @@ void guRadioPanel::OnSelectStations( bool enqueue )
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::GenreSplitterOnIdle( wxIdleEvent& )
-{
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_StationsSplitter->SetSashPosition( Config->ReadNum( wxT( "RadioStationSashPos" ), 180, wxT( "Positions" ) ) );
-    m_GenreSplitter->SetSashPosition( Config->ReadNum( wxT( "RadioGenreSashPos" ), 100, wxT( "Positions" ) ) );
-    m_GenreSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guRadioPanel::GenreSplitterOnIdle ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioUserAdd( wxCommandEvent &event )
 {
     guRadioEditor * RadioEditor = new guRadioEditor( this );
@@ -1295,9 +1279,94 @@ void guRadioPanel::OnRadioUserImport( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-// guUpdateRadiosThread
-// -------------------------------------------------------------------------------- //
+bool guRadioPanel::IsPanelShown( const int panelid ) const
+{
+    return ( m_VisiblePanels & panelid );
+}
 
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::ShowPanel( const int panelid, bool show )
+{
+    wxString PaneName;
+
+    switch( panelid )
+    {
+        case guPANEL_RADIO_TEXTSEARCH :
+            PaneName = wxT( "RadioTextSearch" );
+            break;
+
+        case guPANEL_RADIO_GENRES :
+            PaneName = wxT( "RadioGenres" );
+            break;
+
+        case guPANEL_RADIO_LABELS :
+            PaneName = wxT( "RadioLabels" );
+            break;
+
+////        case guPANEL_RADIO_STATIONS:
+////            PaneName = wxT( "RadioStations" );
+////            break;
+
+        default :
+            return;
+
+    }
+
+    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
+    if( PaneInfo.IsOk() )
+    {
+        if( show )
+            PaneInfo.Show();
+        else
+            PaneInfo.Hide();
+
+        m_AuiManager.Update();
+    }
+
+    if( show )
+        m_VisiblePanels |= panelid;
+    else
+        m_VisiblePanels ^= panelid;
+
+    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnPaneClose( wxAuiManagerEvent &event )
+{
+    wxAuiPaneInfo * PaneInfo = event.GetPane();
+    wxString PaneName = PaneInfo->name;
+    int CmdId = 0;
+
+    if( PaneName == wxT( "RadioTextSearch" ) )
+    {
+        CmdId = ID_MENU_VIEW_RAD_TEXTSEARCH;
+    }
+    else if( PaneName == wxT( "RadioLabels" ) )
+    {
+        CmdId = ID_MENU_VIEW_RAD_LABELS;
+    }
+    else if( PaneName == wxT( "RadioGenres" ) )
+    {
+        CmdId = ID_MENU_VIEW_RAD_GENRES;
+    }
+//    else if( PaneName == wxT( "RadioStations" ) )
+//    {
+//        CmdId = ID_MENU_VIEW_RAD_STATIONS;
+//    }
+
+    guLogMessage( wxT( "OnPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
+    if( CmdId )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, CmdId );
+        AddPendingEvent( evt );
+    }
+
+    event.Veto();
+}
+
+// -------------------------------------------------------------------------------- //
+// guUpdateRadiosThread
 // -------------------------------------------------------------------------------- //
 guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
 {
