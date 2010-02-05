@@ -1257,9 +1257,6 @@ void guMainFrame::OnRadioShowPanel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 {
-//	guConfig *      Config = ( guConfig * ) guConfig::Get();
-//	Config->WriteBool( wxT( "ShowLastfm" ), event.IsChecked(), wxT( "ViewPanels" ) );
-
     if( event.IsChecked() )
     {
         CheckShowNotebook();
@@ -1284,9 +1281,6 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 {
-//	guConfig *      Config = ( guConfig * ) guConfig::Get();
-//	Config->WriteBool( wxT( "ShowLyrics" ), event.IsChecked(), wxT( "ViewPanels" ) );
-
     if( event.IsChecked() )
     {
         CheckShowNotebook();
@@ -1311,9 +1305,6 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 {
-//	guConfig *      Config = ( guConfig * ) guConfig::Get();
-//	Config->WriteBool( wxT( "ShowPodcasts" ), event.IsChecked(), wxT( "ViewPanels" ) );
-
     if( event.IsChecked() )
     {
         CheckShowNotebook();
@@ -1338,9 +1329,6 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 {
-//	guConfig *      Config = ( guConfig * ) guConfig::Get();
-//	Config->WriteBool( wxT( "ShowPlayLists" ), event.IsChecked(), wxT( "ViewPanels" ) );
-
     if( event.IsChecked() )
     {
         CheckShowNotebook();

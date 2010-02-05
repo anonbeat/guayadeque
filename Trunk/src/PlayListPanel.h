@@ -27,6 +27,7 @@
 #include "SoListBox.h"
 
 
+#include <wx/aui/aui.h>
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -125,8 +126,10 @@ class guPLNamesDropTarget : public wxFileDropTarget
 // -------------------------------------------------------------------------------- //
 class guPlayListPanel : public wxPanel
 {
-  private :
-    guDbLibrary *         m_Db;
+  protected :
+    wxAuiManager        m_AuiManager;
+
+    guDbLibrary *       m_Db;
     guPlayerPanel *     m_PlayerPanel;
 
     wxSplitterWindow *  m_MainSplitter;
