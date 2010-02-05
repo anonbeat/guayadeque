@@ -53,6 +53,7 @@ class guLibPanel : public wxPanel
 {
   protected :
     wxAuiManager        m_AuiManager;
+    unsigned int        m_VisiblePanels;
 
     wxSearchCtrl *      m_InputTextCtrl;
     guGeListBox *       m_GenreListCtrl;
@@ -65,8 +66,6 @@ class guLibPanel : public wxPanel
     guDbLibrary *       m_Db;
     bool                m_UpdateLock;
     guPlayerPanel *     m_PlayerPanel;
-
-    unsigned int        m_VisiblePanels;
 
     // Search Str events
     void OnSearchActivated( wxCommandEvent &event );

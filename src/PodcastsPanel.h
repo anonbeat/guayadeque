@@ -25,6 +25,7 @@
 #include "PlayerPanel.h"
 
 #include <wx/wx.h>
+#include <wx/aui/aui.h>
 #include <wx/hyperlink.h>
 #include <wx/splitter.h>
 #include <wx/statline.h>
@@ -44,13 +45,18 @@ class guChannelsListBox : public guListBox
 
   public :
     guChannelsListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
-      guListBox( parent, db, label )
+      guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_HIDE_HEADER )
     {
         ReloadItems();
     };
 
     virtual int GetSelectedSongs( guTrackArray * Songs ) const;
 };
+
+
+#define     guPANEL_PODCASTS_CHANNELS    ( 1 << 0 )
+#define     guPANEL_PODCASTS_DETAILS     ( 1 << 1 )
+
 
 #define guPODCASTS_COLUMN_STATUS        0
 #define guPODCASTS_COLUMN_TITLE         1
@@ -69,7 +75,7 @@ class guPodcastPanel;
 class guPodcastListBox : public guListView
 {
   protected :
-    guDbLibrary *         m_Db;
+    guDbLibrary *       m_Db;
     guPodcastItemArray  m_PodItems;
     int                 m_Order;
     bool                m_OrderDesc;
@@ -120,15 +126,18 @@ class guPodcastPanel : public wxPanel
 
 
   protected:
-    guDbLibrary *                 m_Db;
+    wxAuiManager                m_AuiManager;
+    unsigned int                m_VisiblePanels;
+
+    guDbLibrary *               m_Db;
     guMainFrame *               m_MainFrame;
     guPlayerPanel *             m_PlayerPanel;
     wxString                    m_PodcastsPath;
     int                         m_LastChannelInfoId;
     int                         m_LastPodcastInfoId;
 
-    wxSplitterWindow *          m_MainSplitter;
-    wxSplitterWindow *          m_TopSplitter;
+//    wxSplitterWindow *          m_MainSplitter;
+//    wxSplitterWindow *          m_TopSplitter;
 	guChannelsListBox *         m_ChannelsListBox;
     guPodcastListBox *          m_PodcastsListBox;
 	wxBoxSizer *                m_DetailMainSizer;
@@ -159,9 +168,14 @@ class guPodcastPanel : public wxPanel
 
     void OnConfigUpdated( wxCommandEvent &event );
 
+    void OnPaneClose( wxAuiManagerEvent &event );
+
 public:
     guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel );
     ~guPodcastPanel();
+
+    bool IsPanelShown( const int panelid ) const;
+    void ShowPanel( const int panelid, bool show );
 
     friend class guPodcastDownloadQueueThread;
 };

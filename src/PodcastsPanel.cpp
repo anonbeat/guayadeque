@@ -71,31 +71,31 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
         wxMkdir( m_PodcastsPath, 0770 );
     }
 
-	wxBoxSizer *        MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+    m_AuiManager.SetManagedWindow( this );
 
-	m_MainSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_MainSplitter->SetMinimumPaneSize( 60 );
+    m_VisiblePanels = Config->ReadNum( wxT( "PodVisiblePanels" ), -1, wxT( "Positions" ) );
 
-    wxPanel * TopPanel;
-	TopPanel = new wxPanel( m_MainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* TopPanelSizer;
-	TopPanelSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_TopSplitter = new wxSplitterWindow( TopPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_TopSplitter->SetMinimumPaneSize( 60 );
-	ChannelsPanel = new wxPanel( m_TopSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* ChannelsMainSizer;
+	ChannelsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * ChannelsMainSizer;
 	ChannelsMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_ChannelsListBox = new guChannelsListBox( ChannelsPanel, m_Db, _( "Channels" ) );
-	ChannelsMainSizer->Add( m_ChannelsListBox, 1, wxEXPAND|wxALL, 1 );
+	ChannelsMainSizer->Add( m_ChannelsListBox, 1, wxEXPAND, 5 );
 
 	ChannelsPanel->SetSizer( ChannelsMainSizer );
 	ChannelsPanel->Layout();
 	ChannelsMainSizer->Fit( ChannelsPanel );
-	PodcastsPanel = new wxPanel( m_TopSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* MainPodcastsSizer;
+
+    m_AuiManager.AddPane( ChannelsPanel,
+            wxAuiPaneInfo().Name( wxT( "PodcastsChannels" ) ).Caption( _( "Channels" ) ).
+            MinSize( 50, 50 ).
+            Dockable( true ).Left() );
+
+
+
+	PodcastsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * MainPodcastsSizer;
 	MainPodcastsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_PodcastsListBox = new guPodcastListBox( PodcastsPanel, m_Db );
@@ -104,22 +104,22 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 	PodcastsPanel->SetSizer( MainPodcastsSizer );
 	PodcastsPanel->Layout();
 	MainPodcastsSizer->Fit( PodcastsPanel );
-	m_TopSplitter->SplitVertically( ChannelsPanel, PodcastsPanel, 264 );
-	TopPanelSizer->Add( m_TopSplitter, 1, wxEXPAND, 5 );
 
-	TopPanel->SetSizer( TopPanelSizer );
-	TopPanel->Layout();
-	TopPanelSizer->Fit( TopPanel );
+    m_AuiManager.AddPane( PodcastsPanel, wxAuiPaneInfo().Name( wxT( "PodcastsItems" ) ).Caption( _( "Podcasts" ) ).
+            MinSize( 50, 50 ).
+            CenterPane() );
 
-	wxPanel * BottomPanel;
-	BottomPanel = new wxPanel( m_MainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
+
+	wxPanel * DetailsPanel;
+	DetailsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
 	m_DetailMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticBoxSizer* DetailSizer;
-	DetailSizer = new wxStaticBoxSizer( new wxStaticBox( BottomPanel, wxID_ANY, _(" Details ") ), wxVERTICAL );
+	DetailSizer = new wxStaticBoxSizer( new wxStaticBox( DetailsPanel, wxID_ANY, _(" Details ") ), wxVERTICAL );
 
-	m_DetailScrolledWindow = new wxScrolledWindow( BottomPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxHSCROLL );
+	m_DetailScrolledWindow = new wxScrolledWindow( DetailsPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxHSCROLL );
 	m_DetailScrolledWindow->SetScrollRate( 5, 5 );
 	m_DetailScrolledWindow->SetMinSize( wxSize( -1,100 ) );
 
@@ -230,19 +230,21 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 
 	m_DetailMainSizer->Add( DetailSizer, 1, wxEXPAND|wxALL, 5 );
 
-	BottomPanel->SetSizer( m_DetailMainSizer );
-	BottomPanel->Layout();
-	DetailSizer->Fit( BottomPanel );
-	m_MainSplitter->SplitHorizontally( TopPanel, BottomPanel, 300 );
-	MainSizer->Add( m_MainSplitter, 1, wxEXPAND, 5 );
+	DetailsPanel->SetSizer( m_DetailMainSizer );
+	DetailsPanel->Layout();
+	DetailSizer->Fit( DetailsPanel );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+    m_AuiManager.AddPane( DetailsPanel, wxAuiPaneInfo().Name( wxT( "PodcastsDetails" ) ).Caption( _( "Podcast Details" ) ).
+            MinSize( 100, 100 ).
+            Dockable( true ).Bottom() );
 
 
-	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::MainSplitterOnIdle ), NULL, this );
-//	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_MainSplitterOnIdle ), NULL, this );
-//	m_TopSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_TopSplitterOnIdle ), NULL, this );
+    wxString PodcastLayout = Config->ReadStr( wxT( "Podcasts" ), wxEmptyString, wxT( "Positions" ) );
+    if( PodcastLayout.IsEmpty() )
+        m_AuiManager.Update();
+    else
+        m_AuiManager.LoadPerspective( PodcastLayout, true );
+
     Connect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ), NULL, this );
@@ -264,6 +266,8 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     Connect( ID_PODCASTS_ITEM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
+
+    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPodcastPanel::OnPaneClose ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -275,13 +279,10 @@ guPodcastPanel::~guPodcastPanel()
     {
         Config->UnRegisterObject( this );
 
-        Config->WriteNum( wxT( "PodcastsMainSashPos" ), m_MainSplitter->GetSashPosition(), wxT( "Positions" ) );
-        Config->WriteNum( wxT( "PodcastsTopSashPos" ), m_TopSplitter->GetSashPosition(), wxT( "Positions" ) );
+        Config->WriteNum( wxT( "PodVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
+        Config->WriteStr( wxT( "Podcasts" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
     }
 
-	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::MainSplitterOnIdle ), NULL, this );
-//	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_MainSplitterOnIdle ), NULL, this );
-//	m_TopSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::m_TopSplitterOnIdle ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ), NULL, this );
@@ -303,6 +304,10 @@ guPodcastPanel::~guPodcastPanel()
     Disconnect( ID_PODCASTS_ITEM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
+
+    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPodcastPanel::OnPaneClose ), NULL, this );
+
+    m_AuiManager.UnInit();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -818,14 +823,75 @@ void guPodcastPanel::OnPodcastItemCopyTo( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::MainSplitterOnIdle( wxIdleEvent &event )
+bool guPodcastPanel::IsPanelShown( const int panelid ) const
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_MainSplitter->SetSashPosition( Config->ReadNum( wxT( "PodcastsMainSashPos" ), 150, wxT( "Positions" ) ) );
-    m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPodcastPanel::MainSplitterOnIdle ), NULL, this );
-    m_TopSplitter->SetSashPosition( Config->ReadNum( wxT( "PodcastsTopSashPos" ), 150, wxT( "Positions" ) ) );
+    return ( m_VisiblePanels & panelid );
 }
 
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::ShowPanel( const int panelid, bool show )
+{
+    wxString PaneName;
+
+    switch( panelid )
+    {
+        case guPANEL_PODCASTS_CHANNELS :
+            PaneName = wxT( "PodcastsChannels" );
+            break;
+
+        case guPANEL_PODCASTS_DETAILS :
+            PaneName = wxT( "PodcastsDetails" );
+            break;
+
+        default :
+            return;
+
+    }
+
+    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
+    if( PaneInfo.IsOk() )
+    {
+        if( show )
+            PaneInfo.Show();
+        else
+            PaneInfo.Hide();
+
+        m_AuiManager.Update();
+    }
+
+    if( show )
+        m_VisiblePanels |= panelid;
+    else
+        m_VisiblePanels ^= panelid;
+
+    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPaneClose( wxAuiManagerEvent &event )
+{
+    wxAuiPaneInfo * PaneInfo = event.GetPane();
+    wxString PaneName = PaneInfo->name;
+    int CmdId = 0;
+
+    if( PaneName == wxT( "PodcastsChannels" ) )
+    {
+        CmdId = ID_MENU_VIEW_POD_CHANNELS;
+    }
+    else if( PaneName == wxT( "PodcastsDetails" ) )
+    {
+        CmdId = ID_MENU_VIEW_POD_DETAILS;
+    }
+
+    guLogMessage( wxT( "OnPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
+    if( CmdId )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, CmdId );
+        AddPendingEvent( evt );
+    }
+
+    event.Veto();
+}
 
 
 

@@ -324,7 +324,10 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ), NULL, this );
     Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ), NULL, this );
     Connect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ), NULL, this );
+
     Connect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ), NULL, this );
+    Connect( ID_MENU_VIEW_POD_CHANNELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_POD_DETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
 
     Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
     Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
@@ -659,9 +662,28 @@ void guMainFrame::CreateMenu()
     m_MainMenu->Append( m_ViewPlayLists );
     m_ViewPlayLists->Check( Config->ReadBool( wxT( "ShowPlayLists" ), true, wxT( "ViewPanels" ) ) );
 
-    m_ViewPodcasts = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PODCASTS, _( "P&odcasts" ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
-    m_MainMenu->Append( m_ViewPodcasts );
+
+
+    SubMenu = new wxMenu();
+
+    m_ViewPodcasts = new wxMenuItem( SubMenu, ID_MENU_VIEW_PODCASTS, _( "P&odcasts" ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewPodcasts );
     m_ViewPodcasts->Check( Config->ReadBool( wxT( "ShowPodcasts" ), true, wxT( "ViewPanels" ) ) );
+
+    SubMenu->AppendSeparator();
+
+    m_ViewPodChannels = new wxMenuItem( SubMenu, ID_MENU_VIEW_POD_CHANNELS, _( "Channels" ), _( "Show/Hide the podcasts channels" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewPodChannels );
+    m_ViewPodChannels->Check( m_PodcastsPanel && m_PodcastsPanel->IsPanelShown( guPANEL_PODCASTS_CHANNELS ) );
+    m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
+
+    m_ViewPodDetails = new wxMenuItem( SubMenu, ID_MENU_VIEW_POD_DETAILS, _( "Details" ), _( "Show/Hide the podcasts details" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewPodDetails );
+    m_ViewPodDetails->Check( m_PodcastsPanel && m_PodcastsPanel->IsPanelShown( guPANEL_PODCASTS_DETAILS ) );
+    m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
+
+    m_MainMenu->AppendSubMenu( SubMenu, _( "&Podcasts" ), _( "Set the podcasts visible panels" ) );
+
 
     MenuBar->Append( m_MainMenu, _( "&View" ) );
 
@@ -1251,6 +1273,30 @@ void guMainFrame::OnRadioShowPanel( wxCommandEvent &event )
 
     if( PanelId )
         m_RadioPanel->ShowPanel( PanelId, event.IsChecked() );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPodcastsShowPanel( wxCommandEvent &event )
+{
+    unsigned int PanelId = 0;
+
+    switch( event.GetId() )
+    {
+        case ID_MENU_VIEW_POD_CHANNELS :
+            PanelId = guPANEL_PODCASTS_CHANNELS;
+            m_ViewPodChannels->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_POD_DETAILS :
+            PanelId = guPANEL_PODCASTS_DETAILS;
+            m_ViewPodDetails->Check( event.IsChecked() );
+            break;
+
+    }
+
+    if( PanelId )
+        m_PodcastsPanel->ShowPanel( PanelId, event.IsChecked() );
 
 }
 

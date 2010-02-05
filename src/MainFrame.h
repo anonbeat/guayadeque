@@ -100,7 +100,11 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewLastFM;
     wxMenuItem *                m_ViewLyrics;
     wxMenuItem *                m_ViewPlayLists;
+
     wxMenuItem *                m_ViewPodcasts;
+    wxMenuItem *                m_ViewPodChannels;
+    wxMenuItem *                m_ViewPodDetails;
+
 
     guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
@@ -203,7 +207,9 @@ class guMainFrame : public wxFrame
     void                OnViewLastFM( wxCommandEvent &event );
     void                OnViewLyrics( wxCommandEvent &event );
     void                OnViewPlayLists( wxCommandEvent &event );
+
     void                OnViewPodcasts( wxCommandEvent &event );
+    void                OnPodcastsShowPanel( wxCommandEvent &event );
 
 
   public:
