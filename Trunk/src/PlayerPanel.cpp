@@ -1412,9 +1412,9 @@ void guPlayerPanel::OnAboutToFinish( void )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaAboutToFinish( wxMediaEvent &event )
 {
+    //guLogMessage( wxT( "Ending About-To-Finish %i" ), m_AboutToFinishPending );
     if( m_AboutToFinishPending )
     {
-        //guLogMessage( wxT( "Ending About-To-Finish" ) );
         SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         m_AboutToFinishPending = false;
