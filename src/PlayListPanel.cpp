@@ -439,45 +439,66 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+    m_AuiManager.SetManagedWindow( this );
 
-	m_MainSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-    m_MainSplitter->SetMinimumPaneSize( 60 );
 
-    wxPanel *           NamesPanel;
-	NamesPanel = new wxPanel( m_MainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* NameSizer;
+//	wxBoxSizer* MainSizer;
+//	MainSizer = new wxBoxSizer( wxVERTICAL );
+//
+//	m_MainSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
+//    m_MainSplitter->SetMinimumPaneSize( 60 );
+
+    wxPanel * NamesPanel;
+	NamesPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * NameSizer;
 	NameSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticText * m_NameStaticText;
-    m_NameStaticText = new wxStaticText( NamesPanel, wxID_ANY, _( "Play lists:" ) );
-    NameSizer->Add( m_NameStaticText, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5 );
+//    wxStaticText * m_NameStaticText;
+//    m_NameStaticText = new wxStaticText( NamesPanel, wxID_ANY, _( "Play lists:" ) );
+//    NameSizer->Add( m_NameStaticText, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5 );
 	m_NamesTreeCtrl = new guPLNamesTreeCtrl( NamesPanel, m_Db );
-	NameSizer->Add( m_NamesTreeCtrl, 1, wxALL|wxEXPAND, 1 );
+	NameSizer->Add( m_NamesTreeCtrl, 1, wxEXPAND, 5 );
 
 	NamesPanel->SetSizer( NameSizer );
 	NamesPanel->Layout();
 	NameSizer->Fit( NamesPanel );
 
-    wxPanel *           DetailsPanel;
-	DetailsPanel = new wxPanel( m_MainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* DetailsSizer;
+    m_AuiManager.AddPane( NamesPanel,
+            wxAuiPaneInfo().Name( wxT( "PlayListNames" ) ).Caption( _( "Play Lists" ) ).
+            MinSize( 50, 50 ).
+            Dockable( true ).Left() );
+
+
+    wxPanel *  DetailsPanel;
+	DetailsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * DetailsSizer;
 	DetailsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_PLTracksListBox = new guPLSoListBox( DetailsPanel, m_Db, wxT( "PlayList" ), guLISTVIEW_COLUMN_SELECT );
-	DetailsSizer->Add( m_PLTracksListBox, 1, wxALL|wxEXPAND, 1 );
+	DetailsSizer->Add( m_PLTracksListBox, 1, wxEXPAND, 5 );
 
 	DetailsPanel->SetSizer( DetailsSizer );
 	DetailsPanel->Layout();
 	DetailsSizer->Fit( DetailsPanel );
-	m_MainSplitter->SplitVertically( NamesPanel, DetailsPanel,
-        Config->ReadNum( wxT( "PlayListSashPos" ), 175, wxT( "Positions" ) ) );
 
-	MainSizer->Add( m_MainSplitter, 1, wxEXPAND, 5 );
+    m_AuiManager.AddPane( DetailsPanel, wxAuiPaneInfo().Name( wxT( "PlayListTracks" ) ).Caption( wxT( "PlayList" ) ).
+            MinSize( 50, 50 ).
+            CenterPane() );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+
+    wxString PlayListLayout = Config->ReadStr( wxT( "PlayLists" ), wxEmptyString, wxT( "Positions" ) );
+    if( PlayListLayout.IsEmpty() )
+        m_AuiManager.Update();
+    else
+        m_AuiManager.LoadPerspective( PlayListLayout, true );
+
+//	m_MainSplitter->SplitVertically( NamesPanel, DetailsPanel,
+//        Config->ReadNum( wxT( "PlayListSashPos" ), 175, wxT( "Positions" ) ) );
+//
+//	MainSizer->Add( m_MainSplitter, 1, wxEXPAND, 5 );
+//
+//	this->SetSizer( MainSizer );
+//	this->Layout();
 
 	Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guPlayListPanel::OnPLNamesSelected ), NULL, this );
 	Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guPlayListPanel::OnPLNamesActivated ), NULL, this );
@@ -507,7 +528,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
 
-	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
+//	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -517,7 +538,8 @@ guPlayListPanel::~guPlayListPanel()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        Config->WriteNum( wxT( "PlayListSashPos" ), m_MainSplitter->GetSashPosition(), wxT( "Positions" ) );
+//        Config->WriteNum( wxT( "PlayListSashPos" ), m_MainSplitter->GetSashPosition(), wxT( "Positions" ) );
+        Config->WriteStr( wxT( "PlayLists" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
     }
 
 	Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guPlayListPanel::OnPLNamesSelected ), NULL, this );
@@ -548,7 +570,9 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
     Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
 
-	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
+//	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
+
+    m_AuiManager.UnInit();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1119,9 +1143,9 @@ bool guPlayListPanel::GetPlayListCounters( wxLongLong * count, wxLongLong * len,
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::MainSplitterOnIdle( wxIdleEvent &event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_MainSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayListSashPos" ), 175, wxT( "Positions" ) ) );
-	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    m_MainSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayListSashPos" ), 175, wxT( "Positions" ) ) );
+//	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
