@@ -44,7 +44,8 @@
 
 // -------------------------------------------------------------------------------- //
 guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-            guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
+            guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG |
+                guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS | guLISTVIEW_HIDE_HEADER )
 {
     wxArrayString Songs;
     int Count;

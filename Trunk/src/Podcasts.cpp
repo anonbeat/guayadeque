@@ -180,7 +180,7 @@ void guPodcastChannel::CheckLogo( void )
         guConfig * Config = ( guConfig * ) guConfig::Get();
 
         wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                    wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+                                    wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
 
         //guLogMessage( wxT( "Downloading the Image..." ) );
         wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
@@ -383,7 +383,7 @@ void guPodcastChannel::CheckDir( void )
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     // Check that the directory to store podcasts are created
-    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
 
     // Create the channel dir
     wxFileName ChannelDir = wxFileName( PodcastsPath + wxT( "/" ) + m_Title );
@@ -464,7 +464,7 @@ guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guMainFrame * mainfr
     m_GaugeId = wxNOT_FOUND;
 
     // Check that the directory to store podcasts are created
-    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {

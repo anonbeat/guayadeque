@@ -119,7 +119,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 //    m_PlayerSplitter->SetMinimumPaneSize( 100 );
 
 	m_PlayerPanel = new guPlayerPanel( this, m_Db ); //wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_AuiManager.AddPane( m_PlayerPanel, wxAuiPaneInfo().Name( _("Player")).CenterPane() );
+	m_AuiManager.AddPane( m_PlayerPanel, wxAuiPaneInfo().Name( _("Player")).MinSize( 100, 100 ).CenterPane() );
 
 
 //	MultiPanel = new wxPanel( m_PlayerSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -184,8 +184,10 @@ guMainFrame::guMainFrame( wxWindow * parent )
     else
         m_PodcastsPanel = NULL;
 
-    m_AuiManager.AddPane( m_CatNotebook, wxAuiPaneInfo().Name( wxT("Selector") ).CaptionVisible( false ).CloseButton( false ).DestroyOnClose( false ).Resizable( true ).Floatable( false ).Top() );
-    if( m_CatNotebook->GetPageCount() )
+    m_AuiManager.AddPane( m_CatNotebook, wxAuiPaneInfo().Name( wxT("Selector") ).CaptionVisible( false ).
+        CloseButton( false ).DestroyOnClose( false ).Resizable( true ).Floatable( false ).
+        MinSize( 100, 60 ).Right() );
+    if( !m_CatNotebook->GetPageCount() )
     {
         wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
         PaneInfo.Hide();
@@ -555,7 +557,7 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu = new wxMenu();
 
-    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_CREATE, _( "New Layout" ), _( "Create a new layout" ) );
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_CREATE, _( "Save Layout" ), _( "Saves the current layout" ) );
     m_MainMenu->Append( MenuItem );
 
     m_LayoutLoadMenu = new wxMenu();
@@ -1775,11 +1777,15 @@ void guMainFrame::LoadLayouts( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    m_LayoutName = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Layouts" ) );
-    m_LayoutData = Config->ReadAStr( wxT( "Data" ), wxEmptyString, wxT( "Layouts" ) );
-    m_LayoutTabs = Config->ReadAStr( wxT( "Tabs" ), wxEmptyString, wxT( "Layouts" ) );
+    m_LayoutName    = Config->ReadAStr( wxT( "Name"   ), wxEmptyString, wxT( "Layouts" ) );
+    m_LayoutData    = Config->ReadAStr( wxT( "Data"   ), wxEmptyString, wxT( "Layouts" ) );
+    m_LayoutTabs    = Config->ReadAStr( wxT( "Tabs"   ), wxEmptyString, wxT( "Layouts" ) );
+    m_LayoutPlayer  = Config->ReadAStr( wxT( "Player" ), wxEmptyString, wxT( "Layouts" ) );
 
-    size_t Count = wxMin( wxMin( m_LayoutName.Count(), m_LayoutData.Count() ), m_LayoutTabs.Count() );
+    size_t Count = wxMin( wxMin( wxMin( m_LayoutName.Count(),
+                                        m_LayoutData.Count() ),
+                                 m_LayoutTabs.Count() ),
+                          m_LayoutPlayer.Count() );
 
     while( m_LayoutName.Count() > Count )
         m_LayoutName.RemoveAt( m_LayoutName.Count() - 1 );
@@ -1789,15 +1795,19 @@ void guMainFrame::LoadLayouts( void )
 
     while( m_LayoutTabs.Count() > Count )
         m_LayoutTabs.RemoveAt( m_LayoutTabs.Count() - 1 );
+
+    while( m_LayoutPlayer.Count() > Count )
+        m_LayoutPlayer.RemoveAt( m_LayoutPlayer.Count() - 1 );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::SaveLayouts( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteAStr( wxT( "Name" ), m_LayoutName, wxT( "Layouts" ) );
-    Config->WriteAStr( wxT( "Data" ), m_LayoutData, wxT( "Layouts" ), false );
-    Config->WriteAStr( wxT( "Tabs" ), m_LayoutTabs, wxT( "Layouts" ), false );
+    Config->WriteAStr( wxT( "Name"   ), m_LayoutName,   wxT( "Layouts" ) );
+    Config->WriteAStr( wxT( "Data"   ), m_LayoutData,   wxT( "Layouts" ), false );
+    Config->WriteAStr( wxT( "Tabs"   ), m_LayoutTabs,   wxT( "Layouts" ), false );
+    Config->WriteAStr( wxT( "Player" ), m_LayoutPlayer, wxT( "Layouts" ), false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1812,6 +1822,7 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
         m_LayoutName.Add( EntryDialog.GetValue() );
         m_LayoutData.Add( m_AuiManager.SavePerspective() );
         m_LayoutTabs.Add( m_CatNotebook->SavePerspective() );
+        m_LayoutPlayer.Add( m_PlayerPanel->SavePerspective() );
 
         m_LayoutLoadMenu->Append( ID_MENU_LAYOUT_LOAD + m_LayoutName.Count() - 1,
                 EntryDialog.GetValue(), _( "Load this user defined layout" ) );
@@ -1830,6 +1841,7 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
     guLogMessage( wxT( "Load Layout %i" ), Layout );
     m_AuiManager.LoadPerspective( m_LayoutData[ Layout ] );
     m_CatNotebook->LoadPerspective( m_LayoutTabs[ Layout ] );
+    m_PlayerPanel->LoadPerspective( m_LayoutPlayer[ Layout ] );
     if( !NBIsShown )
     {
         NBPaneInfo.Hide();
@@ -1843,16 +1855,18 @@ void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
     int Layout = event.GetId() - ID_MENU_LAYOUT_DELETE;
     guLogMessage( wxT( "Delete Layout %i" ), Layout );
     int Index;
-    int Count = m_LayoutName.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        m_LayoutLoadMenu->Destroy( ID_MENU_LAYOUT_LOAD + Index );
-        m_LayoutDelMenu->Destroy( ID_MENU_LAYOUT_DELETE + Index );
-    }
+    int Count;
+
+    while( m_LayoutLoadMenu->GetMenuItemCount() )
+        m_LayoutLoadMenu->Delete( m_LayoutLoadMenu->FindItemByPosition( 0 ) );
+
+    while( m_LayoutDelMenu->GetMenuItemCount() )
+        m_LayoutDelMenu->Delete( m_LayoutDelMenu->FindItemByPosition( 0 ) );
 
     m_LayoutName.RemoveAt( Layout );
     m_LayoutData.RemoveAt( Layout );
     m_LayoutTabs.RemoveAt( Layout );
+    m_LayoutPlayer.RemoveAt( Layout );
 
     wxMenuItem * MenuItem;
     Count = m_LayoutName.Count();

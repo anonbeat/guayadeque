@@ -71,7 +71,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	FlexGridSizer->Add( m_Image, 0, wxALL, 5 );
 
     // Check that the directory to store podcasts are created
-    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( ".guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
     wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
                                        channel->m_Title + wxT( "/" ) +
                                        channel->m_Title + wxT( ".jpg" ) );
