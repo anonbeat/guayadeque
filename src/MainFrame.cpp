@@ -317,6 +317,10 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_MENU_VIEW_LIB_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
 
     Connect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ), NULL, this );
+    Connect( ID_MENU_VIEW_RAD_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_RAD_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_RAD_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
+
     Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ), NULL, this );
     Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ), NULL, this );
     Connect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ), NULL, this );
@@ -442,6 +446,7 @@ guMainFrame::~guMainFrame()
 
 
         Config->WriteBool( wxT( "ShowLibrary" ), m_ViewLibrary->IsChecked(), wxT( "ViewPanels" ) );
+        Config->WriteBool( wxT( "ShowRadio" ), m_ViewRadios->IsChecked(), wxT( "ViewPanels" ) );
         Config->WriteBool( wxT( "ShowRadio" ), m_ViewRadios->IsChecked(), wxT( "ViewPanels" ) );
         Config->WriteBool( wxT( "ShowLastfm" ), m_ViewLastFM->IsChecked(), wxT( "ViewPanels" ) );
         Config->WriteBool( wxT( "ShowLyrics" ), m_ViewLyrics->IsChecked(), wxT( "ViewPanels" ) );
@@ -616,10 +621,31 @@ void guMainFrame::CreateMenu()
     m_MainMenu->AppendSubMenu( SubMenu, _( "Library" ), _( "Set the library visible panels" ) );
 
 
+    SubMenu = new wxMenu();
 
-    m_ViewRadios = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_RADIO, _( "&Radio" ), _( "Show/Hide the radio panel" ), wxITEM_CHECK );
-    m_MainMenu->Append( m_ViewRadios );
+    m_ViewRadios = new wxMenuItem( SubMenu, ID_MENU_VIEW_RADIO, _( "&Radio" ), _( "Show/Hide the radio panel" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewRadios );
     m_ViewRadios->Check( Config->ReadBool( wxT( "ShowRadio" ), true, wxT( "ViewPanels" ) ) );
+
+    SubMenu->AppendSeparator();
+
+    m_ViewRadTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the radio text search" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewRadTextSearch );
+    m_ViewRadTextSearch->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_TEXTSEARCH ) );
+    m_ViewRadTextSearch->Enable( m_ViewRadios->IsChecked() );
+
+    m_ViewRadLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_LABELS, _( "Labels" ), _( "Show/Hide the radio labels" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewRadLabels );
+    m_ViewRadLabels->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
+    m_ViewRadLabels->Enable( m_ViewRadios->IsChecked() );
+
+    m_ViewRadGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_GENRES, _( "Genres" ), _( "Show/Hide the radio genres" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewRadGenres );
+    m_ViewRadGenres->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_GENRES ) );
+    m_ViewRadGenres->Enable( m_ViewRadios->IsChecked() );
+
+    m_MainMenu->AppendSubMenu( SubMenu, _( "&Radio" ), _( "Set the radio visible panels" ) );
+
 
     m_ViewLastFM = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_LASTFM, _( "Last.&fm" ), _( "Show/Hide the Last.fm panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewLastFM );
@@ -1161,8 +1187,9 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
 {
 //	guConfig *      Config = ( guConfig * ) guConfig::Get();
 //	Config->WriteBool( wxT( "ShowRadio" ), event.IsChecked(), wxT( "ViewPanels" ) );
+    bool IsEnabled = event.IsChecked();
 
-    if( event.IsChecked() )
+    if( IsEnabled )
     {
         CheckShowNotebook();
 
@@ -1181,6 +1208,50 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
 
         CheckHideNotebook();
     }
+
+    m_ViewRadTextSearch->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_TEXTSEARCH ) );
+    m_ViewRadTextSearch->Enable( IsEnabled );
+
+    m_ViewRadLabels->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
+    m_ViewRadLabels->Enable( IsEnabled );
+
+    m_ViewRadGenres->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_GENRES ) );
+    m_ViewRadGenres->Enable( IsEnabled );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnRadioShowPanel( wxCommandEvent &event )
+{
+    unsigned int PanelId = 0;
+
+    switch( event.GetId() )
+    {
+        case ID_MENU_VIEW_RAD_TEXTSEARCH :
+            PanelId = guPANEL_RADIO_TEXTSEARCH;
+            m_ViewRadTextSearch->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_RAD_LABELS :
+            PanelId = guPANEL_RADIO_LABELS;
+            m_ViewRadLabels->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_RAD_GENRES :
+            PanelId = guPANEL_RADIO_GENRES;
+            m_ViewRadGenres->Check( event.IsChecked() );
+            break;
+
+//        case ID_MENU_VIEW_RAD_STATIONS :
+//            PanelId = guPANEL_RADIO_STATIONS;
+//            m_ViewLibTracks->Check( event.IsChecked() );
+//            break;
+
+    }
+
+    if( PanelId )
+        m_RadioPanel->ShowPanel( PanelId, event.IsChecked() );
+
 }
 
 // -------------------------------------------------------------------------------- //

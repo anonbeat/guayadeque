@@ -82,6 +82,7 @@ class guMainFrame : public wxFrame
     wxMenu *                    m_MainMenu;
     wxMenu *                    m_LayoutLoadMenu;
     wxMenu *                    m_LayoutDelMenu;
+
     wxMenuItem *                m_ViewLibrary;
     wxMenuItem *                m_ViewLibTextSearch;
     wxMenuItem *                m_ViewLibLabels;
@@ -92,6 +93,10 @@ class guMainFrame : public wxFrame
 //    wxMenuItem *                m_ViewLibYears;
 //    wxMenuItem *                m_ViewLibRattings;
     wxMenuItem *                m_ViewRadios;
+    wxMenuItem *                m_ViewRadTextSearch;
+    wxMenuItem *                m_ViewRadLabels;
+    wxMenuItem *                m_ViewRadGenres;
+
     wxMenuItem *                m_ViewLastFM;
     wxMenuItem *                m_ViewLyrics;
     wxMenuItem *                m_ViewPlayLists;
@@ -193,6 +198,8 @@ class guMainFrame : public wxFrame
     void                OnLibraryShowPanel( wxCommandEvent &event );
 
     void                OnViewRadio( wxCommandEvent &event );
+    void                OnRadioShowPanel( wxCommandEvent &event );
+
     void                OnViewLastFM( wxCommandEvent &event );
     void                OnViewLyrics( wxCommandEvent &event );
     void                OnViewPlayLists( wxCommandEvent &event );
