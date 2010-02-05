@@ -28,10 +28,15 @@
 #include "StaticBitmap.h"
 
 
+#include <wx/aui/aui.h>
 #include <wx/wx.h>
 #include <wx/dnd.h>
 //#include <wx/mediactrl.h>
 #include <wx/tglbtn.h>
+
+#define     guPANEL_PLAYER_PLAYLIST         ( 1 << 0 )
+#define     guPANEL_PLAYER_FILTERS          ( 1 << 1 )
+
 
 // -------------------------------------------------------------------------------- //
 enum guSongCoverType {
@@ -117,7 +122,9 @@ class guSmartAddTracksThread;
 class guPlayerPanel : public wxPanel
 {
   private:
-    wxSizer *               m_PlayerMainSizer;
+    wxAuiManager            m_AuiManager;
+    unsigned int            m_VisiblePanels;
+
 	wxBitmapButton *        m_PrevTrackButton;
 	wxBitmapButton *        m_NextTrackButton;
 	wxBitmapButton *        m_PlayButton;
@@ -138,15 +145,15 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_ArtistLabel;
 	wxStaticText *          m_YearLabel;
     guRating *              m_Rating;
+    wxBoxSizer *            m_BitRateSizer;
 	wxStaticText *          m_BitRateLabel;
-	wxBoxSizer *            m_BitRateSizer;
-	wxStaticText *          m_PositionLabel;
 	wxBoxSizer *            m_PosLabelSizer;
+	wxStaticText *          m_PositionLabel;
 	wxSlider *              m_PlayerPositionSlider;
 
-    wxSizer *               m_FiltersSizer;
-	wxFlexGridSizer *       m_FiltersFlexSizer;
-	wxStaticText *          m_FiltersLabel;
+//    wxSizer *               m_FiltersSizer;
+//	wxFlexGridSizer *       m_FiltersFlexSizer;
+//	wxStaticText *          m_FiltersLabel;
 	wxChoice *              m_FilterAllowChoice;
 	wxChoice *              m_FilterDenyChoice;
 
@@ -180,7 +187,7 @@ class guPlayerPanel : public wxPanel
     int                     m_SilenceDetectorLevel;
     int                     m_SilenceDetectorTime;
 
-    bool                    m_ShowFiltersChoices;
+//    bool                    m_ShowFiltersChoices;
 
     // AudioScrobble
     guAudioScrobble *       m_AudioScrobble;
@@ -229,13 +236,15 @@ class guPlayerPanel : public wxPanel
     void                OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime;
                                                                 UpdatePositionLabel( GetPosition() / 1000 ); };
     void                OnRatingChanged( guRatingEvent &event );
-    void                CheckFiltersVisible( void );
+    void                CheckFiltersEnable( void );
 
     void                OnFiltersLabelDClick( wxMouseEvent &event );
     void                OnFiltersChanged( wxCommandEvent &event );
     void                UpdateFilterStatus( void );
 
     void                OnConfigUpdated( wxCommandEvent &event );
+
+    void                OnPaneClose( wxAuiManagerEvent &event );
 
   public:
                         guPlayerPanel( wxWindow* parent, guDbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
@@ -285,6 +294,11 @@ class guPlayerPanel : public wxPanel
 
     void                UpdatedTracks( const guTrackArray * tracks );
 
+    bool                IsPanelShown( const int panelid ) const;
+    void                ShowPanel( const int panelid, bool show );
+
+    void                LoadPerspective( const wxString &layout ) { m_AuiManager.LoadPerspective( layout ); };
+    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); };
 
     friend class guSmartAddTracksThread;
 };

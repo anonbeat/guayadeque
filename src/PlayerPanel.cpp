@@ -44,12 +44,8 @@
 
 // -------------------------------------------------------------------------------- //
 guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
-       : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL )
+       : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1, -1 ), wxTAB_TRAVERSAL )
 {
-	wxBoxSizer* PlayerBtnSizer;
-	wxBoxSizer* PlayerDetailsSizer;
-	wxBoxSizer* PlayerLabelsSizer;
-	wxBoxSizer* PlayListSizer;
 
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
     m_NormalColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
@@ -80,7 +76,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
     m_ShowRevTime = false;
     m_PlayRandom = false;
-    m_ShowFiltersChoices = true;
+//    m_ShowFiltersChoices = true;
     m_DelTracksPlayed = false;
 
     // Load configuration
@@ -108,70 +104,77 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
         }
 
         m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
-        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
+//        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
     }
 
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
     m_SmartAddTracksThread = NULL;
 
-	m_PlayerMainSizer = new wxBoxSizer( wxVERTICAL );
+    m_AuiManager.SetManagedWindow( this );
 
-	PlayerBtnSizer = new wxBoxSizer( wxHORIZONTAL );
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_skip_backward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	wxPanel * PlayerPanel;
+	PlayerPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
+	wxBoxSizer * PlayerMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * PlayerBtnSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_PrevTrackButton = new wxBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_skip_backward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_PrevTrackButton->SetToolTip( _( "Go to Previous Track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_PrevTrackButton, 0, wxALL, 2 );
 
-	m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_skip_forward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_NextTrackButton = new wxBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_skip_forward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_NextTrackButton->SetToolTip( _( "Go to Next Track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_PlayButton = new wxBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_PlayButton->SetToolTip( _( "Start playing or pauses current track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_PlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_StopButton = new wxBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
 	PlayerBtnSizer->Add( m_StopButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	PlayerBtnSizer->Add( 0, 0, 0, wxALL, 2 );
-
-	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_volume_medium ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_VolumeButton = new wxBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_volume_medium ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
     m_VolumeButton->SetToolTip( _( "Volume 0%" ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
-	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mixer ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_EqualizerButton = new wxBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mixer ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
 	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_SmartPlayButton = new wxToggleBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
-	// Get this value from config file
+	// Get PlayerPanel value from config file
 	m_SmartPlayButton->SetValue( m_PlaySmart );
 	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALL, 2 );
 
-	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_shuffle ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_RandomPlayButton = new wxBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_shuffle ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in the playlist" ) );
 	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_repeat ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_RepeatPlayButton = new wxToggleBitmapButton( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_repeat ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	m_RepeatPlayButton->SetToolTip( _( "Repeats the current playlist" ) );
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
 	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 5 );
+	PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 2 );
 
+
+	wxBoxSizer* PlayerDetailsSizer;
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PlayerCoverBitmap = new guStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_PlayerCoverBitmap = new guStaticBitmap( PlayerPanel, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	m_PlayerCoverBitmap->SetToolTip( _( "Shows the current track album cover if available" ) );
 	PlayerDetailsSizer->Add( m_PlayerCoverBitmap, 0, wxALL, 2 );
 
+	wxBoxSizer* PlayerLabelsSizer;
 	PlayerLabelsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_TitleLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	//m_TitleLabel = new guAutoScrollText( this, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_TitleLabel = new wxStaticText( PlayerPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	//m_TitleLabel = new guAutoScrollText( PlayerPanel, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_TitleLabel->SetToolTip( _( "Show the name of the current track" ) );
 	m_TitleLabel->Wrap( -1 );
 	CurrentFont.SetPointSize( 16 );
@@ -180,7 +183,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	PlayerLabelsSizer->Add( m_TitleLabel, 0, wxLEFT|wxRIGHT|wxBOTTOM, 2 );
 
-	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_AlbumLabel = new wxStaticText( PlayerPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_AlbumLabel->SetToolTip( _( "Show the album name of the current track" ) );
 	m_AlbumLabel->Wrap( -1 );
 	CurrentFont.SetPointSize( 12 );
@@ -190,7 +193,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	PlayerLabelsSizer->Add( m_AlbumLabel, 0, wxALL, 2 );
 
-	m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_ArtistLabel = new wxStaticText( PlayerPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_ArtistLabel->SetToolTip( _( "Show the artist name of the current track" ) );
 	m_ArtistLabel->Wrap( -1 );
 	CurrentFont.SetStyle( wxFONTSTYLE_NORMAL );
@@ -200,11 +203,11 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	m_PosLabelSizer = new wxBoxSizer( wxHORIZONTAL );
 	//m_PosLabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-	m_YearLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_YearLabel = new wxStaticText( PlayerPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_YearLabel->SetToolTip( _( "Show the year of the current track" ) );
 	m_PosLabelSizer->Add( m_YearLabel, 1, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 2 );
 
-	m_PositionLabel = new wxStaticText( this, wxID_ANY, _("00:00 of 00:00"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PositionLabel = new wxStaticText( PlayerPanel, wxID_ANY, _("00:00 of 00:00"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PositionLabel->SetToolTip( _( "Show the current position and song length of the current track" ) );
 	m_PositionLabel->Wrap( -1 );
 
@@ -214,12 +217,12 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
     m_BitRateSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    m_Rating = new guRating( this, GURATING_STYLE_MID );
+    m_Rating = new guRating( PlayerPanel, GURATING_STYLE_MID );
 	m_BitRateSizer->Add( m_Rating, 0, wxRIGHT, 2 );
 
 	m_BitRateSizer->Add( 0, 0, 1, wxALL, 5 );
 
-	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "[kbps]" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_BitRateLabel = new wxStaticText( PlayerPanel, wxID_ANY, wxT( "[kbps]" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
 	CurrentFont.SetPointSize( 8 );
 	m_BitRateLabel->SetFont( CurrentFont );
@@ -230,12 +233,23 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 	PlayerDetailsSizer->Add( PlayerLabelsSizer, 1, wxEXPAND, 5 );
 
-	m_PlayerMainSizer->Add( PlayerDetailsSizer, 0, wxEXPAND, 5 );
+	PlayerMainSizer->Add( PlayerDetailsSizer, 0, wxEXPAND, 5 );
 
-	m_PlayerPositionSlider = new wxSlider( this, wxID_ANY, 0, 0, 1000, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-	m_PlayerMainSizer->Add( m_PlayerPositionSlider, 0, wxALL|wxEXPAND, 0 );
+	m_PlayerPositionSlider = new wxSlider( PlayerPanel, wxID_ANY, 0, 0, 1000, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	PlayerMainSizer->Add( m_PlayerPositionSlider, 0, wxALL|wxEXPAND, 0 );
 
-	PlayListSizer = new wxBoxSizer( wxVERTICAL );
+
+	PlayerPanel->SetSizer( PlayerMainSizer );
+	PlayerPanel->Layout();
+	PlayerMainSizer->Fit( PlayerPanel );
+
+    m_AuiManager.AddPane( PlayerPanel, wxAuiPaneInfo().Name( wxT( "Player" ) ).
+            CenterPane() );
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 //	m_PlayListCtrl = new guPlayList( this, m_Db );
 //    PlayListSizer->Add( m_PlayListCtrl, 1, wxALL|wxEXPAND, 2 );
@@ -248,86 +262,57 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 	PlayListPanel->SetSizer( PlayListPanelSizer );
 	PlayListPanel->Layout();
 	PlayListPanelSizer->Fit( PlayListPanel );
-	PlayListSizer->Add( PlayListPanel, 1, wxEXPAND | wxALL, 0 );
 
-	m_PlayerMainSizer->Add( PlayListSizer, 1, wxEXPAND, 5 );
+    m_AuiManager.AddPane( PlayListPanel, wxAuiPaneInfo().Name( wxT( "PlayerPlayList" ) ).Caption( _( "Playlist" ) ).
+            MinSize( 60, 60 ).Layer( 0 ).Row( 1 ).Position( 0 ).
+            Bottom() );
 
 
-//	wxFlexGridSizer * FiltersFlexSizer;
-//	FiltersFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
-//	FiltersFlexSizer->AddGrowableCol( 1 );
-//	FiltersFlexSizer->SetFlexibleDirection( wxBOTH );
-//	FiltersFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-//
-//	wxStaticText * FiltersAllowLabel = new wxStaticText( this, wxID_ANY, wxT("Allow:"), wxDefaultPosition, wxDefaultSize, 0 );
-//	FiltersAllowLabel->Wrap( -1 );
-//	FiltersFlexSizer->Add( FiltersAllowLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
-//
-//	wxArrayString m_FilterAllowChoiceChoices;
-//	m_FilterAllowChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterAllowChoiceChoices, 0 );
-//	m_FilterAllowChoice->SetSelection( 0 );
-//	FiltersFlexSizer->Add( m_FilterAllowChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
-//
-//	wxStaticText * FiltersDenyLabel = new wxStaticText( this, wxID_ANY, wxT("Deny:"), wxDefaultPosition, wxDefaultSize, 0 );
-//	FiltersDenyLabel->Wrap( -1 );
-//	FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-//
-//	wxArrayString m_FilterDenyChoiceChoices;
-//	m_FilterDenyChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDenyChoiceChoices, 0 );
-//	m_FilterDenyChoice->SetSelection( 0 );
-//	FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
-//
-//	m_FiltersSizer->Add( FiltersFlexSizer, 1, wxEXPAND, 2 );
-//
-//	m_PlayerMainSizer->Add( m_FiltersSizer, 0, wxEXPAND|wxALL, 2 );
 
-	m_FiltersSizer = new wxBoxSizer( wxVERTICAL );
+	wxPanel * FiltersPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * FiltersMainSizer;
+	FiltersMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer * FiltersLabelSizer;
-	FiltersLabelSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxFlexGridSizer* FiltersFlexSizer;
+	FiltersFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	FiltersFlexSizer->AddGrowableCol( 1 );
+	FiltersFlexSizer->SetFlexibleDirection( wxBOTH );
+	FiltersFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_FiltersLabel = new wxStaticText( this, wxID_ANY, _( "Filters" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_FiltersLabel->Wrap( -1 );
-	m_FiltersLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-
-	FiltersLabelSizer->Add( m_FiltersLabel, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
-
-	wxStaticLine * FiltersStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	FiltersLabelSizer->Add( FiltersStaticLine, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 2 );
-
-	m_FiltersSizer->Add( FiltersLabelSizer, 0, wxEXPAND, 5 );
-
-	m_FiltersFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
-	m_FiltersFlexSizer->AddGrowableCol( 1 );
-	m_FiltersFlexSizer->SetFlexibleDirection( wxBOTH );
-	m_FiltersFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-
-	wxStaticText * FiltersAllowLabel = new wxStaticText( this, wxID_ANY, _( "Allow:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * FiltersAllowLabel = new wxStaticText( FiltersPanel, wxID_ANY, _( "Allow:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	FiltersAllowLabel->Wrap( -1 );
-	m_FiltersFlexSizer->Add( FiltersAllowLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+	FiltersFlexSizer->Add( FiltersAllowLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
 
 	wxArrayString m_FilterAllowChoiceChoices;
-	m_FilterAllowChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterAllowChoiceChoices, 0 );
+	m_FilterAllowChoice = new wxChoice( FiltersPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterAllowChoiceChoices, 0 );
 	m_FilterAllowChoice->SetSelection( 0 );
-	m_FiltersFlexSizer->Add( m_FilterAllowChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+	FiltersFlexSizer->Add( m_FilterAllowChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
-	wxStaticText * FiltersDenyLabel = new wxStaticText( this, wxID_ANY, _( "Deny:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * FiltersDenyLabel = new wxStaticText( FiltersPanel, wxID_ANY, _( "Deny:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	FiltersDenyLabel->Wrap( -1 );
-	m_FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	wxArrayString m_FilterDenyChoiceChoices;
-	m_FilterDenyChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDenyChoiceChoices, 0 );
+	m_FilterDenyChoice = new wxChoice( FiltersPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDenyChoiceChoices, 0 );
 	m_FilterDenyChoice->SetSelection( 0 );
-	m_FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	m_FiltersSizer->Add( m_FiltersFlexSizer, 0, wxEXPAND, 2 );
-	if( !m_ShowFiltersChoices )
-        m_FiltersSizer->Hide( m_FiltersFlexSizer );
+	FiltersMainSizer->Add( FiltersFlexSizer, 1, wxEXPAND, 5 );
 
-	m_PlayerMainSizer->Add( m_FiltersSizer, 0, wxEXPAND, 5 );
+	FiltersPanel->SetSizer( FiltersMainSizer );
+	FiltersPanel->Layout();
+	FiltersMainSizer->Fit( FiltersPanel );
 
-	this->SetSizer( m_PlayerMainSizer );
-	this->Layout();
+    m_AuiManager.AddPane( FiltersPanel, wxAuiPaneInfo().Name( wxT( "PlayerFilters" ) ).Caption( _( "Filters" ) ).
+            MinSize( 60, 60 ).Layer( 0 ).Row( 0 ).Position( 0 ).
+            Bottom() );
+
+    wxString PlayerLayout = Config->ReadStr( wxT( "Player" ), wxEmptyString, wxT( "Positions" ) );
+    if( PlayerLayout.IsEmpty() )
+        m_AuiManager.Update();
+    else
+        m_AuiManager.LoadPerspective( PlayerLayout, true );
+
 
     m_MediaCtrl = new guMediaCtrl( this );
     //m_MediaCtrl->Create( this, wxID_ANY );
@@ -376,8 +361,7 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
     m_FilterAllowChoice->SetSelection( Config->ReadNum( wxT( "PlayListAllowFilter" ), 0, wxT( "Playback" ) ) );
     m_FilterDenyChoice->SetSelection( Config->ReadNum( wxT( "PlayListDenyFilter" ), 0, wxT( "Playback" ) ) );
     UpdateFilterStatus();
-    CheckFiltersVisible();
-
+    CheckFiltersEnable();
 
 	// Connect Events
 	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
@@ -429,11 +413,12 @@ guPlayerPanel::guPlayerPanel( wxWindow* parent, guDbLibrary * NewDb ) //wxWindow
 
 //    Connect( ID_PLAYERPANEL_UPDATERADIOTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnUpdatedRadioTrack ) );
 
-	m_FiltersLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnFiltersLabelDClick ), NULL, this );
+//	m_FiltersLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnFiltersLabelDClick ), NULL, this );
 
 	m_FilterAllowChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPlayerPanel::OnFiltersChanged ), NULL, this );
 	m_FilterDenyChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPlayerPanel::OnFiltersChanged ), NULL, this );
 
+    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPlayerPanel::OnPaneClose ), NULL, this );
 
     m_PlayerTimer = new guPlayerPanelTimer( this );
     m_PlayerTimer->Start( 400 );
@@ -498,7 +483,9 @@ guPlayerPanel::~guPlayerPanel()
 
         Config->WriteNum( wxT( "PlayListAllowFilter" ), m_FilterAllowChoice->GetSelection(), wxT( "Playback" ) );
         Config->WriteNum( wxT( "PlayListDenyFilter" ), m_FilterDenyChoice->GetSelection(), wxT( "Playback" ) );
-        Config->WriteBool( wxT( "ShowFiltersChoices" ), m_ShowFiltersChoices, wxT( "Positions" ) );
+//        Config->WriteBool( wxT( "ShowFiltersChoices" ), m_ShowFiltersChoices, wxT( "Positions" ) );
+
+        Config->WriteStr( wxT( "Player" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
     }
 
 	// Connect Events
@@ -550,8 +537,12 @@ guPlayerPanel::~guPlayerPanel()
 	m_FilterAllowChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPlayerPanel::OnFiltersChanged ), NULL, this );
 	m_FilterDenyChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPlayerPanel::OnFiltersChanged ), NULL, this );
 
+    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPlayerPanel::OnPaneClose ), NULL, this );
+
     if( m_MediaCtrl )
         delete m_MediaCtrl;
+
+    m_AuiManager.UnInit();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -575,7 +566,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         }
 
         if( !m_PlaySmart )
-            CheckFiltersVisible();
+            CheckFiltersEnable();
 
         if( m_AudioScrobbleEnabled )
         {
@@ -782,8 +773,13 @@ void guPlayerPanel::TrackListChanged( void )
 {
 //    m_PlayListLenStaticText->SetLabel( m_PlayListCtrl->GetLengthStr() );
 //   	m_PlayListLabelsSizer->Layout();
-    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
-        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+//    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
+//        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+//            m_PlayListCtrl->GetCurItem() + 1,
+//            m_PlayListCtrl->GetCount(),
+//            m_PlayListCtrl->GetLengthStr().c_str() ) );
+    m_AuiManager.GetPane( wxT( "PlayerPlayList" ) ).Caption( _( "Now Playing: " ) +
+        wxString::Format( wxT( "%i / %i  ( %s )" ),
             m_PlayListCtrl->GetCurItem() + 1,
             m_PlayListCtrl->GetCount(),
             m_PlayListCtrl->GetLengthStr().c_str() ) );
@@ -1066,8 +1062,13 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     SetBitRate( 0 );
 
 
-    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
-        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+//    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
+//        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+//            m_PlayListCtrl->GetCurItem() + 1,
+//            m_PlayListCtrl->GetCount(),
+//            m_PlayListCtrl->GetLengthStr().c_str() ) );
+    m_AuiManager.GetPane( wxT( "PlayerPlayList" ) ).Caption( _( "Now Playing: " ) +
+        wxString::Format( wxT( "%i / %i  ( %s )" ),
             m_PlayListCtrl->GetCurItem() + 1,
             m_PlayListCtrl->GetCount(),
             m_PlayListCtrl->GetLengthStr().c_str() ) );
@@ -1520,23 +1521,11 @@ void guPlayerPanel::UpdatePlayListFilters( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::CheckFiltersVisible( void )
+void guPlayerPanel::CheckFiltersEnable( void )
 {
-    if( m_PlaySmart || ( !m_PlayLoop && m_PlayRandom ) )
-    {
-        if( !m_PlayerMainSizer->IsShown( m_FiltersSizer ) )
-        {
-            m_PlayerMainSizer->Show( m_FiltersSizer );
-            if( !m_ShowFiltersChoices )
-                m_FiltersSizer->Hide( m_FiltersFlexSizer );
-        }
-    }
-    else
-    {
-        if( m_PlayerMainSizer->IsShown( m_FiltersSizer ) )
-            m_PlayerMainSizer->Hide( m_FiltersSizer );
-    }
-    m_PlayerMainSizer->Layout();
+    bool IsEnable = m_PlaySmart || ( !m_PlayLoop && m_PlayRandom );
+    m_FilterAllowChoice->Enable( IsEnable );
+    m_FilterDenyChoice->Enable( IsEnable );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1548,7 +1537,7 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
     {
         SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
     }
-    CheckFiltersVisible();
+    CheckFiltersEnable();
 
     // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
@@ -1576,7 +1565,7 @@ void guPlayerPanel::SetPlayLoop( int playloop )
         SetPlaySmart( false );
     }
 
-    CheckFiltersVisible();
+    CheckFiltersEnable();
 
     // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
@@ -1984,14 +1973,14 @@ void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnFiltersLabelDClick( wxMouseEvent &event )
 {
-    m_ShowFiltersChoices = !m_ShowFiltersChoices;
-    if( m_ShowFiltersChoices )
-        m_FiltersSizer->Show( m_FiltersFlexSizer );
-    else
-        m_FiltersSizer->Hide( m_FiltersFlexSizer );
-
-    //m_FiltersSizer->Layout();
-    m_PlayerMainSizer->Layout();
+//    m_ShowFiltersChoices = !m_ShowFiltersChoices;
+//    if( m_ShowFiltersChoices )
+//        m_FiltersSizer->Show( m_FiltersFlexSizer );
+//    else
+//        m_FiltersSizer->Hide( m_FiltersFlexSizer );
+//
+//    //m_FiltersSizer->Layout();
+//    m_PlayerMainSizer->Layout();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2003,9 +1992,80 @@ void guPlayerPanel::OnFiltersChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::UpdateFilterStatus( void )
 {
-    m_FiltersLabel->SetForegroundColour( ( m_FilterAllowChoice->GetSelection() ||
-                                          m_FilterDenyChoice->GetSelection() ) ?
-            m_SetColor : m_NormalColor );
+//    m_FiltersLabel->SetForegroundColour( ( m_FilterAllowChoice->GetSelection() ||
+//                                          m_FilterDenyChoice->GetSelection() ) ?
+//            m_SetColor : m_NormalColor );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayerPanel::IsPanelShown( const int panelid ) const
+{
+    return ( m_VisiblePanels & panelid );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::ShowPanel( const int panelid, bool show )
+{
+    wxString PaneName;
+
+    switch( panelid )
+    {
+        case guPANEL_PLAYER_PLAYLIST :
+            PaneName = wxT( "PlayerPlaylist" );
+            break;
+
+        case guPANEL_PLAYER_FILTERS :
+            PaneName = wxT( "PlayerFilters" );
+            break;
+
+        default :
+            return;
+
+    }
+
+    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
+    if( PaneInfo.IsOk() )
+    {
+        if( show )
+            PaneInfo.Show();
+        else
+            PaneInfo.Hide();
+
+        m_AuiManager.Update();
+    }
+
+    if( show )
+        m_VisiblePanels |= panelid;
+    else
+        m_VisiblePanels ^= panelid;
+
+    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnPaneClose( wxAuiManagerEvent &event )
+{
+    wxAuiPaneInfo * PaneInfo = event.GetPane();
+    wxString PaneName = PaneInfo->name;
+    int CmdId = 0;
+
+    if( PaneName == wxT( "PlayerPlayList" ) )
+    {
+        CmdId = ID_MENU_VIEW_PLAYER_PLAYLIST;
+    }
+    else if( PaneName == wxT( "Labels" ) )
+    {
+        CmdId = ID_MENU_VIEW_PLAYER_FILTERS;
+    }
+
+    guLogMessage( wxT( "OnPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
+    if( CmdId )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, CmdId );
+        AddPendingEvent( evt );
+    }
+
+    event.Veto();
 }
 
 // -------------------------------------------------------------------------------- //

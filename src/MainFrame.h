@@ -132,6 +132,7 @@ class guMainFrame : public wxFrame
     wxArrayString               m_LayoutName;
     wxArrayString               m_LayoutData;
     wxArrayString               m_LayoutTabs;
+    wxArrayString               m_LayoutPlayer;
 
 
     void                OnUpdateLibrary( wxCommandEvent &event );
