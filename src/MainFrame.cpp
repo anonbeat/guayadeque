@@ -322,7 +322,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     Connect( ID_MENU_VIEW_PLAYER_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_PLAYER_FILTERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-//    Connect( ID_MENU_VIEW_PLAYER_SELECTOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_PLAYER_SELECTOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
 
     Connect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ), NULL, this );
     Connect( ID_MENU_VIEW_LIB_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
@@ -417,7 +417,7 @@ guMainFrame::~guMainFrame()
 
     Disconnect( ID_MENU_VIEW_PLAYER_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
     Disconnect( ID_MENU_VIEW_PLAYER_FILTERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-//    Disconnect( ID_MENU_VIEW_PLAYER_SELECTOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_PLAYER_SELECTOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
 
     Disconnect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ), NULL, this );
     Disconnect( ID_MENU_VIEW_LIB_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
@@ -1131,8 +1131,8 @@ void guMainFrame::CheckShowNotebook( void )
     if( !PaneInfo.IsShown() )
     {
         PaneInfo.Show();
-        if( !m_NBPerspective.IsEmpty() )
-            m_CatNotebook->LoadPerspective( m_NBPerspective );
+////        if( !m_NBPerspective.IsEmpty() )
+////            m_CatNotebook->LoadPerspective( m_NBPerspective );
         m_AuiManager.Update();
     }
 }
@@ -1142,7 +1142,7 @@ void guMainFrame::CheckHideNotebook( void )
 {
     if( !m_CatNotebook->GetPageCount() )
     {
-        m_NBPerspective = m_CatNotebook->SavePerspective();
+//        m_NBPerspective = m_CatNotebook->SavePerspective();
         wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
         PaneInfo.Hide();
         m_AuiManager.Update();
@@ -1156,12 +1156,12 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 
     if( IsEnabled )
     {
-        CheckShowNotebook();
-
         if( !m_LibPanel )
             m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
 
         m_CatNotebook->InsertPage( 0, m_LibPanel, _( "Library" ), true );
+
+        CheckShowNotebook();
         m_VisiblePanels |= guPANEL_MAIN_LIBRARY;
     }
     else
@@ -1175,6 +1175,8 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
         CheckHideNotebook();
         m_VisiblePanels ^= guPANEL_MAIN_LIBRARY;
     }
+
+    m_ViewLibrary->Check( m_VisiblePanels & guPANEL_MAIN_LIBRARY );
 
     m_ViewLibTextSearch->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
     m_ViewLibTextSearch->Enable( IsEnabled );
@@ -1249,13 +1251,12 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
 
     if( IsEnabled )
     {
-        CheckShowNotebook();
-
         if( !m_RadioPanel )
             m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
 
         m_CatNotebook->InsertPage( wxMin( 1, m_CatNotebook->GetPageCount() ), m_RadioPanel, _( "Radio" ), true );
 
+        CheckShowNotebook();
         m_VisiblePanels |= guPANEL_MAIN_RADIOS;
     }
     else
@@ -1267,9 +1268,10 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
         }
 
         CheckHideNotebook();
-
         m_VisiblePanels ^= guPANEL_MAIN_RADIOS;
     }
+
+    m_ViewRadios->Check( m_VisiblePanels & guPANEL_MAIN_RADIOS );
 
     m_ViewRadTextSearch->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_TEXTSEARCH ) );
     m_ViewRadTextSearch->Enable( IsEnabled );
@@ -1345,13 +1347,12 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        CheckShowNotebook();
-
         if( !m_LastFMPanel )
             m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_DbCache, m_PlayerPanel );
 
         m_CatNotebook->InsertPage( wxMin( 2, m_CatNotebook->GetPageCount() ), m_LastFMPanel, _( "Last.fm" ), true );
 
+        CheckShowNotebook();
         m_VisiblePanels |= guPANEL_MAIN_LASTFM;
     }
     else
@@ -1365,6 +1366,8 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
         CheckHideNotebook();
         m_VisiblePanels ^= guPANEL_MAIN_LASTFM;
     }
+
+    m_ViewLastFM->Check( m_VisiblePanels & guPANEL_MAIN_LASTFM );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1372,13 +1375,12 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        CheckShowNotebook();
-
         if( !m_LyricsPanel )
             m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db );
 
         m_CatNotebook->InsertPage( wxMin( 3, m_CatNotebook->GetPageCount() ), m_LyricsPanel, _( "Lyrics" ), true );
 
+        CheckShowNotebook();
         m_VisiblePanels |= guPANEL_MAIN_LYRICS;
     }
     else
@@ -1392,6 +1394,8 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
         CheckHideNotebook();
         m_VisiblePanels ^= guPANEL_MAIN_LYRICS;
     }
+
+    m_ViewLyrics->Check( m_VisiblePanels & guPANEL_MAIN_LYRICS );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1399,12 +1403,12 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        CheckShowNotebook();
-
         if( !m_PodcastsPanel )
             m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
 
         m_CatNotebook->InsertPage( wxMin( 5, m_CatNotebook->GetPageCount() ), m_PodcastsPanel, _( "Podcasts" ), true );
+
+        CheckShowNotebook();
         m_VisiblePanels |= guPANEL_MAIN_PODCASTS;
     }
     else
@@ -1418,6 +1422,8 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
         CheckHideNotebook();
         m_VisiblePanels ^= guPANEL_MAIN_PODCASTS;
     }
+
+    m_ViewPodcasts->Check( m_VisiblePanels & guPANEL_MAIN_PODCASTS );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1425,12 +1431,12 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 {
     if( event.IsChecked() )
     {
-        CheckShowNotebook();
-
         if( !m_PlayListPanel )
             m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
 
         m_CatNotebook->InsertPage( wxMin( 4, m_CatNotebook->GetPageCount() ), m_PlayListPanel, _( "PlayLists" ), true );
+
+        CheckShowNotebook();
         m_VisiblePanels |= guPANEL_MAIN_PLAYLISTS;
     }
     else
@@ -1593,7 +1599,6 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
     }
 
     CheckHideNotebook();
-
     m_VisiblePanels ^= PanelId;
 
     event.Veto();
@@ -1973,6 +1978,29 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
         case ID_MENU_VIEW_PLAYER_FILTERS :
         {
             PanelId = guPANEL_MAIN_PLAYERFILTERS;
+            break;
+        }
+
+        case ID_MENU_VIEW_PLAYER_SELECTOR :
+        {
+            if( m_VisiblePanels & guPANEL_MAIN_LIBRARY )
+                OnViewLibrary( event );
+
+            if( m_VisiblePanels & guPANEL_MAIN_RADIOS )
+                OnViewRadio( event );
+
+            if( m_VisiblePanels & guPANEL_MAIN_LASTFM )
+                OnViewLastFM( event );
+
+            if( m_VisiblePanels & guPANEL_MAIN_LYRICS )
+                OnViewLyrics( event );
+
+            if( m_VisiblePanels & guPANEL_MAIN_PODCASTS )
+                OnViewPodcasts( event );
+
+            if( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS )
+                OnViewPlayLists( event );
+
             break;
         }
 
