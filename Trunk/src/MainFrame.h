@@ -30,6 +30,7 @@
 #include "LibPanel.h"
 //#include "LibUpdate.h"
 #include "LyricsPanel.h"
+#include "PlayerFilters.h"
 #include "PlayerPanel.h"
 #include "PlayListPanel.h"
 #include "PodcastsPanel.h"
@@ -52,6 +53,16 @@
 #include <wx/xml/xml.h>
 #include <wx/zstream.h>
 
+#define     guPANEL_MAIN_PLAYERPLAYLIST     ( 1 << 0 )
+#define     guPANEL_MAIN_PLAYERFILTERS      ( 1 << 1 )
+#define     guPANEL_MAIN_SELECTOR           ( 1 << 2 )
+#define     guPANEL_MAIN_LIBRARY            ( 1 << 3 )
+#define     guPANEL_MAIN_RADIOS             ( 1 << 4 )
+#define     guPANEL_MAIN_LASTFM             ( 1 << 5 )
+#define     guPANEL_MAIN_LYRICS             ( 1 << 6 )
+#define     guPANEL_MAIN_PLAYLISTS          ( 1 << 7 )
+#define     guPANEL_MAIN_PODCASTS           ( 1 << 8 )
+
 
 class guTaskBarIcon;
 class guLibUpdateThread;
@@ -62,9 +73,13 @@ class guMainFrame : public wxFrame
 {
   private:
     wxAuiManager                m_AuiManager;
+    unsigned int                m_VisiblePanels;
+
     guAuiNotebook *             m_CatNotebook;
     wxString                    m_NBPerspective;
     wxSplitterWindow *          m_PlayerSplitter;
+    guPlayerFilters *           m_PlayerFilters;
+    guPlayerPlayList *          m_PlayerPlayList;
     guPlayerPanel *             m_PlayerPanel;
     guLibPanel *                m_LibPanel;
     guRadioPanel *              m_RadioPanel;
@@ -83,6 +98,9 @@ class guMainFrame : public wxFrame
     wxMenu *                    m_LayoutLoadMenu;
     wxMenu *                    m_LayoutDelMenu;
 
+    wxMenuItem *                m_ViewPlayerPlayList;
+    wxMenuItem *                m_ViewPlayerFilters;
+    wxMenuItem *                m_ViewPlayerSelector;
     wxMenuItem *                m_ViewLibrary;
     wxMenuItem *                m_ViewLibTextSearch;
     wxMenuItem *                m_ViewLibLabels;
@@ -132,7 +150,6 @@ class guMainFrame : public wxFrame
     wxArrayString               m_LayoutName;
     wxArrayString               m_LayoutData;
     wxArrayString               m_LayoutTabs;
-    wxArrayString               m_LayoutPlayer;
 
 
     void                OnUpdateLibrary( wxCommandEvent &event );
@@ -159,6 +176,7 @@ class guMainFrame : public wxFrame
     void                OnAbout( wxCommandEvent &event );
     void                OnCopyTracksTo( wxCommandEvent &event );
     void                OnUpdateLabels( wxCommandEvent &event );
+    void                OnPlayerPlayListUpdateTitle( wxCommandEvent &event );
 
     void                CheckShowNotebook( void );
     void                CheckHideNotebook( void );
@@ -199,6 +217,9 @@ class guMainFrame : public wxFrame
     void                OnLoadLayout( wxCommandEvent &event );
     void                OnDeleteLayout( wxCommandEvent &event );
 
+    void                OnPlayerShowPanel( wxCommandEvent &event );
+    void                ShowMainPanel( const int panelid, const bool enable );
+
     void                OnViewLibrary( wxCommandEvent &event );
     void                OnLibraryShowPanel( wxCommandEvent &event );
 
@@ -212,6 +233,7 @@ class guMainFrame : public wxFrame
     void                OnViewPodcasts( wxCommandEvent &event );
     void                OnPodcastsShowPanel( wxCommandEvent &event );
 
+    void                OnMainPaneClose( wxAuiManagerEvent &event );
 
   public:
                         guMainFrame( wxWindow * parent );

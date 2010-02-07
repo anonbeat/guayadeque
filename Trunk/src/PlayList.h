@@ -30,10 +30,27 @@
 #include <wx/dir.h>
 #include <wx/arrimpl.cpp>
 #include <wx/thread.h>
+#include <wx/string.h>
 
 wxString LenToString( int Len );
 
 class guPlayerPanel;
+class guPlayList;
+
+// -------------------------------------------------------------------------------- //
+class guPlayerPlayList : public wxPanel
+{
+  protected :
+    guPlayList * m_PlayListCtrl;
+
+  public :
+    guPlayerPlayList( wxWindow * parent, guDbLibrary * db );
+    ~guPlayerPlayList() {}
+
+    guPlayList *    GetPlayListCtrl( void ) { return m_PlayListCtrl; }
+    void            SetPlayerPanel( guPlayerPanel * player );
+
+};
 
 // -------------------------------------------------------------------------------- //
 class guPlayList : public guListView
@@ -95,8 +112,10 @@ class guPlayList : public guListView
     void                        OnConfigUpdated( wxCommandEvent &event );
 
   public :
-    guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL );
     ~guPlayList();
+
+    void                        SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
 
     void                        AddItem( const guTrack &NewItem );
     void                        AddItem( const guTrack * NewItem );

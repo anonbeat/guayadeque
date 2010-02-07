@@ -23,6 +23,7 @@
 
 #include "AudioScrobble.h"
 #include "MediaCtrl.h"
+#include "PlayerFilters.h"
 #include "PlayList.h"
 #include "RatingCtrl.h"
 #include "StaticBitmap.h"
@@ -122,9 +123,6 @@ class guSmartAddTracksThread;
 class guPlayerPanel : public wxPanel
 {
   private:
-    wxAuiManager            m_AuiManager;
-    unsigned int            m_VisiblePanels;
-
 	wxBitmapButton *        m_PrevTrackButton;
 	wxBitmapButton *        m_NextTrackButton;
 	wxBitmapButton *        m_PlayButton;
@@ -137,9 +135,6 @@ class guPlayerPanel : public wxPanel
 	wxBitmapButton *        m_EqualizerButton;
 	//
 	guStaticBitmap *        m_PlayerCoverBitmap;
-//	guAutoScrollText *      m_TitleLabel;
-//	guAutoScrollText *      m_AlbumLabel;
-//	guAutoScrollText *      m_ArtistLabel;
 	wxStaticText *          m_TitleLabel;
 	wxStaticText *          m_AlbumLabel;
 	wxStaticText *          m_ArtistLabel;
@@ -151,14 +146,9 @@ class guPlayerPanel : public wxPanel
 	wxStaticText *          m_PositionLabel;
 	wxSlider *              m_PlayerPositionSlider;
 
-//    wxSizer *               m_FiltersSizer;
-//	wxFlexGridSizer *       m_FiltersFlexSizer;
-//	wxStaticText *          m_FiltersLabel;
-	wxChoice *              m_FilterAllowChoice;
-	wxChoice *              m_FilterDenyChoice;
-
     guDbLibrary *           m_Db;
 	guPlayList *            m_PlayListCtrl;
+	guPlayerFilters *       m_PlayerFilters;
 	guMediaCtrl *           m_MediaCtrl;
 	guPlayerPanelTimer *    m_PlayerTimer;
     guCurrentTrack          m_MediaSong;
@@ -187,8 +177,6 @@ class guPlayerPanel : public wxPanel
     int                     m_SilenceDetectorLevel;
     int                     m_SilenceDetectorTime;
 
-//    bool                    m_ShowFiltersChoices;
-
     // AudioScrobble
     guAudioScrobble *       m_AudioScrobble;
     bool                    m_AudioScrobbleEnabled;
@@ -199,12 +187,6 @@ class guPlayerPanel : public wxPanel
     bool                    m_AboutToFinishPending;
 
     bool                    m_ShowRevTime;
-
-    guListItems             m_FilterPlayLists;
-
-	wxColor                 m_NormalColor;
-	wxColor                 m_SetColor;
-
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
@@ -238,16 +220,11 @@ class guPlayerPanel : public wxPanel
     void                OnRatingChanged( guRatingEvent &event );
     void                CheckFiltersEnable( void );
 
-    void                OnFiltersLabelDClick( wxMouseEvent &event );
-    void                OnFiltersChanged( wxCommandEvent &event );
-    void                UpdateFilterStatus( void );
-
     void                OnConfigUpdated( wxCommandEvent &event );
 
-    void                OnPaneClose( wxAuiManagerEvent &event );
-
   public:
-                        guPlayerPanel( wxWindow* parent, guDbLibrary * NewDbLibrary ); //wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 368,191 ), long style = wxTAB_TRAVERSAL );
+                        guPlayerPanel( wxWindow* parent, guDbLibrary * db,
+                                       guPlayList * playlist, guPlayerFilters * filters );
                         ~guPlayerPanel();
     void                UpdateStatus();
     void                SetPlayList( const guTrackArray &SongList );
@@ -293,12 +270,6 @@ class guPlayerPanel : public wxPanel
     void                SetBitRate( int bitrate );
 
     void                UpdatedTracks( const guTrackArray * tracks );
-
-    bool                IsPanelShown( const int panelid ) const;
-    void                ShowPanel( const int panelid, bool show );
-
-    void                LoadPerspective( const wxString &layout ) { m_AuiManager.LoadPerspective( layout ); };
-    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); };
 
     friend class guSmartAddTracksThread;
 };

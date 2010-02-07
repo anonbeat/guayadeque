@@ -513,33 +513,17 @@ bool guMp3TagInfo::Read( void )
 
     if( !fileref.isNull() )
     {
-        if( ( tag = fileref.tag() ) )
-        {
-            m_TrackName = TStringTowxString( tag->title() );
-            m_ArtistName = TStringTowxString( tag->artist() );
-            m_AlbumName = TStringTowxString( tag->album() );
-            m_GenreName = TStringTowxString( tag->genre() );
-            m_Track = tag->track();
-            m_Year = tag->year();
-        }
-
-        apro = fileref.audioProperties();
-        if( apro )
-        {
-            m_Length = apro->length();
-            m_Bitrate = apro->bitrate();
-            //m_Samplerate = apro->sampleRate();
-        }
-        else
-        {
-            guLogWarning( wxT( "Cant read audio properties from %s\n" ), m_FileName.c_str() );
-        }
-
-
         // If its a ID3v2 Tag try to load the labels
         ID3v2::Tag * tagv2 = ( ( TagLib::MPEG::File * ) fileref.file() )->ID3v2Tag();
         if( tagv2 )
         {
+            m_TrackName = TStringTowxString( tagv2->title() );
+            m_ArtistName = TStringTowxString( tagv2->artist() );
+            m_AlbumName = TStringTowxString( tagv2->album() );
+            m_GenreName = TStringTowxString( tagv2->genre() );
+            m_Track = tagv2->track();
+            m_Year = tagv2->year();
+
             if( m_TrackLabels.Count() == 0 )
             {
                 ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tagv2, "guTRLABELS" );
@@ -573,6 +557,27 @@ bool guMp3TagInfo::Read( void )
                     m_AlbumLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
                 }
             }
+        }
+        else if( ( tag = fileref.tag() ) )
+        {
+            m_TrackName = TStringTowxString( tag->title() );
+            m_ArtistName = TStringTowxString( tag->artist() );
+            m_AlbumName = TStringTowxString( tag->album() );
+            m_GenreName = TStringTowxString( tag->genre() );
+            m_Track = tag->track();
+            m_Year = tag->year();
+        }
+
+        apro = fileref.audioProperties();
+        if( apro )
+        {
+            m_Length = apro->length();
+            m_Bitrate = apro->bitrate();
+            //m_Samplerate = apro->sampleRate();
+        }
+        else
+        {
+            guLogWarning( wxT( "Cant read audio properties from %s\n" ), m_FileName.c_str() );
         }
     }
     else
@@ -615,20 +620,17 @@ bool guMp3TagInfo::Write( void )
 
     if( !fileref.isNull() )
     {
-        if( ( tag = fileref.tag() ) )
-        {
-            tag->setTitle( wxStringToTString( m_TrackName ) );
-            tag->setArtist( wxStringToTString( m_ArtistName ) );
-            tag->setAlbum( wxStringToTString( m_AlbumName ) );
-            tag->setGenre( wxStringToTString( m_GenreName ) );
-            tag->setTrack( m_Track ); // set the id3v1 track
-            tag->setYear( m_Year );
-        }
-
         // Check if we have a id3v2 Tag
         ID3v2::Tag * tagv2 = ( ( TagLib::MPEG::File * ) fileref.file() )->ID3v2Tag();
         if( tagv2 )
         {
+            tagv2->setTitle( wxStringToTString( m_TrackName ) );
+            tagv2->setArtist( wxStringToTString( m_ArtistName ) );
+            tagv2->setAlbum( wxStringToTString( m_AlbumName ) );
+            tagv2->setGenre( wxStringToTString( m_GenreName ) );
+            tagv2->setTrack( m_Track ); // set the id3v1 track
+            tagv2->setYear( m_Year );
+
             // I have found several TRCK fields in the mp3s
             tagv2->removeFrames( "TRCK" );
             tagv2->setTrack( m_Track );
@@ -639,6 +641,16 @@ bool guMp3TagInfo::Write( void )
             ID3v2_CheckLabelFrame( tagv2, "guTRLABELS", m_TrackLabelsStr );
 
         }
+        else if( ( tag = fileref.tag() ) )
+        {
+            tag->setTitle( wxStringToTString( m_TrackName ) );
+            tag->setArtist( wxStringToTString( m_ArtistName ) );
+            tag->setAlbum( wxStringToTString( m_AlbumName ) );
+            tag->setGenre( wxStringToTString( m_GenreName ) );
+            tag->setTrack( m_Track ); // set the id3v1 track
+            tag->setYear( m_Year );
+        }
+
 
         if( !fileref.save() )
         {
