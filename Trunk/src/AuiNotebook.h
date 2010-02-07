@@ -166,6 +166,8 @@ public:
  	bool LoadPerspective( const wxString &layout );
 
     wxAuiPaneInfo & GetPane( wxWindow * window );
+    wxAuiPaneInfo & GetPane( const wxString &name );
+    wxAuiPaneInfoArray & GetAllPanes( void );
 };
 
 
