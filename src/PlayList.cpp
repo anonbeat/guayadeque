@@ -35,13 +35,33 @@
 #include "TrackEdit.h"
 #include "Utils.h"
 
-//#include <id3/tag.h>
-//#include <id3/misc_support.h>
 #include <wx/types.h>
 #include <wx/uri.h>
 
-//#define GUPLAYLIST_ITEM_SIZE        40
+// -------------------------------------------------------------------------------- //
+//
+// -------------------------------------------------------------------------------- //
+guPlayerPlayList::guPlayerPlayList( wxWindow * parent, guDbLibrary * db ) :
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1, -1 ), wxTAB_TRAVERSAL )
+{
+    wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
+    m_PlayListCtrl = new guPlayList( this, db );
+    MainSizer->Add( m_PlayListCtrl, 1, wxEXPAND, 5 );
+
+	SetSizer( MainSizer );
+	Layout();
+	MainSizer->Fit( this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPlayList::SetPlayerPanel( guPlayerPanel * player )
+{
+    m_PlayListCtrl->SetPlayerPanel( player );
+}
+
+// -------------------------------------------------------------------------------- //
+//
 // -------------------------------------------------------------------------------- //
 guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
             guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG |
