@@ -465,7 +465,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 
     m_AuiManager.AddPane( NamesPanel,
             wxAuiPaneInfo().Name( wxT( "PlayListNames" ) ).Caption( _( "Play Lists" ) ).
-            MinSize( 50, 50 ).
+            MinSize( 50, 50 ).CloseButton( false ).
             Dockable( true ).Left() );
 
 

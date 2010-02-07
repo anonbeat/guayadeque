@@ -35,10 +35,6 @@
 //#include <wx/mediactrl.h>
 #include <wx/tglbtn.h>
 
-#define     guPANEL_PLAYER_PLAYLIST         ( 1 << 0 )
-#define     guPANEL_PLAYER_FILTERS          ( 1 << 1 )
-
-
 // -------------------------------------------------------------------------------- //
 enum guSongCoverType {
     GU_SONGCOVER_NONE = 0,

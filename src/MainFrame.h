@@ -55,13 +55,14 @@
 
 #define     guPANEL_MAIN_PLAYERPLAYLIST     ( 1 << 0 )
 #define     guPANEL_MAIN_PLAYERFILTERS      ( 1 << 1 )
-#define     guPANEL_MAIN_SELECTOR           ( 1 << 2 )
-#define     guPANEL_MAIN_LIBRARY            ( 1 << 3 )
-#define     guPANEL_MAIN_RADIOS             ( 1 << 4 )
-#define     guPANEL_MAIN_LASTFM             ( 1 << 5 )
-#define     guPANEL_MAIN_LYRICS             ( 1 << 6 )
-#define     guPANEL_MAIN_PLAYLISTS          ( 1 << 7 )
-#define     guPANEL_MAIN_PODCASTS           ( 1 << 8 )
+#define     guPANEL_MAIN_LIBRARY            ( 1 << 2 )
+#define     guPANEL_MAIN_RADIOS             ( 1 << 3 )
+#define     guPANEL_MAIN_LASTFM             ( 1 << 4 )
+#define     guPANEL_MAIN_LYRICS             ( 1 << 5 )
+#define     guPANEL_MAIN_PLAYLISTS          ( 1 << 6 )
+#define     guPANEL_MAIN_PODCASTS           ( 1 << 7 )
+#define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | guPANEL_MAIN_LASTFM | \
+                                              guPANEL_MAIN_LYRICS  | guPANEL_MAIN_PLAYLISTS | guPANEL_MAIN_PODCASTS )
 
 
 class guTaskBarIcon;
@@ -234,6 +235,8 @@ class guMainFrame : public wxFrame
     void                OnPodcastsShowPanel( wxCommandEvent &event );
 
     void                OnMainPaneClose( wxAuiManagerEvent &event );
+
+    void                LoadTabsPerspective( const wxString &layout );
 
   public:
                         guMainFrame( wxWindow * parent );

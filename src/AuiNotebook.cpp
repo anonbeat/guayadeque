@@ -75,7 +75,7 @@ wxString guAuiNotebook::SavePerspective( void )
                 tabs += wxT( "*" );
             else if( ( int ) p == tabframe->m_tabs->GetActivePage() )
                 tabs += wxT( "+" );
-            tabs += wxString::Format( wxT( "%u" ), page_idx );
+            tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, page.caption.c_str() );
         }
     }
     tabs += wxT( "@" );
@@ -151,7 +151,7 @@ bool guAuiNotebook::LoadPerspective( const wxString &layout )
             const wxChar c = tab[ 0 ];
             if( c == wxT( '+' ) || c == wxT( '*' ) )
             {
-                tab = tab.Mid( 1 );
+                tab = tab.Mid( 1, 2 );
             }
 
             const size_t tab_idx = wxAtoi( tab.c_str() );
@@ -188,6 +188,18 @@ bool guAuiNotebook::LoadPerspective( const wxString &layout )
 wxAuiPaneInfo & guAuiNotebook::GetPane( wxWindow * window )
 {
     return m_mgr.GetPane( window );
+}
+
+// -------------------------------------------------------------------------------- //
+wxAuiPaneInfo & guAuiNotebook::GetPane( const wxString &name )
+{
+    return m_mgr.GetPane( name );
+}
+
+// -------------------------------------------------------------------------------- //
+wxAuiPaneInfoArray & guAuiNotebook::GetAllPanes( void )
+{
+    return m_mgr.GetAllPanes();
 }
 
 // -------------------------------------------------------------------------------- //
