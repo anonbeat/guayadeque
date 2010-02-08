@@ -24,6 +24,7 @@
 #include <wx/control.h>
 #include <wx/aui/auibook.h>
 #include <wx/aui/tabmdi.h>
+#include <wx/aui/dockart.h>
 
 // CODE FROM auibook.cpp
 
@@ -147,10 +148,47 @@ public:
 
 
 // -------------------------------------------------------------------------------- //
+class guAuiTabArt : public wxAuiDefaultTabArt
+{
+  protected :
+    wxColour    m_BgColor;
+    wxColour    m_SelBgColor;
+    wxColour    m_TextFgColor;
+    wxColour    m_SelTextFgColour;
+  public:
+    guAuiTabArt();
+
+    virtual ~guAuiTabArt();
+
+    wxAuiTabArt * Clone();
+    virtual void DrawTab(wxDC& dc,
+                         wxWindow* wnd,
+                         const wxAuiNotebookPage& pane,
+                         const wxRect& in_rect,
+                         int close_button_state,
+                         wxRect* out_tab_rect,
+                         wxRect* out_button_rect,
+                         int* x_extent);
+
+};
+
+// -------------------------------------------------------------------------------- //
+class guAuiDockArt : public wxAuiDefaultDockArt
+{
+  public :
+    guAuiDockArt();
+    ~guAuiDockArt();
+
+    virtual wxColour GetColour( int id );
+};
+
+// -------------------------------------------------------------------------------- //
 class guAuiNotebook : public wxAuiNotebook
 {
+  protected :
+//    guAuiTabArt     m_AuiTabArt;
 
-public:
+  public:
 
     guAuiNotebook();
 
@@ -162,6 +200,8 @@ public:
 
     virtual ~guAuiNotebook();
 
+    virtual void UpdateTabCtrlHeight();
+
     wxString SavePerspective( void );
  	bool LoadPerspective( const wxString &layout );
 
@@ -169,7 +209,6 @@ public:
     wxAuiPaneInfo & GetPane( const wxString &name );
     wxAuiPaneInfoArray & GetAllPanes( void );
 };
-
 
 #endif
 // -------------------------------------------------------------------------------- //
