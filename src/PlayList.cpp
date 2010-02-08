@@ -1072,7 +1072,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
 
                 if( !m_Db->FindTrackFile( FileName, &Track ) )
                 {
-                    if( !m_Db->GetPodcastItemFile( FileName, &PodcastItem ) )
+                    if( m_Db->GetPodcastItemFile( FileName, &PodcastItem ) )
                     {
                         Track.m_Type = guTRACK_TYPE_PODCAST;
                         Track.m_SongName = PodcastItem.m_Title;
