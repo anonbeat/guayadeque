@@ -572,6 +572,18 @@ void guPlayerPanel::UpdatePositionLabel( const unsigned int curpos )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetBitRateLabel( int bitrate )
+{
+    if( bitrate )
+    {
+        m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate ) );
+    }
+    else
+        m_BitRateLabel->SetLabel( wxT( "[kbps]" ) );
+    m_BitRateSizer->Layout();
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetBitRate( int bitrate )
 {
     if( bitrate )
@@ -986,7 +998,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     else
         m_YearLabel->SetLabel( wxEmptyString );
 
-    SetBitRate( 0 );
+    SetBitRateLabel( m_MediaSong.m_Bitrate );
 
 
 //    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +

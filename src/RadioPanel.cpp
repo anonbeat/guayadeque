@@ -1038,49 +1038,54 @@ void guRadioPanel::OnSelectStations( bool enqueue )
 
     if( m_StationsListBox->GetSelected( &RadioStation ) )
     {
-        guShoutCast ShoutCast;
-        wxString StationUrl = ShoutCast.GetStationUrl( RadioStation.m_SCId );
-        if( !StationUrl.IsEmpty() )
+        guPlayListFile PlayListFile;
+        if( RadioStation.m_SCId != wxNOT_FOUND )
         {
-            guPlayListFile PlayListFile( StationUrl );
-
-            if( ( Count = PlayListFile.Count() ) )
+            guShoutCast ShoutCast;
+            wxString StationUrl = ShoutCast.GetStationUrl( RadioStation.m_SCId );
+            if( !StationUrl.IsEmpty() )
             {
-                for( Index = 0; Index < Count; Index++ )
-                {
-                    NewSong = new guTrack();
-                    if( NewSong )
-                    {
-                        guStationPlayListItem PlayListItem = PlayListFile.GetItem( Index );
-                        NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
-                        NewSong->m_FileName = PlayListItem.m_Location;
-                        //NewSong->m_SongName = PlayList[ index ].m_Name;
-                        NewSong->m_SongName = PlayListItem.m_Name.IsEmpty() ?
-                                                 RadioStation.m_Name : PlayListItem.m_Name;
-                        NewSong->m_Length = 0;
-                        NewSong->m_Rating = -1;
-                        //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
-                        NewSong->m_CoverId = 0;
-                        NewSong->m_Year = 0;
-                        Tracks.Add( NewSong );
-                    }
-                }
+                PlayListFile.Load( StationUrl );
+            }
+        }
+        else
+        {
+            guLogMessage( wxT( "Trying to load the link %s" ), RadioStation.m_Link.c_str() );
+            PlayListFile.Load( RadioStation.m_Link );
+        }
 
-                if( Tracks.Count() )
+        if( ( Count = PlayListFile.Count() ) )
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                NewSong = new guTrack();
+                if( NewSong )
                 {
-                    if( enqueue )
-                    {
-                        m_PlayerPanel->AddToPlayList( Tracks );
-                    }
-                    else
-                    {
-                        m_PlayerPanel->SetPlayList( Tracks );
-                    }
+                    guStationPlayListItem PlayListItem = PlayListFile.GetItem( Index );
+                    NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
+                    NewSong->m_FileName = PlayListItem.m_Location;
+                    //NewSong->m_SongName = PlayList[ index ].m_Name;
+                    NewSong->m_SongName = PlayListItem.m_Name.IsEmpty() ?
+                                             RadioStation.m_Name : PlayListItem.m_Name;
+                    NewSong->m_Length = 0;
+                    NewSong->m_Rating = -1;
+                    //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
+                    NewSong->m_CoverId = 0;
+                    NewSong->m_Year = 0;
+                    Tracks.Add( NewSong );
                 }
             }
-            else
+
+            if( Tracks.Count() )
             {
-                wxMessageBox( wxT( "There are not entries for this Radio Station" ) );
+                if( enqueue )
+                {
+                    m_PlayerPanel->AddToPlayList( Tracks );
+                }
+                else
+                {
+                    m_PlayerPanel->SetPlayList( Tracks );
+                }
             }
         }
         else

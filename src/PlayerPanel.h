@@ -263,6 +263,7 @@ class guPlayerPanel : public wxPanel
     void                SetTitleLabel( const wxString &trackname );
     void                SetRatingLabel( const int Rating );
     void                UpdatePositionLabel( const unsigned int curpos );
+    void                SetBitRateLabel( const int bitrate );
     void                SetBitRate( int bitrate );
 
     void                UpdatedTracks( const guTrackArray * tracks );
