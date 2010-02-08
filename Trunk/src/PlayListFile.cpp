@@ -63,6 +63,7 @@ bool guPlayListFile::Load( const wxString &uri )
 {
     wxURI Uri( uri );
 
+    //guLogMessage( wxT( "'%s' IsReference:%i" ), uri.c_str(), Uri.IsReference() );
     if( Uri.IsReference() )
     {
         wxString PLPath = uri.Lower();
@@ -85,32 +86,40 @@ bool guPlayListFile::Load( const wxString &uri )
     }
     else
     {
-        wxString Content = GetUrlContent( uri );
-        if( !Content.IsEmpty() )
+        if( !IsValidPlayList( uri ) )
         {
-            wxStringInputStream Ins( Content );
-
-            wxString PLPath = Uri.GetPath().Lower();
-            if( PLPath.EndsWith( wxT( ".pls" ) ) )
-            {
-                return ReadPlsStream( Ins );
-            }
-            else if( PLPath.EndsWith( wxT( ".m3u" ) ) )
-            {
-                return ReadM3uStream( Ins );
-            }
-            else if( PLPath.EndsWith( wxT( ".xspf" ) ) )
-            {
-                return ReadXspfStream( Ins );
-            }
-            else if( PLPath.EndsWith( wxT( ".asx" ) ) )
-            {
-                return ReadAsxStream( Ins );
-            }
+            m_PlayList.Add( new guStationPlayListItem( uri, uri ) );
+            return true;
         }
         else
         {
-            guLogError( wxT( "Could not get the playlist '%s'" ), uri.c_str() );
+            wxString Content = GetUrlContent( uri );
+            if( !Content.IsEmpty() )
+            {
+                wxStringInputStream Ins( Content );
+
+                wxString PLPath = Uri.GetPath().Lower();
+                if( PLPath.EndsWith( wxT( ".pls" ) ) )
+                {
+                    return ReadPlsStream( Ins );
+                }
+                else if( PLPath.EndsWith( wxT( ".m3u" ) ) )
+                {
+                    return ReadM3uStream( Ins );
+                }
+                else if( PLPath.EndsWith( wxT( ".xspf" ) ) )
+                {
+                    return ReadXspfStream( Ins );
+                }
+                else if( PLPath.EndsWith( wxT( ".asx" ) ) )
+                {
+                    return ReadAsxStream( Ins );
+                }
+            }
+            else
+            {
+                guLogError( wxT( "Could not get the playlist '%s'" ), uri.c_str() );
+            }
         }
     }
     return false;
