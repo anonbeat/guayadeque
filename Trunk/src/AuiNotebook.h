@@ -173,16 +173,6 @@ class guAuiTabArt : public wxAuiDefaultTabArt
 };
 
 // -------------------------------------------------------------------------------- //
-class guAuiDockArt : public wxAuiDefaultDockArt
-{
-  public :
-    guAuiDockArt();
-    ~guAuiDockArt();
-
-    virtual wxColour GetColour( int id );
-};
-
-// -------------------------------------------------------------------------------- //
 class guAuiNotebook : public wxAuiNotebook
 {
   protected :

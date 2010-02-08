@@ -41,26 +41,6 @@ static void inline IndentPressedBitmap( wxRect * rect, int button_state )
     }
 }
 
-
-// -------------------------------------------------------------------------------- //
-// guAuiDockArt
-// -------------------------------------------------------------------------------- //
-guAuiDockArt::guAuiDockArt() : wxAuiDefaultDockArt()
-{
-}
-
-// -------------------------------------------------------------------------------- //
-guAuiDockArt::~guAuiDockArt()
-{
-}
-
-// -------------------------------------------------------------------------------- //
-wxColour guAuiDockArt::GetColour( int id )
-{
-    guLogMessage( wxT( "guAuiDockArt:GetColour( %i )" ), id );
-    return wxAuiDefaultDockArt::GetColour( id );
-}
-
 // -------------------------------------------------------------------------------- //
 // guAuiTabArt
 // -------------------------------------------------------------------------------- //
