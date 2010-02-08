@@ -117,6 +117,11 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Create( parent, wxID_ANY, wxT("Guayadeque Player"), MainWindowPos, MainWindowSize, wxDEFAULT_FRAME_STYLE );
 
     m_AuiManager.SetManagedWindow( this );
+    wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
+            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
+            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
 
     m_VisiblePanels = Config->ReadNum( wxT( "MainVisiblePanels" ), -1, wxT( "Positions" ) );
     guLogMessage( wxT( "%08X" ), m_VisiblePanels );

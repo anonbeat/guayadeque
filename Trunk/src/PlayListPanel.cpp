@@ -440,6 +440,11 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     m_AuiManager.SetManagedWindow( this );
+    wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
+            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
+            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
 
 
 //	wxBoxSizer* MainSizer;
