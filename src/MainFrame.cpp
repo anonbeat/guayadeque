@@ -1907,8 +1907,37 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
 
         m_LayoutLoadMenu->Append( ID_MENU_LAYOUT_LOAD + m_LayoutName.Count() - 1,
                 EntryDialog.GetValue(), _( "Load this user defined layout" ) );
-        m_LayoutDelMenu->Append( ID_MENU_LAYOUT_LOAD + m_LayoutName.Count() - 1,
+        m_LayoutDelMenu->Append( ID_MENU_LAYOUT_DELETE + m_LayoutName.Count() - 1,
                 EntryDialog.GetValue(), _( "Load this user defined layout" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
+{
+    int Layout = event.GetId() - ID_MENU_LAYOUT_DELETE;
+    guLogMessage( wxT( "Delete Layout %i" ), Layout );
+    int Index;
+    int Count;
+
+    while( m_LayoutLoadMenu->GetMenuItemCount() )
+        m_LayoutLoadMenu->Delete( m_LayoutLoadMenu->FindItemByPosition( 0 ) );
+
+    while( m_LayoutDelMenu->GetMenuItemCount() )
+        m_LayoutDelMenu->Delete( m_LayoutDelMenu->FindItemByPosition( 0 ) );
+
+    m_LayoutName.RemoveAt( Layout );
+    m_LayoutData.RemoveAt( Layout );
+    m_LayoutTabs.RemoveAt( Layout );
+
+    wxMenuItem * MenuItem;
+    Count = m_LayoutName.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_LOAD + Index, m_LayoutName[ Index ], _( "Load this user defined layout" ) );
+        m_LayoutLoadMenu->Append( MenuItem );
+        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
+        m_LayoutDelMenu->Append( MenuItem );
     }
 }
 
@@ -2010,35 +2039,6 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     }
 
     m_CatNotebook->LoadPerspective( layout );
-}
-
-// -------------------------------------------------------------------------------- //
-void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
-{
-    int Layout = event.GetId() - ID_MENU_LAYOUT_DELETE;
-    guLogMessage( wxT( "Delete Layout %i" ), Layout );
-    int Index;
-    int Count;
-
-    while( m_LayoutLoadMenu->GetMenuItemCount() )
-        m_LayoutLoadMenu->Delete( m_LayoutLoadMenu->FindItemByPosition( 0 ) );
-
-    while( m_LayoutDelMenu->GetMenuItemCount() )
-        m_LayoutDelMenu->Delete( m_LayoutDelMenu->FindItemByPosition( 0 ) );
-
-    m_LayoutName.RemoveAt( Layout );
-    m_LayoutData.RemoveAt( Layout );
-    m_LayoutTabs.RemoveAt( Layout );
-
-    wxMenuItem * MenuItem;
-    Count = m_LayoutName.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_LOAD + Index, m_LayoutName[ Index ], _( "Load this user defined layout" ) );
-        m_LayoutLoadMenu->Append( MenuItem );
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
-        m_LayoutDelMenu->Append( MenuItem );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
