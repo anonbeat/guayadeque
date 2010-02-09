@@ -153,7 +153,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     m_PlayerFilters = new guPlayerFilters( this, m_Db );
 	m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "Vumeters" ) ).
-        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 100, 50 ).
+        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 60, 60 ).
         Float().Hide() );
 
 	m_AuiManager.AddPane( m_PlayerFilters, wxAuiPaneInfo().Name( wxT( "PlayerFilters" ) ).Caption( _( "Filters" ) ).

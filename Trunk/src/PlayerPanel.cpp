@@ -1211,6 +1211,8 @@ void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 
     if( m_PlayerVumeters )
     {
+        //guLogMessage( wxT( "Time: %" GST_TIME_FORMAT ), GST_TIME_ARGS(event.m_LevelInfo.m_EndTime) );
+
         m_PlayerVumeters->SetLevels( event.m_LevelInfo );
 //        guLogMessage( wxT( "L:%02.02f  R:%02.02f" ),
 //            event.m_LevelInfo.m_Peak_L,
