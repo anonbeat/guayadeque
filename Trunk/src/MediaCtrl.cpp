@@ -376,7 +376,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         else
         {
             g_object_set( level, "message", TRUE, NULL );
-            g_object_set( level, "interval", gint64( 250000000 ), NULL );
+            g_object_set( level, "interval", gint64( 100000000 ), NULL );
         }
 
         m_Volume = gst_element_factory_make( "volume", "mastervolume" );
