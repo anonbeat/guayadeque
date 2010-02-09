@@ -41,21 +41,27 @@
 class guVumeter : public wxControl
 {
   protected :
-    int     m_CurrentLevel;
+    double      m_PeakLevel;
+    double      m_DecayLevel;
+    wxColour    m_RedOn;
+    wxColour    m_RedOff;
+    wxColour    m_GreenOn;
+    wxColour    m_GreenOff;
+    wxColour    m_OrangeOn;
+    wxColour    m_OrangeOff;
 
   public:
 	guVumeter() {}
-	guVumeter( wxWindow * parent, wxWindowID id )
-		: wxControl( parent, id ) { m_CurrentLevel = 0; }
+	guVumeter( wxWindow * parent, wxWindowID id );
 
 	wxSize DoGetBestSize() const;
 	void OnPaint(wxPaintEvent& event);
-    void SetLevel( const int level )
+    void SetLevel( const double peak, const double decay )
     {
-        //guLogMessage( wxT( "Level: %i" ), level );
-        if( m_CurrentLevel != level )
+        if( ( m_PeakLevel != peak ) || ( m_DecayLevel != decay ) )
         {
-            m_CurrentLevel = level;
+            m_PeakLevel = peak;
+            m_DecayLevel = decay;
             Refresh(); Update();
         }
     }
