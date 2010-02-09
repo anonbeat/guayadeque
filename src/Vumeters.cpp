@@ -28,9 +28,22 @@ BEGIN_EVENT_TABLE( guVumeter, wxControl )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
+guVumeter::guVumeter( wxWindow * parent, wxWindowID id ) : wxControl( parent, id )
+{
+    m_PeakLevel     = -INFINITY;
+    m_DecayLevel    = -INFINITY;
+	m_GreenOff      = wxColour( 0, 128, 0 );
+	m_OrangeOff     = wxColour( 191, 95, 0 );
+	m_RedOff        = wxColour( 128, 0, 0 );
+	m_GreenOn       = wxColour( 0, 255, 0 );
+	m_OrangeOn      = wxColour( 255, 128, 0 );
+	m_RedOn         = wxColour( 255, 0, 0 );
+}
+
+// -------------------------------------------------------------------------------- //
 wxSize guVumeter::DoGetBestSize() const
 {
-	return wxSize( 35, 10 );
+	return wxSize( 20, 2 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -41,12 +54,8 @@ void guVumeter::OnPaint( wxPaintEvent &WXUNUSED(event) )
 	wxCoord Width;
 	wxCoord Height;
 	GetClientSize( &Width, &Height );
-	wxColour GOff = wxColour( 0, 128, 0 );
-	wxColour OOff = wxColour( 191, 95, 0 );
-	wxColour ROff = wxColour( 128, 0, 0 );
-	wxColour GOn  = wxColour( 0, 255, 0 );
-	wxColour OOn  = wxColour( 255, 128, 0 );
-	wxColour ROn  = wxColour( 255, 0, 0 );
+    int PeakLevel = pow( 10, m_PeakLevel / 20 ) * 100;
+    int DecayLevel = pow( 10, m_DecayLevel / 20 ) * 100;
 
 	int SizeG = ( Width * 40 ) / 100;
 	//int SizeO = ( Width / 5 ) - 40;
@@ -54,23 +63,23 @@ void guVumeter::OnPaint( wxPaintEvent &WXUNUSED(event) )
 
     dc.SetPen( * wxTRANSPARENT_PEN );
 
-    //guLogMessage( wxT( "Current Level: %i" ), m_CurrentLevel );
-    if( !m_CurrentLevel )
+    //guLogMessage( wxT( "Current Level: %i" ), PeakLevel );
+    if( !PeakLevel )
     {
-        dc.SetBrush( GOff );
+        dc.SetBrush( m_GreenOff );
         dc.DrawRectangle( 0, 0, SizeG, Height );
     }
-    else if( m_CurrentLevel > 40 )
+    else if( PeakLevel > 40 )
     {
-        dc.SetBrush( GOn );
+        dc.SetBrush( m_GreenOn );
         dc.DrawRectangle( 0, 0, SizeG, Height );
     }
     else
     {
-        dc.SetBrush( GOn );
-        int LevelWidth = ( Width * m_CurrentLevel ) / 100;
+        dc.SetBrush( m_GreenOn );
+        int LevelWidth = ( Width * PeakLevel ) / 100;
         dc.DrawRectangle( 0, 0, LevelWidth, Height );
-        dc.SetBrush( GOff );
+        dc.SetBrush( m_GreenOff );
         dc.DrawRectangle( LevelWidth, 0, SizeG, Height );
     }
 
@@ -78,62 +87,97 @@ void guVumeter::OnPaint( wxPaintEvent &WXUNUSED(event) )
     Rect.width = ( Width / 5 );
     Rect.height = Height;
     Rect.y = 0;
-    if( m_CurrentLevel < 40 )
+    if( PeakLevel < 40 )
     {
-        dc.GradientFillLinear( Rect, GOff, OOff );
+        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff );
     }
-    else if( m_CurrentLevel > 60 )
+    else if( PeakLevel > 60 )
     {
-        dc.GradientFillLinear( Rect, GOn, OOn );
+        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
     }
     else
     {
-        dc.GradientFillLinear( Rect, GOff, OOff );
+        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff );
         wxRect ClipRect = Rect;
-        ClipRect.width = ( Width * ( m_CurrentLevel - 40 ) ) / 100;
+        ClipRect.width = ( Width * ( PeakLevel - 40 ) ) / 100;
         dc.SetClippingRegion( ClipRect );
-        dc.GradientFillLinear( Rect, GOn, OOn );
+        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
         dc.DestroyClippingRegion();
     }
 
     Rect.x = SizeG + Rect.width;
-    if( m_CurrentLevel < 60 )
+    if( PeakLevel < 60 )
     {
-        dc.GradientFillLinear( Rect, OOff, ROff );
+        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff );
     }
-    else if( m_CurrentLevel > 80 )
+    else if( PeakLevel > 80 )
     {
-        dc.GradientFillLinear( Rect, OOn, ROn );
+        dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
     }
     else
     {
-        dc.GradientFillLinear( Rect, OOff, ROff );
+        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff );
         wxRect ClipRect = Rect;
-        ClipRect.width = ( Width * ( m_CurrentLevel - 60 ) ) / 100;
+        ClipRect.width = ( Width * ( PeakLevel - 60 ) ) / 100;
         dc.SetClippingRegion( ClipRect );
-        dc.GradientFillLinear( Rect, OOn, ROn );
+        dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
         dc.DestroyClippingRegion();
     }
 
-    if( m_CurrentLevel < 80 )
+    if( PeakLevel < 80 )
     {
-        dc.SetBrush( ROff );
+        dc.SetBrush( m_RedOff );
         dc.DrawRectangle( SizeG + ( Rect.width * 2 ), 0, Width, Height );
     }
-    else if( m_CurrentLevel == 100 )
+    else if( PeakLevel == 100 )
     {
-        dc.SetBrush( ROn );
+        dc.SetBrush( m_RedOn );
         dc.DrawRectangle( SizeG + ( Rect.width * 2 ), 0, Width, Height );
     }
     else
     {
-        dc.SetBrush( ROn );
-        int LevelWidth = ( Width * ( m_CurrentLevel - 80 ) ) / 100;
+        dc.SetBrush( m_RedOn );
+        int LevelWidth = ( Width * ( PeakLevel - 80 ) ) / 100;
         dc.DrawRectangle( SizeG + ( Rect.width * 2 ), 0, LevelWidth, Height );
 
-        dc.SetBrush( ROff );
+        dc.SetBrush( m_RedOff );
         dc.DrawRectangle( SizeG + ( Rect.width * 2 ) + LevelWidth, 0, Width, Height );
     }
+
+    // Draw the decay level
+    if( DecayLevel && ( DecayLevel > PeakLevel ) )
+    {
+        wxRect ClipRect = Rect;
+        ClipRect.width = 2;
+        ClipRect.x = ( Width * DecayLevel ) / 100;
+        dc.SetClippingRegion( ClipRect );
+
+        if( DecayLevel < 40 )       // at Solid green
+        {
+            dc.SetBrush( m_GreenOn );
+            dc.DrawRectangle( 0, 0, SizeG, Height );
+        }
+        else if( DecayLevel < 60 )  // at green to orange
+        {
+            Rect.x = SizeG;
+            dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
+        }
+        else if( DecayLevel < 80 )  // at orange to red
+        {
+            Rect.x = SizeG + Rect.width;
+            dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
+        }
+        else                        // at solid red
+        {
+            dc.SetBrush( m_RedOn );
+            dc.DrawRectangle( SizeG + ( Rect.width * 2 ), 0, Width, Height );
+        }
+        dc.DestroyClippingRegion();
+    }
+
+    dc.SetPen( * wxBLACK_PEN );
+    dc.DrawText( wxString::Format( wxT( "%02.0f" ), m_PeakLevel ), 2, 1 );
+    //guLogMessage( wxT( "%f" ), m_PeakLevel );
 }
 
 
@@ -219,8 +263,8 @@ guPlayerVumeters::~guPlayerVumeters()
 // -------------------------------------------------------------------------------- //
 void guPlayerVumeters::SetLevels( const guLevelInfo &levels )
 {
-    m_VumLeft->SetLevel( pow( 10, levels.m_Peak_L / 20 ) * 100 );
-    m_VumRight->SetLevel( pow( 10, levels.m_Peak_R / 20 ) * 100 );
+    m_VumLeft->SetLevel( levels.m_Peak_L, levels.m_Decay_L );
+    m_VumRight->SetLevel( levels.m_Peak_R, levels.m_Decay_R );
     //m_VumLeft->SetValue( left );
     //m_VumRight->SetValue( right );
 }
