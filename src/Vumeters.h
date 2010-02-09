@@ -35,12 +35,16 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
+#define guVU_HORIZONTAL     0
+#define guVU_VERTICAL       1
+
 // -------------------------------------------------------------------------------- //
 // Class guVumeters
 // -------------------------------------------------------------------------------- //
 class guVumeter : public wxControl
 {
   protected :
+    int         m_Style;
     double      m_PeakLevel;
     double      m_DecayLevel;
     wxColour    m_RedOn;
@@ -50,9 +54,12 @@ class guVumeter : public wxControl
     wxColour    m_OrangeOn;
     wxColour    m_OrangeOff;
 
+    void        PaintHoriz( void );
+    void        PaintVert( void );
+
   public:
 	guVumeter() {}
-	guVumeter( wxWindow * parent, wxWindowID id );
+	guVumeter( wxWindow * parent, wxWindowID id, const int style = guVU_HORIZONTAL );
 
 	wxSize DoGetBestSize() const;
 	void OnPaint(wxPaintEvent& event);
@@ -74,8 +81,18 @@ class guVumeter : public wxControl
 class guPlayerVumeters : public wxPanel
 {
   protected:
-	guVumeter * m_VumLeft;
-	guVumeter * m_VumRight;
+	guVumeter *       m_VumLeft;
+	guVumeter *       m_VumRight;
+
+    wxBoxSizer *      m_VumMainSizer;
+    wxFlexGridSizer * m_HVumFlexSizer;
+    wxFlexGridSizer * m_VVumFlexSizer;
+	guVumeter *       m_HVumLeft;
+	guVumeter *       m_HVumRight;
+	guVumeter *       m_VVumLeft;
+	guVumeter *       m_VVumRight;
+
+	void OnChangedSize( wxSizeEvent &event );
 
   public:
 	guPlayerVumeters( wxWindow * parent );

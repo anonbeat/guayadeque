@@ -63,6 +63,21 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
 
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
+            wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
+            wxAuiStepColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ), 130 ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
+            wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
+            wxAuiStepColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ), 130 ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
+            wxAUI_GRADIENT_VERTICAL );
+
     m_VisiblePanels = Config->ReadNum( wxT( "LibVisiblePanels" ), -1, wxT( "Positions" ) );
     //
     //
