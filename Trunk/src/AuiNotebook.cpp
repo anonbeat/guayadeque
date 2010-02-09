@@ -24,13 +24,6 @@
 
 #include <wx/dc.h>
 
-extern wxColor wxAuiStepColour( const wxColor & c, int percent );
-
-//wxBitmap wxAuiBitmapFromBits(const unsigned char bits[], int w, int h,
-//                             const wxColour& color);
-
-extern wxString wxAuiChopText( wxDC &dc, const wxString &text, int max_size );
-
 // -------------------------------------------------------------------------------- //
 static void inline IndentPressedBitmap( wxRect * rect, int button_state )
 {
