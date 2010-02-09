@@ -483,7 +483,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        guLogMessage( wxT( "Reading PlayerPanel Config Updated" ) );
+        //guLogMessage( wxT( "Reading PlayerPanel Config Updated" ) );
         m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
@@ -1288,6 +1288,13 @@ void guPlayerPanel::OnMediaBitrate( wxMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
 {
+    //guLogMessage( wxT( "OnMediaLoaded %i" ), m_AboutToFinishPending );
+    if( m_AboutToFinishPending )
+    {
+        //guLogMessage( wxT( "Push back the OnMediaLoaded event..." ) );
+        wxPostEvent( m_MediaCtrl, event );
+        return;
+    }
     try {
         //guLogMessage( wxT("OnMediaLoaded") );
 
@@ -1364,6 +1371,7 @@ void guPlayerPanel::OnMediaAboutToFinish( wxMediaEvent &event )
         SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         m_AboutToFinishPending = false;
+        //guLogMessage( wxT( "End About-To-Finish %i" ), m_AboutToFinishPending );
         return;
     }
 }
