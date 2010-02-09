@@ -211,7 +211,8 @@ static void gst_about_to_finish( GstElement * playbin, guMediaCtrl * ctrl )
 {
     ctrl->AboutToFinish();
     wxMediaEvent event( wxEVT_MEDIA_ABOUT_TO_FINISH );
-    ctrl->AddPendingEvent( event );
+    //ctrl->AddPendingEvent( event );
+    wxPostEvent( ctrl, event );
 }
 
 }
