@@ -28,6 +28,13 @@
 
 // CODE FROM auibook.cpp
 
+extern wxColor wxAuiStepColour( const wxColor & c, int percent );
+
+//wxBitmap wxAuiBitmapFromBits(const unsigned char bits[], int w, int h,
+//                             const wxColour& color);
+
+extern wxString wxAuiChopText( wxDC &dc, const wxString &text, int max_size );
+
 // wxTabFrame is an interesting case.  It's important that all child pages
 // of the multi-notebook control are all actually children of that control
 // (and not grandchildren).  wxTabFrame facilitates this.  There is one

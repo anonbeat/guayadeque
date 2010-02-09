@@ -64,7 +64,8 @@
 #define     guPANEL_MAIN_PODCASTS           ( 1 << 8 )
 #define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | guPANEL_MAIN_LASTFM | \
                                               guPANEL_MAIN_LYRICS  | guPANEL_MAIN_PLAYLISTS | guPANEL_MAIN_PODCASTS )
-
+#define     guPANEL_MAIN_VISIBLE_DEFAULT    ( guPANEL_MAIN_PLAYERPLAYLIST | guPANEL_MAIN_PLAYERFILTERS | \
+                                              guPANEL_MAIN_SELECTOR )
 
 class guTaskBarIcon;
 class guLibUpdateThread;
