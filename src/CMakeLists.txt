@@ -194,6 +194,8 @@ ADD_EXECUTABLE( guayadeque
 	AuiNotebook.h
 	PlayerFilters.cpp
 	PlayerFilters.h
+	Vumeters.cpp
+	Vumeters.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

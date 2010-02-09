@@ -37,7 +37,6 @@ guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPla
     Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnPrevTrack ) );
     Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnQuit ) );
     Connect( wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler( guTaskBarIcon::OnClick ), NULL, this );
-
 }
 
 // ---------------------------------------------------------------------- //
@@ -116,10 +115,10 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
 
     if( m_PlayerPanel )
     {
-        MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_PLAY, _( "Play" ), _( "Play current playlist" ) );
-        MenuItem->SetBitmap( guImage( ( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING ) ?
-                                           guIMAGE_INDEX_playback_pause :
-                                           guIMAGE_INDEX_playback_start ) );
+        bool IsPaused = ( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING );
+        MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_PLAY, IsPaused ? _( "Pause" ) : _( "Play" ), _( "Play current playlist" ) );
+        MenuItem->SetBitmap( guImage( IsPaused ? guIMAGE_INDEX_playback_pause :
+                                                 guIMAGE_INDEX_playback_start ) );
         RetVal->Append( MenuItem );
 
         MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_STOP, _( "Stop" ), _( "Play current playlist" ) );

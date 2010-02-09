@@ -27,6 +27,7 @@
 #include "PlayList.h"
 #include "RatingCtrl.h"
 #include "StaticBitmap.h"
+#include "Vumeters.h"
 
 
 #include <wx/aui/aui.h>
@@ -145,6 +146,7 @@ class guPlayerPanel : public wxPanel
     guDbLibrary *           m_Db;
 	guPlayList *            m_PlayListCtrl;
 	guPlayerFilters *       m_PlayerFilters;
+	guPlayerVumeters *      m_PlayerVumeters;
 	guMediaCtrl *           m_MediaCtrl;
 	guPlayerPanelTimer *    m_PlayerTimer;
     guCurrentTrack          m_MediaSong;
@@ -267,6 +269,8 @@ class guPlayerPanel : public wxPanel
     void                SetBitRate( int bitrate );
 
     void                UpdatedTracks( const guTrackArray * tracks );
+
+    void                SetPlayerVumeters( guPlayerVumeters * vumeters ) { m_PlayerVumeters = vumeters; };
 
     friend class guSmartAddTracksThread;
 };

@@ -97,6 +97,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_LyricsPanel = NULL;
     m_PlayListPanel = NULL;
     m_PodcastsPanel = NULL;
+    m_PlayerVumeters = NULL;
 
     //
     m_AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
@@ -123,7 +124,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
 
-    m_VisiblePanels = Config->ReadNum( wxT( "MainVisiblePanels" ), -1, wxT( "Positions" ) );
+    m_VisiblePanels = Config->ReadNum( wxT( "MainVisiblePanels" ), -1 ^ guPANEL_MAIN_PLAYERVUMETERS, wxT( "Positions" ) );
     guLogMessage( wxT( "%08X" ), m_VisiblePanels );
 
 	m_MainStatusBar = new guStatusBar( this );
@@ -133,8 +134,12 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
 //	m_PlayerSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
 //    m_PlayerSplitter->SetMinimumPaneSize( 100 );
+    m_PlayerVumeters = new guPlayerVumeters( this );
 
     m_PlayerFilters = new guPlayerFilters( this, m_Db );
+	m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "Vumeters" ) ).
+        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 100, 50 ).
+        Float().Hide() );
 
 	m_AuiManager.AddPane( m_PlayerFilters, wxAuiPaneInfo().Name( wxT( "PlayerFilters" ) ).Caption( _( "Filters" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
@@ -151,6 +156,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	m_PlayerPanel = new guPlayerPanel( this, m_Db, m_PlayerPlayList->GetPlayListCtrl(), m_PlayerFilters );
 
 	m_PlayerPlayList->SetPlayerPanel( m_PlayerPanel );
+	m_PlayerPanel->SetPlayerVumeters( m_PlayerVumeters );
 
 	m_AuiManager.AddPane( m_PlayerPanel, wxAuiPaneInfo().Name( wxT( "PlayerPanel" ) ).
         CloseButton( false ).DestroyOnClose( false ).
@@ -340,6 +346,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     Connect( ID_MENU_VIEW_PLAYER_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_PLAYER_FILTERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_PLAYER_VUMETERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_PLAYER_SELECTOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
 
     Connect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ), NULL, this );
@@ -619,6 +626,10 @@ void guMainFrame::CreateMenu()
     m_ViewPlayerFilters = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYER_FILTERS, _( "Player Filters" ), _( "Show/Hide the player filters panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewPlayerFilters );
     m_ViewPlayerFilters->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS );
+
+    m_ViewPlayerVumeters = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYER_VUMETERS, _( "Vumeters" ), _( "Show/Hide the player vumeter" ), wxITEM_CHECK );
+    m_MainMenu->Append( m_ViewPlayerVumeters );
+    m_ViewPlayerVumeters->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS );
 
     SubMenu = new wxMenu();
 
@@ -1980,6 +1991,7 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
     m_AuiManager.Update();
 
     OnPlayerPlayListUpdateTitle( event );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2056,6 +2068,10 @@ void guMainFrame::OnMainPaneClose( wxAuiManagerEvent &event )
     {
         CmdId = ID_MENU_VIEW_PLAYER_FILTERS;
     }
+    else if( PaneName == wxT( "PlayerVumeters" ) )
+    {
+        CmdId = ID_MENU_VIEW_PLAYER_VUMETERS;
+    }
     else if( PaneName == wxT( "PlayerSelector" ) )
     {
         CmdId = ID_MENU_VIEW_PLAYER_SELECTOR;
@@ -2087,6 +2103,12 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
         case ID_MENU_VIEW_PLAYER_FILTERS :
         {
             PanelId = guPANEL_MAIN_PLAYERFILTERS;
+            break;
+        }
+
+        case ID_MENU_VIEW_PLAYER_VUMETERS :
+        {
+            PanelId = guPANEL_MAIN_PLAYERVUMETERS;
             break;
         }
 
@@ -2136,6 +2158,11 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
         case guPANEL_MAIN_PLAYERFILTERS :
             PaneName = wxT( "PlayerFilters" );
             m_ViewPlayerFilters->Check( show );
+            break;
+
+        case guPANEL_MAIN_PLAYERVUMETERS :
+            PaneName = wxT( "PlayerVumeters" );
+            m_ViewPlayerVumeters->Check( show );
             break;
 
         default :

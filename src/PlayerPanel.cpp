@@ -62,6 +62,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     guConfig * Config;
 
     m_LastVolume = wxNOT_FOUND;
+    m_PlayerVumeters = NULL;
 
     m_LastCurPos = -1;
     m_LastPlayState = wxMEDIASTATE_STOPPED;
@@ -1206,6 +1207,14 @@ void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
                 //guLogMessage( wxT( "Silence detected. Changed to next track" ) );
             }
         }
+    }
+
+    if( m_PlayerVumeters )
+    {
+        m_PlayerVumeters->SetLevels( event.m_LevelInfo );
+//        guLogMessage( wxT( "L:%02.02f  R:%02.02f" ),
+//            event.m_LevelInfo.m_Peak_L,
+//            event.m_LevelInfo.m_Peak_R );
     }
 }
 
