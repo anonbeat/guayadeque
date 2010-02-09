@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-09 08:53+0000\n"
-"PO-Revision-Date: 2010-02-09 08:57-0000\n"
-"Last-Translator: J.Rios <anonbeat@gmail.com>\n"
+"POT-Creation-Date: 2010-02-09 10:34+0100\n"
+"PO-Revision-Date: 2010-02-09 10:52+0100\n"
+"Last-Translator: Rudy <mekanix@aruba.it>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -682,9 +682,8 @@ msgstr "Cerca:"
 #: MainFrame.cpp:642
 #: MainFrame.cpp:683
 #: RadioPanel.cpp:724
-#, fuzzy
 msgid "Text Search"
-msgstr "Cerca:"
+msgstr "Ricerca Testo"
 
 #: LibPanel.cpp:97
 #: LibPanel.cpp:104
@@ -757,14 +756,12 @@ msgid "Copy the content of the lyric to clipboard"
 msgstr "Copia il testo del brano negli appunti"
 
 #: LyricsPanel.cpp:243
-#, fuzzy
 msgid "Paste"
-msgstr "Percorso"
+msgstr "Incolla"
 
 #: LyricsPanel.cpp:243
-#, fuzzy
 msgid "Paste the content of the lyric from clipboard"
-msgstr "Copia il testo del brano negli appunti"
+msgstr "Copia il testo del brano dagli appunti"
 
 #: LyricsPanel.cpp:252
 msgid "Print"
@@ -783,14 +780,13 @@ msgid "No lyrics found for this song."
 msgstr "Testo non trovato per il brano corrente"
 
 #: MainFrame.cpp:133
-#, fuzzy
 msgid "Welcome to guayadeque "
 msgstr "Benvenuto in guayadeque!"
 
 #: MainFrame.cpp:140
 #: MainFrame.cpp:630
 msgid "Vumeters"
-msgstr ""
+msgstr "Spettro"
 
 #: MainFrame.cpp:144
 msgid "Filters"
@@ -891,105 +887,88 @@ msgid "&Library"
 msgstr "&Libreria"
 
 #: MainFrame.cpp:598
-#, fuzzy
 msgid "Save Layout"
-msgstr "Salva Playlist"
+msgstr "Salva Layout"
 
 #: MainFrame.cpp:598
-#, fuzzy
 msgid "Saves the current layout"
-msgstr "Ripete la Playlist"
+msgstr "Salva il layout corrente"
 
 #: MainFrame.cpp:609
 #: MainFrame.cpp:1920
 #: MainFrame.cpp:1922
 #: MainFrame.cpp:1948
 msgid "Load this user defined layout"
-msgstr ""
+msgstr "Carica questo layout personalizzato"
 
 #: MainFrame.cpp:611
 #: MainFrame.cpp:1950
-#, fuzzy
 msgid "Delete this user defined layout"
-msgstr "Elimina la Playlist selezionata"
+msgstr "Elimina la questo layout personalizzato"
 
 #: MainFrame.cpp:616
 msgid "Load Layout"
-msgstr ""
+msgstr "Carica Layout"
 
 #: MainFrame.cpp:616
 msgid "Set current view from a user defined layout"
-msgstr ""
+msgstr "Imposta visualizzazione corrente da un layout personalizzato"
 
 #: MainFrame.cpp:617
-#, fuzzy
 msgid "Delete Layout"
-msgstr "Elimina radio"
+msgstr "Elimina Layout"
 
 #: MainFrame.cpp:617
-#, fuzzy
 msgid "Delete a user defined layout"
-msgstr "Elimina la Playlist selezionata"
+msgstr "Elimina un layout personalizzato"
 
 #: MainFrame.cpp:622
-#, fuzzy
 msgid "Player PlayList"
-msgstr "Svuota la Playlist"
+msgstr "Coda di riproduzione"
 
 #: MainFrame.cpp:622
-#, fuzzy
 msgid "Show/Hide the player playlist panel"
-msgstr "Mostra/Nascondi il pannello delle Playlist"
+msgstr "Mostra/Nascondi il pannello delle coda di riproduzione"
 
 #: MainFrame.cpp:626
-#, fuzzy
 msgid "Player Filters"
-msgstr " Filtri "
+msgstr "Filtri"
 
 #: MainFrame.cpp:626
-#, fuzzy
 msgid "Show/Hide the player filters panel"
-msgstr "Mostra/Nascondi il pannello delle Playlist"
+msgstr "Mostra/Nascondi il pannello dei filtri"
 
 #: MainFrame.cpp:630
-#, fuzzy
 msgid "Show/Hide the player vumeter"
-msgstr "Mostra/Nascondi il pannello dei testi"
+msgstr "Mostra/Nascondi lo spettro"
 
 #: MainFrame.cpp:636
-#, fuzzy
 msgid "Show/Hide the library panel"
-msgstr "Mostra/Nascondi il pannello Radio"
+msgstr "Mostra/Nascondi il pannello della libreria"
 
 #: MainFrame.cpp:642
-#, fuzzy
 msgid "Show/Hide the library text search"
-msgstr "Mostra/Nascondi il pannello delle Playlist"
+msgstr "Mostra/Nascondi ricerca testuale della libreria"
 
 #: MainFrame.cpp:647
-#, fuzzy
 msgid "Show/Hide the library labels"
-msgstr "Mostra/Nascondi il pannello Radio"
+msgstr "Mostra/Nascondi etichette della libreria"
 
 #: MainFrame.cpp:652
-#, fuzzy
 msgid "Show/Hide the library genres"
-msgstr "Mostra/Nascondi il pannello Radio"
+msgstr "Mostra/Nascondi i generi della libreria"
 
 #: MainFrame.cpp:657
-#, fuzzy
 msgid "Show/Hide the library artists"
-msgstr "Mostra/Nascondi il pannello delle Playlist"
+msgstr "Mostra/Nascondi gli artisti della libreria"
 
 #: MainFrame.cpp:662
-#, fuzzy
 msgid "Show/Hide the library albums"
-msgstr "Mostra/Nascondi il pannello Radio"
+msgstr "Mostra/Nascondi gli album della libreria"
 
 #: MainFrame.cpp:672
-#, fuzzy
 msgid "Set the library visible panels"
-msgstr "Mostra/Nascondi il pannello delle Playlist"
+msgstr "Imposta i pannelli visibili della libreria"
 
 #: MainFrame.cpp:677
 #: MainFrame.cpp:698
@@ -1001,24 +980,20 @@ msgid "Show/Hide the radio panel"
 msgstr "Mostra/Nascondi il pannello Radio"
 
 #: MainFrame.cpp:683
-#, fuzzy
 msgid "Show/Hide the radio text search"
-msgstr "Mostra/Nascondi il pannello Radio"
+msgstr "Mostra/Nascondi ricerca radio"
 
 #: MainFrame.cpp:688
-#, fuzzy
 msgid "Show/Hide the radio labels"
-msgstr "Mostra/Nascondi il pannello Radio"
+msgstr "Mostra/Nascondi le etichette nella schermata radio"
 
 #: MainFrame.cpp:693
-#, fuzzy
 msgid "Show/Hide the radio genres"
-msgstr "Mostra/Nascondi il pannello Radio"
+msgstr "Mostra/Nascondi i generi nella schermata radio"
 
 #: MainFrame.cpp:698
-#, fuzzy
 msgid "Set the radio visible panels"
-msgstr "Mostra/Nascondi il pannello Radio"
+msgstr "Imposta i pannelli visibili della radio"
 
 #: MainFrame.cpp:701
 msgid "Last.&fm"
@@ -1059,9 +1034,8 @@ msgid "Channels"
 msgstr "Canali"
 
 #: MainFrame.cpp:723
-#, fuzzy
 msgid "Show/Hide the podcasts channels"
-msgstr "Mostra/Nascondi il pannello dei Podcast"
+msgstr "Mostra/Nascondi i canali podcast"
 
 #: MainFrame.cpp:728
 #: TrackEdit.cpp:226
@@ -1069,19 +1043,16 @@ msgid "Details"
 msgstr "Dettagli"
 
 #: MainFrame.cpp:728
-#, fuzzy
 msgid "Show/Hide the podcasts details"
-msgstr "Mostra/Nascondi il pannello dei Podcast"
+msgstr "Mostra/Nascondi i dettagli dei podcast"
 
 #: MainFrame.cpp:733
-#, fuzzy
 msgid "&Podcasts"
-msgstr "Podcast"
+msgstr "&Podcast"
 
 #: MainFrame.cpp:733
-#, fuzzy
 msgid "Set the podcasts visible panels"
-msgstr "Mostra/Nascondi il pannello dei Podcast"
+msgstr "Imposta i pannelli visibili deli podcast"
 
 #: MainFrame.cpp:736
 msgid "&View"
@@ -1112,14 +1083,12 @@ msgid "Play or Pause the current track in the playlist"
 msgstr "Riproduci/Metti in pausa il brano corrente nella playlist"
 
 #: MainFrame.cpp:749
-#, fuzzy
 msgid "&Stop"
-msgstr "Stop"
+msgstr "&Stop"
 
 #: MainFrame.cpp:749
-#, fuzzy
 msgid "Stop the current played track"
-msgstr "Elimina i brani selezionati"
+msgstr "Ferma la riproduzione del brano corrente"
 
 #: MainFrame.cpp:753
 msgid "&Smart Mode"
@@ -1138,23 +1107,20 @@ msgid "Randomize the playlist"
 msgstr "Ordina la playlist in &modo casuale"
 
 #: MainFrame.cpp:761
-#, fuzzy
 msgid "&Repeat Playlist"
-msgstr "Rinomina Playlist"
+msgstr "&Ripeti Playlist"
 
 #: MainFrame.cpp:761
 msgid "Repeat the tracks in the playlist"
 msgstr "Ripeti il brano nella playlist"
 
 #: MainFrame.cpp:766
-#, fuzzy
 msgid "&Repeat Track"
-msgstr "Brano &Successivo"
+msgstr "&Ripeti Brano"
 
 #: MainFrame.cpp:766
-#, fuzzy
 msgid "Repeat the current track in the playlist"
-msgstr "Ripeti il brano nella playlist"
+msgstr "Ripeti il brano corrente nella playlist"
 
 #: MainFrame.cpp:771
 msgid "&Control"
@@ -1188,32 +1154,30 @@ msgstr "Invia a..."
 #: MainFrame.cpp:1660
 #, c-format
 msgid "%llu tracks,   %s,   %s"
-msgstr ""
+msgstr "%llu brani,   %s,   %s"
 
 #: MainFrame.cpp:1654
 #, c-format
 msgid "%llu stations"
-msgstr ""
+msgstr "%llu stazioni"
 
 #: MainFrame.cpp:1674
 #, c-format
 msgid "%llu podcasts,   %s,   %s"
-msgstr ""
+msgstr "%llu podcast,   %s,   %s"
 
 #: MainFrame.cpp:1905
-#, fuzzy
 msgid "Enter the layout name:"
-msgstr "Inserisci il nome per la nuova Playlist"
+msgstr "Inserisci il nome del Layout"
 
 #: MainFrame.cpp:1905
-#, fuzzy
 msgid "New Layout"
-msgstr "Nuova Playlist"
+msgstr "Nuovo Layout"
 
 #: MainFrame.cpp:1907
 #, c-format
 msgid "Layout %u"
-msgstr ""
+msgstr "Layout %u"
 
 #: NewChannel.cpp:86
 msgid "New Podcast Channel"
@@ -1276,7 +1240,7 @@ msgstr "Riproduce o mette in pausa il brano corrente nella Playlist"
 
 #: PlayerPanel.cpp:138
 msgid "Stops player reproduction"
-msgstr ""
+msgstr "Ferma riproduzione"
 
 #: PlayerPanel.cpp:142
 msgid "Volume 0%"
@@ -1489,9 +1453,8 @@ msgid "Delete the selected playlist"
 msgstr "Elimina la Playlist selezionata"
 
 #: PlayListPanel.cpp:472
-#, fuzzy
 msgid "Play Lists"
-msgstr "PlayList"
+msgstr "Playlist"
 
 #: PlayListPanel.cpp:657
 #: PlayListPanel.cpp:697
@@ -1554,9 +1517,8 @@ msgid "Length:"
 msgstr "Durata:"
 
 #: PodcastsPanel.cpp:242
-#, fuzzy
 msgid "Podcast Details"
-msgstr "Podcast"
+msgstr "Dettagli sul Podcast"
 
 #: PodcastsPanel.cpp:408
 msgid "Are you sure to delete the selected podcast channel?"
@@ -2141,9 +2103,8 @@ msgid "Enter the new label name"
 msgstr "Inserisci il nome per la nuova etichetta"
 
 #: RadioPanel.cpp:783
-#, fuzzy
 msgid "Stations"
-msgstr "Stato"
+msgstr "Stazioni"
 
 #: RadioPanel.cpp:908
 msgid "Stations Labels Editor"
@@ -2159,7 +2120,7 @@ msgstr "Nessun elemento per questa stazione radio"
 
 #: SoListBox.cpp:285
 msgid "Last Play"
-msgstr "Riproduci Ultimo"
+msgstr "Ultima Riproduzione"
 
 #: SoListBox.cpp:338
 msgid "Play All"
@@ -2218,9 +2179,8 @@ msgid "Shows the status of the LastFM connection."
 msgstr "Mostra lo stato della connessione con LastFM"
 
 #: StatusBar.cpp:144
-#, fuzzy
 msgid "Shows information about the selected items."
-msgstr "Mostra le informazioni su guayadeque music player"
+msgstr "Mostra le informazioni per gli elementi selezionati."
 
 #: TagInfo.cpp:645
 msgid "iD3Tags Save failed"
@@ -2236,7 +2196,7 @@ msgstr "Aggiungi alla Playlist i brani associati alle etichette selezionate"
 
 #: TaskBar.cpp:119
 msgid "Pause"
-msgstr ""
+msgstr "Pausa"
 
 #: TaskBar.cpp:119
 #: TaskBar.cpp:124

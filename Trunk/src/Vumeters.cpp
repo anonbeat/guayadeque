@@ -176,7 +176,7 @@ void guVumeter::OnPaint( wxPaintEvent &WXUNUSED(event) )
     }
 
     dc.SetPen( * wxBLACK_PEN );
-    dc.DrawText( wxString::Format( wxT( "%02.0f" ), m_PeakLevel ), 2, 1 );
+    dc.DrawText( wxString::Format( wxT( "%02.0f" ), m_PeakLevel ), 2,  ( Height / 2 ) - 9 );
     //guLogMessage( wxT( "%f" ), m_PeakLevel );
 }
 
