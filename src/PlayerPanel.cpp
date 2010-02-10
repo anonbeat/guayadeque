@@ -42,6 +42,8 @@
 #define guPLAYER_SMART_CACHEITEMS       100
 #define guPLAYER_SMART_CACHEARTISTS     20
 
+guLevelInfo LastLevelInfo;
+
 // -------------------------------------------------------------------------------- //
 guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     guPlayList * playlist, guPlayerFilters * filters )
@@ -1211,9 +1213,12 @@ void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 
     if( m_PlayerVumeters )
     {
-        //guLogMessage( wxT( "Time: %" GST_TIME_FORMAT ), GST_TIME_ARGS(event.m_LevelInfo.m_EndTime) );
+//        guLogMessage( wxT( "Time: %" GST_TIME_FORMAT ),
+//            GST_TIME_ARGS( event.m_LevelInfo.m_EndTime ) );
+//        guLogMessage( wxT( "%lli %u" ), GST_TIME_AS_MSECONDS( event.m_LevelInfo.m_EndTime ), GetPosition() );
 
-        m_PlayerVumeters->SetLevels( event.m_LevelInfo );
+        m_PlayerVumeters->SetLevels( LastLevelInfo );
+        LastLevelInfo = event.m_LevelInfo;
 //        guLogMessage( wxT( "L:%02.02f  R:%02.02f" ),
 //            event.m_LevelInfo.m_Peak_L,
 //            event.m_LevelInfo.m_Peak_R );
