@@ -156,7 +156,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     m_PlayerFilters = new guPlayerFilters( this, m_Db );
 	m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "Vumeters" ) ).
-        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 60, 60 ).
+        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 20, 20 ).
         Float().Hide() );
 
 	m_AuiManager.AddPane( m_PlayerFilters, wxAuiPaneInfo().Name( wxT( "PlayerFilters" ) ).Caption( _( "Filters" ) ).
@@ -278,7 +278,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     else
         m_AuiManager.Update();
 
-    m_CurrentPage = m_LibPanel;
+    m_CurrentPage = m_CatNotebook->GetPage( m_CatNotebook->GetSelection() );
 
     //
     m_TaskBarIcon = NULL;
@@ -322,6 +322,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
     Connect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ), NULL, this );
+    Connect( ID_MENU_UPDATE_LIBRARYFORCED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnForceUpdateLibrary ), NULL, this );
+    Connect( ID_MENU_LIBRARY_ADD_PATH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAddLibraryPath ), NULL, this );
     Connect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ), NULL, this );
     Connect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ), NULL, this );
     Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
@@ -418,6 +420,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
 guMainFrame::~guMainFrame()
 {
     Disconnect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ), NULL, this );
+    Disconnect( ID_MENU_UPDATE_LIBRARYFORCED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnForceUpdateLibrary ), NULL, this );
+    Disconnect( ID_MENU_LIBRARY_ADD_PATH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAddLibraryPath ), NULL, this );
     Disconnect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ), NULL, this );
     Disconnect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ), NULL, this );
     Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
@@ -586,16 +590,23 @@ void guMainFrame::CreateMenu()
 	wxMenu *     SubMenu;
 
 	m_MainMenu = new wxMenu();
-	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_LIBRARY, _("&Update Library" ), _( "Update all songs from the directories configured" ), wxITEM_NORMAL );
+
+	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LIBRARY_ADD_PATH, _("&Add Directory" ), _( "Add a directory to the Library paths" ), wxITEM_NORMAL );
 	m_MainMenu->Append( MenuItem );
 
-	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_PODCASTS, _("Update &Podcasts" ), _( "Update the podcasts added" ), wxITEM_NORMAL );
+	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_LIBRARY, _("&Update Library" ), _( "Update all new songs from the directories configured" ), wxITEM_NORMAL );
+	m_MainMenu->Append( MenuItem );
+
+	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_LIBRARYFORCED, _("&Rescan Library" ), _( "Update all songs from the directories configured" ), wxITEM_NORMAL );
+	m_MainMenu->Append( MenuItem );
+
+	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_PODCASTS, _("Update P&odcasts" ), _( "Update the podcasts added" ), wxITEM_NORMAL );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
 	m_MainMenu->Append( MenuItem );
 
-	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_COVERS, _("Update Covers"), _( "Try to download all missing covers" ), wxITEM_NORMAL );
-    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
-	m_MainMenu->Append( MenuItem );
+//	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_COVERS, _("Update Covers"), _( "Try to download all missing covers" ), wxITEM_NORMAL );
+//    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
+//	m_MainMenu->Append( MenuItem );
 
 	m_MainMenu->AppendSeparator();
 
@@ -1006,6 +1017,58 @@ void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
         return;
     int gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
     m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnForceUpdateLibrary( wxCommandEvent &event )
+{
+    if( m_LibUpdateThread )
+        return;
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+    int gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
+    m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnAddLibraryPath( wxCommandEvent &event )
+{
+    wxDirDialog * DirDialog = new wxDirDialog( this, _( "Select library path" ), wxGetHomeDir() );
+    if( DirDialog )
+    {
+        if( DirDialog->ShowModal() == wxID_OK )
+        {
+            guConfig * Config = ( guConfig * ) guConfig::Get();
+            wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+
+            wxString PathValue = DirDialog->GetPath();
+            if( !PathValue.EndsWith( wxT( "/" ) ) )
+                PathValue += '/';
+
+            guLogMessage( wxT( "LibPaths: '%s'" ), LibPaths[ 0 ].c_str() );
+            guLogMessage( wxT( "Add Path: '%s'" ), PathValue.c_str() );
+            guLogMessage( wxT( "Exists  : %i" ), m_Db->PathExists( PathValue ) );
+            guLogMessage( wxT( "Index   : %i" ), LibPaths.Index( PathValue ) );
+
+            if( ( m_Db->PathExists( PathValue ) == wxNOT_FOUND ) &&
+                !CheckFileLibPath( LibPaths, PathValue ) )
+            {
+
+                LibPaths.Add( PathValue );
+                Config->WriteAStr( wxT( "LibPath" ), LibPaths, wxT( "LibPaths" ) );
+
+                event.SetId( ID_MENU_UPDATE_LIBRARY );
+                AddPendingEvent( event );
+            }
+            else
+            {
+                wxMessageBox( _( "This Path is already in the library" ),
+                    _( "Adding path error" ),
+                    wxICON_EXCLAMATION | wxOK  );
+            }
+        }
+        DirDialog->Destroy();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1473,6 +1536,12 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
     }
 
     m_ViewPodcasts->Check( m_VisiblePanels & guPANEL_MAIN_PODCASTS );
+
+    m_ViewPodChannels->Check( m_PodcastsPanel && m_PodcastsPanel->IsPanelShown( guPANEL_PODCASTS_CHANNELS ) );
+    m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
+
+    m_ViewPodDetails->Check( m_PodcastsPanel && m_PodcastsPanel->IsPanelShown( guPANEL_PODCASTS_DETAILS ) );
+    m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1714,7 +1783,8 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
     {
         guLogMessage( wxT( "Database updating started." ) );
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARY );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED,
+            m_Db->NeedUpdate() ? ID_MENU_UPDATE_LIBRARYFORCED : ID_MENU_UPDATE_LIBRARY );
         AddPendingEvent( event );
     }
 

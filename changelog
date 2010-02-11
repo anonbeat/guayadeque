@@ -1,4 +1,6 @@
 
+  * Added option to add library path from menu
+  * Added option to rescan the library
   * Added playback vumeters
   * You can rearrange panels in PlayLists panel
   * You can select which filters to show in the library and radio

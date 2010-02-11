@@ -408,19 +408,6 @@ int guDbLibrary::GetDbVersion( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename )
-{
-    int index;
-    int count = LibPaths.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( filename.StartsWith( LibPaths[ index ] ) )
-            return true;
-    }
-    return false;
-}
-
-// -------------------------------------------------------------------------------- //
 void guDbLibrary::DoCleanUp( void )
 {
   wxString query;
@@ -699,6 +686,7 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "DROP TABLE 'covers';" ) );
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_midsize BLOB, cover_hash VARCHAR( 32 ) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
+      m_NeedUpdate = true;
 
       guLogMessage( wxT( "Updating database version to "GU_CURRENT_DBVERSION ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
@@ -1212,6 +1200,31 @@ int guDbLibrary::GetLabelId( int * LabelId, wxString &LabelName )
       * LabelId = m_Db.GetLastRowId().GetLo();
       RetVal = 1;
     }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::PathExists( const wxString &path )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int RetVal = wxNOT_FOUND;
+
+  wxString PathValue = path;
+  if( !PathValue.EndsWith( wxT( "/" ) ) )
+    PathValue += '/';
+
+  escape_query_str( &PathValue );
+
+  query = wxString::Format( wxT( "SELECT path_id FROM paths WHERE path_value = '%s' LIMIT 1;" ),
+                    PathValue.c_str() );
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      RetVal = dbRes.GetInt( 0 );
   }
   dbRes.Finalize();
   return RetVal;

@@ -50,6 +50,7 @@ int guExecute( const wxString &Command );
 wxFileOffset guGetFileSize( const wxString &FileName );
 wxString GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString, bool encoding = false );
 void CheckSymLinks( wxArrayString &libpaths );
+bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename );
 
 // -------------------------------------------------------------------------------- //
 #endif
