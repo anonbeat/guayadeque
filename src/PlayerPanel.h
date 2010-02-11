@@ -259,7 +259,6 @@ class guPlayerPanel : public wxPanel
 
     void                OnAboutToFinish( void );
 
-
     void                SetArtistLabel( const wxString &artistname );
     void                SetAlbumLabel( const wxString &albumname );
     void                SetTitleLabel( const wxString &trackname );
@@ -271,6 +270,8 @@ class guPlayerPanel : public wxPanel
     void                UpdatedTracks( const guTrackArray * tracks );
 
     void                SetPlayerVumeters( guPlayerVumeters * vumeters ) { m_PlayerVumeters = vumeters; };
+    void                ResetVumeterLevel( void );
+
 
     friend class guSmartAddTracksThread;
 };

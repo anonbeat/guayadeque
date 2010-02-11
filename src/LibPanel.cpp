@@ -57,6 +57,9 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_PlayerPanel = NewPlayerPanel;
 
     m_AuiManager.SetManagedWindow( this );
+    m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
+                           wxAUI_MGR_TRANSPARENT_DRAG |
+                           wxAUI_MGR_TRANSPARENT_HINT );
     wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
