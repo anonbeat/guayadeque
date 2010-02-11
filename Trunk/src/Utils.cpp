@@ -428,3 +428,16 @@ void CheckSymLinks( wxArrayString &libpaths )
 }
 
 // -------------------------------------------------------------------------------- //
+bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename )
+{
+    int index;
+    int count = LibPaths.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( filename.StartsWith( LibPaths[ index ] ) )
+            return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //

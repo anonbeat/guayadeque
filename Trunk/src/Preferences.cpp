@@ -1117,7 +1117,7 @@ void guPrefDialog::OnAddPathBtnClick( wxCommandEvent& event )
         {
             if( m_PathsListBox->FindString( DirDialog->GetPath(), true ) == wxNOT_FOUND )
             {
-                m_PathsListBox->Append( DirDialog->GetPath() );
+                m_PathsListBox->Append( DirDialog->GetPath() + wxT( "/" ) );
                 m_LibPathsChanged = true;
             }
         }
@@ -1149,7 +1149,7 @@ void guPrefDialog::OnPathsListBoxDClicked( wxCommandEvent &event )
             {
                 if( m_PathsListBox->FindString( DirDialog->GetPath(), true ) == wxNOT_FOUND )
                 {
-                    m_PathsListBox->SetString( index, DirDialog->GetPath() );
+                    m_PathsListBox->SetString( index, DirDialog->GetPath() + wxT( "/" ) );
                     m_LibPathsChanged = true;
                 }
             }

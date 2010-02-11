@@ -196,6 +196,8 @@ ADD_EXECUTABLE( guayadeque
 	PlayerFilters.h
 	Vumeters.cpp
 	Vumeters.h
+	AlbumBrowser.cpp
+	AlbumBrowser.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

@@ -242,6 +242,9 @@ class guMainFrame : public wxFrame
 
     void                LoadTabsPerspective( const wxString &layout );
 
+    void                OnForceUpdateLibrary( wxCommandEvent &event );
+    void                OnAddLibraryPath( wxCommandEvent &event );
+
   public:
                         guMainFrame( wxWindow * parent );
                         ~guMainFrame();

@@ -180,7 +180,7 @@ void guVumeter::PaintHoriz( void )
     }
 
     dc.SetPen( * wxBLACK_PEN );
-    dc.DrawText( wxString::Format( wxT( "%02.0f" ), m_PeakLevel ), 2,  ( Height / 2 ) - 9 );
+    dc.DrawText( wxString::Format( wxT( "%02.0f" ), m_PeakLevel ), 2,  ( Height / 2 ) - 8 );
     //guLogMessage( wxT( "%f" ), m_PeakLevel );
 }
 
@@ -336,7 +336,7 @@ void guVumeter::OnPaint( wxPaintEvent &WXUNUSED(event) )
 
 // -------------------------------------------------------------------------------- //
 guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
-    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 60, 60 ), wxTAB_TRAVERSAL )
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
 	this->SetMinSize( wxSize( -1, 40 ) );
 
