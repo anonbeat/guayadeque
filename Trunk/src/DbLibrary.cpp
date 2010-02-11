@@ -54,7 +54,7 @@ WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "7"
+#define GU_CURRENT_DBVERSION    "8"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
                "song_number, song_pathid, song_filename, song_year, "\
@@ -598,7 +598,7 @@ bool guDbLibrary::CheckDbVersion( void )
                       "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
                       "VALUES( NULL, 3, 0, 7, 1, '', 5, 0 );" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_hash VARCHAR( 32 ) );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_midsize BLOB, cover_hash VARCHAR( 32 ) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS audioscs( audiosc_id INTEGER PRIMARY KEY AUTOINCREMENT, audiosc_artist VARCHAR(255), audiosc_album varchar(255), audiosc_track varchar(255), audiosc_playedtime INTEGER, audiosc_source char(1), audiosc_ratting char(1), audiosc_len INTEGER, audiosc_tracknum INTEGER, audiosc_mbtrackid INTEGER );" ) );
@@ -691,10 +691,18 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_isuser,radiostation_genreid ASC);" ) );
 
+    }
+
+    case 7 :
+    {
+      query.Add( wxT( "DROP INDEX 'cover_id';" ) );
+      query.Add( wxT( "DROP TABLE 'covers';" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_midsize BLOB, cover_hash VARCHAR( 32 ) );" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
+
       guLogMessage( wxT( "Updating database version to "GU_CURRENT_DBVERSION ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
-
     }
 
   }
@@ -806,36 +814,44 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
   TmpImg.LoadFile( coverfile );
   if( TmpImg.IsOk() )
   {
+    wxString CoverHash;
+    if( coverhash.IsEmpty() )
+    {
+      guMD5 md5;
+      CoverHash = md5.MD5File( coverfile );
+    }
+    else
+      CoverHash = coverhash;
+
     //guLogWarning( _T( "Scaling image %i" ), n );
     TmpImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
     if( TmpImg.IsOk() )
     {
-      wxString CoverHash;
-      if( coverhash.IsEmpty() )
-      {
-        guMD5 md5;
-        CoverHash = md5.MD5File( coverfile );
-      }
-      else
-        CoverHash = coverhash;
-
 //      wxFileOutputStream FOut( wxString::Format( wxT( "/home/jrios/%s.jpg" ), coverhash.c_str() ) );
 //      TmpImg.SaveFile( FOut, wxBITMAP_TYPE_JPEG );
 //      FOut.Close();
-
-      wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_hash ) "
-                         "VALUES( NULL, '%s', ?, '%s' );" ), escape_query_str( coverfile ).c_str(), CoverHash.c_str() ) );
-      try {
-        stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
-        //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
-        stmt.ExecuteQuery();
-      }
-      catch( wxSQLite3Exception& e )
+      wxImage MidImg;
+      MidImg.LoadFile( coverfile );
+      if( MidImg.IsOk() )
       {
-        guLogMessage( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
-      }
+        MidImg.Rescale( 150, 150, wxIMAGE_QUALITY_HIGH );
 
-      CoverId = m_Db.GetLastRowId().GetLo();
+
+        wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_midsize, cover_hash ) "
+                             "VALUES( NULL, '%s', ?, ?, '%s' );" ), escape_query_str( coverfile ).c_str(), CoverHash.c_str() ) );
+        try {
+          stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+          stmt.Bind( 2, MidImg.GetData(), MidImg.GetWidth() * MidImg.GetHeight() * 3 );
+          //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
+          stmt.ExecuteQuery();
+        }
+        catch( wxSQLite3Exception& e )
+        {
+          guLogMessage( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+        }
+
+        CoverId = m_Db.GetLastRowId().GetLo();
+      }
     }
   }
   else
@@ -863,17 +879,24 @@ void guDbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const
 
     if( TmpImg.IsOk() )
     {
-      //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
-      wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format(
-         wxT( "UPDATE covers SET cover_thumb = ?, cover_hash = '%s' WHERE cover_id = %u;" ), coverhash.c_str(), coverid ) );
-
-      try {
-        stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
-        stmt.ExecuteQuery();
-      }
-      catch( wxSQLite3Exception& e )
+      wxImage MidImg;
+      MidImg.LoadFile( coverfile );
+      MidImg.Rescale( 150, 150, wxIMAGE_QUALITY_HIGH );
+      if( MidImg.IsOk() )
       {
-        guLogMessage( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+        //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
+        wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format(
+           wxT( "UPDATE covers SET cover_thumb = ?, cover_midsize = ?, cover_hash = '%s' WHERE cover_id = %u;" ), coverhash.c_str(), coverid ) );
+
+        try {
+          stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
+          stmt.Bind( 2, MidImg.GetData(), MidImg.GetWidth() * MidImg.GetHeight() * 3 );
+          stmt.ExecuteQuery();
+        }
+        catch( wxSQLite3Exception& e )
+        {
+          guLogMessage( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+        }
       }
     }
   }
