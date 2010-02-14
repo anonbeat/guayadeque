@@ -84,16 +84,16 @@ void inline InitArrayStrings( void )
 //
 //    if( !m_LimitChoices.Count() )
 //    {
-        m_LimitChoices.Add( _("Tracks") );
-        m_LimitChoices.Add( _("Minutes") );
-        m_LimitChoices.Add( wxT("MB") );
-        m_LimitChoices.Add( wxT("GB") );
+        m_LimitChoices.Add( _( "Tracks" ) );
+        m_LimitChoices.Add( _( "Minutes" ) );
+        m_LimitChoices.Add( wxT( "MB" ) );
+        m_LimitChoices.Add( wxT( "GB" ) );
 //    }
 //
 //    if( !m_SortChoices.Count() )
 //    {
-        m_SortChoices.Add( _("Title") );
-        m_SortChoices.Add( _("Artist") );
+        m_SortChoices.Add( _( "Title" ) );
+        m_SortChoices.Add( _( "Artist" ) );
         m_SortChoices.Add( _( "Album" ) );
         m_SortChoices.Add( _( "Genre" ) );
         m_SortChoices.Add( _( "Label" ) );
@@ -193,8 +193,10 @@ void guFilterItem::SetFilterLabel( void )
 // -------------------------------------------------------------------------------- //
 // guDynPlayLIstEditor
 // -------------------------------------------------------------------------------- //
-guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist ) :
-  wxDialog( parent, wxID_ANY, _( "Dynamic Playlist Editor" ), wxDefaultPosition, wxSize( 600,400 ), wxDEFAULT_DIALOG_STYLE )
+guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist,
+                                          const bool albumfilter ) :
+  wxDialog( parent, wxID_ANY, albumfilter ? _( "Filter Album Browser" ) :
+    _( "Dynamic Playlist Editor" ), wxDefaultPosition, wxSize( 600,400 ), wxDEFAULT_DIALOG_STYLE )
 {
 	int index;
 	int count;
@@ -202,6 +204,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_Filters = &m_PlayList->m_Filters;
 	m_CurFilter = wxNOT_FOUND;
 	m_HasChanged = false;
+	m_AlbumFilter = albumfilter;
 
     InitArrayStrings();
 
@@ -284,61 +287,77 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
 	MainSizer->Add( CurFiltersSizer, 1, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer* ResultSizer;
-	ResultSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _(" Result ") ), wxVERTICAL );
+    if( !albumfilter )
+    {
+        wxStaticBoxSizer* ResultSizer;
+        ResultSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _(" Result ") ), wxVERTICAL );
 
-	wxBoxSizer* LimitSizer;
-	LimitSizer = new wxBoxSizer( wxHORIZONTAL );
+        wxBoxSizer* LimitSizer;
+        LimitSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_LimitCheckBox = new wxCheckBox( this, wxID_ANY, _("Limit To"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_LimitCheckBox->SetValue( m_PlayList->m_Limited );
+        m_LimitCheckBox = new wxCheckBox( this, wxID_ANY, _("Limit To"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_LimitCheckBox->SetValue( m_PlayList->m_Limited );
 
-	LimitSizer->Add( m_LimitCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+        LimitSizer->Add( m_LimitCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_LimitSpinCtrl = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 2147483647, 0 );
-	m_LimitSpinCtrl->SetValue( m_PlayList->m_LimitValue );
-	m_LimitSpinCtrl->Enable( m_LimitCheckBox->IsChecked() );
+        m_LimitSpinCtrl = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 2147483647, 0 );
+        m_LimitSpinCtrl->SetValue( m_PlayList->m_LimitValue );
+        m_LimitSpinCtrl->Enable( m_LimitCheckBox->IsChecked() );
 
-	LimitSizer->Add( m_LimitSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+        LimitSizer->Add( m_LimitSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_LimitChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LimitChoices, 0 );
-	m_LimitChoice->SetSelection( m_PlayList->m_LimitType );
-	m_LimitChoice->Enable( m_LimitCheckBox->IsChecked() );
+        m_LimitChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LimitChoices, 0 );
+        m_LimitChoice->SetSelection( m_PlayList->m_LimitType );
+        m_LimitChoice->Enable( m_LimitCheckBox->IsChecked() );
 
-	LimitSizer->Add( m_LimitChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+        LimitSizer->Add( m_LimitChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 
-	LimitSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+        LimitSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_AddOnAnyCheckBox = new wxCheckBox( this, wxID_ANY, _("Add tracks on any criteria"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_AddOnAnyCheckBox->SetValue( m_PlayList->m_AnyOption );
+        m_AddOnAnyCheckBox = new wxCheckBox( this, wxID_ANY, _("Add tracks on any criteria"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_AddOnAnyCheckBox->SetValue( m_PlayList->m_AnyOption );
 
-	LimitSizer->Add( m_AddOnAnyCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+        LimitSizer->Add( m_AddOnAnyCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	ResultSizer->Add( LimitSizer, 1, wxEXPAND, 5 );
+        ResultSizer->Add( LimitSizer, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* SortSizer;
-	SortSizer = new wxBoxSizer( wxHORIZONTAL );
+        wxBoxSizer* SortSizer;
+        SortSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_SortCheckBox = new wxCheckBox( this, wxID_ANY, _("Sort By"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SortCheckBox->SetValue( m_PlayList->m_Sorted );
-	SortSizer->Add( m_SortCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+        m_SortCheckBox = new wxCheckBox( this, wxID_ANY, _("Sort By"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_SortCheckBox->SetValue( m_PlayList->m_Sorted );
+        SortSizer->Add( m_SortCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
-	m_SortChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_SortChoices, 0 );
-	m_SortChoice->SetSelection( m_PlayList->m_SortType );
-	m_SortChoice->Enable( m_SortCheckBox->IsChecked() );
+        m_SortChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_SortChoices, 0 );
+        m_SortChoice->SetSelection( m_PlayList->m_SortType );
+        m_SortChoice->Enable( m_SortCheckBox->IsChecked() );
 
-	SortSizer->Add( m_SortChoice, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+        SortSizer->Add( m_SortChoice, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
-	m_DescCheckBox = new wxCheckBox( this, wxID_ANY, _("Descending"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_DescCheckBox->SetValue( m_PlayList->m_SortDesc );
-	m_DescCheckBox->Enable( m_SortCheckBox->IsChecked() );
+        m_DescCheckBox = new wxCheckBox( this, wxID_ANY, _("Descending"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_DescCheckBox->SetValue( m_PlayList->m_SortDesc );
+        m_DescCheckBox->Enable( m_SortCheckBox->IsChecked() );
 
-	SortSizer->Add( m_DescCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+        SortSizer->Add( m_DescCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
-	ResultSizer->Add( SortSizer, 1, wxEXPAND, 5 );
+        ResultSizer->Add( SortSizer, 1, wxEXPAND, 5 );
 
-	MainSizer->Add( ResultSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+        MainSizer->Add( ResultSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+    }
+    else
+    {
+        wxBoxSizer* LimitSizer;
+        LimitSizer = new wxBoxSizer( wxHORIZONTAL );
+
+        LimitSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+        m_AddOnAnyCheckBox = new wxCheckBox( this, wxID_ANY, _("Add tracks on any criteria"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_AddOnAnyCheckBox->SetValue( m_PlayList->m_AnyOption );
+        LimitSizer->Add( m_AddOnAnyCheckBox, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+        MainSizer->Add( LimitSizer, 0, wxEXPAND, 5 );
+    }
 
     wxStdDialogButtonSizer * ButtonsSizer;
     wxButton *  BtnCancel;
@@ -366,9 +385,11 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_FilterAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterAddClicked ), NULL, this );
 	m_FilterDel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterDelClicked ), NULL, this );
 	m_FilterAccept->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterUpdateClicked ), NULL, this );
-	m_LimitCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnLImitChecked ), NULL, this );
-	m_SortCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnSortChecked ), NULL, this );
-
+	if( !albumfilter )
+	{
+        m_LimitCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnLImitChecked ), NULL, this );
+        m_SortCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnSortChecked ), NULL, this );
+	}
 }
 
 // -------------------------------------------------------------------------------- //
@@ -384,20 +405,36 @@ guDynPlayListEditor::~guDynPlayListEditor()
 	m_FilterAdd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterAddClicked ), NULL, this );
 	m_FilterDel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterDelClicked ), NULL, this );
 	m_FilterAccept->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterUpdateClicked ), NULL, this );
-	m_LimitCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnLImitChecked ), NULL, this );
-	m_SortCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnSortChecked ), NULL, this );
+	if( !m_AlbumFilter )
+	{
+        m_LimitCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnLImitChecked ), NULL, this );
+        m_SortCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnSortChecked ), NULL, this );
+	}
 }
 
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::FillPlayListEditData( void )
 {
-    m_PlayList->m_Limited = m_LimitCheckBox->IsChecked();
-    m_PlayList->m_LimitValue = m_LimitSpinCtrl->GetValue();
-    m_PlayList->m_LimitType = m_LimitChoice->GetSelection();
-    m_PlayList->m_Sorted = m_SortCheckBox->IsChecked();
-    m_PlayList->m_SortType = m_SortChoice->GetSelection();
-    m_PlayList->m_SortDesc = m_DescCheckBox->IsChecked();
-    m_PlayList->m_AnyOption = m_AddOnAnyCheckBox->IsChecked();
+    if( !m_AlbumFilter )
+    {
+        m_PlayList->m_Limited = m_LimitCheckBox->IsChecked();
+        m_PlayList->m_LimitValue = m_LimitSpinCtrl->GetValue();
+        m_PlayList->m_LimitType = m_LimitChoice->GetSelection();
+        m_PlayList->m_Sorted = m_SortCheckBox->IsChecked();
+        m_PlayList->m_SortType = m_SortChoice->GetSelection();
+        m_PlayList->m_SortDesc = m_DescCheckBox->IsChecked();
+        m_PlayList->m_AnyOption = m_AddOnAnyCheckBox->IsChecked();
+    }
+    else
+    {
+        m_PlayList->m_Limited = false;
+        m_PlayList->m_LimitValue = 0;
+        m_PlayList->m_LimitType = 0;
+        m_PlayList->m_Sorted = false;
+        m_PlayList->m_SortType = 0;
+        m_PlayList->m_SortDesc = false;
+        m_PlayList->m_AnyOption = false;
+    }
 }
 
 // -------------------------------------------------------------------------------- //

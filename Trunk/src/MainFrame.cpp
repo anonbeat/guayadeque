@@ -98,6 +98,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_PlayListPanel = NULL;
     m_PodcastsPanel = NULL;
     m_PlayerVumeters = NULL;
+    m_AlbumBrowserPanel = NULL;
 
     //
     m_AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
@@ -142,7 +143,15 @@ guMainFrame::guMainFrame( wxWindow * parent )
     AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 
+    if( Config->ReadBool( wxT( "LoadDefaultLayouts" ), false, wxT( "General" ) ) )
+    {
+        Config->WriteBool( wxT( "LoadDefaultLayouts" ), false, wxT( "General" ) );
+        Config->SetIgnoreLayouts( true );
+    }
+
     m_VisiblePanels = Config->ReadNum( wxT( "MainVisiblePanels" ), guPANEL_MAIN_VISIBLE_DEFAULT, wxT( "Positions" ) );
+    if( Config->GetIgnoreLayouts() )
+        m_VisiblePanels = guPANEL_MAIN_VISIBLE_DEFAULT;
     guLogMessage( wxT( "%08X" ), m_VisiblePanels );
 
 	m_MainStatusBar = new guStatusBar( this );
@@ -150,14 +159,14 @@ guMainFrame::guMainFrame( wxWindow * parent )
 	//MainFrameSizer = new wxBoxSizer( wxVERTICAL );
 	SetStatusText( _( "Welcome to guayadeque " ) );
 
-//	m_PlayerSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-//    m_PlayerSplitter->SetMinimumPaneSize( 100 );
+
+    //
     m_PlayerVumeters = new guPlayerVumeters( this );
 
     m_PlayerFilters = new guPlayerFilters( this, m_Db );
 	m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "Vumeters" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 20, 20 ).
-        Float().Hide() );
+        Bottom().Layer( 0 ).Row( 3 ).Position( 0 ).Hide() );
 
 	m_AuiManager.AddPane( m_PlayerFilters, wxAuiPaneInfo().Name( wxT( "PlayerFilters" ) ).Caption( _( "Filters" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
@@ -184,16 +193,12 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     CreateMenu();
 
-//	MultiPanel = new wxPanel( m_PlayerSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//
-//	MultiSizer = new wxBoxSizer( wxVERTICAL );
-
 	//m_CatNotebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	m_CatNotebook = new guAuiNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                         wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_WINDOWLIST_BUTTON );
 
     m_NBPerspective = Config->ReadStr( wxT( "NotebookLayout" ), wxEmptyString, wxT( "Positions" ) );
-    if( !m_NBPerspective.IsEmpty() )
+    if( !Config->GetIgnoreLayouts() && !m_NBPerspective.IsEmpty() )
     {
         LoadTabsPerspective( m_NBPerspective );
     }
@@ -245,13 +250,13 @@ guMainFrame::guMainFrame( wxWindow * parent )
             m_PlayListPanel = NULL;
 
         // Podcast Page
-        if( m_VisiblePanels & guPANEL_MAIN_PODCASTS )
+        if( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
         {
-            m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
-            m_CatNotebook->AddPage( m_PodcastsPanel, _( "Podcasts" ), false );
+            m_AlbumBrowserPanel = new guAlbumBrowser( m_CatNotebook, m_Db, m_PlayerPanel );
+            m_CatNotebook->AddPage( m_AlbumBrowserPanel, _( "Browser" ), false );
         }
         else
-            m_PodcastsPanel = NULL;
+            m_AlbumBrowserPanel = NULL;
     }
 
     m_AuiManager.AddPane( m_CatNotebook, wxAuiPaneInfo().Name( wxT("PlayerSelector") ).
@@ -264,7 +269,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
         PaneInfo.Hide();
     }
 
-    // FileSystem Page
+//    // FileSystem Page
 //    if( Config->ReadBool( wxT( "ShowFileSys" ), true, wxT( "ViewPanels" ) ) )
 //    {
 //	      FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -273,10 +278,30 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     //m_AuiManager.Update();
     wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "Positions" ) );
-    if( !Perspective.IsEmpty() )
+    if( !Config->GetIgnoreLayouts() && !Perspective.IsEmpty() )
+    {
         m_AuiManager.LoadPerspective( Perspective, true );
+    }
     else
-        m_AuiManager.Update();
+    {
+        Perspective = wxT( "layout2|name=PlayerVumeters;caption=" );
+        Perspective += _( "Vumeters" );
+        Perspective += wxT( ";state=2099198;dir=3;layer=0;row=3;pos=0;prop=100000;bestw=20;besth=20;minw=20;minh=20;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=331;floath=249|" );
+        Perspective += wxT( "name=PlayerFilters;caption=" );
+        Perspective += _( "Filters" );
+        Perspective += wxT( ";state=2099196;dir=3;layer=0;row=1;pos=0;prop=100000;bestw=135;besth=68;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        Perspective += wxT( "name=PlayerPlayList;caption=" );
+        Perspective += _( "Now Playing" );
+        Perspective += wxT( ";state=2099196;dir=3;layer=0;row=2;pos=0;prop=100000;bestw=100;besth=100;minw=100;minh=100;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        Perspective += wxT( "name=PlayerPanel;caption=;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=308;besth=167;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        Perspective += wxT( "name=PlayerSelector;caption=;state=2099196;dir=2;layer=1;row=0;pos=0;prop=100000;bestw=100;besth=100;minw=100;minh=100;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        Perspective += wxT( "dock_size(3,0,1)=86|" );
+        Perspective += wxString::Format( wxT( "dock_size(3,0,2)=%i|" ), MainWindowSize.y - 86 - 230 );
+        Perspective += wxT( "dock_size(5,0,0)=310|" );
+        Perspective += wxString::Format( wxT( "dock_size(2,1,0)=%i|" ), MainWindowSize.x - 315 );
+        m_AuiManager.LoadPerspective( Perspective, true );
+        //m_AuiManager.Update();
+    }
 
     m_CurrentPage = m_CatNotebook->GetPage( m_CatNotebook->GetSelection() );
 
@@ -392,6 +417,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_MENU_VIEW_POD_CHANNELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_POD_DETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
 
+    Connect( ID_MENU_VIEW_ALBUMBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewAlbumBrowser ), NULL, this );
+
     Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
     Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
     Connect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
@@ -488,6 +515,8 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ), NULL, this );
     Disconnect( ID_MENU_VIEW_POD_CHANNELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
     Disconnect( ID_MENU_VIEW_POD_DETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
+
+    Disconnect( ID_MENU_VIEW_ALBUMBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewAlbumBrowser ), NULL, this );
 
     Disconnect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
     Disconnect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
@@ -760,6 +789,10 @@ void guMainFrame::CreateMenu()
     m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "&Podcasts" ), _( "Set the podcasts visible panels" ) );
+
+    m_ViewAlbumBrowser = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_ALBUMBROWSER, _( "Album Browser" ), _( "Show/Hide the album browser panel" ), wxITEM_CHECK );
+    m_MainMenu->Append( m_ViewAlbumBrowser );
+    m_ViewAlbumBrowser->Check( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER );
 
 
     MenuBar->Append( m_MainMenu, _( "&View" ) );
@@ -1545,6 +1578,35 @@ void guMainFrame::OnViewPodcasts( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewAlbumBrowser( wxCommandEvent &event )
+{
+    if( event.IsChecked() )
+    {
+        if( !m_AlbumBrowserPanel )
+            m_AlbumBrowserPanel = new guAlbumBrowser( m_CatNotebook, m_Db, m_PlayerPanel );
+
+        m_CatNotebook->InsertPage( wxMin( 6, m_CatNotebook->GetPageCount() ), m_AlbumBrowserPanel, _( "Browser" ), true );
+
+        CheckShowNotebook();
+        m_VisiblePanels |= guPANEL_MAIN_ALBUMBROWSER;
+    }
+    else
+    {
+        int PageIndex = m_CatNotebook->GetPageIndex( m_AlbumBrowserPanel );
+        if( PageIndex >= 0 )
+        {
+            m_CatNotebook->RemovePage( PageIndex );
+        }
+
+        CheckHideNotebook();
+        m_VisiblePanels ^= guPANEL_MAIN_ALBUMBROWSER;
+    }
+
+    m_ViewAlbumBrowser->Check( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER );
+
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 {
     if( event.IsChecked() )
@@ -2134,6 +2196,10 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
         {
             OnViewPodcasts( event );
         }
+        else if( TabName == _( "Browser" ) )
+        {
+            OnViewAlbumBrowser( event );
+        }
 
         Index++;
     }
@@ -2214,11 +2280,14 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
             if( m_VisiblePanels & guPANEL_MAIN_LYRICS )
                 OnViewLyrics( event );
 
+            if( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS )
+                OnViewPlayLists( event );
+
             if( m_VisiblePanels & guPANEL_MAIN_PODCASTS )
                 OnViewPodcasts( event );
 
-            if( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS )
-                OnViewPlayLists( event );
+            if( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
+                OnViewAlbumBrowser( event );
 
             break;
         }

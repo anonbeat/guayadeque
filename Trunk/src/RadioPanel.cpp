@@ -805,7 +805,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 
 
     wxString RadioLayout = Config->ReadStr( wxT( "Radio" ), wxEmptyString, wxT( "Positions" ) );
-    if( RadioLayout.IsEmpty() )
+    if( Config->GetIgnoreLayouts() || RadioLayout.IsEmpty() )
         m_AuiManager.Update();
     else
         m_AuiManager.LoadPerspective( RadioLayout, true );

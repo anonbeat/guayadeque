@@ -513,20 +513,17 @@ bool guMp3TagInfo::Read( void )
 
     if( !fileref.isNull() )
     {
-        if( ( tag = fileref.tag() ) )
-        {
-            m_TrackName = TStringTowxString( tag->title() );
-            m_ArtistName = TStringTowxString( tag->artist() );
-            m_AlbumName = TStringTowxString( tag->album() );
-            m_GenreName = TStringTowxString( tag->genre() );
-            m_Track = tag->track();
-            m_Year = tag->year();
-        }
-
         // If its a ID3v2 Tag try to load the labels
         ID3v2::Tag * tagv2 = ( ( TagLib::MPEG::File * ) fileref.file() )->ID3v2Tag();
         if( tagv2 )
         {
+            m_TrackName = TStringTowxString( tagv2->title() );
+            m_ArtistName = TStringTowxString( tagv2->artist() );
+            m_AlbumName = TStringTowxString( tagv2->album() );
+            m_GenreName = TStringTowxString( tagv2->genre() );
+            m_Track = tagv2->track();
+            m_Year = tagv2->year();
+
             if( m_TrackLabels.Count() == 0 )
             {
                 ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tagv2, "guTRLABELS" );
@@ -560,6 +557,15 @@ bool guMp3TagInfo::Read( void )
                     m_AlbumLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
                 }
             }
+        }
+        else if( ( tag = fileref.tag() ) )
+        {
+            m_TrackName = TStringTowxString( tag->title() );
+            m_ArtistName = TStringTowxString( tag->artist() );
+            m_AlbumName = TStringTowxString( tag->album() );
+            m_GenreName = TStringTowxString( tag->genre() );
+            m_Track = tag->track();
+            m_Year = tag->year();
         }
 
         apro = fileref.audioProperties();

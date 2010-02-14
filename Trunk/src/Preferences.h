@@ -64,6 +64,7 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_ShowSplashChkBox;
     wxCheckBox *                m_MinStartChkBox;
     wxCheckBox *                m_TaskIconChkBox;
+    wxCheckBox *                m_IgnoreLayoutsChkBox;
     wxCheckBox *                m_DropFilesChkBox;
     wxCheckBox *                m_EnqueueChkBox;
     wxChoice *                  m_AlYearOrderChoice;

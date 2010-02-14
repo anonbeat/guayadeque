@@ -69,6 +69,8 @@
 		</Linker>
 		<Unit filename="src/AlListBox.cpp" />
 		<Unit filename="src/AlListBox.h" />
+		<Unit filename="src/AlbumBrowser.cpp" />
+		<Unit filename="src/AlbumBrowser.h" />
 		<Unit filename="src/Amazon.cpp" />
 		<Unit filename="src/Amazon.h" />
 		<Unit filename="src/ApeTag.cpp" />

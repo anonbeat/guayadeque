@@ -190,7 +190,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 
 
     wxString LibraryLayout = Config->ReadStr( wxT( "Library" ), wxEmptyString, wxT( "Positions" ) );
-    if( LibraryLayout.IsEmpty() )
+    if( Config->GetIgnoreLayouts() || LibraryLayout.IsEmpty() )
         m_AuiManager.Update();
     else
         m_AuiManager.LoadPerspective( LibraryLayout, true );
