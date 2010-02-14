@@ -171,7 +171,7 @@ class guAlbumBrowser : public wxPanel
             m_PagesCount = 0;
         }
 
-        guLogMessage( wxT( "RefreshPageCount: Albums: %i   Items: %i  Pages: %i"  ), m_AlbumsCount, m_ItemCount, m_PagesCount );
+        //guLogMessage( wxT( "RefreshPageCount: Albums: %i   Items: %i  Pages: %i"  ), m_AlbumsCount, m_ItemCount, m_PagesCount );
         UpdateNavLabel( 0 );
 
         m_NavSlider->Enable( m_PagesCount > 1 );
