@@ -623,6 +623,8 @@ void guMainFrame::CreateMenu()
 	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LIBRARY_ADD_PATH, _("&Add Directory" ), _( "Add a directory to the Library paths" ), wxITEM_NORMAL );
 	m_MainMenu->Append( MenuItem );
 
+	m_MainMenu->AppendSeparator();
+
 	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_LIBRARY, _("&Update Library" ), _( "Update all new songs from the directories configured" ), wxITEM_NORMAL );
 	m_MainMenu->Append( MenuItem );
 
@@ -633,9 +635,9 @@ void guMainFrame::CreateMenu()
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
 	m_MainMenu->Append( MenuItem );
 
-//	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_COVERS, _("Update Covers"), _( "Try to download all missing covers" ), wxITEM_NORMAL );
+	MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_UPDATE_COVERS, _("Update Covers"), _( "Try to download all missing covers" ), wxITEM_NORMAL );
 //    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
-//	m_MainMenu->Append( MenuItem );
+	m_MainMenu->Append( MenuItem );
 
 	m_MainMenu->AppendSeparator();
 
