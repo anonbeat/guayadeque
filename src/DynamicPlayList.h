@@ -19,7 +19,7 @@
 //
 // -------------------------------------------------------------------------------- //
 #ifndef DYNAMICPLAYLIST_H
-#define DYNAMICPLAYLIST
+#define DYNAMICPLAYLIST_H
 
 #include "RatingCtrl.h"
 
@@ -148,6 +148,7 @@ class guDynPlayListEditor : public wxDialog
         //guFilterItem        m_FilterEdit;
         int                 m_CurFilter;
         bool                m_HasChanged;
+        bool                m_AlbumFilter;
 
 		wxListBox * m_FiltersListBox;
 		wxChoice * m_FilterFieldChoice;
@@ -194,7 +195,7 @@ class guDynPlayListEditor : public wxDialog
 
 
 	public:
-		guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist );
+		guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist, const bool albumfilter = false );
 		~guDynPlayListEditor();
 
 		void FillPlayListEditData( void );

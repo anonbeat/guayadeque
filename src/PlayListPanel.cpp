@@ -511,7 +511,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 
 
     wxString PlayListLayout = Config->ReadStr( wxT( "PlayLists" ), wxEmptyString, wxT( "Positions" ) );
-    if( PlayListLayout.IsEmpty() )
+    if( Config->GetIgnoreLayouts() || PlayListLayout.IsEmpty() )
         m_AuiManager.Update();
     else
         m_AuiManager.LoadPerspective( PlayListLayout, true );

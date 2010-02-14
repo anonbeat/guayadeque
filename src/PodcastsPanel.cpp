@@ -263,7 +263,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 
 
     wxString PodcastLayout = Config->ReadStr( wxT( "Podcasts" ), wxEmptyString, wxT( "Positions" ) );
-    if( PodcastLayout.IsEmpty() )
+    if( Config->GetIgnoreLayouts() || PodcastLayout.IsEmpty() )
         m_AuiManager.Update();
     else
         m_AuiManager.LoadPerspective( PodcastLayout, true );

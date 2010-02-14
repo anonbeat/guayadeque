@@ -34,6 +34,7 @@ class guConfig : public wxConfig
   protected :
     wxMutex             m_ConfigMutex;
     guEvtHandlerArray   m_Objects;
+    bool                m_IgnoreLayouts;
 
   public :
     guConfig( const wxString &conffile = wxT( ".guayadeque/guayadeque.conf" ) );
@@ -53,6 +54,9 @@ class guConfig : public wxConfig
     void            RegisterObject( wxEvtHandler * object );
     void            UnRegisterObject( wxEvtHandler * object );
     void            SendConfigChangedEvent( void );
+
+    bool            GetIgnoreLayouts( void ) { return m_IgnoreLayouts; }
+    void            SetIgnoreLayouts( const bool ignorelayouts ) { m_IgnoreLayouts = ignorelayouts; };
 
 };
 

@@ -21,6 +21,7 @@
 #ifndef MAINFRAME_H
 #define MAINFRAME_H
 
+#include "AlbumBrowser.h"
 #include "AuiNotebook.h"
 #include "Config.h"
 #include "curl/http.h"
@@ -62,8 +63,12 @@
 #define     guPANEL_MAIN_LYRICS             ( 1 << 6 )
 #define     guPANEL_MAIN_PLAYLISTS          ( 1 << 7 )
 #define     guPANEL_MAIN_PODCASTS           ( 1 << 8 )
-#define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | guPANEL_MAIN_LASTFM | \
-                                              guPANEL_MAIN_LYRICS  | guPANEL_MAIN_PLAYLISTS | guPANEL_MAIN_PODCASTS )
+#define     guPANEL_MAIN_ALBUMBROWSER       ( 1 << 9 )
+
+#define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | \
+                                              guPANEL_MAIN_LASTFM | guPANEL_MAIN_LYRICS  | \
+                                              guPANEL_MAIN_PLAYLISTS | guPANEL_MAIN_PODCASTS | \
+                                              guPANEL_MAIN_ALBUMBROWSER )
 #define     guPANEL_MAIN_VISIBLE_DEFAULT    ( guPANEL_MAIN_PLAYERPLAYLIST | guPANEL_MAIN_PLAYERFILTERS | \
                                               guPANEL_MAIN_SELECTOR )
 
@@ -91,6 +96,8 @@ class guMainFrame : public wxFrame
     guLyricsPanel *             m_LyricsPanel;
     guPlayListPanel *           m_PlayListPanel;
     guPodcastPanel *            m_PodcastsPanel;
+    guAlbumBrowser *            m_AlbumBrowserPanel;
+
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
 
@@ -123,6 +130,7 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewLastFM;
     wxMenuItem *                m_ViewLyrics;
     wxMenuItem *                m_ViewPlayLists;
+    wxMenuItem *                m_ViewAlbumBrowser;
 
     wxMenuItem *                m_ViewPodcasts;
     wxMenuItem *                m_ViewPodChannels;
@@ -237,6 +245,8 @@ class guMainFrame : public wxFrame
 
     void                OnViewPodcasts( wxCommandEvent &event );
     void                OnPodcastsShowPanel( wxCommandEvent &event );
+
+    void                OnViewAlbumBrowser( wxCommandEvent &event );
 
     void                OnMainPaneClose( wxAuiManagerEvent &event );
 

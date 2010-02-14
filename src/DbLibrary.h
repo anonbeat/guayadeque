@@ -240,6 +240,7 @@ WX_DECLARE_OBJARRAY(guAS_SubmitInfo, guAS_SubmitInfoArray);
 #define GULIBRARY_FILTER_SONGS      4
 
 class guDynPlayList;
+class guAlbumBrowserItemArray;
 
 // -------------------------------------------------------------------------------- //
 class guDbLibrary : public guDb
@@ -335,6 +336,11 @@ class guDbLibrary : public guDb
     int                 GetAlbumsOrder( void ) { return m_AlbumsOrder; };
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
     wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );
+    int                 GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * filter,
+                                   const int start, const int count, const int order );
+    int                 GetAlbumsCount( guDynPlayList * filter );
+    int                 GetAlbumYear( const int albumid );
+    int                 GetAlbumTrackCount( const int albumid );
 
     void                GetPaths( guListItems * Paths, bool FullList = false );
 
@@ -424,7 +430,7 @@ class guDbLibrary : public guDb
 //    int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
 //    wxSQLite3ResultSet  ExecuteQuery( const wxString &query );
 
-    wxBitmap *          GetCoverThumb( int CoverId );
+    wxBitmap *          GetCoverBitmap( const int coverid, const bool thumb = true );
     guCoverInfos        GetEmptyCovers( void );
 
     // Smart Playlist and LastFM Panel support functions

@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "DbLibrary.h"
 
+#include "AlbumBrowser.h"
 #include "Commands.h"
 #include "Config.h"
 #include "DynamicPlayList.h"
@@ -748,9 +749,9 @@ int guDbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
 }
 
 // -------------------------------------------------------------------------------- //
-wxBitmap * guDbLibrary::GetCoverThumb( int CoverId )
+wxBitmap * guDbLibrary::GetCoverBitmap( const int coverid, const bool thumb )
 {
-  if( !CoverId )
+  if( !coverid )
     return NULL;
 
   wxImage *             Img = NULL;
@@ -760,8 +761,9 @@ wxBitmap * guDbLibrary::GetCoverThumb( int CoverId )
   const unsigned char * Data;
   int                   DataLen = 0;
 
-  query = wxString::Format( wxT( "SELECT cover_thumb FROM covers "
-                                 "WHERE cover_id = %u LIMIT 1;" ), CoverId );
+  query = wxT( "SELECT " );
+  query += thumb ? wxT( "cover_thumb" ) : wxT( "cover_midsize" );
+  query += wxString::Format( wxT( " FROM covers WHERE cover_id = %u LIMIT 1;" ), coverid );
 
   dbRes = ExecuteQuery( query );
 
@@ -775,11 +777,11 @@ wxBitmap * guDbLibrary::GetCoverThumb( int CoverId )
       unsigned char * ImgData = ( unsigned char * ) malloc( DataLen );
       memcpy( ImgData, Data, DataLen );
 
-      Img = new wxImage( 38, 38, ImgData );
+      int ImgSize = thumb ? 38 : 100;
+      Img = new wxImage( ImgSize, ImgSize, ImgData );
       //TmpImg->SaveFile( wxString::Format( wxT( "/home/jrios/%u.jpg" ), CoverId ), wxBITMAP_TYPE_JPEG );
       RetVal = new wxBitmap( * Img );
       delete Img;
-
     }
   }
 
@@ -822,7 +824,7 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
       MidImg.LoadFile( coverfile );
       if( MidImg.IsOk() )
       {
-        MidImg.Rescale( 150, 150, wxIMAGE_QUALITY_HIGH );
+        MidImg.Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
 
 
         wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_midsize, cover_hash ) "
@@ -869,7 +871,7 @@ void guDbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const
     {
       wxImage MidImg;
       MidImg.LoadFile( coverfile );
-      MidImg.Rescale( 150, 150, wxIMAGE_QUALITY_HIGH );
+      MidImg.Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
       if( MidImg.IsOk() )
       {
         //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
@@ -2172,7 +2174,7 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
         AlbumItem->m_Name = dbRes.GetString( 1 );
         AlbumItem->m_ArtistId = dbRes.GetInt( 2 );
         AlbumItem->m_CoverId = dbRes.GetInt( 3 );
-        AlbumItem->m_Thumb = GetCoverThumb( AlbumItem->m_CoverId );
+        AlbumItem->m_Thumb = GetCoverBitmap( AlbumItem->m_CoverId );
         AlbumItem->m_Year = dbRes.GetInt( 4 );
         Albums->Add( AlbumItem );
         AddedAlbums.Add( AlbumId );
@@ -2185,6 +2187,148 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   }
   dbRes.Finalize();
 //  return RetVal;
+}
+
+const wxString DynPlayListToSQLQuery( guDynPlayList * playlist );
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetAlbumYear( const int albumid )
+{
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+  int RetVal = 0;
+  query = wxString::Format( wxT( "SELECT song_year FROM songs WHERE song_albumid = %i ORDER by song_year DESC LIMIT 1" ), albumid );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+    RetVal = dbRes.GetInt( 0 );
+
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetAlbumTrackCount( const int albumid )
+{
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+  int RetVal = 0;
+  query = wxString::Format( wxT( "SELECT COUNT( song_id ) FROM songs WHERE song_albumid = %i" ), albumid );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+    RetVal = dbRes.GetInt( 0 );
+
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetAlbumsCount( guDynPlayList * filter )
+{
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+  int                   RetVal = 0;
+
+  query = wxT( "SELECT COUNT( DISTINCT song_albumid ) FROM songs " );
+  if( filter )
+  {
+    query += DynPlayListToSQLQuery( filter );
+  }
+
+  //guLogMessage( wxT( "GetAlbumsCount:\n%s" ), query.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      RetVal = dbRes.GetInt( 0 );
+  }
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * filter,
+                            const int start, const int count, const int order )
+{
+  if( !count )
+    return 0;
+
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+
+  query = wxT( "SELECT DISTINCT album_id, artist_name, album_name, album_coverid FROM songs " );
+  if( filter )
+  {
+    wxString DynQuery = DynPlayListToSQLQuery( filter );
+    if( DynQuery.Find( wxT( "albums" ) ) == wxNOT_FOUND )
+        query += wxT( ", albums" );
+    if( DynQuery.Find( wxT( "artists" ) ) == wxNOT_FOUND )
+        query += wxT( ", artists " );
+    query += DynQuery;
+    query += wxT( " AND album_artistid = artist_id AND song_albumid = album_id " );
+  }
+  else
+  {
+    query += wxT( ", albums, artists WHERE album_artistid = artist_id AND song_albumid = album_id " );
+  }
+
+  query += wxT( " ORDER BY " );
+
+  switch( order )
+  {
+    case guALBUMS_ORDER_NAME :
+      query += wxT( "album_name " );
+      break;
+
+    case guALBUMS_ORDER_YEAR :
+      query += wxT( "song_year" );
+      break;
+
+    case guALBUMS_ORDER_YEAR_REVERSE :
+      query += wxT( "song_year DESC" );
+      break;
+
+    case guALBUMS_ORDER_ARTIST_NAME :
+      query += wxT( "artist_name, album_name" );
+      break;
+
+    case guALBUMS_ORDER_ARTIST_YEAR :
+      query += wxT( "artist_name, song_year" );
+      break;
+
+    case guALBUMS_ORDER_ARTIST_YEAR_REVERSE :
+    default :
+      query += wxT( "artist_name, song_year DESC" );
+      break;
+  }
+
+  query += wxString::Format( wxT( " LIMIT %i, %i" ), start, count );
+
+  //guLogMessage( wxT( "GetAlbums:\n%s" ), query.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+      guAlbumBrowserItem * Item = new guAlbumBrowserItem();
+      Item->m_AlbumId = dbRes.GetInt( 0 ); //AlbumId;
+      Item->m_ArtistName = dbRes.GetString( 1 );
+      Item->m_AlbumName = dbRes.GetString( 2 );
+      Item->m_CoverBitmap = GetCoverBitmap( dbRes.GetInt( 3 ), false );
+      Item->m_Year = 0; //dbRes.GetInt( 4 );
+      Item->m_TrackCount = 0; //dbRes.GetInt( 5 );
+      items->Add( Item );
+  }
+  dbRes.Finalize();
+
+  return items->Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2573,7 +2717,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
 
       case guDYNAMIC_FILTER_TYPE_PATH : // PATH
-        if( dbNames.Find( wxT( "settags" ) ) == wxNOT_FOUND )
+        if( dbNames.Find( wxT( "paths" ) ) == wxNOT_FOUND )
             dbNames += wxT( ", paths " );
         query += wxT( "( song_pathid = path_id AND path_value " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
@@ -5461,7 +5605,7 @@ void guDbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bo
   int ItemId;
   if( ( ItemId = GetPodcastItemEnclosure( item->m_Enclosure ) ) == wxNOT_FOUND )
   {
-    guLogMessage( wxT( "Inserting podcastitem '%s'" ), item->m_Title.c_str() );
+    //guLogMessage( wxT( "Inserting podcastitem '%s'" ), item->m_Title.c_str() );
     query = wxString::Format( wxT( "INSERT INTO podcastitems( "
                 "podcastitem_id, podcastitem_chid, podcastitem_title, "
                 "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "

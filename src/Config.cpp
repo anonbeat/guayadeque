@@ -28,6 +28,7 @@ const wxEventType guConfigUpdatedEvent = wxNewEventType();
 guConfig::guConfig( const wxString &conffile ) :
           wxFileConfig( wxT( "guayadeque" ), wxEmptyString, conffile, wxEmptyString, wxCONFIG_USE_SUBDIR )
 {
+    m_IgnoreLayouts = false;
     //SetRecordDefaults( true );
 }
 

@@ -151,6 +151,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	StartSizer->Add( StartPlayingSizer, 1, wxEXPAND, 5 );
 
+    m_IgnoreLayoutsChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Load default layouts" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_IgnoreLayoutsChkBox->SetValue( m_Config->ReadBool( wxT( "LoadDefaultLayouts" ), false, wxT( "General" ) ) );
+	StartSizer->Add( m_IgnoreLayoutsChkBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+
 	GenMainSizer->Add( StartSizer, 0, wxEXPAND|wxALL, 5 );
 
 	BehaviSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" Behaviour ") ), wxVERTICAL );
@@ -982,6 +986,7 @@ void guPrefDialog::SaveSettings( void )
     // Save all configurations
     m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "LoadDefaultLayouts" ), m_IgnoreLayoutsChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );

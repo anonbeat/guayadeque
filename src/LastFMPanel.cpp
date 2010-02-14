@@ -700,11 +700,11 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( m_Info->m_AlbumId != wxNOT_FOUND )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the album tracks" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
