@@ -552,12 +552,12 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
     {
         size_t ColItems = Size.GetWidth() / 220;
         size_t RowItems = Size.GetHeight() / 220;
-        guLogMessage( wxT( "Row: %i  Col:%i" ), RowItems, ColItems );
+        //guLogMessage( wxT( "Row: %i  Col:%i" ), RowItems, ColItems );
         if( ColItems * RowItems != m_ItemPanels.Count() )
         {
             size_t OldCount = m_ItemPanels.Count();
             m_ItemCount = ColItems * RowItems;
-            guLogMessage( wxT( "We need to reassign the panels from %i to %i" ), OldCount, m_ItemCount );
+            //guLogMessage( wxT( "We need to reassign the panels from %i to %i" ), OldCount, m_ItemCount );
             if( OldCount != m_ItemCount )
             {
                 m_AlbumsSizer->SetCols( ColItems );
@@ -635,7 +635,7 @@ void guAlbumBrowser::OnChangingPosition( wxScrollEvent& event )
 {
     int CurPage = event.GetPosition(); //( ( event.GetPosition() * m_PagesCount ) / 100 );
     m_ItemStart = CurPage * m_ItemCount;
-    guLogMessage( wxT( "ChangePosition: %i -> %i     Albums(%i / %i)" ), m_ItemStart, m_LastItemStart, CurPage, m_AlbumsCount );
+    //guLogMessage( wxT( "ChangePosition: %i -> %i     Albums(%i / %i)" ), m_ItemStart, m_LastItemStart, CurPage, m_AlbumsCount );
     if( m_LastItemStart != m_ItemStart )
     {
         if( m_RefreshTimer.IsRunning() )
@@ -683,6 +683,7 @@ void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
 
         if( m_DynPlayList.m_Filters.Count() )
         {
+            m_FilterBtn->SetValue( true );
             RefreshCount();
             ReloadItems();
             m_LastItemStart = wxNOT_FOUND;

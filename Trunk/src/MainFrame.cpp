@@ -1778,6 +1778,11 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
         m_ViewPodcasts->Check( false );
         PanelId = guPANEL_MAIN_PODCASTS;
     }
+    else if( CurPage == m_AlbumBrowserPanel )
+    {
+        m_ViewAlbumBrowser->Check( false );
+        PanelId = guPANEL_MAIN_ALBUMBROWSER;
+    }
 
     CheckHideNotebook();
     m_VisiblePanels ^= PanelId;
