@@ -148,6 +148,8 @@ class guAlbumBrowser : public wxPanel
     void                            OnOrderSelected( wxCommandEvent &event );
     void                            OnUpdateDetails( wxCommandEvent &event );
 
+    void                            OnMouseWheel( wxMouseEvent& event );
+
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guAlbumBrowser();

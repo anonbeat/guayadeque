@@ -533,6 +533,8 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 
 	Connect( ID_ALBUMBROWSER_UPDATEDETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnUpdateDetails ), NULL, this );
 
+	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guAlbumBrowser::OnMouseWheel ) );
+
     RefreshCount();
     //ReloadItems();
     m_RefreshTimer.SetOwner( this );
@@ -562,6 +564,8 @@ guAlbumBrowser::~guAlbumBrowser()
 	Disconnect( wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowser::OnRefreshTimer ), NULL, this );
 
 	Disconnect( ID_ALBUMBROWSER_UPDATEDETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnUpdateDetails ), NULL, this );
+
+	Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guAlbumBrowser::OnMouseWheel ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -980,6 +984,27 @@ void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "OnUpdateDetails %i" ), event.GetInt() );
     m_ItemPanels[ event.GetInt() ]->UpdateDetails();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnMouseWheel( wxMouseEvent& event )
+{
+    int Rotation = event.GetWheelRotation() / event.GetWheelDelta() * -1;
+    //guLogMessage( wxT( "Got MouseWheel %i " ), Rotation );
+    int CurPos = m_NavSlider->GetValue() + Rotation;
+
+    if( CurPos > m_NavSlider->GetMax() )
+        CurPos = m_NavSlider->GetMax();
+
+    if( CurPos < m_NavSlider->GetMin() )
+        CurPos = m_NavSlider->GetMin();
+
+    m_NavSlider->SetValue( CurPos );
+
+    wxScrollEvent ScrollEvent( wxEVT_SCROLL_CHANGED );
+    ScrollEvent.SetPosition( CurPos );
+    wxPostEvent( m_NavSlider, ScrollEvent );
+
 }
 
 // -------------------------------------------------------------------------------- //
