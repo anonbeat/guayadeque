@@ -97,6 +97,7 @@ class guAlbumBrowserItemPanel : public wxPanel
     void                    OnAlbumCopyToClicked( wxCommandEvent &event );
     void                    OnAlbumEditLabelsClicked( wxCommandEvent &event );
     void                    OnAlbumEditTracksClicked( wxCommandEvent &event );
+    void                    OnAlbumDClicked( wxMouseEvent &event );
 
   public :
     guAlbumBrowserItemPanel( wxWindow * parent, const int index, guAlbumBrowserItem * albumitem = NULL );
