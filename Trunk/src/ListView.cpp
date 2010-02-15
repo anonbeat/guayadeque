@@ -651,7 +651,8 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
     int Width;
     int Height;
     GetSize( &Width, &Height );
-    Height -= h;
+    if( m_Header )
+        Height -= h;
 
     if( ( wherey > ( Height - 10 ) ) && ( int ) GetLastVisibleLine() != GetItemCount() )
     {
@@ -1742,7 +1743,7 @@ guListViewDropTarget::~guListViewDropTarget()
 // -------------------------------------------------------------------------------- //
 bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
 {
-    //guLogMessage( wxT( "guListViewDropTarget::OnDropFiles" ) );
+    guLogMessage( wxT( "guListViewDropTarget::OnDropFiles" ) );
     // We are moving items inside this object.
     if( m_ListView->m_DragSelfItems )
     {
@@ -1773,9 +1774,17 @@ bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
 // -------------------------------------------------------------------------------- //
 void guListViewDropTarget::OnLeave()
 {
-    m_ListView->m_DragOverItem = wxNOT_FOUND;
-    m_ListView->m_DragSelfItems = false;
-    m_ListView->RefreshLines( m_ListView->GetFirstVisibleLine(), m_ListView->GetLastVisibleLine() );
+    int MouseX, MouseY;
+    wxGetMousePosition( &MouseX, &MouseY );
+    //m_ListView->ScreenToClient( &MouseX, &MouseY );
+    wxRect ScreenRect = m_ListView->GetClientScreenRect();
+    //guLogMessage( wxT( "guListViewDropTarget::OnLeave  %i, %i -> ( %i, %i, %i, %i )" ), MouseX, MouseY, ScreenRect.x, ScreenRect.y, ScreenRect.x + ScreenRect.width, ScreenRect.y + ScreenRect.height  );
+    if( !ScreenRect.Contains( MouseX, MouseY ) ) //( m_ListView->HitTest( MouseX, MouseY ) == wxNOT_FOUND ) )
+    {
+        m_ListView->m_DragOverItem = wxNOT_FOUND;
+        m_ListView->m_DragSelfItems = false;
+        m_ListView->RefreshAll();
+    }
 }
 
 // -------------------------------------------------------------------------------- //

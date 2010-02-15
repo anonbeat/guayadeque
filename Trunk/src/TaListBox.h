@@ -26,9 +26,7 @@
 // -------------------------------------------------------------------------------- //
 class guTaListBox : public guListBox
 {
-
   protected :
-
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * Menu ) const;
     void            AddLabel( wxCommandEvent &event );
@@ -36,7 +34,6 @@ class guTaListBox : public guListBox
     void            EditLabel( wxCommandEvent &event );
 
     virtual int     GetDragFiles( wxFileDataObject * files );
-
 
   public :
 
