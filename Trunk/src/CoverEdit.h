@@ -152,6 +152,8 @@ class guCoverEditor : public wxDialog
 	void EndDownloadCoverThread( guDownloadCoverThread * DownloadCoverThread );
 	void OnDownloadedLinks( wxCommandEvent &event );
 
+	void OnSelectFile( void );
+
   public:
 	guCoverEditor( wxWindow * parent, const wxString &Artist, const wxString &Album );// wxWindowID id = wxID_ANY, const wxString& title = wxT("Cover Editor"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 	~guCoverEditor();
