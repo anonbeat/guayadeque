@@ -226,6 +226,7 @@ void guAlbumBrowserItemPanel::UpdateDetails( void )
         m_TracksLabel->SetLabel( wxString::Format( wxT( "(%u) %u " ),
             m_AlbumBrowserItem->m_Year,
             m_AlbumBrowserItem->m_TrackCount ) + _( "Tracks" ) );
+        m_MainSizer->Layout();
     }
 }
 

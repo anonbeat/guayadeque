@@ -178,6 +178,8 @@
 		<Unit filename="src/RadioPanel.h" />
 		<Unit filename="src/RatingCtrl.cpp" />
 		<Unit filename="src/RatingCtrl.h" />
+		<Unit filename="src/SelCoverFile.cpp" />
+		<Unit filename="src/SelCoverFile.h" />
 		<Unit filename="src/Shoutcast.cpp" />
 		<Unit filename="src/Shoutcast.h" />
 		<Unit filename="src/ShowImage.cpp" />

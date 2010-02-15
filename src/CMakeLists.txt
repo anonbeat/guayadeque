@@ -198,6 +198,8 @@ ADD_EXECUTABLE( guayadeque
 	Vumeters.h
 	AlbumBrowser.cpp
 	AlbumBrowser.h
+	SelCoverFile.cpp
+	SelCoverFile.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

@@ -169,7 +169,6 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
     Connect( ID_COVEREDITOR_ADDCOVERIMAGE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnAddCoverImage ) );
     Connect( ID_COVEREDITOR_DOWNLOADEDLINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnDownloadedLinks ) );
 
-
     m_DownloadCoversThread = new guFetchCoverLinksThread( this, Artist.c_str(), Album.c_str(), m_EngineIndex );
 
     m_PrevButton->Disable();
@@ -412,7 +411,6 @@ void guCoverEditor::OnEngineChanged( wxCommandEvent& event )
 {
     if( m_EngineIndex != m_EngineChoice->GetSelection() )
     {
-
         m_DownloadThreadMutex.Lock();
         int index;
         int count = m_DownloadThreads.Count();
@@ -434,6 +432,7 @@ void guCoverEditor::OnEngineChanged( wxCommandEvent& event )
             m_DownloadCoversThread->Pause();
             m_DownloadCoversThread->Delete();
         }
+
         // Empty already downloaded covers
         m_AlbumCovers.Empty();
         // Reset to the 1st Image
