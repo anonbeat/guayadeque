@@ -337,6 +337,8 @@ class guListView : public wxScrolledWindow
     int                     GetColumnId( const int col ) const;
     void                    SetColumnImage( const int col, const int imageindex );
 
+    wxRect                  GetClientScreenRect( void ) { return m_ListBox->GetScreenRect(); }
+
     bool                    IsAllowedColumnSelect( void ) const;
 
     friend class guListViewClient;
