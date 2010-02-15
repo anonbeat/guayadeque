@@ -377,6 +377,7 @@ class guListViewDropTarget : public wxFileDropTarget
     ~guListViewDropTarget();
 
     virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
+    virtual void OnLeave();
 
     virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
 

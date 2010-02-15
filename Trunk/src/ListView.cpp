@@ -614,9 +614,18 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
     //guLogMessage( wxT( ">>guListView::OnDragOver( %u, %u )" ), x, y );
     // TODO Change this for the m_Header size
     int w, h, d;
-    GetTextExtent( wxT("Hg"), &w, &h, &d );
-    h += d + 4;
-    int wherey = y - h;
+    int wherey;
+    if( m_Header )
+    {
+        GetTextExtent( wxT("Hg"), &w, &h, &d );
+        h += d + 4;
+        wherey = y - h;
+    }
+    else
+    {
+        wherey = y;
+    }
+
 
     m_DragOverItem = HitTest( x, wherey );
 
@@ -1759,6 +1768,14 @@ bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
         }
     }
     return true;
+}
+
+// -------------------------------------------------------------------------------- //
+void guListViewDropTarget::OnLeave()
+{
+    m_ListView->m_DragOverItem = wxNOT_FOUND;
+    m_ListView->m_DragSelfItems = false;
+    m_ListView->RefreshLines( m_ListView->GetFirstVisibleLine(), m_ListView->GetLastVisibleLine() );
 }
 
 // -------------------------------------------------------------------------------- //
