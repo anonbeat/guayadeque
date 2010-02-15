@@ -27,6 +27,7 @@
 #include "LabelEditor.h"
 #include "MainApp.h"
 #include "OnlineLinks.h"
+#include "SelCoverFile.h"
 #include "TagInfo.h"
 #include "TrackEdit.h"
 #include "Utils.h"
@@ -843,11 +844,14 @@ void guAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
             {
                 //guLogMessage( wxT( "About to download cover from selected url" ) );
                 wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
-                CoverImage->SaveFile( AlbumPath + wxT( "cover.jpg" ), wxBITMAP_TYPE_JPEG );
-                m_Db->SetAlbumCover( Albums[ 0 ], AlbumPath + wxT( "cover.jpg" ) );
+                if( CoverImage )
+                {
+                    CoverImage->SaveFile( AlbumPath + wxT( "cover.jpg" ), wxBITMAP_TYPE_JPEG );
+                    m_Db->SetAlbumCover( Albums[ 0 ], AlbumPath + wxT( "cover.jpg" ) );
 
-                ReloadItems();
-                RefreshAll();
+                    ReloadItems();
+                    RefreshAll();
+                }
             }
             CoverEditor->Destroy();
         }
@@ -857,37 +861,37 @@ void guAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
 {
-    wxArrayInt Albums;
-    Albums.Add( albumid );
-    if( Albums.Count() )
+    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
+    if( SelCoverFile )
     {
-        wxString AlbumName;
-        wxString ArtistName;
-        wxString AlbumPath;
-        if( !m_Db->GetAlbumInfo( Albums[ 0 ], &AlbumName, &ArtistName, &AlbumPath ) )
+        if( SelCoverFile->ShowModal() == wxID_OK )
         {
-            wxMessageBox( _( "Could not find the Album in the songs library.\n"\
-                             "You should update the library." ), _( "Error" ), wxICON_ERROR | wxOK );
-            return;
-        }
-
-        wxFileDialog * FileDialog = new wxFileDialog( this,
-            wxT( "Select the cover filename" ),
-            AlbumPath,
-            wxT( "cover.jpg" ),
-            wxT( "*.jpg;*.png" ),
-            wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_PREVIEW );
-
-        if( FileDialog )
-        {
-            if( FileDialog->ShowModal() == wxID_OK )
+            wxString CoverFile = SelCoverFile->GetSelFile();
+            if( !CoverFile.IsEmpty() )
             {
-                m_Db->SetAlbumCover( Albums[ 0 ], FileDialog->GetPath() );
-                ReloadItems();
-                RefreshAll();
+                wxURI Uri( CoverFile );
+                if( Uri.IsReference() )
+                {
+                    m_Db->SetAlbumCover( albumid, CoverFile );
+                    ReloadItems();
+                    RefreshAll();
+                }
+                else
+                {
+                    if( DownloadImage( CoverFile, SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) ) )
+                    {
+                        m_Db->SetAlbumCover( albumid, SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) );
+                        ReloadItems();
+                        RefreshAll();
+                    }
+                    else
+                    {
+                        guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
+                    }
+                }
             }
-            FileDialog->Destroy();
         }
+        delete SelCoverFile;
     }
 }
 

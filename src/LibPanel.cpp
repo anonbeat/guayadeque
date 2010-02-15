@@ -807,12 +807,15 @@ void guLibPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
             {
                 //guLogMessage( wxT( "About to download cover from selected url" ) );
                 wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
-                CoverImage->SaveFile( AlbumPath + wxT( "cover.jpg" ), wxBITMAP_TYPE_JPEG );
-                m_Db->SetAlbumCover( Albums[ 0 ], AlbumPath + wxT( "cover.jpg" ) );
-                //AlbumListCtrl->ClearSelection();
-                //Db->SetAlFilters( wxArrayInt() );
-                m_AlbumListCtrl->ReloadItems( false );
-                //guLogMessage( wxT( "Cover downloaded ok\n" ) );
+                if( CoverImage )
+                {
+                    CoverImage->SaveFile( AlbumPath + wxT( "cover.jpg" ), wxBITMAP_TYPE_JPEG );
+                    m_Db->SetAlbumCover( Albums[ 0 ], AlbumPath + wxT( "cover.jpg" ) );
+                    //AlbumListCtrl->ClearSelection();
+                    //Db->SetAlFilters( wxArrayInt() );
+                    m_AlbumListCtrl->ReloadItems( false );
+                    //guLogMessage( wxT( "Cover downloaded ok\n" ) );
+                }
             }
             CoverEditor->Destroy();
         }
@@ -864,22 +867,25 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
             if( SelCoverFile->ShowModal() == wxID_OK )
             {
                 wxString CoverFile = SelCoverFile->GetSelFile();
-                wxURI Uri( CoverFile );
-                if( Uri.IsReference() )
+                if( !CoverFile.IsEmpty() )
                 {
-                    m_Db->SetAlbumCover( Albums[ 0 ], CoverFile );
-                    m_AlbumListCtrl->ReloadItems( false );
-                }
-                else
-                {
-                    if( DownloadImage( CoverFile, SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) ) )
+                    wxURI Uri( CoverFile );
+                    if( Uri.IsReference() )
                     {
-                        m_Db->SetAlbumCover( Albums[ 0 ], SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) );
+                        m_Db->SetAlbumCover( Albums[ 0 ], CoverFile );
                         m_AlbumListCtrl->ReloadItems( false );
                     }
                     else
                     {
-                        guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
+                        if( DownloadImage( CoverFile, SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) ) )
+                        {
+                            m_Db->SetAlbumCover( Albums[ 0 ], SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) );
+                            m_AlbumListCtrl->ReloadItems( false );
+                        }
+                        else
+                        {
+                            guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
+                        }
                     }
                 }
             }
