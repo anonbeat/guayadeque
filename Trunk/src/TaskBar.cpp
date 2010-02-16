@@ -130,7 +130,7 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
         RetVal->Append( MenuItem );
 
         MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_PREVTRACK, _( "Prev Track" ), _( "Skip to previous track in current playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_skip_forward ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_skip_backward ) );
         RetVal->Append( MenuItem );
 
         RetVal->AppendSeparator();
