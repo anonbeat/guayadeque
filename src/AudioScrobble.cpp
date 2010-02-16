@@ -128,7 +128,7 @@ bool guAudioScrobble::GetSessionId( void )
 {
     //http://post.audioscrobbler.com/?hs=true&p=1.2.1&c=<client-id>&v=<client-ver>&u=<user>&t=<timestamp>&a=<auth>
     wxString Content;
-    long LocalTime = wxGetLocalTime();
+    long LocalTime = wxGetUTCTime();
     wxString AS_Url = guAS_HANDSHAKE_URL wxT( "?hs=true" )\
                       wxT( "&p=" ) guAS_PROTOCOL_VERSION\
                       wxT( "&c=" ) guAS_CLIENT_ID\

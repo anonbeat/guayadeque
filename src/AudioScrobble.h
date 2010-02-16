@@ -91,7 +91,8 @@ class guAudioScrobble
     void                        SetNowPlayingSong( const guAS_SubmitInfo &PlayingSong );
     bool                        SubmitNowPlaying( const guAS_SubmitInfo &PlayingSong );
     bool                        SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs );
-    bool                        IsOk() { return m_ErrorCode == guAS_ERROR_NOERROR; };
+    bool                        IsOk() { return ( m_ErrorCode == guAS_ERROR_NOERROR ) ||
+                                                ( m_ErrorCode == guAS_ERROR_NOSESSION ); };
     int                         GetErrorCode() { return m_ErrorCode; };
     void                        EndSubmitThread();
 
