@@ -928,6 +928,7 @@ int guDbLibrary::FindCoverFile( const wxString &dirname )
                 {
                     //guLogMessage( wxT( "FindCoverFile: This file have been detected as a Cover" ) );
                     if( CurFile.EndsWith( wxT( ".jpg" ) ) ||
+                        CurFile.EndsWith( wxT( ".jpeg" ) ) ||
                         CurFile.EndsWith( wxT( ".png" ) ) ||
                         CurFile.EndsWith( wxT( ".bmp" ) ) ||
                         CurFile.EndsWith( wxT( ".gif" ) ) )

@@ -127,6 +127,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
               }
               else if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) &&
                   ( LowerFileName.EndsWith( wxT( ".jpg" ) ) ||
+                    LowerFileName.EndsWith( wxT( ".jpeg" ) ) ||
                     LowerFileName.EndsWith( wxT( ".png" ) ) ||
                     LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
                     LowerFileName.EndsWith( wxT( ".gif" ) ) ) )
