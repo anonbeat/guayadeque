@@ -683,8 +683,11 @@ void guPlayList::AddItem( const guTrack &NewItem )
         InsertPos = m_DragOverAfter ? m_DragOverItem + 1 : m_DragOverItem;
         if( InsertPos <= m_CurItem )
             m_CurItem++;
-        //printf( "Inserted at %d\n", DragOverItem );
+        //guLogMessage( wxT( "Inserted at %i %i" ), m_DragOverItem, m_DragOverAfter );
         m_Items.Insert( NewItem, InsertPos );
+        if( m_DragOverAfter )
+            m_DragOverItem++;
+        m_DragOverAfter = true;
     }
     else
     {
