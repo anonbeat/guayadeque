@@ -1077,29 +1077,32 @@ void guMainFrame::OnAddLibraryPath( wxCommandEvent &event )
             wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
 
             wxString PathValue = DirDialog->GetPath();
-            if( !PathValue.EndsWith( wxT( "/" ) ) )
-                PathValue += '/';
-
-            guLogMessage( wxT( "LibPaths: '%s'" ), LibPaths[ 0 ].c_str() );
-            guLogMessage( wxT( "Add Path: '%s'" ), PathValue.c_str() );
-            guLogMessage( wxT( "Exists  : %i" ), m_Db->PathExists( PathValue ) );
-            guLogMessage( wxT( "Index   : %i" ), LibPaths.Index( PathValue ) );
-
-            if( ( m_Db->PathExists( PathValue ) == wxNOT_FOUND ) &&
-                !CheckFileLibPath( LibPaths, PathValue ) )
+            if( !PathValue.IsEmpty() )
             {
+                if( !PathValue.EndsWith( wxT( "/" ) ) )
+                    PathValue += '/';
 
-                LibPaths.Add( PathValue );
-                Config->WriteAStr( wxT( "LibPath" ), LibPaths, wxT( "LibPaths" ) );
+                //guLogMessage( wxT( "LibPaths: '%s'" ), LibPaths[ 0 ].c_str() );
+                //guLogMessage( wxT( "Add Path: '%s'" ), PathValue.c_str() );
+                //guLogMessage( wxT( "Exists  : %i" ), m_Db->PathExists( PathValue ) );
+                //guLogMessage( wxT( "Index   : %i" ), LibPaths.Index( PathValue ) );
 
-                event.SetId( ID_MENU_UPDATE_LIBRARY );
-                AddPendingEvent( event );
-            }
-            else
-            {
-                wxMessageBox( _( "This Path is already in the library" ),
-                    _( "Adding path error" ),
-                    wxICON_EXCLAMATION | wxOK  );
+                if( ( m_Db->PathExists( PathValue ) == wxNOT_FOUND ) &&
+                    !CheckFileLibPath( LibPaths, PathValue ) )
+                {
+
+                    LibPaths.Add( PathValue );
+                    Config->WriteAStr( wxT( "LibPath" ), LibPaths, wxT( "LibPaths" ) );
+
+                    event.SetId( ID_MENU_UPDATE_LIBRARY );
+                    AddPendingEvent( event );
+                }
+                else
+                {
+                    wxMessageBox( _( "This Path is already in the library" ),
+                        _( "Adding path error" ),
+                        wxICON_EXCLAMATION | wxOK  );
+                }
             }
         }
         DirDialog->Destroy();
