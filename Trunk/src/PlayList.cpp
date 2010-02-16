@@ -911,6 +911,7 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
                 if( SearchCoverWords( CurFile, CoverSearchWords ) )
                 {
                     if( CurFile.EndsWith( wxT( ".jpg" ) ) ||
+                        CurFile.EndsWith( wxT( ".jpeg" ) ) ||
                         CurFile.EndsWith( wxT( ".png" ) ) ||
                         CurFile.EndsWith( wxT( ".bmp" ) ) ||
                         CurFile.EndsWith( wxT( ".gif" ) ) )
