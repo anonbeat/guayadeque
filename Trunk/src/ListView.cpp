@@ -840,18 +840,32 @@ void guListViewClient::OnKeyDown( wxKeyEvent &event )
 {
     wxChar KeyChar = event.GetKeyCode();
 
-    //printf( "KeyPressed %i\n", KeyChar );
-    //if( wxIsalnum( KeyChar ) )
-    if( ( KeyChar >= 'a' && KeyChar <= 'z' ) ||
-        ( KeyChar >= 'A' && KeyChar <= 'Z' ) ||
-        ( KeyChar >= '0' && KeyChar <= '9' ) )
+    int KeyMod = event.GetModifiers();
+    if( KeyMod == wxMOD_NONE )
     {
-        if( m_SearchStrTimer->IsRunning() )
+        if( ( KeyChar >= 'a' && KeyChar <= 'z' ) ||
+            ( KeyChar >= 'A' && KeyChar <= 'Z' ) ||
+            ( KeyChar >= '0' && KeyChar <= '9' ) )
         {
-            m_SearchStrTimer->Stop();
+            if( m_SearchStrTimer->IsRunning() )
+            {
+                m_SearchStrTimer->Stop();
+            }
+            m_SearchStrTimer->Start( guLISTVIEW_TIMER_TIMEOUT, wxTIMER_ONE_SHOT );
+            m_SearchStr.Append( KeyChar );
         }
-        m_SearchStrTimer->Start( guLISTVIEW_TIMER_TIMEOUT, wxTIMER_ONE_SHOT );
-        m_SearchStr.Append( KeyChar );
+    }
+    else if( KeyMod == wxMOD_CONTROL )
+    {
+        if( KeyChar == 'a' || KeyChar == 'A' )
+        {
+            SelectAll();
+            wxCommandEvent evt( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
+            evt.SetEventObject( this );
+            evt.SetInt( 0 );
+            (void) GetEventHandler()->ProcessEvent( evt );
+            return;
+        }
     }
     event.Skip();
 }
