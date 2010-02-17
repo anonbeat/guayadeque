@@ -102,12 +102,13 @@ wxArrayString guSplitWords( const wxString &InputStr )
     wxString ResStr;
     size_t index, len;
     wxRegEx RegEx( wxT( " *([^ ]*|\" *[^\"]* *\") *" ) );
-    while( TempStr.Length() && RegEx.Matches( InputStr ) )
+    while( TempStr.Length() && RegEx.Matches( TempStr ) )
     {
         RegEx.GetMatch( &index, &len );
         ResStr = RegEx.GetMatch( TempStr, 1 );
         ResStr.Replace( wxT( "\"" ), wxT( " " ), true );
         RetVal.Add( ResStr.Trim( true ).Trim( false ) );
+        guLogMessage( wxT( "%i  %s" ), RetVal.Count(), ResStr.Trim( true ).Trim( false ).c_str() );
         TempStr = TempStr.Mid( len );
     }
     return RetVal;
