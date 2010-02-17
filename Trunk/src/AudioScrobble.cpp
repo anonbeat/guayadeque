@@ -47,16 +47,12 @@ guAudioScrobble::guAudioScrobble( guDbLibrary * db )
     m_SubmitUrl = wxEmptyString;
     m_ErrorCode = guAS_ERROR_NOSESSION;
     m_SubmitPlayedSongsThread = NULL;
-//    if( GetSessionId() )
+
+    // Create the SubmitThread and start it
+    m_SubmitPlayedSongsThread = new guASPlayedThread( this, m_Db );
+    if( !m_SubmitPlayedSongsThread )
     {
-        // Create the SubmitThread and start it
-        m_SubmitPlayedSongsThread = new guASPlayedThread( this, m_Db );
-        if( m_SubmitPlayedSongsThread )
-        {
-            m_SubmitPlayedSongsThread->Create();
-            m_SubmitPlayedSongsThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-            m_SubmitPlayedSongsThread->Run();
-        }
+        guLogError( wxT( "Could not create the Submit PLayed Songs thread" ) );
     }
 }
 
@@ -200,16 +196,19 @@ wxString guAudioScrobble::GetAuthToken( int TimeStamp )
     return md5.MD5( m_Password + wxString::Format( wxT( "%u" ), TimeStamp ) );
 }
 
-//    int      Id;
-//    wxString ArtistName;
-//    wxString AlbumName;
-//    wxString TrackName;
-//    int      PlayedTime; // UTC Time since 1/1/1970
-//    wxChar   Source;
-//    wxChar   Ratting;
-//    int      TrackLen;
-//    int      TrackNum;
-//    int      MBTrackId;
+// -------------------------------------------------------------------------------- //
+void guAudioScrobble::SendPlayedTrack( const guTrack &track )
+{
+    if( !m_Db->AddCachedPlayedSong( track ) )
+        guLogError( wxT( "Could not add Song to CachedSongs Database" ) );
+
+    if( !m_SubmitPlayedSongsThread )
+    {
+        m_SubmitPlayedSongsThread = new guASPlayedThread( this, m_Db );
+        if( !m_SubmitPlayedSongsThread )
+            guLogError( wxT( "Could no create the AudioScrobble Played thread" ) );
+    }
+}
 
 // -------------------------------------------------------------------------------- //
 bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs )
@@ -300,19 +299,23 @@ bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs
 }
 
 // -------------------------------------------------------------------------------- //
-void guAudioScrobble::SetNowPlayingSong( const guAS_SubmitInfo &cursong )
+void guAudioScrobble::SendNowPlayingTrack( const guTrack &track )
 {
-    guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, cursong );
-    if( NowPlayingThread )
-    {
-        NowPlayingThread->Create();
-        NowPlayingThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-        NowPlayingThread->Run();
-    }
+    guAS_SubmitInfo * SubmitInfo = new guAS_SubmitInfo();
+
+    SubmitInfo->m_ArtistName = track.m_ArtistName;
+    SubmitInfo->m_AlbumName  = track.m_AlbumName;
+    SubmitInfo->m_TrackName  = track.m_SongName;
+    SubmitInfo->m_TrackLen   = track.m_Length;
+    SubmitInfo->m_TrackNum   = track.m_Number;
+
+    guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, SubmitInfo );
+    if( !NowPlayingThread )
+        guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
 }
 
 // -------------------------------------------------------------------------------- //
-bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo &cursong )
+bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
 {
     wxCurlHTTP  http;
     wxString    PostData;
@@ -326,17 +329,17 @@ bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo &cursong )
         return false;
 
     PostData = wxT( "s=" ) + m_SessionId + wxT( "&" );
-    Artist = guURLEncode( cursong.m_ArtistName );
-    Track  = guURLEncode( cursong.m_TrackName );
-    Album  = guURLEncode( cursong.m_AlbumName );
+    Artist = guURLEncode( cursong->m_ArtistName );
+    Track  = guURLEncode( cursong->m_TrackName );
+    Album  = guURLEncode( cursong->m_AlbumName );
     //
     PostData += wxString::Format( wxT( "a=%s&t=%s&l=%u&b=%s&n=%s&m=" ),
                         Artist.c_str(),
                         Track.c_str(),
-                        cursong.m_TrackLen,
+                        cursong->m_TrackLen,
                         Album.c_str(),
-                        ( cursong.m_TrackNum > 0 ) ?
-                                   wxString::Format( wxT( "%u" ), cursong.m_TrackNum ).c_str() :
+                        ( cursong->m_TrackNum > 0 ) ?
+                                   wxString::Format( wxT( "%u" ), cursong->m_TrackNum ).c_str() :
                                    wxEmptyString
                         );
 
@@ -372,33 +375,30 @@ void guAudioScrobble::EndSubmitThread( void )
 // guASNowPlayingThread
 // -------------------------------------------------------------------------------- //
 guASNowPlayingThread::guASNowPlayingThread( guAudioScrobble * audioscrobble,
-                                               const guAS_SubmitInfo & currentsong )
+                                               const guAS_SubmitInfo * currentsong )
 {
     m_AudioScrobble = audioscrobble;
     m_CurrentSong = currentsong;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 guASNowPlayingThread::~guASNowPlayingThread()
 {
+    if( m_CurrentSong )
+        delete m_CurrentSong;
 }
 
 // -------------------------------------------------------------------------------- //
 guASNowPlayingThread::ExitCode guASNowPlayingThread::Entry()
 {
-    int                     FailCnt;
+    int FailCnt = 0;
 
-//    // Retry 3 times to get a SessionId from server
-//    FailCnt = 0;
-//    while( !m_AudioScrobble->GetSessionId() )
-//    {
-//        FailCnt++;
-//        if( FailCnt > 2 )
-//            return 0;
-//        Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
-//    }
-
-    FailCnt = 0;
     // While the Thread have not been destroyed
     while( !TestDestroy() )
     {
@@ -425,6 +425,9 @@ guASNowPlayingThread::ExitCode guASNowPlayingThread::Entry()
     return 0;
 }
 
+
+
+
 // -------------------------------------------------------------------------------- //
 // guASPlayedThread
 // -------------------------------------------------------------------------------- //
@@ -432,13 +435,22 @@ guASPlayedThread::guASPlayedThread( guAudioScrobble * audioscrobble, guDbLibrary
 {
     m_AudioScrobble = audioscrobble;
     m_Db = db;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 guASPlayedThread::~guASPlayedThread()
 {
-    if( m_AudioScrobble )
-        m_AudioScrobble->EndSubmitThread();
+    if( !TestDestroy() )
+    {
+        if( m_AudioScrobble )
+            m_AudioScrobble->EndSubmitThread();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -447,16 +459,6 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
     guAS_SubmitInfoArray    SubmitInfo;
     bool                    Submit = false;
     int                     FailCnt;
-
-    // Retry 3 times to get a SessionId from server
-//    FailCnt = 0;
-//    while( !m_AudioScrobble->GetSessionId() )
-//    {
-//        FailCnt++;
-//        if( FailCnt > 2 )
-//            return 0;
-//        Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
-//    }
 
     // While the Thread have not been destroyed
     while( !TestDestroy() )
@@ -469,7 +471,7 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
             //guLogMessage( wxT( "**** Trying a AudioScrobble Submit ****" ) );
             // We attempt to submit the info every 30 secs
             FailCnt = 0;
-            while( !( Submit = m_AudioScrobble->SubmitPlayedSongs( SubmitInfo ) ) && !TestDestroy() )
+            while( !TestDestroy() && !( Submit = m_AudioScrobble->SubmitPlayedSongs( SubmitInfo ) ) )
             {
 //                // Update the MainFrame AudioScrobble Status
 //                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
@@ -477,7 +479,7 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
 //                event.SetInt( m_AudioScrobble->GetErrorCode() );
 //                wxPostEvent( wxTheApp->GetTopWindow(), event );
                 //
-                if( m_AudioScrobble->GetErrorCode() == guAS_ERROR_FAILED )
+                if( m_AudioScrobble->GetErrorCode() != guAS_ERROR_NOERROR )
                 {
                     FailCnt++;
                     if( FailCnt > 2 )
@@ -495,6 +497,7 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
                 }
                 else
                     return 0;
+
                 Sleep( guAS_SUBMIT_RETRY_TIMEOUT ); // Wait 30 Secs between submit attempts
             }
             // if the submit was ok then delete the songs from cache
@@ -503,9 +506,10 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
                 m_Db->DeleteCachedPlayedSongs( SubmitInfo );
             }
         }
-        // If have not been destroyed wait 2 mins between submits.
-        if( !TestDestroy() )
-            Sleep( guAS_SUBMIT_TIMEOUT ); // Wait timeout between each try
+        else
+        {
+            break;
+        }
     }
     return 0;
 }
