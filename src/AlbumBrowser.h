@@ -180,8 +180,8 @@ class guAlbumBrowser : public wxPanel
         m_NavSlider->Enable( m_PagesCount > 1 );
         if( m_PagesCount > 1 )
             m_NavSlider->SetRange( 0, m_PagesCount - 1 );
-        else
-            m_NavSlider->SetRange( 0, 0 );
+        //else
+        //    m_NavSlider->SetRange( 0, 0 );
     }
 
     void                            ReloadItems( void );
