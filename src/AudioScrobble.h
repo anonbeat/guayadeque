@@ -77,6 +77,9 @@ class guAudioScrobble
     int                         DoRequest( const wxString &Url, int Timeout = 60, const wxString &PostData = wxEmptyString );
     int                         ProcessError( const wxString &ErrorStr );
 
+    bool                        SubmitNowPlaying( const guAS_SubmitInfo * curtrack );
+    bool                        SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtracks );
+
   public:
                                 guAudioScrobble( guDbLibrary * NewDb );
                                 ~guAudioScrobble();
@@ -85,30 +88,33 @@ class guAudioScrobble
     void                        SetPassword( const wxString &password ) { m_Password = password; }
     bool                        GetSessionId( void );
 
-    bool                        AddSongInfo( const guTrack &SubmitInfo );
 
-    //
-    void                        SetNowPlayingSong( const guAS_SubmitInfo &PlayingSong );
-    bool                        SubmitNowPlaying( const guAS_SubmitInfo &PlayingSong );
-    bool                        SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs );
+    void                        SendNowPlayingTrack( const guTrack &track );
+    void                        SendPlayedTrack( const guTrack &track );
+
+
     bool                        IsOk() { return ( m_ErrorCode == guAS_ERROR_NOERROR ) ||
-                                                ( m_ErrorCode == guAS_ERROR_NOSESSION ); };
-    int                         GetErrorCode() { return m_ErrorCode; };
+                                                ( m_ErrorCode == guAS_ERROR_NOSESSION ); }
+
+    int                         GetErrorCode() { return m_ErrorCode; }
+
     void                        EndSubmitThread();
 
     void                        OnConfigUpdated( void );
 
+    friend class guASNowPlayingThread;
+    friend class guASPlayedThread;
 };
 
 // -------------------------------------------------------------------------------- //
 class guASNowPlayingThread : public wxThread
 {
   private:
-    guAudioScrobble * m_AudioScrobble;
-    guAS_SubmitInfo   m_CurrentSong;
+    guAudioScrobble *           m_AudioScrobble;
+    const guAS_SubmitInfo *     m_CurrentSong;
 
   public:
-    guASNowPlayingThread( guAudioScrobble * audioscrobble, const guAS_SubmitInfo &playingsong );
+    guASNowPlayingThread( guAudioScrobble * audioscrobble, const guAS_SubmitInfo * playingsong );
     ~guASNowPlayingThread();
 
     virtual ExitCode Entry();
@@ -119,15 +125,14 @@ class guASNowPlayingThread : public wxThread
 class guASPlayedThread : public wxThread
 {
   private:
-    guAudioScrobble * m_AudioScrobble;
-    guDbLibrary * m_Db;
+    guAudioScrobble *       m_AudioScrobble;
+    guDbLibrary *           m_Db;
 
   public:
     guASPlayedThread( guAudioScrobble * audioscrobble, guDbLibrary * db );
     ~guASPlayedThread();
 
     virtual ExitCode Entry();
-
 };
 
 #endif

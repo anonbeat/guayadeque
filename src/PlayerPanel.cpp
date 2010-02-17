@@ -959,8 +959,8 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
             if( !m_MediaSong.m_SongName.IsEmpty() &&    // Check if we have no missing data
                 !m_MediaSong.m_ArtistName.IsEmpty() )
             {
-                if( !m_Db->AddCachedPlayedSong( m_MediaSong ) )
-                    guLogError( wxT( "Could not add Song to CachedSongs Database" ) );
+                //
+                m_AudioScrobble->SendPlayedTrack( m_MediaSong );
             }
         }
     }
@@ -1101,6 +1101,12 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 
+    // If Enabled LastFM->Submit and no error then send Now Playing Information
+    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
+        ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
+    {
+        m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1303,22 +1309,6 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
     }
     try {
         //guLogMessage( wxT("OnMediaLoaded") );
-
-        // If Enabled LastFM->Submit and no error then send Now Playing Information
-        if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
-            ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
-        {
-            guAS_SubmitInfo SubmitInfo;
-            //
-            SubmitInfo.m_ArtistName = m_MediaSong.m_ArtistName;
-            SubmitInfo.m_AlbumName  = m_MediaSong.m_AlbumName;
-            SubmitInfo.m_TrackName  = m_MediaSong.m_SongName;
-            SubmitInfo.m_TrackLen   = m_MediaSong.m_Length;
-            SubmitInfo.m_TrackNum   = m_MediaSong.m_Number;
-            //
-            //AudioScrobble->SubmitNowPlaying( SubmitInfo );
-            m_AudioScrobble->SetNowPlayingSong( SubmitInfo );
-        }
 
         if( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION )
         {
@@ -2066,7 +2056,8 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                     if( TestDestroy() )
                         break;
 
-                    if( m_Db->GetArtistId( &ArtistId, SimilarArtists[ Index ].m_Name, false ) )
+                    ArtistId = m_Db->GetArtistId( SimilarArtists[ Index ].m_Name, false );
+                    if( ArtistId != wxNOT_FOUND )
                     {
                         Artists.Add( ArtistId );
                     }
