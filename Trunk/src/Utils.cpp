@@ -108,7 +108,7 @@ wxArrayString guSplitWords( const wxString &InputStr )
         ResStr = RegEx.GetMatch( TempStr, 1 );
         ResStr.Replace( wxT( "\"" ), wxT( " " ), true );
         RetVal.Add( ResStr.Trim( true ).Trim( false ) );
-        guLogMessage( wxT( "%i  %s" ), RetVal.Count(), ResStr.Trim( true ).Trim( false ).c_str() );
+        //guLogMessage( wxT( "%i  %s" ), RetVal.Count(), ResStr.Trim( true ).Trim( false ).c_str() );
         TempStr = TempStr.Mid( len );
     }
     return RetVal;
