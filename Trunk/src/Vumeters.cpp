@@ -528,7 +528,10 @@ void guPlayerVumeters::OnChangedSize( wxSizeEvent &event )
 void guPlayerVumeters::SetLevels( const guLevelInfo &levels )
 {
     m_VumLeft->SetLevel( levels.m_Peak_L, levels.m_Decay_L );
-    m_VumRight->SetLevel( levels.m_Peak_R, levels.m_Decay_R );
+    if( levels.m_Channels > 1 )
+        m_VumRight->SetLevel( levels.m_Peak_R, levels.m_Decay_R );
+    else
+        m_VumRight->SetLevel( -INFINITY, -INFINITY );
 }
 
 // -------------------------------------------------------------------------------- //
