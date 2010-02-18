@@ -621,7 +621,7 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                         PodcastItem->m_Status = guPODCAST_STATUS_DOWNLOADING;
                         SendUpdateEvent( PodcastItem );
 
-                        if( guIsValidAudioFile( PodcastItem->m_Enclosure ) &&
+                        if( guIsValidAudioFile( Uri.GetPath() ) &&
                             DownloadFile( PodcastItem->m_Enclosure, PodcastFile.GetFullPath() ) )
                         {
                             PodcastItem->m_Status = guPODCAST_STATUS_READY;
