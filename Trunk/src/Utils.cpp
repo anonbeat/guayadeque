@@ -237,7 +237,7 @@ bool DownloadImage( const wxString &source, const wxString &target, int maxwidth
 // -------------------------------------------------------------------------------- //
 int DownloadFile( const wxString &Source, const wxString &Target )
 {
-    //guLogMessage( wxT( "Downloading %s" ), Source.c_str() );
+    guLogMessage( wxT( "Downloading %s" ), Source.c_str() );
     wxCurlHTTP http;
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     //http.SetVerbose( true );
@@ -246,7 +246,7 @@ int DownloadFile( const wxString &Source, const wxString &Target )
     long ResCode = http.GetResponseCode();
     if( ResCode < 200 || ResCode > 299 )
     {
-        //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
+        guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
         if( ResCode == 301 || ResCode == 302 || ResCode == 307 )
         {
             wxString Location = http.GetResponseHeader();
@@ -394,9 +394,15 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
         else
         {
             //RetVal = wxString( Buffer, wxConvUTF8 );
-            wxStringOutputStream Outs( &RetVal );
-            wxMemoryInputStream Ins( Buffer );
-            Ins.Read( Outs );
+//            wxStringOutputStream Outs( &RetVal );
+//            wxMemoryInputStream Ins( Buffer );
+//            Ins.Read( Outs );
+            if( Buffer.GetLength() )
+            {
+                RetVal = wxString::FromUTF8( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
+                if( RetVal.IsEmpty() )
+                    RetVal = wxString::From8BitData( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
+            }
         }
         //free( Buffer );
     }

@@ -85,8 +85,12 @@ class guTrackEditor : public wxDialog
     wxTextCtrl *            m_AlbumTextCtrl;
     wxBitmapButton *        m_TiCopyButton;
     wxTextCtrl *            m_TitleTextCtrl;
+    wxBitmapButton *        m_CoCopyButton;
+    wxTextCtrl *            m_CompTextCtrl;
     wxBitmapButton *        m_NuCopyButton;
     wxTextCtrl *            m_NumberTextCtrl;
+    wxBitmapButton *        m_DiCopyButton;
+    wxTextCtrl *            m_DiskTextCtrl;
     wxBitmapButton *        m_GeCopyButton;
     //wxTextCtrl *            m_GenreTextCtrl;
     wxComboBox *            m_GenreComboBox;
@@ -95,6 +99,9 @@ class guTrackEditor : public wxDialog
     wxBitmapButton *        m_RaCopyButton;
     guRating *              m_Rating;
     wxStaticText *          m_DetailInfoStaticText;
+
+    wxBitmapButton *        m_CommentCopyButton;
+    wxTextCtrl *            m_CommentText;
 
     wxStaticBitmap *        m_PictureBitmap;
     wxBitmapButton *        m_AddPicButton;
@@ -150,11 +157,14 @@ class guTrackEditor : public wxDialog
     void OnArCopyButtonClicked( wxCommandEvent &event );
     void OnAlCopyButtonClicked( wxCommandEvent &event );
     void OnTiCopyButtonClicked( wxCommandEvent &event );
+    void OnCoCopyButtonClicked( wxCommandEvent &event );
     void OnNuCopyButtonClicked( wxCommandEvent &event );
+    void OnDiCopyButtonClicked( wxCommandEvent &event );
     void OnGeCopyButtonClicked( wxCommandEvent &event );
     void OnYeCopyButtonClicked( wxCommandEvent &event );
     void OnRaCopyButtonClicked( wxCommandEvent &event );
     void OnGenreTextChanged( wxCommandEvent& event );
+    void OnCommentCopyButtonClicked( wxCommandEvent &event );
 
 
     void OnMBrainzAddButtonClicked( wxCommandEvent &event );

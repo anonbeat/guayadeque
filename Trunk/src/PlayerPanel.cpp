@@ -2056,7 +2056,8 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                     if( TestDestroy() )
                         break;
 
-                    if( m_Db->GetArtistId( &ArtistId, SimilarArtists[ Index ].m_Name, false ) )
+                    ArtistId = m_Db->GetArtistId( SimilarArtists[ Index ].m_Name, false );
+                    if( ArtistId != wxNOT_FOUND )
                     {
                         Artists.Add( ArtistId );
                     }

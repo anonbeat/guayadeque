@@ -93,6 +93,7 @@ bool guPlayListFile::Load( const wxString &uri )
         }
         else
         {
+            guLogMessage( wxT( "Trying to get the uri: %s" ), uri.c_str() );
             wxString Content = GetUrlContent( uri );
             if( !Content.IsEmpty() )
             {

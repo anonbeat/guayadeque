@@ -25,35 +25,9 @@
 #include "Base64.h"
 #include "TrackEdit.h"
 
-#include <tag.h>
-#include <attachedpictureframe.h>
-#include <fileref.h>
-#include <id3v2framefactory.h>
-#include <textidentificationframe.h>
-#include <unsynchronizedlyricsframe.h>
-#include <id3v2tag.h>
-#include <mpegfile.h>
-#include <flacfile.h>
-#include <mpcfile.h>
-#include <oggfile.h>
-#include <vorbisfile.h>
-
-#include <xiphcomment.h>
-
-#include <mp4tag.h>
-#include <mp4file.h>
-
-// FLAC Dev files
-#include <FLAC/metadata.h>
-#include <FLAC/format.h>
-
-
 #include <wx/mstream.h>
 #include <wx/wfstream.h>
 #include <wx/tokenzr.h>
-
-using namespace TagLib;
-
 
 // -------------------------------------------------------------------------------- //
 bool guIsValidAudioFile( const wxString &filename )
@@ -126,35 +100,39 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 wxImage * GetID3v2Image( ID3v2::Tag * tagv2 )
 {
-	TagLib::ID3v2::FrameList frameList = tagv2->frameList( "APIC" );
-	if( !frameList.isEmpty() )
-	{
-		TagLib::ID3v2::AttachedPictureFrame * PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame * >( frameList.front() );
-        int ImgDataSize = PicFrame->picture().size();
+    TagLib::ID3v2::AttachedPictureFrame * PicFrame;
+    TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["APIC"];
+    for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
+    {
+        PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
+        if( PicFrame->type() == TagLib::ID3v2::AttachedPictureFrame::FrontCover )
+        {
+            int ImgDataSize = PicFrame->picture().size();
 
-		if( ImgDataSize > 0 )
-		{
-			//guLogMessage( wxT( "ID3v2 header contains APIC frame with %u bytes." ), ImgDataSize );
-            wxMemoryOutputStream ImgOutStream;
-            ImgOutStream.Write( PicFrame->picture().data(), ImgDataSize );
-            wxMemoryInputStream ImgInputStream( ImgOutStream );
-            wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 ) );
-            if( CoverImage )
+            if( ImgDataSize > 0 )
             {
-                if( CoverImage->IsOk() )
+                //guLogMessage( wxT( "ID3v2 header contains APIC frame with %u bytes." ), ImgDataSize );
+                wxMemoryOutputStream ImgOutStream;
+                ImgOutStream.Write( PicFrame->picture().data(), ImgDataSize );
+                wxMemoryInputStream ImgInputStream( ImgOutStream );
+                wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 ) );
+                if( CoverImage )
                 {
-                    return CoverImage;
+                    if( CoverImage->IsOk() )
+                    {
+                        return CoverImage;
+                    }
+                    else
+                    {
+                        delete CoverImage;
+                    }
                 }
-                else
-                {
-                    delete CoverImage;
-                }
+    //		    wxFileOutputStream FOut( wxT( "~/test.jpg" ) );
+    //		    FOut.Write( PicFrame->picture().data(), ImgDataSize );
+    //		    FOut.Close();
             }
-//		    wxFileOutputStream FOut( wxT( "~/test.jpg" ) );
-//		    FOut.Write( PicFrame->picture().data(), ImgDataSize );
-//		    FOut.Close();
-		}
-	}
+        }
+    }
 	return NULL;
 }
 
@@ -162,6 +140,15 @@ wxImage * GetID3v2Image( ID3v2::Tag * tagv2 )
 void SetID3v2Image( ID3v2::Tag * tagv2, const wxImage * image )
 {
     TagLib::ID3v2::AttachedPictureFrame * PicFrame;
+
+    TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["APIC"];
+    for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
+    {
+        PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
+        if( PicFrame->type() == TagLib::ID3v2::AttachedPictureFrame::FrontCover )
+            tagv2->removeFrame( PicFrame, TRUE );
+    }
+
     if( image )
     {
         PicFrame = new TagLib::ID3v2::AttachedPictureFrame;
@@ -174,15 +161,6 @@ void SetID3v2Image( ID3v2::Tag * tagv2, const wxImage * image )
             ImgOutputStream.CopyTo( ImgData.data(), ImgOutputStream.GetSize() );
             PicFrame->setPicture( ImgData );
             tagv2->addFrame( PicFrame );
-        }
-    }
-    else
-    {
-        TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["APIC"];
-        for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
-        {
-            PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
-            tagv2->removeFrame( PicFrame, TRUE );
         }
     }
 }
@@ -370,82 +348,98 @@ bool SetMp4Lyrics( TagLib::MP4::Tag * mp4tag, const wxString &lyrics )
     return false;
 }
 
+
+
+
 // -------------------------------------------------------------------------------- //
-bool guTagInfo::Read( void )
+// guTagInfo
+// -------------------------------------------------------------------------------- //
+guTagInfo::guTagInfo( const wxString &filename )
 {
-    FileRef fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
-    Tag * tag;
-    AudioProperties * apro;
+    SetFileName( filename );
 
-    if( !fileref.isNull() )
+    m_Track = 0;
+    m_Year = 0;
+    m_Length = 0;
+    m_Bitrate = 0;
+};
+
+// -------------------------------------------------------------------------------- //
+guTagInfo::~guTagInfo()
+{
+    if( m_TagFile )
+        delete m_TagFile;
+}
+
+// -------------------------------------------------------------------------------- //
+void guTagInfo::SetFileName( const wxString &filename )
+{
+    m_FileName = filename;
+    if( !filename.IsEmpty() )
     {
-        if( ( tag = fileref.tag() ) )
-        {
-            m_TrackName = TStringTowxString( tag->title() );
-            m_ArtistName = TStringTowxString( tag->artist() );
-            m_AlbumName = TStringTowxString( tag->album() );
-            m_GenreName = TStringTowxString( tag->genre() );
-            m_Track = tag->track();
-            m_Year = tag->year();
-        }
-        else
-        {
-            guLogWarning( wxT( "Cant get tag object from %s" ), m_FileName.c_str() );
-            return false;
-        }
+        m_TagFile = new TagLib::FileRef( filename.ToUTF8(), true, TagLib::AudioProperties::Fast );
+    }
+    else
+    {
+        m_TagFile = NULL;
+    }
 
-        apro = fileref.audioProperties();
-        if( apro )
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_Tag = m_TagFile->tag();
+        if( !m_Tag )
         {
-            m_Length = apro->length();
-            m_Bitrate = apro->bitrate();
-            //m_Samplerate = apro->sampleRate();
-        }
-        else
-        {
-            guLogWarning( wxT( "Cant read audio properties from %s" ), m_FileName.c_str() );
+            guLogWarning( wxT( "Cant get tag object from '%s'" ), filename.c_str() );
         }
     }
     else
     {
-      guLogError( wxT( "Could not read tags from file %s" ), m_FileName.c_str() );
-      return false;
+        m_Tag = NULL;
     }
-    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::Read( void )
+{
+    AudioProperties * apro;
+    if( m_Tag )
+    {
+        m_TrackName = TStringTowxString( m_Tag->title() );
+        m_ArtistName = TStringTowxString( m_Tag->artist() );
+        m_AlbumName = TStringTowxString( m_Tag->album() );
+        m_GenreName = TStringTowxString( m_Tag->genre() );
+        m_Comments = TStringTowxString( m_Tag->comment() );
+        m_Track = m_Tag->track();
+        m_Year = m_Tag->year();
+    }
+
+    if( m_TagFile && m_Tag && ( apro = m_TagFile->audioProperties() ) )
+    {
+        m_Length = apro->length();
+        m_Bitrate = apro->bitrate();
+        //m_Samplerate = apro->sampleRate();
+        return true;
+    }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guTagInfo::Write( void )
 {
-    FileRef fileref( m_FileName.ToUTF8() );
-    Tag * tag;
-
-    if( !fileref.isNull() )
+    if( m_Tag )
     {
-        if( ( tag = fileref.tag() ) )
-        {
-            tag->setTitle( wxStringToTString( m_TrackName ) );
-            tag->setArtist( wxStringToTString( m_ArtistName ) );
-            tag->setAlbum( wxStringToTString( m_AlbumName ) );
-            tag->setGenre( wxStringToTString( m_GenreName ) );
-            tag->setTrack( m_Track ); // set the id3v1 track
-            tag->setYear( m_Year );
-        }
-        else
-        {
-            guLogWarning( wxT( "Cant get tag object from %s" ), m_FileName.c_str() );
-            return false;
-        }
-
-        if( !fileref.save() )
-        {
-          guLogWarning( wxT( "Tags Save failed for file %s" ), m_FileName.c_str() );
-          return false;
-        }
+        m_Tag->setTitle( wxStringToTString( m_TrackName ) );
+        m_Tag->setArtist( wxStringToTString( m_ArtistName ) );
+        m_Tag->setAlbum( wxStringToTString( m_AlbumName ) );
+        m_Tag->setGenre( wxStringToTString( m_GenreName ) );
+        m_Tag->setComment( wxStringToTString( m_Comments ) );
+        m_Tag->setTrack( m_Track ); // set the id3v1 track
+        m_Tag->setYear( m_Year );
     }
-    else
+
+    if( !m_TagFile->save() )
     {
-      guLogError( wxT( "Invalid file references writing tags for file %s" ), m_FileName.c_str() );
+      guLogWarning( wxT( "Tags Save failed for file '%s'" ), m_FileName.c_str() );
       return false;
     }
     return true;
@@ -495,6 +489,14 @@ bool guTagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 guMp3TagInfo::guMp3TagInfo( const wxString &filename ) : guTagInfo( filename )
 {
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_TagId3v2 = ( ( TagLib::MPEG::File * ) m_TagFile->file() )->ID3v2Tag();
+    }
+    else
+    {
+        m_TagId3v2 = NULL;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -505,28 +507,24 @@ guMp3TagInfo::~guMp3TagInfo()
 // -------------------------------------------------------------------------------- //
 bool guMp3TagInfo::Read( void )
 {
-    wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".mp3" ) ) );
-
-    FileRef fileref( m_FileName.ToUTF8(), true, TagLib::AudioProperties::Fast );
-    Tag * tag;
-    AudioProperties * apro;
-
-    if( !fileref.isNull() )
+    if( guTagInfo::Read() )
     {
         // If its a ID3v2 Tag try to load the labels
-        ID3v2::Tag * tagv2 = ( ( TagLib::MPEG::File * ) fileref.file() )->ID3v2Tag();
-        if( tagv2 )
+        if( m_TagId3v2 )
         {
-            m_TrackName = TStringTowxString( tagv2->title() );
-            m_ArtistName = TStringTowxString( tagv2->artist() );
-            m_AlbumName = TStringTowxString( tagv2->album() );
-            m_GenreName = TStringTowxString( tagv2->genre() );
-            m_Track = tagv2->track();
-            m_Year = tagv2->year();
+            if( m_TagId3v2->frameListMap().contains( "TPOS" ) )
+            {
+                m_Disk = TStringTowxString( m_TagId3v2->frameListMap()[ "TPOS" ].front()->toString() );
+            }
+
+            if( m_TagId3v2->frameListMap().contains( "TCOM" ) )
+            {
+                m_Composer = TStringTowxString( m_TagId3v2->frameListMap()[ "TCOM" ].front()->toString() );
+            }
 
             if( m_TrackLabels.Count() == 0 )
             {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tagv2, "guTRLABELS" );
+                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guTRLABELS" );
                 if( Frame )
                 {
                     // [guTRLABELS] guTRLABELS labels
@@ -538,7 +536,7 @@ bool guMp3TagInfo::Read( void )
 
             if( m_ArtistLabels.Count() == 0 )
             {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tagv2, "guARLABELS" );
+                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guARLABELS" );
                 if( Frame )
                 {
                     m_ArtistLabelsStr = TStringTowxString( Frame->toString() ).Mid( 24 );
@@ -549,7 +547,7 @@ bool guMp3TagInfo::Read( void )
 
             if( m_AlbumLabels.Count() == 0 )
             {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tagv2, "guALLABELS" );
+                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guALLABELS" );
                 if( Frame )
                 {
                     m_AlbumLabelsStr = TStringTowxString( Frame->toString() ).Mid( 24 );
@@ -557,27 +555,6 @@ bool guMp3TagInfo::Read( void )
                     m_AlbumLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
                 }
             }
-        }
-        else if( ( tag = fileref.tag() ) )
-        {
-            m_TrackName = TStringTowxString( tag->title() );
-            m_ArtistName = TStringTowxString( tag->artist() );
-            m_AlbumName = TStringTowxString( tag->album() );
-            m_GenreName = TStringTowxString( tag->genre() );
-            m_Track = tag->track();
-            m_Year = tag->year();
-        }
-
-        apro = fileref.audioProperties();
-        if( apro )
-        {
-            m_Length = apro->length();
-            m_Bitrate = apro->bitrate();
-            //m_Samplerate = apro->sampleRate();
-        }
-        else
-        {
-            guLogWarning( wxT( "Cant read audio properties from %s\n" ), m_FileName.c_str() );
         }
     }
     else
@@ -615,48 +592,30 @@ void ID3v2_CheckLabelFrame( ID3v2::Tag * tagv2, const char * description, const 
 // -------------------------------------------------------------------------------- //
 bool guMp3TagInfo::Write( void )
 {
-    FileRef fileref = TagLib::FileRef( m_FileName.ToUTF8() );
-    Tag * tag;
-
-    if( !fileref.isNull() )
+    if( m_TagId3v2 )
     {
-        if( ( tag = fileref.tag() ) )
-        {
-            tag->setTitle( wxStringToTString( m_TrackName ) );
-            tag->setArtist( wxStringToTString( m_ArtistName ) );
-            tag->setAlbum( wxStringToTString( m_AlbumName ) );
-            tag->setGenre( wxStringToTString( m_GenreName ) );
-            tag->setTrack( m_Track ); // set the id3v1 track
-            tag->setYear( m_Year );
-        }
+        TagLib::ID3v2::TextIdentificationFrame * frame;
+        m_TagId3v2->removeFrames( "TPOS" );
+        frame = new TagLib::ID3v2::TextIdentificationFrame( "TPOS" );
+        frame->setText( wxStringToTString( m_Disk ) );
+        m_TagId3v2->addFrame( frame );
 
-        // Check if we have a id3v2 Tag
-        ID3v2::Tag * tagv2 = ( ( TagLib::MPEG::File * ) fileref.file() )->ID3v2Tag();
-        if( tagv2 )
-        {
-            // I have found several TRCK fields in the mp3s
-            tagv2->removeFrames( "TRCK" );
-            tagv2->setTrack( m_Track );
+        m_TagId3v2->removeFrames( "TCOM" );
+        frame = new TagLib::ID3v2::TextIdentificationFrame( "TCOM" );
+        frame->setText( wxStringToTString( m_Composer ) );
+        m_TagId3v2->addFrame( frame );
 
-            // The Labels
-            ID3v2_CheckLabelFrame( tagv2, "guARLABELS", m_ArtistLabelsStr );
-            ID3v2_CheckLabelFrame( tagv2, "guALLABELS", m_AlbumLabelsStr );
-            ID3v2_CheckLabelFrame( tagv2, "guTRLABELS", m_TrackLabelsStr );
+        // I have found several TRCK fields in the mp3s
+        m_TagId3v2->removeFrames( "TRCK" );
+        m_TagId3v2->setTrack( m_Track );
 
-        }
-
-
-        if( !fileref.save() )
-        {
-          guLogWarning( _( "iD3Tags Save failed" ) );
-          return false;
-        }
+        // The Labels
+        ID3v2_CheckLabelFrame( m_TagId3v2, "guARLABELS", m_ArtistLabelsStr );
+        ID3v2_CheckLabelFrame( m_TagId3v2, "guALLABELS", m_AlbumLabelsStr );
+        ID3v2_CheckLabelFrame( m_TagId3v2, "guTRLABELS", m_TrackLabelsStr );
     }
-    else
-    {
-      guLogError( wxT( "Could not read tags from file %s\n" ), m_FileName.c_str() );
-    }
-    return true;
+
+    return guTagInfo::Write();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -668,27 +627,24 @@ bool guMp3TagInfo::CanHandleImages( void )
 // -------------------------------------------------------------------------------- //
 wxImage * guMp3TagInfo::GetImage( void )
 {
-    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
-    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
-
-	if( !tagv2 )
-        return NULL;
-
-    return GetID3v2Image( tagv2  );
+    if( m_TagId3v2 )
+    {
+        return GetID3v2Image( m_TagId3v2 );
+    }
+    return NULL;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMp3TagInfo::SetImage( const wxImage * image )
 {
-    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
-    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
-
-	if( !tagv2 )
+    if( m_TagId3v2 )
+    {
+        SetID3v2Image( m_TagId3v2, image );
+    }
+    else
         return false;
 
-    SetID3v2Image( tagv2, image );
-
-    return tagfile.save();
+    return m_TagFile->save();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -700,27 +656,22 @@ bool guMp3TagInfo::CanHandleLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxString guMp3TagInfo::GetLyrics( void )
 {
-    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
-    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
-
-	if( !tagv2 )
-        return wxEmptyString;
-
-    return GetID3v2Lyrics( tagv2  );
+    if( m_TagId3v2 )
+    {
+        return GetID3v2Lyrics( m_TagId3v2  );
+    }
+    return wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMp3TagInfo::SetLyrics( const wxString &lyrics )
 {
-    TagLib::MPEG::File tagfile( m_FileName.ToUTF8() );
-    ID3v2::Tag * tagv2 = tagfile.ID3v2Tag( true );
-
-	if( !tagv2 )
-        return false;
-
-    SetID3v2Lyrics( tagv2, lyrics );
-
-    return tagfile.save();
+	if( m_TagId3v2 )
+    {
+        SetID3v2Lyrics( m_TagId3v2, lyrics );
+        return m_TagFile->save();
+    }
+    return false;
 }
 
 
@@ -731,11 +682,48 @@ bool guMp3TagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 guFlacTagInfo::guFlacTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_XiphComment = ( ( TagLib::FLAC::File * ) m_TagFile->file() )->xiphComment();
+    }
+    else
+        m_XiphComment = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
 guFlacTagInfo::~guFlacTagInfo()
 {
+}
+
+// -------------------------------------------------------------------------------- //
+bool guFlacTagInfo::Read( void )
+{
+    if( guTagInfo::Read() )
+    {
+        if( m_XiphComment )
+        {
+            if( m_XiphComment->fieldListMap().contains( "COMPOSER" ) )
+                m_Composer = TStringTowxString( m_XiphComment->fieldListMap()["COMPOSER"].front() );
+
+            if( m_XiphComment->fieldListMap().contains( "DISCNUMBER" ) )
+            {
+                m_Disk = TStringTowxString( m_XiphComment->fieldListMap()["DISCNUMBER"].front() );
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guFlacTagInfo::Write( void )
+{
+    if( m_XiphComment )
+    {
+        m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
+        m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
+    }
+    return guTagInfo::Write();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -886,17 +874,13 @@ bool guFlacTagInfo::CanHandleLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxString guFlacTagInfo::GetLyrics( void )
 {
-    TagLib::FLAC::File tagfile( m_FileName.ToUTF8() );
-
-    return GetXiphCommentLyrics( tagfile.xiphComment() );
+    return GetXiphCommentLyrics( m_XiphComment );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guFlacTagInfo::SetLyrics( const wxString &lyrics )
 {
-    TagLib::FLAC::File tagfile( m_FileName.ToUTF8() );
-
-    return SetXiphCommentLyrics( tagfile.xiphComment(), lyrics ) && tagfile.save();
+    return SetXiphCommentLyrics( m_XiphComment, lyrics ) && m_TagFile->save();
 }
 
 
@@ -907,11 +891,48 @@ bool guFlacTagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 guOggTagInfo::guOggTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_XiphComment = ( ( TagLib::Ogg::Vorbis::File * ) m_TagFile->file() )->tag();
+    }
+    else
+        m_XiphComment = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
 guOggTagInfo::~guOggTagInfo()
 {
+}
+
+// -------------------------------------------------------------------------------- //
+bool guOggTagInfo::Read( void )
+{
+    if( guTagInfo::Read() )
+    {
+        if( m_XiphComment )
+        {
+            if( m_XiphComment->fieldListMap().contains( "COMPOSER" ) )
+                m_Composer = TStringTowxString( m_XiphComment->fieldListMap()["COMPOSER"].front() );
+
+            if( m_XiphComment->fieldListMap().contains( "DISCNUMBER" ) )
+            {
+                m_Disk = TStringTowxString( m_XiphComment->fieldListMap()["DISCNUMBER"].front() );
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guOggTagInfo::Write( void )
+{
+    if( m_XiphComment )
+    {
+        m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
+        m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
+    }
+    return guTagInfo::Write();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -923,17 +944,13 @@ bool guOggTagInfo::CanHandleImages( void )
 // -------------------------------------------------------------------------------- //
 wxImage * guOggTagInfo::GetImage( void )
 {
-    TagLib::Ogg::Vorbis::File tagfile( m_FileName.ToUTF8() );
-
-    return GetXiphCommentCoverArt( tagfile.tag() );
+    return GetXiphCommentCoverArt( m_XiphComment );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guOggTagInfo::SetImage( const wxImage * image )
 {
-    TagLib::Ogg::Vorbis::File tagfile( m_FileName.ToUTF8() );
-
-    return SetXiphCommentCoverArt( tagfile.tag(), image ) && tagfile.save();
+    return SetXiphCommentCoverArt( m_XiphComment, image ) && m_TagFile->save();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -945,16 +962,13 @@ bool guOggTagInfo::CanHandleLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxString guOggTagInfo::GetLyrics( void )
 {
-    TagLib::Ogg::Vorbis::File tagfile( m_FileName.ToUTF8() );
-    return GetXiphCommentLyrics( tagfile.tag() );
+    return GetXiphCommentLyrics( m_XiphComment );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guOggTagInfo::SetLyrics( const wxString &lyrics )
 {
-    TagLib::Ogg::Vorbis::File tagfile( m_FileName.ToUTF8() );
-
-    return SetXiphCommentLyrics( tagfile.tag(), lyrics ) && tagfile.save();
+    return SetXiphCommentLyrics( m_XiphComment, lyrics ) && m_TagFile->save();
 }
 
 
@@ -965,6 +979,12 @@ bool guOggTagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 guMp4TagInfo::guMp4TagInfo( const wxString &filename ) : guTagInfo( filename )
 {
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_Mp4Tag = ( ( TagLib::MP4::File * ) m_TagFile->file() )->tag();
+    }
+    else
+        m_Mp4Tag = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -972,12 +992,76 @@ guMp4TagInfo::~guMp4TagInfo()
 {
 }
 
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::Read( void )
+{
+    if( guTagInfo::Read() )
+    {
+        if( m_Mp4Tag )
+        {
+            if( m_Mp4Tag->itemListMap().contains( "\xA9wrt" ) )
+                m_Composer = TStringTowxString( m_Mp4Tag->itemListMap()["\xa9wrt"].toStringList().front() );
+
+            if( m_Mp4Tag->itemListMap().contains( "disk" ) )
+            {
+                m_Disk = wxString::Format( wxT( "%i/%i" ),
+                    m_Mp4Tag->itemListMap()["disk"].toIntPair().first,
+                    m_Mp4Tag->itemListMap()["disk"].toIntPair().second );
+
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal )
+{
+    unsigned long Number;
+    disknum = 0;
+    disktotal = 0;
+    wxString DiskNum = diskstr.BeforeFirst( wxT( '/' ) );
+    if( !DiskNum.IsEmpty() )
+    {
+        if( DiskNum.ToULong( &Number ) )
+        {
+            disknum = Number;
+            if( diskstr.Find( wxT( "/" ) ) )
+            {
+                DiskNum = diskstr.AfterFirst( wxT( '/' ) );
+                if( DiskNum.ToULong( &Number ) )
+                {
+                    disktotal = Number;
+                }
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::Write( void )
+{
+    if( m_Mp4Tag )
+    {
+        m_Mp4Tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
+        int first;
+        int second;
+        guStrDiskToDiskNum( m_Disk, first, second );
+        m_Mp4Tag->itemListMap()["disk"] = TagLib::MP4::Item( first, second );
+            //mp4tag->itemListMap()["disk"] = TagLib::MP4::Item( discnumber, 0 );
+    }
+    return guTagInfo::Write();
+}
+
 //// -------------------------------------------------------------------------------- //
 //bool guMp4TagInfo::CanHandleImages( void )
 //{
-//    return false;
+//    return true;
 //}
-
+//
 //// -------------------------------------------------------------------------------- //
 //wxImage * guMp4TagInfo::GetImage( void )
 //{
@@ -1071,15 +1155,13 @@ guMp4TagInfo::~guMp4TagInfo()
 //// -------------------------------------------------------------------------------- //
 //wxImage * guMp4TagInfo::GetImage( void )
 //{
-//    TagLib::MP4::File tagfile( m_FileName.ToUTF8() );
-//    return GetMp4Image( tagfile.tag() );
+//    return GetMp4Image( m_Mp4Tag );
 //}
 //
 //// -------------------------------------------------------------------------------- //
 //bool guMp4TagInfo::SetImage( const wxImage * image )
 //{
-//    TagLib::MP4::File tagfile( m_FileName.ToUTF8() );
-//    return SetMp4Image( tagfile.tag(), image ) && tagfile.save();
+//    return SetMp4Image( m_Mp4Tag, image ) && m_TagFile->save();
 //}
 
 // -------------------------------------------------------------------------------- //
@@ -1123,7 +1205,7 @@ guMpcTagInfo::~guMpcTagInfo()
 // -------------------------------------------------------------------------------- //
 guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
-    wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".ape" ) ) );
+    //wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".ape" ) ) );
 }
 
 // -------------------------------------------------------------------------------- //

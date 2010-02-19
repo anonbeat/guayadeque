@@ -94,27 +94,35 @@ void guRating::OnPaint( wxPaintEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRating::OnMouseEvents( wxMouseEvent &event )
 {
-    int SavedRating = m_Rating;
-    if( event.RightDown() )
+    if( event.RightDown() || event.LeftDown() )
     {
-        m_Rating = 0;
-    }
-    else if( event.LeftIsDown() )
-    {
-        int w = ( ( m_Style * 2 ) + GURATING_IMAGE_SIZE );
-        if( event.m_x < 3 )
+        int SavedRating = m_Rating;
+        if( event.RightDown() )
+        {
             m_Rating = 0;
-        else
-            m_Rating = wxMin( 5, ( wxMax( 0, event.m_x - 3 ) / w ) + 1 );
-        //guLogMessage( wxT( "Clicked %i %i" ), event.m_x, m_Rating );
-    }
-    if( SavedRating != m_Rating )
-    {
-        Refresh();
-        guRatingEvent evt( guEVT_RATING_CHANGED );
-        //evt.SetClientObject( this );
-        evt.SetInt( m_Rating );
-        wxPostEvent( this, evt );
+        }
+        else if( event.LeftDown() )
+        {
+            int w = ( ( m_Style * 2 ) + GURATING_IMAGE_SIZE );
+            if( event.m_x < 3 )
+                m_Rating = 0;
+            else
+                m_Rating = wxMin( 5, ( wxMax( 0, event.m_x - 3 ) / w ) + 1 );
+            //guLogMessage( wxT( "Clicked %i %i" ), event.m_x, m_Rating );
+
+        }
+        if( SavedRating == m_Rating )
+        {
+            m_Rating = 0;
+        }
+        if( SavedRating != m_Rating )
+        {
+            Refresh();
+            guRatingEvent evt( guEVT_RATING_CHANGED );
+            //evt.SetClientObject( this );
+            evt.SetInt( m_Rating );
+            wxPostEvent( this, evt );
+        }
     }
 }
 

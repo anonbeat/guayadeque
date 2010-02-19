@@ -34,7 +34,7 @@
 
 static wxString     LastAlbum       = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
 static int          LastAlbumId;
-static int          LastAlbumCoverId;
+//static int          LastAlbumCoverId;
 static wxString     LastGenre       = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
 static int          LastGenreId;
 static int          LastCoverId = wxNOT_FOUND;
@@ -55,11 +55,12 @@ WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "9"
+#define GU_CURRENT_DBVERSION    "10"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
                "song_number, song_pathid, song_filename, song_year, "\
-               "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime, song_filesize "\
+               "song_bitrate, song_rating, song_playcount, song_lastplay, song_addedtime, song_filesize, "\
+               "song_composer, song_comment, song_disk "\
                "FROM songs " )
 
 
@@ -530,8 +531,9 @@ bool guDbLibrary::CheckDbVersion( void )
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS songs( song_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "song_name varchar(255), song_albumid INTEGER, song_artistid INTEGER, song_genreid INTEGER, "
-                      "song_filename varchar(255), song_pathid INTEGER, song_number INTEGER(3), song_year INTEGER(4), "
-                      "song_length INTEGER, song_bitrate INTEGER, song_rating INTEGER DEFAULT -1, song_playcount INTEGER, "
+                      "song_filename varchar(255), song_pathid INTEGER, song_number INTEGER(3), song_disk VARCHAR, "
+                      "song_year INTEGER(4), song_comment VARCHAR, song_composer VARCHAR(512), song_length INTEGER, "
+                      "song_bitrate INTEGER, song_rating INTEGER DEFAULT -1, song_playcount INTEGER, "
                       "song_addedtime INTEGER, song_lastplay INTEGER, song_filesize INTEGER );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'song_id' on songs (song_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_name' on songs (song_name ASC);" ) );
@@ -545,6 +547,7 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_playcount' on songs (song_playcount ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_addedtime' on songs (song_addedtime ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_lastplay' on songs (song_lastplay ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_composer' on songs (song_composer ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS tags( tag_id INTEGER  PRIMARY KEY AUTOINCREMENT, tag_name varchar(100) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_id' on tags (tag_id ASC);" ) );
@@ -692,8 +695,18 @@ bool guDbLibrary::CheckDbVersion( void )
     case 8 :
     {
       query.Add( wxT( "DELETE FROM covers;" ) );
+    }
+
+    case 9 :
+    {
+      if( dbVer > 4 )
+      {
+          query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_disk VARCAHR" ) );
+          query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_comment VARCHAR" ) );
+          query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_composer VARCHAR(512)" ) );
+      }
       m_NeedUpdate = true;
-      guLogMessage( wxT( "Updating database version to "GU_CURRENT_DBVERSION ) );
+      guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
     }
@@ -711,44 +724,41 @@ bool guDbLibrary::CheckDbVersion( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetGenreId( int * GenreId, wxString &GenreName )
+int guDbLibrary::GetGenreId( wxString &genrename )
 {
-  if( LastGenre == GenreName )
+  if( LastGenre == genrename )
   {
-      * GenreId = LastGenreId;
-      return 1;
+      return LastGenreId;
   }
 
   wxString query;
   wxSQLite3ResultSet dbRes;
-  wxASSERT( GenreId );
-  int RetVal = 0;
+  int RetVal = wxNOT_FOUND;
 
-  LastGenre = GenreName;
+  LastGenre = genrename;
 
-  query = wxString::Format( wxT( "SELECT genre_id FROM genres "\
+  query = wxString::Format( wxT( "SELECT genre_id FROM genres "
                                  "WHERE genre_name = '%s' LIMIT 1;" ),
-                        escape_query_str( GenreName ).c_str() );
+                        escape_query_str( genrename ).c_str() );
 
   dbRes = ExecuteQuery( query );
 
   if( dbRes.NextRow() )
   {
-    * GenreId = LastGenreId = dbRes.GetInt( 0 );
-    RetVal = 1;
+    RetVal = LastGenreId = dbRes.GetInt( 0 );
   }
   else
   {
-    query = wxString::Format( wxT( "INSERT INTO genres( genre_id, genre_name ) "\
+    query = wxString::Format( wxT( "INSERT INTO genres( genre_id, genre_name ) "
                                    "VALUES( NULL, '%s' );" ),
-                        escape_query_str( GenreName ).c_str() );
-    if( ExecuteUpdate( query ) == 1 )
+                        escape_query_str( genrename ).c_str() );
+    if( ExecuteUpdate( query ) )
     {
-      * GenreId = LastGenreId = m_Db.GetLastRowId().GetLo();
-      RetVal = 1;
+      RetVal = LastGenreId = m_Db.GetLastRowId().GetLo();
     }
   }
   dbRes.Finalize();
+
   return RetVal;
 }
 
@@ -1074,27 +1084,24 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, co
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName,
-    const int ArtistId, const int PathId, const wxString &PathName )
+int guDbLibrary::GetAlbumId( wxString &albumname, const int artistid, const int pathid, const wxString &pathname )
 {
   //guLogMessage( wxT( "GetAlbumId : %s" ), LastAlbum.c_str() );
-  if( LastAlbum == AlbumName )
+  if( LastAlbum == albumname )
   {
       //guLogMessage( wxT( "Album was found in cache" ) );
-      * AlbumId = LastAlbumId;
-      * CoverId = LastAlbumCoverId;
-      return 1;
+      return LastAlbumId;
   }
 
   wxString query;
   wxSQLite3ResultSet dbRes;
-  int RetVal = 0;
+  int RetVal = wxNOT_FOUND;
 
-  query = wxString::Format( wxT( "SELECT album_id, album_coverid, album_artistid "
+  query = wxString::Format( wxT( "SELECT album_id, album_artistid "
                                  "FROM albums "
                                  "WHERE album_name = '%s' "
                                  "AND album_pathid = %u LIMIT 1;" ),
-                        escape_query_str( AlbumName ).c_str(), PathId );
+                        escape_query_str( albumname ).c_str(), pathid );
 
   //guLogMessage( wxT( "%s" ), query.c_str() );
 
@@ -1102,62 +1109,28 @@ int guDbLibrary::GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName,
 
   if( dbRes.NextRow() )
   {
-    * AlbumId = LastAlbumId = dbRes.GetInt( 0 );
-    * CoverId = LastAlbumCoverId = dbRes.GetInt( 1 );
-
-    if( LastAlbumCoverId )
-    {
-        // Check if the Actual Cover exists and
-        // If not exists then remove it and clear Album database
-        wxString CoverPath = GetCoverPath( LastAlbumCoverId );
-        if( !CoverPath.Len() || !wxFileExists( CoverPath ) )
-        {
-            // Clears CoverId in album
-            query = wxString::Format( wxT( "UPDATE albums SET album_coverid = 0 "\
-                                       "WHERE album_id = %i;" ), LastAlbumId );
-            ExecuteUpdate( query );
-            // The cover did not exist so clear it
-            * CoverId = LastAlbumCoverId = 0;
-        }
-    }
-
-    if( !LastAlbumCoverId )
-    {
-        * CoverId = LastAlbumCoverId = FindCoverFile( PathName );
-        if( * CoverId )
-        {
-            query = wxString::Format( wxT( "UPDATE albums SET album_coverid = %i "\
-                                       "WHERE album_id = %i;" ), * CoverId, * AlbumId );
-            ExecuteUpdate( query );
-        }
-    }
+    RetVal = LastAlbumId = dbRes.GetInt( 0 );
 
     // Now check if the artist id changed and if so update it
-    if( dbRes.GetInt( 2 ) != ArtistId )
+    if( dbRes.GetInt( 1 ) != artistid )
     {
         query = wxString::Format( wxT( "UPDATE albums SET album_artistid = %u "\
-                                       "WHERE album_id = %i;" ), ArtistId, * AlbumId );
+                                       "WHERE album_id = %i;" ), artistid, RetVal );
         ExecuteUpdate( query );
     }
-
-    RetVal = 1;
   }
   else
   {
-    //guLogMessage( wxT( "AlbumName not found. Searching for covers in '%s'" ), wxGetCwd().c_str() );
-    * CoverId = LastAlbumCoverId = FindCoverFile( PathName );
-    //guLogMessage( wxT( "Found Cover with Id : %i" ), * CoverId );
-
-    query = query.Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid ) "\
-                               "VALUES( NULL, %u, %u, '%s', %u );" ),
-                    ArtistId, PathId,  escape_query_str( AlbumName ).c_str(), * CoverId );
-    if( ExecuteUpdate( query ) == 1 )
+    query = wxString::Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid ) "\
+                               "VALUES( NULL, %u, %u, '%s', 0 );" ),
+                    artistid, pathid,  escape_query_str( albumname ).c_str() );
+    if( ExecuteUpdate( query ) )
     {
-      * AlbumId = LastAlbumId = m_Db.GetLastRowId().GetLo();
-      RetVal = 1;
+      RetVal = LastAlbumId = m_Db.GetLastRowId().GetLo();
     }
   }
   dbRes.Finalize();
+
   return RetVal;
 }
 
@@ -1238,12 +1211,11 @@ int guDbLibrary::PathExists( const wxString &path )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPathId( int * PathId, wxString &PathValue )
+int guDbLibrary::GetPathId( wxString &PathValue )
 {
   if( PathValue == LastPath )
   {
-      * PathId = LastPathId;
-      return 1;
+      return LastPathId;
   }
 
   wxString query;
@@ -1255,25 +1227,23 @@ int guDbLibrary::GetPathId( int * PathId, wxString &PathValue )
   if( !PathValue.EndsWith( wxT( "/" ) ) )
     PathValue += '/';
 
-  query = wxString::Format( wxT( "SELECT path_id FROM paths "\
+  query = wxString::Format( wxT( "SELECT path_id FROM paths "
                                  "WHERE path_value = '%s' LIMIT 1;" ),
                     escape_query_str( PathValue ).c_str() );
   dbRes = ExecuteQuery( query );
 
   if( dbRes.NextRow() )
   {
-    * PathId = LastPathId = dbRes.GetInt( 0 );
-    RetVal = 1;
+    RetVal = LastPathId = dbRes.GetInt( 0 );
   }
   else
   {
     query = wxString::Format( wxT( "INSERT INTO paths( path_id, path_value ) "\
                                    "VALUES( NULL, '%s' );" ),
                     escape_query_str( PathValue ).c_str() );
-    if( ExecuteUpdate( query ) == 1 )
+    if( ExecuteUpdate( query ) )
     {
-      * PathId = LastPathId = m_Db.GetLastRowId().GetLo();
-      RetVal = 1;
+      RetVal = LastPathId = m_Db.GetLastRowId().GetLo();
     }
   }
   dbRes.Finalize();
@@ -1282,36 +1252,33 @@ int guDbLibrary::GetPathId( int * PathId, wxString &PathValue )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
+int guDbLibrary::GetSongId( wxString &filename, const int pathid )
 {
   //wxSQLite3StatementBuffer query;
   wxString query;
   wxSQLite3ResultSet dbRes;
-  int RetVal = 0;
+  int RetVal = wxNOT_FOUND;
 
 //  printf( "GetSongId0\n" );
 
 //  printf( "%u : %s\n", FileName.Length(), TextBuf );
-  query = query.Format( wxT( "SELECT song_id FROM songs "\
-                             "WHERE song_pathid = %u " \
+  query = query.Format( wxT( "SELECT song_id FROM songs WHERE song_pathid = %u "
                              "AND song_filename = '%s' LIMIT 1;" ),
-            PathId, escape_query_str( FileName ).c_str() );
+            pathid, escape_query_str( filename ).c_str() );
   //printf( query.ToAscii() );
   dbRes = ExecuteQuery( query );
 
   if( dbRes.NextRow() )
   {
-    * SongId = dbRes.GetInt( 0 );
-    RetVal = 1;
+    RetVal = dbRes.GetInt( 0 );
   }
   else
   {
-    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_playcount, song_addedtime ) "\
-                               "VALUES( NULL, %u, %u, %u )" ), PathId, 0, wxDateTime::GetTimeNow() );
-    if( ExecuteUpdate( query ) == 1 )
+    query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_playcount, song_addedtime ) "
+                               "VALUES( NULL, %u, %u, %u )" ), pathid, 0, wxDateTime::GetTimeNow() );
+    if( ExecuteUpdate( query ) )
     {
-      * SongId = m_Db.GetLastRowId().GetLo();
-      RetVal = 1;
+      RetVal = m_Db.GetLastRowId().GetLo();
     }
   }
   dbRes.Finalize();
@@ -1320,17 +1287,9 @@ int guDbLibrary::GetSongId( int * SongId, wxString &FileName, const int PathId )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetSongId( int * SongId, wxString &FileName, wxString &FilePath )
+int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath )
 {
-  //wxString query;
-  //wxSQLite3ResultSet dbRes;
-  int PathId;
-//  printf( "GetGenreId1\n" );
-
-  if( !GetPathId( &PathId, FilePath ) )
-    return 0;
-
-  return GetSongId( SongId, FileName, PathId );
+  return GetSongId( FileName, GetPathId( FilePath ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1344,49 +1303,36 @@ int guDbLibrary::ReadFileTags( const char * filename )
 
   if( TagInfo )
   {
+      //guLogMessage( wxT( "FileName: '%s'" ), FileName.c_str() );
       if( TagInfo->Read() )
       {
           //wxString PathName = wxGetCwd();
           //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
+
           wxString PathName = wxPathOnly( FileName );
           //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
-          if( !GetPathId( &m_CurSong.m_PathId, PathName ) )
-          {
-             guLogWarning( wxT( "Could not get the PathId\n" ) );
-             return 0;
-          }
+          m_CurSong.m_PathId = GetPathId( PathName );
 
-          if( !GetArtistId( &m_CurSong.m_ArtistId, TagInfo->m_ArtistName ) )
-          {
-            guLogWarning( wxT( "Could not get the ArtistId" ) );
-            return 0;
-          }
+          m_CurSong.m_ArtistId = GetArtistId( TagInfo->m_ArtistName );
 
-          m_CurSong.m_AlbumName = wxEmptyString;
-          m_CurSong.m_AlbumId = 0;
-          if( !GetAlbumId( &m_CurSong.m_AlbumId, &m_CurSong.m_CoverId, TagInfo->m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, PathName ) )
-          {
-            guLogWarning( wxT( "Could not get the AlbumId" ) );
-            return 0;
-          }
+          m_CurSong.m_AlbumId =GetAlbumId( TagInfo->m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, PathName );
 
-          if( !GetGenreId( &m_CurSong.m_GenreId, TagInfo->m_GenreName ) )
-          {
-            guLogWarning( wxT( "Could not get the GenreId" ) );
-            return 0;
-          }
+          m_CurSong.m_GenreId = GetGenreId( TagInfo->m_GenreName );
 
           m_CurSong.m_FileName = FileName.AfterLast( '/' );
           m_CurSong.m_SongName = TagInfo->m_TrackName;
           m_CurSong.m_FileSize = guGetFileSize( FileName );
 
-          GetSongId( &m_CurSong.m_SongId, m_CurSong.m_FileName, m_CurSong.m_PathId );
+          m_CurSong.m_SongId = GetSongId( m_CurSong.m_FileName, m_CurSong.m_PathId );
 
           m_CurSong.m_Number   = TagInfo->m_Track;
           m_CurSong.m_Year     = TagInfo->m_Year;
           m_CurSong.m_Length   = TagInfo->m_Length;
           m_CurSong.m_Bitrate  = TagInfo->m_Bitrate;
           m_CurSong.m_Rating   = -1;
+          m_CurSong.m_Composer = TagInfo->m_Composer;
+          m_CurSong.m_Comments = TagInfo->m_Comments;
+          m_CurSong.m_Disk     = TagInfo->m_Disk;
 
           wxArrayInt ArrayIds;
           //
@@ -1478,6 +1424,9 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
         TagInfo->m_GenreName = Song->m_GenreName;
         TagInfo->m_Track = Song->m_Number;
         TagInfo->m_Year = Song->m_Year;
+        TagInfo->m_Composer = Song->m_Composer;
+        TagInfo->m_Comments = Song->m_Comments;
+        TagInfo->m_Disk = Song->m_Disk;
 
         TagInfo->Write();
 
@@ -1494,7 +1443,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
             int      PathId;
             int      ArtistId;
             int      AlbumId;
-            int      CoverId;
+            //int      CoverId;
             int      GenreId;
             //int      SongId;
             //wxString FileName;
@@ -1503,29 +1452,13 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 
             wxSetWorkingDirectory( PathName );
 
-            if( !GetPathId( &PathId, PathName ) )
-            {
-              guLogWarning( wxT( "Could not get the PathId" ) );
-              continue;
-            }
+            PathId = GetPathId( PathName );
 
-            if( !GetArtistId( &ArtistId, Song->m_ArtistName ) )
-            {
-              guLogMessage( wxT( "Could not get the ArtistId" ) );
-              continue;
-            }
+            ArtistId = GetArtistId( Song->m_ArtistName );
 
-            if( !GetAlbumId( &AlbumId, &CoverId, Song->m_AlbumName, ArtistId, PathId, PathName ) )
-            {
-              guLogMessage( wxT( "Could not get the AlbumId" ) );
-              continue;
-            }
+            AlbumId = GetAlbumId( Song->m_AlbumName, ArtistId, PathId, PathName );
 
-            if( !GetGenreId( &GenreId, Song->m_GenreName ) )
-            {
-              guLogMessage( wxT( "Could not get the GenreId" ) );
-              continue;
-            }
+            GenreId = GetGenreId( Song->m_GenreName );
 
             //FileName = Song->FileName.AfterLast( '/' );
             //printf( ( wxT( "FileName: " ) + CurSong.FileName ).ToAscii() ); printf( "\n" );
@@ -1538,7 +1471,6 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
             m_CurSong.m_AlbumId = AlbumId;
             m_CurSong.m_PathId = PathId;
             m_CurSong.m_FileName = Song->m_FileName.AfterLast( '/' );
-            escape_query_str( &m_CurSong.m_FileName );
             //CurSong.SongId = SongId;
             //CurSong.FileName.c_str(),
             //CurSong.Number
@@ -1576,6 +1508,7 @@ int guDbLibrary::UpdateSong()
       query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', song_genreid = %u, "
                                  "song_artistid = %u, song_albumid = %u, song_pathid = %u, "
                                  "song_filename = '%s', song_number = %u, song_year = %u, "
+                                 "song_composer = '%s', song_comment = '%s', song_disk = '%s', "
                                  "song_length = %u, song_bitrate = %u, song_rating = %i, "
                                  "song_filesize = %u WHERE song_id = %u;" ),
             escape_query_str( m_CurSong.m_SongName ).c_str(),
@@ -1586,6 +1519,9 @@ int guDbLibrary::UpdateSong()
             escape_query_str( m_CurSong.m_FileName ).c_str(),
             m_CurSong.m_Number,
             m_CurSong.m_Year,
+            escape_query_str( m_CurSong.m_Composer ).c_str(),
+            escape_query_str( m_CurSong.m_Comments ).c_str(),
+            escape_query_str( m_CurSong.m_Disk ).c_str(),
             m_CurSong.m_Length,
             m_CurSong.m_Bitrate,
             m_CurSong.m_Rating,
@@ -1597,6 +1533,7 @@ int guDbLibrary::UpdateSong()
       query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', song_genreid = %u, "\
                                  "song_artistid = %u, song_albumid = %u, song_pathid = %u, "\
                                  "song_filename = '%s', song_number = %u, song_year = %u, "\
+                                 "song_composer = '%s', song_comment = '%s', song_disk = '%s', "
                                  "song_length = %u, song_bitrate = %u, song_filesize = %u WHERE song_id = %u;" ),
             escape_query_str( m_CurSong.m_SongName ).c_str(),
             m_CurSong.m_GenreId,
@@ -1606,6 +1543,9 @@ int guDbLibrary::UpdateSong()
             escape_query_str( m_CurSong.m_FileName ).c_str(),
             m_CurSong.m_Number,
             m_CurSong.m_Year,
+            escape_query_str( m_CurSong.m_Composer ).c_str(),
+            escape_query_str( m_CurSong.m_Comments ).c_str(),
+            escape_query_str( m_CurSong.m_Disk ).c_str(),
             m_CurSong.m_Length,
             m_CurSong.m_Bitrate,
             m_CurSong.m_FileSize,
@@ -2558,6 +2498,9 @@ void inline guDbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * d
   Song->m_LastPlay   = dbRes->GetInt( 13 );
   Song->m_AddedTime  = dbRes->GetInt( 14 );
   Song->m_FileSize   = dbRes->GetInt( 15 );
+  Song->m_Composer   = dbRes->GetString( 16 );
+  Song->m_Comments   = dbRes->GetString( 17 );
+  Song->m_Disk       = dbRes->GetString( 18 );
 //  guLogMessage( wxT( "Rating: %i" ), Song->m_Rating );
 }
 
@@ -3471,44 +3414,42 @@ const wxString guDbLibrary::GetArtistName( const int ArtistId )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDbLibrary::GetArtistId( int * ArtistId, wxString &ArtistName, bool Create )
+int guDbLibrary::GetArtistId( wxString &artistname, bool create )
 {
-  if( LastArtist == ArtistName )
+  if( LastArtist == artistname )
   {
-      * ArtistId = LastArtistId;
-      return 1;
+      return LastArtistId;
   }
 
   wxString query;
   wxSQLite3ResultSet dbRes;
-  bool RetVal = false;
+  int RetVal = wxNOT_FOUND;
 //  printf( "GetArtistId\n" );
 
-  LastArtist = ArtistName;
+  LastArtist = artistname;
 
-  query = wxString::Format( wxT( "SELECT artist_id FROM artists "\
+  query = wxString::Format( wxT( "SELECT artist_id FROM artists "
                                  "WHERE artist_name = '%s' LIMIT 1;" ),
-            escape_query_str( ArtistName ).c_str() );
+            escape_query_str( artistname ).c_str() );
 
   dbRes = ExecuteQuery( query );
 
   if( dbRes.NextRow() )
   {
-    * ArtistId = LastArtistId = dbRes.GetInt( 0 );
-    RetVal = true;
+    RetVal = LastArtistId = dbRes.GetInt( 0 );
   }
-  else if( Create )
+  else if( create )
   {
-    query = wxString::Format( wxT( "INSERT INTO artists( artist_id, artist_name ) "\
+    query = wxString::Format( wxT( "INSERT INTO artists( artist_id, artist_name ) "
                                    "VALUES( NULL, '%s' );" ),
-            escape_query_str( ArtistName ).c_str() );
-    if( ExecuteUpdate( query ) == 1 )
+            escape_query_str( artistname ).c_str() );
+    if( ExecuteUpdate( query ) )
     {
-      * ArtistId = LastArtistId = m_Db.GetLastRowId().GetLo();
-      RetVal = true;
+      RetVal = LastArtistId = m_Db.GetLastRowId().GetLo();
     }
   }
   dbRes.Finalize();
+
   return RetVal;
 }
 
@@ -3732,6 +3673,14 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
 
     case guTRACKS_ORDER_GENRE :
       query += wxT( "genre_name" );
+      break;
+
+    case guTRACKS_ORDER_COMPOSER :
+      query += wxT( "song_composer" );
+      break;
+
+    case guTRACKS_ORDER_DISK :
+      query += wxT( "song_disk" );
       break;
 
     case guTRACKS_ORDER_NUMBER :

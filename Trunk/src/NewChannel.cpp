@@ -180,7 +180,7 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannel( wxXmlNode * XmlNode, guN
             bool ItemFound = false;
             for( Index = 0; Index < Count; Index++ )
             {
-                if( NewPodcastItem->m_Name.Find( m_Filters[ Index ] ) != wxNOT_FOUND )
+                if( NewPodcastItem->m_Name.Lower().Find( m_Filters[ Index ].Lower() ) != wxNOT_FOUND )
                 {
                     //guLogMessage( wxT( "Found item %s" ), NewPodcastItem->m_Name.c_str() );
                     podcastchannel->m_Items.Add( NewPodcastItem );
@@ -308,6 +308,15 @@ void guNewPodcastChannelSelector::LoadPodcastDirectory( void )
     else
     {
         guLogWarning( wxT( "Could not download the Podcast Directory xml file" ) );
+    }
+
+    if( m_Filters.Count() )
+    {
+        m_DirectoryTreeCtrl->ExpandAll();
+    }
+    else
+    {
+        m_DirectoryTreeCtrl->ExpandRoot();
     }
     wxSetCursor( wxNullCursor );
 }

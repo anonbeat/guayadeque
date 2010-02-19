@@ -201,6 +201,8 @@ class guAlbumBrowser : public wxPanel
     void                            OnAlbumEditLabelsClicked( const int albumid );
     void                            OnAlbumEditTracksClicked( const int albumid );
 
+    void                            LibraryUpdated( void );
+
     friend class guUpdateAlbumDetails;
 };
 
