@@ -142,7 +142,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	PlayerBtnSizer->Add( m_StopButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_volume_medium ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
-    m_VolumeButton->SetToolTip( _( "Volume 0%" ) );
+    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( "%i%%" ), m_CurVolume ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
 	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mixer ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
@@ -1784,7 +1784,7 @@ void guPlayerPanel::SetVolume( float volume )
     m_CurVolume = volume;
 
     m_MediaCtrl->SetVolume(  volume / 100.0 );
-    m_VolumeButton->SetToolTip( wxString::Format( _( "Volume %u%%" ), ( int ) volume ) );
+    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format(  wxT( " %u%%" ), ( int ) volume ) );
 }
 
 // -------------------------------------------------------------------------------- //
