@@ -48,7 +48,10 @@
 #define     guPANEL_RADIO_TEXTSEARCH        ( 1 << 0 )
 #define     guPANEL_RADIO_GENRES            ( 1 << 1 )
 #define     guPANEL_RADIO_LABELS            ( 1 << 2 )
-#define     guPANEL_RADIO_STATIONS          ( 1 << 3 )
+//#define     guPANEL_RADIO_STATIONS          ( 1 << 3 )
+
+#define     guPANEL_RADIO_VISIBLE_DEFAULT   ( guPANEL_RADIO_TEXTSEARCH | guPANEL_RADIO_GENRES |\
+                                              guPANEL_RADIO_LABELS )
 
 class guRadioGenreTreeCtrl;
 class guRadioStationListBox;

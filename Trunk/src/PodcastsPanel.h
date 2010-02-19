@@ -32,6 +32,22 @@
 
 #include "ItemListBox.h"
 
+#define     guPANEL_PODCASTS_CHANNELS           ( 1 << 0 )
+#define     guPANEL_PODCASTS_DETAILS            ( 1 << 1 )
+
+#define     guPANEL_PODCASTS_VISIBLE_DEFAULT    ( guPANEL_PODCASTS_CHANNELS | guPANEL_PODCASTS_DETAILS )
+
+#define guPODCASTS_COLUMN_STATUS        0
+#define guPODCASTS_COLUMN_TITLE         1
+#define guPODCASTS_COLUMN_CHANNEL       2
+#define guPODCASTS_COLUMN_CATEGORY      3
+#define guPODCASTS_COLUMN_DATE          4
+#define guPODCASTS_COLUMN_LENGTH        5
+#define guPODCASTS_COLUMN_AUTHOR        6
+#define guPODCASTS_COLUMN_PLAYCOUNT     7
+#define guPODCASTS_COLUMN_LASTPLAY      8
+#define guPODCASTS_COLUMN_ADDEDDATE     9
+
 // -------------------------------------------------------------------------------- //
 class guChannelsListBox : public guListBox
 {
@@ -52,22 +68,6 @@ class guChannelsListBox : public guListBox
 
     virtual int GetSelectedSongs( guTrackArray * Songs ) const;
 };
-
-
-#define     guPANEL_PODCASTS_CHANNELS    ( 1 << 0 )
-#define     guPANEL_PODCASTS_DETAILS     ( 1 << 1 )
-
-
-#define guPODCASTS_COLUMN_STATUS        0
-#define guPODCASTS_COLUMN_TITLE         1
-#define guPODCASTS_COLUMN_CHANNEL       2
-#define guPODCASTS_COLUMN_CATEGORY      3
-#define guPODCASTS_COLUMN_DATE          4
-#define guPODCASTS_COLUMN_LENGTH        5
-#define guPODCASTS_COLUMN_AUTHOR        6
-#define guPODCASTS_COLUMN_PLAYCOUNT     7
-#define guPODCASTS_COLUMN_LASTPLAY      8
-#define guPODCASTS_COLUMN_ADDEDDATE     9
 
 class guPodcastPanel;
 

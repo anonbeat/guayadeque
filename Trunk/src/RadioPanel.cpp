@@ -718,7 +718,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
     AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 
-    m_VisiblePanels = Config->ReadNum( wxT( "RadVisiblePanels" ), -1, wxT( "Positions" ) );
+    m_VisiblePanels = Config->ReadNum( wxT( "RadVisiblePanels" ), guPANEL_RADIO_VISIBLE_DEFAULT, wxT( "Positions" ) );
 
 
 	wxBoxSizer * SearchSizer;
@@ -806,10 +806,14 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 
     wxString RadioLayout = Config->ReadStr( wxT( "Radio" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || RadioLayout.IsEmpty() )
+    {
         m_AuiManager.Update();
+        m_VisiblePanels = guPANEL_RADIO_VISIBLE_DEFAULT;
+    }
     else
+    {
         m_AuiManager.LoadPerspective( RadioLayout, true );
-
+    }
 
 
     Connect( wxEVT_COMMAND_TREE_SEL_CHANGED,  wxTreeEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );

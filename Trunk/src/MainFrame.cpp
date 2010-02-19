@@ -204,11 +204,15 @@ guMainFrame::guMainFrame( wxWindow * parent )
     }
     else
     {
+        wxCommandEvent ShowEvent;
+        ShowEvent.SetInt( 1 );
+
         // Library Page
         if( m_VisiblePanels & guPANEL_MAIN_LIBRARY )
         {
-            m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-            m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true );
+            //m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+            //m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true );
+            OnViewLibrary( ShowEvent );
         }
         else
             m_LibPanel = NULL;
@@ -216,8 +220,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
         // Radio Page
         if( m_VisiblePanels & guPANEL_MAIN_RADIOS )
         {
-            m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-            m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false );
+            //m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+            //m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false );
+            OnViewRadio( ShowEvent );
         }
         else
             m_RadioPanel = NULL;
@@ -225,8 +230,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
         // LastFM Info Panel
         if( m_VisiblePanels & guPANEL_MAIN_LASTFM )
         {
-            m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_DbCache, m_PlayerPanel );
-            m_CatNotebook->AddPage( m_LastFMPanel, _( "Last.fm" ), false );
+            //m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_DbCache, m_PlayerPanel );
+            //m_CatNotebook->AddPage( m_LastFMPanel, _( "Last.fm" ), false );
+            OnViewLastFM( ShowEvent );
         }
         else
             m_LastFMPanel = NULL;
@@ -234,8 +240,9 @@ guMainFrame::guMainFrame( wxWindow * parent )
         // Lyrics Panel
         if( m_VisiblePanels & guPANEL_MAIN_LYRICS )
         {
-            m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db );
-            m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
+            //m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db );
+            //m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
+            OnViewLyrics( ShowEvent );
         }
         else
             m_LyricsPanel = NULL;
@@ -243,20 +250,39 @@ guMainFrame::guMainFrame( wxWindow * parent )
         // PlayList Page
         if( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS )
         {
-            m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-            m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
+            //m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
+            //m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
+            OnViewPlayLists( ShowEvent );
         }
         else
             m_PlayListPanel = NULL;
 
-        // Podcast Page
+        // Podcasts Page
+        if( m_VisiblePanels & guPANEL_MAIN_PODCASTS )
+        {
+            //m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
+            //m_CatNotebook->AddPage( m_PodcastsPanel, _( "Podcasts" ), false );
+            OnViewPodcasts( ShowEvent );
+        }
+        else
+            m_PodcastsPanel = NULL;
+
+        // Album Browser Page
         if( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
         {
-            m_AlbumBrowserPanel = new guAlbumBrowser( m_CatNotebook, m_Db, m_PlayerPanel );
-            m_CatNotebook->AddPage( m_AlbumBrowserPanel, _( "Browser" ), false );
+            //m_AlbumBrowserPanel = new guAlbumBrowser( m_CatNotebook, m_Db, m_PlayerPanel );
+            //m_CatNotebook->AddPage( m_AlbumBrowserPanel, _( "Browser" ), false );
+            OnViewAlbumBrowser( ShowEvent );
         }
         else
             m_AlbumBrowserPanel = NULL;
+
+//    // FileSystem Page
+//    if( Config->ReadBool( wxT( "ShowFileSys" ), true, wxT( "ViewPanels" ) ) )
+//    {
+//	      FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+//	      CatNotebook->AddPage( FileSysPanel, wxT("FileSystem"), false );
+//    }
     }
 
     m_AuiManager.AddPane( m_CatNotebook, wxAuiPaneInfo().Name( wxT("PlayerSelector") ).
@@ -268,13 +294,6 @@ guMainFrame::guMainFrame( wxWindow * parent )
         wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
         PaneInfo.Hide();
     }
-
-//    // FileSystem Page
-//    if( Config->ReadBool( wxT( "ShowFileSys" ), true, wxT( "ViewPanels" ) ) )
-//    {
-//	      FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//	      CatNotebook->AddPage( FileSysPanel, wxT("FileSystem"), false );
-//    }
 
     //m_AuiManager.Update();
     wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "Positions" ) );
@@ -2176,9 +2195,11 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     //02dbb6304b6f3a2b000e09c000000002=
     //+00[Librería],01[Radio],03[Letras],04[Listas],05[Podcasts]|02fc2e004b6f433c007e30b000000003=*02[Last.fm]
     //@
-    m_VisiblePanels ^= guPANEL_MAIN_SELECTOR;
+    m_VisiblePanels = m_VisiblePanels & ( guPANEL_MAIN_PLAYERPLAYLIST |
+                                          guPANEL_MAIN_PLAYERFILTERS |
+                                          guPANEL_MAIN_PLAYERVUMETERS );
     int Index = 0;
-    while( 1 )
+    while( true )
     {
         int FindPos = TabsLayout.Find( wxString::Format( wxT( "%02i[" ), Index ) );
         if( FindPos == wxNOT_FOUND )
