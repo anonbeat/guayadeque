@@ -96,7 +96,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 
-    m_VisiblePanels = Config->ReadNum( wxT( "PodVisiblePanels" ), -1, wxT( "Positions" ) );
+    m_VisiblePanels = Config->ReadNum( wxT( "PodVisiblePanels" ), guPANEL_PODCASTS_VISIBLE_DEFAULT, wxT( "Positions" ) );
 
 
 	ChannelsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -264,9 +264,14 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 
     wxString PodcastLayout = Config->ReadStr( wxT( "Podcasts" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || PodcastLayout.IsEmpty() )
+    {
         m_AuiManager.Update();
+        m_VisiblePanels = guPANEL_PODCASTS_VISIBLE_DEFAULT;
+    }
     else
+    {
         m_AuiManager.LoadPerspective( PodcastLayout, true );
+    }
 
     Connect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );

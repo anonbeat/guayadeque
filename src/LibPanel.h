@@ -42,11 +42,14 @@
 #define     guPANEL_LIBRARY_GENRES          ( 1 << 2 )
 #define     guPANEL_LIBRARY_ARTISTS         ( 1 << 3 )
 #define     guPANEL_LIBRARY_ALBUMS          ( 1 << 4 )
-#define     guPANEL_LIBRARY_TRACKS          ( 1 << 5 )
+//#define     guPANEL_LIBRARY_TRACKS          ( 1 << 5 )
 #define     guPANEL_LIBRARY_YEARS           ( 1 << 6 )
 #define     guPANEL_LIBRARY_RATINGS         ( 1 << 7 )
-#define     guPANEL_LIBRARY_COVERBROWSER    ( 1 << 8 )
-#define     guPANEL_LIBRARY_COVERFLOW       ( 1 << 9 )
+#define     guPANEL_LIBRARY_COMPOSER        ( 1 << 8 )
+
+#define     guPANEL_LIBRARY_VISIBLE_DEFAULT ( guPANEL_LIBRARY_TEXTSEARCH | guPANEL_LIBRARY_LABELS |\
+                                              guPANEL_LIBRARY_GENRES | guPANEL_LIBRARY_ARTISTS |\
+                                              guPANEL_LIBRARY_ALBUMS )
 
 // -------------------------------------------------------------------------------- //
 class guLibPanel : public wxPanel

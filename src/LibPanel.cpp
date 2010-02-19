@@ -83,7 +83,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 
-    m_VisiblePanels = Config->ReadNum( wxT( "LibVisiblePanels" ), -1, wxT( "Positions" ) );
+    m_VisiblePanels = Config->ReadNum( wxT( "LibVisiblePanels" ), guPANEL_LIBRARY_VISIBLE_DEFAULT, wxT( "Positions" ) );
     //
     //
     //
@@ -193,9 +193,14 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 
     wxString LibraryLayout = Config->ReadStr( wxT( "Library" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || LibraryLayout.IsEmpty() )
+    {
         m_AuiManager.Update();
+        m_VisiblePanels = guPANEL_LIBRARY_VISIBLE_DEFAULT;
+    }
     else
+    {
         m_AuiManager.LoadPerspective( LibraryLayout, true );
+    }
 
     //
     m_UpdateLock = false;
