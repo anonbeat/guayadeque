@@ -1009,7 +1009,14 @@ void guAlbumBrowser::OnMouseWheel( wxMouseEvent& event )
     wxScrollEvent ScrollEvent( wxEVT_SCROLL_CHANGED );
     ScrollEvent.SetPosition( CurPos );
     wxPostEvent( m_NavSlider, ScrollEvent );
+}
 
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::LibraryUpdated( void )
+{
+    RefreshCount();
+    ReloadItems();
+    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //

@@ -938,10 +938,15 @@ void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::LibraryUpdated( wxCommandEvent &event )
 {
-    m_Db->DoCleanUp();
 //    guLogMessage( wxT( "Library Updated Event fired" ) );
+    m_Db->DoCleanUp();
+
     if( m_LibPanel )
         m_LibPanel->ReloadControls( event );
+
+    if( m_AlbumBrowserPanel )
+        m_AlbumBrowserPanel->LibraryUpdated();
+
     m_LibUpdateThread = NULL;
 }
 
@@ -1073,12 +1078,12 @@ void guMainFrame::OnAddLibraryPath( wxCommandEvent &event )
     {
         if( DirDialog->ShowModal() == wxID_OK )
         {
-            guConfig * Config = ( guConfig * ) guConfig::Get();
-            wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
-
             wxString PathValue = DirDialog->GetPath();
             if( !PathValue.IsEmpty() )
             {
+                guConfig * Config = ( guConfig * ) guConfig::Get();
+                wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+
                 if( !PathValue.EndsWith( wxT( "/" ) ) )
                     PathValue += '/';
 
@@ -1387,7 +1392,7 @@ void guMainFrame::OnLibraryShowPanel( wxCommandEvent &event )
 
     }
 
-    if( PanelId )
+    if( PanelId && m_LibPanel )
         m_LibPanel->ShowPanel( PanelId, event.IsChecked() );
 
 }
@@ -1463,7 +1468,7 @@ void guMainFrame::OnRadioShowPanel( wxCommandEvent &event )
 
     }
 
-    if( PanelId )
+    if( PanelId && m_RadioPanel )
         m_RadioPanel->ShowPanel( PanelId, event.IsChecked() );
 
 }
@@ -1487,7 +1492,7 @@ void guMainFrame::OnPodcastsShowPanel( wxCommandEvent &event )
 
     }
 
-    if( PanelId )
+    if( PanelId && m_PodcastsPanel )
         m_PodcastsPanel->ShowPanel( PanelId, event.IsChecked() );
 
 }

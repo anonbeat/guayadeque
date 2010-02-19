@@ -30,21 +30,23 @@
 #define guSONGS_COLUMN_ARTIST       2
 #define guSONGS_COLUMN_ALBUM        3
 #define guSONGS_COLUMN_GENRE        4
-#define guSONGS_COLUMN_LENGTH       5
-#define guSONGS_COLUMN_YEAR         6
-#define guSONGS_COLUMN_BITRATE      7
-#define guSONGS_COLUMN_RATING       8
-#define guSONGS_COLUMN_PLAYCOUNT    9
-#define guSONGS_COLUMN_LASTPLAY     10
-#define guSONGS_COLUMN_ADDEDDATE    11
+#define guSONGS_COLUMN_COMPOSER     5
+#define guSONGS_COLUMN_DISK         6
+#define guSONGS_COLUMN_LENGTH       7
+#define guSONGS_COLUMN_YEAR         8
+#define guSONGS_COLUMN_BITRATE      9
+#define guSONGS_COLUMN_RATING       10
+#define guSONGS_COLUMN_PLAYCOUNT    11
+#define guSONGS_COLUMN_LASTPLAY     12
+#define guSONGS_COLUMN_ADDEDDATE    13
 
-#define guSONGS_COLUMN_COUNT        12
+#define guSONGS_COLUMN_COUNT        14
 
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public guListView
 {
   protected :
-    guDbLibrary *         m_Db;
+    guDbLibrary *       m_Db;
     guTrackArray        m_Items;
     wxString            m_ConfName;
 

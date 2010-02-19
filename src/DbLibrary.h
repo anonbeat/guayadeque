@@ -78,6 +78,11 @@ class guTrack
     int             m_LastPlay;
     int             m_AddedTime;
     int             m_CoverId;
+    //
+    wxString        m_Disk;
+    wxString        m_Comments;
+    wxString        m_Composer;
+    //
     guTrackMode     m_TrackMode;          // Indicate how the track was created
 
     guTrack() {
@@ -194,6 +199,8 @@ enum guTRACKS_ORDER {
     guTRACKS_ORDER_ARTIST,
     guTRACKS_ORDER_ALBUM,
     guTRACKS_ORDER_GENRE,
+    guTRACKS_ORDER_COMPOSER,
+    guTRACKS_ORDER_DISK,
     guTRACKS_ORDER_LENGTH,
     guTRACKS_ORDER_YEAR,
     guTRACKS_ORDER_BITRATE,
@@ -307,9 +314,9 @@ class guDbLibrary : public guDb
     virtual bool        CheckDbVersion( void );
     void                LoadCache( void );
 
-    int                 GetGenreId( int * GenreId, wxString &GenreName );
+    int                 GetGenreId( wxString &GenreName );
     const wxString      GetArtistName( const int ArtistId );
-    bool                GetArtistId( int * ArtistId, wxString &ArtistName, bool Create = true );
+    int                 GetArtistId( wxString &ArtistName, bool Create = true );
     int                 AddCoverFile( const wxString &coverfile, const wxString &coverhash = wxEmptyString );
     void                UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash );
     int                 FindCoverFile( const wxString &DirName );
@@ -318,14 +325,14 @@ class guDbLibrary : public guDb
     int                 GetAlbumCoverId( const int AlbumId );
 
     wxString            GetCoverPath( const int CoverId );
-    int                 GetAlbumId( int * AlbumId, int * CoverId, wxString &AlbumName, const int ArtistId, const int PathId, const wxString &Path );
-    int                 GetSongId( int * SongId, wxString &FileName, const int PathId );
-    int                 GetSongId( int * SongId, wxString &FileName, wxString &FilePath );
+    int                 GetAlbumId( wxString &AlbumName, const int ArtistId, const int PathId, const wxString &Path );
+    int                 GetSongId( wxString &filename, const int pathid );
+    int                 GetSongId( wxString &FileName, wxString &FilePath );
     wxArrayInt          GetLabelIds( const wxArrayString &Labels );
     wxArrayString       GetLabelNames( const wxArrayInt &LabelIds );
     int                 GetLabelId( int * LabelId, wxString &LabelName );
     int                 PathExists( const wxString &path );
-    int                 GetPathId( int * PathId, wxString &PathValue );
+    int                 GetPathId( wxString &PathValue );
     int                 UpdateSong( void );
 
     void                GetGenres( guListItems * Genres, bool FullList = false );

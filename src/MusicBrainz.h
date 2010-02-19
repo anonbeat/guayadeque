@@ -29,7 +29,7 @@
 #include <wx/thread.h>
 #include <wx/xml/xml.h>
 
-#define GetTrackLengthDiff( time1, time2 )      abs( time1 - time2 )
+#define GetTrackLengthDiff( time1, time2 )      abs( ( int ) time1 - time2 )
 #define guMBRAINZ_MAX_TIME_DIFF                 3000
 
 // -------------------------------------------------------------------------------- //

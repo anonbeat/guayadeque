@@ -134,6 +134,12 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
         case guSONGS_COLUMN_GENRE :
           return Song->m_GenreName;
 
+        case guSONGS_COLUMN_COMPOSER :
+          return Song->m_Composer;
+
+        case guSONGS_COLUMN_DISK :
+          return Song->m_Disk;
+
         case guSONGS_COLUMN_LENGTH :
           return LenToString( Song->m_Length );
 
@@ -263,6 +269,7 @@ int guSoListBox::GetDragFiles( wxFileDataObject * files )
     int count = GetSelectedSongs( &Songs );
     for( index = 0; index < count; index++ )
     {
+       guLogMessage( wxT( "Adding song '%s'" ), Songs[ index ].m_FileName.c_str() );
        files->AddFile( Songs[ index ].m_FileName );
     }
     return count;
@@ -277,6 +284,8 @@ wxArrayString guSoListBox::GetColumnNames( void )
     ColumnNames.Add( _( "Artist" ) );
     ColumnNames.Add( _( "Album" ) );
     ColumnNames.Add( _( "Genre" ) );
+    ColumnNames.Add( _( "Composer" ) );
+    ColumnNames.Add( _( "Disk" ) );
     ColumnNames.Add( _( "Length" ) );
     ColumnNames.Add( _( "Year" ) );
     ColumnNames.Add( _( "BitRate" ) );

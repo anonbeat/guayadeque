@@ -75,8 +75,9 @@ class guPodcastTreeCtrl : public wxTreeCtrl
     ~guPodcastTreeCtrl();
 
     void ReloadItems( void );
-    int  GetCategoryCount( void ) { return m_NewPodcasts->Count(); };
-    int  GetItemsCount( void ) { return m_NewItemsCount; };
+    int  GetCategoryCount( void ) { return m_NewPodcasts->Count(); }
+    int  GetItemsCount( void ) { return m_NewItemsCount; }
+    void ExpandRoot( void ) { Expand( m_RootId ); }
 
 };
 

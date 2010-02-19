@@ -411,7 +411,7 @@ int guListView::GetDragFiles( wxFileDataObject * files )
 // -------------------------------------------------------------------------------- //
 void guListView::OnBeginDrag( wxMouseEvent &event )
 {
-    wxFileDataObject Files; // = wxFileDataObject();
+    wxFileDataObject Files;
 
     if( GetDragFiles( &Files ) )
     {
@@ -1236,6 +1236,8 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
             dc.SetClippingRegion( cRect );
             dc.DrawText( CurCol->m_Label, cRect.x + 2, hLabel );
             dc.DestroyClippingRegion();
+            dc.SetPen( wxPen( wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ), 1, wxSHORT_DASH ) );
+            dc.DrawLine( cRect.x + cRect.width - 1, 4, cRect.x + cRect.width - 1, cRect.height - 4 );
 
             if( CurCol->m_ImageIndex >= 0 )
             {
@@ -1497,7 +1499,7 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	StdBtnSizer->AddButton( StdBtnSizerCancel );
 	StdBtnSizer->Realize();
-	MainSizer->Add( StdBtnSizer, 0, wxEXPAND, 5 );
+	MainSizer->Add( StdBtnSizer, 0, wxEXPAND|wxALL, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
@@ -1685,7 +1687,7 @@ void guListViewDropFilesThread::AddDropFiles( const wxString &DirName )
     wxString FileName;
     wxString SavedDir( wxGetCwd() );
 
-    //printf( "Entering Dir : " ); printf( ( char * ) DirName.char_str() );  ; printf( "\n" );
+    guLogMessage( wxT( "Adding drop item: %s" ), DirName.c_str() );
     if( wxDirExists( DirName ) )
     {
         //wxMessageBox( DirName, wxT( "DirName" ) );
@@ -1757,7 +1759,7 @@ guListViewDropTarget::~guListViewDropTarget()
 // -------------------------------------------------------------------------------- //
 bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
 {
-    guLogMessage( wxT( "guListViewDropTarget::OnDropFiles" ) );
+    //guLogMessage( wxT( "guListViewDropTarget::OnDropFiles" ) );
     // We are moving items inside this object.
     if( m_ListView->m_DragSelfItems )
     {

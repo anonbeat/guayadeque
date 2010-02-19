@@ -590,8 +590,8 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
             //
             guPodcastItem * PodcastItem = &m_Items[ m_CurPos ];
 
-//            guLogMessage( wxT( "Ok so we have one item to download... %u %s" ),
-//                   m_CurPos, PodcastItem->m_Enclosure.c_str() );
+            guLogMessage( wxT( "Ok so we have one item to download... %u %s" ),
+                   m_CurPos, PodcastItem->m_Enclosure.c_str() );
             if( PodcastItem->m_Enclosure.IsEmpty() )
             {
                 PodcastItem->m_Status = guPODCAST_STATUS_ERROR;
