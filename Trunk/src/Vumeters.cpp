@@ -338,6 +338,8 @@ void guVumeter::OnPaint( wxPaintEvent &WXUNUSED(event) )
 guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
+	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
+
 	this->SetMinSize( wxSize( -1, 40 ) );
 
 	m_VumMainSizer = new wxBoxSizer( wxVERTICAL );
@@ -357,27 +359,30 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	wxBoxSizer * HLabelsSizer;
 	HLabelsSizer = new wxBoxSizer( wxHORIZONTAL );
 
+	CurrentFont.SetPointSize( 8 );
+	//CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+
 	wxStaticText * HDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
 	HDbLabel->Wrap( -1 );
-	HDbLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Sans") ) );
+	HDbLabel->SetFont( CurrentFont );
 
 	HLabelsSizer->Add( HDbLabel, 5, wxALIGN_BOTTOM, 5 );
 
 	wxStaticText * HOrangeLevel = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
 	HOrangeLevel->Wrap( -1 );
-	HOrangeLevel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Sans") ) );
+	HOrangeLevel->SetFont( CurrentFont );
 
 	HLabelsSizer->Add( HOrangeLevel, 2, wxALIGN_BOTTOM, 5 );
 
 	wxStaticText * HRedLabel = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
 	HRedLabel->Wrap( -1 );
-	HRedLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Sans") ) );
+	HRedLabel->SetFont( CurrentFont );
 
 	HLabelsSizer->Add( HRedLabel, 3, wxALIGN_BOTTOM, 5 );
 
 	wxStaticText * HClipLabel = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	HClipLabel->Wrap( -1 );
-	HClipLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Sans") ) );
+	HClipLabel->SetFont( CurrentFont );
 
 	HLabelsSizer->Add( HClipLabel, 0, wxRIGHT|wxALIGN_BOTTOM, 5 );
 
@@ -385,6 +390,7 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 
 	wxStaticText * HVumLeftLabel = new wxStaticText( this, wxID_ANY, wxT("L:"), wxDefaultPosition, wxDefaultSize, 0 );
 	HVumLeftLabel->Wrap( -1 );
+	HVumLeftLabel->SetFont( CurrentFont );
 	m_HVumFlexSizer->Add( HVumLeftLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT, 5 );
 
 	m_HVumLeft = new guVumeter( this, wxID_ANY ); //, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL|wxGA_SMOOTH );
@@ -395,6 +401,7 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 
 	wxStaticText * HVumRightLabel = new wxStaticText( this, wxID_ANY, wxT("R:"), wxDefaultPosition, wxDefaultSize, 0 );
 	HVumRightLabel->Wrap( -1 );
+	HVumRightLabel->SetFont( CurrentFont );
 	m_HVumFlexSizer->Add( HVumRightLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT, 5 );
 
 	m_HVumRight = new guVumeter( this, wxID_ANY ); //, 100, wxDefaultPosition, wxSize( -1,-1 ), wxGA_HORIZONTAL );
@@ -421,25 +428,25 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 
 	wxStaticText * VClipLabel = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	VClipLabel->Wrap( -1 );
-	VClipLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Sans") ) );
+	VClipLabel->SetFont( CurrentFont );
 
 	VLabelsSizer->Add( VClipLabel, 3, wxALIGN_BOTTOM|wxALIGN_RIGHT|wxTOP, 5 );
 
 	wxStaticText * VRedLabel = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
 	VRedLabel->Wrap( -1 );
-	VRedLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Sans") ) );
+	VRedLabel->SetFont( CurrentFont );
 
 	VLabelsSizer->Add( VRedLabel, 2, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
 
 	wxStaticText * VOrangeLabel = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
 	VOrangeLabel->Wrap( -1 );
-	VOrangeLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Sans") ) );
+	VOrangeLabel->SetFont( CurrentFont );
 
 	VLabelsSizer->Add( VOrangeLabel, 5, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
 
 	wxStaticText * VDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
 	VDbLabel->Wrap( -1 );
-	VDbLabel->SetFont( wxFont( 8, 74, 90, 90, false, wxT("Sans") ) );
+	VDbLabel->SetFont( CurrentFont );
 
 	VLabelsSizer->Add( VDbLabel, 0, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
@@ -462,10 +469,12 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 
 	wxStaticText * VVumLeftLabel = new wxStaticText( this, wxID_ANY, wxT("L:"), wxDefaultPosition, wxDefaultSize, 0 );
 	VVumLeftLabel->Wrap( -1 );
+	VVumLeftLabel->SetFont( CurrentFont );
 	m_VVumFlexSizer->Add( VVumLeftLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxLEFT, 5 );
 
 	wxStaticText * VVumRightLabel = new wxStaticText( this, wxID_ANY, wxT("R:"), wxDefaultPosition, wxDefaultSize, 0 );
 	VVumRightLabel->Wrap( -1 );
+	VVumRightLabel->SetFont( CurrentFont );
 	m_VVumFlexSizer->Add( VVumRightLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxLEFT, 5 );
 
 	m_VumMainSizer->Add( m_VVumFlexSizer, 1, wxEXPAND, 5 );
