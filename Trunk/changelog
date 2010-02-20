@@ -1,4 +1,6 @@
 
+  * Added dragndrop support to Album Browser. You can drag the tracks or
+    with control the cover to another album
   * Added comments, composer and disk number
   * Ctrl-A select all itmes in ListBoxes
   * Select Album cover dialog accepts now a remote url

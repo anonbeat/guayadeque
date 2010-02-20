@@ -47,6 +47,7 @@ class guAlbumBrowserItem
     wxString      m_AlbumName;
     unsigned int  m_Year;
     unsigned int  m_TrackCount;
+    unsigned int  m_CoverId;
     wxBitmap *    m_CoverBitmap;
 
     guAlbumBrowserItem()
@@ -75,6 +76,9 @@ class guAlbumBrowserItemPanel : public wxPanel
     guAlbumBrowserItem *    m_AlbumBrowserItem;
     guAlbumBrowser *        m_AlbumBrowser;
 
+    wxPoint                 m_DragStart;
+    int                     m_DragCount;
+
     // GUI
     wxBoxSizer *            m_MainSizer;
     wxStaticBitmap *        m_Bitmap;
@@ -99,12 +103,17 @@ class guAlbumBrowserItemPanel : public wxPanel
     void                    OnAlbumEditTracksClicked( wxCommandEvent &event );
     void                    OnAlbumDClicked( wxMouseEvent &event );
 
+    void                    OnMouse( wxMouseEvent &event );
+    void                    OnBeginDrag( wxMouseEvent &event );
+    void                    OnCoverBeginDrag( wxMouseEvent &event );
+
   public :
     guAlbumBrowserItemPanel( wxWindow * parent, const int index, guAlbumBrowserItem * albumitem = NULL );
     ~guAlbumBrowserItemPanel();
 
     void SetAlbumItem( const int index, guAlbumBrowserItem * albumitem, wxBitmap * blankcd );
     void UpdateDetails( void );
+    void SetAlbumCover( const wxString &cover );
 
 };
 WX_DEFINE_ARRAY_PTR( guAlbumBrowserItemPanel *, guAlbumBrowserItemPanelArray );
@@ -149,6 +158,7 @@ class guAlbumBrowser : public wxPanel
     void                            OnUpdateDetails( wxCommandEvent &event );
 
     void                            OnMouseWheel( wxMouseEvent& event );
+//    void                            OnBeginDrag( wxCommandEvent &event );
 
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
@@ -193,6 +203,7 @@ class guAlbumBrowser : public wxPanel
     }
 
     void                            SelectAlbum( const int albumid, const bool append );
+    int                             GetAlbumTracks( const int albumid, guTrackArray * tracks );
     void                            OnCommandClicked( const int commandid, const int albumid );
     void                            OnAlbumDownloadCoverClicked( const int albumid );
     void                            OnAlbumSelectCoverClicked( const int albumid );
@@ -203,7 +214,27 @@ class guAlbumBrowser : public wxPanel
 
     void                            LibraryUpdated( void );
 
+    wxString                        GetAlbumCoverFile( const int albumid );
+
+    void                            SetAlbumCover( const int albumid, const wxString &cover );
+
+
     friend class guUpdateAlbumDetails;
+};
+
+// -------------------------------------------------------------------------------- //
+class guAlbumBrowserDropTarget : public wxFileDropTarget
+{
+  private:
+    guAlbumBrowserItemPanel *       m_AlbumBrowserItemPanel;
+
+  public:
+    guAlbumBrowserDropTarget( guAlbumBrowserItemPanel * itempanel );
+    ~guAlbumBrowserDropTarget() {};
+
+    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
+
+//    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
 };
 
 #endif

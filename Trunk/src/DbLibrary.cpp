@@ -2266,7 +2266,8 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
       Item->m_AlbumId = dbRes.GetInt( 0 ); //AlbumId;
       Item->m_ArtistName = dbRes.GetString( 1 );
       Item->m_AlbumName = dbRes.GetString( 2 );
-      Item->m_CoverBitmap = GetCoverBitmap( dbRes.GetInt( 3 ), false );
+      Item->m_CoverId = dbRes.GetInt( 3 );
+      Item->m_CoverBitmap = GetCoverBitmap( Item->m_CoverId, false );
       Item->m_Year = 0; //dbRes.GetInt( 4 );
       Item->m_TrackCount = 0; //dbRes.GetInt( 5 );
       items->Add( Item );
@@ -3884,9 +3885,12 @@ bool guDbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxStrin
   dbRes = ExecuteQuery( query );
   if( dbRes.NextRow() )
   {
-    * AlbumName = dbRes.GetString( 0 );
-    * ArtistName = dbRes.GetString( 1 );
-    * AlbumPath = dbRes.GetString( 2 );
+    if( AlbumName )
+        * AlbumName = dbRes.GetString( 0 );
+    if( ArtistName )
+        * ArtistName = dbRes.GetString( 1 );
+    if( AlbumPath )
+        * AlbumPath = dbRes.GetString( 2 );
     RetVal = true;
   }
   dbRes.Finalize();

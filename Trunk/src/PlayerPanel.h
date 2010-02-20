@@ -175,6 +175,8 @@ class guPlayerPanel : public wxPanel
     int                     m_SilenceDetectorLevel;
     int                     m_SilenceDetectorTime;
 
+    bool                    m_PendingScrob;
+
     // AudioScrobble
     guAudioScrobble *       m_AudioScrobble;
     bool                    m_AudioScrobbleEnabled;
@@ -263,6 +265,7 @@ class guPlayerPanel : public wxPanel
     void                SetAlbumLabel( const wxString &albumname );
     void                SetTitleLabel( const wxString &trackname );
     void                SetRatingLabel( const int Rating );
+    void                SetRating( const int rating );
     void                UpdatePositionLabel( const unsigned int curpos );
     void                SetBitRateLabel( const int bitrate );
     void                SetBitRate( int bitrate );
