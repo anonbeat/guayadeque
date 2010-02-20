@@ -55,7 +55,7 @@ WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "10"
+#define GU_CURRENT_DBVERSION    "11"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
                "song_number, song_pathid, song_filename, song_year, "\
@@ -565,11 +565,11 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                      "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 1, 10, 1, 0 );" ) );
+                      "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 1, 11, 1, 0 );" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                      "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 1, 9, 1, 0 );" ) );
+                      "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 1, 10, 1, 0 );" ) );
       query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
@@ -581,13 +581,13 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'plset_plid' on plsets (plset_plid ASC);" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
                       "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                      "VALUES( NULL, 1, 0, 11, 0, '', 1, 3 );" ) );
+                      "VALUES( NULL, 1, 0, 13, 0, '', 1, 3 );" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
                       "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                      "VALUES( NULL, 2, 0, 10, 0, '', 1, 2 );" ) );
+                      "VALUES( NULL, 2, 0, 12, 0, '', 1, 2 );" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
                       "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                      "VALUES( NULL, 3, 0, 7, 1, '', 5, 0 );" ) );
+                      "VALUES( NULL, 3, 0, 9, 1, '', 5, 0 );" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_midsize BLOB, cover_hash VARCHAR( 32 ) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
@@ -704,6 +704,15 @@ bool guDbLibrary::CheckDbVersion( void )
           query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_disk VARCAHR" ) );
           query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_comment VARCHAR" ) );
           query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_composer VARCHAR(512)" ) );
+      }
+    }
+
+    case 10 :
+    {
+      if( dbVer > 4 )
+      {
+          query.Add( wxT( "UPDATE playlists SET playlist_sorttype = playlist_sorttype + 1 WHERE playlist_sorttype > 4;" ) );
+          query.Add( wxT( "UPDATE plsets SET plset_type = plset_type + 2 WHERE plset_type > 4;" ) );
       }
       m_NeedUpdate = true;
       guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
@@ -2665,6 +2674,16 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ") )" );
         break;
 
+      case guDYNAMIC_FILTER_TYPE_COMPOSER : // COMPOSER
+        query += wxT( "song_composer " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                                   playlist->m_Filters[ index ].m_Text );
+        break;
+
+      case guDYNAMIC_FILTER_TYPE_COMMENT : // COMMENT
+        query += wxT( "song_comment " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                                   playlist->m_Filters[ index ].m_Text );
+        break;
+
       case guDYNAMIC_FILTER_TYPE_PATH : // PATH
         if( dbNames.Find( wxT( "paths" ) ) == wxNOT_FOUND )
             dbNames += wxT( ", paths " );
@@ -2768,6 +2787,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             break;
         }
 
+        case guDYNAMIC_FILTER_ORDER_COMPOSER : sort += wxT( "song_composer" ); break;
         case guDYNAMIC_FILTER_ORDER_YEAR : sort += wxT( "song_year" ); break;
         case guDYNAMIC_FILTER_ORDER_RATING : sort += wxT( "song_rating" ); break;
         case guDYNAMIC_FILTER_ORDER_LENGTH : sort += wxT( "song_length" ); break;
