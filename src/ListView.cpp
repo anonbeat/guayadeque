@@ -1798,7 +1798,7 @@ void guListViewDropTarget::OnLeave()
     if( !ScreenRect.Contains( MouseX, MouseY ) ) //( m_ListView->HitTest( MouseX, MouseY ) == wxNOT_FOUND ) )
     {
         m_ListView->m_DragOverItem = wxNOT_FOUND;
-        m_ListView->m_DragSelfItems = false;
+        //m_ListView->m_DragSelfItems = false;
         m_ListView->RefreshAll();
     }
 }

@@ -82,6 +82,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_ShowRevTime = false;
     m_PlayRandom = false;
     m_DelTracksPlayed = false;
+    m_PendingScrob = false;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -549,6 +550,13 @@ void guPlayerPanel::SetTitleLabel( const wxString &trackname )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetRatingLabel( const int rating )
 {
+    m_Rating->SetRating( rating );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetRating( const int rating )
+{
+    m_MediaSong.m_Rating = rating;
     m_Rating->SetRating( rating );
 }
 
@@ -1101,11 +1109,18 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 
-    // If Enabled LastFM->Submit and no error then send Now Playing Information
-    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
-        ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
+    if( m_MediaCtrl->GetState() == wxMEDIASTATE_PLAYING )
     {
-        m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
+        // If Enabled LastFM->Submit and no error then send Now Playing Information
+        if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
+            ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
+        {
+            m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
+        }
+    }
+    else
+    {
+        m_PendingScrob = true;
     }
 }
 
@@ -1338,6 +1353,13 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
         }
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         //SetVolume( m_CurVolume );
+        // If Enabled LastFM->Submit and no error then send Now Playing Information
+        if( m_PendingScrob && m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
+            ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
+        {
+            m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
+            m_PendingScrob = false;
+        }
 
     }
     catch(...)
@@ -1822,6 +1844,7 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
 {
+    guLogMessage( wxT( "PlayerPanel::OnRatingChanged: %i" ), event.GetInt() );
     m_MediaSong.m_Rating = event.GetInt();
     if( m_MediaSong.m_SongId > 0 )
     {

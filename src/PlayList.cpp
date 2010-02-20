@@ -217,7 +217,6 @@ void guPlayList::OnDropBegin( void )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnDropFile( const wxString &filename )
 {
-    guLogMessage( wxT( "Adding file %i '%s'  " ), guIsValidAudioFile( filename ), filename.c_str() );
     if( guIsValidAudioFile( filename ) ||
         guPlayListFile::IsValidPlayList( filename ) )
     {
@@ -308,8 +307,12 @@ void guPlayList::MoveSelection( void )
     bool    CurItemSet = false;
     guTrackArray MoveItems;
     wxArrayInt Selection = GetSelectedItems( false );
-    if( m_DragOverItem != wxNOT_FOUND )
+    if( m_DragOverItem == wxNOT_FOUND )
     {
+        m_DragOverItem = m_Items.Count() - 1;
+        m_DragOverAfter = true;
+    }
+
         m_ItemsMutex.Lock();
 
         // Where is the Items to be moved
@@ -353,7 +356,6 @@ void guPlayList::MoveSelection( void )
 
         //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
         m_ItemsMutex.Unlock();
-    }
     ClearSelectedItems();
 }
 
@@ -551,7 +553,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnMouse( wxMouseEvent &event )
 {
-    if( event.LeftDown() )
+    if( event.LeftDown() || event.LeftUp() )
     {
         int x = event.m_x;
         int y = event.m_y;
@@ -563,25 +565,28 @@ void guPlayList::OnMouse( wxMouseEvent &event )
             {
                 if( ( size_t ) y > ( ( Item - GetFirstVisibleLine() ) * m_ItemHeight ) + m_SecondLineOffset )
                 {
-                    int Rating;
-                    x -= ( Size.GetWidth() - ( 50 + 6 ) );
-
-                    if( x < 3 )
-                        Rating = 0;
-                    else
-                        Rating = wxMin( 5, ( wxMax( 0, x - 3 ) / 10 ) + 1 );
-
-                    if( m_Items[ Item ].m_Rating == Rating )
+                    if( event.LeftDown() )
                     {
-                        Rating = 0;
+                        int Rating;
+                        x -= ( Size.GetWidth() - ( 50 + 6 ) );
+
+                        if( x < 3 )
+                            Rating = 0;
+                        else
+                            Rating = wxMin( 5, ( wxMax( 0, x - 3 ) / 10 ) + 1 );
+
+                        if( m_Items[ Item ].m_Rating == Rating )
+                        {
+                            Rating = 0;
+                        }
+                        m_Items[ Item ].m_Rating = Rating;
+                        RefreshLine( Item );
+                        if( Item == m_CurItem )
+                        {
+                            m_PlayerPanel->SetRating( Rating );
+                        }
+                        m_Db->SetTrackRating( m_Items[ Item ].m_SongId, Rating );
                     }
-                    m_Items[ Item ].m_Rating = Rating;
-                    RefreshLine( Item );
-                    if( Item == m_CurItem )
-                    {
-                        m_PlayerPanel->SetRatingLabel( Rating );
-                    }
-                    m_Db->SetTrackRating( m_Items[ Item ].m_SongId, Rating );
                     return;
                 }
             }
