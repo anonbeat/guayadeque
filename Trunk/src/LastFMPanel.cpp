@@ -1420,7 +1420,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	this->SetSizer( m_MainSizer );
 	this->Layout();
 
-	SetScrollRate( 7, 7 );
+	SetScrollRate( 21, 21 );
 
     m_AlbumsUpdateThread = NULL;
     m_ArtistsUpdateThread = NULL;
