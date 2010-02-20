@@ -39,18 +39,20 @@ void inline InitArrayStrings( void )
 {
     if( !m_FilterFieldChoices.Count() )
     {
-        m_FilterFieldChoices.Add( _("Title") );
-        m_FilterFieldChoices.Add( _("Artist") );
-        m_FilterFieldChoices.Add( _("Album") );
-        m_FilterFieldChoices.Add( _("Genre") );
+        m_FilterFieldChoices.Add( _( "Title" ) );
+        m_FilterFieldChoices.Add( _( "Artist" ) );
+        m_FilterFieldChoices.Add( _( "Album" ) );
+        m_FilterFieldChoices.Add( _( "Genre" ) );
         m_FilterFieldChoices.Add( _( "Label" ) );
-        m_FilterFieldChoices.Add( _("Path") );
-        m_FilterFieldChoices.Add( _("Year") );
-        m_FilterFieldChoices.Add( _("Rating") );
-        m_FilterFieldChoices.Add( _("Length") );
-        m_FilterFieldChoices.Add( _("Play Count") );
-        m_FilterFieldChoices.Add( _("Last Play Time") );
-        m_FilterFieldChoices.Add( _("Added Date") );
+        m_FilterFieldChoices.Add( _( "Composer" ) );
+        m_FilterFieldChoices.Add( _( "Comment" ) );
+        m_FilterFieldChoices.Add( _( "Path" ) );
+        m_FilterFieldChoices.Add( _( "Year" ) );
+        m_FilterFieldChoices.Add( _( "Rating" ) );
+        m_FilterFieldChoices.Add( _( "Length" ) );
+        m_FilterFieldChoices.Add( _( "Play Count" ) );
+        m_FilterFieldChoices.Add( _( "Last Play Time" ) );
+        m_FilterFieldChoices.Add( _( "Added Date" ) );
 //    }
 //
 //    if( !m_FilterTextOptionChoices.Count() )
@@ -97,6 +99,7 @@ void inline InitArrayStrings( void )
         m_SortChoices.Add( _( "Album" ) );
         m_SortChoices.Add( _( "Genre" ) );
         m_SortChoices.Add( _( "Label" ) );
+        m_SortChoices.Add( _( "Composer" ) );
         m_SortChoices.Add( _( "Year" ) );
         m_SortChoices.Add( _( "Rating" ) );
         m_SortChoices.Add( _( "Length" ) );
@@ -151,6 +154,8 @@ void guFilterItem::SetFilterLabel( void )
         case guDYNAMIC_FILTER_TYPE_ALBUM :
         case guDYNAMIC_FILTER_TYPE_GENRE :
         case guDYNAMIC_FILTER_TYPE_LABEL :
+        case guDYNAMIC_FILTER_TYPE_COMPOSER :
+        case guDYNAMIC_FILTER_TYPE_COMMENT :
         case guDYNAMIC_FILTER_TYPE_PATH :
         {
             m_Label += m_FilterTextOptionChoices[ m_Option ] + wxT( " " );
