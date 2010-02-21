@@ -1844,7 +1844,6 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
 {
-    guLogMessage( wxT( "PlayerPanel::OnRatingChanged: %i" ), event.GetInt() );
     m_MediaSong.m_Rating = event.GetInt();
     if( m_MediaSong.m_SongId > 0 )
     {
