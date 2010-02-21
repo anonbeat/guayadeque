@@ -207,6 +207,14 @@ guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
 }
 
 // -------------------------------------------------------------------------------- //
+wxString guCheckLabelString( const wxString &label )
+{
+    wxString Label = label;
+    Label.Replace( wxT( "&" ), wxT( "&&" ) );
+    return Label;
+}
+
+// -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::SetAlbumItem( const int index, guAlbumBrowserItem * albumitem, wxBitmap * blankcd )
 {
     m_Index = index;
@@ -219,8 +227,9 @@ void guAlbumBrowserItemPanel::SetAlbumItem( const int index, guAlbumBrowserItem 
         else
             m_Bitmap->SetBitmap( * blankcd );
 
-        m_ArtistLabel->SetLabel( m_AlbumBrowserItem->m_ArtistName );
-        m_AlbumLabel->SetLabel( m_AlbumBrowserItem->m_AlbumName );
+
+        m_ArtistLabel->SetLabel( guCheckLabelString( m_AlbumBrowserItem->m_ArtistName ) );
+        m_AlbumLabel->SetLabel( guCheckLabelString( m_AlbumBrowserItem->m_AlbumName ) );
 
         m_TracksLabel->SetLabel( wxString::Format( wxT( "(%u) %u " ),
             m_AlbumBrowserItem->m_Year,
@@ -606,7 +615,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 	m_NavLabel->Wrap( -1 );
 	NavigatorSizer->Add( m_NavLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
-	m_NavSlider = new wxSlider( this, wxID_ANY, 0, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	m_NavSlider = new wxSlider( this, wxID_ANY, 0, 0, 1, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
 	NavigatorSizer->Add( m_NavSlider, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	MainSizer->Add( NavigatorSizer, 0, wxEXPAND, 5 );
@@ -1104,6 +1113,9 @@ void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnMouseWheel( wxMouseEvent& event )
 {
+    if( !m_NavSlider->IsEnabled() )
+        return;
+
     int Rotation = event.GetWheelRotation() / event.GetWheelDelta() * -1;
     //guLogMessage( wxT( "Got MouseWheel %i " ), Rotation );
     int CurPos = m_NavSlider->GetValue() + Rotation;
