@@ -34,6 +34,7 @@
 #include <wx/statbox.h>
 #include <wx/spinctrl.h>
 #include <wx/panel.h>
+#include <wx/hyperlink.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
