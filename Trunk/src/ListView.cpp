@@ -1115,7 +1115,7 @@ void guListViewClient::OnHScroll( wxScrollWinEvent &event )
 void guListViewClient::SetHScrollbar( const int width )
 {
     if( width )
-        SetScrollbar( wxHORIZONTAL, m_HScrollPos, 1, width );
+        SetScrollbar( wxHORIZONTAL, m_HScrollPos, 125, width + 125 );
     else
         SetScrollbar( wxHORIZONTAL, 0, 0, 0 );
 }
