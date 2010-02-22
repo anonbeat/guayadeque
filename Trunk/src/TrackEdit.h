@@ -121,6 +121,7 @@ class guTrackEditor : public wxDialog
     wxTextCtrl *            m_LyricsTextCtrl;
 
     guMusicBrainzMetadataThread *   m_MBrainzThread;
+    wxMutex                 m_MBrainzThreadMutex;
     wxChoice *              m_MBrainzAlbumChoice;
     wxBitmapButton *        m_MBrainzAddButton;
     wxBitmapButton *        m_MBrainzCopyButton;

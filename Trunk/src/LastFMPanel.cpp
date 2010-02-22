@@ -1517,7 +1517,6 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_ArtistsUpdateThread->Pause();
             m_ArtistsUpdateThread->Delete();
         }
-        m_ArtistsUpdateThreadMutex.Unlock();
 
         m_AlbumsUpdateThreadMutex.Lock();
         if( m_AlbumsUpdateThread )
@@ -1525,7 +1524,6 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_AlbumsUpdateThread->Pause();
             m_AlbumsUpdateThread->Delete();
         }
-        m_AlbumsUpdateThreadMutex.Unlock();
 
         // Clear the LastFM controls to default values
         m_ArtistInfoCtrl->Clear();
@@ -1544,6 +1542,9 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_AlbumsUpdateThread = new guFetchAlbumInfoThread( this, m_DbCache, m_ArtistName.c_str() );
         }
         m_ArtistTextCtrl->SetValue( m_ArtistName );
+
+        m_ArtistsUpdateThreadMutex.Unlock();
+        m_AlbumsUpdateThreadMutex.Unlock();
     }
 
     if( m_LastTrackName != m_TrackName )
@@ -1554,7 +1555,6 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_TracksUpdateThread->Pause();
             m_TracksUpdateThread->Delete();
         }
-        m_TracksUpdateThreadMutex.Unlock();
 
         for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
         {
@@ -1568,6 +1568,8 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_TracksUpdateThread = new guFetchTrackInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_TrackName.c_str() );
         }
         m_TrackTextCtrl->SetValue( m_TrackName );
+
+        m_TracksUpdateThreadMutex.Unlock();
     }
 }
 

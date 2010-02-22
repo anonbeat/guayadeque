@@ -112,8 +112,6 @@
 		<Unit filename="src/DynamicPlayList.h" />
 		<Unit filename="src/Equalizer.cpp" />
 		<Unit filename="src/Equalizer.h" />
-		<Unit filename="src/FileDataObject.cpp" />
-		<Unit filename="src/FileDataObject.h" />
 		<Unit filename="src/GeListBox.cpp" />
 		<Unit filename="src/GeListBox.h" />
 		<Unit filename="src/Google.cpp" />
