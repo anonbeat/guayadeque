@@ -129,6 +129,7 @@ class guAlbumBrowser : public wxPanel
     guAlbumBrowserItemArray         m_AlbumItems;
     guAlbumBrowserItemPanelArray    m_ItemPanels;
     guUpdateAlbumDetails *          m_UpdateDetails;
+    wxMutex                         m_UpdateDetailsMutex;
     unsigned int                    m_ItemStart;        // The first element in a page
     unsigned int                    m_LastItemStart;
     unsigned int                    m_ItemCount;        // The number of elements in a page
@@ -169,6 +170,13 @@ class guAlbumBrowser : public wxPanel
         m_AlbumsCount = m_Db->GetAlbumsCount( m_FilterBtn->GetValue() ? &m_DynPlayList : NULL );
         m_ItemStart = 0;
         RefreshPageCount();
+    }
+
+    void ClearUpdateDetailsThread( void )
+    {
+        m_UpdateDetailsMutex.Lock();
+        m_UpdateDetails = NULL;
+        m_UpdateDetailsMutex.Unlock();
     }
 
     void RefreshPageCount( void )

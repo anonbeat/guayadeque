@@ -1681,32 +1681,32 @@ guListViewDropFilesThread::~guListViewDropFilesThread()
 }
 
 // -------------------------------------------------------------------------------- //
-void guListViewDropFilesThread::AddDropFiles( const wxString &DirName )
+void guListViewDropFilesThread::AddDropFiles( const wxString &dirname )
 {
     wxDir Dir;
     wxString FileName;
-    wxString SavedDir( wxGetCwd() );
+    //wxString SavedDir( wxGetCwd() );
 
-    guLogMessage( wxT( "Adding drop item: %s" ), DirName.c_str() );
-    if( wxDirExists( DirName ) )
+    guLogMessage( wxT( "Adding drop item: %s" ), dirname.c_str() );
+    if( wxDirExists( dirname ) )
     {
         //wxMessageBox( DirName, wxT( "DirName" ) );
-        Dir.Open( DirName );
-        wxSetWorkingDirectory( DirName );
+        Dir.Open( dirname );
+        //wxSetWorkingDirectory( DirName );
         if( Dir.IsOpened() )
         {
-            if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+            if( !TestDestroy() && Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
             {
                 do {
                     if( ( FileName[ 0 ] != '.' ) )
                     {
                         if( Dir.Exists( FileName ) )
                         {
-                            AddDropFiles( DirName + wxT( "/" ) + FileName );
+                            AddDropFiles( dirname + wxT( "/" ) + FileName );
                         }
                         else
                         {
-                            m_ListView->OnDropFile( DirName + wxT( "/" ) + FileName );
+                            m_ListView->OnDropFile( dirname + wxT( "/" ) + FileName );
                         }
                     }
                 } while( Dir.GetNext( &FileName ) && !TestDestroy() );
@@ -1715,9 +1715,9 @@ void guListViewDropFilesThread::AddDropFiles( const wxString &DirName )
     }
     else
     {
-        m_ListView->OnDropFile( DirName );
+        m_ListView->OnDropFile( dirname );
     }
-    wxSetWorkingDirectory( SavedDir );
+    //wxSetWorkingDirectory( SavedDir );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1728,7 +1728,7 @@ guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
     for( index = 0; index < Count; ++index )
     {
         if( TestDestroy() )
-            break;
+            return 0;
         AddDropFiles( m_Files[ index ] );
     }
 
@@ -1773,6 +1773,7 @@ bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
     {
         m_ListView->OnDropBegin();
 
+        m_DropFilesThreadMutex.Lock();
         if( m_ListViewDropFilesThread )
         {
             m_ListViewDropFilesThread->Pause();
@@ -1783,6 +1784,7 @@ bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
         {
             guLogError( wxT( "Could not create the add files thread." ) );
         }
+        m_DropFilesThreadMutex.Unlock();
     }
     return true;
 }

@@ -371,8 +371,14 @@ class guListViewDropTarget : public wxFileDropTarget
   private:
     guListView *                    m_ListView;
     guListViewDropFilesThread *     m_ListViewDropFilesThread;
+    wxMutex                         m_DropFilesThreadMutex;
 
-    void ClearPlayListFilesThread( void ) { m_ListViewDropFilesThread = NULL; };
+    void ClearPlayListFilesThread( void )
+    {
+        m_DropFilesThreadMutex.Lock();
+        m_ListViewDropFilesThread = NULL;
+        m_DropFilesThreadMutex.Unlock();
+    };
 
   public:
     guListViewDropTarget( guListView * listview );
