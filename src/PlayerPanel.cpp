@@ -92,6 +92,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
         //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
         m_CurVolume = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
+        guLogMessage( wxT( "Volume From Config : %i" ), Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) ) );
+        guLogMessage( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
         m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
         m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
         m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
@@ -143,7 +145,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	PlayerBtnSizer->Add( m_StopButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_volume_medium ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
-    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( "%i%%" ), m_CurVolume ) );
+    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) m_CurVolume ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
 	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mixer ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
@@ -289,7 +291,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     // so we do it two calls
     if( ( m_MediaCtrl->GetVolume() * 100.0 ) != m_CurVolume )
     {
-        float SavedVol = m_CurVolume;
+        double SavedVol = m_CurVolume;
         SetVolume( 0.0 );
         SetVolume( SavedVol );
         //guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
@@ -1787,13 +1789,7 @@ void guPlayerPanel::OnPlayerPositionSliderEndSeek( wxScrollEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-float guPlayerPanel::GetVolume()
-{
-    return m_CurVolume;
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetVolume( float volume )
+void guPlayerPanel::SetVolume( double volume )
 {
     if( volume == m_CurVolume )
         return;
@@ -1805,8 +1801,8 @@ void guPlayerPanel::SetVolume( float volume )
 
     m_CurVolume = volume;
 
-    m_MediaCtrl->SetVolume(  volume / 100.0 );
-    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format(  wxT( " %u%%" ), ( int ) volume ) );
+    m_MediaCtrl->SetVolume(  volume / ( double ) 100 );
+    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %u%%" ), ( int ) volume ) );
 }
 
 // -------------------------------------------------------------------------------- //
