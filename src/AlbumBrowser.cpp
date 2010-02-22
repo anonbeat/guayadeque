@@ -48,10 +48,9 @@ class guUpdateAlbumDetails : public wxThread
 {
   protected :
     guAlbumBrowser *        m_AlbumBrowser;
-    guUpdateAlbumDetails ** m_SelfPtrStore;
 
   public :
-    guUpdateAlbumDetails( guAlbumBrowser * albumbrowser, guUpdateAlbumDetails ** selfptr );
+    guUpdateAlbumDetails( guAlbumBrowser * albumbrowser );
     ~guUpdateAlbumDetails();
 
     virtual ExitCode Entry();
@@ -59,10 +58,9 @@ class guUpdateAlbumDetails : public wxThread
 };
 
 // -------------------------------------------------------------------------------- //
-guUpdateAlbumDetails::guUpdateAlbumDetails( guAlbumBrowser * albumbrowser, guUpdateAlbumDetails ** selfptr )
+guUpdateAlbumDetails::guUpdateAlbumDetails( guAlbumBrowser * albumbrowser )
 {
     m_AlbumBrowser = albumbrowser;
-    m_SelfPtrStore = selfptr;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -75,7 +73,9 @@ guUpdateAlbumDetails::guUpdateAlbumDetails( guAlbumBrowser * albumbrowser, guUpd
 guUpdateAlbumDetails::~guUpdateAlbumDetails()
 {
     if( !TestDestroy() )
-        * m_SelfPtrStore = NULL;
+    {
+        m_AlbumBrowser->ClearUpdateDetailsThread();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -758,13 +758,16 @@ void guAlbumBrowser::RefreshAll( void )
     }
     Layout();
 
+    m_UpdateDetailsMutex.Lock();
     if( m_UpdateDetails )
     {
         m_UpdateDetails->Pause();
         m_UpdateDetails->Delete();
     }
 
-    m_UpdateDetails = new guUpdateAlbumDetails( this, &m_UpdateDetails );
+    m_UpdateDetails = new guUpdateAlbumDetails( this );
+
+    m_UpdateDetailsMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //

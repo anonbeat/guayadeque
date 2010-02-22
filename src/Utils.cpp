@@ -237,7 +237,7 @@ bool DownloadImage( const wxString &source, const wxString &target, int maxwidth
 // -------------------------------------------------------------------------------- //
 int DownloadFile( const wxString &Source, const wxString &Target )
 {
-    guLogMessage( wxT( "Downloading %s" ), Source.c_str() );
+    //guLogMessage( wxT( "Downloading %s" ), Source.c_str() );
     wxCurlHTTP http;
     http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
     //http.SetVerbose( true );
