@@ -86,6 +86,7 @@ guUpdateAlbumDetails::ExitCode guUpdateAlbumDetails::Entry()
         //guLogMessage( wxT( "Searching details..." ) );
         guDbLibrary * Db = m_AlbumBrowser->m_Db;
         int Index;
+        m_AlbumBrowser->m_AlbumItemsMutex.Lock();
         int Count = m_AlbumBrowser->m_AlbumItems.Count();
         if( Count )
         {
@@ -109,6 +110,7 @@ guUpdateAlbumDetails::ExitCode guUpdateAlbumDetails::Entry()
                 }
             }
         }
+        m_AlbumBrowser->m_AlbumItemsMutex.Unlock();
     }
     return 0;
 }
@@ -736,9 +738,11 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::ReloadItems( void )
 {
+    m_AlbumItemsMutex.Lock();
     m_AlbumItems.Empty();
     m_Db->GetAlbums( &m_AlbumItems, m_FilterBtn->GetValue() ? &m_DynPlayList : NULL,
                      m_ItemStart, m_ItemCount, m_OrderChoice->GetSelection() - 1 );
+    m_AlbumItemsMutex.Unlock();
 //    guLogMessage( wxT( "Read %i items from %i (%i)" ), m_AlbumItems.Count(), m_ItemStart, m_ItemCount );
 //    RefreshAll();
 }

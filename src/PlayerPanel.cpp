@@ -92,8 +92,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
         //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
         m_CurVolume = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
-        guLogMessage( wxT( "Volume From Config : %i" ), Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) ) );
-        guLogMessage( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
+        //guLogMessage( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
         m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
         m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
         m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );

@@ -727,11 +727,13 @@ guTrackEditor::~guTrackEditor()
 
     Disconnect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackEditor::OnDownloadedLyric ), NULL, this );
 
+    m_MBrainzThreadMutex.Lock();
     if( m_MBrainzThread )
     {
         m_MBrainzThread->Pause();
         m_MBrainzThread->Delete();
     }
+    m_MBrainzThreadMutex.Unlock();
 
     if( m_MBrainzReleases )
         delete m_MBrainzReleases;
@@ -1009,7 +1011,7 @@ void guTrackEditor::OnRatingChanged( guRatingEvent &event )
 void guTrackEditor::RefreshImage( void )
 {
     wxImage Image;
-    wxImage * pCurImage;
+    wxImage * pCurImage = NULL;
     if( ( m_CurItem >= 0 ) && ( pCurImage = ( * m_Images )[ m_CurItem ] ) )
     {
         Image = * pCurImage;
@@ -1170,7 +1172,9 @@ void guTrackEditor::OnCopyImageClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::FinishedMusicBrainzSearch( void )
 {
+    m_MBrainzThreadMutex.Lock();
     m_MBrainzThread = NULL;
+    m_MBrainzThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1235,7 +1239,14 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
     {
         wxSetCursor( * wxHOURGLASS_CURSOR );
         m_MBrainzAddButton->Enable( false );
+        m_MBrainzThreadMutex.Lock();
+        if( m_MBrainzThread )
+        {
+            m_MBrainzThread->Pause();
+            m_MBrainzThread->Delete();
+        }
         m_MBrainzThread = new guMusicBrainzMetadataThread( this, m_MBrainzCurTrack );
+        m_MBrainzThreadMutex.Unlock();
         m_MBrainzCurTrack++;
         //guLogMessage( wxT( "Albums search thread created" ) );
     }
@@ -1685,7 +1696,8 @@ guMusicBrainzMetadataThread::guMusicBrainzMetadataThread( guTrackEditor * tracke
 // -------------------------------------------------------------------------------- //
 guMusicBrainzMetadataThread::~guMusicBrainzMetadataThread()
 {
-    m_TrackEditor->FinishedMusicBrainzSearch();
+    if( !TestDestroy() )
+        m_TrackEditor->FinishedMusicBrainzSearch();
 }
 
 // -------------------------------------------------------------------------------- //

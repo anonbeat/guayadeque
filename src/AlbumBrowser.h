@@ -127,6 +127,7 @@ class guAlbumBrowser : public wxPanel
     guDbLibrary *                   m_Db;
     guPlayerPanel *                 m_PlayerPanel;
     guAlbumBrowserItemArray         m_AlbumItems;
+    wxMutex                         m_AlbumItemsMutex;
     guAlbumBrowserItemPanelArray    m_ItemPanels;
     guUpdateAlbumDetails *          m_UpdateDetails;
     wxMutex                         m_UpdateDetailsMutex;
