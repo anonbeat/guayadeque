@@ -58,7 +58,7 @@ void inline InitArrayStrings( void )
 //    if( !m_FilterTextOptionChoices.Count() )
 //    {
         m_FilterTextOptionChoices.Add( _("Contains") );
-        m_FilterTextOptionChoices.Add( _("Does not contains") );
+        m_FilterTextOptionChoices.Add( _("Does not contain") );
         m_FilterTextOptionChoices.Add( _("Equals") );
         m_FilterTextOptionChoices.Add( _("Begins with") );
         m_FilterTextOptionChoices.Add( _("Ends with") );

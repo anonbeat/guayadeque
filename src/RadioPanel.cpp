@@ -1077,7 +1077,7 @@ void guRadioPanel::OnSelectStations( bool enqueue )
         }
         else
         {
-            guLogMessage( wxT( "Trying to load the link %s" ), RadioStation.m_Link.c_str() );
+            //guLogMessage( wxT( "Trying to load the link %s" ), RadioStation.m_Link.c_str() );
             PlayListFile.Load( RadioStation.m_Link );
         }
 
