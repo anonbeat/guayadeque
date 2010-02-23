@@ -2313,11 +2313,9 @@ int guDbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &s
   int PlayListId = 0;
   wxString query;
   wxSQLite3ResultSet dbRes;
-  wxString PLName = name;
-  escape_query_str( &PLName );
 
-  query = wxString::Format( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type ) VALUES( NULL, \"%s\", %u );" ),
-          PLName.c_str(),
+  query = wxString::Format( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type ) VALUES( NULL, '%s', %u );" ),
+          escape_query_str( name ).c_str(),
           GUPLAYLIST_STATIC );
 
   if( ExecuteUpdate( query ) == 1 )
@@ -2337,7 +2335,7 @@ int guDbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &s
 //      query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsets( plset_id INTEGER PRIMARY KEY AUTOINCREMENT, plset_plid INTEGER, plset_songid INTEGER, "
 //                      "plset_type INTEGER(2), plset_option INTEGER(2), plset_text TEXT(255), plset_option2 INTEGER );" ) );
       query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_type, plset_option, plset_text, plset_option2 ) "
-                                     "VALUES( NULL, %u, %u, 0, 0, \"\", 0 );" ),
+                                     "VALUES( NULL, %u, %u, 0, 0, '', 0 );" ),
                     PlayListId,
                     songs[ index ] );
       ExecuteUpdate( query );
@@ -2368,7 +2366,7 @@ int guDbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks 
   for( index = 0; index < count; index++ )
   {
     query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_type, plset_option, plset_text, plset_option2 ) "
-                                   "VALUES( NULL, %u, %u, 0, 0, \"\", 0 );" ),
+                                   "VALUES( NULL, %u, %u, 0, 0, '', 0 );" ),
                   plid,
                   tracks[ index ] );
     ExecuteUpdate( query );
@@ -2419,8 +2417,6 @@ int guDbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * pl
   int PlayListId = 0;
   wxString query;
   wxSQLite3ResultSet dbRes;
-  wxString PLName = name;
-  escape_query_str( &PLName );
 
 //  playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name varchar(100), "
 //            "playlist_type INTEGER(2), playlist_limited BOOLEAN, playlist_limitvalue INTEGER, playlist_limittype INTEGER(2), "
@@ -2430,8 +2426,8 @@ int guDbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * pl
                "playlist_limited, playlist_limitvalue, playlist_limittype, "
                "playlist_sorted, playlist_sorttype, playlist_sortdesc, "
                "playlist_anyoption ) " );
-  query += wxString::Format( wxT( "VALUES( NULL, \"%s\", %u, %u, %u, %u, %u, %u, %u, %u );" ),
-          PLName.c_str(),
+  query += wxString::Format( wxT( "VALUES( NULL, '%s', %u, %u, %u, %u, %u, %u, %u, %u );" ),
+          escape_query_str( name ).c_str(),
           GUPLAYLIST_DYNAMIC,
           playlist->m_Limited, playlist->m_LimitValue, playlist->m_LimitType,
           playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc,
@@ -2451,7 +2447,7 @@ int guDbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * pl
         guFilterItem * FilterItem = &playlist->m_Filters[ index ];
 
         query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                                       "VALUES( NULL, %u, 0, %u, %u, \"%s\", %u, %u );" ),
+                                       "VALUES( NULL, %u, 0, %u, %u, '%s', %u, %u );" ),
                       PlayListId,
                       FilterItem->m_Type,
                       FilterItem->m_Option,
@@ -2523,19 +2519,19 @@ const wxString DynPLStringOption( int option, const wxString &text )
   switch( option )
   {
     case guDYNAMIC_FILTER_OPTION_STRING_CONTAINS : // contains
-      FmtStr = wxT( "LIKE \"%%%s%%\"" );
+      FmtStr = wxT( "LIKE '%%%s%%'" );
       break;
     case guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS : // not contains
-      FmtStr = wxT( "NOT LIKE \"%%%s%%\"" );
+      FmtStr = wxT( "NOT LIKE '%%%s%%'" );
       break;
     case guDYNAMIC_FILTER_OPTION_STRING_EQUAL : // EQUAL
-      FmtStr = wxT( "= \"%s\"" );
+      FmtStr = wxT( "= '%s'" );
       break;
     case guDYNAMIC_FILTER_OPTION_STRING_START_WITH : // START WITH
-      FmtStr = wxT( "LIKE \"%s%%\"" );
+      FmtStr = wxT( "LIKE '%s%%'" );
       break;
     case guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH : // ENDS WITH
-      FmtStr = wxT( "LIKE \"%%%s\"" );
+      FmtStr = wxT( "LIKE '%%%s'" );
       break;
   }
   return wxString::Format( FmtStr, TextParam.c_str() );
@@ -2900,9 +2896,9 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 
       query = GU_TRACKS_QUERYSTR + DynPlayListToSQLQuery( &PlayList );
 
-      dbRes = ExecuteQuery( query );
+      //guLogMessage( wxT( "GetPlayListSongs: <<%s>>" ), query.c_str() );
 
-      //guLogMessage( wxT( "%s" ), query.c_str() );
+      dbRes = ExecuteQuery( query );
 
       while( dbRes.NextRow() )
       {
@@ -3104,7 +3100,7 @@ void guDbLibrary::UpdateDynPlayList( const int plid, const guDynPlayList * playl
 
     query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
                   "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
-                  "VALUES( NULL, %u, 0, %u, %u, \"%s\", %u, %u );" ),
+                  "VALUES( NULL, %u, 0, %u, %u, '%s', %u, %u );" ),
                   plid,
                   FilterItem->m_Type,
                   FilterItem->m_Option,
@@ -3136,14 +3132,11 @@ void guDbLibrary::DeletePlayList( const int plid )
 void guDbLibrary::SetPlayListName( const int plid, const wxString &plname )
 {
   wxString query;
-  wxString PlayListName = plname;
-
-  escape_query_str( &PlayListName );
 
   if( plid )
   {
-    query = wxString::Format( wxT( "UPDATE playlists SET playlist_name = \"%s\" WHERE playlist_id = %u;" ),
-          PlayListName.c_str(), plid );
+    query = wxString::Format( wxT( "UPDATE playlists SET playlist_name = '%s' WHERE playlist_id = %u;" ),
+          escape_query_str( plname ).c_str(), plid );
     ExecuteUpdate( query );
   }
 }
