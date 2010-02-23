@@ -503,9 +503,15 @@ void guLyricsPanel::OnLyricsCopy( wxCommandEvent &event )
     if( wxTheClipboard->Open() )
     {
         wxTheClipboard->Clear();
-        if( !wxTheClipboard->AddData( new wxTextDataObject( m_TrackTextCtrl->GetValue() + wxT( " / " ) +
-                                                             m_ArtistTextCtrl->GetValue() + wxT( "\n\n" ) +
-                                                             m_CurrentLyricText ) ) )
+        wxString CopyText = m_LyricText->SelectionToText();
+        if( CopyText.IsEmpty() )
+        {
+            CopyText = m_TrackTextCtrl->GetValue() + wxT( " / " ) +
+                       m_ArtistTextCtrl->GetValue() + wxT( "\n\n" ) +
+                       m_CurrentLyricText;
+        }
+
+        if( !wxTheClipboard->AddData( new wxTextDataObject( CopyText ) ) )
         {
             guLogError( wxT( "Can't copy data to the clipboard" ) );
         }
