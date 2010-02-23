@@ -1532,6 +1532,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
         {
             m_ArtistInfoCtrls[ index ]->Clear();
             m_AlbumInfoCtrls[ index ]->Clear();
+            m_EventsInfoCtrls[ index ]->Clear();
         }
 
         m_LastArtistName = m_ArtistName;
@@ -1559,7 +1560,6 @@ void guLastFMPanel::ShowCurrentTrack( void )
         for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
         {
             m_TrackInfoCtrls[ index ]->Clear();
-            m_EventsInfoCtrls[ index ]->Clear();
         }
 
         m_LastTrackName = m_TrackName;
