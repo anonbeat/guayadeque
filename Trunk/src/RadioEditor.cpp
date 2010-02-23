@@ -46,6 +46,7 @@ guRadioEditor::guRadioEditor( wxWindow* parent, const wxString& title, const wxS
 	FlexGridSizer->Add( NameLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
 	m_NameTextCtrl = new wxTextCtrl( this, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, 0 );
+	m_NameTextCtrl->SetFocus();
 	FlexGridSizer->Add( m_NameTextCtrl, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	LinkLabel = new wxStaticText( this, wxID_ANY, _( "Link:" ), wxDefaultPosition, wxDefaultSize, 0 );

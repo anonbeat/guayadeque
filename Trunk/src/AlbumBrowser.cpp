@@ -750,6 +750,17 @@ void guAlbumBrowser::ReloadItems( void )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::RefreshAll( void )
 {
+    m_UpdateDetailsMutex.Lock();
+    if( m_UpdateDetails )
+    {
+        m_UpdateDetails->Pause();
+        m_UpdateDetails->Delete();
+    }
+
+    m_UpdateDetails = new guUpdateAlbumDetails( this );
+
+    m_UpdateDetailsMutex.Unlock();
+
     size_t Index;
     size_t Count = m_ItemCount;
     for( Index = 0; Index < Count; Index++ )
@@ -761,17 +772,6 @@ void guAlbumBrowser::RefreshAll( void )
             m_ItemPanels[ Index ]->SetAlbumItem( Index, NULL, m_BlankCD );
     }
     Layout();
-
-    m_UpdateDetailsMutex.Lock();
-    if( m_UpdateDetails )
-    {
-        m_UpdateDetails->Pause();
-        m_UpdateDetails->Delete();
-    }
-
-    m_UpdateDetails = new guUpdateAlbumDetails( this );
-
-    m_UpdateDetailsMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
