@@ -233,6 +233,7 @@ void guLyricsPanel::CreateContextMenu( wxMenu * menu )
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     menu->Append( MenuItem );
 
+    wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
     {
         if( wxTheClipboard->IsSupported( wxDF_TEXT ) )
@@ -500,6 +501,7 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnLyricsCopy( wxCommandEvent &event )
 {
+    wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
     {
         wxTheClipboard->Clear();
@@ -526,6 +528,7 @@ void guLyricsPanel::OnLyricsCopy( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnLyricsPaste( wxCommandEvent &event )
 {
+    wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
     {
         if( wxTheClipboard->IsSupported( wxDF_TEXT ) )

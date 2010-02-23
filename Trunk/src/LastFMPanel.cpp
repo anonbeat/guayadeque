@@ -260,6 +260,7 @@ void guLastFMInfoCtrl::OnSearchLinkClicked( wxCommandEvent &event )
 void guLastFMInfoCtrl::OnCopyToClipboard( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "OnCopyToClipboard : %s" ), GetSearchText().c_str() );
+    wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
     {
         wxTheClipboard->Clear();
