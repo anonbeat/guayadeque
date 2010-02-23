@@ -102,9 +102,9 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
       do {
         if( ( FileName[ 0 ] != '.' ) )
         {
+          int FileDate = GetFileLastChangeTime( dirname + FileName );
           if( Dir.Exists( dirname + FileName ) )
           {
-            int FileDate = GetFileLastChangeTime( dirname + FileName );
             //guLogMessage( wxT( "Scanning dir '%s' : FileDate: %u  -> %u\n%u Tracks found" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate, m_TrackFiles.Count() );
             ScanDirectory( dirname + FileName, includedir || ( FileDate > m_LastUpdate ) );
 
@@ -115,7 +115,6 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           }
           else
           {
-            int FileDate = GetFileLastChangeTime( dirname + FileName );
             //guLogMessage( wxT( "%s : FileDate: %u  -> %u" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate );
             if( includedir || ( FileDate > m_LastUpdate ) )
             {
