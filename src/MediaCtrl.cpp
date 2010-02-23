@@ -323,26 +323,11 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
             return;
         }
 
-        GstElement * replay = gst_element_factory_make( "rgvolume", "replaygain" );
-        if( !GST_IS_ELEMENT( replay ) )
-        {
-            if( G_IS_OBJECT( replay ) )
-                g_object_unref( replay );
-            replay = NULL;
-            guLogError( wxT( "Could not create the replay gain object" ) );
-            return;
-        }
-        else
-        {
-            g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
-            g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
-        }
-
 //        GstCaps *caps;
 //        caps = gst_caps_from_string( "audio/x-raw-int,channels=2" );
 //
 //        gst_bin_add( GST_BIN( m_Playbin ), level );
-        gst_bin_add( GST_BIN( m_Playbin ), replay );
+//        gst_bin_add( GST_BIN( m_Playbin ), replay );
 //        gst_element_link_filtered( replay, level, caps );
 
         GstElement * sinkbin = gst_bin_new( "outsinkbin" );
@@ -363,6 +348,21 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
             converter = NULL;
             guLogError( wxT( "Could not create the audioconvert object" ) );
             return;
+        }
+
+        GstElement * replay = gst_element_factory_make( "rgvolume", "replaygain" );
+        if( !GST_IS_ELEMENT( replay ) )
+        {
+            if( G_IS_OBJECT( replay ) )
+                g_object_unref( replay );
+            replay = NULL;
+            guLogError( wxT( "Could not create the replay gain object" ) );
+            return;
+        }
+        else
+        {
+            g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
+            g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
         }
 
         GstElement * level = gst_element_factory_make( "level", "gulevelctrl" );
@@ -427,8 +427,8 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         GstPad * pad;
         GstPad * ghostpad;
 
-        gst_bin_add_many( GST_BIN( sinkbin ), converter, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
-        gst_element_link_many( converter, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
+        gst_bin_add_many( GST_BIN( sinkbin ), converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
+        gst_element_link_many( converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
 
         pad = gst_element_get_pad( converter, "sink" );
         ghostpad = gst_ghost_pad_new( "sink", pad );
