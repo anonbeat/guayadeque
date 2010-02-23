@@ -399,6 +399,7 @@ void guAlbumBrowserItemPanel::OnAlbumDClicked( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnCopyToClipboard( wxCommandEvent &event )
 {
+    wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
     {
         wxTheClipboard->Clear();
