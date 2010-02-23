@@ -1367,9 +1367,6 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
     m_ViewLibAlbums->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
     m_ViewLibAlbums->Enable( IsEnabled );
 
-//    m_ViewLibTracks->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TRACKS ) );
-//    m_ViewLibTracks->Enable( IsEnabled );
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2142,7 +2139,6 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
     int Layout = event.GetId() - ID_MENU_LAYOUT_LOAD;
     bool IsShown;
 //    bool NBIsShown = PaneInfo.IsShown();
-
     //guLogMessage( wxT( "Loading Layout %i" ), Layout );
     m_AuiManager.LoadPerspective( m_LayoutData[ Layout ] );
 
@@ -2168,6 +2164,18 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
             m_VisiblePanels ^= guPANEL_MAIN_PLAYERFILTERS;
 
         m_ViewPlayerFilters->Check( IsShown );
+    }
+
+    wxAuiPaneInfo &VumetersPaneInfo = m_AuiManager.GetPane( wxT( "PlayerVumeters" ) );
+    //guLogMessage( wxT( "PlayerFilters: %i   %i" ), FiltersPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
+    if( ( IsShown = VumetersPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) )
+    {
+        if( IsShown )
+            m_VisiblePanels |= guPANEL_MAIN_PLAYERVUMETERS;
+        else
+            m_VisiblePanels ^= guPANEL_MAIN_PLAYERVUMETERS;
+
+        m_ViewPlayerVumeters->Check( IsShown );
     }
 
     LoadTabsPerspective( m_LayoutTabs[ Layout ] );
@@ -2198,6 +2206,33 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     m_VisiblePanels = m_VisiblePanels & ( guPANEL_MAIN_PLAYERPLAYLIST |
                                           guPANEL_MAIN_PLAYERFILTERS |
                                           guPANEL_MAIN_PLAYERVUMETERS );
+
+    // Reset the Menu entry for all elements
+    m_ViewLibrary->Check( false );
+    m_ViewLibTextSearch->Enable( false );
+    m_ViewLibLabels->Enable( false );
+    m_ViewLibGenres->Enable( false );
+    m_ViewLibArtists->Enable( false );
+    m_ViewLibAlbums->Enable( false );
+
+    m_ViewRadios->Check( false );
+    m_ViewRadTextSearch->Enable( false );
+    m_ViewRadLabels->Enable( false );
+    m_ViewRadGenres->Enable( false );
+
+    m_ViewLastFM->Check( false );
+
+    m_ViewLyrics->Check( false );
+
+    m_ViewPlayLists->Check( false );
+
+    m_ViewPodcasts->Check( false );
+    m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
+    m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
+
+    m_ViewAlbumBrowser->Check( false );
+
+
     int Index = 0;
     while( true )
     {
