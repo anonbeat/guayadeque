@@ -96,7 +96,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
   if( !dirname.EndsWith( wxT( "/" ) ) )
     dirname += wxT( "/" );
 
-  guLogMessage( wxT( "Scanning dir (%i) '%s'" ), includedir, dirname.c_str() );
+  //guLogMessage( wxT( "Scanning dir (%i) '%s'" ), includedir, dirname.c_str() );
   Dir.Open( dirname );
 
   if( !TestDestroy() && Dir.IsOpened() )
@@ -119,11 +119,10 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           }
           else
           {
-            guLogMessage( wxT( "%s (%i): FileDate: %u  -> %u" ), ( dirname + FileName ).c_str(), includedir, m_LastUpdate, FileDate );
+            //guLogMessage( wxT( "%s (%i): FileDate: %u  -> %u" ), ( dirname + FileName ).c_str(), includedir, m_LastUpdate, FileDate );
             if( includedir || ( FileDate > m_LastUpdate ) )
             {
               LowerFileName = FileName.Lower();
-              guLogMessage( wxT( "IsCoverFile: %i" ), SearchCoverWords( LowerFileName, m_CoverSearchWords ) );
 
               if( guIsValidAudioFile( LowerFileName ) )
               {
@@ -136,7 +135,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
                     LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
                     LowerFileName.EndsWith( wxT( ".gif" ) ) ) )
               {
-                guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
+                //guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
                 m_ImageFiles.Add( dirname + FileName );
               }
             }
@@ -199,9 +198,9 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             if( ( index >= count ) )
                 break;
 
-             //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ index ].c_str() );
-             m_Db->ReadFileTags( m_TrackFiles[ index ].char_str() );
-                //Sleep( 1 );
+            //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ index ].c_str() );
+            m_Db->ReadFileTags( m_TrackFiles[ index ].char_str() );
+            //Sleep( 1 );
             index++;
             evtup.SetExtraLong( index );
             wxPostEvent( m_MainFrame, evtup );

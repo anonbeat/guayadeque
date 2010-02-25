@@ -832,6 +832,10 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
         }
     }
 
+    // The wxVListBox dont handle the right click to select items. We add this functionality
+    if( event.RightDown() )
+        OnLeftDown( event );
+
     event.Skip();
 }
 
