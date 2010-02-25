@@ -2088,28 +2088,28 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
     switch( m_AlbumsOrder )
     {
         case guALBUMS_ORDER_NAME :
-            query += wxT( "album_name " );
+            query += wxT( "album_name, song_disk" );
             break;
 
         case guALBUMS_ORDER_YEAR :
-            query += wxT( "song_year" );
+            query += wxT( "song_year, album_name, song_disk" );
             break;
 
         case guALBUMS_ORDER_YEAR_REVERSE :
-            query += wxT( "song_year DESC" );
+            query += wxT( "song_year DESC, album_name, song_disk" );
             break;
 
         case guALBUMS_ORDER_ARTIST_NAME :
-            query += wxT( "artist_name, album_name" );
+            query += wxT( "artist_name, album_name, song_disk " );
             break;
 
         case guALBUMS_ORDER_ARTIST_YEAR :
-            query += wxT( "artist_name, song_year" );
+            query += wxT( "artist_name, song_year, album_name, song_disk" );
             break;
 
         case guALBUMS_ORDER_ARTIST_YEAR_REVERSE :
         default :
-            query += wxT( "artist_name, song_year DESC" );
+            query += wxT( "artist_name, song_year DESC, album_name, song_disk" );
             break;
     }
 
