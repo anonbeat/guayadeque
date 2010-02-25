@@ -37,22 +37,26 @@ int inline GetFileLastChangeTime( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
-guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid )
+guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath )
 {
     m_Db = db;
     m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     m_GaugeId = gaugeid;
+    m_ScanPath = scanpath;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+    if( scanpath.IsEmpty() )
     {
-        m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+        if( Config )
+        {
+            m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
 
-        CheckSymLinks( m_LibPaths );
+            CheckSymLinks( m_LibPaths );
 
-        m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
-        //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
-        m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+            m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+            //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
+        }
     }
 
     if( Create() == wxTHREAD_NO_ERROR )
@@ -92,7 +96,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
   if( !dirname.EndsWith( wxT( "/" ) ) )
     dirname += wxT( "/" );
 
-  //guLogMessage( wxT( "Scanning dir '%s'" ), dirname.c_str() );
+  guLogMessage( wxT( "Scanning dir (%i) '%s'" ), includedir, dirname.c_str() );
   Dir.Open( dirname );
 
   if( !TestDestroy() && Dir.IsOpened() )
@@ -115,10 +119,11 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           }
           else
           {
-            //guLogMessage( wxT( "%s : FileDate: %u  -> %u" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate );
+            guLogMessage( wxT( "%s (%i): FileDate: %u  -> %u" ), ( dirname + FileName ).c_str(), includedir, m_LastUpdate, FileDate );
             if( includedir || ( FileDate > m_LastUpdate ) )
             {
               LowerFileName = FileName.Lower();
+              guLogMessage( wxT( "IsCoverFile: %i" ), SearchCoverWords( LowerFileName, m_CoverSearchWords ) );
 
               if( guIsValidAudioFile( LowerFileName ) )
               {
@@ -131,6 +136,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
                     LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
                     LowerFileName.EndsWith( wxT( ".gif" ) ) ) )
               {
+                guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
                 m_ImageFiles.Add( dirname + FileName );
               }
             }
@@ -149,27 +155,35 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 {
+    int index;
+    int count;
     wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
 
     wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
-    int index;
-    int count = m_LibPaths.Count();
-    if( !count )
+    if( m_ScanPath.IsEmpty() )
     {
-        guLogError( wxT( "No library directories to scan" ) );
-        return 0;
-    }
+        count = m_LibPaths.Count();
+        if( !count )
+        {
+            guLogError( wxT( "No library directories to scan" ) );
+            return 0;
+        }
 
-    // For every directory in the library scan for new files and add them to m_TrackFiles
-    index = 0;
-    while( !TestDestroy() && ( index < count ) )
+        // For every directory in the library scan for new files and add them to m_TrackFiles
+        index = 0;
+        while( !TestDestroy() && ( index < count ) )
+        {
+            //guLogMessage( wxT( "Doing Library Update in %s" ), m_LibPaths[ index ].c_str() );
+            ScanDirectory( m_LibPaths[ index ] );
+            index++;
+        }
+    }
+    else
     {
-        //guLogMessage( wxT( "Doing Library Update in %s" ), m_LibPaths[ index ].c_str() );
-        ScanDirectory( m_LibPaths[ index ] );
-        index++;
+        ScanDirectory( m_ScanPath, true );
     }
 
     // For every new track file update it in the database
@@ -206,7 +220,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             if( ( index >= count ) )
                 break;
 
-             m_Db->UpdateImageFile( m_ImageFiles[ index ].char_str() );
+            m_Db->UpdateImageFile( m_ImageFiles[ index ].char_str() );
             index++;
             evtup.SetExtraLong( index );
             wxPostEvent( m_MainFrame, evtup );

@@ -1118,8 +1118,17 @@ void guMainFrame::OnAddLibraryPath( wxCommandEvent &event )
                     LibPaths.Add( PathValue );
                     Config->WriteAStr( wxT( "LibPath" ), LibPaths, wxT( "LibPaths" ) );
 
-                    event.SetId( ID_MENU_UPDATE_LIBRARY );
-                    AddPendingEvent( event );
+                    //event.SetId( ID_MENU_UPDATE_LIBRARY );
+                    //AddPendingEvent( event );
+                    if( !m_LibUpdateThread )
+                    {
+                        int gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
+                        m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid, PathValue );
+                    }
+                    else
+                    {
+                        wxMessageBox( _( "The library is already updating" ), _( "Add Directory" ), wxOK | wxICON_EXCLAMATION  );
+                    }
                 }
                 else
                 {
