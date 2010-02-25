@@ -247,7 +247,7 @@ int DownloadFile( const wxString &Source, const wxString &Target )
     long ResCode = http.GetResponseCode();
     if( ResCode < 200 || ResCode > 299 )
     {
-        guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
+        //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
         if( ResCode == 301 || ResCode == 302 || ResCode == 307 )
         {
             wxString Location = http.GetResponseHeader();
@@ -317,7 +317,7 @@ int guWebExecute( const wxString &Url )
         wxString Cmd = Url;
         Cmd.Replace( wxT( "(" ), wxT( "%28" ) );
         Cmd.Replace( wxT( ")" ), wxT( "%29" ) );
-        guLogMessage( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ).c_str() );
+        //guLogMessage( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ).c_str() );
         //return wxShell( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ) );
         return wxExecute( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ) );
     }

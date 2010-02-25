@@ -1093,7 +1093,8 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, co
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetAlbumId( wxString &albumname, const int artistid, const int pathid, const wxString &pathname )
+int guDbLibrary::GetAlbumId( wxString &albumname, const int artistid, const int pathid,
+    const wxString &pathname, const int coverid )
 {
   //guLogMessage( wxT( "GetAlbumId : %s" ), LastAlbum.c_str() );
   if( LastAlbum == albumname )
@@ -1131,8 +1132,8 @@ int guDbLibrary::GetAlbumId( wxString &albumname, const int artistid, const int 
   else
   {
     query = wxString::Format( wxT( "INSERT INTO albums( album_id, album_artistid, album_pathid, album_name, album_coverid ) "\
-                               "VALUES( NULL, %u, %u, '%s', 0 );" ),
-                    artistid, pathid,  escape_query_str( albumname ).c_str() );
+                               "VALUES( NULL, %u, %u, '%s', %u );" ),
+                    artistid, pathid,  escape_query_str( albumname ).c_str(), coverid );
     if( ExecuteUpdate( query ) )
     {
       RetVal = LastAlbumId = m_Db.GetLastRowId().GetLo();
@@ -1324,7 +1325,7 @@ int guDbLibrary::ReadFileTags( const char * filename )
 
           m_CurSong.m_ArtistId = GetArtistId( TagInfo->m_ArtistName );
 
-          m_CurSong.m_AlbumId =GetAlbumId( TagInfo->m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, PathName );
+          m_CurSong.m_AlbumId = GetAlbumId( TagInfo->m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, PathName );
 
           m_CurSong.m_GenreId = GetGenreId( TagInfo->m_GenreName );
 
@@ -1465,7 +1466,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 
             ArtistId = GetArtistId( Song->m_ArtistName );
 
-            AlbumId = GetAlbumId( Song->m_AlbumName, ArtistId, PathId, PathName );
+            AlbumId = GetAlbumId( Song->m_AlbumName, ArtistId, PathId, PathName, Song->m_CoverId );
 
             GenreId = GetGenreId( Song->m_GenreName );
 
