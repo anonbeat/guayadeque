@@ -491,7 +491,11 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
     if( !gst_uri_is_valid( ( const char * ) uri.mb_str() ) )
         return false;
 
+//    char * uristr = ( char * ) malloc( strlen( uri.mb_str() ) + 1 );
+//    strcpy( uristr, uri.mb_str() );
+
     g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str(), NULL );
+//    g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uristr, NULL );
 
     if( restart )
     {

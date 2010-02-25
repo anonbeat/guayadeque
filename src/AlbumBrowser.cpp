@@ -619,14 +619,13 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 	NavigatorSizer->Add( m_NavLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
 	m_NavSlider = new wxSlider( this, wxID_ANY, 0, 0, 1, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	m_NavSlider->SetFocus();
 	NavigatorSizer->Add( m_NavSlider, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	MainSizer->Add( NavigatorSizer, 0, wxEXPAND, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
-
-    m_NavSlider->SetFocus();
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guAlbumBrowser::OnChangedSize ), NULL, this );
 
@@ -999,9 +998,10 @@ void guAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
                 wxURI Uri( CoverFile );
                 if( Uri.IsReference() )
                 {
-                    m_Db->SetAlbumCover( albumid, CoverFile );
-                    ReloadItems();
-                    RefreshAll();
+                    //m_Db->SetAlbumCover( albumid, CoverFile );
+                    //ReloadItems();
+                    //RefreshAll();
+                    SetAlbumCover( albumid, CoverFile );
                 }
                 else
                 {
@@ -1158,8 +1158,6 @@ wxString guAlbumBrowser::GetAlbumCoverFile( const int coverid )
 // -------------------------------------------------------------------------------- //
 void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
 {
-    wxString AlbumName;
-    wxString ArtistName;
     wxString AlbumPath;
     if( m_Db->GetAlbumInfo( albumid, NULL, NULL, &AlbumPath ) )
     {
