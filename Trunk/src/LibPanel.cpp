@@ -844,8 +844,19 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                     wxURI Uri( CoverFile );
                     if( Uri.IsReference() )
                     {
-                        m_Db->SetAlbumCover( Albums[ 0 ], CoverFile );
-                        m_AlbumListCtrl->ReloadItems( false );
+                        wxImage CoverImage( CoverFile );
+                        if( CoverImage.IsOk() )
+                        {
+                            if( CoverImage.SaveFile( SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ), wxBITMAP_TYPE_JPEG ) )
+                            {
+                                m_Db->SetAlbumCover( Albums[ 0 ], SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) );
+                                m_AlbumListCtrl->ReloadItems( false );
+                            }
+                        }
+                        else
+                        {
+                            guLogError( wxT( "Could not load the imate '%s'" ), CoverFile.c_str() );
+                        }
                     }
                     else
                     {

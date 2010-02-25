@@ -22,6 +22,7 @@
 #include "Config.h"
 
 #include <wx/curl/http.h>
+#include <wx/process.h>
 #include <wx/regex.h>
 #include <wx/uri.h>
 #include <wx/zstream.h>
@@ -316,8 +317,9 @@ int guWebExecute( const wxString &Url )
         wxString Cmd = Url;
         Cmd.Replace( wxT( "(" ), wxT( "%28" ) );
         Cmd.Replace( wxT( ")" ), wxT( "%29" ) );
-        //guLogMessage( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ).c_str() );
-        return wxShell( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ) );
+        guLogMessage( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ).c_str() );
+        //return wxShell( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ) );
+        return wxExecute( wxString::Format( wxT( "%s \"%s\"" ), BrowserCmd.c_str(), Cmd.c_str() ) );
     }
     return -1;
 }
