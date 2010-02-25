@@ -36,11 +36,12 @@ class guLibUpdateThread : public wxThread
     wxArrayString       m_LibPaths;
     int                 m_LastUpdate;
     wxArrayString       m_CoverSearchWords;
+    wxString            m_ScanPath;
 
     int                 ScanDirectory( wxString dirname, bool includedir = false );
 
   public :
-    guLibUpdateThread( guDbLibrary * db, int gaugeid );
+    guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath = wxEmptyString );
     ~guLibUpdateThread();
 
     ExitCode Entry();
