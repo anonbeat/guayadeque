@@ -144,10 +144,12 @@ DECLARE_EVENT_TYPE( wxEVT_MEDIA_TAG, wxID_ANY )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING, wxID_ANY )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_BITRATE, wxID_ANY )
 DECLARE_EVENT_TYPE( wxEVT_MEDIA_LEVEL, wxID_ANY )
+DECLARE_EVENT_TYPE( wxEVT_MEDIA_ERROR, wxID_ANY )
 #define EVT_MEDIA_TAG(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_TAG, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_BUFFERING(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BUFFERING, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_BITRATE(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BITRATE, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 #define EVT_MEDIA_LEVEL(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_LEVEL, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
+#define EVT_MEDIA_ERROR(winid, fn) DECLARE_EVENT_TABLE_ERROR( wxEVT_MEDIA_ERROR, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
 
 class guPlayerPanel;
 

@@ -31,6 +31,7 @@ DEFINE_EVENT_TYPE( wxEVT_MEDIA_TAG )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_BITRATE )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_LEVEL )
+DEFINE_EVENT_TYPE( wxEVT_MEDIA_ERROR )
 
 // -------------------------------------------------------------------------------- //
 extern "C" {
@@ -44,7 +45,13 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             GError * err;
             gchar * debug;
             gst_message_parse_error( message, &err, &debug );
+
             guLogError( wxT( "Gstreamer error '%s'" ), wxString( err->message, wxConvUTF8 ).c_str() );
+            wxString * ErrorStr = new wxString( err->message, wxConvUTF8 );
+            wxMediaEvent event( wxEVT_MEDIA_ERROR );
+            event.SetClientData( ( void * ) ErrorStr );
+            ctrl->AddPendingEvent( event );
+
             g_error_free( err );
             g_free( debug );
 

@@ -367,6 +367,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_MediaCtrl->Connect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_LEVEL, wxMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
+    m_MediaCtrl->Connect( wxEVT_MEDIA_ERROR, wxMediaEventHandler( guPlayerPanel::OnMediaError ), NULL, this );
 
     Connect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
 
@@ -475,6 +476,7 @@ guPlayerPanel::~guPlayerPanel()
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_LEVEL, wxMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
+    m_MediaCtrl->Disconnect( wxEVT_MEDIA_ERROR, wxMediaEventHandler( guPlayerPanel::OnMediaError ), NULL, this );
 
     Disconnect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ) );
 
@@ -1246,6 +1248,21 @@ void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnMediaError( wxMediaEvent &event )
+{
+    wxString * ErrorStr = ( wxString * ) event.GetClientData();
+    if( ErrorStr )
+    {
+        if( m_ErrorStrings.Index( * ErrorStr, false ) == wxNOT_FOUND )
+        {
+            m_ErrorStrings.Add( * ErrorStr );
+            wxMessageBox( * ErrorStr, _( "gstreamer error" ), wxICON_ERROR | wxOK );
+            m_ErrorStrings.Remove( * ErrorStr );
+        }
+        delete ErrorStr;
+    }
+}
 // -------------------------------------------------------------------------------- //
 // 0 -> Artist
 // 1 -> Title
