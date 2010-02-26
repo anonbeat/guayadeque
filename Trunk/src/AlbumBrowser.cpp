@@ -709,6 +709,8 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
             //guLogMessage( wxT( "We need to reassign the panels from %i to %i" ), OldCount, m_ItemCount );
             if( OldCount != m_ItemCount )
             {
+                m_AlbumItemsMutex.Lock();
+
                 m_AlbumsSizer->SetCols( ColItems );
                 m_AlbumsSizer->SetRows( RowItems );
 
@@ -733,6 +735,7 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
                         delete ItemPanel;
                     }
                 }
+                m_AlbumItemsMutex.Unlock();
 
                 RefreshPageCount();
                 ReloadItems();
@@ -771,6 +774,7 @@ void guAlbumBrowser::RefreshAll( void )
 
     m_UpdateDetailsMutex.Unlock();
 
+    m_AlbumItemsMutex.Lock();
     size_t Index;
     size_t Count = m_ItemCount;
     for( Index = 0; Index < Count; Index++ )
@@ -781,6 +785,7 @@ void guAlbumBrowser::RefreshAll( void )
         else
             m_ItemPanels[ Index ]->SetAlbumItem( Index, NULL, m_BlankCD );
     }
+    m_AlbumItemsMutex.Unlock();
     Layout();
 }
 
@@ -1129,8 +1134,10 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 {
+    m_AlbumItemsMutex.Lock();
     //guLogMessage( wxT( "OnUpdateDetails %i" ), event.GetInt() );
     m_ItemPanels[ event.GetInt() ]->UpdateDetails();
+    m_AlbumItemsMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //

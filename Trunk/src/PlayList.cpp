@@ -1404,6 +1404,7 @@ void guPlayList::OnSearchLinkClicked( wxCommandEvent &event )
             }
             SearchLink.Replace( wxT( "{lang}" ), Lang );
             SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
+            guLogMessage( wxT( "Launching link: %s" ), SearchLink.c_str() );
             guWebExecute( SearchLink );
         }
     }
