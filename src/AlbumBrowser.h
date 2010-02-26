@@ -129,6 +129,7 @@ class guAlbumBrowser : public wxPanel
     guAlbumBrowserItemArray         m_AlbumItems;
     wxMutex                         m_AlbumItemsMutex;
     guAlbumBrowserItemPanelArray    m_ItemPanels;
+    wxMutex                         m_ItemPanelsMutex;
     guUpdateAlbumDetails *          m_UpdateDetails;
     wxMutex                         m_UpdateDetailsMutex;
     unsigned int                    m_ItemStart;        // The first element in a page
