@@ -551,7 +551,8 @@ void guAlbumBrowserItemPanel::OnCoverBeginDrag( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::SetAlbumCover( const wxString &cover )
 {
-    m_AlbumBrowser->SetAlbumCover( m_AlbumBrowserItem->m_AlbumId, cover );
+    if( m_AlbumBrowserItem )
+        m_AlbumBrowser->SetAlbumCover( m_AlbumBrowserItem->m_AlbumId, cover );
 }
 
 
