@@ -153,6 +153,7 @@ class guPlayerPanel : public wxPanel
 	wxMediaState            m_LastPlayState;
 	double                  m_LastVolume;
 	wxFileOffset            m_LastCurPos;
+	bool                    m_IsSkipping;
 
 	double                  m_CurVolume;
 	int                     m_PlayLoop;

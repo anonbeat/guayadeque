@@ -52,16 +52,6 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, wxArray
 	FieldsSizer->SetFlexibleDirection( wxBOTH );
 	FieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	PosLabel = new wxStaticText( this, wxID_ANY, _( "Where:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	PosLabel->Wrap( -1 );
-	FieldsSizer->Add( PosLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
-
-	wxString m_PosChoiceChoices[] = { _("Begin"), _("End") };
-	int m_PosChoiceNChoices = sizeof( m_PosChoiceChoices ) / sizeof( wxString );
-	m_PosChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PosChoiceNChoices, m_PosChoiceChoices, 0 );
-	m_PosChoice->SetSelection( 1 );
-	FieldsSizer->Add( m_PosChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
-
 	PlayListLabel = new wxStaticText( this, wxID_ANY, _("Playlist:"), wxDefaultPosition, wxDefaultSize, 0 );
 	PlayListLabel->Wrap( -1 );
 	FieldsSizer->Add( PlayListLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
@@ -74,6 +64,16 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, wxArray
         m_PlayListComboBox->Append( plitems->Item( index ).m_Name );
     }
 	FieldsSizer->Add( m_PlayListComboBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	PosLabel = new wxStaticText( this, wxID_ANY, _( "Where:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	PosLabel->Wrap( -1 );
+	FieldsSizer->Add( PosLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	wxString m_PosChoiceChoices[] = { _("Begin"), _("End") };
+	int m_PosChoiceNChoices = sizeof( m_PosChoiceChoices ) / sizeof( wxString );
+	m_PosChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PosChoiceNChoices, m_PosChoiceChoices, 0 );
+	m_PosChoice->SetSelection( 1 );
+	FieldsSizer->Add( m_PosChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	TracksLabel = new wxStaticText( this, wxID_ANY, _("Tracks:"), wxDefaultPosition, wxDefaultSize, 0 );
 	TracksLabel->Wrap( -1 );

@@ -1103,7 +1103,7 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
         Menu->Append( MenuItem );
     }
 
-    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SAVE, _( "Save PlayList" ), _( "Save the PlayList" ) );
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SAVE, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
     Menu->Append( MenuItem );
 
