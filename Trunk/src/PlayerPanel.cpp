@@ -83,6 +83,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_PlayRandom = false;
     m_DelTracksPlayed = false;
     m_PendingScrob = false;
+    m_IsSkipping = false;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -1262,6 +1263,9 @@ void guPlayerPanel::OnMediaError( wxMediaEvent &event )
         }
         delete ErrorStr;
     }
+
+    if( m_IsSkipping )
+        m_IsSkipping = false;
 }
 // -------------------------------------------------------------------------------- //
 // 0 -> Artist
@@ -1340,6 +1344,10 @@ void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
         wxPostEvent( m_MediaCtrl, event );
         return;
     }
+
+    if( m_IsSkipping )
+        m_IsSkipping = false;
+
     try {
         //guLogMessage( wxT("OnMediaLoaded") );
 
@@ -1524,6 +1532,9 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     wxFileOffset CurPos;
     guTrack * PrevItem;
 
+    if( m_IsSkipping )
+        return;
+
     // If we are already in the first Item start again the song from the begining
     State = m_MediaCtrl->GetState();
     CurPos = m_MediaCtrl->Tell();
@@ -1551,6 +1562,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
             SetCurrentTrack( PrevItem );
             if( State == wxMEDIASTATE_PLAYING )
             {
+                m_IsSkipping = true;
                 LoadMedia( m_MediaSong.m_FileName );
             }
         }
@@ -1569,6 +1581,9 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     wxMediaState State;
     guTrack * NextItem;
 
+    if( m_IsSkipping )
+        return;
+
 //    wxMessageBox( wxT("OnPrevTrackButtonClick"), wxT("Event") );
     bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_NEXTTRACK ) ||
                       ( event.GetEventObject() == m_NextTrackButton );
@@ -1585,6 +1600,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         SetCurrentTrack( NextItem );
         if( State == wxMEDIASTATE_PLAYING )
         {
+            m_IsSkipping = true;
             LoadMedia( m_MediaSong.m_FileName );
         }
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
