@@ -818,6 +818,8 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 
     Connect( wxEVT_COMMAND_TREE_SEL_CHANGED,  wxTreeEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
 
+    m_GenresTreeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guRadioPanel::OnRadioGenreListActivated ), NULL, this );
+
     m_LabelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
 
     //
@@ -858,6 +860,8 @@ guRadioPanel::~guRadioPanel()
 
     //
     Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED,  wxTreeEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
+
+    m_GenresTreeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guRadioPanel::OnRadioGenreListActivated ), NULL, this );
 
     m_LabelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
     //
@@ -965,6 +969,29 @@ void guRadioPanel::OnRadioGenreListSelected( wxTreeEvent &event )
         m_Db->SetRadioIsUserFilter( ( ItemId == * m_GenresTreeCtrl->GetManualId() ) );
     }
     m_StationsListBox->ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioGenreListActivated( wxTreeEvent &event )
+{
+    wxTreeItemId ItemId = event.GetItem();
+
+    guRadioGenreData * ItemData = ( guRadioGenreData * ) m_GenresTreeCtrl->GetItemData( event.GetItem() );
+    if( ItemData )
+    {
+        wxArrayInt RadioGenres;
+        RadioGenres.Add( ItemData->GetId() );
+
+        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Radios" ) );
+        guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, RadioGenres, GaugeId );
+        if( UpdateRadiosThread )
+        {
+            UpdateRadiosThread->Create();
+            UpdateRadiosThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+            UpdateRadiosThread->Run();
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
