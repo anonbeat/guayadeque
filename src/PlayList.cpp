@@ -1348,7 +1348,7 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
             m_Db->UpdateSongs( &Songs );
             UpdateImages( Songs, Images );
             UpdateLyrics( Songs, Lyrics );
-            //m_PlayerPanel->UpdatedTracks( &Songs );
+            m_PlayerPanel->UpdatedTracks( &Songs );
         }
         TrackEditor->Destroy();
     }
@@ -1489,7 +1489,7 @@ void guPlayList::UpdatedTracks( const guTrackArray * tracks )
         int itemcnt = m_Items.Count();
         for( item = 0; item < itemcnt; item++ )
         {
-            if( m_Items[ item ].m_SongId == ( * tracks )[ index ].m_SongId )
+            if( m_Items[ item ].m_FileName == ( * tracks )[ index ].m_FileName )
             {
                 m_Items[ item ] = ( * tracks )[ index ];
                 found = true;

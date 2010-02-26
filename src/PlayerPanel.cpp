@@ -1876,7 +1876,7 @@ void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
     int count = tracks->Count();
     for( index = 0; index < count; index++ )
     {
-        if( ( * tracks )[ index ].m_SongId == m_MediaSong.m_SongId )
+        if( ( * tracks )[ index ].m_FileName == m_MediaSong.m_FileName )
         {
             m_MediaSong = ( * tracks )[ index ];
 
