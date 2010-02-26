@@ -572,6 +572,9 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
     TmpImg.Rescale( 100, 100 );
     m_BlankCD = new wxBitmap( TmpImg );
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_DynFilter.FromString( Config->ReadStr( wxT( "Filter" ), wxEmptyString, wxT( "AlbumBrowser" ) ) );
+
     // GUI
 	SetMinSize( wxSize( 120, 150 ) );
 
@@ -587,6 +590,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 //	m_FilterChoice->SetSelection( 0 );
 //	FilterSizer->Add( m_FilterChoice, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	m_FilterBtn = new wxToggleButton( this, wxID_ANY, _( "Filter" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_FilterBtn->SetValue( Config->ReadBool( wxT( "Enable" ), false, wxT( "AlbumBrowser" ) ) );
 	FilterSizer->Add( m_FilterBtn, 0, wxTOP|wxLEFT, 5 );
 
 	m_EditFilterBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
@@ -597,7 +601,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 	wxString m_OrderChoiceChoices[] = { _("Order By"), _("Name"), _("Year"), _("Year Desc."), _("Artist, Name"), _("Artist, Year"), _("Artist, Year Desc.") };
 	int m_OrderChoiceNChoices = sizeof( m_OrderChoiceChoices ) / sizeof( wxString );
 	m_OrderChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_OrderChoiceNChoices, m_OrderChoiceChoices, 0 );
-	m_OrderChoice->SetSelection( 0 );
+	m_OrderChoice->SetSelection( Config->ReadNum( wxT( "Sort" ), 0, wxT( "AlbumBrowser" ) ) );
 	FilterSizer->Add( m_OrderChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	MainSizer->Add( FilterSizer, 0, wxEXPAND, 5 );
@@ -657,6 +661,11 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 // -------------------------------------------------------------------------------- //
 guAlbumBrowser::~guAlbumBrowser()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteStr( wxT( "Filter" ), m_DynFilter.ToString(), wxT( "AlbumBrowser" ) );
+    Config->WriteBool( wxT( "Enable" ), m_FilterBtn->GetValue(), wxT( "AlbumBrowser" ) );
+    Config->WriteNum( wxT( "Sort" ), m_OrderChoice->GetSelection(), wxT( "AlbumBrowser" ) );
+
     if( m_BlankCD )
         delete m_BlankCD;
 
@@ -740,7 +749,7 @@ void guAlbumBrowser::ReloadItems( void )
 {
     m_AlbumItemsMutex.Lock();
     m_AlbumItems.Empty();
-    m_Db->GetAlbums( &m_AlbumItems, m_FilterBtn->GetValue() ? &m_DynPlayList : NULL,
+    m_Db->GetAlbums( &m_AlbumItems, m_FilterBtn->GetValue() ? &m_DynFilter : NULL,
                      m_ItemStart, m_ItemCount, m_OrderChoice->GetSelection() - 1 );
     m_AlbumItemsMutex.Unlock();
 //    guLogMessage( wxT( "Read %i items from %i (%i)" ), m_AlbumItems.Count(), m_ItemStart, m_ItemCount );
@@ -828,12 +837,16 @@ int guAlbumBrowser::GetAlbumTracks( const int albumid, guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
 {
-    guDynPlayListEditor * PlayListEditor = new guDynPlayListEditor( this, &m_DynPlayList, true );
+    guDynPlayList EditPlayList = m_DynFilter;
+
+    guDynPlayListEditor * PlayListEditor = new guDynPlayListEditor( this, &EditPlayList, true );
     if( PlayListEditor->ShowModal() == wxID_OK )
     {
         PlayListEditor->FillPlayListEditData();
 
-        if( m_DynPlayList.m_Filters.Count() )
+        m_DynFilter = EditPlayList;
+
+        if( m_DynFilter.m_Filters.Count() )
         {
             m_FilterBtn->SetValue( true );
             RefreshCount();
@@ -847,10 +860,7 @@ void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
             m_FilterBtn->SetValue( false );
         }
     }
-    else
-    {
-        m_FilterBtn->SetValue( false );
-    }
+
     PlayListEditor->Destroy();
 }
 
@@ -858,9 +868,13 @@ void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
 void guAlbumBrowser::OnFilterSelected( wxCommandEvent &event )
 {
     // If its enabled
-    if( event.GetInt() )
+    if( event.GetInt() && !m_DynFilter.m_Filters.Count() )
     {
         OnEditFilterClicked( event );
+        if( !m_DynFilter.m_Filters.Count() )
+        {
+            m_FilterBtn->SetValue( false );
+        }
     }
     else
     {

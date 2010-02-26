@@ -151,6 +151,9 @@ class guDynPlayList
     guDynPlayList() { m_Id = 0; m_Limited = false; m_LimitValue = 0; m_LimitType = 0;
                       m_Sorted = false; m_SortType = 0; m_SortDesc = false; m_AnyOption = false; };
     ~guDynPlayList() {};
+
+    wxString ToString( void );
+    void     FromString( const wxString &playlist );
 };
 
 // -------------------------------------------------------------------------------- //
