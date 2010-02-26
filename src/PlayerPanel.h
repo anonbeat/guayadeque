@@ -188,6 +188,8 @@ class guPlayerPanel : public wxPanel
 
     bool                    m_ShowRevTime;
 
+    wxArrayString           m_ErrorStrings;
+
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
 //    void                OnLeftDClickPlayerCoverBitmap( wxMouseEvent &event );
@@ -206,6 +208,7 @@ class guPlayerPanel : public wxPanel
     void                OnMediaBitrate( wxMediaEvent &event );
     void                OnMediaBuffering( wxMediaEvent &event );
     void                OnMediaLevel( wxMediaEvent &event );
+    void                OnMediaError( wxMediaEvent &event );
     void                SetCurrentTrack( const guTrack * Song );
 
     // SmartPlay Events

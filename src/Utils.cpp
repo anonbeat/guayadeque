@@ -327,10 +327,8 @@ int guWebExecute( const wxString &Url )
 // -------------------------------------------------------------------------------- //
 int guExecute( const wxString &Command )
 {
-    if( Command.Find( wxT( "gnome-terminal" ) ) == wxNOT_FOUND )
-        return wxExecute( Command );
-    else
-        return wxShell( Command );
+    guLogMessage( wxT( "Running command %s" ), Command.c_str() );
+    return wxExecute( Command );
 }
 
 // -------------------------------------------------------------------------------- //
