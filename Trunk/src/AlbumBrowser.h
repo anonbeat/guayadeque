@@ -138,7 +138,7 @@ class guAlbumBrowser : public wxPanel
     unsigned int                    m_PagesCount;       // The number of pages to scroll
     wxBitmap *                      m_BlankCD;
     wxTimer                         m_RefreshTimer;
-    guDynPlayList                   m_DynPlayList;
+    guDynPlayList                   m_DynFilter;
 
 
     // GUI
@@ -168,7 +168,7 @@ class guAlbumBrowser : public wxPanel
 
     void RefreshCount( void )
     {
-        m_AlbumsCount = m_Db->GetAlbumsCount( m_FilterBtn->GetValue() ? &m_DynPlayList : NULL );
+        m_AlbumsCount = m_Db->GetAlbumsCount( m_FilterBtn->GetValue() ? &m_DynFilter : NULL );
         m_ItemStart = 0;
         RefreshPageCount();
     }

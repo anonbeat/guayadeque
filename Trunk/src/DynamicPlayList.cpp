@@ -196,6 +196,212 @@ void guFilterItem::SetFilterLabel( void )
 }
 
 // -------------------------------------------------------------------------------- //
+// guDynPlayList
+// -------------------------------------------------------------------------------- //
+wxString inline escape_dynplaylist_str( const wxString &val )
+{
+    wxString RetVal = val;
+    RetVal.Replace( wxT( ":" ), wxT( "_$&" ) );
+    RetVal.Replace( wxT( ";" ), wxT( "_&$" ) );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline unescape_dynplaylist_str( const wxString &val )
+{
+    wxString RetVal = val;
+    RetVal.Replace( wxT( "_$&" ), wxT( ":" ) );
+    RetVal.Replace( wxT( "_&$" ), wxT( ";" ) );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guDynPlayList::ToString( void )
+{
+    wxString RetVal = wxT( "DynPlayList0:" );
+
+    RetVal += wxString::Format( wxT( "%i:%s:%i:%i:%i:%i:%i:%i:%i:" ),
+        m_Id,
+        escape_dynplaylist_str( m_Name ).c_str(), // Need to escape the ':'
+        m_Limited,
+        m_LimitValue,
+        m_LimitType,
+        m_Sorted,
+        m_SortType,
+        m_SortDesc,
+        m_AnyOption );
+
+    int Index;
+    int Count = m_Filters.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guFilterItem FilterItem = m_Filters[ Index ];
+        RetVal += wxString::Format( wxT( "{%i;%i;%s;%i;%i;%s}:" ),
+            FilterItem.m_Type,
+            FilterItem.m_Option,
+            escape_dynplaylist_str( FilterItem.m_Text ).c_str(),
+            FilterItem.m_Number,
+            FilterItem.m_Option2,
+            escape_dynplaylist_str( FilterItem.m_Label ).c_str() );
+    }
+
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadFilterFromString( guFilterItem * filteritem, wxString &filterstr )
+{
+    filterstr = filterstr.AfterFirst( wxT( '{' ) ).BeforeLast( wxT( '}' ) );
+    int Field = 0;
+    while( filterstr.Length() )
+    {
+        wxString Val = filterstr.BeforeFirst( wxT( ';' ) );
+        filterstr = filterstr.AfterFirst( wxT( ';' ) );
+        //guLogMessage( wxT( "(%i) %s" ), Field, Val.c_str() );
+
+        switch( Field )
+        {
+            case 0 :
+            {
+                filteritem->m_Type = wxAtoi( Val );
+                break;
+            }
+
+            case 1 :
+            {
+                filteritem->m_Option = wxAtoi( Val );
+                break;
+            }
+
+            case 2 :
+            {
+                filteritem->m_Text = unescape_dynplaylist_str( Val );
+                break;
+            }
+
+            case 3 :
+            {
+                filteritem->m_Number = wxAtoi( Val );
+                break;
+            }
+
+            case 4 :
+            {
+                filteritem->m_Option2 = wxAtoi( Val );
+                break;
+            }
+
+            case 5 :
+            {
+                filteritem->m_Label = unescape_dynplaylist_str( Val );
+                break;
+            }
+        }
+        Field++;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadFiltersFromString( guFilterItemArray * filterarray, wxString &filterstr )
+{
+    while( filterstr.Length() )
+    {
+        wxString Filter = filterstr.BeforeFirst( wxT( ':' ) );
+        filterstr = filterstr.AfterFirst( wxT( ':' ) );
+        if( Filter.Length() )
+        {
+            guFilterItem * FilterItem = new guFilterItem();
+            ReadFilterFromString( FilterItem, Filter );
+            filterarray->Add( FilterItem );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guDynPlayList::FromString( const wxString &playlist )
+{
+    wxString Fields = playlist;
+    int Field = 0;
+
+    while( Fields.Length() )
+    {
+        wxString Val = Fields.BeforeFirst( wxT( ':' ) );
+        Fields = Fields.AfterFirst( wxT( ':' ) );
+        switch( Field )
+        {
+            case 0 :
+            {
+                if( Val != wxT( "DynPlayList0" ) )
+                {
+                    return;
+                }
+                break;
+            }
+
+            case 1 :
+            {
+                m_Id = wxAtoi( Val );
+                break;
+            }
+
+            case 2 :
+            {
+                m_Name = unescape_dynplaylist_str( Val );
+                break;
+            }
+
+            case 3 :
+            {
+                m_Limited = wxAtoi( Val );
+                break;
+            }
+
+            case 4 :
+            {
+                m_LimitValue = wxAtoi( Val );
+                break;
+            }
+
+            case 5 :
+            {
+                m_LimitType = wxAtoi( Val );
+                break;
+            }
+
+            case 6 :
+            {
+                m_Sorted = wxAtoi( Val );
+                break;
+            }
+
+            case 7 :
+            {
+                m_SortType = wxAtoi( Val );
+                break;
+            }
+
+            case 8 :
+            {
+                m_SortDesc = wxAtoi( Val );
+                break;
+            }
+
+            case 9 :
+            {
+                m_AnyOption = wxAtoi( Val );
+                break;
+            }
+        }
+
+        Field++;
+        if( Field > 9 )
+            break;
+    }
+
+    ReadFiltersFromString( &m_Filters, Fields );
+}
+
+// -------------------------------------------------------------------------------- //
 // guDynPlayLIstEditor
 // -------------------------------------------------------------------------------- //
 guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist,
