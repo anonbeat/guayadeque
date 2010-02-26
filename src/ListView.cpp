@@ -858,6 +858,16 @@ void guListViewClient::OnKeyDown( wxKeyEvent &event )
             m_SearchStrTimer->Start( guLISTVIEW_TIMER_TIMEOUT, wxTIMER_ONE_SHOT );
             m_SearchStr.Append( KeyChar );
         }
+        else if( ( event.GetKeyCode() == WXK_RETURN ) || ( event.GetKeyCode() == WXK_NUMPAD_ENTER ) )
+        {
+            if( GetSelection() != wxNOT_FOUND )
+            {
+                wxCommandEvent DCEvent(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, GetId());
+                DCEvent.SetEventObject( this );
+                DCEvent.SetInt( GetSelection() );
+                ( void ) GetEventHandler()->ProcessEvent( DCEvent );
+            }
+        }
     }
     else if( KeyMod == wxMOD_CONTROL )
     {
