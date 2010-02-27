@@ -633,6 +633,35 @@ void guArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guArtistInfoCtrl::OnCopyToClipboard( wxCommandEvent &event )
+{
+    if( !m_Info || !m_Info->m_Artist )
+        return;
+
+    wxTheClipboard->UsePrimarySelection( false );
+    if( wxTheClipboard->Open() )
+    {
+        wxTheClipboard->Clear();
+        wxString CopyText = m_ArtistDetails->SelectionToText();
+        if( CopyText.IsEmpty() )
+        {
+            CopyText = m_Info->m_Artist->m_Name + wxT( "\n" ) +
+                        ( m_ShowLongBioText ? m_Info->m_Artist->m_BioContent :
+                                              m_Info->m_Artist->m_BioSummary );
+        }
+        if( !wxTheClipboard->AddData( new wxTextDataObject( CopyText ) ) )
+        {
+            guLogError( wxT( "Can't copy data to the clipboard" ) );
+        }
+        wxTheClipboard->Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the clipboard object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guAlbumInfoCtrl
 // -------------------------------------------------------------------------------- //
 guAlbumInfoCtrl::guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel ) :
