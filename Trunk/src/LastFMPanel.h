@@ -335,6 +335,9 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
 
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
 
+  protected :
+    virtual void        OnCopyToClipboard( wxCommandEvent &event );
+
   public :
     guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guArtistInfoCtrl();
