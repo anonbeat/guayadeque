@@ -1131,6 +1131,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "DClick %i" ), event.GetInt() );
     int item = event.GetInt();
     m_PlayListCtrl->SetCurrent( item, m_DelTracksPlayed && !m_PlayLoop );
     //m_MediaSong = * m_PlayListCtrl->GetCurrent();

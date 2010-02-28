@@ -83,7 +83,6 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_CurItem = Config->ReadNum( wxT( "PlayerCurItem" ), -1l, wxT( "General" ) );
     m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxTracksPlayed" ), 15, wxT( "Playback" ) );
     m_MinPlayListTracks = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
     m_DelTracksPLayed = Config->ReadNum( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
@@ -122,6 +121,9 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
         event.SetInt( 1 );
         wxPostEvent( this, event );
     }
+    m_CurItem = Config->ReadNum( wxT( "PlayerCurItem" ), wxNOT_FOUND, wxT( "General" ) );
+    if( ( size_t ) m_CurItem > m_Items.Count() )
+        m_CurItem = wxNOT_FOUND;
 
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     m_GreyStar   = new wxBitmap( guImage( guIMAGE_INDEX_grey_star_tiny ) );
@@ -710,7 +712,8 @@ void guPlayList::AddItem( const guTrack * NewItem )
 // -------------------------------------------------------------------------------- //
 void guPlayList::SetCurrent( int curitem, bool delold )
 {
-    if( delold && ( curitem != m_CurItem ) && ( m_CurItem != wxNOT_FOUND ) )
+    if( delold && ( curitem != m_CurItem ) && ( m_CurItem != wxNOT_FOUND ) &&
+        ( ( size_t ) m_CurItem < m_Items.Count() ) )
     {
         m_TotalLen -= m_Items[ m_CurItem ].m_Length;
         m_Items.RemoveAt( m_CurItem );
