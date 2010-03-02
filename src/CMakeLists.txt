@@ -200,6 +200,8 @@ ADD_EXECUTABLE( guayadeque
 	AlbumBrowser.h
 	SelCoverFile.cpp
 	SelCoverFile.h
+	AutoScrollText.cpp
+	AutoScrollText.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
