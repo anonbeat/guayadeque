@@ -391,9 +391,12 @@ void guAlbumBrowserItemPanel::OnEnqueueClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnAlbumDClicked( wxMouseEvent &event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId,
-        Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "General" ) ) );
+    if( m_AlbumBrowserItem )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId,
+            Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "General" ) ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -505,6 +508,9 @@ void guAlbumBrowserItemPanel::OnMouse( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnBeginDrag( wxMouseEvent &event )
 {
+    if( !m_AlbumBrowserItem )
+        return;
+
     int Index;
     int Count;
     //guLogMessage( wxT( "On BeginDrag event..." ) );
@@ -531,6 +537,9 @@ void guAlbumBrowserItemPanel::OnBeginDrag( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnCoverBeginDrag( wxMouseEvent &event )
 {
+    if( !m_AlbumBrowserItem )
+        return;
+
     //guLogMessage( wxT( "On BeginDrag event..." ) );
     wxFileDataObject Files;
 
@@ -1135,8 +1144,10 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
 void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 {
     m_AlbumItemsMutex.Lock();
-    //guLogMessage( wxT( "OnUpdateDetails %i" ), event.GetInt() );
-    m_ItemPanels[ event.GetInt() ]->UpdateDetails();
+    //guLogMessage( wxT( "OnUpdateDetails %i - %i" ), event.GetInt(), m_ItemPanels.GetCount() );
+    int Item = event.GetInt();
+    if( Item >= 0 && Item < m_ItemPanels.GetCount() )
+        m_ItemPanels[ event.GetInt() ]->UpdateDetails();
     m_AlbumItemsMutex.Unlock();
 }
 

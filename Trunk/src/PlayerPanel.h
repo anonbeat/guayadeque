@@ -22,6 +22,7 @@
 #define MUSICPLAYER_H
 
 #include "AudioScrobble.h"
+#include "AutoScrollText.h"
 #include "MediaCtrl.h"
 #include "PlayerFilters.h"
 #include "PlayList.h"
@@ -132,9 +133,12 @@ class guPlayerPanel : public wxPanel
 	wxBitmapButton *        m_EqualizerButton;
 	//
 	guStaticBitmap *        m_PlayerCoverBitmap;
-	wxStaticText *          m_TitleLabel;
-	wxStaticText *          m_AlbumLabel;
-	wxStaticText *          m_ArtistLabel;
+	//wxStaticText *          m_TitleLabel;
+	guAutoScrollText *      m_TitleLabel;
+	//wxStaticText *          m_AlbumLabel;
+	guAutoScrollText *      m_AlbumLabel;
+	//wxStaticText *          m_ArtistLabel;
+	guAutoScrollText *      m_ArtistLabel;
 	wxStaticText *          m_YearLabel;
     guRating *              m_Rating;
     wxBoxSizer *            m_BitRateSizer;

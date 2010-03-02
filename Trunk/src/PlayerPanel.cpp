@@ -180,33 +180,35 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	wxBoxSizer* PlayerLabelsSizer;
 	PlayerLabelsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_TitleLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	//m_TitleLabel = new guAutoScrollText( PlayerPanel, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	//m_TitleLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_TitleLabel = new guAutoScrollText( this, wxEmptyString );
 	m_TitleLabel->SetToolTip( _( "Show the name of the current track" ) );
-	m_TitleLabel->Wrap( -1 );
+	//m_TitleLabel->Wrap( -1 );
 	CurrentFont.SetPointSize( 16 );
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	m_TitleLabel->SetFont( CurrentFont );
 
-	PlayerLabelsSizer->Add( m_TitleLabel, 0, wxLEFT|wxRIGHT|wxBOTTOM, 2 );
+	PlayerLabelsSizer->Add( m_TitleLabel, 0, wxEXPAND|wxLEFT|wxRIGHT|wxBOTTOM, 2 );
 
-	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	//m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
 	m_AlbumLabel->SetToolTip( _( "Show the album name of the current track" ) );
-	m_AlbumLabel->Wrap( -1 );
+	//m_AlbumLabel->Wrap( -1 );
 	CurrentFont.SetPointSize( 12 );
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
 	CurrentFont.SetStyle( wxFONTSTYLE_ITALIC );
 	m_AlbumLabel->SetFont( CurrentFont );
 
-	PlayerLabelsSizer->Add( m_AlbumLabel, 0, wxALL, 2 );
+	PlayerLabelsSizer->Add( m_AlbumLabel, 0, wxEXPAND|wxALL, 2 );
 
-	m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	//m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_ArtistLabel = new guAutoScrollText( this, wxEmptyString );
 	m_ArtistLabel->SetToolTip( _( "Show the artist name of the current track" ) );
-	m_ArtistLabel->Wrap( -1 );
+	//m_ArtistLabel->Wrap( -1 );
 	CurrentFont.SetStyle( wxFONTSTYLE_NORMAL );
 	m_ArtistLabel->SetFont( CurrentFont );
 
-	PlayerLabelsSizer->Add( m_ArtistLabel, 0, wxALL, 2 );
+	PlayerLabelsSizer->Add( m_ArtistLabel, 0, wxEXPAND|wxALL, 2 );
 
 	m_PosLabelSizer = new wxBoxSizer( wxHORIZONTAL );
 	//m_PosLabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
