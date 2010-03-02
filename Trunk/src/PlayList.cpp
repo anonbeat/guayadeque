@@ -153,18 +153,27 @@ guPlayList::~guPlayList()
     int Count;
     int Index;
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config && Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) )
+    if( Config )
     {
         Config->UnRegisterObject( this );
 
-        Count = m_Items.Count();
-        for( Index = 0; Index < Count; Index++ )
+        if( Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) )
         {
-            Songs.Add( m_Items[ Index ].m_FileName );
+
+            Count = m_Items.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                Songs.Add( m_Items[ Index ].m_FileName );
+            }
+            Config->WriteNum( wxT( "PlayerCurItem" ), m_CurItem, wxT( "General" ) );
+        }
+        else
+        {
+            Config->WriteNum( wxT( "PlayerCurItem" ), wxNOT_FOUND, wxT( "General" ) );
         }
         Config->WriteAStr( wxT( "PlayListSong" ), Songs, wxT( "PlayList" ) );
-        Config->WriteNum( wxT( "PlayerCurItem" ), m_CurItem, wxT( "General" ) );
     }
+
 
     if( m_PlayBitmap )
       delete m_PlayBitmap;
