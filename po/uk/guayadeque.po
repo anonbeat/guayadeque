@@ -1,15 +1,15 @@
 #
-# Yarema aka Knedlyk <yupadmin@gmail.com>, 2009.
+# Yarema aka Knedlyk <yupadmin@gmail.com>, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-0.0.1-Beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-26 23:26-0000\n"
-"PO-Revision-Date: 2010-01-08 00:45+0100\n"
+"POT-Creation-Date: 2010-02-24 09:49+0000\n"
+"PO-Revision-Date: 2010-03-01 17:10+0100\n"
 "Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: /home/jrios/Projects/guayadeque/\n"
@@ -17,255 +17,1777 @@ msgstr ""
 "X-Poedit-Language: English\n"
 "X-Poedit-Country: UNITED STATES\n"
 "X-Poedit-SearchPath-0: src\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\\n\n"
 
-#: src/ConfirmExit.cpp:26
+#: AlbumBrowser.cpp:238 AlbumBrowser.cpp:257 DynamicPlayList (copia).cpp:87
+#: DynamicPlayList.cpp:89 LibPanel.cpp:189
+msgid "Tracks"
+msgstr "Треки"
+
+#: AlbumBrowser.cpp:286 AlListBox.cpp:181 ArListBox.cpp:99 GeListBox.cpp:45
+#: LastFMPanel.cpp:508 LastFMPanel.cpp:704 LastFMPanel.cpp:863
+#: LastFMPanel.cpp:1010 PlayListPanel.cpp:135 PodcastsPanel.cpp:1200
+#: RadioPanel.cpp:487 SoListBox.cpp:343 TaListBox.cpp:87 TaskBar.cpp:119
+msgid "Play"
+msgstr "Програвати"
+
+#: AlbumBrowser.cpp:286 LastFMPanel.cpp:704
+msgid "Play the album tracks"
+msgstr "Програвати треки альбому"
+
+#: AlbumBrowser.cpp:290 AlListBox.cpp:185 ArListBox.cpp:103 GeListBox.cpp:49
+#: LastFMPanel.cpp:512 LastFMPanel.cpp:708 LastFMPanel.cpp:867
+#: LastFMPanel.cpp:1014 PlayListPanel.cpp:139 PodcastsPanel.cpp:1204
+#: RadioPanel.cpp:491 SoListBox.cpp:351 TaListBox.cpp:91
+msgid "Enqueue"
+msgstr "Поставити в чергу"
+
+#: AlbumBrowser.cpp:290 LastFMPanel.cpp:708
+msgid "Enqueue the album tracks to the playlist"
+msgstr "Додати треки альбому до списку програвання"
+
+#: AlbumBrowser.cpp:296 AlListBox.cpp:194 ArListBox.cpp:111 PlayList.cpp:1089
+#: RadioPanel.cpp:519 SoListBox.cpp:373
+msgid "Edit Labels"
+msgstr "Редагувати мітки"
+
+#: AlbumBrowser.cpp:296 AlListBox.cpp:194
+msgid "Edit the labels assigned to the selected albums"
+msgstr "Редагувати мітки приписані до вибраних альбомів"
+
+#: AlbumBrowser.cpp:299 AlListBox.cpp:198
+msgid "Edit Album songs"
+msgstr "Редагувати пісні альбому"
+
+#: AlbumBrowser.cpp:299 AlListBox.cpp:198
+msgid "Edit the selected albums songs"
+msgstr "Редагувати вибрані пісні альбому"
+
+#: AlbumBrowser.cpp:304 LastFMPanel.cpp:712
+msgid "Search Album"
+msgstr "Шукати альбом"
+
+#: AlbumBrowser.cpp:304 LastFMPanel.cpp:712
+msgid "Search the album in the library"
+msgstr "Шукати альбом в бібліотеці"
+
+#: AlbumBrowser.cpp:308 LastFMPanel.cpp:516 LastFMPanel.cpp:871
+#: LastFMPanel.cpp:1018
+msgid "Search Artist"
+msgstr "Шукати виконавця"
+
+#: AlbumBrowser.cpp:308 LastFMPanel.cpp:516 LastFMPanel.cpp:871
+#: LastFMPanel.cpp:1018
+msgid "Search the artist in the library"
+msgstr "Шукати виконавця в бібліотеці"
+
+#: AlbumBrowser.cpp:314 AlListBox.cpp:206
+msgid "Download Album cover"
+msgstr "Скачати обкладинку альбому"
+
+#: AlbumBrowser.cpp:314 AlListBox.cpp:206
+msgid "Download cover for the current selected album"
+msgstr "Скачати обкладинку для поточного ввибраного альбому"
+
+#: AlbumBrowser.cpp:318 AlListBox.cpp:210
+msgid "Select cover location"
+msgstr "Вибрати розміщення обкладинки"
+
+#: AlbumBrowser.cpp:318 AlListBox.cpp:210
+msgid "Select the cover image file from disk"
+msgstr "Вибрати файл зображення обкладинки з диску"
+
+#: AlbumBrowser.cpp:322 AlListBox.cpp:214
+msgid "Delete Album cover"
+msgstr "Видалити обкладинку альбому"
+
+#: AlbumBrowser.cpp:322 AlListBox.cpp:214
+msgid "Delete the cover for the selected album"
+msgstr "Видалити обкладинку вибраного альбому"
+
+#: AlbumBrowser.cpp:328 LastFMPanel.cpp:720
+msgid "Copy the album info to clipboard"
+msgstr "Скопіювати інформацію про альбом до буфера обміну"
+
+#: AlbumBrowser.cpp:334 AlListBox.cpp:253 ArListBox.cpp:121 GeListBox.cpp:57
+#: PlayList.cpp:1118 PlayListPanel.cpp:186 PodcastsPanel.cpp:986
+#: PodcastsPanel.cpp:1221 SoListBox.cpp:365 TaListBox.cpp:97
+msgid "Copy to..."
+msgstr "Копіювати до..."
+
+#: AlbumBrowser.cpp:334
+msgid "Copy the current album to a directory or device"
+msgstr "Скопіювати поточний альбом до каталогу або пристрою"
+
+#: AlbumBrowser.cpp:589
+msgid "Filter"
+msgstr "Фільтр"
+
+#: AlbumBrowser.cpp:597
+msgid "Order By"
+msgstr "Сортування по"
+
+#: AlbumBrowser.cpp:597 AlListBox.cpp:237 RadioPanel.cpp:413
+msgid "Name"
+msgstr "Назва"
+
+#: AlbumBrowser.cpp:597 AlListBox.cpp:238 DynamicPlayList (copia).cpp:48
+#: (copia).cpp:100 DynamicPlayList.cpp:50 DynamicPlayList.cpp:103
+#: SoListBox.cpp:290
+msgid "Year"
+msgstr "Рік"
+
+#: AlbumBrowser.cpp:597
+msgid "Year Desc."
+msgstr "Року,спадн."
+
+#: AlbumBrowser.cpp:597 AlListBox.cpp:240
+msgid "Artist, Name"
+msgstr "Виконавець, назва"
+
+#: AlbumBrowser.cpp:597 AlListBox.cpp:241
+msgid "Artist, Year"
+msgstr "Виконавець, рік"
+
+#: AlbumBrowser.cpp:597
+msgid "Artist, Year Desc."
+msgstr "Виконавець, рік спадн."
+
+#: AlbumBrowser.cpp:960 LibPanel.cpp:801 SelCoverFile.cpp:36
+msgid ""
+"Could not find the Album in the songs library.\n"
+"You should update the library."
+msgstr ""
+"Не можу знайти альбом в бібліотеці пісень.\n"
+"Ви повинні оновити бібліотеку."
+
+#: AlbumBrowser.cpp:961 LibPanel.cpp:802 SelCoverFile.cpp:37
+msgid "Error"
+msgstr "Помилка"
+
+#: AlbumBrowser.cpp:1032 LibPanel.cpp:876
+msgid "Are you sure to delete the selected album cover?"
+msgstr "Ви дійсно бажаєте видалити вибрану обкладинку альбому?"
+
+#: AlbumBrowser.cpp:1033 LabelEditor.cpp:175 LibPanel.cpp:877
+#: PlayListPanel.cpp:735 PodcastsPanel.cpp:432 PodcastsPanel.cpp:804
+#: RadioPanel.cpp:344 RadioPanel.cpp:652 TaListBox.cpp:124
+msgid "Confirm"
+msgstr "Підтвердити"
+
+#: AlbumBrowser.cpp:1076 LibPanel.cpp:639
+msgid "Albums Labels Editor"
+msgstr "Редактор міток альбомів"
+
+#: AlListBox.cpp:169 ArListBox.cpp:85 PlayList.cpp:1071 SoListBox.cpp:330
+msgid "No commands defined"
+msgstr "Не визначено команди"
+
+#: AlListBox.cpp:169 ArListBox.cpp:85 PlayList.cpp:1071 SoListBox.cpp:330
+msgid "Add commands in preferences"
+msgstr "Додайте команди в налаштування"
+
+#: AlListBox.cpp:172 ArListBox.cpp:88 PlayList.cpp:1074 Preferences.cpp:811
+#: SoListBox.cpp:333
+msgid "Commands"
+msgstr "Команди"
+
+#: AlListBox.cpp:181
+msgid "Play current selected albums"
+msgstr "Програвати поточний вибраний альбом"
+
+#: AlListBox.cpp:185
+msgid "Add current selected albums to the Playlist"
+msgstr "Додати поточні вибрані альбоми до списку програвання"
+
+#: AlListBox.cpp:237
+msgid "Albums are sorted by name"
+msgstr "Альбоми сортовані за назвою"
+
+#: AlListBox.cpp:238
+msgid "Albums are sorted by year"
+msgstr "Альбоми сортовані за роком"
+
+#: AlListBox.cpp:239
+msgid "Year descending"
+msgstr "Рік в порядку спадання"
+
+#: AlListBox.cpp:239
+msgid "Albums are sorted by year descending"
+msgstr "Альбоми сортовані по року в порядку спадання"
+
+#: AlListBox.cpp:240
+msgid "Albums are sorted by artist and album name"
+msgstr "Альбоми впорядковані по виконавцю і назві альбому"
+
+#: AlListBox.cpp:241
+msgid "Albums are sorted by artist and year"
+msgstr "Альбоми впорядковані по виконавцю і по року"
+
+#: AlListBox.cpp:242
+msgid "Artist, Year descending"
+msgstr "Виконавець, рік в порядку спадання"
+
+#: AlListBox.cpp:242
+msgid "Albums are sorted by artist and year descending"
+msgstr "Альбоми сортовані по виконавцю і року в порядку спадання"
+
+#: AlListBox.cpp:247
+msgid "Ordered by"
+msgstr "Сортовані по"
+
+#: AlListBox.cpp:247
+msgid "Sets the albums order"
+msgstr "Встановити порядок альбомів"
+
+#: AlListBox.cpp:253 ArListBox.cpp:121 GeListBox.cpp:57 SoListBox.cpp:365
+#: TaListBox.cpp:97
+msgid "Copy the current selected songs to a directory or device"
+msgstr "Скопіювати поточні вибрані пісні до директорії або пристрою"
+
+#: AlListBox.cpp:395 ItemListBox.cpp:82 PlayerFilters.cpp:107
+msgid "All"
+msgstr "Все"
+
+#: ArListBox.cpp:99
+msgid "Play current selected artists"
+msgstr "Програвати поточних вибраних виконавців"
+
+#: ArListBox.cpp:103
+msgid "Add current selected artists to playlist"
+msgstr "Додати поточних вибраних виконавців до списку програвання"
+
+#: ArListBox.cpp:111
+msgid "Edit the labels assigned to the selected artists"
+msgstr "Редагувати мітки приписані до вибраних виконавців"
+
+#: ArListBox.cpp:115 PlayList.cpp:1085 SoListBox.cpp:377
+msgid "Edit Songs"
+msgstr "Редагувати пісні"
+
+#: ArListBox.cpp:115
+msgid "Edit the songs from the selected artists"
+msgstr "Редагувати пісні вибраних виконавців"
+
+#: ChannelEditor.cpp:38
+msgid "Podcast Channel Editor"
+msgstr "Редактор каналів подкасту"
+
+#: ChannelEditor.cpp:62
+msgid " Podcast Channel "
+msgstr " Канал подкасту "
+
+#: ChannelEditor.cpp:107 PodcastsPanel.cpp:163
+msgid "Description:"
+msgstr "Опис:"
+
+#: ChannelEditor.cpp:119 PodcastsPanel.cpp:173
+msgid "Author:"
+msgstr "Автор:"
+
+#: ChannelEditor.cpp:129 PodcastsPanel.cpp:183
+msgid "Owner:"
+msgstr "Власник:"
+
+#: ChannelEditor.cpp:140
+msgid "Download:"
+msgstr "Скачати:"
+
+#: ChannelEditor.cpp:147
+msgid "Manually"
+msgstr "Вручну"
+
+#: ChannelEditor.cpp:147
+msgid "Only if contains"
+msgstr "Тільки якщо містить"
+
+#: ChannelEditor.cpp:147
+msgid "Everything"
+msgstr "Все"
+
+#: ChannelEditor.cpp:160
+msgid "Delete:"
+msgstr "Видалити:"
+
+#: ChannelEditor.cpp:164
+msgid "Allow delete old items"
+msgstr "Дозволити видаляти старе"
+
+#: ConfirmExit.cpp:26
 msgid "Please confirm"
 msgstr "Підтвердіть"
 
-#: src/ConfirmExit.cpp:45
+#: ConfirmExit.cpp:45
 msgid "Are you sure you want to exit the application?"
 msgstr "Ви дійсно бажаєте вийти з програми?"
 
-#: src/ConfirmExit.cpp:51
+#: ConfirmExit.cpp:51
 msgid "Don't ask again"
 msgstr "Більше не запитувати"
 
-#: src/Preferences.cpp:34
-msgid "Preferences"
-msgstr "Налаштування"
+#: CoverEdit.cpp:51
+msgid "Cover Editor"
+msgstr "Редактор обкладинки"
 
-#: src/Preferences.cpp:80
-msgid "Default"
-msgstr "По замовчуванню"
+#: CoverEdit.cpp:68 LastFMPanel.cpp:1228 LyricsPanel.cpp:96 TrackEdit.cpp:134
+#: TrackEdit.cpp:372 TrackEdit.cpp:473
+msgid "Artist:"
+msgstr "Виконавець:"
 
-#: src/Preferences.cpp:81
-msgid "English"
-msgstr "Англійська"
+#: CoverEdit.cpp:75 TrackEdit.cpp:145 TrackEdit.cpp:439 TrackEdit.cpp:484
+msgid "Album:"
+msgstr "Альбом:"
 
-#: src/Preferences.cpp:82
-msgid "French"
-msgstr "Французька"
+#: CoverEdit.cpp:82
+msgid "From:"
+msgstr "З:"
 
-#: src/Preferences.cpp:83
-msgid "German"
-msgstr "Німецька"
+#: DynamicPlayList (copia).cpp:42 (copia).cpp:95 DynamicPlayList.cpp:42
+#: DynamicPlayList.cpp:97 PodcastsPanel.cpp:997 SoListBox.cpp:283
+msgid "Title"
+msgstr "Назва"
 
-#: src/Preferences.cpp:84
-msgid "Italian"
-msgstr "Італійська"
+#: DynamicPlayList (copia).cpp:43 (copia).cpp:96 DynamicPlayList.cpp:43
+#: DynamicPlayList.cpp:98 SoListBox.cpp:284
+msgid "Artist"
+msgstr "Виконавець"
 
-#: src/Preferences.cpp:85
-msgid "Portuguese"
-msgstr "Португальська"
+#: DynamicPlayList (copia).cpp:44 (copia).cpp:97 DynamicPlayList.cpp:44
+#: DynamicPlayList.cpp:99 SoListBox.cpp:285
+msgid "Album"
+msgstr "Альбом"
 
-#: src/Preferences.cpp:86
-msgid "Spanish"
-msgstr "Іспанська"
+#: DynamicPlayList (copia).cpp:45 (copia).cpp:98 DynamicPlayList.cpp:45
+#: DynamicPlayList.cpp:100 SoListBox.cpp:286
+msgid "Genre"
+msgstr "Жанр"
 
-#: src/Preferences.cpp:99
-msgid " On Start "
-msgstr " На Старт"
+#: DynamicPlayList (copia).cpp:46 (copia).cpp:99 DynamicPlayList.cpp:46
+#: DynamicPlayList.cpp:101
+msgid "Label"
+msgstr "Мітка"
 
-#: src/Preferences.cpp:101
-msgid "Show splash screen"
-msgstr "Показати стартову заставку"
+#: DynamicPlayList (copia).cpp:47 DynamicPlayList.cpp:49
+msgid "Path"
+msgstr "Шлях"
 
-#: src/Preferences.cpp:105
-msgid "Start minimized"
-msgstr "Стартувати мінімізованим"
+#: DynamicPlayList (copia).cpp:49 (copia).cpp:101 DynamicPlayList.cpp:51
+#: DynamicPlayList.cpp:104 SoListBox.cpp:292
+msgid "Rating"
+msgstr "Рейтинг"
 
-#: src/Preferences.cpp:111
-msgid " Behaviour "
-msgstr "Поведінка"
+#: DynamicPlayList (copia).cpp:50 (copia).cpp:102 DynamicPlayList.cpp:52
+#: DynamicPlayList.cpp:105 PodcastsPanel.cpp:1001 SoListBox.cpp:289
+msgid "Length"
+msgstr "Час виконання"
 
-#: src/Preferences.cpp:113
-msgid "Activate task bar icon"
-msgstr "Активувати іконки панелі задач"
+#: DynamicPlayList (copia).cpp:51 (copia).cpp:103 DynamicPlayList.cpp:53
+#: DynamicPlayList.cpp:106
+msgid "Play Count"
+msgstr "Лічильник програвання"
 
-#: src/Preferences.cpp:117
-msgid "Enqueue as default action"
-msgstr "Додати як дію по замовчуванню"
+#: DynamicPlayList (copia).cpp:52 (copia).cpp:104 DynamicPlayList.cpp:54
+#: DynamicPlayList.cpp:107
+msgid "Last Play Time"
+msgstr "Час останнього програвання"
 
-#: src/Preferences.cpp:121
-msgid "Drop files clear playlist"
-msgstr "Скинути список програвання файлів"
+#: DynamicPlayList (copia).cpp:53 DynamicPlayList.cpp:55 SoListBox.cpp:295
+msgid "Added Date"
+msgstr "День додавання"
 
-#: src/Preferences.cpp:125
-msgid "Play random track when playlist is empty"
-msgstr "Програвати випадковий трек, коли список програвання є пустим"
+#: DynamicPlayList (copia).cpp:58 DynamicPlayList.cpp:60
+msgid "Contains"
+msgstr "Містить"
 
-#: src/Preferences.cpp:129
-msgid "Albums ordered by Year. Default is by Name"
-msgstr "Альбоми впорядковані по року. По замовчуванню за назвами"
+#: DynamicPlayList (copia).cpp:59
+msgid "Does not contains"
+msgstr "Не містить"
 
-#: src/Preferences.cpp:137
-msgid "Save playlist on close"
-msgstr "Зберегти список програвання при завершенні"
+#: DynamicPlayList (copia).cpp:60 DynamicPlayList.cpp:62
+msgid "Equals"
+msgstr "Дорівнює"
 
-#: src/Preferences.cpp:156
-msgid "Close to task bar icon"
-msgstr "Закривати до іконки системного трею"
+#: DynamicPlayList (copia).cpp:61 DynamicPlayList.cpp:63
+msgid "Begins with"
+msgstr "Починається з"
 
-#: src/Preferences.cpp:161
-msgid "Ask confirmation on exit"
-msgstr "Запитувати підтвердження про вихід"
+#: DynamicPlayList (copia).cpp:62 DynamicPlayList.cpp:64
+msgid "Ends with"
+msgstr "Закінчується з"
 
-#: src/Preferences.cpp:170
-msgid "General"
-msgstr "Загальне"
+#: DynamicPlayList (copia).cpp:67 DynamicPlayList.cpp:69
+msgid "equals"
+msgstr "рівна"
 
-#: src/Preferences.cpp:179
-msgid " Paths "
-msgstr "Шляхи"
+#: DynamicPlayList (copia).cpp:68 DynamicPlayList.cpp:70
+msgid "at least"
+msgstr "хоча б"
 
-#: src/Preferences.cpp:198
-msgid " Words to detect covers "
-msgstr "Слова для визначення обкладинок"
+#: DynamicPlayList (copia).cpp:69 DynamicPlayList.cpp:71
+msgid "at most"
+msgstr "не більше як"
 
-#: src/Preferences.cpp:221
-msgid "Update library on application start"
-msgstr "Оновлювати бібліотеку при старті програми"
+#: DynamicPlayList (copia).cpp:74 DynamicPlayList.cpp:76
+msgid "in"
+msgstr "в"
 
-#: src/Preferences.cpp:230
+#: DynamicPlayList (copia).cpp:75 DynamicPlayList.cpp:77
+msgid "after"
+msgstr "після"
+
+#: DynamicPlayList (copia).cpp:76 DynamicPlayList.cpp:78
+msgid "before"
+msgstr "перед"
+
+#: DynamicPlayList (copia).cpp:81 DynamicPlayList.cpp:83
+msgid "in the last"
+msgstr "в кінці"
+
+#: DynamicPlayList (copia).cpp:82 DynamicPlayList.cpp:84
+msgid "before the last"
+msgstr "перед кінцем"
+
+#: DynamicPlayList (copia).cpp:88 DynamicPlayList.cpp:90
+msgid "Minutes"
+msgstr "Хвилини"
+
+#: DynamicPlayList (copia).cpp:105 DynamicPlayList.cpp:108
+msgid "Added Time"
+msgstr "Час додавання"
+
+#: DynamicPlayList (copia).cpp:106 DynamicPlayList.cpp:109
+msgid "Random"
+msgstr "Випадково"
+
+#: DynamicPlayList (copia).cpp:111 DynamicPlayList.cpp:114 Preferences.cpp:148
+msgid "minutes"
+msgstr "хвилини"
+
+#: DynamicPlayList (copia).cpp:112 DynamicPlayList.cpp:115
+msgid "hours"
+msgstr "години"
+
+#: DynamicPlayList (copia).cpp:113 DynamicPlayList.cpp:116
+msgid "days"
+msgstr "дні"
+
+#: DynamicPlayList (copia).cpp:114 DynamicPlayList.cpp:117
+msgid "weeks"
+msgstr "тижні"
+
+#: DynamicPlayList (copia).cpp:115 DynamicPlayList.cpp:118
+msgid "months"
+msgstr "місяці"
+
+#: DynamicPlayList (copia).cpp:197 DynamicPlayList.cpp:204
+msgid "Dynamic Playlist Editor"
+msgstr "Редактор динамічного списку програвання"
+
+#: DynamicPlayList (copia).cpp:214 DynamicPlayList.cpp:222
+msgid " Current Filters "
+msgstr "Поточні фільтри"
+
+#: DynamicPlayList (copia).cpp:288 DynamicPlayList.cpp:298
+msgid " Result "
+msgstr " Результат "
+
+#: DynamicPlayList (copia).cpp:293 DynamicPlayList.cpp:303
+msgid "Limit To"
+msgstr "Обмежити до"
+
+#: DynamicPlayList (copia).cpp:313 DynamicPlayList.cpp:323
+#: DynamicPlayList.cpp:361
+msgid "Add tracks on any criteria"
+msgstr "Додати трек на нові критерії"
+
+#: DynamicPlayList (copia).cpp:323 DynamicPlayList.cpp:333
+msgid "Sort By"
+msgstr "Сортувати за"
+
+#: DynamicPlayList (copia).cpp:333 DynamicPlayList.cpp:343
+msgid "Descending"
+msgstr "По спаданню"
+
+#: DynamicPlayList.cpp:47 DynamicPlayList.cpp:102 SoListBox.cpp:287
+msgid "Composer"
+msgstr "Композитор"
+
+#: DynamicPlayList.cpp:48
+msgid "Comment"
+msgstr "Коментар"
+
+#: DynamicPlayList.cpp:61
+msgid "Does not contain"
+msgstr "Не містить"
+
+#: DynamicPlayList.cpp:203
+msgid "Filter Album Browser"
+msgstr "Перелядач фільтру альбому"
+
+#: Equalizer.cpp:102
+msgid "Preset:"
+msgstr "Скинути:"
+
+#: GeListBox.cpp:45
+msgid "Play current selected genres"
+msgstr "Програвати поточні вибрані жанри"
+
+#: GeListBox.cpp:49
+msgid "Add current selected genres to playlist"
+msgstr "Додати поточні вибрані жанри до списку програвання"
+
+#: LabelEditor.cpp:46 LibPanel.cpp:134 LibPanel.cpp:141 MainFrame.cpp:726
+#: MainFrame.cpp:767 RadioPanel.cpp:773 RadioPanel.cpp:781
+msgid "Labels"
+msgstr "Мітки"
+
+#: LabelEditor.cpp:51
+msgid "Add a new label"
+msgstr "Додати нову мітку"
+
+#: LabelEditor.cpp:56
+msgid "Delete the selected labels"
+msgstr "Видалити вибрані мітки"
+
+#: LabelEditor.cpp:150 RadioPanel.cpp:634 RadioPanel.cpp:673 TaListBox.cpp:106
+#: TaListBox.cpp:145
+msgid "Label Name: "
+msgstr "Назва мітки:"
+
+#: LabelEditor.cpp:150 RadioPanel.cpp:634 TaListBox.cpp:106
+msgid "Please enter the label name"
+msgstr "Введіть назву мітки"
+
+#: LabelEditor.cpp:174 RadioPanel.cpp:651 TaListBox.cpp:123
+msgid "Are you sure to delete the selected labels?"
+msgstr "Ви дійсно бажаєте видалити вибрані мітки?"
+
+#: LastFMPanel.cpp:199 OnlineLinks.cpp:65
+msgid "No search link defined"
+msgstr "Не визначено посилання для пошуку"
+
+#: LastFMPanel.cpp:199 OnlineLinks.cpp:65
+msgid "Add search links in preferences"
+msgstr "Додати посилання для пошуку в налаштування"
+
+#: LastFMPanel.cpp:408 LastFMPanel.cpp:601
+msgid "Less..."
+msgstr "Менше..."
+
+#: LastFMPanel.cpp:408 LastFMPanel.cpp:601
+msgid "More..."
+msgstr "Більше..."
+
+#: LastFMPanel.cpp:508 LastFMPanel.cpp:863 LastFMPanel.cpp:1010
+msgid "Play the artist tracks"
+msgstr "Програвати треки виконавця"
+
+#: LastFMPanel.cpp:512 LastFMPanel.cpp:867 LastFMPanel.cpp:1014
+msgid "Enqueue the artist tracks to the playlist"
+msgstr "Додати треки виконавця до списку програвання"
+
+#: LastFMPanel.cpp:524
+msgid "Copy the artist name to clipboard"
+msgstr "Скопіювати назву виконавця до буфера обміну"
+
+#: LastFMPanel.cpp:532 LastFMPanel.cpp:728 LastFMPanel.cpp:890
+#: LastFMPanel.cpp:1034 LastFMPanel.cpp:1145
+msgid "Visit last.fm page for this item"
+msgstr "Відвідати сторінку lst.fm на цю тему"
+
+#: LastFMPanel.cpp:557
+msgid "There is no information available for this artist."
+msgstr "Немає інформації про цього виконавця"
+
+#: LastFMPanel.cpp:879
+msgid "Update the information with the current selected artist"
+msgstr "Оновити інформацію з поточним вибраним виконавцем"
+
+#: LastFMPanel.cpp:882
+msgid "Copy the artist info to clipboard"
+msgstr "Скопіювати інформацію про виконавця до буфера обміну"
+
+#: LastFMPanel.cpp:1026
+msgid "Copy the track info to clipboard"
+msgstr "Скопіювати інформацію про трек до буфера обміну"
+
+#: LastFMPanel.cpp:1137
+msgid "Copy the event info to clipboard"
+msgstr "Скопіювати інформацію про подію до буфера обміну"
+
+#: LastFMPanel.cpp:1208 LyricsPanel.cpp:66
+msgid "Follow player"
+msgstr "Слідувати за програвачем"
+
+#: LastFMPanel.cpp:1238 LyricsPanel.cpp:107 TrackEdit.cpp:381
+msgid "Track:"
+msgstr "Трек:"
+
+#: LastFMPanel.cpp:1263
+msgid "Artist Info"
+msgstr "Інформація про виконавця"
+
+#: LastFMPanel.cpp:1299
+msgid "Top Albums"
+msgstr "Топ альбомів"
+
+#: LastFMPanel.cpp:1330
+msgid "Similar Artists"
+msgstr "Подібні виконавці"
+
+#: LastFMPanel.cpp:1362
+msgid "Similar Tracks"
+msgstr "Подібні треки"
+
+#: LastFMPanel.cpp:1394
+msgid "Events"
+msgstr "Події"
+
+#: LibPanel.cpp:97 RadioPanel.cpp:730
+msgid "Search:"
+msgstr "Пошук:"
+
+#: LibPanel.cpp:109 MainFrame.cpp:721 MainFrame.cpp:762 RadioPanel.cpp:742
+msgid "Text Search"
+msgstr "Пошук тексту"
+
+#: LibPanel.cpp:117 LibPanel.cpp:124 MainFrame.cpp:731 MainFrame.cpp:772
+#: RadioPanel.cpp:762
+msgid "Genres"
+msgstr "Жанри"
+
+#: LibPanel.cpp:149 LibPanel.cpp:156 MainFrame.cpp:736
+msgid "Artists"
+msgstr "Виконавці"
+
+#: LibPanel.cpp:165 LibPanel.cpp:172 MainFrame.cpp:741
+msgid "Albums"
+msgstr "Альбоми"
+
+#: LibPanel.cpp:614
+msgid "Artist Labels Editor"
+msgstr "Редактор міток виконавців"
+
+#: LibPanel.cpp:663 PlayList.cpp:1283 PlayListPanel.cpp:967
+msgid "Songs Labels Editor"
+msgstr "Редактор міток пісень"
+
+#: LibPanel.cpp:1055 PlayList.cpp:1190 PlayListPanel.cpp:1057
+msgid "UnNamed"
+msgstr "Без назви"
+
+#: ListView.cpp:1453
+msgid "Select Columns"
+msgstr "Вибрати колонку"
+
+#: LyricsPanel.cpp:232
+msgid "Copy to clipboard"
+msgstr "Скопіювати до буфера обміну"
+
+#: LyricsPanel.cpp:232
+msgid "Copy the content of the lyric to clipboard"
+msgstr "Скопіювати лірику до буфера обміну"
+
+#: LyricsPanel.cpp:244
+msgid "Paste"
+msgstr "Вклеїти"
+
+#: LyricsPanel.cpp:244
+msgid "Paste the content of the lyric from clipboard"
+msgstr "Вклеїти зміст лірики з буфера обміну"
+
+#: LyricsPanel.cpp:253
+msgid "Print"
+msgstr "Друк"
+
+#: LyricsPanel.cpp:253
+msgid "Print the content of the lyrics"
+msgstr "Видрукувати лірику"
+
+#: LyricsPanel.cpp:434
+msgid "Searching the lyrics for this track"
+msgstr "Шукаю лірику для цього треку"
+
+#: LyricsPanel.cpp:496
+msgid "No lyrics found for this song."
+msgstr "Немає лірики для цієї пісні"
+
+#: MainFrame.cpp:160
+msgid "Welcome to guayadeque "
+msgstr "Вітаємо в Guayadeque "
+
+#: MainFrame.cpp:167 MainFrame.cpp:307 MainFrame.cpp:709
+msgid "Vumeters"
+msgstr "Vu-метр"
+
+#: MainFrame.cpp:171 MainFrame.cpp:310
+msgid "Filters"
+msgstr "Фільтри"
+
+#: MainFrame.cpp:313 MainFrame.cpp:570 MainFrame.cpp:1237 MainFrame.cpp:2095
+#: PlayList.cpp:75
+msgid "Now Playing"
+msgstr "Зараз програється"
+
+#: MainFrame.cpp:642
+msgid "&Add Directory"
+msgstr "&Додати каталог"
+
+#: MainFrame.cpp:642
+msgid "Add a directory to the Library paths"
+msgstr "Додати теку до шляхів бібліотеки"
+
+#: MainFrame.cpp:647
+msgid "&Update Library"
+msgstr "&Оновити бібліотеку"
+
+#: MainFrame.cpp:647
+msgid "Update all new songs from the directories configured"
+msgstr "Оновити всі пісні зі сконфігурованих каталогів"
+
+#: MainFrame.cpp:650
+msgid "&Rescan Library"
+msgstr "&Пересканувати бібліотеку"
+
+#: MainFrame.cpp:650
+msgid "Update all songs from the directories configured"
+msgstr "Оновити всі пісні зі сконфігурованої директорії"
+
+#: MainFrame.cpp:653
+msgid "Update P&odcasts"
+msgstr "Оновити &Подкасти"
+
+#: MainFrame.cpp:653
+msgid "Update the podcasts added"
+msgstr "Оновити додані подкасти"
+
+#: MainFrame.cpp:657
+msgid "Update Covers"
+msgstr "Оновити обкладинки"
+
+#: MainFrame.cpp:657
+msgid "Try to download all missing covers"
+msgstr "Намагатися скачати всі бракуючі обкладинки"
+
+#: MainFrame.cpp:663
+msgid "&Preferences"
+msgstr "&Налаштування"
+
+#: MainFrame.cpp:663
+msgid "Change the options of the application"
+msgstr "Змінити опції програми"
+
+#: MainFrame.cpp:669
+msgid "&Quit"
+msgstr "&Вихід"
+
+#: MainFrame.cpp:669
+msgid "Exits the application"
+msgstr "Вийти з програми"
+
+#: MainFrame.cpp:673 MainFrame.cpp:715
+msgid "&Library"
+msgstr "&Бібліотека"
+
+#: MainFrame.cpp:677
+msgid "Save Layout"
+msgstr "Зберегти розміщення"
+
+#: MainFrame.cpp:677
+msgid "Saves the current layout"
+msgstr "Зберігає поточне розміщення"
+
+#: MainFrame.cpp:688 MainFrame.cpp:2101 MainFrame.cpp:2103 MainFrame.cpp:2129
+msgid "Load this user defined layout"
+msgstr "Завантажити визначене користувачем розміщення"
+
+#: MainFrame.cpp:690 MainFrame.cpp:2131
+msgid "Delete this user defined layout"
+msgstr "Видалити визначене користувачем розміщення"
+
+#: MainFrame.cpp:695
+msgid "Load Layout"
+msgstr "Завантажити розміщення"
+
+#: MainFrame.cpp:695
+msgid "Set current view from a user defined layout"
+msgstr "Встановити поточний вигляд з визначеного користувачем розміщення"
+
+#: MainFrame.cpp:696
+msgid "Delete Layout"
+msgstr "Видалити розміщення"
+
+#: MainFrame.cpp:696
+msgid "Delete a user defined layout"
+msgstr "Видалити визначене користувачем розміщення"
+
+#: MainFrame.cpp:701
+msgid "Player PlayList"
+msgstr "Список програвання"
+
+#: MainFrame.cpp:701
+msgid "Show/Hide the player playlist panel"
+msgstr "Показати/Сховати панель списку програвання"
+
+#: MainFrame.cpp:705
+msgid "Player Filters"
+msgstr "Фільтри програвача"
+
+#: MainFrame.cpp:705
+msgid "Show/Hide the player filters panel"
+msgstr "Показати/Сховати панель фільтрів програвача"
+
+#: MainFrame.cpp:709
+msgid "Show/Hide the player vumeter"
+msgstr "Показати/Сховати vu-метр програвача"
+
+#: MainFrame.cpp:715
+msgid "Show/Hide the library panel"
+msgstr "Mostrar/Ocultar el panel de la librería"
+
+#: MainFrame.cpp:721
+msgid "Show/Hide the library text search"
+msgstr "Показати/Сховати пошук тексту по бібліотеці"
+
+#: MainFrame.cpp:726
+msgid "Show/Hide the library labels"
+msgstr "Показати/Сховати мітки бібліотеки"
+
+#: MainFrame.cpp:731
+msgid "Show/Hide the library genres"
+msgstr "Показати/Сховати жанри бібліотеки"
+
+#: MainFrame.cpp:736
+msgid "Show/Hide the library artists"
+msgstr "Показати/Сховати виконавців в бібліотеці"
+
+#: MainFrame.cpp:741
+msgid "Show/Hide the library albums"
+msgstr "Показати/Сховати альбоми в бібліотеці"
+
+#: MainFrame.cpp:751 MainFrame.cpp:1077 MainFrame.cpp:1088 MainFrame.cpp:1336
+#: MainFrame.cpp:2246 Preferences.cpp:279
 msgid "Library"
 msgstr "Бібліотека"
 
-#: src/Preferences.cpp:239
-msgid " LastFM Audioscrobble "
-msgstr " LastFM Audioscrobble "
+#: MainFrame.cpp:751
+msgid "Set the library visible panels"
+msgstr "Встановити видимі панелі бібліотеки"
 
-#: src/Preferences.cpp:241
+#: MainFrame.cpp:756 MainFrame.cpp:777
+msgid "&Radio"
+msgstr "&Радіо"
+
+#: MainFrame.cpp:756
+msgid "Show/Hide the radio panel"
+msgstr "Показати/Сховати панель радіо"
+
+#: MainFrame.cpp:762
+msgid "Show/Hide the radio text search"
+msgstr "Показати/Сховати пошук тексту радіо"
+
+#: MainFrame.cpp:767
+msgid "Show/Hide the radio labels"
+msgstr "Показати/Сховати мітки радіо"
+
+#: MainFrame.cpp:772
+msgid "Show/Hide the radio genres"
+msgstr "Показати/Сховати жанри радіо"
+
+#: MainFrame.cpp:777
+msgid "Set the radio visible panels"
+msgstr "Показати/Сховати видимі панелі"
+
+#: MainFrame.cpp:780
+msgid "Last.&fm"
+msgstr "Last.&fm"
+
+#: MainFrame.cpp:780
+msgid "Show/Hide the Last.fm panel"
+msgstr "Показати/Сховати панель Last.fm"
+
+#: MainFrame.cpp:784
+msgid "L&yrics"
+msgstr "&Лірика"
+
+#: MainFrame.cpp:784
+msgid "Show/Hide the lyrics panel"
+msgstr "Показати/Сховати панель лірики"
+
+#: MainFrame.cpp:788
+msgid "&PlayLists"
+msgstr "&Список програвання"
+
+#: MainFrame.cpp:788
+msgid "Show/Hide the playlists panel"
+msgstr "Показати/Сховати панель списку програвання"
+
+#: MainFrame.cpp:796
+msgid "P&odcasts"
+msgstr "П&одкасти"
+
+#: MainFrame.cpp:796
+msgid "Show/Hide the podcasts panel"
+msgstr "Показати/Сховати панель покастів"
+
+#: MainFrame.cpp:802 PodcastsPanel.cpp:106 PodcastsPanel.cpp:114
+msgid "Channels"
+msgstr "Канали"
+
+#: MainFrame.cpp:802
+msgid "Show/Hide the podcasts channels"
+msgstr "Показати/Сховати канали покастів"
+
+#: MainFrame.cpp:807 TrackEdit.cpp:270
+msgid "Details"
+msgstr "Деталі"
+
+#: MainFrame.cpp:807
+msgid "Show/Hide the podcasts details"
+msgstr "Показати/Сховати деталі покастів"
+
+#: MainFrame.cpp:812
+msgid "&Podcasts"
+msgstr "&Подкасти"
+
+#: MainFrame.cpp:812
+msgid "Set the podcasts visible panels"
+msgstr "Встановити видимі панелі подкастів"
+
+#: MainFrame.cpp:814
+msgid "Album Browser"
+msgstr "Переглядач альбомів"
+
+#: MainFrame.cpp:814
+msgid "Show/Hide the album browser panel"
+msgstr "Показати/Сховати панель переглядача альбомів"
+
+#: MainFrame.cpp:819
+msgid "&View"
+msgstr "&Перегляд"
+
+#: MainFrame.cpp:822
+msgid "&Next Track"
+msgstr "&Наступний трек"
+
+#: MainFrame.cpp:822
+msgid "Play the next track in the playlist"
+msgstr "Програвати наступний трек в списку програвання"
+
+#: MainFrame.cpp:825
+msgid "&Prev. Track"
+msgstr "&Попередній трек"
+
+#: MainFrame.cpp:825
+msgid "Play the previous track in the playlist"
+msgstr "Програвати попередній трек в списку програвання"
+
+#: MainFrame.cpp:829
+msgid "&Play"
+msgstr "&Програвати"
+
+#: MainFrame.cpp:829
+msgid "Play or Pause the current track in the playlist"
+msgstr "Програвати або призупинити поточний трек в списку програвання"
+
+#: MainFrame.cpp:832
+msgid "&Stop"
+msgstr "&Стоп"
+
+#: MainFrame.cpp:832
+msgid "Stop the current played track"
+msgstr "Зупинити поточний трек"
+
+#: MainFrame.cpp:836
+msgid "&Smart Mode"
+msgstr "&Smart Mode"
+
+#: MainFrame.cpp:836
+msgid "Update playlist based on Last.fm statics"
+msgstr "Оновити список програвання базований на Last.fm"
+
+#: MainFrame.cpp:841
+msgid "R&andomize"
+msgstr "В&ипадково"
+
+#: MainFrame.cpp:841
+msgid "Randomize the playlist"
+msgstr "Перемішати випадково список програвання"
+
+#: MainFrame.cpp:844
+msgid "&Repeat Playlist"
+msgstr "&Повторити список програвання"
+
+#: MainFrame.cpp:844
+msgid "Repeat the tracks in the playlist"
+msgstr "Повторити треки в списку програвання"
+
+#: MainFrame.cpp:849
+msgid "&Repeat Track"
+msgstr "&Повторити трек"
+
+#: MainFrame.cpp:849
+msgid "Repeat the current track in the playlist"
+msgstr "Повторити поточний трек в списку програвання"
+
+#: MainFrame.cpp:854
+msgid "&Control"
+msgstr "&Контроль"
+
+#: MainFrame.cpp:857
+msgid "&About"
+msgstr "&Про програму"
+
+#: MainFrame.cpp:857
+msgid "Show information about guayadeque music player"
+msgstr "Показати інформацію про програвач Guayadeque"
+
+#: MainFrame.cpp:860
+msgid "&Help"
+msgstr "Д&опомога"
+
+#: MainFrame.cpp:1061
+msgid "Covers"
+msgstr "Обкладинки"
+
+#: MainFrame.cpp:1095 Preferences.cpp:1125
+msgid "Select library path"
+msgstr "Вибрати шлях до бібліотеки"
+
+#: MainFrame.cpp:1126
+msgid "This Path is already in the library"
+msgstr "Цей шлях вже є в бібліотеці"
+
+#: MainFrame.cpp:1127
+msgid "Adding path error"
+msgstr "Помилка додавання шляху"
+
+#: MainFrame.cpp:1255
+msgid "Select destination directory"
+msgstr "Вибрати директорію призначення"
+
+#: MainFrame.cpp:1260
+msgid "Copy To..."
+msgstr "Скопіювати до"
+
+#: MainFrame.cpp:1428 MainFrame.cpp:2250
+msgid "Radio"
+msgstr "Радіо"
+
+#: MainFrame.cpp:1524 MainFrame.cpp:2254
+msgid "Last.fm"
+msgstr "Last.fm"
+
+#: MainFrame.cpp:1552 MainFrame.cpp:2258 TrackEdit.cpp:399
+msgid "Lyrics"
+msgstr "Лірика"
+
+#: MainFrame.cpp:1580 MainFrame.cpp:1968 MainFrame.cpp:2266
+#: PodcastsPanel.cpp:131
+msgid "Podcasts"
+msgstr "Подкасти"
+
+#: MainFrame.cpp:1614 MainFrame.cpp:2270
+msgid "Browser"
+msgstr "Веб-переглядач"
+
+#: MainFrame.cpp:1643 MainFrame.cpp:2262
+msgid "PlayLists"
+msgstr "Список програвання"
+
+#: MainFrame.cpp:1826 MainFrame.cpp:1840
+#, c-format
+msgid "%llu tracks,   %s,   %s"
+msgstr "%llu треки,   %s,   %s"
+
+#: MainFrame.cpp:1834
+#, c-format
+msgid "%llu stations"
+msgstr "%llu радіостанції"
+
+#: MainFrame.cpp:1854
+#, c-format
+msgid "%llu podcasts,   %s,   %s"
+msgstr "%llu подкасти,   %s,   %s"
+
+#: MainFrame.cpp:2086
+msgid "Enter the layout name:"
+msgstr "Ввести назву розміщення:"
+
+#: MainFrame.cpp:2086
+msgid "New Layout"
+msgstr "Нове розміщення"
+
+#: MainFrame.cpp:2088
+#, c-format
+msgid "Layout %u"
+msgstr "Розміщення %u"
+
+#: NewChannel.cpp:86
+msgid "New Podcast Channel"
+msgstr "Новий канал подкасту"
+
+#: NewChannel.cpp:99
+msgid " Digital Podcast Directory "
+msgstr "Директорія цифрового подкасту "
+
+#: NewChannel.cpp:220
+msgid "Filtered channels"
+msgstr "Фільтровані канали"
+
+#: NewChannel.cpp:294
+#, c-format
+msgid "%u Channels"
+msgstr "%u канали"
+
+#: NewChannel.cpp:299
+#, c-format
+msgid "%u Categories, %u Channels"
+msgstr "%u категорії, %u канали"
+
+#: NewChannel.cpp:367
+msgid "Filter Text: "
+msgstr "Фільтр текст:"
+
+#: NewChannel.cpp:367
+msgid "Enter the text to filter podcasts channels"
+msgstr "Введіть текст для фільтрування каналів подкастів"
+
+#: OnlineLinks.cpp:68 Preferences.cpp:702
+msgid "Links"
+msgstr "Посилання"
+
+#: PlayerFilters.cpp:42
+msgid "Allow:"
+msgstr "Дозволити:"
+
+#: PlayerFilters.cpp:51
+msgid "Deny:"
+msgstr "Заборонити:"
+
+#: PlayerFilters.cpp:123
+msgid "None"
+msgstr "Нема"
+
+#: PlayerPanel.cpp:131
+msgid "Go to Previous Track in the Playlist"
+msgstr "Перейти до попереднього трека в списку програвання"
+
+#: PlayerPanel.cpp:135
+msgid "Go to Next Track in the Playlist"
+msgstr "Перейти до наступного трека в списку програвання"
+
+#: PlayerPanel.cpp:139
+msgid "Start playing or pauses current track in the Playlist"
+msgstr "Почати програвати або призупинити поточний трек в списку програвання"
+
+#: PlayerPanel.cpp:143
+msgid "Stops player reproduction"
+msgstr "Зупинки програвання програвача"
+
+#: PlayerPanel.cpp:147 PlayerPanel.cpp:1804
+msgid "Volume"
+msgstr "Гучність"
+
+#: PlayerPanel.cpp:151
+msgid "Show the equalizer"
+msgstr "Показати еквалайзер"
+
+#: PlayerPanel.cpp:155
+msgid "Add tracks to the playlist based on LastFM"
+msgstr "Додати треки до списку програвання, базуючись на LastFM"
+
+#: PlayerPanel.cpp:161
+msgid "Randomize the tracks in the playlist"
+msgstr "Переміщати випадково треки в списку програвання"
+
+#: PlayerPanel.cpp:165
+msgid "Repeats the current playlist"
+msgstr "Повторити програвання поточного списку програвання"
+
+#: PlayerPanel.cpp:176
+msgid "Shows the current track album cover if available"
+msgstr "Показати обкладинку поточного треку (якщо доступна)"
+
+#: PlayerPanel.cpp:184
+msgid "Show the name of the current track"
+msgstr "Показати назву поточного треку"
+
+#: PlayerPanel.cpp:193
+msgid "Show the album name of the current track"
+msgstr "Показати назву альбому поточного треку"
+
+#: PlayerPanel.cpp:203
+msgid "Show the artist name of the current track"
+msgstr "Показати назву виконавця поточного треку"
+
+#: PlayerPanel.cpp:213
+msgid "Show the year of the current track"
+msgstr "Показати рік поточного треку"
+
+#: PlayerPanel.cpp:216
+msgid "00:00 of 00:00"
+msgstr "00:00 з 00:00"
+
+#: PlayerPanel.cpp:217
+msgid "Show the current position and song length of the current track"
+msgstr "Показати поточну позицію і протяжність пісні поточного треку"
+
+#: PlayerPanel.cpp:232
+msgid "Show the bitrate of the current track"
+msgstr "Показати бітрейт поточного треку"
+
+#: PlayerPanel.cpp:1194
+msgid "Buffering..."
+msgstr "Буферування..."
+
+#: PlayListAppend.cpp:25
+msgid "Save to Playlist"
+msgstr "Зберегти до списку програвання"
+
+#: PlayListAppend.cpp:55
+msgid "Where:"
+msgstr "Де:"
+
+#: PlayListAppend.cpp:59
+msgid "Begin"
+msgstr "Початок"
+
+#: PlayListAppend.cpp:59
+msgid "End"
+msgstr "Кінець"
+
+#: PlayListAppend.cpp:65
+msgid "Playlist:"
+msgstr "Список програвання:"
+
+#: PlayListAppend.cpp:78
+msgid "Tracks:"
+msgstr "Треки:"
+
+#: PlayList.cpp:1085
+msgid "Edit the current selected songs"
+msgstr "Редагувати поточні вибрані пісні"
+
+#: PlayList.cpp:1089
+msgid "Edit the labels of the current selected songs"
+msgstr "Редагувати мітки поточних вибраних пісень"
+
+#: PlayList.cpp:1095
+msgid "Clear PlayList"
+msgstr "Очистити список програвання"
+
+#: PlayList.cpp:1095
+msgid "Remove all songs from PlayList"
+msgstr "Видалити всі пісні з списку програвання"
+
+#: PlayList.cpp:1101
+msgid "Remove selected songs"
+msgstr "Видалити вибрані пісні"
+
+#: PlayList.cpp:1101
+msgid "Remove selected songs from PlayList"
+msgstr "Видалити вибрані пісні з списку програвання"
+
+#: PlayList.cpp:1106
+msgid "Save PlayList"
+msgstr "Зберегти список програвання"
+
+#: PlayList.cpp:1106
+msgid "Save the PlayList"
+msgstr "Зберегти список програвання"
+
+#: PlayList.cpp:1112
+msgid "Randomize PlayList"
+msgstr "Випадково перемішати список програвання"
+
+#: PlayList.cpp:1112
+msgid "Randomize the songs in the PlayList"
+msgstr "Випадково перемішати пісні в списку програвання"
+
+#: PlayList.cpp:1118 PlayListPanel.cpp:186
+msgid "Copy the current playlist to a directory or device"
+msgstr "Скопіювати поточний список програвання до директорії або пристрою"
+
+#: PlayListPanel.cpp:68
+msgid "Static playlists"
+msgstr "Статичний список програвання"
+
+#: PlayListPanel.cpp:69
+msgid "Dynamic playlists"
+msgstr "Динамічний список програвання"
+
+#: PlayListPanel.cpp:135 PodcastsPanel.cpp:1200 RadioPanel.cpp:487
+#: SoListBox.cpp:343
+msgid "Play current selected songs"
+msgstr "Програвати поточні вибрані пісні"
+
+#: PlayListPanel.cpp:139 SoListBox.cpp:351
+msgid "Add current selected songs to the playlist"
+msgstr "Додати поточні вибрані пісні до списку програвання"
+
+#: PlayListPanel.cpp:147 PlayListPanel.cpp:677
+msgid "New Dynamic Playlist"
+msgstr "Новий динамічний список програвання"
+
+#: PlayListPanel.cpp:147
+msgid "Create a new dynamic playlist"
+msgstr "Створити новий динамічний список програвання"
+
+#: PlayListPanel.cpp:153 RadioPanel.cpp:271
+msgid "Import"
+msgstr "Імпорт"
+
+#: PlayListPanel.cpp:153
+msgid "Import a playlist"
+msgstr "Імпорт списку програвання"
+
+#: PlayListPanel.cpp:159 RadioPanel.cpp:275
+msgid "Export"
+msgstr "Експорт"
+
+#: PlayListPanel.cpp:159
+msgid "Export the playlist"
+msgstr "Експорт списку програвання"
+
+#: PlayListPanel.cpp:167
+msgid "Edit Playlist"
+msgstr "Редагувати список програвання"
+
+#: PlayListPanel.cpp:167
+msgid "Edit the selected playlist"
+msgstr "Редагувати вибраний список програвання"
+
+#: PlayListPanel.cpp:171 SoListBox.cpp:361
+msgid "Save Playlist"
+msgstr "Зберегти список програвання"
+
+#: PlayListPanel.cpp:171
+msgid "Save the selected playlist as a Static Playlist"
+msgstr "Зберегти вибраний список програвання як статичний"
+
+#: PlayListPanel.cpp:176
+msgid "Rename Playlist"
+msgstr "Перейменувати список програвання"
+
+#: PlayListPanel.cpp:176
+msgid "Change the name of the selected playlist"
+msgstr "Змінити назву вибраного списку програвання"
+
+#: PlayListPanel.cpp:180
+msgid "Delete Playlist"
+msgstr "Видалити список програвання"
+
+#: PlayListPanel.cpp:180
+msgid "Delete the selected playlist"
+msgstr "Видалити вибраний список програвання"
+
+#: PlayListPanel.cpp:491
+msgid "Play Lists"
+msgstr "Списки програвання"
+
+#: PlayListPanel.cpp:676 PlayListPanel.cpp:716 PlayListPanel.cpp:787
+msgid "PlayList Name: "
+msgstr "Назва списку програвання:"
+
+#: PlayListPanel.cpp:677 PlayListPanel.cpp:717 PlayListPanel.cpp:788
+msgid "Enter the new playlist name"
+msgstr "Ввести назву нового списку програвання"
+
+#: PlayListPanel.cpp:734
+msgid "Are you sure to delete the selected Playlist?"
+msgstr "Ви дійсно бажаєте видалити вибраний список програвання?"
+
+#: PlayListPanel.cpp:788 PlayListPanel.cpp:799
+msgid "New PlayList"
+msgstr "Новий список програвання"
+
+#: PLSoListBox.cpp:82 PodcastsPanel.cpp:965 PodcastsPanel.cpp:1210
+msgid "Delete"
+msgstr "Видалити"
+
+#: PLSoListBox.cpp:82
+msgid "Delete the current selected tracks"
+msgstr "Видалити поточні вибрані треки"
+
+#: PodcastsPanel.cpp:143 TrackEdit.cpp:465
+msgid " Details "
+msgstr " Деталі "
+
+#: PodcastsPanel.cpp:194 RadioEditor.cpp:52
+msgid "Link:"
+msgstr "Посилання:"
+
+#: PodcastsPanel.cpp:209 TrackEdit.cpp:156 TrackEdit.cpp:508
+msgid "Title:"
+msgstr "Назва:"
+
+#: PodcastsPanel.cpp:219
+msgid "Sumary:"
+msgstr "Резюме:"
+
+#: PodcastsPanel.cpp:229 TrackEdit.cpp:495
+msgid "Date:"
+msgstr "Дата:"
+
+#: PodcastsPanel.cpp:239
+msgid "Length:"
+msgstr "Тривалість:"
+
+#: PodcastsPanel.cpp:260
+msgid "Podcast Details"
+msgstr "Деталі подкасту"
+
+#: PodcastsPanel.cpp:431
+msgid "Are you sure to delete the selected podcast channel?"
+msgstr "Ви дійсно бажаєте видалити вибраний канал подкасту?"
+
+#: PodcastsPanel.cpp:803
+msgid "Are you sure to delete the selected podcast item?"
+msgstr "Ви дійсно бажаєте видалити вибраний пункт подкасту?"
+
+#: PodcastsPanel.cpp:959
+msgid "New Channel"
+msgstr "Новий канал"
+
+#: PodcastsPanel.cpp:959
+msgid "Add a new podcast channel"
+msgstr "Додати новий канал подкасту"
+
+#: PodcastsPanel.cpp:965
+msgid "delete this podcast channels and all its items"
+msgstr "видалити цей подкаст і всі його пункти"
+
+#: PodcastsPanel.cpp:974
+msgid "Update"
+msgstr "Оновити"
+
+#: PodcastsPanel.cpp:974
+msgid "Update the podcast items of the selected channels"
+msgstr "Оновити пункти подкасту вибраних каналів"
+
+#: PodcastsPanel.cpp:980
+msgid "Properties"
+msgstr "Властивості"
+
+#: PodcastsPanel.cpp:980
+msgid "Edit the podcast channel"
+msgstr "Редагувати канал подкасту"
+
+#: PodcastsPanel.cpp:986 PodcastsPanel.cpp:1221 PodcastsPanel.cpp:1228
+msgid "Copy the current selected podcasts to a directory or device"
+msgstr "Скопіювати поточні подкасти до директорії або пристрою"
+
+#: PodcastsPanel.cpp:996
+msgid "Status"
+msgstr "Статус"
+
+#: PodcastsPanel.cpp:998
+msgid "Channel"
+msgstr "Канал"
+
+#: PodcastsPanel.cpp:999
+msgid "Category"
+msgstr "Категорія"
+
+#: PodcastsPanel.cpp:1000
+msgid "Date"
+msgstr "Дата"
+
+#: PodcastsPanel.cpp:1002
+msgid "Author"
+msgstr "Автор"
+
+#: PodcastsPanel.cpp:1003 SoListBox.cpp:293
+msgid "PlayCount"
+msgstr "Лічильник програвання"
+
+#: PodcastsPanel.cpp:1004
+msgid "LastPlay"
+msgstr "Востаннє програвалось"
+
+#: PodcastsPanel.cpp:1005
+msgid "Added"
+msgstr "Додано"
+
+#: PodcastsPanel.cpp:1139 SoListBox.cpp:170
+msgid "Never"
+msgstr "Ніколи"
+
+#: PodcastsPanel.cpp:1204 RadioPanel.cpp:491
+msgid "Add current selected songs to playlist"
+msgstr "Додати поточні вибрані пісні до списку програвання"
+
+#: PodcastsPanel.cpp:1210
+msgid "Delete the current selected podcasts"
+msgstr "Видалити поточні вибрані подкасти"
+
+#: PodcastsPanel.cpp:1216
+msgid "Download"
+msgstr "Скачати"
+
+#: PodcastsPanel.cpp:1216
+msgid "Download the current selected podcasts"
+msgstr "Видалити поточні вибрані подкасти"
+
+#: PodcastsPanel.cpp:1228
+msgid "No selected items..."
+msgstr "Не вибрано жодного пункту..."
+
+#: Preferences.cpp:77
+msgid "Preferences"
+msgstr "Налаштування"
+
+#: Preferences.cpp:91
+msgid "Default"
+msgstr "По замовчуванню"
+
+#: Preferences.cpp:92
+msgid "English"
+msgstr "Англійська"
+
+#: Preferences.cpp:93
+msgid "French"
+msgstr "Французька"
+
+#: Preferences.cpp:94
+msgid "German"
+msgstr "Німецька"
+
+#: Preferences.cpp:95
+msgid "Italian"
+msgstr "Італійська"
+
+#: Preferences.cpp:96
+msgid "Portuguese"
+msgstr "Португальська"
+
+#: Preferences.cpp:97
+msgid "Spanish"
+msgstr "Іспанська"
+
+#: Preferences.cpp:124
+msgid " On Start "
+msgstr " На Старт"
+
+#: Preferences.cpp:126
+msgid "Show splash screen"
+msgstr "Показати стартову заставку"
+
+#: Preferences.cpp:130
+msgid "Start minimized"
+msgstr "Стартувати мінімізованим"
+
+#: Preferences.cpp:154
+msgid "Load default layouts"
+msgstr "Завантажити типове розміщення"
+
+#: Preferences.cpp:160
+msgid " Behaviour "
+msgstr "Поведінка"
+
+#: Preferences.cpp:162
+msgid "Activate task bar icon"
+msgstr "Активувати іконки панелі задач"
+
+#: Preferences.cpp:166
+msgid "Enqueue as default action"
+msgstr "Додати як дію по замовчуванню"
+
+#: Preferences.cpp:170
+msgid "Drop files clear playlist"
+msgstr "Скинути список програвання файлів"
+
+#: Preferences.cpp:196
+msgid "Save playlist on close"
+msgstr "Зберегти список програвання при завершенні"
+
+#: Preferences.cpp:200
+msgid "Close to task bar icon"
+msgstr "Закривати до іконки системного трею"
+
+#: Preferences.cpp:205
+msgid "Ask confirmation on exit"
+msgstr "Запитувати підтвердження про вихід"
+
+#: Preferences.cpp:214
+msgid "General"
+msgstr "Загальне"
+
+#: Preferences.cpp:224
+msgid " Paths "
+msgstr "Шляхи"
+
+#: Preferences.cpp:243
+msgid " Words to detect covers "
+msgstr "Слова для визначення обкладинок"
+
+#: Preferences.cpp:266
+msgid "Update library on application start"
+msgstr "Оновлювати бібліотеку при старті програми"
+
+#: Preferences.cpp:270
+msgid "Save lyrics to audio files"
+msgstr "Зберегти лірику в аудіо файлах"
+
+#: Preferences.cpp:293
+msgid "Play random track when playlist is empty"
+msgstr "Програвати випадковий трек, коли список програвання є пустим"
+
+#: Preferences.cpp:297
+msgid "Delete played tracks from playlist"
+msgstr "Видалити прослухані треки з списку програвання"
+
+#: Preferences.cpp:304
+msgid " Silence detector "
+msgstr " Детектор тишини "
+
+#: Preferences.cpp:306 Preferences.cpp:406
 msgid "Enabled"
 msgstr "Включено"
 
-#: src/Preferences.cpp:249
-msgid "Username:"
-msgstr "Користувач:"
+#: Preferences.cpp:314
+msgid " Random / Smart Play Modes "
+msgstr " Випадковий / Смарт-програвання режими"
 
-#: src/Preferences.cpp:257
-msgid "Password:"
-msgstr "Пароль:"
-
-#: src/Preferences.cpp:274
-msgid " Smart Playlists "
-msgstr "Розумний список програвання"
-
-#: src/Preferences.cpp:284
+#: Preferences.cpp:324
 msgid "Tracks left to start search"
 msgstr "Треки зліва для початку пошуку"
 
-#: src/Preferences.cpp:292
+#: Preferences.cpp:332
 msgid "Tracks added each time"
 msgstr "Треки додані кожного разу"
 
-#: src/Preferences.cpp:300
-msgid "Max tracks kept in playlist"
-msgstr "Макс. треки збережені в списку програвання"
+#: Preferences.cpp:341
+msgid "Max played tracks kept in playlist"
+msgstr "Макс. кількість треків для збереження в списку програвання"
 
-#: src/Preferences.cpp:320
+#: Preferences.cpp:353
+msgid "Level(db):"
+msgstr "Рівень(дб):"
+
+#: Preferences.cpp:368
+msgid "Only in the last"
+msgstr "Тільки останнє"
+
+#: Preferences.cpp:380
+msgid "seconds"
+msgstr "секунди"
+
+#: Preferences.cpp:393
+msgid "Playback"
+msgstr "Програвати"
+
+#: Preferences.cpp:404
+msgid " LastFM Audioscrobble "
+msgstr " LastFM Audioscrobble "
+
+#: Preferences.cpp:414
+msgid "Username:"
+msgstr "Користувач:"
+
+#: Preferences.cpp:422
+msgid "Password:"
+msgstr "Пароль:"
+
+#: Preferences.cpp:442
+msgid "Join the Guayadeque Last.fm users group"
+msgstr "Вступити до групи користувачів Guayadeque Last.fm"
+
+#: Preferences.cpp:459
 msgid " Filters "
 msgstr "Фільтри"
 
-#: src/Preferences.cpp:342
+#: Preferences.cpp:481
 msgid " Language "
 msgstr " Мова "
 
-#: src/Preferences.cpp:344
+#: Preferences.cpp:483
 msgid "Language:"
 msgstr "Мова:"
 
-#: src/Preferences.cpp:358
+#: Preferences.cpp:497
 msgid " Browser command "
 msgstr " Команда переглядача "
 
-#: src/Preferences.cpp:365
+#: Preferences.cpp:504
 msgid "Radio Min. Allowed Bitrate "
 msgstr "Мін.дозволений бітрейт для радіо"
 
-#: src/Preferences.cpp:379
-msgid " Lyrics Provider "
-msgstr " Постачальник лірики "
+#: Preferences.cpp:521
+msgid "Online"
+msgstr "Доступний"
 
-#: src/Preferences.cpp:382
-msgid "Lyrics Provider:"
-msgstr "Постачальник лірики:"
-
-#: src/Preferences.cpp:401
-msgid "Online Services"
-msgstr "Онлайн сервіси"
-
-#: src/Preferences.cpp:411
+#: Preferences.cpp:532
 msgid " Podcasts "
 msgstr " Подкасти "
 
-#: src/Preferences.cpp:416
+#: Preferences.cpp:537
 msgid "Destination directory:"
 msgstr "Директорія призначення:"
 
-#: src/Preferences.cpp:420
+#: Preferences.cpp:541
 msgid "Select podcasts folder"
 msgstr "Вибрати директорію для покастів"
 
-#: src/Preferences.cpp:428
+#: Preferences.cpp:549
 msgid "Check new podcasts every"
 msgstr "Перевіряти нові подкасти кожні"
 
-#: src/Preferences.cpp:433
+#: Preferences.cpp:554
 msgid "Hour"
 msgstr "Година"
 
-#: src/Preferences.cpp:433
+#: Preferences.cpp:554
 msgid "Day"
 msgstr "День"
 
-#: src/Preferences.cpp:433
+#: Preferences.cpp:554
 msgid "Week"
 msgstr "Тиждень"
 
-#: src/Preferences.cpp:433
+#: Preferences.cpp:554
 msgid "Month"
 msgstr "Місяць"
 
-#: src/Preferences.cpp:444
+#: Preferences.cpp:565
 msgid "Delete podcasts after"
 msgstr "Витерти подкасти після"
 
-#: src/Preferences.cpp:453
+#: Preferences.cpp:574
 msgid "Days"
 msgstr "Дні"
 
-#: src/Preferences.cpp:453
+#: Preferences.cpp:574
 msgid "Weeks"
 msgstr "Тижнів"
 
-#: src/Preferences.cpp:453
+#: Preferences.cpp:574
 msgid "Months"
 msgstr "Місяці"
 
-#: src/Preferences.cpp:461
+#: Preferences.cpp:582
 msgid "Only if played"
 msgstr "Тільки коли програвалися"
 
-#: src/Preferences.cpp:483
+#: Preferences.cpp:605
 msgid " Links "
 msgstr "Посилання"
 
-#: src/Preferences.cpp:541
+#: Preferences.cpp:663
 msgid "Url:"
 msgstr "Url:"
 
-#: src/Preferences.cpp:549
-#: src/Preferences.cpp:656
+#: Preferences.cpp:671 Preferences.cpp:781 RadioEditor.cpp:44
 msgid "Name:"
 msgstr "Назва:"
 
-#: src/Preferences.cpp:568
-#: src/Preferences.cpp:675
-#: src/Preferences.cpp:706
+#: Preferences.cpp:690 Preferences.cpp:800 Preferences.cpp:832
 msgid " Help "
 msgstr "Допомога"
 
-#: src/Preferences.cpp:571
+#: Preferences.cpp:693
 msgid ""
 "Add urls using :\n"
 "{lang} : 2 lettes language code.\n"
@@ -275,19 +1797,15 @@ msgstr ""
 "{lang} : 2 букви коду мови.\n"
 "{text} : текст для пошуку."
 
-#: src/Preferences.cpp:580
-msgid "Links"
-msgstr "Посилання"
-
-#: src/Preferences.cpp:595
+#: Preferences.cpp:718
 msgid " Commands "
 msgstr " Команди "
 
-#: src/Preferences.cpp:649
+#: Preferences.cpp:774
 msgid "Command:"
 msgstr "Команда:"
 
-#: src/Preferences.cpp:677
+#: Preferences.cpp:802
 msgid ""
 "Add commands using :\n"
 "{bp}\t: Album path\n"
@@ -299,17 +1817,11 @@ msgstr ""
 "{bc}\t: шлях до файлу обкладинки альбому\n"
 "{tp}\t: шлях до треку"
 
-#: src/Preferences.cpp:686
-#: src/AlListBox.cpp:164
-#: src/PlayList.cpp:917
-msgid "Commands"
-msgstr "Команди"
-
-#: src/Preferences.cpp:697
+#: Preferences.cpp:823
 msgid " FileName Pattern "
 msgstr " Зразок назви файлу"
 
-#: src/Preferences.cpp:709
+#: Preferences.cpp:835
 msgid ""
 "{a}\t- Artist\t\t\t('U2')\n"
 "{b}\t- Album\t\t\t('The Josua Tree')\n"
@@ -327,720 +1839,460 @@ msgstr ""
 "{t}\t- Назва\t\t\t('With or Without You')\n"
 "{y}\t- Рік\t\t\t('1987')\n"
 
-#: src/Preferences.cpp:714
+#: Preferences.cpp:840
 msgid " Example "
 msgstr "Приклад"
 
-#: src/Preferences.cpp:726
+#: Preferences.cpp:852
 msgid "Copy To"
 msgstr "Скопіювати до"
 
-#: src/Preferences.cpp:963
-msgid "Select library path"
-msgstr "Вибрати шлях до бібліотеки"
-
-#: src/Preferences.cpp:993
+#: Preferences.cpp:1157
 msgid "Change library path"
 msgstr "Змінити шлях до бібліотеки"
 
-#: src/Preferences.cpp:1025
-#: src/Preferences.cpp:1055
+#: Preferences.cpp:1190 Preferences.cpp:1220
 msgid "Word: "
 msgstr "Слово:"
 
-#: src/Preferences.cpp:1025
+#: Preferences.cpp:1190
 msgid "Enter the text to find covers"
 msgstr "Введіть текст для пошуку обкладинок"
 
-#: src/Preferences.cpp:1055
+#: Preferences.cpp:1220
 msgid "Edit the text to find covers"
 msgstr "Редагувати текст для пошуку обкладинок"
 
-#: src/Preferences.cpp:1100
-#: src/Preferences.cpp:1130
+#: Preferences.cpp:1279 Preferences.cpp:1309
 msgid "Filter: "
 msgstr "Фільтр:"
 
-#: src/Preferences.cpp:1100
+#: Preferences.cpp:1279
 msgid "Enter the text to filter"
 msgstr "Введіть текст для фільтру"
 
-#: src/Preferences.cpp:1130
+#: Preferences.cpp:1309
 msgid "Edit the text to filter"
 msgstr "Редагувати текст для фільтру"
 
-#: src/AlListBox.cpp:161
-#: src/PlayList.cpp:914
-msgid "No commands defined"
-msgstr "Не визначено команди"
+#: RadioPanel.cpp:187
+msgid "Shoutcast"
+msgstr "Shoutcast"
 
-#: src/AlListBox.cpp:161
-#: src/PlayList.cpp:914
-msgid "Add commands in preferences"
-msgstr "Додайте команди в налаштування"
+#: RadioPanel.cpp:188
+msgid "User Defined"
+msgstr "Визначено користувачем"
 
-#: src/AlListBox.cpp:173
-msgid "Play"
-msgstr "Програвати"
+#: RadioPanel.cpp:242
+msgid "Add Genre"
+msgstr "Додати жанр"
 
-#: src/AlListBox.cpp:173
-msgid "Play current selected albums"
-msgstr "Програвати поточний вибраний альбом"
+#: RadioPanel.cpp:242
+msgid "Create a new genre"
+msgstr "Створити новий жанр"
 
-#: src/AlListBox.cpp:177
-msgid "Enqueue"
-msgstr "Додати"
+#: RadioPanel.cpp:248
+msgid "Edit genre"
+msgstr "Редагувати жанр"
 
-#: src/AlListBox.cpp:177
-msgid "Add current selected albums to the Playlist"
-msgstr "Додати поточні вибрані альбоми до списку програвання"
+#: RadioPanel.cpp:248
+msgid "Change selected genre"
+msgstr "Змінити вибраний жанр"
 
-#: src/AlListBox.cpp:186
-#: src/PlayList.cpp:927
-msgid "Edit Labels"
-msgstr "Редагувати мітки"
+#: RadioPanel.cpp:252
+msgid "Delete genre"
+msgstr "Видалити жанр"
 
-#: src/AlListBox.cpp:186
-msgid "Edit the labels assigned to the selected albums"
-msgstr "Редагувати мітки приписані до вибраних альбомів"
+#: RadioPanel.cpp:252
+msgid "Delete selected genre"
+msgstr "Видалити вибраний жанр"
 
-#: src/AlListBox.cpp:190
-msgid "Edit Album songs"
-msgstr "Редагувати пісні альбому"
+#: RadioPanel.cpp:259
+msgid "Update Radio Stations"
+msgstr "Оновити радіостанції"
 
-#: src/AlListBox.cpp:190
-msgid "Edit the selected albums songs"
-msgstr "Редагувати вибрані пісні альбому"
+#: RadioPanel.cpp:259
+msgid "Update the radio station lists"
+msgstr "Оновити список радіостанцій"
 
-#: src/AlListBox.cpp:198
-msgid "Download Album cover"
-msgstr "Скачати обкладинку альбому"
+#: RadioPanel.cpp:265 RadioPanel.cpp:498
+msgid "Add Radio"
+msgstr "Додати радіо"
 
-#: src/AlListBox.cpp:198
-msgid "Download cover for the current selected album"
-msgstr "Скачати обкладинку для поточного ввибраного альбому"
+#: RadioPanel.cpp:265
+msgid "Create a new radio"
+msgstr "Створити нове радіо"
 
-#: src/AlListBox.cpp:202
-msgid "Select cover location"
-msgstr "Вибрати розміщення обкладинки"
+#: RadioPanel.cpp:271
+msgid "Import the radio stations"
+msgstr "Імпортувати список радіостанцій"
 
-#: src/AlListBox.cpp:202
-msgid "Select the cover image file from disk"
-msgstr "Вибрати файл зображення обкладинки з диску"
+#: RadioPanel.cpp:275
+msgid "Export all the radio stations"
+msgstr "Експортувати всі радіостанції"
 
-#: src/AlListBox.cpp:206
-msgid "Delete Album cover"
-msgstr "Видалити обкладинку альбому"
+#: RadioPanel.cpp:323
+msgid "Genre Name: "
+msgstr "Назва жанру:"
 
-#: src/AlListBox.cpp:206
-msgid "Delete the cover for the selected album"
-msgstr "Видалити обкладинку вибраного альбому"
+#: RadioPanel.cpp:323
+msgid "Enter the new Genre Name"
+msgstr "Введіть назву нового жанру"
 
-#: src/AlListBox.cpp:213
-#: src/PlayList.cpp:953
-msgid "Copy to..."
-msgstr "Копіювати до..."
+#: RadioPanel.cpp:343
+msgid "Are you sure to delete the selected radio genres?"
+msgstr "Ви дійсно бажаєте видалити вибрані жанри радіо?"
 
-#: src/AlListBox.cpp:213
-msgid "Copy the current selected songs to a directory or device"
-msgstr "Скопіювати поточні вибрані пісні до директорії або пристрою"
-
-#: src/AlListBox.cpp:355
-msgid "All"
-msgstr "Все"
-
-#: src/NewChannel.cpp:86
-msgid "New Podcast Channel"
-msgstr "Новий канал подкасту"
-
-#: src/NewChannel.cpp:99
-msgid " Digital Podcast Directory "
-msgstr "Директорія цифрового подкасту "
-
-#: src/NewChannel.cpp:220
-msgid "Filtered channels"
-msgstr "Фільтровані канали"
-
-#: src/NewChannel.cpp:292
-#, c-format
-msgid "%u Channels"
-msgstr "%u канали"
-
-#: src/NewChannel.cpp:297
-#, c-format
-msgid "%u Categories, %u Channels"
-msgstr "%u категорії, %u канали"
-
-#: src/NewChannel.cpp:356
-msgid "Filter Text: "
-msgstr "Фільтр текст:"
-
-#: src/NewChannel.cpp:356
-msgid "Enter the text to filter podcasts channels"
-msgstr "Введіть текст для фільтрування каналів подкастів"
-
-#: src/PlayList.cpp:50
-msgid "Now Playing"
-msgstr "Зараз програється"
-
-#: src/PlayList.cpp:927
-msgid "Edit the labels of the current selected songs"
-msgstr "Редагувати мітки поточних вибраних пісень"
-
-#: src/PlayList.cpp:933
-msgid "Clear PlayList"
-msgstr "Очистити список програвання"
-
-#: src/PlayList.cpp:933
-msgid "Remove all songs from PlayList"
-msgstr "Видалити всі пісні з списку програвання"
-
-#: src/PlayList.cpp:937
-msgid "Save PlayList"
-msgstr "Зберегти список програвання"
-
-#: src/PlayList.cpp:937
-msgid "Save the PlayList"
-msgstr "Зберегти список програвання"
-
-#: src/PlayList.cpp:941
-msgid "Remove selected songs"
-msgstr "Видалити вибрані пісні"
-
-#: src/PlayList.cpp:941
-msgid "Remove selected songs from PlayList"
-msgstr "Видалити вибрані пісні з списку програвання"
-
-#: src/PlayList.cpp:947
-msgid "Randomize PlayList"
-msgstr "Випадково перемішати список програвання"
-
-#: src/PlayList.cpp:947
-msgid "Randomize the songs in the PlayList"
-msgstr "Випадково перемішати пісні в списку програвання"
-
-#: src/PlayList.cpp:953
-msgid "Copy the current playlist to a directory or device"
-msgstr "Скопіювати поточний список програвання до директорії або пристрою"
-
-#: src/PlayList.cpp:1003
-msgid "PlayList Name: "
-msgstr "Назва списку програвання:"
-
-#: src/PlayList.cpp:1003
-msgid "Enter the new playlist name"
-msgstr "Ввести назву нового списку програвання"
-
-#: src/PlayList.cpp:1081
-msgid "Songs Labels Editor"
-msgstr "Редактор міток пісень"
-
-#: src/TagInfo.cpp:487
-msgid "iD3Tags Save failed"
-msgstr "Збереження тегів ID3 не вдалося"
-
-#: src/LyricsPanel.cpp:51
-msgid "Follow player"
-msgstr "Слідувати за програвачем"
-
-#: src/LyricsPanel.cpp:62
-#: src/TrackEdit.cpp:114
-#: src/TrackEdit.cpp:316
-msgid "Artist:"
-msgstr "Виконавець:"
-
-#: src/LyricsPanel.cpp:73
-msgid "Track:"
-msgstr "Трек:"
-
-#: src/LyricsPanel.cpp:210
-msgid "Searching the lyrics for this track"
-msgstr "Шукаю лірику для цього треку"
-
-#: src/LyricsPanel.cpp:255
-msgid "No lyrics found for this song."
-msgstr "Немає лірики для цієї пісні"
-
-#: src/SoListBox.cpp:36
-#: src/PodcastsPanel.cpp:848
-msgid "Title"
-msgstr "Назва"
-
-#: src/SoListBox.cpp:37
-msgid "Artist"
-msgstr "Виконавець"
-
-#: src/SoListBox.cpp:38
-msgid "Album"
-msgstr "Альбом"
-
-#: src/SoListBox.cpp:39
-msgid "Genre"
-msgstr "Жанр"
-
-#: src/SoListBox.cpp:40
-#: src/PodcastsPanel.cpp:852
-msgid "Length"
-msgstr "Час виконання"
-
-#: src/SoListBox.cpp:41
-msgid "Year"
-msgstr "Рік"
-
-#: src/SoListBox.cpp:42
+#: RadioPanel.cpp:414 SoListBox.cpp:291
 msgid "BitRate"
 msgstr "Бітрейт"
 
-#: src/SoListBox.cpp:43
-msgid "Rating"
-msgstr "Рейтинг"
+#: RadioPanel.cpp:415
+msgid "Listeners"
+msgstr "Слухачі"
 
-#: src/SoListBox.cpp:44
-#: src/PodcastsPanel.cpp:854
-msgid "PlayCount"
-msgstr "Лічильник програвання"
+#: RadioPanel.cpp:498
+msgid "Add a radio"
+msgstr "Додати радіо"
 
-#: src/SoListBox.cpp:45
+#: RadioPanel.cpp:508 RadioPanel.cpp:1157
+msgid "Edit Radio"
+msgstr "Редагувати радіо"
+
+#: RadioPanel.cpp:508
+msgid "Change the selected radio"
+msgstr "Змінити вибране радіо"
+
+#: RadioPanel.cpp:512
+msgid "Delete Radio"
+msgstr "Видалити радіо"
+
+#: RadioPanel.cpp:512
+msgid "Delete the selected radio"
+msgstr "Видалити вибране радіо"
+
+#: RadioPanel.cpp:519
+msgid "Edit the labels assigned to the selected stations"
+msgstr "Редагувати мітки приписані до вибраних радіостанцій"
+
+#: RadioPanel.cpp:614 TaListBox.cpp:64
+msgid "Add Label"
+msgstr "Додати мітку"
+
+#: RadioPanel.cpp:614 TaListBox.cpp:64
+msgid "Create a new label"
+msgstr "Створити нову мітку"
+
+#: RadioPanel.cpp:620 TaListBox.cpp:70
+msgid "Edit Label"
+msgstr "Редагувати мітку"
+
+#: RadioPanel.cpp:620 TaListBox.cpp:70
+msgid "Change selected label"
+msgstr "Змінити вибрані мітки"
+
+#: RadioPanel.cpp:624 TaListBox.cpp:74
+msgid "Delete label"
+msgstr "Видалити мітку"
+
+#: RadioPanel.cpp:624 TaListBox.cpp:74
+msgid "Delete selected labels"
+msgstr "Видалити вибрані мітки"
+
+#: RadioPanel.cpp:673 TaListBox.cpp:145
+msgid "Enter the new label name"
+msgstr "Ввести нову назву мітки"
+
+#: RadioPanel.cpp:801
+msgid "Stations"
+msgstr "Станції"
+
+#: RadioPanel.cpp:930
+msgid "Stations Labels Editor"
+msgstr "Редактор міток станцій"
+
+#: RadioPanel.cpp:1016
+msgid "Radios"
+msgstr "Радіо"
+
+#: RadioPanel.cpp:1120
+msgid "There are not entries for this Radio Station"
+msgstr "Немає нічого для цієї радіостанції"
+
+#: SelCoverFile.cpp:27
+msgid "Select Cover File"
+msgstr "Вибрати файл обкладинки"
+
+#: SelCoverFile.cpp:50
+msgid "Cover:"
+msgstr "Обкладинка:"
+
+#: SelCoverFile.cpp:85
+msgid "Select the cover filename"
+msgstr "Вибрати файл обкладинки з диску"
+
+#: SoListBox.cpp:288
+msgid "Disk"
+msgstr "Диск"
+
+#: SoListBox.cpp:294
 msgid "Last Play"
 msgstr "Востаннє програвався"
 
-#: src/SoListBox.cpp:46
-msgid "Added Date"
-msgstr "День додавання"
-
-#: src/SoListBox.cpp:172
-#: src/PodcastsPanel.cpp:991
-msgid "Never"
-msgstr "Ніколи"
-
-#: src/SoListBox.cpp:307
-#: src/PodcastsPanel.cpp:1049
-msgid "Play current selected songs"
-msgstr "Програвати поточні вибрані пісні"
-
-#: src/SoListBox.cpp:311
+#: SoListBox.cpp:347
 msgid "Play All"
 msgstr "Програвати все"
 
-#: src/SoListBox.cpp:311
+#: SoListBox.cpp:347
 msgid "Play all songs"
 msgstr "Програвати всі пісні"
 
-#: src/SoListBox.cpp:315
-msgid "Add current selected songs to the playlist"
-msgstr "Додати поточні вибрані пісні до списку програвання"
-
-#: src/SoListBox.cpp:319
+#: SoListBox.cpp:355
 msgid "Enqueue All"
 msgstr "Дадати всі"
 
-#: src/SoListBox.cpp:319
+#: SoListBox.cpp:355
 msgid "Add all songs to the playlist"
 msgstr "Додати всі пісні до списку програвання"
 
-#: src/SoListBox.cpp:327
-msgid "Edit the labels assigned to the selected songs"
-msgstr "Редагувати мітки, приписані вибраній пісні"
-
-#: src/SoListBox.cpp:331
-msgid "Edit Songs"
-msgstr "Редагувати пісні"
-
-#: src/SoListBox.cpp:331
-msgid "Edit the songs selected"
-msgstr "Редагувати вибрані пісні"
-
-#: src/SoListBox.cpp:337
-msgid "Save Playlist"
-msgstr "Зберегти список програвання"
-
-#: src/SoListBox.cpp:337
+#: SoListBox.cpp:361
 msgid "Save all selected tracks as a playlist"
 msgstr "Зберегти всі вибрані треки як список програвання"
 
-#: src/SoListBox.cpp:347
+#: SoListBox.cpp:373
+msgid "Edit the labels assigned to the selected songs"
+msgstr "Редагувати мітки, приписані вибраній пісні"
+
+#: SoListBox.cpp:377
+msgid "Edit the songs selected"
+msgstr "Редагувати вибрані пісні"
+
+#: SoListBox.cpp:383
 msgid "Select Genre"
 msgstr "Вибрати жанр"
 
-#: src/SoListBox.cpp:347
+#: SoListBox.cpp:383
 msgid "Selects the genre of the current song"
 msgstr "Вибрати жанр вибраної пісні"
 
-#: src/SoListBox.cpp:351
+#: SoListBox.cpp:387
 msgid "Select Artist"
 msgstr "Вибрати виконавця"
 
-#: src/SoListBox.cpp:351
+#: SoListBox.cpp:387
 msgid "Selects the artist of the current song"
 msgstr "Вибрати виконавця вибраної пісні"
 
-#: src/SoListBox.cpp:355
+#: SoListBox.cpp:391
 msgid "Select Album"
 msgstr "Вибрати альбом"
 
-#: src/SoListBox.cpp:355
+#: SoListBox.cpp:391
 msgid "Select the album of the current song"
 msgstr "Вибрати альбом вибраної пісні"
 
-#: src/ListView.cpp:1267
-msgid "Select Columns"
-msgstr "Вибрати колонку"
-
-#: src/PlayerPanel.cpp:93
-msgid "Go to Previous Track in the Playlist"
-msgstr "Перейти до попереднього трека в списку програвання"
-
-#: src/PlayerPanel.cpp:97
-msgid "Go to Next Track in the Playlist"
-msgstr "Перейти до наступного трека в списку програвання"
-
-#: src/PlayerPanel.cpp:101
-msgid "Start playing or pauses current track in the Playlist"
-msgstr "Почати програвати або призупинити поточний трек в списку програвання"
-
-#: src/PlayerPanel.cpp:105
-msgid "Stops player reproduction"
-msgstr "Зупинки програвання програвача"
-
-#: src/PlayerPanel.cpp:109
-msgid "Volume 0%"
-msgstr "Гучність 0%"
-
-#: src/PlayerPanel.cpp:113
-msgid "Add tracks to the playlist bassed on LastFM"
-msgstr "Додати треки до списку програвання, базованому на LastFM"
-
-#: src/PlayerPanel.cpp:119
-msgid "Randomize the tracks in the playlist"
-msgstr "Переміщати випадково треки в списку програвання"
-
-#: src/PlayerPanel.cpp:123
-msgid "Repeats the current playlist"
-msgstr "Повторити програвання поточного списку програвання"
-
-#: src/PlayerPanel.cpp:133
-msgid "Shows the current track album cover if available"
-msgstr "Показати обкладинку поточного треку (якщо доступна)"
-
-#: src/PlayerPanel.cpp:139
-msgid "Show the name of the current track"
-msgstr "Показати назву поточного треку"
-
-#: src/PlayerPanel.cpp:148
-msgid "Show the album name of the current track"
-msgstr "Показати назву альбому поточного треку"
-
-#: src/PlayerPanel.cpp:158
-msgid "Show the artist name of the current track"
-msgstr "Показати назву виконавця поточного треку"
-
-#: src/PlayerPanel.cpp:168
-msgid "Show the year of the current track"
-msgstr "Показати рік поточного треку"
-
-#: src/PlayerPanel.cpp:171
-msgid "00:00 of 00:00"
-msgstr "00:00 з 00:00"
-
-#: src/PlayerPanel.cpp:172
-msgid "Show the current position and song length of the current track"
-msgstr "Показати поточну позицію і протяжність пісні поточного треку"
-
-#: src/PlayerPanel.cpp:187
-msgid "Show the bitrate of the current track"
-msgstr "Показати бітрейт поточного треку"
-
-#: src/PlayerPanel.cpp:594
-#: src/PlayerPanel.cpp:1408
-msgid " of "
-msgstr " з "
-
-#: src/PlayerPanel.cpp:968
-msgid "Buffering..."
-msgstr "Буферування..."
-
-#: src/PlayerPanel.cpp:1451
-#, c-format
-msgid "Volume %u%%"
-msgstr "Гучність %u%%"
-
-#: src/StatusBar.cpp:129
+#: StatusBar.cpp:141
 msgid "Shows the status of the LastFM connection."
 msgstr "Показати статус з’єднання з LastFM."
 
-#: src/PodcastsPanel.cpp:90
-msgid "Channels"
-msgstr "Канали"
+#: StatusBar.cpp:144
+msgid "Shows information about the selected items."
+msgstr "Показати інформацію про вибране."
 
-#: src/PodcastsPanel.cpp:119
-#: src/TrackEdit.cpp:308
-msgid " Details "
-msgstr " Деталі "
+#: TaListBox.cpp:87
+msgid "Play current selected labels"
+msgstr "Програвати вибрані мітки"
 
-#: src/PodcastsPanel.cpp:139
-msgid "Description:"
-msgstr "Опис:"
+#: TaListBox.cpp:91
+msgid "Add current selected labels to playlist"
+msgstr "Додати поточні вибрані мітки до списку програвання"
 
-#: src/PodcastsPanel.cpp:149
-msgid "Author:"
-msgstr "Автор:"
+#: TaskBar.cpp:119
+msgid "Pause"
+msgstr "Пауза"
 
-#: src/PodcastsPanel.cpp:159
-msgid "Owner:"
-msgstr "Власник:"
+#: TaskBar.cpp:119 TaskBar.cpp:124
+msgid "Play current playlist"
+msgstr "Програвати поточний список програвання"
 
-#: src/PodcastsPanel.cpp:170
-msgid "Link:"
-msgstr "Посилання:"
+#: TaskBar.cpp:124
+msgid "Stop"
+msgstr "Стоп"
 
-#: src/PodcastsPanel.cpp:185
-#: src/TrackEdit.cpp:136
-#: src/TrackEdit.cpp:351
-msgid "Title:"
-msgstr "Назва:"
+#: TaskBar.cpp:128
+msgid "Next Track"
+msgstr "Наступний трек"
 
-#: src/PodcastsPanel.cpp:195
-msgid "Sumary:"
-msgstr "Резюме:"
+#: TaskBar.cpp:128
+msgid "Skip to next track in current playlist"
+msgstr "Перейти на наступний трек в поточному списку програвання"
 
-#: src/PodcastsPanel.cpp:205
-#: src/TrackEdit.cpp:338
-msgid "Date:"
-msgstr "Дата:"
+#: TaskBar.cpp:132
+msgid "Prev Track"
+msgstr "Попередній трек"
 
-#: src/PodcastsPanel.cpp:215
-msgid "Length:"
-msgstr "Тривалість:"
+#: TaskBar.cpp:132
+msgid "Skip to previous track in current playlist"
+msgstr "Перейти до попереднього треку в поточному списку програвання"
 
-#: src/PodcastsPanel.cpp:351
-msgid "Are you sure to delete the selected podcast channel?"
-msgstr "Ви дійсно бажаєте видалити вибраний канал подкасту?"
+#: TaskBar.cpp:139
+msgid "Exit"
+msgstr "Вийти"
 
-#: src/PodcastsPanel.cpp:352
-#: src/PodcastsPanel.cpp:725
-msgid "Confirm"
-msgstr "Підтвердити"
+#: TaskBar.cpp:139
+msgid "Exit this program"
+msgstr "Вийти з програми"
 
-#: src/PodcastsPanel.cpp:724
-msgid "Are you sure to delete the selected podcast item?"
-msgstr "Ви дійсно бажаєте видалити вибраний пункт подкасту?"
-
-#: src/PodcastsPanel.cpp:810
-msgid "New Channel"
-msgstr "Новий канал"
-
-#: src/PodcastsPanel.cpp:810
-msgid "Add a new podcast channel"
-msgstr "Додати новий канал подкасту"
-
-#: src/PodcastsPanel.cpp:816
-#: src/PodcastsPanel.cpp:1059
-msgid "Delete"
-msgstr "Видалити"
-
-#: src/PodcastsPanel.cpp:816
-msgid "delete this podcast channels and all its items"
-msgstr "видалити цей подкаст і всі його пункти"
-
-#: src/PodcastsPanel.cpp:825
-msgid "Update"
-msgstr "Оновити"
-
-#: src/PodcastsPanel.cpp:825
-msgid "Update the podcast items of the selected channels"
-msgstr "Оновити пункти подкасту вибраних каналів"
-
-#: src/PodcastsPanel.cpp:831
-msgid "Properties"
-msgstr "Властивості"
-
-#: src/PodcastsPanel.cpp:831
-msgid "Edit the podcast channel"
-msgstr "Редагувати канал подкасту"
-
-#: src/PodcastsPanel.cpp:837
-#: src/PodcastsPanel.cpp:1070
-#: src/PodcastsPanel.cpp:1077
-msgid "Copy the current selected podcasts to a directory or device"
-msgstr "Скопіювати поточні подкасти до директорії або пристрою"
-
-#: src/PodcastsPanel.cpp:847
-msgid "Status"
-msgstr "Статус"
-
-#: src/PodcastsPanel.cpp:849
-msgid "Channel"
-msgstr "Канал"
-
-#: src/PodcastsPanel.cpp:850
-msgid "Category"
-msgstr "Категорія"
-
-#: src/PodcastsPanel.cpp:851
-msgid "Date"
-msgstr "Дата"
-
-#: src/PodcastsPanel.cpp:853
-msgid "Author"
-msgstr "Автор"
-
-#: src/PodcastsPanel.cpp:855
-msgid "LastPlay"
-msgstr "Востаннє програвалось"
-
-#: src/PodcastsPanel.cpp:856
-msgid "Added"
-msgstr "Додано"
-
-#: src/PodcastsPanel.cpp:1053
-msgid "Add current selected songs to playlist"
-msgstr "Додати поточні вибрані пісні до списку програвання"
-
-#: src/PodcastsPanel.cpp:1059
-msgid "Delete the current selected podcasts"
-msgstr "Видалити поточні вибрані подкасти"
-
-#: src/PodcastsPanel.cpp:1065
-msgid "Download"
-msgstr "Скачати"
-
-#: src/PodcastsPanel.cpp:1065
-msgid "Download the current selected podcasts"
-msgstr "Видалити поточні вибрані подкасти"
-
-#: src/PodcastsPanel.cpp:1077
-msgid "No selected items..."
-msgstr "Не вибрано жодного пункту..."
-
-#: src/TrackEdit.cpp:37
+#: TrackEdit.cpp:71
 msgid "Songs Editor"
 msgstr "Редактор пісень"
 
-#: src/TrackEdit.cpp:69
+#: TrackEdit.cpp:87
 msgid " Songs "
 msgstr " Пісні "
 
-#: src/TrackEdit.cpp:111
+#: TrackEdit.cpp:96
+msgid "Move the track to the previous position"
+msgstr "Перемістити трек до попередньої позиції"
+
+#: TrackEdit.cpp:102
+msgid "Move the track to the next position"
+msgstr "Перемістити трек до наступної позиції"
+
+#: TrackEdit.cpp:131
 msgid "Copy the Artist name to all the tracks you are editing"
 msgstr "Скопіювати назву виконавця до всіх пісень що редагуються"
 
-#: src/TrackEdit.cpp:122
+#: TrackEdit.cpp:142
 msgid "Copy the Album name to all the tracks you are editing"
 msgstr "Скопіювати назву альбому до всіх пісень що редагуються"
 
-#: src/TrackEdit.cpp:125
-#: src/TrackEdit.cpp:282
-#: src/TrackEdit.cpp:327
-msgid "Album:"
-msgstr "Альбом:"
-
-#: src/TrackEdit.cpp:133
+#: TrackEdit.cpp:153
 msgid "Copy the Title name to all the tracks you are editing"
 msgstr "Скопіювати назву до всіх пісень що редагуються"
 
-#: src/TrackEdit.cpp:144
+#: TrackEdit.cpp:164
+msgid "Copy the composer name to all the tracks you are editing"
+msgstr "Скопіювати назву композитора до всіх треків, що редагуються"
+
+#: TrackEdit.cpp:168
+msgid "Comp.:"
+msgstr "Комп.:"
+
+#: TrackEdit.cpp:176
 msgid "Enumerate the tracks in the order they were added for editing"
 msgstr "Перенумерувати всі треки в порядку додавання для редагування"
 
-#: src/TrackEdit.cpp:147
+#: TrackEdit.cpp:179
 msgid "Number:"
 msgstr "Номер:"
 
-#: src/TrackEdit.cpp:155
+#: TrackEdit.cpp:195
+msgid "Copy the disk to all the tracks you are editing"
+msgstr "Скопіювати диск до всіх треків, що редагуються"
+
+#: TrackEdit.cpp:199
+msgid "Disk:"
+msgstr "Диск:"
+
+#: TrackEdit.cpp:211
 msgid "Copy the Genre name to all songs you are editing"
 msgstr "Скопіювати жанр до всіх пісень що редагуються"
 
-#: src/TrackEdit.cpp:158
+#: TrackEdit.cpp:214
 msgid "Genre:"
 msgstr "Жанр:"
 
-#: src/TrackEdit.cpp:166
+#: TrackEdit.cpp:233
 msgid "Copy the Year to all songs you are editing"
 msgstr "Скопіювати рік до всіх пісень що редагуються"
 
-#: src/TrackEdit.cpp:169
+#: TrackEdit.cpp:236
 msgid "Year:"
 msgstr "Рік:"
 
-#: src/TrackEdit.cpp:180
+#: TrackEdit.cpp:252
 msgid "Rating:"
 msgstr "Рейтинг:"
 
-#: src/TrackEdit.cpp:196
-msgid "Details"
-msgstr "Деталі"
+#: TrackEdit.cpp:280
+msgid "Copy the comment to all the tracks you are editing"
+msgstr "Скопіювати коментарі до всіх треків, що редагуються"
 
-#: src/TrackEdit.cpp:218
+#: TrackEdit.cpp:311
 msgid "Add a picture from file to the current track"
 msgstr "Додати зображення з файлу для поточного треку"
 
-#: src/TrackEdit.cpp:222
+#: TrackEdit.cpp:315
 msgid "Delete the picture from the current track"
 msgstr "Видалити зображення для поточного треку"
 
-#: src/TrackEdit.cpp:226
+#: TrackEdit.cpp:319
 msgid "Save the current picture to file"
 msgstr "Зберегти поточне зображення до файлу"
 
-#: src/TrackEdit.cpp:235
+#: TrackEdit.cpp:323
+msgid "Search the album cover"
+msgstr "Шукати обкладинку альбому"
+
+#: TrackEdit.cpp:332
 msgid "Copy the current picute to all the tracks you are editing"
 msgstr "Скопіювати поточне зображення для всіх треків які редагуються"
 
-#: src/TrackEdit.cpp:243
+#: TrackEdit.cpp:340
 msgid "Pictures"
 msgstr "Зображення"
 
-#: src/TrackEdit.cpp:262
+#: TrackEdit.cpp:419
 msgid "Type the artist name to search in musicbrainz"
 msgstr "Напишіть назву виконавця для пошуку в musicbrainz"
 
-#: src/TrackEdit.cpp:270
+#: TrackEdit.cpp:427
 msgid "Type the album name to search in musicbrainz"
 msgstr "Напишіть назву альбому для пошуку в musicbrainz"
 
-#: src/TrackEdit.cpp:274
-#, fuzzy
+#: TrackEdit.cpp:431
 msgid "Clear the search fields so it search using the music fingerprint"
-msgstr "Очистити поля пошуку, щоб пошук йшов використовуючи відбиток музики"
+msgstr "Очистити поля пошуку, щоб пошук йшов по фрагменту музики"
 
-#: src/TrackEdit.cpp:288
+#: TrackEdit.cpp:445
 msgid "Select the album found in musicbrainz"
 msgstr "Вибрати альбом, знайдений в musicbrainz"
 
-#: src/TrackEdit.cpp:294
+#: TrackEdit.cpp:451
 msgid "Search albums in musicbrainz"
 msgstr "Шукати альбом в musicbrainz"
 
-#: src/TrackEdit.cpp:300
+#: TrackEdit.cpp:457
 msgid "Copy the content of the album to the edited tracks"
 msgstr "Скопіювати зміст альбому до редагованих треків"
 
-#: src/TrackEdit.cpp:324
+#: TrackEdit.cpp:481
 msgid "Copy the artist to the edited tracks"
 msgstr "Скопіювати виконавця до редагованих треків"
 
-#: src/TrackEdit.cpp:335
+#: TrackEdit.cpp:492
 msgid "Copy the album to the edited tracks"
 msgstr "Скопіювати альбом до редагованих треків"
 
-#: src/TrackEdit.cpp:348
+#: TrackEdit.cpp:505
 msgid "Copy the date to the edited tracks"
 msgstr "Скопіювати дату до редагованих треків"
 
-#: src/TrackEdit.cpp:359
+#: TrackEdit.cpp:516
 msgid "Copy the song names to the edited tracks"
 msgstr "Скопіювати назву пісень до редагованих треків"
 
-#: src/TrackEdit.cpp:384
+#: TrackEdit.cpp:541
 msgid "Copy the number to the edited tracks"
 msgstr "Скопіювати номер до редагованих треків"
 
-#: src/TrackEdit.cpp:1141
+#: TrackEdit.cpp:1423
 #, c-format
 msgid "Error: The album have %u tracks and you are editing %u"
 msgstr "Помилка: Альбом має %u треків, а Ви редагуєте %u"
 
-#: src/TrackEdit.cpp:1146
+#: TrackEdit.cpp:1428
 msgid ""
 "\n"
 "Warning: The length of some edited tracks don't match"
@@ -1048,812 +2300,84 @@ msgstr ""
 "\n"
 "Попередження: Довжини деяких редагованих треків не збігаються"
 
-#: src/ChannelEditor.cpp:36
-msgid "Podcast Channel Editor"
-msgstr "Редактор каналів подкасту"
+#~ msgid " Smart Playlists "
+#~ msgstr "Розумний список програвання"
 
-#: src/ChannelEditor.cpp:60
-msgid " Podcast Channel "
-msgstr " Канал подкасту "
+#~ msgid " Lyrics Provider "
+#~ msgstr " Постачальник лірики "
 
-#: src/ChannelEditor.cpp:134
-msgid "Download:"
-msgstr "Скачати:"
+#~ msgid "Lyrics Provider:"
+#~ msgstr "Постачальник лірики:"
 
-#: src/ChannelEditor.cpp:141
-msgid "Manually"
-msgstr "Вручну"
+#~ msgid "Online Services"
+#~ msgstr "Онлайн сервіси"
 
-#: src/ChannelEditor.cpp:141
-msgid "Only if contains"
-msgstr "Тільки якщо містить"
+#~ msgid "iD3Tags Save failed"
+#~ msgstr "Збереження тегів ID3 не вдалося"
 
-#: src/ChannelEditor.cpp:141
-msgid "Everything"
-msgstr "Все"
+#~ msgid " of "
+#~ msgstr " з "
 
-#: src/ChannelEditor.cpp:154
-msgid "Delete:"
-msgstr "Видалити:"
+#~ msgid "Volume %u%%"
+#~ msgstr "Гучність %u%%"
 
-#: src/ChannelEditor.cpp:158
-msgid "Allow delete old items"
-msgstr "Дозволити видаляти старе"
+#~ msgid "&Repeat"
+#~ msgstr "&Повторити"
 
-#: src/MainFrame.cpp:93
-msgid "Welcome to guayadeque!"
-msgstr "Вітаємо в Guayadeque!"
-
-#: src/MainFrame.cpp:111
-#: src/MainFrame.cpp:678
-msgid "Radio"
-msgstr "Радіо"
-
-#: src/MainFrame.cpp:115
-#: src/MainFrame.cpp:695
-msgid "Last.fm"
-msgstr "Last.fm"
-
-#: src/MainFrame.cpp:119
-#: src/MainFrame.cpp:712
-msgid "Lyrics"
-msgstr "Лірика"
-
-#: src/MainFrame.cpp:123
-#: src/MainFrame.cpp:746
-msgid "PlayLists"
-msgstr "Список програвання"
-
-#: src/MainFrame.cpp:127
-#: src/MainFrame.cpp:729
-#: src/MainFrame.cpp:946
-msgid "Podcasts"
-msgstr "Подкасти"
-
-#: src/MainFrame.cpp:282
-msgid "&Update Library"
-msgstr "&Оновити бібліотеку"
-
-#: src/MainFrame.cpp:282
-msgid "Update all songs from the directories configured"
-msgstr "Оновити всі пісні зі сконфігурованої директорії"
-
-#: src/MainFrame.cpp:285
-msgid "Update &Podcasts"
-msgstr "Оновити &Подкасти"
-
-#: src/MainFrame.cpp:285
-msgid "Update the podcasts added"
-msgstr "Оновити додані подкасти"
-
-#: src/MainFrame.cpp:289
-msgid "Update Covers"
-msgstr "Оновити обкладинки"
-
-#: src/MainFrame.cpp:289
-msgid "Try to download all missing covers"
-msgstr "Намагатися скачати всі бракуючі обкладинки"
-
-#: src/MainFrame.cpp:295
-msgid "&Preferences"
-msgstr "&Налаштування"
-
-#: src/MainFrame.cpp:295
-msgid "Change the options of the application"
-msgstr "Змінити опції програми"
-
-#: src/MainFrame.cpp:301
-msgid "&Quit"
-msgstr "&Вихід"
-
-#: src/MainFrame.cpp:301
-msgid "Exits the application"
-msgstr "Вийти з програми"
-
-#: src/MainFrame.cpp:305
-msgid "&Library"
-msgstr "&Бібліотека"
-
-#: src/MainFrame.cpp:312
-msgid "&Radio"
-msgstr "&Радіо"
-
-#: src/MainFrame.cpp:312
-msgid "Show/Hide the radio panel"
-msgstr "Показати/Сховати панель радіо"
-
-#: src/MainFrame.cpp:316
-msgid "Last.&fm"
-msgstr "Last.&fm"
-
-#: src/MainFrame.cpp:316
-msgid "Show/Hide the Last.fm panel"
-msgstr "Показати/Сховати панель Last.fm"
-
-#: src/MainFrame.cpp:320
-msgid "L&yrics"
-msgstr "&Лірика"
-
-#: src/MainFrame.cpp:320
-msgid "Show/Hide the lyrics panel"
-msgstr "Показати/Сховати панель лірики"
-
-#: src/MainFrame.cpp:324
-msgid "&PlayLists"
-msgstr "&Список програвання"
-
-#: src/MainFrame.cpp:324
-msgid "Show/Hide the playlists panel"
-msgstr "Показати/Сховати панель списку програвання"
-
-#: src/MainFrame.cpp:328
-msgid "P&odcasts"
-msgstr "П&одкасти"
-
-#: src/MainFrame.cpp:328
-msgid "Show/Hide the podcasts panel"
-msgstr "Показати/Сховати панель покастів"
-
-#: src/MainFrame.cpp:332
-msgid "&View"
-msgstr "&Перегляд"
-
-#: src/MainFrame.cpp:335
-msgid "&Next Track"
-msgstr "&Наступний трек"
-
-#: src/MainFrame.cpp:335
-msgid "Play the next track in the playlist"
-msgstr "Програвати наступний трек в списку програвання"
-
-#: src/MainFrame.cpp:338
-msgid "&Prev. Track"
-msgstr "&Попередній трек"
-
-#: src/MainFrame.cpp:338
-msgid "Play the previous track in the playlist"
-msgstr "Програвати попередній трек в списку програвання"
-
-#: src/MainFrame.cpp:342
-msgid "&Play"
-msgstr "&Програвати"
-
-#: src/MainFrame.cpp:342
-msgid "Play or Pause the current track in the playlist"
-msgstr "Програвати або призупинити поточний трек в списку програвання"
-
-#: src/MainFrame.cpp:345
-msgid "&Stop"
-msgstr "&Стоп"
-
-#: src/MainFrame.cpp:345
-msgid "Stop the current played track"
-msgstr "Зупинити поточний трек"
-
-#: src/MainFrame.cpp:349
-msgid "&Smart Mode"
-msgstr "&Smart Mode"
-
-#: src/MainFrame.cpp:349
-msgid "Update playlist based on Last.fm statics"
-msgstr "Оновити список програвання базований на Last.fm"
-
-#: src/MainFrame.cpp:352
-msgid "R&andomize"
-msgstr "В&ипадково"
-
-#: src/MainFrame.cpp:352
-msgid "Randomize the playlist"
-msgstr "Перемішати випадково список програвання"
-
-#: src/MainFrame.cpp:355
-msgid "&Repeat"
-msgstr "&Повторити"
-
-#: src/MainFrame.cpp:355
-msgid "Repeat the tracks in the playlist"
-msgstr "Повторити треки в списку програвання"
-
-#: src/MainFrame.cpp:358
-msgid "&Control"
-msgstr "&Контроль"
-
-#: src/MainFrame.cpp:361
-msgid "&About"
-msgstr "&Про програму"
-
-#: src/MainFrame.cpp:361
-msgid "Show information about guayadeque music player"
-msgstr "Показати інформацію про програвач Guayadeque"
-
-#: src/MainFrame.cpp:364
-msgid "&Help"
-msgstr "Д&опомога"
-
-#: src/MainFrame.cpp:516
-msgid "Covers"
-msgstr "Обкладинки"
-
-#: src/MainFrame.cpp:610
-msgid "Select destination directory"
-msgstr "Вибрати директорію призначення"
-
-#: src/MainFrame.cpp:615
-msgid "Copy To..."
-msgstr "Скопіювати до"
-
-#: src/DynamicPlayList.cpp:30
-#: src/DynamicPlayList.cpp:47
-msgid "Label"
-msgstr "Мітка"
-
-#: src/DynamicPlayList.cpp:31
-msgid "Path"
-msgstr "Шлях"
-
-#: src/DynamicPlayList.cpp:32
-#: src/DynamicPlayList.cpp:49
-msgid "Play Count"
-msgstr "Лічильник програвання"
-
-#: src/DynamicPlayList.cpp:32
-#: src/DynamicPlayList.cpp:49
-msgid "Last Play Time"
-msgstr "Час останнього програвання"
-
-#: src/DynamicPlayList.cpp:35
-msgid "Contains"
-msgstr "Містить"
-
-#: src/DynamicPlayList.cpp:35
-msgid "Does not contains"
-msgstr "Не містить"
-
-#: src/DynamicPlayList.cpp:35
-msgid "Equals"
-msgstr "Дорівнює"
-
-#: src/DynamicPlayList.cpp:36
-msgid "Begins with"
-msgstr "Починається з"
-
-#: src/DynamicPlayList.cpp:36
-msgid "Ends with"
-msgstr "Закінчується з"
-
-#: src/DynamicPlayList.cpp:38
-msgid "equals"
-msgstr "рівна"
-
-#: src/DynamicPlayList.cpp:38
-msgid "at least"
-msgstr "хоча б"
-
-#: src/DynamicPlayList.cpp:38
-msgid "at most"
-msgstr "не більше як"
-
-#: src/DynamicPlayList.cpp:40
-msgid "in"
-msgstr "в"
-
-#: src/DynamicPlayList.cpp:40
-msgid "after"
-msgstr "після"
-
-#: src/DynamicPlayList.cpp:40
-msgid "before"
-msgstr "перед"
-
-#: src/DynamicPlayList.cpp:42
-msgid "in the last"
-msgstr "в кінці"
-
-#: src/DynamicPlayList.cpp:42
-msgid "before the last"
-msgstr "перед кінцем"
-
-#: src/DynamicPlayList.cpp:44
-msgid "Tracks"
-msgstr "Треки"
-
-#: src/DynamicPlayList.cpp:44
-msgid "Minutes"
-msgstr "Хвилини"
-
-#: src/DynamicPlayList.cpp:49
-msgid "Added Time"
-msgstr "Час додавання"
-
-#: src/DynamicPlayList.cpp:52
-msgid "minutes"
-msgstr "хвилини"
-
-#: src/DynamicPlayList.cpp:52
-msgid "hours"
-msgstr "години"
-
-#: src/DynamicPlayList.cpp:52
-msgid "days"
-msgstr "дні"
-
-#: src/DynamicPlayList.cpp:52
-msgid "weeks"
-msgstr "тижні"
-
-#: src/DynamicPlayList.cpp:52
-msgid "months"
-msgstr "місяці"
-
-#: src/DynamicPlayList.cpp:131
-msgid "Dynamic Playlist Editor"
-msgstr "Редактор динамічного списку програвання"
-
-#: src/DynamicPlayList.cpp:146
-msgid " Current Filters "
-msgstr "Поточні фільтри"
-
-#: src/DynamicPlayList.cpp:224
-msgid " Result "
-msgstr " Результат "
-
-#: src/DynamicPlayList.cpp:229
-msgid "Limit To"
-msgstr "Обмежити до"
-
-#: src/DynamicPlayList.cpp:252
-msgid "Sort By"
-msgstr "Сортувати за"
-
-#: src/DynamicPlayList.cpp:263
-msgid "Descending"
-msgstr "По спаданню"
-
-#: src/DynamicPlayList.cpp:272
-msgid "Add tracks on any criteria"
-msgstr "Додати трек на нові критерії"
-
-#: src/TaListBox.cpp:64
-msgid "Add Label"
-msgstr "Додати мітку"
-
-#: src/TaListBox.cpp:64
-msgid "Create a new label"
-msgstr "Створити нову мітку"
-
-#: src/TaListBox.cpp:70
-msgid "Edit Label"
-msgstr "Редагувати мітку"
-
-#: src/TaListBox.cpp:70
-msgid "Change selected label"
-msgstr "Змінити вибрані мітки"
-
-#: src/TaListBox.cpp:74
-msgid "Delete label"
-msgstr "Видалити мітку"
-
-#: src/TaListBox.cpp:74
-msgid "Delete selected labels"
-msgstr "Видалити вибрані мітки"
-
-#: src/TaListBox.cpp:87
-msgid "Play current selected labels"
-msgstr "Програвати вибрані мітки"
-
-#: src/TaListBox.cpp:91
-msgid "Add current selected labels to playlist"
-msgstr "Додати поточні вибрані мітки до списку програвання"
-
-#: src/TaListBox.cpp:106
-#: src/TaListBox.cpp:145
-msgid "Label Name: "
-msgstr "Назва мітки:"
-
-#: src/TaListBox.cpp:106
-msgid "Please enter the label name"
-msgstr "Введіть назву мітки"
-
-#: src/TaListBox.cpp:123
-msgid "Are you sure to delete the selected labels?"
-msgstr "Ви дійсно бажаєте видалити вибрані мітки?"
-
-#: src/TaListBox.cpp:145
-msgid "Enter the new label name"
-msgstr "Ввести нову назву мітки"
-
-#: src/GeListBox.cpp:45
-msgid "Play current selected genres"
-msgstr "Програвати поточні вибрані жанри"
-
-#: src/GeListBox.cpp:49
-msgid "Add current selected genres to playlist"
-msgstr "Додати поточні вибрані жанри до списку програвання"
-
-#: src/OnlineLinks.cpp:65
-msgid "No search link defined"
-msgstr "Не визначено посилання для пошуку"
-
-#: src/OnlineLinks.cpp:65
-msgid "Add search links in preferences"
-msgstr "Додати посилання для пошуку в налаштування"
-
-#: src/CoverEdit.cpp:47
-msgid "Cover Editor"
-msgstr "Редактор обкладинки"
-
-#: src/CoverEdit.cpp:78
-msgid "From:"
-msgstr "З:"
-
-#: src/ArListBox.cpp:99
-msgid "Play current selected artists"
-msgstr "Програвати поточних вибраних виконавців"
-
-#: src/ArListBox.cpp:103
-msgid "Add current selected artists to playlist"
-msgstr "Додати поточних вибраних виконавців до списку програвання"
-
-#: src/ArListBox.cpp:111
-msgid "Edit the labels assigned to the selected artists"
-msgstr "Редагувати мітки приписані до вибраних виконавців"
-
-#: src/ArListBox.cpp:115
-msgid "Edit the songs from the selected artists"
-msgstr "Редагувати пісні вибраних виконавців"
-
-#: src/PlayListPanel.cpp:60
-msgid "Static playlists"
-msgstr "Статичний список програвання"
-
-#: src/PlayListPanel.cpp:61
-msgid "Dynamic playlists"
-msgstr "Динамічний список програвання"
-
-#: src/PlayListPanel.cpp:138
-#: src/PlayListPanel.cpp:355
-msgid "New Dynamic Playlist"
-msgstr "Новий динамічний список програвання"
-
-#: src/PlayListPanel.cpp:138
-msgid "Create a new dynamic playlist"
-msgstr "Створити новий динамічний список програвання"
-
-#: src/PlayListPanel.cpp:146
-msgid "Edit Playlist"
-msgstr "Редагувати список програвання"
-
-#: src/PlayListPanel.cpp:146
-msgid "Edit the selected playlist"
-msgstr "Редагувати вибраний список програвання"
-
-#: src/PlayListPanel.cpp:150
-msgid "Save the selected playlist as a Static Playlist"
-msgstr "Зберегти вибраний список програвання як статичний"
-
-#: src/PlayListPanel.cpp:155
-msgid "Rename Playlist"
-msgstr "Перейменувати список програвання"
-
-#: src/PlayListPanel.cpp:155
-msgid "Change the name of the selected playlist"
-msgstr "Змінити назву вибраного списку програвання"
-
-#: src/PlayListPanel.cpp:159
-msgid "Delete Playlist"
-msgstr "Видалити список програвання"
-
-#: src/PlayListPanel.cpp:159
-msgid "Delete the selected playlist"
-msgstr "Видалити вибраний список програвання"
-
-#: src/PlayListPanel.cpp:195
-msgid "Play lists:"
-msgstr "Програвати списки:"
-
-#: src/PlayListPanel.cpp:408
-msgid "Are you sure to delete the selected Playlist?"
-msgstr "Ви дійсно бажаєте видалити вибраний список програвання?"
-
-#: src/LabelEditor.cpp:47
-#: src/LibPanel.cpp:141
-#: src/RadioPanel.cpp:607
-msgid "Labels"
-msgstr "Мітки"
-
-#: src/LabelEditor.cpp:67
-msgid "Add a new label"
-msgstr "Додати нову мітку"
-
-#: src/LabelEditor.cpp:72
-msgid "Delete the selected labels"
-msgstr "Видалити вибрані мітки"
-
-#: src/LastFMPanel.cpp:378
-#: src/LastFMPanel.cpp:547
-msgid "Less..."
-msgstr "Менше..."
-
-#: src/LastFMPanel.cpp:378
-#: src/LastFMPanel.cpp:547
-msgid "More..."
-msgstr "Більше..."
-
-#: src/LastFMPanel.cpp:454
-#: src/LastFMPanel.cpp:649
-#: src/LastFMPanel.cpp:794
-#: src/LastFMPanel.cpp:931
-msgid "Play the artist tracks"
-msgstr "Програвати треки виконавця"
-
-#: src/LastFMPanel.cpp:458
-#: src/LastFMPanel.cpp:653
-#: src/LastFMPanel.cpp:798
-#: src/LastFMPanel.cpp:935
-msgid "Enqueue the artist tracks to the playlist"
-msgstr "Додати треки виконавця до списку програвання"
-
-#: src/LastFMPanel.cpp:462
-#: src/LastFMPanel.cpp:802
-#: src/LastFMPanel.cpp:939
-msgid "Search Artist"
-msgstr "Шукати виконавця"
-
-#: src/LastFMPanel.cpp:462
-#: src/LastFMPanel.cpp:802
-#: src/LastFMPanel.cpp:939
-msgid "Search the artist in the library"
-msgstr "Шукати виконавця в бібліотеці"
-
-#: src/LastFMPanel.cpp:470
-msgid "Copy the artist name to clipboard"
-msgstr "Скопіювати назву виконавця до буфера обміну"
-
-#: src/LastFMPanel.cpp:478
-#: src/LastFMPanel.cpp:673
-#: src/LastFMPanel.cpp:821
-#: src/LastFMPanel.cpp:955
-msgid "Visit last.fm page for this item"
-msgstr "Відвідати сторінку lst.fm на цю тему"
-
-#: src/LastFMPanel.cpp:503
-msgid "There is no information available for this artist."
-msgstr "Немає інформації про цього виконавця"
-
-#: src/LastFMPanel.cpp:657
-msgid "Search Album"
-msgstr "Шукати альбом"
-
-#: src/LastFMPanel.cpp:657
-msgid "Search the album in the library"
-msgstr "Шукати альбом в бібліотеці"
-
-#: src/LastFMPanel.cpp:665
-msgid "Copy the album info to clipboard"
-msgstr "Скопіювати інформацію про альбом до буфера обміну"
-
-#: src/LastFMPanel.cpp:810
-msgid "Update the information with the current selected artist"
-msgstr "Оновити інформацію з поточним вибраним виконавцем"
-
-#: src/LastFMPanel.cpp:813
-msgid "Copy the artist info to clipboard"
-msgstr "Скопіювати інформацію про виконавця до буфера обміну"
-
-#: src/LastFMPanel.cpp:947
-msgid "Copy the track info to clipboard"
-msgstr "Скопіювати інформацію про трек до буфера обміну"
-
-#: src/LastFMPanel.cpp:1072
-msgid "Artist Info"
-msgstr "Інформація про виконавця"
-
-#: src/LastFMPanel.cpp:1108
-msgid "Top Albums"
-msgstr "Топ альбомів"
-
-#: src/LastFMPanel.cpp:1139
-msgid "Similar Artists"
-msgstr "Подібні виконавці"
-
-#: src/LastFMPanel.cpp:1169
-msgid "Similar Tracks"
-msgstr "Подібні треки"
-
-#: src/TaskBar.cpp:113
-#: src/TaskBar.cpp:119
-msgid "Play current playlist"
-msgstr "Програвати поточний список програвання"
-
-#: src/TaskBar.cpp:119
-msgid "Stop"
-msgstr "Стоп"
-
-#: src/TaskBar.cpp:123
-msgid "Next Track"
-msgstr "Наступний трек"
-
-#: src/TaskBar.cpp:123
-msgid "Skip to next track in current playlist"
-msgstr "Перейти на наступний трек в поточному списку програвання"
-
-#: src/TaskBar.cpp:127
-msgid "Prev Track"
-msgstr "Попередній трек"
-
-#: src/TaskBar.cpp:127
-msgid "Skip to previous track in current playlist"
-msgstr "Перейти до попереднього треку в поточному списку програвання"
-
-#: src/TaskBar.cpp:134
-msgid "Exit"
-msgstr "Вийти"
-
-#: src/TaskBar.cpp:134
-msgid "Exit this program"
-msgstr "Вийти з програми"
-
-#: src/LibPanel.cpp:71
-msgid "Search:"
-msgstr "Пошук:"
-
-#: src/LibPanel.cpp:130
-#: src/RadioPanel.cpp:593
-msgid "Genres"
-msgstr "Жанри"
-
-#: src/LibPanel.cpp:166
-msgid "Artists"
-msgstr "Виконавці"
-
-#: src/LibPanel.cpp:177
-msgid "Albums"
-msgstr "Альбоми"
-
-#: src/LibPanel.cpp:620
-msgid "Artist Labels Editor"
-msgstr "Редактор міток виконавців"
-
-#: src/LibPanel.cpp:645
-msgid "Albums Labels Editor"
-msgstr "Редактор міток альбомів"
-
-#: src/LibPanel.cpp:803
-#: src/LibPanel.cpp:840
-msgid ""
-"Could not find the Album in the songs library.\n"
-"You should update the library."
-msgstr ""
-"Не можу знайти альбом в бібліотеці пісень.\n"
-"Ви повинні оновити бібліотеку."
-
-#: src/LibPanel.cpp:804
-#: src/LibPanel.cpp:841
-msgid "Error"
-msgstr "Помилка"
-
-#: src/LibPanel.cpp:871
-msgid "Are you sure to delete the selected album cover?"
-msgstr "Ви дійсно бажаєте видалити вибрану обкладинку альбому?"
-
-#: src/RadioPanel.cpp:102
-msgid "Name"
-msgstr "Назва"
-
-#: src/RadioPanel.cpp:104
-msgid "Listeners"
-msgstr "Слухачі"
-
-#: src/RadioPanel.cpp:173
-msgid "Add Genre"
-msgstr "Додати жанр"
-
-#: src/RadioPanel.cpp:173
-msgid "Create a new genre"
-msgstr "Створити новий жанр"
-
-#: src/RadioPanel.cpp:179
-msgid "Edit genre"
-msgstr "Редагувати жанр"
-
-#: src/RadioPanel.cpp:179
-msgid "Change selected genre"
-msgstr "Змінити вибраний жанр"
-
-#: src/RadioPanel.cpp:183
-msgid "Delete genre"
-msgstr "Видалити жанр"
-
-#: src/RadioPanel.cpp:183
-msgid "Delete selected genre"
-msgstr "Видалити вибраний жанр"
-
-#: src/RadioPanel.cpp:190
-msgid "Update Radio Stations"
-msgstr "Оновити радіостанції"
-
-#: src/RadioPanel.cpp:190
-msgid "Update the radio station lists"
-msgstr "Оновити список радіостанцій"
-
-#: src/RadioPanel.cpp:232
-msgid "Genre Name: "
-msgstr "Назва жанру:"
-
-#: src/RadioPanel.cpp:232
-msgid "Enter the new Genre Name"
-msgstr "Введіть назву нового жанру"
-
-#: src/RadioPanel.cpp:249
-msgid "Are you sure to delete the selected radio genres?"
-msgstr "Ви дійсно бажаєте видалити вибрані жанри радіо?"
-
-#: src/RadioPanel.cpp:381
-msgid "Edit the labels assigned to the selected stations"
-msgstr "Редагувати мітки приписані до вибраних радіостанцій"
-
-#: src/RadioPanel.cpp:737
-msgid "Stations Labels Editor"
-msgstr "Редактор міток станцій"
-
-#: src/RadioPanel.cpp:778
-msgid "Radios"
-msgstr "Радіо"
-
-#: src/RadioPanel.cpp:877
-msgid "There are not entries for this Radio Station"
-msgstr "Немає нічого для цієї радіостанції"
-
-#: src/wx/curl/base.h:106
-#: src/wx/curl/base.h:109
-#: src/wx/curl/base.h:113
-#: src/wx/curl/base.h:165
-#: src/wx/curl/base.h:210
-msgid "Not available"
-msgstr "Недоступно"
+#~ msgid "Not available"
+#~ msgstr "Недоступно"
 
 #~ msgid "Search for missing covers on application start"
 #~ msgstr "Buscar carátulas que falten al salir"
+
 #~ msgid "Edit the url to search"
 #~ msgstr "Edita la url donde buscar"
+
 #~ msgid "Enter the url to search"
 #~ msgstr "Introduce url para buscar"
+
 #~ msgid "Updating track %s"
 #~ msgstr "Actualizando pista %s"
+
 #~ msgid "Done updating the tracks"
 #~ msgstr "Finalizado la actualización de las pistas"
+
 #~ msgid "Title (%u)"
 #~ msgstr "Título (%u)"
+
 #~ msgid "Shows the total length of the current playlist"
 #~ msgstr "Muestra la duración total de la lista de reproducción"
+
 #~ msgid ""
 #~ "Enables or Disables the update of this page when the current playing "
 #~ "track changes"
 #~ msgstr ""
 #~ "Habilitar o deshabilitar actualización de la página cuando cambia la "
 #~ "canción"
+
 #~ msgid "Clear selection"
 #~ msgstr "Limpiar Selección"
+
 #~ msgid "Unselect all selected labels"
 #~ msgstr "Deseleccionar las etiquetas seleccionados"
+
 #~ msgid "BitRate*"
 #~ msgstr "Ratio de Bits*"
+
 #~ msgid "Listeners*"
 #~ msgstr "Oyentes*"
+
 #~ msgid "Name (%u)"
 #~ msgstr "Nombre (%u)"
+
 #~ msgid "Bitrate"
 #~ msgstr "Ratio de Bits"
-#~ msgid "Show/Hide the library panel"
-#~ msgstr "Mostrar/Ocultar el panel de la librería"
+
 #~ msgid "Tags"
 #~ msgstr "Etiquetas"
+
 #~ msgid "Please enter the Genre Name"
 #~ msgstr "Por favor introduzca el nombre del género"
-#~ msgid "Import &File"
-#~ msgstr "Importar &Fichero"
-#~ msgid "Import &Directory"
-#~ msgstr "Importar &Directorio"
+
 #~ msgid "Add current selected albums to guAlbumListBox"
 #~ msgstr "Añadir los albumes seleccionados "
-
