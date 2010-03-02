@@ -1,4 +1,5 @@
 
+  * Player title, artist or album now scrolls when put the mouse over it if needed. 
   * Added composer and comment to the dynamic playlists options
   * Added dragndrop support to Album Browser. You can drag the tracks or
     with control the cover to another album
