@@ -1146,7 +1146,7 @@ void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
     m_AlbumItemsMutex.Lock();
     //guLogMessage( wxT( "OnUpdateDetails %i - %i" ), event.GetInt(), m_ItemPanels.GetCount() );
     int Item = event.GetInt();
-    if( Item >= 0 && Item < m_ItemPanels.GetCount() )
+    if( ( Item >= 0 ) && Item < ( int ) m_ItemPanels.GetCount() )
         m_ItemPanels[ event.GetInt() ]->UpdateDetails();
     m_AlbumItemsMutex.Unlock();
 }
