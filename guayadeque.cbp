@@ -85,6 +85,8 @@
 		<Unit filename="src/AuiNotebook.h" />
 		<Unit filename="src/AutoPulseGauge.cpp" />
 		<Unit filename="src/AutoPulseGauge.h" />
+		<Unit filename="src/AutoScrollText.cpp" />
+		<Unit filename="src/AutoScrollText.h" />
 		<Unit filename="src/Base64.cpp" />
 		<Unit filename="src/Base64.h" />
 		<Unit filename="src/ChannelEditor.cpp" />

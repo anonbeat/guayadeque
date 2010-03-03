@@ -45,6 +45,7 @@ class guPlayListAppend : public wxDialog
 
     guDbLibrary *   m_Db;
     wxArrayInt *    m_Tracks;
+    guListItems *   m_PlayListItems;
 
   public:
     guPlayListAppend( wxWindow * parent, guDbLibrary * db, wxArrayInt * songs, guListItems * items );

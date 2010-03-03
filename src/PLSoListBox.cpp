@@ -107,7 +107,7 @@ void guPLSoListBox::OnDropFile( const wxString &filename )
 {
     if( m_PLId > 0 && m_PLType == GUPLAYLIST_STATIC )
     {
-        guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
+        //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
         if( guIsValidAudioFile( filename ) )
         {
             if( wxFileExists( filename ) )
@@ -125,11 +125,34 @@ void guPLSoListBox::OnDropFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::OnDropEnd( void )
 {
+    int index;
+    int count;
+    wxArrayInt ItemIds;
+
     if( m_PLId > 0 && m_PLType == GUPLAYLIST_STATIC )
     {
         if( m_DropIds.Count() )
         {
-            m_Db->AppendStaticPlayList( m_PLId, m_DropIds );
+            count = m_Items.Count();
+            for( index = 0; index < count; index++ )
+            {
+                ItemIds.Add( m_Items[ index ].m_SongId );
+            }
+
+            //int InsertPos = m_DragOverItem + m_DragOverAfter;
+            int InsertPos = m_DragOverItem + m_DragOverAfter;
+            if( m_DragOverItem == wxNOT_FOUND )
+                InsertPos = m_Items.Count();
+            //guLogMessage( wxT( "Pos: %i + %i  %i of %i " ), m_DragOverItem, m_DragOverAfter, InsertPos, m_Items.Count() );
+
+            count = m_DropIds.Count();
+            for( index = 0; index < count; index++ )
+            {
+                ItemIds.Insert( m_DropIds[ index ], InsertPos + index );
+            }
+
+            // Save it to the database
+            m_Db->UpdateStaticPlayList( m_PLId, ItemIds );
 
             m_DropIds.Clear();
         }
@@ -144,8 +167,7 @@ void guPLSoListBox::MoveSelection( void )
     wxArrayInt   MoveIndex;
     wxArrayInt   ItemIds;
 
-    if( m_DragOverItem == wxNOT_FOUND ||
-        m_PLId != GUPLAYLIST_STATIC )
+    if( m_PLType != GUPLAYLIST_STATIC )
         return;
 
     // Copy the elements we are going to move
@@ -159,9 +181,11 @@ void guPLSoListBox::MoveSelection( void )
     }
 
     // Get the position where to move it
-    int InsertPos = m_DragOverItem;
-    if( m_DragOverAfter )
-        InsertPos++;
+    int InsertPos;
+    if( m_DragOverItem != wxNOT_FOUND )
+        InsertPos = m_DragOverItem + m_DragOverAfter;
+    else
+        InsertPos = m_Items.Count();
 
     // Remove the elements from the original position
     int index;
