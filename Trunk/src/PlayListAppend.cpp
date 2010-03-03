@@ -57,6 +57,7 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, wxArray
 	FieldsSizer->Add( PlayListLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
 	m_PlayListComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_PlayListItems = plitems;
 	int index;
 	int count = plitems->Count();
 	for( index = 0; index < count; index++ )
@@ -109,9 +110,27 @@ int guPlayListAppend::GetSelectedPosition( void )
 }
 
 // -------------------------------------------------------------------------------- //
+int FindPlayListItem( guListItems * items, const wxString &playlistname )
+{
+    int Index;
+    int Count = items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( items->Item( Index ).m_Name.Lower() == playlistname )
+            return Index;
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
 int guPlayListAppend::GetSelectedPlayList( void )
 {
-    return m_PlayListComboBox->GetSelection();
+    int Selection = m_PlayListComboBox->GetSelection();
+    if( Selection == wxNOT_FOUND && !m_PlayListComboBox->GetValue().IsEmpty() )
+    {
+        Selection = FindPlayListItem( m_PlayListItems, m_PlayListComboBox->GetValue().Lower().Trim().Trim( false ) );
+    }
+    return Selection;
 }
 
 // -------------------------------------------------------------------------------- //
