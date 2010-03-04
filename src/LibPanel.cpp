@@ -362,17 +362,25 @@ void guLibPanel::ReloadControls( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSearchActivated( wxCommandEvent& event )
 {
-    wxArrayString Words = guSplitWords( m_InputTextCtrl->GetLineText( 0 ) );
+    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
+    if( !SearchString.IsEmpty() )
+    {
+        wxArrayString Words = guSplitWords( SearchString );
 
-    m_Db->SetTeFilters( Words );
-    m_UpdateLock = true;
-    m_LabelsListCtrl->ReloadItems();
-    m_GenreListCtrl->ReloadItems();
-    m_ArtistListCtrl->ReloadItems();
-    m_AlbumListCtrl->ReloadItems();
-    m_SongListCtrl->ReloadItems();
-    m_UpdateLock = false;
-    m_InputTextCtrl->ShowCancelButton( true );
+        m_Db->SetTeFilters( Words );
+        m_UpdateLock = true;
+        m_LabelsListCtrl->ReloadItems();
+        m_GenreListCtrl->ReloadItems();
+        m_ArtistListCtrl->ReloadItems();
+        m_AlbumListCtrl->ReloadItems();
+        m_SongListCtrl->ReloadItems();
+        m_UpdateLock = false;
+        m_InputTextCtrl->ShowCancelButton( true );
+    }
+    else
+    {
+        OnSearchCancelled( event );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -383,11 +391,11 @@ void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
     m_InputTextCtrl->Clear();
     m_Db->SetTeFilters( Words );
     m_UpdateLock = true;
-    m_LabelsListCtrl->ReloadItems();
-    m_GenreListCtrl->ReloadItems();
-    m_ArtistListCtrl->ReloadItems();
-    m_AlbumListCtrl->ReloadItems();
-    m_SongListCtrl->ReloadItems();
+    m_LabelsListCtrl->ReloadItems( false );
+    m_GenreListCtrl->ReloadItems( false );
+    m_ArtistListCtrl->ReloadItems( false );
+    m_AlbumListCtrl->ReloadItems( false );
+    m_SongListCtrl->ReloadItems( false );
     m_UpdateLock = false;
     m_InputTextCtrl->ShowCancelButton( false );
 }
