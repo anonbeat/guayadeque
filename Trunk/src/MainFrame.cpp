@@ -972,16 +972,29 @@ void guMainFrame::LibraryUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
 {
-    if( m_TaskBarIcon )
+    guTrack * Track = ( guTrack * ) event.GetClientData();
+    if( Track )
     {
-        guTrack * Track = ( guTrack * ) event.GetClientData();
-        if( Track )
+        SetTitle( Track->m_ArtistName + wxT( " " ) +
+                  Track->m_SongName + wxT( " - Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
+
+        if( m_TaskBarIcon )
         {
             m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "\r" ) +
                                                Track->m_ArtistName + wxT( "\n" ) +
                                                Track->m_SongName );
         }
     }
+    else
+    {
+        SetTitle( wxT( " - Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
+
+        if( m_TaskBarIcon )
+        {
+            m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
+        }
+    }
+
 
     if( m_LastFMPanel )
     {
