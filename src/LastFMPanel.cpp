@@ -101,8 +101,8 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	m_Text = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200, -1 ), 0 );
 	m_Text->Wrap( -1 );
 	//Text->SetCursor( wxCursor( wxCURSOR_HAND ) );
-	m_Text->SetMaxSize( wxSize( 250, -1 ) );
-	MainSizer->Add( m_Text, 1, wxALL|wxALIGN_CENTER_VERTICAL, 2 );
+	//m_Text->SetMaxSize( wxSize( 250, -1 ) );
+	MainSizer->Add( m_Text, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 2 );
 
 
 	SetSizer( MainSizer );
@@ -401,7 +401,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	m_Text->SetFont( CurrentFont );
 
-	TopSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	TopSizer->Add( m_Text, 0, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	TopSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 

@@ -2159,6 +2159,8 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
 {
     int Layout = event.GetId() - ID_MENU_LAYOUT_LOAD;
     bool IsShown;
+
+    Hide();
 //    bool NBIsShown = PaneInfo.IsShown();
     //guLogMessage( wxT( "Loading Layout %i" ), Layout );
     m_AuiManager.LoadPerspective( m_LayoutData[ Layout ] );
@@ -2204,6 +2206,8 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
     m_AuiManager.Update();
 
     OnPlayerPlayListUpdateTitle( event );
+
+    Show();
 
 }
 
