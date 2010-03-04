@@ -2535,7 +2535,7 @@ const wxString DynPLStringOption( int option, const wxString &text )
       FmtStr = wxT( "LIKE '%%%s'" );
       break;
   }
-  return wxString::Format( FmtStr, TextParam.c_str() );
+  return wxString::Format( FmtStr, escape_query_str( TextParam ).c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
