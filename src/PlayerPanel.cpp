@@ -353,12 +353,14 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_CHANGED	, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderChanged ), NULL, this );
+//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+    m_PlayerPositionSlider->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnPlayerPositionSliderMouseWheel ), NULL, this );
 
     m_PlayListCtrl->Connect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
     m_PlayListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
@@ -462,12 +464,13 @@ guPlayerPanel::~guPlayerPanel()
 
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+    m_PlayerPositionSlider->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnPlayerPositionSliderMouseWheel ), NULL, this );
 
     //m_PlayListCtrl->Disconnect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
     //m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
@@ -1814,10 +1817,36 @@ void guPlayerPanel::OnPlayerPositionSliderEndSeek( wxScrollEvent &event )
     if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
     {
         NewPos = event.GetPosition();
-        //guLogMessage( wxT( "Slider Set Pos to %i Of %i" ), ( int ) NewPos, 1000 );
-        //printf( "SetPos: %llu\n", ( long long int ) NewPos * m_MediaSong.Length );
-        //m_MediaCtrl->Seek( NewPos * m_MediaSong.m_Length );
+//        guLogMessage( wxT( "Slider EndSeek Set Pos to %i Of %i" ), ( int ) NewPos, 1000 );
+//        //printf( "SetPos: %llu\n", ( long long int ) NewPos * m_MediaSong.Length );
+//        //m_MediaCtrl->Seek( NewPos * m_MediaSong.m_Length );
+//        SetPosition( NewPos * m_MediaSong.m_Length );
+    }
+    m_SliderIsDragged = false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnPlayerPositionSliderChanged( wxScrollEvent &event )
+{
+    wxFileOffset NewPos;
+    if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+    {
+        NewPos = event.GetPosition();
+        //guLogMessage( wxT( "Slider Changed Set Pos to %i Of %i" ), ( int ) NewPos, 1000 );
         SetPosition( NewPos * m_MediaSong.m_Length );
+    }
+    m_SliderIsDragged = false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnPlayerPositionSliderMouseWheel( wxMouseEvent &event )
+{
+    if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+    {
+        int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
+        m_PlayerPositionSlider->SetValue( wxMax( 0, wxMin( 1000, m_PlayerPositionSlider->GetValue() +
+            ( Rotation * 50 ) ) ) );
+        SetPosition( m_PlayerPositionSlider->GetValue() * m_MediaSong.m_Length );
     }
     m_SliderIsDragged = false;
 }

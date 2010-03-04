@@ -427,42 +427,6 @@ void guPlayList::SetPlayList( const guTrackArray &NewItems )
     ReloadItems();
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guPlayList::OnDragOver( const wxCoord x, const wxCoord y )
-//{
-//    int w, h, d;
-//    GetTextExtent( wxT("Hg"), &w, &h, &d );
-//    h += d + 4;
-//    int wherey = y - h;
-//
-//    m_DragOverItem = HitTest( x, wherey );
-//    // Check if its over a item if its in the upper or lower part
-//    // to determine if will be inserted before or after
-//    if( ( int ) m_DragOverItem != wxNOT_FOUND )
-//    {
-//        //m_DragOverAfter = ( wherey > ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * GUPLAYLIST_ITEM_SIZE ) - ( GUPLAYLIST_ITEM_SIZE / 2 ) ) );
-//        m_DragOverAfter = ( wherey > ( int ) ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * m_ItemHeight ) - ( m_ItemHeight / 2 ) ) );
-//        RefreshLines( wxMax( ( int ) m_DragOverItem - 1, 0 ), wxMin( ( ( int ) m_DragOverItem + 3 ), GetCount() ) );
-//    }
-//    int Width;
-//    int Height;
-//    GetSize( &Width, &Height );
-//    Height -= h;
-//
-//    if( ( wherey > ( Height - 10 ) ) && ( int ) GetLastVisibleLine() != GetCount() )
-//    {
-//        ScrollLines( 1 );
-//    }
-//    else
-//    {
-//        if( ( wherey < 10 ) && GetFirstVisibleLine() > 0 )
-//        {
-//            ScrollLines( -1 );
-//        }
-//    }
-//    //printf( "DragOverItem: %d ( %d, %d )\n", DragOverItem, x, y );
-//}
-
 // -------------------------------------------------------------------------------- //
 void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
