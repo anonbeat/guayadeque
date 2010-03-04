@@ -697,7 +697,6 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSeparator();
 
-
     m_ViewPlayerPlayList = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYER_PLAYLIST, _( "Player PlayList" ), _( "Show/Hide the player playlist panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewPlayerPlayList );
     m_ViewPlayerPlayList->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST );
