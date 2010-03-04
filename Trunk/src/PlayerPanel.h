@@ -201,7 +201,8 @@ class guPlayerPanel : public wxPanel
     void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
     void                OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
     void                OnPlayerPositionSliderEndSeek( wxScrollEvent &event );
-
+    void                OnPlayerPositionSliderChanged( wxScrollEvent &event );
+    void                OnPlayerPositionSliderMouseWheel( wxMouseEvent &event );
     //
     void                OnPlayListUpdated( wxCommandEvent &event );
     void                OnPlayListDClick( wxCommandEvent &event );
