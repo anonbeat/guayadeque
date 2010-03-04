@@ -2452,7 +2452,7 @@ int guDbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * pl
                       PlayListId,
                       FilterItem->m_Type,
                       FilterItem->m_Option,
-                      FilterItem->m_Text.c_str(),
+                      escape_query_str( FilterItem->m_Text ).c_str(),
                       FilterItem->m_Number,
                       FilterItem->m_Option2
                        );
@@ -2613,6 +2613,10 @@ const wxString DynPLDateOption( const int option, const int value, const int opt
 const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 {
   wxASSERT( playlist );
+
+  if( !playlist->m_Filters.Count() )
+    return wxEmptyString;
+
   wxString query = wxT( "WHERE " );
   wxString dbNames = wxEmptyString;
   int index;
@@ -3105,7 +3109,7 @@ void guDbLibrary::UpdateDynPlayList( const int plid, const guDynPlayList * playl
                   plid,
                   FilterItem->m_Type,
                   FilterItem->m_Option,
-                  FilterItem->m_Text.c_str(),
+                  escape_query_str( FilterItem->m_Text ).c_str(),
                   FilterItem->m_Number,
                   FilterItem->m_Option2
                    );
