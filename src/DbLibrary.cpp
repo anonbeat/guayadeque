@@ -5927,7 +5927,9 @@ int guDbLibrary::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject *
 
   while( dbRes.NextRow() )
   {
-      files->AddFile( dbRes.GetString( 0 ) );
+      wxString FileName = dbRes.GetString( 0 );
+      FileName.Replace( wxT( "#" ), wxT( "%23" ) );
+      files->AddFile( FileName );
       Count++;
   }
 

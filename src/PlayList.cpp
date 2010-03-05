@@ -258,7 +258,9 @@ int  guPlayList::GetDragFiles( wxFileDataObject * files )
     count = Selection.Count();
     for( index = 0; index < count; index++ )
     {
-       files->AddFile( m_Items[ Selection[ index ] ].m_FileName );
+        wxString FileName = m_Items[ Selection[ index ] ].m_FileName;
+        FileName.Replace( wxT( "#" ), wxT( "%23" ) );
+        files->AddFile( FileName );
     }
     return count;
 }
@@ -925,7 +927,6 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
 
     guLogMessage( wxT( "Loading %s" ), FileName.c_str() );
 
-
     // If its a playlist
     if( guPlayListFile::IsValidPlayList( Uri.GetPath() ) )
     {
@@ -1492,7 +1493,7 @@ void guPlayList::UpdatedTrack( const guTrack * track )
     int itemcnt = m_Items.Count();
     for( item = 0; item < itemcnt; item++ )
     {
-        if( m_Items[ item ].m_SongId == track->m_SongId )
+        if( m_Items[ item ].m_FileName == track->m_FileName )
         {
             m_Items[ item ] = * track;
             found = true;

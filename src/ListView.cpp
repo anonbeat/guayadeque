@@ -1701,7 +1701,7 @@ void guListViewDropFilesThread::AddDropFiles( const wxString &dirname )
     wxString FileName;
     //wxString SavedDir( wxGetCwd() );
 
-    //guLogMessage( wxT( "Adding drop item: %s" ), dirname.c_str() );
+    //guLogMessage( wxT( "Adding drop item: '%s'" ), dirname.c_str() );
     if( wxDirExists( dirname ) )
     {
         wxString DirName = dirname;
