@@ -1008,6 +1008,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
         Track.m_SongName = FileName;
         Track.m_Length   = 0;
         Track.m_Year     = 0;
+        Track.m_Bitrate  = 0;
         Track.m_Rating   = wxNOT_FOUND;
         AddItem( Track );
     }

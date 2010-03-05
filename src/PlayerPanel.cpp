@@ -199,7 +199,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	CurrentFont.SetStyle( wxFONTSTYLE_ITALIC );
 	m_AlbumLabel->SetFont( CurrentFont );
 
-	PlayerLabelsSizer->Add( m_AlbumLabel, 0, wxEXPAND|wxALL, 2 );
+	PlayerLabelsSizer->Add( m_AlbumLabel, 0, wxEXPAND|wxLEFT|wxRIGHT|wxBOTTOM, 2 );
 
 	//m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_ArtistLabel = new guAutoScrollText( this, wxEmptyString );
@@ -208,7 +208,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	CurrentFont.SetStyle( wxFONTSTYLE_NORMAL );
 	m_ArtistLabel->SetFont( CurrentFont );
 
-	PlayerLabelsSizer->Add( m_ArtistLabel, 0, wxEXPAND|wxALL, 2 );
+	PlayerLabelsSizer->Add( m_ArtistLabel, 0, wxEXPAND|wxLEFT|wxRIGHT|wxBOTTOM, 2 );
 
 	m_PosLabelSizer = new wxBoxSizer( wxHORIZONTAL );
 	//m_PosLabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
@@ -1320,8 +1320,10 @@ void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
                 //m_MediaSong.AlbumName = MetaData[ 2 ];
 
                 SetTitleLabel( m_MediaSong.m_SongName );
-                //SetAlbumLabel( m_MediaSong.AlbumName );
+                //SetAlbumLabel( m_MediaSong.m_AlbumName );
                 SetArtistLabel( m_MediaSong.m_ArtistName );
+
+                GetSizer()->Layout();
 
                 //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
