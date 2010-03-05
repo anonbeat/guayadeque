@@ -1037,11 +1037,11 @@ bool guLyrcComArEngine::DoSearchLyric( const wxString &content )
 
     if( !TestDestroy() && !Content.IsEmpty() )
     {
-        StartPos = Content.Find( wxT( "</td></tr></table><br />" ) );
+        StartPos = Content.Find( wxT( "</td></tr></table>" ) );
 
         if( StartPos != wxNOT_FOUND )
         {
-            Content = Content.Mid( StartPos + 24 );
+            Content = Content.Mid( StartPos + 18 );
             EndPos = Content.Find( wxT( "<a href=\"#\"" ) );
             Content = Content.Mid( 0, EndPos );
 

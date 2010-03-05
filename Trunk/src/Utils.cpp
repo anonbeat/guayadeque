@@ -358,7 +358,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
         http.AddHeader( wxT( "Referer: " ) + referer );
     }
 
-    guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
+    //guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
 
     wxMemoryOutputStream Buffer;
     http.Get( Buffer, url );
@@ -397,7 +397,6 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
 //            wxStringOutputStream Outs( &RetVal );
 //            wxMemoryInputStream Ins( Buffer );
 //            Ins.Read( Outs );
-            guLogMessage( wxT( "Buffer Length : %i" ), Buffer.GetLength() );
             if( Buffer.GetLength() )
             {
                 RetVal = wxString::FromUTF8( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
@@ -417,7 +416,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     {
         guLogError( wxT( "Could not get '%s'" ), url.c_str() );
     }
-    guLogMessage( wxT( "Response:\n%s" ), RetVal.c_str() );
+    //guLogMessage( wxT( "Response:\n%s" ), RetVal.c_str() );
     return RetVal;
 }
 
