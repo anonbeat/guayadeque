@@ -358,7 +358,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
         http.AddHeader( wxT( "Referer: " ) + referer );
     }
 
-    //guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
+    guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
 
     wxMemoryOutputStream Buffer;
     http.Get( Buffer, url );
@@ -380,8 +380,8 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
             return wxEmptyString;
 
         wxString ResponseHeaders = http.GetResponseHeader();
-        //guLogMessage( wxT( "Response %u:\n%s\n%s" ),
-        //    http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
+//        guLogMessage( wxT( "Response %u:\n%s\n%s" ),
+//            http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
 
         if( ResponseHeaders.Find( wxT( "Content-Encoding: gzip" ) ) != wxNOT_FOUND )
         {
@@ -397,11 +397,18 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
 //            wxStringOutputStream Outs( &RetVal );
 //            wxMemoryInputStream Ins( Buffer );
 //            Ins.Read( Outs );
+            guLogMessage( wxT( "Buffer Length : %i" ), Buffer.GetLength() );
             if( Buffer.GetLength() )
             {
                 RetVal = wxString::FromUTF8( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
                 if( RetVal.IsEmpty() )
+                {
                     RetVal = wxString::From8BitData( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
+                }
+                if( RetVal.IsEmpty() )
+                {
+                    RetVal = wxString( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), wxConvISO8859_1 );
+                }
             }
         }
         //free( Buffer );
@@ -410,7 +417,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     {
         guLogError( wxT( "Could not get '%s'" ), url.c_str() );
     }
-    //guLogMessage( wxT( "Response:\n%s" ), RetVal.c_str() );
+    guLogMessage( wxT( "Response:\n%s" ), RetVal.c_str() );
     return RetVal;
 }
 

@@ -1029,30 +1029,50 @@ guLyrcComArEngine::~guLyrcComArEngine()
 }
 
 // -------------------------------------------------------------------------------- //
-void guLyrcComArEngine::SearchLyric( void )
+bool guLyrcComArEngine::DoSearchLyric( const wxString &content )
 {
     int         StartPos;
     int         EndPos;
-    wxString    Content;
-    wxString    UrlStr = wxString::Format( wxT( "http://lyrc.com.ar/en/tema1en.php?artist=%s&songname=%s" ),
-                        guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+    wxString Content = content;
 
-    Content = GetUrlContent( UrlStr );
-    //
-    if( !Content.IsEmpty() )
+    if( !TestDestroy() && !Content.IsEmpty() )
     {
-        StartPos = Content.Find( wxT( "</script></td></tr></table>" ) );
+        StartPos = Content.Find( wxT( "</td></tr></table><br />" ) );
+
         if( StartPos != wxNOT_FOUND )
         {
-            Content = Content.Mid( StartPos + 27 );
+            Content = Content.Mid( StartPos + 24 );
             EndPos = Content.Find( wxT( "<a href=\"#\"" ) );
             Content = Content.Mid( 0, EndPos );
 
+            Content.Replace( wxT( "<br />" ), wxT( "" ) );
             SetLyric( new wxString( Content.c_str() ) );
-            return;
+            return true;
+        }
+        else
+        {
+            StartPos = Content.Lower().Find( wxString::Format( wxT( "%s - %s" ),
+                m_ArtistName.Lower().c_str(),
+                m_TrackName.Lower().c_str() ) );
+
+            if( StartPos != wxNOT_FOUND )
+            {
+                Content = Content.Mid( 0, StartPos ).BeforeLast( wxT( '"' ) );
+                Content = Content.AfterLast( wxT( '"' ) );
+                return DoSearchLyric( GetUrlContent( wxT( "http://lyrc.com.ar/en/" ) + Content ) );
+            }
         }
     }
-    if( !TestDestroy() )
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyrcComArEngine::SearchLyric( void )
+{
+    wxString    UrlStr = wxString::Format( wxT( "http://lyrc.com.ar/en/tema1en.php?artist=%s&songname=%s" ),
+                        guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+
+    if( !DoSearchLyric( GetUrlContent( UrlStr ) ) && !TestDestroy() )
     {
         SetLyric( NULL );
     }
