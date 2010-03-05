@@ -161,7 +161,11 @@ int guTaListBox::GetDragFiles( wxFileDataObject * files )
     int count = GetSelectedSongs( &Songs );
     for( index = 0; index < count; index++ )
     {
-       files->AddFile( Songs[ index ].m_FileName );
+       wxString FileName = Songs[ index ].m_FileName;
+       FileName.Replace( wxT( "#" ), wxT( "%23" ) );
+       //FileName.Replace( wxT( "%" ), wxT( "%25" ) );
+       //guLogMessage( wxT( "Adding song '%s'" ), Songs[ index ].m_FileName.c_str() );
+       files->AddFile( FileName );
     }
     return count;
 }
