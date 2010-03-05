@@ -168,6 +168,9 @@ class guLeosLyricsEngine : public guSearchLyricEngine
 // -------------------------------------------------------------------------------- //
 class guLyrcComArEngine : public guSearchLyricEngine
 {
+  protected :
+    bool    DoSearchLyric( const wxString &content );
+
   public:
     guLyrcComArEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
     ~guLyrcComArEngine();
