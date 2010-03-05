@@ -44,6 +44,7 @@ guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label ) :
     m_AllowScroll = false;
     m_StartTimer.SetOwner( this );
     m_ScrollTimer.SetOwner( this );
+    //SetBackgroundColour( * wxCYAN );
 
     SetLabel( label );
 
