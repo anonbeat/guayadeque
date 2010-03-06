@@ -240,7 +240,7 @@ wxString guListView::OnGetItemText( const int row, const int col ) const
 // -------------------------------------------------------------------------------- //
 void guListView::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-    if( row == wxNOT_FOUND )
+    if( ( row == wxNOT_FOUND ) || ( row >= GetItemCount() ) )
         return;
     m_ListBox->DoDrawItem( dc, rect, row, col );
 }
@@ -905,6 +905,7 @@ void guListViewClient::OnPaint( wxPaintEvent &event )
     wxRect rectLine;
     rectLine.width = clientSize.x;
 
+    m_Owner->ItemsLock();
     // iterate over all visible lines
     const size_t lineMax = GetVisibleEnd();
     for( size_t line = GetFirstVisibleLine(); line < lineMax; line++ )
@@ -940,6 +941,7 @@ void guListViewClient::OnPaint( wxPaintEvent &event )
 
         rectLine.y += hLine;
     }
+    m_Owner->ItemsUnlock();
 }
 
 // -------------------------------------------------------------------------------- //

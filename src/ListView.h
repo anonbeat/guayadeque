@@ -288,6 +288,9 @@ class guListView : public wxScrolledWindow
     void                OnContextMenu( wxContextMenuEvent &event );
     void                OnHScroll( wxScrollWinEvent &event );
 
+    virtual void        ItemsLock() {};
+    virtual void        ItemsUnlock() {};
+
   public :
     guListView( wxWindow * parent, const int flags = wxLB_MULTIPLE, wxWindowID id = wxID_ANY,
                 const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize,
