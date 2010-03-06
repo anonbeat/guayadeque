@@ -48,6 +48,7 @@ class guSoListBox : public guListView
   protected :
     guDbLibrary *       m_Db;
     guTrackArray        m_Items;
+    wxMutex             m_ItemsMutex;
     wxString            m_ConfName;
 
     wxBitmap *          m_GreyStar;
@@ -66,14 +67,17 @@ class guSoListBox : public guListView
 
     void                        OnItemColumnClicked( wxListEvent &event );
 
+    virtual void                ItemsLock() { m_ItemsMutex.Lock(); };
+    virtual void                ItemsUnlock() { m_ItemsMutex.Unlock(); };
+
   public :
     guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style = 0 );
     ~guSoListBox();
 
     virtual void                ReloadItems( bool reset = true );
 
-    virtual int                 GetSelectedSongs( guTrackArray * Songs ) const;
-    virtual void                GetAllSongs( guTrackArray * Songs ) const;
+    virtual int                 GetSelectedSongs( guTrackArray * Songs );
+    virtual void                GetAllSongs( guTrackArray * Songs );
 
     virtual int                 GetItemId( const int row ) const;
     virtual wxString            GetItemName( const int row ) const;
