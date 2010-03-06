@@ -532,28 +532,28 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetArtistLabel( const wxString &artistname )
 {
-    wxString Label = artistname;
-    Label.Replace( wxT( "&" ), wxT( "&&" ) );
-    m_ArtistLabel->SetLabel( Label );
-    m_ArtistLabel->SetToolTip( Label );
+//    wxString Label = artistname;
+//    Label.Replace( wxT( "&" ), wxT( "&&" ) );
+    m_ArtistLabel->SetLabel( artistname );
+    m_ArtistLabel->SetToolTip( artistname );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetAlbumLabel( const wxString &albumname )
 {
-    wxString Label = albumname;
-    Label.Replace( wxT( "&" ), wxT( "&&" ) );
-    m_AlbumLabel->SetLabel( Label );
-    m_AlbumLabel->SetToolTip( Label );
+//    wxString Label = albumname;
+//    Label.Replace( wxT( "&" ), wxT( "&&" ) );
+    m_AlbumLabel->SetLabel( albumname );
+    m_AlbumLabel->SetToolTip( albumname );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetTitleLabel( const wxString &trackname )
 {
-    wxString Label = trackname;
-    Label.Replace( wxT( "&" ), wxT( "&&" ) );
-    m_TitleLabel->SetLabel( Label );
-    m_TitleLabel->SetToolTip( Label );
+//    wxString Label = trackname;
+//    Label.Replace( wxT( "&" ), wxT( "&&" ) );
+    m_TitleLabel->SetLabel( trackname );
+    m_TitleLabel->SetToolTip( trackname );
 }
 
 // -------------------------------------------------------------------------------- //
