@@ -25,8 +25,8 @@
 #include <wx/dcclient.h>
 #include <wx/region.h>
 
-#define guSCROLL_START_TIMEOUT  400
-#define guSCROLL_TIMEOUT        250
+#define guSCROLL_START_TIMEOUT  500
+#define guSCROLL_TIMEOUT        300
 
 BEGIN_EVENT_TABLE( guAutoScrollText, wxControl )
     EVT_PAINT( guAutoScrollText::OnPaint)
