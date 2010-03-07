@@ -40,6 +40,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_edit,
     guIMAGE_INDEX_exit,
     guIMAGE_INDEX_guayadeque,
+    guIMAGE_INDEX_guayadeque_taskbar,
     guIMAGE_INDEX_lastfm_as_off,
     guIMAGE_INDEX_lastfm_as_on,
     guIMAGE_INDEX_lastfm_on,

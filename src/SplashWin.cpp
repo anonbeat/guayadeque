@@ -26,7 +26,7 @@
 
 // -------------------------------------------------------------------------------- //
 guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
-    wxFrame( parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 500,300 ), wxSTAY_ON_TOP | wxNO_BORDER | wxFRAME_TOOL_WINDOW )
+    wxFrame( parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 500,275 ), wxSTAY_ON_TOP | wxNO_BORDER | wxFRAME_TOOL_WINDOW )
 {
     CentreOnScreen();
 
@@ -98,21 +98,18 @@ void guSplashFrame::DoPaint( wxDC &dc )
     wxString Version = wxT( ID_GUAYADEQUE_VERSION );
     wxString Credits = wxT( "J.Rios anonbeat@gmail.com" );
 
-    wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
+    wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
 
-    dc.SetFont( Font  );
     dc.SetBackgroundMode( wxTRANSPARENT );
     dc.SetTextForeground( wxColor( 150, 150, 150 ) );
 
     wxCoord width, height;
 
     dc.GetTextExtent( Version,  &width, &height, 0, 0, &Font );
-    width >>= 1;
-    dc.DrawText( Version, 365 - width, 210 );
+    dc.DrawText( Version, 493 - width, 257 );
 
     dc.GetTextExtent( Credits,  &width, &height, 0, 0, &Font );
-    width >>= 1;
-    dc.DrawText( Credits, 365 - width, 225 );
+    dc.DrawText( Credits, 493 - width, 240 );
 }
 
 // -------------------------------------------------------------------------------- //

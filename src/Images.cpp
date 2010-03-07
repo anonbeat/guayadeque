@@ -40,7 +40,8 @@
 #include "./images/grey_star_big.h"
 #include "./images/grey_star_mid.h"
 #include "./images/grey_star_tiny.h"
-#include "./images/guayadeque_png.h"
+#include "./images/guayadeque.h"
+#include "./images/guayadeque_taskbar.h"
 #include "./images/lastfm_as_off_png.h"
 #include "./images/lastfm_as_on_png.h"
 #include "./images/lastfm_on.h"
@@ -62,7 +63,7 @@
 #include "./images/search_png.h"
 #include "./images/skip_backward_png.h"
 #include "./images/skip_forward_png.h"
-#include "./images/splash_png.h"
+#include "./images/splash.h"
 #include "./images/system_run_png.h"
 #include "./images/tags_png.h"
 #include "./images/tiny_accept_png.h"
@@ -136,6 +137,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_edit,                          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_exit,                          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_guayadeque,                    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_guayadeque_taskbar,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_lastfm_as_off,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_lastfm_as_on,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_lastfm_on,                     wxBITMAP_TYPE_PNG ),
