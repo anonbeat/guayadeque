@@ -51,7 +51,7 @@ void guPLSoListBox::GetItemsList( void )
     m_PLSetIds.Empty();
     if( m_PLId > 0 )
     {
-        m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Items );
+        m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Items, &m_TracksLength, &m_TracksSize );
         m_Db->GetPlayListSetIds( m_PLId, &m_PLSetIds );
     }
     else
