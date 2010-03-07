@@ -557,7 +557,55 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
             Rating = 0;
         m_Items[ Row ].m_Rating = Rating;
         m_Db->SetTrackRating( m_Items[ Row ].m_SongId, Rating );
-        RefreshLine( Row );
+        //RefreshLine( Row );
+
+        // Update the track in database, playlist, etc
+        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_NONE, &m_Items[ Row ] );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::UpdatedTracks( const guTrackArray * tracks )
+{
+    int ItemIndex;
+    int ItemCount = m_Items.Count();
+
+    if( !ItemCount )
+        return;
+
+    int TrackIndex;
+    int TrackCount = tracks->Count();
+    for( TrackIndex = 0; TrackIndex < TrackCount; TrackIndex++ )
+    {
+        guTrack &CurTrack = tracks->Item( TrackIndex );
+
+        for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
+        {
+            if( CurTrack.m_FileName == m_Items[ ItemIndex ].m_FileName )
+            {
+                m_Items[ ItemIndex ] = CurTrack;
+                RefreshLine( ItemIndex );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::UpdatedTrack( const guTrack * track )
+{
+    int ItemIndex;
+    int ItemCount = m_Items.Count();
+
+    if( !ItemCount )
+        return;
+
+    for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
+    {
+        if( track->m_FileName == m_Items[ ItemIndex ].m_FileName )
+        {
+            m_Items[ ItemIndex ] = * track;
+            RefreshLine( ItemIndex );
+        }
     }
 }
 

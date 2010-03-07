@@ -2442,7 +2442,53 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
     guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
 }
 
+// -------------------------------------------------------------------------------- //
+void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
+{
+    if( updatedby != guUPDATED_TRACKS_PLAYER )
+    {
+        m_PlayerPanel->UpdatedTracks( tracks );
+    }
 
+    if( updatedby != guUPDATED_TRACKS_PLAYER_PLAYLIST )
+    {
+        m_PlayerPlayList->UpdatedTracks( tracks );
+    }
+
+    if( updatedby != guUPDATED_TRACKS_LIBRARY )
+    {
+        m_LibPanel->UpdatedTracks( tracks );
+    }
+
+    if( updatedby != guUPDATED_TRACKS_PLAYLISTS )
+    {
+        m_PlayListPanel->UpdatedTracks( tracks );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::UpdatedTrack( int updatedby, const guTrack * track )
+{
+    if( updatedby != guUPDATED_TRACKS_PLAYER )
+    {
+        m_PlayerPanel->UpdatedTrack( track );
+    }
+
+    if( updatedby != guUPDATED_TRACKS_PLAYER_PLAYLIST )
+    {
+        m_PlayerPlayList->UpdatedTrack( track );
+    }
+
+    if( updatedby != guUPDATED_TRACKS_LIBRARY )
+    {
+        m_LibPanel->UpdatedTrack( track );
+    }
+
+    if( updatedby != guUPDATED_TRACKS_PLAYLISTS )
+    {
+        m_PlayListPanel->UpdatedTrack( track );
+    }
+}
 
 
 

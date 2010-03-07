@@ -38,21 +38,6 @@ class guPlayerPanel;
 class guPlayList;
 
 // -------------------------------------------------------------------------------- //
-class guPlayerPlayList : public wxPanel
-{
-  protected :
-    guPlayList * m_PlayListCtrl;
-
-  public :
-    guPlayerPlayList( wxWindow * parent, guDbLibrary * db );
-    ~guPlayerPlayList() {}
-
-    guPlayList *    GetPlayListCtrl( void ) { return m_PlayListCtrl; }
-    void            SetPlayerPanel( guPlayerPanel * player );
-
-};
-
-// -------------------------------------------------------------------------------- //
 class guPlayList : public guListView
 {
   private :
@@ -143,8 +128,10 @@ class guPlayList : public guListView
     void                        Randomize( void );
     int                         GetCaps();
     void                        RemoveItem( int itemnum );
+
     void                        UpdatedTracks( const guTrackArray * tracks );
     void                        UpdatedTrack( const guTrack * track );
+
     bool                        StartPlaying( void ) { return m_StartPlaying; }
 
 
@@ -153,7 +140,25 @@ class guPlayList : public guListView
 
 };
 
-class guPlayListDropTarget;
+// -------------------------------------------------------------------------------- //
+class guPlayerPlayList : public wxPanel
+{
+  protected :
+    guPlayList * m_PlayListCtrl;
+
+  public :
+    guPlayerPlayList( wxWindow * parent, guDbLibrary * db );
+    ~guPlayerPlayList() {}
+
+    guPlayList *    GetPlayListCtrl( void ) { return m_PlayListCtrl; }
+    void            SetPlayerPanel( guPlayerPanel * player );
+
+    void inline     UpdatedTracks( const guTrackArray * tracks ) { m_PlayListCtrl->UpdatedTracks( tracks ); };
+    void inline     UpdatedTrack( const guTrack * track ) { m_PlayListCtrl->UpdatedTrack( track ); };
+
+};
+
+//class guPlayListDropTarget;
 
 #endif // PLAYLIST_H
 // -------------------------------------------------------------------------------- //

@@ -280,6 +280,9 @@ class guPlayerPanel : public wxPanel
     void                SetBitRate( int bitrate );
 
     void                UpdatedTracks( const guTrackArray * tracks );
+    void                UpdatedTrack( const guTrack * track );
+
+    void                UpdateLabels( void );
 
     void                SetPlayerVumeters( guPlayerVumeters * vumeters ) { m_PlayerVumeters = vumeters; };
     void                ResetVumeterLevel( void );

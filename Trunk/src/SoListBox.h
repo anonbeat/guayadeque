@@ -84,6 +84,9 @@ class guSoListBox : public guListView
 
     virtual wxArrayString       GetColumnNames( void );
 
+    void                        UpdatedTracks( const guTrackArray * tracks );
+    void                        UpdatedTrack( const guTrack * track );
+
 };
 
 #endif
