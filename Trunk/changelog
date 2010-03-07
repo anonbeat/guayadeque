@@ -1,4 +1,5 @@
 
+  * New Icon and new Splash
   * Tracks changes propagates thought the playlist, library, current track, etc
   * The player slider handles wheel events
   * Player title, artist or album now scrolls when put the mouse over it if needed. 

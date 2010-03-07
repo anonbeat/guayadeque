@@ -101,7 +101,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_AlbumBrowserPanel = NULL;
 
     //
-    m_AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
+    m_AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
 
 
     // Load the preconfigured layouts from config file
