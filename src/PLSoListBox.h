@@ -31,6 +31,8 @@ class guPLSoListBox : public guSoListBox
     int             m_PLType;   // The PlayList type
     wxArrayInt      m_PLSetIds; // The array containing the list of plset_id
     wxArrayInt      m_DropIds;  // The array containing the id of the songs dropped
+    wxLongLong      m_TracksSize;
+    wxLongLong      m_TracksLength;
 
     virtual void                GetItemsList( void );
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
@@ -47,6 +49,13 @@ class guPLSoListBox : public guSoListBox
 
     void    SetPlayList( int plid, int pltype );
     int     GetPlayListSetIds( wxArrayInt * setids ) const;
+
+    void    GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+    {
+        * count = GetItemCount();
+        * len   = m_TracksLength;
+        * size  = m_TracksSize;
+    }
 
 };
 

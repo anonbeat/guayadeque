@@ -212,7 +212,7 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
             else
             {
                 guTrackArray Tracks;
-                m_Db->GetPlayListSongs( ItemData->GetData(), ItemData->GetType(), &Tracks );
+                m_Db->GetPlayListSongs( ItemData->GetData(), ItemData->GetType(), &Tracks, NULL, NULL );
                 int index;
                 int count = Tracks.Count();
                 for( index = 0; index < count; index++ )
@@ -804,7 +804,7 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
                     wxString FileName = Uri.BuildUnescapedURI();
                     if( FileName.StartsWith( wxT( "file:" ) ) )
                         FileName = FileName.Mid( 5 );
-                    guLogMessage( wxT( "Trying to add file '%s'" ), FileName.c_str() );
+                    //guLogMessage( wxT( "Trying to add file '%s'" ), FileName.c_str() );
                     int SongId = m_Db->FindTrackFile( FileName, NULL );
                     if( SongId )
                     {
@@ -1157,7 +1157,8 @@ bool guPlayListPanel::GetPlayListCounters( wxLongLong * count, wxLongLong * len,
         guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
         if( ItemData )
         {
-            m_Db->GetPlayListCounters( ItemData->GetData(), ItemData->GetType(), count, len, size );
+//            m_Db->GetPlayListCounters( ItemData->GetData(), ItemData->GetType(), count, len, size );
+            m_PLTracksListBox->GetCounters( count, len, size );
             return true;
         }
     }

@@ -2846,11 +2846,14 @@ wxString guDbLibrary::GetPlayListQuery( const int plid )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks )
+int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks,
+                    wxLongLong * len, wxLongLong * size )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
   guTrack * Track;
+  wxLongLong TrackLength = 0;
+  wxLongLong TrackSize = 0;
 
   if( plid )
   {
@@ -2866,6 +2869,8 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
         Track = new guTrack();
         FillTrackFromDb( Track, &dbRes );
         tracks->Add( Track );
+        TrackLength += Track->m_Length;
+        TrackSize += Track->m_FileSize;
       }
       dbRes.Finalize();
     }
@@ -2927,90 +2932,17 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
                 break;
         }
         tracks->Add( Track );
+        TrackLength += Track->m_Length;
+        TrackSize += Track->m_FileSize;
       }
       dbRes.Finalize();
     }
   }
+  if( len )
+    * len = TrackLength;
+  if( size )
+    * size = TrackSize;
   return tracks->Count();
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::GetPlayListCounters( const int plid, const int pltype,
-                            wxLongLong * count, wxLongLong * len, wxLongLong * size )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  if( plid )
-  {
-    if( pltype == GUPLAYLIST_STATIC )
-    {
-      query = wxT( "SELECT COUNT(), SUM( song_length ), SUM( song_filesize ) FROM songs " );
-      query += wxString::Format( wxT( ", plsets WHERE plset_songid = song_id AND plset_plid = %u" ), plid );
-
-      dbRes = ExecuteQuery( query );
-
-      if( dbRes.NextRow() )
-      {
-          * count = dbRes.GetInt64( 0 );
-          * len   = dbRes.GetInt64( 1 );
-          * size  = dbRes.GetInt64( 2 );
-      }
-      dbRes.Finalize();
-    }
-    else //GUPLAYLIST_DYNAMIC
-    {
-      guDynPlayList PlayList;
-      GetDynamicPlayList( plid, &PlayList );
-
-      query = wxT( "SELECT COUNT(), SUM( song_length ), SUM( song_filesize ) FROM songs " ) +
-              DynPlayListToSQLQuery( &PlayList );
-
-      dbRes = ExecuteQuery( query );
-
-      //guLogMessage( wxT( "%s" ), query.c_str() );
-
-      if( dbRes.NextRow() )
-      {
-          if( PlayList.m_Limited )
-          {
-              switch( PlayList.m_LimitType )
-              {
-                  case guDYNAMIC_FILTER_LIMIT_TRACKS : // TRACKS
-                    * count = PlayList.m_LimitValue;
-                    * len   = dbRes.GetInt64( 1 );
-                    * size  = dbRes.GetInt64( 2 );
-                    break;
-
-                  case guDYNAMIC_FILTER_LIMIT_MINUTES : // Minutes -> to seconds
-                    * count = dbRes.GetInt64( 0 );
-                    * len   = PlayList.m_LimitValue * 60;
-                    * size  = dbRes.GetInt64( 2 );
-                    break;
-
-                  case guDYNAMIC_FILTER_LIMIT_MEGABYTES : // MB -> To bytes
-                    * count = dbRes.GetInt64( 0 );
-                    * len   = dbRes.GetInt64( 1 );
-                    * size  = PlayList.m_LimitValue * 1000;
-                    break;
-
-                  case guDYNAMIC_FILTER_LIMIT_GIGABYTES : // GB -> to bytes
-                    * count = dbRes.GetInt64( 0 );
-                    * len   = dbRes.GetInt64( 1 );
-                    * size  = PlayList.m_LimitValue * 1000000;
-                    break;
-              }
-          }
-          else
-          {
-              * count = dbRes.GetInt64( 0 );
-              * len   = dbRes.GetInt64( 1 );
-              * size  = dbRes.GetInt64( 2 );
-          }
-      }
-      dbRes.Finalize();
-    }
-  }
 }
 
 // -------------------------------------------------------------------------------- //
