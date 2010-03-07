@@ -142,6 +142,9 @@ class guLibPanel : public wxPanel
     bool IsPanelShown( const int panelid ) const;
     void ShowPanel( const int panelid, bool show );
 
+    void inline UpdatedTracks( const guTrackArray * tracks ) { m_SongListCtrl->UpdatedTracks( tracks ); };
+    void inline UpdatedTrack( const guTrack * track ) { m_SongListCtrl->UpdatedTrack( track ); };
+
 };
 
 #endif

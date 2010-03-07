@@ -26,6 +26,7 @@
 #include "Images.h"
 #include "LabelEditor.h"
 #include "MainApp.h"
+#include "MainFrame.h"
 #include "OnlineLinks.h"
 #include "PlayerPanel.h"
 #include "PlayListAppend.h"
@@ -558,11 +559,14 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                         }
                         m_Items[ Item ].m_Rating = Rating;
                         RefreshLine( Item );
-                        if( Item == m_CurItem )
-                        {
-                            m_PlayerPanel->SetRating( Rating );
-                        }
+//                        if( Item == m_CurItem )
+//                        {
+//                            m_PlayerPanel->SetRating( Rating );
+//                        }
                         m_Db->SetTrackRating( m_Items[ Item ].m_SongId, Rating );
+
+                        // Update the track in database, playlist, etc
+                        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER_PLAYLIST, &m_Items[ Item ] );
                     }
                     return;
                 }
@@ -1326,7 +1330,9 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
             m_Db->UpdateSongs( &Songs );
             UpdateImages( Songs, Images );
             UpdateLyrics( Songs, Lyrics );
-            m_PlayerPanel->UpdatedTracks( &Songs );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Songs );
         }
         TrackEditor->Destroy();
     }
@@ -1468,9 +1474,9 @@ void guPlayList::UpdatedTracks( const guTrackArray * tracks )
         int itemcnt = m_Items.Count();
         for( item = 0; item < itemcnt; item++ )
         {
-            if( m_Items[ item ].m_FileName == ( * tracks )[ index ].m_FileName )
+            if( m_Items[ item ].m_FileName == tracks->Item( index ).m_FileName )
             {
-                m_Items[ item ] = ( * tracks )[ index ];
+                m_Items[ item ] = tracks->Item( index );
                 found = true;
             }
         }

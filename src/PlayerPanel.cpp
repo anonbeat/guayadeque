@@ -615,10 +615,12 @@ void guPlayerPanel::SetBitRate( int bitrate )
         if( !m_MediaSong.m_Bitrate )
         {
             m_MediaSong.m_Bitrate = bitrate;
-            m_PlayListCtrl->UpdatedTrack( &m_MediaSong );
 
             if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
                 m_Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
     }
     else
@@ -831,7 +833,7 @@ void guPlayerPanel::UpdateStatus()
             m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
         {
             m_MediaSong.m_Length = m_MediaCtrl->GetLength();
-            m_PlayListCtrl->UpdatedTrack( &m_MediaSong );
+
             if( m_MediaSong.m_SongId )
             {
                 if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
@@ -839,6 +841,9 @@ void guPlayerPanel::UpdateStatus()
                 else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
                     m_Db->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
             }
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
 
         //CurPos = m_MediaCtrl->Tell();
@@ -996,8 +1001,8 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
             else
                 m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
 
-            // Update the track in the playlist
-            m_PlayListCtrl->UpdatedTrack( ( guTrack * ) &m_MediaSong );
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
     }
 
@@ -1006,21 +1011,8 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     m_MediaSong = * Song;
 
     // Update the Current Playing Song Info
-    SetTitleLabel( m_MediaSong.m_SongName );
-    SetAlbumLabel( m_MediaSong.m_AlbumName );
-    SetArtistLabel( m_MediaSong.m_ArtistName );
+    UpdateLabels();
     UpdatePositionLabel( 0 );
-    SetRatingLabel( m_MediaSong.m_Rating );
-
-    if( m_MediaSong.m_Year > 0 )
-    {
-        m_YearLabel->SetLabel( wxString::Format( wxT( "%u" ), m_MediaSong.m_Year ) );
-    }
-    else
-        m_YearLabel->SetLabel( wxEmptyString );
-
-    SetBitRateLabel( m_MediaSong.m_Bitrate );
-
 
 //    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
 //        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
@@ -1906,13 +1898,16 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
 void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
 {
     m_MediaSong.m_Rating = event.GetInt();
-    if( m_MediaSong.m_SongId > 0 )
+    if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
     {
         m_Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
-        m_PlayListCtrl->UpdatedTrack( ( guTrack * ) &m_MediaSong );
+
+        // Update the track in database, playlist, etc
+        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
     }
     else
     {
+        m_MediaSong.m_Rating = -1;
         m_Rating->SetRating( -1 );
     }
 }
@@ -1925,33 +1920,45 @@ void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
     int count = tracks->Count();
     for( index = 0; index < count; index++ )
     {
-        if( ( * tracks )[ index ].m_FileName == m_MediaSong.m_FileName )
+        if( tracks->Item( index ).m_FileName == m_MediaSong.m_FileName )
         {
-            m_MediaSong = ( * tracks )[ index ];
-
+            m_MediaSong = tracks->Item( index );
             // Update the Current Playing Song Info
-            SetTitleLabel( m_MediaSong.m_SongName );
-            SetAlbumLabel( m_MediaSong.m_AlbumName );
-            SetArtistLabel( m_MediaSong.m_ArtistName );
-            SetRatingLabel( m_MediaSong.m_Rating );
-
-            if( m_MediaSong.m_Year > 0 )
-            {
-                m_YearLabel->SetLabel( wxString::Format( wxT( "%u" ), m_MediaSong.m_Year ) );
-            }
-            else
-            {
-                m_YearLabel->SetLabel( wxEmptyString );
-            }
-
+            UpdateLabels();
             break;
         }
     }
+}
 
-    if( m_PlayListCtrl )
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::UpdatedTrack( const guTrack * track )
+{
+    wxASSERT( track );
+    if( track->m_FileName == m_MediaSong.m_FileName )
     {
-        m_PlayListCtrl->UpdatedTracks( tracks );
+        m_MediaSong = * track;
+        // Update the Current Playing Song Info
+        UpdateLabels();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::UpdateLabels( void )
+{
+    // Update the Current Playing Song Info
+    SetTitleLabel( m_MediaSong.m_SongName );
+    SetAlbumLabel( m_MediaSong.m_AlbumName );
+    SetArtistLabel( m_MediaSong.m_ArtistName );
+    SetRatingLabel( m_MediaSong.m_Rating );
+
+    if( m_MediaSong.m_Year > 0 )
+    {
+        m_YearLabel->SetLabel( wxString::Format( wxT( "%u" ), m_MediaSong.m_Year ) );
+    }
+    else
+        m_YearLabel->SetLabel( wxEmptyString );
+
+    SetBitRateLabel( m_MediaSong.m_Bitrate );
 }
 
 // -------------------------------------------------------------------------------- //

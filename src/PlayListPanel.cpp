@@ -27,6 +27,7 @@
 #include "DynamicPlayList.h"
 #include "Images.h"
 #include "LabelEditor.h"
+#include "MainFrame.h"
 #include "PlayListAppend.h"
 #include "PlayListFile.h"
 #include "TagInfo.h"
@@ -552,7 +553,6 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
 
-//	m_MainSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -593,8 +593,6 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectGenre ) );
     Disconnect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
     Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
-
-//	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 
     m_AuiManager.UnInit();
 }
@@ -996,7 +994,9 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
             m_PLTracksListBox->ReloadItems();
-            m_PlayerPanel->UpdatedTracks( &Tracks );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYLISTS, &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -1162,14 +1162,6 @@ bool guPlayListPanel::GetPlayListCounters( wxLongLong * count, wxLongLong * len,
         }
     }
     return false;
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayListPanel::MainSplitterOnIdle( wxIdleEvent &event )
-{
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    m_MainSplitter->SetSashPosition( Config->ReadNum( wxT( "PlayListSashPos" ), 175, wxT( "Positions" ) ) );
-//	m_MainSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPlayListPanel::MainSplitterOnIdle ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //

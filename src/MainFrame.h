@@ -72,6 +72,14 @@
 #define     guPANEL_MAIN_VISIBLE_DEFAULT    ( guPANEL_MAIN_PLAYERPLAYLIST | guPANEL_MAIN_PLAYERFILTERS | \
                                               guPANEL_MAIN_SELECTOR )
 
+enum guUPDATED_TRACKS {
+    guUPDATED_TRACKS_NONE = 0,
+    guUPDATED_TRACKS_PLAYER,
+    guUPDATED_TRACKS_PLAYER_PLAYLIST,
+    guUPDATED_TRACKS_LIBRARY,
+    guUPDATED_TRACKS_PLAYLISTS
+};
+
 class guTaskBarIcon;
 class guLibUpdateThread;
 class guUpdatePodcastsTimer;
@@ -266,6 +274,8 @@ class guMainFrame : public wxFrame
     void                AddPodcastsDownloadItems( guPodcastItemArray * items );
     void                RemovePodcastDownloadItems( guPodcastItemArray * items );
 
+    void                UpdatedTracks( int updatedby, const guTrackArray * tracks );
+    void                UpdatedTrack( int updatedby, const guTrack * track );
 };
 
 // -------------------------------------------------------------------------------- //

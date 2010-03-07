@@ -164,8 +164,6 @@ class guPlayListPanel : public wxPanel
     void                OnPLTracksSelectArtist( wxCommandEvent &event );
     void                OnPLTracksSelectAlbum( wxCommandEvent &event );
 
-    void                MainSplitterOnIdle( wxIdleEvent &event );
-
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();
@@ -173,6 +171,9 @@ class guPlayListPanel : public wxPanel
     void                PlayListUpdated( void );
 
     bool                GetPlayListCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
+
+    void inline         UpdatedTracks( const guTrackArray * tracks ) { m_PLTracksListBox->UpdatedTracks( tracks ); };
+    void inline         UpdatedTrack( const guTrack * track ) { m_PLTracksListBox->UpdatedTrack( track ); };
 
 };
 

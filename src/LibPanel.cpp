@@ -751,21 +751,24 @@ void guLibPanel::OnAlbumQueueClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
 {
-    guTrackArray Songs;
+    guTrackArray Tracks;
     guImagePtrArray Images;
     wxArrayString Lyrics;
-    m_ArtistListCtrl->GetSelectedSongs( &Songs );
-    if( !Songs.Count() )
+    m_ArtistListCtrl->GetSelectedSongs( &Tracks );
+    if( !Tracks.Count() )
         return;
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
+
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
-            m_Db->UpdateSongs( &Songs );
-            UpdateImages( Songs, Images );
-            UpdateLyrics( Songs, Lyrics );
-            m_PlayerPanel->UpdatedTracks( &Songs );
+            m_Db->UpdateSongs( &Tracks );
+            UpdateImages( Tracks, Images );
+            UpdateLyrics( Tracks, Lyrics );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -774,22 +777,24 @@ void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
 {
-    guTrackArray Songs;
+    guTrackArray Tracks;
     guImagePtrArray Images;
     wxArrayString Lyrics;
     //m_AlbumListCtrl->GetSelectedSongs( &Songs );
-    m_Db->GetAlbumsSongs( m_AlbumListCtrl->GetSelectedItems(), &Songs, true );
-    if( !Songs.Count() )
+    m_Db->GetAlbumsSongs( m_AlbumListCtrl->GetSelectedItems(), &Tracks, true );
+    if( !Tracks.Count() )
         return;
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
-            m_Db->UpdateSongs( &Songs );
-            UpdateImages( Songs, Images );
-            UpdateLyrics( Songs, Lyrics );
-            m_PlayerPanel->UpdatedTracks( &Songs );
+            m_Db->UpdateSongs( &Tracks );
+            UpdateImages( Tracks, Images );
+            UpdateLyrics( Tracks, Lyrics );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -993,21 +998,23 @@ void guLibPanel::OnSongQueueAllClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
 {
-    guTrackArray Songs;
-    m_SongListCtrl->GetSelectedSongs( &Songs );
+    guTrackArray Tracks;
+    m_SongListCtrl->GetSelectedSongs( &Tracks );
     guImagePtrArray Images;
     wxArrayString Lyrics;
-    if( !Songs.Count() )
+    if( !Tracks.Count() )
         return;
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
-            m_Db->UpdateSongs( &Songs );
-            UpdateImages( Songs, Images );
-            UpdateLyrics( Songs, Lyrics );
-            m_PlayerPanel->UpdatedTracks( &Songs );
+            m_Db->UpdateSongs( &Tracks );
+            UpdateImages( Tracks, Images );
+            UpdateLyrics( Tracks, Lyrics );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
         }
         TrackEditor->Destroy();
     }
