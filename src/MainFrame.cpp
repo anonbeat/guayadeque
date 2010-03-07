@@ -2455,12 +2455,12 @@ void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
         m_PlayerPlayList->UpdatedTracks( tracks );
     }
 
-    if( updatedby != guUPDATED_TRACKS_LIBRARY )
+    if( ( updatedby != guUPDATED_TRACKS_LIBRARY ) && m_LibPanel )
     {
         m_LibPanel->UpdatedTracks( tracks );
     }
 
-    if( updatedby != guUPDATED_TRACKS_PLAYLISTS )
+    if( ( updatedby != guUPDATED_TRACKS_PLAYLISTS ) && m_PlayListPanel )
     {
         m_PlayListPanel->UpdatedTracks( tracks );
     }
@@ -2479,12 +2479,12 @@ void guMainFrame::UpdatedTrack( int updatedby, const guTrack * track )
         m_PlayerPlayList->UpdatedTrack( track );
     }
 
-    if( updatedby != guUPDATED_TRACKS_LIBRARY )
+    if( ( updatedby != guUPDATED_TRACKS_LIBRARY ) && m_LibPanel )
     {
         m_LibPanel->UpdatedTrack( track );
     }
 
-    if( updatedby != guUPDATED_TRACKS_PLAYLISTS )
+    if( ( updatedby != guUPDATED_TRACKS_PLAYLISTS ) && m_PlayListPanel )
     {
         m_PlayListPanel->UpdatedTrack( track );
     }
