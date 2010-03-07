@@ -106,10 +106,10 @@ void guSplashFrame::DoPaint( wxDC &dc )
     wxCoord width, height;
 
     dc.GetTextExtent( Version,  &width, &height, 0, 0, &Font );
-    dc.DrawText( Version, 493 - width, 257 );
+    dc.DrawText( Version, 493 - width, 270 - height );
 
     dc.GetTextExtent( Credits,  &width, &height, 0, 0, &Font );
-    dc.DrawText( Credits, 493 - width, 240 );
+    dc.DrawText( Credits, 493 - width, 270 - ( height * 2 ) );
 }
 
 // -------------------------------------------------------------------------------- //
