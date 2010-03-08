@@ -150,6 +150,21 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
         dbus_message_unref( dbmsg );
     }
 
+    // Send the Play
+    dbmsg = dbus_message_new_method_call( GUAYADEQUE_MPRIS_SERVICENAME,
+                                          GUAYADEQUE_MPRIS_TRACKLIST_PATH,
+                                          GUAYADEQUE_MPRIS_INTERFACE,
+                                          "Play" );
+    dbreply = dbus_connection_send_with_reply_and_block( dbconn, dbmsg, 5000, &dberr );
+    if( dbus_error_is_set( &dberr ) )
+    {
+          guLogMessage( wxT( "Error sending Play" ) );
+          printf( "Error getting a reply: %s\n", dberr.message );
+          dbus_error_free( &dberr );
+    }
+    dbus_message_unref( dbreply );
+    dbus_message_unref( dbmsg );
+
     dbus_connection_close( dbconn );
     dbus_connection_unref( dbconn );
 
@@ -173,7 +188,9 @@ bool guMainApp::OnInit()
             while( RetryCnt < 25 )
             {
                 if( SendFilesByMPRIS( argc, argv ) )
+                {
                     break;
+                }
                 wxMilliSleep( 100 );
             }
         }

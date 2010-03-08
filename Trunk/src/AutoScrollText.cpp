@@ -86,7 +86,7 @@ void guAutoScrollText::OnPaint( wxPaintEvent &event )
     dc.SetBackgroundMode( wxTRANSPARENT );
     dc.SetTextForeground( GetForegroundColour() );
     dc.SetFont( GetFont() );
-    dc.DrawText( m_Label.Mid( m_ScrollPos ), 2, 2 );
+    dc.DrawText( m_Label.Mid( m_ScrollPos ), 0, 0 );
 }
 
 // -------------------------------------------------------------------------------- //
