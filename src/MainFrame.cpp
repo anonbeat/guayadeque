@@ -974,8 +974,8 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
     guTrack * Track = ( guTrack * ) event.GetClientData();
     if( Track )
     {
-        SetTitle( Track->m_ArtistName + wxT( " " ) +
-                  Track->m_SongName + wxT( " - Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
+        SetTitle( Track->m_SongName + wxT( " / " ) + Track->m_ArtistName +
+            wxT( " - Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
 
         if( m_TaskBarIcon )
         {
