@@ -113,6 +113,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     m_AuiManager.AddPane( ChannelsPanel,
             wxAuiPaneInfo().Name( wxT( "PodcastsChannels" ) ).Caption( _( "Channels" ) ).
             MinSize( 50, 50 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Left() );
 
 
@@ -259,6 +260,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 
     m_AuiManager.AddPane( DetailsPanel, wxAuiPaneInfo().Name( wxT( "PodcastsDetails" ) ).Caption( _( "Podcast Details" ) ).
             MinSize( 100, 100 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Bottom() );
 
 

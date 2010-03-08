@@ -741,6 +741,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
     m_AuiManager.AddPane( SearchPanel,
             wxAuiPaneInfo().Name( wxT( "RadioTextSearch" ) ).Caption( _( "Text Search" ) ).
             MinSize( 60, 28 ).MaxSize( -1, 28 ).Row( 0 ).Layer( 2 ).Position( 0 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Top() );
 
 
@@ -761,6 +762,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 	m_AuiManager.AddPane( GenrePanel,
             wxAuiPaneInfo().Name( wxT( "RadioGenres" ) ).Caption( _( "Genres" ) ).
             MinSize( 60, 60 ).Layer( 1 ).Row( 0 ).Position( 0 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Left() );
 
 
@@ -780,6 +782,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 	m_AuiManager.AddPane( LabelsPanel,
             wxAuiPaneInfo().Name( wxT( "RadioLabels" ) ).Caption( _( "Labels" ) ).
             MinSize( 60, 60 ).Layer( 1 ).Row( 0 ).Position( 1 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Left() );
 
 

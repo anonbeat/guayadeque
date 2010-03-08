@@ -108,6 +108,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_AuiManager.AddPane( SearchPanel,
             wxAuiPaneInfo().Name( wxT( "TextSearch" ) ).Caption( _( "Text Search" ) ).
             MinSize( 60, 28 ).MaxSize( -1, 28 ).Row( 0 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Top() );
 
 
@@ -124,6 +125,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_AuiManager.AddPane( GenrePanel, wxAuiPaneInfo().Name( wxT( "Genres" ) ).Caption( _( "Genres" ) ).
             MinSize( 50, 50 ).Row( 1 ).
             Position( 1 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Top() );
 
 
@@ -141,6 +143,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_AuiManager.AddPane( LabelsPanel, wxAuiPaneInfo().Name( wxT( "Labels" ) ).Caption( _( "Labels" ) ).
             MinSize( 50, 50 ).Row( 1 ).
             Position( 0 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Top() );
 
 	ArtistPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -156,6 +159,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_AuiManager.AddPane( ArtistPanel, wxAuiPaneInfo().Name( wxT( "Artists" ) ).Caption( _( "Artists" ) ).
             MinSize( 50, 50 ).Row( 1 ).
             Position( 2 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Top() );
 
 
@@ -172,6 +176,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_AuiManager.AddPane( AlbumPanel, wxAuiPaneInfo().Name( wxT( "Albums" ) ).Caption( _( "Albums" ) ).
             MinSize( 50, 50 ).Row( 1 ).
             Position( 3 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Top() );
 
 

@@ -166,16 +166,19 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_PlayerFilters = new guPlayerFilters( this, m_Db );
 	m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "Vumeters" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 20, 20 ).
+        CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
         Bottom().Layer( 0 ).Row( 3 ).Position( 0 ).Hide() );
 
 	m_AuiManager.AddPane( m_PlayerFilters, wxAuiPaneInfo().Name( wxT( "PlayerFilters" ) ).Caption( _( "Filters" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
+        CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
         Bottom().Layer( 0 ).Row( 1 ).Position( 0 ) );
 
     m_PlayerPlayList = new guPlayerPlayList( this, m_Db );
 
 	m_AuiManager.AddPane( m_PlayerPlayList, wxAuiPaneInfo().Name( wxT( "PlayerPlayList" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 100, 100 ).
+        CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
         Bottom().Layer( 0 ).Row( 2 ).Position( 0 ) );
 
 
@@ -287,6 +290,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
 
     m_AuiManager.AddPane( m_CatNotebook, wxAuiPaneInfo().Name( wxT("PlayerSelector") ).
         MinSize( 100, 100 ).
+        CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
         Right().Layer( 1 ).Row( 0 ).Position( 0 ) );
 
     if( !m_CatNotebook->GetPageCount() )
