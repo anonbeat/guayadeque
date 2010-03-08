@@ -2617,7 +2617,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
   if( !playlist->m_Filters.Count() )
     return wxEmptyString;
 
-  wxString query = wxT( "WHERE " );
+  wxString query = wxEmptyString;
   wxString dbNames = wxEmptyString;
   int index;
   int count = playlist->m_Filters.Count();
@@ -2676,13 +2676,13 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
 
       case guDYNAMIC_FILTER_TYPE_COMPOSER : // COMPOSER
-        query += wxT( "song_composer " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
-                                                   playlist->m_Filters[ index ].m_Text );
+        query += wxT( "( song_composer " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                                   playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
       case guDYNAMIC_FILTER_TYPE_COMMENT : // COMMENT
-        query += wxT( "song_comment " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
-                                                   playlist->m_Filters[ index ].m_Text );
+        query += wxT( "( song_comment " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                                   playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
       case guDYNAMIC_FILTER_TYPE_PATH : // PATH
@@ -2695,51 +2695,51 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 
       case guDYNAMIC_FILTER_TYPE_YEAR :  // YEAR
       {
-        query += wxT( "song_year " ) +
+        query += wxT( "( song_year " ) +
                  DynPLYearOption( playlist->m_Filters[ index ].m_Option,
-                                  playlist->m_Filters[ index ].m_Number );
+                                  playlist->m_Filters[ index ].m_Number ) + wxT( ")" );
         break;
       }
 
       case guDYNAMIC_FILTER_TYPE_RATING :  // RATING
       {
-        query += wxT( "song_rating " ) +
+        query += wxT( "( song_rating " ) +
                  DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
-                                  playlist->m_Filters[ index ].m_Number );
+                                  playlist->m_Filters[ index ].m_Number ) + wxT( ")" );
         break;
       }
 
       case guDYNAMIC_FILTER_TYPE_LENGTH :  // LENGTH
       {
-        query += wxT( "song_length " ) +
+        query += wxT( "( song_length " ) +
                  DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
-                                  playlist->m_Filters[ index ].m_Number );
+                                  playlist->m_Filters[ index ].m_Number ) + wxT( ")" );
         break;
       }
 
       case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :  // PLAYCOUNT
       {
-        query += wxT( "song_playcount " ) +
+        query += wxT( "( song_playcount " ) +
                  DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
-                                  playlist->m_Filters[ index ].m_Number );
+                                  playlist->m_Filters[ index ].m_Number ) + wxT( ")" );
         break;
       }
 
       case guDYNAMIC_FILTER_TYPE_LASTPLAY :
       {
-        query += wxT( "song_lastplay " ) +
+        query += wxT( "( song_lastplay " ) +
                  DynPLDateOption( playlist->m_Filters[ index ].m_Option,
                  playlist->m_Filters[ index ].m_Number,
-                 playlist->m_Filters[ index ].m_Option2 );
+                 playlist->m_Filters[ index ].m_Option2 ) + wxT( ")" );
         break;
       }
 
       case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
       {
-        query += wxT( "song_addedtime " ) +
+        query += wxT( "( song_addedtime " ) +
                  DynPLDateOption( playlist->m_Filters[ index ].m_Option,
                  playlist->m_Filters[ index ].m_Number,
-                 playlist->m_Filters[ index ].m_Option2 );
+                 playlist->m_Filters[ index ].m_Option2 ) + wxT( ")" );
         break;
       }
 
@@ -2748,6 +2748,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
   // SORTING Options
   //guLogMessage( wxT( "Sort: %u %u %u" ), playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc );
   wxString sort = wxEmptyString;
+  wxString sortquery = wxEmptyString;
   if( playlist->m_Sorted )
   {
     sort = wxT( " ORDER BY " );
@@ -2760,7 +2761,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             if( !dbNames.Contains( wxT( "artists" ) ) )
             {
                 dbNames += wxT( ", artists " );
-                query += wxT( " AND song_artistid = artist_id " );
+                sortquery += wxT( "song_artistid = artist_id AND " );
             }
             sort += wxT( "artist_name" );
             break;
@@ -2771,7 +2772,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             if( !dbNames.Contains( wxT( "albums" ) ) )
             {
                 dbNames += wxT( ", albums " );
-                query += wxT( " AND song_albumid = album_id " );
+                sortquery += wxT( "song_albumid = album_id AND " );
             }
             sort += wxT( "album_name" );
             break;
@@ -2782,7 +2783,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             if( !dbNames.Contains( wxT( "genres" ) ) )
             {
                 dbNames += wxT( ", genres " );
-                query += wxT( " AND song_genreid = genre_id " );
+                sortquery += wxT( "song_genreid = genre_id AND " );
             }
             sort += wxT( "song_genrename" );
             break;
@@ -2803,7 +2804,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 
   //guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
 
-  return dbNames + query + sort;
+  return dbNames + wxT( " WHERE " ) + sortquery + wxT( "(" ) + query + wxT( ")" ) + sort;
 }
 
 // -------------------------------------------------------------------------------- //
