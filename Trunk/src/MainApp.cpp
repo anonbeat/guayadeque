@@ -20,11 +20,12 @@
 // -------------------------------------------------------------------------------- //
 #include "MainApp.h"
 
+#include "Config.h"
 #include "Images.h"
 #include "MainFrame.h"
-#include "Config.h"
-#include "Utils.h"
 #include "mpris.h"
+#include "SplashWin.h"
+#include "Utils.h"
 
 #include "wx/clipbrd.h"
 #include <wx/curl/base.h>
@@ -181,12 +182,21 @@ bool guMainApp::OnInit()
         return false;
     }
 
-    // Use the primary clipboard which is shared with other applications
-    wxTheClipboard->UsePrimarySelection( false );
-
-
     // Init all image handlers
     wxInitAllImageHandlers();
+
+    // If enabled Show the Splash Screen on Startup
+    if( m_Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "General" ) ) )
+    {
+        guSplashFrame * SplashFrame = new guSplashFrame( 0 );
+        if( !SplashFrame )
+            guLogError( wxT( "Could not create splash object" ) );
+        SplashFrame->Show( true );
+        wxYield();
+    }
+
+    // Use the primary clipboard which is shared with other applications
+    wxTheClipboard->UsePrimarySelection( false );
 
     // Init the wxCurl Lib
     wxCurlBase::Init();
