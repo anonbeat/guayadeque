@@ -299,7 +299,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         //guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
     }
 
-    if( Equalizer.Count() ==guEQUALIZER_BAND_COUNT )
+    if( Equalizer.Count() == guEQUALIZER_BAND_COUNT )
     {
         m_MediaCtrl->SetEqualizer( Equalizer );
     }
@@ -308,8 +308,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     if( m_PlayListCtrl->StartPlaying() )
     {
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
-        wxTheApp->GetTopWindow()->AddPendingEvent( event );
-        //OnPlayButtonClick( event );
+        //wxTheApp->GetTopWindow()->AddPendingEvent( event );
+        OnPlayButtonClick( event );
     }
     else
     {
