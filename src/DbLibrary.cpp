@@ -1493,6 +1493,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
     {
         guLogMessage( wxT( "The file %s was not found for edition." ), Song->m_FileName.c_str() );
     }
+    wxSafeYield();
   }
   //MainFrame->SetStatusText( _( "Done updating the tracks" ) );
 
