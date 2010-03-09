@@ -1257,6 +1257,9 @@ void guPlayerPanel::OnMediaError( wxMediaEvent &event )
             m_ErrorStrings.Add( * ErrorStr );
             wxMessageBox( * ErrorStr, _( "gstreamer error" ), wxICON_ERROR | wxOK );
             m_ErrorStrings.Remove( * ErrorStr );
+
+            wxCommandEvent CmdEvent;
+            OnStopButtonClick( CmdEvent );
         }
         delete ErrorStr;
     }
@@ -1689,17 +1692,17 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 {
-    wxMediaState State;
-    State = m_MediaCtrl->GetState();
+    //wxMediaState State;
+    //State = m_MediaCtrl->GetState();
     //guLogMessage( wxT( "State: %i" ), State );
-    if( State != wxMEDIASTATE_STOPPED )
-    {
+    //if( State != wxMEDIASTATE_STOPPED )
+    //{
         m_MediaCtrl->Stop();
         UpdatePositionLabel( 0 );
         if( m_MediaSong.m_Length )
             m_PlayerPositionSlider->SetValue( 0 );
         ResetVumeterLevel();
-    }
+    //}
 }
 
 // -------------------------------------------------------------------------------- //
