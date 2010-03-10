@@ -698,15 +698,16 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
+void guPlayerPanel::AddToPlayList( const guTrackArray &tracks )
 {
-    if( SongList.Count() )
+    int PrevTrackCount = m_PlayListCtrl->GetCount();
+    if( tracks.Count() )
     {
-        guTrack * Track = &SongList[ 0 ];
+        guTrack * Track = &tracks[ 0 ];
         bool ClearPlayList = ( Track->m_TrackMode == guTRACK_MODE_RANDOM ||
                                Track->m_TrackMode == guTRACK_MODE_SMART ) && !m_DelTracksPlayed;
 
-        m_PlayListCtrl->AddToPlayList( SongList, ClearPlayList );
+        m_PlayListCtrl->AddToPlayList( tracks, ClearPlayList );
 
         TrackListChanged();
 
@@ -714,14 +715,14 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
         {
             int Count;
             int Index;
-            Count = SongList.Count();
+            Count = tracks.Count();
             // We only insert the last CACHEITEMS as the rest should be forgiven
             for( Index = 0; Index < Count; Index++ )
             {
-                if( SongList[ Index ].m_TrackMode != guTRACK_MODE_SMART )
+                if( tracks[ Index ].m_TrackMode != guTRACK_MODE_SMART )
                 {
-                    m_SmartAddedTracks.Add( SongList[ Index ].m_SongId );
-                    m_SmartAddedArtists.Add( SongList[ Index ].m_ArtistName.Upper() );
+                    m_SmartAddedTracks.Add( tracks[ Index ].m_SongId );
+                    m_SmartAddedArtists.Add( tracks[ Index ].m_ArtistName.Upper() );
                 }
             }
 
@@ -730,6 +731,13 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &SongList )
 
             if( ( Count = m_SmartAddedArtists.Count() ) > guPLAYER_SMART_CACHEARTISTS )
                 m_SmartAddedArtists.RemoveAt( 0, Count - guPLAYER_SMART_CACHEARTISTS );
+        }
+
+        if( !PrevTrackCount && ( GetState() != wxMEDIASTATE_PLAYING ) )
+        {
+            wxCommandEvent CmdEvent;
+            OnNextTrackButtonClick( CmdEvent );
+            OnPlayButtonClick( CmdEvent );
         }
     }
 }
