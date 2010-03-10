@@ -1933,7 +1933,8 @@ void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
     {
         if( tracks->Item( index ).m_FileName == m_MediaSong.m_FileName )
         {
-            m_MediaSong = tracks->Item( index );
+            //m_MediaSong = tracks->Item( index );
+            m_MediaSong.Update( tracks->Item( index ) );
             // Update the Current Playing Song Info
             UpdateLabels();
             break;
@@ -1947,7 +1948,8 @@ void guPlayerPanel::UpdatedTrack( const guTrack * track )
     wxASSERT( track );
     if( track->m_FileName == m_MediaSong.m_FileName )
     {
-        m_MediaSong = * track;
+        //m_MediaSong = * track;
+        m_MediaSong.Update( * track );
         // Update the Current Playing Song Info
         UpdateLabels();
     }

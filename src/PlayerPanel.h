@@ -112,6 +112,31 @@ class guCurrentTrack : public guTrack
         m_CoverPath = wxEmptyString;
         return *this;
     }
+
+    void Update( const guTrack &track )
+    {
+        m_Loaded = true;
+        m_Type = track.m_Type;
+        m_SongId = track.m_SongId;
+        m_SongName = track.m_SongName;
+        m_AlbumId = track.m_AlbumId;
+        m_AlbumName = track.m_AlbumName;
+        m_ArtistId = track.m_ArtistId;
+        m_ArtistName = track.m_ArtistName;
+        m_GenreId = track.m_GenreId;
+        m_GenreName = track.m_GenreName;
+        m_PathId = track.m_PathId;
+        m_FileName = track.m_FileName;
+        m_Number = track.m_Number;
+        m_Year = track.m_Year;
+        m_Length = track.m_Length;
+        m_Bitrate = track.m_Bitrate;
+        m_PlayCount = track.m_PlayCount;
+        m_Rating = track.m_Rating;
+        m_LastPlay = track.m_LastPlay;
+        m_AddedTime = track.m_AddedTime;
+        m_CoverId = track.m_CoverId;
+    }
 };
 
 class guPlayerPanelTimer;
