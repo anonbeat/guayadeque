@@ -101,7 +101,7 @@ void guSplashFrame::DoPaint( wxDC &dc )
     wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
 
     dc.SetBackgroundMode( wxTRANSPARENT );
-    dc.SetTextForeground( wxColor( 150, 150, 150 ) );
+    dc.SetTextForeground( wxColor( 60, 60, 60 ) );
     dc.SetFont( Font );
 
     wxCoord width, height;
