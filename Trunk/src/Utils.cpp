@@ -245,13 +245,13 @@ int DownloadFile( const wxString &Source, const wxString &Target )
     http.Get( Target, Source );
 
     long ResCode = http.GetResponseCode();
-    if( ResCode < 200 || ResCode > 299 )
+    if( ( ResCode < 200 ) || ( ResCode > 299 ) )
     {
         //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
-        if( ResCode == 301 || ResCode == 302 || ResCode == 307 )
+        if( ( ResCode == 301 ) || ( ResCode == 302 ) || ( ResCode == 307 ) )
         {
             wxString Location = http.GetResponseHeader();
-            int Pos = Location.Find( wxT( "Location: " ) );
+            int Pos = Location.Lower().Find( wxT( "location: " ) );
             if( Pos != wxNOT_FOUND )
             {
                 Location = Location.Mid( Pos + 10 );
@@ -368,7 +368,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
         if( ResponseCode >= 300  && ResponseCode < 400 )
         {
             wxString Location = http.GetResponseHeader();
-            int Pos = Location.Find( wxT( "Location: " ) );
+            int Pos = Location.Lower().Find( wxT( "location: " ) );
             if( Pos != wxNOT_FOUND )
             {
                 Location = Location.Mid( Pos + 10 );
@@ -383,7 +383,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
 //        guLogMessage( wxT( "Response %u:\n%s\n%s" ),
 //            http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
 
-        if( ResponseHeaders.Find( wxT( "Content-Encoding: gzip" ) ) != wxNOT_FOUND )
+        if( ResponseHeaders.Lower().Find( wxT( "content-encoding: gzip" ) ) != wxNOT_FOUND )
         {
             //guLogMessage( wxT( "Response Headers:\n%s" ), ResponseHeaders.c_str() );
             wxMemoryInputStream Ins( Buffer );
