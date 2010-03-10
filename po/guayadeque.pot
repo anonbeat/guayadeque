@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-24 09:49+0000\n"
+"POT-Creation-Date: 2010-03-10 07:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,34 +17,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: AlbumBrowser.cpp:238 AlbumBrowser.cpp:257 DynamicPlayList (copia).cpp:87
-#: DynamicPlayList.cpp:89 LibPanel.cpp:189
+#: DynamicPlayList.cpp:89 LibPanel.cpp:194
 msgid "Tracks"
 msgstr ""
 
 #: AlbumBrowser.cpp:286 AlListBox.cpp:181 ArListBox.cpp:99 GeListBox.cpp:45
-#: LastFMPanel.cpp:508 LastFMPanel.cpp:704 LastFMPanel.cpp:863
-#: LastFMPanel.cpp:1010 PlayListPanel.cpp:135 PodcastsPanel.cpp:1200
-#: RadioPanel.cpp:487 SoListBox.cpp:343 TaListBox.cpp:87 TaskBar.cpp:119
+#: LastFMPanel.cpp:508 LastFMPanel.cpp:733 LastFMPanel.cpp:892
+#: LastFMPanel.cpp:1039 PlayListPanel.cpp:136 PodcastsPanel.cpp:1202
+#: RadioPanel.cpp:487 SoListBox.cpp:354 TaListBox.cpp:87 TaskBar.cpp:119
 msgid "Play"
 msgstr ""
 
-#: AlbumBrowser.cpp:286 LastFMPanel.cpp:704
+#: AlbumBrowser.cpp:286 LastFMPanel.cpp:733
 msgid "Play the album tracks"
 msgstr ""
 
 #: AlbumBrowser.cpp:290 AlListBox.cpp:185 ArListBox.cpp:103 GeListBox.cpp:49
-#: LastFMPanel.cpp:512 LastFMPanel.cpp:708 LastFMPanel.cpp:867
-#: LastFMPanel.cpp:1014 PlayListPanel.cpp:139 PodcastsPanel.cpp:1204
-#: RadioPanel.cpp:491 SoListBox.cpp:351 TaListBox.cpp:91
+#: LastFMPanel.cpp:512 LastFMPanel.cpp:737 LastFMPanel.cpp:896
+#: LastFMPanel.cpp:1043 PlayListPanel.cpp:140 PodcastsPanel.cpp:1206
+#: RadioPanel.cpp:491 SoListBox.cpp:362 TaListBox.cpp:91
 msgid "Enqueue"
 msgstr ""
 
-#: AlbumBrowser.cpp:290 LastFMPanel.cpp:708
+#: AlbumBrowser.cpp:290 LastFMPanel.cpp:737
 msgid "Enqueue the album tracks to the playlist"
 msgstr ""
 
-#: AlbumBrowser.cpp:296 AlListBox.cpp:194 ArListBox.cpp:111 PlayList.cpp:1089
-#: RadioPanel.cpp:519 SoListBox.cpp:373
+#: AlbumBrowser.cpp:296 AlListBox.cpp:194 ArListBox.cpp:111 PlayList.cpp:1071
+#: RadioPanel.cpp:519 SoListBox.cpp:384
 msgid "Edit Labels"
 msgstr ""
 
@@ -60,21 +60,21 @@ msgstr ""
 msgid "Edit the selected albums songs"
 msgstr ""
 
-#: AlbumBrowser.cpp:304 LastFMPanel.cpp:712
+#: AlbumBrowser.cpp:304 LastFMPanel.cpp:741
 msgid "Search Album"
 msgstr ""
 
-#: AlbumBrowser.cpp:304 LastFMPanel.cpp:712
+#: AlbumBrowser.cpp:304 LastFMPanel.cpp:741
 msgid "Search the album in the library"
 msgstr ""
 
-#: AlbumBrowser.cpp:308 LastFMPanel.cpp:516 LastFMPanel.cpp:871
-#: LastFMPanel.cpp:1018
+#: AlbumBrowser.cpp:308 LastFMPanel.cpp:516 LastFMPanel.cpp:900
+#: LastFMPanel.cpp:1047
 msgid "Search Artist"
 msgstr ""
 
-#: AlbumBrowser.cpp:308 LastFMPanel.cpp:516 LastFMPanel.cpp:871
-#: LastFMPanel.cpp:1018
+#: AlbumBrowser.cpp:308 LastFMPanel.cpp:516 LastFMPanel.cpp:900
+#: LastFMPanel.cpp:1047
 msgid "Search the artist in the library"
 msgstr ""
 
@@ -102,13 +102,13 @@ msgstr ""
 msgid "Delete the cover for the selected album"
 msgstr ""
 
-#: AlbumBrowser.cpp:328 LastFMPanel.cpp:720
+#: AlbumBrowser.cpp:328 LastFMPanel.cpp:749
 msgid "Copy the album info to clipboard"
 msgstr ""
 
 #: AlbumBrowser.cpp:334 AlListBox.cpp:253 ArListBox.cpp:121 GeListBox.cpp:57
-#: PlayList.cpp:1118 PlayListPanel.cpp:186 PodcastsPanel.cpp:986
-#: PodcastsPanel.cpp:1221 SoListBox.cpp:365 TaListBox.cpp:97
+#: PlayList.cpp:1100 PlayListPanel.cpp:187 PodcastsPanel.cpp:988
+#: PodcastsPanel.cpp:1223 SoListBox.cpp:376 TaListBox.cpp:97
 msgid "Copy to..."
 msgstr ""
 
@@ -116,74 +116,74 @@ msgstr ""
 msgid "Copy the current album to a directory or device"
 msgstr ""
 
-#: AlbumBrowser.cpp:589
+#: AlbumBrowser.cpp:602
 msgid "Filter"
 msgstr ""
 
-#: AlbumBrowser.cpp:597
+#: AlbumBrowser.cpp:611
 msgid "Order By"
 msgstr ""
 
-#: AlbumBrowser.cpp:597 AlListBox.cpp:237 RadioPanel.cpp:413
+#: AlbumBrowser.cpp:611 AlListBox.cpp:237 RadioPanel.cpp:413
 msgid "Name"
 msgstr ""
 
-#: AlbumBrowser.cpp:597 AlListBox.cpp:238 DynamicPlayList (copia).cpp:48
+#: AlbumBrowser.cpp:611 AlListBox.cpp:238 DynamicPlayList (copia).cpp:48
 #: DynamicPlayList (copia).cpp:100 DynamicPlayList.cpp:50
-#: DynamicPlayList.cpp:103 SoListBox.cpp:290
+#: DynamicPlayList.cpp:103 SoListBox.cpp:301
 msgid "Year"
 msgstr ""
 
-#: AlbumBrowser.cpp:597
+#: AlbumBrowser.cpp:611
 msgid "Year Desc."
 msgstr ""
 
-#: AlbumBrowser.cpp:597 AlListBox.cpp:240
+#: AlbumBrowser.cpp:611 AlListBox.cpp:240
 msgid "Artist, Name"
 msgstr ""
 
-#: AlbumBrowser.cpp:597 AlListBox.cpp:241
+#: AlbumBrowser.cpp:611 AlListBox.cpp:241
 msgid "Artist, Year"
 msgstr ""
 
-#: AlbumBrowser.cpp:597
+#: AlbumBrowser.cpp:611
 msgid "Artist, Year Desc."
 msgstr ""
 
-#: AlbumBrowser.cpp:960 LibPanel.cpp:801 SelCoverFile.cpp:36
+#: AlbumBrowser.cpp:988 LibPanel.cpp:819 SelCoverFile.cpp:36
 msgid ""
 "Could not find the Album in the songs library.\n"
 "You should update the library."
 msgstr ""
 
-#: AlbumBrowser.cpp:961 LibPanel.cpp:802 SelCoverFile.cpp:37
+#: AlbumBrowser.cpp:989 LibPanel.cpp:820 SelCoverFile.cpp:37
 msgid "Error"
 msgstr ""
 
-#: AlbumBrowser.cpp:1032 LibPanel.cpp:876
+#: AlbumBrowser.cpp:1061 LibPanel.cpp:905
 msgid "Are you sure to delete the selected album cover?"
 msgstr ""
 
-#: AlbumBrowser.cpp:1033 LabelEditor.cpp:175 LibPanel.cpp:877
-#: PlayListPanel.cpp:735 PodcastsPanel.cpp:432 PodcastsPanel.cpp:804
+#: AlbumBrowser.cpp:1062 LabelEditor.cpp:175 LibPanel.cpp:906
+#: PlayListPanel.cpp:733 PodcastsPanel.cpp:434 PodcastsPanel.cpp:806
 #: RadioPanel.cpp:344 RadioPanel.cpp:652 TaListBox.cpp:124
 msgid "Confirm"
 msgstr ""
 
-#: AlbumBrowser.cpp:1076 LibPanel.cpp:639
+#: AlbumBrowser.cpp:1105 LibPanel.cpp:652
 msgid "Albums Labels Editor"
 msgstr ""
 
-#: AlListBox.cpp:169 ArListBox.cpp:85 PlayList.cpp:1071 SoListBox.cpp:330
+#: AlListBox.cpp:169 ArListBox.cpp:85 PlayList.cpp:1053 SoListBox.cpp:341
 msgid "No commands defined"
 msgstr ""
 
-#: AlListBox.cpp:169 ArListBox.cpp:85 PlayList.cpp:1071 SoListBox.cpp:330
+#: AlListBox.cpp:169 ArListBox.cpp:85 PlayList.cpp:1053 SoListBox.cpp:341
 msgid "Add commands in preferences"
 msgstr ""
 
-#: AlListBox.cpp:172 ArListBox.cpp:88 PlayList.cpp:1074 Preferences.cpp:811
-#: SoListBox.cpp:333
+#: AlListBox.cpp:172 ArListBox.cpp:88 PlayList.cpp:1056 Preferences.cpp:811
+#: SoListBox.cpp:344
 msgid "Commands"
 msgstr ""
 
@@ -235,7 +235,7 @@ msgstr ""
 msgid "Sets the albums order"
 msgstr ""
 
-#: AlListBox.cpp:253 ArListBox.cpp:121 GeListBox.cpp:57 SoListBox.cpp:365
+#: AlListBox.cpp:253 ArListBox.cpp:121 GeListBox.cpp:57 SoListBox.cpp:376
 #: TaListBox.cpp:97
 msgid "Copy the current selected songs to a directory or device"
 msgstr ""
@@ -256,7 +256,7 @@ msgstr ""
 msgid "Edit the labels assigned to the selected artists"
 msgstr ""
 
-#: ArListBox.cpp:115 PlayList.cpp:1085 SoListBox.cpp:377
+#: ArListBox.cpp:115 PlayList.cpp:1067 SoListBox.cpp:388
 msgid "Edit Songs"
 msgstr ""
 
@@ -272,15 +272,15 @@ msgstr ""
 msgid " Podcast Channel "
 msgstr ""
 
-#: ChannelEditor.cpp:107 PodcastsPanel.cpp:163
+#: ChannelEditor.cpp:107 PodcastsPanel.cpp:164
 msgid "Description:"
 msgstr ""
 
-#: ChannelEditor.cpp:119 PodcastsPanel.cpp:173
+#: ChannelEditor.cpp:119 PodcastsPanel.cpp:174
 msgid "Author:"
 msgstr ""
 
-#: ChannelEditor.cpp:129 PodcastsPanel.cpp:183
+#: ChannelEditor.cpp:129 PodcastsPanel.cpp:184
 msgid "Owner:"
 msgstr ""
 
@@ -324,7 +324,7 @@ msgstr ""
 msgid "Cover Editor"
 msgstr ""
 
-#: CoverEdit.cpp:68 LastFMPanel.cpp:1228 LyricsPanel.cpp:96 TrackEdit.cpp:134
+#: CoverEdit.cpp:68 LastFMPanel.cpp:1257 LyricsPanel.cpp:96 TrackEdit.cpp:134
 #: TrackEdit.cpp:372 TrackEdit.cpp:473
 msgid "Artist:"
 msgstr ""
@@ -338,23 +338,23 @@ msgid "From:"
 msgstr ""
 
 #: DynamicPlayList (copia).cpp:42 DynamicPlayList (copia).cpp:95
-#: DynamicPlayList.cpp:42 DynamicPlayList.cpp:97 PodcastsPanel.cpp:997
-#: SoListBox.cpp:283
+#: DynamicPlayList.cpp:42 DynamicPlayList.cpp:97 PodcastsPanel.cpp:999
+#: SoListBox.cpp:294
 msgid "Title"
 msgstr ""
 
 #: DynamicPlayList (copia).cpp:43 DynamicPlayList (copia).cpp:96
-#: DynamicPlayList.cpp:43 DynamicPlayList.cpp:98 SoListBox.cpp:284
+#: DynamicPlayList.cpp:43 DynamicPlayList.cpp:98 SoListBox.cpp:295
 msgid "Artist"
 msgstr ""
 
 #: DynamicPlayList (copia).cpp:44 DynamicPlayList (copia).cpp:97
-#: DynamicPlayList.cpp:44 DynamicPlayList.cpp:99 SoListBox.cpp:285
+#: DynamicPlayList.cpp:44 DynamicPlayList.cpp:99 SoListBox.cpp:296
 msgid "Album"
 msgstr ""
 
 #: DynamicPlayList (copia).cpp:45 DynamicPlayList (copia).cpp:98
-#: DynamicPlayList.cpp:45 DynamicPlayList.cpp:100 SoListBox.cpp:286
+#: DynamicPlayList.cpp:45 DynamicPlayList.cpp:100 SoListBox.cpp:297
 msgid "Genre"
 msgstr ""
 
@@ -368,13 +368,13 @@ msgid "Path"
 msgstr ""
 
 #: DynamicPlayList (copia).cpp:49 DynamicPlayList (copia).cpp:101
-#: DynamicPlayList.cpp:51 DynamicPlayList.cpp:104 SoListBox.cpp:292
+#: DynamicPlayList.cpp:51 DynamicPlayList.cpp:104 SoListBox.cpp:303
 msgid "Rating"
 msgstr ""
 
 #: DynamicPlayList (copia).cpp:50 DynamicPlayList (copia).cpp:102
-#: DynamicPlayList.cpp:52 DynamicPlayList.cpp:105 PodcastsPanel.cpp:1001
-#: SoListBox.cpp:289
+#: DynamicPlayList.cpp:52 DynamicPlayList.cpp:105 PodcastsPanel.cpp:1003
+#: SoListBox.cpp:300
 msgid "Length"
 msgstr ""
 
@@ -388,7 +388,7 @@ msgstr ""
 msgid "Last Play Time"
 msgstr ""
 
-#: DynamicPlayList (copia).cpp:53 DynamicPlayList.cpp:55 SoListBox.cpp:295
+#: DynamicPlayList (copia).cpp:53 DynamicPlayList.cpp:55 SoListBox.cpp:306
 msgid "Added Date"
 msgstr ""
 
@@ -476,36 +476,36 @@ msgstr ""
 msgid "months"
 msgstr ""
 
-#: DynamicPlayList (copia).cpp:197 DynamicPlayList.cpp:204
+#: DynamicPlayList (copia).cpp:197 DynamicPlayList.cpp:410
 msgid "Dynamic Playlist Editor"
 msgstr ""
 
-#: DynamicPlayList (copia).cpp:214 DynamicPlayList.cpp:222
+#: DynamicPlayList (copia).cpp:214 DynamicPlayList.cpp:428
 msgid " Current Filters "
 msgstr ""
 
-#: DynamicPlayList (copia).cpp:288 DynamicPlayList.cpp:298
+#: DynamicPlayList (copia).cpp:288 DynamicPlayList.cpp:504
 msgid " Result "
 msgstr ""
 
-#: DynamicPlayList (copia).cpp:293 DynamicPlayList.cpp:303
+#: DynamicPlayList (copia).cpp:293 DynamicPlayList.cpp:509
 msgid "Limit To"
 msgstr ""
 
-#: DynamicPlayList (copia).cpp:313 DynamicPlayList.cpp:323
-#: DynamicPlayList.cpp:361
+#: DynamicPlayList (copia).cpp:313 DynamicPlayList.cpp:529
+#: DynamicPlayList.cpp:567
 msgid "Add tracks on any criteria"
 msgstr ""
 
-#: DynamicPlayList (copia).cpp:323 DynamicPlayList.cpp:333
+#: DynamicPlayList (copia).cpp:323 DynamicPlayList.cpp:539
 msgid "Sort By"
 msgstr ""
 
-#: DynamicPlayList (copia).cpp:333 DynamicPlayList.cpp:343
+#: DynamicPlayList (copia).cpp:333 DynamicPlayList.cpp:549
 msgid "Descending"
 msgstr ""
 
-#: DynamicPlayList.cpp:47 DynamicPlayList.cpp:102 SoListBox.cpp:287
+#: DynamicPlayList.cpp:47 DynamicPlayList.cpp:102 SoListBox.cpp:298
 msgid "Composer"
 msgstr ""
 
@@ -517,7 +517,7 @@ msgstr ""
 msgid "Does not contain"
 msgstr ""
 
-#: DynamicPlayList.cpp:203
+#: DynamicPlayList.cpp:409
 msgid "Filter Album Browser"
 msgstr ""
 
@@ -533,8 +533,8 @@ msgstr ""
 msgid "Add current selected genres to playlist"
 msgstr ""
 
-#: LabelEditor.cpp:46 LibPanel.cpp:134 LibPanel.cpp:141 MainFrame.cpp:726
-#: MainFrame.cpp:767 RadioPanel.cpp:773 RadioPanel.cpp:781
+#: LabelEditor.cpp:46 LibPanel.cpp:136 LibPanel.cpp:143 MainFrame.cpp:729
+#: MainFrame.cpp:770 RadioPanel.cpp:775 RadioPanel.cpp:783
 msgid "Labels"
 msgstr ""
 
@@ -575,11 +575,11 @@ msgstr ""
 msgid "More..."
 msgstr ""
 
-#: LastFMPanel.cpp:508 LastFMPanel.cpp:863 LastFMPanel.cpp:1010
+#: LastFMPanel.cpp:508 LastFMPanel.cpp:892 LastFMPanel.cpp:1039
 msgid "Play the artist tracks"
 msgstr ""
 
-#: LastFMPanel.cpp:512 LastFMPanel.cpp:867 LastFMPanel.cpp:1014
+#: LastFMPanel.cpp:512 LastFMPanel.cpp:896 LastFMPanel.cpp:1043
 msgid "Enqueue the artist tracks to the playlist"
 msgstr ""
 
@@ -587,8 +587,8 @@ msgstr ""
 msgid "Copy the artist name to clipboard"
 msgstr ""
 
-#: LastFMPanel.cpp:532 LastFMPanel.cpp:728 LastFMPanel.cpp:890
-#: LastFMPanel.cpp:1034 LastFMPanel.cpp:1145
+#: LastFMPanel.cpp:532 LastFMPanel.cpp:757 LastFMPanel.cpp:919
+#: LastFMPanel.cpp:1063 LastFMPanel.cpp:1174
 msgid "Visit last.fm page for this item"
 msgstr ""
 
@@ -596,47 +596,47 @@ msgstr ""
 msgid "There is no information available for this artist."
 msgstr ""
 
-#: LastFMPanel.cpp:879
+#: LastFMPanel.cpp:908
 msgid "Update the information with the current selected artist"
 msgstr ""
 
-#: LastFMPanel.cpp:882
+#: LastFMPanel.cpp:911
 msgid "Copy the artist info to clipboard"
 msgstr ""
 
-#: LastFMPanel.cpp:1026
+#: LastFMPanel.cpp:1055
 msgid "Copy the track info to clipboard"
 msgstr ""
 
-#: LastFMPanel.cpp:1137
+#: LastFMPanel.cpp:1166
 msgid "Copy the event info to clipboard"
 msgstr ""
 
-#: LastFMPanel.cpp:1208 LyricsPanel.cpp:66
+#: LastFMPanel.cpp:1237 LyricsPanel.cpp:66
 msgid "Follow player"
 msgstr ""
 
-#: LastFMPanel.cpp:1238 LyricsPanel.cpp:107 TrackEdit.cpp:381
+#: LastFMPanel.cpp:1267 LyricsPanel.cpp:107 TrackEdit.cpp:381
 msgid "Track:"
 msgstr ""
 
-#: LastFMPanel.cpp:1263
+#: LastFMPanel.cpp:1292
 msgid "Artist Info"
 msgstr ""
 
-#: LastFMPanel.cpp:1299
+#: LastFMPanel.cpp:1328
 msgid "Top Albums"
 msgstr ""
 
-#: LastFMPanel.cpp:1330
+#: LastFMPanel.cpp:1359
 msgid "Similar Artists"
 msgstr ""
 
-#: LastFMPanel.cpp:1362
+#: LastFMPanel.cpp:1391
 msgid "Similar Tracks"
 msgstr ""
 
-#: LastFMPanel.cpp:1394
+#: LastFMPanel.cpp:1423
 msgid "Events"
 msgstr ""
 
@@ -644,36 +644,36 @@ msgstr ""
 msgid "Search:"
 msgstr ""
 
-#: LibPanel.cpp:109 MainFrame.cpp:721 MainFrame.cpp:762 RadioPanel.cpp:742
+#: LibPanel.cpp:109 MainFrame.cpp:724 MainFrame.cpp:765 RadioPanel.cpp:742
 msgid "Text Search"
 msgstr ""
 
-#: LibPanel.cpp:117 LibPanel.cpp:124 MainFrame.cpp:731 MainFrame.cpp:772
-#: RadioPanel.cpp:762
+#: LibPanel.cpp:118 LibPanel.cpp:125 MainFrame.cpp:734 MainFrame.cpp:775
+#: RadioPanel.cpp:763
 msgid "Genres"
 msgstr ""
 
-#: LibPanel.cpp:149 LibPanel.cpp:156 MainFrame.cpp:736
+#: LibPanel.cpp:152 LibPanel.cpp:159 MainFrame.cpp:739
 msgid "Artists"
 msgstr ""
 
-#: LibPanel.cpp:165 LibPanel.cpp:172 MainFrame.cpp:741
+#: LibPanel.cpp:169 LibPanel.cpp:176 MainFrame.cpp:744
 msgid "Albums"
 msgstr ""
 
-#: LibPanel.cpp:614
+#: LibPanel.cpp:627
 msgid "Artist Labels Editor"
 msgstr ""
 
-#: LibPanel.cpp:663 PlayList.cpp:1283 PlayListPanel.cpp:967
+#: LibPanel.cpp:676 PlayList.cpp:1265 PlayListPanel.cpp:965
 msgid "Songs Labels Editor"
 msgstr ""
 
-#: LibPanel.cpp:1055 PlayList.cpp:1190 PlayListPanel.cpp:1057
+#: LibPanel.cpp:1086 PlayList.cpp:1172 PlayListPanel.cpp:1057
 msgid "UnNamed"
 msgstr ""
 
-#: ListView.cpp:1453
+#: ListView.cpp:1469
 msgid "Select Columns"
 msgstr ""
 
@@ -713,409 +713,417 @@ msgstr ""
 msgid "Welcome to guayadeque "
 msgstr ""
 
-#: MainFrame.cpp:167 MainFrame.cpp:307 MainFrame.cpp:709
+#: MainFrame.cpp:167 MainFrame.cpp:311 MainFrame.cpp:712
 msgid "Vumeters"
 msgstr ""
 
-#: MainFrame.cpp:171 MainFrame.cpp:310
+#: MainFrame.cpp:172 MainFrame.cpp:314
 msgid "Filters"
 msgstr ""
 
-#: MainFrame.cpp:313 MainFrame.cpp:570 MainFrame.cpp:1237 MainFrame.cpp:2095
-#: PlayList.cpp:75
+#: MainFrame.cpp:317 MainFrame.cpp:574 MainFrame.cpp:1262 MainFrame.cpp:2120
+#: PlayList.cpp:76
 msgid "Now Playing"
 msgstr ""
 
-#: MainFrame.cpp:642
+#: MainFrame.cpp:646
 msgid "&Add Directory"
 msgstr ""
 
-#: MainFrame.cpp:642
+#: MainFrame.cpp:646
 msgid "Add a directory to the Library paths"
 msgstr ""
 
-#: MainFrame.cpp:647
+#: MainFrame.cpp:651
 msgid "&Update Library"
 msgstr ""
 
-#: MainFrame.cpp:647
+#: MainFrame.cpp:651
 msgid "Update all new songs from the directories configured"
 msgstr ""
 
-#: MainFrame.cpp:650
+#: MainFrame.cpp:654
 msgid "&Rescan Library"
 msgstr ""
 
-#: MainFrame.cpp:650
+#: MainFrame.cpp:654
 msgid "Update all songs from the directories configured"
 msgstr ""
 
-#: MainFrame.cpp:653
+#: MainFrame.cpp:657
 msgid "Update P&odcasts"
 msgstr ""
 
-#: MainFrame.cpp:653
+#: MainFrame.cpp:657
 msgid "Update the podcasts added"
 msgstr ""
 
-#: MainFrame.cpp:657
+#: MainFrame.cpp:661
 msgid "Update Covers"
 msgstr ""
 
-#: MainFrame.cpp:657
+#: MainFrame.cpp:661
 msgid "Try to download all missing covers"
 msgstr ""
 
-#: MainFrame.cpp:663
+#: MainFrame.cpp:667
 msgid "&Preferences"
 msgstr ""
 
-#: MainFrame.cpp:663
+#: MainFrame.cpp:667
 msgid "Change the options of the application"
 msgstr ""
 
-#: MainFrame.cpp:669
+#: MainFrame.cpp:673
 msgid "&Quit"
 msgstr ""
 
-#: MainFrame.cpp:669
+#: MainFrame.cpp:673
 msgid "Exits the application"
 msgstr ""
 
-#: MainFrame.cpp:673 MainFrame.cpp:715
+#: MainFrame.cpp:677 MainFrame.cpp:718
 msgid "&Library"
 msgstr ""
 
-#: MainFrame.cpp:677
+#: MainFrame.cpp:681
 msgid "Save Layout"
 msgstr ""
 
-#: MainFrame.cpp:677
+#: MainFrame.cpp:681
 msgid "Saves the current layout"
 msgstr ""
 
-#: MainFrame.cpp:688 MainFrame.cpp:2101 MainFrame.cpp:2103 MainFrame.cpp:2129
+#: MainFrame.cpp:692 MainFrame.cpp:2126 MainFrame.cpp:2128 MainFrame.cpp:2154
 msgid "Load this user defined layout"
 msgstr ""
 
-#: MainFrame.cpp:690 MainFrame.cpp:2131
+#: MainFrame.cpp:694 MainFrame.cpp:2156
 msgid "Delete this user defined layout"
 msgstr ""
 
-#: MainFrame.cpp:695
+#: MainFrame.cpp:699
 msgid "Load Layout"
 msgstr ""
 
-#: MainFrame.cpp:695
+#: MainFrame.cpp:699
 msgid "Set current view from a user defined layout"
 msgstr ""
 
-#: MainFrame.cpp:696
+#: MainFrame.cpp:700
 msgid "Delete Layout"
 msgstr ""
 
-#: MainFrame.cpp:696
+#: MainFrame.cpp:700
 msgid "Delete a user defined layout"
 msgstr ""
 
-#: MainFrame.cpp:701
+#: MainFrame.cpp:704
 msgid "Player PlayList"
 msgstr ""
 
-#: MainFrame.cpp:701
+#: MainFrame.cpp:704
 msgid "Show/Hide the player playlist panel"
 msgstr ""
 
-#: MainFrame.cpp:705
+#: MainFrame.cpp:708
 msgid "Player Filters"
 msgstr ""
 
-#: MainFrame.cpp:705
+#: MainFrame.cpp:708
 msgid "Show/Hide the player filters panel"
 msgstr ""
 
-#: MainFrame.cpp:709
+#: MainFrame.cpp:712
 msgid "Show/Hide the player vumeter"
 msgstr ""
 
-#: MainFrame.cpp:715
+#: MainFrame.cpp:718
 msgid "Show/Hide the library panel"
 msgstr ""
 
-#: MainFrame.cpp:721
+#: MainFrame.cpp:724
 msgid "Show/Hide the library text search"
 msgstr ""
 
-#: MainFrame.cpp:726
+#: MainFrame.cpp:729
 msgid "Show/Hide the library labels"
 msgstr ""
 
-#: MainFrame.cpp:731
+#: MainFrame.cpp:734
 msgid "Show/Hide the library genres"
 msgstr ""
 
-#: MainFrame.cpp:736
+#: MainFrame.cpp:739
 msgid "Show/Hide the library artists"
 msgstr ""
 
-#: MainFrame.cpp:741
+#: MainFrame.cpp:744
 msgid "Show/Hide the library albums"
 msgstr ""
 
-#: MainFrame.cpp:751 MainFrame.cpp:1077 MainFrame.cpp:1088 MainFrame.cpp:1336
-#: MainFrame.cpp:2246 Preferences.cpp:279
+#: MainFrame.cpp:754 MainFrame.cpp:1093 MainFrame.cpp:1104 MainFrame.cpp:1141
+#: MainFrame.cpp:1361 MainFrame.cpp:2275 Preferences.cpp:279
 msgid "Library"
 msgstr ""
 
-#: MainFrame.cpp:751
+#: MainFrame.cpp:754
 msgid "Set the library visible panels"
 msgstr ""
 
-#: MainFrame.cpp:756 MainFrame.cpp:777
+#: MainFrame.cpp:759 MainFrame.cpp:780
 msgid "&Radio"
 msgstr ""
 
-#: MainFrame.cpp:756
+#: MainFrame.cpp:759
 msgid "Show/Hide the radio panel"
 msgstr ""
 
-#: MainFrame.cpp:762
+#: MainFrame.cpp:765
 msgid "Show/Hide the radio text search"
 msgstr ""
 
-#: MainFrame.cpp:767
+#: MainFrame.cpp:770
 msgid "Show/Hide the radio labels"
 msgstr ""
 
-#: MainFrame.cpp:772
+#: MainFrame.cpp:775
 msgid "Show/Hide the radio genres"
 msgstr ""
 
-#: MainFrame.cpp:777
+#: MainFrame.cpp:780
 msgid "Set the radio visible panels"
 msgstr ""
 
-#: MainFrame.cpp:780
+#: MainFrame.cpp:783
 msgid "Last.&fm"
 msgstr ""
 
-#: MainFrame.cpp:780
+#: MainFrame.cpp:783
 msgid "Show/Hide the Last.fm panel"
 msgstr ""
 
-#: MainFrame.cpp:784
+#: MainFrame.cpp:787
 msgid "L&yrics"
 msgstr ""
 
-#: MainFrame.cpp:784
+#: MainFrame.cpp:787
 msgid "Show/Hide the lyrics panel"
 msgstr ""
 
-#: MainFrame.cpp:788
+#: MainFrame.cpp:791
 msgid "&PlayLists"
 msgstr ""
 
-#: MainFrame.cpp:788
+#: MainFrame.cpp:791
 msgid "Show/Hide the playlists panel"
 msgstr ""
 
-#: MainFrame.cpp:796
+#: MainFrame.cpp:799
 msgid "P&odcasts"
 msgstr ""
 
-#: MainFrame.cpp:796
+#: MainFrame.cpp:799
 msgid "Show/Hide the podcasts panel"
 msgstr ""
 
-#: MainFrame.cpp:802 PodcastsPanel.cpp:106 PodcastsPanel.cpp:114
+#: MainFrame.cpp:805 PodcastsPanel.cpp:106 PodcastsPanel.cpp:114
 msgid "Channels"
 msgstr ""
 
-#: MainFrame.cpp:802
+#: MainFrame.cpp:805
 msgid "Show/Hide the podcasts channels"
 msgstr ""
 
-#: MainFrame.cpp:807 TrackEdit.cpp:270
+#: MainFrame.cpp:810 TrackEdit.cpp:270
 msgid "Details"
 msgstr ""
 
-#: MainFrame.cpp:807
+#: MainFrame.cpp:810
 msgid "Show/Hide the podcasts details"
 msgstr ""
 
-#: MainFrame.cpp:812
+#: MainFrame.cpp:815
 msgid "&Podcasts"
 msgstr ""
 
-#: MainFrame.cpp:812
+#: MainFrame.cpp:815
 msgid "Set the podcasts visible panels"
 msgstr ""
 
-#: MainFrame.cpp:814
+#: MainFrame.cpp:817
 msgid "Album Browser"
 msgstr ""
 
-#: MainFrame.cpp:814
+#: MainFrame.cpp:817
 msgid "Show/Hide the album browser panel"
 msgstr ""
 
-#: MainFrame.cpp:819
+#: MainFrame.cpp:822
 msgid "&View"
 msgstr ""
 
-#: MainFrame.cpp:822
+#: MainFrame.cpp:825
 msgid "&Next Track"
 msgstr ""
 
-#: MainFrame.cpp:822
+#: MainFrame.cpp:825
 msgid "Play the next track in the playlist"
 msgstr ""
 
-#: MainFrame.cpp:825
+#: MainFrame.cpp:828
 msgid "&Prev. Track"
 msgstr ""
 
-#: MainFrame.cpp:825
+#: MainFrame.cpp:828
 msgid "Play the previous track in the playlist"
 msgstr ""
 
-#: MainFrame.cpp:829
+#: MainFrame.cpp:832
 msgid "&Play"
 msgstr ""
 
-#: MainFrame.cpp:829
+#: MainFrame.cpp:832
 msgid "Play or Pause the current track in the playlist"
 msgstr ""
 
-#: MainFrame.cpp:832
+#: MainFrame.cpp:835
 msgid "&Stop"
 msgstr ""
 
-#: MainFrame.cpp:832
+#: MainFrame.cpp:835
 msgid "Stop the current played track"
 msgstr ""
 
-#: MainFrame.cpp:836
+#: MainFrame.cpp:839
 msgid "&Smart Mode"
 msgstr ""
 
-#: MainFrame.cpp:836
+#: MainFrame.cpp:839
 msgid "Update playlist based on Last.fm statics"
 msgstr ""
 
-#: MainFrame.cpp:841
+#: MainFrame.cpp:844
 msgid "R&andomize"
 msgstr ""
 
-#: MainFrame.cpp:841
+#: MainFrame.cpp:844
 msgid "Randomize the playlist"
 msgstr ""
 
-#: MainFrame.cpp:844
+#: MainFrame.cpp:847
 msgid "&Repeat Playlist"
 msgstr ""
 
-#: MainFrame.cpp:844
+#: MainFrame.cpp:847
 msgid "Repeat the tracks in the playlist"
 msgstr ""
 
-#: MainFrame.cpp:849
+#: MainFrame.cpp:852
 msgid "&Repeat Track"
 msgstr ""
 
-#: MainFrame.cpp:849
+#: MainFrame.cpp:852
 msgid "Repeat the current track in the playlist"
 msgstr ""
 
-#: MainFrame.cpp:854
+#: MainFrame.cpp:857
 msgid "&Control"
 msgstr ""
 
-#: MainFrame.cpp:857
+#: MainFrame.cpp:860
 msgid "&About"
 msgstr ""
 
-#: MainFrame.cpp:857
+#: MainFrame.cpp:860
 msgid "Show information about guayadeque music player"
 msgstr ""
 
-#: MainFrame.cpp:860
+#: MainFrame.cpp:863
 msgid "&Help"
 msgstr ""
 
-#: MainFrame.cpp:1061
+#: MainFrame.cpp:1077
 msgid "Covers"
 msgstr ""
 
-#: MainFrame.cpp:1095 Preferences.cpp:1125
+#: MainFrame.cpp:1111 Preferences.cpp:1125
 msgid "Select library path"
 msgstr ""
 
-#: MainFrame.cpp:1126
+#: MainFrame.cpp:1146
+msgid "The library is already updating"
+msgstr ""
+
+#: MainFrame.cpp:1146
+msgid "Add Directory"
+msgstr ""
+
+#: MainFrame.cpp:1151
 msgid "This Path is already in the library"
 msgstr ""
 
-#: MainFrame.cpp:1127
+#: MainFrame.cpp:1152
 msgid "Adding path error"
 msgstr ""
 
-#: MainFrame.cpp:1255
+#: MainFrame.cpp:1280
 msgid "Select destination directory"
 msgstr ""
 
-#: MainFrame.cpp:1260
+#: MainFrame.cpp:1285
 msgid "Copy To..."
 msgstr ""
 
-#: MainFrame.cpp:1428 MainFrame.cpp:2250
+#: MainFrame.cpp:1453 MainFrame.cpp:2279
 msgid "Radio"
 msgstr ""
 
-#: MainFrame.cpp:1524 MainFrame.cpp:2254
+#: MainFrame.cpp:1549 MainFrame.cpp:2283
 msgid "Last.fm"
 msgstr ""
 
-#: MainFrame.cpp:1552 MainFrame.cpp:2258 TrackEdit.cpp:399
+#: MainFrame.cpp:1577 MainFrame.cpp:2287 TrackEdit.cpp:399
 msgid "Lyrics"
 msgstr ""
 
-#: MainFrame.cpp:1580 MainFrame.cpp:1968 MainFrame.cpp:2266
-#: PodcastsPanel.cpp:131
+#: MainFrame.cpp:1605 MainFrame.cpp:1993 MainFrame.cpp:2295
+#: PodcastsPanel.cpp:132
 msgid "Podcasts"
 msgstr ""
 
-#: MainFrame.cpp:1614 MainFrame.cpp:2270
+#: MainFrame.cpp:1639 MainFrame.cpp:2299
 msgid "Browser"
 msgstr ""
 
-#: MainFrame.cpp:1643 MainFrame.cpp:2262
+#: MainFrame.cpp:1668 MainFrame.cpp:2291
 msgid "PlayLists"
 msgstr ""
 
-#: MainFrame.cpp:1826 MainFrame.cpp:1840
+#: MainFrame.cpp:1851 MainFrame.cpp:1865
 #, c-format
 msgid "%llu tracks,   %s,   %s"
 msgstr ""
 
-#: MainFrame.cpp:1834
+#: MainFrame.cpp:1859
 #, c-format
 msgid "%llu stations"
 msgstr ""
 
-#: MainFrame.cpp:1854
+#: MainFrame.cpp:1879
 #, c-format
 msgid "%llu podcasts,   %s,   %s"
 msgstr ""
 
-#: MainFrame.cpp:2086
+#: MainFrame.cpp:2111
 msgid "Enter the layout name:"
 msgstr ""
 
-#: MainFrame.cpp:2086
+#: MainFrame.cpp:2111
 msgid "New Layout"
 msgstr ""
 
-#: MainFrame.cpp:2088
+#: MainFrame.cpp:2113
 #, c-format
 msgid "Layout %u"
 msgstr ""
@@ -1166,71 +1174,71 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: PlayerPanel.cpp:131
+#: PlayerPanel.cpp:132
 msgid "Go to Previous Track in the Playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:135
+#: PlayerPanel.cpp:136
 msgid "Go to Next Track in the Playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:139
+#: PlayerPanel.cpp:140
 msgid "Start playing or pauses current track in the Playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:143
+#: PlayerPanel.cpp:144
 msgid "Stops player reproduction"
 msgstr ""
 
-#: PlayerPanel.cpp:147 PlayerPanel.cpp:1804
+#: PlayerPanel.cpp:148 PlayerPanel.cpp:1865
 msgid "Volume"
 msgstr ""
 
-#: PlayerPanel.cpp:151
+#: PlayerPanel.cpp:152
 msgid "Show the equalizer"
 msgstr ""
 
-#: PlayerPanel.cpp:155
+#: PlayerPanel.cpp:156
 msgid "Add tracks to the playlist based on LastFM"
 msgstr ""
 
-#: PlayerPanel.cpp:161
+#: PlayerPanel.cpp:162
 msgid "Randomize the tracks in the playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:165
+#: PlayerPanel.cpp:166
 msgid "Repeats the current playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:176
+#: PlayerPanel.cpp:177
 msgid "Shows the current track album cover if available"
 msgstr ""
 
-#: PlayerPanel.cpp:184
+#: PlayerPanel.cpp:185
 msgid "Show the name of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:193
+#: PlayerPanel.cpp:195
 msgid "Show the album name of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:203
+#: PlayerPanel.cpp:206
 msgid "Show the artist name of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:213
+#: PlayerPanel.cpp:216
 msgid "Show the year of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:216
+#: PlayerPanel.cpp:219
 msgid "00:00 of 00:00"
 msgstr ""
 
-#: PlayerPanel.cpp:217
+#: PlayerPanel.cpp:220
 msgid "Show the current position and song length of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:232
+#: PlayerPanel.cpp:235
 msgid "Show the bitrate of the current track"
 msgstr ""
 
@@ -1238,168 +1246,172 @@ msgstr ""
 msgid "Buffering..."
 msgstr ""
 
+#: PlayerPanel.cpp:1258
+msgid "gstreamer error"
+msgstr ""
+
 #: PlayListAppend.cpp:25
 msgid "Save to Playlist"
 msgstr ""
 
 #: PlayListAppend.cpp:55
-msgid "Where:"
-msgstr ""
-
-#: PlayListAppend.cpp:59
-msgid "Begin"
-msgstr ""
-
-#: PlayListAppend.cpp:59
-msgid "End"
-msgstr ""
-
-#: PlayListAppend.cpp:65
 msgid "Playlist:"
 msgstr ""
 
-#: PlayListAppend.cpp:78
+#: PlayListAppend.cpp:69
+msgid "Where:"
+msgstr ""
+
+#: PlayListAppend.cpp:73
+msgid "Begin"
+msgstr ""
+
+#: PlayListAppend.cpp:73
+msgid "End"
+msgstr ""
+
+#: PlayListAppend.cpp:79
 msgid "Tracks:"
 msgstr ""
 
-#: PlayList.cpp:1085
+#: PlayList.cpp:1067
 msgid "Edit the current selected songs"
 msgstr ""
 
-#: PlayList.cpp:1089
+#: PlayList.cpp:1071
 msgid "Edit the labels of the current selected songs"
 msgstr ""
 
-#: PlayList.cpp:1095
+#: PlayList.cpp:1077
 msgid "Clear PlayList"
 msgstr ""
 
-#: PlayList.cpp:1095
+#: PlayList.cpp:1077
 msgid "Remove all songs from PlayList"
 msgstr ""
 
-#: PlayList.cpp:1101
+#: PlayList.cpp:1083
 msgid "Remove selected songs"
 msgstr ""
 
-#: PlayList.cpp:1101
+#: PlayList.cpp:1083
 msgid "Remove selected songs from PlayList"
 msgstr ""
 
-#: PlayList.cpp:1106
-msgid "Save PlayList"
+#: PlayList.cpp:1088
+msgid "Save to PlayList"
 msgstr ""
 
-#: PlayList.cpp:1106
-msgid "Save the PlayList"
+#: PlayList.cpp:1088
+msgid "Save the selected tracks to PlayList"
 msgstr ""
 
-#: PlayList.cpp:1112
+#: PlayList.cpp:1094
 msgid "Randomize PlayList"
 msgstr ""
 
-#: PlayList.cpp:1112
+#: PlayList.cpp:1094
 msgid "Randomize the songs in the PlayList"
 msgstr ""
 
-#: PlayList.cpp:1118 PlayListPanel.cpp:186
+#: PlayList.cpp:1100 PlayListPanel.cpp:187
 msgid "Copy the current playlist to a directory or device"
 msgstr ""
 
-#: PlayListPanel.cpp:68
+#: PlayListPanel.cpp:69
 msgid "Static playlists"
 msgstr ""
 
-#: PlayListPanel.cpp:69
+#: PlayListPanel.cpp:70
 msgid "Dynamic playlists"
 msgstr ""
 
-#: PlayListPanel.cpp:135 PodcastsPanel.cpp:1200 RadioPanel.cpp:487
-#: SoListBox.cpp:343
+#: PlayListPanel.cpp:136 PodcastsPanel.cpp:1202 RadioPanel.cpp:487
+#: SoListBox.cpp:354
 msgid "Play current selected songs"
 msgstr ""
 
-#: PlayListPanel.cpp:139 SoListBox.cpp:351
+#: PlayListPanel.cpp:140 SoListBox.cpp:362
 msgid "Add current selected songs to the playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:147 PlayListPanel.cpp:677
+#: PlayListPanel.cpp:148 PlayListPanel.cpp:675
 msgid "New Dynamic Playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:147
+#: PlayListPanel.cpp:148
 msgid "Create a new dynamic playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:153 RadioPanel.cpp:271
+#: PlayListPanel.cpp:154 RadioPanel.cpp:271
 msgid "Import"
 msgstr ""
 
-#: PlayListPanel.cpp:153
+#: PlayListPanel.cpp:154
 msgid "Import a playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:159 RadioPanel.cpp:275
+#: PlayListPanel.cpp:160 RadioPanel.cpp:275
 msgid "Export"
 msgstr ""
 
-#: PlayListPanel.cpp:159
+#: PlayListPanel.cpp:160
 msgid "Export the playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:167
+#: PlayListPanel.cpp:168
 msgid "Edit Playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:167
+#: PlayListPanel.cpp:168
 msgid "Edit the selected playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:171 SoListBox.cpp:361
+#: PlayListPanel.cpp:172 SoListBox.cpp:372
 msgid "Save Playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:171
+#: PlayListPanel.cpp:172
 msgid "Save the selected playlist as a Static Playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:176
+#: PlayListPanel.cpp:177
 msgid "Rename Playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:176
+#: PlayListPanel.cpp:177
 msgid "Change the name of the selected playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:180
+#: PlayListPanel.cpp:181
 msgid "Delete Playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:180
+#: PlayListPanel.cpp:181
 msgid "Delete the selected playlist"
 msgstr ""
 
-#: PlayListPanel.cpp:491
+#: PlayListPanel.cpp:492
 msgid "Play Lists"
 msgstr ""
 
-#: PlayListPanel.cpp:676 PlayListPanel.cpp:716 PlayListPanel.cpp:787
+#: PlayListPanel.cpp:674 PlayListPanel.cpp:714 PlayListPanel.cpp:785
 msgid "PlayList Name: "
 msgstr ""
 
-#: PlayListPanel.cpp:677 PlayListPanel.cpp:717 PlayListPanel.cpp:788
+#: PlayListPanel.cpp:675 PlayListPanel.cpp:715 PlayListPanel.cpp:786
 msgid "Enter the new playlist name"
 msgstr ""
 
-#: PlayListPanel.cpp:734
+#: PlayListPanel.cpp:732
 msgid "Are you sure to delete the selected Playlist?"
 msgstr ""
 
-#: PlayListPanel.cpp:788 PlayListPanel.cpp:799
+#: PlayListPanel.cpp:786 PlayListPanel.cpp:797
 msgid "New PlayList"
 msgstr ""
 
-#: PLSoListBox.cpp:82 PodcastsPanel.cpp:965 PodcastsPanel.cpp:1210
+#: PLSoListBox.cpp:82 PodcastsPanel.cpp:967 PodcastsPanel.cpp:1212
 msgid "Delete"
 msgstr ""
 
@@ -1407,127 +1419,127 @@ msgstr ""
 msgid "Delete the current selected tracks"
 msgstr ""
 
-#: PodcastsPanel.cpp:143 TrackEdit.cpp:465
+#: PodcastsPanel.cpp:144 TrackEdit.cpp:465
 msgid " Details "
 msgstr ""
 
-#: PodcastsPanel.cpp:194 RadioEditor.cpp:52
+#: PodcastsPanel.cpp:195 RadioEditor.cpp:52
 msgid "Link:"
 msgstr ""
 
-#: PodcastsPanel.cpp:209 TrackEdit.cpp:156 TrackEdit.cpp:508
+#: PodcastsPanel.cpp:210 TrackEdit.cpp:156 TrackEdit.cpp:508
 msgid "Title:"
 msgstr ""
 
-#: PodcastsPanel.cpp:219
+#: PodcastsPanel.cpp:220
 msgid "Sumary:"
 msgstr ""
 
-#: PodcastsPanel.cpp:229 TrackEdit.cpp:495
+#: PodcastsPanel.cpp:230 TrackEdit.cpp:495
 msgid "Date:"
 msgstr ""
 
-#: PodcastsPanel.cpp:239
+#: PodcastsPanel.cpp:240
 msgid "Length:"
 msgstr ""
 
-#: PodcastsPanel.cpp:260
+#: PodcastsPanel.cpp:261
 msgid "Podcast Details"
 msgstr ""
 
-#: PodcastsPanel.cpp:431
+#: PodcastsPanel.cpp:433
 msgid "Are you sure to delete the selected podcast channel?"
 msgstr ""
 
-#: PodcastsPanel.cpp:803
+#: PodcastsPanel.cpp:805
 msgid "Are you sure to delete the selected podcast item?"
 msgstr ""
 
-#: PodcastsPanel.cpp:959
+#: PodcastsPanel.cpp:961
 msgid "New Channel"
 msgstr ""
 
-#: PodcastsPanel.cpp:959
+#: PodcastsPanel.cpp:961
 msgid "Add a new podcast channel"
 msgstr ""
 
-#: PodcastsPanel.cpp:965
+#: PodcastsPanel.cpp:967
 msgid "delete this podcast channels and all its items"
 msgstr ""
 
-#: PodcastsPanel.cpp:974
+#: PodcastsPanel.cpp:976
 msgid "Update"
 msgstr ""
 
-#: PodcastsPanel.cpp:974
+#: PodcastsPanel.cpp:976
 msgid "Update the podcast items of the selected channels"
 msgstr ""
 
-#: PodcastsPanel.cpp:980
+#: PodcastsPanel.cpp:982
 msgid "Properties"
 msgstr ""
 
-#: PodcastsPanel.cpp:980
+#: PodcastsPanel.cpp:982
 msgid "Edit the podcast channel"
 msgstr ""
 
-#: PodcastsPanel.cpp:986 PodcastsPanel.cpp:1221 PodcastsPanel.cpp:1228
+#: PodcastsPanel.cpp:988 PodcastsPanel.cpp:1223 PodcastsPanel.cpp:1230
 msgid "Copy the current selected podcasts to a directory or device"
 msgstr ""
 
-#: PodcastsPanel.cpp:996
+#: PodcastsPanel.cpp:998
 msgid "Status"
 msgstr ""
 
-#: PodcastsPanel.cpp:998
+#: PodcastsPanel.cpp:1000
 msgid "Channel"
 msgstr ""
 
-#: PodcastsPanel.cpp:999
+#: PodcastsPanel.cpp:1001
 msgid "Category"
 msgstr ""
 
-#: PodcastsPanel.cpp:1000
+#: PodcastsPanel.cpp:1002
 msgid "Date"
 msgstr ""
 
-#: PodcastsPanel.cpp:1002
+#: PodcastsPanel.cpp:1004
 msgid "Author"
 msgstr ""
 
-#: PodcastsPanel.cpp:1003 SoListBox.cpp:293
+#: PodcastsPanel.cpp:1005 SoListBox.cpp:304
 msgid "PlayCount"
 msgstr ""
 
-#: PodcastsPanel.cpp:1004
+#: PodcastsPanel.cpp:1006
 msgid "LastPlay"
 msgstr ""
 
-#: PodcastsPanel.cpp:1005
+#: PodcastsPanel.cpp:1007
 msgid "Added"
 msgstr ""
 
-#: PodcastsPanel.cpp:1139 SoListBox.cpp:170
+#: PodcastsPanel.cpp:1141 SoListBox.cpp:170
 msgid "Never"
 msgstr ""
 
-#: PodcastsPanel.cpp:1204 RadioPanel.cpp:491
+#: PodcastsPanel.cpp:1206 RadioPanel.cpp:491
 msgid "Add current selected songs to playlist"
 msgstr ""
 
-#: PodcastsPanel.cpp:1210
+#: PodcastsPanel.cpp:1212
 msgid "Delete the current selected podcasts"
 msgstr ""
 
-#: PodcastsPanel.cpp:1216
+#: PodcastsPanel.cpp:1218
 msgid "Download"
 msgstr ""
 
-#: PodcastsPanel.cpp:1216
+#: PodcastsPanel.cpp:1218
 msgid "Download the current selected podcasts"
 msgstr ""
 
-#: PodcastsPanel.cpp:1228
+#: PodcastsPanel.cpp:1230
 msgid "No selected items..."
 msgstr ""
 
@@ -1925,7 +1937,7 @@ msgstr ""
 msgid "Are you sure to delete the selected radio genres?"
 msgstr ""
 
-#: RadioPanel.cpp:414 SoListBox.cpp:291
+#: RadioPanel.cpp:414 SoListBox.cpp:302
 msgid "BitRate"
 msgstr ""
 
@@ -1937,7 +1949,7 @@ msgstr ""
 msgid "Add a radio"
 msgstr ""
 
-#: RadioPanel.cpp:508 RadioPanel.cpp:1157
+#: RadioPanel.cpp:508 RadioPanel.cpp:1187
 msgid "Edit Radio"
 msgstr ""
 
@@ -1985,19 +1997,19 @@ msgstr ""
 msgid "Enter the new label name"
 msgstr ""
 
-#: RadioPanel.cpp:801
+#: RadioPanel.cpp:804
 msgid "Stations"
 msgstr ""
 
-#: RadioPanel.cpp:930
+#: RadioPanel.cpp:937
 msgid "Stations Labels Editor"
 msgstr ""
 
-#: RadioPanel.cpp:1016
+#: RadioPanel.cpp:989 RadioPanel.cpp:1046
 msgid "Radios"
 msgstr ""
 
-#: RadioPanel.cpp:1120
+#: RadioPanel.cpp:1150
 msgid "There are not entries for this Radio Station"
 msgstr ""
 
@@ -2013,63 +2025,63 @@ msgstr ""
 msgid "Select the cover filename"
 msgstr ""
 
-#: SoListBox.cpp:288
+#: SoListBox.cpp:299
 msgid "Disk"
 msgstr ""
 
-#: SoListBox.cpp:294
+#: SoListBox.cpp:305
 msgid "Last Play"
 msgstr ""
 
-#: SoListBox.cpp:347
+#: SoListBox.cpp:358
 msgid "Play All"
 msgstr ""
 
-#: SoListBox.cpp:347
+#: SoListBox.cpp:358
 msgid "Play all songs"
 msgstr ""
 
-#: SoListBox.cpp:355
+#: SoListBox.cpp:366
 msgid "Enqueue All"
 msgstr ""
 
-#: SoListBox.cpp:355
+#: SoListBox.cpp:366
 msgid "Add all songs to the playlist"
 msgstr ""
 
-#: SoListBox.cpp:361
+#: SoListBox.cpp:372
 msgid "Save all selected tracks as a playlist"
 msgstr ""
 
-#: SoListBox.cpp:373
+#: SoListBox.cpp:384
 msgid "Edit the labels assigned to the selected songs"
 msgstr ""
 
-#: SoListBox.cpp:377
+#: SoListBox.cpp:388
 msgid "Edit the songs selected"
 msgstr ""
 
-#: SoListBox.cpp:383
+#: SoListBox.cpp:394
 msgid "Select Genre"
 msgstr ""
 
-#: SoListBox.cpp:383
+#: SoListBox.cpp:394
 msgid "Selects the genre of the current song"
 msgstr ""
 
-#: SoListBox.cpp:387
+#: SoListBox.cpp:398
 msgid "Select Artist"
 msgstr ""
 
-#: SoListBox.cpp:387
+#: SoListBox.cpp:398
 msgid "Selects the artist of the current song"
 msgstr ""
 
-#: SoListBox.cpp:391
+#: SoListBox.cpp:402
 msgid "Select Album"
 msgstr ""
 
-#: SoListBox.cpp:391
+#: SoListBox.cpp:402
 msgid "Select the album of the current song"
 msgstr ""
 
