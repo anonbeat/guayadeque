@@ -97,15 +97,19 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     }
 }
 
+
 // -------------------------------------------------------------------------------- //
-wxImage * GetID3v2Image( ID3v2::Tag * tagv2 )
+wxImage * GetID3v2ImageType( TagLib::ID3v2::FrameList &framelist,
+            TagLib::ID3v2::AttachedPictureFrame::Type frametype  = TagLib::ID3v2::AttachedPictureFrame::FrontCover );
+
+wxImage * GetID3v2ImageType( TagLib::ID3v2::FrameList &framelist,
+            TagLib::ID3v2::AttachedPictureFrame::Type frametype )
 {
     TagLib::ID3v2::AttachedPictureFrame * PicFrame;
-    TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["APIC"];
-    for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
+    for( std::list<TagLib::ID3v2::Frame*>::iterator iter = framelist.begin(); iter != framelist.end(); iter++ )
     {
         PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
-        if( PicFrame->type() == TagLib::ID3v2::AttachedPictureFrame::FrontCover )
+        if( PicFrame->type() == frametype )
         {
             int ImgDataSize = PicFrame->picture().size();
 
@@ -133,7 +137,22 @@ wxImage * GetID3v2Image( ID3v2::Tag * tagv2 )
             }
         }
     }
-	return NULL;
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * GetID3v2Image( ID3v2::Tag * tagv2 )
+{
+    TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["APIC"];
+
+    wxImage * CoverImage = GetID3v2ImageType( FrameList );
+
+    if( !CoverImage )
+    {
+        CoverImage = GetID3v2ImageType( FrameList, TagLib::ID3v2::AttachedPictureFrame::Other );
+    }
+
+	return CoverImage;
 }
 
 // -------------------------------------------------------------------------------- //

@@ -1036,14 +1036,14 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_RADIO;
     }
+    else if( ( CoverImage = guTagGetPicture( m_MediaSong.m_FileName ) ) )
+    {
+        m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
+    }
     else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
     {
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast_icon ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_PODCAST;
-    }
-    else if( ( CoverImage = guTagGetPicture( m_MediaSong.m_FileName ) ) )
-    {
-        m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
     }
     else if( m_MediaSong.m_CoverId )
     {
