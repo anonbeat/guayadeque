@@ -49,6 +49,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     guPlayList * playlist, guPlayerFilters * filters )
        : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 310, 170 ), wxTAB_TRAVERSAL )
 {
+    double SavedVol = 50.0;
+
     m_Db = db;
     m_PlayListCtrl = playlist;
     m_PlayerFilters = filters;
@@ -92,7 +94,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         Config->RegisterObject( this );
 
         //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
-        m_CurVolume = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
+        SavedVol = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
         //guLogMessage( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
         m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
         m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
@@ -291,13 +293,10 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     TrackListChanged();
     // The SetVolume call dont get set if the volume is the last one
     // so we do it two calls
-    if( ( m_MediaCtrl->GetVolume() * 100.0 ) != m_CurVolume )
-    {
-        double SavedVol = m_CurVolume;
-        SetVolume( 0.0 );
-        SetVolume( SavedVol );
-        //guLogMessage( wxT( "Set Volume %i %e" ), m_CurVolume, m_MediaCtrl->GetVolume() );
-    }
+
+    m_CurVolume = ( m_MediaCtrl->GetVolume() * 100.0 );
+    SetVolume( SavedVol );
+    //guLogMessage( wxT( "CurVol: %i SavedVol: %i" ), int( m_MediaCtrl->GetVolume() * 100.0 ), ( int ) m_CurVolume );
 
     if( Equalizer.Count() == guEQUALIZER_BAND_COUNT )
     {
@@ -1869,7 +1868,7 @@ void guPlayerPanel::SetVolume( double volume )
 
     m_CurVolume = volume;
 
-    m_MediaCtrl->SetVolume(  volume / ( double ) 100 );
+    m_MediaCtrl->SetVolume(  volume / ( double ) 100.0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %u%%" ), ( int ) volume ) );
 }
 
