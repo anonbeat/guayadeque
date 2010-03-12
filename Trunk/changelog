@@ -1,5 +1,30 @@
 
+2010-03-12 0.2.5
+
+  * Fix set volumen on loading when was muted
+  * Fix Downloading files when redirected using 'location:' in lower case
+  * Fixed when edit the track currently playing the cover dont show anymore
+  * Added german translation
+  * If playlist is empty and player is not playing enqueue tracks starts
+    playing the added tracks
+  * Add configuration option to hide close button. You need to add entry in
+    the conf file ~/.guayadeque/guayadeque.conf
+    [General]
+    ShowPaneCloseButton=0
+  * The current played track appears in app title
+  * Fix player labels with & char
+  * Fix drag and drop items in playlist under fedora
+  * Fix # in filenames during drag n drop operations
+
   * New Icon and new Splash
+I would like to thank everyone who participated in the Icon development poll
+at OMG! UK.  Every icon and every artist was appreciated and the resulting
+artwork and design was fantastic.  The 1800 votes cast was a surprise, but
+shows how effective a good blog can be. Mrmotinjo (Stefan Bogdanovic
+http://evilsun.carbonmade.com ) won with his icon
+creation and will forever be linked to Guayadeque and for this we are
+grateful and humbled.
+
   * Tracks changes propagates thought the playlist, library, current track, etc
   * The player slider handles wheel events
   * Player title, artist or album now scrolls when put the mouse over it if needed. 
