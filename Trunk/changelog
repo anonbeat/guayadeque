@@ -1,4 +1,6 @@
 
+  * Fix parsing podcasts that contains comments before the channel tag
+
 2010-03-12 0.2.5
 
   * Fix set volumen on loading when was muted

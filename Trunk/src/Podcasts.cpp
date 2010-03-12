@@ -98,59 +98,82 @@ bool guPodcastChannel::ReadContent( void )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guPodcastChannel::ReadXmlImage( wxXmlNode * XmlNode )
+{
+    while( XmlNode )
+    {
+        if( XmlNode->GetName() == wxT( "url" ) )
+        {
+            m_Image = XmlNode->GetNodeContent();
+            return true;
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 bool guPodcastChannel::ReadXml( wxXmlNode * XmlNode )
 {
-    if( XmlNode && XmlNode->GetName() == wxT( "channel" ) )
+    while( XmlNode )
     {
-        XmlNode = XmlNode->GetChildren();
-        while( XmlNode )
+        if( XmlNode->GetName() == wxT( "channel" ) )
         {
-            if( XmlNode->GetName() == wxT( "title" ) )
+            XmlNode = XmlNode->GetChildren();
+            while( XmlNode )
             {
-                m_Title = XmlNode->GetNodeContent();
+                if( XmlNode->GetName() == wxT( "title" ) )
+                {
+                    m_Title = XmlNode->GetNodeContent();
+                }
+                else if( XmlNode->GetName() == wxT( "link" ) )
+                {
+                    m_Link = XmlNode->GetNodeContent();
+                }
+                else if( XmlNode->GetName() == wxT( "language" ) )
+                {
+                    m_Lang = XmlNode->GetNodeContent();
+                }
+                else if( XmlNode->GetName() == wxT( "description" ) )
+                {
+                    m_Description = XmlNode->GetNodeContent();
+                }
+                else if( XmlNode->GetName() == wxT( "itunes:author" ) )
+                {
+                    m_Author = XmlNode->GetNodeContent();
+                }
+                else if( XmlNode->GetName() == wxT( "itunes:owner" ) )
+                {
+                    ReadXmlOwner( XmlNode->GetChildren() );
+                }
+                else if( XmlNode->GetName() == wxT( "itunes:image" ) )
+                {
+                    XmlNode->GetPropVal( wxT( "href" ), &m_Image );
+                }
+                else if( XmlNode->GetName() == wxT( "image" ) )
+                {
+                    ReadXmlImage( XmlNode->GetChildren() );
+                }
+                else if( XmlNode->GetName() == wxT( "itunes:category" ) )
+                {
+                    XmlNode->GetPropVal( wxT( "text" ), &m_Category );
+                }
+                else if( XmlNode->GetName() == wxT( "itunes:summary" ) )
+                {
+                    m_Summary = XmlNode->GetNodeContent();
+                }
+                else if( XmlNode->GetName() == wxT( "item" ) )
+                {
+                    guPodcastItem * PodcastItem = new guPodcastItem( XmlNode->GetChildren() );
+                    //PodcastItem->ReadXml( XmlNode->GetChildren() );
+                    //guLogMessage( wxT( "Item Length: %i" ), PodcastItem->m_Length );
+                    m_Items.Add( PodcastItem );
+                }
+                XmlNode = XmlNode->GetNext();
             }
-            else if( XmlNode->GetName() == wxT( "link" ) )
-            {
-                m_Link = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "language" ) )
-            {
-                m_Lang = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "description" ) )
-            {
-                m_Description = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:author" ) )
-            {
-                m_Author = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:owner" ) )
-            {
-                ReadXmlOwner( XmlNode->GetChildren() );
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:image" ) )
-            {
-                XmlNode->GetPropVal( wxT( "href" ), &m_Image );
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:category" ) )
-            {
-                XmlNode->GetPropVal( wxT( "text" ), &m_Category );
-            }
-            else if( XmlNode->GetName() == wxT( "itunes:summary" ) )
-            {
-                m_Summary = XmlNode->GetNodeContent();
-            }
-            else if( XmlNode->GetName() == wxT( "item" ) )
-            {
-                guPodcastItem * PodcastItem = new guPodcastItem( XmlNode->GetChildren() );
-                //PodcastItem->ReadXml( XmlNode->GetChildren() );
-                //guLogMessage( wxT( "Item Length: %i" ), PodcastItem->m_Length );
-                m_Items.Add( PodcastItem );
-            }
-            XmlNode = XmlNode->GetNext();
+            return true;
         }
-        return true;
+        XmlNode = XmlNode->GetNext();
     }
     return false;
 }
