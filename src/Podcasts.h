@@ -105,6 +105,7 @@ class guPodcastChannel
 {
   protected :
     bool        ReadContent( void );
+    bool        ReadXmlImage( wxXmlNode * XmlNode );
     bool        ReadXml( wxXmlNode * XmlNode );
     void        ReadXmlOwner( wxXmlNode * XmlNode );
 
