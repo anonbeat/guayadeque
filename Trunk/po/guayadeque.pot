@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-10 07:20+0000\n"
+"POT-Creation-Date: 2010-03-12 11:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1174,79 +1174,79 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: PlayerPanel.cpp:132
+#: PlayerPanel.cpp:134
 msgid "Go to Previous Track in the Playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:136
+#: PlayerPanel.cpp:138
 msgid "Go to Next Track in the Playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:140
+#: PlayerPanel.cpp:142
 msgid "Start playing or pauses current track in the Playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:144
+#: PlayerPanel.cpp:146
 msgid "Stops player reproduction"
 msgstr ""
 
-#: PlayerPanel.cpp:148 PlayerPanel.cpp:1865
+#: PlayerPanel.cpp:150 PlayerPanel.cpp:1872
 msgid "Volume"
 msgstr ""
 
-#: PlayerPanel.cpp:152
+#: PlayerPanel.cpp:154
 msgid "Show the equalizer"
 msgstr ""
 
-#: PlayerPanel.cpp:156
+#: PlayerPanel.cpp:158
 msgid "Add tracks to the playlist based on LastFM"
 msgstr ""
 
-#: PlayerPanel.cpp:162
+#: PlayerPanel.cpp:164
 msgid "Randomize the tracks in the playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:166
+#: PlayerPanel.cpp:168
 msgid "Repeats the current playlist"
 msgstr ""
 
-#: PlayerPanel.cpp:177
+#: PlayerPanel.cpp:179
 msgid "Shows the current track album cover if available"
 msgstr ""
 
-#: PlayerPanel.cpp:185
+#: PlayerPanel.cpp:187
 msgid "Show the name of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:195
+#: PlayerPanel.cpp:197
 msgid "Show the album name of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:206
+#: PlayerPanel.cpp:208
 msgid "Show the artist name of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:216
+#: PlayerPanel.cpp:218
 msgid "Show the year of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:219
+#: PlayerPanel.cpp:221
 msgid "00:00 of 00:00"
 msgstr ""
 
-#: PlayerPanel.cpp:220
+#: PlayerPanel.cpp:222
 msgid "Show the current position and song length of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:235
+#: PlayerPanel.cpp:237
 msgid "Show the bitrate of the current track"
 msgstr ""
 
-#: PlayerPanel.cpp:1194
+#: PlayerPanel.cpp:1201
 msgid "Buffering..."
 msgstr ""
 
-#: PlayerPanel.cpp:1258
+#: PlayerPanel.cpp:1265
 msgid "gstreamer error"
 msgstr ""
 
