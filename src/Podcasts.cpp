@@ -70,17 +70,21 @@ guPodcastChannel::guPodcastChannel( const wxString &url )
 bool guPodcastChannel::ReadContent( void )
 {
     bool RetVal = false;
-    wxCurlHTTP  http;
-    //guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
-
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: */*" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8;iso-8859-1" ) );
-    char * Buffer = NULL;
-    http.Get( Buffer, m_Url );
-    if( Buffer )
+//    wxCurlHTTP  http;
+//    //guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
+//
+//    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+//    http.AddHeader( wxT( "Accept: */*" ) );
+//    http.AddHeader( wxT( "Accept-Charset: utf-8;iso-8859-1" ) );
+//    char * Buffer = NULL;
+//    http.Get( Buffer, m_Url );
+//    if( Buffer )
+//    {
+//        wxMemoryInputStream ins( Buffer, Strlen( Buffer ) );
+    wxString Content = GetUrlContent( m_Url );
+    if( !Content.IsEmpty() )
     {
-        wxMemoryInputStream ins( Buffer, Strlen( Buffer ) );
+        wxStringInputStream ins( Content );
         wxXmlDocument XmlDoc( ins );
         //wxSt
         wxXmlNode * XmlNode = XmlDoc.GetRoot();
@@ -88,7 +92,7 @@ bool guPodcastChannel::ReadContent( void )
         {
             RetVal = ReadXml( XmlNode->GetChildren() );
         }
-        free( Buffer );
+//        free( Buffer );
     }
     else
     {
