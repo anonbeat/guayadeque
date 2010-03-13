@@ -21,7 +21,11 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#define ID_GUAYADEQUE_VERSION           "0.2.5"
+#ifdef _GUREVISION_
+#define ID_GUAYADEQUE_VERSION       _GUVERSION_ " rev. 0" _GUREVISION_
+#else
+#define ID_GUAYADEQUE_VERSION		_GUVERSION_
+#endif
 
 // -------------------------------------------------------------------------------- //
 //
