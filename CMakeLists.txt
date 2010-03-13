@@ -1,5 +1,9 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 2.4)
+if(POLICY CMP0005)
+   cmake_policy(SET CMP0005 NEW)
+endif(POLICY CMP0005)
+
  
 project( Guayadeque )
 
@@ -66,6 +70,20 @@ ENDIF( NOT LIBFLAC_LIBRARIES )
 
 # Include wxWidgets macros
 INCLUDE(${wxWidgets_USE_FILE})
+
+#
+ADD_DEFINITIONS( -D_GUVERSION_="0.2.6" )
+IF( EXISTS ${PROJECT_SOURCE_DIR}/.svn )
+	# Probably a SVN workspace, determine revision level
+     	FIND_PACKAGE(Subversion)
+     	IF(Subversion_FOUND)
+        	Subversion_WC_INFO(${PROJECT_SOURCE_DIR} GUAYADEQUE)
+        	MESSAGE("Current revision is ${GUAYADEQUE_WC_REVISION}")
+		ADD_DEFINITIONS(-D_GUREVISION_="${GUAYADEQUE_WC_REVISION}")
+        ELSE(Subversion_FOUND)
+        	ADD_DEFINITIONS( -D_GUREVISION_="" )
+	ENDIF(Subversion_FOUND)
+ENDIF( EXISTS ${PROJECT_SOURCE_DIR}/.svn ) 
 
 #    
 #ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
