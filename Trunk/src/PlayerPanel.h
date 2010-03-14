@@ -188,6 +188,7 @@ class guPlayerPanel : public wxPanel
 	int                     m_PlayLoop;
 	bool                    m_PlaySmart;
 	bool                    m_PlayRandom;
+	int                     m_PlayRandomMode;
 	bool                    m_SliderIsDragged;
 	long                    m_LastTotalLen;
 

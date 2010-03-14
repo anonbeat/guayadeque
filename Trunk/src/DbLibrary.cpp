@@ -3304,7 +3304,7 @@ int guDbLibrary::GetPlayListType( const int plid )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetRandomTracks( guTrackArray * tracks, const int count,
+int guDbLibrary::GetRandomTracks( guTrackArray * tracks, const int rndmode, const int count,
                                      const int allowplaylist, const int denyplaylist )
 {
   wxString              query;
@@ -3329,8 +3329,25 @@ int guDbLibrary::GetRandomTracks( guTrackArray * tracks, const int count,
     Filters += wxT( "song_id NOT IN ( " ) + DenyPlQuery + wxT( " ) " );
   }
 
-  query = GU_TRACKS_QUERYSTR + Filters;
-  query += wxString::Format( wxT( " ORDER BY RANDOM() LIMIT %u;" ), count );
+  if( rndmode == guRANDOM_MODE_TRACK )
+  {
+      query = GU_TRACKS_QUERYSTR + Filters;
+      query += wxString::Format( wxT( " ORDER BY RANDOM() LIMIT %u;" ), count );
+  }
+  else //if( rndmode == guRANDOM_MODE_ALBUM )
+  {
+      int AlbumId = 0;
+      query = wxT( "SELECT song_albumid FROM songs " ) + Filters;
+      query += wxT( " ORDER BY RANDOM() LIMIT 1;" );
+      dbRes = ExecuteQuery( query );
+      if( dbRes.NextRow() )
+      {
+          AlbumId = dbRes.GetInt( 0 );
+      }
+      dbRes.Finalize();
+      query = GU_TRACKS_QUERYSTR + wxString::Format( wxT( "WHERE song_albumid = %i" ), AlbumId );
+      query += wxT( " ORDER BY song_number" );
+  }
 
   //guLogMessage( wxT( "GetRandomTracks:\n%s" ), query.c_str() );
 
