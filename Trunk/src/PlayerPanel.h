@@ -263,7 +263,7 @@ class guPlayerPanel : public wxPanel
                         ~guPlayerPanel();
     void                UpdateStatus();
     void                SetPlayList( const guTrackArray &SongList );
-    void                AddToPlayList( const guTrackArray &SongList );
+    void                AddToPlayList( const guTrackArray &SongList, const bool allowplay = true );
     void                AddToPlayList( const wxString &FileName );
     double              GetVolume() { return m_CurVolume; }
     void                SetVolume( double volume );
