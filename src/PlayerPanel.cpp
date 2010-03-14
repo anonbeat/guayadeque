@@ -705,7 +705,7 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const guTrackArray &tracks )
+void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowplay )
 {
     int PrevTrackCount = m_PlayListCtrl->GetCount();
     if( tracks.Count() )
@@ -740,7 +740,7 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &tracks )
                 m_SmartAddedArtists.RemoveAt( 0, Count - guPLAYER_SMART_CACHEARTISTS );
         }
 
-        if( !PrevTrackCount && ( GetState() != wxMEDIASTATE_PLAYING ) )
+        if( allowplay && !PrevTrackCount && ( GetState() != wxMEDIASTATE_PLAYING ) )
         {
             wxCommandEvent CmdEvent;
             OnNextTrackButtonClick( CmdEvent );
@@ -1463,7 +1463,7 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
         {
             // If Repeat was enabled disable it
             if( m_PlayLoop )
-                SetPlayLoop( 0 );
+                SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
 
             //guLogMessage( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
@@ -1471,7 +1471,7 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
                     m_PlayerFilters->GetAllowFilterId(),
                     m_PlayerFilters->GetDenyFilterId() ) )
             {
-                AddToPlayList( Tracks );
+                AddToPlayList( Tracks, false );
 
                 OnMediaFinished( event );
             }
@@ -1601,7 +1601,6 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     if( m_IsSkipping )
         return;
 
-//    wxMessageBox( wxT("OnPrevTrackButtonClick"), wxT("Event") );
     bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_NEXTTRACK ) ||
                       ( event.GetEventObject() == m_NextTrackButton );
 
@@ -1637,7 +1636,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
                     m_PlayerFilters->GetAllowFilterId(),
                     m_PlayerFilters->GetDenyFilterId() ) )
             {
-                AddToPlayList( Tracks );
+                AddToPlayList( Tracks, false );
 
                 OnNextTrackButtonClick( event );
             }
@@ -1695,7 +1694,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
                     m_PlayerFilters->GetAllowFilterId(),
                     m_PlayerFilters->GetDenyFilterId() ) )
             {
-                AddToPlayList( Tracks );
+                AddToPlayList( Tracks, false );
 
                 OnPlayButtonClick( event );
             }
