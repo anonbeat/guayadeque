@@ -53,6 +53,11 @@ enum guTrackMode {
     guTRACK_MODE_RADIO
 };
 
+enum guRandomMode {
+    guRANDOM_MODE_TRACK,
+    guRANDOM_MODE_ALBUM
+};
+
 // -------------------------------------------------------------------------------- //
 class guTrack
 {
@@ -369,7 +374,7 @@ class guDbLibrary : public guDb
                                          const int count, const int filterallow, const int filterdeny );
     int                 GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums );
     int                 GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs );
-    int                 GetRandomTracks( guTrackArray * Tracks, const int count,
+    int                 GetRandomTracks( guTrackArray * Tracks, const int rndmode, const int count,
                                          const int allowplaylist, const int denyplaylist );
     int                 GetLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs );
     int                 AddLabel( wxString LabelName );

@@ -298,15 +298,42 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	wxStaticBoxSizer * PlayGenSizer;
 	PlayGenSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
-	m_RndPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Play random track when playlist is empty"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) ) );
-	PlayGenSizer->Add( m_RndPlayChkBox, 0, wxALL, 5 );
+//	m_RndPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Play random track when playlist is empty"), wxDefaultPosition, wxDefaultSize, 0 );
+//    m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) ) );
+//	PlayGenSizer->Add( m_RndPlayChkBox, 0, wxALL, 5 );
+//
+//	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Delete played tracks from playlist"), wxDefaultPosition, wxDefaultSize, 0 );
+//    m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) ) );
+//	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxALL, 5 );
+//
+//	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
+	wxBoxSizer* RandomPlaySizer;
+	RandomPlaySizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Delete played tracks from playlist"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) ) );
+	m_RndPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Play random" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) ) );
+	RandomPlaySizer->Add( m_RndPlayChkBox, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	wxString m_RndModeChoiceChoices[] = { _( "track" ), _( "album" ) };
+	int m_RndModeChoiceNChoices = sizeof( m_RndModeChoiceChoices ) / sizeof( wxString );
+	m_RndModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_RndModeChoiceNChoices, m_RndModeChoiceChoices, 0 );
+    m_RndModeChoice->Enable( m_RndPlayChkBox->IsChecked() );
+	m_RndModeChoice->SetSelection( m_Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) ) );
+	RandomPlaySizer->Add( m_RndModeChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	wxStaticText * RndTextStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, wxT("when playlist is empty"), wxDefaultPosition, wxDefaultSize, 0 );
+	RndTextStaticText->Wrap( -1 );
+	RandomPlaySizer->Add( RndTextStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	PlayGenSizer->Add( RandomPlaySizer, 1, wxEXPAND, 5 );
+
+	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, wxT("Delete played tracks from playlist"), wxDefaultPosition, wxDefaultSize, 0 );
+
 	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxALL, 5 );
 
 	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
+
+
 
 	wxStaticBoxSizer * PlaySilenceSizer;
 	PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
@@ -892,6 +919,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_DelPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
 	m_PathsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
 
+	m_RndPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
 	m_DelPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
 	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
 	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
@@ -952,15 +980,17 @@ guPrefDialog::~guPrefDialog()
 	m_DelPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
 	m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
 
+	m_RndPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
+	m_DelPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
+	m_PlayLevelEnabled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
+	m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
+
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
 	m_AddCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
 	m_UpCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnUpCoverBtnClick ), NULL, this );
 	m_DownCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
 	m_DelCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
-
-	m_PlayLevelEnabled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
-	m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 
 	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
 	m_OnlineAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
@@ -971,7 +1001,6 @@ guPrefDialog::~guPrefDialog()
     m_PasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
 
 	m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
-	//m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLinkListBoxDClicked ), NULL, this );
 	m_LinksAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
 	m_LinksDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
 	m_LinksMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
@@ -990,7 +1019,6 @@ guPrefDialog::~guPrefDialog()
 	m_CmdAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
 
 	m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
-
 }
 
 
@@ -1025,7 +1053,8 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "SaveLyricsToFiles" ), m_SaveLyricsChkBox->GetValue(), wxT( "General" ) );
 
-    m_Config->WriteBool( wxT( "RndTrackOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "RndPlayOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "General" ) );
     m_Config->WriteBool( wxT( "DelTracksPlayed" ), m_DelPlayChkBox->GetValue(), wxT( "Playback" ) );
 
     m_Config->WriteBool( wxT( "SilenceDetector" ), m_PlayLevelEnabled->GetValue(), wxT( "Playback" ) );
@@ -1109,6 +1138,12 @@ void guPrefDialog::SaveSettings( void )
 void guPrefDialog::OnActivateTaskBarIcon( wxCommandEvent& event )
 {
     m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnRndPlayClicked( wxCommandEvent& event )
+{
+    m_RndModeChoice->Enable( m_RndPlayChkBox->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

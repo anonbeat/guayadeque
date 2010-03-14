@@ -83,6 +83,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     m_ShowRevTime = false;
     m_PlayRandom = false;
+    m_PlayRandomMode = 0;
     m_DelTracksPlayed = false;
     m_PendingScrob = false;
     m_IsSkipping = false;
@@ -98,7 +99,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         //guLogMessage( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
         m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
         m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
-        m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
+        m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
+        m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) );
+
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
@@ -500,7 +503,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
     if( Config )
     {
         //guLogMessage( wxT( "Reading PlayerPanel Config Updated" ) );
-        m_PlayRandom = Config->ReadBool( wxT( "RndTrackOnEmptyPlayList" ), false, wxT( "General" ) );
+        m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
+        m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) );
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
@@ -1463,7 +1467,7 @@ void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
 
             //guLogMessage( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
-            if( m_Db->GetRandomTracks( &Tracks, m_SmartPlayAddTracks,
+            if( m_Db->GetRandomTracks( &Tracks, m_SmartPlayAddTracks, m_PlayRandomMode,
                     m_PlayerFilters->GetAllowFilterId(),
                     m_PlayerFilters->GetDenyFilterId() ) )
             {
@@ -1629,7 +1633,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 
             //guLogMessage( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
-            if( m_Db->GetRandomTracks( &Tracks, m_SmartPlayAddTracks,
+            if( m_Db->GetRandomTracks( &Tracks, m_SmartPlayAddTracks, m_PlayRandomMode,
                     m_PlayerFilters->GetAllowFilterId(),
                     m_PlayerFilters->GetDenyFilterId() ) )
             {
@@ -1687,7 +1691,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 
             //guLogMessage( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
-            if( m_Db->GetRandomTracks( &Tracks, m_SmartPlayAddTracks,
+            if( m_Db->GetRandomTracks( &Tracks, m_SmartPlayAddTracks, m_PlayRandomMode,
                     m_PlayerFilters->GetAllowFilterId(),
                     m_PlayerFilters->GetDenyFilterId() ) )
             {
