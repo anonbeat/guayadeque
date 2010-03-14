@@ -321,14 +321,14 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_RndModeChoice->SetSelection( m_Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) ) );
 	RandomPlaySizer->Add( m_RndModeChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	wxStaticText * RndTextStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, wxT("when playlist is empty"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * RndTextStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "when playlist is empty" ), wxDefaultPosition, wxDefaultSize, 0 );
 	RndTextStaticText->Wrap( -1 );
 	RandomPlaySizer->Add( RndTextStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	PlayGenSizer->Add( RandomPlaySizer, 1, wxEXPAND, 5 );
 
-	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, wxT("Delete played tracks from playlist"), wxDefaultPosition, wxDefaultSize, 0 );
-
+	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Delete played tracks from playlist" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) ) );
 	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxALL, 5 );
 
 	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
