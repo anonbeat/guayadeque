@@ -480,8 +480,10 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 
         dc.SetClippingRegion( CutRect );
 
-        dc.DrawText( ( Item.m_Number ? wxString::Format( wxT( "%02u - " ), Item.m_Number ) :
-                          wxT( "" ) ) + Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
+        //dc.DrawText( ( Item.m_Number ? wxString::Format( wxT( "%02u - " ), Item.m_Number ) :
+        //                  wxT( "" ) ) + Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
+        dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
+
         //m_Attr.m_Font->SetPointSize( 7 );
         //m_Attr.m_Font->SetStyle( wxFONTSTYLE_ITALIC );
         m_Attr.m_Font->SetWeight( wxFONTWEIGHT_NORMAL );
@@ -956,10 +958,13 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
                     if( m_Db->GetPodcastItemFile( FileName, &PodcastItem ) )
                     {
                         Track.m_Type = guTRACK_TYPE_PODCAST;
+                        Track.m_SongId = PodcastItem.m_Id;
                         Track.m_SongName = PodcastItem.m_Title;
                         Track.m_ArtistName = PodcastItem.m_Author;
+                        Track.m_AlbumId = PodcastItem.m_ChId;
                         Track.m_AlbumName = PodcastItem.m_Channel;
                         Track.m_Length = PodcastItem.m_Length;
+                        Track.m_PlayCount = PodcastItem.m_PlayCount;
                         Track.m_Year = 0;
                         Track.m_Rating = wxNOT_FOUND;
                     }

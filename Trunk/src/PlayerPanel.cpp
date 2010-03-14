@@ -147,7 +147,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	PlayerBtnSizer->Add( m_StopButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_volume_medium ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
-    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) m_CurVolume ) );
+    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
 	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mixer ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
@@ -341,8 +341,11 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
 
+    m_TitleLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTitleNameDClicked ), NULL, this );
 	m_AlbumLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+
 	m_PositionLabel->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 
@@ -452,6 +455,7 @@ guPlayerPanel::~guPlayerPanel()
 
     Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
 
+	m_TitleLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTitleNameDClicked ), NULL, this );
 	m_AlbumLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
 	m_PositionLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
@@ -1764,25 +1768,12 @@ void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
     }
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guPlayerPanel::OnLeftDClickPlayerCoverBitmap( wxMouseEvent& event )
-//{
-//    wxPoint Pos;
-//    Pos = ClientToScreen( m_PlayerCoverBitmap->GetPosition() );
-//    guCoverFrame * BigCover = new guCoverFrame( this, wxID_ANY, wxEmptyString, Pos );
-//    if( BigCover )
-//    {
-//        if( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG )
-//            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_FileName );
-//        else
-//            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
-//        BigCover->Show();
-//    }
-//}
-
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayerCoverBitmapMouseOver( wxCommandEvent &event )
 {
+    if( m_MediaSong.m_CoverType == GU_SONGCOVER_NONE )
+        return;
+
     wxPoint Pos;
     Pos = ClientToScreen( m_PlayerCoverBitmap->GetPosition() );
     guCoverFrame * BigCover = new guCoverFrame( this, wxID_ANY, wxEmptyString, Pos );
@@ -1887,21 +1878,72 @@ int guPlayerPanel::GetPosition()
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
+{
+    int TrackId = wxNOT_FOUND;
+    if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
+    {
+        TrackId = m_MediaSong.m_SongId;
+    }
+    else
+    {
+        TrackId = m_Db->FindTrack( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
+    }
+
+    if( TrackId != wxNOT_FOUND )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
+        evt.SetInt( TrackId );
+        evt.SetExtraLong( m_MediaSong.m_Type );
+        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
 {
-    wxString * AlbumName = new wxString( m_MediaSong.m_AlbumName );
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_SELECTNAME );
-    evt.SetClientData( ( void * ) AlbumName );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    int AlbumId = wxNOT_FOUND;
+    if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
+    {
+        AlbumId = m_MediaSong.m_AlbumId;
+    }
+    else
+    {
+        AlbumId = m_Db->FindAlbum( m_MediaSong.m_ArtistName, m_MediaSong.m_AlbumName );
+    }
+
+    if( AlbumId != wxNOT_FOUND )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+        evt.SetInt( AlbumId );
+        evt.SetExtraLong( m_MediaSong.m_Type );
+        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
 {
-    wxString * ArtistName = new wxString( m_MediaSong.m_ArtistName );
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SELECTNAME );
-    evt.SetClientData( ( void * ) ArtistName );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    int ArtistId = wxNOT_FOUND;
+    if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
+    {
+        ArtistId = m_MediaSong.m_ArtistId;
+    }
+    else
+    {
+        ArtistId = m_Db->FindArtist( m_MediaSong.m_ArtistName );
+    }
+
+    if( ArtistId != wxNOT_FOUND )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+        evt.SetInt( ArtistId );
+        evt.SetExtraLong( m_MediaSong.m_Type );
+        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

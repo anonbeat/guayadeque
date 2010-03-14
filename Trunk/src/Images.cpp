@@ -48,7 +48,7 @@
 #include "./images/left_png.h"
 #include "./images/musicbrainz.h"
 #include "./images/net_radio_jpg.h"
-#include "./images/no_cover_jpg.h"
+#include "./images/no_cover.h"
 #include "./images/no_photo_png.h"
 #include "./images/numerate_png.h"
 #include "./images/playback_pause_png.h"
@@ -143,7 +143,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_lastfm_on,                     wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_left,                          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_net_radio,                     wxBITMAP_TYPE_JPEG ),
-    GUIMAGE( guImage_no_cover,                      wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_no_cover,                      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_no_photo,                      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_numerate,                      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_playback_pause,                wxBITMAP_TYPE_PNG ),

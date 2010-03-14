@@ -57,6 +57,8 @@ class guAlListBox : public  guListView
     virtual void            ReloadItems( bool reset = true );
     virtual void            SetSelectedItems( const wxArrayInt &selection );
 
+    int                 FindAlbum( const int albumid );
+
 
 };
 

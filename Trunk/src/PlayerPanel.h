@@ -222,7 +222,6 @@ class guPlayerPanel : public wxPanel
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
-//    void                OnLeftDClickPlayerCoverBitmap( wxMouseEvent &event );
     void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
     void                OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
     void                OnPlayerPositionSliderEndSeek( wxScrollEvent &event );
@@ -247,6 +246,7 @@ class guPlayerPanel : public wxPanel
     void                OnSmartAddTracks( wxCommandEvent &event );
     void                OnUpdatedRadioTrack( wxCommandEvent &event );
 
+    void                OnTitleNameDClicked( wxMouseEvent &event );
     void                OnAlbumNameDClicked( wxMouseEvent &event );
     void                OnArtistNameDClicked( wxMouseEvent &event );
     void                OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime;

@@ -44,6 +44,7 @@ class guAlbumBrowserItem
   public :
     unsigned int  m_AlbumId;
     wxString      m_ArtistName;
+    unsigned int  m_ArtistId;
     wxString      m_AlbumName;
     unsigned int  m_Year;
     unsigned int  m_TrackCount;
@@ -54,6 +55,7 @@ class guAlbumBrowserItem
     {
         m_AlbumId = wxNOT_FOUND;
         m_Year = 0;
+        m_ArtistId = wxNOT_FOUND;
         m_TrackCount = 0;
         m_CoverBitmap = NULL;
     };

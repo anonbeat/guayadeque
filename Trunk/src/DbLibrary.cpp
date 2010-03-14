@@ -2219,7 +2219,7 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
   wxString              query;
   wxSQLite3ResultSet    dbRes;
 
-  query = wxT( "SELECT DISTINCT album_id, artist_name, album_name, album_coverid FROM songs " );
+  query = wxT( "SELECT DISTINCT album_id, album_artistid, artist_name, album_name, album_coverid FROM songs " );
   if( filter )
   {
     wxString DynQuery = DynPlayListToSQLQuery( filter );
@@ -2275,9 +2275,10 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
   {
       guAlbumBrowserItem * Item = new guAlbumBrowserItem();
       Item->m_AlbumId = dbRes.GetInt( 0 ); //AlbumId;
-      Item->m_ArtistName = dbRes.GetString( 1 );
-      Item->m_AlbumName = dbRes.GetString( 2 );
-      Item->m_CoverId = dbRes.GetInt( 3 );
+      Item->m_ArtistId = dbRes.GetInt( 1 );
+      Item->m_ArtistName = dbRes.GetString( 2 );
+      Item->m_AlbumName = dbRes.GetString( 3 );
+      Item->m_CoverId = dbRes.GetInt( 4 );
       Item->m_CoverBitmap = GetCoverBitmap( Item->m_CoverId, false );
       Item->m_Year = 0; //dbRes.GetInt( 4 );
       Item->m_TrackCount = 0; //dbRes.GetInt( 5 );

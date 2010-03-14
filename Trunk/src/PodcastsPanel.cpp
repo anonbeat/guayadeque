@@ -511,6 +511,7 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
             Track->m_FileName = PodcastItems[ Index ].m_FileName;
             Track->m_SongName = PodcastItems[ Index ].m_Title;
             Track->m_ArtistName = PodcastItems[ Index ].m_Author;
+            Track->m_AlbumId = PodcastItems[ Index ].m_ChId;
             Track->m_AlbumName = PodcastItems[ Index ].m_Channel;
             Track->m_Length = PodcastItems[ Index ].m_Length;
             Track->m_PlayCount = PodcastItems[ Index ].m_PlayCount;
@@ -733,6 +734,7 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue )
                             Track->m_FileName = PodcastItem.m_FileName;
                             Track->m_SongName = PodcastItem.m_Title;
                             Track->m_ArtistName = PodcastItem.m_Author;
+                            Track->m_AlbumId = PodcastItem.m_ChId;
                             Track->m_AlbumName = PodcastItem.m_Channel;
                             Track->m_Length = PodcastItem.m_Length;
                             Track->m_PlayCount = PodcastItem.m_PlayCount;
@@ -923,7 +925,19 @@ void guPodcastPanel::OnPaneClose( wxAuiManagerEvent &event )
     event.Veto();
 }
 
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::SelectPodcast( const int podcastid )
+{
+    m_ChannelsListBox->SetSelection( wxNOT_FOUND );
+    m_PodcastsListBox->SetSelection( m_PodcastsListBox->FindItem( podcastid ) );
+}
 
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::SelectChannel( const int channelid )
+{
+    m_ChannelsListBox->SetSelection( wxNOT_FOUND );
+    m_ChannelsListBox->SetSelection( m_ChannelsListBox->FindItem( channelid ) );
+}
 
 // -------------------------------------------------------------------------------- //
 // guChannelsListBox
@@ -989,6 +1003,21 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+int guChannelsListBox::FindItem( const int channelid )
+{
+    int Index;
+    int Count = m_Items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_Items->Item( Index ).m_Id == channelid )
+        {
+            return Index;
+        }
+    }
+    return wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1293,6 +1322,7 @@ int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
                 Track->m_FileName = PodcastItem.m_FileName;
                 Track->m_SongName = PodcastItem.m_Title;
                 Track->m_ArtistName = PodcastItem.m_Author;
+                Track->m_AlbumId = PodcastItem.m_ChId;
                 Track->m_AlbumName = PodcastItem.m_Channel;
                 Track->m_Length = PodcastItem.m_Length;
                 Track->m_PlayCount = PodcastItem.m_PlayCount;
@@ -1319,6 +1349,21 @@ int guPodcastListBox::GetDragFiles( wxFileDataObject * files )
        files->AddFile( Songs[ index ].m_FileName );
     }
     return count;
+}
+
+// -------------------------------------------------------------------------------- //
+int guPodcastListBox::FindItem( const int podcastid )
+{
+    int Index;
+    int Count = m_PodItems.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_PodItems[ Index ].m_Id == podcastid )
+        {
+            return Index;
+        }
+    }
+    return wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //

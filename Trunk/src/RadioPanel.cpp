@@ -978,8 +978,7 @@ void guRadioPanel::OnRadioGenreListSelected( wxTreeEvent &event )
 void guRadioPanel::OnRadioGenreListActivated( wxTreeEvent &event )
 {
     wxTreeItemId ItemId = event.GetItem();
-
-    guRadioGenreData * ItemData = ( guRadioGenreData * ) m_GenresTreeCtrl->GetItemData( event.GetItem() );
+    guRadioGenreData * ItemData = ( guRadioGenreData * ) m_GenresTreeCtrl->GetItemData( ItemId );
     if( ItemData )
     {
         wxArrayInt RadioGenres;
@@ -995,6 +994,7 @@ void guRadioPanel::OnRadioGenreListActivated( wxTreeEvent &event )
             UpdateRadiosThread->Run();
         }
     }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //

@@ -288,3 +288,18 @@ int guArListBox::GetDragFiles( wxFileDataObject * files )
 }
 
 // -------------------------------------------------------------------------------- //
+int guArListBox::FindArtist( const int artistid )
+{
+    int Index;
+    int Count = m_Items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_Items->Item( Index ).m_Id == artistid )
+        {
+            return Index;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //

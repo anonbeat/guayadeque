@@ -96,6 +96,9 @@ void guSplashFrame::OnTimeout( wxTimerEvent &event )
 void guSplashFrame::DoPaint( wxDC &dc )
 {
     wxString Version = wxT( ID_GUAYADEQUE_VERSION );
+#ifdef ID_GUAYADEQUE_REVISION
+    Version += wxT( "-" ID_GUAYADEQUE_REVISION );
+#endif
     wxString Credits = wxT( "J.Rios anonbeat@gmail.com" );
 
     wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );

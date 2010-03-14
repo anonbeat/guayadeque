@@ -136,6 +136,7 @@ class guLastFMTrackInfo : public guLastFMInfo
   public:
     guSimilarTrackInfo *   m_Track;
     int                    m_TrackId;
+    int                    m_ArtistId;
 
     guLastFMTrackInfo() { m_Track = NULL; m_TrackId = wxNOT_FOUND; };
 
@@ -145,6 +146,7 @@ class guLastFMTrackInfo : public guLastFMInfo
     {
         m_Track = track;
         m_TrackId = wxNOT_FOUND;
+        m_ArtistId = wxNOT_FOUND;
     };
 
     ~guLastFMTrackInfo()
@@ -293,6 +295,7 @@ class guLastFMInfoCtrl : public wxPanel
     virtual void        OnPlayClicked( wxCommandEvent &event );
     virtual void        OnEnqueueClicked( wxCommandEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
+    virtual void        OnSongSelectName( wxCommandEvent &event );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
     virtual void        OnAlbumSelectName( wxCommandEvent &event );
 
@@ -414,6 +417,7 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
     virtual wxString    GetItemUrl( void );
     //void                OnClick( wxMouseEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
+    virtual void        OnSongSelectName( wxCommandEvent &event );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
 
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
