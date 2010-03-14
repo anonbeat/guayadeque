@@ -42,6 +42,7 @@ class guArListBox : public guListBox
                     ~guArListBox();
     virtual int     GetSelectedSongs( guTrackArray * songs ) const;
     bool            SelectArtistName( const wxString &ArtistName );
+    int             FindArtist( const int artistid );
 
 };
 

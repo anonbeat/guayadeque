@@ -1189,6 +1189,47 @@ void guLibPanel::OnSongSelectAlbum( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::SelectTrack( const int trackid )
+{
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_AlbumListCtrl->ReloadItems();
+    m_SongListCtrl->SetSelection( m_SongListCtrl->FindItem( trackid ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SelectAlbum( const int albumid )
+{
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_AlbumListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_AlbumListCtrl->SetSelection( m_AlbumListCtrl->FindAlbum( albumid ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SelectArtist( const int artistid )
+{
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_ArtistListCtrl->SetSelection( m_ArtistListCtrl->FindArtist( artistid ) );
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::SelectAlbumName( const wxString &album )
 {
     wxArrayString Words;

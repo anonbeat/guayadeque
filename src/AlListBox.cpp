@@ -432,3 +432,18 @@ int guAlListBox::GetDragFiles( wxFileDataObject * files )
 }
 
 // -------------------------------------------------------------------------------- //
+int guAlListBox::FindAlbum( const int albumid )
+{
+    int Index;
+    int Count = m_Items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_Items->Item( Index ).m_Id == albumid )
+        {
+            return Index;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //

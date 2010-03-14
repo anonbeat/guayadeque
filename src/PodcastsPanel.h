@@ -54,8 +54,8 @@ class guChannelsListBox : public guListBox
   protected :
     guPodcastChannelArray m_PodChannels;
 
-    virtual void GetItemsList( void );
-    virtual void CreateContextMenu( wxMenu * Menu ) const;
+    virtual void    GetItemsList( void );
+    virtual void    CreateContextMenu( wxMenu * Menu ) const;
 
     virtual int     GetDragFiles( wxFileDataObject * files );
 
@@ -66,7 +66,8 @@ class guChannelsListBox : public guListBox
         ReloadItems();
     };
 
-    virtual int GetSelectedSongs( guTrackArray * Songs ) const;
+    virtual int     GetSelectedSongs( guTrackArray * Songs ) const;
+    int             FindItem( const int channelid );
 };
 
 class guPodcastPanel;
@@ -95,10 +96,13 @@ class guPodcastListBox : public guListView
 
     virtual void                ReloadItems( bool reset = true );
 
-    virtual wxString inline GetItemName( const int item ) const;
-    virtual int inline      GetItemId( const int item ) const;
+    virtual wxString inline     GetItemName( const int item ) const;
+    virtual int inline          GetItemId( const int item ) const;
 
     void                        SetOrder( int order );
+
+    int                         FindItem( const int podcastid );
+
     friend class guPodcastPanel;
 };
 
@@ -176,6 +180,9 @@ public:
 
     bool IsPanelShown( const int panelid ) const;
     void ShowPanel( const int panelid, bool show );
+
+    void SelectPodcast( const int podcastid );
+    void SelectChannel( const int channelid );
 
     friend class guPodcastDownloadQueueThread;
 };

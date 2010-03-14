@@ -116,7 +116,8 @@ guMainFrame::guMainFrame( wxWindow * parent )
     wxSize MainWindowSize;
     MainWindowSize.x = Config->ReadNum( wxT( "MainWindowSizeWidth" ), 800, wxT( "Positions" ) );
     MainWindowSize.y = Config->ReadNum( wxT( "MainWindowSizeHeight" ), 600, wxT( "Positions" ) );
-    Create( parent, wxID_ANY, wxT("Guayadeque Player"), MainWindowPos, MainWindowSize, wxDEFAULT_FRAME_STYLE );
+    Create( parent, wxID_ANY, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ),
+                MainWindowPos, MainWindowSize, wxDEFAULT_FRAME_STYLE );
 
     m_AuiManager.SetManagedWindow( this );
     m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
@@ -386,8 +387,10 @@ guMainFrame::guMainFrame( wxWindow * parent )
     Connect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
     Connect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
 
-	Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbumName ), NULL, this );
-	Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtistName ), NULL, this );
+
+	Connect( ID_MAINFRAME_SELECT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectTrack ), NULL, this );
+	Connect( ID_MAINFRAME_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbum ), NULL, this );
+	Connect( ID_MAINFRAME_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtist ), NULL, this );
 
 	Connect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
 	Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
@@ -486,8 +489,9 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
     Disconnect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
 
-	Disconnect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbumName ), NULL, this );
-	Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtistName ), NULL, this );
+	Disconnect( ID_MAINFRAME_SELECT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectTrack ), NULL, this );
+	Disconnect( ID_MAINFRAME_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbum ), NULL, this );
+	Disconnect( ID_MAINFRAME_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtist ), NULL, this );
 
 	Disconnect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
 	Disconnect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
@@ -979,22 +983,23 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
     if( Track )
     {
         SetTitle( Track->m_SongName + wxT( " / " ) + Track->m_ArtistName +
-            wxT( " - Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
+            wxT( " - Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ) );
 
         if( m_TaskBarIcon )
         {
-            m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "\r" ) +
+            m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION
+                                                    "-" ID_GUAYADEQUE_REVISION "\r" ) +
                                                Track->m_ArtistName + wxT( "\n" ) +
                                                Track->m_SongName );
         }
     }
     else
     {
-        SetTitle( wxT( " - Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
+        SetTitle( wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ) );
 
         if( m_TaskBarIcon )
         {
-            m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
+            m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ) );
         }
     }
 
@@ -1685,26 +1690,81 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnSelectAlbumName( wxCommandEvent &event )
+void guMainFrame::OnSelectTrack( wxCommandEvent &event )
 {
-    wxString * album = ( wxString * ) event.GetClientData();
-    if( album )
+    if( event.GetExtraLong() == guTRACK_TYPE_PODCAST )
     {
-        m_CatNotebook->SetSelection( 0 );
-        m_LibPanel->SelectAlbumName( * album );
-        delete album;
+        if( m_PodcastsPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_PodcastsPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_PodcastsPanel->SelectPodcast( event.GetInt() );
+        }
+    }
+    else
+    {
+        if( m_LibPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_LibPanel->SelectTrack( event.GetInt() );
+        }
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnSelectArtistName( wxCommandEvent &event )
+void guMainFrame::OnSelectAlbum( wxCommandEvent &event )
 {
-    wxString * artist = ( wxString * ) event.GetClientData();
-    if( artist )
+    if( event.GetExtraLong() == guTRACK_TYPE_PODCAST )
     {
-        m_CatNotebook->SetSelection( 0 );
-        m_LibPanel->SelectArtistName( * artist );
-        delete artist;
+        if( m_PodcastsPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_PodcastsPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_PodcastsPanel->SelectChannel( event.GetInt() );
+        }
+    }
+    else
+    {
+        if( m_LibPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_LibPanel->SelectAlbum( event.GetInt() );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnSelectArtist( wxCommandEvent &event )
+{
+    if( event.GetExtraLong() == guTRACK_TYPE_PODCAST )
+    {
+        return;
+    }
+    else
+    {
+        if( m_LibPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_LibPanel->SelectArtist( event.GetInt() );
+        }
     }
 }
 
@@ -1941,7 +2001,7 @@ void guMainFrame::CreateTaskBarIcon( void )
     m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
     if( m_TaskBarIcon )
     {
-        m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION ) );
+        m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ) );
     }
 }
 

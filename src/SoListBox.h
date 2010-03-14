@@ -86,6 +86,7 @@ class guSoListBox : public guListView
 
     void                        UpdatedTracks( const guTrackArray * tracks );
     void                        UpdatedTrack( const guTrack * track );
+    int                         FindItem( const int trackid );
 
 };
 

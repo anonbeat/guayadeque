@@ -610,3 +610,18 @@ void guSoListBox::UpdatedTrack( const guTrack * track )
 }
 
 // -------------------------------------------------------------------------------- //
+int guSoListBox::FindItem( const int trackid )
+{
+    int Index;
+    int Count = m_Items.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_Items[ Index ].m_SongId == trackid )
+        {
+            return Index;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //

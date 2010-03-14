@@ -1,4 +1,8 @@
 
+  * Added in last.fm panel the posibility to search for tracks in library
+  * The splash shows the revision number
+  * Double click over the track title selects the track
+  * Updated the no cover image. Thanks mrmotinjo
   * Fix parsing podcasts that contains comments before the channel tag
 
 2010-03-12 0.2.5

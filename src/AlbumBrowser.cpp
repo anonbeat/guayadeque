@@ -422,18 +422,18 @@ void guAlbumBrowserItemPanel::OnCopyToClipboard( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnAlbumSelectName( wxCommandEvent &event )
 {
-    wxString * AlbumName = new wxString( m_AlbumBrowserItem->m_AlbumName );
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_SELECTNAME );
-    evt.SetClientData( ( void * ) AlbumName );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+    evt.SetInt( m_AlbumBrowserItem->m_AlbumId );
+    evt.SetExtraLong( guTRACK_TYPE_DB );
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxString * ArtistName = new wxString( m_AlbumBrowserItem->m_ArtistName );
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SELECTNAME );
-    evt.SetClientData( ( void * ) ArtistName );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+    evt.SetInt( m_AlbumBrowserItem->m_ArtistId );
+    evt.SetExtraLong( guTRACK_TYPE_DB );
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
@@ -578,9 +578,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
     m_ItemStart = 0;
     m_LastItemStart = wxNOT_FOUND;
     m_ItemCount = 1;
-    wxImage TmpImg = wxImage( guImage( guIMAGE_INDEX_blank_cd_cover ) );
-    TmpImg.Rescale( 100, 100 );
-    m_BlankCD = new wxBitmap( TmpImg );
+    m_BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_no_cover ) );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_DynFilter.FromString( Config->ReadStr( wxT( "Filter" ), wxEmptyString, wxT( "AlbumBrowser" ) ) );
