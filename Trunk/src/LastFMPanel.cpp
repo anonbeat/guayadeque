@@ -460,7 +460,6 @@ void guArtistInfoCtrl::SetInfo( guLastFMArtistInfo * info )
 
 
     m_Info->m_ArtistId = m_Db->FindArtist( m_Info->m_Artist->m_Name );
-    guLogMessage( wxT( "ArtistId for %s = %i" ), m_Info->m_Artist->m_Name.c_str(), m_Info->m_ArtistId );
 
     m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
                                         m_NotFoundColor : m_NormalColor );

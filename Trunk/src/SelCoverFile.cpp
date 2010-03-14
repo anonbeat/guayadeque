@@ -20,6 +20,8 @@
 // -------------------------------------------------------------------------------- //
 #include "SelCoverFile.h"
 
+#include "Config.h"
+
 #include <wx/filedlg.h>
 
 // -------------------------------------------------------------------------------- //
@@ -82,8 +84,12 @@ guSelCoverFile::~guSelCoverFile()
 // -------------------------------------------------------------------------------- //
 void guSelCoverFile::OnSelFileClicked( wxCommandEvent& event )
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+    wxString CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+
     wxFileDialog * FileDialog = new wxFileDialog( this, _( "Select the cover filename" ),
-        m_AlbumPath, wxT( "cover.jpg" ), wxT( "*.jpg;*.png" ),
+        m_AlbumPath, CoverName, wxT( "*.jpg;*.png" ),
         wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_PREVIEW );
 
     if( FileDialog )

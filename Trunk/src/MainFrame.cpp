@@ -2598,15 +2598,17 @@ bool FindCoverLink( guDbLibrary * Db, int AlbumId, const wxString &Album, const 
                 //guLogMessage( wxT( "ImageLink : %s" ), AlbumInfo.ImageLink.c_str() );
                 // Save the cover into the target directory.
                 // Changed to DownloadImage to convert all images to jpg
-                //if( !DownloadFile( AlbumInfo.ImageLink, Path + wxT( "/cover.jpg" ) ) )
-                if( !DownloadImage( AlbumInfo.m_ImageLink, Path + wxT( "/cover.jpg" ) ) )
+                guConfig * Config = ( guConfig * ) guConfig::Get();
+                wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+                wxString CoverName = Path + ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+                if( !DownloadImage( AlbumInfo.m_ImageLink, CoverName ) )
                 {
                     guLogWarning( wxT( "Could not download cover file" ) );
                 }
                 else
                 {
 //                    DownloadedCovers++;
-                    Db->SetAlbumCover( AlbumId, Path + wxT( "/cover.jpg" ) );
+                    Db->SetAlbumCover( AlbumId, CoverName );
                     //guLogMessage( wxT( "Cover file downloaded for %s - %s" ), Artist.c_str(), AlbumName.c_str() );
                     RetVal = true;
                 }

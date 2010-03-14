@@ -41,7 +41,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	wxStaticBoxSizer *  PathsSizer;
 	wxBoxSizer *        PathButtonsSizer;
 	wxStaticBoxSizer*   CoversSizer;
-	wxStaticBoxSizer *  LibOptionsSIzer;
+	wxStaticBoxSizer *  LibOptionsSizer;
 	wxBoxSizer *        ASMainSizer;
 	wxStaticBoxSizer *  LastFMASSizer;
 	wxFlexGridSizer *   ASLoginSizer;
@@ -242,7 +242,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	CoversSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, _(" Words to detect covers ") ), wxHORIZONTAL );
 
-	m_CoversListBox = new wxListBox( m_LibPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
+	m_CoversListBox = new wxListBox( m_LibPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
 	m_CoversListBox->Append( m_Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) ) );
 	CoversSizer->Add( m_CoversListBox, 1, wxALL|wxEXPAND, 5 );
 
@@ -251,6 +251,14 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_AddCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	CoversButtonsSizer->Add( m_AddCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_UpCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_UpCoverButton->Enable( false );
+	CoversButtonsSizer->Add( m_UpCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_DownCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DownCoverButton->Enable( false );
+	CoversButtonsSizer->Add( m_DownCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_DelCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelCoverButton->Enable( false );
@@ -261,17 +269,17 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	LibMainSizer->Add( CoversSizer, 1, wxEXPAND|wxALL, 5 );
 
 
-	LibOptionsSIzer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	LibOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
 	m_UpdateLibChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Update library on application start"), wxDefaultPosition, wxDefaultSize, 0 );
     m_UpdateLibChkBox->SetValue( m_Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) );
-	LibOptionsSIzer->Add( m_UpdateLibChkBox, 0, wxALL, 5 );
+	LibOptionsSizer->Add( m_UpdateLibChkBox, 0, wxALL, 5 );
 
 	m_SaveLyricsChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Save lyrics to audio files"), wxDefaultPosition, wxDefaultSize, 0 );
     m_SaveLyricsChkBox->SetValue( m_Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "General" ) ) );
-	LibOptionsSIzer->Add( m_SaveLyricsChkBox, 0, wxALL, 5 );
+	LibOptionsSizer->Add( m_SaveLyricsChkBox, 0, wxALL, 5 );
 
-	LibMainSizer->Add( LibOptionsSIzer, 0, wxEXPAND|wxALL, 5 );
+	LibMainSizer->Add( LibOptionsSizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_LibPanel->SetSizer( LibMainSizer );
 	m_LibPanel->Layout();
@@ -890,6 +898,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
 	m_AddCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
+	m_UpCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnUpCoverBtnClick ), NULL, this );
+	m_DownCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
 	m_DelCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
 	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
 
@@ -944,6 +954,8 @@ guPrefDialog::~guPrefDialog()
 
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
 	m_AddCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
+	m_UpCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnUpCoverBtnClick ), NULL, this );
+	m_DownCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
 	m_DelCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
 
@@ -1176,10 +1188,14 @@ void guPrefDialog::OnCoversListBoxSelected( wxCommandEvent& event )
     m_CoverSelected = event.GetInt();
     if( m_CoverSelected != wxNOT_FOUND )
     {
+        m_UpCoverButton->Enable( m_CoverSelected > 0 );
+        m_DownCoverButton->Enable( m_CoverSelected < int( m_CoversListBox->GetCount() - 1 ) );
         m_DelCoverButton->Enable();
     }
     else
     {
+        m_UpCoverButton->Disable();
+        m_DownCoverButton->Disable();
         m_DelCoverButton->Disable();
     }
 }
@@ -1199,6 +1215,32 @@ void guPrefDialog::OnAddCoverBtnClick( wxCommandEvent& event )
         }
         EntryDialog->Destroy();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnUpCoverBtnClick( wxCommandEvent& event )
+{
+    wxString CoverWord = m_CoversListBox->GetString( m_CoverSelected );
+    m_CoversListBox->SetString( m_CoverSelected, m_CoversListBox->GetString( m_CoverSelected - 1 ) );
+    m_CoverSelected--;
+    m_CoversListBox->SetString( m_CoverSelected, CoverWord );
+    m_CoversListBox->SetSelection( m_CoverSelected );
+
+    event.SetInt( m_CoverSelected );
+    OnCoversListBoxSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnDownCoverBtnClick( wxCommandEvent& event )
+{
+    wxString CoverWord = m_CoversListBox->GetString( m_CoverSelected );
+    m_CoversListBox->SetString( m_CoverSelected, m_CoversListBox->GetString( m_CoverSelected + 1 ) );
+    m_CoverSelected++;
+    m_CoversListBox->SetString( m_CoverSelected, CoverWord );
+    m_CoversListBox->SetSelection( m_CoverSelected );
+
+    event.SetInt( m_CoverSelected );
+    OnCoversListBoxSelected( event );
 }
 
 // -------------------------------------------------------------------------------- //

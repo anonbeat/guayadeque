@@ -832,8 +832,11 @@ void guLibPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
                 wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
                 if( CoverImage )
                 {
-                    CoverImage->SaveFile( AlbumPath + wxT( "cover.jpg" ), wxBITMAP_TYPE_JPEG );
-                    m_Db->SetAlbumCover( Albums[ 0 ], AlbumPath + wxT( "cover.jpg" ) );
+                    guConfig * Config = ( guConfig * ) guConfig::Get();
+                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+                    wxString CoverName = AlbumPath + ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+                    CoverImage->SaveFile( CoverName, wxBITMAP_TYPE_JPEG );
+                    m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
                     //AlbumListCtrl->ClearSelection();
                     //Db->SetAlFilters( wxArrayInt() );
                     m_AlbumListCtrl->ReloadItems( false );
@@ -859,15 +862,19 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                 wxString CoverFile = SelCoverFile->GetSelFile();
                 if( !CoverFile.IsEmpty() )
                 {
+                    guConfig * Config = ( guConfig * ) guConfig::Get();
+                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+                    wxString CoverName = SelCoverFile->GetAlbumPath() + ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+
                     wxURI Uri( CoverFile );
                     if( Uri.IsReference() )
                     {
                         wxImage CoverImage( CoverFile );
                         if( CoverImage.IsOk() )
                         {
-                            if( CoverImage.SaveFile( SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ), wxBITMAP_TYPE_JPEG ) )
+                            if( CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
                             {
-                                m_Db->SetAlbumCover( Albums[ 0 ], SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) );
+                                m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
                                 m_AlbumListCtrl->ReloadItems( false );
                             }
                         }
@@ -878,9 +885,9 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                     }
                     else
                     {
-                        if( DownloadImage( CoverFile, SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) ) )
+                        if( DownloadImage( CoverFile, CoverName ) )
                         {
-                            m_Db->SetAlbumCover( Albums[ 0 ], SelCoverFile->GetAlbumPath() + wxT( "/cover.jpg" ) );
+                            m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
                             m_AlbumListCtrl->ReloadItems( false );
                         }
                         else

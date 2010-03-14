@@ -1100,10 +1100,14 @@ void guTrackEditor::OnSaveImageClicked( wxCommandEvent &event )
     wxImage * pCurImage = ( * m_Images )[ m_CurItem ];
     wxASSERT( pCurImage );
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+    wxString CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+
     wxFileDialog * FileDialog = new wxFileDialog( this,
         wxT( "Select the filename to save" ),
         wxPathOnly( ( * m_Items )[ m_CurItem ].m_FileName ),
-        wxT( "cover.jpg" ),
+        CoverName,
         wxT( "*.jpg;*.png" ),
         wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
 

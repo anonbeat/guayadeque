@@ -81,6 +81,8 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_DelPathButton;
     wxListBox *                 m_CoversListBox;
     wxBitmapButton *            m_AddCoverButton;
+    wxBitmapButton *            m_UpCoverButton;
+    wxBitmapButton *            m_DownCoverButton;
     wxBitmapButton *            m_DelCoverButton;
     wxCheckBox *                m_UpdateLibChkBox;
     wxCheckBox *                m_SaveLyricsChkBox;
@@ -173,6 +175,8 @@ class guPrefDialog : public wxDialog
 	void OnCoverListBoxDClicked( wxCommandEvent &event );
     void OnCoversListBoxSelected( wxCommandEvent& event );
     void OnAddCoverBtnClick( wxCommandEvent& event );
+    void OnUpCoverBtnClick( wxCommandEvent& event );
+    void OnDownCoverBtnClick( wxCommandEvent& event );
 	void OnDelCoverBtnClick( wxCommandEvent& event );
     void OnPlayLevelEnabled( wxCommandEvent& event );
     void OnPlayEndTimeEnabled( wxCommandEvent& event );
