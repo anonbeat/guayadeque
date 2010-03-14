@@ -1,4 +1,6 @@
 
+  * Added two buttons in preferences to order the cover words
+  * The covers are now saved with the first word to detect covers
   * Added in last.fm panel the posibility to search for tracks in library
   * The splash shows the revision number
   * Double click over the track title selects the track
