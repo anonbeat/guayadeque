@@ -35,7 +35,7 @@ guDBusNotify::~guDBusNotify()
 {
     if( m_MsgId )
     {
-        //guLogMessage( wxT( "Sending Close Message..." ) );
+        //guLogMessage( wxT( "Sending Close Message... %i" ), m_MsgId );
         guDBusMethodCall * Msg = new guDBusMethodCall( "org.freedesktop.Notifications",
                                                "/org/freedesktop/Notifications",
                                                "org.freedesktop.Notifications",
