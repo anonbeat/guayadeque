@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xml:space="preserve"
+   width="1.54805in"
+   height="1.25544in"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   viewBox="0 0 0.44532 0.361149"
+   id="svg3764"
+   version="1.1"
+   inkscape:version="0.47pre4 r22446"
+   sodipodi:docname="Podcast.svg"
+   inkscape:export-filename="/home/jrios/Projects/guayadeque/src/images/orig/tiny_podcast.png"
+   inkscape:export-xdpi="39.029686"
+   inkscape:export-ydpi="39.029686"><metadata
+   id="metadata3794"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1280"
+   inkscape:window-height="948"
+   id="namedview3792"
+   showgrid="false"
+   showborder="false"
+   inkscape:zoom="2.0886878"
+   inkscape:cx="80.526399"
+   inkscape:cy="90.857219"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg3764" />
+ <defs
+   id="defs3766"><linearGradient
+   inkscape:collect="always"
+   id="linearGradient3804"><stop
+     style="stop-color:#ffffff;stop-opacity:1;"
+     offset="0"
+     id="stop3806" /><stop
+     style="stop-color:#ffffff;stop-opacity:0;"
+     offset="1"
+     id="stop3808" /></linearGradient><inkscape:perspective
+   sodipodi:type="inkscape:persp3d"
+   inkscape:vp_x="0 : 56.494801 : 1"
+   inkscape:vp_y="0 : 1000 : 0"
+   inkscape:vp_z="139.32451 : 56.494801 : 1"
+   inkscape:persp3d-origin="69.662254 : 37.6632 : 1"
+   id="perspective3796" />
+  <style
+   type="text/css"
+   id="style3768">
+   
+    .fil4 {fill:#383431}
+    .fil5 {fill:white}
+    .fil3 {fill:white;fill-rule:nonzero}
+    .fil2 {fill:#31A2F2;fill-rule:nonzero}
+    .fil0 {fill:#31A2F2;fill-rule:nonzero;fill-opacity:0.250980}
+    .fil1 {fill:#31A2F2;fill-rule:nonzero;fill-opacity:0.501961}
+   
+  </style>
+   <mask
+   id="id0">
+  <linearGradient
+   id="id1"
+   gradientUnits="userSpaceOnUse"
+   x1="0.141119"
+   y1="0.0760502"
+   x2="0.26039"
+   y2="0.203867">
+   <stop
+   offset="0"
+   style="stop-opacity:1; stop-color:white"
+   id="stop3772" />
+   <stop
+   offset="1"
+   style="stop-opacity:0; stop-color:white"
+   id="stop3774" />
+  </linearGradient>
+    <rect
+   style="fill:url(#id1)"
+   x="0.164062"
+   y="0.0149541"
+   width="0.0733831"
+   height="0.250009"
+   id="rect3776" />
+   </mask>
+ 
+  
+  
+  
+  
+  
+  
+  
+ <linearGradient
+   inkscape:collect="always"
+   xlink:href="#linearGradient3804"
+   id="linearGradient3810"
+   x1="-0.97546363"
+   y1="-0.11039406"
+   x2="0.45576066"
+   y2="0.015953302"
+   gradientUnits="userSpaceOnUse" /></defs>
+ <g
+   id="g2827"
+   inkscape:export-filename="/home/jrios/Projects/guayadeque/src/images/orig/podcast.png"
+   inkscape:export-xdpi="64.599998"
+   inkscape:export-ydpi="64.599998"><path
+     class="fil0"
+     d="M 0.376569,0.349124 C 0.4079959,0.313185 0.427043,0.2661438 0.427043,0.214662 0.427043,0.1631812 0.4079959,0.1161399 0.376569,0.080201 L 0.3903317,0.0681768 C 0.4245696,0.1073299 0.44532,0.1585775 0.44532,0.2146618 c 0,0.0560858 -0.0207504,0.107332 -0.0549883,0.146486 L 0.376569,0.3491236 z M 0.068751,0.080201 C 0.0373241,0.11614 0.018277,0.1631812 0.018277,0.214662 c 0,0.051482 0.0190471,0.0985233 0.050474,0.134462 L 0.0549883,0.3611482 C 0.0207504,0.3219939 0,0.2707475 0,0.2146622 0,0.1585776 0.0207504,0.1073302 0.0549883,0.0681772 L 0.068751,0.0802014 z"
+     id="path3780"
+     style="fill:#31a2f2;fill-opacity:0.25097997;fill-rule:nonzero" /><path
+     class="fil1"
+     d="M 0.339557,0.316789 C 0.3634242,0.2894913 0.3778924,0.2537641 0.3778924,0.214662 0.3778924,0.175561 0.3634242,0.1398338 0.339557,0.112536 L 0.3602633,0.0944459 c 0.0280984,0.0321325 0.0451284,0.0741906 0.0451284,0.120216 0,0.0460265 -0.01703,0.0880846 -0.0451284,0.120217 L 0.339557,0.3167888 z M 0.105764,0.112536 C 0.0818968,0.1398337 0.0674286,0.1755609 0.0674286,0.214662 c 0,0.0391022 0.0144682,0.0748293 0.0383354,0.102127 L 0.0850577,0.3348791 C 0.0569593,0.3027466 0.0399293,0.2606885 0.0399293,0.2146621 c 0,-0.0460254 0.01703,-0.0880835 0.0451284,-0.120216 L 0.105764,0.1125362 z"
+     id="path3782"
+     style="fill:#31a2f2;fill-opacity:0.5019609;fill-rule:nonzero" /><path
+     class="fil2"
+     d="M 0.291257,0.274592 C 0.3052632,0.2585745 0.3137527,0.2376088 0.3137527,0.2146624 c 0,-0.0229453 -0.00849,-0.0439109 -0.0224957,-0.0599285 L 0.3157414,0.1333424 c 0.0190063,0.0217369 0.0305265,0.0501863 0.0305265,0.0813199 0,0.0311347 -0.0115202,0.0595842 -0.0305265,0.0813199 L 0.291257,0.2745919 z M 0.154063,0.154734 C 0.1400568,0.1707515 0.1315673,0.1917172 0.1315673,0.2146625 c 0,0.0229464 0.00849,0.0439121 0.0224957,0.0599296 L 0.1295786,0.2959824 C 0.1105723,0.2742466 0.0990521,0.2457972 0.0990521,0.2146625 c 0,-0.0311336 0.0115202,-0.0595831 0.0305265,-0.0813199 L 0.154063,0.1547341 z"
+     id="path3784"
+     style="fill:#31a2f2;fill-rule:nonzero" /><path
+     class="fil3"
+     d="m 0.192461,0.00341915 c 0.026668,-0.00714408 0.0537482,-0.00278266 0.0759607,0.0100411 0.0222499,0.0128442 0.0395892,0.034136 0.0467389,0.0608175 l 0.004129,0.0154048 -0.0154286,0.0041349 -0.0329955,0.0088418 0.0243293,0.0907982 c 0.005138,0.0191751 0.001626,0.0386854 -0.008202,0.0547165 -0.009693,0.0158092 -0.0255286,0.0282264 -0.045202,0.0334983 l -2.27e-6,0 c -0.0196326,0.005261 -0.0395303,0.002424 -0.0558275,-0.006412 l -2.604e-5,4.87e-5 c -0.0165317,-0.008971 -0.0293351,-0.0241333 -0.0344859,-0.0433571 l -1.14e-6,-4.53e-6 c -0.005137,-0.0191751 -0.001626,-0.038682 0.008203,-0.0547131 0.008462,-0.0138034 0.0216078,-0.025019 0.0379017,-0.0311528 l -0.0318788,-0.118972 -0.004128,-0.015406 L 0.17697335,0.00756964 0.19246085,0.00342 z m 0.0601052,0.0376344 C 0.2374445,0.03232391 0.218958,0.02936685 0.2007014,0.0342583 l -6.002e-5,1.586e-5 0.0319264,0.119148 0.004717,0.0175997 -0.0181388,0.002315 c -5.6854e-4,7.248e-5 -0.001582,2.5255e-4 -0.003045,5.4135e-4 -0.001024,2.0159e-4 -0.002028,4.349e-4 -0.003007,6.9651e-4 l -2.27e-6,0 c -0.0114964,0.003081 -0.0206768,0.0102178 -0.0262229,0.0192645 -0.005409,0.008824 -0.007364,0.0194797 -0.00458,0.0298697 l 1.13e-6,4.53e-6 c 0.002771,0.0103424 0.009786,0.0185692 0.0188783,0.0235037 l 0,6.229e-5 c 0.00932,0.005058 0.0208535,0.006643 0.0323817,0.003554 l 2.27e-6,0 c 0.0114964,-0.003081 0.020678,-0.0102189 0.026224,-0.0192645 0.005409,-0.008824 0.007364,-0.0194797 0.00458,-0.0298708 l -0.0284574,-0.106204 -0.004127,-0.015406 0.0154264,-0.0041338 0.0311947,-0.0083593 C 0.27229845,0.0563227 0.26326416,0.0472295 0.25256616,0.0410538 z m -0.0190154,0.20978 1.13e-6,0 m 0.008238,0.0308391 -1.13e-6,0 m -0.0286964,-0.107098 -1.13e-6,0 m -0.008239,-0.0308391 2.26e-6,0"
+     id="path3786"
+     style="fill:#ffffff;fill-rule:nonzero" /><path
+     class="fil4"
+     d="M 0.196581,0.0188387 C 0.2415078,0.0068009 0.2877031,0.0334723 0.299741,0.078398 L 0.251318,0.0913735 C 0.260804,0.1267745 0.2702892,0.1621767 0.2797754,0.1975775 0.28769867,0.227147 0.268843,0.2579001 0.2376709,0.2662526 0.2064977,0.27460623 0.1747921,0.25739952 0.1668689,0.22783 0.15894563,0.1982605 0.1778002,0.1675074 0.2089734,0.1591549 c 0.002726,-7.3049e-4 0.005457,-0.001265 0.008175,-0.001613 L 0.1810939,0.0229879 0.1965814,0.0188383 z"
+     id="path3788"
+     style="fill:#383431" /><path
+     class="fil5"
+     style="fill:url(#linearGradient3810);fill-opacity:1"
+     d="M 0.196581,0.0188387 C 0.2088442,0.0155532 0.2211991,0.0151579 0.2329311,0.0172237 0.2390671,0.0873201 0.2402051,0.1833757 0.2107265,0.2428997 0.2071745,0.2500707 0.2033285,0.2570939 0.1992606,0.2639639 0.1837165,0.2576089 0.1714012,0.2447447 0.1668688,0.2278301 0.1589458,0.1982606 0.1778001,0.1675075 0.2089733,0.159155 0.2116993,0.15842451 0.2144303,0.15789 0.2171483,0.157542 L 0.1810938,0.022988 0.1965813,0.0188384 z"
+     id="path3790"
+     mask="url(#id0)" /></g>
+</svg>
