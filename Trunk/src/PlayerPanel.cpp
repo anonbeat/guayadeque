@@ -88,6 +88,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_DelTracksPlayed = false;
     m_PendingScrob = false;
     m_IsSkipping = false;
+    m_ShowNotifications = true;
+    m_ShowNotificationsTime = 0;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -102,6 +104,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
         m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
         m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) );
+        m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
+        m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
 
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
@@ -506,6 +510,9 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         //guLogMessage( wxT( "Reading PlayerPanel Config Updated" ) );
         m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
         m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) );
+        m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
+        m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
+
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
@@ -1139,15 +1146,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         m_PendingScrob = true;
     }
 
-    if( m_NotifySrv )
-    {
-        CoverImage->Rescale( 60, 60, wxIMAGE_QUALITY_HIGH );
-        m_NotifySrv->Notify( wxEmptyString,
-            m_MediaSong.m_SongName,
-            LenToString( m_MediaSong.m_Length ) + wxT( "\n" ) +
-            m_MediaSong.m_ArtistName + wxT( " / " ) + m_MediaSong.m_AlbumName,
-            CoverImage );
-    }
+    SendNotifyInfo( CoverImage );
 
     if( CoverImage )
         delete CoverImage;
@@ -1352,6 +1351,9 @@ void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
                 event.SetClientData( new guTrack( m_MediaSong ) );
                 wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+                wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
+                SendNotifyInfo( &Image );
             }
         }
         delete TagStr;
@@ -2046,6 +2048,28 @@ void guPlayerPanel::ResetVumeterLevel( void )
         m_PlayerVumeters->SetLevels( LevelInfo );
     }
     LastLevelInfo = LevelInfo;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SendNotifyInfo( wxImage * image )
+{
+    if( m_ShowNotifications && m_NotifySrv )
+    {
+        image->Rescale( 60, 60, wxIMAGE_QUALITY_HIGH );
+
+        wxString Body;
+        if( m_MediaSong.m_Length )
+        {
+            Body = LenToString( m_MediaSong.m_Length ) + wxT( "\n" );
+        }
+        Body += m_MediaSong.m_ArtistName;
+        if( !m_MediaSong.m_AlbumName.IsEmpty() )
+        {
+            Body += wxT( " / " ) + m_MediaSong.m_AlbumName;
+        }
+
+        m_NotifySrv->Notify( wxEmptyString, m_MediaSong.m_SongName, Body, image );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

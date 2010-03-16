@@ -96,6 +96,7 @@ class guPrefDialog : public wxDialog
     wxSlider *                  m_PlayLevelSlider;
     wxCheckBox *                m_PlayEndTimeCheckBox;
     wxSpinCtrl *                m_PlayEndTimeSpinCtrl;
+    wxCheckBox *                m_NotifyChkBox;
 
     wxPanel *                   m_LastFMPanel;
     wxCheckBox *                m_ASEnableChkBox;

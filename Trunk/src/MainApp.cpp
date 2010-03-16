@@ -92,6 +92,13 @@ guMainApp::~guMainApp()
 
 
 // -------------------------------------------------------------------------------- //
+// Its done this way to avoid the warning of temporary address
+void inline Append_String( DBusMessageIter * iter, const char * str )
+{
+    dbus_message_iter_append_basic( iter, DBUS_TYPE_STRING, &str );
+}
+
+// -------------------------------------------------------------------------------- //
 bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
 {
     DBusError dberr;
@@ -129,7 +136,8 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
 
         dbus_message_iter_init_append( dbmsg, &dbiter );
 
-        dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_STRING, &FilePath.char_str() );
+        //dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_STRING, &FilePath.char_str() );
+        Append_String( &dbiter, FilePath.char_str() );
         dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_BOOLEAN, &PlayTrack );
 
         dbus_error_init( &dberr );

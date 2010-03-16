@@ -57,7 +57,7 @@ void inline Append_String( DBusMessageIter * iter, const char * str )
 
 // -------------------------------------------------------------------------------- //
 void guDBusNotify::Notify( const wxString &icon, const wxString &summary,
-                            const wxString &body, wxImage * image, const int timeout )
+                            const wxString &body, wxImage * image )
 {
     guDBusMethodCall * Msg = new guDBusMethodCall( "org.freedesktop.Notifications",
                                                "/org/freedesktop/Notifications",

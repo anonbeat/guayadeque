@@ -185,6 +185,8 @@ class guPlayerPanel : public wxPanel
 	double                  m_LastVolume;
 	wxFileOffset            m_LastCurPos;
 	bool                    m_IsSkipping;
+	bool                    m_ShowNotifications;
+	int                     m_ShowNotificationsTime;
 
 	double                  m_CurVolume;
 	int                     m_PlayLoop;
@@ -316,6 +318,7 @@ class guPlayerPanel : public wxPanel
     void                ResetVumeterLevel( void );
 
     void                SetNotifySrv( guDBusNotify * notify ) { m_NotifySrv = notify; };
+    void                SendNotifyInfo( wxImage * image );
 
 
     friend class guSmartAddTracksThread;
