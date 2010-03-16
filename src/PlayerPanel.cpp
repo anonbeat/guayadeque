@@ -778,7 +778,8 @@ void guPlayerPanel::TrackListChanged( void )
 void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
 {
     m_PlayListCtrl->ReloadItems();
-    SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
+    //SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
+    m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
 
     // If a Player reset is needed
     if( event.GetExtraLong() )
