@@ -46,6 +46,8 @@ SET( DBUS_SOURCES
 	dbus/mmkeys.h
 	dbus/gsession.cpp
 	dbus/gsession.h
+	dbus/notify.cpp
+	dbus/notify.h
 )
 
 SET( HMAC_SHA2_SOURCES

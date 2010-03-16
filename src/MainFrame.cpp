@@ -85,6 +85,7 @@ guMainFrame::guMainFrame( wxWindow * parent )
     m_LibUpdateThread = NULL;
     m_UpdatePodcastsTimer = NULL;
     m_DownloadThread = NULL;
+    m_NotifySrv = NULL;
 
     m_SelCount = 0;
     m_SelLength = 0;
@@ -364,7 +365,13 @@ guMainFrame::guMainFrame( wxWindow * parent )
         guLogError( wxT( "Could not create the gnome session dbus object" ) );
     }
 
+    m_NotifySrv = new guDBusNotify( m_DBusServer );
+    if( !m_NotifySrv )
+    {
+        guLogMessage( wxT( "Could not create the notify dbus object" ) );
+    }
 
+    m_PlayerPanel->SetNotifySrv( m_NotifySrv );
     //m_DBusServer->Run();
 
     //
@@ -619,6 +626,11 @@ guMainFrame::~guMainFrame()
         delete m_MMKeys;
     }
 
+    if( m_NotifySrv )
+    {
+        m_PlayerPanel->SetNotifySrv( NULL );
+        delete m_NotifySrv;
+    }
 
     if( m_DBusServer )
     {

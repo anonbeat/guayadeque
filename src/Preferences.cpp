@@ -134,14 +134,14 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	wxBoxSizer* StartPlayingSizer;
 	StartPlayingSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, wxT("Restore position for tracks longer than"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Restore position for tracks longer than"), wxDefaultPosition, wxDefaultSize, 0 );
     m_SavePosCheckBox->SetValue( m_Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) );
 
 	StartPlayingSizer->Add( m_SavePosCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	m_MinLenSpinCtrl = new wxSpinCtrl( m_GenPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 9999, 10 );
 	m_MinLenSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) );
-	m_MinLenSpinCtrl->SetToolTip( wxT( "set the minimun length in minutes to save track position" ) );
+	m_MinLenSpinCtrl->SetToolTip( _( "set the minimun length in minutes to save track position" ) );
 
 	StartPlayingSizer->Add( m_MinLenSpinCtrl, 0, wxALIGN_CENTER_VERTICAL, 5 );
 

@@ -29,6 +29,7 @@
 #include "dbus/mpris.h"
 #include "dbus/mmkeys.h"
 #include "dbus/gsession.h"
+#include "dbus/notify.h"
 #include "DbLibrary.h"
 #include "DbCache.h"
 #include "LastFM.h"
@@ -160,6 +161,7 @@ class guMainFrame : public wxFrame
     guMPRIS *                   m_MPRIS;
     guMMKeys *                  m_MMKeys;
     guGSession *                m_GSession;
+    guDBusNotify *              m_NotifySrv;
 
     wxWindow *                  m_CurrentPage;
 
@@ -277,6 +279,8 @@ class guMainFrame : public wxFrame
 
     void                UpdatedTracks( int updatedby, const guTrackArray * tracks );
     void                UpdatedTrack( int updatedby, const guTrack * track );
+
+    guDBusNotify *      GetNotifyObject( void ) { return m_NotifySrv; };
 };
 
 // -------------------------------------------------------------------------------- //

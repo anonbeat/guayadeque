@@ -152,7 +152,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 	m_DetailFlexGridSizer->SetFlexibleDirection( wxBOTH );
 	m_DetailFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_DetailImage = new wxStaticBitmap( m_DetailScrolledWindow, wxID_ANY, guImage( guIMAGE_INDEX_tiny_podcast_icon ), wxDefaultPosition, wxSize( 60,60 ), 0 );
+	m_DetailImage = new wxStaticBitmap( m_DetailScrolledWindow, wxID_ANY, guImage( guIMAGE_INDEX_tiny_podcast ), wxDefaultPosition, wxSize( 60,60 ), 0 );
 	m_DetailFlexGridSizer->Add( m_DetailImage, 0, wxALL, 5 );
 
 	m_DetailChannelTitle = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
@@ -670,7 +670,7 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
                 m_DetailImage->SetBitmap( PodcastImage );
             }
             else
-                m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_tiny_podcast_icon ) );
+                m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_tiny_podcast ) );
         }
 
         m_DetailChannelTitle->SetLabel( PodcastChannel.m_Title );
@@ -683,7 +683,7 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
     }
     else
     {
-        m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_tiny_podcast_icon ) );
+        m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_tiny_podcast ) );
         m_DetailChannelTitle->SetLabel( wxEmptyString );
         m_DetailDescText->SetLabel( wxEmptyString );
         m_DetailAuthorText->SetLabel( wxEmptyString );

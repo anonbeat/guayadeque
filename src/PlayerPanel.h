@@ -23,6 +23,7 @@
 
 #include "AudioScrobble.h"
 #include "AutoScrollText.h"
+#include "dbus/notify.h"
 #include "MediaCtrl.h"
 #include "PlayerFilters.h"
 #include "PlayList.h"
@@ -174,6 +175,7 @@ class guPlayerPanel : public wxPanel
 
     guDbLibrary *           m_Db;
 	guPlayList *            m_PlayListCtrl;
+	guDBusNotify *          m_NotifySrv;
 	guPlayerFilters *       m_PlayerFilters;
 	guPlayerVumeters *      m_PlayerVumeters;
 	guMediaCtrl *           m_MediaCtrl;
@@ -312,6 +314,8 @@ class guPlayerPanel : public wxPanel
 
     void                SetPlayerVumeters( guPlayerVumeters * vumeters ) { m_PlayerVumeters = vumeters; };
     void                ResetVumeterLevel( void );
+
+    void                SetNotifySrv( guDBusNotify * notify ) { m_NotifySrv = notify; };
 
 
     friend class guSmartAddTracksThread;

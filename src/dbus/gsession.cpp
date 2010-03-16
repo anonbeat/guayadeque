@@ -84,10 +84,12 @@ DBusHandlerResult guGSession::HandleMessages( guDBusMessage * msg, guDBusMessage
     wxASSERT( msg );
 
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
-    //const char *    Interface = msg->GetInterface();
+    const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();
+    int             Serial = msg->GetSerial();
+    int             RSerial = msg->GetReplySerial();
 
 //    // Show the details of the msg
 //    guLogMessage( wxT( "==GSession========================" ) );
@@ -96,6 +98,8 @@ DBusHandlerResult guGSession::HandleMessages( guDBusMessage * msg, guDBusMessage
 //    guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
 //    guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
 //    guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
+//    guLogMessage( wxT( "Serial : %i" ), Serial );
+//    guLogMessage( wxT( "RSerial: %i" ), RSerial );
 
     if( Type == DBUS_MESSAGE_TYPE_METHOD_RETURN )
     {
@@ -115,6 +119,7 @@ DBusHandlerResult guGSession::HandleMessages( guDBusMessage * msg, guDBusMessage
 //	                      "path='%s'" ), m_ObjectPath.c_str() ).char_str() );
                 m_Status = guGSESSION_STATUS_INITIALIZED;
             }
+            RetVal = DBUS_HANDLER_RESULT_HANDLED;
         }
     }
     else if( Type == DBUS_MESSAGE_TYPE_SIGNAL )
