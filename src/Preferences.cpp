@@ -421,6 +421,14 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	PlayMainSizer->Add( PlaySilenceSizer, 0, wxEXPAND|wxALL, 5 );
 
+	wxStaticBoxSizer* NotifySizer;
+	NotifySizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _(" Notifications ") ), wxHORIZONTAL );
+
+	m_NotifyChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Show Notifications" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_NotifyChkBox->SetValue( m_Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) ) );
+	NotifySizer->Add( m_NotifyChkBox, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	PlayMainSizer->Add( NotifySizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_PlayPanel->SetSizer( PlayMainSizer );
 	m_PlayPanel->Layout();
@@ -1061,7 +1069,7 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteNum( wxT( "SilenceLevel" ), m_PlayLevelSlider->GetValue(), wxT( "Playback" ) );
     m_Config->WriteBool( wxT( "SilenceAtEnd" ), m_PlayEndTimeCheckBox->GetValue(), wxT( "Playback" ) );
     m_Config->WriteNum( wxT( "SilenceEndTime" ), m_PlayEndTimeSpinCtrl->GetValue(), wxT( "Playback" ) );
-
+    m_Config->WriteBool( wxT( "ShowNotifications" ), m_NotifyChkBox->GetValue(), wxT( "General" ) );
 
     m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->IsEnabled() && m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
     m_Config->WriteStr( wxT( "UserName" ), m_UserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
