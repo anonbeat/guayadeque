@@ -82,6 +82,10 @@ wxSQLite3ResultSet guDb::ExecuteQuery( const wxString &query )
     guLogError( wxT( "guDbLibrary::ExecuteQuery exception '%s'\n%u: %s" ),
         query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
   }
+  catch(...)
+  {
+    guLogError( wxT( "Other exception found while executing:\n'%s'" ), query.c_str() );
+  }
   return RetVal;
 }
 
@@ -99,6 +103,10 @@ int guDb::ExecuteUpdate( const wxString &query )
   {
     guLogError( wxT( "guDbLibrary::ExecuteUpdate exception '%s'\n%u: %s" ),
         query.c_str(), e.GetErrorCode(), e.GetMessage().c_str() );
+  }
+  catch(...)
+  {
+    guLogError( wxT( "Other exception found while executing:\n'%s'" ), query.c_str() );
   }
   return RetVal;
 }

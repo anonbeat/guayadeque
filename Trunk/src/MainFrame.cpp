@@ -40,7 +40,7 @@
 
 
 // -------------------------------------------------------------------------------- //
-guMainFrame::guMainFrame( wxWindow * parent )
+guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache )
 {
 //	wxBoxSizer *    MainFrameSizer;
 //	wxPanel *       MultiPanel;
@@ -58,24 +58,26 @@ guMainFrame::guMainFrame( wxWindow * parent )
         return;
     }
 
-    //
-    // Init the Database Object
-    //
-    m_Db = new guDbLibrary( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.db" ) );
-    if( !m_Db )
-    {
-        guLogError( wxT( "Could not open the guayadeque database" ) );
-        return;
-    }
-
-    m_DbCache = new guDbCache( wxGetHomeDir() + wxT( "/.guayadeque/cache.db" ) );
-    if( !m_DbCache )
-    {
-        guLogError( wxT( "Could not open the guayadeque cache database" ) );
-        return;
-    }
-
-    m_DbCache->SetDbCache();
+//    //
+//    // Init the Database Object
+//    //
+//    m_Db = new guDbLibrary( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.db" ) );
+//    if( !m_Db )
+//    {
+//        guLogError( wxT( "Could not open the guayadeque database" ) );
+//        return;
+//    }
+//
+//    m_DbCache = new guDbCache( wxGetHomeDir() + wxT( "/.guayadeque/cache.db" ) );
+//    if( !m_DbCache )
+//    {
+//        guLogError( wxT( "Could not open the guayadeque cache database" ) );
+//        return;
+//    }
+//
+//    m_DbCache->SetDbCache();
+    m_Db = db;
+    m_DbCache = dbcache;
 
     //
     m_Db->SetLibPath( Config->ReadAStr( wxT( "LibPath" ),
@@ -598,18 +600,6 @@ guMainFrame::~guMainFrame()
     if( m_TaskBarIcon )
         delete m_TaskBarIcon;
 
-    if( m_Db )
-    {
-        m_Db->Close();
-        delete m_Db;
-    }
-
-    if( m_DbCache )
-    {
-        m_DbCache->Close();
-        delete m_DbCache;
-    }
-
     // destroy the mpris object
     if( m_MPRIS )
     {
@@ -638,6 +628,18 @@ guMainFrame::~guMainFrame()
     }
 
     m_AuiManager.UnInit();
+
+//    if( m_Db )
+//    {
+//        m_Db->Close();
+//        delete m_Db;
+//    }
+//
+//    if( m_DbCache )
+//    {
+//        m_DbCache->Close();
+//        delete m_DbCache;
+//    }
 }
 
 extern void wxClearGtkSystemObjects();

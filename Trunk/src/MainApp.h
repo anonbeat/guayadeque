@@ -22,6 +22,8 @@
 #define MAINAPP_H
 
 #include "Config.h"
+#include "DbLibrary.h"
+#include "DbCache.h"
 
 #include <wx/app.h>
 #include <wx/snglinst.h>
@@ -30,9 +32,11 @@
 class guMainApp : public wxApp
 {
   protected :
-    guConfig * m_Config;
-    wxSingleInstanceChecker * m_SingleInstanceChecker;
-    wxLocale m_Locale;
+    guDbLibrary *               m_Db;
+    guDbCache *                 m_DbCache;
+    guConfig *                  m_Config;
+    wxSingleInstanceChecker *   m_SingleInstanceChecker;
+    wxLocale                    m_Locale;
 
   public:
     guMainApp();
