@@ -267,7 +267,7 @@ class guMainFrame : public wxFrame
     void                OnAddLibraryPath( wxCommandEvent &event );
 
   public:
-                        guMainFrame( wxWindow * parent );
+                        guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                         ~guMainFrame();
     void                LibraryUpdated( wxCommandEvent &event );
     void                OnQuit( wxCommandEvent &WXUNUSED(event) );

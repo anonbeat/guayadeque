@@ -74,7 +74,6 @@ guMainApp::guMainApp() : wxApp()
         guLogMessage( wxT( "Created the default equalizers file" ) );
     }
 
-
     m_Config = new guConfig();
     guConfig::Set( m_Config );
 }
@@ -82,12 +81,24 @@ guMainApp::guMainApp() : wxApp()
 // -------------------------------------------------------------------------------- //
 guMainApp::~guMainApp()
 {
+    if( m_SingleInstanceChecker )
+        delete m_SingleInstanceChecker;
+
+    if( m_Db )
+    {
+        m_Db->Close();
+        delete m_Db;
+    }
+
+    if( m_DbCache )
+    {
+        m_DbCache->Close();
+        delete m_DbCache;
+    }
+
     // config
     if( m_Config )
       delete m_Config;
-
-    if( m_SingleInstanceChecker )
-        delete m_SingleInstanceChecker;
 }
 
 
@@ -253,9 +264,26 @@ bool guMainApp::OnInit()
     // Enable tooltips
     wxToolTip::Enable( true );
 
+    //
+    // Init the Database Object
+    //
+    m_Db = new guDbLibrary( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.db" ) );
+    if( !m_Db )
+    {
+        guLogError( wxT( "Could not open the guayadeque database" ) );
+    }
+
+    m_DbCache = new guDbCache( wxGetHomeDir() + wxT( "/.guayadeque/cache.db" ) );
+    if( !m_DbCache )
+    {
+        guLogError( wxT( "Could not open the guayadeque cache database" ) );
+    }
+
+    m_DbCache->SetDbCache();
+
 
     // Initialize the MainFrame object
-    guMainFrame* Frame = new guMainFrame( 0 );
+    guMainFrame* Frame = new guMainFrame( 0, m_Db, m_DbCache );
     wxIcon MainIcon;
     MainIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
     Frame->SetIcon( MainIcon );

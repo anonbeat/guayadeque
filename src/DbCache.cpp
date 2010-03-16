@@ -123,6 +123,10 @@ bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const int imgtyp
       {
         guLogError( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
       }
+      catch(...)
+      {
+        guLogError( wxT( "Other exception found while updating the image in cache" ) );
+      }
   }
   return false;
 }
