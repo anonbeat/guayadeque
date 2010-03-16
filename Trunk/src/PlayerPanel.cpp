@@ -2061,9 +2061,14 @@ void guPlayerPanel::SendNotifyInfo( wxImage * image )
         wxString Body;
         if( m_MediaSong.m_Length )
         {
-            Body = LenToString( m_MediaSong.m_Length ) + wxT( "\n" );
+            Body = LenToString( m_MediaSong.m_Length );
         }
-        Body += m_MediaSong.m_ArtistName;
+        if( m_MediaSong.m_Rating > 0 )
+        {
+            Body += wxT( "  " );
+            Body.Append( wxT( '★' ), m_MediaSong.m_Rating );
+        }
+        Body +=  wxT( "\n" ) + m_MediaSong.m_ArtistName;
         if( !m_MediaSong.m_AlbumName.IsEmpty() )
         {
             Body += wxT( " / " ) + m_MediaSong.m_AlbumName;
@@ -2071,6 +2076,14 @@ void guPlayerPanel::SendNotifyInfo( wxImage * image )
 
         m_NotifySrv->Notify( wxEmptyString, m_MediaSong.m_SongName, Body, image );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
+{
+    int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
+    //guLogMessage( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
+    SetVolume( m_CurVolume + ( Rotation * 4 ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2082,14 +2095,6 @@ void guPlayerPanelTimer::Notify()
     {
         Player->UpdateStatus();
     }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
-{
-    int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
-    //guLogMessage( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
-    SetVolume( m_CurVolume + ( Rotation * 4 ) );
 }
 
 // -------------------------------------------------------------------------------- //
