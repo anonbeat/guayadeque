@@ -47,7 +47,7 @@
 #include "./images/lastfm_on.h"
 #include "./images/left_png.h"
 #include "./images/musicbrainz.h"
-#include "./images/net_radio_jpg.h"
+#include "./images/net_radio.h"
 #include "./images/no_cover.h"
 #include "./images/no_photo_png.h"
 #include "./images/numerate_png.h"
@@ -57,7 +57,7 @@
 #include "./images/playlist_repeat_png.h"
 #include "./images/playlist_shuffle_png.h"
 #include "./images/playlist_smart_png.h"
-#include "./images/podcast_icon.h"
+#include "./images/podcast.h"
 #include "./images/right_png.h"
 #include "./images/search_engine.h"
 #include "./images/search_png.h"
@@ -81,7 +81,7 @@
 #include "./images/tiny_playlist_repeat.h"
 #include "./images/tiny_playlist_repeat_single.h"
 #include "./images/tiny_playlist_shufle.h"
-#include "./images/tiny_podcast_icon.h"
+#include "./images/tiny_podcast.h"
 #include "./images/tiny_reload.h"
 #include "./images/tiny_right.h"
 #include "./images/tiny_search.h"
@@ -142,7 +142,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_lastfm_as_on,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_lastfm_on,                     wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_left,                          wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_net_radio,                     wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_net_radio,                     wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_no_cover,                      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_no_photo,                      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_numerate,                      wxBITMAP_TYPE_PNG ),
@@ -177,20 +177,20 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_yellow_star_big,               wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_track,                         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_search,                   wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_search_engine,	                wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_musicbrainz,	                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_search_engine,	            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_musicbrainz,	            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_edit_copy,	            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_search_again,             wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_tiny_numerate,	                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_numerate,	            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_edit_clear,               wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_podcast_icon,                  wxBITMAP_TYPE_JPEG ),
-    GUIMAGE( guImage_tiny_podcast_icon,             wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_podcast,                  	    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_podcast,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_status_pending,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_status_error,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_doc_save,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_reload,                   wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_shoutcast,                wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_tiny_net_radio,                wxBITMAP_TYPE_JPEG ),
+    GUIMAGE( guImage_tiny_net_radio,                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_left,                     wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_right,                    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_skip_backward,            wxBITMAP_TYPE_PNG ),
@@ -208,7 +208,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_pref_links,                    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_online_services,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_playback,                 wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_pref_podcasts,                 wxBITMAP_TYPE_JPEG )
+    GUIMAGE( guImage_pref_podcasts,                 wxBITMAP_TYPE_PNG )
 };
 
 

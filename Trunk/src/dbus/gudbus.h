@@ -49,6 +49,7 @@ class guDBusMessage
      const char *    GetInterface();
      const char *    GetMember();
      bool            NeedReply();
+     void            SetNoReply( const bool needreply );
      const char *    GetPath();
      unsigned int    GetReplySerial();
      const char *    GetSender();
@@ -141,7 +142,7 @@ class guDBusServer
     bool                        UnRegisterObjectPath( const char * objname );
     bool                        AddMatch( const char * rule );
     bool                        Send( guDBusMessage * msg );
-    bool                        SendWithReply( guDBusMessage * msg, int timeout = guDBUS_DEFAULT_SEND_TIMEOUT );
+    bool                        SendWithReply( guDBusMessage * msg, guDBusClient * client, int timeout = guDBUS_DEFAULT_SEND_TIMEOUT );
     guDBusMessage *             SendWithReplyAndBlock( guDBusMessage * msg, int timeout = guDBUS_DEFAULT_SEND_TIMEOUT );
     void                        Flush();
     void                        MethodCall( const char * dest, const char * path,

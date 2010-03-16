@@ -112,7 +112,7 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
     }
     else if( CoverType == GU_SONGCOVER_PODCAST )
     {
-        CoverImage = guImage( guIMAGE_INDEX_podcast_icon );
+        CoverImage = guImage( guIMAGE_INDEX_podcast );
     }
     //
     if( CoverImage.IsOk() )

@@ -39,7 +39,7 @@ DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, voi
 // -------------------------------------------------------------------------------- //
 void Handle_Response( DBusPendingCall * PCall, void * udata )
 {
-	guDBusServer * DBusObj = ( guDBusServer * ) udata;
+	guDBusClient * DBusObj = ( guDBusClient * ) udata;
 	DBusMessage * reply;
 	reply = dbus_pending_call_steal_reply( PCall );
     guDBusMessage * Msg = new guDBusMessage( reply );
@@ -195,11 +195,11 @@ bool guDBusServer::Send( guDBusMessage * msg )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDBusServer::SendWithReply( guDBusMessage * msg, int timeout )
+bool guDBusServer::SendWithReply( guDBusMessage * msg, guDBusClient * client, int timeout )
 {
     DBusPendingCall * PCall = NULL;
     bool RetVal = dbus_connection_send_with_reply( m_DBusConn, msg->GetMessage(), &PCall, timeout );
-	dbus_pending_call_set_notify( PCall, Handle_Response, (void *) this, NULL );
+	dbus_pending_call_set_notify( PCall, Handle_Response, (void *) client, NULL );
     return RetVal;
 }
 
@@ -321,7 +321,7 @@ bool guDBusClient::Send( guDBusMessage * msg )
 // -------------------------------------------------------------------------------- //
 bool guDBusClient::SendWithReply( guDBusMessage * msg, int timeout )
 {
-    return m_DBusServer->SendWithReply( msg, timeout );
+    return m_DBusServer->SendWithReply( msg, this, timeout );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -373,115 +373,121 @@ guDBusMessage::~guDBusMessage()
 }
 
 // -------------------------------------------------------------------------------- //
- DBusMessage * guDBusMessage::GetMessage()
+DBusMessage * guDBusMessage::GetMessage()
 {
     return m_DBusMsg;
 }
 
 // -------------------------------------------------------------------------------- //
- const char * guDBusMessage::GetErrorName()
+const char * guDBusMessage::GetErrorName()
 {
     return dbus_message_get_error_name( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- const char * guDBusMessage::GetInterface()
+const char * guDBusMessage::GetInterface()
 {
     return dbus_message_get_interface( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- const char * guDBusMessage::GetMember()
+const char * guDBusMessage::GetMember()
 {
     return dbus_message_get_member( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::NeedReply()
+bool guDBusMessage::NeedReply()
 {
     return !dbus_message_get_no_reply( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- const char * guDBusMessage::GetPath()
+void guDBusMessage::SetNoReply( const bool needreply )
+{
+    dbus_message_set_no_reply( m_DBusMsg, needreply );
+}
+
+// -------------------------------------------------------------------------------- //
+const char * guDBusMessage::GetPath()
 {
     return dbus_message_get_path( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- unsigned int guDBusMessage::GetReplySerial()
+unsigned int guDBusMessage::GetReplySerial()
 {
     return dbus_message_get_reply_serial( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- const char * guDBusMessage::GetSender()
+const char * guDBusMessage::GetSender()
 {
     return dbus_message_get_sender( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- const char * guDBusMessage::GetDestination()
+const char * guDBusMessage::GetDestination()
 {
     return dbus_message_get_destination( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- unsigned int guDBusMessage::GetSerial()
+unsigned int guDBusMessage::GetSerial()
 {
     return dbus_message_get_serial( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- int guDBusMessage::GetType()
+int guDBusMessage::GetType()
 {
     return dbus_message_get_type( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::HasDestination( const char * dest )
+bool guDBusMessage::HasDestination( const char * dest )
 {
     return dbus_message_has_destination( m_DBusMsg, dest );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::HasInterface( const char * iface )
+bool guDBusMessage::HasInterface( const char * iface )
 {
     return dbus_message_has_interface( m_DBusMsg, iface );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::HasMember( const char * member )
+bool guDBusMessage::HasMember( const char * member )
 {
     return dbus_message_has_member( m_DBusMsg, member );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::HasPath( const char * path )
+bool guDBusMessage::HasPath( const char * path )
 {
     return dbus_message_has_path( m_DBusMsg, path );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::HasSender( const char * sender )
+bool guDBusMessage::HasSender( const char * sender )
 {
     return dbus_message_has_sender( m_DBusMsg, sender );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::IsError( const char * errname )
+bool guDBusMessage::IsError( const char * errname )
 {
     return dbus_message_is_error( m_DBusMsg, errname );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::IsMethodCall( const char * iface, const char * method )
+bool guDBusMessage::IsMethodCall( const char * iface, const char * method )
 {
     return dbus_message_is_method_call( m_DBusMsg, iface, method );
 }
 
 // -------------------------------------------------------------------------------- //
- bool guDBusMessage::IsSignal( const char * iface, const char * signal_name )
+bool guDBusMessage::IsSignal( const char * iface, const char * signal_name )
 {
     return dbus_message_is_signal( m_DBusMsg, iface, signal_name );
 }

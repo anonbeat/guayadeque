@@ -53,6 +53,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     m_Db = db;
     m_PlayListCtrl = playlist;
+    m_NotifySrv = NULL;
     m_PlayerFilters = filters;
     m_BufferGaugeId = wxNOT_FOUND;
     m_MediaSong.m_SongId = 0;
@@ -1050,7 +1051,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     }
     else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
     {
-        CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast_icon ) );
+        CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_PODCAST;
     }
     else if( m_MediaSong.m_CoverId )
@@ -1100,7 +1101,6 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
             m_PlayerCoverBitmap->SetBitmap( wxBitmap( *CoverImage ) );
             m_PlayerCoverBitmap->Refresh();
         }
-        delete CoverImage;
     }
 
     // Check if Smart is enabled
@@ -1138,6 +1138,19 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     {
         m_PendingScrob = true;
     }
+
+    if( m_NotifySrv )
+    {
+        CoverImage->Rescale( 60, 60, wxIMAGE_QUALITY_HIGH );
+        m_NotifySrv->Notify( wxEmptyString,
+            m_MediaSong.m_SongName,
+            LenToString( m_MediaSong.m_Length ) + wxT( "\n" ) +
+            m_MediaSong.m_ArtistName + wxT( " / " ) + m_MediaSong.m_AlbumName,
+            CoverImage );
+    }
+
+    if( CoverImage )
+        delete CoverImage;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1774,7 +1787,9 @@ void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayerCoverBitmapMouseOver( wxCommandEvent &event )
 {
-    if( m_MediaSong.m_CoverType == GU_SONGCOVER_NONE )
+    if( m_MediaSong.m_CoverType == GU_SONGCOVER_NONE ||
+        m_MediaSong.m_CoverType == GU_SONGCOVER_RADIO ||
+        m_MediaSong.m_CoverType == GU_SONGCOVER_PODCAST )
         return;
 
     wxPoint Pos;
