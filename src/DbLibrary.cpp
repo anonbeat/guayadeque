@@ -1665,9 +1665,11 @@ int guDbLibrary::GetFiltersCount() const
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetTeFilters( const wxArrayString &NewTeFilters )
+void guDbLibrary::SetTeFilters( const wxArrayString &NewTeFilters, const bool locked )
 {
-    //guLogMessage( wxT( "guDbLibrary::SetTeFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetTeFilters %i" ), NewTeFilters.Count() );
+    if( locked )
+        return;
     m_TeFilters = NewTeFilters;
     m_LaFilters.Empty();
     m_GeFilters.Empty();
@@ -1676,9 +1678,11 @@ void guDbLibrary::SetTeFilters( const wxArrayString &NewTeFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetTaFilters( const wxArrayInt &NewTaFilters )
+void guDbLibrary::SetTaFilters( const wxArrayInt &NewTaFilters, const bool locked )
 {
-    //guLogMessage( wxT( "guDbLibrary::SetTaFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetTaFilters %i" ), NewTaFilters.Count() );
+    if( locked )
+        return;
     if( NewTaFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_LaFilters.Empty();
@@ -1693,9 +1697,11 @@ void guDbLibrary::SetTaFilters( const wxArrayInt &NewTaFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters )
+void guDbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters, const bool locked )
 {
-    //guLogMessage( wxT( "guDbLibrary::SetGeFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetGeFilters %i" ), NewGeFilters.Count() );
+    if( locked )
+        return;
     if( NewGeFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_GeFilters.Empty();
@@ -1709,9 +1715,11 @@ void guDbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetArFilters( const wxArrayInt &NewArFilters )
+void guDbLibrary::SetArFilters( const wxArrayInt &NewArFilters, const bool locked )
 {
-    //guLogMessage( wxT( "guDbLibrary::SetArFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetArFilters %i" ), NewArFilters.Count() );
+    if( locked )
+        return;
     if( NewArFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_ArFilters.Empty();
@@ -1724,9 +1732,11 @@ void guDbLibrary::SetArFilters( const wxArrayInt &NewArFilters )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters )
+void guDbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters, const bool locked )
 {
-    //guLogMessage( wxT( "guDbLibrary::SetAlFilters" ) );
+    //guLogMessage( wxT( "guDbLibrary::SetAlFilters %i" ), NewAlFilters.Count() );
+    if( locked )
+        return;
     if( NewAlFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_AlFilters.Empty();
