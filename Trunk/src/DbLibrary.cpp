@@ -1497,9 +1497,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
   }
   //MainFrame->SetStatusText( _( "Done updating the tracks" ) );
 
-  wxString query;
-
-  DoCleanUp();
+  //DoCleanUp();
 
 //////////////////////////
   wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
