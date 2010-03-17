@@ -1,4 +1,7 @@
 
+  * Now when loading the library if title is empty will be used the filename. 
+    If album is empty will be used the dir name. 
+    If Genre or Artist is empty 'Unknown' will be used.
   * Fixed Playlists. Now dynamic playlists are loaded more quickly.
   * Added in Preferences -> Playback the option to add in random mode albums 
     instead of tracks.

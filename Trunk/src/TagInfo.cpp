@@ -425,13 +425,13 @@ bool guTagInfo::Read( void )
     {
         m_TrackName = TStringTowxString( m_Tag->title() );
         if( m_TrackName.IsEmpty() )
-            m_TrackName = _( "Unknown" );
+            m_TrackName = m_FileName.AfterLast( wxT( '/' ) );
         m_ArtistName = TStringTowxString( m_Tag->artist() );
         if( m_ArtistName.IsEmpty() )
             m_ArtistName = _( "Unknown" );
         m_AlbumName = TStringTowxString( m_Tag->album() );
         if( m_AlbumName.IsEmpty() )
-            m_AlbumName = _( "Unknown" );
+            m_AlbumName = m_FileName.BeforeLast( wxT( '/' ) ).AfterLast( wxT( '/' ) );
         m_GenreName = TStringTowxString( m_Tag->genre() );
         if( m_GenreName.IsEmpty() )
             m_GenreName = _( "Unknown" );
@@ -1249,13 +1249,13 @@ bool guApeTagInfo::Read( void )
     {
         m_TrackName = Tag->GetTitle();
         if( m_TrackName.IsEmpty() )
-            m_TrackName = _( "Unknown" );
+            m_TrackName = m_FileName.AfterLast( wxT( '/' ) );
         m_ArtistName = Tag->GetArtist();
         if( m_ArtistName.IsEmpty() )
             m_ArtistName = _( "Unknown" );
         m_AlbumName = Tag->GetAlbum();
         if( m_AlbumName.IsEmpty() )
-            m_AlbumName = _( "Unknown" );
+            m_AlbumName = m_FileName.BeforeLast( wxT( '/' ) ).AfterLast( wxT( '/' ) );
         m_GenreName = Tag->GetGenre();
         if( m_GenreName.IsEmpty() )
             m_GenreName = _( "Unknown" );
