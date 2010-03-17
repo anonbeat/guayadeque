@@ -23,7 +23,6 @@
 #include "Config.h"
 #include "Utils.h"
 //#include "HTTP.h"
-#include "Commands.h"
 
 #include <wx/curl/http.h>
 #include <wx/tokenzr.h>

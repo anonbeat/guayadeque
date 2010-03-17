@@ -72,18 +72,19 @@ ENDIF( NOT LIBFLAC_LIBRARIES )
 INCLUDE(${wxWidgets_USE_FILE})
 
 #
-ADD_DEFINITIONS( -D_GUVERSION_="0.2.6" )
 IF( EXISTS ${PROJECT_SOURCE_DIR}/.svn )
 	# Probably a SVN workspace, determine revision level
      	FIND_PACKAGE(Subversion)
      	IF(Subversion_FOUND)
         	Subversion_WC_INFO(${PROJECT_SOURCE_DIR} GUAYADEQUE)
         	MESSAGE("Current revision is ${GUAYADEQUE_WC_REVISION}")
-		ADD_DEFINITIONS(-D_GUREVISION_="${GUAYADEQUE_WC_REVISION}")
+		SET( _GUREVISION_ ${GUAYADEQUE_WC_REVISION})
         ELSE(Subversion_FOUND)
-        	ADD_DEFINITIONS( -D_GUREVISION_="" )
+        	SET( _GUREVISION_ "" )
 	ENDIF(Subversion_FOUND)
 ENDIF( EXISTS ${PROJECT_SOURCE_DIR}/.svn ) 
+
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h )
 
 #    
 #ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})

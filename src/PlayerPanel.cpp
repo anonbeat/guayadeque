@@ -687,27 +687,38 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::AddToPlayList( const wxString &FileName )
 {
-    m_PlayListCtrl->AddPlayListItem( FileName );
-    m_PlayListCtrl->ReloadItems();
-    TrackListChanged();
-    // Add the added track to the smart cache
-    if( m_PlaySmart )
+    int PrevTrackCount = m_PlayListCtrl->GetCount();
+    if( wxFileExists( FileName ) )
     {
-        int Count = m_PlayListCtrl->GetCount();
-
-        // TODO : Check if the track was really added or not
-        if( Count )
+        m_PlayListCtrl->AddPlayListItem( FileName );
+        m_PlayListCtrl->ReloadItems();
+        TrackListChanged();
+        // Add the added track to the smart cache
+        if( m_PlaySmart )
         {
-            guTrack * Track = m_PlayListCtrl->GetItem( Count - 1 );
+            int Count = m_PlayListCtrl->GetCount();
 
-            m_SmartAddedTracks.Add( Track->m_SongId );
-            m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
+            // TODO : Check if the track was really added or not
+            if( Count )
+            {
+                guTrack * Track = m_PlayListCtrl->GetItem( Count - 1 );
 
-            if( m_SmartAddedTracks.Count() > guPLAYER_SMART_CACHEITEMS )
-                m_SmartAddedTracks.RemoveAt( 0 );
+                m_SmartAddedTracks.Add( Track->m_SongId );
+                m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
 
-            if( m_SmartAddedArtists.Count() > guPLAYER_SMART_CACHEARTISTS )
-                m_SmartAddedArtists.RemoveAt( 0 );
+                if( m_SmartAddedTracks.Count() > guPLAYER_SMART_CACHEITEMS )
+                    m_SmartAddedTracks.RemoveAt( 0 );
+
+                if( m_SmartAddedArtists.Count() > guPLAYER_SMART_CACHEARTISTS )
+                    m_SmartAddedArtists.RemoveAt( 0 );
+            }
+        }
+
+        if( !PrevTrackCount && ( GetState() != wxMEDIASTATE_PLAYING ) )
+        {
+            wxCommandEvent CmdEvent;
+            OnNextTrackButtonClick( CmdEvent );
+            OnPlayButtonClick( CmdEvent );
         }
     }
 }

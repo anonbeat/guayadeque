@@ -24,6 +24,7 @@
 #include <wx/wx.h>
 #include "Commands.h"
 #include "DbLibrary.h"
+#include "Version.h"
 
 
 #define guAS_PROTOCOL_VERSION       wxT( "1.2.1" )
