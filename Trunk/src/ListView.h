@@ -205,7 +205,7 @@ class guListViewClient : public wxVListBox
     void            OnKeyDown( wxKeyEvent &event );
     void            OnMouse( wxMouseEvent &event );
     void            OnContextMenu( wxContextMenuEvent& event );
-    long            FindItem( long start, const wxString& str, bool partial );
+    long            FindItem( long start, const wxString &str, bool partial, bool atstart = true );
 
     void            OnSearchLinkClicked( wxCommandEvent &event );
     void            OnCommandClicked( wxCommandEvent &event );
@@ -273,6 +273,7 @@ class guListView : public wxScrolledWindow
     virtual wxString    OnGetItemText( const int row, const int column ) const;
     virtual void        CreateContextMenu( wxMenu * menu ) const;
     virtual wxCoord     OnMeasureItem( size_t row ) const;
+    virtual wxString    GetItemSearchText( const int row );
 
     virtual void        OnBeginDrag( wxMouseEvent &event );
     virtual void        OnDragOver( const wxCoord x, const wxCoord y );
@@ -328,7 +329,7 @@ class guListView : public wxScrolledWindow
 
     virtual wxString        GetItemName( const int item ) const = 0;
     virtual int             GetItemId( const int item ) const = 0;
-    long                    FindItem( long start, const wxString &str, bool partial );
+    long                    FindItem( long start, const wxString &str, bool partial, bool atstart = true );
 
     void                    SetImageList( wxImageList * imagelist );
 
