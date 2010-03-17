@@ -391,17 +391,19 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_GENRE, _( "Select Genre" ), _( "Selects the genre of the current song" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_search ) );
-        Menu->Append( MenuItem );
+        wxMenu *     SubMenu;
+        SubMenu = new wxMenu();
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_ARTIST, _( "Select Artist" ), _( "Selects the artist of the current song" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_search ) );
-        Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_GENRE, _( "Genre" ), _( "Selects the genre of the current song" ) );
+        SubMenu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_ALBUM, _( "Select Album" ), _( "Select the album of the current song" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_search ) );
-        Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_ARTIST, _( "Artist" ), _( "Selects the artist of the current song" ) );
+        SubMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_ALBUM, _( "Album" ), _( "Select the album of the current song" ) );
+        SubMenu->Append( MenuItem );
+
+        Menu->AppendSubMenu( SubMenu, _( "Select" ), _( "Search in the library" ) );
 
         Menu->AppendSeparator();
 
