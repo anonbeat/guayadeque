@@ -58,7 +58,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_BufferGaugeId = wxNOT_FOUND;
     m_MediaSong.m_SongId = 0;
     m_MediaSong.m_Length = 0;
-
+    m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
 
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 

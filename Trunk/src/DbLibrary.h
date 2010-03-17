@@ -411,11 +411,11 @@ class guDbLibrary : public guDb
     void                UpdateImageFile( const char * filename );
 
     int                 GetFiltersCount() const;
-    void                SetTeFilters( const wxArrayString &NewTeFilters );
-    void                SetGeFilters( const wxArrayInt &NewGeFilters );
-    void                SetTaFilters( const wxArrayInt &NewTaFilters );
-    void                SetArFilters( const wxArrayInt &NewArFilters );
-    void                SetAlFilters( const wxArrayInt &NewAlFilters );
+    void                SetTeFilters( const wxArrayString &NewTeFilters, const bool locked );
+    void                SetGeFilters( const wxArrayInt &NewGeFilters, const bool locked  );
+    void                SetTaFilters( const wxArrayInt &NewTaFilters, const bool locked );
+    void                SetArFilters( const wxArrayInt &NewArFilters, const bool locked );
+    void                SetAlFilters( const wxArrayInt &NewAlFilters, const bool locked );
 
     //
     guArrayListItems    GetArtistsLabels( const wxArrayInt &Artists );

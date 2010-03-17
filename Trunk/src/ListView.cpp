@@ -1109,9 +1109,14 @@ long guListViewClient::FindItem( long start, const wxString& str, bool partial, 
             if( line_upper == str_upper )
                 return index;
         }
+        else if( atstart )
+        {
+            if( line_upper.Find( str_upper ) == 0 )
+                return index;
+        }
         else
         {
-            if( line_upper.Find( str_upper ) != ( atstart ? 0 : wxNOT_FOUND ) )
+            if( line_upper.Find( str_upper ) != wxNOT_FOUND )
                 return index;
         }
     }
