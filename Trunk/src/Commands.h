@@ -21,11 +21,6 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#define ID_GUAYADEQUE_VERSION       _GUVERSION_
-#ifdef _GUREVISION_
-#define ID_GUAYADEQUE_REVISION      "0" _GUREVISION_
-#endif
-
 // -------------------------------------------------------------------------------- //
 //
 enum guCommandIds {

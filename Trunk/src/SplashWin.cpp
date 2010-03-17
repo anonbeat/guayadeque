@@ -23,6 +23,7 @@
 #include "Commands.h"
 #include "Images.h"
 #include "Utils.h"
+#include "Version.h"
 
 // -------------------------------------------------------------------------------- //
 guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :

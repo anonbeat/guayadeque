@@ -24,6 +24,7 @@
 #include "curl/http.h"
 #include "MusicBrainz.h"
 #include "Utils.h"
+#include "Version.h"
 
 #define guMUSICDNS_CLIENT_ID    "ca3d48c7383db1dcf6dccd1f0cab26e5"
 #define guMUSICDNS_BASEURL      "http://ofa.musicdns.org/ofa/1/track"

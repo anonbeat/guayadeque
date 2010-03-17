@@ -29,6 +29,7 @@
 #include "TrackChangeInfo.h"
 #include "TaskBar.h"
 #include "Utils.h"
+#include "Version.h"
 
 #include <wx/event.h>
 #include <wx/statline.h>
