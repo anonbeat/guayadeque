@@ -2052,6 +2052,16 @@ void guPlayerPanel::ResetVumeterLevel( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void Notify_Normalize_String( wxString &text )
+{
+    text.Replace( wxT( "&" ), wxT( "&amp;" ) );
+    text.Replace( wxT( "<" ), wxT( "&lt;" ) );
+    text.Replace( wxT( ">" ), wxT( "&gt;" ) );
+    text.Replace( wxT( "'" ), wxT( "&apos;" ) );
+    text.Replace( wxT( "\"" ), wxT( "&quot;" ) );
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::SendNotifyInfo( wxImage * image )
 {
     if( m_ShowNotifications && m_NotifySrv )
@@ -2073,6 +2083,7 @@ void guPlayerPanel::SendNotifyInfo( wxImage * image )
         {
             Body += wxT( " / " ) + m_MediaSong.m_AlbumName;
         }
+        Notify_Normalize_String( Body );
 
         m_NotifySrv->Notify( wxEmptyString, m_MediaSong.m_SongName, Body, image );
     }

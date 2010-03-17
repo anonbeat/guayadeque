@@ -2537,7 +2537,7 @@ const wxString DynPLStringOption( int option, const wxString &text )
       FmtStr = wxT( "LIKE '%%%s'" );
       break;
   }
-  return wxString::Format( FmtStr, escape_query_str( TextParam ).c_str() );
+  return wxString::Format( FmtStr, TextParam.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2621,6 +2621,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 
   wxString query = wxEmptyString;
   wxString dbNames = wxEmptyString;
+  wxString dbSets = wxEmptyString;
   int index;
   int count = playlist->m_Filters.Count();
   for( index = 0; index < count; index++ )
@@ -2638,24 +2639,39 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 
       case guDYNAMIC_FILTER_TYPE_ARTIST :  // ARTIST
         if( dbNames.Find( wxT( "artists" ) ) == wxNOT_FOUND )
+        {
             dbNames += wxT( ", artists " );
-        query += wxT( "( song_artistid = artist_id AND artist_name " ) +
+            if( !dbSets.IsEmpty() )
+                dbSets += wxT( "AND " );
+            dbSets  += wxT( "song_artistid = artist_id " );
+        }
+        query += wxT( "( artist_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
       case guDYNAMIC_FILTER_TYPE_ALBUM : // ALBUM
         if( dbNames.Find( wxT( "albums" ) ) == wxNOT_FOUND )
+        {
             dbNames += wxT( ", albums " );
-        query += wxT( "( song_albumid = album_id AND album_name " ) +
+            if( !dbSets.IsEmpty() )
+                dbSets += wxT( "AND " );
+            dbSets  += wxT( "song_albumid = album_id " );
+        }
+        query += wxT( "( album_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
       case guDYNAMIC_FILTER_TYPE_GENRE : // GENRE
         if( dbNames.Find( wxT( "genres" ) ) == wxNOT_FOUND )
+        {
             dbNames += wxT( ", genres " );
-        query += wxT( "( song_genreid = genre_id AND genre_name " ) +
+            if( !dbSets.IsEmpty() )
+                dbSets += wxT( "AND " );
+            dbSets  += wxT( "song_genreid = genre_id " );
+        }
+        query += wxT( "( genre_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
@@ -2665,14 +2681,22 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             dbNames += wxT( ", tags " );
         if( dbNames.Find( wxT( "settags" ) ) == wxNOT_FOUND )
             dbNames += wxT( ", settags " );
+        if( !dbSets.IsEmpty() )
+        {
+            dbSets += wxT( "AND " );
+            dbSets  += wxT( "( ( song_id = settag_songid OR "
+                                "song_artistid = settag_artistid OR "
+                                "song_albumid = settag_albumid ) AND "
+                                "settag_tagid = tag_id ) " );
+        }
 
-        query += wxT( "( ( song_id = settag_songid AND settag_tagid = tag_id AND tag_name " ) +
+        query += wxT( "( ( tag_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ") OR " );
-        query += wxT( "( song_artistid = settag_artistid AND settag_tagid = tag_id AND tag_name " ) +
+        query += wxT( "( tag_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ") OR " );
-        query += wxT( "( song_albumid = settag_albumid AND settag_tagid = tag_id AND tag_name " ) +
+        query += wxT( "( tag_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ") )" );
         break;
@@ -2689,8 +2713,14 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 
       case guDYNAMIC_FILTER_TYPE_PATH : // PATH
         if( dbNames.Find( wxT( "paths" ) ) == wxNOT_FOUND )
+        {
             dbNames += wxT( ", paths " );
-        query += wxT( "( song_pathid = path_id AND path_value " ) +
+            if( !dbSets.IsEmpty() )
+                dbSets += wxT( "AND " );
+            dbSets  += wxT( "song_pathid = path_id " );
+        }
+
+        query += wxT( "( path_value " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                     playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
@@ -2750,7 +2780,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
   // SORTING Options
   //guLogMessage( wxT( "Sort: %u %u %u" ), playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc );
   wxString sort = wxEmptyString;
-  wxString sortquery = wxEmptyString;
+//  wxString sortquery = wxEmptyString;
   if( playlist->m_Sorted )
   {
     sort = wxT( " ORDER BY " );
@@ -2763,7 +2793,9 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             if( !dbNames.Contains( wxT( "artists" ) ) )
             {
                 dbNames += wxT( ", artists " );
-                sortquery += wxT( "song_artistid = artist_id AND " );
+                if( !dbSets.IsEmpty() )
+                    dbSets += wxT( "AND " );
+                dbSets  += wxT( "song_artistid = artist_id " );
             }
             sort += wxT( "artist_name" );
             break;
@@ -2774,7 +2806,9 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             if( !dbNames.Contains( wxT( "albums" ) ) )
             {
                 dbNames += wxT( ", albums " );
-                sortquery += wxT( "song_albumid = album_id AND " );
+                if( !dbSets.IsEmpty() )
+                    dbSets += wxT( "AND " );
+                dbSets  += wxT( "song_albumid = album_id " );
             }
             sort += wxT( "album_name" );
             break;
@@ -2785,7 +2819,9 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             if( !dbNames.Contains( wxT( "genres" ) ) )
             {
                 dbNames += wxT( ", genres " );
-                sortquery += wxT( "song_genreid = genre_id AND " );
+                if( !dbSets.IsEmpty() )
+                    dbSets += wxT( "AND " );
+                dbSets  += wxT( "song_genreid = genre_id " );
             }
             sort += wxT( "song_genrename" );
             break;
@@ -2805,8 +2841,12 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
   }
 
   //guLogMessage( wxT( "..., %s%s%s" ), dbNames.c_str(), query.c_str(), sort.c_str() );
+  if( !dbSets.IsEmpty() )
+  {
+      dbSets = wxT( "( " ) + dbSets + wxT( ") AND " );
+  }
 
-  return dbNames + wxT( " WHERE " ) + sortquery + wxT( "(" ) + query + wxT( ")" ) + sort;
+  return dbNames + wxT( " WHERE " ) + dbSets + wxT( "(" ) + query + wxT( ")" ) + sort;
 }
 
 // -------------------------------------------------------------------------------- //
