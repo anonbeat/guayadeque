@@ -52,6 +52,7 @@ class guPlayList : public guListView
     int             m_MinPlayListTracks;
     bool            m_DelTracksPLayed;
     int             m_ItemHeight;
+    wxString        m_LastSearch;
 
     wxBitmap *      m_PlayBitmap;
     wxBitmap *      m_GreyStar;
@@ -68,7 +69,7 @@ class guPlayList : public guListView
     virtual void                OnDropBegin( void );
     virtual void                OnDropEnd( void );
 
-
+    virtual wxString GetItemSearchText( const int row );
 
 //    void                        OnMouse( wxMouseEvent &event );
     void                        RemoveSelected();
@@ -81,6 +82,7 @@ class guPlayList : public guListView
     void                        OnCopyToClicked( wxCommandEvent &event );
     void                        OnEditLabelsClicked( wxCommandEvent &event );
     void                        OnEditTracksClicked( wxCommandEvent &event );
+    void                        OnSearchClicked( wxCommandEvent &event );
     void                        OnSearchLinkClicked( wxCommandEvent &event );
     void                        OnCommandClicked( wxCommandEvent &event );
     wxString                    GetSearchText( int item ) const;

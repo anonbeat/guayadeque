@@ -517,9 +517,9 @@ void guListView::ClearSelectedItems()
 }
 
 // -------------------------------------------------------------------------------- //
-long guListView::FindItem( long start, const wxString &str, bool partial )
+long guListView::FindItem( long start, const wxString &str, bool partial, bool atstart )
 {
-    return m_ListBox->FindItem( start, str, partial );
+    return m_ListBox->FindItem( start, str, partial, atstart );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -697,6 +697,12 @@ void guListView::OnMouse( wxMouseEvent &event )
     }
 
     event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guListView::GetItemSearchText( const int row )
+{
+    return GetItemName( row );
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -1079,11 +1085,11 @@ void guListViewClient::OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n 
 // -------------------------------------------------------------------------------- //
 wxString guListViewClient::GetItemSearchText( const int row )
 {
-    return m_Owner->GetItemName( row );
+    return m_Owner->GetItemSearchText( row );
 }
 
 // -------------------------------------------------------------------------------- //
-long guListViewClient::FindItem( long start, const wxString& str, bool partial )
+long guListViewClient::FindItem( long start, const wxString& str, bool partial, bool atstart )
 {
     if( str.empty() )
         return wxNOT_FOUND;
@@ -1105,7 +1111,7 @@ long guListViewClient::FindItem( long start, const wxString& str, bool partial )
         }
         else
         {
-            if( line_upper.find( str_upper ) == 0 )
+            if( line_upper.Find( str_upper ) != ( atstart ? 0 : wxNOT_FOUND ) )
                 return index;
         }
     }

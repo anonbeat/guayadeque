@@ -1,4 +1,5 @@
 
+  * Added search text for player playlist
   * Now allow to load from command line directories.
   * Now when loading the library if title is empty will be used the filename. 
     If album is empty will be used the dir name. 

@@ -137,6 +137,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     Connect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Connect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
     Connect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchClicked ) );
 
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Connect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
@@ -190,6 +191,7 @@ guPlayList::~guPlayList()
     Disconnect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ) );
+    Disconnect( ID_PLAYER_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchClicked ) );
 
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
@@ -1098,6 +1100,10 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
     Menu->Append( MenuItem );
 
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SEARCH, _( "Search" ), _( "Search a track in the playlist by name" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+    Menu->Append( MenuItem );
+
     Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
@@ -1362,6 +1368,32 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
         }
         TrackEditor->Destroy();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guPlayList::GetItemSearchText( const int row )
+{
+    return m_Items[ row ].m_SongName +
+           m_Items[ row ].m_ArtistName +
+           m_Items[ row ].m_AlbumName;
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSearchClicked( wxCommandEvent &event )
+{
+    wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Search: " ), _( "Please enter the search term" ), m_LastSearch );
+    if( EntryDialog->ShowModal() == wxID_OK )
+    {
+        m_LastSearch = EntryDialog->GetValue();
+        wxArrayInt Selection = GetSelectedItems();
+        long StartItem = 0;
+        if( Selection.Count() )
+            StartItem = Selection[ 0 ];
+        int LastItemFound = FindItem( StartItem, m_LastSearch, true, false );
+        SetSelection( LastItemFound );
+    }
+    EntryDialog->Destroy();
 }
 
 // -------------------------------------------------------------------------------- //
