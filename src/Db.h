@@ -21,6 +21,8 @@
 #ifndef guDB_H
 #define guDB_H
 
+#include "Utils.h"
+
 // wxWidgets
 #include <wx/string.h>
 #include <wx/utils.h>
@@ -41,6 +43,7 @@ wxString inline escape_query_str( const wxString &str )
 {
     wxString QueryStr = str;
     escape_query_str( &QueryStr );
+    //guLogMessage( wxT( "'%s' --> '%s'" ), str.c_str(), QueryStr.c_str() );
     return QueryStr;
 }
 
