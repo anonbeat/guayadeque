@@ -688,38 +688,36 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
 void guPlayerPanel::AddToPlayList( const wxString &FileName )
 {
     int PrevTrackCount = m_PlayListCtrl->GetCount();
-    if( wxFileExists( FileName ) )
+
+    m_PlayListCtrl->AddPlayListItem( FileName );
+    m_PlayListCtrl->ReloadItems();
+    TrackListChanged();
+    // Add the added track to the smart cache
+    if( m_PlaySmart )
     {
-        m_PlayListCtrl->AddPlayListItem( FileName );
-        m_PlayListCtrl->ReloadItems();
-        TrackListChanged();
-        // Add the added track to the smart cache
-        if( m_PlaySmart )
+        int Count = m_PlayListCtrl->GetCount();
+
+        // TODO : Check if the track was really added or not
+        if( Count )
         {
-            int Count = m_PlayListCtrl->GetCount();
+            guTrack * Track = m_PlayListCtrl->GetItem( Count - 1 );
 
-            // TODO : Check if the track was really added or not
-            if( Count )
-            {
-                guTrack * Track = m_PlayListCtrl->GetItem( Count - 1 );
+            m_SmartAddedTracks.Add( Track->m_SongId );
+            m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
 
-                m_SmartAddedTracks.Add( Track->m_SongId );
-                m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
+            if( m_SmartAddedTracks.Count() > guPLAYER_SMART_CACHEITEMS )
+                m_SmartAddedTracks.RemoveAt( 0 );
 
-                if( m_SmartAddedTracks.Count() > guPLAYER_SMART_CACHEITEMS )
-                    m_SmartAddedTracks.RemoveAt( 0 );
-
-                if( m_SmartAddedArtists.Count() > guPLAYER_SMART_CACHEARTISTS )
-                    m_SmartAddedArtists.RemoveAt( 0 );
-            }
+            if( m_SmartAddedArtists.Count() > guPLAYER_SMART_CACHEARTISTS )
+                m_SmartAddedArtists.RemoveAt( 0 );
         }
+    }
 
-        if( !PrevTrackCount && ( GetState() != wxMEDIASTATE_PLAYING ) )
-        {
-            wxCommandEvent CmdEvent;
-            OnNextTrackButtonClick( CmdEvent );
-            OnPlayButtonClick( CmdEvent );
-        }
+    if( !PrevTrackCount && ( GetState() != wxMEDIASTATE_PLAYING ) )
+    {
+        wxCommandEvent CmdEvent;
+        OnNextTrackButtonClick( CmdEvent );
+        OnPlayButtonClick( CmdEvent );
     }
 }
 
