@@ -633,9 +633,10 @@ void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
                 m_Db->UpdateArtistsLabels( Artists, LabelEditor->GetCheckedIds() );
             }
             LabelEditor->Destroy();
-            //m_UpdateLock = true;
+            m_UpdateLock = true;
             m_LabelsListCtrl->ReloadItems( false );
-            //m_UpdateLock = false;
+            m_UpdateLock = false;
+            m_ArtistListCtrl->ReloadItems( false );
         }
     }
 }
@@ -658,9 +659,10 @@ void guLibPanel::OnAlbumEditLabelsClicked( wxCommandEvent &event )
             m_Db->UpdateAlbumsLabels( Albums, LabelEditor->GetCheckedIds() );
         }
         LabelEditor->Destroy();
-        //m_UpdateLock = true;
+        m_UpdateLock = true;
         m_LabelsListCtrl->ReloadItems( false );
-        //m_UpdateLock = false;
+        m_UpdateLock = false;
+        m_AlbumListCtrl->ReloadItems( false );
     }
 }
 
@@ -682,9 +684,10 @@ void guLibPanel::OnSongsEditLabelsClicked( wxCommandEvent &event )
             m_Db->UpdateSongsLabels( SongIds, LabelEditor->GetCheckedIds() );
         }
         LabelEditor->Destroy();
-        //m_UpdateLock = true;
+        m_UpdateLock = true;
         m_LabelsListCtrl->ReloadItems( false );
-        //m_UpdateLock = false;
+        m_UpdateLock = false;
+        m_SongListCtrl->ReloadItems( false );
     }
 }
 
