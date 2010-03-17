@@ -1005,6 +1005,27 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
                 guLogError( wxT( "Could not open the file '%s'" ), FileName.c_str() );
             }
         }
+        else if( wxDirExists( FileName ) )
+        {
+            wxString DirName = FileName;
+            wxDir Dir;
+            if( !DirName.EndsWith( wxT( "/" ) ) )
+                DirName += wxT( "/" );
+
+            Dir.Open( FileName );
+            if( Dir.IsOpened() )
+            {
+                if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+                {
+                    do {
+                        if( ( FileName[ 0 ] != '.' ) )
+                        {
+                            AddPlayListItem( DirName + FileName, addpath );
+                        }
+                    } while( Dir.GetNext( &FileName ) );
+                }
+            }
+        }
         else
         {
             guLogError( wxT( "File doesnt exist '%s'" ), FileName.c_str() );
