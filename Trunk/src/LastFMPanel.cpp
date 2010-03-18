@@ -2120,9 +2120,43 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
         wxPostEvent( m_LastFMPanel, event );
         m_LastFMPanel->m_UpdateEventsMutex.Unlock();
     }
-    else if( Image )
+    else
     {
-        delete Image;
+        if( Image )
+            delete Image;
+
+        if( m_CommandData )
+        {
+            switch( m_CommandId )
+            {
+                case ID_LASTFM_UPDATE_ALBUMINFO :
+                {
+                    delete ( guLastFMAlbumInfo * ) m_CommandData;
+                    break;
+                }
+
+                case ID_LASTFM_UPDATE_ARTISTINFO :
+                case ID_LASTFM_UPDATE_SIMARTIST :
+                {
+                    delete ( guLastFMArtistInfo * ) m_CommandData;
+                    break;
+                }
+
+                case ID_LASTFM_UPDATE_EVENTINFO :
+                {
+                    delete ( guLastFMEventInfo * ) m_CommandData;
+                    break;
+                }
+
+                case ID_LASTFM_UPDATE_SIMTRACK :
+                {
+                    delete ( guLastFMTrackInfo * ) m_CommandData;
+                    break;
+                    break;
+                }
+
+            }
+        }
     }
     return 0;
 
