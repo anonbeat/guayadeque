@@ -94,9 +94,9 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
         Count = MainApp->argc;
         for( Index = 1; Index < Count; Index++ )
         {
-            //wxMessageBox( wxString::Format( wxT( "%u-%u %s" ), Index, MainApp->argc, MainApp->argv[ Index ] ), wxT( "Song" ) );
-            if( guIsValidAudioFile( MainApp->argv[ Index ] ) ||
-                guPlayListFile::IsValidPlayList( MainApp->argv[ Index ] ) )
+            //guLogMessage( wxT( "%u-%u %s" ), Index, MainApp->argc, MainApp->argv[ Index ] );
+            //if( guIsValidAudioFile( MainApp->argv[ Index ] ) ||
+            //    guPlayListFile::IsValidPlayList( MainApp->argv[ Index ] ) )
             {
                 AddPlayListItem( MainApp->argv[ Index ] );
                 m_StartPlaying = true;
