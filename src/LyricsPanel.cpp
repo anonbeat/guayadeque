@@ -45,7 +45,8 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
     m_Db = db;
     m_LyricThread = NULL;
     m_UpdateEnabled = true;
-    m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
+//    m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
+    m_LyricFormat = guLYRIC_FORMAT_NORMAL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -87,6 +88,10 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 
 	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+
+	m_EditButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_EditButton->Enable( false );
+	EditorSizer->Add( m_EditButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SaveButton->Enable( false );
@@ -134,11 +139,13 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 
 	MainSizer->Add( TitleSizer, 0, wxEXPAND, 5 );
 
-	m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
-	m_LyricText->SetBorders( 0 );
-    m_LyricText->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s></body></html>" ),
-          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str() ) );
-	m_LyricText->SetFonts( CurrentFont.GetFaceName(), wxEmptyString );
+	//m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
+	m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CENTRE|wxTE_DONTWRAP|wxTE_MULTILINE|wxNO_BORDER );
+	m_EditModeColor = m_LyricText->GetBackgroundColour();
+	m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
+//    m_LyricText->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s></body></html>" ),
+//          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str() ) );
+//	m_LyricText->SetFonts( CurrentFont.GetFaceName(), wxEmptyString );
 
 	MainSizer->Add( m_LyricText, 1, wxALL|wxEXPAND, 5 );
 
@@ -149,6 +156,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 
 	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
 	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
+	m_EditButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnEditBtnClick ), NULL, this );
 	m_SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
@@ -168,6 +176,7 @@ guLyricsPanel::~guLyricsPanel()
 {
 	m_UpdateCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
 	m_ReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
+	m_EditButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnEditBtnClick ), NULL, this );
 	m_SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
@@ -337,6 +346,9 @@ void guLyricsPanel::SaveLyrics( void )
         {
             if( TagInfo->CanHandleLyrics() )
             {
+                if( m_LyricText->IsModified() )
+                    m_CurrentLyricText = m_LyricText->GetValue();
+
                 TagInfo->SetLyrics( m_CurrentLyricText );
             }
             delete TagInfo;
@@ -345,10 +357,22 @@ void guLyricsPanel::SaveLyrics( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnEditBtnClick( wxCommandEvent& event )
+{
+    m_EditButton->Enable( false );
+    m_SaveButton->Enable( true );
+    m_LyricText->SetEditable( true );
+    m_LyricText->SetBackgroundColour( m_EditModeColor );
+}
+
+// -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnSaveBtnClick( wxCommandEvent& event )
 {
     SaveLyrics();
     m_SaveButton->Enable( false );
+    m_EditButton->Enable( true );
+    m_LyricText->SetEditable( false );
+    m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -373,10 +397,25 @@ void guLyricsPanel::SetText( const wxString &text )
     wxString LyricText = text;
     LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
     LyricText.Replace( wxT( " " ), wxT( "&nbsp;" ) );
-    m_LyricText->SetPage( wxString::Format( m_LyricsTemplate,
-          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-          LyricText.c_str() ) );
+
+	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
+
+    if( m_LyricFormat == guLYRIC_FORMAT_NORMAL )
+    {
+        m_LyricText->SetWindowStyle( ( m_LyricText->GetWindowStyle() ^ wxTE_LEFT ) | wxTE_CENTER );
+        m_LyricText->SetFont( CurrentFont );
+    }
+    else
+    {
+        m_LyricText->SetWindowStyle( ( m_LyricText->GetWindowStyle() ^ wxTE_CENTER ) | wxTE_LEFT );
+        CurrentFont.SetFamily( wxTELETYPE );
+        m_LyricText->SetFont( CurrentFont );
+    }
+//    m_LyricText->SetPage( wxString::Format( m_LyricsTemplate,
+//          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+//          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+//          LyricText.c_str() ) );
+    m_LyricText->SetValue( text );
     Layout();
 }
 
@@ -387,6 +426,11 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     wxString Artist = trackchangeinfo->m_ArtistName;
     wxString Track = trackchangeinfo->m_TrackName;
     wxString LyricText;
+
+    m_EditButton->Enable( !Artist.IsEmpty() && !Track.IsEmpty() &&
+                          !m_CurrentFileName.IsEmpty() && wxFileExists( m_CurrentFileName ) );
+    m_LyricText->SetEditable( false );
+    m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
 
     SetTitle( Track + wxT( " / " ) + Artist );
     //SetText( _( "No lyrics found for this song." ) );
@@ -423,9 +467,11 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
         // for tab representation to decide the template to use
         // I know this is an ugly hack :/
         if( LyricText.Find( wxT( "-----" ) ) != wxNOT_FOUND )
-            m_LyricsTemplate = guLYRICS_TEMPLATE_ULTGUITAR;
+            //m_LyricsTemplate = guLYRICS_TEMPLATE_ULTGUITAR;
+            m_LyricFormat = guLYRIC_FORMAT_GUITAR;
         else
-            m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
+            //m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
+            m_LyricFormat = guLYRIC_FORMAT_NORMAL;
 
         SetText( LyricText );
     }
@@ -462,7 +508,8 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
         {
             m_LyricThread = new guUltGuitarEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
-        m_LyricsTemplate = m_LyricThread->GetTemplate();
+        //m_LyricsTemplate = m_LyricThread->GetTemplate();
+        m_LyricFormat = m_LyricThread->GetFormat();
     }
     else
     {
@@ -505,7 +552,7 @@ void guLyricsPanel::OnLyricsCopy( wxCommandEvent &event )
     if( wxTheClipboard->Open() )
     {
         wxTheClipboard->Clear();
-        wxString CopyText = m_LyricText->SelectionToText();
+        wxString CopyText = m_LyricText->GetStringSelection();
         if( CopyText.IsEmpty() )
         {
             CopyText = m_TrackTextCtrl->GetValue() + wxT( " / " ) +
@@ -577,7 +624,8 @@ void guLyricsPanel::OnLyricsPrint( wxCommandEvent &event )
                                  m_CurrentLyricText;
             LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
-            Printout.SetHtmlText( wxString::Format( m_LyricsTemplate,
+            Printout.SetHtmlText( wxString::Format(
+                ( ( m_LyricFormat == guLYRIC_FORMAT_NORMAL ) ? guLYRICS_TEMPLATE_DEFAULT : guLYRICS_TEMPLATE_ULTGUITAR ),
                 wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
                 wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
                 LyricText.c_str() ) );
@@ -736,6 +784,12 @@ void guSearchLyricEngine::SetLyric( wxString * lyrictext )
 wxString guSearchLyricEngine::GetTemplate( void )
 {
     return guLYRICS_TEMPLATE_DEFAULT;
+}
+
+// -------------------------------------------------------------------------------- //
+int guSearchLyricEngine::GetFormat( void )
+{
+    return guLYRIC_FORMAT_NORMAL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1218,6 +1272,12 @@ void guUltGuitarEngine::SearchLyric( void )
 wxString guUltGuitarEngine::GetTemplate( void )
 {
     return guLYRICS_TEMPLATE_ULTGUITAR;
+}
+
+// -------------------------------------------------------------------------------- //
+int guUltGuitarEngine::GetFormat( void )
+{
+    return guLYRIC_FORMAT_GUITAR;
 }
 
 // -------------------------------------------------------------------------------- //

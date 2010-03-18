@@ -71,6 +71,7 @@
 #include "./images/tiny_del_png.h"
 #include "./images/tiny_doc_save.h"
 #include "./images/tiny_edit_clear.h"
+#include "./images/tiny_edit.h"
 #include "./images/tiny_edit_copy.h"
 #include "./images/tiny_left.h"
 #include "./images/tiny_mixer.h"
@@ -179,6 +180,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_tiny_search,                   wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_search_engine,	            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_musicbrainz,	            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_edit,                     wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_edit_copy,	            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_search_again,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_numerate,	            wxBITMAP_TYPE_PNG ),
