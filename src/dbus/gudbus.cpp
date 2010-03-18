@@ -46,6 +46,9 @@ void Handle_Response( DBusPendingCall * PCall, void * udata )
 
     DBusObj->HandleMessages( Msg, NULL );
 
+    delete Msg;
+
+    //delete Msg;
 	dbus_message_unref( reply );
 	dbus_pending_call_unref( PCall );
 }
@@ -147,11 +150,10 @@ DBusHandlerResult guDBusServer::HandleMessages( guDBusMessage * msg, guDBusMessa
         m_ClientsMutex.Unlock();
     }
 
-    // release the dbus objects
-    dbus_message_unref( msg->GetMessage() );
+    delete msg;
 
     if( reply )
-        dbus_message_unref( reply->GetMessage() );
+        delete reply;
 
     return RetVal;
 }
@@ -527,6 +529,12 @@ guDBusMethodReturn::guDBusMethodReturn( DBusMessage * msg )  :
 guDBusSignal::guDBusSignal( const char * path, const char * iface, const char * name )
 {
     m_DBusMsg = dbus_message_new_signal( path, iface, name );
+}
+
+// -------------------------------------------------------------------------------- //
+guDBusSignal::~guDBusSignal()
+{
+    //m_DBusMsg = NULL;
 }
 
 // -------------------------------------------------------------------------------- //

@@ -87,6 +87,7 @@ class guDBusSignal : public guDBusMessage
 {
   public:
     guDBusSignal( const char * path, const char * iface, const char * name );
+    ~guDBusSignal();
 };
 
 class guDBusServer;
