@@ -843,6 +843,7 @@ void guMPRIS::OnPlayerTrackChange()
         FillMetadataArgs( signal, CurTrack );
         Send( signal );
         Flush();
+        delete signal;
     }
     else
     {
@@ -880,6 +881,7 @@ void guMPRIS::OnPlayerStatusChange()
 
         Send( signal );
         Flush();
+        delete signal;
     }
     else
     {
@@ -927,6 +929,7 @@ void guMPRIS::OnTrackListChange()
         }
         Send( signal );
         Flush();
+        delete signal;
     }
 }
 
