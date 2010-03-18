@@ -53,6 +53,11 @@ enum guLYRIC_ENGINE_ID {
     guLYRIC_ENGINE_ULTGUITAR
 };
 
+enum guLYRIC_FORMAT {
+    guLYRIC_FORMAT_NORMAL = 0,
+    guLYRIC_FORMAT_GUITAR
+};
+
 // -------------------------------------------------------------------------------- //
 class guLyricsPanel : public wxPanel
 {
@@ -60,19 +65,23 @@ class guLyricsPanel : public wxPanel
     guDbLibrary *           m_Db;
 
     wxStaticText *          m_LyricTitle;
-    wxHtmlWindow *          m_LyricText;
+    //wxHtmlWindow *          m_LyricText;
+    wxTextCtrl *            m_LyricText;
     guSearchLyricEngine *   m_LyricThread;
     wxCheckBox *            m_UpdateCheckBox;
 	wxBitmapButton *        m_ReloadButton;
+	wxBitmapButton *        m_EditButton;
 	wxBitmapButton *        m_SaveButton;
 	wxChoice *              m_ServerChoice;
 	wxTextCtrl *            m_ArtistTextCtrl;
 	wxTextCtrl *            m_TrackTextCtrl;
 	wxBitmapButton *        m_SearchButton;
+	wxColour                m_EditModeColor;
 
 	bool                    m_UpdateEnabled;
     guTrackChangeInfo       m_CurrentTrackInfo;
-    wxString                m_LyricsTemplate;
+    //wxString                m_LyricsTemplate;
+    int                     m_LyricFormat;
 	wxString                m_CurrentFileName;
 	wxString                m_CurrentLyricText;
 	bool                    m_WriteLyrics;
@@ -81,6 +90,7 @@ class guLyricsPanel : public wxPanel
     void                    SetText( const wxString &text );
     void                    OnDownloadedLyric( wxCommandEvent &event );
 	void                    OnReloadBtnClick( wxCommandEvent& event );
+    void                    OnEditBtnClick( wxCommandEvent& event );
     void                    OnSaveBtnClick( wxCommandEvent& event );
 	void                    OnUpdateChkBoxClicked( wxCommandEvent& event );
 	void                    SetAutoUpdate( const bool autoupdate );
@@ -139,6 +149,7 @@ class guSearchLyricEngine : public wxThread
     virtual void            SearchLyric( void ) = 0;
     virtual void            SetLyric( wxString * lyrictext );
     virtual wxString        GetTemplate( void );
+    virtual int             GetFormat( void );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -197,6 +208,7 @@ class guUltGuitarEngine : public guSearchLyricEngine
 
     virtual void            SearchLyric( void );
     virtual wxString        GetTemplate( void );
+    virtual int             GetFormat( void );
 };
 
 #endif
