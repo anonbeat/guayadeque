@@ -128,7 +128,8 @@ void guLastFMInfoCtrl::SetBitmap( const wxImage * image )
 {
     if( image )
     {
-        m_Bitmap->SetBitmap( wxBitmap( image->Copy() ) );
+        //m_Bitmap->SetBitmap( wxBitmap( image->Copy() ) );
+        m_Bitmap->SetBitmap( wxBitmap( * image ) );
     }
     else
     {
@@ -485,7 +486,7 @@ void guArtistInfoCtrl::SetBitmap( const wxImage * image )
 {
     if( image )
     {
-        m_Bitmap->SetBitmap( wxBitmap( image->Copy() ) );
+        m_Bitmap->SetBitmap( wxBitmap( * image ) );
     }
     else
     {
@@ -2136,9 +2137,14 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
                 }
 
                 case ID_LASTFM_UPDATE_ARTISTINFO :
-                case ID_LASTFM_UPDATE_SIMARTIST :
                 {
                     delete ( guLastFMArtistInfo * ) m_CommandData;
+                    break;
+                }
+
+                case ID_LASTFM_UPDATE_SIMARTIST :
+                {
+                    delete ( guLastFMSimilarArtistInfo * ) m_CommandData;
                     break;
                 }
 
