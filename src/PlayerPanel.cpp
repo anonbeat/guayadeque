@@ -138,41 +138,41 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	wxBoxSizer * PlayerBtnSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_skip_backward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_prev ), wxDefaultPosition, wxDefaultSize, 0 ); //wxBU_AUTODRAW );
 	m_PrevTrackButton->SetToolTip( _( "Go to Previous Track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_PrevTrackButton, 0, wxALL, 2 );
 
-	m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_skip_forward ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_NextTrackButton->SetToolTip( _( "Go to Next Track in the Playlist" ) );
-	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
-
-	m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_play ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PlayButton->SetToolTip( _( "Start playing or pauses current track in the Playlist" ) );
 	PlayerBtnSizer->Add( m_PlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_playback_stop ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_next ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_NextTrackButton->SetToolTip( _( "Go to Next Track in the Playlist" ) );
+	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
+
+	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_stop ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
 	PlayerBtnSizer->Add( m_StopButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_volume_medium ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
 
-	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mixer ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
 	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
 	// Get PlayerPanel value from config file
 	m_SmartPlayButton->SetValue( m_PlaySmart );
 	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALL, 2 );
 
-	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_shuffle ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_random ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in the playlist" ) );
 	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playlist_repeat ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_repeat ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_RepeatPlayButton->SetToolTip( _( "Repeats the current playlist" ) );
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
 	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
@@ -844,11 +844,11 @@ void guPlayerPanel::UpdateStatus()
     {
         if( State == wxMEDIASTATE_PLAYING )
         {
-            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_playback_pause ) );
+            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_pause ) );
         }
         else
         {
-            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_playback_start ) );
+            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_play ) );
         }
         m_PlayButton->Refresh();
         m_LastPlayState = State;
@@ -906,13 +906,13 @@ void guPlayerPanel::UpdateStatus()
     if( m_CurVolume != m_LastVolume )
     {
         if( m_CurVolume > 75 )
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_tiny_volume_high ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_high ) );
         else if( m_CurVolume > 50 )
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_tiny_volume_medium ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_mid ) );
         else if( m_CurVolume == 0 )
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_tiny_volume_muted ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_muted ) );
         else
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_tiny_volume_low ) );
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_low ) );
         m_VolumeButton->Refresh();
         m_LastVolume = m_CurVolume;
     }
@@ -1073,13 +1073,13 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     }
     else if( m_MediaSong.m_CoverId )
     {
-        guLogMessage( wxT( "CoverId %i" ), m_MediaSong.m_CoverId );
+        //guLogMessage( wxT( "CoverId %i" ), m_MediaSong.m_CoverId );
         m_MediaSong.m_CoverPath = m_Db->GetCoverPath( m_MediaSong.m_CoverId );
         m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
     }
     else
     {
-        guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_MediaSong.m_FileName ).c_str() );
+        //guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_MediaSong.m_FileName ).c_str() );
         m_MediaSong.m_CoverPath = m_PlayListCtrl->FindCoverFile( wxPathOnly( m_MediaSong.m_FileName ) );
     }
 
@@ -1569,8 +1569,8 @@ void guPlayerPanel::SetPlayLoop( int playloop )
     m_PlayLoop = playloop;
 
     m_RepeatPlayButton->SetLabel( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
-        guImage( guIMAGE_INDEX_tiny_playlist_repeat ) :
-        guImage( guIMAGE_INDEX_tiny_playlist_repeat_single ) );
+        guImage( guIMAGE_INDEX_player_normal_repeat ) :
+        guImage( guIMAGE_INDEX_player_normal_repeat_single ) );
 
     m_RepeatPlayButton->SetValue( m_PlayLoop );
     if( m_PlayLoop && GetPlaySmart() )

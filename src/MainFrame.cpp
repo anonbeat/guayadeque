@@ -842,14 +842,14 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu = new wxMenu();
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_NEXTTRACK, _( "&Next Track" ), _( "Play the next track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_forward ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_forward ) );
     m_MainMenu->Append( MenuItem );
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PREVTRACK, _( "&Prev. Track" ), _( "Play the previous track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_backward ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_backward ) );
     m_MainMenu->Append( MenuItem );
     m_MainMenu->AppendSeparator();
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PLAY, _( "&Play" ), _( "Play or Pause the current track in the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     m_MainMenu->Append( MenuItem );
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_STOP, _( "&Stop" ), _( "Stop the current played track" ), wxITEM_NORMAL );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_ ) );
@@ -861,7 +861,7 @@ void guMainFrame::CreateMenu()
     m_PlaySmartMenuItem->Check( m_PlayerPanel->GetPlaySmart() );
 
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_RANDOMPLAY, _( "R&andomize" ), _( "Randomize the playlist" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_shuffle ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_shuffle ) );
     m_MainMenu->Append( MenuItem );
     m_LoopPlayListMenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_REPEATPLAYLIST, _( "&Repeat Playlist" ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playlist_repeat ) );
@@ -877,7 +877,7 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu = new wxMenu();
     MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_ABOUT, _( "&About" ), _( "Show information about guayadeque music player" ), wxITEM_NORMAL );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_volume_high ) );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_volume_high ) );
     m_MainMenu->Append( MenuItem );
     MenuBar->Append( m_MainMenu, _( "&Help" ) );
 
