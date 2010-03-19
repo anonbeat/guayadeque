@@ -873,14 +873,18 @@ void guPlayList::Randomize( void )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guPlayList::FindCoverFile( const wxString &DirName )
+wxString guPlayList::FindCoverFile( const wxString &dirname )
 {
     wxDir           Dir;
+    wxString        DirName;
     wxString        FileName;
     wxString        CurFile;
-    wxString        SavedDir = wxGetCwd();
     wxString        RetVal = wxEmptyString;
     wxArrayString   CoverSearchWords;
+
+    DirName = dirname;
+    if( !DirName.EndsWith( wxT( "/" ) ) )
+        DirName += wxT( '/' );
 
     // Refresh the SearchCoverWords array
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -890,7 +894,6 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
     }
 
     Dir.Open( DirName );
-    wxSetWorkingDirectory( DirName );
 
     if( Dir.IsOpened() )
     {
@@ -898,7 +901,7 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
         {
             do {
                 CurFile = FileName.Lower();
-                //guLogMessage( wxT( "Searching %s : %s" ), DirName.c_str(), CurFile.c_str() );
+                guLogMessage( wxT( "Searching %s : %s" ), DirName.c_str(), FileName.c_str() );
 
                 if( SearchCoverWords( CurFile, CoverSearchWords ) )
                 {
@@ -909,14 +912,13 @@ wxString guPlayList::FindCoverFile( const wxString &DirName )
                         CurFile.EndsWith( wxT( ".gif" ) ) )
                     {
                         //printf( "Found Cover: " ); printf( CurFile.char_str() ); printf( "\n" );
-                        RetVal = DirName + wxT( '/' ) + FileName;
+                        RetVal = DirName + FileName;
                         break;
                     }
                 }
             } while( Dir.GetNext( &FileName ) );
         }
     }
-    wxSetWorkingDirectory( SavedDir );
     return RetVal;
 }
 
@@ -988,6 +990,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
                             Track.m_Length      = TagInfo->m_Length;
                             Track.m_Year        = TagInfo->m_Year;
                             Track.m_Rating      = wxNOT_FOUND;
+                            Track.m_CoverId     = 0;
 
                             delete TagInfo;
                         }
