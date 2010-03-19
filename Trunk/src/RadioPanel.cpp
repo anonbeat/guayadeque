@@ -485,7 +485,7 @@ void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
     if( Selection.Count() )
     {
         MenuItem = new wxMenuItem( Menu, ID_RADIO_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );

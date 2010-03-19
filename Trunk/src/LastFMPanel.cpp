@@ -516,7 +516,7 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     {
         guLogMessage( wxT( "The artist id = %i" ), m_Info->m_ArtistId );
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
@@ -741,7 +741,7 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_AlbumId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the album tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
@@ -900,7 +900,7 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_ArtistId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
@@ -916,7 +916,6 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( !GetSearchText().IsEmpty() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_SELECT_ARTIST, wxT( "Show artist info" ), _( "Update the information with the current selected artist" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the artist info to clipboard" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
@@ -1048,7 +1047,7 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_TrackId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
@@ -1325,7 +1324,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	wxStaticLine * ArInfoStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	ArInfoTitleSizer->Add( ArInfoStaticLine, 1, wxEXPAND | wxALL, 5 );
 
-//	m_LastFMPlayBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_playback_start ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+//	m_LastFMPlayBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_play ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 //	m_LastFMPlayBitmapBtn->SetToolTip( _( "Enables or Disables the update of this page when the current playing track changes" ) );
 //	ArInfoTitleSizer->Add( m_LastFMPlayBitmapBtn, 0, wxRIGHT, 5 );
 
@@ -2157,7 +2156,6 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
                 case ID_LASTFM_UPDATE_SIMTRACK :
                 {
                     delete ( guLastFMTrackInfo * ) m_CommandData;
-                    break;
                     break;
                 }
 

@@ -43,7 +43,7 @@ void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
     int SelCount = GetSelectedItems().Count();
 
     MenuItem = new wxMenuItem( Menu, ID_GENRE_PLAY, _( "Play" ), _( "Play current selected genres" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE, _( "Enqueue" ), _( "Add current selected genres to playlist" ) );

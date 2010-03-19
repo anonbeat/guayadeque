@@ -97,7 +97,7 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
     int SelCount = GetSelectedItems().Count();
 
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_PLAY, _( "Play" ), _( "Play current selected artists" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_start ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_ENQUEUE, _( "Enqueue" ), _( "Add current selected artists to playlist" ) );
