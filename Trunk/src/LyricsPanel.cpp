@@ -1110,7 +1110,10 @@ bool guLyrcComArEngine::DoSearchLyric( const wxString &content )
         if( StartPos != wxNOT_FOUND )
         {
             Content = Content.Mid( StartPos + 18 );
-            EndPos = Content.Find( wxT( "<a href=\"#\"" ) );
+            if( ( EndPos = Content.Find( wxT( "<p><hr size" ) ) ) == wxNOT_FOUND )
+            {
+                EndPos = Content.Find( wxT( "<a href=\"#\"" ) );
+            }
             Content = Content.Mid( 0, EndPos );
 
             Content.Replace( wxT( "<br />" ), wxT( "" ) );
