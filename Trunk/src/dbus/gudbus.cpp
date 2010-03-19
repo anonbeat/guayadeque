@@ -183,7 +183,9 @@ bool guDBusServer::AddMatch( const char * rule )
 
     if( dbus_error_is_set( &error ) )
     {
-        printf( "Could not add the match %s : %s\n", rule, error.message );
+        guLogError( wxT( "Could not add the match %s : %s" ),
+            wxString::FromAscii( rule ).c_str(),
+            wxString::FromAscii( error.message ).c_str() );
         dbus_error_free( &error );
         return false;
     }
@@ -514,15 +516,15 @@ guDBusMethodCall::guDBusMethodCall( const char * dest, const char * path, const 
 // -------------------------------------------------------------------------------- //
 // guDBusMethodReturn
 // -------------------------------------------------------------------------------- //
-guDBusMethodReturn::guDBusMethodReturn( guDBusMessage * msg )  :
-  guDBusMessage( dbus_message_new_method_return( msg->GetMessage() ) )
+guDBusMethodReturn::guDBusMethodReturn( guDBusMessage * msg )
 {
+    m_DBusMsg = dbus_message_new_method_return( msg->GetMessage() );
 }
 
 // -------------------------------------------------------------------------------- //
-guDBusMethodReturn::guDBusMethodReturn( DBusMessage * msg )  :
-  guDBusMessage( dbus_message_new_method_return( msg ) )
+guDBusMethodReturn::guDBusMethodReturn( DBusMessage * msg )
 {
+    m_DBusMsg = dbus_message_new_method_return( msg );
 }
 
 // -------------------------------------------------------------------------------- //
