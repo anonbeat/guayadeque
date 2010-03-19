@@ -42,20 +42,28 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
     {
         case GST_MESSAGE_ERROR :
         {
-            GError * err;
-            gchar * debug;
-            gst_message_parse_error( message, &err, &debug );
+            if( !ctrl->GetLastError() )
+            {
+                ctrl->SetLastError( 1 );
 
-            guLogError( wxT( "Gstreamer error '%s'" ), wxString( err->message, wxConvUTF8 ).c_str() );
-            wxString * ErrorStr = new wxString( err->message, wxConvUTF8 );
-            wxMediaEvent event( wxEVT_MEDIA_ERROR );
-            event.SetClientData( ( void * ) ErrorStr );
-            ctrl->AddPendingEvent( event );
+                GError * err;
+                gchar * debug;
+                gst_message_parse_error( message, &err, &debug );
 
-            g_error_free( err );
-            g_free( debug );
+                //guLogError( wxT( "Gstreamer error '%s'\'%s'" ),
+                //    wxString( err->message, wxConvUTF8 ).c_str(),
+                //    wxString( debug, wxConvUTF8 ).c_str() );
+                wxString * ErrorStr = new wxString( err->message, wxConvUTF8 );
+                wxMediaEvent event( wxEVT_MEDIA_ERROR );
+                event.SetClientData( ( void * ) ErrorStr );
+                ctrl->AddPendingEvent( event );
 
-            ctrl->Stop();
+                g_error_free( err );
+                g_free( debug );
+
+            }
+            //ctrl->Stop();
+            //gst_element_set_state( ctrl->m_Playbin, GST_STATE_NULL );
             break;
         }
 
@@ -294,6 +302,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     m_Buffering = false;
     m_WasPlaying = false;
     m_llPausedPos = 0;
+    m_LastError = 0;
 
     if( Init() )
     {
@@ -516,6 +525,8 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
     event.SetInt( restart );
     AddPendingEvent( event );
 
+    SetLastError( 0 );
+
     return true;
 }
 
@@ -668,6 +679,16 @@ void guMediaCtrl::ResetEqualizer( void )
 void guMediaCtrl::AboutToFinish( void )
 {
      m_PlayerPanel->OnAboutToFinish();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::ClearError( void )
+{
+    while( gst_element_set_state( m_Playbin, GST_STATE_NULL ) == GST_STATE_CHANGE_FAILURE )
+    {
+        guLogMessage( wxT( "Error clearing the error..." ) );
+        wxMilliSleep( 10 );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

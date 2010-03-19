@@ -1186,6 +1186,7 @@ wxString inline FileNameEncode( const wxString filename )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::LoadMedia( const wxString &FileName, bool restart )
 {
+    //guLogMessage( wxT( "LoadMedia Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     //m_MediaCtrl->Load( NextItem->FileName );
     wxURI UriPath( FileName );
     wxString Uri;
@@ -1286,24 +1287,45 @@ void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaError( wxMediaEvent &event )
 {
+    //guLogMessage( wxT( "OnMediaError: %i" ), m_PlayListCtrl->GetCurItem() );
     wxString * ErrorStr = ( wxString * ) event.GetClientData();
     if( ErrorStr )
     {
-        if( m_ErrorStrings.Index( * ErrorStr, false ) == wxNOT_FOUND )
-        {
-            m_ErrorStrings.Add( * ErrorStr );
-            wxMessageBox( * ErrorStr, _( "gstreamer error" ), wxICON_ERROR | wxOK );
-            m_ErrorStrings.Remove( * ErrorStr );
+        m_NotifySrv->Notify( wxEmptyString, wxT( "Guayadeque: GStreamer Error" ), * ErrorStr, NULL );
 
-            wxCommandEvent CmdEvent;
-            OnStopButtonClick( CmdEvent );
-        }
         delete ErrorStr;
     }
+    else
+    {
+        m_NotifySrv->Notify( wxEmptyString, wxT( "Guayadeque: GStreamer Error" ), _( "Unknown" ), NULL );
+    }
+
+    if( m_AboutToFinishPending )
+        m_AboutToFinishPending = false;
 
     if( m_IsSkipping )
         m_IsSkipping = false;
+
+    m_MediaCtrl->ClearError();
+
+    // Be sure it will not try to play the track again
+    event.SetInt( 0 );
+    // Simulate the track loaded correctly.
+    OnMediaLoaded( event );
+
+    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+    AddPendingEvent( CmdEvent );
+
+    CmdEvent.SetId( ID_PLAYERPANEL_NEXTTRACK );
+    AddPendingEvent( CmdEvent );
+
+    CmdEvent.SetId( ID_PLAYERPANEL_STOP );
+    AddPendingEvent( CmdEvent );
+
+    CmdEvent.SetId( ID_PLAYERPANEL_PLAY );
+    AddPendingEvent( CmdEvent );
 }
+
 // -------------------------------------------------------------------------------- //
 // 0 -> Artist
 // 1 -> Title
@@ -1379,7 +1401,7 @@ void guPlayerPanel::OnMediaBitrate( wxMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLoaded( wxMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaLoaded %i" ), m_AboutToFinishPending );
+    //guLogMessage( wxT( "OnMediaLoaded Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     if( m_AboutToFinishPending )
     {
         //guLogMessage( wxT( "Push back the OnMediaLoaded event..." ) );
@@ -1452,6 +1474,7 @@ void guPlayerPanel::OnAboutToFinish( void )
 void guPlayerPanel::OnMediaAboutToFinish( wxMediaEvent &event )
 {
     //guLogMessage( wxT( "Ending About-To-Finish %i" ), m_AboutToFinishPending );
+    //guLogMessage( wxT( "Ending About to Finsih Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     if( m_AboutToFinishPending )
     {
         SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
@@ -1465,6 +1488,7 @@ void guPlayerPanel::OnMediaAboutToFinish( wxMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFinished( wxMediaEvent &event )
 {
+    //guLogMessage( wxT( "OnMediaFinished Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     if( m_AboutToFinishPending )
     {
         m_AboutToFinishPending = false;
@@ -1620,6 +1644,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 {
+    //guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     wxMediaState State;
     guTrack * NextItem;
 
@@ -1672,6 +1697,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 {
+    //guLogMessage( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     wxMediaState State;
 
     // Get The Current Song From m_PlayListCtrl
@@ -1731,6 +1757,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 {
+    //guLogMessage( wxT( "OnStopButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     //wxMediaState State;
     //State = m_MediaCtrl->GetState();
     //guLogMessage( wxT( "State: %i" ), State );

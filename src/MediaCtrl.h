@@ -161,6 +161,7 @@ class guMediaCtrl : public wxEvtHandler
   private :
     guPlayerPanel * m_PlayerPanel;
     wxLongLong      m_llPausedPos;
+    int             m_LastError;
 
     bool            SetProperty( GstElement * element, const char * name, gint64 value );
 
@@ -181,6 +182,7 @@ class guMediaCtrl : public wxEvtHandler
     bool Stop();
     bool Play();
     bool Pause();
+    void ClearError();
 
     bool Seek( wxLongLong where );
     wxFileOffset Tell();
@@ -197,6 +199,8 @@ class guMediaCtrl : public wxEvtHandler
     void SetEqualizerBand( const int band, const int value );
 
     void inline AboutToFinish( void );
+    int  inline GetLastError( void ) { return m_LastError; };
+    void inline SetLastError( const int error ) { m_LastError = error; };
 
 };
 

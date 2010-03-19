@@ -273,7 +273,7 @@ void guPlayList::RemoveItem( int itemnum )
 {
     wxMutexLocker Lock( m_ItemsMutex );
     int count = m_Items.Count();
-    if( count && ( itemnum < count ) )
+    if( count && ( itemnum >= 0 ) && ( itemnum < count ) )
     {
         m_TotalLen -= m_Items[ itemnum ].m_Length;
         m_Items.RemoveAt( itemnum );

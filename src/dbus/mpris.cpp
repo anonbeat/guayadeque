@@ -866,6 +866,10 @@ void guMPRIS::OnTrackListChange()
         Flush();
         delete signal;
     }
+    else
+    {
+        guLogError( wxT( "Could not create TrackListChange signal object" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
