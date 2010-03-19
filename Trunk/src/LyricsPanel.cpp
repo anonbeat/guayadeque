@@ -153,6 +153,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	this->Layout();
 
     SetDropTarget( new guLyricsPanelDropTarget( this ) );
+    m_LyricText->SetDropTarget( new guLyricsPanelDropTarget( this ) );
 
 	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
 	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
@@ -269,6 +270,12 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
 {
     if( m_UpdateEnabled )
     {
+        // If have been edited and not saved
+        if( m_LyricText->IsModified() && m_WriteLyrics )
+        {
+            SaveLyrics();
+        }
+
         m_CurrentFileName = wxEmptyString;
 
         guTrack * Track = ( guTrack * ) event.GetClientData();
@@ -422,7 +429,7 @@ void guLyricsPanel::SetText( const wxString &text )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch )
 {
-    //const wxString &artist, const wxString &track
+    //const wxString &artist, const wxString &tracK
     wxString Artist = trackchangeinfo->m_ArtistName;
     wxString Track = trackchangeinfo->m_TrackName;
     wxString LyricText;
@@ -652,6 +659,13 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
 {
     //guLogMessage( wxT( "guLastFMPanelDropTarget::OnDropFiles" ) );
     guTrack Track;
+
+    // If have been edited and not saved
+    if( m_LyricText->IsModified() && m_WriteLyrics )
+    {
+        SaveLyrics();
+    }
+
     if( m_Db->FindTrackFile( files[ 0 ], &Track ) )
     {
         guTrackChangeInfo ChangeInfo;
@@ -677,15 +691,15 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
             if( TagInfo->Read() )
             {
                 Track.m_FileName = files[ 0 ];
-                Track.m_Type = guTRACK_TYPE_NOTDB;
+                //Track.m_Type = guTRACK_TYPE_NOTDB;
                 Track.m_ArtistName = TagInfo->m_ArtistName;
-                Track.m_AlbumName = TagInfo->m_AlbumName;
+                //Track.m_AlbumName = TagInfo->m_AlbumName;
                 Track.m_SongName = TagInfo->m_TrackName;
-                Track.m_Number = TagInfo->m_Track;
-                Track.m_GenreName = TagInfo->m_GenreName;
-                Track.m_Length = TagInfo->m_Length;
-                Track.m_Year = TagInfo->m_Year;
-                Track.m_Rating = wxNOT_FOUND;
+                //Track.m_Number = TagInfo->m_Track;
+                //Track.m_GenreName = TagInfo->m_GenreName;
+                //Track.m_Length = TagInfo->m_Length;
+                //Track.m_Year = TagInfo->m_Year;
+                //Track.m_Rating = wxNOT_FOUND;
 
                 guTrackChangeInfo ChangeInfo;
 
