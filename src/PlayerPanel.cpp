@@ -1073,13 +1073,13 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     }
     else if( m_MediaSong.m_CoverId )
     {
-        //guLogMessage( wxT( "CoverId %i" ), m_MediaSong.CoverId );
+        guLogMessage( wxT( "CoverId %i" ), m_MediaSong.m_CoverId );
         m_MediaSong.m_CoverPath = m_Db->GetCoverPath( m_MediaSong.m_CoverId );
         m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
     }
     else
     {
-        //guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_MediaSong.FileName ).c_str() );
+        guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_MediaSong.m_FileName ).c_str() );
         m_MediaSong.m_CoverPath = m_PlayListCtrl->FindCoverFile( wxPathOnly( m_MediaSong.m_FileName ) );
     }
 
