@@ -141,7 +141,8 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_player_normal_stop,
     guIMAGE_INDEX_player_normal_vol_high,
     guIMAGE_INDEX_player_normal_vol_low,
-    guIMAGE_INDEX_player_normal_vol_mid
+    guIMAGE_INDEX_player_normal_vol_mid,
+    guIMAGE_INDEX_player_tiny_light_play
 };
 
 

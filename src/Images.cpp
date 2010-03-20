@@ -140,6 +140,7 @@
 #include "./images/player_normal_vol_high.h"
 #include "./images/player_normal_vol_low.h"
 #include "./images/player_normal_vol_mid.h"
+#include "./images/player_tiny_light_play.h"
 
 
 // -------------------------------------------------------------------------------- //
@@ -269,7 +270,8 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_normal_stop,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_vol_high,        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_vol_low,         wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_player_normal_vol_mid,         wxBITMAP_TYPE_PNG )
+    GUIMAGE( guImage_player_normal_vol_mid,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_tiny_light_play,        wxBITMAP_TYPE_PNG )
 };
 
 
