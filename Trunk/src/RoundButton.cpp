@@ -95,6 +95,9 @@ void guRoundButton::OnMouseEvents( wxMouseEvent &event )
             wxCommandEvent ClickEvent( wxEVT_COMMAND_BUTTON_CLICKED, GetId() );
             ClickEvent.SetEventObject( this );
             AddPendingEvent( ClickEvent );
+            m_IsClicked = false;
+            m_MouseIsOver = false;
+            NeedPaint = true;
         }
     }
     else
@@ -111,6 +114,12 @@ void guRoundButton::OnMouseEvents( wxMouseEvent &event )
             //Refresh();
             NeedPaint = true;
         }
+    }
+    if( event.Leaving() )
+    {
+        m_IsClicked = false;
+        m_MouseIsOver = false;
+        NeedPaint = true;
     }
     if( NeedPaint )
         Refresh();
