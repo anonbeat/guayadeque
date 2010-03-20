@@ -2692,11 +2692,11 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         if( !dbSets.IsEmpty() )
         {
             dbSets += wxT( "AND " );
-            dbSets  += wxT( "( ( song_id = settag_songid OR "
-                                "song_artistid = settag_artistid OR "
-                                "song_albumid = settag_albumid ) AND "
-                                "settag_tagid = tag_id ) " );
         }
+        dbSets  += wxT( "( ( song_id = settag_songid OR "
+                            "song_artistid = settag_artistid OR "
+                            "song_albumid = settag_albumid ) AND "
+                            "settag_tagid = tag_id ) " );
 
         query += wxT( "( ( tag_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
