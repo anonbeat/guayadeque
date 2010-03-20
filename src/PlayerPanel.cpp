@@ -138,44 +138,52 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	wxBoxSizer * PlayerBtnSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_prev ), wxDefaultPosition, wxDefaultSize, 0 ); //wxBU_AUTODRAW );
+	//m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_prev ), wxDefaultPosition, wxDefaultSize, 0 ); //wxBU_AUTODRAW );
+	m_PrevTrackButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_prev ), guImage( guIMAGE_INDEX_player_highlight_prev ), 0 );
 	m_PrevTrackButton->SetToolTip( _( "Go to Previous Track in the Playlist" ) );
-	PlayerBtnSizer->Add( m_PrevTrackButton, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( m_PrevTrackButton, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
-	m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_play ), wxDefaultPosition, wxDefaultSize, 0 );
+	//m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_play ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PlayButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_play ), guImage( guIMAGE_INDEX_player_highlight_play ), 0 );
 	m_PlayButton->SetToolTip( _( "Start playing or pauses current track in the Playlist" ) );
-	PlayerBtnSizer->Add( m_PlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
+	PlayerBtnSizer->Add( m_PlayButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_next ), wxDefaultPosition, wxDefaultSize, 0 );
+	//m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_next ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_NextTrackButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_next ), guImage( guIMAGE_INDEX_player_highlight_next ), 0 );
 	m_NextTrackButton->SetToolTip( _( "Go to Next Track in the Playlist" ) );
-	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
+	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_stop ), wxDefaultPosition, wxDefaultSize, 0 );
+	//m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_stop ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_StopButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_stop ), guImage( guIMAGE_INDEX_player_highlight_stop ), 0 );
 	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
-	PlayerBtnSizer->Add( m_StopButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
+	PlayerBtnSizer->Add( m_StopButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
+	//m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_VolumeButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_vol_mid ), guImage( guIMAGE_INDEX_player_highlight_vol_mid ), 0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
-	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
-	m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
+	//m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_EqualizerButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_equalizer ), guImage( guIMAGE_INDEX_player_highlight_equalizer ), 0 );
 	m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
-	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
+	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
+	//m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SmartPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_smart ), guImage( guIMAGE_INDEX_player_normal_smart ), guImage( guIMAGE_INDEX_player_highlight_smart ) );
 	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
 	// Get PlayerPanel value from config file
 	m_SmartPlayButton->SetValue( m_PlaySmart );
-	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALL, 2 );
+	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2 );
 
-	m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_random ), wxDefaultPosition, wxDefaultSize, 0 );
+	//m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_random ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_RandomPlayButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_random ), guImage( guIMAGE_INDEX_player_highlight_random ), 0 );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in the playlist" ) );
-	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
+	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
-	m_RepeatPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_repeat ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_RepeatPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_repeat ), guImage( guIMAGE_INDEX_player_normal_repeat ), guImage( guIMAGE_INDEX_player_highlight_repeat ) );
 	m_RepeatPlayButton->SetToolTip( _( "Repeats the current playlist" ) );
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
-	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxTOP|wxBOTTOM|wxRIGHT, 2 );
+	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 2 );
 
@@ -845,10 +853,12 @@ void guPlayerPanel::UpdateStatus()
         if( State == wxMEDIASTATE_PLAYING )
         {
             m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_pause ) );
+            m_PlayButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_pause ) );
         }
         else
         {
             m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_play ) );
+            m_PlayButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_play ) );
         }
         m_PlayButton->Refresh();
         m_LastPlayState = State;
@@ -1568,9 +1578,17 @@ void guPlayerPanel::SetPlayLoop( int playloop )
 {
     m_PlayLoop = playloop;
 
-    m_RepeatPlayButton->SetLabel( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
+    m_RepeatPlayButton->SetBitmapLabel( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
         guImage( guIMAGE_INDEX_player_normal_repeat ) :
         guImage( guIMAGE_INDEX_player_normal_repeat_single ) );
+
+    m_RepeatPlayButton->SetBitmapDisabled( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
+        guImage( guIMAGE_INDEX_player_light_repeat ) :
+        guImage( guIMAGE_INDEX_player_light_repeat_single ) );
+
+    m_RepeatPlayButton->SetBitmapHover( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
+        guImage( guIMAGE_INDEX_player_highlight_repeat ) :
+        guImage( guIMAGE_INDEX_player_highlight_repeat_single ) );
 
     m_RepeatPlayButton->SetValue( m_PlayLoop );
     if( m_PlayLoop && GetPlaySmart() )

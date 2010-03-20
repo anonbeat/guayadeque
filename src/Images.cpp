@@ -100,9 +100,9 @@
 #include "./images/player_highlight_prev.h"
 #include "./images/player_highlight_random.h"
 #include "./images/player_highlight_repeat.h"
+#include "./images/player_highlight_repeat_single.h"
 #include "./images/player_highlight_search.h"
 #include "./images/player_highlight_setup.h"
-#include "./images/player_highlight_single.h"
 #include "./images/player_highlight_smart.h"
 #include "./images/player_highlight_stop.h"
 #include "./images/player_highlight_vol_high.h"
@@ -116,7 +116,7 @@
 #include "./images/player_light_prev.h"
 #include "./images/player_light_random.h"
 #include "./images/player_light_repeat.h"
-#include "./images/player_light_repeat_one.h"
+#include "./images/player_light_repeat_single.h"
 #include "./images/player_light_search.h"
 #include "./images/player_light_setup.h"
 #include "./images/player_light_smart.h"
@@ -230,9 +230,9 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_highlight_prev,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_random,       wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_repeat,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_highlight_repeat_single, wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_search,       wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_setup,        wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_player_highlight_single,       wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_smart,        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_stop,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_vol_high,     wxBITMAP_TYPE_PNG ),
@@ -246,7 +246,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_light_prev,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_random,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_repeat,           wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_player_light_repeat_one,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_light_repeat_single,    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_search,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_setup,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_smart,            wxBITMAP_TYPE_PNG ),

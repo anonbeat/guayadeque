@@ -28,7 +28,9 @@
 #include "PlayerFilters.h"
 #include "PlayList.h"
 #include "RatingCtrl.h"
+#include "RoundButton.h"
 #include "StaticBitmap.h"
+#include "ToggleRoundButton.h"
 #include "Vumeters.h"
 
 
@@ -147,16 +149,16 @@ class guSmartAddTracksThread;
 class guPlayerPanel : public wxPanel
 {
   private:
-	wxBitmapButton *        m_PrevTrackButton;
-	wxBitmapButton *        m_NextTrackButton;
-	wxBitmapButton *        m_PlayButton;
-	wxBitmapButton *        m_StopButton;
-	wxBitmapButton *        m_VolumeButton;
+	guRoundButton *         m_PrevTrackButton;
+	guRoundButton *         m_NextTrackButton;
+	guRoundButton *         m_PlayButton;
+	guRoundButton *         m_StopButton;
+	guRoundButton *         m_VolumeButton;
 	//
-	wxToggleBitmapButton *  m_SmartPlayButton;
-	wxBitmapButton *        m_RandomPlayButton;
-	wxToggleBitmapButton *  m_RepeatPlayButton;
-	wxBitmapButton *        m_EqualizerButton;
+	guToggleRoundButton *   m_SmartPlayButton;
+	guRoundButton *         m_RandomPlayButton;
+	guToggleRoundButton *   m_RepeatPlayButton;
+	guRoundButton *         m_EqualizerButton;
 	//
 	guStaticBitmap *        m_PlayerCoverBitmap;
 	//wxStaticText *          m_TitleLabel;

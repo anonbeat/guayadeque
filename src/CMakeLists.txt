@@ -204,6 +204,10 @@ ADD_EXECUTABLE( guayadeque
 	SelCoverFile.h
 	AutoScrollText.cpp
 	AutoScrollText.h
+	RoundButton.cpp
+	RoundButton.h
+	ToggleRoundButton.cpp
+	ToggleRoundButton.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
