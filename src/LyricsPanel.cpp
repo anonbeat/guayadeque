@@ -65,6 +65,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	EditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_UpdateCheckBox->SetToolTip( wxT( "Search the lyrics for the current playing track" ) );
 	m_UpdateCheckBox->SetValue( m_UpdateEnabled );
 
 	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
@@ -87,14 +88,17 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	EditorSizer->Add( m_ServerChoice, 1, wxTOP|wxRIGHT, 5 );
 
 	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_ReloadButton->SetToolTip( wxT( "Reload the lyric" ) );
 	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_EditButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_EditButton->SetToolTip( wxT( "Edit the lyric for the current track" ) );
 	m_EditButton->Enable( false );
 	EditorSizer->Add( m_EditButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SaveButton->Enable( false );
+	m_SaveButton->SetToolTip( wxT( "Save the lyrics to the current file" ) );
 	EditorSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	wxStaticText * ArtistStaticText;

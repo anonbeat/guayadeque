@@ -42,7 +42,8 @@
 #define guPLAYER_SMART_CACHEITEMS       100
 #define guPLAYER_SMART_CACHEARTISTS     20
 
-#define guPLAYER_ICONS_SEPARATOR        4
+#define guPLAYER_ICONS_SEPARATOR        3
+#define guPLAYER_ICONS_GROUPSEPARATOR   5
 
 guLevelInfo LastLevelInfo;
 
@@ -160,7 +161,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_StopButton->SetToolTip( _( "Stops player reproduction" ) );
 	PlayerBtnSizer->Add( m_StopButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
 
-	PlayerBtnSizer->Add( 6, 0, 0, wxEXPAND, 5 );
+	PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
 
 	//m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_VolumeButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_vol_mid ), guImage( guIMAGE_INDEX_player_highlight_vol_mid ), 0 );
@@ -172,7 +173,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
 	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
 
-	PlayerBtnSizer->Add( 6, 0, 0, wxEXPAND, 5 );
+	PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
 
 	//m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_SmartPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_smart ), guImage( guIMAGE_INDEX_player_normal_smart ), guImage( guIMAGE_INDEX_player_highlight_smart ) );
