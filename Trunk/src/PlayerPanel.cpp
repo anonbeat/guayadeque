@@ -181,7 +181,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
 	m_RepeatPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_repeat ), guImage( guIMAGE_INDEX_player_normal_repeat ), guImage( guIMAGE_INDEX_player_highlight_repeat ) );
-	m_RepeatPlayButton->SetToolTip( _( "Repeats the current playlist" ) );
+	m_RepeatPlayButton->SetToolTip( _( "Select the repeat mode" ) );
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
 	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 2 );
 
@@ -916,13 +916,25 @@ void guPlayerPanel::UpdateStatus()
     if( m_CurVolume != m_LastVolume )
     {
         if( m_CurVolume > 75 )
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_high ) );
+        {
+            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_hi ) );
+            m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_hi ) );
+        }
         else if( m_CurVolume > 50 )
+        {
             m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_mid ) );
+            m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
+        }
         else if( m_CurVolume == 0 )
+        {
             m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_muted ) );
+            m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_muted ) );
+        }
         else
+        {
             m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_low ) );
+            m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_low ) );
+        }
         m_VolumeButton->Refresh();
         m_LastVolume = m_CurVolume;
     }
