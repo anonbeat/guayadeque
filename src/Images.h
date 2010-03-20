@@ -107,7 +107,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_player_highlight_setup,
     guIMAGE_INDEX_player_highlight_smart,
     guIMAGE_INDEX_player_highlight_stop,
-    guIMAGE_INDEX_player_highlight_vol_high,
+    guIMAGE_INDEX_player_highlight_vol_hi,
     guIMAGE_INDEX_player_highlight_vol_low,
     guIMAGE_INDEX_player_highlight_vol_mid,
     guIMAGE_INDEX_player_light_equalizer,
@@ -139,7 +139,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_player_normal_setup,
     guIMAGE_INDEX_player_normal_smart,
     guIMAGE_INDEX_player_normal_stop,
-    guIMAGE_INDEX_player_normal_vol_high,
+    guIMAGE_INDEX_player_normal_vol_hi,
     guIMAGE_INDEX_player_normal_vol_low,
     guIMAGE_INDEX_player_normal_vol_mid,
     guIMAGE_INDEX_player_tiny_light_play
