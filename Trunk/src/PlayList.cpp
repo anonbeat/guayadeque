@@ -126,7 +126,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     if( ( size_t ) m_CurItem > m_Items.Count() )
         m_CurItem = wxNOT_FOUND;
 
-    m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_light_play ) );
+    m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     m_GreyStar   = new wxBitmap( guImage( guIMAGE_INDEX_grey_star_tiny ) );
     m_YellowStar = new wxBitmap( guImage( guIMAGE_INDEX_yellow_star_tiny ) );
 
@@ -469,7 +469,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     // Draw Play bitmap
     if( row == m_CurItem && m_PlayBitmap )
     {
-        dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 2, CutRect.y + 2, true );
+        dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 2, CutRect.y + 10, true );
         CutRect.x += 16;
         CutRect.width -= 16;
     }
