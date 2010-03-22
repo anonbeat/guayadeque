@@ -396,6 +396,7 @@ void guLyricsPanel::SaveLyrics( void )
                 {
                     guLogError( wxT( "Error writing to lyric file '%s'" ), FileName.GetFullPath().c_str() );
                 }
+                LyricFile.Flush();
                 LyricFile.Close();
             }
             else
@@ -505,6 +506,42 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
                 LyricText = TagInfo->GetLyrics();
             }
             delete TagInfo;
+        }
+    }
+
+    // If was not found as a tag in the file try to read it from the lyric directory.
+    if( LyricText.IsEmpty() )
+    {
+        wxFileName FileName( m_WriteToDirPath +
+                    m_ArtistTextCtrl->GetValue() + wxT( "/" ) +
+                    m_TrackTextCtrl->GetValue() + wxT( ".lyric" ) );
+        if( FileName.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+        {
+            if( wxFileExists( FileName.GetFullPath() ) )
+            {
+                wxFile LyricFile( FileName.GetFullPath(), wxFile::read );
+                if( LyricFile.IsOpened() )
+                {
+                    int FileSize = LyricFile.SeekEnd();
+                    char * Buffer = ( char * ) malloc( FileSize + 1 );
+                    if( Buffer )
+                    {
+                        LyricFile.Seek( 0 );
+                        if( LyricFile.Read( Buffer, FileSize ) != FileSize )
+                        {
+                            guLogError( wxT( "Error reading lyric file '%s'" ), FileName.GetFullPath().c_str() );
+                        }
+                        Buffer[ FileSize ] = 0;
+                        LyricText = wxString::FromUTF8( Buffer );
+                        free( Buffer );
+                    }
+                    LyricFile.Close();
+                }
+            }
+            else
+            {
+                guLogMessage( wxT( "The file dont exists %s" ), FileName.GetFullPath().c_str() );
+            }
         }
     }
 
