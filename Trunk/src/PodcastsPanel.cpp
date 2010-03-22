@@ -1229,7 +1229,7 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         wxMenuItem * MenuItem;
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );

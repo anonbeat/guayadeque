@@ -85,7 +85,7 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
     Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_PLAY, _( "Play" ), _( "Play current selected labels" ) );
-    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_ENQUEUE, _( "Enqueue" ), _( "Add current selected labels to playlist" ) );

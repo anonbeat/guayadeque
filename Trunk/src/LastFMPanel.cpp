@@ -516,7 +516,7 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     {
         guLogMessage( wxT( "The artist id = %i" ), m_Info->m_ArtistId );
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
@@ -741,7 +741,7 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_AlbumId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the album tracks" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
@@ -900,7 +900,7 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_ArtistId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
@@ -1047,7 +1047,7 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
     if( m_Info->m_TrackId != wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );

@@ -717,6 +717,15 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSubMenu( m_LayoutLoadMenu, _( "Load Layout" ), _( "Set current view from a user defined layout" ) );
     m_MainMenu->AppendSubMenu( m_LayoutDelMenu, _( "Delete Layout" ), _( "Delete a user defined layout" ) );
+    if( !Count )
+    {
+        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
+        m_LayoutLoadMenu->Append( MenuItem );
+        MenuItem->Enable( false );
+        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
+        m_LayoutDelMenu->Append( MenuItem );
+        MenuItem->Enable( false );
+    }
 
     m_MainMenu->AppendSeparator();
 
@@ -2189,18 +2198,43 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
 
     if( EntryDialog.ShowModal() == wxID_OK )
     {
-        m_LayoutName.Add( EntryDialog.GetValue() );
-        wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
-        wxString PLCaption = PaneInfo.caption;
-        PaneInfo.Caption( _( "Now Playing" ) );
-        m_LayoutData.Add( m_AuiManager.SavePerspective() );
-        PaneInfo.Caption( PLCaption );
-        m_LayoutTabs.Add( m_CatNotebook->SavePerspective() );
+        // If was the first layout delete the dummy ones
+        if( !m_LayoutName.Count() )
+        {
+            while( m_LayoutLoadMenu->GetMenuItemCount() )
+                m_LayoutLoadMenu->Delete( m_LayoutLoadMenu->FindItemByPosition( 0 ) );
 
-        m_LayoutLoadMenu->Append( ID_MENU_LAYOUT_LOAD + m_LayoutName.Count() - 1,
-                EntryDialog.GetValue(), _( "Load this user defined layout" ) );
-        m_LayoutDelMenu->Append( ID_MENU_LAYOUT_DELETE + m_LayoutName.Count() - 1,
-                EntryDialog.GetValue(), _( "Load this user defined layout" ) );
+            while( m_LayoutDelMenu->GetMenuItemCount() )
+                m_LayoutDelMenu->Delete( m_LayoutDelMenu->FindItemByPosition( 0 ) );
+        }
+
+        int LayoutIndex = m_LayoutName.Index( EntryDialog.GetValue(), false );
+        if( LayoutIndex == wxNOT_FOUND )
+        {
+
+            m_LayoutName.Add( EntryDialog.GetValue() );
+
+            wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
+            wxString PLCaption = PaneInfo.caption;
+            PaneInfo.Caption( _( "Now Playing" ) );
+            m_LayoutData.Add( m_AuiManager.SavePerspective() );
+            PaneInfo.Caption( PLCaption );
+            m_LayoutTabs.Add( m_CatNotebook->SavePerspective() );
+
+            m_LayoutLoadMenu->Append( ID_MENU_LAYOUT_LOAD + m_LayoutName.Count() - 1,
+                    EntryDialog.GetValue(), _( "Load this user defined layout" ) );
+            m_LayoutDelMenu->Append( ID_MENU_LAYOUT_DELETE + m_LayoutName.Count() - 1,
+                    EntryDialog.GetValue(), _( "Load this user defined layout" ) );
+        }
+        else
+        {
+            wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
+            wxString PLCaption = PaneInfo.caption;
+            PaneInfo.Caption( _( "Now Playing" ) );
+            m_LayoutData[ LayoutIndex ] = m_AuiManager.SavePerspective();
+            PaneInfo.Caption( PLCaption );
+            m_LayoutTabs[ LayoutIndex ] = m_CatNotebook->SavePerspective();
+        }
     }
 }
 
@@ -2208,7 +2242,7 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
 void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
 {
     int Layout = event.GetId() - ID_MENU_LAYOUT_DELETE;
-    guLogMessage( wxT( "Delete Layout %i" ), Layout );
+    //guLogMessage( wxT( "Delete Layout %i" ), Layout );
     int Index;
     int Count;
 
@@ -2230,6 +2264,15 @@ void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
         m_LayoutLoadMenu->Append( MenuItem );
         MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
         m_LayoutDelMenu->Append( MenuItem );
+    }
+    if( !Count )
+    {
+        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
+        m_LayoutLoadMenu->Append( MenuItem );
+        MenuItem->Enable( false );
+        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
+        m_LayoutDelMenu->Append( MenuItem );
+        MenuItem->Enable( false );
     }
 }
 
