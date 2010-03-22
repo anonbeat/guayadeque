@@ -94,6 +94,9 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_pref_playback,
     guIMAGE_INDEX_pref_podcasts,
     //
+    guIMAGE_INDEX_tiny_close_normal,
+    guIMAGE_INDEX_tiny_close_highlight,
+    //
     guIMAGE_INDEX_player_highlight_equalizer,
     guIMAGE_INDEX_player_highlight_muted,
     guIMAGE_INDEX_player_highlight_next,

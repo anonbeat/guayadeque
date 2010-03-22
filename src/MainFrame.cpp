@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "MainFrame.h"
 
+#include "AuiDockArt.h"
 #include "Commands.h"
 #include "ConfirmExit.h"
 #include "Images.h"
@@ -124,6 +125,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
                 MainWindowPos, MainWindowSize, wxDEFAULT_FRAME_STYLE );
 
     m_AuiManager.SetManagedWindow( this );
+    m_AuiManager.SetArtProvider( new guAuiDockArt() );
     m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
                            wxAUI_MGR_TRANSPARENT_DRAG |
                            wxAUI_MGR_TRANSPARENT_HINT );

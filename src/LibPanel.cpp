@@ -19,6 +19,8 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "LibPanel.h"
+
+#include "AuiDockArt.h"
 #include "Config.h"
 #include "Utils.h"
 #include "Commands.h"
@@ -59,6 +61,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_PlayerPanel = NewPlayerPanel;
 
     m_AuiManager.SetManagedWindow( this );
+    m_AuiManager.SetArtProvider( new guAuiDockArt() );
     m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
                            wxAUI_MGR_TRANSPARENT_DRAG |
                            wxAUI_MGR_TRANSPARENT_HINT );

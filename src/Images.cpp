@@ -92,6 +92,9 @@
 #include "./images/pref_playback.h"
 #include "./images/pref_podcasts.h"
 //
+#include "./images/tiny_close_normal.h"
+#include "./images/tiny_close_highlight.h"
+//
 #include "./images/player_highlight_equalizer.h"
 #include "./images/player_highlight_muted.h"
 #include "./images/player_highlight_next.h"
@@ -222,6 +225,9 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_pref_online_services,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_playback,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_podcasts,                 wxBITMAP_TYPE_PNG ),
+    //
+    GUIMAGE( guImage_tiny_close_normal,		    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_close_highlight,	    wxBITMAP_TYPE_PNG ),  
     //
     GUIMAGE( guImage_player_highlight_equalizer,    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_muted,        wxBITMAP_TYPE_PNG ),
