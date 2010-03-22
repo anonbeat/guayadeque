@@ -352,11 +352,11 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
     int SelCount = GetSelectedItems().Count();
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_PLAYALL, _( "Play All" ), _( "Play all songs" ) );
-    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );

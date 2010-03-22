@@ -179,7 +179,7 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     MenuItem = new wxMenuItem( Menu, ID_ALBUM_PLAY, _( "Play" ), _( "Play current selected albums" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE, _( "Enqueue" ), _( "Add current selected albums to the Playlist" ) );

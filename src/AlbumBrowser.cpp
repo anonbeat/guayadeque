@@ -284,7 +284,7 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
     if( m_AlbumBrowserItem->m_AlbumId != ( size_t ) wxNOT_FOUND )
     {
         MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_PLAY, _( "Play" ), _( "Play the album tracks" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_play ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu.Append( MenuItem );
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_ENQUEUE, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
