@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "PodcastsPanel.h"
 
+#include "AuiDockArt.h"
 #include "ChannelEditor.h"
 #include "Commands.h"
 #include "Config.h"
@@ -72,6 +73,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     }
 
     m_AuiManager.SetManagedWindow( this );
+    m_AuiManager.SetArtProvider( new guAuiDockArt() );
     m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
                            wxAUI_MGR_TRANSPARENT_DRAG |
                            wxAUI_MGR_TRANSPARENT_HINT );

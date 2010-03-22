@@ -208,6 +208,8 @@ ADD_EXECUTABLE( guayadeque
 	RoundButton.h
 	ToggleRoundButton.cpp
 	ToggleRoundButton.h
+	AuiDockArt.cpp
+	AuiDockArt.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

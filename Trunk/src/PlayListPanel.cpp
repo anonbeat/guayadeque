@@ -21,6 +21,7 @@
 #include "PlayListPanel.h"
 
 #include "AuiNotebook.h"
+#include "AuiDockArt.h"
 #include "Commands.h"
 #include "Config.h"
 #include "DbLibrary.h"
@@ -442,6 +443,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     m_AuiManager.SetManagedWindow( this );
+    m_AuiManager.SetArtProvider( new guAuiDockArt() );
     m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
                            wxAUI_MGR_TRANSPARENT_DRAG |
                            wxAUI_MGR_TRANSPARENT_HINT );

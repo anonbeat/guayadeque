@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "RadioPanel.h"
 
+#include "AuiDockArt.h"
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
@@ -694,6 +695,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
     guConfig *  Config = ( guConfig * ) guConfig::Get();
 
     m_AuiManager.SetManagedWindow( this );
+    m_AuiManager.SetArtProvider( new guAuiDockArt() );
     m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
                            wxAUI_MGR_TRANSPARENT_DRAG |
                            wxAUI_MGR_TRANSPARENT_HINT );
