@@ -108,6 +108,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_library ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_playback ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_last_fm ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_lyrics ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_online_services ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_podcasts ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_links ) );
@@ -274,10 +275,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_UpdateLibChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Update library on application start"), wxDefaultPosition, wxDefaultSize, 0 );
     m_UpdateLibChkBox->SetValue( m_Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_UpdateLibChkBox, 0, wxALL, 5 );
-
-	m_SaveLyricsChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Save lyrics to audio files"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_SaveLyricsChkBox->SetValue( m_Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "General" ) ) );
-	LibOptionsSizer->Add( m_SaveLyricsChkBox, 0, wxALL, 5 );
 
 	LibMainSizer->Add( LibOptionsSizer, 0, wxEXPAND|wxALL, 5 );
 
@@ -493,6 +490,43 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_MainNotebook->SetPageImage( 3, 3 );
 
     //
+    // Lyrics
+    //
+	m_LyricsPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * LyricsMainSizer;
+	LyricsMainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer * LyricsSaveSizer;
+	LyricsSaveSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Save " ) ), wxVERTICAL );
+
+	m_LyricsTracksSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Save lyrics to audio files" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LyricsTracksSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "Lyrics" ) ) );
+    LyricsSaveSizer->Add( m_LyricsTracksSaveChkBox, 0, wxALL, 5 );
+
+	wxBoxSizer * LyricsDirSaveSizer;
+	LyricsDirSaveSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_LyricsDirSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Save Lyrics to directory" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LyricsDirSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) ) );
+	LyricsDirSaveSizer->Add( m_LyricsDirSaveChkBox, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_LyricsDirSavePicker = new wxDirPickerCtrl( m_LyricsPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) ), _( "Select lyrics folder" ), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+    m_LyricsDirSavePicker->Enable( m_LyricsDirSaveChkBox->IsChecked() );
+	LyricsDirSaveSizer->Add( m_LyricsDirSavePicker, 0, wxALL, 5 );
+
+	LyricsSaveSizer->Add( LyricsDirSaveSizer, 1, wxEXPAND, 5 );
+
+	LyricsMainSizer->Add( LyricsSaveSizer, 0, wxEXPAND|wxALL, 5 );
+
+	m_LyricsPanel->SetSizer( LyricsMainSizer );
+	m_LyricsPanel->Layout();
+	LyricsMainSizer->Fit( m_LyricsPanel );
+	m_MainNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
+	m_MainNotebook->SetPageImage( 4, 4 );
+
+	//m_MainNotebookBitmap = wxBitmap( wxT("../src/images/orig/pref_lyrics.png"), wxBITMAP_TYPE_ANY );
+
+    //
     // Online Services Filter
     //
 	m_OnlinePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -562,7 +596,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_OnlinePanel->Layout();
 	OnlineMainSizer->Fit( m_OnlinePanel );
 	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online" ), false );
-	m_MainNotebook->SetPageImage( 4, 4 );
+	m_MainNotebook->SetPageImage( 5, 5 );
 
     //
     // Podcasts
@@ -635,7 +669,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	PodcastPanel->Layout();
 	PodcastsMainSizer->Fit( PodcastPanel );
 	m_MainNotebook->AddPage( PodcastPanel, wxT("Podcasts"), false );
-	m_MainNotebook->SetPageImage( 5, 5 );
+	m_MainNotebook->SetPageImage( 6, 6 );
 
     //
     // Links
@@ -743,7 +777,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LinksPanel->Layout();
 	LinksMainSizer->Fit( m_LinksPanel );
 	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
-	m_MainNotebook->SetPageImage( 6, 6 );
+	m_MainNotebook->SetPageImage( 7, 7 );
 
 
     //
@@ -852,7 +886,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_CmdPanel->Layout();
 	CmdMainSizer->Fit( m_CmdPanel );
 	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
-	m_MainNotebook->SetPageImage( 7, 7 );
+	m_MainNotebook->SetPageImage( 8, 8 );
 
 
     //
@@ -893,7 +927,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_CopyPanel->Layout();
 	CopyToMainSizer->Fit( m_CopyPanel );
 	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
-	m_MainNotebook->SetPageImage( 8, 8 );
+	m_MainNotebook->SetPageImage( 9, 9 );
 
 
     //
@@ -938,6 +972,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_DownCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
 	m_DelCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
 	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
+
+    m_LyricsDirSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
 
 	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
 	m_OnlineAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
@@ -1000,6 +1036,8 @@ guPrefDialog::~guPrefDialog()
 	m_DelCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
 
+    m_LyricsDirSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
+
 	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
 	m_OnlineAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
 	m_OnlineDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
@@ -1059,7 +1097,6 @@ void guPrefDialog::SaveSettings( void )
 
     m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
     m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "SaveLyricsToFiles" ), m_SaveLyricsChkBox->GetValue(), wxT( "General" ) );
 
     m_Config->WriteBool( wxT( "RndPlayOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "General" ) );
@@ -1096,6 +1133,12 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteNum( wxT( "DeleteTime" ), m_PodcastDeleteTime->GetValue(), wxT( "Podcasts" ) );
     m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "Podcasts" ) );
     m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
+
+    m_Config->WriteBool( wxT( "SaveLyricsToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
+    m_Config->WriteBool( wxT( "SaveLyricsToDir" ), m_LyricsDirSaveChkBox->GetValue(), wxT( "Lyrics" ) );
+    m_Config->WriteStr( wxT( "Path" ), m_LyricsDirSavePicker->GetPath(), wxT( "Lyrics" ) );
+
+
 
     wxArrayString SearchLinks = m_LinksListBox->GetStrings();
     m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
@@ -1315,6 +1358,12 @@ void guPrefDialog::OnCoverListBoxDClicked( wxCommandEvent &event )
             EntryDialog->Destroy();
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricsSaveDirClicked( wxCommandEvent &event )
+{
+    m_LyricsDirSavePicker->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

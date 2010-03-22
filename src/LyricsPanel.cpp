@@ -51,7 +51,16 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_WriteLyrics = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "General" ) );
+    m_WriteToFiles   = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "Lyrics" ) );
+    m_WriteToDir     = Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) );
+    m_WriteToDirPath = Config->ReadStr(  wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) );
+    if( !m_WriteToDirPath.EndsWith( wxT( "/" ) ) )
+        m_WriteToDirPath += wxT( "/" );
+    // Check that the directory to store podcasts are created
+    if( !wxDirExists( m_WriteToDirPath ) )
+    {
+        wxMkdir( m_WriteToDirPath, 0770 );
+    }
 
     wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
@@ -214,7 +223,9 @@ void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        m_WriteLyrics = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "General" ) );
+        m_WriteToFiles   = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "Lyrics" ) );
+        m_WriteToDir     = Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) );
+        m_WriteToDirPath = Config->ReadStr(  wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) );
     }
 }
 
@@ -275,7 +286,7 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
     if( m_UpdateEnabled )
     {
         // If have been edited and not saved
-        if( m_LyricText->IsModified() && m_WriteLyrics )
+        if( m_LyricText->IsModified() )
         {
             SaveLyrics();
         }
@@ -347,22 +358,50 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::SaveLyrics( void )
 {
-    if( !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) )
+    //guLogMessage( wxT( "Saving to File: %i  Dir: %i" ), m_WriteToFiles, m_WriteToDir );
+    if( m_WriteToFiles )
     {
-        guTagInfo * TagInfo;
-
-        TagInfo = guGetTagInfoHandler( m_CurrentFileName );
-
-        if( TagInfo )
+        if( !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) )
         {
-            if( TagInfo->CanHandleLyrics() )
-            {
-                if( m_LyricText->IsModified() )
-                    m_CurrentLyricText = m_LyricText->GetValue();
+            guTagInfo * TagInfo;
 
-                TagInfo->SetLyrics( m_CurrentLyricText );
+            TagInfo = guGetTagInfoHandler( m_CurrentFileName );
+
+            if( TagInfo )
+            {
+                if( TagInfo->CanHandleLyrics() )
+                {
+                    if( m_LyricText->IsModified() )
+                        m_CurrentLyricText = m_LyricText->GetValue();
+
+                    TagInfo->SetLyrics( m_CurrentLyricText );
+                }
+                delete TagInfo;
             }
-            delete TagInfo;
+        }
+    }
+
+    if( m_WriteToDir )
+    {
+        wxFileName FileName( m_WriteToDirPath +
+                    m_ArtistTextCtrl->GetValue() + wxT( "/" ) +
+                    m_TrackTextCtrl->GetValue() + wxT( ".lyric" ) );
+        if( FileName.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+        {
+            FileName.Mkdir( 0770, wxPATH_MKDIR_FULL );
+            wxFile LyricFile( FileName.GetFullPath(), wxFile::write );
+            if( LyricFile.IsOpened() )
+            {
+                if( !LyricFile.Write( m_CurrentLyricText ) )
+                {
+                    guLogError( wxT( "Error writing to lyric file '%s'" ), FileName.GetFullPath().c_str() );
+                }
+                LyricFile.Close();
+            }
+            else
+            {
+                guLogError( wxT( "Error saving lyric file '%s'" ), FileName.GetFullPath().c_str() );
+            }
         }
     }
 }
@@ -538,7 +577,7 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
 
         SetText( * Content );
 
-        if( m_WriteLyrics && m_UpdateEnabled )
+        if( m_UpdateEnabled )
         {
             SaveLyrics();
         }
@@ -598,7 +637,7 @@ void guLyricsPanel::OnLyricsPaste( wxCommandEvent &event )
 
                 SetText( m_CurrentLyricText );
 
-                if( m_WriteLyrics && m_UpdateEnabled )
+                if( m_UpdateEnabled )
                 {
                     SaveLyrics();
                 }
@@ -665,7 +704,7 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
     guTrack Track;
 
     // If have been edited and not saved
-    if( m_LyricText->IsModified() && m_WriteLyrics )
+    if( m_LyricText->IsModified() )
     {
         SaveLyrics();
     }
@@ -1121,6 +1160,7 @@ bool guLyrcComArEngine::DoSearchLyric( const wxString &content )
             Content = Content.Mid( 0, EndPos );
 
             Content.Replace( wxT( "<br />" ), wxT( "" ) );
+            Content.Replace( wxT( "<br>" ), wxT( "\n" ) );
             SetLyric( new wxString( Content.c_str() ) );
             return true;
         }

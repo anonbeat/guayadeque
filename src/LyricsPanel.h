@@ -84,7 +84,9 @@ class guLyricsPanel : public wxPanel
     int                     m_LyricFormat;
 	wxString                m_CurrentFileName;
 	wxString                m_CurrentLyricText;
-	bool                    m_WriteLyrics;
+	bool                    m_WriteToFiles;
+	bool                    m_WriteToDir;
+	wxString                m_WriteToDirPath;
 
     void                    SetTitle( const wxString &title );
     void                    SetText( const wxString &text );

@@ -90,6 +90,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_pref_last_fm,
     guIMAGE_INDEX_pref_library,
     guIMAGE_INDEX_pref_links,
+    guIMAGE_INDEX_pref_lyrics,
     guIMAGE_INDEX_pref_online_services,
     guIMAGE_INDEX_pref_playback,
     guIMAGE_INDEX_pref_podcasts,
