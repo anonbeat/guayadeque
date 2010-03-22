@@ -120,7 +120,10 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
     switch( ( * m_Columns )[ col ].m_Id )
     {
         case guSONGS_COLUMN_NUMBER :
-          return wxString::Format( wxT( "%02u" ), Song->m_Number );
+          if( Song->m_Number )
+            return wxString::Format( wxT( "%u" ), Song->m_Number );
+          else
+            return wxEmptyString;
 
         case guSONGS_COLUMN_TITLE  :
           return Song->m_SongName;
