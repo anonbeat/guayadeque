@@ -44,6 +44,12 @@ guMainApp::guMainApp() : wxApp()
         guLogMessage( wxT( "Created the configuration directory" ) );
     }
 
+    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ) ) )
+    {
+        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), 0770 );
+        guLogMessage( wxT( "Created the lyrics directory" ) );
+    }
+
     if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ) ) )
     {
         if( wxFileExists( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ) ) )

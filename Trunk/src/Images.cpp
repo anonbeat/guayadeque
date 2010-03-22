@@ -88,6 +88,7 @@
 #include "./images/pref_last_fm.h"
 #include "./images/pref_library.h"
 #include "./images/pref_links.h"
+#include "./images/pref_lyrics.h"
 #include "./images/pref_online_services.h"
 #include "./images/pref_playback.h"
 #include "./images/pref_podcasts.h"
@@ -222,6 +223,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_pref_last_fm,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_library,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_links,                    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_lyrics,                   wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_online_services,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_playback,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_podcasts,                 wxBITMAP_TYPE_PNG ),

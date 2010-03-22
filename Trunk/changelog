@@ -1,4 +1,6 @@
 
+  * Now the lyrics can be saved to a directory you can configure from preferences -> lyrics
+  * Changed the close buttons of the panes
   * Added search text for player playlist
   * Now allow to load from command line directories.
   * Now when loading the library if title is empty will be used the filename. 

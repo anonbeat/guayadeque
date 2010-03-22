@@ -112,6 +112,11 @@ class guPrefDialog : public wxDialog
     wxSpinCtrl *                m_NumTracksSpinCtrl;
     wxSpinCtrl *                m_MaxTracksPlayed;
 
+    wxPanel *                   m_LyricsPanel;
+    wxCheckBox *                m_LyricsTracksSaveChkBox;
+    wxCheckBox *                m_LyricsDirSaveChkBox;
+    wxDirPickerCtrl *           m_LyricsDirSavePicker;
+
     wxPanel *                   m_OnlinePanel;
     wxListBox *                 m_OnlineFiltersListBox;
     wxBitmapButton *            m_OnlineAddBtn;
@@ -176,6 +181,7 @@ class guPrefDialog : public wxDialog
 	void OnDelPathBtnClick( wxCommandEvent& event );
 	void OnPathsListBoxDClicked( wxCommandEvent &event );
 	void OnCoverListBoxDClicked( wxCommandEvent &event );
+	void OnLyricsSaveDirClicked( wxCommandEvent &event );
     void OnCoversListBoxSelected( wxCommandEvent& event );
     void OnAddCoverBtnClick( wxCommandEvent& event );
     void OnUpCoverBtnClick( wxCommandEvent& event );
