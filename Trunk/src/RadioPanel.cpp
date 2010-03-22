@@ -706,16 +706,16 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
             wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
+            wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxAuiStepColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ), 130 ) );
+            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
+            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxAuiStepColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ), 130 ) );
+            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
