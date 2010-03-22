@@ -42,11 +42,9 @@ guAuiTabArt::guAuiTabArt() : wxAuiDefaultTabArt()
 {
     m_BgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_3DHILIGHT );
     m_SelBgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
-    //m_TextFgColor.Set( m_base_colour.Red() ^ 0xFF, m_base_colour.Green() ^ 0xFF, m_base_colour.Blue() ^ 0xFF );
     m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT );
     m_SelTextFgColour = wxSystemSettings::GetColour( wxSYS_COLOUR_BTNTEXT );
-    //m_TextFgColor = * wxBLUE;
-//    guLogMessage( wxT( "FGColor:%s" ), m_TextFgColor.GetAsString( wxC2S_HTML_SYNTAX ).c_str() );
+
     m_disabled_close_bmp = guImage( guIMAGE_INDEX_tiny_close_normal );
     m_active_close_bmp = guImage( guIMAGE_INDEX_tiny_close_highlight );
 }
