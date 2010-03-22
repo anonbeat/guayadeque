@@ -21,6 +21,7 @@
 #include "AuiNotebook.h"
 
 #include "Utils.h"
+#include "Images.h"
 
 #include <wx/dc.h>
 
@@ -46,6 +47,8 @@ guAuiTabArt::guAuiTabArt() : wxAuiDefaultTabArt()
     m_SelTextFgColour = wxSystemSettings::GetColour( wxSYS_COLOUR_BTNTEXT );
     //m_TextFgColor = * wxBLUE;
 //    guLogMessage( wxT( "FGColor:%s" ), m_TextFgColor.GetAsString( wxC2S_HTML_SYNTAX ).c_str() );
+    m_disabled_close_bmp = guImage( guIMAGE_INDEX_tiny_close_normal );
+    m_active_close_bmp = guImage( guIMAGE_INDEX_tiny_close_highlight );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -299,7 +302,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
         }
 
         wxRect rect(tab_x + tab_width - close_button_width - 1,
-                    tab_y + (tab_height/2) - (bmp.GetHeight()/2),
+                    tab_y + (tab_height/2) - (bmp.GetHeight()/2) - 1,
                     close_button_width,
                     tab_height);
         IndentPressedBitmap(&rect, close_button_state);
