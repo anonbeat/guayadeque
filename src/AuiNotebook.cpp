@@ -302,7 +302,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
         }
 
         wxRect rect(tab_x + tab_width - close_button_width - 1,
-                    tab_y + (tab_height/2) - (bmp.GetHeight()/2) - 1,
+                    tab_y + (tab_height/2) - (bmp.GetHeight()/2) - 2,
                     close_button_width,
                     tab_height);
         IndentPressedBitmap(&rect, close_button_state);
