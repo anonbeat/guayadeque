@@ -125,23 +125,28 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     m_AlbumBrowserItem = albumitem;
     m_AlbumBrowser = ( guAlbumBrowser * ) parent;
 
+    wxFont CurrentFont = GetFont();
     // GUI
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 100, 100 ), 0 );
-	m_MainSizer->Add( m_Bitmap, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_MainSizer->Add( m_Bitmap, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
-	m_ArtistLabel->Wrap( 120 );
-	m_MainSizer->Add( m_ArtistLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
-
-	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
+	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	m_AlbumLabel->Wrap( 120 );
-	m_MainSizer->Add( m_AlbumLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
+	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+	m_AlbumLabel->SetFont( CurrentFont );
+	m_MainSizer->Add( m_AlbumLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
-	m_TracksLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
+	m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	m_ArtistLabel->Wrap( 120 );
+	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
+	m_ArtistLabel->SetFont( CurrentFont );
+	m_MainSizer->Add( m_ArtistLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
+
+	m_TracksLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	m_TracksLabel->Wrap( 120 );
-	m_MainSizer->Add( m_TracksLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_MainSizer->Add( m_TracksLabel, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
 	SetSizer( m_MainSizer );
 	Layout();
