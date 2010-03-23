@@ -235,6 +235,8 @@ bool guMainApp::OnInit()
             guLogError( wxT( "Could not create splash object" ) );
         SplashFrame->Show( true );
         wxYield();
+        wxYield();
+        //wxMilliSleep( 300 );
     }
 
     // Use the primary clipboard which is shared with other applications

@@ -302,6 +302,10 @@ class guLastFMInfoCtrl : public wxPanel
     virtual void        OnBitmapMouseOver( wxCommandEvent &event );
     virtual wxString    GetBitmapImageUrl( void );
 
+    virtual void        OnMouse( wxMouseEvent &event );
+
+    virtual bool        ItemWasFound( void ) { return false; }
+
   public :
 	guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel, bool createcontrols = true );
 	~guLastFMInfoCtrl();
@@ -338,6 +342,8 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
 
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
 
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_ArtistId != wxNOT_FOUND ); };
+
   protected :
     virtual void        OnCopyToClipboard( wxCommandEvent &event );
 
@@ -368,6 +374,8 @@ class guAlbumInfoCtrl : public guLastFMInfoCtrl
 
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
 
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_AlbumId != wxNOT_FOUND ); };
+
   public :
     guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guAlbumInfoCtrl();
@@ -394,6 +402,8 @@ class guSimilarArtistInfoCtrl : public guLastFMInfoCtrl
     void                OnSelectArtist( wxCommandEvent &event );
 
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_ArtistId != wxNOT_FOUND ); };
 
   public :
     guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
@@ -422,6 +432,8 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
 
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
 
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_TrackId != wxNOT_FOUND ); };
+
   public :
     guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guTrackInfoCtrl();
@@ -446,6 +458,8 @@ class guEventInfoCtrl : public guLastFMInfoCtrl
     virtual int         GetSelectedTracks( guTrackArray * tracks );
 
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+
+    virtual bool        ItemWasFound( void ) { return true; };
 
   public :
     guEventInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
