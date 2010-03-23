@@ -626,11 +626,9 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
 
         SetText( * Content );
 
-        if( m_UpdateEnabled )
-        {
-            SaveLyrics();
-        }
-        else
+        SaveLyrics();
+
+        if( !m_WriteToFiles || !m_WriteToDir )
         {
             m_SaveButton->Enable( !Content->IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
         }
