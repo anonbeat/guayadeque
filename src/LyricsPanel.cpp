@@ -38,6 +38,8 @@
 #define guLYRICS_TEMPLATE_DEFAULT       wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\">%s</font></center></body></html>" )
 #define guLYRICS_TEMPLATE_ULTGUITAR     wxT( "<html><body bgcolor=%s><font color=%s><TT>%s</TT></font></body></html>" )
 
+#define guLYRICSFLY_USER_ID             wxT( "8f7177553a49dabc7-temporary.API.access" )
+
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
@@ -89,6 +91,8 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	    wxT( "http://leoslyrics.com" ),
 	    wxT( "http://lyrc.com.ar" ),
 	    wxT( "http://cduniverse.com" ),
+//	    wxT( "http://lyricsfly.com" ),
+        wxT( "http://chartlyrics.com" ),
 	    wxT( "http://ultimate-guitar.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
@@ -591,6 +595,14 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
         {
             m_LyricThread = new guCDUEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
         }
+//        else if( Engine == guLYRIC_ENGINE_LYRICSFLY )
+//        {
+//            m_LyricThread = new guLyricsFlyEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
+//        }
+        else if( Engine == guLYRIC_ENGINE_CHARTLYRICS )
+        {
+            m_LyricThread = new guChartLyricsEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
+        }
         else //if( Engine == guLYRIC_ENGINE_ULTGUITAR )
         {
             m_LyricThread = new guUltGuitarEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
@@ -972,7 +984,7 @@ void guLyricWikiEngine::SearchLyric( void )
 }
 
 // -------------------------------------------------------------------------------- //
-// guLyricWikiEngine
+// guLeosLyricsEngine
 // -------------------------------------------------------------------------------- //
 guLeosLyricsEngine::guLeosLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
          const wxChar * artistname, const wxChar * trackname ) :
@@ -1225,6 +1237,174 @@ void guLyrcComArEngine::SearchLyric( void )
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
 
     if( !DoSearchLyric( GetUrlContent( UrlStr ) ) && !TestDestroy() )
+    {
+        SetLyric( NULL );
+    }
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guLyricsFlyEngine
+// -------------------------------------------------------------------------------- //
+guLyricsFlyEngine::guLyricsFlyEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
+         const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
+{
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guLyricsFlyEngine::~guLyricsFlyEngine()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guLyricsFlyEngine::ReadTrackItem( wxXmlNode * xmlnode )
+{
+    while( xmlnode )
+    {
+        if( xmlnode->GetName() == wxT( "tx" ) )
+        {
+            return xmlnode->GetNodeContent();
+        }
+        xmlnode = xmlnode->GetNext();
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guLyricsFlyEngine::GetLyricText( const wxString &content )
+{
+    wxString RetVal;
+    wxStringInputStream ins( content );
+    wxXmlDocument XmlDoc( ins );
+    wxXmlNode * XmlNode = XmlDoc.GetRoot();
+    wxString Status;
+    if( XmlNode && XmlNode->GetName() == wxT( "start" ) )
+    {
+        XmlNode = XmlNode->GetChildren();
+        while( XmlNode )
+        {
+            //guLogMessage( wxT( "Name: %s" ), XmlNode->GetName().c_str() );
+            if( XmlNode->GetName() == wxT( "sg" ) )
+            {
+                RetVal = ReadTrackItem( XmlNode->GetChildren() );
+                if( !RetVal.IsEmpty() )
+                {
+                    RetVal.Replace( wxT( "[br]" ), wxT( "\n" ) );
+                    RetVal.Replace( wxT( "\n\n" ), wxT( "\n" ) );
+                    break;
+                }
+            }
+            XmlNode = XmlNode->GetNext();
+        }
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsFlyEngine::SearchLyric( void )
+{
+    wxString Url = wxT( "http://api.lyricsfly.com/api/api.php?i=" ) guLYRICSFLY_USER_ID;
+    Url += wxString::Format( wxT( "&a=%s&t=%s" ), guURLEncode( m_ArtistName ).c_str(),
+                                    guURLEncode( m_TrackName ).c_str() );
+
+    wxString Content = GetUrlContent( Url );
+    guLogMessage( wxT( "%s" ), Content.c_str() );
+
+    if( !TestDestroy() && !Content.IsEmpty() )
+    {
+        wxString LyricText = GetLyricText( Content );
+        if( !TestDestroy() && !LyricText.IsEmpty() )
+        {
+            SetLyric( new wxString( LyricText ) );
+        }
+        else
+        {
+            SetLyric( NULL );
+        }
+    }
+    else
+    {
+        SetLyric( NULL );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guChartLyricsEngine
+// -------------------------------------------------------------------------------- //
+guChartLyricsEngine::guChartLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
+         const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
+{
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guChartLyricsEngine::~guChartLyricsEngine()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guChartLyricsEngine::GetLyricText( const wxString &content )
+{
+    wxString RetVal;
+    wxStringInputStream ins( content );
+    wxXmlDocument XmlDoc( ins );
+    wxXmlNode * XmlNode = XmlDoc.GetRoot();
+    wxString Status;
+    if( XmlNode && XmlNode->GetName() == wxT( "GetLyricResult" ) )
+    {
+        XmlNode = XmlNode->GetChildren();
+        while( XmlNode )
+        {
+            //guLogMessage( wxT( "Name: %s" ), XmlNode->GetName().c_str() );
+            if( XmlNode->GetName() == wxT( "Lyric" ) )
+            {
+                RetVal = XmlNode->GetNodeContent();
+                if( !RetVal.IsEmpty() )
+                {
+                    RetVal.Replace( wxT( "<br>" ), wxT( "\n" ) );
+                    break;
+                }
+            }
+            XmlNode = XmlNode->GetNext();
+        }
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guChartLyricsEngine::SearchLyric( void )
+{
+    wxString Url = wxT( "http://api.chartlyrics.com/apiv1.asmx/SearchLyricDirect?" );
+    Url += wxString::Format( wxT( "artist=%s&song=%s" ), guURLEncode( m_ArtistName ).c_str(),
+                                    guURLEncode( m_TrackName ).c_str() );
+
+    wxString Content = GetUrlContent( Url );
+    //guLogMessage( wxT( "%s" ), Content.c_str() );
+
+    if( !TestDestroy() && !Content.IsEmpty() )
+    {
+        wxString LyricText = GetLyricText( Content );
+        if( !TestDestroy() && !LyricText.IsEmpty() )
+        {
+            SetLyric( new wxString( LyricText ) );
+        }
+        else
+        {
+            SetLyric( NULL );
+        }
+    }
+    else
     {
         SetLyric( NULL );
     }
