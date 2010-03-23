@@ -27,7 +27,7 @@
 #define GURATING_STYLE_MID      1
 #define GURATING_STYLE_BIG      2
 
-#define GURATING_IMAGE_MINSIZE      8
+#define GURATING_IMAGE_MINSIZE      12
 #define GURATING_IMAGE_SEPARATION   1
 #define GURATING_IMAGE_SIZE         GURATING_IMAGE_MINSIZE + GURATING_IMAGE_SEPARATION
 
@@ -66,8 +66,8 @@ class guRating : public wxControl
   private :
     int             m_Rating;
     int             m_Style;
-    wxBitmap *      m_GreyStar;
-    wxBitmap *      m_YellowStar;
+    wxBitmap *      m_NormalStar;
+    wxBitmap *      m_SelectStar;
 
     DECLARE_EVENT_TABLE()
 

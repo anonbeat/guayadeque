@@ -51,8 +51,8 @@ class guSoListBox : public guListView
     wxMutex             m_ItemsMutex;
     wxString            m_ConfName;
 
-    wxBitmap *          m_GreyStar;
-    wxBitmap *          m_YellowStar;
+    wxBitmap *          m_NormalStar;
+    wxBitmap *          m_SelectStar;
 
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;

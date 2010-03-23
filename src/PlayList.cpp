@@ -127,8 +127,8 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
         m_CurItem = wxNOT_FOUND;
 
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
-    m_GreyStar   = new wxBitmap( guImage( guIMAGE_INDEX_grey_star_tiny ) );
-    m_YellowStar = new wxBitmap( guImage( guIMAGE_INDEX_yellow_star_tiny ) );
+    m_NormalStar   = new wxBitmap( guImage( guIMAGE_INDEX_star_normal_tiny ) );
+    m_SelectStar = new wxBitmap( guImage( guIMAGE_INDEX_star_highlight_tiny ) );
 
 //    Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
@@ -179,10 +179,10 @@ guPlayList::~guPlayList()
 
     if( m_PlayBitmap )
       delete m_PlayBitmap;
-    if( m_GreyStar )
-      delete m_GreyStar;
-    if( m_YellowStar )
-      delete m_YellowStar;
+    if( m_NormalStar )
+      delete m_NormalStar;
+    if( m_SelectStar )
+      delete m_SelectStar;
 
 //    Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
@@ -521,7 +521,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
             CutRect.y += 2;
             for( index = 0; index < 5; index++ )
             {
-               dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_GreyStar : * m_YellowStar,
+               dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_NormalStar : * m_SelectStar,
                               CutRect.x + ( 10 * index ), CutRect.y + m_SecondLineOffset, true );
             }
         }

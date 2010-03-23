@@ -37,9 +37,6 @@
 #include "./images/edit_delete.h"
 #include "./images/edit.h"
 #include "./images/exit.h"
-#include "./images/grey_star_big.h"
-#include "./images/grey_star_mid.h"
-#include "./images/grey_star_tiny.h"
 #include "./images/guayadeque.h"
 #include "./images/guayadeque_taskbar.h"
 #include "./images/lastfm_as_off.h"
@@ -79,9 +76,6 @@
 #include "./images/tiny_status_pending.h"
 #include "./images/track.h"
 #include "./images/up.h"
-#include "./images/yellow_star_big.h"
-#include "./images/yellow_star_mid.h"
-#include "./images/yellow_star_tiny.h"
 #include "./images/pref_commands.h"
 #include "./images/pref_copy_to.h"
 #include "./images/pref_general.h"
@@ -145,6 +139,13 @@
 #include "./images/player_normal_vol_low.h"
 #include "./images/player_normal_vol_mid.h"
 #include "./images/player_tiny_light_play.h"
+//
+#include "./images/star_normal_tiny.h"
+#include "./images/star_normal_mid.h"
+#include "./images/star_normal_big.h"
+#include "./images/star_highlight_tiny.h"
+#include "./images/star_highlight_mid.h"
+#include "./images/star_highlight_big.h"
 
 
 // -------------------------------------------------------------------------------- //
@@ -191,12 +192,6 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_tiny_add,                      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_del,                      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_up,                            wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_grey_star_tiny,                wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_grey_star_mid,                 wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_grey_star_big,                 wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_yellow_star_tiny,              wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_yellow_star_mid,               wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_yellow_star_big,               wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_track,                         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_search,                   wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_search_engine,	                wxBITMAP_TYPE_PNG ),
@@ -228,8 +223,8 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_pref_playback,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_podcasts,                 wxBITMAP_TYPE_PNG ),
     //
-    GUIMAGE( guImage_tiny_close_normal,		    wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_tiny_close_highlight,	    wxBITMAP_TYPE_PNG ),  
+    GUIMAGE( guImage_tiny_close_normal,		        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_close_highlight,	        wxBITMAP_TYPE_PNG ),
     //
     GUIMAGE( guImage_player_highlight_equalizer,    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_muted,        wxBITMAP_TYPE_PNG ),
@@ -279,7 +274,14 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_normal_vol_hi,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_vol_low,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_vol_mid,         wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_player_tiny_light_play,        wxBITMAP_TYPE_PNG )
+    GUIMAGE( guImage_player_tiny_light_play,        wxBITMAP_TYPE_PNG ),
+    //
+    GUIMAGE( guImage_star_normal_tiny,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_star_normal_mid,               wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_star_normal_big,               wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_star_highlight_tiny,           wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_star_highlight_mid,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_star_highlight_big,            wxBITMAP_TYPE_PNG )
 };
 
 

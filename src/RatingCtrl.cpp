@@ -39,17 +39,17 @@ guRating::guRating( wxWindow * parent, const int style ) : wxControl( parent, wx
     m_Rating = wxNOT_FOUND;
     m_Style = style;
 
-    m_GreyStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_grey_star_tiny + style ) ) );
-    m_YellowStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_yellow_star_tiny + style ) ) );
+    m_NormalStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + style ) ) );
+    m_SelectStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + style ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
 guRating::~guRating()
 {
-    if( m_GreyStar )
-        delete m_GreyStar;
-    if( m_YellowStar )
-        delete m_YellowStar;
+    if( m_NormalStar )
+        delete m_NormalStar;
+    if( m_SelectStar )
+        delete m_SelectStar;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -70,7 +70,7 @@ wxSize guRating::DoGetBestSize( void ) const
 {
     wxSize RetVal;
     RetVal.x = 4 + ( 5 * ( ( m_Style * 2 ) + GURATING_IMAGE_SIZE ) );
-    RetVal.y = ( m_Style * 2 ) + 15;
+    RetVal.y = ( m_Style * 2 ) + GURATING_IMAGE_SIZE + 4;
     return RetVal;
 }
 
@@ -86,7 +86,7 @@ void guRating::OnPaint( wxPaintEvent &event )
 
     for( x = 0; x < 5; x++ )
     {
-       dc.DrawBitmap( ( x >= m_Rating ) ? * m_GreyStar : * m_YellowStar,
+       dc.DrawBitmap( ( x >= m_Rating ) ? * m_NormalStar : * m_SelectStar,
                       3 + ( w * x ), 2, true );
     }
 }
