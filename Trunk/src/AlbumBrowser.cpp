@@ -238,9 +238,14 @@ void guAlbumBrowserItemPanel::SetAlbumItem( const int index, guAlbumBrowserItem 
         m_ArtistLabel->SetLabel( guCheckLabelString( m_AlbumBrowserItem->m_ArtistName ) );
         m_AlbumLabel->SetLabel( guCheckLabelString( m_AlbumBrowserItem->m_AlbumName ) );
 
-        m_TracksLabel->SetLabel( wxString::Format( wxT( "(%u) %u " ),
-            m_AlbumBrowserItem->m_Year,
-            m_AlbumBrowserItem->m_TrackCount ) + _( "Tracks" ) );
+        wxString Label;
+        if( m_AlbumBrowserItem->m_Year )
+        {
+            Label += wxString::Format( wxT( "(%u) " ), m_AlbumBrowserItem->m_Year );
+        }
+        Label += wxString::Format( wxT( "%u " ), m_AlbumBrowserItem->m_TrackCount ) + _( "Tracks" );
+
+        m_TracksLabel->SetLabel( Label );
     }
     else
     {
@@ -257,9 +262,14 @@ void guAlbumBrowserItemPanel::UpdateDetails( void )
 {
     if( m_AlbumBrowserItem )
     {
-        m_TracksLabel->SetLabel( wxString::Format( wxT( "(%u) %u " ),
-            m_AlbumBrowserItem->m_Year,
-            m_AlbumBrowserItem->m_TrackCount ) + _( "Tracks" ) );
+        wxString Label;
+        if( m_AlbumBrowserItem->m_Year )
+        {
+            Label += wxString::Format( wxT( "(%u) " ), m_AlbumBrowserItem->m_Year );
+        }
+        Label += wxString::Format( wxT( "%u " ), m_AlbumBrowserItem->m_TrackCount ) + _( "Tracks" );
+
+        m_TracksLabel->SetLabel( Label );
         m_MainSizer->Layout();
     }
 }
