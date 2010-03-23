@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2009 J.Rios
+//	Copyright (C) 2008-2010 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -1242,96 +1242,6 @@ void guLyrcComArEngine::SearchLyric( void )
 
 
 
-
-// -------------------------------------------------------------------------------- //
-// guLyricsFlyEngine
-// -------------------------------------------------------------------------------- //
-guLyricsFlyEngine::guLyricsFlyEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
-         const wxChar * artistname, const wxChar * trackname ) :
-    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
-{
-    if( Create() == wxTHREAD_NO_ERROR )
-    {
-        Run();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guLyricsFlyEngine::~guLyricsFlyEngine()
-{
-}
-
-// -------------------------------------------------------------------------------- //
-wxString guLyricsFlyEngine::ReadTrackItem( wxXmlNode * xmlnode )
-{
-    while( xmlnode )
-    {
-        if( xmlnode->GetName() == wxT( "tx" ) )
-        {
-            return xmlnode->GetNodeContent();
-        }
-        xmlnode = xmlnode->GetNext();
-    }
-    return wxEmptyString;
-}
-
-// -------------------------------------------------------------------------------- //
-wxString guLyricsFlyEngine::GetLyricText( const wxString &content )
-{
-    wxString RetVal;
-    wxStringInputStream ins( content );
-    wxXmlDocument XmlDoc( ins );
-    wxXmlNode * XmlNode = XmlDoc.GetRoot();
-    wxString Status;
-    if( XmlNode && XmlNode->GetName() == wxT( "start" ) )
-    {
-        XmlNode = XmlNode->GetChildren();
-        while( XmlNode )
-        {
-            //guLogMessage( wxT( "Name: %s" ), XmlNode->GetName().c_str() );
-            if( XmlNode->GetName() == wxT( "sg" ) )
-            {
-                RetVal = ReadTrackItem( XmlNode->GetChildren() );
-                if( !RetVal.IsEmpty() )
-                {
-                    RetVal.Replace( wxT( "[br]" ), wxT( "\n" ) );
-                    RetVal.Replace( wxT( "\n\n" ), wxT( "\n" ) );
-                    break;
-                }
-            }
-            XmlNode = XmlNode->GetNext();
-        }
-    }
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-void guLyricsFlyEngine::SearchLyric( void )
-{
-    wxString Url = wxT( "http://api.lyricsfly.com/api/api.php?i=" ) guLYRICSFLY_USER_ID;
-    Url += wxString::Format( wxT( "&a=%s&t=%s" ), guURLEncode( m_ArtistName ).c_str(),
-                                    guURLEncode( m_TrackName ).c_str() );
-
-    wxString Content = GetUrlContent( Url );
-    guLogMessage( wxT( "%s" ), Content.c_str() );
-
-    if( !TestDestroy() && !Content.IsEmpty() )
-    {
-        wxString LyricText = GetLyricText( Content );
-        if( !TestDestroy() && !LyricText.IsEmpty() )
-        {
-            SetLyric( new wxString( LyricText ) );
-        }
-        else
-        {
-            SetLyric( NULL );
-        }
-    }
-    else
-    {
-        SetLyric( NULL );
-    }
-}
 
 // -------------------------------------------------------------------------------- //
 // guChartLyricsEngine
