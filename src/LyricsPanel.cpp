@@ -394,19 +394,26 @@ void guLyricsPanel::SaveLyrics( void )
         if( FileName.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
         {
             FileName.Mkdir( 0770, wxPATH_MKDIR_FULL );
-            wxFile LyricFile( FileName.GetFullPath(), wxFile::write );
-            if( LyricFile.IsOpened() )
+            if( !m_CurrentLyricText.IsEmpty() )
             {
-                if( !LyricFile.Write( m_CurrentLyricText ) )
+                wxFile LyricFile( FileName.GetFullPath(), wxFile::write );
+                if( LyricFile.IsOpened() )
                 {
-                    guLogError( wxT( "Error writing to lyric file '%s'" ), FileName.GetFullPath().c_str() );
+                    if( !LyricFile.Write( m_CurrentLyricText ) )
+                    {
+                        guLogError( wxT( "Error writing to lyric file '%s'" ), FileName.GetFullPath().c_str() );
+                    }
+                    LyricFile.Flush();
+                    LyricFile.Close();
                 }
-                LyricFile.Flush();
-                LyricFile.Close();
+                else
+                {
+                    guLogError( wxT( "Error saving lyric file '%s'" ), FileName.GetFullPath().c_str() );
+                }
             }
             else
             {
-                guLogError( wxT( "Error saving lyric file '%s'" ), FileName.GetFullPath().c_str() );
+                wxRemoveFile( FileName.GetFullPath() );
             }
         }
     }
@@ -516,7 +523,7 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     }
 
     // If was not found as a tag in the file try to read it from the lyric directory.
-    if( LyricText.IsEmpty() )
+    if( !onlinesearch && LyricText.IsEmpty() )
     {
         wxFileName FileName( m_WriteToDirPath +
                     m_ArtistTextCtrl->GetValue() + wxT( "/" ) +
