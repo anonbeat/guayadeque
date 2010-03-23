@@ -380,15 +380,14 @@ void guLastFMInfoCtrl::OnMouse( wxMouseEvent &event )
     //guLogMessage( wxT( "Mouse: %i %i" ), event.m_x, event.m_y );
     if( !ItemWasFound() )
     {
-        if( event.Entering() )
+        if( event.Entering() || event.Leaving() )
         {
+            wxString LabelText = m_Text->GetLabel();
+            LabelText.Replace( wxT( "&" ), wxT( "&&" ) );
             //guLogMessage( wxT( "Entering..." ) );
-            m_Text->SetForegroundColour( m_NormalColor );
-        }
-        else if( event.Leaving() )
-        {
-            //guLogMessage( wxT( "Leaving..." ) );
-            m_Text->SetForegroundColour( m_NotFoundColor );
+            m_Text->SetForegroundColour( event.Entering() ? m_NormalColor : m_NotFoundColor );
+            m_Text->SetLabel( LabelText );
+            Layout();
         }
     }
 }
