@@ -55,8 +55,8 @@ class guPlayList : public guListView
     wxString        m_LastSearch;
 
     wxBitmap *      m_PlayBitmap;
-    wxBitmap *      m_GreyStar;
-    wxBitmap *      m_YellowStar;
+    wxBitmap *      m_NormalStar;
+    wxBitmap *      m_SelectStar;
     wxCoord         m_SecondLineOffset;
 
 

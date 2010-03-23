@@ -69,8 +69,8 @@ guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confn
         InsertColumn( Column );
     }
 
-    m_GreyStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_grey_star_tiny + GURATING_STYLE_MID ) ) );
-    m_YellowStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_yellow_star_tiny + GURATING_STYLE_MID ) ) );
+    m_NormalStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + GURATING_STYLE_MID ) ) );
+    m_SelectStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + GURATING_STYLE_MID ) ) );
 
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Connect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
@@ -100,10 +100,10 @@ guSoListBox::~guSoListBox()
                            m_ConfName + wxT( "Columns" ) );
     }
 
-    if( m_GreyStar )
-        delete m_GreyStar;
-    if( m_YellowStar )
-        delete m_YellowStar;
+    if( m_NormalStar )
+        delete m_NormalStar;
+    if( m_SelectStar )
+        delete m_SelectStar;
 
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Disconnect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
@@ -194,8 +194,8 @@ void guSoListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 
         for( x = 0; x < 5; x++ )
         {
-           dc.DrawBitmap( ( x >= m_Items[ row ].m_Rating ) ? * m_GreyStar : * m_YellowStar,
-                          rect.x + 3 + ( w * x ), rect.y + 6, true );
+           dc.DrawBitmap( ( x >= m_Items[ row ].m_Rating ) ? * m_NormalStar : * m_SelectStar,
+                          rect.x + 3 + ( w * x ), rect.y + 2, true );
         }
     }
     else

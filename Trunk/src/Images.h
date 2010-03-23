@@ -58,12 +58,6 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_add,
     guIMAGE_INDEX_tiny_del,
     guIMAGE_INDEX_up,
-    guIMAGE_INDEX_grey_star_tiny,
-    guIMAGE_INDEX_grey_star_mid,
-    guIMAGE_INDEX_grey_star_big,
-    guIMAGE_INDEX_yellow_star_tiny,
-    guIMAGE_INDEX_yellow_star_mid,
-    guIMAGE_INDEX_yellow_star_big,
     guIMAGE_INDEX_track,
     guIMAGE_INDEX_tiny_search,
     guIMAGE_INDEX_search_engine,
@@ -146,7 +140,13 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_player_normal_vol_hi,
     guIMAGE_INDEX_player_normal_vol_low,
     guIMAGE_INDEX_player_normal_vol_mid,
-    guIMAGE_INDEX_player_tiny_light_play
+    guIMAGE_INDEX_player_tiny_light_play,
+    guIMAGE_INDEX_star_normal_tiny,
+    guIMAGE_INDEX_star_normal_mid,
+    guIMAGE_INDEX_star_normal_big,
+    guIMAGE_INDEX_star_highlight_tiny,
+    guIMAGE_INDEX_star_highlight_mid,
+    guIMAGE_INDEX_star_highlight_big
 };
 
 
