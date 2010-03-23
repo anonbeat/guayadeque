@@ -27,6 +27,7 @@
 #include "ShowImage.h"
 #include "TagInfo.h"
 #include "Utils.h"
+#include "AuiNotebook.h"
 
 #include <wx/arrimpl.cpp>
 #include "wx/clipbrd.h"
@@ -52,7 +53,7 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
     m_DbCache = dbcache;
     m_PlayerPanel = playerpanel;
     m_NormalColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
-    m_NotFoundColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
+    m_NotFoundColor = wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT );
 
     if( createcontrols )
         this->CreateControls( parent );
@@ -68,6 +69,10 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
     Connect( ID_SONG_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
     Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
     Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
+
+    Connect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
 
     Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
 }
@@ -85,6 +90,13 @@ guLastFMInfoCtrl::~guLastFMInfoCtrl()
     Disconnect( ID_SONG_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
     Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
     Disconnect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
+
+    Disconnect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    m_Text->Disconnect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    m_Text->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    m_Text->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
 
     Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
 }
@@ -114,6 +126,9 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 //    Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
 //    m_Bitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
     m_Text->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
+    m_Text->Connect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    m_Text->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    m_Text->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -357,6 +372,25 @@ void guLastFMInfoCtrl::OnBitmapMouseOver( wxCommandEvent &event )
 wxString guLastFMInfoCtrl::GetBitmapImageUrl( void )
 {
     return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMInfoCtrl::OnMouse( wxMouseEvent &event )
+{
+    //guLogMessage( wxT( "Mouse: %i %i" ), event.m_x, event.m_y );
+    if( !ItemWasFound() )
+    {
+        if( event.Entering() )
+        {
+            //guLogMessage( wxT( "Entering..." ) );
+            m_Text->SetForegroundColour( m_NormalColor );
+        }
+        else if( event.Leaving() )
+        {
+            //guLogMessage( wxT( "Leaving..." ) );
+            m_Text->SetForegroundColour( m_NotFoundColor );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
