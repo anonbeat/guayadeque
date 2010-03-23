@@ -431,17 +431,9 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
 	m_ArtistDetails->SetFonts( CurrentFont.GetFaceName(), wxEmptyString );
 
-	wxColour ArtistBG = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME );
-	ArtistBG.Set( ArtistBG.Red() - 5, ArtistBG.Green() - 5, ArtistBG.Blue() - 5 );
-	m_ArtistDetails->SetBackgroundColour( ArtistBG );
+	m_ArtistDetails->SetBackgroundColour( m_Text->GetBackgroundColour() );
 	m_ArtistDetails->SetBorders( 0 );
 	m_DetailSizer->Add( m_ArtistDetails, 1, wxALL|wxEXPAND, 5 );
-
-//	m_ShowMoreHyperLink = new wxHyperlinkCtrl( this, wxID_ANY, m_ShowLongBioText ? _( "Less..." ) : _("More..."), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
-//	m_ShowMoreHyperLink->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-//	m_ShowMoreHyperLink->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-//	m_ShowMoreHyperLink->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-//	m_DetailSizer->Add( m_ShowMoreHyperLink, 0, wxALL|wxALIGN_RIGHT, 5 );
 
 	m_MainSizer->Add( m_DetailSizer, 1, wxEXPAND, 5 );
 
@@ -579,7 +571,8 @@ void guArtistInfoCtrl::UpdateArtistInfoText( void )
     Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
     m_ArtistDetails->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s text=%s link=%s>%s</body></html>" ),
-          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(), //wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+          //wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(), //wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
+          m_Text->GetBackgroundColour().GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
           Content.c_str() ) );
