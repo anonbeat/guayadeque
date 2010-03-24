@@ -212,9 +212,13 @@ guDBusMessage * guDBusServer::SendWithReplyAndBlock( guDBusMessage * msg, int ti
 {
     DBusError error;
     dbus_error_init( &error );
+    guDBusMessage * Reply;
 
     DBusMessage * Result = dbus_connection_send_with_reply_and_block( m_DBusConn, msg->GetMessage(), timeout, &error );
-    return Result ? new guDBusMessage( Result ) : NULL;
+    Reply =  Result ? new guDBusMessage( Result ) : NULL;
+    if( Result )
+        dbus_message_unref( Result );
+    return Reply;
 }
 
 // -------------------------------------------------------------------------------- //

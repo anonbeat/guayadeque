@@ -182,20 +182,44 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	//m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_SmartPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_smart ), guImage( guIMAGE_INDEX_player_normal_smart ), guImage( guIMAGE_INDEX_player_highlight_smart ) );
-	m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
+	//m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
+    wxString TipText = _( "Smart Mode: " );
+    if( !m_PlaySmart )
+    {
+        TipText += _( "Off" );
+    }
+    else
+    {
+        TipText += _( "On" );
+    }
+    m_SmartPlayButton->SetToolTip( TipText );
 	// Get PlayerPanel value from config file
 	m_SmartPlayButton->SetValue( m_PlaySmart );
 	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
+
+	m_RepeatPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_repeat ), guImage( guIMAGE_INDEX_player_normal_repeat ), guImage( guIMAGE_INDEX_player_highlight_repeat ) );
+	//m_RepeatPlayButton->SetToolTip( _( "Select the repeat mode" ) );
+    TipText = _( "Repeat Mode: " );
+    if( !m_PlayLoop )
+    {
+        TipText += _( "Off" );
+    }
+    else if( m_PlayLoop == guPLAYER_PLAYLOOP_TRACK )
+    {
+        TipText += _( "Track" );
+    }
+    else
+    {
+        TipText += _( "Playlist" );
+    }
+    m_RepeatPlayButton->SetToolTip( TipText );
+	m_RepeatPlayButton->SetValue( m_PlayLoop );
+	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
 	//m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_random ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_RandomPlayButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_random ), guImage( guIMAGE_INDEX_player_highlight_random ), 0 );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in the playlist" ) );
 	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
-
-	m_RepeatPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_repeat ), guImage( guIMAGE_INDEX_player_normal_repeat ), guImage( guIMAGE_INDEX_player_highlight_repeat ) );
-	m_RepeatPlayButton->SetToolTip( _( "Select the repeat mode" ) );
-	m_RepeatPlayButton->SetValue( m_PlayLoop );
-	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
 	PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 2 );
 
@@ -1595,6 +1619,22 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
     }
     CheckFiltersEnable();
 
+    // Send a notification
+    wxString TipText = _( "Smart Mode: " );
+    wxImage Image;
+    if( !playsmart )
+    {
+        TipText += _( "Off" );
+        Image = guImage( guIMAGE_INDEX_player_light_smart );
+    }
+    else
+    {
+        TipText += _( "On" );
+        Image = guImage( guIMAGE_INDEX_player_normal_smart );
+    }
+    m_SmartPlayButton->SetToolTip( TipText );
+    m_NotifySrv->Notify( wxEmptyString, _( "Smart Mode" ), TipText, &Image );
+
     // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
@@ -1630,6 +1670,27 @@ void guPlayerPanel::SetPlayLoop( int playloop )
     }
 
     CheckFiltersEnable();
+
+    // Send a notification
+    wxString TipText = _( "Repeat Mode: " );
+    wxImage Image;
+    if( !m_PlayLoop )
+    {
+        TipText += _( "Off" );
+        Image = guImage( guIMAGE_INDEX_player_light_repeat );
+    }
+    else if( m_PlayLoop == guPLAYER_PLAYLOOP_TRACK )
+    {
+        TipText += _( "Track" );
+        Image = guImage( guIMAGE_INDEX_player_normal_repeat_single );
+    }
+    else
+    {
+        TipText += _( "Playlist" );
+        Image = guImage( guIMAGE_INDEX_player_normal_repeat );
+    }
+    m_RepeatPlayButton->SetToolTip( TipText );
+    m_NotifySrv->Notify( wxEmptyString, _( "Repeat Mode" ), TipText, &Image );
 
     // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );

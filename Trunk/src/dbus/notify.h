@@ -38,7 +38,7 @@ class guDBusNotify : public guDBusClient
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
 
     void    Notify( const wxString &icon, const wxString &summary,
-                    const wxString &body, wxImage * image );
+                    const wxString &body, wxImage * image, bool newnotify = false );
 
 };
 
