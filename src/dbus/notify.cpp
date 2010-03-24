@@ -57,7 +57,7 @@ void inline Append_String( DBusMessageIter * iter, const char * str )
 
 // -------------------------------------------------------------------------------- //
 void guDBusNotify::Notify( const wxString &icon, const wxString &summary,
-                            const wxString &body, wxImage * image )
+                            const wxString &body, wxImage * image, bool newnotify )
 {
     guDBusMethodCall * Msg = new guDBusMethodCall( "org.freedesktop.Notifications",
                                                "/org/freedesktop/Notifications",
@@ -66,6 +66,7 @@ void guDBusNotify::Notify( const wxString &icon, const wxString &summary,
 
     const char * msg_app = "guayadeque-music-player";
     int  msg_timeout = -1;           // Default timeout
+    int  msg_newid = 0;
 
     DBusMessageIter iter;
     DBusMessageIter array;
@@ -76,7 +77,7 @@ void guDBusNotify::Notify( const wxString &icon, const wxString &summary,
 
     dbus_message_iter_init_append( Msg->GetMessage(), &iter );
     dbus_message_iter_append_basic( &iter, DBUS_TYPE_STRING, &msg_app );
-    dbus_message_iter_append_basic( &iter, DBUS_TYPE_UINT32, &m_MsgId );
+    dbus_message_iter_append_basic( &iter, DBUS_TYPE_UINT32, newnotify ? &msg_newid : &m_MsgId );
     Append_String( &iter, icon.char_str() );
     Append_String( &iter, summary.char_str() );
     Append_String( &iter, body.char_str() );
@@ -147,7 +148,12 @@ void guDBusNotify::Notify( const wxString &icon, const wxString &summary,
     dbus_message_iter_close_container( &iter, &array );
     dbus_message_iter_append_basic( &iter, DBUS_TYPE_INT32, &msg_timeout );
 
-    SendWithReply( Msg );
+    guDBusMessage * Reply = SendWithReplyAndBlock( Msg );
+    if( Reply )
+    {
+        dbus_message_get_args( Reply->GetMessage(), NULL, DBUS_TYPE_UINT32, &m_MsgId, DBUS_TYPE_INVALID );
+        delete Reply;
+    }
 
     delete Msg;
 }
@@ -175,13 +181,14 @@ DBusHandlerResult guDBusNotify::HandleMessages( guDBusMessage * msg, guDBusMessa
 //    guLogMessage( wxT( "Serial : %i" ), Serial );
 //    guLogMessage( wxT( "RSerial: %i" ), RSerial );
 
-    if( Type == DBUS_MESSAGE_TYPE_METHOD_RETURN )
-    {
-        dbus_message_get_args( msg->GetMessage(), NULL, DBUS_TYPE_UINT32, &m_MsgId, DBUS_TYPE_INVALID );
-        //guLogMessage( wxT( "The Id is: %i" ), m_MsgId );
-        RetVal = DBUS_HANDLER_RESULT_HANDLED;
-    }
-    else if( Type == DBUS_MESSAGE_TYPE_SIGNAL )
+//    if( Type == DBUS_MESSAGE_TYPE_METHOD_RETURN )
+//    {
+//        dbus_message_get_args( msg->GetMessage(), NULL, DBUS_TYPE_UINT32, &m_MsgId, DBUS_TYPE_INVALID );
+//        //guLogMessage( wxT( "The Id is: %i" ), m_MsgId );
+//        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+//    }
+//    else if( Type == DBUS_MESSAGE_TYPE_SIGNAL )
+    if( Type == DBUS_MESSAGE_TYPE_SIGNAL )
     {
         if( !strcmp( Member, "NotificationClosed" ) )
         {
