@@ -2112,29 +2112,28 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
 
                 if( !TestDestroy() && Image )
                 {
-                    int Width;
-                    int Height;
+                    int Size;
                     switch( m_ImageSize )
                     {
                         case guDBCACHE_IMAGE_SIZE_TINY  :
                         {
-                            Width = Height = 50;
+                            Size = 50;
                             break;
                         }
 
                         case guDBCACHE_IMAGE_SIZE_MID   :
                         {
-                            Width = Height = 100;
+                            Size = 100;
                             break;
                         }
 
                         default : //case guDBCACHE_IMAGE_SIZE_BIG    :
                         {
-                            Width = Height = 150;
+                            Size = 150;
                             break;
                         }
                     }
-                    Image->Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+                    guImageResize( Image, Size );
                 }
             }
 

@@ -36,6 +36,21 @@
 #define guRandom(x) (rand() % x)
 
 // -------------------------------------------------------------------------------- //
+void inline guImageResize( wxImage * image, int maxsize )
+{
+    int w = image->GetWidth();
+    int h = image->GetHeight();
+
+    double ratio = wxMin( static_cast<double>( maxsize ) / h,
+                          static_cast<double>( maxsize ) / w );
+
+    if( ratio < 1 )
+    {
+        image->Rescale( ( w * ratio ) + .5, ( h * ratio ) + .5, wxIMAGE_QUALITY_HIGH );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 wxString LenToString( unsigned int len );
 wxString SizeToString( wxFileOffset size );
 wxArrayString guSplitWords( const wxString &InputStr );

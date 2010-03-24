@@ -135,28 +135,31 @@ bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const int imgtyp
 bool guDbCache::SetImage( const wxString &url, wxImage * img, const int imgtype )
 {
   wxImage TmpImg( * img );
-  int Width = 150;
-  int Height = 150;
-  int ImageSize = guDBCACHE_IMAGE_SIZE_BIG;
-  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
-  if( !DoSetImage( url, &TmpImg, imgtype, ImageSize ) )
+//  int Width = 150;
+//  int Height = 150;
+//  int ImageSize = guDBCACHE_IMAGE_SIZE_BIG;
+//  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+  guImageResize( &TmpImg, 150 );
+  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_IMAGE_SIZE_BIG ) )
     return false;
 
 
   TmpImg = * img;
-  Width = 100;
-  Height = 100;
-  ImageSize = guDBCACHE_IMAGE_SIZE_MID;
-  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
-  if( !DoSetImage( url, &TmpImg, imgtype, ImageSize ) )
+//  Width = 100;
+//  Height = 100;
+//  ImageSize = guDBCACHE_IMAGE_SIZE_MID;
+//  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+  guImageResize( &TmpImg, 100 );
+  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_IMAGE_SIZE_MID ) )
     return false;
 
   TmpImg = * img;
-  Width = 50;
-  Height = 50;
-  ImageSize = guDBCACHE_IMAGE_SIZE_TINY;
-  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
-  if( !DoSetImage( url, &TmpImg, imgtype, ImageSize ) )
+//  Width = 50;
+//  Height = 50;
+//  ImageSize = guDBCACHE_IMAGE_SIZE_TINY;
+//  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
+  guImageResize( &TmpImg, 50 );
+  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_IMAGE_SIZE_TINY ) )
     return false;
 
   // delete the expired entries but call it only 5% of the times
