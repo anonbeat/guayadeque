@@ -195,7 +195,7 @@ void guSoListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
         for( x = 0; x < 5; x++ )
         {
            dc.DrawBitmap( ( x >= m_Items[ row ].m_Rating ) ? * m_NormalStar : * m_SelectStar,
-                          rect.x + 3 + ( w * x ), rect.y + 2, true );
+                          rect.x + 3 + ( w * x ), rect.y + 3, true );
         }
     }
     else
