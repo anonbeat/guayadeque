@@ -1621,19 +1621,15 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
 
     // Send a notification
     wxString TipText = _( "Smart Mode: " );
-    wxImage Image;
     if( !playsmart )
     {
         TipText += _( "Off" );
-        Image = guImage( guIMAGE_INDEX_player_light_smart );
     }
     else
     {
         TipText += _( "On" );
-        Image = guImage( guIMAGE_INDEX_player_normal_smart );
     }
     m_SmartPlayButton->SetToolTip( TipText );
-    m_NotifySrv->Notify( wxEmptyString, _( "Smart Mode" ), TipText, &Image );
 
     // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
@@ -1673,24 +1669,19 @@ void guPlayerPanel::SetPlayLoop( int playloop )
 
     // Send a notification
     wxString TipText = _( "Repeat Mode: " );
-    wxImage Image;
     if( !m_PlayLoop )
     {
         TipText += _( "Off" );
-        Image = guImage( guIMAGE_INDEX_player_light_repeat );
     }
     else if( m_PlayLoop == guPLAYER_PLAYLOOP_TRACK )
     {
         TipText += _( "Track" );
-        Image = guImage( guIMAGE_INDEX_player_normal_repeat_single );
     }
     else
     {
         TipText += _( "Playlist" );
-        Image = guImage( guIMAGE_INDEX_player_normal_repeat );
     }
     m_RepeatPlayButton->SetToolTip( TipText );
-    m_NotifySrv->Notify( wxEmptyString, _( "Repeat Mode" ), TipText, &Image );
 
     // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
