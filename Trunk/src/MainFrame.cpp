@@ -104,6 +104,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_PodcastsPanel = NULL;
     m_PlayerVumeters = NULL;
     m_AlbumBrowserPanel = NULL;
+    m_FileBrowserPanel = NULL;
 
     //
     m_AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
@@ -287,12 +288,14 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         else
             m_AlbumBrowserPanel = NULL;
 
-//    // FileSystem Page
-//    if( Config->ReadBool( wxT( "ShowFileSys" ), true, wxT( "ViewPanels" ) ) )
-//    {
-//	      FileSysPanel = new wxPanel( CatNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-//	      CatNotebook->AddPage( FileSysPanel, wxT("FileSystem"), false );
-//    }
+        // FileSystem Page
+        if( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER )
+        {
+            OnViewFileBrowser( ShowEvent );
+        }
+        else
+            m_FileBrowserPanel = NULL;
+
     }
 
     m_AuiManager.AddPane( m_CatNotebook, wxAuiPaneInfo().Name( wxT("PlayerSelector") ).
@@ -457,6 +460,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     Connect( ID_MENU_VIEW_ALBUMBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewAlbumBrowser ), NULL, this );
 
+    Connect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
+
     Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
     Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
     Connect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
@@ -556,6 +561,8 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_VIEW_POD_DETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
 
     Disconnect( ID_MENU_VIEW_ALBUMBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewAlbumBrowser ), NULL, this );
+
+    Disconnect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
 
     Disconnect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
     Disconnect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
@@ -844,10 +851,13 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "&Podcasts" ), _( "Set the podcasts visible panels" ) );
 
-    m_ViewAlbumBrowser = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_ALBUMBROWSER, _( "Album Browser" ), _( "Show/Hide the album browser panel" ), wxITEM_CHECK );
+    m_ViewAlbumBrowser = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_ALBUMBROWSER, _( "Browser" ), _( "Show/Hide the album browser panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewAlbumBrowser );
     m_ViewAlbumBrowser->Check( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER );
 
+    m_ViewFileBrowser = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_FILEBROWSER, _( "FileSystem" ), _( "Show/Hide the file browser panel" ), wxITEM_CHECK );
+    m_MainMenu->Append( m_ViewFileBrowser );
+    m_ViewFileBrowser->Check( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER );
 
     MenuBar->Append( m_MainMenu, _( "&View" ) );
 
@@ -1689,6 +1699,34 @@ void guMainFrame::OnViewAlbumBrowser( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewFileBrowser( wxCommandEvent &event )
+{
+    if( event.IsChecked() )
+    {
+        if( !m_FileBrowserPanel )
+            m_FileBrowserPanel = new guFileBrowser( m_CatNotebook, m_Db, m_PlayerPanel );
+
+        m_CatNotebook->InsertPage( wxMin( 7, m_CatNotebook->GetPageCount() ), m_FileBrowserPanel, _( "FileSystem" ), true );
+
+        CheckShowNotebook();
+        m_VisiblePanels |= guPANEL_MAIN_FILEBROWSER;
+    }
+    else
+    {
+        int PageIndex = m_CatNotebook->GetPageIndex( m_FileBrowserPanel );
+        if( PageIndex >= 0 )
+        {
+            m_CatNotebook->RemovePage( PageIndex );
+        }
+
+        CheckHideNotebook();
+        m_VisiblePanels ^= guPANEL_MAIN_FILEBROWSER;
+    }
+
+    m_ViewFileBrowser->Check( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER );
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 {
     if( event.IsChecked() )
@@ -1919,6 +1957,11 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
     {
         m_ViewAlbumBrowser->Check( false );
         PanelId = guPANEL_MAIN_ALBUMBROWSER;
+    }
+    else if( CurPage == m_FileBrowserPanel )
+    {
+        m_ViewFileBrowser->Check( false );
+        PanelId = guPANEL_MAIN_FILEBROWSER;
     }
 
     CheckHideNotebook();
@@ -2419,6 +2462,10 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
         else if( TabName == _( "Browser" ) )
         {
             OnViewAlbumBrowser( event );
+        }
+        else if( TabName == _( "FileSystem" ) )
+        {
+            OnViewFileBrowser( event );
         }
 
         Index++;

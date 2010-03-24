@@ -49765,7 +49765,7 @@
             <property name="minimum_size"></property>
             <property name="name">FileBrowserPanel</property>
             <property name="pos"></property>
-            <property name="size">530,505</property>
+            <property name="size">577,590</property>
             <property name="subclass"></property>
             <property name="tooltip"></property>
             <property name="window_extra_style"></property>
@@ -49819,7 +49819,7 @@
                         <property name="permission">protected</property>
                         <property name="pos"></property>
                         <property name="sashgravity">0.0</property>
-                        <property name="sashpos">195</property>
+                        <property name="sashpos">287</property>
                         <property name="sashsize">-1</property>
                         <property name="size"></property>
                         <property name="splitmode">wxSPLIT_VERTICAL</property>
@@ -49867,7 +49867,7 @@
                                 <property name="id">wxID_ANY</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
-                                <property name="name">m_panel84</property>
+                                <property name="name">m_DirCtrl</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="size"></property>
@@ -49901,7 +49901,7 @@
                                 <event name="OnUpdateUI"></event>
                                 <object class="wxBoxSizer" expanded="1">
                                     <property name="minimum_size"></property>
-                                    <property name="name">bSizer314</property>
+                                    <property name="name">MainSizer</property>
                                     <property name="orient">wxVERTICAL</property>
                                     <property name="permission">none</property>
                                     <object class="sizeritem" expanded="1">
@@ -50097,6 +50097,125 @@
                                 </object>
                             </object>
                         </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+        <object class="Panel" expanded="1">
+            <property name="bg"></property>
+            <property name="context_help"></property>
+            <property name="enabled">1</property>
+            <property name="fg"></property>
+            <property name="font"></property>
+            <property name="hidden">0</property>
+            <property name="id">wxID_ANY</property>
+            <property name="maximum_size"></property>
+            <property name="minimum_size"></property>
+            <property name="name">guFileBrowserDirCtrl</property>
+            <property name="pos"></property>
+            <property name="size">313,448</property>
+            <property name="subclass"></property>
+            <property name="tooltip"></property>
+            <property name="window_extra_style"></property>
+            <property name="window_name"></property>
+            <property name="window_style">wxTAB_TRAVERSAL</property>
+            <event name="OnChar"></event>
+            <event name="OnEnterWindow"></event>
+            <event name="OnEraseBackground"></event>
+            <event name="OnInitDialog"></event>
+            <event name="OnKeyDown"></event>
+            <event name="OnKeyUp"></event>
+            <event name="OnKillFocus"></event>
+            <event name="OnLeaveWindow"></event>
+            <event name="OnLeftDClick"></event>
+            <event name="OnLeftDown"></event>
+            <event name="OnLeftUp"></event>
+            <event name="OnMiddleDClick"></event>
+            <event name="OnMiddleDown"></event>
+            <event name="OnMiddleUp"></event>
+            <event name="OnMotion"></event>
+            <event name="OnMouseEvents"></event>
+            <event name="OnMouseWheel"></event>
+            <event name="OnPaint"></event>
+            <event name="OnRightDClick"></event>
+            <event name="OnRightDown"></event>
+            <event name="OnRightUp"></event>
+            <event name="OnSetFocus"></event>
+            <event name="OnSize"></event>
+            <event name="OnUpdateUI"></event>
+            <object class="wxBoxSizer" expanded="1">
+                <property name="minimum_size"></property>
+                <property name="name">MainSizer</property>
+                <property name="orient">wxVERTICAL</property>
+                <property name="permission">none</property>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxEXPAND | wxALL</property>
+                    <property name="proportion">1</property>
+                    <object class="wxGenericDirCtrl" expanded="1">
+                        <property name="bg"></property>
+                        <property name="context_help"></property>
+                        <property name="defaultfilter">0</property>
+                        <property name="defaultfolder">/home/jrios</property>
+                        <property name="enabled">1</property>
+                        <property name="fg"></property>
+                        <property name="filter"></property>
+                        <property name="font"></property>
+                        <property name="hidden">0</property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="maximum_size"></property>
+                        <property name="minimum_size"></property>
+                        <property name="name">m_DirCtrl</property>
+                        <property name="permission">protected</property>
+                        <property name="pos"></property>
+                        <property name="show_hidden">0</property>
+                        <property name="size"></property>
+                        <property name="style">wxDIRCTRL_DIR_ONLY</property>
+                        <property name="subclass"></property>
+                        <property name="tooltip"></property>
+                        <property name="window_extra_style"></property>
+                        <property name="window_name"></property>
+                        <property name="window_style">wxSUNKEN_BORDER</property>
+                        <event name="OnChar"></event>
+                        <event name="OnEnterWindow"></event>
+                        <event name="OnEraseBackground"></event>
+                        <event name="OnKeyDown"></event>
+                        <event name="OnKeyUp"></event>
+                        <event name="OnKillFocus"></event>
+                        <event name="OnLeaveWindow"></event>
+                        <event name="OnLeftDClick"></event>
+                        <event name="OnLeftDown"></event>
+                        <event name="OnLeftUp"></event>
+                        <event name="OnMiddleDClick"></event>
+                        <event name="OnMiddleDown"></event>
+                        <event name="OnMiddleUp"></event>
+                        <event name="OnMotion"></event>
+                        <event name="OnMouseEvents"></event>
+                        <event name="OnMouseWheel"></event>
+                        <event name="OnPaint"></event>
+                        <event name="OnRightDClick"></event>
+                        <event name="OnRightDown"></event>
+                        <event name="OnRightUp"></event>
+                        <event name="OnSetFocus"></event>
+                        <event name="OnSize"></event>
+                        <event name="OnTreeBeginDrag">OnDirTreeBeginDrag</event>
+                        <event name="OnTreeBeginRDrag"></event>
+                        <event name="OnTreeDeleteItem">OnTreeDeleteItem</event>
+                        <event name="OnTreeEndDrag">OnDirTreeEndDrag</event>
+                        <event name="OnTreeGetInfo"></event>
+                        <event name="OnTreeItemActivated">OnTreeItemActivated</event>
+                        <event name="OnTreeItemCollapsing"></event>
+                        <event name="OnTreeItemExpanded"></event>
+                        <event name="OnTreeItemGetTooltip"></event>
+                        <event name="OnTreeItemMenu"></event>
+                        <event name="OnTreeItemMiddleClick"></event>
+                        <event name="OnTreeItemRightClick"></event>
+                        <event name="OnTreeKeyDown"></event>
+                        <event name="OnTreeSelChanged">OnTreeItemSelChanged</event>
+                        <event name="OnTreeSelChanging"></event>
+                        <event name="OnTreeSetInfo"></event>
+                        <event name="OnTreeStateImageClick"></event>
+                        <event name="OnUpdateUI"></event>
                     </object>
                 </object>
             </object>
