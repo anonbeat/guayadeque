@@ -32,6 +32,7 @@
 #include "dbus/notify.h"
 #include "DbLibrary.h"
 #include "DbCache.h"
+#include "FileBrowser.h"
 #include "LastFM.h"
 #include "LastFMPanel.h"
 #include "LibPanel.h"
@@ -65,6 +66,7 @@
 #define     guPANEL_MAIN_PLAYLISTS          ( 1 << 7 )
 #define     guPANEL_MAIN_PODCASTS           ( 1 << 8 )
 #define     guPANEL_MAIN_ALBUMBROWSER       ( 1 << 9 )
+#define     guPANEL_MAIN_FILEBROWSER        ( 1 << 10 )
 
 #define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | \
                                               guPANEL_MAIN_LASTFM | guPANEL_MAIN_LYRICS  | \
@@ -106,6 +108,7 @@ class guMainFrame : public wxFrame
     guPlayListPanel *           m_PlayListPanel;
     guPodcastPanel *            m_PodcastsPanel;
     guAlbumBrowser *            m_AlbumBrowserPanel;
+    guFileBrowser *             m_FileBrowserPanel;
 
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
@@ -140,6 +143,8 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewLyrics;
     wxMenuItem *                m_ViewPlayLists;
     wxMenuItem *                m_ViewAlbumBrowser;
+
+    wxMenuItem *                m_ViewFileBrowser;
 
     wxMenuItem *                m_ViewPodcasts;
     wxMenuItem *                m_ViewPodChannels;
@@ -258,6 +263,8 @@ class guMainFrame : public wxFrame
     void                OnPodcastsShowPanel( wxCommandEvent &event );
 
     void                OnViewAlbumBrowser( wxCommandEvent &event );
+
+    void                OnViewFileBrowser( wxCommandEvent &event );
 
     void                OnMainPaneClose( wxAuiManagerEvent &event );
 
