@@ -517,12 +517,12 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
             // Draw the rating
             int index;
             //OffsetSecLine += 2;
-            CutRect.x += 3;
+            CutRect.x += 1;
             CutRect.y += 2;
             for( index = 0; index < 5; index++ )
             {
                dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_NormalStar : * m_SelectStar,
-                              CutRect.x + ( 10 * index ), CutRect.y + m_SecondLineOffset, true );
+                              CutRect.x + ( 11 * index ), CutRect.y + m_SecondLineOffset, true );
             }
         }
     }
@@ -555,7 +555,7 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                         if( x < 3 )
                             Rating = 0;
                         else
-                            Rating = wxMin( 5, ( wxMax( 0, x - 3 ) / 10 ) + 1 );
+                            Rating = wxMin( 5, ( wxMax( 0, x ) / 11 ) + 1 );
 
                         if( m_Items[ Item ].m_Rating == Rating )
                         {
