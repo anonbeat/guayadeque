@@ -77,7 +77,8 @@ class guLyricsPanel : public wxPanel
 	wxTextCtrl *            m_ArtistTextCtrl;
 	wxTextCtrl *            m_TrackTextCtrl;
 	wxBitmapButton *        m_SearchButton;
-	wxColour                m_EditModeColor;
+	wxColour                m_EditModeBGColor;
+	wxColour                m_EditModeFGColor;
 
 	bool                    m_UpdateEnabled;
     guTrackChangeInfo       m_CurrentTrackInfo;

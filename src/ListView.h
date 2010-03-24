@@ -121,7 +121,8 @@ class guListViewAttr
         {
             m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
         }
-        m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
+        //m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
+        m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOXTEXT );
 
         //m_PlayFgColor  = m_SelBgColor;
         m_DragBgColor  = * wxGREY_BRUSH;

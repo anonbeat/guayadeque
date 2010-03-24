@@ -159,11 +159,11 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 
 	//m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
 	m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CENTRE|wxTE_DONTWRAP|wxTE_MULTILINE|wxNO_BORDER );
-	m_EditModeColor = m_LyricText->GetBackgroundColour();
+	m_EditModeFGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOXTEXT ); //m_LyricText->GetForegroundColour();
+	m_EditModeBGColor = m_LyricText->GetBackgroundColour();
+
 	m_LyricText->SetBackgroundColour( m_LyricTitle->GetBackgroundColour() ); //wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
-//    m_LyricText->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s></body></html>" ),
-//          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str() ) );
-//	m_LyricText->SetFonts( CurrentFont.GetFaceName(), wxEmptyString );
+	m_LyricText->SetForegroundColour( m_LyricTitle->GetForegroundColour() );
 
 	MainSizer->Add( m_LyricText, 1, wxALL|wxEXPAND, 5 );
 
@@ -425,7 +425,9 @@ void guLyricsPanel::OnEditBtnClick( wxCommandEvent& event )
     m_EditButton->Enable( false );
     m_SaveButton->Enable( true );
     m_LyricText->SetEditable( true );
-    m_LyricText->SetBackgroundColour( m_EditModeColor );
+    m_LyricText->SetBackgroundColour( m_EditModeBGColor );
+    m_LyricText->SetForegroundColour( m_EditModeFGColor );
+    //m_LyricText->SetValue( m_LyricText->GetValue() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -437,6 +439,7 @@ void guLyricsPanel::OnSaveBtnClick( wxCommandEvent& event )
     m_LyricText->SetEditable( false );
     //m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
 	m_LyricText->SetBackgroundColour( m_LyricTitle->GetBackgroundColour() );
+	m_LyricText->SetForegroundColour( m_LyricTitle->GetForegroundColour() );
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -494,7 +497,8 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     m_EditButton->Enable( !Artist.IsEmpty() && !Track.IsEmpty() &&
                           !m_CurrentFileName.IsEmpty() && wxFileExists( m_CurrentFileName ) );
     m_LyricText->SetEditable( false );
-	m_LyricText->SetBackgroundColour( m_LyricTitle->GetBackgroundColour() );
+    m_LyricText->SetBackgroundColour( m_LyricTitle->GetBackgroundColour() );
+	m_LyricText->SetForegroundColour( m_LyricTitle->GetForegroundColour() );
 
     SetTitle( Track + wxT( " / " ) + Artist );
     //SetText( _( "No lyrics found for this song." ) );
