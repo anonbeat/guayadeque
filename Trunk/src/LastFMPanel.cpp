@@ -73,6 +73,7 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
     Connect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
 
     Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
 }
@@ -94,9 +95,11 @@ guLastFMInfoCtrl::~guLastFMInfoCtrl()
     Disconnect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     m_Text->Disconnect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     m_Text->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     m_Text->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    m_Text->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
 
     Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
 }
@@ -129,6 +132,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
     m_Text->Connect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     m_Text->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     m_Text->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    m_Text->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -380,7 +384,7 @@ void guLastFMInfoCtrl::OnMouse( wxMouseEvent &event )
     //guLogMessage( wxT( "Mouse: %i %i" ), event.m_x, event.m_y );
     if( !ItemWasFound() )
     {
-        if( event.Entering() || event.Leaving() )
+        if( event.Entering() || event.Leaving() || event.RightDown() )
         {
             wxString LabelText = m_Text->GetLabel();
             LabelText.Replace( wxT( "&" ), wxT( "&&" ) );
@@ -390,6 +394,7 @@ void guLastFMInfoCtrl::OnMouse( wxMouseEvent &event )
             Layout();
         }
     }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
