@@ -997,6 +997,8 @@ guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache
                  guLastFMInfoCtrl( parent, db, dbcache, playerpanel )
 {
     m_Info = NULL;
+
+    Connect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackInfoCtrl::OnSelectArtist ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1004,6 +1006,8 @@ guTrackInfoCtrl::~guTrackInfoCtrl()
 {
     if( m_Info )
         delete m_Info;
+
+    Disconnect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackInfoCtrl::OnSelectArtist ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1043,15 +1047,17 @@ void guTrackInfoCtrl::Clear( void )
     m_Info = NULL;
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guTrackInfoCtrl::OnClick( wxMouseEvent &event )
-//{
-//    if( m_Info )
-//    {
-//        //guLogMessage( wxT( "guArtistInfo::OnClick %s" ), Info->Artist->Url.c_str() );
-//        guWebExecute( m_Info->m_Track->m_Url );
-//    }
-//}
+// -------------------------------------------------------------------------------- //
+void guTrackInfoCtrl::OnSelectArtist( wxCommandEvent &event )
+{
+    guLastFMPanel * LastFMPanel = ( guLastFMPanel * ) GetParent();
+    LastFMPanel->SetUpdateEnable( false );
+
+    guTrackChangeInfo TrackChangeInfo( m_Info->m_Track->m_ArtistName, wxEmptyString );
+
+    LastFMPanel->AppendTrackChangeInfo( &TrackChangeInfo );
+    LastFMPanel->ShowCurrentTrack();
+}
 
 // -------------------------------------------------------------------------------- //
 wxString guTrackInfoCtrl::GetSearchText( void )
@@ -1092,6 +1098,9 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !GetSearchText().IsEmpty() )
     {
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_SELECT_ARTIST, wxT( "Show artist info" ), _( "Update the information with the current selected artist" ) );
+        Menu->Append( MenuItem );
+
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the track info to clipboard" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
