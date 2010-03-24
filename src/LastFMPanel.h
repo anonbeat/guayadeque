@@ -430,6 +430,8 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnSongSelectName( wxCommandEvent &event );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
 
+    void                OnSelectArtist( wxCommandEvent &event );
+
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
 
     virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_TrackId != wxNOT_FOUND ); };
