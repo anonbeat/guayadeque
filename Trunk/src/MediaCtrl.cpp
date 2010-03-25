@@ -684,10 +684,9 @@ void guMediaCtrl::AboutToFinish( void )
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::ClearError( void )
 {
-    while( gst_element_set_state( m_Playbin, GST_STATE_NULL ) == GST_STATE_CHANGE_FAILURE )
+    if( gst_element_set_state( m_Playbin, GST_STATE_NULL ) == GST_STATE_CHANGE_FAILURE )
     {
-        guLogMessage( wxT( "Error clearing the error..." ) );
-        wxMilliSleep( 10 );
+        guLogMessage( wxT( "Error restoring the gstreamer status." ) );
     }
 }
 

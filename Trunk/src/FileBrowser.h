@@ -40,15 +40,19 @@
 
 #define     guPANEL_FILEBROWSER_VISIBLE_DEFAULT     ( guPANEL_FILEBROWSER_DIRCTRL | guPANEL_FILEBROWSER_FILECTRL |\
                                                       guPANEL_FILEBROWSER_FILEDETAILS )
+#define guFILEITEM_FILE     0
+#define guFILEITEM_DIR      1
 
-#define guFILEBROWSER_COLUMN_NAME       0
-#define guFILEBROWSER_COLUMN_SIZE       1
-#define guFILEBROWSER_COLUMN_TIME       2
+#define guFILEBROWSER_COLUMN_TYPE       0
+#define guFILEBROWSER_COLUMN_NAME       1
+#define guFILEBROWSER_COLUMN_SIZE       2
+#define guFILEBROWSER_COLUMN_TIME       3
 
 // -------------------------------------------------------------------------------- //
 class guFileItem
 {
   public :
+    int             m_Type;
     wxString        m_Name;
     wxFileOffset    m_Size;
     int             m_Time;
@@ -61,17 +65,17 @@ class guFileBrowserDirCtrl : public wxPanel
   protected :
     wxGenericDirCtrl *  m_DirCtrl;
 
-//    void    OnDirTreeBeginDrag( wxTreeEvent &event );
-//    void    OnTreeDeleteItem( wxTreeEvent &event );
-//    void    OnDirTreeEndDrag( wxTreeEvent &event );
-//    void    OnTreeItemActivated( wxTreeEvent &event );
-//    void    OnTreeItemSelChanged( wxTreeEvent &event );
+    wxImageList *       GetImageList( void ) { return m_DirCtrl->GetTreeCtrl()->GetImageList(); }
 
   public :
     guFileBrowserDirCtrl( wxWindow * parent, const wxString &dirpath );
     ~guFileBrowserDirCtrl();
 
-    wxString GetPath( void ) { return m_DirCtrl->GetPath(); };
+    wxString GetPath( void ) { return m_DirCtrl->GetPath(); }
+    void     SetPath( const wxString &path ) { m_DirCtrl->SetPath( path ); }
+
+  friend class guFileBrowserFileCtrl;
+  friend class guFileBrowser;
 };
 
 // -------------------------------------------------------------------------------- //
@@ -81,11 +85,13 @@ class guFilesListBox : public guListView
     guDbLibrary *       m_Db;
     wxString            m_CurDir;
     guFileItemArray     m_Files;
+    wxImageList *       m_TreeImageList;
     int                 m_Order;
     bool                m_OrderDesc;
 
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
+    virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                GetItemsList( void );
     virtual int                 GetSelectedSongs( guTrackArray * tracks ) const;
 
@@ -102,6 +108,8 @@ class guFilesListBox : public guListView
 
     void                        SetOrder( int order );
     void                        SetPath( const wxString &path );
+    wxString                    GetPath( const int item );
+    void                        SetTreeImageList( wxImageList * imagelist ) { m_TreeImageList = imagelist; }
 
 };
 
@@ -109,14 +117,18 @@ class guFilesListBox : public guListView
 class guFileBrowserFileCtrl : public wxPanel
 {
   protected :
-    guDbLibrary *       m_Db;
-    guFilesListBox *    m_FilesListBox;
+    guDbLibrary *           m_Db;
+    guFilesListBox *        m_FilesListBox;
+    guFileBrowserDirCtrl *  m_DirCtrl;
 
   public :
-    guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * db );
+    guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * db, guFileBrowserDirCtrl * dirctrl );
     ~guFileBrowserFileCtrl();
 
-    void    SetPath( const wxString &path ) { m_FilesListBox->SetPath( path ); }
+    void                    SetPath( const wxString &path ) { m_FilesListBox->SetPath( path ); }
+    const wxString          GetPath( const int item ) { return m_FilesListBox->GetPath( item ); }
+    wxArrayInt              GetSelectedItems( void ) { return m_FilesListBox->GetSelectedItems(); }
+    void                    SetOrder( const int order ) { m_FilesListBox->SetOrder( order ); }
 
 };
 
@@ -133,7 +145,11 @@ class guFileBrowser : public wxPanel
 	guFileBrowserFileCtrl * m_FilesCtrl;
 
     void                    OnDirItemChanged( wxTreeEvent &event );
+    void                    OnFileItemActivated( wxListEvent &Event );
+    void                    OnFilesColClick( wxListEvent &event );
+    void                    OnDirBeginDrag( wxTreeEvent &event );
 
+    DECLARE_EVENT_TABLE()
 
   public :
     guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );

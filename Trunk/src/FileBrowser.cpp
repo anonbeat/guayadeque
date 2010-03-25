@@ -41,7 +41,7 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, const wxString &d
 	m_DirCtrl = new wxGenericDirCtrl( this, wxID_ANY, dirpath, wxDefaultPosition, wxDefaultSize, wxDIRCTRL_DIR_ONLY|wxSUNKEN_BORDER, wxEmptyString, 0 );
 
 	m_DirCtrl->ShowHidden( false );
-	MainSizer->Add( m_DirCtrl, 1, wxEXPAND | wxALL, 5 );
+	MainSizer->Add( m_DirCtrl, 1, wxEXPAND, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
@@ -59,6 +59,7 @@ guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
 // guFilesListBox
 // -------------------------------------------------------------------------------- //
 wxString guFILES_COLUMN_NAMES[] = {
+    _( "Type" ),
     _( "Name" ),
     _( "Size" ),
     _( "Modified" )
@@ -69,7 +70,6 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
     guListView( parent, wxLB_MULTIPLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING | guLISTVIEW_ALLOWDRAG )
 {
     m_Db = db;
-    //m_CurDir = wxEmptyString;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -128,6 +128,9 @@ wxString guFilesListBox::OnGetItemText( const int row, const int col ) const
     FileItem = &m_Files[ row ];
     switch( ( * m_Columns )[ col ].m_Id )
     {
+        case guFILEBROWSER_COLUMN_TYPE :
+            return wxEmptyString;
+
         case guFILEBROWSER_COLUMN_NAME :
           return FileItem->m_Name;
 
@@ -145,12 +148,110 @@ wxString guFilesListBox::OnGetItemText( const int row, const int col ) const
 }
 
 // -------------------------------------------------------------------------------- //
+void guFilesListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
+{
+    if( ( * m_Columns )[ col ].m_Id == guFILEBROWSER_COLUMN_TYPE )
+    {
+        guFileItem * FileItem = &m_Files[ row ];
+        dc.SetBackgroundMode( wxTRANSPARENT );
+        if( FileItem->m_Type == guFILEITEM_DIR )
+        {
+            m_TreeImageList->Draw( 0, dc, rect.x + 1, rect.y + 1, wxIMAGELIST_DRAW_TRANSPARENT );
+        }
+    }
+    else
+    {
+        guListView::DrawItem( dc, rect, row, col );
+    }
+}
+
+
+// -------------------------------------------------------------------------------- //
 void inline GetFileDetails( const wxString &filename, guFileItem * fileitem )
 {
     wxStructStat St;
     wxStat( filename, &St );
+    fileitem->m_Type = ( ( St.st_mode & S_IFMT ) == S_IFDIR );
     fileitem->m_Size = St.st_size;
     fileitem->m_Time = St.st_ctime;
+}
+
+// -------------------------------------------------------------------------------- //
+static int wxCMPFUNC_CONV CompareFileTypeA( guFileItem ** item1, guFileItem ** item2 )
+{
+    if( ( * item1 )->m_Type == ( * item2 )->m_Type )
+        return 0;
+    else if( ( * item1 )->m_Type > ( * item2 )->m_Type )
+        return 1;
+    else
+        return -1;
+}
+
+// -------------------------------------------------------------------------------- //
+static int wxCMPFUNC_CONV CompareFileTypeD( guFileItem ** item1, guFileItem ** item2 )
+{
+    if( ( * item1 )->m_Type == ( * item2 )->m_Type )
+        return 0;
+    else if( ( * item1 )->m_Type > ( * item2 )->m_Type )
+        return -1;
+    else
+        return 1;
+}
+
+// -------------------------------------------------------------------------------- //
+static int wxCMPFUNC_CONV CompareFileNameA( guFileItem ** item1, guFileItem ** item2 )
+{
+    return ( * item1 )->m_Name.Cmp( ( * item2 )->m_Name );
+}
+
+// -------------------------------------------------------------------------------- //
+static int wxCMPFUNC_CONV CompareFileNameD( guFileItem ** item1, guFileItem ** item2 )
+{
+    return ( * item2 )->m_Name.Cmp( ( * item1 )->m_Name );
+}
+
+// -------------------------------------------------------------------------------- //
+static int wxCMPFUNC_CONV CompareFileSizeA( guFileItem ** item1, guFileItem ** item2 )
+{
+    if( ( * item1 )->m_Size == ( * item2 )->m_Size )
+        return 0;
+    else if( ( * item1 )->m_Size > ( * item2 )->m_Size )
+        return 1;
+    else
+        return -1;
+}
+
+// -------------------------------------------------------------------------------- //
+static int wxCMPFUNC_CONV CompareFileSizeD( guFileItem ** item1, guFileItem ** item2 )
+{
+    if( ( * item1 )->m_Size == ( * item2 )->m_Size )
+        return 0;
+    else if( ( * item2 )->m_Size > ( * item1 )->m_Size )
+        return 1;
+    else
+        return -1;
+}
+
+// -------------------------------------------------------------------------------- //
+static int wxCMPFUNC_CONV CompareFileTimeA( guFileItem ** item1, guFileItem ** item2 )
+{
+    if( ( * item1 )->m_Time == ( * item2 )->m_Time )
+        return 0;
+    else if( ( * item1 )->m_Time > ( * item2 )->m_Time )
+        return 1;
+    else
+        return -1;
+}
+
+// -------------------------------------------------------------------------------- //
+static int wxCMPFUNC_CONV CompareFileTimeD( guFileItem ** item1, guFileItem ** item2 )
+{
+    if( ( * item1 )->m_Time == ( * item2 )->m_Time )
+        return 0;
+    else if( ( * item2 )->m_Time > ( * item1 )->m_Time )
+        return 1;
+    else
+        return -1;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -162,15 +263,45 @@ void guFilesListBox::GetItemsList( void )
         if( Dir.IsOpened() )
         {
             wxString FileName;
-            if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES ) )
+            if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS | wxDIR_DOTDOT ) )
             {
                 do {
-                    guFileItem * FileItem = new guFileItem();
-                    FileItem->m_Name = FileName;
-                    GetFileDetails( m_CurDir + FileName, FileItem );
-                    m_Files.Add( FileItem );
+                    if( FileName != wxT( "." ) )
+                    {
+                        guFileItem * FileItem = new guFileItem();
+                        FileItem->m_Name = FileName;
+                        GetFileDetails( m_CurDir + FileName, FileItem );
+                        m_Files.Add( FileItem );
+                    }
                 } while( Dir.GetNext( &FileName ) );
             }
+        }
+    }
+
+    switch( m_Order )
+    {
+        case guFILEBROWSER_COLUMN_TYPE :
+        {
+            m_Files.Sort( m_OrderDesc ? CompareFileTypeD : CompareFileTypeA );
+            break;
+        }
+
+        case guFILEBROWSER_COLUMN_NAME :
+        {
+            m_Files.Sort( m_OrderDesc ? CompareFileNameD : CompareFileNameA );
+            break;
+        }
+
+        case guFILEBROWSER_COLUMN_SIZE :
+        {
+            m_Files.Sort( m_OrderDesc ? CompareFileSizeD : CompareFileSizeA );
+            break;
+        }
+
+        case guFILEBROWSER_COLUMN_TIME :
+        {
+            m_Files.Sort( m_OrderDesc ? CompareFileTimeD : CompareFileTimeA );
+            break;
         }
     }
 
@@ -275,20 +406,18 @@ void guFilesListBox::SetOrder( int columnid )
     else
         m_OrderDesc = !m_OrderDesc;
 
-////    m_Db->SetPodcastOrder( m_Order );
-//
-//    int CurColId;
-//    int index;
-//    int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
-//    for( index = 0; index < count; index++ )
-//    {
-//        CurColId = GetColumnId( index );
-//        SetColumnLabel( index,
-//            guPODCASTS_COLUMN_NAMES[ CurColId ]  + ( ( CurColId == m_Order ) ?
-//                ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
-//    }
-//
-//    ReloadItems();
+    int CurColId;
+    int index;
+    int count = sizeof( guFILES_COLUMN_NAMES ) / sizeof( wxString );
+    for( index = 0; index < count; index++ )
+    {
+        CurColId = GetColumnId( index );
+        SetColumnLabel( index,
+            guFILES_COLUMN_NAMES[ CurColId ]  + ( ( CurColId == m_Order ) ?
+                ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+    }
+
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -352,21 +481,45 @@ void guFilesListBox::SetPath( const wxString &path )
     ReloadItems();
 }
 
+// -------------------------------------------------------------------------------- //
+wxString guFilesListBox::GetPath( const int item )
+{
+    wxString RetVal;
+    guLogMessage( wxT( "GetPath( %i )" ), item );
+    if( item >= 0 )
+    {
+        if( m_Files[ item ].m_Name == wxT( ".." ) )
+        {
+            RetVal = m_CurDir.BeforeLast( wxT( '/' ) ).BeforeLast( wxT( '/' ) );
+            guLogMessage( wxT( "1) Path : %s" ), RetVal.c_str() );
+            return RetVal;
+        }
+
+        wxFileName FileName( m_Files[ item ].m_Name );
+        FileName.MakeAbsolute( m_CurDir );
+        guLogMessage( wxT( "Path : %s" ), FileName.GetFullPath().c_str() );
+        return FileName.GetFullPath();
+    }
+    return wxEmptyString;
+}
+
 
 
 // -------------------------------------------------------------------------------- //
 // guFileBrowserFileCtrl
 // -------------------------------------------------------------------------------- //
-guFileBrowserFileCtrl::guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * db ) :
+guFileBrowserFileCtrl::guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * db, guFileBrowserDirCtrl * dirctrl ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
     m_Db = db;
+    m_DirCtrl = dirctrl;
 
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_FilesListBox = new guFilesListBox( this, db );
-	MainSizer->Add( m_FilesListBox, 1, wxEXPAND | wxALL, 5 );
+	m_FilesListBox->SetTreeImageList( dirctrl->GetImageList() );
+	MainSizer->Add( m_FilesListBox, 1, wxEXPAND, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
@@ -382,6 +535,10 @@ guFileBrowserFileCtrl::~guFileBrowserFileCtrl()
 // -------------------------------------------------------------------------------- //
 // guFileBrowser
 // -------------------------------------------------------------------------------- //
+BEGIN_EVENT_TABLE( guFileBrowser, wxPanel )
+    EVT_TREE_BEGIN_DRAG( wxID_ANY, guFileBrowser::OnDirBeginDrag)
+END_EVENT_TABLE()
+
 guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
@@ -416,7 +573,7 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 
-    m_VisiblePanels = Config->ReadNum( wxT( "RadVisiblePanels" ), guPANEL_FILEBROWSER_VISIBLE_DEFAULT, wxT( "Positions" ) );
+    m_VisiblePanels = Config->ReadNum( wxT( "FBVisiblePanels" ), guPANEL_FILEBROWSER_VISIBLE_DEFAULT, wxT( "Positions" ) );
 
 
     m_DirCtrl = new guFileBrowserDirCtrl( this, wxT( "/Datos/Music" ) );
@@ -424,10 +581,10 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     m_AuiManager.AddPane( m_DirCtrl,
             wxAuiPaneInfo().Name( wxT( "FileBrowserDirCtrl" ) ).Caption( _( "Directories" ) ).
             MinSize( 60, 28 ).Row( 0 ).Layer( 0 ).Position( 0 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            CloseButton( false ).
             Dockable( true ).Left() );
 
-    m_FilesCtrl = new guFileBrowserFileCtrl( this, db );
+    m_FilesCtrl = new guFileBrowserFileCtrl( this, db, m_DirCtrl );
     m_FilesCtrl->SetPath( m_DirCtrl->GetPath() );
 
     m_AuiManager.AddPane( m_FilesCtrl,
@@ -446,12 +603,20 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     }
 
 	m_DirCtrl->Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guFileBrowser::OnDirItemChanged ), NULL, this );
+	//m_DirCtrl->Connect( wxEVT_TREE_BEGIN_DRAG, wxTreeEventHandler( guFileBrowser::OnDirBeginDrag ), NULL, this );
+    m_FilesCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,  wxListEventHandler( guFileBrowser::OnFileItemActivated ), NULL, this );
+	m_FilesCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guFileBrowser::OnFilesColClick ), NULL, this );
 
 }
 
 // -------------------------------------------------------------------------------- //
 guFileBrowser::~guFileBrowser()
 {
+    guConfig *  Config = ( guConfig * ) guConfig::Get();
+
+    Config->WriteNum( wxT( "FBVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
+    Config->WriteStr( wxT( "FileBrowser" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
+
 	m_DirCtrl->Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guFileBrowser::OnDirItemChanged ), NULL, this );
 
     m_AuiManager.UnInit();
@@ -463,6 +628,39 @@ void guFileBrowser::OnDirItemChanged( wxTreeEvent &event )
     guLogMessage( wxT( "The current selected directory is '%s'" ), m_DirCtrl->GetPath().c_str() );
 
     m_FilesCtrl->SetPath( m_DirCtrl->GetPath() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnFileItemActivated( wxListEvent &Event )
+{
+    wxArrayInt Selection = m_FilesCtrl->GetSelectedItems();
+    if( Selection.Count() )
+    {
+        m_DirCtrl->SetPath( m_FilesCtrl->GetPath( Selection[ 0 ] ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnFilesColClick( wxListEvent &event )
+{
+    int col = event.GetColumn();
+    if( col < 0 )
+        return;
+    m_FilesCtrl->SetOrder( col );
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnDirBeginDrag( wxTreeEvent &event )
+{
+    wxFileDataObject Files;
+
+    Files.AddFile( m_DirCtrl->GetPath() );
+    wxDropSource source( Files, this );
+
+    wxDragResult Result = source.DoDragDrop();
+    if( Result )
+    {
+    }
 }
 
 // -------------------------------------------------------------------------------- //
