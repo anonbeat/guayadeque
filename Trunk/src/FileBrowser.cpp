@@ -179,6 +179,11 @@ void inline GetFileDetails( const wxString &filename, guFileItem * fileitem )
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileTypeA( guFileItem ** item1, guFileItem ** item2 )
 {
+    if( ( * item1 )->m_Name == wxT( ".." ) )
+        return -1;
+    else if( ( * item2 )->m_Name == wxT( ".." ) )
+        return 1;
+
     if( ( * item1 )->m_Type == ( * item2 )->m_Type )
         return 0;
     else if( ( * item1 )->m_Type > ( * item2 )->m_Type )
@@ -190,6 +195,11 @@ static int wxCMPFUNC_CONV CompareFileTypeA( guFileItem ** item1, guFileItem ** i
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileTypeD( guFileItem ** item1, guFileItem ** item2 )
 {
+    if( ( * item1 )->m_Name == wxT( ".." ) )
+        return -1;
+    else if( ( * item2 )->m_Name == wxT( ".." ) )
+        return 1;
+
     if( ( * item1 )->m_Type == ( * item2 )->m_Type )
         return 0;
     else if( ( * item1 )->m_Type > ( * item2 )->m_Type )
@@ -201,57 +211,83 @@ static int wxCMPFUNC_CONV CompareFileTypeD( guFileItem ** item1, guFileItem ** i
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileNameA( guFileItem ** item1, guFileItem ** item2 )
 {
-    return ( * item1 )->m_Name.Cmp( ( * item2 )->m_Name );
+    int type = CompareFileTypeD( item1, item2 );
+    if( !type )
+        return ( * item1 )->m_Name.Cmp( ( * item2 )->m_Name );
+    return type;
 }
 
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileNameD( guFileItem ** item1, guFileItem ** item2 )
 {
-    return ( * item2 )->m_Name.Cmp( ( * item1 )->m_Name );
+    int type = CompareFileTypeD( item1, item2 );
+    if( !type )
+        return ( * item2 )->m_Name.Cmp( ( * item1 )->m_Name );
+    return type;
 }
 
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileSizeA( guFileItem ** item1, guFileItem ** item2 )
 {
-    if( ( * item1 )->m_Size == ( * item2 )->m_Size )
-        return 0;
-    else if( ( * item1 )->m_Size > ( * item2 )->m_Size )
-        return 1;
-    else
-        return -1;
+    int type = CompareFileTypeD( item1, item2 );
+    if( !type )
+    {
+        if( ( * item1 )->m_Size == ( * item2 )->m_Size )
+            return 0;
+        else if( ( * item1 )->m_Size > ( * item2 )->m_Size )
+            return 1;
+        else
+            return -1;
+    }
+    return type;
 }
 
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileSizeD( guFileItem ** item1, guFileItem ** item2 )
 {
-    if( ( * item1 )->m_Size == ( * item2 )->m_Size )
-        return 0;
-    else if( ( * item2 )->m_Size > ( * item1 )->m_Size )
-        return 1;
-    else
-        return -1;
+    int type = CompareFileTypeD( item1, item2 );
+    if( !type )
+    {
+        if( ( * item1 )->m_Size == ( * item2 )->m_Size )
+            return 0;
+        else if( ( * item2 )->m_Size > ( * item1 )->m_Size )
+            return 1;
+        else
+            return -1;
+    }
+    return type;
 }
 
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileTimeA( guFileItem ** item1, guFileItem ** item2 )
 {
-    if( ( * item1 )->m_Time == ( * item2 )->m_Time )
-        return 0;
-    else if( ( * item1 )->m_Time > ( * item2 )->m_Time )
-        return 1;
-    else
-        return -1;
+    int type = CompareFileTypeD( item1, item2 );
+    if( !type )
+    {
+        if( ( * item1 )->m_Time == ( * item2 )->m_Time )
+            return 0;
+        else if( ( * item1 )->m_Time > ( * item2 )->m_Time )
+            return 1;
+        else
+            return -1;
+    }
+    return type;
 }
 
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileTimeD( guFileItem ** item1, guFileItem ** item2 )
 {
-    if( ( * item1 )->m_Time == ( * item2 )->m_Time )
-        return 0;
-    else if( ( * item2 )->m_Time > ( * item1 )->m_Time )
-        return 1;
-    else
-        return -1;
+    int type = CompareFileTypeD( item1, item2 );
+    if( !type )
+    {
+        if( ( * item1 )->m_Time == ( * item2 )->m_Time )
+            return 0;
+        else if( ( * item2 )->m_Time > ( * item1 )->m_Time )
+            return 1;
+        else
+            return -1;
+    }
+    return type;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -461,15 +497,14 @@ int guFilesListBox::GetSelectedSongs( guTrackArray * tracks ) const
 // -------------------------------------------------------------------------------- //
 int guFilesListBox::GetDragFiles( wxFileDataObject * files )
 {
-//    guTrackArray Songs;
-//    int index;
-//    int count = GetSelectedSongs( &Songs );
-//    for( index = 0; index < count; index++ )
-//    {
-//       files->AddFile( Songs[ index ].m_FileName );
-//    }
-//    return count;
-    return 0;
+    wxArrayInt Selection = GetSelectedItems();
+    int index;
+    int count = Selection.Count();
+    for( index = 0; index < count; index++ )
+    {
+       files->AddFile( m_CurDir + m_Files[ Selection[ index ] ].m_Name );
+    }
+    return count;
 }
 
 // -------------------------------------------------------------------------------- //
