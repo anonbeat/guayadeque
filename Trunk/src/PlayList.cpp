@@ -222,7 +222,7 @@ void guPlayList::OnDropBegin( void )
             ClearItems();
             RefreshAll();
             m_DragOverItem = wxNOT_FOUND;
-            m_CurItem = 0;
+            //m_CurItem = wxNOT_FOUND;
             //guLogMessage( wxT( "ClearPlaylist set on config. Playlist cleared" ) );
         }
     }
