@@ -77,7 +77,7 @@ wxString LenToString( unsigned int Len )
 wxString SizeToString( wxFileOffset size )
 {
     double s = size;
-    wxString Formats[] = { wxT( "%f Bytes" ),
+    wxString Formats[] = { wxT( "%.0f Bytes" ),
                            wxT( "%.2f KB" ),
                            wxT( "%.2f MB" ),
                            wxT( "%.2f GB" ),
