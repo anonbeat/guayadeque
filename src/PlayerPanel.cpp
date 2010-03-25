@@ -844,10 +844,15 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
     m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
 
     // If a Player reset is needed
-    if( event.GetExtraLong() )
+    if( event.GetExtraLong() && ( m_MediaCtrl->GetState() != wxMEDIASTATE_PLAYING ) )
     {
-        OnStopButtonClick( event );
-        OnPlayButtonClick( event );
+        //OnStopButtonClick( event );
+        //OnPlayButtonClick( event );
+        if( m_PlayListCtrl->GetCount() )
+        {
+            event.SetInt( 0 );
+            OnPlayListDClick( event );
+        }
     }
     if( ( event.GetExtraLong() || event.GetInt() ) && m_PlaySmart )
     {
