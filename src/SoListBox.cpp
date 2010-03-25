@@ -155,11 +155,15 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
         case guSONGS_COLUMN_BITRATE :
             return wxString::Format( wxT( "%u" ), Song->m_Bitrate );
 
-        case guSONGS_COLUMN_RATING :
-            return wxString::Format( wxT( "%i" ), Song->m_Rating );
+//        case guSONGS_COLUMN_RATING :
+//            return wxString::Format( wxT( "%i" ), Song->m_Rating );
 
         case guSONGS_COLUMN_PLAYCOUNT :
-            return wxString::Format( wxT( "%u" ), Song->m_PlayCount );
+        {
+            if( Song->m_PlayCount )
+                return wxString::Format( wxT( "%u" ), Song->m_PlayCount );
+            break;
+        }
 
         case guSONGS_COLUMN_LASTPLAY :
         {
