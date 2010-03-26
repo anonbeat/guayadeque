@@ -22,10 +22,13 @@
 
 #include "AuiDockArt.h"
 #include "Config.h"
+#include "LibUpdate.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 #include <wx/aui/aui.h>
 #include <wx/arrimpl.cpp>
+#include <wx/artprov.h>
 
 WX_DEFINE_OBJARRAY(guFileItemArray);
 
@@ -128,8 +131,8 @@ wxString guFilesListBox::OnGetItemText( const int row, const int col ) const
     FileItem = &m_Files[ row ];
     switch( ( * m_Columns )[ col ].m_Id )
     {
-        case guFILEBROWSER_COLUMN_TYPE :
-            return wxEmptyString;
+//        case guFILEBROWSER_COLUMN_TYPE :
+//            return wxEmptyString;
 
         case guFILEBROWSER_COLUMN_NAME :
           return FileItem->m_Name;
@@ -154,10 +157,20 @@ void guFilesListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, cons
     {
         guFileItem * FileItem = &m_Files[ row ];
         dc.SetBackgroundMode( wxTRANSPARENT );
-        if( FileItem->m_Type == guFILEITEM_DIR )
+        int ImageIndex = guFILEITEM_IMAGE_INDEX_OTHER;
+        if( FileItem->m_Type == guFILEITEM_TYPE_FOLDER )
         {
-            m_TreeImageList->Draw( 0, dc, rect.x + 1, rect.y + 1, wxIMAGELIST_DRAW_TRANSPARENT );
+            ImageIndex = guFILEITEM_IMAGE_INDEX_FOLDER;
         }
+        else if( FileItem->m_Type == guFILEITEM_TYPE_AUDIO )
+        {
+            ImageIndex = guFILEITEM_IMAGE_INDEX_AUDIO;
+        }
+        else if( FileItem->m_Type == guFILEITEM_TYPE_IMAGE )
+        {
+            ImageIndex = guFILEITEM_IMAGE_INDEX_IMAGE;
+        }
+        m_TreeImageList->Draw( ImageIndex, dc, rect.x + 1, rect.y + 1, wxIMAGELIST_DRAW_TRANSPARENT );
     }
     else
     {
@@ -171,7 +184,7 @@ void inline GetFileDetails( const wxString &filename, guFileItem * fileitem )
 {
     wxStructStat St;
     wxStat( filename, &St );
-    fileitem->m_Type = ( ( St.st_mode & S_IFMT ) == S_IFDIR );
+    fileitem->m_Type = ( ( St.st_mode & S_IFMT ) == S_IFDIR ) ? 0 : 3;
     fileitem->m_Size = St.st_size;
     fileitem->m_Time = St.st_ctime;
 }
@@ -187,9 +200,9 @@ static int wxCMPFUNC_CONV CompareFileTypeA( guFileItem ** item1, guFileItem ** i
     if( ( * item1 )->m_Type == ( * item2 )->m_Type )
         return 0;
     else if( ( * item1 )->m_Type > ( * item2 )->m_Type )
-        return 1;
-    else
         return -1;
+    else
+        return 1;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -203,9 +216,9 @@ static int wxCMPFUNC_CONV CompareFileTypeD( guFileItem ** item1, guFileItem ** i
     if( ( * item1 )->m_Type == ( * item2 )->m_Type )
         return 0;
     else if( ( * item1 )->m_Type > ( * item2 )->m_Type )
-        return -1;
-    else
         return 1;
+    else
+        return -1;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -307,6 +320,10 @@ void guFilesListBox::GetItemsList( void )
                         guFileItem * FileItem = new guFileItem();
                         FileItem->m_Name = FileName;
                         GetFileDetails( m_CurDir + FileName, FileItem );
+                        if( guIsValidAudioFile( FileName.Lower() ) )
+                            FileItem->m_Type = guFILEITEM_TYPE_AUDIO;
+                        else if( guIsValidImageFile( FileName.Lower() ) )
+                            FileItem->m_Type = guFILEITEM_TYPE_IMAGE;
                         m_Files.Add( FileItem );
                     }
                 } while( Dir.GetNext( &FileName ) );
@@ -548,12 +565,15 @@ guFileBrowserFileCtrl::guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * d
 {
     m_Db = db;
     m_DirCtrl = dirctrl;
+    wxImageList * ImageList = dirctrl->GetImageList();
+    ImageList->Add( wxArtProvider::GetBitmap( wxT( "audio-x-generic" ), wxART_OTHER, wxSize( 16, 16 ) ) );
+    ImageList->Add( wxArtProvider::GetBitmap( wxT( "image-x-generic" ), wxART_OTHER, wxSize( 16, 16 ) ) );
 
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_FilesListBox = new guFilesListBox( this, db );
-	m_FilesListBox->SetTreeImageList( dirctrl->GetImageList() );
+	m_FilesListBox->SetTreeImageList( ImageList );
 	MainSizer->Add( m_FilesListBox, 1, wxEXPAND, 5 );
 
 	this->SetSizer( MainSizer );
