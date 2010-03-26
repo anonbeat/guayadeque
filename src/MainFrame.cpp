@@ -855,7 +855,7 @@ void guMainFrame::CreateMenu()
     m_MainMenu->Append( m_ViewAlbumBrowser );
     m_ViewAlbumBrowser->Check( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER );
 
-    m_ViewFileBrowser = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_FILEBROWSER, _( "FileSystem" ), _( "Show/Hide the file browser panel" ), wxITEM_CHECK );
+    m_ViewFileBrowser = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_FILEBROWSER, _( "Files" ), _( "Show/Hide the file browser panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewFileBrowser );
     m_ViewFileBrowser->Check( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER );
 
@@ -1706,7 +1706,7 @@ void guMainFrame::OnViewFileBrowser( wxCommandEvent &event )
         if( !m_FileBrowserPanel )
             m_FileBrowserPanel = new guFileBrowser( m_CatNotebook, m_Db, m_PlayerPanel );
 
-        m_CatNotebook->InsertPage( wxMin( 7, m_CatNotebook->GetPageCount() ), m_FileBrowserPanel, _( "FileSystem" ), true );
+        m_CatNotebook->InsertPage( wxMin( 7, m_CatNotebook->GetPageCount() ), m_FileBrowserPanel, _( "Files" ), true );
 
         CheckShowNotebook();
         m_VisiblePanels |= guPANEL_MAIN_FILEBROWSER;
@@ -2463,7 +2463,7 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
         {
             OnViewAlbumBrowser( event );
         }
-        else if( TabName == _( "FileSystem" ) )
+        else if( TabName == _( "Files" ) )
         {
             OnViewFileBrowser( event );
         }

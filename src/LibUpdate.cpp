@@ -87,6 +87,16 @@ guLibUpdateThread::~guLibUpdateThread()
 }
 
 // -------------------------------------------------------------------------------- //
+bool guIsValidImageFile( const wxString &filename )
+{
+    return filename.EndsWith( wxT( ".jpg" ) ) ||
+           filename.EndsWith( wxT( ".jpeg" ) ) ||
+           filename.EndsWith( wxT( ".png" ) ) ||
+           filename.EndsWith( wxT( ".bmp" ) ) ||
+           filename.EndsWith( wxT( ".gif" ) );
+}
+
+// -------------------------------------------------------------------------------- //
 int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 {
   wxDir         Dir;

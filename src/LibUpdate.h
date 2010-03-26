@@ -25,6 +25,9 @@
 #include "MainFrame.h"
 
 // -------------------------------------------------------------------------------- //
+bool guIsValidImageFile( const wxString &filename );
+
+// -------------------------------------------------------------------------------- //
 class guLibUpdateThread : public wxThread
 {
   private :
