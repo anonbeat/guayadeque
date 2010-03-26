@@ -271,6 +271,9 @@ class guPlayerPanel : public wxPanel
     void                SetPlayList( const guTrackArray &SongList );
     void                AddToPlayList( const guTrackArray &SongList, const bool allowplay = true );
     void                AddToPlayList( const wxString &FileName );
+    void                ClearPlayList( void ) { m_PlayListCtrl->ClearItems(); };
+    void                SetPlayList( const wxArrayString &files );
+
     double              GetVolume() { return m_CurVolume; }
     void                SetVolume( double volume );
     bool                SetPosition( int pos );

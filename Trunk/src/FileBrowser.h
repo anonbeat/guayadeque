@@ -69,20 +69,60 @@ class guFileItem
 };
 WX_DECLARE_OBJARRAY(guFileItem, guFileItemArray);
 
+class guFileBrowserDirCtrl;
+
+// -------------------------------------------------------------------------------- //
+class guGenericDirCtrl : public wxGenericDirCtrl
+{
+  protected :
+    guFileBrowserDirCtrl *  m_FileBrowserDirCtrl;
+    wxString                m_RenameName;
+
+    void                OnBeginRenameDir( wxTreeEvent &event );
+    void                OnEndRenameDir( wxTreeEvent &event );
+
+  public :
+    guGenericDirCtrl() : wxGenericDirCtrl() { m_FileBrowserDirCtrl = NULL; };
+    guGenericDirCtrl(wxWindow *parent, const wxWindowID id = wxID_ANY,
+              const wxString &dir = wxDirDialogDefaultFolderStr,
+              const wxPoint& pos = wxDefaultPosition,
+              const wxSize& size = wxDefaultSize,
+              long style = wxDIRCTRL_3D_INTERNAL|wxSUNKEN_BORDER,
+              const wxString& filter = wxEmptyString,
+              int defaultFilter = 0,
+              const wxString& name = wxTreeCtrlNameStr ) :
+              wxGenericDirCtrl( parent, id, dir, pos, size, style, filter, defaultFilter, name )
+    {
+        m_FileBrowserDirCtrl = NULL;
+    }
+
+    virtual void SetupSections();
+
+    void FolderRename( void );
+
+    DECLARE_EVENT_TABLE()
+};
+
 // -------------------------------------------------------------------------------- //
 class guFileBrowserDirCtrl : public wxPanel
 {
   protected :
-    wxGenericDirCtrl *  m_DirCtrl;
+    guDbLibrary *       m_Db;
+    guGenericDirCtrl *  m_DirCtrl;
 
     wxImageList *       GetImageList( void ) { return m_DirCtrl->GetTreeCtrl()->GetImageList(); }
 
+    void                OnContextMenu( wxTreeEvent &event );
+
   public :
-    guFileBrowserDirCtrl( wxWindow * parent, const wxString &dirpath );
+    guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db, const wxString &dirpath );
     ~guFileBrowserDirCtrl();
 
-    wxString GetPath( void ) { return m_DirCtrl->GetPath(); }
-    void     SetPath( const wxString &path ) { m_DirCtrl->SetPath( path ); }
+    wxString            GetPath( void ) { return m_DirCtrl->GetPath(); }
+    void                SetPath( const wxString &path ) { m_DirCtrl->SetPath( path ); }
+
+    void                RenamedDir( const wxString &oldname, const wxString &newname );
+    void                FolderRename( void ) { m_DirCtrl->FolderRename(); };
 
   friend class guFileBrowserFileCtrl;
   friend class guFileBrowser;
@@ -158,6 +198,12 @@ class guFileBrowser : public wxPanel
     void                    OnFileItemActivated( wxListEvent &Event );
     void                    OnFilesColClick( wxListEvent &event );
     void                    OnDirBeginDrag( wxTreeEvent &event );
+
+    void                    OnFolderPlay( wxCommandEvent &event );
+    void                    OnFolderEnqueue( wxCommandEvent &event );
+    void                    OnFolderNew( wxCommandEvent &event );
+    void                    OnFolderRename( wxCommandEvent &event );
+    void                    OnFolderDelete( wxCommandEvent &event );
 
     DECLARE_EVENT_TABLE()
 
