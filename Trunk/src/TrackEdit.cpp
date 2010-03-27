@@ -359,6 +359,8 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	    wxT( "http://leoslyrics.com" ),
 	    wxT( "http://lyrc.com.ar" ),
 	    wxT( "http://cduniverse.com" ),
+//	    wxT( "http://lyricsfly.com" ),
+        wxT( "http://chartlyrics.com" ),
 	    wxT( "http://ultimate-guitar.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
@@ -1639,6 +1641,16 @@ void guTrackEditor::OnSearchLyrics( wxCommandEvent &event )
     else if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
     {
         m_LyricThread = new guCDUEngine( this, &m_LyricThread,
+                                m_LyricArtistTextCtrl->GetValue().c_str(),
+                                m_LyricTrackTextCtrl->GetValue().c_str() );
+    }
+//    else if( Engine == guLYRIC_ENGINE_LYRICSFLY )
+//    {
+//        m_LyricThread = new guLyricsFlyEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
+//    }
+    else if( Engine == guLYRIC_ENGINE_CHARTLYRICS )
+    {
+        m_LyricThread = new guChartLyricsEngine( this, &m_LyricThread,
                                 m_LyricArtistTextCtrl->GetValue().c_str(),
                                 m_LyricTrackTextCtrl->GetValue().c_str() );
     }
