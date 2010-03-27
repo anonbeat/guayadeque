@@ -5939,3 +5939,15 @@ int guDbLibrary::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject *
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::UpdatePaths( const wxString &oldpath, const wxString &newpath )
+{
+  wxString query;
+
+  query = wxString::Format( wxT( "UPDATE paths SET path_value = replace( path_value, '%s', '%s' )" ),
+            escape_query_str( oldpath ).c_str(), escape_query_str( newpath ).c_str() );
+
+  ExecuteUpdate( query );
+
+}
+
+// -------------------------------------------------------------------------------- //

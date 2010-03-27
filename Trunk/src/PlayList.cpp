@@ -901,7 +901,7 @@ wxString guPlayList::FindCoverFile( const wxString &dirname )
         {
             do {
                 CurFile = FileName.Lower();
-                guLogMessage( wxT( "Searching %s : %s" ), DirName.c_str(), FileName.c_str() );
+                //guLogMessage( wxT( "Searching %s : %s" ), DirName.c_str(), FileName.c_str() );
 
                 if( SearchCoverWords( CurFile, CoverSearchWords ) )
                 {

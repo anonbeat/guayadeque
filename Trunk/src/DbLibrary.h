@@ -519,6 +519,9 @@ class guDbLibrary : public guDb
     int                     GetPendingPodcasts( guPodcastItemArray * items );
     int                     GetPodcastFiles( const wxArrayInt &channelid, wxFileDataObject * files );
 
+    // File Browser related functions
+    void                    UpdatePaths( const wxString &oldpath, const wxString &newpath );
+
 };
 
 // -------------------------------------------------------------------------------- //

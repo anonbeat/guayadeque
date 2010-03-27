@@ -93,7 +93,7 @@ class guGenericDirCtrl : public wxGenericDirCtrl
               const wxString& name = wxTreeCtrlNameStr ) :
               wxGenericDirCtrl( parent, id, dir, pos, size, style, filter, defaultFilter, name )
     {
-        m_FileBrowserDirCtrl = NULL;
+        m_FileBrowserDirCtrl = ( guFileBrowserDirCtrl * ) parent;
     }
 
     virtual void SetupSections();
@@ -109,6 +109,7 @@ class guFileBrowserDirCtrl : public wxPanel
   protected :
     guDbLibrary *       m_Db;
     guGenericDirCtrl *  m_DirCtrl;
+    bool                m_AddingFolder;
 
     wxImageList *       GetImageList( void ) { return m_DirCtrl->GetTreeCtrl()->GetImageList(); }
 
@@ -123,6 +124,8 @@ class guFileBrowserDirCtrl : public wxPanel
 
     void                RenamedDir( const wxString &oldname, const wxString &newname );
     void                FolderRename( void ) { m_DirCtrl->FolderRename(); };
+    void                FolderNew( void );
+    void                FolderDelete( void );
 
   friend class guFileBrowserFileCtrl;
   friend class guFileBrowser;
@@ -159,6 +162,7 @@ class guFilesListBox : public guListView
     void                        SetOrder( int order );
     void                        SetPath( const wxString &path );
     wxString                    GetPath( const int item );
+    int                         GetType( const int item );
     void                        SetTreeImageList( wxImageList * imagelist ) { m_TreeImageList = imagelist; }
 
 };
@@ -177,6 +181,7 @@ class guFileBrowserFileCtrl : public wxPanel
 
     void                    SetPath( const wxString &path ) { m_FilesListBox->SetPath( path ); }
     const wxString          GetPath( const int item ) { return m_FilesListBox->GetPath( item ); }
+    int                     GetType( const int item ) { return m_FilesListBox->GetType( item ); }
     wxArrayInt              GetSelectedItems( void ) { return m_FilesListBox->GetSelectedItems(); }
     void                    SetOrder( const int order ) { m_FilesListBox->SetOrder( order ); }
 
