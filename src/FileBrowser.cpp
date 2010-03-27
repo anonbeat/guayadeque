@@ -25,6 +25,7 @@
 #include "Images.h"
 #include "LibUpdate.h"
 #include "TagInfo.h"
+#include "TrackEdit.h"
 #include "Utils.h"
 
 #include <wx/aui/aui.h>
@@ -239,6 +240,7 @@ void guFileBrowserDirCtrl::FolderDelete( void )
             wxMessageBox( _( "Error deleting the folder " ) + FolderData->m_path,
                 _( "Error" ), wxICON_ERROR | wxOK, this );
         }
+        m_Db->DoCleanUp();
     }
 }
 
@@ -341,7 +343,7 @@ wxString guFilesListBox::OnGetItemText( const int row, const int col ) const
 // -------------------------------------------------------------------------------- //
 void guFilesListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-    if( ( * m_Columns )[ col ].m_Id == guFILEBROWSER_COLUMN_TYPE )
+    if( ( * m_Columns )[ col ].m_Id == guFILEBROWSER_COLUMN_NAME )
     {
         guFileItem * FileItem = &m_Files[ row ];
         dc.SetBackgroundMode( wxTRANSPARENT );
@@ -359,6 +361,10 @@ void guFilesListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, cons
             ImageIndex = guFILEITEM_IMAGE_INDEX_IMAGE;
         }
         m_TreeImageList->Draw( ImageIndex, dc, rect.x + 1, rect.y + 1, wxIMAGELIST_DRAW_TRANSPARENT );
+        wxRect TextRect = rect;
+        TextRect.x += 20; // 16 + 4
+        TextRect.width -= 20;
+        guListView::DrawItem( dc, TextRect, row, col );
     }
     else
     {
@@ -377,21 +383,21 @@ void inline GetFileDetails( const wxString &filename, guFileItem * fileitem )
     fileitem->m_Time = St.st_ctime;
 }
 
-// -------------------------------------------------------------------------------- //
-static int wxCMPFUNC_CONV CompareFileTypeA( guFileItem ** item1, guFileItem ** item2 )
-{
-    if( ( * item1 )->m_Name == wxT( ".." ) )
-        return -1;
-    else if( ( * item2 )->m_Name == wxT( ".." ) )
-        return 1;
-
-    if( ( * item1 )->m_Type == ( * item2 )->m_Type )
-        return 0;
-    else if( ( * item1 )->m_Type > ( * item2 )->m_Type )
-        return -1;
-    else
-        return 1;
-}
+//// -------------------------------------------------------------------------------- //
+//static int wxCMPFUNC_CONV CompareFileTypeA( guFileItem ** item1, guFileItem ** item2 )
+//{
+//    if( ( * item1 )->m_Name == wxT( ".." ) )
+//        return -1;
+//    else if( ( * item2 )->m_Name == wxT( ".." ) )
+//        return 1;
+//
+//    if( ( * item1 )->m_Type == ( * item2 )->m_Type )
+//        return 0;
+//    else if( ( * item1 )->m_Type > ( * item2 )->m_Type )
+//        return -1;
+//    else
+//        return 1;
+//}
 
 // -------------------------------------------------------------------------------- //
 static int wxCMPFUNC_CONV CompareFileTypeD( guFileItem ** item1, guFileItem ** item2 )
@@ -521,11 +527,11 @@ void guFilesListBox::GetItemsList( void )
 
     switch( m_Order )
     {
-        case guFILEBROWSER_COLUMN_TYPE :
-        {
-            m_Files.Sort( m_OrderDesc ? CompareFileTypeD : CompareFileTypeA );
-            break;
-        }
+//        case guFILEBROWSER_COLUMN_TYPE :
+//        {
+//            m_Files.Sort( m_OrderDesc ? CompareFileTypeD : CompareFileTypeA );
+//            break;
+//        }
 
         case guFILEBROWSER_COLUMN_NAME :
         {
@@ -586,42 +592,42 @@ void guFilesListBox::ReloadItems( bool reset )
 // -------------------------------------------------------------------------------- //
 void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
 {
-//    wxArrayInt Selection = GetSelectedItems();
-//    if( Selection.Count() )
-//    {
-//        wxMenuItem * MenuItem;
-//        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
-//        Menu->Append( MenuItem );
-//
-//        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-//        Menu->Append( MenuItem );
-//
-//        Menu->AppendSeparator();
-//
-//        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_DEL, _( "Delete" ), _( "Delete the current selected podcasts" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_del ) );
-//        Menu->Append( MenuItem );
-//
-//        Menu->AppendSeparator();
-//
-//        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_DOWNLOAD, _( "Download" ), _( "Download the current selected podcasts" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
-//        Menu->Append( MenuItem );
-//
-//        Menu->AppendSeparator();
-//        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_COPYTO, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-//        Menu->Append( MenuItem );
-//    }
-//    else
-//    {
-//        wxMenuItem * MenuItem;
-//        MenuItem = new wxMenuItem( Menu, wxID_ANY, _( "No selected items..." ), _( "Copy the current selected podcasts to a directory or device" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_status_error ) );
-//        Menu->Append( MenuItem );
-//    }
+    wxArrayInt Selection = GetSelectedItems();
+    if( Selection.Count() )
+    {
+        wxMenuItem * MenuItem;
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_PLAY, _( "Play" ), _( "Play current selected files" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE, _( "Enqueue" ), _( "Add current selected files to playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_EDITTRACKS, _( "Edit tracks" ), _( "Edit the current selected files" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_COPYTO, _( "Copy to..." ), _( "Copy the selected files to a folder or device" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+
+        if( Selection.Count() == 1 )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_RENAME, _( "Rename" ), _( "Rename the current selected file" ) );
+            //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
+            Menu->Append( MenuItem );
+        }
+
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_DELETE, _( "Delete" ), _( "Delete the selected files" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
+        Menu->Append( MenuItem );
+
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -783,6 +789,55 @@ guFileBrowserFileCtrl::~guFileBrowserFileCtrl()
 {
 }
 
+// -------------------------------------------------------------------------------- //
+bool guAddDirItems( const wxString &path, wxArrayString &files )
+{
+    wxString FileName;
+    wxString CurPath = path;
+    if( !CurPath.EndsWith( wxT( "/" ) ) )
+        CurPath += wxT( "/" );
+    //guLogMessage( wxT( "Deleting folder %s" ), CurPath.c_str() );
+    wxDir Dir( CurPath );
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN | wxDIR_DIRS | wxDIR_DOTDOT ) )
+        {
+            do {
+                if( FileName != wxT( "." ) && FileName != wxT( ".." ) )
+                {
+                    if( wxDirExists( CurPath + FileName ) )
+                    {
+                        if( !guAddDirItems( CurPath + FileName, files ) )
+                            return false;
+                    }
+                    else
+                    {
+                        files.Add( CurPath + FileName );
+                    }
+                }
+            } while( Dir.GetNext( &FileName ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayString guFileBrowserFileCtrl::GetSelectedFiles( const bool includedirs )
+{
+    wxArrayString Files;
+    wxArrayInt Selection = GetSelectedItems();
+    int Index;
+    int Count = Selection.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( includedirs && ( GetType( Selection[ Index ] ) == guFILEITEM_TYPE_FOLDER ) )
+            guAddDirItems( GetPath( Selection[ Index ] ), Files );
+        else
+            Files.Add( GetPath( Selection[ Index ] ) );
+    }
+    return Files;
+}
 
 
 // -------------------------------------------------------------------------------- //
@@ -871,6 +926,13 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     Connect( ID_FILESYSTEM_FOLDER_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderRename ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderDelete ), NULL, this );
 
+    Connect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
+    Connect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
+    Connect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
+    Connect( ID_FILESYSTEM_ITEMS_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopyTo ), NULL, this );
+    Connect( ID_FILESYSTEM_ITEMS_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsRename ), NULL, this );
+    Connect( ID_FILESYSTEM_ITEMS_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsDelete ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -891,6 +953,13 @@ guFileBrowser::~guFileBrowser()
     Disconnect( ID_FILESYSTEM_FOLDER_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderNew ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderRename ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderDelete ), NULL, this );
+
+    Disconnect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
+    Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
+    Disconnect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
+    Disconnect( ID_FILESYSTEM_ITEMS_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopyTo ), NULL, this );
+    Disconnect( ID_FILESYSTEM_ITEMS_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsRename ), NULL, this );
+    Disconnect( ID_FILESYSTEM_ITEMS_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsDelete ), NULL, this );
 
     m_AuiManager.UnInit();
 }
@@ -923,7 +992,7 @@ void guFileBrowser::OnFileItemActivated( wxListEvent &Event )
             {
                 if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "General" )) )
                 {
-                    m_PlayerPanel->AddToPlayList( Files[ 0 ] );
+                    m_PlayerPanel->AddToPlayList( Files );
                 }
                 else
                 {
@@ -988,6 +1057,169 @@ void guFileBrowser::OnFolderRename( wxCommandEvent &event )
 void guFileBrowser::OnFolderDelete( wxCommandEvent &event )
 {
     m_DirCtrl->FolderDelete();
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnItemsPlay( wxCommandEvent &event )
+{
+    wxArrayString Files = m_FilesCtrl->GetSelectedFiles();
+    if( Files.Count() )
+    {
+        m_PlayerPanel->SetPlayList( Files );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnItemsEnqueue( wxCommandEvent &event )
+{
+    wxArrayString Files = m_FilesCtrl->GetSelectedFiles();
+    if( Files.Count() )
+    {
+        m_PlayerPanel->AddToPlayList( Files );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
+{
+    wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
+    int Index;
+    int Count;
+    if( ( Count = Files.Count() ) )
+    {
+        guTrackArray Tracks;
+        guImagePtrArray Images;
+        wxArrayString Lyrics;
+        guPodcastItem PodcastItem;
+
+        for( Index = 0; Index < Count; Index++ )
+        {
+            wxString FileName = Files[ Index ];
+            wxURI Uri( FileName );
+
+            if( Uri.IsReference() )
+            {
+                if( guIsValidAudioFile( FileName ) )
+                {
+                    guTrack * Track = new guTrack();
+                    Track->m_FileName = FileName;
+
+                    if( !m_Db->FindTrackFile( FileName, Track ) )
+                    {
+                        if( m_Db->GetPodcastItemFile( FileName, &PodcastItem ) )
+                        {
+                            delete Track;
+                            continue;
+                        }
+                        else
+                        {
+                            //guLogMessage( wxT( "Reading tags from the file..." ) );
+                            guTagInfo * TagInfo = guGetTagInfoHandler( FileName );
+                            if( TagInfo )
+                            {
+                                Track->m_Type = guTRACK_TYPE_NOTDB;
+
+                                TagInfo->Read();
+
+                                Track->m_ArtistName  = TagInfo->m_ArtistName;
+                                Track->m_AlbumName   = TagInfo->m_AlbumName;
+                                Track->m_SongName    = TagInfo->m_TrackName;
+                                Track->m_Number      = TagInfo->m_Track;
+                                Track->m_GenreName   = TagInfo->m_GenreName;
+                                Track->m_Length      = TagInfo->m_Length;
+                                Track->m_Year        = TagInfo->m_Year;
+                                Track->m_Rating      = wxNOT_FOUND;
+                                Track->m_CoverId     = 0;
+
+                                delete TagInfo;
+                            }
+                            else
+                            {
+                                guLogError( wxT( "Could not read tags from file '%s'" ), FileName.c_str() );
+                            }
+                        }
+                    }
+
+                    Tracks.Add( Track );
+                }
+            }
+        }
+
+
+        if( Tracks.Count() )
+        {
+            guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
+
+            if( TrackEditor )
+            {
+                if( TrackEditor->ShowModal() == wxID_OK )
+                {
+                    m_Db->UpdateSongs( &Tracks );
+                    UpdateImages( Tracks, Images );
+                    UpdateLyrics( Tracks, Lyrics );
+
+                    // Update the track in database, playlist, etc
+                    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
+                }
+                TrackEditor->Destroy();
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnItemsCopyTo( wxCommandEvent &event )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnItemsRename( wxCommandEvent &event )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnItemsDelete( wxCommandEvent &event )
+{
+    wxArrayString Files = m_FilesCtrl->GetSelectedFiles();
+
+    int Index;
+    int Count;
+    bool Error = false;
+    if( ( Count = Files.Count() ) )
+    {
+        if( wxMessageBox( _( "Are you sure to delete the selected files ?" ),
+                         _( "Confirm" ),
+                         wxICON_QUESTION | wxYES_NO, this ) == wxYES )
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                if( wxDirExists( Files[ Index ] ) )
+                {
+                    Error = !RemoveDirItems( Files[ Index ] ) || !wxRmdir( Files[ Index ] );
+                }
+                else
+                {
+                    Error = !wxRemoveFile( Files[ Index ] );
+                }
+                if( Error )
+                {
+                    if( wxMessageBox( _( "There was an error deleting " ) + wxFileNameFromPath( Files[ Index ] ) +
+                                      _( "\nContinue deleting?" ),
+                                     _( "Continue" ),
+                                     wxICON_QUESTION | wxYES_NO, this ) == wxNO )
+                    {
+                        break;
+                    }
+                    //Error = false;
+                }
+            }
+            wxString CurrentFolder = m_DirCtrl->GetPath();
+            m_DirCtrl->CollapsePath( CurrentFolder );
+            m_DirCtrl->ExpandPath( CurrentFolder );
+            //
+            m_Db->DoCleanUp();
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

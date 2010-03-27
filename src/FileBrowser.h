@@ -53,10 +53,10 @@ enum guFILEITEM_TYPE {
 #define guFILEITEM_IMAGE_INDEX_IMAGE    10
 
 
-#define guFILEBROWSER_COLUMN_TYPE       0
-#define guFILEBROWSER_COLUMN_NAME       1
-#define guFILEBROWSER_COLUMN_SIZE       2
-#define guFILEBROWSER_COLUMN_TIME       3
+//#define guFILEBROWSER_COLUMN_TYPE       0
+#define guFILEBROWSER_COLUMN_NAME       0
+#define guFILEBROWSER_COLUMN_SIZE       1
+#define guFILEBROWSER_COLUMN_TIME       2
 
 // -------------------------------------------------------------------------------- //
 class guFileItem
@@ -126,6 +126,8 @@ class guFileBrowserDirCtrl : public wxPanel
     void                FolderRename( void ) { m_DirCtrl->FolderRename(); };
     void                FolderNew( void );
     void                FolderDelete( void );
+    bool                ExpandPath( const wxString &path ) { return m_DirCtrl->ExpandPath( path ); }
+    bool                CollapsePath( const wxString &path ) { return m_DirCtrl->CollapsePath( path ); }
 
   friend class guFileBrowserFileCtrl;
   friend class guFileBrowser;
@@ -183,6 +185,7 @@ class guFileBrowserFileCtrl : public wxPanel
     const wxString          GetPath( const int item ) { return m_FilesListBox->GetPath( item ); }
     int                     GetType( const int item ) { return m_FilesListBox->GetType( item ); }
     wxArrayInt              GetSelectedItems( void ) { return m_FilesListBox->GetSelectedItems(); }
+    wxArrayString           GetSelectedFiles( const bool includedirs = false );
     void                    SetOrder( const int order ) { m_FilesListBox->SetOrder( order ); }
 
 };
@@ -209,6 +212,13 @@ class guFileBrowser : public wxPanel
     void                    OnFolderNew( wxCommandEvent &event );
     void                    OnFolderRename( wxCommandEvent &event );
     void                    OnFolderDelete( wxCommandEvent &event );
+
+    void                    OnItemsPlay( wxCommandEvent &event );
+    void                    OnItemsEnqueue( wxCommandEvent &event );
+    void                    OnItemsEditTracks( wxCommandEvent &event );
+    void                    OnItemsCopyTo( wxCommandEvent &event );
+    void                    OnItemsRename( wxCommandEvent &event );
+    void                    OnItemsDelete( wxCommandEvent &event );
 
     DECLARE_EVENT_TABLE()
 
