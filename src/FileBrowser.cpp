@@ -75,6 +75,8 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db,
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
     m_Db = db;
+    m_AddingFolder = false;
+
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
@@ -129,9 +131,114 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
 
 void guFileBrowserDirCtrl::RenamedDir( const wxString &oldname, const wxString &newname )
 {
-    if( oldname != newname )
+    guLogMessage( wxT( "'%s' -> '%s'" ), oldname.c_str(), newname.c_str() );
+
+    if( m_AddingFolder )
     {
-        guLogMessage( wxT( "%s -> %s" ), oldname.c_str(), newname.c_str() );
+        wxTreeCtrl * TreeCtrl = m_DirCtrl->GetTreeCtrl();
+        if( newname.IsEmpty() )
+        {
+            TreeCtrl->Delete( TreeCtrl->GetSelection() );
+        }
+        //m_DirCtrl->ReCreateTree();
+        m_AddingFolder = false;
+    }
+    else
+    {
+        if( oldname != newname )
+        {
+            m_Db->UpdatePaths( oldname, newname );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowserDirCtrl::FolderNew( void )
+{
+    wxTreeCtrl * TreeCtrl = m_DirCtrl->GetTreeCtrl();
+    wxTreeItemId FolderParent = TreeCtrl->GetSelection();
+    if( FolderParent.IsOk() )
+    {
+        m_AddingFolder = true;
+
+        wxString NewDirName = m_DirCtrl->GetPath() + wxT( "/" ) + _( "New Folder" );
+        int Index = 1;
+        while( wxDirExists( NewDirName ) )
+        {
+            NewDirName = m_DirCtrl->GetPath() + wxT( "/" ) + _( "New Folder" );
+            NewDirName += wxString::Format( wxT( "%i" ), Index++ );
+        }
+
+        if( wxMkdir( NewDirName, 0770 ) )
+        {
+            TreeCtrl->Collapse( FolderParent );
+            //TreeCtrl->Expand( m_AddFolderParent );
+            m_DirCtrl->ExpandPath( NewDirName );
+            wxTextCtrl * TextCtrl = TreeCtrl->EditLabel( TreeCtrl->GetSelection() );
+            TextCtrl->SetSelection( -1, -1 );
+        }
+        else
+        {
+            guLogError( wxT( "Could not create the new directory" ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool RemoveDirItems( const wxString &path )
+{
+    wxString FileName;
+    wxString CurPath = path;
+    if( !CurPath.EndsWith( wxT( "/" ) ) )
+        CurPath += wxT( "/" );
+    //guLogMessage( wxT( "Deleting folder %s" ), CurPath.c_str() );
+    wxDir Dir( CurPath );
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN | wxDIR_DIRS | wxDIR_DOTDOT ) )
+        {
+            do {
+                if( FileName != wxT( "." ) && FileName != wxT( ".." ) )
+                {
+                    if( wxDirExists( CurPath + FileName ) )
+                    {
+                        if( !RemoveDirItems( CurPath + FileName ) )
+                            return false;
+                        if( !wxRmdir( CurPath + FileName ) )
+                            return false;
+                    }
+                    else
+                    {
+                        if( !wxRemoveFile( CurPath + FileName ) )
+                            return false;
+                    }
+                }
+            } while( Dir.GetNext( &FileName ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowserDirCtrl::FolderDelete( void )
+{
+    wxTreeCtrl * TreeCtrl = m_DirCtrl->GetTreeCtrl();
+    wxTreeItemId FolderId = TreeCtrl->GetSelection();
+    wxDirItemData * FolderData = ( wxDirItemData *  ) TreeCtrl->GetItemData( FolderId );
+    if( wxMessageBox( _( "Are you sure to delete the selected path ?" ),
+                     _( "Confirm" ),
+                     wxICON_QUESTION | wxYES_NO, this ) == wxYES )
+    {
+        if( RemoveDirItems( FolderData->m_path ) && wxRmdir( FolderData->m_path ) )
+        {
+            TreeCtrl->Delete( FolderId );
+        }
+        else
+        {
+            wxMessageBox( _( "Error deleting the folder " ) + FolderData->m_path,
+                _( "Error" ), wxICON_ERROR | wxOK, this );
+        }
     }
 }
 
@@ -140,7 +247,6 @@ void guFileBrowserDirCtrl::RenamedDir( const wxString &oldname, const wxString &
 // guFilesListBox
 // -------------------------------------------------------------------------------- //
 wxString guFILES_COLUMN_NAMES[] = {
-    _( "Type" ),
     _( "Name" ),
     _( "Size" ),
     _( "Modified" )
@@ -205,6 +311,10 @@ guFilesListBox::~guFilesListBox()
 // -------------------------------------------------------------------------------- //
 wxString guFilesListBox::OnGetItemText( const int row, const int col ) const
 {
+//    guLogMessage( wxT( "GetItem: %i  %i" ), row, col );
+//    if( row < 0 || col < 0 )
+//        return wxEmptyString;
+
     guFileItem * FileItem;
     FileItem = &m_Files[ row ];
     switch( ( * m_Columns )[ col ].m_Id )
@@ -615,7 +725,7 @@ void guFilesListBox::SetPath( const wxString &path )
 wxString guFilesListBox::GetPath( const int item )
 {
     wxString RetVal;
-    guLogMessage( wxT( "GetPath( %i )" ), item );
+    //guLogMessage( wxT( "GetPath( %i )" ), item );
     if( item >= 0 )
     {
         if( m_Files[ item ].m_Name == wxT( ".." ) )
@@ -627,10 +737,20 @@ wxString guFilesListBox::GetPath( const int item )
 
         wxFileName FileName( m_Files[ item ].m_Name );
         FileName.MakeAbsolute( m_CurDir );
-        guLogMessage( wxT( "Path : %s" ), FileName.GetFullPath().c_str() );
+        //guLogMessage( wxT( "Path : %s" ), FileName.GetFullPath().c_str() );
         return FileName.GetFullPath();
     }
     return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+int guFilesListBox::GetType( const int item )
+{
+    if( item >= 0 )
+    {
+        return m_Files[ item ].m_Type;
+    }
+    return wxNOT_FOUND;
 }
 
 
@@ -789,7 +909,29 @@ void guFileBrowser::OnFileItemActivated( wxListEvent &Event )
     wxArrayInt Selection = m_FilesCtrl->GetSelectedItems();
     if( Selection.Count() )
     {
-        m_DirCtrl->SetPath( m_FilesCtrl->GetPath( Selection[ 0 ] ) );
+        if( m_FilesCtrl->GetType( Selection[ 0 ] ) == guFILEITEM_TYPE_FOLDER )
+        {
+            m_DirCtrl->SetPath( m_FilesCtrl->GetPath( Selection[ 0 ] ) );
+        }
+        else
+        {
+            wxArrayString Files;
+            Files.Add( m_FilesCtrl->GetPath( Selection[ 0 ] ) );
+
+            guConfig * Config = ( guConfig * ) guConfig::Get();
+            if( Config )
+            {
+                if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "General" )) )
+                {
+                    m_PlayerPanel->AddToPlayList( Files[ 0 ] );
+                }
+                else
+                {
+                    m_PlayerPanel->SetPlayList( Files );
+                }
+            }
+
+        }
     }
 }
 
@@ -833,6 +975,7 @@ void guFileBrowser::OnFolderEnqueue( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderNew( wxCommandEvent &event )
 {
+    m_DirCtrl->FolderNew();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -844,6 +987,7 @@ void guFileBrowser::OnFolderRename( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderDelete( wxCommandEvent &event )
 {
+    m_DirCtrl->FolderDelete();
 }
 
 // -------------------------------------------------------------------------------- //
