@@ -475,7 +475,7 @@ void guDbLibrary::DoCleanUp( void )
   ExecuteUpdate( query );
   query = wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" );
   ExecuteUpdate( query );
-  query = wxT( "DELETE FROM plsets WHERE plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" );
+  query = wxT( "DELETE FROM plsets WHERE plset_type = 0 AND plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" );
   ExecuteUpdate( query );
   query = wxT( "DELETE FROM settags WHERE settag_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" );
   ExecuteUpdate( query );

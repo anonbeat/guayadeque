@@ -255,6 +255,39 @@ wxString guFILES_COLUMN_NAMES[] = {
 };
 
 // -------------------------------------------------------------------------------- //
+bool guAddDirItems( const wxString &path, wxArrayString &files )
+{
+    wxString FileName;
+    wxString CurPath = path;
+    if( !CurPath.EndsWith( wxT( "/" ) ) )
+        CurPath += wxT( "/" );
+    guLogMessage( wxT( "Searching in folder %s" ), CurPath.c_str() );
+    wxDir Dir( CurPath );
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN | wxDIR_DIRS | wxDIR_DOTDOT ) )
+        {
+            do {
+                if( FileName != wxT( "." ) && FileName != wxT( ".." ) )
+                {
+                    if( wxDirExists( CurPath + FileName ) )
+                    {
+                        if( !guAddDirItems( CurPath + FileName, files ) )
+                            return false;
+                    }
+                    else
+                    {
+                        files.Add( CurPath + FileName );
+                    }
+                }
+            } while( Dir.GetNext( &FileName ) );
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
     guListView( parent, wxLB_MULTIPLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING | guLISTVIEW_ALLOWDRAG )
 {
@@ -670,39 +703,80 @@ void guFilesListBox::SetOrder( int columnid )
 // -------------------------------------------------------------------------------- //
 int guFilesListBox::GetSelectedSongs( guTrackArray * tracks ) const
 {
-//    wxArrayInt Selection = GetSelectedItems();
-//    int Index;
-//    int Count = Selection.Count();
-//    for( Index = 0; Index < Count; Index++ )
-//    {
-//        guPodcastItem PodcastItem;
-//        if( ( m_Db->GetPodcastItemId( Selection[ Index ], &PodcastItem ) != wxNOT_FOUND ) &&
-//            ( PodcastItem.m_Status == guPODCAST_STATUS_READY ) &&
-//            ( wxFileExists( PodcastItem.m_FileName ) ) )
-//        {
-//            guTrack * Track = new guTrack();
-//            if( Track )
-//            {
-//                Track->m_Type = guTRACK_TYPE_PODCAST;
-//                Track->m_SongId = PodcastItem.m_Id;
-//                Track->m_FileName = PodcastItem.m_FileName;
-//                Track->m_SongName = PodcastItem.m_Title;
-//                Track->m_ArtistName = PodcastItem.m_Author;
-//                Track->m_AlbumId = PodcastItem.m_ChId;
-//                Track->m_AlbumName = PodcastItem.m_Channel;
-//                Track->m_Length = PodcastItem.m_Length;
-//                Track->m_PlayCount = PodcastItem.m_PlayCount;
-//                Track->m_GenreName = wxT( "Podcasts" );
-//                Track->m_Number = Index;
-//                Track->m_Rating = -1;
-//                Track->m_CoverId = 0;
-//                Track->m_Year = 0; // Get year from item date
-//                tracks->Add( Track );
-//            }
-//        }
-//    }
-//    return tracks->Count();
-    return 0;
+    wxArrayString Files;
+    wxArrayInt Selection = GetSelectedItems( true );
+    int Index;
+    int Count;
+    guLogMessage( wxT( "Selected %i items." ), Selection.Count() );
+    if( ( Count = Selection.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( ( m_Files[ Selection[ Index ] ].m_Type == guFILEITEM_TYPE_FOLDER ) )
+                guAddDirItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name, Files );
+            else
+                Files.Add( m_CurDir + m_Files[ Selection[ Index ] ].m_Name );
+        }
+    }
+
+    if( ( Count = Files.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            wxString FileName = Files[ Index ];
+            guLogMessage( wxT( "File: %s" ), FileName.c_str() );
+            wxURI Uri( FileName );
+
+            if( Uri.IsReference() )
+            {
+                if( guIsValidAudioFile( FileName ) )
+                {
+                    guTrack * Track = new guTrack();
+                    Track->m_FileName = FileName;
+
+                    if( !m_Db->FindTrackFile( FileName, Track ) )
+                    {
+                        guPodcastItem PodcastItem;
+                        if( m_Db->GetPodcastItemFile( FileName, &PodcastItem ) )
+                        {
+                            delete Track;
+                            continue;
+                        }
+                        else
+                        {
+                            //guLogMessage( wxT( "Reading tags from the file..." ) );
+                            guTagInfo * TagInfo = guGetTagInfoHandler( FileName );
+                            if( TagInfo )
+                            {
+                                Track->m_Type = guTRACK_TYPE_NOTDB;
+
+                                TagInfo->Read();
+
+                                Track->m_ArtistName  = TagInfo->m_ArtistName;
+                                Track->m_AlbumName   = TagInfo->m_AlbumName;
+                                Track->m_SongName    = TagInfo->m_TrackName;
+                                Track->m_Number      = TagInfo->m_Track;
+                                Track->m_GenreName   = TagInfo->m_GenreName;
+                                Track->m_Length      = TagInfo->m_Length;
+                                Track->m_Year        = TagInfo->m_Year;
+                                Track->m_Rating      = wxNOT_FOUND;
+                                Track->m_CoverId     = 0;
+
+                                delete TagInfo;
+                            }
+                            else
+                            {
+                                guLogError( wxT( "Could not read tags from file '%s'" ), FileName.c_str() );
+                            }
+                        }
+                    }
+
+                    tracks->Add( Track );
+                }
+            }
+        }
+    }
+    return tracks->Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -787,39 +861,6 @@ guFileBrowserFileCtrl::guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * d
 // -------------------------------------------------------------------------------- //
 guFileBrowserFileCtrl::~guFileBrowserFileCtrl()
 {
-}
-
-// -------------------------------------------------------------------------------- //
-bool guAddDirItems( const wxString &path, wxArrayString &files )
-{
-    wxString FileName;
-    wxString CurPath = path;
-    if( !CurPath.EndsWith( wxT( "/" ) ) )
-        CurPath += wxT( "/" );
-    //guLogMessage( wxT( "Deleting folder %s" ), CurPath.c_str() );
-    wxDir Dir( CurPath );
-    if( Dir.IsOpened() )
-    {
-        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN | wxDIR_DIRS | wxDIR_DOTDOT ) )
-        {
-            do {
-                if( FileName != wxT( "." ) && FileName != wxT( ".." ) )
-                {
-                    if( wxDirExists( CurPath + FileName ) )
-                    {
-                        if( !guAddDirItems( CurPath + FileName, files ) )
-                            return false;
-                    }
-                    else
-                    {
-                        files.Add( CurPath + FileName );
-                    }
-                }
-            } while( Dir.GetNext( &FileName ) );
-        }
-        return true;
-    }
-    return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1082,87 +1123,28 @@ void guFileBrowser::OnItemsEnqueue( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
 {
-    wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
-    int Index;
-    int Count;
-    if( ( Count = Files.Count() ) )
+    guTrackArray Tracks;
+    guImagePtrArray Images;
+    wxArrayString Lyrics;
+
+    m_FilesCtrl->GetSelectedSongs( &Tracks );
+
+    if( Tracks.Count() )
     {
-        guTrackArray Tracks;
-        guImagePtrArray Images;
-        wxArrayString Lyrics;
-        guPodcastItem PodcastItem;
+        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
 
-        for( Index = 0; Index < Count; Index++ )
+        if( TrackEditor )
         {
-            wxString FileName = Files[ Index ];
-            wxURI Uri( FileName );
-
-            if( Uri.IsReference() )
+            if( TrackEditor->ShowModal() == wxID_OK )
             {
-                if( guIsValidAudioFile( FileName ) )
-                {
-                    guTrack * Track = new guTrack();
-                    Track->m_FileName = FileName;
+                m_Db->UpdateSongs( &Tracks );
+                UpdateImages( Tracks, Images );
+                UpdateLyrics( Tracks, Lyrics );
 
-                    if( !m_Db->FindTrackFile( FileName, Track ) )
-                    {
-                        if( m_Db->GetPodcastItemFile( FileName, &PodcastItem ) )
-                        {
-                            delete Track;
-                            continue;
-                        }
-                        else
-                        {
-                            //guLogMessage( wxT( "Reading tags from the file..." ) );
-                            guTagInfo * TagInfo = guGetTagInfoHandler( FileName );
-                            if( TagInfo )
-                            {
-                                Track->m_Type = guTRACK_TYPE_NOTDB;
-
-                                TagInfo->Read();
-
-                                Track->m_ArtistName  = TagInfo->m_ArtistName;
-                                Track->m_AlbumName   = TagInfo->m_AlbumName;
-                                Track->m_SongName    = TagInfo->m_TrackName;
-                                Track->m_Number      = TagInfo->m_Track;
-                                Track->m_GenreName   = TagInfo->m_GenreName;
-                                Track->m_Length      = TagInfo->m_Length;
-                                Track->m_Year        = TagInfo->m_Year;
-                                Track->m_Rating      = wxNOT_FOUND;
-                                Track->m_CoverId     = 0;
-
-                                delete TagInfo;
-                            }
-                            else
-                            {
-                                guLogError( wxT( "Could not read tags from file '%s'" ), FileName.c_str() );
-                            }
-                        }
-                    }
-
-                    Tracks.Add( Track );
-                }
+                // Update the track in database, playlist, etc
+                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
             }
-        }
-
-
-        if( Tracks.Count() )
-        {
-            guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-
-            if( TrackEditor )
-            {
-                if( TrackEditor->ShowModal() == wxID_OK )
-                {
-                    m_Db->UpdateSongs( &Tracks );
-                    UpdateImages( Tracks, Images );
-                    UpdateLyrics( Tracks, Lyrics );
-
-                    // Update the track in database, playlist, etc
-                    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
-                }
-                TrackEditor->Destroy();
-            }
+            TrackEditor->Destroy();
         }
     }
 }
@@ -1170,11 +1152,18 @@ void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnItemsCopyTo( wxCommandEvent &event )
 {
+    guTrackArray * Tracks = new guTrackArray();
+    m_FilesCtrl->GetSelectedSongs( Tracks );
+
+    event.SetId( ID_MAINFRAME_COPYTO );
+    event.SetClientData( ( void * ) Tracks );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnItemsRename( wxCommandEvent &event )
 {
+    // Only should be enabled if one item is selected
 }
 
 // -------------------------------------------------------------------------------- //
