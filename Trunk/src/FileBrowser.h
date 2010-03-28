@@ -167,6 +167,7 @@ class guFilesListBox : public guListView
     int                         GetType( const int item );
     void                        SetTreeImageList( wxImageList * imagelist ) { m_TreeImageList = imagelist; }
 
+  friend class guFileBrowserFileCtrl;
 };
 
 // -------------------------------------------------------------------------------- //
@@ -186,6 +187,7 @@ class guFileBrowserFileCtrl : public wxPanel
     int                     GetType( const int item ) { return m_FilesListBox->GetType( item ); }
     wxArrayInt              GetSelectedItems( void ) { return m_FilesListBox->GetSelectedItems(); }
     wxArrayString           GetSelectedFiles( const bool includedirs = false );
+    int                     GetSelectedSongs( guTrackArray * tracks ) { return m_FilesListBox->GetSelectedSongs( tracks ); }
     void                    SetOrder( const int order ) { m_FilesListBox->SetOrder( order ); }
 
 };

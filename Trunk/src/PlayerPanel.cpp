@@ -749,42 +749,45 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
         m_PlayListCtrl->AddPlayListItem( files[ Index ] );
     }
     m_PlayListCtrl->ReloadItems();
-    m_PlayListCtrl->SetCurrent( 0 );
-    SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
-    //m_MediaSong.SongId = 0;
-
-    wxCommandEvent event;
-    OnStopButtonClick( event );
-    OnPlayButtonClick( event );
-    TrackListChanged();
-
-    // Add the added track to the smart cache
-    if( m_PlaySmart )
+    if( m_PlayListCtrl->GetItemCount() )
     {
-        // Reset the Smart played items
-        m_SmartAddedTracks.Empty();
-        m_SmartAddedArtists.Empty();
+        m_PlayListCtrl->SetCurrent( 0 );
+        SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
+        //m_MediaSong.SongId = 0;
 
-        //guLogMessage( wxT( "SetPlayList adding track to smart cache..." ) );
-        int Count;
-        int Index = 0;
-        Count = m_PlayListCtrl->GetItemCount();
-        // We only insert the last CACHEITEMS as the rest should be forgiven
-        if( Count > guPLAYER_SMART_CACHEITEMS )
-            Index = Count - guPLAYER_SMART_CACHEITEMS;
-        for( ; Index < Count; Index++ )
-        {
-            guTrack * Track = m_PlayListCtrl->GetItem( Index );
-            m_SmartAddedTracks.Add( Track->m_SongId );
-        }
+        wxCommandEvent event;
+        OnStopButtonClick( event );
+        OnPlayButtonClick( event );
+        TrackListChanged();
 
-        Index = 0;
-        if( Count > guPLAYER_SMART_CACHEARTISTS )
-            Index = Count - guPLAYER_SMART_CACHEARTISTS;
-        for( ; Index < Count; Index++ )
+        // Add the added track to the smart cache
+        if( m_PlaySmart )
         {
-            guTrack * Track = m_PlayListCtrl->GetItem( Index );
-            m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
+            // Reset the Smart played items
+            m_SmartAddedTracks.Empty();
+            m_SmartAddedArtists.Empty();
+
+            //guLogMessage( wxT( "SetPlayList adding track to smart cache..." ) );
+            int Count;
+            int Index = 0;
+            Count = m_PlayListCtrl->GetItemCount();
+            // We only insert the last CACHEITEMS as the rest should be forgiven
+            if( Count > guPLAYER_SMART_CACHEITEMS )
+                Index = Count - guPLAYER_SMART_CACHEITEMS;
+            for( ; Index < Count; Index++ )
+            {
+                guTrack * Track = m_PlayListCtrl->GetItem( Index );
+                m_SmartAddedTracks.Add( Track->m_SongId );
+            }
+
+            Index = 0;
+            if( Count > guPLAYER_SMART_CACHEARTISTS )
+                Index = Count - guPLAYER_SMART_CACHEARTISTS;
+            for( ; Index < Count; Index++ )
+            {
+                guTrack * Track = m_PlayListCtrl->GetItem( Index );
+                m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
+            }
         }
     }
 }
@@ -848,7 +851,7 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
         int Count = m_PlayListCtrl->GetCount();
 
         // TODO : Check if the track was really added or not
-        if( Count )
+        if( Count > PrevTrackCount )
         {
             guTrack * Track = m_PlayListCtrl->GetItem( Count - 1 );
 
@@ -863,7 +866,7 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
         }
     }
 
-    if( !PrevTrackCount && ( GetState() != wxMEDIASTATE_PLAYING ) )
+    if( !PrevTrackCount && m_PlayListCtrl->GetCount() && ( GetState() != wxMEDIASTATE_PLAYING ) )
     {
         wxCommandEvent CmdEvent;
         OnNextTrackButtonClick( CmdEvent );
@@ -910,7 +913,7 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files )
             m_SmartAddedArtists.RemoveAt( 0, Count - guPLAYER_SMART_CACHEARTISTS );
     }
 
-    if( !PrevTrackCount && ( GetState() != wxMEDIASTATE_PLAYING ) )
+    if( !PrevTrackCount && m_PlayListCtrl->GetItemCount() && ( GetState() != wxMEDIASTATE_PLAYING ) )
     {
         wxCommandEvent CmdEvent;
         OnNextTrackButtonClick( CmdEvent );
