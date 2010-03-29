@@ -248,13 +248,6 @@ void guFileBrowserDirCtrl::FolderDelete( void )
 // -------------------------------------------------------------------------------- //
 // guFilesListBox
 // -------------------------------------------------------------------------------- //
-wxString guFILES_COLUMN_NAMES[] = {
-    _( "Name" ),
-    _( "Size" ),
-    _( "Modified" )
-};
-
-// -------------------------------------------------------------------------------- //
 bool guAddDirItems( const wxString &path, wxArrayString &files )
 {
     wxString FileName;
@@ -300,13 +293,14 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
 
     int ColId;
     wxString ColName;
+    wxArrayString ColumnNames = GetColumnNames();
     int index;
-    int count = sizeof( guFILES_COLUMN_NAMES ) / sizeof( wxString );
+    int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         ColId = Config->ReadNum( wxString::Format( wxT( "FileBrowserCol%u" ), index ), index, wxT( "FileBrowserColumns" ) );
 
-        ColName = guFILES_COLUMN_NAMES[ ColId ];
+        ColName = ColumnNames[ ColId ];
 
         ColName += ( ( ColId == m_Order ) ? ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
 
@@ -327,8 +321,9 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
 guFilesListBox::~guFilesListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString ColumnNames = GetColumnNames();
     int index;
-    int count = sizeof( guFILES_COLUMN_NAMES ) / sizeof( wxString );
+    int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         Config->WriteNum( wxString::Format( wxT( "FileBrowserCol%u" ), index ),
@@ -341,6 +336,16 @@ guFilesListBox::~guFilesListBox()
 
     Config->WriteNum( wxT( "Order" ), m_Order, wxT( "FileBrowser" ) );
     Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "FileBrowser" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayString guFilesListBox::GetColumnNames( void )
+{
+    wxArrayString ColumnNames;
+    ColumnNames.Add( _( "Name" ) );
+    ColumnNames.Add( _( "Size" ) );
+    ColumnNames.Add( _( "Modified" ) );
+    return ColumnNames;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -686,14 +691,15 @@ void guFilesListBox::SetOrder( int columnid )
     else
         m_OrderDesc = !m_OrderDesc;
 
+    wxArrayString ColumnNames = GetColumnNames();
     int CurColId;
     int index;
-    int count = sizeof( guFILES_COLUMN_NAMES ) / sizeof( wxString );
+    int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         CurColId = GetColumnId( index );
         SetColumnLabel( index,
-            guFILES_COLUMN_NAMES[ CurColId ]  + ( ( CurColId == m_Order ) ?
+            ColumnNames[ CurColId ]  + ( ( CurColId == m_Order ) ?
                 ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 

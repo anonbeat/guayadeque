@@ -152,6 +152,8 @@ class guFilesListBox : public guListView
 
     virtual int                 GetDragFiles( wxFileDataObject * files );
 
+    wxArrayString               GetColumnNames( void );
+
   public :
     guFilesListBox( wxWindow * parent, guDbLibrary * db );
     ~guFilesListBox();
