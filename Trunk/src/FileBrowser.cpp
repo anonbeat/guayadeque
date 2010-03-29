@@ -32,6 +32,7 @@
 #include <wx/aui/aui.h>
 #include <wx/arrimpl.cpp>
 #include <wx/artprov.h>
+#include <wx/clipbrd.h>
 
 WX_DEFINE_OBJARRAY(guFileItemArray);
 
@@ -113,6 +114,28 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE, _( "Enqueue" ), _( "Add the selected folder to playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    Menu.Append( MenuItem );
+
+    Menu.AppendSeparator();
+
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_COPY, _( "Copy" ), _( "Copy the selected folder to clipboard" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
+    Menu.Append( MenuItem );
+
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_PASTE, _( "Paste" ), _( "Paste to the selected folder" ) );
+    wxTheClipboard->UsePrimarySelection( false );
+    if( wxTheClipboard->Open() )
+    {
+        if( wxTheClipboard->IsSupported( wxDF_FILENAME ) )
+        {
+            wxFileDataObject data;
+            if( wxTheClipboard->GetData( data ) )
+            {
+                guLogMessage( wxT( "The data is type wxDF_FILENAME: %s" ), data.GetFilenames()[ 0 ].c_str() );
+            }
+        }
+        wxTheClipboard->Close();
+    }
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
@@ -206,11 +229,13 @@ bool RemoveDirItems( const wxString &path )
                     {
                         if( !RemoveDirItems( CurPath + FileName ) )
                             return false;
+                        guLogMessage( wxT( "Removing Dir: %s" ), ( CurPath + FileName ).c_str() );
                         if( !wxRmdir( CurPath + FileName ) )
                             return false;
                     }
                     else
                     {
+                        guLogMessage( wxT( "Removing file: %s" ), ( CurPath + FileName ).c_str() );
                         if( !wxRemoveFile( CurPath + FileName ) )
                             return false;
                     }
@@ -976,6 +1001,8 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     Connect( ID_FILESYSTEM_FOLDER_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderNew ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderRename ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderDelete ), NULL, this );
+    Connect( ID_FILESYSTEM_FOLDER_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopy ), NULL, this );
+    Connect( ID_FILESYSTEM_FOLDER_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPaste ), NULL, this );
 
     Connect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
@@ -1004,6 +1031,8 @@ guFileBrowser::~guFileBrowser()
     Disconnect( ID_FILESYSTEM_FOLDER_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderNew ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderRename ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderDelete ), NULL, this );
+    Disconnect( ID_FILESYSTEM_FOLDER_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopy ), NULL, this );
+    Disconnect( ID_FILESYSTEM_FOLDER_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPaste ), NULL, this );
 
     Disconnect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
@@ -1108,6 +1137,90 @@ void guFileBrowser::OnFolderRename( wxCommandEvent &event )
 void guFileBrowser::OnFolderDelete( wxCommandEvent &event )
 {
     m_DirCtrl->FolderDelete();
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnFolderCopy( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnFolderCopy" ) );
+    wxTheClipboard->UsePrimarySelection( false );
+    if( wxTheClipboard->Open() )
+    {
+        wxTheClipboard->Clear();
+        wxFileDataObject * FileObject = new wxFileDataObject();
+        FileObject->AddFile( m_DirCtrl->GetPath() );
+
+        if( !wxTheClipboard->AddData( FileObject ) )
+        {
+            delete FileObject;
+            guLogError( wxT( "Can't copy the folder to the clipboard" ) );
+        }
+        wxTheClipboard->Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the clipboard object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnFolderPaste( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnFolderPaste" ) );
+    wxTheClipboard->UsePrimarySelection( false );
+    if( wxTheClipboard->Open() )
+    {
+        if( wxTheClipboard->IsSupported( wxDF_FILENAME ) )
+        {
+            wxFileDataObject FileObject;
+            if( wxTheClipboard->GetData( FileObject ) )
+            {
+                wxArrayString Files = FileObject.GetFilenames();
+                wxArrayString FromFiles;
+                //guLogMessage( wxT( "Pasted: %s" ), Files[ 0 ].c_str() );
+                int Index;
+                int Count = Files.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    if( wxDirExists( Files[ Index ] ) )
+                    {
+                        wxFileName::Mkdir( m_DirCtrl->GetPath() + wxFileNameFromPath( Files[ Index ] ), 0770, wxPATH_MKDIR_FULL );
+
+                        guAddDirItems( Files[ Index ], FromFiles );
+
+                        int FromIndex;
+                        int FromCount = FromFiles.Count();
+                        for( FromIndex = 0; FromIndex < FromCount; FromIndex++ )
+                        {
+                            wxString DestName = FromFiles[ FromIndex ];
+                            DestName.Replace( wxPathOnly( Files[ Index ] ), m_DirCtrl->GetPath() );
+                            wxFileName::Mkdir( wxPathOnly( DestName ), 0770, wxPATH_MKDIR_FULL );
+                            guLogMessage( wxT( "Copy file %s to %s" ), FromFiles[ FromIndex ].c_str(), DestName.c_str() );
+                            wxCopyFile( FromFiles[ FromIndex ], DestName );
+                        }
+
+                    }
+                    else
+                    {
+                        wxCopyFile( Files[ Index ], m_DirCtrl->GetPath() + wxT( "/" ) + wxFileNameFromPath( Files[ Index ] ) );
+                    }
+                }
+                wxString CurPath = m_DirCtrl->GetPath();
+                m_DirCtrl->CollapsePath( CurPath );
+                m_DirCtrl->ExpandPath( CurPath );
+            }
+            else
+            {
+                guLogError( wxT( "Can't paste the data from the clipboard" ) );
+            }
+
+        }
+        wxTheClipboard->Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the clipboard object" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

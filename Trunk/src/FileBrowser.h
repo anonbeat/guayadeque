@@ -216,6 +216,8 @@ class guFileBrowser : public wxPanel
     void                    OnFolderNew( wxCommandEvent &event );
     void                    OnFolderRename( wxCommandEvent &event );
     void                    OnFolderDelete( wxCommandEvent &event );
+    void                    OnFolderCopy( wxCommandEvent &event );
+    void                    OnFolderPaste( wxCommandEvent &event );
 
     void                    OnItemsPlay( wxCommandEvent &event );
     void                    OnItemsEnqueue( wxCommandEvent &event );
