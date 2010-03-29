@@ -500,26 +500,33 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	LyricsSaveSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Save " ) ), wxVERTICAL );
 
 	m_LyricsTracksSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Save lyrics to audio files" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LyricsTracksSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "Lyrics" ) ) );
-    LyricsSaveSizer->Add( m_LyricsTracksSaveChkBox, 0, wxALL, 5 );
+    m_LyricsTracksSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToFiles" ), false, wxT( "Lyrics" ) ) );
+    LyricsSaveSizer->Add( m_LyricsTracksSaveChkBox, 0, wxEXPAND|wxALL, 5 );
 
-	m_LyricsTracksAutoSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Auto Save lyrics to audio files" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LyricsTracksAutoSaveChkBox->SetValue( m_Config->ReadBool( wxT( "AutoSaveLyricsToFiles" ), false, wxT( "Lyrics" ) ) );
-    m_LyricsTracksAutoSaveChkBox->Enable( m_LyricsTracksSaveChkBox->IsChecked() );
-    LyricsSaveSizer->Add( m_LyricsTracksAutoSaveChkBox, 0, wxALL, 5 );
+	m_LyricsTracksSaveSelectedChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Only for the selected tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LyricsTracksSaveSelectedChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToFilesOnlySelected" ), false, wxT( "Lyrics" ) ) );
+    m_LyricsTracksSaveSelectedChkBox->Enable( m_LyricsTracksSaveChkBox->IsChecked() );
+    LyricsSaveSizer->Add( m_LyricsTracksSaveSelectedChkBox, 0, wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
+
+    wxStaticLine * LyricsStaticLine = new wxStaticLine( m_LyricsPanel, wxID_ANY );
+	LyricsSaveSizer->Add( LyricsStaticLine, 0, wxEXPAND, 5 );
 
 	wxBoxSizer * LyricsDirSaveSizer;
 	LyricsDirSaveSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_LyricsDirSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Save Lyrics to directory" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LyricsDirSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) ) );
+    m_LyricsDirSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToDir" ), false, wxT( "Lyrics" ) ) );
 	LyricsDirSaveSizer->Add( m_LyricsDirSaveChkBox, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_LyricsDirSavePicker = new wxDirPickerCtrl( m_LyricsPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) ), _( "Select lyrics folder" ), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
     m_LyricsDirSavePicker->Enable( m_LyricsDirSaveChkBox->IsChecked() );
-	LyricsDirSaveSizer->Add( m_LyricsDirSavePicker, 0, wxALL, 5 );
+	LyricsDirSaveSizer->Add( m_LyricsDirSavePicker, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	LyricsSaveSizer->Add( LyricsDirSaveSizer, 1, wxEXPAND, 5 );
+
+	m_LyricsDirSaveSelectedChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Only for the selected tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LyricsDirSaveSelectedChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToDirOnlySelected" ), false, wxT( "Lyrics" ) ) );
+	LyricsSaveSizer->Add( m_LyricsDirSaveSelectedChkBox, 0, wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
 	LyricsMainSizer->Add( LyricsSaveSizer, 0, wxEXPAND|wxALL, 5 );
 
@@ -1141,10 +1148,11 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "Podcasts" ) );
     m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
 
-    m_Config->WriteBool( wxT( "SaveLyricsToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
-    m_Config->WriteBool( wxT( "AutoSaveLyricsToFiles" ), m_LyricsTracksAutoSaveChkBox->GetValue(), wxT( "Lyrics" ) );
-    m_Config->WriteBool( wxT( "SaveLyricsToDir" ), m_LyricsDirSaveChkBox->GetValue(), wxT( "Lyrics" ) );
+    m_Config->WriteBool( wxT( "SaveToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
+    m_Config->WriteBool( wxT( "SaveToFilesOnlySelected" ), m_LyricsTracksSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
+    m_Config->WriteBool( wxT( "SaveToDir" ), m_LyricsDirSaveChkBox->GetValue(), wxT( "Lyrics" ) );
     m_Config->WriteStr( wxT( "Path" ), m_LyricsDirSavePicker->GetPath(), wxT( "Lyrics" ) );
+    m_Config->WriteBool( wxT( "SaveToDirOnlySelected" ), m_LyricsDirSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
 
 
 
@@ -1371,13 +1379,14 @@ void guPrefDialog::OnCoverListBoxDClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLyricsSaveTracksClicked( wxCommandEvent &event )
 {
-    m_LyricsTracksAutoSaveChkBox->Enable( event.IsChecked() );
+    m_LyricsTracksSaveSelectedChkBox->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLyricsSaveDirClicked( wxCommandEvent &event )
 {
     m_LyricsDirSavePicker->Enable( event.IsChecked() );
+    m_LyricsDirSaveSelectedChkBox->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

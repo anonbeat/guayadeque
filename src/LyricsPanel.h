@@ -87,8 +87,9 @@ class guLyricsPanel : public wxPanel
 	wxString                m_CurrentFileName;
 	wxString                m_CurrentLyricText;
 	bool                    m_WriteToFiles;
-	bool                    m_AutoWriteToFiles;
+	bool                    m_WriteToFilesOnlySelected;
 	bool                    m_WriteToDir;
+	bool                    m_WriteToDirOnlySelected;
 	wxString                m_WriteToDirPath;
 
     void                    SetTitle( const wxString &title );
@@ -108,7 +109,7 @@ class guLyricsPanel : public wxPanel
     void                    OnLyricsPrint( wxCommandEvent &event );
 
     void                    OnConfigUpdated( wxCommandEvent &event );
-    void                    SaveLyrics( const bool IsAuto = false );
+    void                    SaveLyrics( const bool selected = false );
     void                    OnServerSelected( wxCommandEvent &event );
 
   public :

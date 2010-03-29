@@ -114,9 +114,10 @@ class guPrefDialog : public wxDialog
 
     wxPanel *                   m_LyricsPanel;
     wxCheckBox *                m_LyricsTracksSaveChkBox;
-    wxCheckBox *                m_LyricsTracksAutoSaveChkBox;
+    wxCheckBox *                m_LyricsTracksSaveSelectedChkBox;
     wxCheckBox *                m_LyricsDirSaveChkBox;
     wxDirPickerCtrl *           m_LyricsDirSavePicker;
+    wxCheckBox *                m_LyricsDirSaveSelectedChkBox;
 
     wxPanel *                   m_OnlinePanel;
     wxListBox *                 m_OnlineFiltersListBox;
