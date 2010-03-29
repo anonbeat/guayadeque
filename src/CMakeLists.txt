@@ -212,6 +212,8 @@ ADD_EXECUTABLE( guayadeque
 	AuiDockArt.h
 	FileBrowser.cpp
 	FileBrowser.h
+	FileRenamer.cpp
+	FileRenamer.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

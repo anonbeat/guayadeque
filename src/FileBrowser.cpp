@@ -22,6 +22,7 @@
 
 #include "AuiDockArt.h"
 #include "Config.h"
+#include "FileRenamer.h"
 #include "Images.h"
 #include "LibUpdate.h"
 #include "TagInfo.h"
@@ -654,12 +655,9 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSeparator();
 
-        if( Selection.Count() == 1 )
-        {
-            MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_RENAME, _( "Rename" ), _( "Rename the current selected file" ) );
-            //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
-            Menu->Append( MenuItem );
-        }
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_RENAME, _( "Rename files" ), _( "Rename the current selected file" ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
+        Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_DELETE, _( "Delete" ), _( "Delete the selected files" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
@@ -718,10 +716,13 @@ int guFilesListBox::GetSelectedSongs( guTrackArray * tracks ) const
     {
         for( Index = 0; Index < Count; Index++ )
         {
-            if( ( m_Files[ Selection[ Index ] ].m_Type == guFILEITEM_TYPE_FOLDER ) )
-                guAddDirItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name, Files );
-            else
-                Files.Add( m_CurDir + m_Files[ Selection[ Index ] ].m_Name );
+            if( m_Files[ Selection[ Index ] ].m_Name != wxT( ".." ) )
+            {
+                if( ( m_Files[ Selection[ Index ] ].m_Type == guFILEITEM_TYPE_FOLDER ) )
+                    guAddDirItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name, Files );
+                else
+                    Files.Add( m_CurDir + m_Files[ Selection[ Index ] ].m_Name );
+            }
         }
     }
 
@@ -878,10 +879,13 @@ wxArrayString guFileBrowserFileCtrl::GetSelectedFiles( const bool includedirs )
     int Count = Selection.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        if( includedirs && ( GetType( Selection[ Index ] ) == guFILEITEM_TYPE_FOLDER ) )
-            guAddDirItems( GetPath( Selection[ Index ] ), Files );
-        else
-            Files.Add( GetPath( Selection[ Index ] ) );
+        if( GetPath( Selection[ Index ] ) != wxT( ".." ) )
+        {
+            if( includedirs && ( GetType( Selection[ Index ] ) == guFILEITEM_TYPE_FOLDER ) )
+                guAddDirItems( GetPath( Selection[ Index ] ), Files );
+            else
+                Files.Add( GetPath( Selection[ Index ] ) );
+        }
     }
     return Files;
 }
@@ -1169,7 +1173,41 @@ void guFileBrowser::OnItemsCopyTo( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnItemsRename( wxCommandEvent &event )
 {
-    // Only should be enabled if one item is selected
+    wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
+    if( Files.Count() )
+    {
+        guFileRenamer * FileRenamer = new guFileRenamer( this, m_Db, Files );
+        if( FileRenamer )
+        {
+            if( FileRenamer->ShowModal() == wxID_OK )
+            {
+                wxArrayString RenamedFiles = FileRenamer->GetRenamedNames();
+                int Index;
+                int Count = RenamedFiles.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    if( Files[ Index ] != RenamedFiles[ Index ] )
+                    {
+                        if( !wxDirExists( wxPathOnly( RenamedFiles[ Index ] ) ) )
+                        {
+                            wxFileName::Mkdir( wxPathOnly( RenamedFiles[ Index ] ), 0770, wxPATH_MKDIR_FULL );
+                        }
+
+                        //if( wxFileExists( Files[ Index ] ) )
+                        if( !wxRenameFile( Files[ Index ], RenamedFiles[ Index ] ) )
+                        {
+                            guLogError( wxT( "Could no rename '%s' to '%s'" ),
+                                Files[ Index ].c_str(),
+                                RenamedFiles[ Index ].c_str() );
+                        }
+                    }
+                }
+                //m_DirCtrl->ExpandPath( m_DirCtrl->GetPath() );
+                m_FilesCtrl->SetPath( m_DirCtrl->GetPath() );
+            }
+            FileRenamer->Destroy();
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
