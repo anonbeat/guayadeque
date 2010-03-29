@@ -105,6 +105,8 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+	Connect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnOKButton ) );
+
 	m_FilesListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guFileRenamer::OnFileSelected ), NULL, this );
 	m_PatTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guFileRenamer::OnPatternChanged ), NULL, this );
 	m_PatApplyBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnPatternApply ), NULL, this );
@@ -129,6 +131,19 @@ guFileRenamer::~guFileRenamer()
 	m_PatTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guFileRenamer::OnPatternChanged ), NULL, this );
 	m_PatApplyBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnPatternApply ), NULL, this );
 	m_PatRevertBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnPattternRevert ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileRenamer::OnOKButton( wxCommandEvent& event )
+{
+    if( m_CurFile != wxNOT_FOUND )
+    {
+        if( m_NameTextCtrl->IsModified() )
+        {
+            m_FilesListBox->SetString( m_CurFile, m_NameTextCtrl->GetLineText( 0 ) );
+        }
+    }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //

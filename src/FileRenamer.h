@@ -59,6 +59,8 @@ class guFileRenamer : public wxDialog
     void OnPatternApply( wxCommandEvent& event );
     void OnPattternRevert( wxCommandEvent& event );
 
+    void OnOKButton( wxCommandEvent& event );
+
   public:
     guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArrayString &files );
     ~guFileRenamer();
