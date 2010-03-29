@@ -503,6 +503,11 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_LyricsTracksSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "Lyrics" ) ) );
     LyricsSaveSizer->Add( m_LyricsTracksSaveChkBox, 0, wxALL, 5 );
 
+	m_LyricsTracksAutoSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Auto Save lyrics to audio files" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LyricsTracksAutoSaveChkBox->SetValue( m_Config->ReadBool( wxT( "AutoSaveLyricsToFiles" ), false, wxT( "Lyrics" ) ) );
+    m_LyricsTracksAutoSaveChkBox->Enable( m_LyricsTracksSaveChkBox->IsChecked() );
+    LyricsSaveSizer->Add( m_LyricsTracksAutoSaveChkBox, 0, wxALL, 5 );
+
 	wxBoxSizer * LyricsDirSaveSizer;
 	LyricsDirSaveSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -973,6 +978,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_DelCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
 	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
 
+    m_LyricsTracksSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
     m_LyricsDirSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
 
 	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
@@ -1036,6 +1042,7 @@ guPrefDialog::~guPrefDialog()
 	m_DelCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
 
+    m_LyricsTracksSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
     m_LyricsDirSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
 
 	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
@@ -1135,6 +1142,7 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
 
     m_Config->WriteBool( wxT( "SaveLyricsToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
+    m_Config->WriteBool( wxT( "AutoSaveLyricsToFiles" ), m_LyricsTracksAutoSaveChkBox->GetValue(), wxT( "Lyrics" ) );
     m_Config->WriteBool( wxT( "SaveLyricsToDir" ), m_LyricsDirSaveChkBox->GetValue(), wxT( "Lyrics" ) );
     m_Config->WriteStr( wxT( "Path" ), m_LyricsDirSavePicker->GetPath(), wxT( "Lyrics" ) );
 
@@ -1358,6 +1366,12 @@ void guPrefDialog::OnCoverListBoxDClicked( wxCommandEvent &event )
             EntryDialog->Destroy();
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricsSaveTracksClicked( wxCommandEvent &event )
+{
+    m_LyricsTracksAutoSaveChkBox->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

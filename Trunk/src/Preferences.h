@@ -114,6 +114,7 @@ class guPrefDialog : public wxDialog
 
     wxPanel *                   m_LyricsPanel;
     wxCheckBox *                m_LyricsTracksSaveChkBox;
+    wxCheckBox *                m_LyricsTracksAutoSaveChkBox;
     wxCheckBox *                m_LyricsDirSaveChkBox;
     wxDirPickerCtrl *           m_LyricsDirSavePicker;
 
@@ -181,6 +182,7 @@ class guPrefDialog : public wxDialog
 	void OnDelPathBtnClick( wxCommandEvent& event );
 	void OnPathsListBoxDClicked( wxCommandEvent &event );
 	void OnCoverListBoxDClicked( wxCommandEvent &event );
+	void OnLyricsSaveTracksClicked( wxCommandEvent &event );
 	void OnLyricsSaveDirClicked( wxCommandEvent &event );
     void OnCoversListBoxSelected( wxCommandEvent& event );
     void OnAddCoverBtnClick( wxCommandEvent& event );

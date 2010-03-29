@@ -55,6 +55,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
     Config->RegisterObject( this );
 
     m_WriteToFiles   = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "Lyrics" ) );
+    m_AutoWriteToFiles = Config->ReadBool( wxT( "AutoSaveLyricsToFiles" ), false, wxT( "Lyrics" ) );
     m_WriteToDir     = Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) );
     m_WriteToDirPath = Config->ReadStr(  wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) );
     if( !m_WriteToDirPath.EndsWith( wxT( "/" ) ) )
@@ -229,6 +230,7 @@ void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
     if( Config )
     {
         m_WriteToFiles   = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "Lyrics" ) );
+        m_AutoWriteToFiles = Config->ReadBool( wxT( "AutoSaveLyricsToFiles" ), false, wxT( "Lyrics" ) );
         m_WriteToDir     = Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) );
         m_WriteToDirPath = Config->ReadStr(  wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) );
         if( !m_WriteToDirPath.EndsWith( wxT( "/" ) ) )
@@ -299,7 +301,7 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
         // If have been edited and not saved
         if( m_LyricText->IsModified() )
         {
-            SaveLyrics();
+            SaveLyrics( m_AutoWriteToFiles );
         }
 
         m_CurrentFileName = wxEmptyString;
@@ -367,10 +369,10 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLyricsPanel::SaveLyrics( void )
+void guLyricsPanel::SaveLyrics( const bool isauto )
 {
     //guLogMessage( wxT( "Saving to File: %i  Dir: %i" ), m_WriteToFiles, m_WriteToDir );
-    if( m_WriteToFiles )
+    if( m_WriteToFiles && isauto )
     {
         if( !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) )
         {
@@ -392,7 +394,7 @@ void guLyricsPanel::SaveLyrics( void )
         }
     }
 
-    if( m_WriteToDir )
+    if( m_WriteToDir && isauto )
     {
         wxFileName FileName( m_WriteToDirPath +
                     m_ArtistTextCtrl->GetValue() + wxT( "/" ) +
@@ -439,7 +441,7 @@ void guLyricsPanel::OnEditBtnClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnSaveBtnClick( wxCommandEvent& event )
 {
-    SaveLyrics();
+    SaveLyrics( true );
     m_SaveButton->Enable( false );
     m_EditButton->Enable( true );
     m_LyricText->SetEditable( false );
@@ -645,9 +647,9 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
 
         SetText( * Content );
 
-        SaveLyrics();
+        SaveLyrics( m_AutoWriteToFiles );
 
-        if( !m_WriteToFiles || !m_WriteToDir )
+        if( !m_AutoWriteToFiles || !m_WriteToDir )
         {
             m_SaveButton->Enable( !Content->IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
         }
@@ -703,14 +705,10 @@ void guLyricsPanel::OnLyricsPaste( wxCommandEvent &event )
 
                 SetText( m_CurrentLyricText );
 
-                if( m_UpdateEnabled )
-                {
-                    SaveLyrics();
-                }
-                else
-                {
-                    m_SaveButton->Enable( !m_CurrentLyricText.IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
-                }
+                SaveLyrics( m_AutoWriteToFiles );
+
+                m_SaveButton->Enable( !m_CurrentLyricText.IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) &&
+                                      ( !m_AutoWriteToFiles || !m_WriteToDir ) );
             }
         }
         wxTheClipboard->Close();
@@ -772,7 +770,7 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
     // If have been edited and not saved
     if( m_LyricText->IsModified() )
     {
-        SaveLyrics();
+        SaveLyrics( m_AutoWriteToFiles );
     }
 
     if( m_Db->FindTrackFile( files[ 0 ], &Track ) )

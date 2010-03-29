@@ -87,6 +87,7 @@ class guLyricsPanel : public wxPanel
 	wxString                m_CurrentFileName;
 	wxString                m_CurrentLyricText;
 	bool                    m_WriteToFiles;
+	bool                    m_AutoWriteToFiles;
 	bool                    m_WriteToDir;
 	wxString                m_WriteToDirPath;
 
@@ -107,7 +108,7 @@ class guLyricsPanel : public wxPanel
     void                    OnLyricsPrint( wxCommandEvent &event );
 
     void                    OnConfigUpdated( wxCommandEvent &event );
-    void                    SaveLyrics( void );
+    void                    SaveLyrics( const bool IsAuto = false );
     void                    OnServerSelected( wxCommandEvent &event );
 
   public :
