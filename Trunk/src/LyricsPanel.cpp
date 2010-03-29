@@ -231,6 +231,12 @@ void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
         m_WriteToFiles   = Config->ReadBool( wxT( "SaveLyricsToFiles" ), false, wxT( "Lyrics" ) );
         m_WriteToDir     = Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) );
         m_WriteToDirPath = Config->ReadStr(  wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) );
+        if( !m_WriteToDirPath.EndsWith( wxT( "/" ) ) )
+            m_WriteToDirPath += wxT( "/" );
+        if( !wxDirExists( m_WriteToDirPath ) )
+        {
+            wxMkdir( m_WriteToDirPath, 0770 );
+        }
     }
 }
 
