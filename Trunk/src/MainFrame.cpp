@@ -2010,6 +2010,20 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
             LenToString( m_SelLength.GetLo() ).c_str(),
             SizeToString( m_SelSize.GetValue() ).c_str() ) );
     }
+    else if( m_CurrentPage == ( wxWindow * ) m_FileBrowserPanel )
+    {
+        if( m_FileBrowserPanel->GetCounters( &m_SelCount, &m_SelLength, &m_SelSize ) )
+        {
+            m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu dirs, %llu files,   %s" ),
+                m_SelLength.GetValue(),
+                m_SelCount.GetValue(),
+                SizeToString( m_SelSize.GetValue() ).c_str() ) );
+        }
+        else
+        {
+            m_MainStatusBar->SetSelInfo( wxEmptyString );
+        }
+    }
     else
     {
         //m_SelCount = wxNOT_FOUND;

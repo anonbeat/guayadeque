@@ -114,6 +114,10 @@
 		<Unit filename="src/DynamicPlayList.h" />
 		<Unit filename="src/Equalizer.cpp" />
 		<Unit filename="src/Equalizer.h" />
+		<Unit filename="src/FileBrowser.cpp" />
+		<Unit filename="src/FileBrowser.h" />
+		<Unit filename="src/FileRenamer.cpp" />
+		<Unit filename="src/FileRenamer.h" />
 		<Unit filename="src/GeListBox.cpp" />
 		<Unit filename="src/GeListBox.h" />
 		<Unit filename="src/Google.cpp" />
@@ -220,6 +224,8 @@
 		<Unit filename="src/dbus/mmkeys.h" />
 		<Unit filename="src/dbus/mpris.cpp" />
 		<Unit filename="src/dbus/mpris.h" />
+		<Unit filename="src/dbus/notify.cpp" />
+		<Unit filename="src/dbus/notify.h" />
 		<Unit filename="src/hmac/hmac_sha2.c">
 			<Option compilerVar="CC" />
 		</Unit>

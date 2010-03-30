@@ -169,6 +169,8 @@ class guFilesListBox : public guListView
     int                         GetType( const int item );
     void                        SetTreeImageList( wxImageList * imagelist ) { m_TreeImageList = imagelist; }
 
+    bool                        GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
+
   friend class guFileBrowserFileCtrl;
 };
 
@@ -191,6 +193,11 @@ class guFileBrowserFileCtrl : public wxPanel
     wxArrayString           GetSelectedFiles( const bool includedirs = false );
     int                     GetSelectedSongs( guTrackArray * tracks ) { return m_FilesListBox->GetSelectedSongs( tracks ); }
     void                    SetOrder( const int order ) { m_FilesListBox->SetOrder( order ); }
+
+    bool                    GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+    {
+        return m_FilesListBox->GetCounters( count, len, size );
+    }
 
 };
 
@@ -231,6 +238,12 @@ class guFileBrowser : public wxPanel
   public :
     guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guFileBrowser();
+
+    bool                    GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+    {
+        return m_FilesCtrl->GetCounters( count, len, size );
+    }
+
 
 };
 

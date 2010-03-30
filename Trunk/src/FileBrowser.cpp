@@ -616,8 +616,8 @@ void guFilesListBox::GetItemsList( void )
         }
     }
 
-//    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
-//    AddPendingEvent( event );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    AddPendingEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -865,6 +865,28 @@ int guFilesListBox::GetType( const int item )
     return wxNOT_FOUND;
 }
 
+// -------------------------------------------------------------------------------- //
+bool guFilesListBox::GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+{
+    int Index;
+    int Count;
+    * count = * len = * size = 0;
+    Count = m_Files.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( ( m_Files[ Index ].m_Type == guFILEITEM_TYPE_FOLDER ) )
+        {
+            if( ( m_Files[ Index ].m_Name != wxT( ".." ) ) )
+                ( * len )++;
+        }
+        else
+        {
+            * size += m_Files[ Index ].m_Size;
+            ( * count )++;
+        }
+    }
+    return true;
+}
 
 
 // -------------------------------------------------------------------------------- //
