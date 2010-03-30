@@ -154,6 +154,10 @@ class guFilesListBox : public guListView
 
     wxArrayString               GetColumnNames( void );
 
+    int                         GetPathSordedItems( const wxString &path, guFileItemArray * items,
+                                                    const int order, const bool orderdesc,
+                                                    const bool recursive = false ) const;
+
   public :
     guFilesListBox( wxWindow * parent, guDbLibrary * db );
     ~guFilesListBox();
@@ -165,11 +169,14 @@ class guFilesListBox : public guListView
 
     void                        SetOrder( int order );
     void                        SetPath( const wxString &path );
-    wxString                    GetPath( const int item );
+    wxString                    GetPath( const int item, const bool absolute = true );
     int                         GetType( const int item );
     void                        SetTreeImageList( wxImageList * imagelist ) { m_TreeImageList = imagelist; }
 
     bool                        GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
+
+    wxArrayString               GetSelectedFiles( const bool recursive = false );
+    wxArrayString               GetAllFiles( const bool recursive = false );
 
   friend class guFileBrowserFileCtrl;
 };
@@ -187,10 +194,11 @@ class guFileBrowserFileCtrl : public wxPanel
     ~guFileBrowserFileCtrl();
 
     void                    SetPath( const wxString &path ) { m_FilesListBox->SetPath( path ); }
-    const wxString          GetPath( const int item ) { return m_FilesListBox->GetPath( item ); }
+    const wxString          GetPath( const int item, const bool absolute = true ) { return m_FilesListBox->GetPath( item, absolute ); }
     int                     GetType( const int item ) { return m_FilesListBox->GetType( item ); }
-    wxArrayInt              GetSelectedItems( void ) { return m_FilesListBox->GetSelectedItems(); }
-    wxArrayString           GetSelectedFiles( const bool includedirs = false );
+    wxArrayInt              GetSelectedItems( const bool convertall = true ) { return m_FilesListBox->GetSelectedItems( convertall ); }
+    wxArrayString           GetSelectedFiles( const bool recursive = false ) { return m_FilesListBox->GetSelectedFiles( recursive ); }
+    wxArrayString           GetAllFiles( const bool recursive = false ) { return m_FilesListBox->GetAllFiles( recursive ); }
     int                     GetSelectedSongs( guTrackArray * tracks ) { return m_FilesListBox->GetSelectedSongs( tracks ); }
     void                    SetOrder( const int order ) { m_FilesListBox->SetOrder( order ); }
 

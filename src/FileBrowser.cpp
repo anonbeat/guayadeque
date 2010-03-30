@@ -366,7 +366,8 @@ void guFileBrowserDirCtrl::OnShowLibPathsClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 // guFilesListBox
 // -------------------------------------------------------------------------------- //
-bool guAddDirItems( const wxString &path, wxArrayString &files )
+bool guAddDirItems( const wxString &path, wxArrayString &files,
+                    const int order = wxNOT_FOUND, const bool orderdesc = false )
 {
     wxString FileName;
     wxString CurPath = path;
@@ -654,11 +655,15 @@ static int wxCMPFUNC_CONV CompareFileTimeD( guFileItem ** item1, guFileItem ** i
 }
 
 // -------------------------------------------------------------------------------- //
-void guFilesListBox::GetItemsList( void )
+int guFilesListBox::GetPathSordedItems( const wxString &path, guFileItemArray * items,
+    const int order, const bool orderdesc, const bool recursive ) const
 {
-    if( !m_CurDir.IsEmpty() && wxDirExists( m_CurDir ) )
+    wxString Path = path;
+    if( !Path.EndsWith( wxT( "/" ) ) )
+        Path += wxT( "/" );
+    if( !path.IsEmpty() && wxDirExists( Path ) )
     {
-        wxDir Dir( m_CurDir );
+        wxDir Dir( Path );
         if( Dir.IsOpened() )
         {
             wxString FileName;
@@ -667,46 +672,59 @@ void guFilesListBox::GetItemsList( void )
                 do {
                     if( FileName != wxT( "." ) )
                     {
-                        guFileItem * FileItem = new guFileItem();
-                        FileItem->m_Name = FileName;
-                        GetFileDetails( m_CurDir + FileName, FileItem );
-                        if( guIsValidAudioFile( FileName.Lower() ) )
-                            FileItem->m_Type = guFILEITEM_TYPE_AUDIO;
-                        else if( guIsValidImageFile( FileName.Lower() ) )
-                            FileItem->m_Type = guFILEITEM_TYPE_IMAGE;
-                        m_Files.Add( FileItem );
+                        if( recursive && wxDirExists( Path + FileName ) )
+                        {
+                            if( FileName != wxT( ".." ) )
+                            {
+                                GetPathSordedItems( Path + FileName, items, order, orderdesc, recursive );
+                            }
+                        }
+                        else
+                        {
+                            guFileItem * FileItem = new guFileItem();
+                            if( recursive )
+                                FileItem->m_Name = Path;
+                            FileItem->m_Name += FileName;
+                            GetFileDetails( Path + FileName, FileItem );
+                            if( guIsValidAudioFile( FileName.Lower() ) )
+                                FileItem->m_Type = guFILEITEM_TYPE_AUDIO;
+                            else if( guIsValidImageFile( FileName.Lower() ) )
+                                FileItem->m_Type = guFILEITEM_TYPE_IMAGE;
+                            items->Add( FileItem );
+                        }
                     }
                 } while( Dir.GetNext( &FileName ) );
             }
+
+            switch( order )
+            {
+                case guFILEBROWSER_COLUMN_NAME :
+                {
+                    items->Sort( orderdesc ? CompareFileNameD : CompareFileNameA );
+                    break;
+                }
+
+                case guFILEBROWSER_COLUMN_SIZE :
+                {
+                    items->Sort( orderdesc ? CompareFileSizeD : CompareFileSizeA );
+                    break;
+                }
+
+                case guFILEBROWSER_COLUMN_TIME :
+                {
+                    items->Sort( orderdesc ? CompareFileTimeD : CompareFileTimeA );
+                    break;
+                }
+            }
         }
     }
+    return items->Count();
+}
 
-    switch( m_Order )
-    {
-//        case guFILEBROWSER_COLUMN_TYPE :
-//        {
-//            m_Files.Sort( m_OrderDesc ? CompareFileTypeD : CompareFileTypeA );
-//            break;
-//        }
-
-        case guFILEBROWSER_COLUMN_NAME :
-        {
-            m_Files.Sort( m_OrderDesc ? CompareFileNameD : CompareFileNameA );
-            break;
-        }
-
-        case guFILEBROWSER_COLUMN_SIZE :
-        {
-            m_Files.Sort( m_OrderDesc ? CompareFileSizeD : CompareFileSizeA );
-            break;
-        }
-
-        case guFILEBROWSER_COLUMN_TIME :
-        {
-            m_Files.Sort( m_OrderDesc ? CompareFileTimeD : CompareFileTimeA );
-            break;
-        }
-    }
+// -------------------------------------------------------------------------------- //
+void guFilesListBox::GetItemsList( void )
+{
+    GetPathSordedItems( m_CurDir, &m_Files, m_Order, m_OrderDesc );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
@@ -748,7 +766,7 @@ void guFilesListBox::ReloadItems( bool reset )
 // -------------------------------------------------------------------------------- //
 void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
 {
-    wxArrayInt Selection = GetSelectedItems();
+    wxArrayInt Selection = GetSelectedItems( false );
     if( Selection.Count() )
     {
         wxMenuItem * MenuItem;
@@ -825,7 +843,7 @@ void guFilesListBox::SetOrder( int columnid )
 int guFilesListBox::GetSelectedSongs( guTrackArray * tracks ) const
 {
     wxArrayString Files;
-    wxArrayInt Selection = GetSelectedItems( true );
+    wxArrayInt Selection = GetSelectedItems( false );
     int Index;
     int Count;
     guLogMessage( wxT( "Selected %i items." ), Selection.Count() );
@@ -836,9 +854,24 @@ int guFilesListBox::GetSelectedSongs( guTrackArray * tracks ) const
             if( m_Files[ Selection[ Index ] ].m_Name != wxT( ".." ) )
             {
                 if( ( m_Files[ Selection[ Index ] ].m_Type == guFILEITEM_TYPE_FOLDER ) )
-                    guAddDirItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name, Files );
+                {
+                    //guAddDirItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name, Files );
+                    guFileItemArray DirFiles;
+                    if( GetPathSordedItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name,
+                                            &DirFiles, m_Order, m_OrderDesc, true ) )
+                    {
+                        int FileIndex;
+                        int FileCount = DirFiles.Count();
+                        for( FileIndex = 0; FileIndex < FileCount; FileIndex++ )
+                        {
+                            Files.Add( DirFiles[ FileIndex ].m_Name );
+                        }
+                    }
+                }
                 else
+                {
                     Files.Add( m_CurDir + m_Files[ Selection[ Index ] ].m_Name );
+                }
             }
         }
     }
@@ -904,9 +937,84 @@ int guFilesListBox::GetSelectedSongs( guTrackArray * tracks ) const
 }
 
 // -------------------------------------------------------------------------------- //
+wxArrayString guFilesListBox::GetSelectedFiles( const bool recursive )
+{
+    wxArrayString Files;
+    wxArrayInt Selection = GetSelectedItems( false );
+    int Index;
+    int Count;
+    if( ( Count = Selection.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( m_Files[ Selection[ Index ] ].m_Name != wxT( ".." ) )
+            {
+                if( recursive && ( m_Files[ Selection[ Index ] ].m_Type == guFILEITEM_TYPE_FOLDER ) )
+                {
+                    //guAddDirItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name, Files );
+                    guFileItemArray DirFiles;
+                    if( GetPathSordedItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name,
+                                            &DirFiles, m_Order, m_OrderDesc, true ) )
+                    {
+                        int FileIndex;
+                        int FileCount = DirFiles.Count();
+                        for( FileIndex = 0; FileIndex < FileCount; FileIndex++ )
+                        {
+                            Files.Add( DirFiles[ FileIndex ].m_Name );
+                        }
+                    }
+                }
+                else
+                {
+                    Files.Add( m_CurDir + m_Files[ Selection[ Index ] ].m_Name );
+                }
+            }
+        }
+    }
+    return Files;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayString guFilesListBox::GetAllFiles( const bool recursive )
+{
+    wxArrayString Files;
+    int Index;
+    int Count = m_Files.Count();
+    if( Count )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( m_Files[ Index ].m_Name != wxT( ".." ) )
+            {
+                if( recursive && ( m_Files[ Index ].m_Type == guFILEITEM_TYPE_FOLDER ) )
+                {
+                    //guAddDirItems( m_CurDir + m_Files[ Selection[ Index ] ].m_Name, Files );
+                    guFileItemArray DirFiles;
+                    if( GetPathSordedItems( m_CurDir + m_Files[ Index ].m_Name,
+                                            &DirFiles, m_Order, m_OrderDesc, true ) )
+                    {
+                        int FileIndex;
+                        int FileCount = DirFiles.Count();
+                        for( FileIndex = 0; FileIndex < FileCount; FileIndex++ )
+                        {
+                            Files.Add( DirFiles[ FileIndex ].m_Name );
+                        }
+                    }
+                }
+                else
+                {
+                    Files.Add( m_CurDir + m_Files[ Index ].m_Name );
+                }
+            }
+        }
+    }
+    return Files;
+}
+
+// -------------------------------------------------------------------------------- //
 int guFilesListBox::GetDragFiles( wxFileDataObject * files )
 {
-    wxArrayInt Selection = GetSelectedItems();
+    wxArrayInt Selection = GetSelectedItems( false );
     int index;
     int count = Selection.Count();
     for( index = 0; index < count; index++ )
@@ -927,23 +1035,30 @@ void guFilesListBox::SetPath( const wxString &path )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guFilesListBox::GetPath( const int item )
+wxString guFilesListBox::GetPath( const int item, const bool absolute )
 {
     wxString RetVal;
     //guLogMessage( wxT( "GetPath( %i )" ), item );
     if( item >= 0 )
     {
-        if( m_Files[ item ].m_Name == wxT( ".." ) )
+        if( !absolute )
         {
-            RetVal = m_CurDir.BeforeLast( wxT( '/' ) ).BeforeLast( wxT( '/' ) );
-            //guLogMessage( wxT( "1) Path : %s" ), RetVal.c_str() );
-            return RetVal;
+            return m_CurDir + m_Files[ item ].m_Name;
         }
+        else
+        {
+            if( m_Files[ item ].m_Name == wxT( ".." ) )
+            {
+                RetVal = m_CurDir.BeforeLast( wxT( '/' ) ).BeforeLast( wxT( '/' ) );
+                //guLogMessage( wxT( "1) Path : %s" ), RetVal.c_str() );
+                return RetVal;
+            }
 
-        wxFileName FileName( m_Files[ item ].m_Name );
-        FileName.MakeAbsolute( m_CurDir );
-        //guLogMessage( wxT( "Path : %s" ), FileName.GetFullPath().c_str() );
-        return FileName.GetFullPath();
+            wxFileName FileName( m_Files[ item ].m_Name );
+            FileName.MakeAbsolute( m_CurDir );
+            //guLogMessage( wxT( "Path : %s" ), FileName.GetFullPath().c_str() );
+            return FileName.GetFullPath();
+        }
     }
     return wxEmptyString;
 }
@@ -1009,26 +1124,6 @@ guFileBrowserFileCtrl::guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * d
 // -------------------------------------------------------------------------------- //
 guFileBrowserFileCtrl::~guFileBrowserFileCtrl()
 {
-}
-
-// -------------------------------------------------------------------------------- //
-wxArrayString guFileBrowserFileCtrl::GetSelectedFiles( const bool includedirs )
-{
-    wxArrayString Files;
-    wxArrayInt Selection = GetSelectedItems();
-    int Index;
-    int Count = Selection.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        if( GetPath( Selection[ Index ] ) != wxT( ".." ) )
-        {
-            if( includedirs && ( GetType( Selection[ Index ] ) == guFILEITEM_TYPE_FOLDER ) )
-                guAddDirItems( GetPath( Selection[ Index ] ), Files );
-            else
-                Files.Add( GetPath( Selection[ Index ] ) );
-        }
-    }
-    return Files;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1169,7 +1264,7 @@ void guFileBrowser::OnDirItemChanged( wxTreeEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFileItemActivated( wxListEvent &Event )
 {
-    wxArrayInt Selection = m_FilesCtrl->GetSelectedItems();
+    wxArrayInt Selection = m_FilesCtrl->GetSelectedItems( false );
     if( Selection.Count() )
     {
         if( m_FilesCtrl->GetType( Selection[ 0 ] ) == guFILEITEM_TYPE_FOLDER )
@@ -1224,15 +1319,15 @@ void guFileBrowser::OnDirBeginDrag( wxTreeEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderPlay( wxCommandEvent &event )
 {
-    wxArrayString Files;
-    Files.Add( m_DirCtrl->GetPath() );
+    wxArrayString Files = m_FilesCtrl->GetAllFiles( true );
     m_PlayerPanel->SetPlayList( Files );
 }
 
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderEnqueue( wxCommandEvent &event )
 {
-    m_PlayerPanel->AddToPlayList( m_DirCtrl->GetPath() );
+    wxArrayString Files = m_FilesCtrl->GetAllFiles( true );
+    m_PlayerPanel->AddToPlayList( Files );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1340,7 +1435,7 @@ void guFileBrowser::OnFolderPaste( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnItemsPlay( wxCommandEvent &event )
 {
-    wxArrayString Files = m_FilesCtrl->GetSelectedFiles();
+    wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
     if( Files.Count() )
     {
         m_PlayerPanel->SetPlayList( Files );
@@ -1350,7 +1445,7 @@ void guFileBrowser::OnItemsPlay( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnItemsEnqueue( wxCommandEvent &event )
 {
-    wxArrayString Files = m_FilesCtrl->GetSelectedFiles();
+    wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
     if( Files.Count() )
     {
         m_PlayerPanel->AddToPlayList( Files );
