@@ -1423,7 +1423,10 @@ void guPlayerPanel::OnMediaBuffering( wxMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLevel( wxMediaEvent &event )
 {
-    if( m_SilenceDetector && m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+    if( m_SilenceDetector &&
+        ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
+        ( !m_SilenceDetectorTime ||
+          ( ( m_MediaSong.m_Length * 1000 ) > ( unsigned int ) ( m_SilenceDetectorTime + 10000 ) ) ) )
     {
         //guLogMessage( wxT( "Decay Level: %f  %s" ), event.m_LevelInfo.m_Decay_L, LenToString( event.m_LevelInfo.m_EndTime / 1000000000 ).c_str() );
         if( int( event.m_LevelInfo.m_Decay_L ) < m_SilenceDetectorLevel )
