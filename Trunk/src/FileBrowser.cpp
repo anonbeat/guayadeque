@@ -45,9 +45,68 @@ BEGIN_EVENT_TABLE(guGenericDirCtrl, wxGenericDirCtrl)
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
+guGenericDirCtrl::guGenericDirCtrl( wxWindow * parent, const bool showlibpath  ) :
+              wxGenericDirCtrl( parent, wxID_ANY, wxDirDialogDefaultFolderStr,
+                wxDefaultPosition, wxDefaultSize, wxDIRCTRL_DIR_ONLY|wxDIRCTRL_3D_INTERNAL|wxSUNKEN_BORDER,
+                wxEmptyString, 0, wxTreeCtrlNameStr )
+{
+    m_ShowLibPaths = showlibpath;
+    m_FileBrowserDirCtrl = ( guFileBrowserDirCtrl * ) parent;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
+
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guGenericDirCtrl::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guGenericDirCtrl::~guGenericDirCtrl()
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guGenericDirCtrl::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guGenericDirCtrl::OnConfigUpdated( wxCommandEvent &event )
+{
+    if( m_ShowLibPaths )
+    {
+        wxString CurPath = GetPath();
+        ReCreateTree();
+        SetPath( CurPath );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guGenericDirCtrl::SetupSections()
 {
-    AddSection( wxT( "/" ), wxT( "/" ), 1 );
+    if( m_ShowLibPaths )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+        int Index;
+        int Count = LibPaths.Count();
+        if( Count )
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                wxString LibName = LibPaths[ Index ];
+                if( LibName.EndsWith( wxT( "/" ) ) )
+                    LibName.RemoveLast();
+                AddSection( LibPaths[ Index ], wxFileNameFromPath( LibName ), 1 );
+            }
+        }
+        else
+        {
+            AddSection( wxT( "/" ), wxT( "/" ), 1 );
+        }
+    }
+    else
+    {
+        AddSection( wxT( "/" ), wxT( "/" ), 1 );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -80,10 +139,14 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db,
     m_Db = db;
     m_AddingFolder = false;
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_DirCtrl = new guGenericDirCtrl( this, wxID_ANY, dirpath, wxDefaultPosition, wxDefaultSize, wxDIRCTRL_DIR_ONLY|wxSUNKEN_BORDER|wxDIRCTRL_EDIT_LABELS, wxEmptyString, 0 );
+    bool ShowLibPath = Config->ReadBool( wxT( "ShowLibPaths" ), true, wxT( "FileBrowser" ) );
+	m_DirCtrl = new guGenericDirCtrl( this, ShowLibPath );
+	m_DirCtrl->SetPath( dirpath );
 
 	m_DirCtrl->ShowHidden( false );
 	MainSizer->Add( m_DirCtrl, 1, wxEXPAND, 5 );
@@ -96,6 +159,7 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db,
 
 	m_ShowLibPathsBtn = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_ShowLibPathsBtn->SetToolTip( _( "Switch between see all filesystem and only library locations" ) );
+	m_ShowLibPathsBtn->SetValue( ShowLibPath );
 	DirBtnSizer->Add( m_ShowLibPathsBtn, 0, wxALL, 5 );
 
 	MainSizer->Add( DirBtnSizer, 0, wxEXPAND, 5 );
@@ -104,15 +168,17 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db,
 	this->Layout();
 
     m_DirCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
-	m_ShowLibPathsBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
+	m_ShowLibPathsBtn->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 
 }
 
 // -------------------------------------------------------------------------------- //
 guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteBool( wxT( "ShowLibPaths" ), m_ShowLibPathsBtn->GetValue(), wxT( "FileBrowser" ) );
     m_DirCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
-	m_ShowLibPathsBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
+	m_ShowLibPathsBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -169,6 +235,7 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     event.Skip();
 }
 
+// -------------------------------------------------------------------------------- //
 void guFileBrowserDirCtrl::RenamedDir( const wxString &oldname, const wxString &newname )
 {
     guLogMessage( wxT( "'%s' -> '%s'" ), oldname.c_str(), newname.c_str() );
@@ -289,6 +356,10 @@ void guFileBrowserDirCtrl::FolderDelete( void )
 // -------------------------------------------------------------------------------- //
 void guFileBrowserDirCtrl::OnShowLibPathsClick( wxCommandEvent& event )
 {
+    wxString CurPath = m_DirCtrl->GetPath();
+    m_DirCtrl->SetShowLibPaths( event.IsChecked() );
+    m_DirCtrl->ReCreateTree();
+    m_DirCtrl->SetPath( CurPath );
 }
 
 
@@ -848,6 +919,7 @@ int guFilesListBox::GetDragFiles( wxFileDataObject * files )
 // -------------------------------------------------------------------------------- //
 void guFilesListBox::SetPath( const wxString &path )
 {
+    guLogMessage( wxT( "SetPath: %s" ), path.c_str() );
     m_CurDir = path;
     if( !m_CurDir.EndsWith( wxT( "/" ) ) )
         m_CurDir += wxT( "/" );
@@ -864,7 +936,7 @@ wxString guFilesListBox::GetPath( const int item )
         if( m_Files[ item ].m_Name == wxT( ".." ) )
         {
             RetVal = m_CurDir.BeforeLast( wxT( '/' ) ).BeforeLast( wxT( '/' ) );
-            guLogMessage( wxT( "1) Path : %s" ), RetVal.c_str() );
+            //guLogMessage( wxT( "1) Path : %s" ), RetVal.c_str() );
             return RetVal;
         }
 
@@ -1091,7 +1163,6 @@ guFileBrowser::~guFileBrowser()
 void guFileBrowser::OnDirItemChanged( wxTreeEvent &event )
 {
     guLogMessage( wxT( "The current selected directory is '%s'" ), m_DirCtrl->GetPath().c_str() );
-
     m_FilesCtrl->SetPath( m_DirCtrl->GetPath() );
 }
 

@@ -79,28 +79,23 @@ class guGenericDirCtrl : public wxGenericDirCtrl
   protected :
     guFileBrowserDirCtrl *  m_FileBrowserDirCtrl;
     wxString                m_RenameName;
+    bool                    m_ShowLibPaths;
 
-    void                OnBeginRenameDir( wxTreeEvent &event );
-    void                OnEndRenameDir( wxTreeEvent &event );
+    void            OnBeginRenameDir( wxTreeEvent &event );
+    void            OnEndRenameDir( wxTreeEvent &event );
 
   public :
     guGenericDirCtrl() : wxGenericDirCtrl() { m_FileBrowserDirCtrl = NULL; };
-    guGenericDirCtrl(wxWindow *parent, const wxWindowID id = wxID_ANY,
-              const wxString &dir = wxDirDialogDefaultFolderStr,
-              const wxPoint& pos = wxDefaultPosition,
-              const wxSize& size = wxDefaultSize,
-              long style = wxDIRCTRL_3D_INTERNAL|wxSUNKEN_BORDER,
-              const wxString& filter = wxEmptyString,
-              int defaultFilter = 0,
-              const wxString& name = wxTreeCtrlNameStr ) :
-              wxGenericDirCtrl( parent, id, dir, pos, size, style, filter, defaultFilter, name )
-    {
-        m_FileBrowserDirCtrl = ( guFileBrowserDirCtrl * ) parent;
-    }
+    guGenericDirCtrl( wxWindow * parent, const bool showlibpath  );
+    ~guGenericDirCtrl();
 
-    virtual void SetupSections();
+    void            OnConfigUpdated( wxCommandEvent &event );
 
-    void FolderRename( void );
+    virtual void    SetupSections();
+
+    void            FolderRename( void );
+
+    void            SetShowLibPaths( bool showlibpaths ) { m_ShowLibPaths = showlibpaths; }
 
     DECLARE_EVENT_TABLE()
 };
