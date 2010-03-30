@@ -21,7 +21,7 @@
 #include "VolumeFrame.h"
 //#include "Utils.h"
 
-#define guVOLUMEN_AUTOCLOSE_TIMEOUT 1000
+#define guVOLUMEN_AUTOCLOSE_TIMEOUT 3000
 
 // -------------------------------------------------------------------------------- //
 guVolumeFrame::guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) :
@@ -56,6 +56,7 @@ guVolumeFrame::guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindow
 	// Connect Events
 	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guVolumeFrame::VolFrameActivate ), NULL, this );
 	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ), NULL, this );
+	m_VolSlider->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ), NULL, this );
 	m_IncVolButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::IncVolButtonClick ), NULL, this );
 	m_VolSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
 	m_VolSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
@@ -122,6 +123,10 @@ void guVolumeFrame::DecVolButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guVolumeFrame::OnMouseWheel( wxMouseEvent &event )
 {
+    if( m_MouseTimer->IsRunning() )
+        m_MouseTimer->Stop();
+    m_MouseTimer->Start( guVOLUMEN_AUTOCLOSE_TIMEOUT, wxTIMER_ONE_SHOT );
+
     int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
     m_VolSlider->SetValue( m_VolSlider->GetValue() + ( Rotation * 2 ) );
     SetVolume();
