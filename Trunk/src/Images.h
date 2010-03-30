@@ -78,6 +78,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_left,
     guIMAGE_INDEX_tiny_right,
     guIMAGE_INDEX_tiny_search_engine,
+    guIMAGE_INDEX_tiny_library,
     guIMAGE_INDEX_pref_commands,
     guIMAGE_INDEX_pref_copy_to,
     guIMAGE_INDEX_pref_general,
