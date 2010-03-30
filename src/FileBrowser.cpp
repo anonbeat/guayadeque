@@ -88,16 +88,31 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db,
 	m_DirCtrl->ShowHidden( false );
 	MainSizer->Add( m_DirCtrl, 1, wxEXPAND, 5 );
 
+	wxBoxSizer* DirBtnSizer;
+	DirBtnSizer = new wxBoxSizer( wxHORIZONTAL );
+
+
+	DirBtnSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_ShowLibPathsBtn = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_ShowLibPathsBtn->SetToolTip( _( "Switch between see all filesystem and only library locations" ) );
+	DirBtnSizer->Add( m_ShowLibPathsBtn, 0, wxALL, 5 );
+
+	MainSizer->Add( DirBtnSizer, 0, wxEXPAND, 5 );
+
 	this->SetSizer( MainSizer );
 	this->Layout();
 
     m_DirCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
+	m_ShowLibPathsBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
 guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
 {
     m_DirCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
+	m_ShowLibPathsBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -268,6 +283,12 @@ void guFileBrowserDirCtrl::FolderDelete( void )
         }
         m_Db->DoCleanUp();
     }
+}
+
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowserDirCtrl::OnShowLibPathsClick( wxCommandEvent& event )
+{
 }
 
 
@@ -910,6 +931,7 @@ guFileBrowserFileCtrl::guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * d
 
 	this->SetSizer( MainSizer );
 	this->Layout();
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -936,7 +958,6 @@ wxArrayString guFileBrowserFileCtrl::GetSelectedFiles( const bool includedirs )
     }
     return Files;
 }
-
 
 // -------------------------------------------------------------------------------- //
 // guFileBrowser

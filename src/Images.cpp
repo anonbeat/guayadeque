@@ -76,6 +76,7 @@
 #include "./images/tiny_status_pending.h"
 #include "./images/track.h"
 #include "./images/up.h"
+#include "./images/tiny_library.h"
 #include "./images/pref_commands.h"
 #include "./images/pref_copy_to.h"
 #include "./images/pref_general.h"
@@ -212,6 +213,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_tiny_left,                     wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_right,                    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_search_engine,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_library,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_commands,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_copy_to,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_general,                  wxBITMAP_TYPE_PNG ),
