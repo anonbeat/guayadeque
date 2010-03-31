@@ -921,7 +921,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
 
 	wxStaticText * CopyToHelpText;
-	CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "{a}\t- Artist\t\t\t('U2')\n{b}\t- Album\t\t\t('The Josua Tree')\n{f}\t- Original Filename\t( 'With or without you.mp3')\n{g}\t- Genre\t\t\t('Pop')\n{n}\t- Number\t\t\t('3')\n{t}\t- Title\t\t\t('With or Without You')\n{y}\t- Year\t\t\t('1987')\n" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "{a}\t- Artist\t\t\t('U2')\n{b}\t- Album\t\t\t('The Josua Tree')\n{f}\t- Original Filename\t( 'With or without you.mp3')\n{g}\t- Genre\t\t\t('Pop')\n{n}\t- Number\t\t('3')\n{t}\t- Title\t\t\t('With or Without You')\n{y}\t- Year\t\t\t('1987')\n{d}\t- Disk\t\t\t('1-2')\n" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToHelpText->Wrap( -1 );
 	CopyToHelpSizer->Add( CopyToHelpText, 0, wxALL, 5 );
 
@@ -1726,6 +1726,7 @@ wxString PatternToExample( const wxString &Pattern )
     RetVal.Replace( wxT( "{n}" ), wxT( "03" ) );
     RetVal.Replace( wxT( "{t}" ), wxT( "With or Without You" ) );
     RetVal.Replace( wxT( "{y}" ), wxT( "1987" ) );
+    RetVal.Replace( wxT( "{d}" ), wxT( "1-2" ) );
     RetVal.Append( wxT( ".mp3" ) );
     return RetVal;
 }

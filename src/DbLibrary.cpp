@@ -3365,7 +3365,7 @@ int guDbLibrary::GetRandomTracks( guTrackArray * tracks, const int count, const 
   wxString              AllowPlQuery = wxEmptyString;
   wxString              DenyPlQuery = wxEmptyString;
 
-  guLogMessage( wxT( "GetRandomTracks... %i" ), rndmode );
+  //guLogMessage( wxT( "GetRandomTracks... %i %i %i" ), rndmode, allowplaylist, denyplaylist );
 
   AllowPlQuery = GetPlayListQuery( allowplaylist );
   DenyPlQuery = GetPlayListQuery( denyplaylist );

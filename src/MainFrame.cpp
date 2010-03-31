@@ -2851,7 +2851,11 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
             FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), ( * m_Tracks )[ index ].m_Number ) );
             FileName.Replace( wxT( "{t}" ), ( * m_Tracks )[ index ].m_SongName );
             FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), ( * m_Tracks )[ index ].m_Year ) );
+            wxString Disk = ( * m_Tracks )[ index ].m_Disk;
+            Disk.Replace( wxT( "/" ), wxT( "-" ) );
+            FileName.Replace( wxT( "{d}" ), Disk );
             //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );
+
         }
 
         FileName += wxT( '.' ) + ( * m_Tracks )[ index ].m_FileName.Lower().AfterLast( wxT( '.' ) );
