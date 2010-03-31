@@ -208,13 +208,19 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
     Menu.Append( MenuItem );
 
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_COPYTO, _( "Copy to..." ), _( "Copy the selected folder to a folder or device" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
+    Menu.Append( MenuItem );
+
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_COPY, _( "Copy" ), _( "Copy the selected folder to clipboard" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
     Menu.Append( MenuItem );
+    MenuItem->Enable( false );
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_PASTE, _( "Paste" ), _( "Paste to the selected folder" ) );
+    Menu.Append( MenuItem );
     wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
     {
@@ -225,7 +231,6 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
         }
         wxTheClipboard->Close();
     }
-    Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
@@ -791,6 +796,10 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
         Menu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Add the current selected tracks to a playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        Menu->Append( MenuItem );
+
         MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_COPYTO, _( "Copy to..." ), _( "Copy the selected files to a folder or device" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
         Menu->Append( MenuItem );
@@ -1204,10 +1213,12 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     Connect( ID_FILESYSTEM_FOLDER_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPaste ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEditTracks ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderSaveToPlayList ), NULL, this );
+    Connect( ID_FILESYSTEM_FOLDER_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopyTo ), NULL, this );
 
     Connect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
+    Connect( ID_FILESYSTEM_ITEMS_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsSaveToPlayList ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopyTo ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsRename ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsDelete ), NULL, this );
@@ -1236,10 +1247,12 @@ guFileBrowser::~guFileBrowser()
     Disconnect( ID_FILESYSTEM_FOLDER_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPaste ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEditTracks ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderSaveToPlayList ), NULL, this );
+    Disconnect( ID_FILESYSTEM_FOLDER_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopyTo ), NULL, this );
 
     Disconnect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
+    Disconnect( ID_FILESYSTEM_ITEMS_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsSaveToPlayList ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopyTo ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsRename ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsDelete ), NULL, this );
@@ -1344,31 +1357,40 @@ void guFileBrowser::OnFolderDelete( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderCopy( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "OnFolderCopy" ) );
-    wxTheClipboard->UsePrimarySelection( false );
-    if( wxTheClipboard->Open() )
-    {
-        wxTheClipboard->Clear();
-        wxFileDataObject * FileObject = new wxFileDataObject();
-        FileObject->AddFile( m_DirCtrl->GetPath() );
-
-        if( !wxTheClipboard->AddData( FileObject ) )
-        {
-            delete FileObject;
-            guLogError( wxT( "Can't copy the folder to the clipboard" ) );
-        }
-        wxTheClipboard->Close();
-    }
-    else
-    {
-        guLogError( wxT( "Could not open the clipboard object" ) );
-    }
+//    guLogMessage( wxT( "OnFolderCopy" ) );
+//    wxTheClipboard->UsePrimarySelection( false );
+//    if( wxTheClipboard->Open() )
+//    {
+//        wxTheClipboard->Clear();
+//        wxFileDataObject * FileObject = new wxFileDataObject();
+//        wxTextDataObject * TextObject = new wxTextDataObject();
+//        wxDataObjectComposite * CompositeObject = new wxDataObjectComposite();
+//
+//        FileObject->AddFile( m_DirCtrl->GetPath() );
+//        TextObject->SetText( m_DirCtrl->GetPath() );
+//        CompositeObject->Add( FileObject );
+//        CompositeObject->Add( TextObject );
+//
+//        if( !wxTheClipboard->AddData( CompositeObject ) )
+//        {
+//            delete FileObject;
+//            delete TextObject;
+//            delete CompositeObject;
+//            guLogError( wxT( "Can't copy the folder to the clipboard" ) );
+//        }
+//        guLogMessage( wxT( "Copied the data to the clipboard..." ) );
+//        wxTheClipboard->Close();
+//    }
+//    else
+//    {
+//        guLogError( wxT( "Could not open the clipboard object" ) );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderPaste( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "OnFolderPaste" ) );
+    //guLogMessage( wxT( "OnFolderPaste" ) );
     wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
     {
@@ -1510,6 +1532,17 @@ void guFileBrowser::OnFolderSaveToPlayList( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guFileBrowser::OnFolderCopyTo( wxCommandEvent &event )
+{
+    guTrackArray * Tracks = new guTrackArray();
+    m_FilesCtrl->GetAllSongs( Tracks );
+
+    event.SetId( ID_MAINFRAME_COPYTO );
+    event.SetClientData( ( void * ) Tracks );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
 void guFileBrowser::OnItemsPlay( wxCommandEvent &event )
 {
     wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
@@ -1555,6 +1588,61 @@ void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
             }
             TrackEditor->Destroy();
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnItemsSaveToPlayList( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_FilesCtrl->GetSelectedSongs( &Tracks );
+
+    wxArrayInt TrackIds;
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        TrackIds.Add( Tracks[ Index ].m_SongId );
+    }
+
+    if( Tracks.Count() )
+    {
+        guListItems PlayLists;
+        m_Db->GetPlayLists( &PlayLists,GUPLAYLIST_STATIC );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &TrackIds, &PlayLists );
+        if( PlayListAppendDlg->ShowModal() == wxID_OK )
+        {
+            int Selected = PlayListAppendDlg->GetSelectedPlayList();
+            if( Selected == -1 )
+            {
+                wxString PLName = PlayListAppendDlg->GetPlaylistName();
+                if( PLName.IsEmpty() )
+                {
+                    PLName = _( "UnNamed" );
+                }
+                m_Db->CreateStaticPlayList( PLName, TrackIds );
+            }
+            else
+            {
+                int PLId = PlayLists[ Selected ].m_Id;
+                wxArrayInt OldSongs;
+                m_Db->GetPlayListSongIds( PLId, &OldSongs );
+                if( PlayListAppendDlg->GetSelectedPosition() == 0 ) // BEGIN
+                {
+                    m_Db->UpdateStaticPlayList( PLId, TrackIds );
+                    m_Db->AppendStaticPlayList( PLId, OldSongs );
+                }
+                else                                                // END
+                {
+                    m_Db->AppendStaticPlayList( PLId, TrackIds );
+                }
+            }
+
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+
+        PlayListAppendDlg->Destroy();
     }
 }
 
