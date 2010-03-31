@@ -183,6 +183,39 @@ guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
 }
 
 // -------------------------------------------------------------------------------- //
+void AppendFolderCommands( wxMenu * menu )
+{
+    wxMenu * SubMenu;
+    int Index;
+    int Count;
+    wxMenuItem * MenuItem;
+
+    SubMenu = new wxMenu();
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+    wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+    if( ( Count = Commands.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( ( Commands[ Index ].Find( wxT( "{bc}" ) ) == wxNOT_FOUND ) )
+            {
+                MenuItem = new wxMenuItem( menu, ID_FILESYSTEM_FOLDER_COMMANDS + Index, Names[ Index ], Commands[ Index ] );
+                SubMenu->Append( MenuItem );
+            }
+        }
+    }
+    else
+    {
+        MenuItem = new wxMenuItem( menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+        SubMenu->Append( MenuItem );
+    }
+    menu->AppendSeparator();
+    menu->AppendSubMenu( SubMenu, _( "Commands" ) );
+}
+
+// -------------------------------------------------------------------------------- //
 void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
 {
     wxMenu Menu;
@@ -244,6 +277,8 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_DELETE, _( "Remove" ), _( "Remove the selected folder" ) );
     Menu.Append( MenuItem );
 
+    AppendFolderCommands( &Menu );
+
     PopupMenu( &Menu, Point );
     event.Skip();
 }
@@ -251,7 +286,7 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowserDirCtrl::RenamedDir( const wxString &oldname, const wxString &newname )
 {
-    guLogMessage( wxT( "'%s' -> '%s'" ), oldname.c_str(), newname.c_str() );
+    //guLogMessage( wxT( "'%s' -> '%s'" ), oldname.c_str(), newname.c_str() );
 
     if( m_AddingFolder )
     {
@@ -1215,6 +1250,8 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     Connect( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderSaveToPlayList ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopyTo ), NULL, this );
 
+    Connect( ID_FILESYSTEM_FOLDER_COMMANDS, ID_FILESYSTEM_FOLDER_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ) );
+
     Connect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
@@ -1248,6 +1285,8 @@ guFileBrowser::~guFileBrowser()
     Disconnect( ID_FILESYSTEM_FOLDER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEditTracks ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderSaveToPlayList ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopyTo ), NULL, this );
+
+    Disconnect( ID_FILESYSTEM_FOLDER_COMMANDS, ID_FILESYSTEM_FOLDER_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ) );
 
     Disconnect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
@@ -1313,7 +1352,6 @@ void guFileBrowser::OnDirBeginDrag( wxTreeEvent &event )
 {
     wxFileDataObject Files;
 
-//    Files.AddFile( m_DirCtrl->GetPath() );
     wxArrayString FolderFiles = m_FilesCtrl->GetAllFiles( true );
     int Index;
     int Count;
@@ -1750,6 +1788,42 @@ void guFileBrowser::OnItemsDelete( wxCommandEvent &event )
             //
             m_Db->DoCleanUp();
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
+{
+    int Index;
+    int Count;
+    Index = event.GetId();
+
+    guConfig * Config = ( guConfig * ) Config->Get();
+    if( Config )
+    {
+        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+
+        Index -= ID_FILESYSTEM_FOLDER_COMMANDS;
+        wxString CurCmd = Commands[ Index ];
+        if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+        {
+            CurCmd.Replace( wxT( "{bp}" ), wxT( "\"" ) + m_DirCtrl->GetPath() + wxT( "\"" ) );
+        }
+
+        if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+        {
+            wxString SongList;
+            wxArrayString Files = m_FilesCtrl->GetAllFiles( true );
+            Count = Files.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                SongList += wxT( " \"" ) + Files[ Index ] + wxT( "\"" );
+            }
+            CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+        }
+
+        //guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
+        guExecute( CurCmd );
     }
 }
 
