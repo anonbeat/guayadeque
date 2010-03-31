@@ -149,6 +149,8 @@ class guFilesListBox : public guListView
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                GetItemsList( void );
     virtual int                 GetSelectedSongs( guTrackArray * tracks ) const;
+    int                         GetAllSongs( guTrackArray * tracks ) const;
+    int                         GetTracksFromFiles( const wxArrayString &files, guTrackArray * tracks ) const;
 
     virtual int                 GetDragFiles( wxFileDataObject * files );
 
@@ -175,8 +177,8 @@ class guFilesListBox : public guListView
 
     bool                        GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
 
-    wxArrayString               GetSelectedFiles( const bool recursive = false );
-    wxArrayString               GetAllFiles( const bool recursive = false );
+    wxArrayString               GetSelectedFiles( const bool recursive = false ) const;
+    wxArrayString               GetAllFiles( const bool recursive = false ) const;
 
   friend class guFileBrowserFileCtrl;
 };
@@ -200,6 +202,7 @@ class guFileBrowserFileCtrl : public wxPanel
     wxArrayString           GetSelectedFiles( const bool recursive = false ) { return m_FilesListBox->GetSelectedFiles( recursive ); }
     wxArrayString           GetAllFiles( const bool recursive = false ) { return m_FilesListBox->GetAllFiles( recursive ); }
     int                     GetSelectedSongs( guTrackArray * tracks ) { return m_FilesListBox->GetSelectedSongs( tracks ); }
+    int                     GetAllSongs( guTrackArray * tracks ) { return m_FilesListBox->GetAllSongs( tracks ); }
     void                    SetOrder( const int order ) { m_FilesListBox->SetOrder( order ); }
 
     bool                    GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
@@ -233,6 +236,8 @@ class guFileBrowser : public wxPanel
     void                    OnFolderDelete( wxCommandEvent &event );
     void                    OnFolderCopy( wxCommandEvent &event );
     void                    OnFolderPaste( wxCommandEvent &event );
+    void                    OnFolderEditTracks( wxCommandEvent &event );
+    void                    OnFolderSaveToPlayList( wxCommandEvent &event );
 
     void                    OnItemsPlay( wxCommandEvent &event );
     void                    OnItemsEnqueue( wxCommandEvent &event );
