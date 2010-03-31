@@ -171,8 +171,8 @@ class guFilesListBox : public guListView
 
     void                        SetOrder( int order );
     void                        SetPath( const wxString &path );
-    wxString                    GetPath( const int item, const bool absolute = true );
-    int                         GetType( const int item );
+    wxString                    GetPath( const int item, const bool absolute = true ) const;
+    int                         GetType( const int item ) const;
     void                        SetTreeImageList( wxImageList * imagelist ) { m_TreeImageList = imagelist; }
 
     bool                        GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
@@ -196,8 +196,8 @@ class guFileBrowserFileCtrl : public wxPanel
     ~guFileBrowserFileCtrl();
 
     void                    SetPath( const wxString &path ) { m_FilesListBox->SetPath( path ); }
-    const wxString          GetPath( const int item, const bool absolute = true ) { return m_FilesListBox->GetPath( item, absolute ); }
-    int                     GetType( const int item ) { return m_FilesListBox->GetType( item ); }
+    const wxString          GetPath( const int item, const bool absolute = true ) const { return m_FilesListBox->GetPath( item, absolute ); }
+    int                     GetType( const int item ) const { return m_FilesListBox->GetType( item ); }
     wxArrayInt              GetSelectedItems( const bool convertall = true ) { return m_FilesListBox->GetSelectedItems( convertall ); }
     wxArrayString           GetSelectedFiles( const bool recursive = false ) { return m_FilesListBox->GetSelectedFiles( recursive ); }
     wxArrayString           GetAllFiles( const bool recursive = false ) { return m_FilesListBox->GetAllFiles( recursive ); }
@@ -248,6 +248,7 @@ class guFileBrowser : public wxPanel
     void                    OnItemsCopyTo( wxCommandEvent &event );
     void                    OnItemsRename( wxCommandEvent &event );
     void                    OnItemsDelete( wxCommandEvent &event );
+    void                    OnItemsCommand( wxCommandEvent &event );
 
     DECLARE_EVENT_TABLE()
 
