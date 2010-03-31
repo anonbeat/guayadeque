@@ -1012,12 +1012,12 @@ wxArrayString guFilesListBox::GetAllFiles( const bool recursive ) const
 // -------------------------------------------------------------------------------- //
 int guFilesListBox::GetDragFiles( wxFileDataObject * files )
 {
-    wxArrayInt Selection = GetSelectedItems( false );
+    wxArrayString SelectFiles = GetSelectedFiles( true );
     int index;
-    int count = Selection.Count();
+    int count = SelectFiles.Count();
     for( index = 0; index < count; index++ )
     {
-       files->AddFile( m_CurDir + m_Files[ Selection[ index ] ].m_Name );
+       files->AddFile( SelectFiles[ index ] );
     }
     return count;
 }
@@ -1313,12 +1313,23 @@ void guFileBrowser::OnDirBeginDrag( wxTreeEvent &event )
 {
     wxFileDataObject Files;
 
-    Files.AddFile( m_DirCtrl->GetPath() );
-    wxDropSource source( Files, this );
-
-    wxDragResult Result = source.DoDragDrop();
-    if( Result )
+//    Files.AddFile( m_DirCtrl->GetPath() );
+    wxArrayString FolderFiles = m_FilesCtrl->GetAllFiles( true );
+    int Index;
+    int Count;
+    if( ( Count = FolderFiles.Count() ) )
     {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            Files.AddFile( FolderFiles[ Index ] );
+        }
+
+        wxDropSource source( Files, this );
+
+        wxDragResult Result = source.DoDragDrop();
+        if( Result )
+        {
+        }
     }
 }
 
