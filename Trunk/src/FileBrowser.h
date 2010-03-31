@@ -239,6 +239,7 @@ class guFileBrowser : public wxPanel
     void                    OnFolderEditTracks( wxCommandEvent &event );
     void                    OnFolderSaveToPlayList( wxCommandEvent &event );
     void                    OnFolderCopyTo( wxCommandEvent &event );
+    void                    OnFolderCommand( wxCommandEvent &event );
 
     void                    OnItemsPlay( wxCommandEvent &event );
     void                    OnItemsEnqueue( wxCommandEvent &event );
