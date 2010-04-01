@@ -250,7 +250,7 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_COPY, _( "Copy" ), _( "Copy the selected folder to clipboard" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
     Menu.Append( MenuItem );
-    MenuItem->Enable( false );
+    //MenuItem->Enable( false );
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_PASTE, _( "Paste" ), _( "Paste to the selected folder" ) );
     Menu.Append( MenuItem );
@@ -1447,34 +1447,35 @@ void guFileBrowser::OnFolderDelete( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderCopy( wxCommandEvent &event )
 {
-//    guLogMessage( wxT( "OnFolderCopy" ) );
-//    wxTheClipboard->UsePrimarySelection( false );
-//    if( wxTheClipboard->Open() )
-//    {
-//        wxTheClipboard->Clear();
-//        wxFileDataObject * FileObject = new wxFileDataObject();
-//        wxTextDataObject * TextObject = new wxTextDataObject();
-//        wxDataObjectComposite * CompositeObject = new wxDataObjectComposite();
-//
-//        FileObject->AddFile( m_DirCtrl->GetPath() );
-//        TextObject->SetText( m_DirCtrl->GetPath() );
-//        CompositeObject->Add( FileObject );
-//        CompositeObject->Add( TextObject );
-//
-//        if( !wxTheClipboard->AddData( CompositeObject ) )
-//        {
-//            delete FileObject;
-//            delete TextObject;
-//            delete CompositeObject;
-//            guLogError( wxT( "Can't copy the folder to the clipboard" ) );
-//        }
-//        guLogMessage( wxT( "Copied the data to the clipboard..." ) );
-//        wxTheClipboard->Close();
-//    }
-//    else
-//    {
-//        guLogError( wxT( "Could not open the clipboard object" ) );
-//    }
+    guLogMessage( wxT( "OnFolderCopy" ) );
+    wxTheClipboard->UsePrimarySelection( false );
+    if( wxTheClipboard->Open() )
+    {
+        wxTheClipboard->Clear();
+        //wxFileDataObject * FileObject = new wxFileDataObject();
+        wxTextDataObject * TextObject = new wxTextDataObject();
+        //wxDataObjectComposite * CompositeObject = new wxDataObjectComposite();
+
+        //FileObject->AddFile( m_DirCtrl->GetPath() );
+        TextObject->SetText( m_DirCtrl->GetPath() );
+        //CompositeObject->Add( FileObject );
+        //CompositeObject->Add( TextObject );
+
+        //if( !wxTheClipboard->AddData( CompositeObject ) )
+        if( !wxTheClipboard->AddData( TextObject ) )
+        {
+            //delete FileObject;
+            delete TextObject;
+            //delete CompositeObject;
+            guLogError( wxT( "Can't copy the folder to the clipboard" ) );
+        }
+        guLogMessage( wxT( "Copied the data to the clipboard..." ) );
+        wxTheClipboard->Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the clipboard object" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

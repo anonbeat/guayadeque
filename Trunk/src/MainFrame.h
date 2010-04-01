@@ -131,9 +131,10 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewLibGenres;
     wxMenuItem *                m_ViewLibArtists;
     wxMenuItem *                m_ViewLibAlbums;
-//    wxMenuItem *                m_ViewLibTracks;
-//    wxMenuItem *                m_ViewLibYears;
-//    wxMenuItem *                m_ViewLibRattings;
+    wxMenuItem *                m_ViewLibYears;
+    wxMenuItem *                m_ViewLibRatings;
+    wxMenuItem *                m_ViewLibPlayCounts;
+
     wxMenuItem *                m_ViewRadios;
     wxMenuItem *                m_ViewRadTextSearch;
     wxMenuItem *                m_ViewRadLabels;
