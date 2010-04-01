@@ -348,6 +348,7 @@ class guDbLibrary : public guDb
     void                GetRadioLabels( guListItems * Labels, const bool FullList = false );
     void                GetArtists( guListItems * Artists, const bool FullList = false );
     void                GetYears( guListItems * items, const bool FullList = false );
+    void                GetRatings( guListItems * items, const bool FullList = false );
     void                SetAlbumsOrder( const int order );
     int                 GetAlbumsOrder( void ) { return m_AlbumsOrder; };
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
@@ -444,6 +445,7 @@ class guDbLibrary : public guDb
 
 
     int                 GetYearsSongs( const wxArrayInt &Years, guTrackArray * Songs );
+    int                 GetRatingsSongs( const wxArrayInt &Years, guTrackArray * Songs );
 
 //    wxSQLite3ResultSet  ExecuteQuery(  const wxSQLite3StatementBuffer &query );
 //    int                 ExecuteUpdate( const wxString &query );

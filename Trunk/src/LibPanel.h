@@ -26,6 +26,7 @@
 #include "DbLibrary.h"
 #include "GeListBox.h"
 #include "PlayerPanel.h"
+#include "RaListBox.h"
 #include "SoListBox.h"
 #include "TaListBox.h"
 #include "YeListBox.h"
@@ -66,6 +67,7 @@ class guLibPanel : public wxPanel
     guAlListBox *       m_AlbumListCtrl;
     guSoListBox *       m_SongListCtrl;
     guYeListBox *       m_YearListCtrl;
+    guRaListBox *       m_RatingListCtrl;
 
     //
     guDbLibrary *       m_Db;
@@ -76,13 +78,6 @@ class guLibPanel : public wxPanel
     void OnSearchActivated( wxCommandEvent &event );
     void OnSearchCancelled( wxCommandEvent &event );
 
-    // GenreListBox Events
-    void OnGenreListActivated( wxListEvent &event );
-    void OnGenreListSelected( wxListEvent &event );
-    void OnGenrePlayClicked( wxCommandEvent &event );
-    void OnGenreQueueClicked( wxCommandEvent &event );
-    void OnGenreCopyToClicked( wxCommandEvent &event );
-
     // LabelsListBox Events
     void OnLabelListActivated( wxListEvent &event );
     void OnLabelListSelected( wxListEvent &event );
@@ -90,6 +85,13 @@ class guLibPanel : public wxPanel
     void OnLabelQueueClicked( wxCommandEvent &event );
 //    void OnLabelClearSelectClicked( wxCommandEvent &event );
     void OnLabelCopyToClicked( wxCommandEvent &event );
+
+    // GenreListBox Events
+    void OnGenreListActivated( wxListEvent &event );
+    void OnGenreListSelected( wxListEvent &event );
+    void OnGenrePlayClicked( wxCommandEvent &event );
+    void OnGenreQueueClicked( wxCommandEvent &event );
+    void OnGenreCopyToClicked( wxCommandEvent &event );
 
     // ArtistsListBox Events
     void OnArtistListActivated( wxListEvent &event );
@@ -112,6 +114,22 @@ class guLibPanel : public wxPanel
     void OnAlbumDeleteCoverClicked( wxCommandEvent &event );
     void OnAlbumCopyToClicked( wxCommandEvent &event );
 
+    // YearsListBoxEvents
+    void OnYearListSelected( wxListEvent &event );
+    void OnYearListActivated( wxListEvent &event );
+    void OnYearListPlayClicked( wxCommandEvent &event );
+    void OnYearListQueueClicked( wxCommandEvent &event );
+    void OnYearListEditTracksClicked( wxCommandEvent &event );
+    void OnYearListCopyToClicked( wxCommandEvent &event );
+
+    // RatingsListBoxEvents
+    void OnRatingListSelected( wxListEvent &event );
+    void OnRatingListActivated( wxListEvent &event );
+    void OnRatingListPlayClicked( wxCommandEvent &event );
+    void OnRatingListQueueClicked( wxCommandEvent &event );
+    void OnRatingListEditTracksClicked( wxCommandEvent &event );
+    void OnRatingListCopyToClicked( wxCommandEvent &event );
+
     // SongsListBox Events
     void OnSongListActivated( wxListEvent &event );
     void OnSongPlayClicked( wxCommandEvent &event );
@@ -127,14 +145,7 @@ class guLibPanel : public wxPanel
     void OnSongSelectArtist( wxCommandEvent &event );
     void OnSongSelectAlbum( wxCommandEvent &event );
 
-    // YearsListBoxEvents
-    void OnYearsListSelected( wxListEvent &event );
-    void OnYearListActivated( wxListEvent &event );
-    void OnYearListPlayClicked( wxCommandEvent &event );
-    void OnYearListQueueClicked( wxCommandEvent &event );
-    void OnYearListEditTracksClicked( wxCommandEvent &event );
-    void OnYearListCopyToClicked( wxCommandEvent &event );
-
+    //
     void OnPaneClose( wxAuiManagerEvent &event );
 
   public :

@@ -1447,6 +1447,12 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 
     m_ViewLibYears->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
     m_ViewLibYears->Enable( IsEnabled );
+
+    m_ViewLibRatings->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
+    m_ViewLibRatings->Enable( IsEnabled );
+
+    m_ViewLibPlayCounts->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
+    m_ViewLibPlayCounts->Enable( IsEnabled );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2444,6 +2450,8 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     m_ViewLibArtists->Enable( false );
     m_ViewLibAlbums->Enable( false );
     m_ViewLibYears->Enable( false );
+    m_ViewLibRatings->Enable( false );
+    m_ViewLibPlayCounts->Enable( false );
 
     m_ViewRadios->Check( false );
     m_ViewRadTextSearch->Enable( false );
