@@ -216,6 +216,8 @@ ADD_EXECUTABLE( guayadeque
 	FileRenamer.h
 	YeListBox.cpp
 	YeListBox.h
+	RaListBox.cpp
+	RaListBox.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

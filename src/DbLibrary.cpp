@@ -1778,7 +1778,14 @@ void guDbLibrary::SetRaFilters( const wxArrayInt &filter )
     }
     else
     {
-        m_RaFilters = filter;
+        //m_RaFilters = filter;
+        m_RaFilters.Empty();
+        int Index;
+        int Count = filter.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            m_RaFilters.Add( filter[ Index ] - 1 );
+        }
     }
 }
 
@@ -2147,6 +2154,33 @@ void guDbLibrary::GetYears( guListItems * Years, const bool FullList )
   {
     int Year = dbRes.GetInt( 0 );
     Years->Add( new guListItem( Year, wxString::Format( wxT( "%i" ), Year ) ) );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetRatings( guListItems * Ratings, const bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  if( FullList || !GetFiltersCount() )
+  {
+    query = wxT( "SELECT DISTINCT song_rating FROM songs WHERE song_rating >= 0 ORDER BY song_rating DESC;" );
+  }
+  else
+  {
+    query = wxT( "SELECT DISTINCT song_rating FROM songs " ) \
+            wxT( "WHERE song_rating >= 0 AND " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+    query += wxT( " ORDER BY song_rating DESC;" );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    int Rating = dbRes.GetInt( 0 ) + 1; // To avoid using the 0 as 0 is used for All
+    Ratings->Add( new guListItem( Rating, wxString::Format( wxT( "%i" ), Rating ) ) );
   }
   dbRes.Finalize();
 }
@@ -3451,6 +3485,33 @@ int guDbLibrary::GetYearsSongs( const wxArrayInt &Years, guTrackArray * Songs )
     query += GetSongsDBNamesSQL( m_TracksOrder );
     query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
     query += wxT( "song_year IN " ) + ArrayIntToStrList( Years );
+    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Song = new guTrack();
+      FillTrackFromDb( Song, &dbRes );
+      Songs->Add( Song );
+    }
+    dbRes.Finalize();
+  }
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetRatingsSongs( const wxArrayInt &Ratings, guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+  if( Ratings.Count() )
+  {
+    query = GU_TRACKS_QUERYSTR;
+    query += GetSongsDBNamesSQL( m_TracksOrder );
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += wxT( "song_rating IN " ) + ArrayIntToStrList( Ratings );
     query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
     dbRes = ExecuteQuery( query );
