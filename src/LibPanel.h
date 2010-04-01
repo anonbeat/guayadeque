@@ -28,6 +28,7 @@
 #include "PlayerPanel.h"
 #include "SoListBox.h"
 #include "TaListBox.h"
+#include "YeListBox.h"
 
 #include <wx/wx.h>
 #include <wx/aui/aui.h>
@@ -45,7 +46,7 @@
 //#define     guPANEL_LIBRARY_TRACKS          ( 1 << 5 )
 #define     guPANEL_LIBRARY_YEARS           ( 1 << 6 )
 #define     guPANEL_LIBRARY_RATINGS         ( 1 << 7 )
-#define     guPANEL_LIBRARY_COMPOSER        ( 1 << 8 )
+#define     guPANEL_LIBRARY_PLAYCOUNT       ( 1 << 8 )
 
 #define     guPANEL_LIBRARY_VISIBLE_DEFAULT ( guPANEL_LIBRARY_TEXTSEARCH | guPANEL_LIBRARY_LABELS |\
                                               guPANEL_LIBRARY_GENRES | guPANEL_LIBRARY_ARTISTS |\
@@ -64,6 +65,7 @@ class guLibPanel : public wxPanel
     guArListBox *       m_ArtistListCtrl;
     guAlListBox *       m_AlbumListCtrl;
     guSoListBox *       m_SongListCtrl;
+    guYeListBox *       m_YearListCtrl;
 
     //
     guDbLibrary *       m_Db;
@@ -124,6 +126,14 @@ class guLibPanel : public wxPanel
     void OnSongSelectGenre( wxCommandEvent &event );
     void OnSongSelectArtist( wxCommandEvent &event );
     void OnSongSelectAlbum( wxCommandEvent &event );
+
+    // YearsListBoxEvents
+    void OnYearsListSelected( wxListEvent &event );
+    void OnYearListActivated( wxListEvent &event );
+    void OnYearListPlayClicked( wxCommandEvent &event );
+    void OnYearListQueueClicked( wxCommandEvent &event );
+    void OnYearListEditTracksClicked( wxCommandEvent &event );
+    void OnYearListCopyToClicked( wxCommandEvent &event );
 
     void OnPaneClose( wxAuiManagerEvent &event );
 

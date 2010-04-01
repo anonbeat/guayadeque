@@ -214,6 +214,8 @@ ADD_EXECUTABLE( guayadeque
 	FileBrowser.h
 	FileRenamer.cpp
 	FileRenamer.h
+	YeListBox.cpp
+	YeListBox.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

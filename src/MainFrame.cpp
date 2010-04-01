@@ -441,9 +441,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_VIEW_LIB_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_LIB_ARTISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_LIB_ALBUMS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_LIB_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
-
-
+    Connect( ID_MENU_VIEW_LIB_YEARS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_LIB_RATINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_LIB_PLAYCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
 
     Connect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ), NULL, this );
     Connect( ID_MENU_VIEW_RAD_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
@@ -543,7 +543,9 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_VIEW_LIB_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
     Disconnect( ID_MENU_VIEW_LIB_ARTISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
     Disconnect( ID_MENU_VIEW_LIB_ALBUMS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
-    Disconnect( ID_MENU_VIEW_LIB_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_YEARS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_RATINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
+    Disconnect( ID_MENU_VIEW_LIB_PLAYCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
 
 
 
@@ -783,10 +785,20 @@ void guMainFrame::CreateMenu()
     m_ViewLibAlbums->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
     m_ViewLibAlbums->Enable( m_ViewLibrary->IsChecked() );
 
-//    m_ViewLibTracks = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_TRACKS, _( "Tracks" ), _( "Show/Hide the library tracks" ), wxITEM_CHECK );
-//    SubMenu->Append( m_ViewLibTracks );
-//    m_ViewLibTracks->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TRACKS ) );
-//    m_ViewLibTracks->Enable( m_ViewLibrary->IsChecked() );
+    m_ViewLibYears = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_YEARS, _( "Years" ), _( "Show/Hide the library years" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibYears );
+    m_ViewLibYears->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
+    m_ViewLibYears->Enable( m_ViewLibrary->IsChecked() );
+
+    m_ViewLibRatings = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_RATINGS, _( "Ratings" ), _( "Show/Hide the library ratings" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibRatings );
+    m_ViewLibRatings->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
+    m_ViewLibRatings->Enable( m_ViewLibrary->IsChecked() );
+
+    m_ViewLibPlayCounts = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_PLAYCOUNT, _( "Play Counts" ), _( "Show/Hide the library play counts" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewLibPlayCounts );
+    m_ViewLibPlayCounts->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
+    m_ViewLibPlayCounts->Enable( m_ViewLibrary->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "Library" ), _( "Set the library visible panels" ) );
 
@@ -1433,6 +1445,8 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
     m_ViewLibAlbums->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
     m_ViewLibAlbums->Enable( IsEnabled );
 
+    m_ViewLibYears->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
+    m_ViewLibYears->Enable( IsEnabled );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1467,11 +1481,20 @@ void guMainFrame::OnLibraryShowPanel( wxCommandEvent &event )
             m_ViewLibAlbums->Check( event.IsChecked() );
             break;
 
-//        case ID_MENU_VIEW_LIB_TRACKS :
-//            PanelId = guPANEL_LIBRARY_TRACKS;
-//            m_ViewLibTracks->Check( event.IsChecked() );
-//            break;
+        case ID_MENU_VIEW_LIB_YEARS :
+            PanelId = guPANEL_LIBRARY_YEARS;
+            m_ViewLibYears->Check( event.IsChecked() );
+            break;
 
+        case ID_MENU_VIEW_LIB_RATINGS :
+            PanelId = guPANEL_LIBRARY_RATINGS;
+            m_ViewLibRatings->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_LIB_PLAYCOUNT :
+            PanelId = guPANEL_LIBRARY_PLAYCOUNT;
+            m_ViewLibPlayCounts->Check( event.IsChecked() );
+            break;
     }
 
     if( PanelId && m_LibPanel )
@@ -2420,6 +2443,7 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     m_ViewLibGenres->Enable( false );
     m_ViewLibArtists->Enable( false );
     m_ViewLibAlbums->Enable( false );
+    m_ViewLibYears->Enable( false );
 
     m_ViewRadios->Check( false );
     m_ViewRadTextSearch->Enable( false );

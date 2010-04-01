@@ -1665,7 +1665,10 @@ void guDbLibrary::SetLibPath( const wxArrayString &NewPaths )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetFiltersCount() const
 {
-    return m_TeFilters.Count() + m_GeFilters.Count() + m_LaFilters.Count() + m_ArFilters.Count() + m_AlFilters.Count();
+    return m_TeFilters.Count() || m_GeFilters.Count() ||
+           m_LaFilters.Count() || m_ArFilters.Count() ||
+           m_AlFilters.Count() || m_YeFilters.Count() ||
+           m_RaFilters.Count() || m_PcFilters.Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1682,16 +1685,16 @@ void guDbLibrary::SetTeFilters( const wxArrayString &NewTeFilters, const bool lo
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetTaFilters( const wxArrayInt &NewTaFilters, const bool locked )
+void guDbLibrary::SetLaFilters( const wxArrayInt &NewLaFilters, const bool locked )
 {
     //guLogMessage( wxT( "guDbLibrary::SetTaFilters %i" ), NewTaFilters.Count() );
-    if( NewTaFilters.Index( 0 ) != wxNOT_FOUND )
+    if( NewLaFilters.Index( 0 ) != wxNOT_FOUND )
     {
         m_LaFilters.Empty();
     }
     else
     {
-        m_LaFilters = NewTaFilters;
+        m_LaFilters = NewLaFilters;
     }
     if( locked )
         return;
@@ -1752,6 +1755,48 @@ void guDbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters, const bool locke
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::SetYeFilters( const wxArrayInt &filter )
+{
+    //guLogMessage( wxT( "guDbLibrary::SetYeFilters %i" ), filter.Count() );
+    if( filter.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_YeFilters.Empty();
+    }
+    else
+    {
+        m_YeFilters = filter;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::SetRaFilters( const wxArrayInt &filter )
+{
+    //guLogMessage( wxT( "guDbLibrary::SetYeFilters %i" ), filter.Count() );
+    if( filter.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_RaFilters.Empty();
+    }
+    else
+    {
+        m_RaFilters = filter;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::SetPcFilters( const wxArrayInt &filter )
+{
+    //guLogMessage( wxT( "guDbLibrary::SetYeFilters %i" ), filter.Count() );
+    if( filter.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_PcFilters.Empty();
+    }
+    else
+    {
+        m_PcFilters = filter;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 wxString guDbLibrary::FiltersSQL( int Level )
 {
   wxString subquery;
@@ -1798,10 +1843,42 @@ wxString guDbLibrary::FiltersSQL( int Level )
               RetVal += wxT( " AND " );
             RetVal += ArrayToFilter( m_AlFilters, wxT( "song_albumid" ) );
           }
+
+
+          if( Level >= GULIBRARY_FILTER_SONGS )
+          {
+              if( m_YeFilters.Count() )
+              {
+                  if( RetVal.Len() )
+                  {
+                      RetVal += wxT( " AND " );
+                  }
+                  RetVal += ArrayToFilter( m_YeFilters, wxT( "song_year" ) );
+              }
+
+              if( m_RaFilters.Count() )
+              {
+                  if( RetVal.Len() )
+                  {
+                      RetVal += wxT( " AND " );
+                  }
+                  RetVal += ArrayToFilter( m_RaFilters, wxT( "song_rating" ) );
+              }
+
+              if( m_PcFilters.Count() )
+              {
+                  if( RetVal.Len() )
+                  {
+                      RetVal += wxT( " AND " );
+                  }
+                  RetVal += ArrayToFilter( m_PcFilters, wxT( "song_playcount" ) );
+              }
+          }
         }
       }
     }
   }
+  //guLogMessage( wxT( "FilterSQL: '%s'" ), RetVal.c_str() );
   return RetVal;
 }
 
@@ -1890,7 +1967,7 @@ wxArrayInt guDbLibrary::GetLabels( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::GetLabels( guListItems * Labels, bool FullList )
+void guDbLibrary::GetLabels( guListItems * Labels, const bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -1911,7 +1988,7 @@ void guDbLibrary::GetLabels( guListItems * Labels, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::GetRadioLabels( guListItems * Labels, bool FullList )
+void guDbLibrary::GetRadioLabels( guListItems * Labels, const bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -1979,7 +2056,7 @@ int guDbLibrary::DelRadioLabel( const int labelid )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::GetGenres( guListItems * Genres, bool FullList )
+void guDbLibrary::GetGenres( guListItems * Genres, const bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2014,7 +2091,7 @@ void guDbLibrary::GetGenres( guListItems * Genres, bool FullList )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::GetArtists( guListItems * Artists, bool FullList )
+void guDbLibrary::GetArtists( guListItems * Artists, const bool FullList )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -2045,6 +2122,33 @@ void guDbLibrary::GetArtists( guListItems * Artists, bool FullList )
   }
   dbRes.Finalize();
 //  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetYears( guListItems * Years, const bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  if( FullList || !GetFiltersCount() )
+  {
+    query = wxT( "SELECT DISTINCT song_year FROM songs WHERE song_year > 0 ORDER BY song_year DESC;" );
+  }
+  else
+  {
+    query = wxT( "SELECT DISTINCT song_year FROM songs " ) \
+            wxT( "WHERE song_year > 0 AND " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+    query += wxT( " ORDER BY song_year DESC;" );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    int Year = dbRes.GetInt( 0 );
+    Years->Add( new guListItem( Year, wxString::Format( wxT( "%i" ), Year ) ) );
+  }
+  dbRes.Finalize();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3321,6 +3425,33 @@ int guDbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs,
     {
         query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
     }
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Song = new guTrack();
+      FillTrackFromDb( Song, &dbRes );
+      Songs->Add( Song );
+    }
+    dbRes.Finalize();
+  }
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetYearsSongs( const wxArrayInt &Years, guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+  if( Years.Count() )
+  {
+    query = GU_TRACKS_QUERYSTR;
+    query += GetSongsDBNamesSQL( m_TracksOrder );
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += wxT( "song_year IN " ) + ArrayIntToStrList( Years );
+    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
     dbRes = ExecuteQuery( query );
 
