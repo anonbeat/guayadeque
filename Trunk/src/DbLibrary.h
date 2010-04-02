@@ -319,6 +319,7 @@ class guDbLibrary : public guDb
     bool                NeedUpdate( void ) { return m_NeedUpdate; };
 
     void                DoCleanUp( void );
+    void                CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers );
     virtual bool        CheckDbVersion( void );
     void                LoadCache( void );
 

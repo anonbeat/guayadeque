@@ -439,12 +439,6 @@ void guDbLibrary::DoCleanUp( void )
   }
   dbRes.Finalize();
 
-  if( SongsToDel.Count() )
-  {
-      query = wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( SongsToDel, wxT( "song_id" ) );
-      ExecuteUpdate( query );
-  }
-
   query = wxT( "SELECT DISTINCT cover_id, cover_path FROM covers;" );
 
   dbRes = ExecuteQuery( query );
@@ -458,9 +452,23 @@ void guDbLibrary::DoCleanUp( void )
   }
   dbRes.Finalize();
 
-  if( CoversToDel.Count() )
+  CleanItems( SongsToDel, CoversToDel );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers )
+{
+  wxString query;
+
+  if( tracks.Count() )
   {
-      query = wxT( "DELETE FROM covers WHERE " ) + ArrayToFilter( CoversToDel, wxT( "cover_id" ) );
+      query = wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( tracks, wxT( "song_id" ) );
+      ExecuteUpdate( query );
+  }
+
+  if( covers.Count() )
+  {
+      query = wxT( "DELETE FROM covers WHERE " ) + ArrayToFilter( covers, wxT( "cover_id" ) );
       ExecuteUpdate( query );
   }
 
