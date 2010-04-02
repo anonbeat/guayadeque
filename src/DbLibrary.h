@@ -248,8 +248,9 @@ WX_DECLARE_OBJARRAY(guAS_SubmitInfo, guAS_SubmitInfoArray);
 #define GULIBRARY_FILTER_LABELS     0
 #define GULIBRARY_FILTER_GENRES     1
 #define GULIBRARY_FILTER_ARTISTS    2
-#define GULIBRARY_FILTER_ALBUMS     3
-#define GULIBRARY_FILTER_SONGS      4
+#define GULIBRARY_FILTER_YEARS      3
+#define GULIBRARY_FILTER_ALBUMS     4
+#define GULIBRARY_FILTER_SONGS      5
 
 class guDynPlayList;
 class guAlbumBrowserItemArray;
@@ -320,6 +321,7 @@ class guDbLibrary : public guDb
 
     void                DoCleanUp( void );
     void                CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers );
+    void                CleanFiles( const wxArrayString &files );
     virtual bool        CheckDbVersion( void );
     void                LoadCache( void );
 
@@ -423,7 +425,7 @@ class guDbLibrary : public guDb
     void                SetLaFilters( const wxArrayInt &NewLaFilters, const bool locked );
     void                SetArFilters( const wxArrayInt &NewArFilters, const bool locked );
     void                SetAlFilters( const wxArrayInt &NewAlFilters, const bool locked );
-    void                SetYeFilters( const wxArrayInt &filter );
+    void                SetYeFilters( const wxArrayInt &filter, const bool locked );
     void                SetRaFilters( const wxArrayInt &filter );
     void                SetPcFilters( const wxArrayInt &filter );
 

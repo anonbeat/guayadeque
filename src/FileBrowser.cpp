@@ -340,7 +340,7 @@ void guFileBrowserDirCtrl::FolderNew( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool RemoveDirItems( const wxString &path )
+bool RemoveDirItems( const wxString &path, wxArrayString * deletefiles )
 {
     wxString FileName;
     wxString CurPath = path;
@@ -357,17 +357,18 @@ bool RemoveDirItems( const wxString &path )
                 {
                     if( wxDirExists( CurPath + FileName ) )
                     {
-                        if( !RemoveDirItems( CurPath + FileName ) )
+                        if( !RemoveDirItems( CurPath + FileName, deletefiles ) )
                             return false;
-                        guLogMessage( wxT( "Removing Dir: %s" ), ( CurPath + FileName ).c_str() );
+                        //guLogMessage( wxT( "Removing Dir: %s" ), ( CurPath + FileName ).c_str() );
                         if( !wxRmdir( CurPath + FileName ) )
                             return false;
                     }
                     else
                     {
-                        guLogMessage( wxT( "Removing file: %s" ), ( CurPath + FileName ).c_str() );
+                        //guLogMessage( wxT( "Removing file: %s" ), ( CurPath + FileName ).c_str() );
                         if( !wxRemoveFile( CurPath + FileName ) )
                             return false;
+                        deletefiles->Add( CurPath + FileName );
                     }
                 }
             } while( Dir.GetNext( &FileName ) );
@@ -387,7 +388,8 @@ void guFileBrowserDirCtrl::FolderDelete( void )
                      _( "Confirm" ),
                      wxICON_QUESTION | wxYES_NO, this ) == wxYES )
     {
-        if( RemoveDirItems( FolderData->m_path ) && wxRmdir( FolderData->m_path ) )
+        wxArrayString DeleteFiles;
+        if( RemoveDirItems( FolderData->m_path, &DeleteFiles ) && wxRmdir( FolderData->m_path ) )
         {
             TreeCtrl->Delete( FolderId );
         }
@@ -396,7 +398,8 @@ void guFileBrowserDirCtrl::FolderDelete( void )
             wxMessageBox( _( "Error deleting the folder " ) + FolderData->m_path,
                 _( "Error" ), wxICON_ERROR | wxOK, this );
         }
-        m_Db->DoCleanUp();
+        //m_Db->DoCleanUp();
+        m_Db->CleanFiles( DeleteFiles );
     }
 }
 
@@ -1452,21 +1455,21 @@ void guFileBrowser::OnFolderCopy( wxCommandEvent &event )
     if( wxTheClipboard->Open() )
     {
         wxTheClipboard->Clear();
-        //wxFileDataObject * FileObject = new wxFileDataObject();
+        wxFileDataObject * FileObject = new wxFileDataObject();
         wxTextDataObject * TextObject = new wxTextDataObject();
-        //wxDataObjectComposite * CompositeObject = new wxDataObjectComposite();
+        wxDataObjectComposite * CompositeObject = new wxDataObjectComposite();
 
-        //FileObject->AddFile( m_DirCtrl->GetPath() );
+        FileObject->AddFile( m_DirCtrl->GetPath() );
         TextObject->SetText( m_DirCtrl->GetPath() );
-        //CompositeObject->Add( FileObject );
-        //CompositeObject->Add( TextObject );
+        CompositeObject->Add( FileObject );
+        CompositeObject->Add( TextObject );
 
-        //if( !wxTheClipboard->AddData( CompositeObject ) )
-        if( !wxTheClipboard->AddData( TextObject ) )
+        if( !wxTheClipboard->AddData( CompositeObject ) )
+        //if( !wxTheClipboard->AddData( TextObject ) )
         {
-            //delete FileObject;
+            delete FileObject;
             delete TextObject;
-            //delete CompositeObject;
+            delete CompositeObject;
             guLogError( wxT( "Can't copy the folder to the clipboard" ) );
         }
         guLogMessage( wxT( "Copied the data to the clipboard..." ) );
@@ -1802,15 +1805,17 @@ void guFileBrowser::OnItemsDelete( wxCommandEvent &event )
                          _( "Confirm" ),
                          wxICON_QUESTION | wxYES_NO, this ) == wxYES )
         {
+            wxArrayString DeleteFiles;
             for( Index = 0; Index < Count; Index++ )
             {
                 if( wxDirExists( Files[ Index ] ) )
                 {
-                    Error = !RemoveDirItems( Files[ Index ] ) || !wxRmdir( Files[ Index ] );
+                    Error = !RemoveDirItems( Files[ Index ], &DeleteFiles ) || !wxRmdir( Files[ Index ] );
                 }
                 else
                 {
                     Error = !wxRemoveFile( Files[ Index ] );
+                    DeleteFiles.Add( Files[ Index ] );
                 }
                 if( Error )
                 {
@@ -1828,7 +1833,8 @@ void guFileBrowser::OnItemsDelete( wxCommandEvent &event )
             m_DirCtrl->CollapsePath( CurrentFolder );
             m_DirCtrl->ExpandPath( CurrentFolder );
             //
-            m_Db->DoCleanUp();
+            //m_Db->DoCleanUp();
+            m_Db->CleanFiles( DeleteFiles );
         }
     }
 }

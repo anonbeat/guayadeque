@@ -1932,13 +1932,13 @@ void guLibPanel::DoSelectionChanged( void )
             break;
         }
 
-        case guPANEL_LIBRARY_ALBUMS :
+        case guPANEL_LIBRARY_YEARS :
         {
-            m_Db->SetAlFilters( m_AlbumListCtrl->GetSelectedItems(), m_UpdateLock );
+            m_Db->SetYeFilters( m_YearListCtrl->GetSelectedItems(), m_UpdateLock );
             if( !m_UpdateLock )
             {
                 m_UpdateLock = true;
-                m_YearListCtrl->ReloadItems();
+                m_AlbumListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
                 m_PlayCountListCtrl->ReloadItems( false );
                 m_SongListCtrl->ReloadItems();
@@ -1947,12 +1947,14 @@ void guLibPanel::DoSelectionChanged( void )
             break;
         }
 
-        case guPANEL_LIBRARY_YEARS :
+        case guPANEL_LIBRARY_ALBUMS :
         {
-            m_Db->SetYeFilters( m_YearListCtrl->GetSelectedItems() );
+            m_Db->SetAlFilters( m_AlbumListCtrl->GetSelectedItems(), m_UpdateLock );
             if( !m_UpdateLock )
             {
                 m_UpdateLock = true;
+                m_RatingListCtrl->ReloadItems( false );
+                m_PlayCountListCtrl->ReloadItems( false );
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
