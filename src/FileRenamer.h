@@ -41,6 +41,14 @@
 #include <wx/dialog.h>
 
 // -------------------------------------------------------------------------------- //
+wxString inline NormalizeField( const wxString &name )
+{
+    wxString RetVal = name;
+    RetVal.Replace( wxT( "/" ), wxT( "_" ) );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 class guFileRenamer : public wxDialog
 {
   protected:
