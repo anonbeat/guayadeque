@@ -36,7 +36,8 @@
 #include <wx/event.h>
 #include <wx/uri.h>
 
-#define LISTCTRL_BORDER 1
+#define     LISTCTRL_BORDER 1
+#define     guPANEL_TIMER_SELCHANGED        50
 
 // -------------------------------------------------------------------------------- //
 guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel )
@@ -59,6 +60,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 
     m_Db = NewDb;
     m_PlayerPanel = NewPlayerPanel;
+    m_SelChangedTimer.SetOwner( this );
 
     m_AuiManager.SetManagedWindow( this );
     m_AuiManager.SetArtProvider( new guAuiDockArt() );
@@ -257,6 +259,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_UpdateLock = false;
 
 
+	Connect( wxEVT_TIMER, wxTimerEventHandler( guLibPanel::OnSelChangedTimer ), NULL, this );
     //
     m_GenreListCtrl->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnGenreListSelected ), NULL, this );
     //m_GenreListCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED,  wxListEventHandler( guLibPanel::OnGenreListSelected ), NULL, this );
@@ -502,21 +505,25 @@ void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnGenreListSelected( wxListEvent &event )
 {
-    //wxLongLong time = wxGetLocalTimeMillis();
-    m_Db->SetGeFilters( m_GenreListCtrl->GetSelectedItems(), m_UpdateLock );
-
-    if( !m_UpdateLock )
-    {
-        m_UpdateLock = true;
-        m_ArtistListCtrl->ReloadItems();
-        m_AlbumListCtrl->ReloadItems();
-        m_YearListCtrl->ReloadItems();
-        m_RatingListCtrl->ReloadItems( false );
-        m_SongListCtrl->ReloadItems();
-        m_UpdateLock = false;
-    }
-    //time = wxGetLocalTimeMillis() - time;;
-    //guLogWarning( wxT( "Genre Time : %u ms" ), time.GetLo() );
+    m_SelChangedObject = guPANEL_LIBRARY_GENRES;
+    if( m_SelChangedTimer.IsRunning() )
+        m_SelChangedTimer.Stop();
+    m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
+//    //wxLongLong time = wxGetLocalTimeMillis();
+//    m_Db->SetGeFilters( m_GenreListCtrl->GetSelectedItems(), m_UpdateLock );
+//
+//    if( !m_UpdateLock )
+//    {
+//        m_UpdateLock = true;
+//        m_ArtistListCtrl->ReloadItems();
+//        m_AlbumListCtrl->ReloadItems();
+//        m_YearListCtrl->ReloadItems();
+//        m_RatingListCtrl->ReloadItems( false );
+//        m_SongListCtrl->ReloadItems();
+//        m_UpdateLock = false;
+//    }
+//    //time = wxGetLocalTimeMillis() - time;;
+//    //guLogWarning( wxT( "Genre Time : %u ms" ), time.GetLo() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -575,20 +582,24 @@ void guLibPanel::OnGenreCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnLabelListSelected( wxListEvent &event )
 {
-    m_Db->SetLaFilters( m_LabelsListCtrl->GetSelectedItems(), m_UpdateLock );
-    if( !m_UpdateLock )
-    {
-        m_UpdateLock = true;
-        m_GenreListCtrl->ReloadItems();
-        m_ArtistListCtrl->ReloadItems();
-        m_AlbumListCtrl->ReloadItems();
-        m_YearListCtrl->ReloadItems();
-        m_RatingListCtrl->ReloadItems( false );
-        m_SongListCtrl->ReloadItems();
-        //
-        //
-        m_UpdateLock = false;
-    }
+    m_SelChangedObject = guPANEL_LIBRARY_LABELS;
+    if( m_SelChangedTimer.IsRunning() )
+        m_SelChangedTimer.Stop();
+    m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
+//    m_Db->SetLaFilters( m_LabelsListCtrl->GetSelectedItems(), m_UpdateLock );
+//    if( !m_UpdateLock )
+//    {
+//        m_UpdateLock = true;
+//        m_GenreListCtrl->ReloadItems();
+//        m_ArtistListCtrl->ReloadItems();
+//        m_AlbumListCtrl->ReloadItems();
+//        m_YearListCtrl->ReloadItems();
+//        m_RatingListCtrl->ReloadItems( false );
+//        m_SongListCtrl->ReloadItems();
+//        //
+//        //
+//        m_UpdateLock = false;
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -661,16 +672,20 @@ void guLibPanel::UpdateLabels( void )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnArtistListSelected( wxListEvent &event )
 {
-    m_Db->SetArFilters( m_ArtistListCtrl->GetSelectedItems(), m_UpdateLock );
-    if( !m_UpdateLock )
-    {
-        m_UpdateLock = true;
-        m_AlbumListCtrl->ReloadItems();
-        m_YearListCtrl->ReloadItems();
-        m_RatingListCtrl->ReloadItems( false );
-        m_SongListCtrl->ReloadItems();
-        m_UpdateLock = false;
-    }
+    m_SelChangedObject = guPANEL_LIBRARY_ARTISTS;
+    if( m_SelChangedTimer.IsRunning() )
+        m_SelChangedTimer.Stop();
+    m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
+//    m_Db->SetArFilters( m_ArtistListCtrl->GetSelectedItems(), m_UpdateLock );
+//    if( !m_UpdateLock )
+//    {
+//        m_UpdateLock = true;
+//        m_AlbumListCtrl->ReloadItems();
+//        m_YearListCtrl->ReloadItems();
+//        m_RatingListCtrl->ReloadItems( false );
+//        m_SongListCtrl->ReloadItems();
+//        m_UpdateLock = false;
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -783,15 +798,19 @@ void guLibPanel::OnArtistCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumListSelected( wxListEvent &event )
 {
-    m_Db->SetAlFilters( m_AlbumListCtrl->GetSelectedItems(), m_UpdateLock );
-    if( !m_UpdateLock )
-    {
-        m_UpdateLock = true;
-        m_YearListCtrl->ReloadItems();
-        m_RatingListCtrl->ReloadItems( false );
-        m_SongListCtrl->ReloadItems();
-        m_UpdateLock = false;
-    }
+    m_SelChangedObject = guPANEL_LIBRARY_ALBUMS;
+    if( m_SelChangedTimer.IsRunning() )
+        m_SelChangedTimer.Stop();
+    m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
+//    m_Db->SetAlFilters( m_AlbumListCtrl->GetSelectedItems(), m_UpdateLock );
+//    if( !m_UpdateLock )
+//    {
+//        m_UpdateLock = true;
+//        m_YearListCtrl->ReloadItems();
+//        m_RatingListCtrl->ReloadItems( false );
+//        m_SongListCtrl->ReloadItems();
+//        m_UpdateLock = false;
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1408,13 +1427,17 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnYearListSelected( wxListEvent &event )
 {
-    m_Db->SetYeFilters( m_YearListCtrl->GetSelectedItems() );
-    if( !m_UpdateLock )
-    {
-        m_UpdateLock = true;
-        m_SongListCtrl->ReloadItems();
-        m_UpdateLock = false;
-    }
+    m_SelChangedObject = guPANEL_LIBRARY_YEARS;
+    if( m_SelChangedTimer.IsRunning() )
+        m_SelChangedTimer.Stop();
+    m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
+//    m_Db->SetYeFilters( m_YearListCtrl->GetSelectedItems() );
+//    if( !m_UpdateLock )
+//    {
+//        m_UpdateLock = true;
+//        m_SongListCtrl->ReloadItems();
+//        m_UpdateLock = false;
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1497,13 +1520,17 @@ void guLibPanel::OnYearListCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnRatingListSelected( wxListEvent &event )
 {
-    m_Db->SetRaFilters( m_RatingListCtrl->GetSelectedItems() );
-    if( !m_UpdateLock )
-    {
-        m_UpdateLock = true;
-        m_SongListCtrl->ReloadItems();
-        m_UpdateLock = false;
-    }
+    m_SelChangedObject = guPANEL_LIBRARY_RATINGS;
+    if( m_SelChangedTimer.IsRunning() )
+        m_SelChangedTimer.Stop();
+    m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
+//    m_Db->SetRaFilters( m_RatingListCtrl->GetSelectedItems() );
+//    if( !m_UpdateLock )
+//    {
+//        m_UpdateLock = true;
+//        m_SongListCtrl->ReloadItems();
+//        m_UpdateLock = false;
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1698,6 +1725,118 @@ void guLibPanel::OnPaneClose( wxAuiManagerEvent &event )
     }
 
     event.Veto();
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSelChangedTimer( wxTimerEvent &event )
+{
+    DoSelectionChanged();
+    m_SelChangedObject = 0;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::DoSelectionChanged( void )
+{
+    switch( m_SelChangedObject )
+    {
+        case guPANEL_LIBRARY_TEXTSEARCH :
+        {
+            break;
+        }
+
+        case guPANEL_LIBRARY_LABELS :
+        {
+            m_Db->SetLaFilters( m_LabelsListCtrl->GetSelectedItems(), m_UpdateLock );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_GenreListCtrl->ReloadItems();
+                m_ArtistListCtrl->ReloadItems();
+                m_AlbumListCtrl->ReloadItems();
+                m_YearListCtrl->ReloadItems();
+                m_RatingListCtrl->ReloadItems( false );
+                m_SongListCtrl->ReloadItems();
+                //
+                //
+                m_UpdateLock = false;
+            }
+            break;
+        }
+
+        case guPANEL_LIBRARY_GENRES :
+        {
+            //wxLongLong time = wxGetLocalTimeMillis();
+            m_Db->SetGeFilters( m_GenreListCtrl->GetSelectedItems(), m_UpdateLock );
+
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_ArtistListCtrl->ReloadItems();
+                m_AlbumListCtrl->ReloadItems();
+                m_YearListCtrl->ReloadItems();
+                m_RatingListCtrl->ReloadItems( false );
+                m_SongListCtrl->ReloadItems();
+                m_UpdateLock = false;
+            }
+            //time = wxGetLocalTimeMillis() - time;;
+            //guLogWarning( wxT( "Genre Time : %u ms" ), time.GetLo() );
+            break;
+        }
+
+        case guPANEL_LIBRARY_ARTISTS :
+        {
+            m_Db->SetArFilters( m_ArtistListCtrl->GetSelectedItems(), m_UpdateLock );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_AlbumListCtrl->ReloadItems();
+                m_YearListCtrl->ReloadItems();
+                m_RatingListCtrl->ReloadItems( false );
+                m_SongListCtrl->ReloadItems();
+                m_UpdateLock = false;
+            }
+            break;
+        }
+
+        case guPANEL_LIBRARY_ALBUMS :
+        {
+            m_Db->SetAlFilters( m_AlbumListCtrl->GetSelectedItems(), m_UpdateLock );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_YearListCtrl->ReloadItems();
+                m_RatingListCtrl->ReloadItems( false );
+                m_SongListCtrl->ReloadItems();
+                m_UpdateLock = false;
+            }
+            break;
+        }
+
+        case guPANEL_LIBRARY_YEARS :
+        {
+            m_Db->SetYeFilters( m_YearListCtrl->GetSelectedItems() );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_SongListCtrl->ReloadItems();
+                m_UpdateLock = false;
+            }
+            break;
+        }
+
+        case guPANEL_LIBRARY_RATINGS :
+        {
+            m_Db->SetRaFilters( m_RatingListCtrl->GetSelectedItems() );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_SongListCtrl->ReloadItems();
+                m_UpdateLock = false;
+            }
+            break;
+        }
+
+    }
 }
 
 // -------------------------------------------------------------------------------- //
