@@ -73,6 +73,8 @@ class guLibPanel : public wxPanel
     guDbLibrary *       m_Db;
     bool                m_UpdateLock;
     guPlayerPanel *     m_PlayerPanel;
+    wxTimer             m_SelChangedTimer;
+    int                 m_SelChangedObject;
 
     // Search Str events
     void OnSearchActivated( wxCommandEvent &event );
@@ -147,6 +149,10 @@ class guLibPanel : public wxPanel
 
     //
     void OnPaneClose( wxAuiManagerEvent &event );
+
+    //
+    void OnSelChangedTimer( wxTimerEvent &event );
+    void DoSelectionChanged( void );
 
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel );
