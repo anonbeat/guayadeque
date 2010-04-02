@@ -1703,6 +1703,7 @@ void guDbLibrary::SetLaFilters( const wxArrayInt &NewLaFilters, const bool locke
     m_AlFilters.Empty();
     m_YeFilters.Empty();
     m_RaFilters.Empty();
+    m_PcFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1723,6 +1724,7 @@ void guDbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters, const bool locke
     m_AlFilters.Empty();
     m_YeFilters.Empty();
     m_RaFilters.Empty();
+    m_PcFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1742,6 +1744,7 @@ void guDbLibrary::SetArFilters( const wxArrayInt &NewArFilters, const bool locke
     m_AlFilters.Empty();
     m_YeFilters.Empty();
     m_RaFilters.Empty();
+    m_PcFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1762,6 +1765,7 @@ void guDbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters, const bool locke
         return;
     m_YeFilters.Empty();
     m_RaFilters.Empty();
+    m_PcFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1809,7 +1813,13 @@ void guDbLibrary::SetPcFilters( const wxArrayInt &filter )
     }
     else
     {
-        m_PcFilters = filter;
+        m_PcFilters.Empty();
+        int Index;
+        int Count = filter.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            m_PcFilters.Add( filter[ Index ] - 1 );
+        }
     }
 }
 
@@ -2189,8 +2199,37 @@ void guDbLibrary::GetRatings( guListItems * Ratings, const bool FullList )
 
   while( dbRes.NextRow() )
   {
-    int Rating = dbRes.GetInt( 0 ) + 1; // To avoid using the 0 as 0 is used for All
-    Ratings->Add( new guListItem( Rating, wxString::Format( wxT( "%i" ), Rating ) ) );
+    int Rating = dbRes.GetInt( 0 );
+    // To avoid using the 0 as 0 is used for All
+    Ratings->Add( new guListItem( Rating + 1, wxString::Format( wxT( "%i" ), Rating ) ) );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetPlayCounts( guListItems * PlayCounts, const bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  if( FullList || !GetFiltersCount() )
+  {
+    query = wxT( "SELECT DISTINCT song_playcount FROM songs ORDER BY song_playcount;" );
+  }
+  else
+  {
+    query = wxT( "SELECT DISTINCT song_playcount FROM songs " ) \
+            wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+    query += wxT( " ORDER BY song_playcount;" );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    int PlayCount = dbRes.GetInt( 0 );
+    // To avoid using the 0 as 0 is used for All
+    PlayCounts->Add( new guListItem( PlayCount + 1, wxString::Format( wxT( "%i" ), PlayCount ) ) );
   }
   dbRes.Finalize();
 }
@@ -3522,6 +3561,33 @@ int guDbLibrary::GetRatingsSongs( const wxArrayInt &Ratings, guTrackArray * Song
     query += GetSongsDBNamesSQL( m_TracksOrder );
     query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
     query += wxT( "song_rating IN " ) + ArrayIntToStrList( Ratings );
+    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Song = new guTrack();
+      FillTrackFromDb( Song, &dbRes );
+      Songs->Add( Song );
+    }
+    dbRes.Finalize();
+  }
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetPlayCountsSongs( const wxArrayInt &PlayCounts, guTrackArray * Songs )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+  if( PlayCounts.Count() )
+  {
+    query = GU_TRACKS_QUERYSTR;
+    query += GetSongsDBNamesSQL( m_TracksOrder );
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += wxT( "song_playcount IN " ) + ArrayIntToStrList( PlayCounts );
     query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
     dbRes = ExecuteQuery( query );
