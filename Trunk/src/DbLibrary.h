@@ -349,6 +349,7 @@ class guDbLibrary : public guDb
     void                GetArtists( guListItems * Artists, const bool FullList = false );
     void                GetYears( guListItems * items, const bool FullList = false );
     void                GetRatings( guListItems * items, const bool FullList = false );
+    void                GetPlayCounts( guListItems * items, const bool FullList = false );
     void                SetAlbumsOrder( const int order );
     int                 GetAlbumsOrder( void ) { return m_AlbumsOrder; };
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
@@ -445,7 +446,8 @@ class guDbLibrary : public guDb
 
 
     int                 GetYearsSongs( const wxArrayInt &Years, guTrackArray * Songs );
-    int                 GetRatingsSongs( const wxArrayInt &Years, guTrackArray * Songs );
+    int                 GetRatingsSongs( const wxArrayInt &Ratings, guTrackArray * Songs );
+    int                 GetPlayCountsSongs( const wxArrayInt &PlayCounts, guTrackArray * Songs );
 
 //    wxSQLite3ResultSet  ExecuteQuery(  const wxSQLite3StatementBuffer &query );
 //    int                 ExecuteUpdate( const wxString &query );

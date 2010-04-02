@@ -207,7 +207,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
             Dockable( true ).Top() );
 
 	//
-	// Years
+	// Ratings
 	//
 	wxPanel * RatingPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer * RatingSizer = new wxBoxSizer( wxVERTICAL );
@@ -222,6 +222,25 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_AuiManager.AddPane( RatingPanel, wxAuiPaneInfo().Name( wxT( "Ratings" ) ).Caption( _( "Ratings" ) ).
             MinSize( 50, 50 ).Row( 2 ).
             Position( 1 ).Hide().
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            Dockable( true ).Top() );
+
+	//
+	// PlayCounts
+	//
+	wxPanel * PlayCountPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * PlayCountSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_PlayCountListCtrl = new guPcListBox( PlayCountPanel, m_Db, _( "Play Counts" ) );
+	PlayCountSizer->Add( m_PlayCountListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+
+	PlayCountPanel->SetSizer( PlayCountSizer );
+	PlayCountPanel->Layout();
+	PlayCountSizer->Fit( PlayCountPanel );
+
+    m_AuiManager.AddPane( PlayCountPanel, wxAuiPaneInfo().Name( wxT( "PlayCounts" ) ).Caption( _( "Play Counts" ) ).
+            MinSize( 50, 50 ).Row( 2 ).
+            Position( 2 ).Hide().
             CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Top() );
 
@@ -282,6 +301,9 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_RatingListCtrl->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnRatingListSelected ), NULL, this );
     m_RatingListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnRatingListActivated ), NULL, this );
 
+    m_PlayCountListCtrl->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnPlayCountListSelected ), NULL, this );
+    m_PlayCountListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnPlayCountListActivated ), NULL, this );
+
     m_SongListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
     m_SongListCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
@@ -322,6 +344,11 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     Connect( ID_RATING_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListQueueClicked ), NULL, this );
     Connect( ID_RATING_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListEditTracksClicked ), NULL, this );
     Connect( ID_RATING_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListCopyToClicked ), NULL, this );
+
+    Connect( ID_PLAYCOUNT_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListPlayClicked ), NULL, this );
+    Connect( ID_PLAYCOUNT_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListQueueClicked ), NULL, this );
+    Connect( ID_PLAYCOUNT_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListEditTracksClicked ), NULL, this );
+    Connect( ID_PLAYCOUNT_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListCopyToClicked ), NULL, this );
 
     Connect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayClicked ), NULL, this );
     Connect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayAllClicked ), NULL, this );
@@ -369,6 +396,9 @@ guLibPanel::~guLibPanel()
     m_RatingListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnRatingListSelected ), NULL, this );
     m_RatingListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnRatingListActivated ), NULL, this );
 
+    m_PlayCountListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnPlayCountListSelected ), NULL, this );
+    m_PlayCountListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnPlayCountListActivated ), NULL, this );
+
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
@@ -410,6 +440,11 @@ guLibPanel::~guLibPanel()
     Disconnect( ID_RATING_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListEditTracksClicked ), NULL, this );
     Disconnect( ID_RATING_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListCopyToClicked ), NULL, this );
 
+    Disconnect( ID_PLAYCOUNT_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListPlayClicked ), NULL, this );
+    Disconnect( ID_PLAYCOUNT_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListQueueClicked ), NULL, this );
+    Disconnect( ID_PLAYCOUNT_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListEditTracksClicked ), NULL, this );
+    Disconnect( ID_PLAYCOUNT_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListCopyToClicked ), NULL, this );
+
     Disconnect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayClicked ) );
     Disconnect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayAllClicked ) );
     Disconnect( ID_SONG_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongQueueClicked ) );
@@ -439,6 +474,7 @@ void guLibPanel::ReloadControls( wxCommandEvent &event )
     m_AlbumListCtrl->ReloadItems( false );
     m_YearListCtrl->ReloadItems( false );
     m_RatingListCtrl->ReloadItems( false );
+    m_PlayCountListCtrl->ReloadItems( false );
     m_SongListCtrl->ReloadItems();
     m_UpdateLock = false;
 }
@@ -465,6 +501,7 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
             m_AlbumListCtrl->ReloadItems();
             m_YearListCtrl->ReloadItems();
             m_RatingListCtrl->ReloadItems();
+            m_PlayCountListCtrl->ReloadItems( false );
             m_SongListCtrl->ReloadItems();
             m_UpdateLock = false;
         }
@@ -492,6 +529,7 @@ void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
         m_AlbumListCtrl->ReloadItems( false );
         m_YearListCtrl->ReloadItems( false );
         m_RatingListCtrl->ReloadItems( false );
+        m_PlayCountListCtrl->ReloadItems( false );
         m_SongListCtrl->ReloadItems( false );
         m_UpdateLock = false;
 //    }
@@ -1608,6 +1646,99 @@ void guLibPanel::OnRatingListCopyToClicked( wxCommandEvent &event )
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
+//
+// PlayCount List Box
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnPlayCountListSelected( wxListEvent &event )
+{
+    m_SelChangedObject = guPANEL_LIBRARY_PLAYCOUNT;
+    if( m_SelChangedTimer.IsRunning() )
+        m_SelChangedTimer.Stop();
+    m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
+//    m_Db->SetRaFilters( m_PlayCountListCtrl->GetSelectedItems() );
+//    if( !m_UpdateLock )
+//    {
+//        m_UpdateLock = true;
+//        m_SongListCtrl->ReloadItems();
+//        m_UpdateLock = false;
+//    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnPlayCountListActivated( wxListEvent &event )
+{
+    guTrackArray Songs;
+    m_PlayCountListCtrl->GetSelectedSongs( &Songs );
+    if( Songs.Count() )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
+        {
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Songs );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Songs );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnPlayCountListPlayClicked( wxCommandEvent &event )
+{
+    guTrackArray Songs;
+    m_PlayCountListCtrl->GetSelectedSongs( &Songs );
+    m_PlayerPanel->SetPlayList( Songs );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnPlayCountListQueueClicked( wxCommandEvent &event )
+{
+    guTrackArray Songs;
+    m_PlayCountListCtrl->GetSelectedSongs( &Songs );
+    m_PlayerPanel->AddToPlayList( Songs );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnPlayCountListEditTracksClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    guImagePtrArray Images;
+    wxArrayString Lyrics;
+    m_PlayCountListCtrl->GetSelectedSongs( &Tracks );
+    if( !Tracks.Count() )
+        return;
+
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
+    if( TrackEditor )
+    {
+        if( TrackEditor->ShowModal() == wxID_OK )
+        {
+            m_Db->UpdateSongs( &Tracks );
+            UpdateImages( Tracks, Images );
+            UpdateLyrics( Tracks, Lyrics );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+        }
+        TrackEditor->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnPlayCountListCopyToClicked( wxCommandEvent &event )
+{
+    guTrackArray * Tracks = new guTrackArray();
+    m_PlayCountListCtrl->GetSelectedSongs( Tracks );
+
+    event.SetId( ID_MAINFRAME_COPYTO );
+    event.SetClientData( ( void * ) Tracks );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
 // -------------------------------------------------------------------------------- //
 bool guLibPanel::IsPanelShown( const int panelid ) const
 {
@@ -1755,6 +1886,7 @@ void guLibPanel::DoSelectionChanged( void )
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
+                m_PlayCountListCtrl->ReloadItems( false );
                 m_SongListCtrl->ReloadItems();
                 //
                 //
@@ -1775,6 +1907,7 @@ void guLibPanel::DoSelectionChanged( void )
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
+                m_PlayCountListCtrl->ReloadItems( false );
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -1792,6 +1925,7 @@ void guLibPanel::DoSelectionChanged( void )
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
+                m_PlayCountListCtrl->ReloadItems( false );
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -1806,6 +1940,7 @@ void guLibPanel::DoSelectionChanged( void )
                 m_UpdateLock = true;
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
+                m_PlayCountListCtrl->ReloadItems( false );
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -1836,6 +1971,17 @@ void guLibPanel::DoSelectionChanged( void )
             break;
         }
 
+        case guPANEL_LIBRARY_PLAYCOUNT :
+        {
+            m_Db->SetPcFilters( m_PlayCountListCtrl->GetSelectedItems() );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_SongListCtrl->ReloadItems();
+                m_UpdateLock = false;
+            }
+            break;
+        }
     }
 }
 

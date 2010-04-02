@@ -25,6 +25,7 @@
 #include "ArListBox.h"
 #include "DbLibrary.h"
 #include "GeListBox.h"
+#include "PcListBox.h"
 #include "PlayerPanel.h"
 #include "RaListBox.h"
 #include "SoListBox.h"
@@ -68,6 +69,7 @@ class guLibPanel : public wxPanel
     guSoListBox *       m_SongListCtrl;
     guYeListBox *       m_YearListCtrl;
     guRaListBox *       m_RatingListCtrl;
+    guPcListBox *       m_PlayCountListCtrl;
 
     //
     guDbLibrary *       m_Db;
@@ -131,6 +133,14 @@ class guLibPanel : public wxPanel
     void OnRatingListQueueClicked( wxCommandEvent &event );
     void OnRatingListEditTracksClicked( wxCommandEvent &event );
     void OnRatingListCopyToClicked( wxCommandEvent &event );
+
+    // PlayCountListBoxEvents
+    void OnPlayCountListSelected( wxListEvent &event );
+    void OnPlayCountListActivated( wxListEvent &event );
+    void OnPlayCountListPlayClicked( wxCommandEvent &event );
+    void OnPlayCountListQueueClicked( wxCommandEvent &event );
+    void OnPlayCountListEditTracksClicked( wxCommandEvent &event );
+    void OnPlayCountListCopyToClicked( wxCommandEvent &event );
 
     // SongsListBox Events
     void OnSongListActivated( wxListEvent &event );

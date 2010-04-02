@@ -160,6 +160,8 @@
 		<Unit filename="src/OnlineLinks.h" />
 		<Unit filename="src/PLSoListBox.cpp" />
 		<Unit filename="src/PLSoListBox.h" />
+		<Unit filename="src/PcListBox.cpp" />
+		<Unit filename="src/PcListBox.h" />
 		<Unit filename="src/PlayList.cpp" />
 		<Unit filename="src/PlayList.h" />
 		<Unit filename="src/PlayListAppend.cpp" />
@@ -176,6 +178,8 @@
 		<Unit filename="src/PodcastsPanel.h" />
 		<Unit filename="src/Preferences.cpp" />
 		<Unit filename="src/Preferences.h" />
+		<Unit filename="src/RaListBox.cpp" />
+		<Unit filename="src/RaListBox.h" />
 		<Unit filename="src/RadioEditor.cpp" />
 		<Unit filename="src/RadioEditor.h" />
 		<Unit filename="src/RadioGenreEditor.cpp" />
@@ -214,6 +218,8 @@
 		<Unit filename="src/VolumeFrame.h" />
 		<Unit filename="src/Vumeters.cpp" />
 		<Unit filename="src/Vumeters.h" />
+		<Unit filename="src/YeListBox.cpp" />
+		<Unit filename="src/YeListBox.h" />
 		<Unit filename="src/curl/base.cpp" />
 		<Unit filename="src/curl/http.cpp" />
 		<Unit filename="src/dbus/gsession.cpp" />
