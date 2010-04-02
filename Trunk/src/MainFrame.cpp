@@ -23,6 +23,7 @@
 #include "AuiDockArt.h"
 #include "Commands.h"
 #include "ConfirmExit.h"
+#include "FileRenamer.h"    // NormalizeField
 #include "Images.h"
 #include "LibUpdate.h"
 #include "Preferences.h"
@@ -2876,14 +2877,14 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
         else
         {
             FileName = FilePattern;
-            FileName.Replace( wxT( "{a}" ), ( * m_Tracks )[ index ].m_ArtistName );
-            FileName.Replace( wxT( "{b}" ), ( * m_Tracks )[ index ].m_AlbumName );
+            FileName.Replace( wxT( "{a}" ), NormalizeField( ( * m_Tracks )[ index ].m_ArtistName ) );
+            FileName.Replace( wxT( "{b}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumName ) );
             FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( ( * m_Tracks )[ index ].m_FileName ) );
-            FileName.Replace( wxT( "{g}" ), ( * m_Tracks )[ index ].m_GenreName );
+            FileName.Replace( wxT( "{g}" ), NormalizeField( ( * m_Tracks )[ index ].m_GenreName ) );
             FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), ( * m_Tracks )[ index ].m_Number ) );
-            FileName.Replace( wxT( "{t}" ), ( * m_Tracks )[ index ].m_SongName );
+            FileName.Replace( wxT( "{t}" ), NormalizeField( ( * m_Tracks )[ index ].m_SongName ) );
             FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), ( * m_Tracks )[ index ].m_Year ) );
-            wxString Disk = ( * m_Tracks )[ index ].m_Disk;
+            wxString Disk = NormalizeField( ( * m_Tracks )[ index ].m_Disk );
             Disk.Replace( wxT( "/" ), wxT( "-" ) );
             FileName.Replace( wxT( "{d}" ), Disk );
             //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );

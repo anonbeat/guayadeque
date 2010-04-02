@@ -182,14 +182,6 @@ void guFileRenamer::OnPatternChanged( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString inline NormalizeField( const wxString &name )
-{
-    wxString RetVal = name;
-    RetVal.Replace( wxT( "/" ), wxT( "_" ) );
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
 void guFileRenamer::OnPatternApply( wxCommandEvent& event )
 {
     wxArrayInt Selection;
