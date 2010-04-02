@@ -1701,6 +1701,8 @@ void guDbLibrary::SetLaFilters( const wxArrayInt &NewLaFilters, const bool locke
     m_GeFilters.Empty();
     m_ArFilters.Empty();
     m_AlFilters.Empty();
+    m_YeFilters.Empty();
+    m_RaFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1719,6 +1721,8 @@ void guDbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters, const bool locke
         return;
     m_ArFilters.Empty();
     m_AlFilters.Empty();
+    m_YeFilters.Empty();
+    m_RaFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1736,6 +1740,8 @@ void guDbLibrary::SetArFilters( const wxArrayInt &NewArFilters, const bool locke
     if( locked )
         return;
     m_AlFilters.Empty();
+    m_YeFilters.Empty();
+    m_RaFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1752,6 +1758,10 @@ void guDbLibrary::SetAlFilters( const wxArrayInt &NewAlFilters, const bool locke
     {
         m_AlFilters = NewAlFilters;
     }
+    if( locked )
+        return;
+    m_YeFilters.Empty();
+    m_RaFilters.Empty();
 }
 
 // -------------------------------------------------------------------------------- //
