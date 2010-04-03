@@ -43,8 +43,17 @@
 // -------------------------------------------------------------------------------- //
 wxString inline NormalizeField( const wxString &name )
 {
+    // Special chars: < > : " / \ | ? *
     wxString RetVal = name;
+    RetVal.Replace( wxT( "<" ), wxT( "_" ) );
+    RetVal.Replace( wxT( ">" ), wxT( "_" ) );
+    RetVal.Replace( wxT( ":" ), wxT( "_" ) );
+    RetVal.Replace( wxT( "\"" ), wxT( "_" ) );
     RetVal.Replace( wxT( "/" ), wxT( "_" ) );
+    RetVal.Replace( wxT( "\\" ), wxT( "_" ) );
+    RetVal.Replace( wxT( "|" ), wxT( "_" ) );
+    RetVal.Replace( wxT( "?" ), wxT( "_" ) );
+    RetVal.Replace( wxT( "*" ), wxT( "_" ) );
     return RetVal;
 }
 

@@ -42,28 +42,26 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
     {
         case GST_MESSAGE_ERROR :
         {
-            if( !ctrl->GetLastError() )
+            GError * err;
+            //gchar * debug;
+            gst_message_parse_error( message, &err, NULL );
+
+            if( ctrl->GetLastError() != err->code )
             {
-                ctrl->SetLastError( 1 );
+                ctrl->SetLastError( err->code );
 
-                GError * err;
-                gchar * debug;
-                gst_message_parse_error( message, &err, &debug );
-
-                //guLogError( wxT( "Gstreamer error '%s'\'%s'" ),
-                //    wxString( err->message, wxConvUTF8 ).c_str(),
-                //    wxString( debug, wxConvUTF8 ).c_str() );
                 wxString * ErrorStr = new wxString( err->message, wxConvUTF8 );
+
+                guLogError( wxT( "Gstreamer error '%s'" ), ErrorStr->c_str() );
+
                 wxMediaEvent event( wxEVT_MEDIA_ERROR );
                 event.SetClientData( ( void * ) ErrorStr );
                 ctrl->AddPendingEvent( event );
-
-                g_error_free( err );
-                g_free( debug );
-
             }
-            //ctrl->Stop();
-            //gst_element_set_state( ctrl->m_Playbin, GST_STATE_NULL );
+
+
+            g_error_free( err );
+            //g_free( debug );
             break;
         }
 
@@ -483,10 +481,12 @@ guMediaCtrl::~guMediaCtrl()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Load( const wxString &uri, bool restart )
 {
+    guLogMessage( wxT( "uri set to %u %s" ), restart, uri.c_str() );
+
     // Reset positions & rate
     m_llPausedPos = 0;
 
-    //guLogMessage( wxT( "uri set to %u %s" ), restart, uri.c_str() );
+    SetLastError( 0 );
 
     if( restart )
     {
@@ -507,11 +507,7 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
     if( !gst_uri_is_valid( ( const char * ) uri.mb_str() ) )
         return false;
 
-//    char * uristr = ( char * ) malloc( strlen( uri.mb_str() ) + 1 );
-//    strcpy( uristr, uri.mb_str() );
-
     g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str(), NULL );
-//    g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uristr, NULL );
 
     if( restart )
     {
@@ -524,8 +520,6 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
     wxMediaEvent event( wxEVT_MEDIA_LOADED );
     event.SetInt( restart );
     AddPendingEvent( event );
-
-    SetLastError( 0 );
 
     return true;
 }
@@ -684,6 +678,8 @@ void guMediaCtrl::AboutToFinish( void )
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::ClearError( void )
 {
+    guLogMessage( wxT( "ClearError called..." ) );
+
     if( gst_element_set_state( m_Playbin, GST_STATE_NULL ) == GST_STATE_CHANGE_FAILURE )
     {
         guLogMessage( wxT( "Error restoring the gstreamer status." ) );
