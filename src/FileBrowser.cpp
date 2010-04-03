@@ -1456,19 +1456,33 @@ void guFileBrowser::OnFolderCopy( wxCommandEvent &event )
     {
         wxTheClipboard->Clear();
         wxFileDataObject * FileObject = new wxFileDataObject();
+        wxCustomDataObject * CustomObject = new wxCustomDataObject( wxDataFormat( wxT( "x-special/gnome-copied-files" ) ) );
         wxTextDataObject * TextObject = new wxTextDataObject();
         wxDataObjectComposite * CompositeObject = new wxDataObjectComposite();
 
-        FileObject->AddFile( m_DirCtrl->GetPath() );
-        TextObject->SetText( m_DirCtrl->GetPath() );
+        wxString Path = m_DirCtrl->GetPath();
+        FileObject->AddFile( Path );
+        TextObject->SetText( Path );
+
+
+        Path = wxT( "copy\nfile://" ) + Path;
+        guLogMessage( wxT( "Copy: '%s'" ), Path.c_str() );
+
+        //CustomObject->SetFormat( wxDataFormat( wxT( "x-special/gnome-copied-files" ) ) );
+        //CustomObject->SetData( Path.Length(), Path.c_str() );
+        CustomObject->SetData( Path.Length(), Path.char_str() );
+
         CompositeObject->Add( FileObject );
+        CompositeObject->Add( CustomObject );
         CompositeObject->Add( TextObject );
 
+        //if( !wxTheClipboard->AddData( CustomObject ) )
         if( !wxTheClipboard->AddData( CompositeObject ) )
         //if( !wxTheClipboard->AddData( TextObject ) )
         {
             delete FileObject;
             delete TextObject;
+            delete CustomObject;
             delete CompositeObject;
             guLogError( wxT( "Can't copy the folder to the clipboard" ) );
         }
@@ -1488,6 +1502,17 @@ void guFileBrowser::OnFolderPaste( wxCommandEvent &event )
     wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
     {
+//        if( wxTheClipboard->IsSupported( wxDataFormat( wxT( "x-special/gnome-copied-files" ) ) ) )
+//        {
+//            guLogMessage( wxT( "Supported format x-special..." ) );
+//
+//            wxCustomDataObject CustomDataObject( wxDataFormat( wxT( "x-special/gnome-copied-files" ) ) ); //( wxT( "Supported format x-special..." ) );
+//            if( wxTheClipboard->GetData( CustomDataObject ) )
+//            {
+//                guLogMessage( wxT( "Custom Data: (%i) '%s'" ), CustomDataObject.GetSize(), wxString( ( const char * ) CustomDataObject.GetData(), wxConvUTF8 ).c_str() );
+//            }
+//        }
+//        else if( wxTheClipboard->IsSupported( wxDF_FILENAME ) )
         if( wxTheClipboard->IsSupported( wxDF_FILENAME ) )
         {
             wxFileDataObject FileObject;
