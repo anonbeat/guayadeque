@@ -309,18 +309,22 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         outputsink = gst_element_factory_make( "gconfaudiosink", "audio-sink" );
         if( !IsValidOutput( outputsink ) )
         {
-            // fallback to autodetection, then alsa, then oss as a stopgap
+            // fallback to autodetection
             outputsink = gst_element_factory_make( "autoaudiosink", "audio-sink" );
             if( !IsValidOutput( outputsink ) )
             {
                 outputsink = gst_element_factory_make( "alsasink", "alsa-output" );
                 if( !IsValidOutput( outputsink ) )
                 {
-                    outputsink = gst_element_factory_make( "osssink", "play_audio" );
+                    outputsink = gst_element_factory_make( "pulsesink", "pulse-sink" );
                     if( !IsValidOutput( outputsink ) )
                     {
-                        guLogError( wxT( "Could not find a valid audiosink" ) );
-                        return;
+                        outputsink = gst_element_factory_make( "osssink", "play_audio" );
+                        if( !IsValidOutput( outputsink ) )
+                        {
+                            guLogError( wxT( "Could not find a valid audiosink" ) );
+                            return;
+                        }
                     }
                 }
             }
@@ -336,13 +340,6 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
             guLogError( wxT( "Could not create the gstreamer playbin." ) );
             return;
         }
-
-//        GstCaps *caps;
-//        caps = gst_caps_from_string( "audio/x-raw-int,channels=2" );
-//
-//        gst_bin_add( GST_BIN( m_Playbin ), level );
-//        gst_bin_add( GST_BIN( m_Playbin ), replay );
-//        gst_element_link_filtered( replay, level, caps );
 
         GstElement * sinkbin = gst_bin_new( "outsinkbin" );
         if( !GST_IS_ELEMENT( sinkbin ) )
@@ -481,7 +478,7 @@ guMediaCtrl::~guMediaCtrl()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Load( const wxString &uri, bool restart )
 {
-    guLogMessage( wxT( "uri set to %u %s" ), restart, uri.c_str() );
+    //guLogMessage( wxT( "uri set to %u %s" ), restart, uri.c_str() );
 
     // Reset positions & rate
     m_llPausedPos = 0;
@@ -678,8 +675,6 @@ void guMediaCtrl::AboutToFinish( void )
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::ClearError( void )
 {
-    guLogMessage( wxT( "ClearError called..." ) );
-
     if( gst_element_set_state( m_Playbin, GST_STATE_NULL ) == GST_STATE_CHANGE_FAILURE )
     {
         guLogMessage( wxT( "Error restoring the gstreamer status." ) );

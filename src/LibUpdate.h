@@ -51,5 +51,23 @@ class guLibUpdateThread : public wxThread
 
 };
 
+// -------------------------------------------------------------------------------- //
+class guLibCleanThread : public wxThread
+{
+  private :
+    guDbLibrary *       m_Db;
+    guMainFrame *       m_MainFrame;
+    wxTimer             m_ProgressTimer;
+
+    void                OnTimer( wxTimerEvent &event );
+
+  public :
+    guLibCleanThread( guDbLibrary * db );
+    ~guLibCleanThread();
+
+    ExitCode Entry();
+
+};
+
 #endif
 // -------------------------------------------------------------------------------- //

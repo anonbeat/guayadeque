@@ -248,3 +248,121 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 }
 
 // -------------------------------------------------------------------------------- //
+// guLibCleanThread
+// -------------------------------------------------------------------------------- //
+guLibCleanThread::guLibCleanThread( guDbLibrary * db )
+{
+    m_Db = db;
+    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guLibCleanThread::~guLibCleanThread()
+{
+    if( !TestDestroy() )
+    {
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_CLEANFINISHED );
+        event.SetEventObject( ( wxObject * ) this );
+        wxPostEvent( m_MainFrame, event );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guLibCleanThread::ExitCode guLibCleanThread::Entry()
+{
+    wxString query;
+    wxArrayInt SongsToDel;
+    wxArrayInt CoversToDel;
+    wxSQLite3ResultSet dbRes;
+    wxString FileName;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+
+    if( !TestDestroy() )
+    {
+        CheckSymLinks( LibPaths );
+
+        query = wxT( "SELECT DISTINCT song_id, song_filename, path_value FROM songs, paths " \
+                   "WHERE song_pathid = path_id;" );
+
+        dbRes = m_Db->ExecuteQuery( query );
+
+        while( !TestDestroy() && dbRes.NextRow() )
+        {
+            FileName = dbRes.GetString( 2 ) + wxT( "/" ) + dbRes.GetString( 1 );
+            //guLogMessage( wxT( "Checking %s" ), FileName.c_str() );
+
+            if( !wxFileExists( FileName ) || !CheckFileLibPath( LibPaths, FileName ) )
+            {
+                SongsToDel.Add( dbRes.GetInt( 0 ) );
+            }
+        }
+        dbRes.Finalize();
+
+
+        if( !TestDestroy() )
+        {
+            query = wxT( "SELECT DISTINCT cover_id, cover_path FROM covers;" );
+
+            dbRes = m_Db->ExecuteQuery( query );
+
+            while( !TestDestroy() && dbRes.NextRow() )
+            {
+                if( !wxFileExists( dbRes.GetString( 1 ) ) )
+                {
+                    CoversToDel.Add( dbRes.GetInt( 0 ) );
+                }
+            }
+            dbRes.Finalize();
+
+
+            if( !TestDestroy() )
+            {
+                wxArrayString Queries;
+
+                //m_Db->CleanItems( SongsToDel, CoversToDel );
+                if( SongsToDel.Count() )
+                {
+                    Queries.Add( wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( SongsToDel, wxT( "song_id" ) ) );
+                }
+
+                if( CoversToDel.Count() )
+                {
+                    Queries.Add( wxT( "DELETE FROM covers WHERE " ) + ArrayToFilter( CoversToDel, wxT( "cover_id" ) ) );
+                }
+
+                // Delete all posible orphan entries
+                Queries.Add( wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" ) );
+                Queries.Add( wxT( "DELETE FROM artists WHERE artist_id NOT IN ( SELECT DISTINCT song_artistid FROM songs );" ) );
+                Queries.Add( wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" ) );
+                Queries.Add( wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT album_coverid FROM albums );" ) );
+                Queries.Add( wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" ) );
+                Queries.Add( wxT( "DELETE FROM plsets WHERE plset_type = 0 AND plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
+                Queries.Add( wxT( "DELETE FROM settags WHERE settag_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
+
+                int Index;
+                int Count = Queries.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    if( TestDestroy() )
+                        break;
+                    //guLogMessage( wxT( "Executing: '%s'" ), Queries[ Index ].c_str() );
+                    m_Db->ExecuteUpdate( Queries[ Index ] );
+                }
+
+                //m_Db->LoadCache();
+            }
+        }
+    }
+
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
