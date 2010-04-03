@@ -78,7 +78,7 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
 	PatternSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_PatTextCtrl = new wxTextCtrl( this, wxID_ANY, Config->ReadStr( wxT( "Pattern" ), wxT( "{n} - {a} -  {t}" ), wxT( "FileRenamer" ) ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_PatTextCtrl->SetToolTip( _("Pattern flags:\n{g} \t- Genero\n{a} \t- Artist Name\n{b} \t- Album Name\n{t} \t- Track Title\n{n} \t- Track Number\n{y} \t- Track Year\n") );
+	m_PatTextCtrl->SetToolTip( _("Pattern flags:\n{g} \t- Genero\n{a} \t- Artist Name\n{b} \t- Album Name\n{t} \t- Track Title\n{n} \t- Track Number\n{y} \t- Track Year\n{d} \t- Disk\n") );
 
 	PatternSizer->Add( m_PatTextCtrl, 1, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -269,11 +269,12 @@ void guFileRenamer::OnPatternApply( wxCommandEvent& event )
 
                     FileName.Replace( wxT( "{a}" ), NormalizeField( Track->m_ArtistName ) );
                     FileName.Replace( wxT( "{b}" ), NormalizeField( Track->m_AlbumName ) );
-                    FileName.Replace( wxT( "{f}" ), NormalizeField( wxFileNameFromPath( Track->m_FileName ) ) );
+                    FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( Track->m_FileName ) );
                     FileName.Replace( wxT( "{g}" ), NormalizeField( Track->m_GenreName ) );
                     FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), Track->m_Number ) );
                     FileName.Replace( wxT( "{t}" ), NormalizeField( Track->m_SongName ) );
                     FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), Track->m_Year ) );
+                    FileName.Replace( wxT( "{d}" ), NormalizeField( Track->m_Disk ) );
 
                     m_FilesListBox->SetString( Selection[ Index ], FileName );
 
