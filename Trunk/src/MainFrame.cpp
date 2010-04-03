@@ -88,6 +88,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
                                       wxT( "LibPaths" ) ) );
 
     m_LibUpdateThread = NULL;
+    m_LibCleanThread = NULL;
     m_UpdatePodcastsTimer = NULL;
     m_DownloadThread = NULL;
     m_NotifySrv = NULL;
@@ -392,7 +393,11 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ), NULL, this );
     Connect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ), NULL, this );
     Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
+
     Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
+    Connect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
+    Connect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryCleanFinished ), NULL, this );
+
     Connect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
     Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
     Connect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
@@ -496,7 +501,11 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ), NULL, this );
     Disconnect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ), NULL, this );
     Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
+
     Disconnect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
+    Disconnect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
+    Disconnect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryCleanFinished ), NULL, this );
+
     Disconnect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
     Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
     Disconnect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
@@ -608,6 +617,12 @@ guMainFrame::~guMainFrame()
     {
         m_LibUpdateThread->Pause();
         m_LibUpdateThread->Delete();
+    }
+
+    if( m_LibCleanThread )
+    {
+        m_LibCleanThread->Pause();
+        m_LibCleanThread->Delete();
     }
 
     if( m_TaskBarIcon )
@@ -1011,10 +1026,29 @@ void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
+{
+    m_LibCleanThread = NULL;
+    m_Db->LoadCache();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::DoLibraryClean( wxCommandEvent &event )
+{
+    if( m_LibCleanThread )
+    {
+        m_LibCleanThread->Pause();
+        m_LibCleanThread->Delete();
+    }
+
+    m_LibCleanThread = new guLibCleanThread( m_Db );
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::LibraryUpdated( wxCommandEvent &event )
 {
 //    guLogMessage( wxT( "Library Updated Event fired" ) );
-    m_Db->DoCleanUp();
+    //m_Db->DoCleanUp();
 
     if( m_LibPanel )
         m_LibPanel->ReloadControls( event );
@@ -1023,6 +1057,8 @@ void guMainFrame::LibraryUpdated( wxCommandEvent &event )
         m_AlbumBrowserPanel->LibraryUpdated();
 
     m_LibUpdateThread = NULL;
+
+    DoLibraryClean( event );
 }
 
 // -------------------------------------------------------------------------------- //

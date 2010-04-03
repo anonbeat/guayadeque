@@ -207,30 +207,6 @@ wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper )
 };
 
 // -------------------------------------------------------------------------------- //
-wxString inline ArrayIntToStrList( const wxArrayInt &Data )
-{
-  int index;
-  int count;
-  wxString RetVal = wxT( "(" );
-  count = Data.Count();
-  for( index = 0; index < count; index++ )
-  {
-    RetVal += wxString::Format( wxT( "%u," ), Data[ index ]  );
-  }
-  if( RetVal.Length() > 1 )
-    RetVal = RetVal.RemoveLast() + wxT( ")" );
-  else
-    RetVal += wxT( ")" );
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-wxString inline ArrayToFilter( const wxArrayInt &Filters, const wxString &VarName )
-{
-  return VarName + wxT( " IN " ) + ArrayIntToStrList( Filters );
-}
-
-// -------------------------------------------------------------------------------- //
 wxString TextFilterToSQL( const wxArrayString &TeFilters )
 {
   long count;
@@ -368,13 +344,13 @@ void guDbLibrary::LoadCache( void )
 {
 //    Labels.Empty();
 //    GetLabels( &Labels );
-    m_GenresCache.Clear();
+    m_GenresCache.Empty();
     GetGenres( &m_GenresCache, true );
-    m_ArtistsCache.Clear();
+    m_ArtistsCache.Empty();
     GetArtists( &m_ArtistsCache, true );
-    m_AlbumsCache.Clear();
+    m_AlbumsCache.Empty();
     GetAlbums( &m_AlbumsCache , true );
-    m_PathsCache.Clear();
+    m_PathsCache.Empty();
     GetPaths( &m_PathsCache, true );
 }
 
@@ -1546,7 +1522,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
   //DoCleanUp();
 
 //////////////////////////
-  wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
+  wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_DOCLEANDB );
   event.SetEventObject( ( wxObject * ) this );
   wxPostEvent( wxTheApp->GetTopWindow(), event );
 

@@ -85,6 +85,7 @@ enum guUPDATED_TRACKS {
 
 class guTaskBarIcon;
 class guLibUpdateThread;
+class guLibCleanThread;
 class guUpdatePodcastsTimer;
 
 // -------------------------------------------------------------------------------- //
@@ -155,6 +156,7 @@ class guMainFrame : public wxFrame
     guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
     guLibUpdateThread *         m_LibUpdateThread;
+    guLibCleanThread *          m_LibCleanThread;
 
     wxIcon                      m_AppIcon;
 
@@ -277,7 +279,9 @@ class guMainFrame : public wxFrame
   public:
                         guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                         ~guMainFrame();
+    void                DoLibraryClean( wxCommandEvent &event );
     void                LibraryUpdated( wxCommandEvent &event );
+    void                LibraryCleanFinished( wxCommandEvent &event );
     void                OnQuit( wxCommandEvent &WXUNUSED(event) );
     void                UpdatePodcasts( void );
 

@@ -551,5 +551,29 @@ wxString guListItemsGetName( const guListItems &Items, int m_Id );
 wxArrayInt GetArraySameItems( const wxArrayInt &Source, const wxArrayInt &Oper );
 wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper );
 
+// -------------------------------------------------------------------------------- //
+wxString inline ArrayIntToStrList( const wxArrayInt &Data )
+{
+  int index;
+  int count;
+  wxString RetVal = wxT( "(" );
+  count = Data.Count();
+  for( index = 0; index < count; index++ )
+  {
+    RetVal += wxString::Format( wxT( "%u," ), Data[ index ]  );
+  }
+  if( RetVal.Length() > 1 )
+    RetVal = RetVal.RemoveLast() + wxT( ")" );
+  else
+    RetVal += wxT( ")" );
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline ArrayToFilter( const wxArrayInt &Filters, const wxString &VarName )
+{
+  return VarName + wxT( " IN " ) + ArrayIntToStrList( Filters );
+}
+
 #endif
 // -------------------------------------------------------------------------------- //
