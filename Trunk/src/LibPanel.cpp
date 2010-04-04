@@ -1360,7 +1360,7 @@ void guLibPanel::SelectTrack( const int trackid )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false  );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
@@ -1374,7 +1374,7 @@ void guLibPanel::SelectAlbum( const int albumid )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
@@ -1388,7 +1388,7 @@ void guLibPanel::SelectArtist( const int artistid )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
@@ -1401,7 +1401,7 @@ void guLibPanel::SelectYear( const int year )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
