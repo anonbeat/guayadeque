@@ -330,7 +330,10 @@ class guListView : public wxScrolledWindow
 
     virtual wxString        GetItemName( const int item ) const = 0;
     virtual int             GetItemId( const int item ) const = 0;
-    long                    FindItem( long start, const wxString &str, bool partial, bool atstart = true );
+    long                    FindItem( long start, const wxString &str, bool partial, bool atstart = true )
+    {
+        return m_ListBox->FindItem( start, str, partial, atstart );
+    }
 
     void                    SetImageList( wxImageList * imagelist );
 
