@@ -40,6 +40,8 @@ class guYeListBox : public guListBox
                     ~guYeListBox();
     virtual int     GetSelectedSongs( guTrackArray * songs ) const;
 
+    int             FindYear( const int year );
+
 };
 
 #endif

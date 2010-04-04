@@ -1397,6 +1397,20 @@ void guLibPanel::SelectArtist( const int artistid )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::SelectYear( const int year )
+{
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ArtistListCtrl->ReloadItems();
+    m_YearListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_YearListCtrl->SetSelection( m_YearListCtrl->FindYear( year ) );
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::SelectAlbumName( const wxString &album )
 {
     wxArrayString Words;

@@ -220,6 +220,7 @@ class guMainFrame : public wxFrame
     void                OnSelectTrack( wxCommandEvent &event );
     void                OnSelectAlbum( wxCommandEvent &event );
     void                OnSelectArtist( wxCommandEvent &event );
+    void                OnSelectYear( wxCommandEvent &event );
     void                OnGenreSetSelection( wxCommandEvent &event );
     void                OnArtistSetSelection( wxCommandEvent &event );
     void                OnAlbumSetSelection( wxCommandEvent &event );
