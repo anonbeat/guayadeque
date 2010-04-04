@@ -249,6 +249,8 @@ class guFileBrowser : public wxPanel
     void                    OnItemsRename( wxCommandEvent &event );
     void                    OnItemsDelete( wxCommandEvent &event );
     void                    OnItemsCommand( wxCommandEvent &event );
+    void                    OnItemsCopy( wxCommandEvent &event );
+    void                    OnItemsPaste( wxCommandEvent &event );
 
     DECLARE_EVENT_TABLE()
 
