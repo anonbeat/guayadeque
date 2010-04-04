@@ -58,6 +58,7 @@ DEFINE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_RCLICKED )
 
 WX_DEFINE_OBJARRAY(guListViewColumnArray);
 
+static wxString FindChars = wxT( "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789 @&*+-_=/\\ºª:.,;çÇ<>$%()'\"|" );
 
 // -------------------------------------------------------------------------------- //
 // guListViewColEdit
@@ -98,7 +99,10 @@ class guListViewClientTimer : public wxTimer
   public:
     guListViewClient * m_ListViewClient;
     //
-    guListViewClientTimer( guListViewClient * listviewclient ) { m_ListViewClient = listviewclient; }
+    guListViewClientTimer( guListViewClient * listviewclient )
+    {
+        m_ListViewClient = listviewclient;
+    }
 
     //Called each time the timer's timeout expires
     void Notify();
@@ -516,11 +520,11 @@ void guListView::ClearSelectedItems()
     SetSelection( wxNOT_FOUND );
 }
 
-// -------------------------------------------------------------------------------- //
-long guListView::FindItem( long start, const wxString &str, bool partial, bool atstart )
-{
-    return m_ListBox->FindItem( start, str, partial, atstart );
-}
+//// -------------------------------------------------------------------------------- //
+//long guListView::FindItem( long start, const wxString &str, bool partial, bool atstart )
+//{
+//    return m_ListBox->FindItem( start, str, partial, atstart );
+//}
 
 // -------------------------------------------------------------------------------- //
 void guListView::SetColumnWidth( const int col, const int width )
@@ -851,11 +855,9 @@ void guListViewClient::OnKeyDown( wxKeyEvent &event )
     wxChar KeyChar = event.GetKeyCode();
 
     int KeyMod = event.GetModifiers();
-    if( KeyMod == wxMOD_NONE )
+    if( KeyMod == wxMOD_NONE || KeyMod == wxMOD_SHIFT )
     {
-        if( ( KeyChar >= 'a' && KeyChar <= 'z' ) ||
-            ( KeyChar >= 'A' && KeyChar <= 'Z' ) ||
-            ( KeyChar >= '0' && KeyChar <= '9' ) )
+        if( FindChars.Find( KeyChar ) != wxNOT_FOUND )
         {
             if( m_SearchStrTimer->IsRunning() )
             {
