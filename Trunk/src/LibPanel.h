@@ -173,6 +173,7 @@ class guLibPanel : public wxPanel
     void SelectTrack( const int trackid );
     void SelectAlbum( const int albumid );
     void SelectArtist( const int artistid );
+    void SelectYear( const int year );
     void SelectAlbumName( const wxString &album );
     void SelectArtistName( const wxString &artist );
     void SelectGenres( wxArrayInt * genres );

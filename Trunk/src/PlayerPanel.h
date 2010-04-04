@@ -256,6 +256,7 @@ class guPlayerPanel : public wxPanel
     void                OnTitleNameDClicked( wxMouseEvent &event );
     void                OnAlbumNameDClicked( wxMouseEvent &event );
     void                OnArtistNameDClicked( wxMouseEvent &event );
+    void                OnYearDClicked( wxMouseEvent &event );
     void                OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime;
                                                                 UpdatePositionLabel( GetPosition() / 1000 ); };
     void                OnRatingChanged( guRatingEvent &event );

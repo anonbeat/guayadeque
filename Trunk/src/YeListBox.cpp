@@ -106,3 +106,18 @@ int guYeListBox::GetDragFiles( wxFileDataObject * files )
 }
 
 // -------------------------------------------------------------------------------- //
+int guYeListBox::FindYear( const int year )
+{
+    int Index;
+    int Count = m_Items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_Items->Item( Index ).m_Id == year )
+        {
+            return Index;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //

@@ -405,7 +405,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_TitleLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTitleNameDClicked ), NULL, this );
 	m_AlbumLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
-	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+	m_YearLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnYearDClicked ), NULL, this );
 
 	m_PositionLabel->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
@@ -519,6 +519,7 @@ guPlayerPanel::~guPlayerPanel()
 	m_TitleLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTitleNameDClicked ), NULL, this );
 	m_AlbumLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
+	m_YearLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnYearDClicked ), NULL, this );
 	m_PositionLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 
@@ -2212,6 +2213,19 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
         evt.SetInt( ArtistId );
         evt.SetExtraLong( m_MediaSong.m_Type );
+        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnYearDClicked( wxMouseEvent &event )
+{
+    int Year = m_MediaSong.m_Year;
+
+    if( Year )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_YEAR );
+        evt.SetInt( Year );
         wxPostEvent( wxTheApp->GetTopWindow(), evt );
     }
 }
