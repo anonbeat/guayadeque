@@ -328,11 +328,6 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
     GstElement * sinkbin = gst_bin_new( "outsinkbin" );
     if( IsValidElement( sinkbin ) )
     {
-
-        GstElement * m_Tee = gst_element_factory_make( "tee", "tee-element" );
-        GstElement * queue = gst_element_factory_make( "queue2", "queue-element" );
-        g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
-
         GstElement * converter = gst_element_factory_make( "audioconvert", "aconvert" );
         if( IsValidElement( converter ) )
         {
@@ -362,26 +357,45 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                                 GstElement * outconverter = gst_element_factory_make( "audioconvert", "outconvert" );
                                 if( IsValidElement( outconverter ) )
                                 {
-                                    GstPad * pad;
-                                    GstPad * ghostpad;
 
-                                    gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
-                                    gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
-
-                                    pad = gst_element_get_pad( m_Tee, "sink" );
-                                    if( GST_IS_PAD( pad ) )
+                                    GstElement * m_Tee = gst_element_factory_make( "tee", "tee-element" );
+                                    if( IsValidElement( m_Tee ) )
                                     {
-                                        ghostpad = gst_ghost_pad_new( "sink", pad );
-                                        gst_element_add_pad( sinkbin, ghostpad );
-                                        gst_object_unref( pad );
+                                        GstElement * queue = gst_element_factory_make( "queue2", "queue-element" );
+                                        if( IsValidElement( queue ) )
+                                        {
+                                            g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
 
-                                        return sinkbin;
+                                            gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
+                                            gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
+
+                                            GstPad * pad = gst_element_get_pad( m_Tee, "sink" );
+                                            if( GST_IS_PAD( pad ) )
+                                            {
+                                                GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
+                                                gst_element_add_pad( sinkbin, ghostpad );
+                                                gst_object_unref( pad );
+
+                                                return sinkbin;
+                                            }
+                                            else
+                                            {
+                                                if( G_IS_OBJECT( pad ) )
+                                                    gst_object_unref( pad );
+                                                guLogError( wxT( "Could not create the pad element" ) );
+                                            }
+                                        }
+                                        else
+                                        {
+                                            guLogError( wxT( "Could not create the playback queue object" ) );
+                                        }
+
+                                        g_object_unref( m_Tee );
+                                        m_Tee = NULL;
                                     }
                                     else
                                     {
-                                        if( G_IS_OBJECT( pad ) )
-                                            gst_object_unref( pad );
-                                        guLogError( wxT( "Could not create the pad element" ) );
+                                        guLogError( wxT( "Could not create the tee object" ) );
                                     }
 
                                     g_object_unref( outconverter );
