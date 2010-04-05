@@ -812,7 +812,7 @@ void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
             UpdateLyrics( Tracks, Lyrics );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -934,7 +934,7 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
             UpdateLyrics( Tracks, Lyrics );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -1186,7 +1186,7 @@ void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
             UpdateLyrics( Tracks, Lyrics );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -1550,7 +1550,7 @@ void guLibPanel::OnYearListEditTracksClicked( wxCommandEvent &event )
             UpdateLyrics( Tracks, Lyrics );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -1643,7 +1643,7 @@ void guLibPanel::OnRatingListEditTracksClicked( wxCommandEvent &event )
             UpdateLyrics( Tracks, Lyrics );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         TrackEditor->Destroy();
     }
@@ -1736,7 +1736,7 @@ void guLibPanel::OnPlayCountListEditTracksClicked( wxCommandEvent &event )
             UpdateLyrics( Tracks, Lyrics );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         TrackEditor->Destroy();
     }

@@ -171,6 +171,8 @@ class guMediaCtrl : public wxEvtHandler
 
   public :
     GstElement * m_Playbin;
+    GstElement * m_Playbackbin;
+    GstElement * m_Recordbin;
     GstElement * m_Tee;
     GstElement * m_Volume;
     GstElement * m_Equalizer;

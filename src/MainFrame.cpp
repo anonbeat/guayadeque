@@ -1032,6 +1032,12 @@ void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
 {
     m_LibCleanThread = NULL;
     m_Db->LoadCache();
+
+    if( m_LibPanel )
+        m_LibPanel->ReloadControls( event );
+
+    if( m_AlbumBrowserPanel )
+        m_AlbumBrowserPanel->LibraryUpdated();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1052,11 +1058,11 @@ void guMainFrame::LibraryUpdated( wxCommandEvent &event )
 //    guLogMessage( wxT( "Library Updated Event fired" ) );
     //m_Db->DoCleanUp();
 
-    if( m_LibPanel )
-        m_LibPanel->ReloadControls( event );
-
-    if( m_AlbumBrowserPanel )
-        m_AlbumBrowserPanel->LibraryUpdated();
+//    if( m_LibPanel )
+//        m_LibPanel->ReloadControls( event );
+//
+//    if( m_AlbumBrowserPanel )
+//        m_AlbumBrowserPanel->LibraryUpdated();
 
     m_LibUpdateThread = NULL;
 
