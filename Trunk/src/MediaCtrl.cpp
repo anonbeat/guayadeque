@@ -358,7 +358,7 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                                 if( IsValidElement( outconverter ) )
                                 {
 
-                                    GstElement * m_Tee = gst_element_factory_make( "tee", "tee-element" );
+                                    m_Tee = gst_element_factory_make( "tee", "tee-element" );
                                     if( IsValidElement( m_Tee ) )
                                     {
                                         GstElement * queue = gst_element_factory_make( "queue", "queue-element" );
@@ -384,6 +384,8 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                                                     gst_object_unref( pad );
                                                 guLogError( wxT( "Could not create the pad element" ) );
                                             }
+
+                                            g_object_unref( queue );
                                         }
                                         else
                                         {
@@ -461,6 +463,82 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
 // -------------------------------------------------------------------------------- //
 GstElement * guMediaCtrl::BuildRecordBin( void )
 {
+    GstElement * recordbin = gst_bin_new( "recordbin" );
+    if( IsValidElement( recordbin ) )
+    {
+        GstElement * converter = gst_element_factory_make( "audioconvert", "recordconvert" );
+        if( IsValidElement( converter ) )
+        {
+            GstElement * lame = gst_element_factory_make( "lame", "lame-encoder" );
+            if( IsValidElement( lame ) )
+            {
+                GstElement * filewriter = gst_element_factory_make( "filesink", "file-writer" );
+                if( IsValidElement( filewriter ) )
+                {
+                    g_object_set( filewriter, "location", "~/Records", NULL );
+
+                    GstElement * queue = gst_element_factory_make( "queue", "queue-element" );
+                    if( IsValidElement( queue ) )
+                    {
+                        //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
+
+                        gst_bin_add_many( GST_BIN( recordbin ), queue, converter, lame, filewriter, NULL );
+                        gst_element_link_many( queue, converter, lame, filewriter, NULL );
+
+                        gst_bin_add( GST_BIN( m_Playbackbin ), recordbin );
+
+                        GstPad * pad = gst_element_get_pad( queue, "sink" );
+                        if( GST_IS_PAD( pad ) )
+                        {
+                            GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
+                            gst_element_add_pad( recordbin, ghostpad );
+                            gst_object_unref( pad );
+
+                            gst_element_link( m_Tee, recordbin );
+
+                            return recordbin;
+                        }
+                        else
+                        {
+                            if( G_IS_OBJECT( pad ) )
+                                gst_object_unref( pad );
+                            guLogError( wxT( "Could not create the pad element" ) );
+                        }
+
+                        g_object_unref( queue );
+                    }
+                    else
+                    {
+                        guLogError( wxT( "Could not create the playback queue object" ) );
+                    }
+
+                    g_object_unref( filewriter );
+                }
+                else
+                {
+                    guLogError( wxT( "Could not create the file writer object" ) );
+                }
+
+                g_object_unref( lame );
+            }
+            else
+            {
+                guLogError( wxT( "Could not create the lame encoder object" ) );
+            }
+
+            g_object_unref( converter );
+        }
+        else
+        {
+            guLogError( wxT( "Could not create the record convert object" ) );
+        }
+
+        g_object_unref( recordbin );
+    }
+    else
+    {
+        guLogError( wxT( "Could not create the recordbin object" ) );
+    }
     return NULL;
 }
 
@@ -488,9 +566,11 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
             guLogError( wxT( "Could not create the gstreamer playbin." ) );
         }
 
-        GstElement * sinkbin = BuildPlaybackBin( outputsink );
+        m_Playbackbin = BuildPlaybackBin( outputsink );
 
-        g_object_set( G_OBJECT( m_Playbin ), "audio-sink", sinkbin, NULL );
+        //m_Recordbin = BuildRecordBin();
+
+        g_object_set( G_OBJECT( m_Playbin ), "audio-sink", m_Playbackbin, NULL );
 
             // This dont make any difference in gapless playback :(
 //        if( !SetProperty( outputsink, "buffer-time", (gint64) 5000*1000 ) )
