@@ -296,20 +296,20 @@ bool guMediaCtrl::SetProperty( GstElement * element, const char * name, gint64 v
 GstElement * guMediaCtrl::BuildOutputBin( void )
 {
     GstElement * outputsink;
-    outputsink = gst_element_factory_make( "gconfaudiosink", "audio-sink" );
+    outputsink = gst_element_factory_make( "gconfaudiosink", "out_gconfaudiosink" );
     if( !IsValidElement( outputsink ) )
     {
         // fallback to autodetection
-        outputsink = gst_element_factory_make( "autoaudiosink", "audio-sink" );
+        outputsink = gst_element_factory_make( "autoaudiosink", "out_autoaudiosink" );
         if( !IsValidElement( outputsink ) )
         {
-            outputsink = gst_element_factory_make( "alsasink", "alsa-output" );
+            outputsink = gst_element_factory_make( "alsasink", "out_alsasink" );
             if( !IsValidElement( outputsink ) )
             {
-                outputsink = gst_element_factory_make( "pulsesink", "pulse-sink" );
+                outputsink = gst_element_factory_make( "pulsesink", "out_pulsesink" );
                 if( !IsValidElement( outputsink ) )
                 {
-                    outputsink = gst_element_factory_make( "osssink", "play_audio" );
+                    outputsink = gst_element_factory_make( "osssink", "out_osssink" );
                     if( !IsValidElement( outputsink ) )
                     {
                         guLogError( wxT( "Could not find a valid audiosink" ) );
@@ -328,40 +328,40 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
     GstElement * sinkbin = gst_bin_new( "outsinkbin" );
     if( IsValidElement( sinkbin ) )
     {
-        GstElement * converter = gst_element_factory_make( "audioconvert", "aconvert" );
+        GstElement * converter = gst_element_factory_make( "audioconvert", "pb_audioconvert" );
         if( IsValidElement( converter ) )
         {
-            GstElement * replay = gst_element_factory_make( "rgvolume", "replaygain" );
+            GstElement * replay = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
             if( IsValidElement( replay ) )
             {
                 g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
                 g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
 
-                GstElement * level = gst_element_factory_make( "level", "gulevelctrl" );
+                GstElement * level = gst_element_factory_make( "level", "pb_level" );
                 if( IsValidElement( level ) )
                 {
                     g_object_set( level, "message", TRUE, NULL );
                     g_object_set( level, "interval", gint64( 200000000 ), NULL );
 
-                    m_Volume = gst_element_factory_make( "volume", "mastervolume" );
+                    m_Volume = gst_element_factory_make( "volume", "pb_volume" );
                     if( IsValidElement( m_Volume ) )
                     {
-                        m_Equalizer = gst_element_factory_make( "equalizer-10bands", "equalizer" );
+                        m_Equalizer = gst_element_factory_make( "equalizer-10bands", "pb_equalizer" );
                         if( IsValidElement( m_Equalizer ) )
                         {
-                            GstElement * limiter = gst_element_factory_make( "rglimiter", "limiter" );
+                            GstElement * limiter = gst_element_factory_make( "rglimiter", "pb_rglimiter" );
                             if( IsValidElement( limiter ) )
                             {
                                 //g_object_set( G_OBJECT( limiter ), "enabled", TRUE, NULL );
 
-                                GstElement * outconverter = gst_element_factory_make( "audioconvert", "outconvert" );
+                                GstElement * outconverter = gst_element_factory_make( "audioconvert", "pb_audioconvert2" );
                                 if( IsValidElement( outconverter ) )
                                 {
 
-                                    m_Tee = gst_element_factory_make( "tee", "tee-element" );
+                                    m_Tee = gst_element_factory_make( "tee", "pb_tee" );
                                     if( IsValidElement( m_Tee ) )
                                     {
-                                        GstElement * queue = gst_element_factory_make( "queue", "queue-element" );
+                                        GstElement * queue = gst_element_factory_make( "queue", "pb_queue" );
                                         if( IsValidElement( queue ) )
                                         {
                                             g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
@@ -466,20 +466,20 @@ GstElement * guMediaCtrl::BuildRecordBin( void )
     GstElement * recordbin = gst_bin_new( "recordbin" );
     if( IsValidElement( recordbin ) )
     {
-        GstElement * converter = gst_element_factory_make( "audioconvert", "recordconvert" );
+        GstElement * converter = gst_element_factory_make( "audioconvert", "rb_audioconvert" );
         if( IsValidElement( converter ) )
         {
-            GstElement * lame = gst_element_factory_make( "lame", "lame-encoder" );
+            GstElement * lame = gst_element_factory_make( "lame", "rb_lame" );
             if( IsValidElement( lame ) )
             {
                 g_object_set( lame, "bitrate", gint( 192 ), NULL );
 
-                m_FileSink = gst_element_factory_make( "filesink", "file-writer" );
+                m_FileSink = gst_element_factory_make( "filesink", "rb_filesink" );
                 if( IsValidElement( m_FileSink ) )
                 {
-                    g_object_set( m_FileSink, "location", "~/Records/output.mp3", NULL );
+                    g_object_set( m_FileSink, "location", "/home/jrios/Records/output.mp3", NULL );
 
-                    GstElement * queue = gst_element_factory_make( "queue2", "record-queue" );
+                    GstElement * queue = gst_element_factory_make( "queue2", "rb_queue" );
                     if( IsValidElement( queue ) )
                     {
                         //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
@@ -572,9 +572,10 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 
         m_Playbackbin = BuildPlaybackBin( outputsink );
 
+        g_object_set( G_OBJECT( m_Playbin ), "audio-sink", m_Playbackbin, NULL );
+
         //m_Recordbin = BuildRecordBin();
 
-        g_object_set( G_OBJECT( m_Playbin ), "audio-sink", m_Playbackbin, NULL );
 
             // This dont make any difference in gapless playback :(
 //        if( !SetProperty( outputsink, "buffer-time", (gint64) 5000*1000 ) )
