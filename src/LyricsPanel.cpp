@@ -55,9 +55,9 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
     Config->RegisterObject( this );
 
     m_WriteToFiles = Config->ReadBool( wxT( "SaveToFiles" ), false, wxT( "Lyrics" ) );
-    m_WriteToFilesOnlySelected = Config->ReadBool( wxT( "SaveToFilesOnlySelected" ), false, wxT( "Lyrics" ) );
-    m_WriteToDir = Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) );
-    m_WriteToDirOnlySelected = Config->ReadBool( wxT( "SaveToDirOnlySelected" ), false, wxT( "Lyrics" ) );
+    m_WriteToFilesOnlySelected = m_WriteToFiles && Config->ReadBool( wxT( "SaveToFilesOnlySelected" ), false, wxT( "Lyrics" ) );
+    m_WriteToDir = Config->ReadBool( wxT( "SaveToDir" ), false, wxT( "Lyrics" ) );
+    m_WriteToDirOnlySelected = m_WriteToDir && Config->ReadBool( wxT( "SaveToDirOnlySelected" ), false, wxT( "Lyrics" ) );
     m_WriteToDirPath = Config->ReadStr(  wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) );
     if( !m_WriteToDirPath.EndsWith( wxT( "/" ) ) )
         m_WriteToDirPath += wxT( "/" );
@@ -230,9 +230,9 @@ void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
     if( Config )
     {
         m_WriteToFiles = Config->ReadBool( wxT( "SaveToFiles" ), false, wxT( "Lyrics" ) );
-        m_WriteToFilesOnlySelected = Config->ReadBool( wxT( "SaveToFilesOnlySelected" ), false, wxT( "Lyrics" ) );
-        m_WriteToDir = Config->ReadBool( wxT( "SaveLyricsToDir" ), false, wxT( "Lyrics" ) );
-        m_WriteToDirOnlySelected = Config->ReadBool( wxT( "SaveToDirOnlySelected" ), false, wxT( "Lyrics" ) );
+        m_WriteToFilesOnlySelected = m_WriteToFiles && Config->ReadBool( wxT( "SaveToFilesOnlySelected" ), false, wxT( "Lyrics" ) );
+        m_WriteToDir = Config->ReadBool( wxT( "SaveToDir" ), false, wxT( "Lyrics" ) );
+        m_WriteToDirOnlySelected = m_WriteToDir && Config->ReadBool( wxT( "SaveToDirOnlySelected" ), false, wxT( "Lyrics" ) );
         m_WriteToDirPath = Config->ReadStr(  wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) );
         if( !m_WriteToDirPath.EndsWith( wxT( "/" ) ) )
             m_WriteToDirPath += wxT( "/" );

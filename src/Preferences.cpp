@@ -526,6 +526,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_LyricsDirSaveSelectedChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Only for the selected tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_LyricsDirSaveSelectedChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToDirOnlySelected" ), false, wxT( "Lyrics" ) ) );
+    m_LyricsDirSaveSelectedChkBox->Enable( m_LyricsDirSaveChkBox->IsChecked() );
 	LyricsSaveSizer->Add( m_LyricsDirSaveSelectedChkBox, 0, wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
 	LyricsMainSizer->Add( LyricsSaveSizer, 0, wxEXPAND|wxALL, 5 );

@@ -176,6 +176,7 @@ class guMediaCtrl : public wxEvtHandler
     GstElement * m_Tee;
     GstElement * m_Volume;
     GstElement * m_Equalizer;
+    GstElement * m_FileSink;
     bool         m_Buffering;
     bool         m_WasPlaying;
 
