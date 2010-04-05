@@ -98,6 +98,7 @@
 #include "./images/player_highlight_play.h"
 #include "./images/player_highlight_prev.h"
 #include "./images/player_highlight_random.h"
+#include "./images/player_highlight_record.h"
 #include "./images/player_highlight_repeat.h"
 #include "./images/player_highlight_repeat_single.h"
 #include "./images/player_highlight_search.h"
@@ -114,6 +115,7 @@
 #include "./images/player_light_play.h"
 #include "./images/player_light_prev.h"
 #include "./images/player_light_random.h"
+#include "./images/player_light_record.h"
 #include "./images/player_light_repeat.h"
 #include "./images/player_light_repeat_single.h"
 #include "./images/player_light_search.h"
@@ -130,6 +132,7 @@
 #include "./images/player_normal_play.h"
 #include "./images/player_normal_prev.h"
 #include "./images/player_normal_random.h"
+#include "./images/player_normal_record.h"
 #include "./images/player_normal_repeat.h"
 #include "./images/player_normal_repeat_single.h"
 #include "./images/player_normal_search.h"
@@ -235,6 +238,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_highlight_play,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_prev,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_random,       wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_highlight_record,       wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_repeat,       wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_repeat_single, wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_search,       wxBITMAP_TYPE_PNG ),
@@ -251,6 +255,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_light_play,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_prev,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_random,           wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_light_record,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_repeat,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_repeat_single,    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_search,           wxBITMAP_TYPE_PNG ),
@@ -267,6 +272,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_normal_play,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_prev,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_random,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_normal_record,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_repeat,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_repeat_single,   wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_search,          wxBITMAP_TYPE_PNG ),

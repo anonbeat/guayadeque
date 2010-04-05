@@ -153,6 +153,7 @@ class guPlayerPanel : public wxPanel
 	guRoundButton *         m_NextTrackButton;
 	guRoundButton *         m_PlayButton;
 	guRoundButton *         m_StopButton;
+	guToggleRoundButton *   m_RecordButton;
 	guRoundButton *         m_VolumeButton;
 	//
 	guToggleRoundButton *   m_SmartPlayButton;
@@ -300,6 +301,7 @@ class guPlayerPanel : public wxPanel
     void                OnNextTrackButtonClick( wxCommandEvent &event );
     void                OnPlayButtonClick( wxCommandEvent &event );
     void                OnStopButtonClick( wxCommandEvent &event );
+    void                OnRecordButtonClick( wxCommandEvent &event );
 	void                OnSmartPlayButtonClick( wxCommandEvent &event );
 	void                OnRandomPlayButtonClick( wxCommandEvent &event );
 	void                OnRepeatPlayButtonClick( wxCommandEvent &event );
