@@ -361,7 +361,7 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                                     GstElement * m_Tee = gst_element_factory_make( "tee", "tee-element" );
                                     if( IsValidElement( m_Tee ) )
                                     {
-                                        GstElement * queue = gst_element_factory_make( "queue2", "queue-element" );
+                                        GstElement * queue = gst_element_factory_make( "queue", "queue-element" );
                                         if( IsValidElement( queue ) )
                                         {
                                             g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
