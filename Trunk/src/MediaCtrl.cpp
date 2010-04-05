@@ -231,7 +231,7 @@ static void gst_about_to_finish( GstElement * playbin, guMediaCtrl * ctrl )
 }
 
 // -------------------------------------------------------------------------------- //
-bool IsValidOutput( GstElement * outputsink )
+bool IsValidElement( GstElement * outputsink )
 {
     if( !GST_IS_ELEMENT( outputsink ) )
     {
@@ -293,6 +293,164 @@ bool guMediaCtrl::SetProperty( GstElement * element, const char * name, gint64 v
 
 
 // -------------------------------------------------------------------------------- //
+GstElement * guMediaCtrl::BuildOutputBin( void )
+{
+    GstElement * outputsink;
+    outputsink = gst_element_factory_make( "gconfaudiosink", "audio-sink" );
+    if( !IsValidElement( outputsink ) )
+    {
+        // fallback to autodetection
+        outputsink = gst_element_factory_make( "autoaudiosink", "audio-sink" );
+        if( !IsValidElement( outputsink ) )
+        {
+            outputsink = gst_element_factory_make( "alsasink", "alsa-output" );
+            if( !IsValidElement( outputsink ) )
+            {
+                outputsink = gst_element_factory_make( "pulsesink", "pulse-sink" );
+                if( !IsValidElement( outputsink ) )
+                {
+                    outputsink = gst_element_factory_make( "osssink", "play_audio" );
+                    if( !IsValidElement( outputsink ) )
+                    {
+                        guLogError( wxT( "Could not find a valid audiosink" ) );
+                        return NULL;
+                    }
+                }
+            }
+        }
+    }
+    return outputsink;
+}
+
+// -------------------------------------------------------------------------------- //
+GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
+{
+    GstElement * sinkbin = gst_bin_new( "outsinkbin" );
+    if( IsValidElement( sinkbin ) )
+    {
+
+        GstElement * m_Tee = gst_element_factory_make( "tee", "tee-element" );
+        GstElement * queue = gst_element_factory_make( "queue2", "queue-element" );
+        g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
+
+        GstElement * converter = gst_element_factory_make( "audioconvert", "aconvert" );
+        if( IsValidElement( converter ) )
+        {
+            GstElement * replay = gst_element_factory_make( "rgvolume", "replaygain" );
+            if( IsValidElement( replay ) )
+            {
+                g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
+                g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
+
+                GstElement * level = gst_element_factory_make( "level", "gulevelctrl" );
+                if( IsValidElement( level ) )
+                {
+                    g_object_set( level, "message", TRUE, NULL );
+                    g_object_set( level, "interval", gint64( 200000000 ), NULL );
+
+                    m_Volume = gst_element_factory_make( "volume", "mastervolume" );
+                    if( IsValidElement( m_Volume ) )
+                    {
+                        m_Equalizer = gst_element_factory_make( "equalizer-10bands", "equalizer" );
+                        if( IsValidElement( m_Equalizer ) )
+                        {
+                            GstElement * limiter = gst_element_factory_make( "rglimiter", "limiter" );
+                            if( IsValidElement( limiter ) )
+                            {
+                                //g_object_set( G_OBJECT( limiter ), "enabled", TRUE, NULL );
+
+                                GstElement * outconverter = gst_element_factory_make( "audioconvert", "outconvert" );
+                                if( IsValidElement( outconverter ) )
+                                {
+                                    GstPad * pad;
+                                    GstPad * ghostpad;
+
+                                    gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
+                                    gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
+
+                                    pad = gst_element_get_pad( m_Tee, "sink" );
+                                    if( GST_IS_PAD( pad ) )
+                                    {
+                                        ghostpad = gst_ghost_pad_new( "sink", pad );
+                                        gst_element_add_pad( sinkbin, ghostpad );
+                                        gst_object_unref( pad );
+
+                                        return sinkbin;
+                                    }
+                                    else
+                                    {
+                                        if( G_IS_OBJECT( pad ) )
+                                            gst_object_unref( pad );
+                                        guLogError( wxT( "Could not create the pad element" ) );
+                                    }
+
+                                    g_object_unref( outconverter );
+                                }
+                                else
+                                {
+                                    guLogError( wxT( "Could not create the output audioconvert object" ) );
+                                }
+
+                                g_object_unref( limiter );
+                            }
+                            else
+                            {
+                                guLogError( wxT( "Could not create the limiter object" ) );
+                            }
+
+                            g_object_unref( m_Equalizer );
+                            m_Equalizer = NULL;
+                        }
+                        else
+                        {
+                            guLogError( wxT( "Could not create the equalizer object" ) );
+                        }
+
+                        g_object_unref( m_Volume );
+                        m_Volume = NULL;
+                    }
+                    else
+                    {
+                        guLogError( wxT( "Could not create the volume object" ) );
+                    }
+
+                    g_object_unref( level );
+                }
+                else
+                {
+                    guLogError( wxT( "Could not create the level object" ) );
+                }
+
+                g_object_unref( replay );
+            }
+            else
+            {
+                guLogError( wxT( "Could not create the replay gain object" ) );
+            }
+
+            g_object_unref( converter );
+        }
+        else
+        {
+            guLogError( wxT( "Could not create the audioconvert object" ) );
+        }
+
+        g_object_unref( sinkbin );
+    }
+    else
+    {
+        guLogError( wxT( "Could not create the outsinkbin object" ) );
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+GstElement * guMediaCtrl::BuildRecordBin( void )
+{
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 {
     m_PlayerPanel = playerpanel;
@@ -305,146 +463,18 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     if( Init() )
     {
         // Get the audio output sink
-        GstElement * outputsink;
-        outputsink = gst_element_factory_make( "gconfaudiosink", "audio-sink" );
-        if( !IsValidOutput( outputsink ) )
-        {
-            // fallback to autodetection
-            outputsink = gst_element_factory_make( "autoaudiosink", "audio-sink" );
-            if( !IsValidOutput( outputsink ) )
-            {
-                outputsink = gst_element_factory_make( "alsasink", "alsa-output" );
-                if( !IsValidOutput( outputsink ) )
-                {
-                    outputsink = gst_element_factory_make( "pulsesink", "pulse-sink" );
-                    if( !IsValidOutput( outputsink ) )
-                    {
-                        outputsink = gst_element_factory_make( "osssink", "play_audio" );
-                        if( !IsValidOutput( outputsink ) )
-                        {
-                            guLogError( wxT( "Could not find a valid audiosink" ) );
-                            return;
-                        }
-                    }
-                }
-            }
-        }
+        GstElement * outputsink = BuildOutputBin();
+
 
         //
         m_Playbin = gst_element_factory_make( "playbin2", "play" );
-        if( !GST_IS_ELEMENT( m_Playbin ) )
+        if( !IsValidElement( m_Playbin ) )
         {
-            if( G_IS_OBJECT( m_Playbin ) )
-                g_object_unref( m_Playbin );
             m_Playbin = NULL;
             guLogError( wxT( "Could not create the gstreamer playbin." ) );
-            return;
         }
 
-        GstElement * sinkbin = gst_bin_new( "outsinkbin" );
-        if( !GST_IS_ELEMENT( sinkbin ) )
-        {
-            if( G_IS_OBJECT( sinkbin ) )
-                g_object_unref( sinkbin );
-            sinkbin = NULL;
-            guLogError( wxT( "Could not create the outsinkbin object" ) );
-            return;
-        }
-
-        GstElement * converter = gst_element_factory_make( "audioconvert", "aconvert" );
-        if( !GST_IS_ELEMENT( converter ) )
-        {
-            if( G_IS_OBJECT( converter ) )
-                g_object_unref( converter );
-            converter = NULL;
-            guLogError( wxT( "Could not create the audioconvert object" ) );
-            return;
-        }
-
-        GstElement * replay = gst_element_factory_make( "rgvolume", "replaygain" );
-        if( !GST_IS_ELEMENT( replay ) )
-        {
-            if( G_IS_OBJECT( replay ) )
-                g_object_unref( replay );
-            replay = NULL;
-            guLogError( wxT( "Could not create the replay gain object" ) );
-            return;
-        }
-        else
-        {
-            g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
-            g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
-        }
-
-        GstElement * level = gst_element_factory_make( "level", "gulevelctrl" );
-        if( !GST_IS_ELEMENT( level ) )
-        {
-            if( G_IS_OBJECT( level ) )
-                g_object_unref( level );
-            level = NULL;
-            guLogError( wxT( "Could not create the level object" ) );
-            return;
-        }
-        else
-        {
-            g_object_set( level, "message", TRUE, NULL );
-            g_object_set( level, "interval", gint64( 200000000 ), NULL );
-        }
-
-        m_Volume = gst_element_factory_make( "volume", "mastervolume" );
-        if( !GST_IS_ELEMENT( m_Volume ) )
-        {
-            if( G_IS_OBJECT( m_Volume ) )
-                g_object_unref( m_Volume );
-            m_Volume = NULL;
-            guLogError( wxT( "Could not create the volume object" ) );
-            return;
-        }
-
-        m_Equalizer = gst_element_factory_make( "equalizer-10bands", "equalizer" );
-        if( !GST_IS_ELEMENT( m_Equalizer ) )
-        {
-            if( G_IS_OBJECT( m_Equalizer ) )
-                g_object_unref( m_Equalizer );
-            m_Equalizer = NULL;
-            guLogError( wxT( "Could not create the equalizer object" ) );
-            return;
-        }
-
-        GstElement * limiter = gst_element_factory_make( "rglimiter", "limiter" );
-        if( !GST_IS_ELEMENT( limiter ) )
-        {
-            if( G_IS_OBJECT( limiter ) )
-                g_object_unref( limiter );
-            limiter = NULL;
-            guLogError( wxT( "Could not create the limiter object" ) );
-            return;
-        }
-//        else
-//        {
-//            g_object_set( G_OBJECT( limiter ), "enabled", TRUE, NULL );
-//        }
-
-        GstElement * outconverter = gst_element_factory_make( "audioconvert", "outconvert" );
-        if( !GST_IS_ELEMENT( outconverter ) )
-        {
-            if( G_IS_OBJECT( outconverter ) )
-                g_object_unref( outconverter );
-            outconverter = NULL;
-            guLogError( wxT( "Could not create the output audioconvert object" ) );
-            return;
-        }
-
-        GstPad * pad;
-        GstPad * ghostpad;
-
-        gst_bin_add_many( GST_BIN( sinkbin ), converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
-        gst_element_link_many( converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
-
-        pad = gst_element_get_pad( converter, "sink" );
-        ghostpad = gst_ghost_pad_new( "sink", pad );
-        gst_element_add_pad( sinkbin, ghostpad );
-        gst_object_unref( pad );
+        GstElement * sinkbin = BuildPlaybackBin( outputsink );
 
         g_object_set( G_OBJECT( m_Playbin ), "audio-sink", sinkbin, NULL );
 
