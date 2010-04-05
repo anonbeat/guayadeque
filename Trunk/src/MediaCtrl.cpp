@@ -472,18 +472,20 @@ GstElement * guMediaCtrl::BuildRecordBin( void )
             GstElement * lame = gst_element_factory_make( "lame", "lame-encoder" );
             if( IsValidElement( lame ) )
             {
-                GstElement * filewriter = gst_element_factory_make( "filesink", "file-writer" );
-                if( IsValidElement( filewriter ) )
-                {
-                    g_object_set( filewriter, "location", "~/Records", NULL );
+                g_object_set( lame, "bitrate", gint( 192 ), NULL );
 
-                    GstElement * queue = gst_element_factory_make( "queue", "queue-element" );
+                m_FileSink = gst_element_factory_make( "filesink", "file-writer" );
+                if( IsValidElement( m_FileSink ) )
+                {
+                    g_object_set( m_FileSink, "location", "~/Records/output.mp3", NULL );
+
+                    GstElement * queue = gst_element_factory_make( "queue2", "record-queue" );
                     if( IsValidElement( queue ) )
                     {
                         //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
 
-                        gst_bin_add_many( GST_BIN( recordbin ), queue, converter, lame, filewriter, NULL );
-                        gst_element_link_many( queue, converter, lame, filewriter, NULL );
+                        gst_bin_add_many( GST_BIN( recordbin ), queue, converter, lame, m_FileSink, NULL );
+                        gst_element_link_many( queue, converter, lame, m_FileSink, NULL );
 
                         gst_bin_add( GST_BIN( m_Playbackbin ), recordbin );
 
@@ -495,6 +497,8 @@ GstElement * guMediaCtrl::BuildRecordBin( void )
                             gst_object_unref( pad );
 
                             gst_element_link( m_Tee, recordbin );
+
+                            //g_object_set( recordbin, "async-handling", true, NULL );
 
                             return recordbin;
                         }
@@ -512,7 +516,8 @@ GstElement * guMediaCtrl::BuildRecordBin( void )
                         guLogError( wxT( "Could not create the playback queue object" ) );
                     }
 
-                    g_object_unref( filewriter );
+                    g_object_unref( m_FileSink );
+                    m_FileSink = NULL;
                 }
                 else
                 {
@@ -556,7 +561,6 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     {
         // Get the audio output sink
         GstElement * outputsink = BuildOutputBin();
-
 
         //
         m_Playbin = gst_element_factory_make( "playbin2", "play" );
