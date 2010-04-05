@@ -165,8 +165,13 @@ class guMediaCtrl : public wxEvtHandler
 
     bool            SetProperty( GstElement * element, const char * name, gint64 value );
 
+    GstElement *    BuildOutputBin( void );
+    GstElement *    BuildPlaybackBin( GstElement * outputsink );
+    GstElement *    BuildRecordBin( void );
+
   public :
     GstElement * m_Playbin;
+    GstElement * m_Tee;
     GstElement * m_Volume;
     GstElement * m_Equalizer;
     bool         m_Buffering;

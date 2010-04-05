@@ -648,7 +648,14 @@ void guPlayerPanel::UpdatePositionLabel( const unsigned int curpos )
     }
     else if( m_MediaSong.m_Length )
     {
-        Label = wxT( "-" ) + LenToString( m_MediaSong.m_Length - curpos );
+        // The Gapless playback can produce than while we are listenning to the finish of
+        // a track the player already changed to the next track.
+        // To avoid weird time less results we check if the length of the track is
+        // bigger than the current pos.
+        if( curpos > m_MediaSong.m_Length )
+            Label = wxT( "-" ) + LenToString( m_MediaSong.m_Length );
+        else
+            Label = wxT( "-" ) + LenToString( m_MediaSong.m_Length - curpos );
     }
 
     if( m_MediaSong.m_Length )
