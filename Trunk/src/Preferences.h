@@ -98,6 +98,12 @@ class guPrefDialog : public wxDialog
     wxSpinCtrl *                m_PlayEndTimeSpinCtrl;
     wxCheckBox *                m_NotifyChkBox;
 
+    wxPanel *                   m_RecordPanel;
+    wxCheckBox *                m_RecordChkBox;
+    wxDirPickerCtrl *           m_RecSelDirPicker;
+    wxChoice *                  m_RecFormatChoice;
+    wxChoice *                  m_RecQualityChoice;
+
     wxPanel *                   m_LastFMPanel;
     wxCheckBox *                m_ASEnableChkBox;
     wxStaticText *              m_UserNameStaticText;
@@ -192,6 +198,7 @@ class guPrefDialog : public wxDialog
 	void OnDelCoverBtnClick( wxCommandEvent& event );
     void OnPlayLevelEnabled( wxCommandEvent& event );
     void OnPlayEndTimeEnabled( wxCommandEvent& event );
+    void OnRecEnableClicked( wxCommandEvent& event );
 	void OnFiltersListBoxSelected( wxCommandEvent &event );
 	void OnASUserNameChanged( wxCommandEvent &event );
     void OnOnlineAddBtnClick( wxCommandEvent& event );

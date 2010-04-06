@@ -107,6 +107,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_general ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_library ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_playback ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_record ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_last_fm ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_lyrics ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_online_services ) );
@@ -435,6 +436,84 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 
     //
+    // Record Panel
+    //
+	m_RecordPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* RecMainSizer;
+	RecMainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer* RecordSizer;
+	RecordSizer = new wxStaticBoxSizer( new wxStaticBox( m_RecordPanel, wxID_ANY, _(" Record ") ), wxVERTICAL );
+
+	m_RecordChkBox = new wxCheckBox( m_RecordPanel, wxID_ANY, _("Enable recording"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_RecordChkBox->SetValue( m_Config->ReadBool( wxT( "Enabled" ), false, wxT( "Record" ) ) );
+
+	RecordSizer->Add( m_RecordChkBox, 0, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* RecSelDirSizer;
+	RecSelDirSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * RecSelDirLabel = new wxStaticText( m_RecordPanel, wxID_ANY, _("Save to:"), wxDefaultPosition, wxDefaultSize, 0 );
+	RecSelDirLabel->Wrap( -1 );
+	RecSelDirSizer->Add( RecSelDirLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_RecSelDirPicker = new wxDirPickerCtrl( m_RecordPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Records" ), wxT( "Record" ) ), _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
+    m_RecSelDirPicker->Enable( m_RecordChkBox->IsChecked() );
+	RecSelDirSizer->Add( m_RecSelDirPicker, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	RecordSizer->Add( RecSelDirSizer, 0, wxEXPAND, 5 );
+
+	wxStaticBoxSizer* RecPropSizer;
+	RecPropSizer = new wxStaticBoxSizer( new wxStaticBox( m_RecordPanel, wxID_ANY, _(" Properties ") ), wxVERTICAL );
+
+	wxFlexGridSizer* RecPropFlexSizer;
+	RecPropFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	RecPropFlexSizer->AddGrowableCol( 1 );
+	RecPropFlexSizer->SetFlexibleDirection( wxBOTH );
+	RecPropFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxStaticText * RecFormatLabel = new wxStaticText( m_RecordPanel, wxID_ANY, _("Format:"), wxDefaultPosition, wxDefaultSize, 0 );
+	RecFormatLabel->Wrap( -1 );
+	RecPropFlexSizer->Add( RecFormatLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	wxString m_RecFormatChoiceChoices[] = { wxT("mp3"), wxT("ogg"), wxT("flac") };
+	int m_RecFormatChoiceNChoices = sizeof( m_RecFormatChoiceChoices ) / sizeof( wxString );
+	m_RecFormatChoice = new wxChoice( m_RecordPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_RecFormatChoiceNChoices, m_RecFormatChoiceChoices, 0 );
+	m_RecFormatChoice->SetSelection( m_Config->ReadNum( wxT( "Format" ), 0, wxT( "Record" ) ) );
+    m_RecFormatChoice->Enable( m_RecordChkBox->IsChecked() );
+	RecPropFlexSizer->Add( m_RecFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * RecQualityLabel = new wxStaticText( m_RecordPanel, wxID_ANY, _("Quality:"), wxDefaultPosition, wxDefaultSize, 0 );
+	RecQualityLabel->Wrap( -1 );
+	RecPropFlexSizer->Add( RecQualityLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	wxArrayString RecQualityChoiceChoices;
+	RecQualityChoiceChoices.Add( _( "Very High" ) );
+	RecQualityChoiceChoices.Add( _( "High" ) );
+	RecQualityChoiceChoices.Add( _( "Normal" ) );
+	RecQualityChoiceChoices.Add( _( "Low" ) );
+	RecQualityChoiceChoices.Add( _( "Very Low" ) );
+
+	m_RecQualityChoice = new wxChoice( m_RecordPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, RecQualityChoiceChoices, 0 );
+	m_RecQualityChoice->SetSelection( m_Config->ReadNum( wxT( "Quality" ), 2, wxT( "Record" ) ) );
+    m_RecQualityChoice->Enable( m_RecordChkBox->IsChecked() );
+	RecPropFlexSizer->Add( m_RecQualityChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	RecPropSizer->Add( RecPropFlexSizer, 1, wxEXPAND, 5 );
+
+	RecordSizer->Add( RecPropSizer, 1, wxEXPAND|wxALL, 5 );
+
+	RecMainSizer->Add( RecordSizer, 0, wxEXPAND|wxALL, 5 );
+
+	m_RecordPanel->SetSizer( RecMainSizer );
+	m_RecordPanel->Layout();
+	RecMainSizer->Fit( m_RecordPanel );
+	m_MainNotebook->AddPage( m_RecordPanel, _( "Record" ), false );
+	m_MainNotebook->SetPageImage( 3, 3 );
+
+
+
+    //
     // LastFM Panel
     //
 	m_LastFMPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -487,7 +566,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LastFMPanel->Layout();
 	ASMainSizer->Fit( m_LastFMPanel );
 	m_MainNotebook->AddPage( m_LastFMPanel, wxT( "LastFM" ), false );
-	m_MainNotebook->SetPageImage( 3, 3 );
+	m_MainNotebook->SetPageImage( 4, 4 );
 
     //
     // Lyrics
@@ -535,7 +614,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LyricsPanel->Layout();
 	LyricsMainSizer->Fit( m_LyricsPanel );
 	m_MainNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
-	m_MainNotebook->SetPageImage( 4, 4 );
+	m_MainNotebook->SetPageImage( 5, 5 );
 
 	//m_MainNotebookBitmap = wxBitmap( wxT("../src/images/orig/pref_lyrics.png"), wxBITMAP_TYPE_ANY );
 
@@ -609,7 +688,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_OnlinePanel->Layout();
 	OnlineMainSizer->Fit( m_OnlinePanel );
 	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online" ), false );
-	m_MainNotebook->SetPageImage( 5, 5 );
+	m_MainNotebook->SetPageImage( 6, 6 );
 
     //
     // Podcasts
@@ -682,7 +761,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	PodcastPanel->Layout();
 	PodcastsMainSizer->Fit( PodcastPanel );
 	m_MainNotebook->AddPage( PodcastPanel, wxT("Podcasts"), false );
-	m_MainNotebook->SetPageImage( 6, 6 );
+	m_MainNotebook->SetPageImage( 7, 7 );
 
     //
     // Links
@@ -790,7 +869,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LinksPanel->Layout();
 	LinksMainSizer->Fit( m_LinksPanel );
 	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
-	m_MainNotebook->SetPageImage( 7, 7 );
+	m_MainNotebook->SetPageImage( 8, 8 );
 
 
     //
@@ -899,7 +978,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_CmdPanel->Layout();
 	CmdMainSizer->Fit( m_CmdPanel );
 	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
-	m_MainNotebook->SetPageImage( 8, 8 );
+	m_MainNotebook->SetPageImage( 9, 9 );
 
 
     //
@@ -940,7 +1019,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_CopyPanel->Layout();
 	CopyToMainSizer->Fit( m_CopyPanel );
 	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
-	m_MainNotebook->SetPageImage( 9, 9 );
+	m_MainNotebook->SetPageImage( 10, 10 );
 
 
     //
@@ -978,6 +1057,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_DelPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
 	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
 	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
+
+	m_RecordChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
 
 	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
 	m_AddCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
@@ -1042,6 +1123,8 @@ guPrefDialog::~guPrefDialog()
 	m_DelPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
 	m_PlayLevelEnabled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
 	m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
+
+	m_RecordChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
 
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
 	m_AddCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
@@ -1141,6 +1224,11 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
     m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
 //    m_Config->WriteNum( wxT( "LyricSearchEngine" ), m_LyricsChoice->GetSelection(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "Enabled" ), m_RecordChkBox->GetValue(), wxT( "Record" ) );
+    m_Config->WriteStr( wxT( "Path" ), m_RecSelDirPicker->GetPath(), wxT( "Record" ) );
+    m_Config->WriteNum( wxT( "Format" ), m_RecFormatChoice->GetSelection(), wxT( "Record" ) );
+    m_Config->WriteNum( wxT( "Quality" ), m_RecQualityChoice->GetSelection(), wxT( "Record" ) );
+
     m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "Podcasts" ) );
     m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "Podcasts" ) );
     m_Config->WriteNum( wxT( "UpdatePeriod" ), m_PodcastUpdatePeriod->GetSelection(), wxT( "Podcasts" ) );
@@ -1416,6 +1504,14 @@ void guPrefDialog::OnPlayLevelEnabled( wxCommandEvent& event )
 void guPrefDialog::OnPlayEndTimeEnabled( wxCommandEvent& event )
 {
 	m_PlayEndTimeSpinCtrl->Enable( event.IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnRecEnableClicked( wxCommandEvent& event )
+{
+	m_RecSelDirPicker->Enable( event.IsChecked() );
+	m_RecFormatChoice->Enable( event.IsChecked() );
+	m_RecQualityChoice->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -89,6 +89,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_pref_online_services,
     guIMAGE_INDEX_pref_playback,
     guIMAGE_INDEX_pref_podcasts,
+    guIMAGE_INDEX_pref_record,
     //
     guIMAGE_INDEX_tiny_close_normal,
     guIMAGE_INDEX_tiny_close_highlight,
