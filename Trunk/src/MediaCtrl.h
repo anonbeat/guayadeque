@@ -34,7 +34,7 @@
 enum guRecordFormat {
     guRECORD_FORMAT_MP3,
     guRECORD_FORMAT_OGG,
-    guRECORD_FORMAT_LAME
+    guRECORD_FORMAT_FLAC
 };
 
 enum guRecordQuality {
@@ -176,12 +176,15 @@ class guMediaCtrl : public wxEvtHandler
     guPlayerPanel * m_PlayerPanel;
     wxLongLong      m_llPausedPos;
     int             m_LastError;
+    wxString        m_RecordPath;
+    wxString        m_RecordExt;
+    int             m_RecordFormat;
 
     bool            SetProperty( GstElement * element, const char * name, gint64 value );
 
     GstElement *    BuildOutputBin( void );
     GstElement *    BuildPlaybackBin( GstElement * outputsink );
-    GstElement *    BuildRecordBin( const wxString &path, GstElement * encoder );
+    GstElement *    BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer );
 
   public :
     GstElement * m_Playbin;
@@ -226,6 +229,7 @@ class guMediaCtrl : public wxEvtHandler
 
     bool EnableRecord( const wxString &path, const int format, const int quality );
     void DisableRecord( void );
+    bool SetRecordFileName( const wxString &path );
 
 };
 

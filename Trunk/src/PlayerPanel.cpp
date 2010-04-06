@@ -25,6 +25,7 @@
 #include "Config.h"
 #include "DbLibrary.h"
 #include "Equalizer.h"
+#include "FileRenamer.h" // NormalizeField
 #include "Images.h"
 #include "LastFM.h"
 #include "MainFrame.h"
@@ -1580,6 +1581,13 @@ void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
 
                 GetSizer()->Layout();
 
+                // If its recording
+                if( m_RecordButton->GetValue() )
+                {
+                    wxString RecordFileName = NormalizeField( * TagStr );
+                    m_MediaCtrl->SetRecordFileName( RecordFileName );
+                }
+
                 //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
                 event.SetClientData( new guTrack( m_MediaSong ) );
@@ -2017,10 +2025,15 @@ void guPlayerPanel::OnRecordButtonClick( wxCommandEvent& event )
 
     if( IsEnabled )
     {
-        wxString    RecPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Records" ), wxT( "Record" ) );
-        int         RecFormat = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "Record" ) );
-        int         RecQuality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "Record" ) );
+        wxString RecPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Records" ), wxT( "Record" ) );
+        int RecFormat = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "Record" ) );
+        int RecQuality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "Record" ) );
         m_MediaCtrl->EnableRecord( RecPath, RecFormat, RecQuality );
+        if( !m_MediaSong.m_ArtistName.IsEmpty() )
+        {
+            wxString RecordFileName = NormalizeField( m_MediaSong.m_ArtistName + wxT( " - " ) + m_MediaSong.m_SongName );
+            m_MediaCtrl->SetRecordFileName( RecordFileName );
+        }
     }
     else
     {

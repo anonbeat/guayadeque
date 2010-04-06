@@ -92,6 +92,11 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 if( ctrl->m_WasPlaying )
                 {
                     gst_element_set_state( ctrl->m_Playbin, GST_STATE_PLAYING );
+                    if( ctrl->m_Recordbin )
+                    {
+                        gst_element_set_state( ctrl->m_Playbackbin, GST_STATE_PLAYING );
+                        gst_element_set_state( ctrl->m_Recordbin, GST_STATE_PLAYING );
+                    }
                     ctrl->m_WasPlaying = false;
                 }
             }
@@ -102,6 +107,11 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 {
                     ctrl->m_WasPlaying = true;
                     gst_element_set_state( ctrl->m_Playbin, GST_STATE_PAUSED );
+                    if( ctrl->m_Recordbin )
+                    {
+                        gst_element_set_state( ctrl->m_Playbackbin, GST_STATE_PAUSED );
+                        gst_element_set_state( ctrl->m_Recordbin, GST_STATE_PAUSED );
+                    }
                 }
                 ctrl->m_Buffering = true;
             }
@@ -461,7 +471,7 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
 }
 
 // -------------------------------------------------------------------------------- //
-GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * encoder )
+GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer )
 {
     GstElement * recordbin = gst_bin_new( "recordbin" );
     if( IsValidElement( recordbin ) )
@@ -477,10 +487,19 @@ GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * enc
                 GstElement * queue = gst_element_factory_make( "queue", "rb_queue" );
                 if( IsValidElement( queue ) )
                 {
+                    g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
                     //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
 
-                    gst_bin_add_many( GST_BIN( recordbin ), queue, converter, encoder, m_FileSink, NULL );
-                    gst_element_link_many( queue, converter, encoder, m_FileSink, NULL );
+                    if( muxer )
+                    {
+                        gst_bin_add_many( GST_BIN( recordbin ), queue, converter, encoder, muxer, m_FileSink, NULL );
+                        gst_element_link_many( queue, converter, encoder, muxer, m_FileSink, NULL );
+                    }
+                    else
+                    {
+                        gst_bin_add_many( GST_BIN( recordbin ), queue, converter, encoder, m_FileSink, NULL );
+                        gst_element_link_many( queue, converter, encoder, m_FileSink, NULL );
+                    }
 
                     gst_bin_add( GST_BIN( m_Playbackbin ), recordbin );
 
@@ -562,9 +581,6 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 
         g_object_set( G_OBJECT( m_Playbin ), "audio-sink", m_Playbackbin, NULL );
 
-        //m_Recordbin = BuildRecordBin();
-
-
             // This dont make any difference in gapless playback :(
 //        if( !SetProperty( outputsink, "buffer-time", (gint64) 5000*1000 ) )
 //            guLogMessage( wxT( "Could not set buffer time to gstreamer object." ) );
@@ -596,22 +612,22 @@ guMediaCtrl::~guMediaCtrl()
 bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const int quality )
 {
     GstElement * Encoder = NULL;
+    GstElement * Muxer = NULL;
     gint Mp3Quality[] = { 320, 192, 128, 96, 64 };
     float OggQuality[] = { 0.9, 0.7, 0.5, 0.3, 0.1 };
     gint FlacQuality[] = { 9, 7, 5, 3, 1 };
 
-    wxString Path = path;
-    wxString Ext;
+    m_RecordPath = path;
     // Be sure the path exists
-    if( !Path.EndsWith( wxT( "/" ) ) )
-        Path.Append( wxT( "/" ) );
-    wxFileName::Mkdir( Path, 0770, wxPATH_MKDIR_FULL );
+    if( !m_RecordPath.EndsWith( wxT( "/" ) ) )
+        m_RecordPath.Append( wxT( "/" ) );
+    wxFileName::Mkdir( m_RecordPath, 0770, wxPATH_MKDIR_FULL );
     //
     switch( format )
     {
         case guRECORD_FORMAT_MP3  :
         {
-            Ext = wxT( ".mp3" );
+            m_RecordExt = wxT( ".mp3" );
             Encoder = gst_element_factory_make( "lame", "rb_lame" );
             if( IsValidElement( Encoder ) )
             {
@@ -626,11 +642,18 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
 
         case guRECORD_FORMAT_OGG  :
         {
-            Ext = wxT( ".ogg" );
+            m_RecordExt = wxT( ".ogg" );
             Encoder = gst_element_factory_make( "vorbisenc", "rb_vorbis" );
             if( IsValidElement( Encoder ) )
             {
                 g_object_set( Encoder, "quality", OggQuality[ quality ], NULL );
+
+                Muxer = gst_element_factory_make( "oggmux", "rb_oggmux" );
+                if( !IsValidElement( Muxer ) )
+                {
+                    guLogError( wxT( "Could not create the record oggmux object" ) );
+                    Muxer = NULL;
+                }
             }
             else
             {
@@ -639,9 +662,9 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
             break;
         }
 
-        case guRECORD_FORMAT_LAME :
+        case guRECORD_FORMAT_FLAC :
         {
-            Ext = wxT( ".flac" );
+            m_RecordExt = wxT( ".flac" );
             Encoder = gst_element_factory_make( "flacenc", "rb_flac" );
             if( IsValidElement( Encoder ) )
             {
@@ -667,7 +690,7 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
             }
         }
 
-        m_Recordbin = BuildRecordBin( Path + wxT( "record" ) + Ext, Encoder );
+        m_Recordbin = BuildRecordBin( m_RecordPath + wxT( "record" ) + m_RecordExt, Encoder, Muxer );
 
         if( State == wxMEDIASTATE_PLAYING )
         {
@@ -703,6 +726,7 @@ void guMediaCtrl::DisableRecord( void )
     gst_bin_remove( GST_BIN( m_Playbackbin ), m_Recordbin );
     gst_object_unref( m_Recordbin );
     m_Recordbin = NULL;
+    m_FileSink = NULL;
 
     if( State == wxMEDIASTATE_PLAYING )
     {
@@ -711,6 +735,43 @@ void guMediaCtrl::DisableRecord( void )
             guLogMessage( wxT( "Could not restore state inserting record object" ) );
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaCtrl::SetRecordFileName( const wxString &path )
+{
+    if( !m_Recordbin )
+        return false;
+
+    GstState    CurState;
+
+    gst_element_get_state( m_Playbin, &CurState, NULL, 0 );
+
+    if( CurState == GST_STATE_PLAYING )
+    {
+        if( gst_element_set_state( m_Recordbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
+        {
+            guLogMessage( wxT( "Could not set state inserting record object" ) );
+            return false;
+        }
+        gst_element_set_state( m_Recordbin, GST_STATE_NULL ); // == GST_STATE_CHANGE_FAILURE )
+    }
+
+    wxString FileName = m_RecordPath + path + m_RecordExt;
+    guLogMessage( wxT( "The Record File is %s" ), FileName.c_str() );
+
+    g_object_set( m_FileSink, "location", ( const char * ) FileName.mb_str(), NULL );
+
+    if( CurState == GST_STATE_PLAYING )
+    {
+        if( gst_element_set_state( m_Recordbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
+        {
+            guLogMessage( wxT( "Could not restore state inserting record object" ) );
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -725,6 +786,10 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
 
     if( restart )
     {
+        if( m_Recordbin )
+        {
+            gst_element_set_state( m_Recordbin, GST_STATE_READY );
+        }
         // Set playbin to ready to stop the current media...
         if( gst_element_set_state( m_Playbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
         {
@@ -733,6 +798,10 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
 
         // free current media resources
         gst_element_set_state( m_Playbin, GST_STATE_NULL );
+        if( m_Recordbin )
+        {
+            gst_element_set_state( m_Recordbin, GST_STATE_NULL );
+        }
     }
 
     // Make sure the passed URI is valid and tell playbin to load it
@@ -750,6 +819,10 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
         {
             return false; // no real error message needed here as this is
         }
+        if( m_Recordbin )
+        {
+            gst_element_set_state( m_Recordbin, GST_STATE_PAUSED );
+        }
     }
 
     wxMediaEvent event( wxEVT_MEDIA_LOADED );
@@ -762,14 +835,26 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Play()
 {
-    return gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) != GST_STATE_CHANGE_FAILURE;
+    if( gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) != GST_STATE_CHANGE_FAILURE )
+    {
+        if( m_Recordbin )
+            return gst_element_set_state( m_Recordbin, GST_STATE_PLAYING ) != GST_STATE_CHANGE_FAILURE;
+        return true;
+    }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Pause()
 {
     m_llPausedPos = Tell();
-    return gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE;
+    if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE )
+    {
+        if( m_Recordbin )
+            return gst_element_set_state( m_Recordbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE;
+        return true;
+    }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
