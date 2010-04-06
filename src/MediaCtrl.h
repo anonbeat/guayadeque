@@ -31,6 +31,20 @@
 
 #define guEQUALIZER_BAND_COUNT  10
 
+enum guRecordFormat {
+    guRECORD_FORMAT_MP3,
+    guRECORD_FORMAT_OGG,
+    guRECORD_FORMAT_LAME
+};
+
+enum guRecordQuality {
+    guRECORD_QUALITY_VERY_HIGH,
+    guRECORD_QUALITY_HIGH,
+    guRECORD_QUALITY_NORMAL,
+    guRECORD_QUALITY_LOW,
+    guRECORD_QUALITY_VERY_LOW
+};
+
 // ----------------------------------------------------------------------------
 class guLevelInfo
 {
@@ -167,7 +181,7 @@ class guMediaCtrl : public wxEvtHandler
 
     GstElement *    BuildOutputBin( void );
     GstElement *    BuildPlaybackBin( GstElement * outputsink );
-    GstElement *    BuildRecordBin( void );
+    GstElement *    BuildRecordBin( const wxString &path, GstElement * encoder );
 
   public :
     GstElement * m_Playbin;
@@ -209,6 +223,9 @@ class guMediaCtrl : public wxEvtHandler
     void inline AboutToFinish( void );
     int  inline GetLastError( void ) { return m_LastError; };
     void inline SetLastError( const int error ) { m_LastError = error; };
+
+    bool EnableRecord( const wxString &path, const int format, const int quality );
+    void DisableRecord( void );
 
 };
 

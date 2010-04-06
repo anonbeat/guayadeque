@@ -461,7 +461,7 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
 }
 
 // -------------------------------------------------------------------------------- //
-GstElement * guMediaCtrl::BuildRecordBin( void )
+GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * encoder )
 {
     GstElement * recordbin = gst_bin_new( "recordbin" );
     if( IsValidElement( recordbin ) )
@@ -469,62 +469,50 @@ GstElement * guMediaCtrl::BuildRecordBin( void )
         GstElement * converter = gst_element_factory_make( "audioconvert", "rb_audioconvert" );
         if( IsValidElement( converter ) )
         {
-            GstElement * lame = gst_element_factory_make( "lame", "rb_lame" );
-            if( IsValidElement( lame ) )
+            m_FileSink = gst_element_factory_make( "filesink", "rb_filesink" );
+            if( IsValidElement( m_FileSink ) )
             {
-                g_object_set( lame, "bitrate", gint( 192 ), NULL );
+                g_object_set( m_FileSink, "location", ( const char * ) path.mb_str(), NULL );
 
-                m_FileSink = gst_element_factory_make( "filesink", "rb_filesink" );
-                if( IsValidElement( m_FileSink ) )
+                GstElement * queue = gst_element_factory_make( "queue", "rb_queue" );
+                if( IsValidElement( queue ) )
                 {
-                    g_object_set( m_FileSink, "location", "/home/jrios/Records/output.mp3", NULL );
+                    //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
 
-                    GstElement * queue = gst_element_factory_make( "queue2", "rb_queue" );
-                    if( IsValidElement( queue ) )
+                    gst_bin_add_many( GST_BIN( recordbin ), queue, converter, encoder, m_FileSink, NULL );
+                    gst_element_link_many( queue, converter, encoder, m_FileSink, NULL );
+
+                    gst_bin_add( GST_BIN( m_Playbackbin ), recordbin );
+
+                    GstPad * pad = gst_element_get_pad( queue, "sink" );
+                    if( GST_IS_PAD( pad ) )
                     {
-                        //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
+                        GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
+                        gst_element_add_pad( recordbin, ghostpad );
+                        gst_object_unref( pad );
 
-                        gst_bin_add_many( GST_BIN( recordbin ), queue, converter, lame, m_FileSink, NULL );
-                        gst_element_link_many( queue, converter, lame, m_FileSink, NULL );
+                        gst_element_link( m_Tee, recordbin );
 
-                        gst_bin_add( GST_BIN( m_Playbackbin ), recordbin );
+                        //g_object_set( recordbin, "async-handling", true, NULL );
 
-                        GstPad * pad = gst_element_get_pad( queue, "sink" );
-                        if( GST_IS_PAD( pad ) )
-                        {
-                            GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
-                            gst_element_add_pad( recordbin, ghostpad );
-                            gst_object_unref( pad );
-
-                            gst_element_link( m_Tee, recordbin );
-
-                            //g_object_set( recordbin, "async-handling", true, NULL );
-
-                            return recordbin;
-                        }
-                        else
-                        {
-                            if( G_IS_OBJECT( pad ) )
-                                gst_object_unref( pad );
-                            guLogError( wxT( "Could not create the pad element" ) );
-                        }
-
-                        g_object_unref( queue );
+                        return recordbin;
                     }
                     else
                     {
-                        guLogError( wxT( "Could not create the playback queue object" ) );
+                        if( G_IS_OBJECT( pad ) )
+                            gst_object_unref( pad );
+                        guLogError( wxT( "Could not create the pad element" ) );
                     }
 
-                    g_object_unref( m_FileSink );
-                    m_FileSink = NULL;
+                    g_object_unref( queue );
                 }
                 else
                 {
-                    guLogError( wxT( "Could not create the file writer object" ) );
+                    guLogError( wxT( "Could not create the playback queue object" ) );
                 }
 
-                g_object_unref( lame );
+                g_object_unref( m_FileSink );
+                m_FileSink = NULL;
             }
             else
             {
@@ -582,7 +570,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 //            guLogMessage( wxT( "Could not set buffer time to gstreamer object." ) );
 
         // Be sure we only play audio
-        g_object_set( G_OBJECT( m_Playbin ), "flags", 0x02|0x10, NULL );
+        g_object_set( G_OBJECT( m_Playbin ), "flags", 0x02 | 0x10, NULL );
         //g_object_set( G_OBJECT( m_Playbin ), "buffer-size", 256*1024, NULL );
 
         g_signal_connect( G_OBJECT( m_Playbin ), "about-to-finish",
@@ -601,6 +589,127 @@ guMediaCtrl::~guMediaCtrl()
         wxASSERT( GST_IS_OBJECT( m_Playbin ) );
         gst_element_set_state( m_Playbin, GST_STATE_NULL );
         gst_object_unref( GST_OBJECT( m_Playbin ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const int quality )
+{
+    GstElement * Encoder = NULL;
+    gint Mp3Quality[] = { 320, 192, 128, 96, 64 };
+    float OggQuality[] = { 0.9, 0.7, 0.5, 0.3, 0.1 };
+    gint FlacQuality[] = { 9, 7, 5, 3, 1 };
+
+    wxString Path = path;
+    wxString Ext;
+    // Be sure the path exists
+    if( !Path.EndsWith( wxT( "/" ) ) )
+        Path.Append( wxT( "/" ) );
+    wxFileName::Mkdir( Path, 0770, wxPATH_MKDIR_FULL );
+    //
+    switch( format )
+    {
+        case guRECORD_FORMAT_MP3  :
+        {
+            Ext = wxT( ".mp3" );
+            Encoder = gst_element_factory_make( "lame", "rb_lame" );
+            if( IsValidElement( Encoder ) )
+            {
+                g_object_set( Encoder, "bitrate", Mp3Quality[ quality ], NULL );
+            }
+            else
+            {
+                Encoder = NULL;
+            }
+            break;
+        }
+
+        case guRECORD_FORMAT_OGG  :
+        {
+            Ext = wxT( ".ogg" );
+            Encoder = gst_element_factory_make( "vorbisenc", "rb_vorbis" );
+            if( IsValidElement( Encoder ) )
+            {
+                g_object_set( Encoder, "quality", OggQuality[ quality ], NULL );
+            }
+            else
+            {
+                Encoder = NULL;
+            }
+            break;
+        }
+
+        case guRECORD_FORMAT_LAME :
+        {
+            Ext = wxT( ".flac" );
+            Encoder = gst_element_factory_make( "flacenc", "rb_flac" );
+            if( IsValidElement( Encoder ) )
+            {
+                g_object_set( Encoder, "quality", FlacQuality[ quality ], NULL );
+            }
+            else
+            {
+                Encoder = NULL;
+            }
+            break;
+        }
+    }
+
+    if( Encoder )
+    {
+        wxMediaState State = GetState();
+        if( State == wxMEDIASTATE_PLAYING )
+        {
+            if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
+            {
+                guLogMessage( wxT( "Could not set state inserting record object" ) );
+                return false;
+            }
+        }
+
+        m_Recordbin = BuildRecordBin( Path + wxT( "record" ) + Ext, Encoder );
+
+        if( State == wxMEDIASTATE_PLAYING )
+        {
+            if( gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
+            {
+                guLogMessage( wxT( "Could not restore state inserting record object" ) );
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    {
+        guLogError( wxT( "Could not create the recorder encoder object" ) );
+    }
+
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::DisableRecord( void )
+{
+    wxMediaState State = GetState();
+    if( State == wxMEDIASTATE_PLAYING )
+    {
+        if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
+        {
+            guLogMessage( wxT( "Could not set state inserting record object" ) );
+        }
+    }
+
+    gst_element_set_state( m_Recordbin, GST_STATE_NULL );
+    gst_bin_remove( GST_BIN( m_Playbackbin ), m_Recordbin );
+    gst_object_unref( m_Recordbin );
+    m_Recordbin = NULL;
+
+    if( State == wxMEDIASTATE_PLAYING )
+    {
+        if( gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
+        {
+            guLogMessage( wxT( "Could not restore state inserting record object" ) );
+        }
     }
 }
 
