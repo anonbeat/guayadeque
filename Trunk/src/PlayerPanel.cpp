@@ -1252,6 +1252,8 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     // Enable or disables the record button. Only enabled for radio stations
     m_RecordButton->Enable( ( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
+    if( m_RecordButton->GetValue() )
+        m_RecordButton->SetValue( ( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
 
     //guLogWarning( wxT( "SetCurrentTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
     CoverImage = NULL;
