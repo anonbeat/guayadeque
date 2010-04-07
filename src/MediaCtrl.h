@@ -59,6 +59,26 @@ class guLevelInfo
     double          m_Decay_R;
 };
 
+// ----------------------------------------------------------------------------
+class guRadioTagInfo
+{
+  public :
+    gchar * m_Organization;
+    gchar * m_Location;
+    gchar * m_Title;
+
+    guRadioTagInfo() { m_Organization = NULL; m_Location = NULL; m_Title = NULL; }
+    ~guRadioTagInfo()
+    {
+        if( m_Organization )
+            g_free( m_Organization );
+        if( m_Location )
+            g_free( m_Location );
+        if( m_Title )
+            g_free( m_Title );
+    }
+};
+
 // Start_of_Ripped_Code_From_mediactrl_h
 // This code is from mediactrl.h to avoid the need of the wxWidgets media library because its
 // not included in many distributions by default.

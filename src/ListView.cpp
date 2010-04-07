@@ -1491,7 +1491,7 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticBoxSizer * ColumnsSizer;
-	ColumnsSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT(" Columns ") ), wxHORIZONTAL );
+	ColumnsSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _(" Columns ") ), wxHORIZONTAL );
 
     int index;
     int count = columns->Count();

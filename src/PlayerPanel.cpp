@@ -441,7 +441,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_MediaCtrl->Connect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_ABOUT_TO_FINISH, wxMediaEventHandler( guPlayerPanel::OnMediaAboutToFinish ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
-    m_MediaCtrl->Connect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTag ), NULL, this );
+    m_MediaCtrl->Connect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
     m_MediaCtrl->Connect( wxEVT_MEDIA_LEVEL, wxMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
@@ -554,7 +554,7 @@ guPlayerPanel::~guPlayerPanel()
 
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
-    m_MediaCtrl->Disconnect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTag ), NULL, this );
+    m_MediaCtrl->Disconnect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
     m_MediaCtrl->Disconnect( wxEVT_MEDIA_LEVEL, wxMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
@@ -1566,44 +1566,52 @@ wxArrayString ExtractMetaData( const wxString &TitleStr )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
+void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
 {
-    wxString * TagStr = ( wxString * ) event.GetClientData();
-    if( TagStr )
+    guRadioTagInfo * RadioTag = ( guRadioTagInfo * ) event.GetClientData();
+    if( RadioTag )
     {
         if( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION )
         {
             //guLogMessage( wxT( "MediaTag:'%s'" ), TagStr->c_str() );
-            wxArrayString MetaData = ExtractMetaData( * TagStr );
-            if( MetaData.Count() )
+            if( RadioTag->m_Title )
             {
-                m_MediaSong.m_ArtistName = MetaData[ 0 ];
-                m_MediaSong.m_SongName = MetaData[ 1 ];
-                //m_MediaSong.AlbumName = MetaData[ 2 ];
-
-                SetTitleLabel( m_MediaSong.m_SongName );
-                //SetAlbumLabel( m_MediaSong.m_AlbumName );
-                SetArtistLabel( m_MediaSong.m_ArtistName );
-
-                GetSizer()->Layout();
-
-                // If its recording
-                if( m_RecordButton->GetValue() && m_SplitRecordings )
+                wxArrayString MetaData = ExtractMetaData( wxString( RadioTag->m_Title, wxConvUTF8 ) );
+                if( MetaData.Count() )
                 {
-                    wxString RecordFileName = NormalizeField( * TagStr );
-                    m_MediaCtrl->SetRecordFileName( RecordFileName );
+                    m_MediaSong.m_ArtistName = MetaData[ 0 ];
+                    m_MediaSong.m_SongName = MetaData[ 1 ];
+                    if( RadioTag->m_Organization )
+                        m_MediaSong.m_AlbumName = wxString( RadioTag->m_Organization, wxConvUTF8 );
+                    else if( RadioTag->m_Location )
+                        m_MediaSong.m_AlbumName = wxString( RadioTag->m_Location, wxConvUTF8 );
+
+                    guLogMessage( wxT( "AlbumName: '%s'" ), m_MediaSong.m_AlbumName.c_str() );
+                    SetTitleLabel( m_MediaSong.m_SongName );
+                    SetAlbumLabel( m_MediaSong.m_AlbumName );
+                    SetArtistLabel( m_MediaSong.m_ArtistName );
+
+                    GetSizer()->Layout();
+
+                    // If its recording
+                    if( m_RecordButton->GetValue() && m_SplitRecordings )
+                    {
+                        wxString RecordFileName = NormalizeField( MetaData[ 0 ] + wxT( " - " ) + MetaData[ 1 ] );
+                        m_MediaCtrl->SetRecordFileName( RecordFileName );
+                    }
+
+                    //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+                    event.SetClientData( new guTrack( m_MediaSong ) );
+                    wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+                    wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
+                    SendNotifyInfo( &Image );
                 }
-
-                //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-                event.SetClientData( new guTrack( m_MediaSong ) );
-                wxPostEvent( wxTheApp->GetTopWindow(), event );
-
-                wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
-                SendNotifyInfo( &Image );
             }
+
         }
-        delete TagStr;
+        delete RadioTag;
     }
 }
 
