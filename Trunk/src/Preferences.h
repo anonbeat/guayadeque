@@ -103,6 +103,7 @@ class guPrefDialog : public wxDialog
     wxDirPickerCtrl *           m_RecSelDirPicker;
     wxChoice *                  m_RecFormatChoice;
     wxChoice *                  m_RecQualityChoice;
+    wxCheckBox *                m_RecSplitChkBox;
 
     wxPanel *                   m_LastFMPanel;
     wxCheckBox *                m_ASEnableChkBox;

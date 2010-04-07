@@ -228,6 +228,8 @@ class guPlayerPanel : public wxPanel
 
     wxArrayString           m_ErrorStrings;
 
+    int                     m_SplitRecordings;
+
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
     void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
