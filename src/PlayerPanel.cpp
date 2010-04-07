@@ -99,6 +99,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_IsSkipping = false;
     m_ShowNotifications = true;
     m_ShowNotificationsTime = 0;
+    m_SplitRecordings = false;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -131,6 +132,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
         m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
 //        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
+        m_SplitRecordings = Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) );
     }
 
     m_SliderIsDragged = false;
@@ -607,6 +609,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             event.SetInt( 1 );
             wxTheApp->GetTopWindow()->AddPendingEvent( event );
         }
+
+        m_SplitRecordings = Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) );
     }
 }
 
@@ -1584,7 +1588,7 @@ void guPlayerPanel::OnMediaTag( wxMediaEvent &event )
                 GetSizer()->Layout();
 
                 // If its recording
-                if( m_RecordButton->GetValue() )
+                if( m_RecordButton->GetValue() && m_SplitRecordings )
                 {
                     wxString RecordFileName = NormalizeField( * TagStr );
                     m_MediaCtrl->SetRecordFileName( RecordFileName );
@@ -2033,7 +2037,11 @@ void guPlayerPanel::OnRecordButtonClick( wxCommandEvent& event )
         m_MediaCtrl->EnableRecord( RecPath, RecFormat, RecQuality );
         if( !m_MediaSong.m_ArtistName.IsEmpty() )
         {
-            wxString RecordFileName = NormalizeField( m_MediaSong.m_ArtistName + wxT( " - " ) + m_MediaSong.m_SongName );
+            wxString RecordFileName = NormalizeField( m_MediaSong.m_ArtistName );
+            if( m_MediaSong.m_SongName.IsEmpty() )
+            {
+                RecordFileName += wxT( " - " ) + NormalizeField( m_MediaSong.m_SongName );
+            }
             m_MediaCtrl->SetRecordFileName( RecordFileName );
         }
     }

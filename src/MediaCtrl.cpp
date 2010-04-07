@@ -86,7 +86,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 
             gst_message_parse_buffering( message, &Percent );
 
-            guLogMessage( wxT( "Buffering: %i%%" ), Percent );
+            //guLogMessage( wxT( "Buffering: %i%%" ), Percent );
             if( Percent >= 100 )
             {
                 ctrl->m_Buffering = false;
@@ -292,30 +292,10 @@ static gboolean set_state_and_wait( GstElement * bin, GstState target, guMediaCt
         {
             case GST_MESSAGE_ERROR :
             {
-                char *debug;
                 GError *gst_error = NULL;
-
-                gst_message_parse_error( message, &gst_error, &debug );
-
-//                if( message_from_sink( ctrl->player->priv->audio_sink, message)) {
-//                    rb_debug ("got error from sink: %s (%s)", gst_error->message, debug);
-//                    /* Translators: the parameter here is an error message */
-//                    g_set_error (error,
-//                             RB_PLAYER_ERROR,
-//                             RB_PLAYER_ERROR_INTERNAL,
-//                             _("Failed to open output device: %s"),
-//                             gst_error->message);
-//                } else {
-//                    rb_debug ("got error from stream: %s (%s)", gst_error->message, debug);
-//                    g_set_error (error,
-//                             RB_PLAYER_ERROR,
-//                             RB_PLAYER_ERROR_GENERAL,
-//                             "%s",
-//                             gst_error->message);
-//                }
-
+                gst_message_parse_error( message, &gst_error, NULL );
+                guLogError( wxT( "State change error '%s'" ), wxString( gst_error->message, wxConvUTF8 ).c_str() );
                 g_error_free( gst_error );
-                g_free( debug );
 
                 waiting = FALSE;
                 result = FALSE;
@@ -811,7 +791,16 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
             }
         }
 
-        m_Recordbin = BuildRecordBin( m_RecordPath + wxT( "record" ) + m_RecordExt, Encoder, Muxer );
+        wxString RecordFile = m_RecordPath + wxT( "record" ) + m_RecordExt;
+        if( wxFileExists( RecordFile ) )
+        {
+            int Index = 1;
+            do {
+                RecordFile = m_RecordPath + wxString::Format( wxT( "record%i" ), Index++ ) + m_RecordExt;
+            } while( wxFileExists( RecordFile ) );
+        }
+
+        m_Recordbin = BuildRecordBin( RecordFile, Encoder, Muxer );
 
         if( State == wxMEDIASTATE_PLAYING )
         {
@@ -877,7 +866,6 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path )
 
     GstState    PlayState;
     GstState    RecState;
-//    GstState    NewState;
 
     gst_element_get_state( m_Recordbin, &RecState, NULL, 0 );
     if( RecState != GST_STATE_NULL )
@@ -895,12 +883,7 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path )
             guLogError( wxT( "Could not reset the record object chaning the filename." ) );
         }
 
-//        gst_element_get_state( m_Recordbin, &NewState, NULL, 0 );
-//        guLogMessage( wxT( "1) The Recordbin state is %s" ), wxString( gst_element_state_get_name( NewState ), wxConvUTF8 ).c_str() );
     }
-
-//    gst_element_get_state( m_Recordbin, &NewState, NULL, 0 );
-//    guLogMessage( wxT( "2) The Recordbin state is %s" ), wxString( gst_element_state_get_name( NewState ), wxConvUTF8 ).c_str() );
 
     wxString FileName = m_RecordPath + path + m_RecordExt;
     guLogMessage( wxT( "The new Record File is '%s'" ), FileName.c_str() );
@@ -909,7 +892,6 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path )
 
 
     gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
-//    guLogMessage( wxT( "0) The Recordbin state is %s" ), wxString( gst_element_state_get_name( PlayState ), wxConvUTF8 ).c_str() );
 
     //if( !set_state_and_wait( this, m_Recordbin, CurState, &gsterror ) )
     if( gst_element_set_state( m_Recordbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
@@ -917,9 +899,6 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path )
         guLogMessage( wxT( "Could not restore state inserting record object" ) );
         return false;
     }
-
-//    gst_element_get_state( m_Recordbin, &NewState, NULL, 0 );
-//    guLogMessage( wxT( "3) The Recordbin state is %s" ), wxString( gst_element_state_get_name( NewState ), wxConvUTF8 ).c_str() );
 
     return true;
 }

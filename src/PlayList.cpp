@@ -1042,6 +1042,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
         Track.m_CoverId  = 0;
         Track.m_FileName = FileName;
         Track.m_SongName = FileName;
+        //Track.m_AlbumName = FileName;
         Track.m_Length   = 0;
         Track.m_Year     = 0;
         Track.m_Bitrate  = 0;

@@ -447,7 +447,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_RecordChkBox = new wxCheckBox( m_RecordPanel, wxID_ANY, _("Enable recording"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_RecordChkBox->SetValue( m_Config->ReadBool( wxT( "Enabled" ), false, wxT( "Record" ) ) );
-
 	RecordSizer->Add( m_RecordChkBox, 0, wxALL|wxEXPAND, 5 );
 
 	wxBoxSizer* RecSelDirSizer;
@@ -502,6 +501,11 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	RecPropSizer->Add( RecPropFlexSizer, 1, wxEXPAND, 5 );
 
 	RecordSizer->Add( RecPropSizer, 1, wxEXPAND|wxALL, 5 );
+
+	m_RecSplitChkBox = new wxCheckBox( m_RecordPanel, wxID_ANY, _( "Split tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_RecSplitChkBox->SetValue( m_Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) ) );
+    m_RecSplitChkBox->Enable( m_RecordChkBox->IsChecked() );
+	RecordSizer->Add( m_RecSplitChkBox, 0, wxALL, 5 );
 
 	RecMainSizer->Add( RecordSizer, 0, wxEXPAND|wxALL, 5 );
 
@@ -1228,6 +1232,7 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteStr( wxT( "Path" ), m_RecSelDirPicker->GetPath(), wxT( "Record" ) );
     m_Config->WriteNum( wxT( "Format" ), m_RecFormatChoice->GetSelection(), wxT( "Record" ) );
     m_Config->WriteNum( wxT( "Quality" ), m_RecQualityChoice->GetSelection(), wxT( "Record" ) );
+    m_Config->WriteBool( wxT( "Split" ), m_RecSplitChkBox->GetValue(), wxT( "Record" ) );
 
     m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "Podcasts" ) );
     m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "Podcasts" ) );
@@ -1512,6 +1517,7 @@ void guPrefDialog::OnRecEnableClicked( wxCommandEvent& event )
 	m_RecSelDirPicker->Enable( event.IsChecked() );
 	m_RecFormatChoice->Enable( event.IsChecked() );
 	m_RecQualityChoice->Enable( event.IsChecked() );
+	m_RecSplitChkBox->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

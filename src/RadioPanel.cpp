@@ -1126,6 +1126,7 @@ void guRadioPanel::OnSelectStations( bool enqueue )
                     //NewSong->m_SongName = PlayList[ index ].m_Name;
                     NewSong->m_SongName = PlayListItem.m_Name.IsEmpty() ?
                                              RadioStation.m_Name : PlayListItem.m_Name;
+                    NewSong->m_AlbumName = RadioStation.m_Name;
                     NewSong->m_Length = 0;
                     NewSong->m_Rating = -1;
                     //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
