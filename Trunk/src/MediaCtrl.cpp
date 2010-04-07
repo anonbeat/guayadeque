@@ -134,20 +134,28 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
         {
             /* The stream discovered new tags. */
             GstTagList * tags;
-            gchar * title = NULL;
+            //gchar * title = NULL;
             unsigned int bitrate = 0;
             /* Extract from the message the GstTagList.
             * This generates a copy, so we must remember to free it.*/
             gst_message_parse_tag( message, &tags );
 
-            /* Extract the title and artist tags - if they exist */
-            gst_tag_list_get_string( tags, GST_TAG_TITLE, &title );
+            guRadioTagInfo * RadioTagInfo = new guRadioTagInfo();
 
-            if( title )
+            gst_tag_list_get_string( tags, GST_TAG_ORGANIZATION, &RadioTagInfo->m_Organization );
+            gst_tag_list_get_string( tags, GST_TAG_LOCATION, &RadioTagInfo->m_Location );
+            gst_tag_list_get_string( tags, GST_TAG_TITLE, &RadioTagInfo->m_Title );
+
+            if( RadioTagInfo->m_Organization || RadioTagInfo->m_Location || RadioTagInfo->m_Title )
             {
+                //guLogMessage( wxT( "Tit: %s" ), wxString( title, wxConvUTF8 ).c_str() );
                 wxMediaEvent event( wxEVT_MEDIA_TAG );
-                event.SetClientData( new wxString( title, wxConvUTF8 ) );
+                event.SetClientData( RadioTagInfo );
                 ctrl->AddPendingEvent( event );
+            }
+            else
+            {
+                delete RadioTagInfo;
             }
 
             gst_tag_list_get_uint( tags, GST_TAG_BITRATE, &bitrate );
