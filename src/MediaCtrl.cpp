@@ -146,6 +146,11 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             gst_tag_list_get_string( tags, GST_TAG_LOCATION, &RadioTagInfo->m_Location );
             gst_tag_list_get_string( tags, GST_TAG_TITLE, &RadioTagInfo->m_Title );
 
+            guLogMessage( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'" ),
+                wxString( RadioTagInfo->m_Organization, wxConvUTF8 ).c_str(),
+                wxString( RadioTagInfo->m_Location, wxConvUTF8 ).c_str(),
+                wxString( RadioTagInfo->m_Title, wxConvUTF8 ).c_str() );
+
             if( RadioTagInfo->m_Organization || RadioTagInfo->m_Location || RadioTagInfo->m_Title )
             {
                 //guLogMessage( wxT( "Tit: %s" ), wxString( title, wxConvUTF8 ).c_str() );
@@ -726,11 +731,8 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
     float OggQuality[] = { 0.9, 0.7, 0.5, 0.3, 0.1 };
     gint FlacQuality[] = { 9, 7, 5, 3, 1 };
 
-    m_RecordPath = path;
-    // Be sure the path exists
-    if( !m_RecordPath.EndsWith( wxT( "/" ) ) )
-        m_RecordPath.Append( wxT( "/" ) );
-    wxFileName::Mkdir( m_RecordPath, 0770, wxPATH_MKDIR_FULL );
+    SetRecordPath( path );
+
     //
     switch( format )
     {
@@ -800,13 +802,13 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
         }
 
         wxString RecordFile = m_RecordPath + wxT( "record" ) + m_RecordExt;
-        if( wxFileExists( RecordFile ) )
-        {
-            int Index = 1;
-            do {
-                RecordFile = m_RecordPath + wxString::Format( wxT( "record%i" ), Index++ ) + m_RecordExt;
-            } while( wxFileExists( RecordFile ) );
-        }
+//        if( wxFileExists( RecordFile ) )
+//        {
+//            int Index = 1;
+//            do {
+//                RecordFile = m_RecordPath + wxString::Format( wxT( "record%i" ), Index++ ) + m_RecordExt;
+//            } while( wxFileExists( RecordFile ) );
+//        }
 
         m_Recordbin = BuildRecordBin( RecordFile, Encoder, Muxer );
 
@@ -867,7 +869,7 @@ void guMediaCtrl::DisableRecord( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMediaCtrl::SetRecordFileName( const wxString &path )
+bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track )
 {
     if( !m_Recordbin )
         return false;
@@ -893,7 +895,8 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path )
 
     }
 
-    wxString FileName = m_RecordPath + path + m_RecordExt;
+    wxString FileName = m_RecordPath + path + wxT( "/" ) + track + m_RecordExt;
+    wxFileName::Mkdir( wxPathOnly( FileName ), 0770, wxPATH_MKDIR_FULL );
     guLogMessage( wxT( "The new Record File is '%s'" ), FileName.c_str() );
 
     g_object_set( m_FileSink, "location", ( const char * ) FileName.mb_str(), NULL );
@@ -909,6 +912,16 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path )
     }
 
     return true;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::SetRecordPath( const wxString &path )
+{
+    m_RecordPath = path;
+    // Be sure the path exists
+    if( !m_RecordPath.EndsWith( wxT( "/" ) ) )
+        m_RecordPath.Append( wxT( "/" ) );
+    wxFileName::Mkdir( m_RecordPath, 0770, wxPATH_MKDIR_FULL );
 }
 
 // -------------------------------------------------------------------------------- //

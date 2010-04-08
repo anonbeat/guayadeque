@@ -249,7 +249,8 @@ class guMediaCtrl : public wxEvtHandler
 
     bool EnableRecord( const wxString &path, const int format, const int quality );
     void DisableRecord( void );
-    bool SetRecordFileName( const wxString &path );
+    bool SetRecordFileName( const wxString &path, const wxString &filename );
+    void SetRecordPath( const wxString &path );
 
 };
 

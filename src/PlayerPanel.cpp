@@ -611,6 +611,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         }
 
         m_SplitRecordings = Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) );
+        m_MediaCtrl->SetRecordPath( Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Recordings" ), wxT( "Record" ) ) );
     }
 }
 
@@ -1534,35 +1535,35 @@ void guPlayerPanel::OnMediaError( wxMediaEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-// 0 -> Artist
-// 1 -> Title
-wxArrayString ExtractMetaData( const wxString &TitleStr )
+void ExtractMetaData( wxString &title, wxString &artist, wxString &trackname )
 {
-    wxArrayString RetVal;
-    wxString Artist = wxEmptyString;
-    wxString Title = wxEmptyString;
     int FindPos;
-    if( !TitleStr.IsEmpty() )
+    if( !title.IsEmpty() )
     {
-        FindPos = TitleStr.Find( wxT( " - " ) );
+        FindPos = title.Find( wxT( " - " ) );
+        if( FindPos == wxNOT_FOUND )
+            FindPos = title.Find( wxT( "_-_" ) );
         if( FindPos != wxNOT_FOUND )
         {
-            Artist = TitleStr.Mid( 0, FindPos );
-            Title = TitleStr.Mid( FindPos + 3 );
-            FindPos = Title.Find( wxT( " - " ) );
+            artist = title.Mid( 0, FindPos );
+            title = title.Mid( FindPos + 3 );
+            FindPos = title.Find( wxT( " - " ) );
+            if( FindPos == wxNOT_FOUND )
+                FindPos = title.Find( wxT( "_-_" ) );
             if( FindPos != wxNOT_FOUND )
             {
-                Title = Title.Mid( 0, FindPos );
+                trackname = title.Mid( 0, FindPos );
+            }
+            else
+            {
+                trackname = title;
             }
         }
         else
         {
-            Artist = TitleStr;
+            trackname = title;
         }
-        RetVal.Add( Artist );
-        RetVal.Add( Title );
     }
-    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1573,41 +1574,61 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
     {
         if( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION )
         {
+            if( RadioTag->m_Location )
+            {
+                m_MediaSong.m_AlbumName = wxString( RadioTag->m_Location, wxConvUTF8 );
+            }
+
             //guLogMessage( wxT( "MediaTag:'%s'" ), TagStr->c_str() );
             if( RadioTag->m_Title )
             {
-                wxArrayString MetaData = ExtractMetaData( wxString( RadioTag->m_Title, wxConvUTF8 ) );
-                if( MetaData.Count() )
+                wxString Title( RadioTag->m_Title, wxConvUTF8 );
+                ExtractMetaData( Title,
+                        m_MediaSong.m_ArtistName,
+                        m_MediaSong.m_SongName );
+
+                //guLogMessage( wxT( "AlbumName: '%s'" ), m_MediaSong.m_AlbumName.c_str() );
+                SetTitleLabel( m_MediaSong.m_SongName );
+                SetAlbumLabel( m_MediaSong.m_AlbumName );
+                SetArtistLabel( m_MediaSong.m_ArtistName );
+
+                GetSizer()->Layout();
+
+                // If its recording
+                if( m_RecordButton->GetValue() && m_SplitRecordings )
                 {
-                    m_MediaSong.m_ArtistName = MetaData[ 0 ];
-                    m_MediaSong.m_SongName = MetaData[ 1 ];
-                    if( RadioTag->m_Organization )
-                        m_MediaSong.m_AlbumName = wxString( RadioTag->m_Organization, wxConvUTF8 );
-                    else if( RadioTag->m_Location )
-                        m_MediaSong.m_AlbumName = wxString( RadioTag->m_Location, wxConvUTF8 );
-
-                    guLogMessage( wxT( "AlbumName: '%s'" ), m_MediaSong.m_AlbumName.c_str() );
-                    SetTitleLabel( m_MediaSong.m_SongName );
-                    SetAlbumLabel( m_MediaSong.m_AlbumName );
-                    SetArtistLabel( m_MediaSong.m_ArtistName );
-
-                    GetSizer()->Layout();
-
-                    // If its recording
-                    if( m_RecordButton->GetValue() && m_SplitRecordings )
+                    wxString RecordPath;
+                    if( m_MediaSong.m_AlbumName.IsEmpty() )
                     {
-                        wxString RecordFileName = NormalizeField( MetaData[ 0 ] + wxT( " - " ) + MetaData[ 1 ] );
-                        m_MediaCtrl->SetRecordFileName( RecordFileName );
+                        RecordPath = m_MediaSong.m_FileName;
                     }
+                    else
+                    {
+                        RecordPath = m_MediaSong.m_AlbumName;
+                    }
+                    wxURI Uri( RecordPath );
+                    RecordPath = NormalizeField( Uri.GetServer() );
 
-                    //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-                    event.SetClientData( new guTrack( m_MediaSong ) );
-                    wxPostEvent( wxTheApp->GetTopWindow(), event );
-
-                    wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
-                    SendNotifyInfo( &Image );
+                    wxString RecordFileName;
+                    if( !m_MediaSong.m_ArtistName.IsEmpty() )
+                    {
+                        RecordFileName = NormalizeField( m_MediaSong.m_ArtistName + wxT( " - " ) +
+                                         m_MediaSong.m_SongName );
+                    }
+                    else
+                    {
+                        RecordFileName = NormalizeField( m_MediaSong.m_SongName );
+                    }
+                    m_MediaCtrl->SetRecordFileName( RecordPath, RecordFileName );
                 }
+
+                //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
+                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+                event.SetClientData( new guTrack( m_MediaSong ) );
+                wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+                wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
+                SendNotifyInfo( &Image );
             }
 
         }
@@ -2039,18 +2060,35 @@ void guPlayerPanel::OnRecordButtonClick( wxCommandEvent& event )
 
     if( IsEnabled )
     {
-        wxString RecPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Records" ), wxT( "Record" ) );
+        wxString RecPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Recordings" ), wxT( "Record" ) );
         int RecFormat = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "Record" ) );
         int RecQuality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "Record" ) );
         m_MediaCtrl->EnableRecord( RecPath, RecFormat, RecQuality );
         if( !m_MediaSong.m_ArtistName.IsEmpty() )
         {
-            wxString RecordFileName = NormalizeField( m_MediaSong.m_ArtistName );
-            if( m_MediaSong.m_SongName.IsEmpty() )
+            wxString RecordPath;
+            if( m_MediaSong.m_AlbumName.IsEmpty() )
             {
-                RecordFileName += wxT( " - " ) + NormalizeField( m_MediaSong.m_SongName );
+                RecordPath = m_MediaSong.m_FileName;
             }
-            m_MediaCtrl->SetRecordFileName( RecordFileName );
+            else
+            {
+                RecordPath = m_MediaSong.m_AlbumName;
+            }
+            wxURI Uri( RecordPath );
+            RecordPath = NormalizeField( Uri.GetServer() );
+
+            wxString RecordFileName;
+            if( !m_MediaSong.m_ArtistName.IsEmpty() )
+            {
+                RecordFileName = NormalizeField( m_MediaSong.m_ArtistName + wxT( " - " ) +
+                                 m_MediaSong.m_SongName );
+            }
+            else
+            {
+                RecordFileName = NormalizeField( m_MediaSong.m_SongName );
+            }
+            m_MediaCtrl->SetRecordFileName( RecordPath, RecordFileName );
         }
     }
     else

@@ -317,6 +317,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_RndModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_RndModeChoiceNChoices, m_RndModeChoiceChoices, 0 );
     m_RndModeChoice->Enable( m_RndPlayChkBox->IsChecked() );
 	m_RndModeChoice->SetSelection( m_Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) ) );
+	m_RndModeChoice->SetMinSize( wxSize( 150,-1 ) );
 	RandomPlaySizer->Add( m_RndModeChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	wxStaticText * RndTextStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "when playlist is empty" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -480,6 +481,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_RecFormatChoice = new wxChoice( m_RecordPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_RecFormatChoiceNChoices, m_RecFormatChoiceChoices, 0 );
 	m_RecFormatChoice->SetSelection( m_Config->ReadNum( wxT( "Format" ), 0, wxT( "Record" ) ) );
     m_RecFormatChoice->Enable( m_RecordChkBox->IsChecked() );
+	m_RecFormatChoice->SetMinSize( wxSize( 150,-1 ) );
 	RecPropFlexSizer->Add( m_RecFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	wxStaticText * RecQualityLabel = new wxStaticText( m_RecordPanel, wxID_ANY, _("Quality:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -496,6 +498,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_RecQualityChoice = new wxChoice( m_RecordPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, RecQualityChoiceChoices, 0 );
 	m_RecQualityChoice->SetSelection( m_Config->ReadNum( wxT( "Quality" ), 2, wxT( "Record" ) ) );
     m_RecQualityChoice->Enable( m_RecordChkBox->IsChecked() );
+	m_RecQualityChoice->SetMinSize( wxSize( 150,-1 ) );
 	RecPropFlexSizer->Add( m_RecQualityChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	RecPropSizer->Add( RecPropFlexSizer, 1, wxEXPAND, 5 );
@@ -663,6 +666,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
         m_LangChoice->SetSelection( 0 );
     else
         m_LangChoice->SetSelection( LangIndex );
+	m_LangChoice->SetMinSize( wxSize( 250,-1 ) );
 	OnlineLangSizer->Add( m_LangChoice, 0, wxALL, 5 );
 
 	OnlineMainSizer->Add( OnlineLangSizer, 0, wxEXPAND|wxALL, 5 );
@@ -719,7 +723,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	wxBoxSizer* UpdateSizer;
 	UpdateSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PodcastUpdate = new wxCheckBox( PodcastPanel, wxID_ANY, _("Check new podcasts every"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PodcastUpdate = new wxCheckBox( PodcastPanel, wxID_ANY, _("Check every"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PodcastUpdate->SetValue( m_Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) );
 
 	UpdateSizer->Add( m_PodcastUpdate, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -728,6 +732,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	int m_PodcastUpdatePeriodNChoices = sizeof( m_PodcastUpdatePeriodChoices ) / sizeof( wxString );
 	m_PodcastUpdatePeriod = new wxChoice( PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastUpdatePeriodNChoices, m_PodcastUpdatePeriodChoices, 0 );
 	m_PodcastUpdatePeriod->SetSelection( m_Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "Podcasts" ) ) );
+	m_PodcastUpdatePeriod->SetMinSize( wxSize( 150,-1 ) );
 	UpdateSizer->Add( m_PodcastUpdatePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	PodcastsSizer->Add( UpdateSizer, 0, wxEXPAND, 5 );
@@ -735,7 +740,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	wxBoxSizer* DeleteSizer;
 	DeleteSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PodcastDelete = new wxCheckBox( PodcastPanel, wxID_ANY, _("Delete podcasts after"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PodcastDelete = new wxCheckBox( PodcastPanel, wxID_ANY, _("Delete after"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PodcastDelete->SetValue( m_Config->ReadBool( wxT( "Delete" ), false, wxT( "Podcasts" ) ) );
 
 	DeleteSizer->Add( m_PodcastDelete, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -748,6 +753,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	int m_PodcastDeletePeriodNChoices = sizeof( m_PodcastDeletePeriodChoices ) / sizeof( wxString );
 	m_PodcastDeletePeriod = new wxChoice( PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastDeletePeriodNChoices, m_PodcastDeletePeriodChoices, 0 );
 	m_PodcastDeletePeriod->SetSelection( m_Config->ReadNum( wxT( "DeletePeriod" ), 0, wxT( "Podcasts" ) ) );
+	m_PodcastDeletePeriod->SetMinSize( wxSize( 150,-1 ) );
 	DeleteSizer->Add( m_PodcastDeletePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	DeleteSizer->Add( 0, 0, 1, wxEXPAND, 5 );
