@@ -146,10 +146,10 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             gst_tag_list_get_string( tags, GST_TAG_LOCATION, &RadioTagInfo->m_Location );
             gst_tag_list_get_string( tags, GST_TAG_TITLE, &RadioTagInfo->m_Title );
 
-            guLogMessage( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'" ),
-                wxString( RadioTagInfo->m_Organization, wxConvUTF8 ).c_str(),
-                wxString( RadioTagInfo->m_Location, wxConvUTF8 ).c_str(),
-                wxString( RadioTagInfo->m_Title, wxConvUTF8 ).c_str() );
+            //guLogMessage( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'" ),
+            //    wxString( RadioTagInfo->m_Organization, wxConvUTF8 ).c_str(),
+            //    wxString( RadioTagInfo->m_Location, wxConvUTF8 ).c_str(),
+            //    wxString( RadioTagInfo->m_Title, wxConvUTF8 ).c_str() );
 
             if( RadioTagInfo->m_Organization || RadioTagInfo->m_Location || RadioTagInfo->m_Title )
             {
