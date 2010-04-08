@@ -388,7 +388,7 @@ msgstr "Podcast Editor"
 
 #: ChannelEditor.cpp:62
 msgid " Podcast Channel "
-msgstr " Podcast"
+msgstr " Podcast "
 
 #: ChannelEditor.cpp:107
 #: PodcastsPanel.cpp:166
@@ -635,7 +635,7 @@ msgstr "Editor für dynamische Wiedergabelisten"
 
 #: DynamicPlayList.cpp:428
 msgid " Current Filters "
-msgstr "Aktuelle Filter"
+msgstr " Aktuelle Filter "
 
 #: DynamicPlayList.cpp:504
 msgid " Result "
@@ -843,7 +843,7 @@ msgstr "Umbenennen von Dateien"
 
 #: FileRenamer.cpp:54
 msgid " Names Preview "
-msgstr "Vorschau der Namen"
+msgstr " Vorschau der Namen "
 
 #: FileRenamer.cpp:66
 #: Preferences.cpp:840
@@ -1622,7 +1622,7 @@ msgstr "Neuer Podcast Kanal"
 
 #: NewChannel.cpp:99
 msgid " Digital Podcast Directory "
-msgstr "Digitaler Podcast Ordner "
+msgstr " Digitaler Podcast Ordner "
 
 #: NewChannel.cpp:220
 msgid "Filtered channels"
@@ -2202,7 +2202,7 @@ msgstr " Pfade "
 
 #: Preferences.cpp:245
 msgid " Words to detect covers "
-msgstr " Wörter für Coversuche"
+msgstr " Wörter für Coversuche "
 
 #: Preferences.cpp:276
 msgid "Update library on application start"
@@ -2230,7 +2230,7 @@ msgstr "Gespielte Titel aus der Wiedergabeliste entfernen"
 
 #: Preferences.cpp:337
 msgid " Silence detector "
-msgstr "Ruhedetektor"
+msgstr " Ruhedetektor "
 
 #: Preferences.cpp:339
 #: Preferences.cpp:525
@@ -2239,7 +2239,7 @@ msgstr "Aktivieren"
 
 #: Preferences.cpp:347
 msgid " Random / Smart Play Modes "
-msgstr "Zufällige und intelligente Wiedergabemodi"
+msgstr " Zufällige und intelligente Wiedergabemodi "
 
 #: Preferences.cpp:357
 msgid "Tracks left to start search"
@@ -2267,7 +2267,7 @@ msgstr "Sekunden"
 
 #: Preferences.cpp:423
 msgid " Notifications "
-msgstr "Benachrichtigungen"
+msgstr " Benachrichtigungen "
 
 #: Preferences.cpp:425
 msgid "Show Notifications"
@@ -2279,7 +2279,7 @@ msgstr "Wiedergabe"
 
 #: Preferences.cpp:446
 msgid " Record "
-msgstr "Aufnehmen"
+msgstr " Aufnehmen "
 
 #: Preferences.cpp:448
 msgid "Enable recording"
@@ -2295,7 +2295,7 @@ msgstr "Ordner auswählen"
 
 #: Preferences.cpp:467
 msgid " Properties "
-msgstr "Eigenschaften"
+msgstr " Eigenschaften "
 
 #: Preferences.cpp:475
 msgid "Format:"
@@ -2347,7 +2347,7 @@ msgstr "Der Guayadeque-Benutzergruppe auf Last.fm  beitreten"
 
 #: Preferences.cpp:579
 msgid " Save "
-msgstr "Speichern"
+msgstr " Speichern "
 
 #: Preferences.cpp:581
 msgid "Save lyrics to audio files"
@@ -2368,7 +2368,7 @@ msgstr "Verzeichnis für Liedtexte wählen"
 
 #: Preferences.cpp:628
 msgid " Filters "
-msgstr "Filter"
+msgstr " Filter "
 
 #: Preferences.cpp:650
 msgid " Language "
@@ -2488,7 +2488,7 @@ msgstr ""
 
 #: Preferences.cpp:992
 msgid " FileName Pattern "
-msgstr " Dateistruktur"
+msgstr " Dateistruktur "
 
 #: Preferences.cpp:1004
 msgid ""
@@ -2512,7 +2512,7 @@ msgstr ""
 
 #: Preferences.cpp:1009
 msgid " Example "
-msgstr "Beispiel"
+msgstr " Beispiel "
 
 #: Preferences.cpp:1021
 msgid "Copy To"
