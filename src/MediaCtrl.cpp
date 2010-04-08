@@ -927,11 +927,10 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
         guLogMessage( wxT( "5) SetRecordName: playbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
     }
 
-//    gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
+    gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
 
     //if( !set_state_and_wait( m_Recordbin, PlayState, this ) )
-    //if( gst_element_set_state( m_Recordbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
-    if( gst_element_set_state( m_Recordbin, RecState ) == GST_STATE_CHANGE_FAILURE )
+    if( gst_element_set_state( m_Recordbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
     {
         guLogMessage( wxT( "Could not restore state inserting record object" ) );
         return false;
