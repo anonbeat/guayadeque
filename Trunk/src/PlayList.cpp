@@ -856,7 +856,7 @@ void guPlayList::Randomize( void )
             do {
                 pos = guRandom( count );
                 newpos = guRandom( count );
-            } while( ( pos == newpos ) || ( ( !pos || !newpos ) && m_CurItem == 0 ) );
+            } while( ( pos == newpos ) || ( ( m_CurItem == 0 ) && ( !pos || !newpos ) ) );
             SavedItem = m_Items[ pos ];
             m_Items[ pos ] = m_Items[ newpos ];
             m_Items[ newpos ] = SavedItem;

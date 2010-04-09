@@ -78,9 +78,12 @@ void guDBusNotify::Notify( const wxString &icon, const wxString &summary,
     dbus_message_iter_init_append( Msg->GetMessage(), &iter );
     dbus_message_iter_append_basic( &iter, DBUS_TYPE_STRING, &msg_app );
     dbus_message_iter_append_basic( &iter, DBUS_TYPE_UINT32, newnotify ? &msg_newid : &m_MsgId );
-    Append_String( &iter, icon.char_str() );
-    Append_String( &iter, summary.char_str() );
-    Append_String( &iter, body.char_str() );
+    //Append_String( &iter, icon.char_str() );
+    //Append_String( &iter, summary.char_str() );
+    //Append_String( &iter, body.char_str() );
+    Append_String( &iter, icon.mb_str( wxConvUTF8 ) );
+    Append_String( &iter, summary.mb_str( wxConvUTF8 ) );
+    Append_String( &iter, body.mb_str( wxConvUTF8 ) );
     dbus_message_iter_open_container( &iter, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING, &array );
     dbus_message_iter_close_container( &iter, &array );
     dbus_message_iter_open_container( &iter, DBUS_TYPE_ARRAY, "{sv}", &array );

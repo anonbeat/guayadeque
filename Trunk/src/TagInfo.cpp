@@ -396,7 +396,8 @@ void guTagInfo::SetFileName( const wxString &filename )
     m_FileName = filename;
     if( !filename.IsEmpty() )
     {
-        m_TagFile = new TagLib::FileRef( filename.ToUTF8(), true, TagLib::AudioProperties::Fast );
+        m_TagFile = new TagLib::FileRef( filename.mb_str( wxConvFile ), true, TagLib::AudioProperties::Fast );
+        //m_TagFile = new TagLib::FileRef( filename.ToUTF8(), true, TagLib::AudioProperties::Fast );
     }
     else
     {
@@ -767,7 +768,7 @@ wxImage * guFlacTagInfo::GetImage( void )
     FLAC__Metadata_SimpleIterator * iter = FLAC__metadata_simple_iterator_new();
     if( iter )
     {
-        if( FLAC__metadata_simple_iterator_init( iter, m_FileName.ToUTF8(), true, false ) )
+        if( FLAC__metadata_simple_iterator_init( iter, m_FileName.mb_str( wxConvFile ), true, false ) )
         {
             while( FLAC__metadata_simple_iterator_next( iter ) )
             {
@@ -812,7 +813,7 @@ bool guFlacTagInfo::SetImage( const wxImage * image )
     Chain = FLAC__metadata_chain_new();
     if( Chain )
     {
-        if( FLAC__metadata_chain_read( Chain, m_FileName.ToUTF8() ) )
+        if( FLAC__metadata_chain_read( Chain, m_FileName.mb_str( wxConvFile ) ) )
         {
             Iter = FLAC__metadata_iterator_new();
             if( Iter )
@@ -1092,7 +1093,7 @@ bool guMp4TagInfo::Write( void )
 //// -------------------------------------------------------------------------------- //
 //wxImage * guMp4TagInfo::GetImage( void )
 //{
-//    MP4FileHandle mp4_file = MP4Read( m_FileName.ToUTF8() );
+//    MP4FileHandle mp4_file = MP4Read( m_FileName.mb_str( wxConvFile ) );
 //    if( mp4_file != MP4_INVALID_FILE_HANDLE )
 //    {
 //        if( MP4GetMetadataCoverArtCount( mp4_file ) )
@@ -1139,7 +1140,7 @@ bool guMp4TagInfo::Write( void )
 //bool guMp4TagInfo::SetImage( const wxImage * image )
 //{
 //    bool RetVal = false;
-//    MP4FileHandle mp4_file = MP4Modify( m_FileName.ToUTF8() );
+//    MP4FileHandle mp4_file = MP4Modify( m_FileName.mb_str( wxConvFile ) );
 //    if( mp4_file != MP4_INVALID_FILE_HANDLE )
 //    {
 //        if( image )
@@ -1200,14 +1201,14 @@ bool guMp4TagInfo::CanHandleLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxString guMp4TagInfo::GetLyrics( void )
 {
-    TagLib::MP4::File tagfile( m_FileName.ToUTF8() );
+    TagLib::MP4::File tagfile( m_FileName.mb_str( wxConvFile ) );
     return GetMp4Lyrics( tagfile.tag() );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::SetLyrics( const wxString &lyrics )
 {
-    TagLib::MP4::File tagfile( m_FileName.ToUTF8() );
+    TagLib::MP4::File tagfile( m_FileName.mb_str( wxConvFile ) );
 
     return SetMp4Lyrics( tagfile.tag(), lyrics ) && tagfile.save();
 }
