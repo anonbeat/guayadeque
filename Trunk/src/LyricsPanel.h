@@ -51,6 +51,7 @@ enum guLYRIC_ENGINE_ID {
     guLYRIC_ENGINE_LYRC_COM_AR,
     guLYRIC_ENGINE_CDUNIVERSE,
     guLYRIC_ENGINE_CHARTLYRICS,
+    guLYRIC_ENGINE_LYRICPLUGIN,
     guLYRIC_ENGINE_ULTGUITAR
 };
 
@@ -196,6 +197,19 @@ class guLyrcComArEngine : public guSearchLyricEngine
 };
 
 // -------------------------------------------------------------------------------- //
+class guLyricPluginEngine : public guSearchLyricEngine
+{
+  protected :
+    bool    DoSearchLyric( const wxString &content );
+
+  public:
+    guLyricPluginEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
+    ~guLyricPluginEngine();
+
+    virtual void            SearchLyric( void );
+};
+
+// -------------------------------------------------------------------------------- //
 class guChartLyricsEngine : public guSearchLyricEngine
 {
   protected :
@@ -229,6 +243,10 @@ class guUltGuitarEngine : public guSearchLyricEngine
     virtual wxString        GetTemplate( void );
     virtual int             GetFormat( void );
 };
+
+// -------------------------------------------------------------------------------- //
+guSearchLyricEngine * guGetSearchLyricEngine( const int engineid, wxEvtHandler * evthandler,
+    guSearchLyricEngine ** enginevar, const wxChar * artist, const wxChar * trackname );
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -361,6 +361,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	    wxT( "http://cduniverse.com" ),
 //	    wxT( "http://lyricsfly.com" ),
         wxT( "http://chartlyrics.com" ),
+        wxT( "http://lyricplugin.com" ),
 	    wxT( "http://ultimate-guitar.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
@@ -1620,46 +1621,9 @@ void guTrackEditor::OnSearchLyrics( wxCommandEvent &event )
 
     int Engine = m_LyricSrvChoice->GetSelection();
 
-    if( Engine == guLYRIC_ENGINE_LYRICWIKI )
-    {
-        m_LyricThread = new guLyricWikiEngine( this, &m_LyricThread,
-                                m_LyricArtistTextCtrl->GetValue().c_str(),
-                                m_LyricTrackTextCtrl->GetValue().c_str() );
-    }
-    else if( Engine == guLYRIC_ENGINE_LEOSLYRICS )
-    {
-        m_LyricThread = new guLeosLyricsEngine( this, &m_LyricThread,
-                                m_LyricArtistTextCtrl->GetValue().c_str(),
-                                m_LyricTrackTextCtrl->GetValue().c_str() );
-    }
-    else if( Engine == guLYRIC_ENGINE_LYRC_COM_AR )
-    {
-        m_LyricThread = new guLyrcComArEngine( this, &m_LyricThread,
-                                m_LyricArtistTextCtrl->GetValue().c_str(),
-                                m_LyricTrackTextCtrl->GetValue().c_str() );
-    }
-    else if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
-    {
-        m_LyricThread = new guCDUEngine( this, &m_LyricThread,
-                                m_LyricArtistTextCtrl->GetValue().c_str(),
-                                m_LyricTrackTextCtrl->GetValue().c_str() );
-    }
-//    else if( Engine == guLYRIC_ENGINE_LYRICSFLY )
-//    {
-//        m_LyricThread = new guLyricsFlyEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
-//    }
-    else if( Engine == guLYRIC_ENGINE_CHARTLYRICS )
-    {
-        m_LyricThread = new guChartLyricsEngine( this, &m_LyricThread,
-                                m_LyricArtistTextCtrl->GetValue().c_str(),
-                                m_LyricTrackTextCtrl->GetValue().c_str() );
-    }
-    else //if( Engine == guLYRIC_ENGINE_ULTGUITAR )
-    {
-        m_LyricThread = new guUltGuitarEngine( this, &m_LyricThread,
-                                m_LyricArtistTextCtrl->GetValue().c_str(),
-                                m_LyricTrackTextCtrl->GetValue().c_str() );
-    }
+    m_LyricThread = guGetSearchLyricEngine( Engine, ( wxEvtHandler * ) this, &m_LyricThread,
+        m_LyricArtistTextCtrl->GetValue().c_str(), m_LyricTrackTextCtrl->GetValue().c_str() );
+
     m_LyricReloadButton->Enable( false );
 }
 

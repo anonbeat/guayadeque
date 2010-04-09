@@ -95,6 +95,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	    wxT( "http://cduniverse.com" ),
 //	    wxT( "http://lyricsfly.com" ),
         wxT( "http://chartlyrics.com" ),
+        wxT( "http://lyricplugin.com" ),
 	    wxT( "http://ultimate-guitar.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
@@ -607,34 +608,9 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
         //guConfig * Config = ( guConfig * ) Config->Get();
         //int Engine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
         int Engine = m_ServerChoice->GetSelection();
-        if( Engine == guLYRIC_ENGINE_LYRICWIKI )
-        {
-            m_LyricThread = new guLyricWikiEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
-        }
-        else if( Engine == guLYRIC_ENGINE_LEOSLYRICS )
-        {
-            m_LyricThread = new guLeosLyricsEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
-        }
-        else if( Engine == guLYRIC_ENGINE_LYRC_COM_AR )
-        {
-            m_LyricThread = new guLyrcComArEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
-        }
-        else if( Engine == guLYRIC_ENGINE_CDUNIVERSE )
-        {
-            m_LyricThread = new guCDUEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
-        }
-//        else if( Engine == guLYRIC_ENGINE_LYRICSFLY )
-//        {
-//            m_LyricThread = new guLyricsFlyEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
-//        }
-        else if( Engine == guLYRIC_ENGINE_CHARTLYRICS )
-        {
-            m_LyricThread = new guChartLyricsEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
-        }
-        else //if( Engine == guLYRIC_ENGINE_ULTGUITAR )
-        {
-            m_LyricThread = new guUltGuitarEngine( ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
-        }
+
+        m_LyricThread = guGetSearchLyricEngine( Engine, ( wxEvtHandler * ) this, &m_LyricThread, Artist.c_str(), Track.c_str() );
+
         //m_LyricsTemplate = m_LyricThread->GetTemplate();
         m_LyricFormat = m_LyricThread->GetFormat();
     }
@@ -1270,6 +1246,67 @@ void guLyrcComArEngine::SearchLyric( void )
 
 
 // -------------------------------------------------------------------------------- //
+// guLyricPluginEngine
+// -------------------------------------------------------------------------------- //
+guLyricPluginEngine::guLyricPluginEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
+         const wxChar * artistname, const wxChar * trackname ) :
+    guSearchLyricEngine( owner, psearchengine, artistname, trackname )
+{
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guLyricPluginEngine::~guLyricPluginEngine()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLyricPluginEngine::DoSearchLyric( const wxString &content )
+{
+    int         StartPos;
+    int         EndPos;
+    wxString Content = content;
+
+    if( !TestDestroy() && !Content.IsEmpty() )
+    {
+        StartPos = Content.Find( wxT( "<div id=\"lyrics\">" ) );
+
+        if( StartPos != wxNOT_FOUND )
+        {
+            Content = Content.Mid( StartPos + 17 );
+            if( ( EndPos = Content.Find( wxT( "</div>" ) ) ) != wxNOT_FOUND )
+            {
+                Content = Content.Mid( 0, EndPos );
+
+                Content.Replace( wxT( "<br />" ), wxT( "" ) );
+                Content.Replace( wxT( "<br>" ), wxT( "\n" ) );
+                SetLyric( new wxString( Content.c_str() ) );
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricPluginEngine::SearchLyric( void )
+{
+    wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/plugin/?artist=%s&title=%s" ),
+                        guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+
+    if( !DoSearchLyric( GetUrlContent( UrlStr ) ) && !TestDestroy() )
+    {
+        SetLyric( NULL );
+    }
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
 // guChartLyricsEngine
 // -------------------------------------------------------------------------------- //
 guChartLyricsEngine::guChartLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine,
@@ -1490,6 +1527,37 @@ wxString guUltGuitarEngine::GetTemplate( void )
 int guUltGuitarEngine::GetFormat( void )
 {
     return guLYRIC_FORMAT_GUITAR;
+}
+
+// -------------------------------------------------------------------------------- //
+guSearchLyricEngine * guGetSearchLyricEngine( const int engineid, wxEvtHandler * evthandler,
+    guSearchLyricEngine ** enginevar, const wxChar * artist, const wxChar * trackname )
+{
+    switch( engineid )
+    {
+        case guLYRIC_ENGINE_LYRICWIKI :
+            return new guLyricWikiEngine( evthandler, enginevar, artist, trackname );
+
+        case guLYRIC_ENGINE_LEOSLYRICS :
+            return new guLeosLyricsEngine( evthandler, enginevar, artist, trackname );
+
+        case guLYRIC_ENGINE_LYRC_COM_AR :
+            return new guLyrcComArEngine( evthandler, enginevar, artist, trackname );
+
+        case guLYRIC_ENGINE_CDUNIVERSE :
+            return new guCDUEngine( evthandler, enginevar, artist, trackname );
+
+        case guLYRIC_ENGINE_CHARTLYRICS :
+            return new guChartLyricsEngine( evthandler, enginevar, artist, trackname );
+
+        case guLYRIC_ENGINE_LYRICPLUGIN :
+            return new guLyricPluginEngine( evthandler, enginevar, artist, trackname );
+
+        default : //case guLYRIC_ENGINE_ULTGUITAR :
+            return new guUltGuitarEngine( evthandler, enginevar, artist, trackname );
+
+    }
+    return NULL;
 }
 
 // -------------------------------------------------------------------------------- //
