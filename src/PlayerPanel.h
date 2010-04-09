@@ -230,6 +230,8 @@ class guPlayerPanel : public wxPanel
 
     int                     m_SplitRecordings;
 
+    bool                    m_PendingRecordRename;
+
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
     void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
@@ -266,6 +268,8 @@ class guPlayerPanel : public wxPanel
     void                CheckFiltersEnable( void );
 
     void                OnConfigUpdated( wxCommandEvent &event );
+
+    void                SetRecordFileName( void );
 
   public:
                         guPlayerPanel( wxWindow* parent, guDbLibrary * db,
