@@ -23,6 +23,27 @@
 #include "Utils.h"
 #include "PlayerPanel.h"
 
+#if 1
+#define SHOW_RECORDING_STATES( c, ctrl )     //
+#else
+#define SHOW_RECORDING_STATES( c, ctrl )       {\
+        GstState MState;\
+        GstState PState;\
+        GstState RState;\
+        gst_element_get_state( ctrl->m_Playbin, &MState, NULL, 0 );\
+        gst_element_get_state( ctrl->m_Playbackbin, &PState, NULL, 0 );\
+        gst_element_get_state( ctrl->m_Recordbin, &RState, NULL, 0 );\
+        guLogMessage( wxT( "%i) %i SetName: M:%-12s  PB:%-12s  R:%-12s" ), c,\
+                ctrl->m_Buffering,\
+                wxString( gst_element_state_get_name( MState ), wxConvUTF8 ).c_str(),\
+                wxString( gst_element_state_get_name( PState ), wxConvUTF8 ).c_str(),\
+                wxString( gst_element_state_get_name( RState ), wxConvUTF8 ).c_str() );\
+    }
+#endif
+
+
+
+
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_LOADED )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_STATECHANGED )
 DEFINE_EVENT_TYPE( wxEVT_MEDIA_ABOUT_TO_FINISH )
@@ -86,7 +107,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 
             gst_message_parse_buffering( message, &Percent );
 
-            //guLogMessage( wxT( "Buffering: %i%%" ), Percent );
+            guLogMessage( wxT( "Buffering: %i%%" ), Percent );
             if( Percent >= 100 )
             {
                 ctrl->m_Buffering = false;
@@ -119,6 +140,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             event.SetInt( Percent );
             ctrl->AddPendingEvent( event );
             //printf( "Buffering %d%%\n", Percent );
+            SHOW_RECORDING_STATES( 0, ctrl )
             break;
         }
 
@@ -483,7 +505,8 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                                         GstElement * queue = gst_element_factory_make( "queue", "pb_queue" );
                                         if( IsValidElement( queue ) )
                                         {
-                                            g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
+                                            //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
+                                            g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
                                             gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
                                             gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
@@ -867,19 +890,6 @@ void guMediaCtrl::DisableRecord( void )
     }
 }
 
-#if 1
-#define SHOW_RECORDING_STATES()     //
-#else
-#define SHOW_RECORDING_STATES()       {\
-        GstState State;\
-        gst_element_get_state( m_Recordbin, &State, NULL, 0 );\
-        guLogMessage( wxT( "0) SetRecordName: recordbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );\
-        gst_element_get_state( m_Playbin, &State, NULL, 0 );\
-        guLogMessage( wxT( "1) SetRecordName: playbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );\
-    }
-#endif
-
-
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track )
 {
@@ -889,7 +899,7 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
     GstState    PlayState;
     GstState    RecState;
 
-    SHOW_RECORDING_STATES()
+    SHOW_RECORDING_STATES( 0, this )
 
     gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
     gst_element_get_state( m_Recordbin, &RecState, NULL, 0 );
@@ -909,7 +919,7 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
         }
     }
 
-    SHOW_RECORDING_STATES()
+    SHOW_RECORDING_STATES( 1, this )
 
     wxString FileName = m_RecordPath + path + wxT( "/" ) + track + m_RecordExt;
     wxFileName::Mkdir( wxPathOnly( FileName ), 0770, wxPATH_MKDIR_FULL );
@@ -918,17 +928,23 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
     g_object_set( m_FileSink, "location", ( const char * ) FileName.mb_str( wxConvFile ), NULL );
 
 
-    SHOW_RECORDING_STATES()
+    SHOW_RECORDING_STATES( 2, this )
 
     //if( !set_state_and_wait( m_Recordbin, PlayState, this ) )
     //if( gst_element_set_state( m_Recordbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
-    if( gst_element_set_state( m_Recordbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
+    if( gst_element_set_state( m_Playbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
     {
-        guLogMessage( wxT( "Could not restore state inserting record object" ) );
+        guLogMessage( wxT( "Could not restore playbin state inserting record object" ) );
         return false;
     }
 
-    SHOW_RECORDING_STATES()
+    if( gst_element_set_state( m_Recordbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
+    {
+        guLogMessage( wxT( "Could not restore record state inserting record object" ) );
+        return false;
+    }
+
+    SHOW_RECORDING_STATES( 3, this )
 
     return true;
 }
