@@ -211,15 +211,15 @@ void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
 
     dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
 
-    FillMetadataDetails( &dict, metadata_names[ 0 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_FileName.c_str() ).char_str() );
-    FillMetadataDetails( &dict, metadata_names[ 1 ], ( const char * ) CurTrack->m_SongName.char_str() );
-    FillMetadataDetails( &dict, metadata_names[ 2 ], ( const char * ) CurTrack->m_ArtistName.char_str() );
-    FillMetadataDetails( &dict, metadata_names[ 3 ], ( const char * ) CurTrack->m_AlbumName.char_str() );
+    FillMetadataDetails( &dict, metadata_names[ 0 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_FileName ).mb_str( wxConvUTF8 ) );
+    FillMetadataDetails( &dict, metadata_names[ 1 ], ( const char * ) CurTrack->m_SongName.mb_str( wxConvUTF8 ) );
+    FillMetadataDetails( &dict, metadata_names[ 2 ], ( const char * ) CurTrack->m_ArtistName.mb_str( wxConvUTF8 ) );
+    FillMetadataDetails( &dict, metadata_names[ 3 ], ( const char * ) CurTrack->m_AlbumName.mb_str( wxConvUTF8 ) );
     if( CurTrack->m_Number )
         FillMetadataDetails( &dict, metadata_names[ 4 ], ( const int ) CurTrack->m_Number );
     FillMetadataDetails( &dict, metadata_names[ 5 ], ( const int ) CurTrack->m_Length );
     FillMetadataDetails( &dict, metadata_names[ 6 ], ( const int ) CurTrack->m_Length * 1000 );
-    FillMetadataDetails( &dict, metadata_names[ 7 ], ( const char * ) CurTrack->m_GenreName.char_str() );
+    FillMetadataDetails( &dict, metadata_names[ 7 ], ( const char * ) CurTrack->m_GenreName.mb_str( wxConvUTF8 ) );
 
     if( CurTrack->m_Rating >= 0 )
         FillMetadataDetails( &dict, metadata_names[ 8 ], ( const int ) CurTrack->m_Rating );
@@ -228,7 +228,7 @@ void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
         FillMetadataDetails( &dict, metadata_names[ 9 ], ( const int ) CurTrack->m_Year );
 
 //    if( !CurTrack->m_CoverPath.IsEmpty() )
-//        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_CoverPath.c_str() ).char_str() );
+//        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_CoverPath ).mb_str( wxConvUTF8 ) );
 
     dbus_message_iter_close_container( &args, &dict );
 
@@ -251,15 +251,15 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
 
     dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
 
-    FillMetadataDetails( &dict, metadata_names[ 0 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_FileName.c_str() ).char_str() );
-    FillMetadataDetails( &dict, metadata_names[ 1 ], ( const char * ) CurTrack->m_SongName.char_str() );
-    FillMetadataDetails( &dict, metadata_names[ 2 ], ( const char * ) CurTrack->m_ArtistName.char_str() );
-    FillMetadataDetails( &dict, metadata_names[ 3 ], ( const char * ) CurTrack->m_AlbumName.char_str() );
+    FillMetadataDetails( &dict, metadata_names[ 0 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_FileName ).mb_str( wxConvUTF8 ) );
+    FillMetadataDetails( &dict, metadata_names[ 1 ], ( const char * ) CurTrack->m_SongName.mb_str( wxConvUTF8 ) );
+    FillMetadataDetails( &dict, metadata_names[ 2 ], ( const char * ) CurTrack->m_ArtistName.mb_str( wxConvUTF8 ) );
+    FillMetadataDetails( &dict, metadata_names[ 3 ], ( const char * ) CurTrack->m_AlbumName.mb_str( wxConvUTF8 ) );
     if( CurTrack->m_Number )
         FillMetadataDetails( &dict, metadata_names[ 4 ], ( const int ) CurTrack->m_Number );
     FillMetadataDetails( &dict, metadata_names[ 5 ], ( const int ) CurTrack->m_Length );
     FillMetadataDetails( &dict, metadata_names[ 6 ], ( const int ) CurTrack->m_Length * 1000 );
-    FillMetadataDetails( &dict, metadata_names[ 7 ], ( const char * ) CurTrack->m_GenreName.char_str() );
+    FillMetadataDetails( &dict, metadata_names[ 7 ], ( const char * ) CurTrack->m_GenreName.mb_str( wxConvUTF8 ) );
     if( CurTrack->m_Rating >= 0 )
         FillMetadataDetails( &dict, metadata_names[ 8 ], ( const int ) CurTrack->m_Rating );
 
@@ -267,7 +267,7 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
         FillMetadataDetails( &dict, metadata_names[ 9 ], ( const int ) CurTrack->m_Year );
 
     if( !CurTrack->m_CoverPath.IsEmpty() )
-        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) wxString::Format( wxT( "file://%s" ), CurTrack->m_CoverPath.c_str() ).char_str() );
+        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_CoverPath ).mb_str( wxConvUTF8 ) );
 
     dbus_message_iter_close_container( &args, &dict );
 

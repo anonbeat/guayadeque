@@ -1707,6 +1707,13 @@ void guFileBrowser::OnFolderCopyTo( wxCommandEvent &event )
 void guFileBrowser::OnItemsPlay( wxCommandEvent &event )
 {
     wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
+
+    int Index;
+    int Count = Files.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guLogMessage( wxT( "File%i: '%s'" ), Index, Files[ Index ].c_str() );
+    }
     if( Files.Count() )
     {
         m_PlayerPanel->SetPlayList( Files );

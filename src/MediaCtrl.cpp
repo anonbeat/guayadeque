@@ -591,7 +591,7 @@ GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * enc
             m_FileSink = gst_element_factory_make( "filesink", "rb_filesink" );
             if( IsValidElement( m_FileSink ) )
             {
-                g_object_set( m_FileSink, "location", ( const char * ) path.mb_str(), NULL );
+                g_object_set( m_FileSink, "location", ( const char * ) path.mb_str( wxConvFile ), NULL );
 
                 GstElement * queue = gst_element_factory_make( "queue", "rb_queue" );
                 if( IsValidElement( queue ) )
@@ -915,7 +915,7 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
     wxFileName::Mkdir( wxPathOnly( FileName ), 0770, wxPATH_MKDIR_FULL );
     guLogMessage( wxT( "The new Record File is '%s'" ), FileName.c_str() );
 
-    g_object_set( m_FileSink, "location", ( const char * ) FileName.mb_str(), NULL );
+    g_object_set( m_FileSink, "location", ( const char * ) FileName.mb_str( wxConvFile ), NULL );
 
 
     SHOW_RECORDING_STATES()
@@ -977,10 +977,10 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
     // non-file uris are encoded
     //wxASSERT( gst_uri_protocol_is_valid( "file" ) );
     //wxASSERT( gst_uri_is_valid( ( const char * ) uri.mb_str() ) );
-    if( !gst_uri_is_valid( ( const char * ) uri.mb_str() ) )
+    if( !gst_uri_is_valid( ( const char * ) uri.mb_str( wxConvFile ) ) )
         return false;
 
-    g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str(), NULL );
+    g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str( wxConvFile ), NULL );
 
     if( restart )
     {

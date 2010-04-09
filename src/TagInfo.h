@@ -54,7 +54,7 @@
 using namespace TagLib;
 
 #define wxStringToTString(s) TagLib::String(s.ToUTF8(), TagLib::String::UTF8)
-#define TStringTowxString(s) wxString::FromUTF8( s.toCString(true))
+#define TStringTowxString(s) wxString::FromUTF8( s.toCString(true) )
 
 // -------------------------------------------------------------------------------- //
 class guTagInfo
