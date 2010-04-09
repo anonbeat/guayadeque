@@ -86,7 +86,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 
             gst_message_parse_buffering( message, &Percent );
 
-            guLogMessage( wxT( "Buffering: %i%%" ), Percent );
+            //guLogMessage( wxT( "Buffering: %i%%" ), Percent );
             if( Percent >= 100 )
             {
                 ctrl->m_Buffering = false;
@@ -109,7 +109,6 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                     ctrl->m_WasPlaying = true;
                     if( ctrl->m_Recordbin )
                     {
-                        //gst_element_set_state( ctrl->m_Playbackbin, GST_STATE_PAUSED );
                         gst_element_set_state( ctrl->m_Recordbin, GST_STATE_PAUSED );
                     }
                     gst_element_set_state( ctrl->m_Playbin, GST_STATE_PAUSED );
@@ -868,24 +867,31 @@ void guMediaCtrl::DisableRecord( void )
     }
 }
 
+#if 1
+#define SHOW_RECORDING_STATES()     //
+#else
+#define SHOW_RECORDING_STATES()       {\
+        GstState State;\
+        gst_element_get_state( m_Recordbin, &State, NULL, 0 );\
+        guLogMessage( wxT( "0) SetRecordName: recordbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );\
+        gst_element_get_state( m_Playbin, &State, NULL, 0 );\
+        guLogMessage( wxT( "1) SetRecordName: playbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );\
+    }
+#endif
+
+
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track )
 {
-    if( !m_Recordbin )
+    if( !m_Recordbin || m_Buffering )
         return false;
 
     GstState    PlayState;
     GstState    RecState;
 
-    {
-        GstState State;
-        gst_element_get_state( m_Recordbin, &State, NULL, 0 );
-        guLogMessage( wxT( "0) SetRecordName: recordbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
+    SHOW_RECORDING_STATES()
 
-        gst_element_get_state( m_Playbin, &State, NULL, 0 );
-        guLogMessage( wxT( "1) SetRecordName: playbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
-    }
-
+    gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
     gst_element_get_state( m_Recordbin, &RecState, NULL, 0 );
     if( RecState != GST_STATE_NULL )
     {
@@ -903,14 +909,7 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
         }
     }
 
-    {
-        GstState State;
-        gst_element_get_state( m_Recordbin, &State, NULL, 0 );
-        guLogMessage( wxT( "2) SetRecordName: recordbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
-
-        gst_element_get_state( m_Playbin, &State, NULL, 0 );
-        guLogMessage( wxT( "3) SetRecordName: playbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
-    }
+    SHOW_RECORDING_STATES()
 
     wxString FileName = m_RecordPath + path + wxT( "/" ) + track + m_RecordExt;
     wxFileName::Mkdir( wxPathOnly( FileName ), 0770, wxPATH_MKDIR_FULL );
@@ -918,32 +917,18 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
 
     g_object_set( m_FileSink, "location", ( const char * ) FileName.mb_str(), NULL );
 
-    {
-        GstState State;
-        gst_element_get_state( m_Recordbin, &State, NULL, 0 );
-        guLogMessage( wxT( "4) SetRecordName: recordbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
 
-        gst_element_get_state( m_Playbin, &State, NULL, 0 );
-        guLogMessage( wxT( "5) SetRecordName: playbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
-    }
-
-    gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
+    SHOW_RECORDING_STATES()
 
     //if( !set_state_and_wait( m_Recordbin, PlayState, this ) )
+    //if( gst_element_set_state( m_Recordbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
     if( gst_element_set_state( m_Recordbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
     {
         guLogMessage( wxT( "Could not restore state inserting record object" ) );
         return false;
     }
 
-    {
-        GstState State;
-        gst_element_get_state( m_Recordbin, &State, NULL, 0 );
-        guLogMessage( wxT( "6) SetRecordName: recordbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
-
-        gst_element_get_state( m_Playbin, &State, NULL, 0 );
-        guLogMessage( wxT( "7) SetRecordName: playbin state: %s" ), wxString( gst_element_state_get_name( State ), wxConvUTF8 ).c_str() );
-    }
+    SHOW_RECORDING_STATES()
 
     return true;
 }

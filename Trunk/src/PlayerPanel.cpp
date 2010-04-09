@@ -65,6 +65,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_NotifySrv = NULL;
     m_PlayerFilters = filters;
     m_BufferGaugeId = wxNOT_FOUND;
+    m_PendingRecordRename = false;
     m_MediaSong.m_SongId = 0;
     m_MediaSong.m_Length = 0;
     m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
@@ -1088,6 +1089,14 @@ void guPlayerPanel::UpdateStatus()
             m_MediaSong.m_PlayTime = ( CurPos / 1000 );
             m_LastCurPos = CurPos;
         }
+
+        // When tags are received while buffering the rename gets pending till the track start playing again
+        // To avoid get the stream paused.
+        if( m_PendingRecordRename && ( m_BufferGaugeId == wxNOT_FOUND ) )
+        {
+            m_PendingRecordRename = false;
+            SetRecordFileName();
+        }
     }
 
     if( m_CurVolume != m_LastVolume )
@@ -1566,6 +1575,43 @@ void ExtractMetaData( wxString &title, wxString &artist, wxString &trackname )
     }
 }
 
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetRecordFileName( void )
+{
+    // If its buffering
+    if( m_BufferGaugeId != wxNOT_FOUND )
+    {
+        m_PendingRecordRename = true;
+        guLogMessage( wxT( "Player is buffering. Will rename recording once its finished" ) );
+        return;
+    }
+
+    wxString RecordPath;
+    if( m_MediaSong.m_AlbumName.IsEmpty() )
+    {
+        RecordPath = m_MediaSong.m_FileName;
+    }
+    else
+    {
+        RecordPath = m_MediaSong.m_AlbumName;
+    }
+    wxURI Uri( RecordPath );
+    RecordPath = NormalizeField( Uri.GetServer() );
+
+    wxString RecordFileName;
+    if( !m_MediaSong.m_ArtistName.IsEmpty() )
+    {
+        RecordFileName = NormalizeField( m_MediaSong.m_ArtistName + wxT( " - " ) +
+                         m_MediaSong.m_SongName );
+    }
+    else
+    {
+        RecordFileName = NormalizeField( m_MediaSong.m_SongName );
+    }
+    m_MediaCtrl->SetRecordFileName( RecordPath, RecordFileName );
+}
+
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
 {
@@ -1597,29 +1643,7 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
                 // If its recording
                 if( m_RecordButton->GetValue() && m_SplitRecordings )
                 {
-                    wxString RecordPath;
-                    if( m_MediaSong.m_AlbumName.IsEmpty() )
-                    {
-                        RecordPath = m_MediaSong.m_FileName;
-                    }
-                    else
-                    {
-                        RecordPath = m_MediaSong.m_AlbumName;
-                    }
-                    wxURI Uri( RecordPath );
-                    RecordPath = NormalizeField( Uri.GetServer() );
-
-                    wxString RecordFileName;
-                    if( !m_MediaSong.m_ArtistName.IsEmpty() )
-                    {
-                        RecordFileName = NormalizeField( m_MediaSong.m_ArtistName + wxT( " - " ) +
-                                         m_MediaSong.m_SongName );
-                    }
-                    else
-                    {
-                        RecordFileName = NormalizeField( m_MediaSong.m_SongName );
-                    }
-                    m_MediaCtrl->SetRecordFileName( RecordPath, RecordFileName );
+                    SetRecordFileName();
                 }
 
                 //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
@@ -1980,6 +2004,9 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     //guLogMessage( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     wxMediaState State;
 
+    if( m_PendingRecordRename )
+        m_PendingRecordRename = false;
+
     // Get The Current Song From m_PlayListCtrl
     //guTrack * CurItem = m_PlayListCtrl->GetCurrent();
     //if( !m_MediaSong.m_SongId && m_PlayListCtrl->GetItemCount() )
@@ -2066,29 +2093,7 @@ void guPlayerPanel::OnRecordButtonClick( wxCommandEvent& event )
         m_MediaCtrl->EnableRecord( RecPath, RecFormat, RecQuality );
         if( !m_MediaSong.m_ArtistName.IsEmpty() )
         {
-            wxString RecordPath;
-            if( m_MediaSong.m_AlbumName.IsEmpty() )
-            {
-                RecordPath = m_MediaSong.m_FileName;
-            }
-            else
-            {
-                RecordPath = m_MediaSong.m_AlbumName;
-            }
-            wxURI Uri( RecordPath );
-            RecordPath = NormalizeField( Uri.GetServer() );
-
-            wxString RecordFileName;
-            if( !m_MediaSong.m_ArtistName.IsEmpty() )
-            {
-                RecordFileName = NormalizeField( m_MediaSong.m_ArtistName + wxT( " - " ) +
-                                 m_MediaSong.m_SongName );
-            }
-            else
-            {
-                RecordFileName = NormalizeField( m_MediaSong.m_SongName );
-            }
-            m_MediaCtrl->SetRecordFileName( RecordPath, RecordFileName );
+            SetRecordFileName();
         }
     }
     else
