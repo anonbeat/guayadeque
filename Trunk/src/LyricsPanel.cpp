@@ -95,7 +95,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	    wxT( "http://cduniverse.com" ),
 //	    wxT( "http://lyricsfly.com" ),
         wxT( "http://chartlyrics.com" ),
-        wxT( "http://lyricplugin.com" ),
+        wxT( "http://lyricsplugin.com" ),
 	    wxT( "http://ultimate-guitar.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );

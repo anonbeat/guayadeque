@@ -105,15 +105,25 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             gint        Percent;
             GstState    cur_state;
 
+            GstElement * src;
+            char *  name;
+
             gst_message_parse_buffering( message, &Percent );
 
-            guLogMessage( wxT( "Buffering: %i%%" ), Percent );
+            src = GST_ELEMENT( GST_MESSAGE_SRC( message ) );
+
+            name = gst_element_get_name( src );
+            //match = gst_bin_get_by_name (GST_BIN (sink), name);
+            guLogMessage( wxT( "Buffering: %s %i%%" ), wxString( name, wxConvUTF8 ).c_str(), Percent );
+            g_free( name );
+
             if( Percent >= 100 )
             {
                 ctrl->m_Buffering = false;
                 if( ctrl->m_WasPlaying )
                 {
                     gst_element_set_state( ctrl->m_Playbin, GST_STATE_PLAYING );
+                    gst_element_set_state( ctrl->m_Playbackbin, GST_STATE_PLAYING );
                     if( ctrl->m_Recordbin )
                     {
                         //gst_element_set_state( ctrl->m_Playbackbin, GST_STATE_PLAYING );
@@ -133,6 +143,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                         gst_element_set_state( ctrl->m_Recordbin, GST_STATE_PAUSED );
                     }
                     gst_element_set_state( ctrl->m_Playbin, GST_STATE_PAUSED );
+                    gst_element_set_state( ctrl->m_Playbackbin, GST_STATE_PAUSED );
                 }
                 ctrl->m_Buffering = true;
             }
@@ -930,11 +941,15 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
 
     SHOW_RECORDING_STATES( 2, this )
 
-    //if( !set_state_and_wait( m_Recordbin, PlayState, this ) )
-    //if( gst_element_set_state( m_Recordbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
     if( gst_element_set_state( m_Playbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
     {
         guLogMessage( wxT( "Could not restore playbin state inserting record object" ) );
+        return false;
+    }
+
+    if( gst_element_set_state( m_Playbackbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
+    {
+        guLogMessage( wxT( "Could not restore playbackbin state inserting record object" ) );
         return false;
     }
 
