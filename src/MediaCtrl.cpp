@@ -853,6 +853,7 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
                 return false;
             }
         }
+
         return true;
     }
     else
@@ -907,21 +908,21 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
     if( !m_Recordbin || m_Buffering )
         return false;
 
-    GstState    PlayState;
+    //GstState    PlayState;
     GstState    RecState;
 
     SHOW_RECORDING_STATES( 0, this )
 
-    gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
+    //gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
     gst_element_get_state( m_Recordbin, &RecState, NULL, 0 );
     if( RecState != GST_STATE_NULL )
     {
-        if( gst_element_set_state( m_Recordbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
-        //if( !set_state_and_wait( this, m_Recordbin, GST_STATE_READY, &gsterror ) )
-        {
-            guLogMessage( wxT( "Could not set state inserting record object" ) );
-            return false;
-        }
+//        if( gst_element_set_state( m_Recordbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
+//        //if( !set_state_and_wait( this, m_Recordbin, GST_STATE_READY, &gsterror ) )
+//        {
+//            guLogMessage( wxT( "Could not set state inserting record object" ) );
+//            return false;
+//        }
 
         //gst_element_set_state( m_Recordbin, GST_STATE_NULL ); // == GST_STATE_CHANGE_FAILURE )
         if( !set_state_and_wait( m_Recordbin, GST_STATE_NULL, this ) )
@@ -941,19 +942,19 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
 
     SHOW_RECORDING_STATES( 2, this )
 
-    if( gst_element_set_state( m_Playbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
-    {
-        guLogMessage( wxT( "Could not restore playbin state inserting record object" ) );
-        return false;
-    }
+//    if( gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
+//    {
+//        guLogMessage( wxT( "Could not restore playbin state inserting record object" ) );
+//        return false;
+//    }
+//
+//    if( gst_element_set_state( m_Playbackbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
+//    {
+//        guLogMessage( wxT( "Could not restore playbackbin state inserting record object" ) );
+//        return false;
+//    }
 
-    if( gst_element_set_state( m_Playbackbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
-    {
-        guLogMessage( wxT( "Could not restore playbackbin state inserting record object" ) );
-        return false;
-    }
-
-    if( gst_element_set_state( m_Recordbin, PlayState ) == GST_STATE_CHANGE_FAILURE )
+    if( gst_element_set_state( m_Recordbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
     {
         guLogMessage( wxT( "Could not restore record state inserting record object" ) );
         return false;
