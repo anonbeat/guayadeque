@@ -235,7 +235,6 @@ bool guMainApp::OnInit()
             guLogError( wxT( "Could not create splash object" ) );
         SplashFrame->Show( true );
         wxYield();
-        wxYield();
         //wxMilliSleep( 300 );
     }
 
