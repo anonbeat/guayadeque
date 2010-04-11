@@ -40,6 +40,8 @@
 
 #define guLYRICSFLY_USER_ID             wxT( "8f7177553a49dabc7-temporary.API.access" )
 
+int LyricAligns[] = { wxTE_LEFT, wxTE_CENTER, wxTE_RIGHT };
+
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
@@ -71,8 +73,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer * TitleSizer;
-	TitleSizer = new wxBoxSizer( wxVERTICAL );
+	m_TitleSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxBoxSizer * EditorSizer;
 	EditorSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -144,23 +145,24 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 
 //	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	TitleSizer->Add( EditorSizer, 1, wxEXPAND, 5 );
+	m_TitleSizer->Add( EditorSizer, 1, wxEXPAND, 5 );
 
 	wxStaticLine * TopLine;
 	TopLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	TitleSizer->Add( TopLine, 0, wxEXPAND|wxALL, 5 );
+	m_TitleSizer->Add( TopLine, 0, wxEXPAND|wxALL, 5 );
 
     m_LyricTitle = new wxStaticText( this, wxID_ANY, wxT( "/" ) );
     CurrentFont.SetPointSize( 12 );
     CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	m_LyricTitle->SetFont( CurrentFont );
 
-	TitleSizer->Add( m_LyricTitle, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+    m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) ];
+	m_TitleSizer->Add( m_LyricTitle, 0, wxALL|m_LyricAlign, 5 );
 
-	MainSizer->Add( TitleSizer, 0, wxEXPAND, 5 );
+	MainSizer->Add( m_TitleSizer, 0, wxEXPAND, 5 );
 
 	//m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
-	m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CENTRE|wxTE_DONTWRAP|wxTE_MULTILINE|wxNO_BORDER );
+	m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_LyricAlign|wxTE_DONTWRAP|wxTE_MULTILINE|wxNO_BORDER );
 	m_EditModeFGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOXTEXT ); //m_LyricText->GetForegroundColour();
 	m_EditModeBGColor = m_LyricText->GetBackgroundColour();
 
@@ -241,6 +243,13 @@ void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
         {
             wxMkdir( m_WriteToDirPath, 0770 );
         }
+        m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() ^ m_LyricAlign );
+        m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) ];
+        m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() | m_LyricAlign );
+
+        m_TitleSizer->Detach( m_LyricTitle );
+        m_TitleSizer->Add( m_LyricTitle, 0, wxALL|m_LyricAlign, 5 );
+        Layout();
     }
 }
 
@@ -485,12 +494,12 @@ void guLyricsPanel::SetText( const wxString &text )
 
     if( m_LyricFormat == guLYRIC_FORMAT_NORMAL )
     {
-        m_LyricText->SetWindowStyle( ( m_LyricText->GetWindowStyle() ^ wxTE_LEFT ) | wxTE_CENTER );
+        m_LyricText->SetWindowStyle( ( m_LyricText->GetWindowStyle() ^ wxTE_LEFT ) | m_LyricAlign );
         m_LyricText->SetFont( CurrentFont );
     }
     else
     {
-        m_LyricText->SetWindowStyle( ( m_LyricText->GetWindowStyle() ^ wxTE_CENTER ) | wxTE_LEFT );
+        m_LyricText->SetWindowStyle( ( m_LyricText->GetWindowStyle() ^ m_LyricAlign ) | wxTE_LEFT );
         CurrentFont.SetFamily( wxTELETYPE );
         m_LyricText->SetFont( CurrentFont );
     }
@@ -641,7 +650,10 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     }
     else
     {
-        SetText( _( "No lyrics found for this song." ) );
+        if( m_CurrentLyricText.IsEmpty() )
+        {
+            SetText( _( "No lyrics found for this song." ) );
+        }
     }
     m_ReloadButton->Enable( true );
 }

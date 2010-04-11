@@ -582,6 +582,14 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	wxBoxSizer * LyricsMainSizer;
 	LyricsMainSizer = new wxBoxSizer( wxVERTICAL );
 
+	wxArrayString LyricsAlignSizerChoices;
+	LyricsAlignSizerChoices.Add( _( "Left" ) );
+	LyricsAlignSizerChoices.Add( _( "Center" ) );
+	LyricsAlignSizerChoices.Add( _( "Right" ) );
+	m_LyricsAlignSizer = new wxRadioBox( m_LyricsPanel, wxID_ANY, _( " Text Align " ), wxDefaultPosition, wxDefaultSize, LyricsAlignSizerChoices, 1, wxRA_SPECIFY_ROWS );
+	m_LyricsAlignSizer->SetSelection( m_Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) );
+	LyricsMainSizer->Add( m_LyricsAlignSizer, 0, wxALL|wxEXPAND, 5 );
+
 	wxStaticBoxSizer * LyricsSaveSizer;
 	LyricsSaveSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Save " ) ), wxVERTICAL );
 
@@ -1248,6 +1256,7 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "Podcasts" ) );
     m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
 
+    m_Config->WriteNum( wxT( "TextAlign" ), m_LyricsAlignSizer->GetSelection(), wxT( "Lyrics" ) );
     m_Config->WriteBool( wxT( "SaveToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
     m_Config->WriteBool( wxT( "SaveToFilesOnlySelected" ), m_LyricsTracksSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
     m_Config->WriteBool( wxT( "SaveToDir" ), m_LyricsDirSaveChkBox->GetValue(), wxT( "Lyrics" ) );
