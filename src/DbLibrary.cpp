@@ -3945,6 +3945,7 @@ wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
   //
   switch( order )
   {
+    case guTRACKS_ORDER_YEAR :
     case guTRACKS_ORDER_DISK :
       query += wxT( ",albums WHERE song_albumid = album_id " );
       break;
@@ -3960,7 +3961,6 @@ wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
 //    case guTRACKS_ORDER_TITLE :
 //    case guTRACKS_ORDER_NUMBER :
 //    case guTRACKS_ORDER_LENGTH :
-//    case guTRACKS_ORDER_YEAR :
 //    case guTRACKS_ORDER_RATING :
 //    case guTRACKS_ORDER_BITRATE :
 //    case guTRACKS_ORDER_PLAYCOUNT :
@@ -4053,6 +4053,10 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
 
     case guTRACKS_ORDER_ALBUM :
       query += wxT( ",song_disk,album_id,song_number;" );
+      break;
+
+    case guTRACKS_ORDER_YEAR :
+      query += wxT( ",album_name,song_disk,song_number;" );
       break;
 
     default:
