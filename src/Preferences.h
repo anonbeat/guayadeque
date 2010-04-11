@@ -120,6 +120,7 @@ class guPrefDialog : public wxDialog
     wxSpinCtrl *                m_MaxTracksPlayed;
 
     wxPanel *                   m_LyricsPanel;
+    wxRadioBox *                m_LyricsAlignSizer;
     wxCheckBox *                m_LyricsTracksSaveChkBox;
     wxCheckBox *                m_LyricsTracksSaveSelectedChkBox;
     wxCheckBox *                m_LyricsDirSaveChkBox;

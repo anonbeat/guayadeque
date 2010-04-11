@@ -1,4 +1,5 @@
 
+  * Added option to align text in lyrics
   * Fixed mpris Pause/Play interface
   * Added lyricsplugin.com as lyrics search engine
   * Added a playcount listbox to filter in library tab

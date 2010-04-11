@@ -66,6 +66,7 @@ class guLyricsPanel : public wxPanel
   protected :
     guDbLibrary *           m_Db;
 
+	wxBoxSizer *            m_TitleSizer;
     wxStaticText *          m_LyricTitle;
     //wxHtmlWindow *          m_LyricText;
     wxTextCtrl *            m_LyricText;
@@ -85,6 +86,7 @@ class guLyricsPanel : public wxPanel
     guTrackChangeInfo       m_CurrentTrackInfo;
     //wxString                m_LyricsTemplate;
     int                     m_LyricFormat;
+    int                     m_LyricAlign;
 	wxString                m_CurrentFileName;
 	wxString                m_CurrentLyricText;
 	bool                    m_WriteToFiles;
