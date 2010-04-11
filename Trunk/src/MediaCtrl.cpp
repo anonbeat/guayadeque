@@ -516,7 +516,7 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                                         if( IsValidElement( queue ) )
                                         {
                                             //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
-                                            g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
+                                            //g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
                                             gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
                                             gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
