@@ -1024,6 +1024,7 @@ bool guMediaCtrl::Play()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Pause()
 {
+    m_llPausedPos = Tell();
     return ( !m_Recordbin || ( gst_element_set_state( m_Recordbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE ) ) &&
            ( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE );
 }
