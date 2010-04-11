@@ -59,6 +59,7 @@ class guPlayList : public guListView
     wxBitmap *      m_SelectStar;
     wxCoord         m_SecondLineOffset;
 
+    wxColor         m_PlayedColor;
 
     virtual wxCoord             OnMeasureItem( size_t row ) const;
 
