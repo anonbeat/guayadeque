@@ -540,7 +540,7 @@ void guPlayerVumeters::SetLevels( const guLevelInfo &levels )
     if( levels.m_Channels > 1 )
         m_VumRight->SetLevel( levels.m_Peak_R, levels.m_Decay_R );
     else
-        m_VumRight->SetLevel( -INFINITY, -INFINITY );
+        m_VumRight->SetLevel( levels.m_Peak_L, levels.m_Decay_L );
 }
 
 // -------------------------------------------------------------------------------- //

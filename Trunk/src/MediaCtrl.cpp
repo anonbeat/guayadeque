@@ -30,14 +30,13 @@
         GstState MState;\
         GstState PState;\
         GstState RState;\
+        guLogMessage( wxT( "%i) %i SetName" ), c, ctrl->m_Buffering );\
         gst_element_get_state( ctrl->m_Playbin, &MState, NULL, 0 );\
+        guLogMessage( wxT( "M:%-12s" ), wxString( gst_element_state_get_name( MState ), wxConvUTF8 ).c_str() );\
         gst_element_get_state( ctrl->m_Playbackbin, &PState, NULL, 0 );\
+        guLogMessage( wxT( "P:%-12s" ), wxString( gst_element_state_get_name( PState ), wxConvUTF8 ).c_str() );\
         gst_element_get_state( ctrl->m_Recordbin, &RState, NULL, 0 );\
-        guLogMessage( wxT( "%i) %i SetName: M:%-12s  PB:%-12s  R:%-12s" ), c,\
-                ctrl->m_Buffering,\
-                wxString( gst_element_state_get_name( MState ), wxConvUTF8 ).c_str(),\
-                wxString( gst_element_state_get_name( PState ), wxConvUTF8 ).c_str(),\
-                wxString( gst_element_state_get_name( RState ), wxConvUTF8 ).c_str() );\
+        guLogMessage( wxT( "R:%-12s" ), wxString( gst_element_state_get_name( RState ), wxConvUTF8 ).c_str() );\
     }
 #endif
 
@@ -644,6 +643,7 @@ GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * enc
                         gst_element_link_many( queue, converter, encoder, m_FileSink, NULL );
                     }
 
+                    //gst_element_set_state( recordbin, GST_STATE_PAUSED );
                     gst_bin_add( GST_BIN( m_Playbackbin ), recordbin );
 
                     GstPad * pad = gst_element_get_pad( queue, "sink" );
@@ -653,7 +653,9 @@ GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * enc
                         gst_element_add_pad( recordbin, ghostpad );
                         gst_object_unref( pad );
 
-                        gst_element_link( m_Tee, recordbin );
+                        //gst_element_link( m_Tee, recordbin );
+                        m_RecordPad = gst_element_get_request_pad( m_Tee, "src%d" );
+                        gst_pad_link( m_RecordPad, ghostpad );
 
                         //g_object_set( recordbin, "async-handling", true, NULL );
 
@@ -706,6 +708,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     m_Playbackbin = NULL;
     m_FileSink = NULL;
     m_Tee = NULL;
+    m_RecordPad = NULL;
     m_Buffering = false;
     m_WasPlaying = false;
     m_llPausedPos = 0;
@@ -871,6 +874,8 @@ void guMediaCtrl::DisableRecord( void )
 
     gst_element_get_state( m_Playbin, &CurState, NULL, 0 );
 
+    SHOW_RECORDING_STATES( 10, this )
+
     if( CurState == GST_STATE_PLAYING )
     {
         //guLogMessage( wxT( "Trying to set state to pased" ) );
@@ -893,6 +898,8 @@ void guMediaCtrl::DisableRecord( void )
     m_Recordbin = NULL;
     m_FileSink = NULL;
 
+    SHOW_RECORDING_STATES( 11, this )
+
     if( CurState == GST_STATE_PLAYING )
     {
         if( gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
@@ -900,6 +907,8 @@ void guMediaCtrl::DisableRecord( void )
             guLogMessage( wxT( "Could not restore state inserting record object" ) );
         }
     }
+
+    SHOW_RECORDING_STATES( 12, this )
 }
 
 // -------------------------------------------------------------------------------- //
@@ -908,59 +917,31 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
     if( !m_Recordbin || m_Buffering )
         return false;
 
-    //GstState    PlayState;
-    GstState    RecState;
-
-    SHOW_RECORDING_STATES( 0, this )
-
-    //gst_element_get_state( m_Playbin, &PlayState, NULL, 0 );
-    gst_element_get_state( m_Recordbin, &RecState, NULL, 0 );
-    if( RecState != GST_STATE_NULL )
-    {
-//        if( gst_element_set_state( m_Recordbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
-//        //if( !set_state_and_wait( this, m_Recordbin, GST_STATE_READY, &gsterror ) )
-//        {
-//            guLogMessage( wxT( "Could not set state inserting record object" ) );
-//            return false;
-//        }
-
-        //gst_element_set_state( m_Recordbin, GST_STATE_NULL ); // == GST_STATE_CHANGE_FAILURE )
-        if( !set_state_and_wait( m_Recordbin, GST_STATE_NULL, this ) )
-        {
-            guLogError( wxT( "Could not reset the record object chaning the filename." ) );
-        }
-    }
-
-    SHOW_RECORDING_STATES( 1, this )
-
     wxString FileName = m_RecordPath + path + wxT( "/" ) + track + m_RecordExt;
     wxFileName::Mkdir( wxPathOnly( FileName ), 0770, wxPATH_MKDIR_FULL );
     guLogMessage( wxT( "The new Record File is '%s'" ), FileName.c_str() );
 
+    gst_pad_set_blocked( m_RecordPad, true );
+
+    if( gst_element_set_state( m_Recordbin, GST_STATE_NULL ) == GST_STATE_CHANGE_FAILURE )
+    {
+        guLogMessage( wxT( "Could not reset recordbin state changing location" ) );
+    }
+
     g_object_set( m_FileSink, "location", ( const char * ) FileName.mb_str( wxConvFile ), NULL );
 
-
-    SHOW_RECORDING_STATES( 2, this )
-
-//    if( gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
-//    {
-//        guLogMessage( wxT( "Could not restore playbin state inserting record object" ) );
-//        return false;
-//    }
-//
-//    if( gst_element_set_state( m_Playbackbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
-//    {
-//        guLogMessage( wxT( "Could not restore playbackbin state inserting record object" ) );
-//        return false;
-//    }
+    //if( !set_state_and_wait( m_FileSink, PrevState, this ) )
+    if( gst_element_set_state( m_Recordbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
+    {
+        guLogMessage( wxT( "Could not restore recordbin state changing location" ) );
+    }
 
     if( gst_element_set_state( m_Recordbin, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
     {
-        guLogMessage( wxT( "Could not restore record state inserting record object" ) );
-        return false;
+        guLogMessage( wxT( "Could not set running recordbin changing location" ) );
     }
 
-    SHOW_RECORDING_STATES( 3, this )
+    gst_pad_set_blocked( m_RecordPad, false );
 
     return true;
 }

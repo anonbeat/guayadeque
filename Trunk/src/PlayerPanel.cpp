@@ -1654,7 +1654,6 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
                 wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
                 SendNotifyInfo( &Image );
             }
-
         }
         delete RadioTag;
     }
