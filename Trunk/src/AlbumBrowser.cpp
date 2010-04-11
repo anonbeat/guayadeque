@@ -40,6 +40,7 @@
 WX_DEFINE_OBJARRAY( guAlbumBrowserItemArray );
 
 #define guALBUMBROWSER_REFRESH_DELAY    60
+#define guALBUMBROWSER_GRID_SIZE        180
 
 void AddAlbumCommands( wxMenu * Menu, int SelCount );
 
@@ -723,8 +724,8 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
     wxSize Size = event.GetSize();
     if( Size != m_LastSize )
     {
-        size_t ColItems = Size.GetWidth() / 220;
-        size_t RowItems = Size.GetHeight() / 220;
+        size_t ColItems = Size.GetWidth() / guALBUMBROWSER_GRID_SIZE;
+        size_t RowItems = Size.GetHeight() / guALBUMBROWSER_GRID_SIZE;
         //guLogMessage( wxT( "Row: %i  Col:%i" ), RowItems, ColItems );
         if( ColItems * RowItems != m_ItemPanels.Count() )
         {
