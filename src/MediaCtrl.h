@@ -214,6 +214,7 @@ class guMediaCtrl : public wxEvtHandler
     GstElement * m_Volume;
     GstElement * m_Equalizer;
     GstElement * m_FileSink;
+    GstPad *     m_RecordPad;
     bool         m_Buffering;
     bool         m_WasPlaying;
 
