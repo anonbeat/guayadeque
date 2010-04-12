@@ -65,6 +65,7 @@ class guLyricsPanel : public wxPanel
 {
   protected :
     guDbLibrary *           m_Db;
+    wxTimer                 m_LyricTextTimer;
 
 	wxBoxSizer *            m_TitleSizer;
     wxStaticText *          m_LyricTitle;
@@ -98,6 +99,7 @@ class guLyricsPanel : public wxPanel
     void                    SetTitle( const wxString &title );
     void                    SetText( const wxString &text );
     void                    OnDownloadedLyric( wxCommandEvent &event );
+    void                    OnTextTimer( wxTimerEvent &event );
 	void                    OnReloadBtnClick( wxCommandEvent& event );
     void                    OnEditBtnClick( wxCommandEvent& event );
     void                    OnSaveBtnClick( wxCommandEvent& event );
