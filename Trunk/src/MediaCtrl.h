@@ -66,8 +66,9 @@ class guRadioTagInfo
     gchar * m_Organization;
     gchar * m_Location;
     gchar * m_Title;
+    gchar * m_Genre;
 
-    guRadioTagInfo() { m_Organization = NULL; m_Location = NULL; m_Title = NULL; }
+    guRadioTagInfo() { m_Organization = NULL; m_Location = NULL; m_Title = NULL; m_Genre = NULL; }
     ~guRadioTagInfo()
     {
         if( m_Organization )
@@ -76,6 +77,8 @@ class guRadioTagInfo
             g_free( m_Location );
         if( m_Title )
             g_free( m_Title );
+        if( m_Genre )
+            g_free( m_Genre );
     }
 };
 
@@ -196,9 +199,12 @@ class guMediaCtrl : public wxEvtHandler
     guPlayerPanel * m_PlayerPanel;
     wxLongLong      m_llPausedPos;
     int             m_LastError;
+
     wxString        m_RecordPath;
-    wxString        m_RecordExt;
     int             m_RecordFormat;
+    wxString        m_RecordExt;
+    wxString        m_RecordFileName;
+
 
     bool            SetProperty( GstElement * element, const char * name, gint64 value );
 
@@ -250,7 +256,8 @@ class guMediaCtrl : public wxEvtHandler
 
     bool EnableRecord( const wxString &path, const int format, const int quality );
     void DisableRecord( void );
-    bool SetRecordFileName( const wxString &path, const wxString &filename );
+    bool SetRecordFileName( const wxString &filename );
+    wxString GetRecordFileName( void ) { return m_RecordFileName; }
     void SetRecordPath( const wxString &path );
 
 };

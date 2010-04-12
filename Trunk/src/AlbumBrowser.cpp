@@ -136,6 +136,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	m_AlbumLabel->Wrap( 120 );
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+	CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 1 );
 	m_AlbumLabel->SetFont( CurrentFont );
 	m_MainSizer->Add( m_AlbumLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
@@ -147,6 +148,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 
 	m_TracksLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	m_TracksLabel->Wrap( 120 );
+	m_TracksLabel->SetFont( CurrentFont );
 	m_MainSizer->Add( m_TracksLabel, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
 	SetSizer( m_MainSizer );
