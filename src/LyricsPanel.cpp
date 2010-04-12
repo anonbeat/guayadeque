@@ -176,6 +176,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 
     SetDropTarget( new guLyricsPanelDropTarget( this ) );
     m_LyricText->SetDropTarget( new guLyricsPanelDropTarget( this ) );
+    m_LyricTextTimer.SetOwner( this );
 
 	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
 	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
@@ -184,6 +185,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
     Connect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ), NULL, this );
+    Connect( wxEVT_TIMER, wxTimerEventHandler( guLyricsPanel::OnTextTimer ), NULL, this );
 
     m_LyricText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
     Connect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
@@ -205,6 +207,7 @@ guLyricsPanel::~guLyricsPanel()
 	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	//m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSearchBtnClick ), NULL, this );
     Disconnect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnDownloadedLyric ), NULL, this );
+    Disconnect( wxEVT_TIMER, wxTimerEventHandler( guLyricsPanel::OnTextTimer ), NULL, this );
 
     m_LyricText->Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
     Disconnect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
@@ -650,12 +653,21 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     }
     else
     {
-        if( m_CurrentLyricText.IsEmpty() )
-        {
-            SetText( _( "No lyrics found for this song." ) );
-        }
+        SetText( _( "No lyrics found for this song." ) );
+        if( m_LyricTextTimer.IsRunning() )
+            m_LyricTextTimer.Stop();
+        m_LyricTextTimer.Start( 3000, wxTIMER_ONE_SHOT );
     }
     m_ReloadButton->Enable( true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnTextTimer( wxTimerEvent &event )
+{
+    if( !m_CurrentLyricText.IsEmpty() )
+    {
+        SetText( m_CurrentLyricText );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

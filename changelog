@@ -1,4 +1,6 @@
 
+  * If no lyric is found after showing the eror that was not found restore
+    the previous lyric text
   * Added option to align text in lyrics
   * Fixed mpris Pause/Play interface
   * Added lyricsplugin.com as lyrics search engine
