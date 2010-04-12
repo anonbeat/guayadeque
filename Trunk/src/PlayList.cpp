@@ -72,7 +72,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     int Count;
     int Index;
     m_ItemHeight = 40;
-    m_PlayedColor = wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT );
+//    m_PlayedColor = wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT );
 
     InsertColumn( new guListViewColumn( _( "Now Playing" ), 0 ) );
 
@@ -460,7 +460,8 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     }
     else
     {
-        dc.SetTextForeground( row > m_CurItem ? m_Attr.m_TextFgColor : m_PlayedColor );
+        //dc.SetTextForeground( row > m_CurItem ? m_Attr.m_TextFgColor : m_PlayedColor );
+        dc.SetTextForeground( m_Attr.m_TextFgColor );
     }
 
 
