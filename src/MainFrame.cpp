@@ -2065,24 +2065,30 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     {
         m_Db->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
 
-        m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu tracks,   %s,   %s" ),
-            m_SelCount.GetValue(),
+        wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+        SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
+        SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
             LenToString( m_SelLength.GetLo() ).c_str(),
-            SizeToString( m_SelSize.GetValue() ).c_str() ) );
+            SizeToString( m_SelSize.GetValue() ).c_str() );
+        m_MainStatusBar->SetSelInfo( SelInfo );
     }
     else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
     {
         m_Db->GetRadioCounter( &m_SelCount );
-        m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu stations" ), m_SelCount.GetValue() ) );
+        wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+        SelInfo += m_SelCount == 1 ? _( "station" ) : _( "stations" );
+        m_MainStatusBar->SetSelInfo( SelInfo );
     }
     else if( m_CurrentPage == ( wxWindow * ) m_PlayListPanel )
     {
         if( m_PlayListPanel->GetPlayListCounters( &m_SelCount, &m_SelLength, &m_SelSize ) )
         {
-            m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu tracks,   %s,   %s" ),
-                m_SelCount.GetValue(),
+            wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+            SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
+            SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
                 LenToString( m_SelLength.GetLo() ).c_str(),
-                SizeToString( m_SelSize.GetValue() ).c_str() ) );
+                SizeToString( m_SelSize.GetValue() ).c_str() );
+            m_MainStatusBar->SetSelInfo( SelInfo );
         }
         else
         {
@@ -2093,19 +2099,26 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     {
         m_Db->GetPodcastCounters( &m_SelCount, &m_SelLength, &m_SelSize );
 
-        m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu podcasts,   %s,   %s" ),
-            m_SelCount.GetValue(),
+        wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+        SelInfo += m_SelCount == 1 ? _( "podcast" ) : _( "podcasts" );
+        SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
             LenToString( m_SelLength.GetLo() ).c_str(),
-            SizeToString( m_SelSize.GetValue() ).c_str() ) );
+            SizeToString( m_SelSize.GetValue() ).c_str() );
+        m_MainStatusBar->SetSelInfo( SelInfo );
     }
     else if( m_CurrentPage == ( wxWindow * ) m_FileBrowserPanel )
     {
         if( m_FileBrowserPanel->GetCounters( &m_SelCount, &m_SelLength, &m_SelSize ) )
         {
-            m_MainStatusBar->SetSelInfo( wxString::Format( _( "%llu dirs, %llu files,   %s" ),
-                m_SelLength.GetValue(),
-                m_SelCount.GetValue(),
-                SizeToString( m_SelSize.GetValue() ).c_str() ) );
+            wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelLength.GetValue() );
+            SelInfo += m_SelLength == 1 ? _( "dir" ) : _( "dirs" );
+            SelInfo += wxString::Format( wxT( ", %llu " ), m_SelCount.GetValue() );
+            SelInfo += m_SelLength == 1 ? _( "file" ) : _( "files" );
+
+            SelInfo += wxString::Format( wxT( ",   %s" ),
+                SizeToString( m_SelSize.GetValue() ).c_str() );
+
+            m_MainStatusBar->SetSelInfo( SelInfo );
         }
         else
         {

@@ -1247,6 +1247,14 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
         }
     }
 
+    // Enable or disables the record button. Only enabled for radio stations
+    m_RecordButton->Enable( ( Song->m_Type == guTRACK_TYPE_RADIOSTATION ) );
+    if( m_RecordButton->GetValue() )
+    {
+        m_RecordButton->SetValue( ( Song->m_Type == guTRACK_TYPE_RADIOSTATION ) );
+        if( !m_RecordButton->GetValue() )
+            DisableRecording();
+    }
 
     // Set the Current Song
     m_MediaSong = * Song;
@@ -1263,11 +1271,6 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
     wxPostEvent( wxTheApp->GetTopWindow(), TitleEvent );
 
-
-    // Enable or disables the record button. Only enabled for radio stations
-    m_RecordButton->Enable( ( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
-    if( m_RecordButton->GetValue() )
-        m_RecordButton->SetValue( ( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
 
     //guLogWarning( wxT( "SetCurrentTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
     CoverImage = NULL;
@@ -1544,6 +1547,17 @@ void guPlayerPanel::OnMediaError( wxMediaEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::SaveRecordingTags( const wxString &filename, const guTrack &track )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void  guPlayerPanel::DisableRecording( void )
+{
+    m_MediaCtrl->DisableRecord();
+}
+
+// -------------------------------------------------------------------------------- //
 void ExtractMetaData( wxString &title, wxString &artist, wxString &trackname )
 {
     int FindPos;
@@ -1590,14 +1604,17 @@ void guPlayerPanel::SetRecordFileName( void )
     wxString RecordPath;
     if( m_MediaSong.m_AlbumName.IsEmpty() )
     {
-        RecordPath = m_MediaSong.m_FileName;
+        wxURI Uri( m_MediaSong.m_FileName );
+        RecordPath = Uri.GetServer();
     }
     else
     {
         RecordPath = m_MediaSong.m_AlbumName;
     }
-    wxURI Uri( RecordPath );
-    RecordPath = NormalizeField( Uri.GetServer() );
+    RecordPath = NormalizeField( RecordPath );
+    if( RecordPath.StartsWith( wxT( "." ) ) )
+        RecordPath = RecordPath.Mid( 1 );
+    RecordPath = RecordPath.Trim().Trim( false );
 
     wxString RecordFileName;
     if( !m_MediaSong.m_ArtistName.IsEmpty() )
@@ -1609,7 +1626,8 @@ void guPlayerPanel::SetRecordFileName( void )
     {
         RecordFileName = NormalizeField( m_MediaSong.m_SongName );
     }
-    m_MediaCtrl->SetRecordFileName( RecordPath, RecordFileName );
+
+    m_MediaCtrl->SetRecordFileName( RecordPath + wxT( "/" ) + RecordFileName );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1620,9 +1638,15 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
     {
         if( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION )
         {
-            if( RadioTag->m_Location )
+            if( RadioTag->m_Organization )
             {
-                m_MediaSong.m_AlbumName = wxString( RadioTag->m_Location, wxConvUTF8 );
+                m_MediaSong.m_AlbumName = wxString( RadioTag->m_Organization, wxConvUTF8 );
+                SetAlbumLabel( m_MediaSong.m_AlbumName );
+            }
+
+            if( RadioTag->m_Genre )
+            {
+                m_MediaSong.m_GenreName = wxString( RadioTag->m_Genre, wxConvUTF8 );
             }
 
             //guLogMessage( wxT( "MediaTag:'%s'" ), TagStr->c_str() );
@@ -1635,10 +1659,7 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
 
                 //guLogMessage( wxT( "AlbumName: '%s'" ), m_MediaSong.m_AlbumName.c_str() );
                 SetTitleLabel( m_MediaSong.m_SongName );
-                SetAlbumLabel( m_MediaSong.m_AlbumName );
                 SetArtistLabel( m_MediaSong.m_ArtistName );
-
-                GetSizer()->Layout();
 
                 // If its recording
                 if( m_RecordButton->GetValue() && m_SplitRecordings )
@@ -1654,6 +1675,7 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
                 wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
                 SendNotifyInfo( &Image );
             }
+            GetSizer()->Layout();
         }
         delete RadioTag;
     }
@@ -2090,6 +2112,7 @@ void guPlayerPanel::OnRecordButtonClick( wxCommandEvent& event )
         int RecFormat = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "Record" ) );
         int RecQuality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "Record" ) );
         m_MediaCtrl->EnableRecord( RecPath, RecFormat, RecQuality );
+
         if( !m_MediaSong.m_ArtistName.IsEmpty() )
         {
             SetRecordFileName();
@@ -2097,7 +2120,7 @@ void guPlayerPanel::OnRecordButtonClick( wxCommandEvent& event )
     }
     else
     {
-        m_MediaCtrl->DisableRecord();
+        DisableRecording();
     }
 }
 

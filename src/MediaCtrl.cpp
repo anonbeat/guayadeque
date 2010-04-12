@@ -176,15 +176,17 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             gst_tag_list_get_string( tags, GST_TAG_ORGANIZATION, &RadioTagInfo->m_Organization );
             gst_tag_list_get_string( tags, GST_TAG_LOCATION, &RadioTagInfo->m_Location );
             gst_tag_list_get_string( tags, GST_TAG_TITLE, &RadioTagInfo->m_Title );
+            gst_tag_list_get_string( tags, GST_TAG_GENRE, &RadioTagInfo->m_Genre );
 
-            //guLogMessage( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'" ),
+            //guLogMessage( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'\n'%s'" ),
             //    wxString( RadioTagInfo->m_Organization, wxConvUTF8 ).c_str(),
             //    wxString( RadioTagInfo->m_Location, wxConvUTF8 ).c_str(),
-            //    wxString( RadioTagInfo->m_Title, wxConvUTF8 ).c_str() );
+            //    wxString( RadioTagInfo->m_Title, wxConvUTF8 ).c_str(),
+            //    wxString( RadioTagInfo->m_Genre, wxConvUTF8 ).c_str() );
 
-            if( RadioTagInfo->m_Organization || RadioTagInfo->m_Location || RadioTagInfo->m_Title )
+            if( RadioTagInfo->m_Organization || RadioTagInfo->m_Location ||
+                RadioTagInfo->m_Title || RadioTagInfo->m_Genre )
             {
-                //guLogMessage( wxT( "Tit: %s" ), wxString( title, wxConvUTF8 ).c_str() );
                 wxMediaEvent event( wxEVT_MEDIA_TAG );
                 event.SetClientData( RadioTagInfo );
                 ctrl->AddPendingEvent( event );
@@ -837,7 +839,7 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
             }
         }
 
-        wxString RecordFile = m_RecordPath + wxT( "record" ) + m_RecordExt;
+        m_RecordFileName = m_RecordPath + wxT( "record" ) + m_RecordExt;
 //        if( wxFileExists( RecordFile ) )
 //        {
 //            int Index = 1;
@@ -846,7 +848,7 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
 //            } while( wxFileExists( RecordFile ) );
 //        }
 
-        m_Recordbin = BuildRecordBin( RecordFile, Encoder, Muxer );
+        m_Recordbin = BuildRecordBin( m_RecordFileName, Encoder, Muxer );
 
         if( State == wxMEDIASTATE_PLAYING )
         {
@@ -912,14 +914,14 @@ void guMediaCtrl::DisableRecord( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track )
+bool guMediaCtrl::SetRecordFileName( const wxString &filename )
 {
     if( !m_Recordbin || m_Buffering )
         return false;
 
-    wxString FileName = m_RecordPath + path + wxT( "/" ) + track + m_RecordExt;
-    wxFileName::Mkdir( wxPathOnly( FileName ), 0770, wxPATH_MKDIR_FULL );
-    guLogMessage( wxT( "The new Record File is '%s'" ), FileName.c_str() );
+    m_RecordFileName = m_RecordPath + filename + m_RecordExt;
+    wxFileName::Mkdir( wxPathOnly( m_RecordFileName ), 0770, wxPATH_MKDIR_FULL );
+    guLogMessage( wxT( "The new Record File is '%s'" ), m_RecordFileName.c_str() );
 
     gst_pad_set_blocked( m_RecordPad, true );
 
@@ -928,7 +930,7 @@ bool guMediaCtrl::SetRecordFileName( const wxString &path, const wxString &track
         guLogMessage( wxT( "Could not reset recordbin state changing location" ) );
     }
 
-    g_object_set( m_FileSink, "location", ( const char * ) FileName.mb_str( wxConvFile ), NULL );
+    g_object_set( m_FileSink, "location", ( const char * ) m_RecordFileName.mb_str( wxConvFile ), NULL );
 
     //if( !set_state_and_wait( m_FileSink, PrevState, this ) )
     if( gst_element_set_state( m_Recordbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )

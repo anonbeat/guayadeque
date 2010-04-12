@@ -270,6 +270,8 @@ class guPlayerPanel : public wxPanel
     void                OnConfigUpdated( wxCommandEvent &event );
 
     void                SetRecordFileName( void );
+    void                SaveRecordingTags( const wxString &filename, const guTrack &track );
+    void                DisableRecording( void );
 
   public:
                         guPlayerPanel( wxWindow* parent, guDbLibrary * db,
