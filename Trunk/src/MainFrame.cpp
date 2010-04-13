@@ -109,8 +109,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_FileBrowserPanel = NULL;
 
     //
-    m_AppIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
-
+    wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
+    TaskBarIcon.ConvertAlphaToMask();
+    m_AppIcon.CopyFromBitmap( TaskBarIcon );
 
     // Load the preconfigured layouts from config file
     LoadLayouts();
