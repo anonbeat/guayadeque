@@ -157,7 +157,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	m_LyricTitle->SetFont( CurrentFont );
 
     m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) ];
-	m_TitleSizer->Add( m_LyricTitle, 0, wxALL|m_LyricAlign, 5 );
+	m_TitleSizer->Add( m_LyricTitle, 0, wxEXPAND|wxALL|m_LyricAlign, 5 );
 
 	MainSizer->Add( m_TitleSizer, 0, wxEXPAND, 5 );
 
@@ -319,6 +319,7 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
         }
 
         m_CurrentFileName = wxEmptyString;
+        m_CurrentLyricText = wxEmptyString;
 
         guTrack * Track = ( guTrack * ) event.GetClientData();
         guTrackChangeInfo ChangeInfo;
@@ -371,6 +372,8 @@ void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnServerSelected( wxCommandEvent &event )
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+	Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
     OnReloadBtnClick( event );
 }
 
@@ -489,10 +492,6 @@ void guLyricsPanel::SetTitle( const wxString &title )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::SetText( const wxString &text )
 {
-    wxString LyricText = text;
-    LyricText.Replace( wxT( "\n" ), wxT( "<br>" ) );
-    LyricText.Replace( wxT( " " ), wxT( "&nbsp;" ) );
-
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
     if( m_LyricFormat == guLYRIC_FORMAT_NORMAL )
@@ -506,10 +505,6 @@ void guLyricsPanel::SetText( const wxString &text )
         CurrentFont.SetFamily( wxTELETYPE );
         m_LyricText->SetFont( CurrentFont );
     }
-//    m_LyricText->SetPage( wxString::Format( m_LyricsTemplate,
-//          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-//          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-//          LyricText.c_str() ) );
     m_LyricText->SetValue( text );
     Layout();
 }
@@ -639,14 +634,15 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     if( Content )
     {
         m_CurrentLyricText = * Content;
+        m_CurrentLyricText.Trim().Trim( false );
 
-        SetText( * Content );
+        SetText( m_CurrentLyricText );
 
         SaveLyrics();
 
         if( m_WriteToFilesOnlySelected || m_WriteToDirOnlySelected )
         {
-            m_SaveButton->Enable( !Content->IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
+            m_SaveButton->Enable( !m_CurrentLyricText.IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
         }
 
         delete Content;
@@ -790,6 +786,7 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
         ChangeInfo.m_TrackName = Track.m_SongName;
 
         m_CurrentFileName = files[ 0 ];
+        m_CurrentLyricText = wxEmptyString;
 
         SetAutoUpdate( false );
 
@@ -823,6 +820,7 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
                 ChangeInfo.m_TrackName = Track.m_SongName;
 
                 m_CurrentFileName = files[ 0 ];
+                m_CurrentLyricText = wxEmptyString;
 
                 SetAutoUpdate( false );
 
