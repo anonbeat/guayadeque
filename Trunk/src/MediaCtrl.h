@@ -21,6 +21,8 @@
 #ifndef MEDIACTRL_H
 #define MEDIACTRL_H
 
+#include "DbLibrary.h"
+
 #include <wx/event.h>
 #include <wx/wx.h>
 #include <wx/uri.h>
@@ -200,12 +202,6 @@ class guMediaCtrl : public wxEvtHandler
     wxLongLong      m_llPausedPos;
     int             m_LastError;
 
-    wxString        m_RecordPath;
-    int             m_RecordFormat;
-    wxString        m_RecordExt;
-    wxString        m_RecordFileName;
-
-
     bool            SetProperty( GstElement * element, const char * name, gint64 value );
 
     GstElement *    BuildOutputBin( void );
@@ -257,9 +253,66 @@ class guMediaCtrl : public wxEvtHandler
     bool EnableRecord( const wxString &path, const int format, const int quality );
     void DisableRecord( void );
     bool SetRecordFileName( const wxString &filename );
-    wxString GetRecordFileName( void ) { return m_RecordFileName; }
-    void SetRecordPath( const wxString &path );
 
+};
+
+// -------------------------------------------------------------------------------- //
+class guMediaRecordCtrl
+{
+  protected:
+    guPlayerPanel * m_PlayerPanel;
+    guMediaCtrl *   m_MediaCtrl;
+    guTrack         m_TrackInfo;
+
+    wxString        m_MainPath;
+    int             m_Format;
+    int             m_Quality;
+    wxString        m_Ext;
+    wxString        m_FileName;
+
+    bool            m_Recording;
+    bool            m_SplitTracks;
+    bool            m_FirstChange;
+
+    wxString        GetRecordFileName( void );
+
+  public :
+    guMediaRecordCtrl( guPlayerPanel * playerpanel, guMediaCtrl * mediactrl );
+    ~guMediaRecordCtrl();
+
+    void            SetTrack( const guTrack &track )
+    {
+        m_TrackInfo = track;
+        SplitTrack( true );
+    }
+
+    void            SetTrackName( const wxString &trackname )
+    {
+        m_TrackInfo.m_SongName = trackname;
+        SplitTrack();
+    }
+
+    void            SetArtist( const wxString &artist ) { m_TrackInfo.m_ArtistName = artist; }
+    void            SetStation( const wxString &station )
+    {
+        m_TrackInfo.m_AlbumName = station;
+        SplitTrack( true );
+    }
+
+    void            SetGenre( const wxString &genre ) { m_TrackInfo.m_GenreName = genre; }
+
+    //void            SetRecordFileName( const wxString &filename ) { m_FileName = filename; }
+
+    bool            SaveTagInfo( void );
+
+    bool            IsRecording( void ) { return m_Recording; }
+
+    bool            Start( const guTrack * track );
+    bool            Stop( void );
+
+    void            SplitTrack( bool newstation = false );
+
+    void UpdatedConfig( void );
 };
 
 #endif

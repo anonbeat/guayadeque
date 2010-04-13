@@ -182,6 +182,7 @@ class guPlayerPanel : public wxPanel
 	guPlayerFilters *       m_PlayerFilters;
 	guPlayerVumeters *      m_PlayerVumeters;
 	guMediaCtrl *           m_MediaCtrl;
+	guMediaRecordCtrl *     m_MediaRecordCtrl;
 	guPlayerPanelTimer *    m_PlayerTimer;
     guCurrentTrack          m_MediaSong;
 	wxMediaState            m_LastPlayState;
@@ -228,9 +229,7 @@ class guPlayerPanel : public wxPanel
 
     wxArrayString           m_ErrorStrings;
 
-    int                     m_SplitRecordings;
-
-    bool                    m_PendingRecordRename;
+    bool                    m_PendingNewRecordName;
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
@@ -269,9 +268,7 @@ class guPlayerPanel : public wxPanel
 
     void                OnConfigUpdated( wxCommandEvent &event );
 
-    void                SetRecordFileName( void );
-    void                SaveRecordingTags( const wxString &filename, const guTrack &track );
-    void                DisableRecording( void );
+    void                SendRecordSplitEvent( void );
 
   public:
                         guPlayerPanel( wxWindow* parent, guDbLibrary * db,

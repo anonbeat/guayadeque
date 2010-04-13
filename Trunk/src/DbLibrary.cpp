@@ -2452,7 +2452,8 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
     if( DynQuery.Find( wxT( "artists" ) ) == wxNOT_FOUND )
         query += wxT( ", artists " );
     query += DynQuery;
-    query += wxT( " AND album_artistid = artist_id AND song_albumid = album_id " );
+    query += DynQuery.IsEmpty() ? wxT( " WHERE " ) : wxT( " AND " );
+    query += wxT( "album_artistid = artist_id AND song_albumid = album_id " );
   }
   else
   {
