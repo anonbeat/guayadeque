@@ -65,7 +65,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_NotifySrv = NULL;
     m_PlayerFilters = filters;
     m_BufferGaugeId = wxNOT_FOUND;
-    m_PendingRecordRename = false;
+    m_PendingNewRecordName = false;
     m_MediaSong.m_SongId = 0;
     m_MediaSong.m_Length = 0;
     m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
@@ -100,7 +100,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_IsSkipping = false;
     m_ShowNotifications = true;
     m_ShowNotificationsTime = 0;
-    m_SplitRecordings = false;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -133,7 +132,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
         m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
 //        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
-        m_SplitRecordings = Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) );
     }
 
     m_SliderIsDragged = false;
@@ -349,6 +347,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 
     m_MediaCtrl = new guMediaCtrl( this );
+    m_MediaRecordCtrl = new guMediaRecordCtrl( this, m_MediaCtrl );
     //m_MediaCtrl->Create( this, wxID_ANY );
 
     //
@@ -477,6 +476,9 @@ guPlayerPanel::~guPlayerPanel()
 
     if( m_PlayerTimer )
         delete m_PlayerTimer;
+
+    if( m_MediaRecordCtrl )
+        delete m_MediaRecordCtrl;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -611,8 +613,10 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             wxTheApp->GetTopWindow()->AddPendingEvent( event );
         }
 
-        m_SplitRecordings = Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) );
-        m_MediaCtrl->SetRecordPath( Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Recordings" ), wxT( "Record" ) ) );
+        if( m_MediaRecordCtrl )
+        {
+            m_MediaRecordCtrl->UpdatedConfig();
+        }
     }
 }
 
@@ -1092,10 +1096,10 @@ void guPlayerPanel::UpdateStatus()
 
         // When tags are received while buffering the rename gets pending till the track start playing again
         // To avoid get the stream paused.
-        if( m_PendingRecordRename && ( m_BufferGaugeId == wxNOT_FOUND ) )
+        if( m_PendingNewRecordName && ( m_BufferGaugeId == wxNOT_FOUND ) )
         {
-            m_PendingRecordRename = false;
-            SetRecordFileName();
+            m_PendingNewRecordName = false;
+            m_MediaRecordCtrl->SplitTrack();
         }
     }
 
@@ -1253,7 +1257,13 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     {
         m_RecordButton->SetValue( ( Song->m_Type == guTRACK_TYPE_RADIOSTATION ) );
         if( !m_RecordButton->GetValue() )
-            DisableRecording();
+        {
+            m_MediaRecordCtrl->Stop();
+        }
+        else
+        {
+            m_MediaRecordCtrl->SetTrack( * Song );
+        }
     }
 
     // Set the Current Song
@@ -1547,17 +1557,6 @@ void guPlayerPanel::OnMediaError( wxMediaEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::SaveRecordingTags( const wxString &filename, const guTrack &track )
-{
-}
-
-// -------------------------------------------------------------------------------- //
-void  guPlayerPanel::DisableRecording( void )
-{
-    m_MediaCtrl->DisableRecord();
-}
-
-// -------------------------------------------------------------------------------- //
 void ExtractMetaData( wxString &title, wxString &artist, wxString &trackname )
 {
     int FindPos;
@@ -1591,43 +1590,17 @@ void ExtractMetaData( wxString &title, wxString &artist, wxString &trackname )
 
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetRecordFileName( void )
+void guPlayerPanel::SendRecordSplitEvent( void )
 {
     // If its buffering
     if( m_BufferGaugeId != wxNOT_FOUND )
     {
-        m_PendingRecordRename = true;
+        m_PendingNewRecordName = true;
         guLogMessage( wxT( "Player is buffering. Will rename recording once its finished" ) );
         return;
     }
 
-    wxString RecordPath;
-    if( m_MediaSong.m_AlbumName.IsEmpty() )
-    {
-        wxURI Uri( m_MediaSong.m_FileName );
-        RecordPath = Uri.GetServer();
-    }
-    else
-    {
-        RecordPath = m_MediaSong.m_AlbumName;
-    }
-    RecordPath = NormalizeField( RecordPath );
-    if( RecordPath.StartsWith( wxT( "." ) ) )
-        RecordPath = RecordPath.Mid( 1 );
-    RecordPath = RecordPath.Trim().Trim( false );
-
-    wxString RecordFileName;
-    if( !m_MediaSong.m_ArtistName.IsEmpty() )
-    {
-        RecordFileName = NormalizeField( m_MediaSong.m_ArtistName + wxT( " - " ) +
-                         m_MediaSong.m_SongName );
-    }
-    else
-    {
-        RecordFileName = NormalizeField( m_MediaSong.m_SongName );
-    }
-
-    m_MediaCtrl->SetRecordFileName( RecordPath + wxT( "/" ) + RecordFileName );
+    m_MediaRecordCtrl->SplitTrack();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1642,11 +1615,19 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
             {
                 m_MediaSong.m_AlbumName = wxString( RadioTag->m_Organization, wxConvUTF8 );
                 SetAlbumLabel( m_MediaSong.m_AlbumName );
+                if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
+                {
+                    m_MediaRecordCtrl->SetStation( m_MediaSong.m_AlbumName );
+                }
             }
 
             if( RadioTag->m_Genre )
             {
                 m_MediaSong.m_GenreName = wxString( RadioTag->m_Genre, wxConvUTF8 );
+                if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
+                {
+                    m_MediaRecordCtrl->SetGenre( m_MediaSong.m_GenreName );
+                }
             }
 
             //guLogMessage( wxT( "MediaTag:'%s'" ), TagStr->c_str() );
@@ -1661,10 +1642,12 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
                 SetTitleLabel( m_MediaSong.m_SongName );
                 SetArtistLabel( m_MediaSong.m_ArtistName );
 
-                // If its recording
-                if( m_RecordButton->GetValue() && m_SplitRecordings )
+                if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
                 {
-                    SetRecordFileName();
+                    m_MediaRecordCtrl->SetArtist( m_MediaSong.m_ArtistName );
+                    m_MediaRecordCtrl->SetTrackName( m_MediaSong.m_SongName );
+
+                    SendRecordSplitEvent();
                 }
 
                 //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
@@ -2025,8 +2008,8 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     //guLogMessage( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     wxMediaState State;
 
-    if( m_PendingRecordRename )
-        m_PendingRecordRename = false;
+    if( m_PendingNewRecordName )
+        m_PendingNewRecordName = false;
 
     // Get The Current Song From m_PlayListCtrl
     //guTrack * CurItem = m_PlayListCtrl->GetCurrent();
@@ -2102,25 +2085,14 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRecordButtonClick( wxCommandEvent& event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-
     bool IsEnabled = event.IsChecked();
-
     if( IsEnabled )
     {
-        wxString RecPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Recordings" ), wxT( "Record" ) );
-        int RecFormat = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "Record" ) );
-        int RecQuality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "Record" ) );
-        m_MediaCtrl->EnableRecord( RecPath, RecFormat, RecQuality );
-
-        if( !m_MediaSong.m_ArtistName.IsEmpty() )
-        {
-            SetRecordFileName();
-        }
+        m_MediaRecordCtrl->Start( &m_MediaSong );
     }
     else
     {
-        DisableRecording();
+        m_MediaRecordCtrl->Stop();
     }
 }
 

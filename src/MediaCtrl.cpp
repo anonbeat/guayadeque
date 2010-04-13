@@ -20,8 +20,12 @@
 // -------------------------------------------------------------------------------- //
 #include "MediaCtrl.h"
 
-#include "Utils.h"
+#include "Config.h"
+#include "FileRenamer.h" // NormalizeField
 #include "PlayerPanel.h"
+#include "Utils.h"
+
+#include <wx/uri.h>
 
 #if 1
 #define SHOW_RECORDING_STATES( c, ctrl )     //
@@ -761,7 +765,7 @@ guMediaCtrl::~guMediaCtrl()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const int quality )
+bool guMediaCtrl::EnableRecord( const wxString &recfile, const int format, const int quality )
 {
     GstElement * Encoder = NULL;
     GstElement * Muxer = NULL;
@@ -769,14 +773,11 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
     float OggQuality[] = { 0.9, 0.7, 0.5, 0.3, 0.1 };
     gint FlacQuality[] = { 9, 7, 5, 3, 1 };
 
-    SetRecordPath( path );
-
     //
     switch( format )
     {
         case guRECORD_FORMAT_MP3  :
         {
-            m_RecordExt = wxT( ".mp3" );
             Encoder = gst_element_factory_make( "lame", "rb_lame" );
             if( IsValidElement( Encoder ) )
             {
@@ -791,7 +792,6 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
 
         case guRECORD_FORMAT_OGG  :
         {
-            m_RecordExt = wxT( ".ogg" );
             Encoder = gst_element_factory_make( "vorbisenc", "rb_vorbis" );
             if( IsValidElement( Encoder ) )
             {
@@ -813,7 +813,6 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
 
         case guRECORD_FORMAT_FLAC :
         {
-            m_RecordExt = wxT( ".flac" );
             Encoder = gst_element_factory_make( "flacenc", "rb_flac" );
             if( IsValidElement( Encoder ) )
             {
@@ -839,16 +838,7 @@ bool guMediaCtrl::EnableRecord( const wxString &path, const int format, const in
             }
         }
 
-        m_RecordFileName = m_RecordPath + wxT( "record" ) + m_RecordExt;
-//        if( wxFileExists( RecordFile ) )
-//        {
-//            int Index = 1;
-//            do {
-//                RecordFile = m_RecordPath + wxString::Format( wxT( "record%i" ), Index++ ) + m_RecordExt;
-//            } while( wxFileExists( RecordFile ) );
-//        }
-
-        m_Recordbin = BuildRecordBin( m_RecordFileName, Encoder, Muxer );
+        m_Recordbin = BuildRecordBin( recfile, Encoder, Muxer );
 
         if( State == wxMEDIASTATE_PLAYING )
         {
@@ -919,9 +909,8 @@ bool guMediaCtrl::SetRecordFileName( const wxString &filename )
     if( !m_Recordbin || m_Buffering )
         return false;
 
-    m_RecordFileName = m_RecordPath + filename + m_RecordExt;
-    wxFileName::Mkdir( wxPathOnly( m_RecordFileName ), 0770, wxPATH_MKDIR_FULL );
-    guLogMessage( wxT( "The new Record File is '%s'" ), m_RecordFileName.c_str() );
+//    m_RecordFileName = m_RecordPath + filename + m_RecordExt;
+//    wxFileName::Mkdir( wxPathOnly( m_RecordFileName ), 0770, wxPATH_MKDIR_FULL );
 
     gst_pad_set_blocked( m_RecordPad, true );
 
@@ -930,7 +919,7 @@ bool guMediaCtrl::SetRecordFileName( const wxString &filename )
         guLogMessage( wxT( "Could not reset recordbin state changing location" ) );
     }
 
-    g_object_set( m_FileSink, "location", ( const char * ) m_RecordFileName.mb_str( wxConvFile ), NULL );
+    g_object_set( m_FileSink, "location", ( const char * ) filename.mb_str( wxConvFile ), NULL );
 
     //if( !set_state_and_wait( m_FileSink, PrevState, this ) )
     if( gst_element_set_state( m_Recordbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
@@ -946,16 +935,6 @@ bool guMediaCtrl::SetRecordFileName( const wxString &filename )
     gst_pad_set_blocked( m_RecordPad, false );
 
     return true;
-}
-
-// -------------------------------------------------------------------------------- //
-void guMediaCtrl::SetRecordPath( const wxString &path )
-{
-    m_RecordPath = path;
-    // Be sure the path exists
-    if( !m_RecordPath.EndsWith( wxT( "/" ) ) )
-        m_RecordPath.Append( wxT( "/" ) );
-    wxFileName::Mkdir( m_RecordPath, 0770, wxPATH_MKDIR_FULL );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1214,6 +1193,117 @@ bool guMediaCtrl::Init()
     delete [] argvGST;
 #endif
     return bInited;
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guMediaRecordCtrl
+// -------------------------------------------------------------------------------- //
+guMediaRecordCtrl::guMediaRecordCtrl( guPlayerPanel * playerpanel, guMediaCtrl * mediactrl )
+{
+    m_PlayerPanel = playerpanel;
+    m_MediaCtrl = mediactrl;
+    m_Recording = false;
+    m_FirstChange = false;
+
+    UpdatedConfig();
+}
+
+// -------------------------------------------------------------------------------- //
+guMediaRecordCtrl::~guMediaRecordCtrl()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaRecordCtrl::UpdatedConfig( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_MainPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/recordings" ), wxT( "Record" ) );
+    m_Format = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "Record" ) );
+    m_Quality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "Record" ) );
+    m_SplitTracks = Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) );
+
+    if( !m_MainPath.EndsWith( wxT( "/" ) ) )
+        m_MainPath += wxT( "/" );
+
+    switch( m_Format )
+    {
+        case guRECORD_FORMAT_MP3 :
+            m_Ext = wxT( ".mp3" );
+            break;
+        case guRECORD_FORMAT_OGG :
+            m_Ext = wxT( ".ogg" );
+            break;
+        case guRECORD_FORMAT_FLAC :
+            m_Ext = wxT( ".flac" );
+            break;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaRecordCtrl::Start( const guTrack * track )
+{
+    m_TrackInfo = * track;
+
+    m_TrackInfo.m_SongName = wxT( "Record" );
+    m_FileName = GetRecordFileName();
+
+    wxFileName::Mkdir( wxPathOnly( m_FileName ), 0770, wxPATH_MKDIR_FULL );
+
+    m_Recording = m_MediaCtrl->EnableRecord( m_FileName, m_Format, m_Quality );
+
+    return m_Recording;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaRecordCtrl::Stop( void )
+{
+    m_MediaCtrl->DisableRecord();
+    m_Recording = false;
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMediaRecordCtrl::GetRecordFileName( void )
+{
+    wxString FileName = m_MainPath;
+
+    if( !m_TrackInfo.m_AlbumName.IsEmpty() )
+    {
+        FileName += NormalizeField( m_TrackInfo.m_AlbumName );
+    }
+    else
+    {
+        wxURI Uri( m_TrackInfo.m_FileName );
+        FileName += NormalizeField( Uri.GetServer() + wxT( "-" ) + Uri.GetPath() );
+    }
+
+    FileName += wxT( "/" );
+    if( !m_TrackInfo.m_ArtistName.IsEmpty() )
+    {
+        FileName += NormalizeField( m_TrackInfo.m_ArtistName ) +
+                      wxT( " - " ) + NormalizeField( m_TrackInfo.m_SongName );
+    }
+    FileName += NormalizeField( m_TrackInfo.m_SongName ) + m_Ext;
+
+    guLogMessage( wxT( "The New Record Location is : '%s'" ), FileName.c_str() );
+    return FileName;
+}
+
+
+// -------------------------------------------------------------------------------- //
+void guMediaRecordCtrl::SplitTrack( bool newstation )
+{
+    if( m_SplitTracks || newstation || !m_FirstChange )
+    {
+        if( !newstation && !m_FirstChange )
+            m_FirstChange = true;
+
+        m_FileName = GetRecordFileName();
+        m_MediaCtrl->SetRecordFileName( m_FileName );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
