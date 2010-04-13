@@ -157,7 +157,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	m_LyricTitle->SetFont( CurrentFont );
 
     m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) ];
-	m_TitleSizer->Add( m_LyricTitle, 0, wxEXPAND|wxALL|m_LyricAlign, 5 );
+	m_TitleSizer->Add( m_LyricTitle, 0, wxALL|m_LyricAlign, 5 );
 
 	MainSizer->Add( m_TitleSizer, 0, wxEXPAND, 5 );
 
