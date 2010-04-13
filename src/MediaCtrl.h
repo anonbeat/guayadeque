@@ -263,6 +263,8 @@ class guMediaRecordCtrl
     guPlayerPanel * m_PlayerPanel;
     guMediaCtrl *   m_MediaCtrl;
     guTrack         m_TrackInfo;
+    guTrack         m_PrevTrack;
+    wxString        m_PrevFileName;
 
     wxString        m_MainPath;
     int             m_Format;
@@ -280,37 +282,21 @@ class guMediaRecordCtrl
     guMediaRecordCtrl( guPlayerPanel * playerpanel, guMediaCtrl * mediactrl );
     ~guMediaRecordCtrl();
 
-    void            SetTrack( const guTrack &track )
-    {
-        m_TrackInfo = track;
-        SplitTrack( true );
-    }
+    void            SetTrack( const guTrack &track );
+    void            SetTrackName( const wxString &artistname, const wxString &trackname );
 
-    void            SetTrackName( const wxString &trackname )
-    {
-        m_TrackInfo.m_SongName = trackname;
-        SplitTrack();
-    }
-
-    void            SetArtist( const wxString &artist ) { m_TrackInfo.m_ArtistName = artist; }
-    void            SetStation( const wxString &station )
-    {
-        m_TrackInfo.m_AlbumName = station;
-        SplitTrack( true );
-    }
+    void            SetStation( const wxString &station );
 
     void            SetGenre( const wxString &genre ) { m_TrackInfo.m_GenreName = genre; }
 
-    //void            SetRecordFileName( const wxString &filename ) { m_FileName = filename; }
-
-    bool            SaveTagInfo( void );
+    bool            SaveTagInfo( const wxString &filename, const guTrack * track );
 
     bool            IsRecording( void ) { return m_Recording; }
 
     bool            Start( const guTrack * track );
     bool            Stop( void );
 
-    void            SplitTrack( bool newstation = false );
+    void            SplitTrack( void );
 
     void UpdatedConfig( void );
 };
