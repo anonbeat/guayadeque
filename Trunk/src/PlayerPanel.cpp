@@ -1644,8 +1644,7 @@ void guPlayerPanel::OnMediaTags( wxMediaEvent &event )
 
                 if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
                 {
-                    m_MediaRecordCtrl->SetArtist( m_MediaSong.m_ArtistName );
-                    m_MediaRecordCtrl->SetTrackName( m_MediaSong.m_SongName );
+                    m_MediaRecordCtrl->SetTrackName( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
 
                     SendRecordSplitEvent();
                 }

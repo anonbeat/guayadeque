@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "FileRenamer.h" // NormalizeField
 #include "PlayerPanel.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 #include <wx/uri.h>
@@ -1247,7 +1248,9 @@ bool guMediaRecordCtrl::Start( const guTrack * track )
 {
     m_TrackInfo = * track;
 
-    m_TrackInfo.m_SongName = wxT( "Record" );
+    if( m_TrackInfo.m_SongName.IsEmpty() )
+        m_TrackInfo.m_SongName = wxT( "Record" );
+
     m_FileName = GetRecordFileName();
 
     wxFileName::Mkdir( wxPathOnly( m_FileName ), 0770, wxPATH_MKDIR_FULL );
@@ -1260,8 +1263,14 @@ bool guMediaRecordCtrl::Start( const guTrack * track )
 // -------------------------------------------------------------------------------- //
 bool guMediaRecordCtrl::Stop( void )
 {
-    m_MediaCtrl->DisableRecord();
-    m_Recording = false;
+    if( m_Recording )
+    {
+        m_MediaCtrl->DisableRecord();
+        m_Recording = false;
+
+        SaveTagInfo( m_PrevFileName, &m_PrevTrack );
+        m_PrevFileName = wxEmptyString;
+    }
     return true;
 }
 
@@ -1283,8 +1292,7 @@ wxString guMediaRecordCtrl::GetRecordFileName( void )
     FileName += wxT( "/" );
     if( !m_TrackInfo.m_ArtistName.IsEmpty() )
     {
-        FileName += NormalizeField( m_TrackInfo.m_ArtistName ) +
-                      wxT( " - " ) + NormalizeField( m_TrackInfo.m_SongName );
+        FileName += NormalizeField( m_TrackInfo.m_ArtistName ) + wxT( " - " );
     }
     FileName += NormalizeField( m_TrackInfo.m_SongName ) + m_Ext;
 
@@ -1292,17 +1300,72 @@ wxString guMediaRecordCtrl::GetRecordFileName( void )
     return FileName;
 }
 
+// -------------------------------------------------------------------------------- //
+void guMediaRecordCtrl::SplitTrack( void )
+{
+    m_FileName = GetRecordFileName();
+    m_MediaCtrl->SetRecordFileName( m_FileName );
+
+    SaveTagInfo( m_PrevFileName, &m_PrevTrack );
+
+    m_PrevFileName = m_FileName;
+    m_PrevTrack = m_TrackInfo;
+}
 
 // -------------------------------------------------------------------------------- //
-void guMediaRecordCtrl::SplitTrack( bool newstation )
+bool guMediaRecordCtrl::SaveTagInfo( const wxString &filename, const guTrack * Track )
 {
-    if( m_SplitTracks || newstation || !m_FirstChange )
-    {
-        if( !newstation && !m_FirstChange )
-            m_FirstChange = true;
+    guTagInfo * TagInfo;
 
-        m_FileName = GetRecordFileName();
-        m_MediaCtrl->SetRecordFileName( m_FileName );
+    if( !filename.IsEmpty() && wxFileExists( filename ) )
+    {
+        TagInfo = guGetTagInfoHandler( filename );
+
+        if( TagInfo )
+        {
+            TagInfo->m_AlbumName = Track->m_AlbumName;
+            TagInfo->m_ArtistName = Track->m_ArtistName;
+            TagInfo->m_GenreName = Track->m_GenreName;
+            TagInfo->m_TrackName = Track->m_SongName;
+
+            if( !TagInfo->Write() )
+            {
+                guLogError( wxT( "Could not set tags to the record track" ) );
+            }
+            else
+                return true;
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaRecordCtrl::SetTrack( const guTrack &track )
+{
+    m_TrackInfo = track;
+    SplitTrack();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaRecordCtrl::SetTrackName( const wxString &artistname, const wxString &trackname )
+{
+    // If its the first file Set it so the tags are saved
+    if( m_PrevFileName.IsEmpty() )
+    {
+        m_PrevFileName = m_FileName;
+        m_PrevTrack = m_TrackInfo;
+    }
+    m_TrackInfo.m_ArtistName = artistname;
+    m_TrackInfo.m_SongName = trackname;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaRecordCtrl::SetStation( const wxString &station )
+{
+    if( m_TrackInfo.m_AlbumName != station )
+    {
+        m_TrackInfo.m_AlbumName = station;
+        SplitTrack();
     }
 }
 

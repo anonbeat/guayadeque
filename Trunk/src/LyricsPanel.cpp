@@ -30,6 +30,7 @@
 
 #include <wx/clipbrd.h>
 #include <wx/html/htmprint.h>
+#include <wx/html/htmlpars.h>
 #include <wx/print.h>
 #include <wx/printdlg.h>
 #include <wx/settings.h>
@@ -633,7 +634,9 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
-        m_CurrentLyricText = * Content;
+        wxHtmlEntitiesParser EntitiesParser;
+
+        m_CurrentLyricText = EntitiesParser.Parse( * Content );
         m_CurrentLyricText.Trim().Trim( false );
 
         SetText( m_CurrentLyricText );
