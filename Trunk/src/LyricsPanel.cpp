@@ -316,7 +316,8 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
         // If have been edited and not saved
         if( m_LyricText->IsModified() )
         {
-            SaveLyrics();
+            if( m_CurrentLyricText.IsEmpty() )
+                SaveLyrics();
         }
 
         m_CurrentFileName = wxEmptyString;
@@ -636,14 +637,17 @@ void guLyricsPanel::OnDownloadedLyric( wxCommandEvent &event )
     {
         wxHtmlEntitiesParser EntitiesParser;
 
+        bool PreviousLyric = !m_CurrentLyricText.IsEmpty();
+
         m_CurrentLyricText = EntitiesParser.Parse( * Content );
         m_CurrentLyricText.Trim().Trim( false );
 
         SetText( m_CurrentLyricText );
 
-        SaveLyrics();
+        if( !PreviousLyric )
+            SaveLyrics();
 
-        if( m_WriteToFilesOnlySelected || m_WriteToDirOnlySelected )
+        if( ( m_WriteToDir || m_WriteToFiles ) && ( PreviousLyric || m_WriteToFilesOnlySelected || m_WriteToDirOnlySelected ) )
         {
             m_SaveButton->Enable( !m_CurrentLyricText.IsEmpty() && !m_CurrentFileName.IsEmpty() && guIsValidAudioFile( m_CurrentFileName ) );
         }
