@@ -94,7 +94,11 @@ class guCurrentTrack : public guTrack
         m_LastPlay = Src.m_LastPlay;
         m_AddedTime = Src.m_AddedTime;
         m_CoverId = Src.m_CoverId;
+        m_Disk = Src.m_Disk;
+        m_Comments = Src.m_Comments;
+        m_Composer = Src.m_Composer;
         m_PlayTime = 0;
+
         //CoverType = GU_SONGCOVER_NONE;
         if( m_Type == guTRACK_TYPE_RADIOSTATION )
         {
