@@ -132,13 +132,19 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     m_SelectStar = new wxBitmap( guImage( guIMAGE_INDEX_star_highlight_tiny ) );
 
 //    Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ) );
-    Connect( ID_PLAYER_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ) );
-    Connect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ) );
-    Connect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ) );
-    Connect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
-    Connect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ) );
-    Connect( ID_PLAYER_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchClicked ) );
+    Connect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnRemoveClicked ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSaveClicked ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchClicked ), NULL, this );
+
+    Connect( ID_PLAYER_PLAYLIST_SELECT_TITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectTrack ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectArtist ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectAlbum ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectYear ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectGenre ), NULL, this );
 
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Connect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
@@ -193,6 +199,12 @@ guPlayList::~guPlayList()
     Disconnect( ID_PLAYER_PLAYLIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditLabelsClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchClicked ) );
+
+    Disconnect( ID_PLAYER_PLAYLIST_SELECT_TITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectTrack ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectArtist ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectAlbum ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectYear ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectGenre ), NULL, this );
 
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchLinkClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
@@ -1135,6 +1147,31 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 
     Menu->AppendSeparator();
 
+    if( SelCount == 1 )
+    {
+        wxMenu *     SubMenu;
+        SubMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_TITLE, _( "Track" ), _( "Selects the current selected track in the library" ) );
+        SubMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_ARTIST, _( "Artist" ), _( "Selects the artist of the current song" ) );
+        SubMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_ALBUM, _( "Album" ), _( "Select the album of the current song" ) );
+        SubMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_YEAR, _( "Year" ), _( "Select the year of the current song" ) );
+        SubMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_GENRE, _( "Genre" ), _( "Select the genre of the current song" ) );
+        SubMenu->Append( MenuItem );
+
+        Menu->AppendSubMenu( SubMenu, _( "Select" ), _( "Search in the library" ) );
+
+        Menu->AppendSeparator();
+    }
+
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     Menu->Append( MenuItem );
@@ -1400,6 +1437,98 @@ void guPlayList::OnSearchClicked( wxCommandEvent &event )
         SetSelection( LastItemFound );
     }
     EntryDialog->Destroy();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSelectTrack( wxCommandEvent &event )
+{
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    if( SelectedItems.Count() )
+    {
+        int SelItem = SelectedItems[ 0 ];
+        int SelType = m_Items[ SelItem ].m_Type;
+        if( ( SelType == guTRACK_TYPE_DB ) ||
+            ( SelType == guTRACK_TYPE_PODCAST ) )
+        {
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
+            evt.SetInt( m_Items[ SelItem ].m_SongId );
+            evt.SetExtraLong( SelType );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSelectArtist( wxCommandEvent &event )
+{
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    if( SelectedItems.Count() )
+    {
+        int SelItem = SelectedItems[ 0 ];
+        int SelType = m_Items[ SelItem ].m_Type;
+        if( ( SelType == guTRACK_TYPE_DB ) )
+        {
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+            evt.SetInt( m_Items[ SelItem ].m_ArtistId );
+            evt.SetExtraLong( SelType );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSelectAlbum( wxCommandEvent &event )
+{
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    if( SelectedItems.Count() )
+    {
+        int SelItem = SelectedItems[ 0 ];
+        int SelType = m_Items[ SelItem ].m_Type;
+        if( ( SelType == guTRACK_TYPE_DB ) ||
+            ( SelType == guTRACK_TYPE_PODCAST ) )
+        {
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+            evt.SetInt( m_Items[ SelItem ].m_AlbumId );
+            evt.SetExtraLong( SelType );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSelectYear( wxCommandEvent &event )
+{
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    if( SelectedItems.Count() )
+    {
+        int SelItem = SelectedItems[ 0 ];
+        int SelYear = m_Items[ SelItem ].m_Year;
+        if( SelYear )
+        {
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_YEAR );
+            evt.SetInt( SelYear );
+            //evt.SetExtraLong( SelType );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSelectGenre( wxCommandEvent &event )
+{
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    if( SelectedItems.Count() )
+    {
+        int SelItem = SelectedItems[ 0 ];
+        int SelType = m_Items[ SelItem ].m_Type;
+        if( ( SelType == guTRACK_TYPE_DB ) )
+        {
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_GENRE );
+            evt.SetInt( m_Items[ SelItem ].m_GenreId );
+            //evt.SetExtraLong( SelType );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

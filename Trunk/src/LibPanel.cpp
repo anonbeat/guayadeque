@@ -466,6 +466,7 @@ guLibPanel::~guLibPanel()
 // -------------------------------------------------------------------------------- //
 void guLibPanel::ReloadControls( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "ReloadControls..." ) );
     m_Db->LoadCache();
     m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems( false );
@@ -517,7 +518,7 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
 void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
     wxArrayString Words;
-    //guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
+    guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
     m_InputTextCtrl->Clear();
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, m_UpdateLock );
@@ -543,6 +544,8 @@ void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnGenreListSelected( wxListEvent &event )
 {
+    if( m_UpdateLock )
+        return;
     m_SelChangedObject = guPANEL_LIBRARY_GENRES;
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
@@ -620,6 +623,8 @@ void guLibPanel::OnGenreCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnLabelListSelected( wxListEvent &event )
 {
+    if( m_UpdateLock )
+        return;
     m_SelChangedObject = guPANEL_LIBRARY_LABELS;
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
@@ -710,6 +715,8 @@ void guLibPanel::UpdateLabels( void )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnArtistListSelected( wxListEvent &event )
 {
+    if( m_UpdateLock )
+        return;
     m_SelChangedObject = guPANEL_LIBRARY_ARTISTS;
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
@@ -836,6 +843,8 @@ void guLibPanel::OnArtistCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumListSelected( wxListEvent &event )
 {
+    if( m_UpdateLock )
+        return;
     m_SelChangedObject = guPANEL_LIBRARY_ALBUMS;
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
@@ -1364,8 +1373,9 @@ void guLibPanel::SelectTrack( const int trackid )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
-    m_UpdateLock = false;
     m_AlbumListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_SongListCtrl->ReloadItems();
     m_SongListCtrl->SetSelection( m_SongListCtrl->FindItem( trackid ) );
 }
 
@@ -1479,6 +1489,8 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnYearListSelected( wxListEvent &event )
 {
+    if( m_UpdateLock )
+        return;
     m_SelChangedObject = guPANEL_LIBRARY_YEARS;
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
@@ -1572,6 +1584,8 @@ void guLibPanel::OnYearListCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnRatingListSelected( wxListEvent &event )
 {
+    if( m_UpdateLock )
+        return;
     m_SelChangedObject = guPANEL_LIBRARY_RATINGS;
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
@@ -1665,6 +1679,8 @@ void guLibPanel::OnRatingListCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnPlayCountListSelected( wxListEvent &event )
 {
+    if( m_UpdateLock )
+        return;
     m_SelChangedObject = guPANEL_LIBRARY_PLAYCOUNT;
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
