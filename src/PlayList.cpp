@@ -1147,6 +1147,12 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 
     Menu->AppendSeparator();
 
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+    Menu->Append( MenuItem );
+
+    Menu->AppendSeparator();
+
     if( SelCount == 1 )
     {
         wxMenu *     SubMenu;
@@ -1171,12 +1177,6 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSeparator();
     }
-
-    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-    Menu->Append( MenuItem );
-
-    Menu->AppendSeparator();
 
     if( SelCount == 1 && ( m_Items[ SelectedItems[ 0 ] ].m_Type < guTRACK_TYPE_RADIOSTATION ) )
     {
