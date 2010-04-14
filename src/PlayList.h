@@ -88,6 +88,12 @@ class guPlayList : public guListView
     void                        OnCommandClicked( wxCommandEvent &event );
     wxString                    GetSearchText( int item ) const;
 
+    void                        OnSelectTrack( wxCommandEvent &event );
+    void                        OnSelectArtist( wxCommandEvent &event );
+    void                        OnSelectAlbum( wxCommandEvent &event );
+    void                        OnSelectYear( wxCommandEvent &event );
+    void                        OnSelectGenre( wxCommandEvent &event );
+
   protected:
     virtual void                OnKeyDown( wxKeyEvent &event );
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;

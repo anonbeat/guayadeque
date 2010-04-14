@@ -414,6 +414,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 	Connect( ID_MAINFRAME_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbum ), NULL, this );
 	Connect( ID_MAINFRAME_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtist ), NULL, this );
 	Connect( ID_MAINFRAME_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectYear ), NULL, this );
+	Connect( ID_MAINFRAME_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectGenre ), NULL, this );
 
 	Connect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
 	Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
@@ -522,6 +523,7 @@ guMainFrame::~guMainFrame()
 	Disconnect( ID_MAINFRAME_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbum ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtist ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectYear ), NULL, this );
+	Disconnect( ID_MAINFRAME_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectGenre ), NULL, this );
 
 	Disconnect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
 	Disconnect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
@@ -1918,6 +1920,22 @@ void guMainFrame::OnSelectYear( wxCommandEvent &event )
             m_CatNotebook->SetSelection( PaneIndex );
         }
         m_LibPanel->SelectYear( event.GetInt() );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnSelectGenre( wxCommandEvent &event )
+{
+    if( m_LibPanel )
+    {
+        int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+        if( PaneIndex != wxNOT_FOUND )
+        {
+            m_CatNotebook->SetSelection( PaneIndex );
+        }
+        wxArrayInt Genres;
+        Genres.Add( event.GetInt() );
+        m_LibPanel->SelectGenres( &Genres );
     }
 }
 
