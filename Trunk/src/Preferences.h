@@ -104,6 +104,8 @@ class guPrefDialog : public wxDialog
     wxChoice *                  m_RecFormatChoice;
     wxChoice *                  m_RecQualityChoice;
     wxCheckBox *                m_RecSplitChkBox;
+    wxCheckBox *                m_RecDelTracks;
+    wxSpinCtrl *                m_RecDelTime;
 
     wxPanel *                   m_LastFMPanel;
     wxCheckBox *                m_ASEnableChkBox;
@@ -201,6 +203,7 @@ class guPrefDialog : public wxDialog
     void OnPlayLevelEnabled( wxCommandEvent& event );
     void OnPlayEndTimeEnabled( wxCommandEvent& event );
     void OnRecEnableClicked( wxCommandEvent& event );
+    void OnRecDelTracksClicked( wxCommandEvent& event );
 	void OnFiltersListBoxSelected( wxCommandEvent &event );
 	void OnASUserNameChanged( wxCommandEvent &event );
     void OnOnlineAddBtnClick( wxCommandEvent& event );

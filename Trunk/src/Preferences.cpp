@@ -510,6 +510,25 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_RecSplitChkBox->Enable( m_RecordChkBox->IsChecked() );
 	RecordSizer->Add( m_RecSplitChkBox, 0, wxALL, 5 );
 
+	wxBoxSizer* RecDelSizer;
+	RecDelSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_RecDelTracks = new wxCheckBox( m_RecordPanel, wxID_ANY, _("Delete Tracks shorter than"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_RecDelTracks->SetValue( m_Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "Record" ) ) );
+
+	RecDelSizer->Add( m_RecDelTracks, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_RecDelTime = new wxSpinCtrl( m_RecordPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 999,
+                                    m_Config->ReadNum( wxT( "DeleteTime" ), 50, wxT( "Record" ) ) );
+	m_RecDelTime->Enable( m_RecDelTracks->IsChecked() );
+	RecDelSizer->Add( m_RecDelTime, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * RecDelSecLabel = new wxStaticText( m_RecordPanel, wxID_ANY, _("seconds"), wxDefaultPosition, wxDefaultSize, 0 );
+	RecDelSecLabel->Wrap( -1 );
+	RecDelSizer->Add( RecDelSecLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	RecordSizer->Add( RecDelSizer, 0, wxEXPAND, 5 );
+
 	RecMainSizer->Add( RecordSizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_RecordPanel->SetSizer( RecMainSizer );
@@ -1077,6 +1096,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 
 	m_RecordChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
+	m_RecDelTracks->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
 
 	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
 	m_AddCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
@@ -1143,6 +1163,7 @@ guPrefDialog::~guPrefDialog()
 	m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 
 	m_RecordChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
+	m_RecDelTracks->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
 
 	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
 	m_AddCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
@@ -1247,6 +1268,8 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteNum( wxT( "Format" ), m_RecFormatChoice->GetSelection(), wxT( "Record" ) );
     m_Config->WriteNum( wxT( "Quality" ), m_RecQualityChoice->GetSelection(), wxT( "Record" ) );
     m_Config->WriteBool( wxT( "Split" ), m_RecSplitChkBox->GetValue(), wxT( "Record" ) );
+    m_Config->WriteBool( wxT( "DeleteTracks" ), m_RecDelTracks->GetValue(), wxT( "Record" ) );
+    m_Config->WriteNum( wxT( "DeleteTime" ), m_RecDelTime->GetValue(), wxT( "Record" ) );
 
     m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "Podcasts" ) );
     m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "Podcasts" ) );
@@ -1533,6 +1556,12 @@ void guPrefDialog::OnRecEnableClicked( wxCommandEvent& event )
 	m_RecFormatChoice->Enable( event.IsChecked() );
 	m_RecQualityChoice->Enable( event.IsChecked() );
 	m_RecSplitChkBox->Enable( event.IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnRecDelTracksClicked( wxCommandEvent& event )
+{
+	m_RecDelTime->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //
