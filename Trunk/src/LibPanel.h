@@ -76,6 +76,7 @@ class guLibPanel : public wxPanel
     bool                m_UpdateLock;
     guPlayerPanel *     m_PlayerPanel;
     wxTimer             m_SelChangedTimer;
+    wxTimer             m_TextChangedTimer;
     int                 m_SelChangedObject;
 
     // Search Str events
@@ -162,6 +163,7 @@ class guLibPanel : public wxPanel
 
     //
     void OnSelChangedTimer( wxTimerEvent &event );
+    void OnTextChangedTimer( wxTimerEvent &event );
     void DoSelectionChanged( void );
 
   public :
