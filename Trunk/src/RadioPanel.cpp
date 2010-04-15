@@ -38,6 +38,9 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
+#define guRADIO_TIMER_TEXTSEARCH        1
+#define guRADIO_TIMER_TEXTSEARCH_VALUE  500
+
 // -------------------------------------------------------------------------------- //
 // guRadioGenreTreeCtrl
 // -------------------------------------------------------------------------------- //
@@ -687,7 +690,8 @@ void guRadioLabelListBox::EditLabel( wxCommandEvent &event )
 
 // -------------------------------------------------------------------------------- //
 guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel ) :
-              wxPanel( parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
+              wxPanel( parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ),
+              m_TextChangedTimer( this, guRADIO_TIMER_TEXTSEARCH )
 {
     m_Db = NewDb;
     m_PlayerPanel = NewPlayerPanel;
@@ -821,6 +825,8 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
     }
 
 
+	Connect( guRADIO_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnTextChangedTimer ), NULL, this );
+
     Connect( wxEVT_COMMAND_TREE_SEL_CHANGED,  wxTreeEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
 
     m_GenresTreeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guRadioPanel::OnRadioGenreListActivated ), NULL, this );
@@ -843,8 +849,9 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 	m_StationsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
     Connect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
     Connect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
@@ -882,8 +889,9 @@ guRadioPanel::~guRadioPanel()
 	m_StationsListBox->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
     Disconnect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
-    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
-    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
     Disconnect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
@@ -897,24 +905,55 @@ guRadioPanel::~guRadioPanel()
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnSearchActivated( wxCommandEvent& event )
 {
-    wxArrayString Words = guSplitWords( m_InputTextCtrl->GetLineText( 0 ) );
-    m_Db->SetRaTeFilters( Words );
-    m_LabelsListBox->ReloadItems();
-    m_GenresTreeCtrl->ReloadItems();
-    m_StationsListBox->ReloadItems();
-    m_InputTextCtrl->ShowCancelButton( true );
+    if( m_TextChangedTimer.IsRunning() )
+        m_TextChangedTimer.Stop();
+    m_TextChangedTimer.Start( guRADIO_TIMER_TEXTSEARCH_VALUE, wxTIMER_ONE_SHOT );
+//    wxArrayString Words = guSplitWords( m_InputTextCtrl->GetLineText( 0 ) );
+//    m_Db->SetRaTeFilters( Words );
+//    m_LabelsListBox->ReloadItems();
+//    m_GenresTreeCtrl->ReloadItems();
+//    m_StationsListBox->ReloadItems();
+//    m_InputTextCtrl->ShowCancelButton( true );
 }
 
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
-    wxArrayString Words;
+//    wxArrayString Words;
     m_InputTextCtrl->Clear();
-    m_Db->SetRaTeFilters( Words );
-    m_LabelsListBox->ReloadItems();
-    m_GenresTreeCtrl->ReloadItems();
-    m_StationsListBox->ReloadItems();
-    m_InputTextCtrl->ShowCancelButton( false );
+//    m_Db->SetRaTeFilters( Words );
+//    m_LabelsListBox->ReloadItems();
+//    m_GenresTreeCtrl->ReloadItems();
+//    m_StationsListBox->ReloadItems();
+//    m_InputTextCtrl->ShowCancelButton( false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnTextChangedTimer( wxTimerEvent &event )
+{
+    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
+    guLogMessage( wxT( "Should do the search now: '%s'" ), SearchString.c_str() );
+    if( !SearchString.IsEmpty() )
+    {
+        if( SearchString.Length() > 1 )
+        {
+            wxArrayString Words = guSplitWords( SearchString );
+            m_Db->SetRaTeFilters( Words );
+            m_LabelsListBox->ReloadItems();
+            m_GenresTreeCtrl->ReloadItems();
+            m_StationsListBox->ReloadItems();
+        }
+        m_InputTextCtrl->ShowCancelButton( true );
+    }
+    else
+    {
+        wxArrayString Words;
+        m_Db->SetRaTeFilters( Words );
+        m_LabelsListBox->ReloadItems();
+        m_GenresTreeCtrl->ReloadItems();
+        m_StationsListBox->ReloadItems();
+        m_InputTextCtrl->ShowCancelButton( false );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

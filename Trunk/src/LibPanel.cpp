@@ -1912,7 +1912,7 @@ void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
     wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
     if( !SearchString.IsEmpty() )
     {
-        if( SearchString.Length() > 2 )
+        if( SearchString.Length() > 1 )
         {
             wxArrayString Words = guSplitWords( SearchString );
 
