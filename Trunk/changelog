@@ -1,4 +1,6 @@
 
+  * You can enable to delete the recordings not bigger than a certain amount
+    of time in preferences
   * Added a button to record from streams. Need to enable it from Preferences
   * If no lyric is found after showing the error that was not found restore
     the previous lyric text

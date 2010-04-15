@@ -1225,6 +1225,8 @@ void guMediaRecordCtrl::UpdatedConfig( void )
     m_Format = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "Record" ) );
     m_Quality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "Record" ) );
     m_SplitTracks = Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) );
+    m_DeleteTracks = Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "Record" ) );
+    m_DeleteTime = Config->ReadNum( wxT( "DeleteTime" ), 55, wxT( "Record" ) );
 
     if( !m_MainPath.EndsWith( wxT( "/" ) ) )
         m_MainPath += wxT( "/" );
@@ -1315,6 +1317,7 @@ void guMediaRecordCtrl::SplitTrack( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaRecordCtrl::SaveTagInfo( const wxString &filename, const guTrack * Track )
 {
+    bool RetVal = true;
     guTagInfo * TagInfo;
 
     if( !filename.IsEmpty() && wxFileExists( filename ) )
@@ -1323,20 +1326,31 @@ bool guMediaRecordCtrl::SaveTagInfo( const wxString &filename, const guTrack * T
 
         if( TagInfo )
         {
+            if( m_DeleteTracks )
+            {
+                TagInfo->Read();
+                if( TagInfo->m_Length < m_DeleteTime )
+                {
+                    wxRemoveFile( filename );
+                    delete TagInfo;
+                    return true;
+                }
+            }
+
             TagInfo->m_AlbumName = Track->m_AlbumName;
             TagInfo->m_ArtistName = Track->m_ArtistName;
             TagInfo->m_GenreName = Track->m_GenreName;
             TagInfo->m_TrackName = Track->m_SongName;
 
-            if( !TagInfo->Write() )
+            if( !( RetVal = TagInfo->Write() ) )
             {
                 guLogError( wxT( "Could not set tags to the record track" ) );
             }
-            else
-                return true;
+
+            delete TagInfo;
         }
     }
-    return false;
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //

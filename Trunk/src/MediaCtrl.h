@@ -269,8 +269,11 @@ class guMediaRecordCtrl
     wxString        m_MainPath;
     int             m_Format;
     int             m_Quality;
+    bool            m_DeleteTracks;
+    int             m_DeleteTime;
     wxString        m_Ext;
     wxString        m_FileName;
+
 
     bool            m_Recording;
     bool            m_SplitTracks;
