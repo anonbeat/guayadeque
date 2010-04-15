@@ -193,7 +193,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	GenMainSizer->Add( BehaviSizer, 0, wxEXPAND|wxALL, 5 );
 
-	OnCloseSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, wxT(" On Close ") ), wxVERTICAL );
+	OnCloseSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" On Close ") ), wxVERTICAL );
 
 	m_SavePlayListChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Save playlist on close"), wxDefaultPosition, wxDefaultSize, 0 );
     m_SavePlayListChkBox->SetValue( m_Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) );
