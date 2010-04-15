@@ -67,6 +67,7 @@ class guRadioPanel : public wxPanel
 	guDbLibrary *       m_Db;
 	guPlayerPanel *     m_PlayerPanel;
 
+    wxTimer             m_TextChangedTimer;
     unsigned int        m_VisiblePanels;
 
     void OnRadioUpdateEnd( wxCommandEvent &event );
@@ -92,6 +93,8 @@ class guRadioPanel : public wxPanel
 	void OnRadioUserImport( wxCommandEvent &event );
 
     void OnPaneClose( wxAuiManagerEvent &event );
+
+    void OnTextChangedTimer( wxTimerEvent &event );
 
   protected:
     wxSearchCtrl *          m_InputTextCtrl;
