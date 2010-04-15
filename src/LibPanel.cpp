@@ -37,11 +37,19 @@
 #include <wx/uri.h>
 
 #define     LISTCTRL_BORDER 1
+
+#define     guPANEL_TIMER_SELECTION         1
+#define     guPANEL_TIMER_TEXTSEARCH        2
+
 #define     guPANEL_TIMER_SELCHANGED        50
+#define     guPANEL_TIMER_TEXTCHANGED       500
+
 
 // -------------------------------------------------------------------------------- //
-guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel )
-       : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL )
+guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel ) :
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL ),
+    m_SelChangedTimer( this, guPANEL_TIMER_SELECTION ),
+    m_TextChangedTimer( this, guPANEL_TIMER_TEXTSEARCH )
 {
     wxPanel *           SearchPanel;
     wxPanel *           GenrePanel;
@@ -60,7 +68,6 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 
     m_Db = NewDb;
     m_PlayerPanel = NewPlayerPanel;
-    m_SelChangedTimer.SetOwner( this );
 
     m_AuiManager.SetManagedWindow( this );
     m_AuiManager.SetArtProvider( new guAuiDockArt() );
@@ -278,7 +285,8 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_UpdateLock = false;
 
 
-	Connect( wxEVT_TIMER, wxTimerEventHandler( guLibPanel::OnSelChangedTimer ), NULL, this );
+	Connect( guPANEL_TIMER_SELECTION, wxEVT_TIMER, wxTimerEventHandler( guLibPanel::OnSelChangedTimer ), NULL, this );
+	Connect( guPANEL_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guLibPanel::OnTextChangedTimer ), NULL, this );
     //
     m_GenreListCtrl->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnGenreListSelected ), NULL, this );
     //m_GenreListCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED,  wxListEventHandler( guLibPanel::OnGenreListSelected ), NULL, this );
@@ -307,8 +315,9 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_SongListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
     m_SongListCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guLibPanel::OnSearchCancelled ), NULL, this );
 
     Connect( ID_GENRE_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenrePlayClicked ), NULL, this );
@@ -402,8 +411,9 @@ guLibPanel::~guLibPanel()
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
-    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
-    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guLibPanel::OnSearchCancelled ), NULL, this );
 
     Disconnect( ID_GENRE_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenrePlayClicked ) );
@@ -487,54 +497,55 @@ void guLibPanel::ReloadControls( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSearchActivated( wxCommandEvent& event )
 {
-    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
-    if( !SearchString.IsEmpty() )
-    {
-        wxArrayString Words = guSplitWords( SearchString );
-
-        m_Db->SetTeFilters( Words, m_UpdateLock );
-        if( !m_UpdateLock )
-        {
-            m_UpdateLock = true;
-            m_LabelsListCtrl->ReloadItems();
-            m_GenreListCtrl->ReloadItems();
-            m_ArtistListCtrl->ReloadItems();
-            m_AlbumListCtrl->ReloadItems();
-            m_YearListCtrl->ReloadItems();
-            m_RatingListCtrl->ReloadItems();
-            m_PlayCountListCtrl->ReloadItems( false );
-            m_SongListCtrl->ReloadItems();
-            m_UpdateLock = false;
-        }
-        m_InputTextCtrl->ShowCancelButton( true );
-    }
-    else
-    {
-        OnSearchCancelled( event );
-    }
+    if( m_TextChangedTimer.IsRunning() )
+        m_TextChangedTimer.Stop();
+    m_TextChangedTimer.Start( guPANEL_TIMER_TEXTCHANGED, wxTIMER_ONE_SHOT );
+//    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
+//        wxArrayString Words = guSplitWords( SearchString );
+//
+//        m_Db->SetTeFilters( Words, m_UpdateLock );
+//        if( !m_UpdateLock )
+//        {
+//            m_UpdateLock = true;
+//            m_LabelsListCtrl->ReloadItems();
+//            m_GenreListCtrl->ReloadItems();
+//            m_ArtistListCtrl->ReloadItems();
+//            m_AlbumListCtrl->ReloadItems();
+//            m_YearListCtrl->ReloadItems();
+//            m_RatingListCtrl->ReloadItems();
+//            m_PlayCountListCtrl->ReloadItems( false );
+//            m_SongListCtrl->ReloadItems();
+//            m_UpdateLock = false;
+//        }
+//        m_InputTextCtrl->ShowCancelButton( true );
+//    }
+//    else
+//    {
+//        OnSearchCancelled( event );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
-    wxArrayString Words;
-    guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
+//    wxArrayString Words;
+//    guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
     m_InputTextCtrl->Clear();
-    m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
-//    if( !m_UpdateLock )
-//    {
-        m_LabelsListCtrl->ReloadItems( false );
-        m_GenreListCtrl->ReloadItems( false );
-        m_ArtistListCtrl->ReloadItems( false );
-        m_AlbumListCtrl->ReloadItems( false );
-        m_YearListCtrl->ReloadItems( false );
-        m_RatingListCtrl->ReloadItems( false );
-        m_PlayCountListCtrl->ReloadItems( false );
-        m_SongListCtrl->ReloadItems( false );
-        m_UpdateLock = false;
-//    }
-    m_InputTextCtrl->ShowCancelButton( false );
+//    m_UpdateLock = true;
+//    m_Db->SetTeFilters( Words, m_UpdateLock );
+////    if( !m_UpdateLock )
+////    {
+//        m_LabelsListCtrl->ReloadItems( false );
+//        m_GenreListCtrl->ReloadItems( false );
+//        m_ArtistListCtrl->ReloadItems( false );
+//        m_AlbumListCtrl->ReloadItems( false );
+//        m_YearListCtrl->ReloadItems( false );
+//        m_RatingListCtrl->ReloadItems( false );
+//        m_PlayCountListCtrl->ReloadItems( false );
+//        m_SongListCtrl->ReloadItems( false );
+//        m_UpdateLock = false;
+////    }
+//    m_InputTextCtrl->ShowCancelButton( false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1893,6 +1904,56 @@ void guLibPanel::OnSelChangedTimer( wxTimerEvent &event )
 {
     DoSelectionChanged();
     m_SelChangedObject = 0;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
+{
+    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
+    if( !SearchString.IsEmpty() )
+    {
+        if( SearchString.Length() > 2 )
+        {
+            wxArrayString Words = guSplitWords( SearchString );
+
+            m_Db->SetTeFilters( Words, m_UpdateLock );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_LabelsListCtrl->ReloadItems();
+                m_GenreListCtrl->ReloadItems();
+                m_ArtistListCtrl->ReloadItems();
+                m_AlbumListCtrl->ReloadItems();
+                m_YearListCtrl->ReloadItems();
+                m_RatingListCtrl->ReloadItems();
+                m_PlayCountListCtrl->ReloadItems( false );
+                m_SongListCtrl->ReloadItems();
+                m_UpdateLock = false;
+            }
+            m_InputTextCtrl->ShowCancelButton( true );
+        }
+    }
+    else
+    {
+        wxArrayString Words;
+        //guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
+        //m_InputTextCtrl->Clear();
+        m_UpdateLock = true;
+        m_Db->SetTeFilters( Words, m_UpdateLock );
+    //    if( !m_UpdateLock )
+    //    {
+            m_LabelsListCtrl->ReloadItems( false );
+            m_GenreListCtrl->ReloadItems( false );
+            m_ArtistListCtrl->ReloadItems( false );
+            m_AlbumListCtrl->ReloadItems( false );
+            m_YearListCtrl->ReloadItems( false );
+            m_RatingListCtrl->ReloadItems( false );
+            m_PlayCountListCtrl->ReloadItems( false );
+            m_SongListCtrl->ReloadItems( false );
+            m_UpdateLock = false;
+    //    }
+        m_InputTextCtrl->ShowCancelButton( false );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
