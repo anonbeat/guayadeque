@@ -91,6 +91,8 @@
 		<Unit filename="src/Base64.h" />
 		<Unit filename="src/ChannelEditor.cpp" />
 		<Unit filename="src/ChannelEditor.h" />
+		<Unit filename="src/CoListBox.cpp" />
+		<Unit filename="src/CoListBox.h" />
 		<Unit filename="src/Commands.h" />
 		<Unit filename="src/Config.cpp" />
 		<Unit filename="src/Config.h" />

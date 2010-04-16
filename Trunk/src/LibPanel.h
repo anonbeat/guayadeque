@@ -23,6 +23,7 @@
 
 #include "AlListBox.h"
 #include "ArListBox.h"
+#include "CoListBox.h"
 #include "DbLibrary.h"
 #include "GeListBox.h"
 #include "PcListBox.h"
@@ -49,6 +50,7 @@
 #define     guPANEL_LIBRARY_YEARS           ( 1 << 6 )
 #define     guPANEL_LIBRARY_RATINGS         ( 1 << 7 )
 #define     guPANEL_LIBRARY_PLAYCOUNT       ( 1 << 8 )
+#define     guPANEL_LIBRARY_COMPOSERS       ( 1 << 9 )
 
 #define     guPANEL_LIBRARY_VISIBLE_DEFAULT ( guPANEL_LIBRARY_TEXTSEARCH | guPANEL_LIBRARY_LABELS |\
                                               guPANEL_LIBRARY_GENRES | guPANEL_LIBRARY_ARTISTS |\
@@ -70,6 +72,7 @@ class guLibPanel : public wxPanel
     guYeListBox *       m_YearListCtrl;
     guRaListBox *       m_RatingListCtrl;
     guPcListBox *       m_PlayCountListCtrl;
+    guCoListBox *       m_ComposerListCtrl;
 
     //
     guDbLibrary *       m_Db;
@@ -142,6 +145,14 @@ class guLibPanel : public wxPanel
     void OnPlayCountListQueueClicked( wxCommandEvent &event );
     void OnPlayCountListEditTracksClicked( wxCommandEvent &event );
     void OnPlayCountListCopyToClicked( wxCommandEvent &event );
+
+    // PlayCountListBoxEvents
+    void OnComposerListSelected( wxListEvent &event );
+    void OnComposerListActivated( wxListEvent &event );
+    void OnComposerListPlayClicked( wxCommandEvent &event );
+    void OnComposerListQueueClicked( wxCommandEvent &event );
+    void OnComposerListEditTracksClicked( wxCommandEvent &event );
+    void OnComposerListCopyToClicked( wxCommandEvent &event );
 
     // SongsListBox Events
     void OnSongListActivated( wxListEvent &event );
