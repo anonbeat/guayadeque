@@ -49,13 +49,22 @@ enum guFILEITEM_TYPE {
     guFILEITEM_TYPE_FILE
 };
 
+#define     guFILEBROWSER_SHOWPATH_SYSTEM           ( 1 << 0 )
+#define     guFILEBROWSER_SHOWPATH_LIBRARY          ( 1 << 1 )
+#define     guFILEBROWSER_SHOWPATH_RECORDS          ( 1 << 2 )
+#define     guFILEBROWSER_SHOWPATH_PODCASTS         ( 1 << 3 )
+
+#define guDIR_IMAGE_INDEX_FOLDER        0
+#define guDIR_IMAGE_INDEX_LIBRARY       9
+#define guDIR_IMAGE_INDEX_PODCASTS      10
+#define guDIR_IMAGE_INDEX_RECORDS       11
+
 #define guFILEITEM_IMAGE_INDEX_FOLDER   0
 #define guFILEITEM_IMAGE_INDEX_OTHER    7
 #define guFILEITEM_IMAGE_INDEX_AUDIO    9
 #define guFILEITEM_IMAGE_INDEX_IMAGE    10
 
 
-//#define guFILEBROWSER_COLUMN_TYPE       0
 #define guFILEBROWSER_COLUMN_NAME       0
 #define guFILEBROWSER_COLUMN_SIZE       1
 #define guFILEBROWSER_COLUMN_TIME       2
@@ -79,14 +88,14 @@ class guGenericDirCtrl : public wxGenericDirCtrl
   protected :
     guFileBrowserDirCtrl *  m_FileBrowserDirCtrl;
     wxString                m_RenameName;
-    bool                    m_ShowLibPaths;
+    int                     m_ShowPaths;
 
     void            OnBeginRenameDir( wxTreeEvent &event );
     void            OnEndRenameDir( wxTreeEvent &event );
 
   public :
     guGenericDirCtrl() : wxGenericDirCtrl() { m_FileBrowserDirCtrl = NULL; };
-    guGenericDirCtrl( wxWindow * parent, const bool showlibpath  );
+    guGenericDirCtrl( wxWindow * parent, const int showpaths  );
     ~guGenericDirCtrl();
 
     void            OnConfigUpdated( wxCommandEvent &event );
@@ -95,7 +104,7 @@ class guGenericDirCtrl : public wxGenericDirCtrl
 
     void            FolderRename( void );
 
-    void            SetShowLibPaths( bool showlibpaths ) { m_ShowLibPaths = showlibpaths; }
+    void            SetShowLibPaths( int showlibpaths ) { m_ShowPaths = showlibpaths; }
 
     DECLARE_EVENT_TABLE()
 };
@@ -107,6 +116,8 @@ class guFileBrowserDirCtrl : public wxPanel
     guDbLibrary *       m_Db;
     guGenericDirCtrl *  m_DirCtrl;
     bool                m_AddingFolder;
+    wxToggleBitmapButton *  m_ShowRecPathsBtn;
+    wxToggleBitmapButton *  m_ShowPodPathsBtn;
     wxToggleBitmapButton *  m_ShowLibPathsBtn;
 
     void                OnShowLibPathsClick( wxCommandEvent& event );
