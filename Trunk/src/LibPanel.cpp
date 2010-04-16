@@ -511,7 +511,7 @@ guLibPanel::~guLibPanel()
 // -------------------------------------------------------------------------------- //
 void guLibPanel::ReloadControls( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "ReloadControls..." ) );
+    //guLogMessage( wxT( "ReloadControls..." ) );
     m_Db->LoadCache();
     m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems( false );

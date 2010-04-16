@@ -153,6 +153,8 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewPodChannels;
     wxMenuItem *                m_ViewPodDetails;
 
+    wxMenuItem *                m_ViewStatusBar;
+
 
     guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
@@ -278,6 +280,8 @@ class guMainFrame : public wxFrame
 
     void                OnForceUpdateLibrary( wxCommandEvent &event );
     void                OnAddLibraryPath( wxCommandEvent &event );
+
+    void                OnViewStatusBar( wxCommandEvent &event );
 
   public:
                         guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );

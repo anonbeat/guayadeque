@@ -169,7 +169,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 	SetStatusBar(  m_MainStatusBar );
 	//MainFrameSizer = new wxBoxSizer( wxVERTICAL );
 	SetStatusText( _( "Welcome to guayadeque " ) );
-
+	SetStatusBarPane( 0 );
 
     //
     m_PlayerVumeters = new guPlayerVumeters( this );
@@ -472,6 +472,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     Connect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
 
+    Connect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
+
+
     Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
     Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
     Connect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
@@ -583,6 +586,8 @@ guMainFrame::~guMainFrame()
 
     Disconnect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
 
+    Disconnect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
+
     Disconnect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
     Disconnect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
     Disconnect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
@@ -616,6 +621,8 @@ guMainFrame::~guMainFrame()
         PaneInfo.Caption( _( "Now Playing" ) );
         Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
         Config->WriteStr( wxT( "NotebookLayout" ), m_CatNotebook->SavePerspective(), wxT( "Positions" ) );
+
+        Config->WriteBool( wxT( "ShowStatusBar" ), m_MainStatusBar->IsShown() , wxT( "General" ) );
 
         SaveLayouts();
     }
@@ -693,6 +700,8 @@ void guMainFrame::CreateMenu()
 	wxMenuBar * MenuBar;
 	wxMenuItem * MenuItem;
 	wxMenu *     SubMenu;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
 
 	m_MainMenu = new wxMenu();
 
@@ -869,8 +878,6 @@ void guMainFrame::CreateMenu()
     m_MainMenu->Append( m_ViewPlayLists );
     m_ViewPlayLists->Check( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS );
 
-
-
     SubMenu = new wxMenu();
 
     m_ViewPodcasts = new wxMenuItem( SubMenu, ID_MENU_VIEW_PODCASTS, _( "P&odcasts" ), _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
@@ -898,6 +905,12 @@ void guMainFrame::CreateMenu()
     m_ViewFileBrowser = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_FILEBROWSER, _( "Files" ), _( "Show/Hide the file browser panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewFileBrowser );
     m_ViewFileBrowser->Check( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER );
+
+    m_MainMenu->AppendSeparator();
+
+    m_ViewStatusBar = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_STATUSBAR, _( "StatusBar" ), _( "Show/Hide the statusbar" ), wxITEM_CHECK );
+    m_MainMenu->Append( m_ViewStatusBar );
+    m_ViewStatusBar->Check( Config->ReadBool( wxT( "ShowStatusBar" ), true, wxT( "General" ) ) );
 
     MenuBar->Append( m_MainMenu, _( "&View" ) );
 
@@ -1819,6 +1832,13 @@ void guMainFrame::OnViewFileBrowser( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewStatusBar( wxCommandEvent &event )
+{
+    m_MainStatusBar->Show( event.IsChecked() );
+    m_AuiManager.Update();
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 {
     if( event.IsChecked() )
@@ -2174,6 +2194,7 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
+	m_MainStatusBar->Show( Config->ReadBool( wxT( "ShowStatusBar" ), true, wxT( "General" ) ) );
 
     // If the database need to be updated
     if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
