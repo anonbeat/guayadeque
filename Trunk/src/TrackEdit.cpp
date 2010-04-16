@@ -1636,7 +1636,8 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
-        wxString NewLyric = * Content;
+        wxHtmlEntitiesParser EntitiesParser;
+        wxString NewLyric = EntitiesParser.Parse( * Content );
         NewLyric.Trim().Trim( false );
         m_LyricsTextCtrl->SetValue( NewLyric );
         ( * m_Lyrics )[ m_CurItem ] = NewLyric;
