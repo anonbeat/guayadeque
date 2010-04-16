@@ -65,6 +65,7 @@
 #include "./images/tiny_left.h"
 #include "./images/tiny_net_radio.h"
 #include "./images/tiny_numerate.h"
+#include "./images/mid_podcast.h"
 #include "./images/tiny_podcast.h"
 #include "./images/tiny_reload.h"
 #include "./images/tiny_right.h"
@@ -77,6 +78,7 @@
 #include "./images/track.h"
 #include "./images/up.h"
 #include "./images/tiny_library.h"
+#include "./images/tiny_record.h"
 #include "./images/pref_commands.h"
 #include "./images/pref_copy_to.h"
 #include "./images/pref_general.h"
@@ -207,6 +209,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_tiny_numerate,	                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_edit_clear,               wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_podcast,                  	    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_mid_podcast,                   wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_podcast,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_status_pending,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_status_error,             wxBITMAP_TYPE_PNG ),
@@ -218,6 +221,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_tiny_right,                    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_search_engine,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_library,                  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_record,                   wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_commands,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_copy_to,                  wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_general,                  wxBITMAP_TYPE_PNG ),
