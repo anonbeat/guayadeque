@@ -763,6 +763,7 @@ void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMoveUpBtnClick( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "UP: %i" ), m_CurItem );
     wxString FileName = m_SongListBox->GetString( m_CurItem );
     guTrack * MovedTrack = m_Items->Detach( m_CurItem );
     wxImage * MovedImage = ( * m_Images )[ m_CurItem ];
@@ -785,11 +786,13 @@ void guTrackEditor::OnMoveUpBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMoveDownBtnClick( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "DOWN: %i" ), m_CurItem );
     wxString FileName = m_SongListBox->GetString( m_CurItem );
     guTrack * MovedTrack = m_Items->Detach( m_CurItem );
     wxImage * MovedImage = ( * m_Images )[ m_CurItem ];
     wxString MovedLyric = ( * m_Lyrics )[ m_CurItem ];
     m_Images->RemoveAt( m_CurItem );
+    m_Lyrics->RemoveAt( m_CurItem );
     m_SongListBox->SetString( m_CurItem, m_SongListBox->GetString( m_CurItem + 1 ) );
     m_CurItem++;
     m_Items->Insert( MovedTrack, m_CurItem );
@@ -1633,8 +1636,10 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
-        m_LyricsTextCtrl->SetValue( * Content );
-        ( * m_Lyrics )[ m_CurItem ] = * Content;
+        wxString NewLyric = * Content;
+        NewLyric.Trim().Trim( false );
+        m_LyricsTextCtrl->SetValue( NewLyric );
+        ( * m_Lyrics )[ m_CurItem ] = NewLyric;
         delete Content;
     }
     m_LyricReloadButton->Enable( true );
