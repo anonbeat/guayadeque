@@ -1750,8 +1750,9 @@ int guDbLibrary::GetFiltersCount() const
 {
     return m_TeFilters.Count() || m_GeFilters.Count() ||
            m_LaFilters.Count() || m_ArFilters.Count() ||
-           m_AlFilters.Count() || m_YeFilters.Count() ||
-           m_RaFilters.Count() || m_PcFilters.Count();
+           m_CoFilters.Count() || m_AlFilters.Count() ||
+           m_YeFilters.Count() || m_RaFilters.Count() ||
+           m_PcFilters.Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2284,7 +2285,7 @@ void guDbLibrary::GetYears( guListItems * Years, const bool FullList )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  if( FullList || !( m_TeFilters.Count() || m_LaFilters.Count() || m_ArFilters.Count() ) )
+  if( FullList || !( m_TeFilters.Count() || m_LaFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() ) )
   {
     query = wxT( "SELECT DISTINCT song_year FROM songs WHERE song_year > 0 ORDER BY song_year DESC;" );
   }
@@ -2371,7 +2372,7 @@ void guDbLibrary::GetComposers( guListItems * Items, const bool FullList )
   {
     query = wxT( "SELECT composer_id, composer_name FROM composers ORDER BY composer_id;" );
   }
-  else if( !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() ) )
+  else if( !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() || m_ArFilters.Count() ) )
   {
     query = wxT( "SELECT composer_id, composer_name FROM composers WHERE composer_name > '' ORDER BY composer_name;" );
   }
@@ -2437,7 +2438,8 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   }
   else
   {
-    if( m_LaFilters.Count() || m_GeFilters.Count() || m_ArFilters.Count() || m_TeFilters.Count() || m_YeFilters.Count() )
+    if( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() ||
+        m_ArFilters.Count() || m_CoFilters.Count() || m_YeFilters.Count() )
     {
       query += wxT( "AND " ) + FiltersSQL( GULIBRARY_FILTER_ALBUMS );
     }
