@@ -85,6 +85,7 @@ class guLibPanel : public wxPanel
     // Search Str events
     void OnSearchActivated( wxCommandEvent &event );
     void OnSearchCancelled( wxCommandEvent &event );
+    void OnSearchSelected( wxCommandEvent &event );
 
     // LabelsListBox Events
     void OnLabelListActivated( wxListEvent &event );

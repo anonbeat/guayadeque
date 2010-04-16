@@ -337,7 +337,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_SongListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
     m_SongListCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
-    //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchSelected ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
     //m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guLibPanel::OnSearchCancelled ), NULL, this );
@@ -441,7 +441,7 @@ guLibPanel::~guLibPanel()
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
-    //m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLibPanel::OnSearchSelected ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
     //m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guLibPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guLibPanel::OnSearchCancelled ), NULL, this );
@@ -536,52 +536,29 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
     m_TextChangedTimer.Start( guPANEL_TIMER_TEXTCHANGED, wxTIMER_ONE_SHOT );
-//    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
-//        wxArrayString Words = guSplitWords( SearchString );
-//
-//        m_Db->SetTeFilters( Words, m_UpdateLock );
-//        if( !m_UpdateLock )
-//        {
-//            m_UpdateLock = true;
-//            m_LabelsListCtrl->ReloadItems();
-//            m_GenreListCtrl->ReloadItems();
-//            m_ArtistListCtrl->ReloadItems();
-//            m_AlbumListCtrl->ReloadItems();
-//            m_YearListCtrl->ReloadItems();
-//            m_RatingListCtrl->ReloadItems();
-//            m_PlayCountListCtrl->ReloadItems( false );
-//            m_SongListCtrl->ReloadItems();
-//            m_UpdateLock = false;
-//        }
-//        m_InputTextCtrl->ShowCancelButton( true );
-//    }
-//    else
-//    {
-//        OnSearchCancelled( event );
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
-//    wxArrayString Words;
-//    guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
     m_InputTextCtrl->Clear();
-//    m_UpdateLock = true;
-//    m_Db->SetTeFilters( Words, m_UpdateLock );
-////    if( !m_UpdateLock )
-////    {
-//        m_LabelsListCtrl->ReloadItems( false );
-//        m_GenreListCtrl->ReloadItems( false );
-//        m_ArtistListCtrl->ReloadItems( false );
-//        m_AlbumListCtrl->ReloadItems( false );
-//        m_YearListCtrl->ReloadItems( false );
-//        m_RatingListCtrl->ReloadItems( false );
-//        m_PlayCountListCtrl->ReloadItems( false );
-//        m_SongListCtrl->ReloadItems( false );
-//        m_UpdateLock = false;
-////    }
-//    m_InputTextCtrl->ShowCancelButton( false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSearchSelected( wxCommandEvent& event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+        {
+            OnSongQueueAllClicked( event );
+        }
+        else
+        {
+            OnSongPlayAllClicked( event );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
