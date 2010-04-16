@@ -1539,6 +1539,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
             wxString PathName;
             int      PathId;
             int      ArtistId;
+            int      ComposerId;
             int      AlbumId;
             //int      CoverId;
             int      GenreId;
@@ -1553,6 +1554,8 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 
             ArtistId = GetArtistId( Song->m_ArtistName );
 
+            ComposerId = GetComposerId( Song->m_Composer );
+
             AlbumId = GetAlbumId( Song->m_AlbumName, ArtistId, PathId, PathName, Song->m_CoverId );
 
             GenreId = GetGenreId( Song->m_GenreName );
@@ -1565,6 +1568,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
             m_CurSong = * Song;
             m_CurSong.m_GenreId = GenreId;
             m_CurSong.m_ArtistId = ArtistId;
+            m_CurSong.m_ComposerId = ComposerId;
             m_CurSong.m_AlbumId = AlbumId;
             m_CurSong.m_PathId = PathId;
             m_CurSong.m_FileName = Song->m_FileName.AfterLast( '/' );

@@ -341,6 +341,7 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
                 // Delete all posible orphan entries
                 Queries.Add( wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM artists WHERE artist_id NOT IN ( SELECT DISTINCT song_artistid FROM songs );" ) );
+                Queries.Add( wxT( "DELETE FROM composers WHERE composer_id NOT IN ( SELECT DISTINCT song_composerid FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT album_coverid FROM albums );" ) );
                 Queries.Add( wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" ) );
