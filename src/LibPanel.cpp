@@ -252,6 +252,25 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
             Dockable( true ).Top() );
 
 	//
+	// Composers
+	//
+	wxPanel * ComposerPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * ComposerSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_ComposerListCtrl = new guCoListBox( ComposerPanel, m_Db, _( "Composers" ) );
+	ComposerSizer->Add( m_ComposerListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+
+	ComposerPanel->SetSizer( ComposerSizer );
+	ComposerPanel->Layout();
+	ComposerSizer->Fit( ComposerPanel );
+
+    m_AuiManager.AddPane( ComposerPanel, wxAuiPaneInfo().Name( wxT( "Composers" ) ).Caption( _( "Composers" ) ).
+            MinSize( 50, 50 ).Row( 2 ).
+            Position( 3 ).Hide().
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            Dockable( true ).Top() );
+
+	//
 	// Songs
 	//
 	SongListPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -312,6 +331,9 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     m_PlayCountListCtrl->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnPlayCountListSelected ), NULL, this );
     m_PlayCountListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnPlayCountListActivated ), NULL, this );
 
+    m_ComposerListCtrl->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnComposerListSelected ), NULL, this );
+    m_ComposerListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnComposerListActivated ), NULL, this );
+
     m_SongListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
     m_SongListCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
@@ -358,6 +380,11 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     Connect( ID_PLAYCOUNT_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListQueueClicked ), NULL, this );
     Connect( ID_PLAYCOUNT_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListEditTracksClicked ), NULL, this );
     Connect( ID_PLAYCOUNT_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListCopyToClicked ), NULL, this );
+
+    Connect( ID_COMPOSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListPlayClicked ), NULL, this );
+    Connect( ID_COMPOSER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListQueueClicked ), NULL, this );
+    Connect( ID_COMPOSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListEditTracksClicked ), NULL, this );
+    Connect( ID_COMPOSER_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListCopyToClicked ), NULL, this );
 
     Connect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayClicked ), NULL, this );
     Connect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayAllClicked ), NULL, this );
@@ -408,6 +435,9 @@ guLibPanel::~guLibPanel()
     m_PlayCountListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnPlayCountListSelected ), NULL, this );
     m_PlayCountListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnPlayCountListActivated ), NULL, this );
 
+    m_ComposerListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guLibPanel::OnComposerListSelected ), NULL, this );
+    m_ComposerListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnComposerListActivated ), NULL, this );
+
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guLibPanel::OnSongListActivated ), NULL, this );
     m_SongListCtrl->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guLibPanel::OnSongListColClicked ), NULL, this );
 
@@ -455,6 +485,11 @@ guLibPanel::~guLibPanel()
     Disconnect( ID_PLAYCOUNT_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListEditTracksClicked ), NULL, this );
     Disconnect( ID_PLAYCOUNT_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListCopyToClicked ), NULL, this );
 
+    Disconnect( ID_COMPOSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListPlayClicked ), NULL, this );
+    Disconnect( ID_COMPOSER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListQueueClicked ), NULL, this );
+    Disconnect( ID_COMPOSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListEditTracksClicked ), NULL, this );
+    Disconnect( ID_COMPOSER_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListCopyToClicked ), NULL, this );
+
     Disconnect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayClicked ) );
     Disconnect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayAllClicked ) );
     Disconnect( ID_SONG_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongQueueClicked ) );
@@ -482,6 +517,7 @@ void guLibPanel::ReloadControls( wxCommandEvent &event )
     m_LabelsListCtrl->ReloadItems( false );
     m_GenreListCtrl->ReloadItems( false );
     m_ArtistListCtrl->ReloadItems( false );
+    m_ComposerListCtrl->ReloadItems( false );
     m_AlbumListCtrl->ReloadItems( false );
     m_YearListCtrl->ReloadItems( false );
     m_RatingListCtrl->ReloadItems( false );
@@ -1384,6 +1420,7 @@ void guLibPanel::SelectTrack( const int trackid )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_SongListCtrl->ReloadItems();
@@ -1399,6 +1436,7 @@ void guLibPanel::SelectAlbum( const int albumid )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_AlbumListCtrl->SetSelection( m_AlbumListCtrl->FindAlbum( albumid ) );
@@ -1413,6 +1451,7 @@ void guLibPanel::SelectArtist( const int artistid )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_ArtistListCtrl->SetSelection( m_ArtistListCtrl->FindArtist( artistid ) );
 }
@@ -1426,6 +1465,7 @@ void guLibPanel::SelectYear( const int year )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
     m_YearListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_YearListCtrl->SetSelection( m_YearListCtrl->FindYear( year ) );
@@ -1440,6 +1480,7 @@ void guLibPanel::SelectAlbumName( const wxString &album )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_AlbumListCtrl->SelectAlbumName( album );
@@ -1454,6 +1495,7 @@ void guLibPanel::SelectArtistName( const wxString &artist )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_ArtistListCtrl->SelectArtistName( artist );
 }
@@ -1479,6 +1521,7 @@ void guLibPanel::SelectArtists( wxArrayInt * artists )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_ArtistListCtrl->SetSelectedItems( * artists );
 }
@@ -1492,6 +1535,7 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_AlbumListCtrl->SetSelectedItems( * albums );
@@ -1780,6 +1824,103 @@ void guLibPanel::OnPlayCountListCopyToClicked( wxCommandEvent &event )
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
+//
+// Composers List Box
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnComposerListSelected( wxListEvent &event )
+{
+    if( m_UpdateLock )
+        return;
+    m_SelChangedObject = guPANEL_LIBRARY_COMPOSERS;
+    if( m_SelChangedTimer.IsRunning() )
+        m_SelChangedTimer.Stop();
+    m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
+//    m_Db->SetRaFilters( m_ComposerListCtrl->GetSelectedItems() );
+//    if( !m_UpdateLock )
+//    {
+//        m_UpdateLock = true;
+//        m_SongListCtrl->ReloadItems();
+//        m_UpdateLock = false;
+//    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnComposerListActivated( wxListEvent &event )
+{
+    guTrackArray Songs;
+    m_ComposerListCtrl->GetSelectedSongs( &Songs );
+    if( Songs.Count() )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
+        {
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Songs );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Songs );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnComposerListPlayClicked( wxCommandEvent &event )
+{
+    guTrackArray Songs;
+    m_ComposerListCtrl->GetSelectedSongs( &Songs );
+    m_PlayerPanel->SetPlayList( Songs );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnComposerListQueueClicked( wxCommandEvent &event )
+{
+    guTrackArray Songs;
+    m_ComposerListCtrl->GetSelectedSongs( &Songs );
+    m_PlayerPanel->AddToPlayList( Songs );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnComposerListEditTracksClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    guImagePtrArray Images;
+    wxArrayString Lyrics;
+    m_ComposerListCtrl->GetSelectedSongs( &Tracks );
+    if( !Tracks.Count() )
+        return;
+
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
+    if( TrackEditor )
+    {
+        if( TrackEditor->ShowModal() == wxID_OK )
+        {
+            m_Db->UpdateSongs( &Tracks );
+            UpdateImages( Tracks, Images );
+            UpdateLyrics( Tracks, Lyrics );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
+        }
+        TrackEditor->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnComposerListCopyToClicked( wxCommandEvent &event )
+{
+    guTrackArray * Tracks = new guTrackArray();
+    m_ComposerListCtrl->GetSelectedSongs( Tracks );
+
+    event.SetId( ID_MAINFRAME_COPYTO );
+    event.SetClientData( ( void * ) Tracks );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+//
+//
 // -------------------------------------------------------------------------------- //
 bool guLibPanel::IsPanelShown( const int panelid ) const
 {
@@ -1807,6 +1948,10 @@ void guLibPanel::ShowPanel( const int panelid, bool show )
 
         case guPANEL_LIBRARY_ARTISTS :
             PaneName = wxT( "Artists" );
+            break;
+
+        case guPANEL_LIBRARY_COMPOSERS :
+            PaneName = wxT( "Composers" );
             break;
 
         case guPANEL_LIBRARY_ALBUMS :
@@ -1872,6 +2017,10 @@ void guLibPanel::OnPaneClose( wxAuiManagerEvent &event )
     {
         CmdId = ID_MENU_VIEW_LIB_ARTISTS;
     }
+    else if( PaneName == wxT( "Composers" ) )
+    {
+        CmdId = ID_MENU_VIEW_LIB_COMPOSERS;
+    }
     else if( PaneName == wxT( "Albums" ) )
     {
         CmdId = ID_MENU_VIEW_LIB_ALBUMS;
@@ -1923,6 +2072,7 @@ void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
                 m_LabelsListCtrl->ReloadItems();
                 m_GenreListCtrl->ReloadItems();
                 m_ArtistListCtrl->ReloadItems();
+                m_ComposerListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems();
@@ -1945,6 +2095,7 @@ void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
             m_LabelsListCtrl->ReloadItems( false );
             m_GenreListCtrl->ReloadItems( false );
             m_ArtistListCtrl->ReloadItems( false );
+            m_ComposerListCtrl->ReloadItems( false );
             m_AlbumListCtrl->ReloadItems( false );
             m_YearListCtrl->ReloadItems( false );
             m_RatingListCtrl->ReloadItems( false );
@@ -1974,6 +2125,7 @@ void guLibPanel::DoSelectionChanged( void )
                 m_UpdateLock = true;
                 m_GenreListCtrl->ReloadItems();
                 m_ArtistListCtrl->ReloadItems();
+                m_ComposerListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
@@ -1995,8 +2147,9 @@ void guLibPanel::DoSelectionChanged( void )
             {
                 m_UpdateLock = true;
                 m_ArtistListCtrl->ReloadItems();
-                m_AlbumListCtrl->ReloadItems();
+                m_ComposerListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
+                m_AlbumListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
                 m_PlayCountListCtrl->ReloadItems( false );
                 m_SongListCtrl->ReloadItems();
@@ -2013,6 +2166,7 @@ void guLibPanel::DoSelectionChanged( void )
             if( !m_UpdateLock )
             {
                 m_UpdateLock = true;
+                m_ComposerListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
@@ -2070,6 +2224,22 @@ void guLibPanel::DoSelectionChanged( void )
             if( !m_UpdateLock )
             {
                 m_UpdateLock = true;
+                m_SongListCtrl->ReloadItems();
+                m_UpdateLock = false;
+            }
+            break;
+        }
+
+        case guPANEL_LIBRARY_COMPOSERS :
+        {
+            m_Db->SetCoFilters( m_ComposerListCtrl->GetSelectedItems(), m_UpdateLock );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                m_YearListCtrl->ReloadItems();
+                m_AlbumListCtrl->ReloadItems();
+                m_RatingListCtrl->ReloadItems( false );
+                m_PlayCountListCtrl->ReloadItems( false );
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }

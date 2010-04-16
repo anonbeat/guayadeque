@@ -220,6 +220,8 @@ ADD_EXECUTABLE( guayadeque
 	RaListBox.h
 	PcListBox.cpp
 	PcListBox.h
+	CoListBox.cpp
+	CoListBox.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
