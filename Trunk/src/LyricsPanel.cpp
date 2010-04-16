@@ -589,7 +589,9 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
 
     if( !LyricText.IsEmpty() )
     {
-        m_CurrentLyricText = LyricText;
+        wxHtmlEntitiesParser EntitiesParser;
+
+        m_CurrentLyricText = EntitiesParser.Parse( LyricText );
 
         // When reading lyrics from an mp3 file I have no way to know if its a
         // Tab or a regular lyric so I search for what its usually used
