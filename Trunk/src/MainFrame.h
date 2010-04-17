@@ -285,6 +285,16 @@ class guMainFrame : public wxFrame
     void                OnViewFullScreen( wxCommandEvent &event );
     void                OnViewStatusBar( wxCommandEvent &event );
 
+    // There is a bug that dont removes correctly the last window from the AuiNotebook
+    // When a new one is inserted if it was already in the Notebook then
+    // Its shown the last removed tab instead of the new we created.
+    // As a workaround we control if we are going to remove the last window and if so
+    // Instead of remove it we hide the Notebook
+    // When inserting we need to control if it was hiden and if so add the new one and remove the first
+    // We create two functions RemoveTabPanel and InsertTabPanel that controls this
+    void                RemoveTabPanel( wxPanel * panel );
+    void                InsertTabPanel( wxPanel * panel, const int index, const wxString &label );
+
   public:
                         guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                         ~guMainFrame();
