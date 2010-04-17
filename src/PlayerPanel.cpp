@@ -236,7 +236,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_PlayerCoverBitmap = new guStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
-	m_PlayerCoverBitmap->SetToolTip( _( "Shows the current track album cover if available" ) );
+	//m_PlayerCoverBitmap->SetToolTip( _( "Shows the current track album cover if available" ) );
 	PlayerDetailsSizer->Add( m_PlayerCoverBitmap, 0, wxALL, 2 );
 
 	wxBoxSizer* PlayerLabelsSizer;

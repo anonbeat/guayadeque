@@ -1,4 +1,5 @@
 
+  * Added option to show full screen and to hide status bar
   * Added a composer listbox to the library tab
   * You can enable to delete the recordings not bigger than a certain amount
     of time in preferences

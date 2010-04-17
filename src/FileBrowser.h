@@ -55,14 +55,12 @@ enum guFILEITEM_TYPE {
 #define     guFILEBROWSER_SHOWPATH_PODCASTS         ( 1 << 3 )
 
 #define guDIR_IMAGE_INDEX_FOLDER        0
+#define guDIR_IMAGE_INDEX_OTHER         7
 #define guDIR_IMAGE_INDEX_LIBRARY       9
 #define guDIR_IMAGE_INDEX_PODCASTS      10
 #define guDIR_IMAGE_INDEX_RECORDS       11
-
-#define guFILEITEM_IMAGE_INDEX_FOLDER   0
-#define guFILEITEM_IMAGE_INDEX_OTHER    7
-#define guFILEITEM_IMAGE_INDEX_AUDIO    9
-#define guFILEITEM_IMAGE_INDEX_IMAGE    10
+#define guDIR_IMAGE_INDEX_AUDIO         12
+#define guDIR_IMAGE_INDEX_IMAGE         13
 
 
 #define guFILEBROWSER_COLUMN_NAME       0

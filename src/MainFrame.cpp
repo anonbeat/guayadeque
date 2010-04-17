@@ -401,7 +401,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     Connect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
     Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
-    Connect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
+    //Connect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
     Connect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
 
     Connect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ), NULL, this );
@@ -472,6 +472,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     Connect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
 
+    Connect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
     Connect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
 
 
@@ -515,7 +516,7 @@ guMainFrame::~guMainFrame()
 
     Disconnect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
     Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
-    Disconnect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
+    //Disconnect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
     Disconnect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
 
     Disconnect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ), NULL, this );
@@ -586,6 +587,7 @@ guMainFrame::~guMainFrame()
 
     Disconnect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
 
+    Disconnect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
     Disconnect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
 
     Disconnect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
@@ -622,6 +624,7 @@ guMainFrame::~guMainFrame()
         Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
         Config->WriteStr( wxT( "NotebookLayout" ), m_CatNotebook->SavePerspective(), wxT( "Positions" ) );
 
+        Config->WriteBool( wxT( "ShowFullScreen" ), IsFullScreen() , wxT( "General" ) );
         Config->WriteBool( wxT( "ShowStatusBar" ), m_MainStatusBar->IsShown() , wxT( "General" ) );
 
         SaveLayouts();
@@ -908,6 +911,10 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSeparator();
 
+    m_ViewFullScreen = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_FULLSCREEN, _( "Full Screen" ), _( "Show/Restore the main window in full screen" ), wxITEM_CHECK );
+    m_MainMenu->Append( m_ViewFullScreen );
+    m_ViewFullScreen->Check( Config->ReadBool( wxT( "ShowFullScreen" ), false, wxT( "General" ) ) );
+
     m_ViewStatusBar = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_STATUSBAR, _( "StatusBar" ), _( "Show/Hide the statusbar" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewStatusBar );
     m_ViewStatusBar->Check( Config->ReadBool( wxT( "ShowStatusBar" ), true, wxT( "General" ) ) );
@@ -1024,31 +1031,31 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
     event.Skip();
 }
 
-// -------------------------------------------------------------------------------- //
-void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
-{
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    if( Config )
-//    {
-//        // If the icon
-//        if( m_TaskBarIcon &&
-//            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
-//            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
-//        {
-//            if( event.IsIconized() )
-//            {
-//                if( IsShown() )
-//                    Show( false );
-//            }
-//            else
-//            {
-//                if( !IsShown() )
-//                    Show( true );
-//            }
-//        }
-//    }
-    event.Skip();
-}
+//// -------------------------------------------------------------------------------- //
+//void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
+//{
+////    guConfig * Config = ( guConfig * ) guConfig::Get();
+////    if( Config )
+////    {
+////        // If the icon
+////        if( m_TaskBarIcon &&
+////            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
+////            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
+////        {
+////            if( event.IsIconized() )
+////            {
+////                if( IsShown() )
+////                    Show( false );
+////            }
+////            else
+////            {
+////                if( !IsShown() )
+////                    Show( true );
+////            }
+////        }
+////    }
+//    event.Skip();
+//}
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
@@ -1829,6 +1836,59 @@ void guMainFrame::OnViewFileBrowser( wxCommandEvent &event )
     }
 
     m_ViewFileBrowser->Check( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewFullScreen( wxCommandEvent &event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    bool IsFull = event.IsChecked();
+
+    if( IsFull )
+    {
+        // Save the normal perspective
+        Config->WriteNum( wxT( "MainVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
+        wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
+        PaneInfo.Caption( _( "Now Playing" ) );
+        Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
+//        Config->WriteStr( wxT( "NotebookLayout" ), m_CatNotebook->SavePerspective(), wxT( "Positions" ) );
+
+        ShowFullScreen( IsFull, wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
+
+        // Restore the previous full screen layout
+        m_VisiblePanels = Config->ReadNum( wxT( "MainVisiblePanelsFull" ), guPANEL_MAIN_VISIBLE_DEFAULT, wxT( "Positions" ) );
+//        wxString NBLayout = Config->ReadStr( wxT( "NotebookLayoutFull" ), wxEmptyString, wxT( "Positions" ) );
+//        if( !NBLayout.IsEmpty() )
+//            LoadTabsPerspective( NBLayout );
+
+        wxString Perspective = Config->ReadStr( wxT( "LastLayoutFull" ), wxEmptyString, wxT( "Positions" ) );
+        if( !Perspective.IsEmpty() )
+            m_AuiManager.LoadPerspective( Perspective, true );
+    }
+    else
+    {
+        // Save the full screen layout
+        Config->WriteNum( wxT( "MainVisiblePanelsFull" ), m_VisiblePanels, wxT( "Positions" ) );
+        wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
+        PaneInfo.Caption( _( "Now Playing" ) );
+        Config->WriteStr( wxT( "LastLayoutFull" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
+//        Config->WriteStr( wxT( "NotebookLayoutFull" ), m_CatNotebook->SavePerspective(), wxT( "Positions" ) );
+
+        ShowFullScreen( IsFull, wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
+
+        // Restore the normal layout
+        m_VisiblePanels = Config->ReadNum( wxT( "MainVisiblePanels" ), guPANEL_MAIN_VISIBLE_DEFAULT, wxT( "Positions" ) );
+        Config->WriteNum( wxT( "MainVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
+//        wxString NBLayout = Config->ReadStr( wxT( "NotebookLayout" ), wxEmptyString, wxT( "Positions" ) );
+//        if( !NBLayout.IsEmpty() )
+//            LoadTabsPerspective( NBLayout );
+
+        wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "Positions" ) );
+        if( !Perspective.IsEmpty() )
+            m_AuiManager.LoadPerspective( Perspective, true );
+    }
+
+//    m_AuiManager.Update();
 }
 
 // -------------------------------------------------------------------------------- //
