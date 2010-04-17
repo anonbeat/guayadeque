@@ -153,6 +153,7 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewPodChannels;
     wxMenuItem *                m_ViewPodDetails;
 
+    wxMenuItem *                m_ViewFullScreen;
     wxMenuItem *                m_ViewStatusBar;
 
 
@@ -197,7 +198,7 @@ class guMainFrame : public wxFrame
     void                CreateMenu();
     void                DoCreateStatusBar( int kind );
     void                OnCloseWindow( wxCloseEvent &event );
-    void                OnIconizeWindow( wxIconizeEvent &event );
+    //void                OnIconizeWindow( wxIconizeEvent &event );
     void                OnPreferences( wxCommandEvent &event );
 
     void                OnPlay( wxCommandEvent &event );
@@ -281,6 +282,7 @@ class guMainFrame : public wxFrame
     void                OnForceUpdateLibrary( wxCommandEvent &event );
     void                OnAddLibraryPath( wxCommandEvent &event );
 
+    void                OnViewFullScreen( wxCommandEvent &event );
     void                OnViewStatusBar( wxCommandEvent &event );
 
   public:

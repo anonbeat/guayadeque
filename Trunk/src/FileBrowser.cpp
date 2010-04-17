@@ -89,6 +89,8 @@ void guGenericDirCtrl::SetupSections()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
+    guLogMessage( wxT( "Tree Flag %08X" ), m_ShowPaths );
+
     if( m_ShowPaths & guFILEBROWSER_SHOWPATH_LIBRARY )
     {
         wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
@@ -455,7 +457,7 @@ void guFileBrowserDirCtrl::OnShowLibPathsClick( wxCommandEvent& event )
     if( m_ShowPodPathsBtn->GetValue() )
         ShowPaths |= guFILEBROWSER_SHOWPATH_PODCASTS;
     if( !ShowPaths )
-        ShowPaths |= guFILEBROWSER_SHOWPATH_LIBRARY;
+        ShowPaths |= guFILEBROWSER_SHOWPATH_SYSTEM;
 
     wxString CurPath = m_DirCtrl->GetPath();
     m_DirCtrl->SetShowLibPaths( ShowPaths );
@@ -604,18 +606,18 @@ void guFilesListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, cons
     {
         guFileItem * FileItem = &m_Files[ row ];
         dc.SetBackgroundMode( wxTRANSPARENT );
-        int ImageIndex = guFILEITEM_IMAGE_INDEX_OTHER;
+        int ImageIndex = guDIR_IMAGE_INDEX_OTHER;
         if( FileItem->m_Type == guFILEITEM_TYPE_FOLDER )
         {
-            ImageIndex = guFILEITEM_IMAGE_INDEX_FOLDER;
+            ImageIndex = guDIR_IMAGE_INDEX_FOLDER;
         }
         else if( FileItem->m_Type == guFILEITEM_TYPE_AUDIO )
         {
-            ImageIndex = guFILEITEM_IMAGE_INDEX_AUDIO;
+            ImageIndex = guDIR_IMAGE_INDEX_AUDIO;
         }
         else if( FileItem->m_Type == guFILEITEM_TYPE_IMAGE )
         {
-            ImageIndex = guFILEITEM_IMAGE_INDEX_IMAGE;
+            ImageIndex = guDIR_IMAGE_INDEX_IMAGE;
         }
         m_TreeImageList->Draw( ImageIndex, dc, rect.x + 1, rect.y + 1, wxIMAGELIST_DRAW_TRANSPARENT );
         wxRect TextRect = rect;
