@@ -35,6 +35,7 @@ class guLibUpdateThread : public wxThread
     guMainFrame *       m_MainFrame;
     wxArrayString       m_TrackFiles;
     wxArrayString       m_ImageFiles;
+    wxArrayString       m_PlayListFiles;
     int                 m_GaugeId;
     wxArrayString       m_LibPaths;
     int                 m_LastUpdate;
