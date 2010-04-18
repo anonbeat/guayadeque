@@ -2946,6 +2946,9 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
             if( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
                 OnViewAlbumBrowser( event );
 
+            if( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER )
+                OnViewFileBrowser( event );
+
             break;
         }
 
