@@ -2710,6 +2710,8 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
     Hide();
 //    bool NBIsShown = PaneInfo.IsShown();
     //guLogMessage( wxT( "Loading Layout %i" ), Layout );
+    LoadTabsPerspective( m_LayoutTabs[ Layout ] );
+
     m_AuiManager.LoadPerspective( m_LayoutData[ Layout ] );
 
     wxAuiPaneInfo &PlayListPaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
@@ -2748,7 +2750,44 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
         m_ViewPlayerVumeters->Check( IsShown );
     }
 
-    LoadTabsPerspective( m_LayoutTabs[ Layout ] );
+    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
+    if( !PaneInfo.IsShown() )
+    {
+        m_VisiblePanels = m_VisiblePanels & ( guPANEL_MAIN_PLAYERPLAYLIST |
+                                              guPANEL_MAIN_PLAYERFILTERS |
+                                              guPANEL_MAIN_PLAYERVUMETERS );
+
+        // Reset the Menu entry for all elements
+        m_ViewLibrary->Check( false );
+        m_ViewLibTextSearch->Enable( false );
+        m_ViewLibLabels->Enable( false );
+        m_ViewLibGenres->Enable( false );
+        m_ViewLibArtists->Enable( false );
+        m_ViewLibAlbums->Enable( false );
+        m_ViewLibYears->Enable( false );
+        m_ViewLibRatings->Enable( false );
+        m_ViewLibPlayCounts->Enable( false );
+        m_ViewLibComposers->Enable( false );
+
+        m_ViewRadios->Check( false );
+        m_ViewRadTextSearch->Enable( false );
+        m_ViewRadLabels->Enable( false );
+        m_ViewRadGenres->Enable( false );
+
+        m_ViewLastFM->Check( false );
+
+        m_ViewLyrics->Check( false );
+
+        m_ViewPlayLists->Check( false );
+
+        m_ViewPodcasts->Check( false );
+        m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
+        m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
+
+        m_ViewAlbumBrowser->Check( false );
+
+        m_ViewFileBrowser->Check( false );
+    }
 
     m_AuiManager.Update();
 
