@@ -138,15 +138,14 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
               {
                 m_TrackFiles.Add( dirname + FileName );
               }
-              else if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) &&
-                  ( LowerFileName.EndsWith( wxT( ".jpg" ) ) ||
-                    LowerFileName.EndsWith( wxT( ".jpeg" ) ) ||
-                    LowerFileName.EndsWith( wxT( ".png" ) ) ||
-                    LowerFileName.EndsWith( wxT( ".bmp" ) ) ||
-                    LowerFileName.EndsWith( wxT( ".gif" ) ) ) )
+              else if( guIsValidImageFile( LowerFileName ) )
               {
-                //guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
-                m_ImageFiles.Add( dirname + FileName );
+                if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) )                //guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
+                    m_ImageFiles.Add( dirname + FileName );
+              }
+              else if( guPlayListFile::IsValidPlayList( LowerFileName ) )
+              {
+                  m_PlayListFiles.Add( dirname + FileName );
               }
             }
           }
@@ -230,6 +229,49 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                 break;
 
             m_Db->UpdateImageFile( m_ImageFiles[ index ].char_str() );
+            index++;
+            evtup.SetExtraLong( index );
+            wxPostEvent( m_MainFrame, evtup );
+        }
+    }
+
+    count = m_PlayListFiles.Count();
+    if( count )
+    {
+        index = 0;
+        evtmax.SetExtraLong( count );
+        wxPostEvent( m_MainFrame, evtmax );
+        while( !TestDestroy() )
+        {
+            //guLogMessage( wxT( "%i - %i" ), index, count );
+            if( ( index >= count ) )
+                break;
+
+            guPlayListFile PlayList( m_PlayListFiles[ index ] );
+            wxArrayInt PlayListIds;
+            int ItemTrackId;
+            int ItemIndex;
+            int ItemCount;
+            if( ( ItemCount = PlayList.Count() ) )
+            {
+                for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
+                {
+                    ItemTrackId = m_Db->FindTrackFile( PlayList.GetItem( ItemIndex ).m_Location, NULL );
+                    if( ItemTrackId )
+                    {
+                        PlayListIds.Add( ItemTrackId );
+                    }
+                }
+                if( PlayListIds.Count() )
+                {
+                    m_Db->CreateStaticPlayList( wxFileNameFromPath( m_PlayListFiles[ index ] ).BeforeLast( wxT( '.' ) ),
+                                PlayListIds );
+
+                    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+                    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+                }
+            }
+
             index++;
             evtup.SetExtraLong( index );
             wxPostEvent( m_MainFrame, evtup );
