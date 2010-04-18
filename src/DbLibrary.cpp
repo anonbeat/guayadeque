@@ -58,7 +58,7 @@ WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "12"
+#define GU_CURRENT_DBVERSION    "13"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
                "song_number, song_pathid, song_filename, song_year, "\
@@ -211,9 +211,9 @@ wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper )
 // -------------------------------------------------------------------------------- //
 wxString TextFilterToSQL( const wxArrayString &TeFilters )
 {
-  long count;
-  long index;
-  wxString RetVal = wxEmptyString;
+  int index;
+  int count;
+  wxString RetVal;
   if( ( count = TeFilters.Count() ) )
   {
     for( index = 0; index < count; index++ )
@@ -227,6 +227,7 @@ wxString TextFilterToSQL( const wxArrayString &TeFilters )
     RetVal = RetVal.RemoveLast( 4 );
   }
   return RetVal;
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -578,7 +579,8 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_playcount' on songs (song_playcount ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_addedtime' on songs (song_addedtime ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_lastplay' on songs (song_lastplay ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_composer' on songs (song_composer ASC);" ) );
+      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_composer' on songs (song_composer ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_composerid' on songs (song_composerid ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS tags( tag_id INTEGER  PRIMARY KEY AUTOINCREMENT, tag_name varchar(100) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_id' on tags (tag_id ASC);" ) );
@@ -753,16 +755,23 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'composer_id' on composers (composer_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'composer_name' on composers (composer_name ASC);" ) );
 
-      m_NeedUpdate = true;
-      guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
-      query.Add( wxT( "DELETE FROM Version;" ) );
-      query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
-
       if( dbVer > 4 )
       {
         //query.Add( wxT( "ALTER TABLE songs DELETE COLUMN song_composer" ) );
         query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_composerid INTEGER" ) );
       }
+      m_NeedUpdate = true;
+    }
+
+    case 12 :
+    {
+      if( dbVer > 4 )
+      {
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_composerid' on songs (song_composerid ASC);" ) );
+      }
+      guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
+      query.Add( wxT( "DELETE FROM Version;" ) );
+      query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
     }
 
   }
