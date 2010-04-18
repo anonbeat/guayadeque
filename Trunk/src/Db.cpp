@@ -71,7 +71,7 @@ int guDb::Close()
 wxSQLite3ResultSet guDb::ExecuteQuery( const wxString &query )
 {
 #ifdef  DBLIBRARY_SHOW_QUERIES
-  guLogMessage( query );
+  guLogMessage( wxT( "ExecQuery:\n%s" ), query.c_str() );
 #endif
   wxSQLite3ResultSet RetVal;
   try {
@@ -93,7 +93,7 @@ wxSQLite3ResultSet guDb::ExecuteQuery( const wxString &query )
 int guDb::ExecuteUpdate( const wxString &query )
 {
 #ifdef  DBLIBRARY_SHOW_QUERIES
-  guLogMessage( query );
+  guLogMessage( wxT( "ExecUpdate:\n%s" ), query.c_str() );
 #endif
   int RetVal = 0;
   try {

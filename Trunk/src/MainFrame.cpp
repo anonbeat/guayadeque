@@ -2316,7 +2316,7 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
         PanelId = guPANEL_MAIN_FILEBROWSER;
     }
 
-    CheckHideNotebook();
+    //CheckHideNotebook();
     m_VisiblePanels ^= PanelId;
 
     event.Veto();
