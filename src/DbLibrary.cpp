@@ -2684,6 +2684,27 @@ wxArrayString guDbLibrary::GetAlbumsPaths( const wxArrayInt &AlbumIds )
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::GetStaticPlayList( const wxString &name )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int PLId = wxNOT_FOUND;
+
+  query = wxString::Format( wxT( "SELECT playlist_id FROM playlists WHERE playlist_name = '%s' AND playlist_type = %u LIMIT 1" ),
+          escape_query_str( name ).c_str(),
+          GUPLAYLIST_STATIC );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      PLId = dbRes.GetInt( 0 );
+  }
+  dbRes.Finalize();
+  return PLId;
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &songs )
 {
   int PlayListId = 0;

@@ -264,11 +264,14 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                 }
                 if( PlayListIds.Count() )
                 {
-                    m_Db->CreateStaticPlayList( wxFileNameFromPath( m_PlayListFiles[ index ] ).BeforeLast( wxT( '.' ) ),
-                                PlayListIds );
+                    if( m_Db->GetStaticPlayList( wxFileNameFromPath( m_PlayListFiles[ index ] ).BeforeLast( wxT( '.' ) ) ) == wxNOT_FOUND )
+                    {
+                        m_Db->CreateStaticPlayList( wxFileNameFromPath( m_PlayListFiles[ index ] ).BeforeLast( wxT( '.' ) ),
+                                    PlayListIds );
 
-                    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-                    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+                        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+                        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+                    }
                 }
             }
 

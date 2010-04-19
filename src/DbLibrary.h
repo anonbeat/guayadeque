@@ -403,6 +403,7 @@ class guDbLibrary : public guDb
     int                 DelRadioLabel( const int LabelId );
     wxArrayInt          GetRadioLabels( void );
 
+    int                 GetStaticPlayList( const wxString &name );
     int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
     int                 UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
     int                 AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
