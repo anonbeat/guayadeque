@@ -108,6 +108,8 @@ class guRadioPanel : public wxPanel
 
     bool IsPanelShown( const int panelid ) const;
     void ShowPanel( const int panelid, bool show );
+
+    void GetRadioCounter( wxLongLong * count );
 };
 
 #endif

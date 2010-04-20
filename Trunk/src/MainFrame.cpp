@@ -2338,7 +2338,8 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     }
     else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
     {
-        m_Db->GetRadioCounter( &m_SelCount );
+        //m_Db->GetRadioCounter( &m_SelCount );
+        m_RadioPanel->GetRadioCounter( &m_SelCount );
         wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
         SelInfo += m_SelCount == 1 ? _( "station" ) : _( "stations" );
         m_MainStatusBar->SetSelInfo( SelInfo );
