@@ -935,7 +935,7 @@ void guRadioPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH ST
 void guRadioPanel::OnTextChangedTimer( wxTimerEvent &event )
 {
     wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
-    guLogMessage( wxT( "Should do the search now: '%s'" ), SearchString.c_str() );
+    //guLogMessage( wxT( "Should do the search now: '%s'" ), SearchString.c_str() );
     if( !SearchString.IsEmpty() )
     {
         if( SearchString.Length() > 1 )
