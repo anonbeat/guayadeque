@@ -5179,6 +5179,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
     query = wxT( "SELECT DISTINCT radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations WHERE " );
     query += wxString::Format( wxT( "radiostation_isuser = %u " ), m_RadioIsUser );
+    query += wxT( "GROUP BY radiostation_name, radiostation_br " );
   }
   else
   {
@@ -5225,6 +5226,8 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
     {
         query = query + subquery;
     }
+
+    query += wxT( "GROUP BY radiostation_name, radiostation_br " );
   }
 
   query += wxT( " ORDER BY " );
