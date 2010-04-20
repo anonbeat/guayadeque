@@ -170,7 +170,7 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
             Menu.Append( MenuItem );
 
-            MenuItem = new wxMenuItem( &Menu, ID_SONG_SAVEPLAYLIST, _( "Save Playlist" ), _( "Save the selected playlist as a Static Playlist" ) );
+            MenuItem = new wxMenuItem( &Menu, ID_SONG_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Save the selected playlist as a Static Playlist" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
             Menu.Append( MenuItem );
         }
