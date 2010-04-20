@@ -488,7 +488,7 @@ class guDbLibrary : public guDb
     void                    GetRadioGenres( guListItems * RadioGenres, bool AllowFilter = true );
     void                    SetRadioGenres( const wxArrayString &Genres );
     int                     GetRadioStations( guRadioStations * stations );
-    void                    GetRadioCounter( wxLongLong * count );
+//    void                    GetRadioCounter( wxLongLong * count );
     int                     GetUserRadioStations( guRadioStations * stations );
     void                    SetRadioStation( const guRadioStation * RadioStation );
     bool                    GetRadioStation( const int id, guRadioStation * radiostation );

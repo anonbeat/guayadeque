@@ -4940,7 +4940,7 @@ wxString RadioTextFilterToSQL( const wxArrayString &TeFilters )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetRadioFiltersCount( void ) const
 {
-    return m_RaTeFilters.Count() + m_RaGeFilters.Count() + m_RaLaFilters.Count();
+    return m_RaTeFilters.Count() | m_RaGeFilters.Count() | m_RaLaFilters.Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -5176,7 +5176,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 
   if( !GetRadioFiltersCount() )
   {
-    query = wxT( "SELECT DISTINCT radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations WHERE " );
     query += wxString::Format( wxT( "radiostation_isuser = %u " ), m_RadioIsUser );
     query += wxT( "GROUP BY radiostation_name, radiostation_br " );
@@ -5184,42 +5184,31 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
   else
   {
     //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-    query = wxT( "SELECT DISTINCT radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations, radiogenres" );
 
     //else
     wxString subquery = wxEmptyString;
     if( m_RaLaFilters.Count() )
     {
-        query += wxT( ", radiosetlabels WHERE radiostation_id = radiosetlabel_stationid AND " );
+        query += wxT( ", radiosetlabels WHERE radiostation_genreid = radiogenre_id AND radiostation_id = radiosetlabel_stationid AND " );
         subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
     }
     else
     {
-        query += wxT( " WHERE " );
+        query += wxT( " WHERE radiostation_genreid = radiogenre_id " );
     }
 
-    if( !subquery.IsEmpty() )
-        subquery += wxT( " AND " );
-    subquery += wxString::Format( wxT( " radiostation_isuser = %u " ), m_RadioIsUser );
+    subquery += wxT( " AND " ) + wxString::Format( wxT( " radiostation_isuser = %u " ), m_RadioIsUser );
 
     if( m_RaGeFilters.Count() )
     {
-        //if( !subquery.IsEmpty() )
-        //{
-        //    subquery += wxT( " AND " );
-        //}
-        subquery += wxT( " AND radiostation_genreid = radiogenre_id AND " );
-        subquery += ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
+        subquery += wxT( " AND " ) + ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
     }
 
     if( m_RaTeFilters.Count() )
     {
-        //if( !subquery.IsEmpty() )
-        //{
-            subquery += wxT( " AND " );
-        //}
-        subquery += RadioFiltersSQL();
+        subquery += wxT( " AND " ) + RadioFiltersSQL();
     }
 
     if( !subquery.IsEmpty() )
@@ -5248,11 +5237,11 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
   while( dbRes.NextRow() )
   {
     Station = new guRadioStation();
-    Station->m_Id         = dbRes.GetInt( 0 );
-    Station->m_SCId       = dbRes.GetInt( 1 );
-    Station->m_IsUser     = dbRes.GetBool( 2 );
-    Station->m_GenreId    = dbRes.GetInt( 3 );
-    Station->m_Name       = dbRes.GetString( 4 );
+    Station->m_Name       = dbRes.GetString( 0 );
+    Station->m_Id         = dbRes.GetInt( 1 );
+    Station->m_SCId       = dbRes.GetInt( 2 );
+    Station->m_IsUser     = dbRes.GetBool( 3 );
+    Station->m_GenreId    = dbRes.GetInt( 4 );
     Station->m_Link       = dbRes.GetString( 5 );
     Station->m_Type       = dbRes.GetString( 6 );
     Station->m_BitRate    = dbRes.GetInt( 7 );
@@ -5263,72 +5252,72 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
   return Stations->Count();
 }
 
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::GetRadioCounter( wxLongLong * count )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  if( !GetRadioFiltersCount() )
-  {
-    query = wxT( "SELECT COUNT() FROM radiostations WHERE " );
-    query += wxString::Format( wxT( "radiostation_isuser = %u " ), m_RadioIsUser );
-  }
-  else
-  {
-    //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-    query = wxT( "SELECT COUNT() FROM radiostations, radiogenres" );
-
-    //else
-    wxString subquery = wxEmptyString;
-    if( m_RaLaFilters.Count() )
-    {
-        query += wxT( ", radiosetlabels WHERE radiostation_id = radiosetlabel_stationid AND " );
-        subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
-    }
-    else
-    {
-        query += wxT( " WHERE " );
-    }
-
-    if( !subquery.IsEmpty() )
-        subquery += wxT( " AND " );
-    subquery += wxString::Format( wxT( " radiostation_isuser = %u " ), m_RadioIsUser );
-
-    if( m_RaGeFilters.Count() )
-    {
-        //if( !subquery.IsEmpty() )
-        //{
-        //    subquery += wxT( " AND " );
-        //}
-        subquery += wxT( " AND radiostation_genreid = radiogenre_id AND " );
-        subquery += ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
-    }
-
-    if( m_RaTeFilters.Count() )
-    {
-        //if( !subquery.IsEmpty() )
-        //{
-            subquery += wxT( " AND " );
-        //}
-        subquery += RadioFiltersSQL();
-    }
-
-    if( !subquery.IsEmpty() )
-    {
-        query = query + subquery;
-    }
-  }
-
-  //guLogMessage( wxT( "GetRadioStations\n%s" ), query.c_str() );
-  dbRes = ExecuteQuery( query );
-
-  if( dbRes.NextRow() )
-  {
-      * count = dbRes.GetInt64( 0 );
-  }
-  dbRes.Finalize();
-}
+//// -------------------------------------------------------------------------------- //
+//void guDbLibrary::GetRadioCounter( wxLongLong * count )
+//{
+//  wxString query;
+//  wxSQLite3ResultSet dbRes;
+//
+//  if( !GetRadioFiltersCount() )
+//  {
+//    query = wxT( "SELECT COUNT() FROM radiostations WHERE " );
+//    query += wxString::Format( wxT( "radiostation_isuser = %u " ), m_RadioIsUser );
+//  }
+//  else
+//  {
+//    //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
+//    query = wxT( "SELECT COUNT() FROM radiostations, radiogenres" );
+//
+//    //else
+//    wxString subquery = wxEmptyString;
+//    if( m_RaLaFilters.Count() )
+//    {
+//        query += wxT( ", radiosetlabels WHERE radiostation_id = radiosetlabel_stationid AND " );
+//        subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
+//    }
+//    else
+//    {
+//        query += wxT( " WHERE " );
+//    }
+//
+//    if( !subquery.IsEmpty() )
+//        subquery += wxT( " AND " );
+//    subquery += wxString::Format( wxT( " radiostation_isuser = %u " ), m_RadioIsUser );
+//
+//    if( m_RaGeFilters.Count() )
+//    {
+//        //if( !subquery.IsEmpty() )
+//        //{
+//        //    subquery += wxT( " AND " );
+//        //}
+//        subquery += wxT( " AND radiostation_genreid = radiogenre_id AND " );
+//        subquery += ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
+//    }
+//
+//    if( m_RaTeFilters.Count() )
+//    {
+//        //if( !subquery.IsEmpty() )
+//        //{
+//            subquery += wxT( " AND " );
+//        //}
+//        subquery += RadioFiltersSQL();
+//    }
+//
+//    if( !subquery.IsEmpty() )
+//    {
+//        query = query + subquery;
+//    }
+//  }
+//
+//  //guLogMessage( wxT( "GetRadioStations\n%s" ), query.c_str() );
+//  dbRes = ExecuteQuery( query );
+//
+//  if( dbRes.NextRow() )
+//  {
+//      * count = dbRes.GetInt64( 0 );
+//  }
+//  dbRes.Finalize();
+//}
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::DelRadioStations( const wxArrayInt &RadioGenresIds )

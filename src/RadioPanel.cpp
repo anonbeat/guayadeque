@@ -684,6 +684,9 @@ void guRadioLabelListBox::EditLabel( wxCommandEvent &event )
     }
 }
 
+
+
+
 // -------------------------------------------------------------------------------- //
 // guRadioPanel
 // -------------------------------------------------------------------------------- //
@@ -1468,6 +1471,15 @@ void guRadioPanel::OnPaneClose( wxAuiManagerEvent &event )
 
     event.Veto();
 }
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::GetRadioCounter( wxLongLong * count )
+{
+    * count = m_StationsListBox->GetItemCount();
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guUpdateRadiosThread
