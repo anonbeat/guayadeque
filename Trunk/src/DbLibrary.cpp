@@ -2143,7 +2143,7 @@ void guDbLibrary::GetLabels( guListItems * Labels, const bool FullList )
   //guLogMessage( wxT( "guDbLibrary::GetLabels" ) );
 
   query = wxT( "SELECT tag_id, tag_name FROM tags ORDER BY " );
-  query += FullList ? wxT( "tag_id;" ) : wxT( "tag_name;" );
+  query += FullList ? wxT( "tag_id;" ) : wxT( "tag_name COLLATE NOCASE;" );
 
   dbRes = ExecuteQuery( query );
 
@@ -2162,7 +2162,7 @@ void guDbLibrary::GetRadioLabels( guListItems * Labels, const bool FullList )
   wxSQLite3ResultSet dbRes;
 
   query = wxT( "SELECT radiolabel_id, radiolabel_name FROM radiolabels ORDER BY " );
-  query += FullList ? wxT( "radiolabel_id;" ) : wxT( "radiolabel_name;" );
+  query += FullList ? wxT( "radiolabel_id;" ) : wxT( "radiolabel_name COLLATE NOCASE;" );
 
   //guLogMessage( query );
   dbRes = ExecuteQuery( query );
@@ -2238,14 +2238,14 @@ void guDbLibrary::GetGenres( guListItems * Genres, const bool FullList )
   }
   else if( !( m_TeFilters.Count() + m_LaFilters.Count() ) )
   {
-    query = wxT( "SELECT genre_id, genre_name FROM genres ORDER BY genre_name;" );
+    query = wxT( "SELECT genre_id, genre_name FROM genres ORDER BY genre_name COLLATE NOCASE;" );
   }
   else
   {
     query = wxT( "SELECT DISTINCT genre_id, genre_name FROM genres,songs " ) \
             wxT( "WHERE genre_id = song_genreid AND " );
     query += FiltersSQL( GULIBRARY_FILTER_GENRES );
-    query += wxT( " ORDER BY genre_name;" );
+    query += wxT( " ORDER BY genre_name COLLATE NOCASE;" );
   }
 
   dbRes = ExecuteQuery( query );
@@ -2272,14 +2272,14 @@ void guDbLibrary::GetArtists( guListItems * Artists, const bool FullList )
   }
   else if( !( m_LaFilters.Count() + m_GeFilters.Count() + m_TeFilters.Count() ) )
   {
-    query = wxT( "SELECT artist_id, artist_name FROM artists ORDER BY artist_name;" );
+    query = wxT( "SELECT artist_id, artist_name FROM artists ORDER BY artist_name COLLATE NOCASE;" );
   }
   else
   {
     query = wxT( "SELECT DISTINCT artist_id, artist_name FROM artists,songs " ) \
             wxT( "WHERE artist_id = song_artistid AND " );
     query += FiltersSQL( GULIBRARY_FILTER_ARTISTS );
-    query += wxT( " ORDER BY artist_name;" );
+    query += wxT( " ORDER BY artist_name COLLATE NOCASE;" );
   }
 
   dbRes = ExecuteQuery( query );
@@ -2387,14 +2387,14 @@ void guDbLibrary::GetComposers( guListItems * Items, const bool FullList )
   }
   else if( !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() || m_ArFilters.Count() ) )
   {
-    query = wxT( "SELECT composer_id, composer_name FROM composers WHERE composer_name > '' ORDER BY composer_name;" );
+    query = wxT( "SELECT composer_id, composer_name FROM composers WHERE composer_name > '' ORDER BY composer_name COLLATE NOCASE;" );
   }
   else
   {
     query = wxT( "SELECT DISTINCT composer_id, composer_name FROM composers, songs " ) \
             wxT( "WHERE composer_id = song_composerid AND composer_name > '' AND " ) +
             FiltersSQL( GULIBRARY_FILTER_COMPOSERS );
-    query += wxT( " ORDER BY composer_name;" );
+    query += wxT( " ORDER BY composer_name COLLATE NOCASE;" );
   }
 
   dbRes = ExecuteQuery( query );
@@ -2461,28 +2461,28 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
     switch( m_AlbumsOrder )
     {
         case guALBUMS_ORDER_NAME :
-            query += wxT( "album_name, song_disk" );
+            query += wxT( "album_name COLLATE NOCASE, song_disk" );
             break;
 
         case guALBUMS_ORDER_YEAR :
-            query += wxT( "song_year, album_name, song_disk" );
+            query += wxT( "song_year, album_name COLLATE NOCASE, song_disk" );
             break;
 
         case guALBUMS_ORDER_YEAR_REVERSE :
-            query += wxT( "song_year DESC, album_name, song_disk" );
+            query += wxT( "song_year DESC, album_name COLLATE NOCASE, song_disk" );
             break;
 
         case guALBUMS_ORDER_ARTIST_NAME :
-            query += wxT( "artist_name, album_name, song_disk " );
+            query += wxT( "artist_name, album_name COLLATE NOCASE, song_disk " );
             break;
 
         case guALBUMS_ORDER_ARTIST_YEAR :
-            query += wxT( "artist_name, song_year, album_name, song_disk" );
+            query += wxT( "artist_name COLLATE NOCASE, song_year, album_name COLLATE NOCASE, song_disk" );
             break;
 
         case guALBUMS_ORDER_ARTIST_YEAR_REVERSE :
         default :
-            query += wxT( "artist_name, song_year DESC, album_name, song_disk" );
+            query += wxT( "artist_name COLLATE NOCASE, song_year DESC, album_name COLLATE NOCASE, song_disk" );
             break;
     }
 
@@ -2613,7 +2613,7 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
   switch( order )
   {
     case guALBUMS_ORDER_NAME :
-      query += wxT( "album_name " );
+      query += wxT( "album_name COLLATE NOCASE " );
       break;
 
     case guALBUMS_ORDER_YEAR :
@@ -2625,16 +2625,16 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
       break;
 
     case guALBUMS_ORDER_ARTIST_NAME :
-      query += wxT( "artist_name, album_name" );
+      query += wxT( "artist_name COLLATE NOCASE, album_name COLLATE NOCASE" );
       break;
 
     case guALBUMS_ORDER_ARTIST_YEAR :
-      query += wxT( "artist_name, song_year" );
+      query += wxT( "artist_name COLLATE NOCASE, song_year" );
       break;
 
     case guALBUMS_ORDER_ARTIST_YEAR_REVERSE :
     default :
-      query += wxT( "artist_name, song_year DESC" );
+      query += wxT( "artist_name COLLATE NOCASE, song_year DESC" );
       break;
   }
 
@@ -3181,7 +3181,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
     sort = wxT( " ORDER BY " );
     switch( playlist->m_SortType )
     {
-        case guDYNAMIC_FILTER_ORDER_TITLE : sort += wxT( "song_name" ); break;
+        case guDYNAMIC_FILTER_ORDER_TITLE : sort += wxT( "song_name COLLATE NOCASE" ); break;
 
         case guDYNAMIC_FILTER_ORDER_ARTIST :
         {
@@ -3192,7 +3192,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
                     dbSets += wxT( "AND " );
                 dbSets  += wxT( "song_artistid = artist_id " );
             }
-            sort += wxT( "artist_name" );
+            sort += wxT( "artist_name COLLATE NOCASE" );
             break;
         }
 
@@ -3205,7 +3205,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
                     dbSets += wxT( "AND " );
                 dbSets  += wxT( "song_albumid = album_id " );
             }
-            sort += wxT( "album_name" );
+            sort += wxT( "album_name COLLATE NOCASE" );
             break;
         }
 
@@ -3218,11 +3218,11 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
                     dbSets += wxT( "AND " );
                 dbSets  += wxT( "song_genreid = genre_id " );
             }
-            sort += wxT( "song_genrename" );
+            sort += wxT( "song_genrename COLLATE NOCASE" );
             break;
         }
 
-        case guDYNAMIC_FILTER_ORDER_COMPOSER : sort += wxT( "song_composer" ); break;
+        case guDYNAMIC_FILTER_ORDER_COMPOSER : sort += wxT( "song_composer COLLATE NOCASE" ); break;
         case guDYNAMIC_FILTER_ORDER_YEAR : sort += wxT( "song_year" ); break;
         case guDYNAMIC_FILTER_ORDER_RATING : sort += wxT( "song_rating" ); break;
         case guDYNAMIC_FILTER_ORDER_LENGTH : sort += wxT( "song_length" ); break;
@@ -4179,23 +4179,23 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
   switch( order )
   {
     case guTRACKS_ORDER_TITLE :
-      query += wxT( "song_name" );
+      query += wxT( "song_name COLLATE NOCASE" );
       break;
 
     case guTRACKS_ORDER_ARTIST :
-      query += wxT( "artist_name" );
+      query += wxT( "artist_name COLLATE NOCASE" );
       break;
 
     case guTRACKS_ORDER_ALBUM :
-      query += wxT( "album_name" );
+      query += wxT( "album_name COLLATE NOCASE" );
       break;
 
     case guTRACKS_ORDER_GENRE :
-      query += wxT( "genre_name" );
+      query += wxT( "genre_name COLLATE NOCASE" );
       break;
 
     case guTRACKS_ORDER_COMPOSER :
-      query += wxT( "song_composer" );
+      query += wxT( "song_composer COLLATE NOCASE" );
       break;
 
     case guTRACKS_ORDER_DISK :
@@ -4242,11 +4242,11 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
   switch( order )
   {
     case guTRACKS_ORDER_DISK :
-      query += wxT( ",album_name,song_number;" );
+      query += wxT( ",album_name COLLATE NOCASE,song_number;" );
       break;
 
     case guTRACKS_ORDER_ARTIST :
-      query += wxT( ",album_name,song_disk,song_number;" );
+      query += wxT( ",album_name COLLATE NOCASE,song_disk,song_number;" );
       break;
 
     case guTRACKS_ORDER_ALBUM :
@@ -4254,7 +4254,7 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
       break;
 
     case guTRACKS_ORDER_YEAR :
-      query += wxT( ",album_name,song_disk,song_number;" );
+      query += wxT( ",album_name COLLATE NOCASE,song_disk,song_number;" );
       break;
 
     default:
@@ -4968,7 +4968,7 @@ void guDbLibrary::GetRadioGenresList( guListItems * RadioGenres, const wxArrayIn
   {
     query = wxT( "SELECT radiogenre_id, radiogenre_name FROM radiogenres WHERE " );
     query += ArrayToFilter( GenreIds, wxT( "radiogenre_id" ) );
-    query += wxT( " ORDER BY radiogenre_name;" );
+    query += wxT( " ORDER BY radiogenre_name COLLATE NOCASE;" );
 
     //guLogMessage( query );
     dbRes = ExecuteQuery( query );
@@ -4990,7 +4990,7 @@ void guDbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
   //if( !AllowFilter || !GetRadioFiltersCount() )
   if( !AllowFilter || ( !m_RaTeFilters.Count() && !m_RaLaFilters.Count() ) )
   {
-    query = wxT( "SELECT radiogenre_id, radiogenre_name FROM radiogenres ORDER BY radiogenre_name;" );
+    query = wxT( "SELECT radiogenre_id, radiogenre_name FROM radiogenres ORDER BY radiogenre_name COLLATE NOCASE;" );
   }
   else
   {
@@ -5007,7 +5007,7 @@ void guDbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
         query += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
         query += wxT( " )" );
     }
-    query += wxT( " ORDER BY radiogenre_name;" );
+    query += wxT( " ORDER BY radiogenre_name COLLATE NOCASE;" );
   }
 
   //guLogMessage( query );
@@ -5230,7 +5230,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
   query += wxT( " ORDER BY " );
 
   if( m_StationsOrder == guRADIOSTATIONS_ORDER_NAME )
-    query += wxT( "radiostation_name" );
+    query += wxT( "radiostation_name COLLATE NOCASE" );
   else if( m_StationsOrder == guRADIOSTATIONS_ORDER_BITRATE )
     query += wxT( "radiostation_br" );
   else
@@ -5933,17 +5933,17 @@ int guDbLibrary::GetPodcastItems( guPodcastItemArray * items )
 
   query += wxT( " ORDER BY " );
   if( m_PodcastOrder == guPODCASTS_COLUMN_TITLE )
-    query += wxT( "podcastitem_title" );
+    query += wxT( "podcastitem_title COLLATE NOCASE" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_CHANNEL )
-    query += wxT( "podcastch_title" );
+    query += wxT( "podcastch_title COLLATE NOCASE" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_CATEGORY )
-    query += wxT( "podcastch_category" );
+    query += wxT( "podcastch_category COLLATE NOCASE" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_DATE )
     query += wxT( "podcastitem_time" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_LENGTH )
     query += wxT( "podcastitem_length" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_AUTHOR )
-    query += wxT( "podcastitem_author" );
+    query += wxT( "podcastitem_author COLLATE NOCASE" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_PLAYCOUNT )
     query += wxT( "podcastitem_playcount" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_LASTPLAY )
@@ -6029,17 +6029,17 @@ int guDbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * it
 
   query += wxT( " ORDER BY " );
   if( m_PodcastOrder == guPODCASTS_COLUMN_TITLE )
-    query += wxT( "podcastitem_title" );
+    query += wxT( "podcastitem_title COLLATE NOCASE" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_CHANNEL )
-    query += wxT( "podcastch_title" );
+    query += wxT( "podcastch_title COLLATE NOCASE" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_CATEGORY )
-    query += wxT( "podcastch_category" );
+    query += wxT( "podcastch_category COLLATE NOCASE" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_DATE )
     query += wxT( "podcastitem_time" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_LENGTH )
     query += wxT( "podcastitem_length" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_AUTHOR )
-    query += wxT( "podcastitem_author" );
+    query += wxT( "podcastitem_author COLLATE NOCASE" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_PLAYCOUNT )
     query += wxT( "podcastitem_playcount" );
   else if( m_PodcastOrder == guPODCASTS_COLUMN_LASTPLAY )
