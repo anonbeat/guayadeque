@@ -485,7 +485,7 @@ bool guApeFile::WriteApeTag( void )
         }
     }
     m_File->Flush();
-    return false;
+    return true;
 }
 
 

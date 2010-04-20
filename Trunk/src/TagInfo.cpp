@@ -381,6 +381,7 @@ guTagInfo::guTagInfo( const wxString &filename )
     m_Year = 0;
     m_Length = 0;
     m_Bitrate = 0;
+    m_Compilation = false;
 };
 
 // -------------------------------------------------------------------------------- //
@@ -550,6 +551,16 @@ bool guMp3TagInfo::Read( void )
                 m_Composer = TStringTowxString( m_TagId3v2->frameListMap()[ "TCOM" ].front()->toString() );
             }
 
+            if( m_TagId3v2->frameListMap().contains( "TPE2" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_TagId3v2->frameListMap()[ "TPE2" ].front()->toString() );
+            }
+
+            if( m_TagId3v2->frameListMap().contains( "TCMP" ) )
+            {
+                m_Compilation = TStringTowxString( m_TagId3v2->frameListMap()[ "TCMP" ].front()->toString() ) == wxT( "1" );
+            }
+
             if( m_TrackLabels.Count() == 0 )
             {
                 ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guTRLABELS" );
@@ -631,6 +642,16 @@ bool guMp3TagInfo::Write( void )
         m_TagId3v2->removeFrames( "TCOM" );
         frame = new TagLib::ID3v2::TextIdentificationFrame( "TCOM" );
         frame->setText( wxStringToTString( m_Composer ) );
+        m_TagId3v2->addFrame( frame );
+
+        m_TagId3v2->removeFrames( "TPE2" );
+        frame = new TagLib::ID3v2::TextIdentificationFrame( "TPE2" );
+        frame->setText( wxStringToTString( m_AlbumArtist ) );
+        m_TagId3v2->addFrame( frame );
+
+        m_TagId3v2->removeFrames( "TCMP" );
+        frame = new TagLib::ID3v2::TextIdentificationFrame( "TCMP" );
+        frame->setText( wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
         m_TagId3v2->addFrame( frame );
 
         // I have found several TRCK fields in the mp3s
@@ -731,12 +752,20 @@ bool guFlacTagInfo::Read( void )
         if( m_XiphComment )
         {
             if( m_XiphComment->fieldListMap().contains( "COMPOSER" ) )
+            {
                 m_Composer = TStringTowxString( m_XiphComment->fieldListMap()["COMPOSER"].front() );
+            }
 
             if( m_XiphComment->fieldListMap().contains( "DISCNUMBER" ) )
             {
                 m_Disk = TStringTowxString( m_XiphComment->fieldListMap()["DISCNUMBER"].front() );
             }
+
+            if( m_XiphComment->fieldListMap().contains( "COMPILATION" ) )
+            {
+                m_Compilation = TStringTowxString( m_XiphComment->fieldListMap()["COMPILATION"].front() ) == wxT( "1" );
+            }
+
             return true;
         }
     }
@@ -750,6 +779,7 @@ bool guFlacTagInfo::Write( void )
     {
         m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
         m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
+        m_XiphComment->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
     }
     return guTagInfo::Write();
 }
@@ -940,12 +970,20 @@ bool guOggTagInfo::Read( void )
         if( m_XiphComment )
         {
             if( m_XiphComment->fieldListMap().contains( "COMPOSER" ) )
+            {
                 m_Composer = TStringTowxString( m_XiphComment->fieldListMap()["COMPOSER"].front() );
+            }
 
             if( m_XiphComment->fieldListMap().contains( "DISCNUMBER" ) )
             {
                 m_Disk = TStringTowxString( m_XiphComment->fieldListMap()["DISCNUMBER"].front() );
             }
+
+            if( m_XiphComment->fieldListMap().contains( "COMPILATION" ) )
+            {
+                m_Compilation = TStringTowxString( m_XiphComment->fieldListMap()["COMPILATION"].front() ) == wxT( "1" );
+            }
+
             return true;
         }
     }
@@ -959,6 +997,7 @@ bool guOggTagInfo::Write( void )
     {
         m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
         m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
+        m_XiphComment->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
     }
     return guTagInfo::Write();
 }
@@ -1028,7 +1067,9 @@ bool guMp4TagInfo::Read( void )
         if( m_Mp4Tag )
         {
             if( m_Mp4Tag->itemListMap().contains( "\xA9wrt" ) )
+            {
                 m_Composer = TStringTowxString( m_Mp4Tag->itemListMap()["\xa9wrt"].toStringList().front() );
+            }
 
             if( m_Mp4Tag->itemListMap().contains( "disk" ) )
             {
@@ -1037,6 +1078,12 @@ bool guMp4TagInfo::Read( void )
                     m_Mp4Tag->itemListMap()["disk"].toIntPair().second );
 
             }
+
+            if( m_Mp4Tag->itemListMap().contains( "cpil" ) )
+            {
+                m_Compilation = m_Mp4Tag->itemListMap()["cpil"].toBool();
+            }
+
         }
         return true;
     }
@@ -1079,7 +1126,7 @@ bool guMp4TagInfo::Write( void )
         int second;
         guStrDiskToDiskNum( m_Disk, first, second );
         m_Mp4Tag->itemListMap()["disk"] = TagLib::MP4::Item( first, second );
-            //mp4tag->itemListMap()["disk"] = TagLib::MP4::Item( discnumber, 0 );
+        m_Mp4Tag->itemListMap()["cpil"] = TagLib::MP4::Item( m_Compilation );
     }
     return guTagInfo::Write();
 }
@@ -1201,16 +1248,14 @@ bool guMp4TagInfo::CanHandleLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxString guMp4TagInfo::GetLyrics( void )
 {
-    TagLib::MP4::File tagfile( m_FileName.mb_str( wxConvFile ) );
-    return GetMp4Lyrics( tagfile.tag() );
+    //TagLib::MP4::File tagfile( m_FileName.mb_str( wxConvFile ) );
+    return GetMp4Lyrics( ( ( TagLib::MP4::File * ) m_TagFile->file() )->tag() );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::SetLyrics( const wxString &lyrics )
 {
-    TagLib::MP4::File tagfile( m_FileName.mb_str( wxConvFile ) );
-
-    return SetMp4Lyrics( tagfile.tag(), lyrics ) && tagfile.save();
+    return SetMp4Lyrics( ( ( TagLib::MP4::File * ) m_TagFile->file() )->tag(), lyrics ) && m_TagFile->save();
 }
 
 
@@ -1231,7 +1276,7 @@ guMpcTagInfo::~guMpcTagInfo()
 // -------------------------------------------------------------------------------- //
 // guApeTagInfo
 // -------------------------------------------------------------------------------- //
-guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo( filename )
+guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo(), m_ApeFile( filename )
 {
     //wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".ape" ) ) );
 }
@@ -1244,8 +1289,7 @@ guApeTagInfo::~guApeTagInfo()
 // -------------------------------------------------------------------------------- //
 bool guApeTagInfo::Read( void )
 {
-    guApeFile File( m_FileName );
-    guApeTag * Tag = File.GetApeTag();
+    guApeTag * Tag = m_ApeFile.GetApeTag();
     if( Tag )
     {
         m_TrackName = Tag->GetTitle();
@@ -1262,9 +1306,18 @@ bool guApeTagInfo::Read( void )
             m_GenreName = _( "Unknown" );
         m_Track = Tag->GetTrack();
         m_Year = Tag->GetYear();
-        m_Length = File.GetTrackLength();
-        m_Bitrate = File.GetBitRate();
+        m_Length = m_ApeFile.GetTrackLength();
+        m_Bitrate = m_ApeFile.GetBitRate();
+
+        m_Comments = Tag->GetItemValue( APE_TAG_KEY_COMMENT );
+        m_Composer = Tag->GetItemValue( APE_TAG_KEY_COMPOSER );
+        m_Disk = Tag->GetItemValue( APE_TAG_KEY_MEDIA );
+
         return true;
+    }
+    else
+    {
+        guLogError( wxT( "Ape file with no tags found" ) );
     }
     return false;
 }
@@ -1272,8 +1325,7 @@ bool guApeTagInfo::Read( void )
 // -------------------------------------------------------------------------------- //
 bool guApeTagInfo::Write( void )
 {
-    guApeFile File( m_FileName );
-    guApeTag * Tag = File.GetApeTag();
+    guApeTag * Tag = m_ApeFile.GetApeTag();
     if( Tag )
     {
         Tag->SetTitle( m_TrackName );
@@ -1282,12 +1334,36 @@ bool guApeTagInfo::Write( void )
         Tag->SetGenre( m_GenreName );
         Tag->SetTrack( m_Track );
         Tag->SetYear( m_Year );
-        File.WriteApeTag();
+        Tag->SetItem( APE_TAG_KEY_COMMENT, m_Comments );
+        Tag->SetItem( APE_TAG_KEY_COMPOSER, m_Composer );
+        Tag->SetItem( APE_TAG_KEY_MEDIA, m_Disk );
+
+        m_ApeFile.WriteApeTag();
         return true;
     }
     return false;
 }
 
+// -------------------------------------------------------------------------------- //
+bool guApeTagInfo::CanHandleLyrics( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guApeTagInfo::GetLyrics( void )
+{
+    guApeTag * Tag = m_ApeFile.GetApeTag();
+    return Tag->GetItemValue( APE_TAG_KEY_LYRICS );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guApeTagInfo::SetLyrics( const wxString &lyrics )
+{
+    guApeTag * Tag = m_ApeFile.GetApeTag();
+    Tag->SetItem( APE_TAG_KEY_LYRICS, lyrics );
+    return m_ApeFile.WriteApeTag();
+}
 
 
 

@@ -1,4 +1,8 @@
 
+  * Read composer, comments from ape and m4a files added
+  * Added Lyric support to Ape files
+  * Added French translation thanks to Frombenny <frombenny@gmail.com>
+  * Now playlist are created for found playlist doing a library scan
   * Added option to show full screen and to hide status bar
   * Added a composer listbox to the library tab
   * You can enable to delete the recordings not bigger than a certain amount
