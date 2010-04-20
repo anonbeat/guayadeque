@@ -21,6 +21,7 @@
 #ifndef TAGINFO_H
 #define TAGINFO_H
 
+#include "ApeTag.h"
 #include "DbLibrary.h"
 
 
@@ -68,6 +69,7 @@ class guTagInfo
     wxString        m_TrackName;
     wxString        m_GenreName;
     wxString        m_ArtistName;
+    wxString        m_AlbumArtist;
     wxString        m_AlbumName;
     wxString        m_Composer;
     wxString        m_Comments;
@@ -84,6 +86,7 @@ class guTagInfo
     wxString        m_ArtistLabelsStr;
     wxArrayString   m_AlbumLabels;
     wxString        m_AlbumLabelsStr;
+    bool            m_Compilation;
 
     guTagInfo( const wxString &filename = wxEmptyString );
     ~guTagInfo();
@@ -205,12 +208,18 @@ class guMpcTagInfo : public guTagInfo
 // -------------------------------------------------------------------------------- //
 class guApeTagInfo : public guTagInfo
 {
+  protected :
+    guApeFile       m_ApeFile;
+
   public :
     guApeTagInfo( const wxString &filename = wxEmptyString );
     ~guApeTagInfo();
 
     virtual bool        Read( void );
     virtual bool        Write( void );
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
 };
 
 
