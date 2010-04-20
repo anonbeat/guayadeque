@@ -41,6 +41,8 @@
 
 #define guLYRICSFLY_USER_ID             wxT( "8f7177553a49dabc7-temporary.API.access" )
 
+#define guLYRICS_LINEFEED               wxT( "\r\n" )
+
 int LyricAligns[] = { wxTE_LEFT, wxTE_CENTER, wxTE_RIGHT };
 
 // -------------------------------------------------------------------------------- //
@@ -958,7 +960,7 @@ wxString ProcessHexData( const wxString &hexstr )
         wxString New = wxString::Format( wxT( "%c" ), index );
         RetVal.Replace( Old, New );
     }
-    RetVal.Replace( wxT( "<br />" ), wxT( "\n" ) );
+    RetVal.Replace( wxT( "<br />" ), guLYRICS_LINEFEED );
     return RetVal;
 }
 
@@ -1240,7 +1242,7 @@ bool guLyrcComArEngine::DoSearchLyric( const wxString &content )
             Content = Content.Mid( 0, EndPos );
 
             Content.Replace( wxT( "<br />" ), wxT( "" ) );
-            Content.Replace( wxT( "<br>" ), wxT( "\n" ) );
+            Content.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
             SetLyric( new wxString( Content.c_str() ) );
             return true;
         }
@@ -1313,7 +1315,7 @@ bool guLyricPluginEngine::DoSearchLyric( const wxString &content )
                 Content = Content.Mid( 0, EndPos );
 
                 Content.Replace( wxT( "<br />" ), wxT( "" ) );
-                Content.Replace( wxT( "<br>" ), wxT( "\n" ) );
+                Content.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
                 SetLyric( new wxString( Content.c_str() ) );
                 return true;
             }
@@ -1374,7 +1376,7 @@ wxString guChartLyricsEngine::GetLyricText( const wxString &content )
                 RetVal = XmlNode->GetNodeContent();
                 if( !RetVal.IsEmpty() )
                 {
-                    RetVal.Replace( wxT( "<br>" ), wxT( "\n" ) );
+                    RetVal.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
                     break;
                 }
             }
