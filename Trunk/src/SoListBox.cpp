@@ -376,7 +376,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
     Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( Menu, ID_SONG_SAVEPLAYLIST, _( "Save Playlist" ), _( "Save all selected tracks as a playlist" ) );
+    MenuItem = new wxMenuItem( Menu, ID_SONG_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Save all selected tracks as a playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
     Menu->Append( MenuItem );
 
