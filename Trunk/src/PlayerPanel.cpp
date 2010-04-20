@@ -2220,9 +2220,8 @@ void guPlayerPanel::OnPlayerPositionSliderMouseWheel( wxMouseEvent &event )
     if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
     {
         int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
-        m_PlayerPositionSlider->SetValue( wxMax( 0, wxMin( 1000, m_PlayerPositionSlider->GetValue() +
-            ( Rotation * 50 ) ) ) );
-        SetPosition( m_PlayerPositionSlider->GetValue() * m_MediaSong.m_Length );
+        //guLogMessage( wxT( "Pos : %i -> %i" ), GetPosition(), GetPosition() + ( Rotation * 7000 ) );
+        SetPosition( wxMax( 0, wxMin( ( int ) m_MediaSong.m_Length * 1000, GetPosition() + ( Rotation * 7000 ) ) ) );
     }
     m_SliderIsDragged = false;
 }
