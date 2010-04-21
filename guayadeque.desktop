@@ -2,9 +2,15 @@
 Version=1.0
 Encoding=UTF-8
 Name=Guayadeque Music Player
-Name[es]=Reproductor de Música Guayadeque
+Name[es]=Guayadeque - Reproductor de Música
+Name[fr]=Guayadeque - Lecteur de musique et de radios
+Name[de]=Guayadeque - Musik-Wiedergabeprogramm
+Name[it]=Guayadeque - Riproduttore musicale
 Comment=Play music songs
 Comment[es]=Reproduce canciones
+Comment[fr]=Permet de lire, organiser, trier nos musiques et radios numériques
+Comment[de]=Ihre Musiksammlung wiedergeben und organisieren
+Comment[it]=lettore di file audio che legge ed organizza file musicali i stazioni radio
 Exec=guayadeque
 Terminal=false
 Type=Application
