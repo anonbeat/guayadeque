@@ -567,21 +567,24 @@ void guRadioStationListBox::SetStationsOrder( int order )
 // -------------------------------------------------------------------------------- //
 bool guRadioStationListBox::GetSelected( guRadioStation * radiostation ) const
 {
+    if( !m_Radios.Count() )
+        return false;
+
     int Selected = GetSelection();
-    if( Selected != wxNOT_FOUND )
+    if( Selected == wxNOT_FOUND )
     {
-        radiostation->m_Id          = m_Radios[ Selected ].m_Id;
-        radiostation->m_SCId        = m_Radios[ Selected ].m_SCId;
-        radiostation->m_BitRate     = m_Radios[ Selected ].m_BitRate;
-        radiostation->m_GenreId     = m_Radios[ Selected ].m_GenreId;
-        radiostation->m_IsUser      = m_Radios[ Selected ].m_IsUser;
-        radiostation->m_Link        = m_Radios[ Selected ].m_Link;
-        radiostation->m_Listeners   = m_Radios[ Selected ].m_Listeners;
-        radiostation->m_Name        = m_Radios[ Selected ].m_Name;
-        radiostation->m_Type        = m_Radios[ Selected ].m_Type;
-        return true;
+        Selected = 0;
     }
-    return false;
+    radiostation->m_Id          = m_Radios[ Selected ].m_Id;
+    radiostation->m_SCId        = m_Radios[ Selected ].m_SCId;
+    radiostation->m_BitRate     = m_Radios[ Selected ].m_BitRate;
+    radiostation->m_GenreId     = m_Radios[ Selected ].m_GenreId;
+    radiostation->m_IsUser      = m_Radios[ Selected ].m_IsUser;
+    radiostation->m_Link        = m_Radios[ Selected ].m_Link;
+    radiostation->m_Listeners   = m_Radios[ Selected ].m_Listeners;
+    radiostation->m_Name        = m_Radios[ Selected ].m_Name;
+    radiostation->m_Type        = m_Radios[ Selected ].m_Type;
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -852,7 +855,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 	m_StationsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
     Connect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
-    //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchSelected ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     //m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
@@ -892,7 +895,7 @@ guRadioPanel::~guRadioPanel()
 	m_StationsListBox->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
     Disconnect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
-    //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchSelected ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     //m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
@@ -917,6 +920,13 @@ void guRadioPanel::OnSearchActivated( wxCommandEvent& event )
 //    m_GenresTreeCtrl->ReloadItems();
 //    m_StationsListBox->ReloadItems();
 //    m_InputTextCtrl->ShowCancelButton( true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnSearchSelected( wxCommandEvent& event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
 }
 
 // -------------------------------------------------------------------------------- //

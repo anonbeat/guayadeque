@@ -4,6 +4,7 @@
   * Added French translation thanks to Frombenny <frombenny@gmail.com>
   * Now playlist are created for found playlist doing a library scan
   * Added option to show full screen and to hide status bar
+  * Implemented live search. Now Enter sends current filtered results to playlist
   * Added a composer listbox to the library tab
   * You can enable to delete the recordings not bigger than a certain amount
     of time in preferences

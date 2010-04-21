@@ -78,6 +78,7 @@ class guRadioPanel : public wxPanel
     void OnStationListBoxColClick( wxListEvent &event );
     void OnStationsEditLabelsClicked( wxCommandEvent &event );
     void OnSearchActivated( wxCommandEvent &event );
+    void OnSearchSelected( wxCommandEvent &event );
     void OnSearchCancelled( wxCommandEvent &event );
 	void OnRadioGenreListActivated( wxTreeEvent &Event );
 	void OnRadioLabelListSelected( wxListEvent &Event );
