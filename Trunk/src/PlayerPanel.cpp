@@ -1271,7 +1271,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     // Update the Current Playing Song Info
     UpdateLabels();
-    UpdatePositionLabel( 0 );
+    //UpdatePositionLabel( 0 );
 
 //    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
 //        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
@@ -1355,7 +1355,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
     }
 
     // If its a Radio disable PositionSlider
-    m_PlayerPositionSlider->SetValue( 0 );
+    //m_PlayerPositionSlider->SetValue( 0 );
     if( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION )
     {
         m_PlayerPositionSlider->Disable();

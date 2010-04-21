@@ -1556,6 +1556,8 @@ void guPrefDialog::OnRecEnableClicked( wxCommandEvent& event )
 	m_RecFormatChoice->Enable( event.IsChecked() );
 	m_RecQualityChoice->Enable( event.IsChecked() );
 	m_RecSplitChkBox->Enable( event.IsChecked() );
+	m_RecDelTracks->Enable( event.IsChecked() );
+	m_RecDelTime->Enable( event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

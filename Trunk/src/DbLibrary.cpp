@@ -2473,7 +2473,7 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
             break;
 
         case guALBUMS_ORDER_ARTIST_NAME :
-            query += wxT( "artist_name, album_name COLLATE NOCASE, song_disk " );
+            query += wxT( "artist_name COLLATE NOCASE, album_name COLLATE NOCASE, song_disk " );
             break;
 
         case guALBUMS_ORDER_ARTIST_YEAR :
