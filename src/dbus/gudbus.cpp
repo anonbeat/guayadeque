@@ -195,7 +195,7 @@ bool guDBusServer::AddMatch( const char * rule )
 // -------------------------------------------------------------------------------- //
 bool guDBusServer::Send( guDBusMessage * msg )
 {
-    return dbus_connection_send( m_DBusConn, msg->GetMessage(), NULL );
+    return msg && dbus_connection_send( m_DBusConn, msg->GetMessage(), NULL );
 }
 
 // -------------------------------------------------------------------------------- //
