@@ -713,7 +713,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     else
                     {
                         m_PlayerPanel->RemoveItem( TrackNum );
-                        //Send( reply );
+                        Send( reply );
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
@@ -739,7 +739,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     {
                         m_PlayerPanel->SetPlayLoop( PlayLoop );
 
-                        //Send( reply );
+                        Send( reply );
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
@@ -766,7 +766,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                         wxCommandEvent event;
                         m_PlayerPanel->OnRandomPlayButtonClick( event );
 
-                        //Send( reply );
+                        Send( reply );
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
