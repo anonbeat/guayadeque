@@ -108,11 +108,11 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	EditorSizer->Add( m_ServerChoice, 1, wxTOP|wxRIGHT, 5 );
 
 	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-    m_ReloadButton->SetToolTip( _( "Reload the lyric" ) );
+    m_ReloadButton->SetToolTip( _( "Reload the lyrics" ) );
 	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_EditButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_EditButton->SetToolTip( _( "Edit the lyric for the current track" ) );
+	m_EditButton->SetToolTip( _( "Edit the lyrics for the current track" ) );
 	m_EditButton->Enable( false );
 	EditorSizer->Add( m_EditButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
@@ -610,7 +610,7 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     }
     else if( !Artist.IsEmpty() && !Track.IsEmpty() )
     {
-        SetText( _( "Searching the lyrics for this track" ) );
+        SetText( _( "Searching for lyrics for this track" ) );
 
         if( m_LyricThread )
         {
