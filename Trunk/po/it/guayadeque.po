@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque 0.2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-21 09:16+0200\n"
-"PO-Revision-Date: 2010-04-21 09:16+0100\n"
-"Last-Translator: Rudy-Metal <mekanix@aruba.it>\n"
+"POT-Creation-Date: 2010-04-28 09:00+0200\n"
+"PO-Revision-Date: 2010-04-28 09:03+0100\n"
+"Last-Translator: Il Metallo <mekanix@aruba.it>\n"
 "Language-Team: guayadeque <anonbeat@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -258,7 +258,7 @@ msgstr "Sei sicuro di voler eliminare la copertina per l'album selezionato?"
 #: PodcastsPanel.cpp:436
 #: PodcastsPanel.cpp:810
 #: RadioPanel.cpp:348
-#: RadioPanel.cpp:656
+#: RadioPanel.cpp:659
 #: TaListBox.cpp:124
 msgid "Confirm"
 msgstr "Conferma"
@@ -927,8 +927,8 @@ msgstr "Aggiungi i generi selezionati alla playlist"
 #: LibPanel.cpp:155
 #: MainFrame.cpp:842
 #: MainFrame.cpp:898
-#: RadioPanel.cpp:784
-#: RadioPanel.cpp:792
+#: RadioPanel.cpp:787
+#: RadioPanel.cpp:795
 msgid "Labels"
 msgstr "Etichette"
 
@@ -941,21 +941,21 @@ msgid "Delete the selected labels"
 msgstr "Elimina etichette selezionate"
 
 #: LabelEditor.cpp:150
-#: RadioPanel.cpp:638
-#: RadioPanel.cpp:677
+#: RadioPanel.cpp:641
+#: RadioPanel.cpp:680
 #: TaListBox.cpp:106
 #: TaListBox.cpp:145
 msgid "Label Name: "
 msgstr "Nome etichetta:"
 
 #: LabelEditor.cpp:150
-#: RadioPanel.cpp:638
+#: RadioPanel.cpp:641
 #: TaListBox.cpp:106
 msgid "Please enter the label name"
 msgstr "Inserire un nome per l'etichetta"
 
 #: LabelEditor.cpp:174
-#: RadioPanel.cpp:655
+#: RadioPanel.cpp:658
 #: TaListBox.cpp:123
 msgid "Are you sure to delete the selected labels?"
 msgstr "Sei sicuro di voler cancellare le etichette selezionate?"
@@ -1065,14 +1065,14 @@ msgid "Events"
 msgstr "Eventi"
 
 #: LibPanel.cpp:109
-#: RadioPanel.cpp:739
+#: RadioPanel.cpp:742
 msgid "Search:"
 msgstr "Cerca:"
 
 #: LibPanel.cpp:121
 #: MainFrame.cpp:837
 #: MainFrame.cpp:893
-#: RadioPanel.cpp:751
+#: RadioPanel.cpp:754
 msgid "Text Search"
 msgstr "Ricerca Testo"
 
@@ -1080,7 +1080,7 @@ msgstr "Ricerca Testo"
 #: LibPanel.cpp:137
 #: MainFrame.cpp:847
 #: MainFrame.cpp:903
-#: RadioPanel.cpp:772
+#: RadioPanel.cpp:775
 msgid "Genres"
 msgstr "Generi"
 
@@ -1139,11 +1139,11 @@ msgid " Columns "
 msgstr "Colonne"
 
 #: LyricsPanel.cpp:111
-msgid "Reload the lyric"
+msgid "Reload the lyrics"
 msgstr "Ricarica il testo"
 
 #: LyricsPanel.cpp:115
-msgid "Edit the lyric for the current track"
+msgid "Edit the lyrics for the current track"
 msgstr "Modifica il testo per il brano corrente"
 
 #: LyricsPanel.cpp:121
@@ -1171,8 +1171,8 @@ msgid "Print the content of the lyrics"
 msgstr "Stampa il testo del brano"
 
 #: LyricsPanel.cpp:613
-msgid "Searching the lyrics for this track"
-msgstr "Ricerca testo del brano"
+msgid "Searching for lyrics for this track"
+msgstr "Ricerca del testo per il brano in corso"
 
 #: LyricsPanel.cpp:663
 msgid "No lyrics found for this song."
@@ -2664,16 +2664,16 @@ msgstr "Inserisci il testo per trovare la copertina"
 msgid "Edit the text to find covers"
 msgstr "Modifica il testo per trovare la copertina:"
 
-#: Preferences.cpp:1583
-#: Preferences.cpp:1613
+#: Preferences.cpp:1585
+#: Preferences.cpp:1615
 msgid "Filter: "
 msgstr "Filtro:"
 
-#: Preferences.cpp:1583
+#: Preferences.cpp:1585
 msgid "Enter the text to filter"
 msgstr "Inserisci il testo da usare come filtro"
 
-#: Preferences.cpp:1613
+#: Preferences.cpp:1615
 msgid "Edit the text to filter"
 msgstr "Modifica il testo da usare come filtro"
 
@@ -2760,7 +2760,7 @@ msgid "Add a radio"
 msgstr "Aggiungi radio"
 
 #: RadioPanel.cpp:512
-#: RadioPanel.cpp:1232
+#: RadioPanel.cpp:1242
 msgid "Edit Radio"
 msgstr "Modifica radio"
 
@@ -2780,55 +2780,55 @@ msgstr "Elimina la radio selezionata"
 msgid "Edit the labels assigned to the selected stations"
 msgstr "Modifica le etichette assegnate alla stazione"
 
-#: RadioPanel.cpp:618
+#: RadioPanel.cpp:621
 #: TaListBox.cpp:64
 msgid "Add Label"
 msgstr "Aggiungi etichetta"
 
-#: RadioPanel.cpp:618
+#: RadioPanel.cpp:621
 #: TaListBox.cpp:64
 msgid "Create a new label"
 msgstr "Crea una nuova etichetta"
 
-#: RadioPanel.cpp:624
+#: RadioPanel.cpp:627
 #: TaListBox.cpp:70
 msgid "Edit Label"
 msgstr "Modifica etichetta"
 
-#: RadioPanel.cpp:624
+#: RadioPanel.cpp:627
 #: TaListBox.cpp:70
 msgid "Change selected label"
 msgstr "Cambia l'etichetta selezionata"
 
-#: RadioPanel.cpp:628
+#: RadioPanel.cpp:631
 #: TaListBox.cpp:74
 msgid "Delete label"
 msgstr "Elimina etichetta"
 
-#: RadioPanel.cpp:628
+#: RadioPanel.cpp:631
 #: TaListBox.cpp:74
 msgid "Delete selected labels"
 msgstr "Elimina le etichette selezionate"
 
-#: RadioPanel.cpp:677
+#: RadioPanel.cpp:680
 #: TaListBox.cpp:145
 msgid "Enter the new label name"
 msgstr "Inserisci il nome per la nuova etichetta"
 
-#: RadioPanel.cpp:813
+#: RadioPanel.cpp:816
 msgid "Stations"
 msgstr "Stazioni"
 
-#: RadioPanel.cpp:981
+#: RadioPanel.cpp:991
 msgid "Stations Labels Editor"
 msgstr "Editor etichette delle stazioni"
 
-#: RadioPanel.cpp:1032
-#: RadioPanel.cpp:1090
+#: RadioPanel.cpp:1042
+#: RadioPanel.cpp:1100
 msgid "Radios"
 msgstr "Radio"
 
-#: RadioPanel.cpp:1195
+#: RadioPanel.cpp:1205
 msgid "There are not entries for this Radio Station"
 msgstr "Nessun elemento per questa stazione radio"
 
