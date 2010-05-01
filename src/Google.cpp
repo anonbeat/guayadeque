@@ -26,6 +26,7 @@
 #include <wx/arrimpl.cpp>
 #include <wx/curl/http.h>
 #include <wx/statline.h>
+#include <wx/html/htmlpars.h>
 
 //#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
 #define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&start=%u" )
@@ -99,7 +100,8 @@ int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
         if( StrPos == wxNOT_FOUND )
           return 0; //break;
         //guLogMessage( wxT( "%s" ), Content.Mid( 0, StrPos ).c_str() );
-        GoogleImage = ExtractImageInfo( content.Mid( 0, StrPos ) );
+        wxHtmlEntitiesParser EntitiesParser;
+        GoogleImage = ExtractImageInfo( EntitiesParser.Parse( content.Mid( 0, StrPos ) ) );
         //RetVal.Add( CurImage );
         CurImage.Empty();
         CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_LINK ] );
