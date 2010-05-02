@@ -132,6 +132,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         }
 
         m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
+
+        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) );
 //        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
     }
 
@@ -601,6 +603,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         {
             m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
         }
+
+        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) );
 
         if( !m_PlaySmart )
             CheckFiltersEnable();
@@ -1627,7 +1631,8 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
         m_MediaSong.m_PlayTime = CurPos;
 
-        if( ( CurPos + 6 + 2 >= m_LastLength ) && !m_AboutToFinishPending )
+        if( ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
+            ( CurPos + m_FadeOutTime + 2 >= m_LastLength ) && !m_AboutToFinishPending )
         {
             //OnAboutToFinish();
             m_AboutToFinishPending = true;
