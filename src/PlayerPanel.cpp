@@ -442,6 +442,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     Connect( guEVT_MEDIA_LOADED, guMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
     //Connect( guEVT_MEDIA_ABOUT_TO_FINISH, wxMediaEventHandler( guPlayerPanel::OnMediaAboutToFinish ), NULL, this );
     Connect( guEVT_MEDIA_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
+    Connect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
     Connect( guEVT_MEDIA_TAGINFO, guMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
     Connect( guEVT_MEDIA_CHANGED_BITRATE, guMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     Connect( guEVT_MEDIA_BUFFERING, guMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
@@ -559,13 +560,14 @@ guPlayerPanel::~guPlayerPanel()
     //m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
 
-//    m_MediaCtrl->Disconnect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
-//    m_MediaCtrl->Disconnect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
-//    m_MediaCtrl->Disconnect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
-//    m_MediaCtrl->Disconnect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
-//    m_MediaCtrl->Disconnect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
-//    m_MediaCtrl->Disconnect( wxEVT_MEDIA_LEVEL, wxMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
-//    m_MediaCtrl->Disconnect( wxEVT_MEDIA_ERROR, wxMediaEventHandler( guPlayerPanel::OnMediaError ), NULL, this );
+//    Disconnect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
+//    Disconnect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
+//    Disconnect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
+//    Disconnect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
+//    Disconnect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
+//    Disconnect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
+//    Disconnect( wxEVT_MEDIA_LEVEL, wxMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
+//    Disconnect( wxEVT_MEDIA_ERROR, wxMediaEventHandler( guPlayerPanel::OnMediaError ), NULL, this );
 
     Disconnect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ) );
 
@@ -615,6 +617,11 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
             event.SetInt( 1 );
             wxTheApp->GetTopWindow()->AddPendingEvent( event );
+        }
+
+        if( m_MediaCtrl )
+        {
+            m_MediaCtrl->UpdatedConfig();
         }
 
         if( m_MediaRecordCtrl )
@@ -1594,9 +1601,21 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaPosition..." ) );
-    wxFileOffset CurPos = event.GetInt() / 1000;
+    guLogMessage( wxT( "OnMediaPosition... %i" ), event.GetInt() );
 
+    if( event.GetInt() < 0 )
+        return;
+
+    wxFileOffset CurLen = event.GetExtraLong() / 1000;
+    if( CurLen != m_LastLength )
+    {
+        m_LastLength = CurLen;
+
+        UpdatePositionLabel( m_LastCurPos );
+        m_MediaSong.m_Length = CurLen;
+    }
+
+    wxFileOffset CurPos = event.GetInt() / 1000;
     if( ( CurPos != m_LastCurPos ) && !m_SliderIsDragged )
     {
         m_LastCurPos = CurPos;
@@ -1607,6 +1626,14 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             m_PlayerPositionSlider->SetValue( event.GetInt() / m_MediaSong.m_Length );
 
         m_MediaSong.m_PlayTime = CurPos;
+
+        if( ( CurPos + 6 + 2 >= m_LastLength ) && !m_AboutToFinishPending )
+        {
+            //OnAboutToFinish();
+            m_AboutToFinishPending = true;
+            wxCommandEvent evt;
+            OnNextTrackButtonClick( evt );
+        }
     }
 }
 
@@ -1746,9 +1773,12 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
     guLogMessage( wxT( "OnMediaLoaded Cur: %i %i" ), m_PlayListCtrl->GetCurItem(), event.GetInt() );
     if( m_AboutToFinishPending )
     {
-        //guLogMessage( wxT( "Push back the OnMediaLoaded event..." ) );
-        wxPostEvent( this, event );
-        return;
+        SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
+        //m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+        //m_AboutToFinishPending = false;
+        guLogMessage( wxT( "OnMediaLoaded... Push back the OnMediaLoaded event..." ) );
+        //wxPostEvent( this, event );
+        //return;
     }
 
     if( m_IsSkipping )
@@ -1806,7 +1836,7 @@ void guPlayerPanel::OnAboutToFinish( void )
     guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
     if( NextItem )
     {
-        //guLogMessage( wxT( "Starting of About-To-Finish" ) );
+        guLogMessage( wxT( "Starting of About-To-Finish" ) );
         m_AboutToFinishPending = true;
         LoadMedia( NextItem->m_FileName, false );
     }
@@ -1838,7 +1868,7 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
     {
         m_AboutToFinishPending = false;
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-        //guLogMessage( wxT( "EOS cancelled..." ) );
+        guLogMessage( wxT( "EOS cancelled..." ) );
         return;
     }
 
@@ -1870,6 +1900,18 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
                 OnMediaFinished( event );
             }
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnMediaFadeOutFinished( guMediaEvent &event )
+{
+    guLogMessage( wxT( "OnMediaFadeOutFinished Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+
+    if( m_AboutToFinishPending )
+    {
+        m_AboutToFinishPending = false;
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
 }
 

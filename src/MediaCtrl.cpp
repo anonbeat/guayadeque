@@ -34,7 +34,7 @@
 
 
 DEFINE_EVENT_TYPE( guEVT_MEDIA_LOADED )
-DEFINE_EVENT_TYPE( guEVT_MEDIA_SET_NEXT_MEDIA )
+//DEFINE_EVENT_TYPE( guEVT_MEDIA_SET_NEXT_MEDIA )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_FINISHED )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_CHANGED_STATE )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_BUFFERING )
@@ -44,7 +44,7 @@ DEFINE_EVENT_TYPE( guEVT_MEDIA_CHANGED_BITRATE )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_CHANGED_POSITION )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_CHANGED_LENGTH )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_ERROR )
-DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_STARTED )
+DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_FINISHED )
 
 #define guFADERPLAYBIN_FAST_FADER_TIME          (GST_SECOND)
 
@@ -148,6 +148,7 @@ static guFaderPlayBin * FindFaderPlayBin( const guFaderPlayBinArray &playbins, i
 extern "C" {
 
 static void unlink_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBin * faderplaybin );
+static void unlink_reuse_relink( guMediaCtrl * mediactrl, guFaderPlayBin * faderplaybin );
 
 // -------------------------------------------------------------------------------- //
 static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMediaCtrl * ctrl )
@@ -513,11 +514,16 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 switch( FaderPlayBin->m_State )
                 {
                     case guFADERPLAYBIN_STATE_FADING_OUT :
+                    {
                         // stop the stream and dispose of it
                         guLogDebug( wxT( "got fade-out-done for stream %s -> PENDING_REMOVE" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
                         FaderPlayBin->m_Player->ScheduleReap();
+
+                        guMediaEvent event( guEVT_MEDIA_FADEOUT_FINISHED );
+                        ctrl->AddPendingEvent( event );
                         break;
+                    }
 
                     case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED :
                     {
@@ -562,13 +568,14 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                     FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
 
                     unlink_blocked_cb( FaderPlayBin->m_SourcePad, true, FaderPlayBin );
+                    ctrl->ScheduleReap();
                 }
                 else
                 {
                     // no need to emit EOS here, we already know what to do next
                     guLogDebug( wxT( "got EOS message for stream %s in REUSING state" ), FaderPlayBin->m_Uri.c_str() );
 
-                    //unlink_reuse_relink(player, stream);
+                    unlink_reuse_relink( ctrl, FaderPlayBin );
                 }
             }
             else
@@ -596,6 +603,44 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 //    ctrl->AddPendingEvent( event );
 //}
 //
+
+static void unlink_reuse_relink( guMediaCtrl * mediactrl, guFaderPlayBin * faderplaybin )
+{
+	GError * Error = NULL;
+
+	faderplaybin->Lock();
+
+	if( !faderplaybin->m_AdderPad )
+	{
+		guLogDebug( wxT( "stream %s doesn't need to be unlinked.. weird." ), faderplaybin->m_Uri.c_str() );
+	}
+	else
+	{
+		guLogDebug( wxT( "unlinking stream %s for reuse" ), faderplaybin->m_Uri.c_str() );
+
+		if( !gst_pad_unlink( faderplaybin->m_GhostPad, faderplaybin->m_AdderPad ) )
+		{
+			guLogDebug( wxT( "Couldn't unlink stream %s: this is going to suck." ), faderplaybin->m_Uri.c_str() );
+		}
+
+		gst_element_release_request_pad( mediactrl->m_Adder, faderplaybin->m_AdderPad );
+		faderplaybin->m_AdderPad = NULL;
+
+		mediactrl->m_LinkedStreams--;
+		guLogDebug( wxT( "%d linked streams left" ), mediactrl->m_LinkedStreams );
+	}
+
+	faderplaybin->m_NeedsUnlink = false;
+	faderplaybin->m_EmittedPlaying = false;
+
+	faderplaybin->Unlock();
+
+	faderplaybin->Reuse();
+	if( !faderplaybin->LinkAndUnblock( &Error ) )
+	{
+		faderplaybin->EmitError( Error );
+	}
+}
 
 // -------------------------------------------------------------------------------- //
 static gboolean set_state_and_wait( GstElement * bin, GstState target, guMediaCtrl * ctrl )
@@ -768,7 +813,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 
 
 	g_object_get( faderplaybin->m_Volume, "volume", &Vol, NULL );
-	//guLogDebug( wxT( "== Volume Changed to %0.2f ===========================================================" ), Vol );
+	guLogDebug( wxT( "== Volume Changed to %0.2f ===========================================================" ), Vol );
 
 	switch( faderplaybin->m_State )
 	{
@@ -2490,6 +2535,7 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
             case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED:
             case guFADERPLAYBIN_STATE_WAITING_EOS:
             case guFADERPLAYBIN_STATE_PAUSED:
+                Reused = CanReuse( uri, FaderPlayBin );
                 //g_signal_emit (player,
                 //           signals[CAN_REUSE_STREAM], 0,
                 //           uri, stream->uri, GST_ELEMENT (stream),
@@ -2651,25 +2697,27 @@ bool guMediaCtrl::Play( void )
         }
 
         case guFADERPLAYBIN_STATE_REUSING :
-//            switch( play_type )
-//            {
-//                case RB_PLAYER_PLAY_REPLACE:
-//                case RB_PLAYER_PLAY_CROSSFADE:
-//                    // probably should split this into two states..
-//                    if( FaderPlayBin->m_SoureBlocked )
-//                    {
-//                        guLogDebug( wxT( "reusing and restarting paused stream %s" ), FaderPlayBin->m_Uri.c_str() );
-//                        reuse_stream( stream );
-//                        ret = link_and_unblock_stream (stream, error);
-//                    } else {
-//                        rb_debug ("unlinking stream %s for reuse", stream->uri);
-//                        unlink_and_block_stream (stream);
-//                    }
-//                    break;
-//                case RB_PLAYER_PLAY_AFTER_EOS:
-//                    rb_debug ("waiting for EOS before reusing stream %s", stream->uri);
-//                    break;
-//            }
+            switch( FaderPlayBin->m_PlayType )
+            {
+                case guFADERPLAYBIN_PLAYTYPE_REPLACE :
+                case guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
+                    // probably should split this into two states..
+                    if( FaderPlayBin->m_SoureBlocked )
+                    {
+                        guLogDebug( wxT( "reusing and restarting paused stream %s" ), FaderPlayBin->m_Uri.c_str() );
+                        FaderPlayBin->Reuse();
+                        Ret = FaderPlayBin->LinkAndUnblock( &Error );
+                    }
+                    else
+                    {
+                        guLogDebug( wxT( "unlinking stream %s for reuse" ), FaderPlayBin->m_Uri.c_str() );
+                        FaderPlayBin->UnlinkAndBlock();
+                    }
+                    break;
+                case guFADERPLAYBIN_PLAYTYPE_AFTER_EOS :
+                    guLogMessage( wxT( "waiting for EOS before reusing stream %s" ), FaderPlayBin->m_Uri.c_str() );
+                    break;
+            }
             break;
 
         default:
@@ -2862,6 +2910,20 @@ bool guMediaCtrl::Seek( wxFileOffset where )
 	return true;
 }
 
+// -------------------------------------------------------------------------------- //
+bool guMediaCtrl::CanReuse( const wxString &uri, guFaderPlayBin * faderplaybin )
+{
+    return false;
+}
+
+void guMediaCtrl::UpdatedConfig( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ) * GST_SECOND;
+    m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 1, wxT( "Crossfader" ) ) * GST_SECOND;
+    m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 8, wxT( "Crossfader" ) ) ) / 10.0;
+    m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 5, wxT( "Crossfader" ) ) ) / 10.0;
+}
 
 // -------------------------------------------------------------------------------- //
 // guMediaRecordCtrl
@@ -3755,6 +3817,21 @@ bool guFaderPlayBin::Preroll( void )
 //	}
 
 	return Ret;
+}
+
+// -------------------------------------------------------------------------------- //
+void guFaderPlayBin::Reuse( void )
+{
+//	g_signal_emit (stream->player,
+//		       signals[REUSE_STREAM], 0,
+//		       stream->new_uri, stream->uri, GST_ELEMENT (stream));
+
+	// replace URI and stream data
+	m_Uri = m_NewUri;
+
+	m_NewUri = wxEmptyString;
+
+	m_EmittedPlaying = false;
 }
 
 // -------------------------------------------------------------------------------- //

@@ -251,6 +251,7 @@ class guPlayerPanel : public wxPanel
     void                OnMediaLoaded( guMediaEvent &event );
     void                OnMediaAboutToFinish( guMediaEvent &event );
     void                OnMediaFinished( guMediaEvent &event );
+    void                OnMediaFadeOutFinished( guMediaEvent &event );
     void                OnMediaTags( guMediaEvent &event );
     void                OnMediaBitrate( guMediaEvent &event );
     void                OnMediaBuffering( guMediaEvent &event );
