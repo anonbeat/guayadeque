@@ -419,7 +419,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 }
                 else if( !strcmp( Member, "Pause" ) )
                 {
-                    //if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
+                    //if( m_PlayerPanel->GetState() == guMediaState_PLAYING )
                     //{
                         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
                         wxPostEvent( m_PlayerPanel, event );
@@ -438,7 +438,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 }
                 else if( !strcmp( Member, "Play" ) )
                 {
-                    if( m_PlayerPanel->GetState() == wxMEDIASTATE_PAUSED )
+                    if( m_PlayerPanel->GetState() == guMEDIASTATE_PAUSED )
                     {
                         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
                         wxPostEvent( m_PlayerPanel, event );
@@ -466,12 +466,12 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 {
                     int PlayStatus;
                     int Dummy = 0;
-                    wxMediaState State = m_PlayerPanel->GetState();
-                    if( State == wxMEDIASTATE_STOPPED )
+                    guMediaState State = m_PlayerPanel->GetState();
+                    if( State == guMEDIASTATE_STOPPED )
                         PlayStatus = 2;
-                    else if( State == wxMEDIASTATE_PAUSED )
+                    else if( State == guMEDIASTATE_PAUSED )
                         PlayStatus = 1;
-                    else if( State == wxMEDIASTATE_PLAYING )
+                    else if( State == guMEDIASTATE_PLAYING )
                         PlayStatus = 0;
                     int PlayLoop = m_PlayerPanel->GetPlayLoop();
 
@@ -713,7 +713,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     else
                     {
                         m_PlayerPanel->RemoveItem( TrackNum );
-                        Send( reply );
+                        //Send( reply );
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
@@ -739,7 +739,6 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     {
                         m_PlayerPanel->SetPlayLoop( PlayLoop );
 
-                        Send( reply );
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
@@ -766,7 +765,6 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                         wxCommandEvent event;
                         m_PlayerPanel->OnRandomPlayButtonClick( event );
 
-                        Send( reply );
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
@@ -804,12 +802,12 @@ void guMPRIS::OnPlayerStatusChange()
     {
         int PlayStatus;
         int Dummy = 0;
-        wxMediaState State = m_PlayerPanel->GetState();
-        if( State == wxMEDIASTATE_STOPPED )
+        guMediaState State = m_PlayerPanel->GetState();
+        if( State == guMEDIASTATE_STOPPED )
             PlayStatus = 2;
-        else if( State == wxMEDIASTATE_PAUSED )
+        else if( State == guMEDIASTATE_PAUSED )
             PlayStatus = 1;
-        else if( State == wxMEDIASTATE_PLAYING )
+        else if( State == guMEDIASTATE_PLAYING )
             PlayStatus = 0;
         int PlayLoop = m_PlayerPanel->GetPlayLoop();
 

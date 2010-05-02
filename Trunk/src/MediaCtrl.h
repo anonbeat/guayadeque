@@ -27,9 +27,13 @@
 #include <wx/wx.h>
 #include <wx/uri.h>
 //#include <wx/mediactrl.h>
+#include <wx/dynarray.h>
 
 #undef ATTRIBUTE_PRINTF // there are warnings about redefined ATTRIBUTE_PRINTF in Fedora
 #include <gst/gst.h>
+#include <gst/controller/gstcontroller.h>
+#include <gst/base/gstbasetransform.h>
+
 
 #define guEQUALIZER_BAND_COUNT  10
 
@@ -47,7 +51,7 @@ enum guRecordQuality {
     guRECORD_QUALITY_VERY_LOW
 };
 
-// ----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------- //
 class guLevelInfo
 {
   public :
@@ -61,7 +65,7 @@ class guLevelInfo
     double          m_Decay_R;
 };
 
-// ----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------- //
 class guRadioTagInfo
 {
   public :
@@ -84,176 +88,268 @@ class guRadioTagInfo
     }
 };
 
-// Start_of_Ripped_Code_From_mediactrl_h
-// This code is from mediactrl.h to avoid the need of the wxWidgets media library because its
-// not included in many distributions by default.
-
-// ----------------------------------------------------------------------------
-enum wxMediaState
+// -------------------------------------------------------------------------------- //
+enum guMediaState
 {
-    wxMEDIASTATE_STOPPED,
-    wxMEDIASTATE_PAUSED,
-    wxMEDIASTATE_PLAYING
+    guMEDIASTATE_STOPPED,
+    guMEDIASTATE_PAUSED,
+    guMEDIASTATE_PLAYING
 };
-
-// ----------------------------------------------------------------------------
-//
-// wxMediaEvent
-//
-// ----------------------------------------------------------------------------
-class wxMediaEvent : public wxNotifyEvent
-{
-  public:
-    guLevelInfo m_LevelInfo;
-
-    // ------------------------------------------------------------------------
-    // wxMediaEvent Constructor
-    //
-    // Normal constructor, much the same as wxNotifyEvent
-    // ------------------------------------------------------------------------
-    wxMediaEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
-        : wxNotifyEvent(commandType, winid)
-    {                                       }
-
-    // ------------------------------------------------------------------------
-    // wxMediaEvent Copy Constructor
-    //
-    // Normal copy constructor, much the same as wxNotifyEvent
-    // ------------------------------------------------------------------------
-    wxMediaEvent(const wxMediaEvent &clone)
-            : wxNotifyEvent(clone)
-    {                                       }
-
-    // ------------------------------------------------------------------------
-    // wxMediaEvent::Clone
-    //
-    // Allocates a copy of this object.
-    // Required for wxEvtHandler::AddPendingEvent
-    // ------------------------------------------------------------------------
-    virtual wxEvent *Clone() const
-    {
-        wxMediaEvent * pEvent = new wxMediaEvent(*this);
-        if( pEvent )
-            pEvent->m_LevelInfo = m_LevelInfo;
-        return pEvent;
-    }
-
-
-//    // Put this class on wxWidget's RTTI table
-//    DECLARE_DYNAMIC_CLASS(wxMediaEvent)
-};
-
-#define wxMEDIA_LOADED_ID      13002
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_LOADED,     wxMEDIA_LOADED_ID )
-#define EVT_MEDIA_LOADED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_LOADED, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-
-//Event ID to give to our events
-#define wxMEDIA_ABOUT_TO_FINISH_ID 13006
-#define wxMEDIA_FINISHED_ID    13000
-#define wxMEDIA_STOP_ID    13001
-//Define our event types - we need to call DEFINE_EVENT_TYPE(EVT) later
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_ABOUT_TO_FINISH, wxMEDIA_ABOUT_TO_FINISH_ID )
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_FINISHED, wxMEDIA_FINISHED_ID )
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_STOP,     wxMEDIA_STOP_ID )
-
-//Function type(s) our events need
-typedef void (wxEvtHandler::*wxMediaEventFunction)(wxMediaEvent&);
-
-#define wxMediaEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxMediaEventFunction, &func)
-
-//Macro for usage with message maps
-#define EVT_MEDIA_ABOUT_TO_FINISH(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_ABOUT_TO_FINISH, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-#define EVT_MEDIA_FINISHED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_FINISHED, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-#define EVT_MEDIA_STOP(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_STOP, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-
-#define wxMEDIA_STATECHANGED_ID      13003
-#define wxMEDIA_PLAY_ID      13004
-#define wxMEDIA_PAUSE_ID      13005
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_STATECHANGED, wxMEDIA_STATECHANGED_ID)
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_PLAY, wxMEDIA_PLAY_ID)
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_PAUSE, wxMEDIA_PAUSE_ID)
-#define EVT_MEDIA_STATECHANGED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_STATECHANGED, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-#define EVT_MEDIA_PLAY(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_PLAY, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-#define EVT_MEDIA_PAUSE(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_PAUSE, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-
-// End_of_Ripped_Code_From_mediactrl_h
-
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_TAG, wxID_ANY )
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_BUFFERING, wxID_ANY )
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_BITRATE, wxID_ANY )
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_LEVEL, wxID_ANY )
-DECLARE_EVENT_TYPE( wxEVT_MEDIA_ERROR, wxID_ANY )
-#define EVT_MEDIA_TAG(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_TAG, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-#define EVT_MEDIA_BUFFERING(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BUFFERING, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-#define EVT_MEDIA_BITRATE(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_BITRATE, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-#define EVT_MEDIA_LEVEL(winid, fn) DECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_LEVEL, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-#define EVT_MEDIA_ERROR(winid, fn) DECLARE_EVENT_TABLE_ERROR( wxEVT_MEDIA_ERROR, winid, wxID_ANY, wxMediaEventHandler(fn), (wxObject *) NULL ),
-
-class guPlayerPanel;
 
 // -------------------------------------------------------------------------------- //
-// guMediaCtrl : Interface class for gstreamer
+//
+// guMediaEvent
+//
+// -------------------------------------------------------------------------------- //
+class guMediaEvent : public wxNotifyEvent
+{
+  public:
+    guMediaEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 ) : wxNotifyEvent( commandType, winid ) { }
+    guMediaEvent( const guMediaEvent &clone ) : wxNotifyEvent( clone ) { }
+
+    virtual wxEvent * Clone() const
+    {
+        return new guMediaEvent( * this );
+    }
+};
+
+
+//Function type(s) our events need
+typedef void (wxEvtHandler::*wxMediaEventFunction)(guMediaEvent&);
+
+#define guMediaEventHandler(func) \
+    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxMediaEventFunction, &func)
+
+DECLARE_EVENT_TYPE( guEVT_MEDIA_LOADED,             wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_SET_NEXT_MEDIA,     wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_FINISHED,           wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_STATE,      wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_BUFFERING,          wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_LEVELINFO,          wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_TAGINFO,            wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_BITRATE,    wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_POSITION,   wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_LENGTH,     wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_STARTED,    wxID_ANY )
+
+DECLARE_EVENT_TYPE( guEVT_MEDIA_ERROR,              wxID_ANY )
+
+class guPlayerPanel;
+class guMediaCtrl;
+
+enum guFaderPlayBinState {
+    // Stable
+    guFADERPLAYBIN_STATE_WAITING =              ( 1 << 0 ),
+    guFADERPLAYBIN_STATE_PLAYING =              ( 1 << 1 ),
+    guFADERPLAYBIN_STATE_PAUSED  =              ( 1 << 2 ),
+    // Transitions
+    guFADERPLAYBIN_STATE_REUSING =              ( 1 << 3 ),
+    guFADERPLAYBIN_STATE_PREROLLING =           ( 1 << 4 ),
+    guFADERPLAYBIN_STATE_PREROLL_PLAY =         ( 1 << 5 ),
+    guFADERPLAYBIN_STATE_FADING_IN =            ( 1 << 6 ),
+    guFADERPLAYBIN_STATE_SEEKING =              ( 1 << 7 ),
+    guFADERPLAYBIN_STATE_SEEKING_PAUSED =       ( 1 << 8 ),
+    guFADERPLAYBIN_STATE_SEEKING_EOS =          ( 1 << 9 ),
+    guFADERPLAYBIN_STATE_WAITING_EOS =          ( 1 << 10 ),
+    guFADERPLAYBIN_STATE_FADING_OUT =           ( 1 << 11 ),
+    guFADERPLAYBIN_STATE_FADING_OUT_PAUSED =    ( 1 << 12 ),
+    guFADERPLAYBIN_STATE_PENDING_REMOVE =       ( 1 << 13 )
+};
+
+enum guPlayerPlayType {
+    guFADERPLAYBIN_PLAYTYPE_CROSSFADE,
+    guFADERPLAYBIN_PLAYTYPE_AFTER_EOS,
+    guFADERPLAYBIN_PLAYTYPE_REPLACE
+};
+
+#define guFADERPLAYBIN_MESSAGE_PLAYING          "guayadeque-playing"
+#define guFADERPLAYBIN_MESSAGE_FADEOUT_DONE     "guayadeque-fade-out-done"
+#define guFADERPLAYBIN_MESSAGE_FADEIN_START     "guayadeque-fade-in-start"
+#define guFADERPLAYBIN_MESSAGE_FADEIN_DONE      "guayadeque-fade-in-done"
+#define guFADERPLAYBIN_MESSAGE_EOS              "guayadeque-eos"
+
+class guMediaCtrl;
+
+// -------------------------------------------------------------------------------- //
+class guFaderPlayBin
+{
+  protected :
+
+  public :
+    guMediaCtrl *       m_Player;
+    GstElement *        m_Parent;
+
+    wxMutex             m_Lock;
+
+    wxString            m_Uri;
+    wxString            m_NewUri;
+
+
+    GstElement *        m_PlayBin;
+    GstElement *        m_Decoder;
+    GstElement *        m_Volume;
+    GstElement *        m_AudioConvert;
+    GstElement *        m_AudioResample;
+    GstElement *        m_CapsFilter;
+    GstElement *        m_PreRoll;
+    GstElement *        m_Identity;
+
+    bool                m_DecoderLinked;
+    bool                m_EmittedPlaying;
+    bool                m_EmittedFakePlaying;
+    bool                m_EmittedStartFadeIn;
+
+    GstPad *            m_DecoderPad;
+    GstPad *            m_SourcePad;
+    GstPad *            m_GhostPad;
+    GstPad *            m_AdderPad;
+
+    bool                m_SoureBlocked;
+    bool                m_NeedsUnlink;
+
+    GstClockTime        m_BaseTime;
+
+    wxFileOffset        m_SeekTarget;
+
+	GstController *     m_Fader;
+    guFaderPlayBinState m_State;
+    guPlayerPlayType    m_PlayType;
+    gint64              m_FadeOutTime;
+    bool                m_Fading;
+
+    gulong              m_AdjustProbeId;
+
+    double              m_FadeEnd;
+
+    bool                m_EmittedError;
+    bool                m_ErrorIdleId;
+    GError *            m_Error;
+
+    wxArrayPtrVoid      m_Tags;
+
+    guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri );
+    ~guFaderPlayBin();
+
+    void                Lock( void ) { m_Lock.Lock(); }
+    void                Unlock( void ) { m_Lock.Unlock(); };
+
+    //void                PrepareSource( GstElement * source );
+    void                UnlinkAndBlock( void );
+    bool                LinkAndUnblock( GError ** error );
+    bool                ActuallyStart( GError ** error );
+    void                StartFade( double start, double end, gint64 time );
+    void                AdjustBaseTime( void );
+    void                PostPlayMessage( bool fake );
+    void                EmitError( GError * error );
+    bool                Preroll( void );
+
+    friend class guMediaCtrl;
+};
+WX_DEFINE_ARRAY_PTR( guFaderPlayBin *, guFaderPlayBinArray );
+
 // -------------------------------------------------------------------------------- //
 class guMediaCtrl : public wxEvtHandler
 {
-  private :
-    guPlayerPanel * m_PlayerPanel;
-    wxLongLong      m_llPausedPos;
-    int             m_LastError;
+  protected :
+    guPlayerPanel *         m_PlayerPanel;
 
-    bool            SetProperty( GstElement * element, const char * name, gint64 value );
+    int                     m_LastError;
+    GstState                m_CurrentState;
 
-    GstElement *    BuildOutputBin( void );
-    GstElement *    BuildPlaybackBin( GstElement * outputsink );
-    GstElement *    BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer );
+    GstElement *            BuildOutputBin( void );
+    GstElement *            BuildPlaybackBin( GstElement * outputsink );
+    GstElement *            BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer );
+    void                    AddBusWatch( void );
 
   public :
-    GstElement * m_Playbin;
-    GstElement * m_Playbackbin;
-    GstElement * m_Recordbin;
-    GstElement * m_Tee;
-    GstElement * m_Volume;
-    GstElement * m_Equalizer;
-    GstElement * m_FileSink;
-    GstPad *     m_RecordPad;
-    bool         m_Buffering;
-    bool         m_WasPlaying;
+    guFaderPlayBinArray     m_FaderPlayBins;
+    wxMutex                 m_FaderPlayBinsMutex;
+    int                     m_LinkedStreams;
+
+    wxMutex                 m_SinkLock;
+	enum {
+		SINK_NULL,
+		SINK_STOPPED,
+		SINK_PLAYING
+	}                       m_SinkState;
+
+    GstElement *            m_Pipeline;
+    GstElement *            m_Adder;
+    GstElement *            m_RecordBin;
+    GstElement *            m_OutputBin;
+    GstElement *            m_PlaybackBin;
+    GstElement *            m_SilenceBin;
+    GstElement *            m_CapsFilter;
+
+    GstElement *            m_Tee;
+    GstPad *                m_RecordPad;
+    GstElement *            m_Volume;
+    GstElement *            m_Equalizer;
+    GstElement *            m_FileSink;
+
+    bool                    m_Buffering;
+    bool                    m_WasPlaying;
+
+	int                     m_TickTimeoutId;
+
+	int                     m_PlayBinReapId;
+	int                     m_StopSinkId;
+	int                     m_BusWatchId;
+
+    gint64                  m_FadeOutTime;
+    gint64                  m_FadeInTime;
+    double                  m_FadeInVolStart;
+    double                  m_FadeInVolTriger;
 
     guMediaCtrl( guPlayerPanel * playerpanel );
     ~guMediaCtrl();
 
-    static bool Init();
+    static bool     Init();
 
     //bool Load( const wxURI &uri );
-    bool Load( const wxString &uri, bool restart = true );
-    bool Stop();
-    bool Play();
-    bool Pause();
-    void ClearError();
+    bool            Load( const wxString &uri, bool restart = true );
+    bool            Stop( void );
+    bool            Play( void );
+    bool            Pause( void );
+    void            ClearError( void );
 
-    bool Seek( wxLongLong where );
-    wxFileOffset Tell();
-    wxFileOffset GetLength();
+    bool            Seek( wxFileOffset where );
+    wxFileOffset    Tell( void );
+    wxFileOffset    GetLength( void );
 
-    wxMediaState GetState();
+    double          GetVolume( void );
+    bool            SetVolume( double volume );
 
-    double GetVolume();
-    bool SetVolume( double volume );
+    int             GetEqualizerBand( const int band );
+    bool            SetEqualizer( const wxArrayInt &eqset );
+    void            ResetEqualizer( void );
+    void            SetEqualizerBand( const int band, const int value );
 
-    int GetEqualizerBand( const int band );
-    bool SetEqualizer( const wxArrayInt &eqset );
-    void ResetEqualizer( void );
-    void SetEqualizerBand( const int band, const int value );
+    //void            AboutToFinish( void );
+    int  inline     GetLastError( void ) { return m_LastError; };
+    void inline     SetLastError( const int error ) { m_LastError = error; };
 
-    void inline AboutToFinish( void );
-    int  inline GetLastError( void ) { return m_LastError; };
-    void inline SetLastError( const int error ) { m_LastError = error; };
+    bool            EnableRecord( const wxString &path, const int format, const int quality );
+    void            DisableRecord( void );
+    bool            SetRecordFileName( const wxString &filename );
 
-    bool EnableRecord( const wxString &path, const int format, const int quality );
-    void DisableRecord( void );
-    bool SetRecordFileName( const wxString &filename );
 
+    void            AddPendingEvent( guMediaEvent &event );
+
+    GstState        GetCurrentState( void ) { return m_CurrentState; }
+    guMediaState    GetState( void );
+    void            SetCurrentState( GstState state );
+
+    bool            StartSink( GError ** error );
+    bool            StartSinkLocked( wxArrayPtrVoid &messages, GError ** error );
+    bool            StopSink( void );
+    void            MaybeStopSink( void );
+    void            ScheduleReap( void );
+
+    void            Lock( void ) { m_FaderPlayBinsMutex.Lock(); }
+    void            Unlock( void ) { m_FaderPlayBinsMutex.Unlock(); }
+
+    friend class guFaderPlayBin;
 };
 
 // -------------------------------------------------------------------------------- //
@@ -301,7 +397,8 @@ class guMediaRecordCtrl
 
     void            SplitTrack( void );
 
-    void UpdatedConfig( void );
+    void            UpdatedConfig( void );
+
 };
 
 #endif

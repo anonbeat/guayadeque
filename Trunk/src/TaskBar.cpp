@@ -115,7 +115,7 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
 
     if( m_PlayerPanel )
     {
-        bool IsPaused = ( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING );
+        bool IsPaused = ( m_PlayerPanel->GetState() == guMEDIASTATE_PLAYING );
         MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_PLAY, IsPaused ? _( "Pause" ) : _( "Play" ), _( "Play current playlist" ) );
         MenuItem->SetBitmap( guImage( IsPaused ? guIMAGE_INDEX_player_normal_pause :
                                                  guIMAGE_INDEX_player_normal_play ) );

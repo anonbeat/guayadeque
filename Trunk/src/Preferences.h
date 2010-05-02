@@ -98,6 +98,12 @@ class guPrefDialog : public wxDialog
     wxSpinCtrl *                m_PlayEndTimeSpinCtrl;
     wxCheckBox *                m_NotifyChkBox;
 
+    wxPanel *                   m_XFadePanel;
+    wxSlider *                  m_XFadeOutLenSlider;
+    wxSlider *                  m_XFadeInLenSlider;
+    wxSlider *                  m_XFadeInStartSlider;
+    wxSlider *                  m_XFadeInTrigerSlider;
+
     wxPanel *                   m_RecordPanel;
     wxCheckBox *                m_RecordChkBox;
     wxDirPickerCtrl *           m_RecSelDirPicker;

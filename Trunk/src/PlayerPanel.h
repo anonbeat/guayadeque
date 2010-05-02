@@ -189,9 +189,10 @@ class guPlayerPanel : public wxPanel
 	guMediaRecordCtrl *     m_MediaRecordCtrl;
 	guPlayerPanelTimer *    m_PlayerTimer;
     guCurrentTrack          m_MediaSong;
-	wxMediaState            m_LastPlayState;
+	int                     m_LastPlayState;
 	double                  m_LastVolume;
 	wxFileOffset            m_LastCurPos;
+	wxFileOffset            m_LastLength;
 	bool                    m_IsSkipping;
 	bool                    m_ShowNotifications;
 	int                     m_ShowNotificationsTime;
@@ -245,15 +246,21 @@ class guPlayerPanel : public wxPanel
     //
     void                OnPlayListUpdated( wxCommandEvent &event );
     void                OnPlayListDClick( wxCommandEvent &event );
+
     void                LoadMedia( const wxString &FileName, bool restart = true );
-    void                OnMediaLoaded( wxMediaEvent &event );
-    void                OnMediaAboutToFinish( wxMediaEvent &event );
-    void                OnMediaFinished( wxMediaEvent &event );
-    void                OnMediaTags( wxMediaEvent &event );
-    void                OnMediaBitrate( wxMediaEvent &event );
-    void                OnMediaBuffering( wxMediaEvent &event );
-    void                OnMediaLevel( wxMediaEvent &event );
-    void                OnMediaError( wxMediaEvent &event );
+    void                OnMediaLoaded( guMediaEvent &event );
+    void                OnMediaAboutToFinish( guMediaEvent &event );
+    void                OnMediaFinished( guMediaEvent &event );
+    void                OnMediaTags( guMediaEvent &event );
+    void                OnMediaBitrate( guMediaEvent &event );
+    void                OnMediaBuffering( guMediaEvent &event );
+    void                OnMediaLevel( guMediaEvent &event );
+    void                OnMediaError( guMediaEvent &event );
+    void                OnMediaState( guMediaEvent &event );
+    void                OnMediaPosition( guMediaEvent &event );
+    void                OnMediaLength( guMediaEvent &event );
+
+
     void                SetCurrentTrack( const guTrack * Song );
 
     // SmartPlay Events
@@ -305,7 +312,7 @@ class guPlayerPanel : public wxPanel
 
     int                 GetCaps();
 
-    const wxMediaState  GetState( void );
+    const guMediaState  GetState( void );
     void                OnPrevTrackButtonClick( wxCommandEvent &event );
     void                OnNextTrackButtonClick( wxCommandEvent &event );
     void                OnPlayButtonClick( wxCommandEvent &event );
