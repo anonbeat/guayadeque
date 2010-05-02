@@ -219,6 +219,8 @@ class guPlayerPanel : public wxPanel
     int                     m_SilenceDetectorLevel;
     int                     m_SilenceDetectorTime;
 
+    int                     m_FadeOutTime;
+
     bool                    m_PendingScrob;
 
     // AudioScrobble
