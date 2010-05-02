@@ -121,7 +121,7 @@ typedef void (wxEvtHandler::*wxMediaEventFunction)(guMediaEvent&);
     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxMediaEventFunction, &func)
 
 DECLARE_EVENT_TYPE( guEVT_MEDIA_LOADED,             wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_SET_NEXT_MEDIA,     wxID_ANY )
+//DECLARE_EVENT_TYPE( guEVT_MEDIA_SET_NEXT_MEDIA,     wxID_ANY )
 DECLARE_EVENT_TYPE( guEVT_MEDIA_FINISHED,           wxID_ANY )
 DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_STATE,      wxID_ANY )
 DECLARE_EVENT_TYPE( guEVT_MEDIA_BUFFERING,          wxID_ANY )
@@ -130,7 +130,7 @@ DECLARE_EVENT_TYPE( guEVT_MEDIA_TAGINFO,            wxID_ANY )
 DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_BITRATE,    wxID_ANY )
 DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_POSITION,   wxID_ANY )
 DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_LENGTH,     wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_STARTED,    wxID_ANY )
+DECLARE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_FINISHED,    wxID_ANY )
 
 DECLARE_EVENT_TYPE( guEVT_MEDIA_ERROR,              wxID_ANY )
 
@@ -242,6 +242,7 @@ class guFaderPlayBin
     void                PostPlayMessage( bool fake );
     void                EmitError( GError * error );
     bool                Preroll( void );
+    void                Reuse( void );
 
     friend class guMediaCtrl;
 };
@@ -348,6 +349,10 @@ class guMediaCtrl : public wxEvtHandler
 
     void            Lock( void ) { m_FaderPlayBinsMutex.Lock(); }
     void            Unlock( void ) { m_FaderPlayBinsMutex.Unlock(); }
+
+    bool            CanReuse( const wxString &uri, guFaderPlayBin * faderplaybin );
+
+    void            UpdatedConfig( void );
 
     friend class guFaderPlayBin;
 };
