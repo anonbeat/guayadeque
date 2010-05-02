@@ -104,7 +104,7 @@ DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage *
                     }
                     else if( !strcmp( KeyName, "Pause" ) )
                     {
-                        if( m_PlayerPanel->GetState() == wxMEDIASTATE_PLAYING )
+                        if( m_PlayerPanel->GetState() == guMEDIASTATE_PLAYING )
                         {
                             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
                             wxPostEvent( m_PlayerPanel, event );

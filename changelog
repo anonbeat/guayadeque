@@ -1,4 +1,5 @@
 
+  * Implemented crossfading between tracks
   * Read composer, comments from ape and m4a files added
   * Added Lyric support to Ape files
   * Added French translation thanks to Frombenny <frombenny@gmail.com>

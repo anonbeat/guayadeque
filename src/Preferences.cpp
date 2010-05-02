@@ -107,6 +107,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_general ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_library ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_playback ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_playback ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_record ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_last_fm ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_lyrics ) );
@@ -435,6 +436,60 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_MainNotebook->AddPage( m_PlayPanel, _( "Playback" ), false );
 	m_MainNotebook->SetPageImage( 2, 2 );
 
+    //
+    // Crossfader Panel
+    //
+	m_XFadePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * XFadeMainSizer;
+	XFadeMainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer * XFadesbSizer;
+	XFadesbSizer = new wxStaticBoxSizer( new wxStaticBox( m_XFadePanel, wxID_ANY, _(" Crossfader ") ), wxVERTICAL );
+
+	wxFlexGridSizer * XFadeFlexSizer;
+	XFadeFlexSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
+	XFadeFlexSizer->AddGrowableCol( 1 );
+	XFadeFlexSizer->SetFlexibleDirection( wxBOTH );
+	XFadeFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxStaticText * XFadeOutLenLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("Out length:"), wxDefaultPosition, wxDefaultSize, 0 );
+	XFadeOutLenLabel->Wrap( -1 );
+	XFadeFlexSizer->Add( XFadeOutLenLabel, 0, wxALIGN_BOTTOM|wxTOP|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
+
+	m_XFadeOutLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_LABELS );
+	XFadeFlexSizer->Add( m_XFadeOutLenSlider, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
+
+	wxStaticText * XFadeInLenLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In length:"), wxDefaultPosition, wxDefaultSize, 0 );
+	XFadeInLenLabel->Wrap( -1 );
+	XFadeFlexSizer->Add( XFadeInLenLabel, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_RIGHT|wxALIGN_BOTTOM, 5 );
+
+	m_XFadeInLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInTime" ), 1, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+	XFadeFlexSizer->Add( m_XFadeInLenSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
+
+	wxStaticText * XFadeInStartLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In vol. Start:"), wxDefaultPosition, wxDefaultSize, 0 );
+	XFadeInStartLabel->Wrap( -1 );
+	XFadeFlexSizer->Add( XFadeInStartLabel, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+
+	m_XFadeInStartSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolStart" ), 8, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+	XFadeFlexSizer->Add( m_XFadeInStartSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
+
+	wxStaticText * XFadeTrigerLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In start:"), wxDefaultPosition, wxDefaultSize, 0 );
+	XFadeTrigerLabel->Wrap( -1 );
+	XFadeFlexSizer->Add( XFadeTrigerLabel, 0, wxALL|wxALIGN_BOTTOM, 5 );
+
+	m_XFadeInTrigerSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolTriger" ), 5, wxT( "Crossfader" ) ), 1, 9, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+	XFadeFlexSizer->Add( m_XFadeInTrigerSlider, 0, wxEXPAND|wxRIGHT, 5 );
+
+	XFadesbSizer->Add( XFadeFlexSizer, 1, wxEXPAND, 5 );
+
+	XFadeMainSizer->Add( XFadesbSizer, 0, wxEXPAND|wxALL, 5 );
+
+	m_XFadePanel->SetSizer( XFadeMainSizer );
+	m_XFadePanel->Layout();
+	XFadeMainSizer->Fit( m_XFadePanel );
+	m_MainNotebook->AddPage( m_XFadePanel, _( "Crossfader" ), false );
+	m_MainNotebook->SetPageImage( 3, 3 );
+
 
     //
     // Record Panel
@@ -535,7 +590,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_RecordPanel->Layout();
 	RecMainSizer->Fit( m_RecordPanel );
 	m_MainNotebook->AddPage( m_RecordPanel, _( "Record" ), false );
-	m_MainNotebook->SetPageImage( 3, 3 );
+	m_MainNotebook->SetPageImage( 4, 4 );
 
 
 
@@ -592,7 +647,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LastFMPanel->Layout();
 	ASMainSizer->Fit( m_LastFMPanel );
 	m_MainNotebook->AddPage( m_LastFMPanel, wxT( "LastFM" ), false );
-	m_MainNotebook->SetPageImage( 4, 4 );
+	m_MainNotebook->SetPageImage( 5, 5 );
 
     //
     // Lyrics
@@ -648,7 +703,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LyricsPanel->Layout();
 	LyricsMainSizer->Fit( m_LyricsPanel );
 	m_MainNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
-	m_MainNotebook->SetPageImage( 5, 5 );
+	m_MainNotebook->SetPageImage( 6, 6 );
 
 	//m_MainNotebookBitmap = wxBitmap( wxT("../src/images/orig/pref_lyrics.png"), wxBITMAP_TYPE_ANY );
 
@@ -723,7 +778,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_OnlinePanel->Layout();
 	OnlineMainSizer->Fit( m_OnlinePanel );
 	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online" ), false );
-	m_MainNotebook->SetPageImage( 6, 6 );
+	m_MainNotebook->SetPageImage( 7, 7 );
 
     //
     // Podcasts
@@ -798,7 +853,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	PodcastPanel->Layout();
 	PodcastsMainSizer->Fit( PodcastPanel );
 	m_MainNotebook->AddPage( PodcastPanel, wxT("Podcasts"), false );
-	m_MainNotebook->SetPageImage( 7, 7 );
+	m_MainNotebook->SetPageImage( 8, 8 );
 
     //
     // Links
@@ -906,7 +961,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LinksPanel->Layout();
 	LinksMainSizer->Fit( m_LinksPanel );
 	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
-	m_MainNotebook->SetPageImage( 8, 8 );
+	m_MainNotebook->SetPageImage( 9, 9 );
 
 
     //
@@ -1015,7 +1070,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_CmdPanel->Layout();
 	CmdMainSizer->Fit( m_CmdPanel );
 	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
-	m_MainNotebook->SetPageImage( 9, 9 );
+	m_MainNotebook->SetPageImage( 10, 10 );
 
 
     //
@@ -1056,7 +1111,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_CopyPanel->Layout();
 	CopyToMainSizer->Fit( m_CopyPanel );
 	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
-	m_MainNotebook->SetPageImage( 10, 10 );
+	m_MainNotebook->SetPageImage( 11, 11 );
 
 
     //
@@ -1244,6 +1299,11 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteBool( wxT( "SilenceAtEnd" ), m_PlayEndTimeCheckBox->GetValue(), wxT( "Playback" ) );
     m_Config->WriteNum( wxT( "SilenceEndTime" ), m_PlayEndTimeSpinCtrl->GetValue(), wxT( "Playback" ) );
     m_Config->WriteBool( wxT( "ShowNotifications" ), m_NotifyChkBox->GetValue(), wxT( "General" ) );
+
+    m_Config->WriteNum( wxT( "FadeOutTime" ), m_XFadeOutLenSlider->GetValue(), wxT( "Crossfader" ) );
+	m_Config->WriteNum( wxT( "FadeInTime" ), m_XFadeInLenSlider->GetValue(), wxT( "Crossfader" ) );
+    m_Config->ReadNum( wxT( "FadeInVolStart" ), m_XFadeInStartSlider->GetValue(), wxT( "Crossfader" ) );
+	m_Config->WriteNum( wxT( "FadeInVolTriger" ), m_XFadeInTrigerSlider->GetValue(), wxT( "Crossfader" ) );
 
     m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->IsEnabled() && m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
     m_Config->WriteStr( wxT( "UserName" ), m_UserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
