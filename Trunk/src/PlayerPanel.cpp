@@ -38,7 +38,7 @@
 #include <wx/regex.h>
 #include <wx/utils.h>
 
-#define GUPLAYER_MIN_PREVTRACK_POS      5
+#define GUPLAYER_MIN_PREVTRACK_POS      5000
 
 #define guPLAYER_SMART_CACHEITEMS       100
 #define guPLAYER_SMART_CACHEARTISTS     20
@@ -133,7 +133,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
         m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
 
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) );
+        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ) * 1000;
 //        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
     }
 
@@ -604,7 +604,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
         }
 
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) );
+        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ) * 1000;
 
         if( !m_PlaySmart )
             CheckFiltersEnable();
@@ -1612,21 +1612,21 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     if( event.GetInt() < 0 )
         return;
 
-    wxFileOffset CurLen = event.GetExtraLong() / 1000;
+    wxFileOffset CurLen = event.GetExtraLong();
     if( CurLen != m_LastLength )
     {
         m_LastLength = CurLen;
 
-        UpdatePositionLabel( m_LastCurPos );
-        m_MediaSong.m_Length = CurLen;
+        UpdatePositionLabel( m_LastCurPos / 1000 );
+        m_MediaSong.m_Length = CurLen / 1000;
     }
 
-    wxFileOffset CurPos = event.GetInt() / 1000;
+    wxFileOffset CurPos = event.GetInt();
     if( ( CurPos != m_LastCurPos ) && !m_SliderIsDragged )
     {
         m_LastCurPos = CurPos;
 
-        UpdatePositionLabel( CurPos );
+        UpdatePositionLabel( CurPos / 1000 );
 
         if( m_MediaSong.m_Length )
             m_PlayerPositionSlider->SetValue( event.GetInt() / m_MediaSong.m_Length );
@@ -2036,7 +2036,6 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     State = m_MediaCtrl->GetState();
     //CurPos = m_MediaCtrl->Tell();
     int CurItem = m_PlayListCtrl->GetCurItem();
-    guLogMessage( wxT( "PrevTrack State: %i %i %li" ), State, CurItem, m_LastCurPos  );
     if( ( ( CurItem == 0 ) && ( State == guMEDIASTATE_PLAYING ) ) ||
         ( ( State != guMEDIASTATE_STOPPED ) && ( m_LastCurPos  > GUPLAYER_MIN_PREVTRACK_POS ) ) )
     {
@@ -2383,7 +2382,7 @@ int guPlayerPanel::GetPosition()
 {
     if( m_AboutToFinishPending )
         return 0;
-    return m_MediaCtrl->Tell();
+    return m_LastCurPos; //m_MediaCtrl->Tell();
 }
 
 // -------------------------------------------------------------------------------- //
