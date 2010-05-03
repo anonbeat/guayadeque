@@ -63,7 +63,7 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
         return;
     }
 
-    guLogDebug( wxT( " * * * * * * * * * * current stream list * * * * * * * * * *" ) );
+    //guLogDebug( wxT( " * * * * * * * * * * current stream list * * * * * * * * * *" ) );
     int Index;
     int Count = playbins.Count();
     for( Index = 0; Index < Count; Index++ )
@@ -92,9 +92,9 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
             case guFADERPLAYBIN_STATE_PENDING_REMOVE:	    StateName = wxT( "pending remove" );    break;
         }
 
-        guLogDebug( wxT( "[%s] '%s'" ), StateName.c_str(), FaderPlayBin->m_Uri.c_str() );
+        //guLogDebug( wxT( "[%s] '%s'" ), StateName.c_str(), FaderPlayBin->m_Uri.c_str() );
     }
-    guLogDebug( wxT( " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " ) );
+    //guLogDebug( wxT( " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " ) );
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -213,8 +213,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 
             if( Emit )
             {
-                guLogDebug( wxT( "emitting error '%s' for stream %s" ),
-                        GST_TO_WXSTRING( Error->message ).c_str(), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "emitting error '%s' for stream %s" ), GST_TO_WXSTRING( Error->message ).c_str(), FaderPlayBin->m_Uri.c_str() );
 //                sig_error = g_error_new_literal (RB_PLAYER_ERROR,
 //                                 code,
 //                                 error->message);
@@ -270,7 +269,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 gst_tag_list_get_string( tags, GST_TAG_TITLE, &RadioTagInfo->m_Title );
                 gst_tag_list_get_string( tags, GST_TAG_GENRE, &RadioTagInfo->m_Genre );
 
-                //guLogDebug( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'\n'%s'" ),
+                ////guLogDebug( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'\n'%s'" ),
                 //    wxString( RadioTagInfo->m_Organization, wxConvUTF8 ).c_str(),
                 //    wxString( RadioTagInfo->m_Location, wxConvUTF8 ).c_str(),
                 //    wxString( RadioTagInfo->m_Title, wxConvUTF8 ).c_str(),
@@ -309,7 +308,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 //
 //            if( pendingstate == GST_STATE_VOID_PENDING )
 //            {
-//                //guLogDebug( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
+//                ////guLogDebug( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
 ////                if( ctrl->GetLastState() != newstate )
 ////                {
 ////                    ctrl->SetLastState( newstate );
@@ -329,7 +328,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 gint64 duration;
                 GstFormat format;
                 gst_message_parse_duration( message, &format, &duration );
-                guLogDebug( wxT( "got duration %" G_GINT64_FORMAT" for stream %s" ), duration, FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "got duration %" G_GINT64_FORMAT" for stream %s" ), duration, FaderPlayBin->m_Uri.c_str() );
             }
             break;
         }
@@ -344,7 +343,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             gst_message_parse_buffering( message, &Percent );
 
             //match = gst_bin_get_by_name (GST_BIN (sink), name);
-            guLogDebug( wxT( "Buffering: %i%%" ), Percent );
+            //guLogDebug( wxT( "Buffering: %i%%" ), Percent );
 
             if( Percent >= 100 )
             {
@@ -395,7 +394,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             const GstStructure * s = gst_message_get_structure( message );
             const gchar * name = gst_structure_get_name( s );
 
-            //guLogDebug( wxT( "MESSAGE_ELEMENT %s" ), wxString( element ).c_str() );
+            ////guLogDebug( wxT( "MESSAGE_ELEMENT %s" ), wxString( element ).c_str() );
             if( !strcmp( name, "level" ) )
             {
                 guLevelInfo * LevelInfo = new guLevelInfo();
@@ -406,7 +405,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 if( !gst_structure_get_clock_time( s, "endtime", &LevelInfo->m_EndTime ) )
                     guLogWarning( wxT( "Could not parse endtime" ) );
 
-                //guLogDebug( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
+                ////guLogDebug( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
 
                 // we can get the number of channels as the length of any of the value lists
                 list = gst_structure_get_value( s, "rms" );
@@ -438,14 +437,14 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 }
 
 
-//                guLogDebug( wxT( "    RMS: %f dB, peak: %f dB, decay: %f dB" ),
+//                //guLogDebug( wxT( "    RMS: %f dB, peak: %f dB, decay: %f dB" ),
 //                    event.m_LevelInfo.m_RMS_L,
 //                    event.m_LevelInfo.m_Peak_L,
 //                    event.m_LevelInfo.m_Decay_L );
 
 //                // converting from dB to normal gives us a value between 0.0 and 1.0 */
 //                rms = pow( 10, rms_dB / 20 );
-//                  guLogDebug( wxT( "    normalized rms value: %f" ), rms );
+//                  //guLogDebug( wxT( "    normalized rms value: %f" ), rms );
                 event.SetClientObject( ( wxClientData * ) LevelInfo );
                 ctrl->AddPendingEvent( event );
 
@@ -461,7 +460,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 
             Struct = gst_message_get_structure( message );
             Name = gst_structure_get_name( Struct );
-            guLogDebug( wxT( "Got Application Message %s" ), GST_TO_WXSTRING( Name ).c_str() );
+            //guLogDebug( wxT( "Got Application Message %s" ), GST_TO_WXSTRING( Name ).c_str() );
 
             if( !FaderPlayBin )
             {
@@ -471,9 +470,9 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             {
                 //GList *t;
 
-                guLogDebug( wxT( "got stream playing message for %s" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "got stream playing message for %s" ), FaderPlayBin->m_Uri.c_str() );
                 //_rb_player_emit_playing_stream (RB_PLAYER (player), stream->stream_data);
-                guLogDebug( wxT( "** PLAYING ** now stream %s" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "** PLAYING ** now stream %s" ), FaderPlayBin->m_Uri.c_str() );
                 ctrl->Lock();
                 if( ctrl->m_FaderPlayBins.Count() == 1 )
                     FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PLAYING;
@@ -502,7 +501,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                     guFaderPlayBin * FaderPlayBin = ctrl->m_FaderPlayBins[ Index ];
                     if( FaderPlayBin->m_State == guFADERPLAYBIN_STATE_WAITING )
                     {
-                        guLogDebug( wxT( "got fade-in-start for stream %s -> FADE_IN" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "got fade-in-start for stream %s -> FADE_IN" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->StartFade( FaderPlayBin->m_Player->m_FadeInVolStart, 1.0, FaderPlayBin->m_Player->m_FadeInTime );
                         FaderPlayBin->LinkAndUnblock( NULL );
                     }
@@ -516,7 +515,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                     case guFADERPLAYBIN_STATE_FADING_OUT :
                     {
                         // stop the stream and dispose of it
-                        guLogDebug( wxT( "got fade-out-done for stream %s -> PENDING_REMOVE" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "got fade-out-done for stream %s -> PENDING_REMOVE" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
                         FaderPlayBin->m_Player->ScheduleReap();
 
@@ -535,18 +534,16 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                         {
                             FaderPlayBin->m_SeekTarget = Pos > guFADERPLAYBIN_FAST_FADER_TIME ? Pos - guFADERPLAYBIN_FAST_FADER_TIME : 0;
                             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_PAUSED;
-                            guLogDebug( wxT( "got fade-out-done for stream %s -> SEEKING_PAUSED [%" G_GINT64_FORMAT "]" ),
-                                  FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
+                            //guLogDebug( wxT( "got fade-out-done for stream %s -> SEEKING_PAUSED [%" G_GINT64_FORMAT "]" ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
                         }
                         else
                         {
                             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PAUSED;
-                            guLogDebug( wxT( "got fade-out-done for stream %s -> PAUSED (position query failed)" ),
-                                  FaderPlayBin->m_Uri.c_str() );
+                            //guLogDebug( wxT( "got fade-out-done for stream %s -> PAUSED (position query failed)" ), FaderPlayBin->m_Uri.c_str() );
                         }
                         FaderPlayBin->UnlinkAndBlock();
 
-                        //ctrl->SetCurrentState( GST_STATE_PAUSED );
+                        ctrl->SetCurrentState( GST_STATE_PAUSED );
                         break;
                     }
 
@@ -561,7 +558,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 FaderPlayBin->m_NeedsUnlink = true;
                 if( FaderPlayBin->m_State != guFADERPLAYBIN_STATE_REUSING )
                 {
-                    guLogDebug( wxT( "got EOS message for stream %s -> PENDING_REMOVE" ), FaderPlayBin->m_Uri.c_str() );
+                    //guLogDebug( wxT( "got EOS message for stream %s -> PENDING_REMOVE" ), FaderPlayBin->m_Uri.c_str() );
                     //_rb_player_emit_eos (RB_PLAYER (player), stream->stream_data, FALSE);
                     guMediaEvent event( guEVT_MEDIA_FINISHED );
                     ctrl->AddPendingEvent( event );
@@ -573,7 +570,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 else
                 {
                     // no need to emit EOS here, we already know what to do next
-                    guLogDebug( wxT( "got EOS message for stream %s in REUSING state" ), FaderPlayBin->m_Uri.c_str() );
+                    //guLogDebug( wxT( "got EOS message for stream %s in REUSING state" ), FaderPlayBin->m_Uri.c_str() );
 
                     unlink_reuse_relink( ctrl, FaderPlayBin );
                 }
@@ -612,22 +609,22 @@ static void unlink_reuse_relink( guMediaCtrl * mediactrl, guFaderPlayBin * fader
 
 	if( !faderplaybin->m_AdderPad )
 	{
-		guLogDebug( wxT( "stream %s doesn't need to be unlinked.. weird." ), faderplaybin->m_Uri.c_str() );
+		//guLogDebug( wxT( "stream %s doesn't need to be unlinked.. weird." ), faderplaybin->m_Uri.c_str() );
 	}
 	else
 	{
-		guLogDebug( wxT( "unlinking stream %s for reuse" ), faderplaybin->m_Uri.c_str() );
+		//guLogDebug( wxT( "unlinking stream %s for reuse" ), faderplaybin->m_Uri.c_str() );
 
 		if( !gst_pad_unlink( faderplaybin->m_GhostPad, faderplaybin->m_AdderPad ) )
 		{
-			guLogDebug( wxT( "Couldn't unlink stream %s: this is going to suck." ), faderplaybin->m_Uri.c_str() );
+			//guLogDebug( wxT( "Couldn't unlink stream %s: this is going to suck." ), faderplaybin->m_Uri.c_str() );
 		}
 
 		gst_element_release_request_pad( mediactrl->m_Adder, faderplaybin->m_AdderPad );
 		faderplaybin->m_AdderPad = NULL;
 
 		mediactrl->m_LinkedStreams--;
-		guLogDebug( wxT( "%d linked streams left" ), mediactrl->m_LinkedStreams );
+		//guLogDebug( wxT( "%d linked streams left" ), mediactrl->m_LinkedStreams );
 	}
 
 	faderplaybin->m_NeedsUnlink = false;
@@ -649,30 +646,30 @@ static gboolean set_state_and_wait( GstElement * bin, GstState target, guMediaCt
     gboolean waiting;
     gboolean result;
 
-    //guLogDebug( wxT( "setting playbin state to %s" ), wxString( gst_element_state_get_name( target ), wxConvUTF8 ).c_str() );
+    ////guLogDebug( wxT( "setting playbin state to %s" ), wxString( gst_element_state_get_name( target ), wxConvUTF8 ).c_str() );
 
     switch( gst_element_set_state( bin, target ) )
     {
         case GST_STATE_CHANGE_SUCCESS :
-            //guLogDebug( wxT( "State change was successful" ) );
+            ////guLogDebug( wxT( "State change was successful" ) );
             return true;
 
         case GST_STATE_CHANGE_NO_PREROLL:
-            //guLogDebug( wxT( "state change was successful (no preroll)" ) );
+            ////guLogDebug( wxT( "state change was successful (no preroll)" ) );
             return true;
 
         case GST_STATE_CHANGE_ASYNC:
-            //guLogDebug( wxT( "state is changing asynchronously" ) );
+            ////guLogDebug( wxT( "state is changing asynchronously" ) );
             result = true;
             break;
 
         case GST_STATE_CHANGE_FAILURE:
-            //guLogDebug( wxT( "state change failed" ) );
+            ////guLogDebug( wxT( "state change failed" ) );
             result = FALSE;
             break;
 
         default:
-            //guLogDebug( wxT( "unknown state change return.." ) );
+            ////guLogDebug( wxT( "unknown state change return.." ) );
             result = true;
             break;
     }
@@ -714,7 +711,7 @@ static gboolean set_state_and_wait( GstElement * bin, GstState target, guMediaCt
                 gst_message_parse_state_changed( message, &oldstate, &newstate, &pending );
                 if( GST_MESSAGE_SRC( message ) == GST_OBJECT( bin ) )
                 {
-                    //guLogDebug( wxT( "playbin reached state %s" ), wxString( gst_element_state_get_name( newstate ), wxConvUTF8 ).c_str() );
+                    ////guLogDebug( wxT( "playbin reached state %s" ), wxString( gst_element_state_get_name( newstate ), wxConvUTF8 ).c_str() );
                     if( pending == GST_STATE_VOID_PENDING && newstate == target )
                     {
                         waiting = FALSE;
@@ -742,7 +739,7 @@ static gboolean set_state_and_wait( GstElement * bin, GstState target, guMediaCt
 static void faderplaybin_notify_source_cb( GstElement * decoder, GParamSpec * pspec, guFaderPlayBin * faderplaybin )
 {
 //	GstElement * Source;
-	guLogDebug( wxT( "got source notification for stream %s" ), faderplaybin->m_Uri.c_str() );
+	//guLogDebug( wxT( "got source notification for stream %s" ), faderplaybin->m_Uri.c_str() );
 //	g_object_get( decoder, "source", &Source, NULL );
 //	faderplaybin->PrepareSource( Source );
 //	g_object_unref (source);
@@ -760,7 +757,7 @@ static void faderplaybin_pad_added_cb( GstElement * decoder, GstPad * pad, guFad
 	Caps = gst_pad_get_caps( pad );
 	if( gst_caps_is_empty( Caps ) || gst_caps_is_any( Caps ) )
 	{
-		guLogDebug( wxT( "got empty/any decoded caps.  hmm?" ) );
+		//guLogDebug( wxT( "got empty/any decoded caps.  hmm?" ) );
 		gst_caps_unref( Caps );
 		return;
 	}
@@ -778,7 +775,7 @@ static void faderplaybin_pad_added_cb( GstElement * decoder, GstPad * pad, guFad
 	}
 	else
 	{
-		guLogDebug( wxT( "got decoded audio pad for stream %s" ), faderplaybin->m_Uri.c_str() );
+		//guLogDebug( wxT( "got decoded audio pad for stream %s" ), faderplaybin->m_Uri.c_str() );
 		VPad = gst_element_get_static_pad( faderplaybin->m_Identity, "sink" );
 		gst_pad_link( pad, VPad );
 		gst_object_unref( VPad );
@@ -795,7 +792,7 @@ static void faderplaybin_pad_removed_cb( GstElement * decoder, GstPad * pad, guF
 {
     if( pad == faderplaybin->m_DecoderPad )
     {
-		guLogDebug( wxT( "active output pad for stream %s removed" ), faderplaybin->m_Uri.c_str() );
+		//guLogDebug( wxT( "active output pad for stream %s removed" ), faderplaybin->m_Uri.c_str() );
 		faderplaybin->m_DecoderLinked = false;
 
 		gst_object_unref( faderplaybin->m_DecoderPad );
@@ -813,7 +810,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 
 
 	g_object_get( faderplaybin->m_Volume, "volume", &Vol, NULL );
-	//guLogDebug( wxT( "== Volume Changed to %0.2f ===========================================================" ), Vol );
+	////guLogDebug( wxT( "== Volume Changed to %0.2f ===========================================================" ), Vol );
 
 	switch( faderplaybin->m_State )
 	{
@@ -822,7 +819,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 	        //if( faderplaybin->m_Fading && ( Vol == faderplaybin->m_FadeEnd ) )
             if( Vol > ( faderplaybin->m_FadeEnd - 0.001 ) && faderplaybin->m_Fading )
 	        {
-                guLogDebug( wxT( "stream %s fully faded in (at %f) -> PLAYING state" ), faderplaybin->m_Uri.c_str(), Vol );
+                //guLogDebug( wxT( "stream %s fully faded in (at %f) -> PLAYING state" ), faderplaybin->m_Uri.c_str(), Vol );
                 faderplaybin->m_Fading = false;
                 faderplaybin->m_State = guFADERPLAYBIN_STATE_PLAYING;
 	        }
@@ -835,7 +832,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 	        //if( Vol == faderplaybin->m_FadeEnd )
             if( Vol < ( faderplaybin->m_FadeEnd + 0.001 ) )
 	        {
-                guLogDebug( wxT( "stream %s fully faded out (at %f)" ), faderplaybin->m_Uri.c_str(), Vol );
+                //guLogDebug( wxT( "stream %s fully faded out (at %f)" ), faderplaybin->m_Uri.c_str(), Vol );
                 if( faderplaybin->m_Fading )
                 {
                     Message = guFADERPLAYBIN_MESSAGE_FADEOUT_DONE;
@@ -844,7 +841,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 	        }
 	        else if( !faderplaybin->m_EmittedStartFadeIn && Vol < ( faderplaybin->m_Player->m_FadeInVolTriger + 0.001 ) )
 	        {
-                guLogDebug( wxT( "stream %s sending fade in message (at %f)" ), faderplaybin->m_Uri.c_str(), Vol );
+                //guLogDebug( wxT( "stream %s sending fade in message (at %f)" ), faderplaybin->m_Uri.c_str(), Vol );
                 if( faderplaybin->m_Fading )
                 {
                     Message = guFADERPLAYBIN_MESSAGE_FADEIN_START;
@@ -873,14 +870,14 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 //	{
 //	    if( CurVol == 0.0 )
 //	    {
-//	        guLogDebug( wxT( ">>>>>>>>>> Finished the FadeOut" ) );
+//	        //guLogDebug( wxT( ">>>>>>>>>> Finished the FadeOut" ) );
 //	        //faderplaybin->DoFaderEnd();
 //	        Message = guFADE_OUT_DONE;
 //	    }
 //	    else if( CurVol <= 0.5 && faderplaybin->NeedFadeInStart() )
 //	    {
 //	        faderplaybin->NeedFadeInStart( false );
-//	        guLogDebug( wxT( ">>>>>>>>>> FadeIn should start now" ) );
+//	        //guLogDebug( wxT( ">>>>>>>>>> FadeIn should start now" ) );
 //	        Message = guFADE_IN_START;
 //	    }
 //	}
@@ -888,7 +885,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 //	{
 //	    if( CurVol == 1.0 )
 //	    {
-//	        guLogDebug( wxT( ">>>>>>>>>> Finished the FadeIn" ) );
+//	        //guLogDebug( wxT( ">>>>>>>>>> Finished the FadeIn" ) );
 //	        //faderplaybin->DoFaderEnd();
 //	        Message = guFADE_IN_DONE;
 //	    }
@@ -899,8 +896,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 		GstMessage * Msg;
 		GstStructure * Struct;
 
-		guLogDebug( wxT( "posting %s message for stream %s" ),
-            GST_TO_WXSTRING( Message ).c_str(), faderplaybin->m_Uri.c_str() );
+		//guLogDebug( wxT( "posting %s message for stream %s" ), GST_TO_WXSTRING( Message ).c_str(), faderplaybin->m_Uri.c_str() );
 
 		Struct = gst_structure_new( Message, NULL );
 		Msg = gst_message_new_application( GST_OBJECT( object ), Struct );
@@ -916,14 +912,14 @@ static gboolean faderplaybin_src_event_cb( GstPad * pad, GstEvent * event, guFad
 	GstStructure * S;
 	guMediaCtrl * Player;
 
-    guLogDebug( wxT( "Source Pad event for playbin '%s'" ), faderplaybin->m_Uri.c_str() );
+    //guLogDebug( wxT( "Source Pad event for playbin '%s'" ), faderplaybin->m_Uri.c_str() );
 
 	switch( GST_EVENT_TYPE( event ) )
 	{
         case GST_EVENT_EOS :
         {
             guFaderPlayBinArray ToStart;
-            guLogDebug( wxT( "posting EOS message for stream %s" ), faderplaybin->m_Uri.c_str() );
+            //guLogDebug( wxT( "posting EOS message for stream %s" ), faderplaybin->m_Uri.c_str() );
 
             S = gst_structure_new( guFADERPLAYBIN_MESSAGE_EOS, NULL );
             Msg = gst_message_new_application( GST_OBJECT( faderplaybin->m_PlayBin ), S );
@@ -949,7 +945,7 @@ static gboolean faderplaybin_src_event_cb( GstPad * pad, GstEvent * event, guFad
             {
                 GError * error = NULL;
 
-                guLogDebug( wxT( "starting stream %s on EOS from previous" ), ToStart[ Index ]->m_Uri.c_str() );
+                //guLogDebug( wxT( "starting stream %s on EOS from previous" ), ToStart[ Index ]->m_Uri.c_str() );
                 if( ToStart[ Index ]->LinkAndUnblock( &error ) == false )
                 {
                     ToStart[ Index ]->EmitError( error );
@@ -960,7 +956,7 @@ static gboolean faderplaybin_src_event_cb( GstPad * pad, GstEvent * event, guFad
 
         case GST_EVENT_NEWSEGMENT :
         {
-            guLogDebug( wxT( "got new segment for stream %s" ), faderplaybin->m_Uri.c_str() );
+            //guLogDebug( wxT( "got new segment for stream %s" ), faderplaybin->m_Uri.c_str() );
             faderplaybin->AdjustBaseTime();
             break;
         }
@@ -968,15 +964,13 @@ static gboolean faderplaybin_src_event_cb( GstPad * pad, GstEvent * event, guFad
         case GST_EVENT_FLUSH_STOP :
         case GST_EVENT_FLUSH_START :
         {
-            guLogDebug( wxT( "dropping %s event for stream %s" ),
-                GST_TO_WXSTRING( GST_EVENT_TYPE_NAME( event ) ).c_str(), faderplaybin->m_Uri.c_str() );
+            //guLogDebug( wxT( "dropping %s event for stream %s" ), GST_TO_WXSTRING( GST_EVENT_TYPE_NAME( event ) ).c_str(), faderplaybin->m_Uri.c_str() );
             return false;
         }
 
         default:
         {
-            guLogDebug( wxT( "got %s event for stream %s" ),
-                GST_TO_WXSTRING( GST_EVENT_TYPE_NAME( event ) ).c_str(), faderplaybin->m_Uri.c_str() );
+            //guLogDebug( wxT( "got %s event for stream %s" ), GST_TO_WXSTRING( GST_EVENT_TYPE_NAME( event ) ).c_str(), faderplaybin->m_Uri.c_str() );
             break;
         }
 	}
@@ -988,7 +982,7 @@ static void perform_seek( guFaderPlayBin * faderplaybin )
 {
 	GstEvent * Event;
 
-	guLogDebug( wxT( "sending seek event to %li" ), faderplaybin->m_SeekTarget );
+	//guLogDebug( wxT( "sending seek event to %li" ), faderplaybin->m_SeekTarget );
 
 	Event = gst_event_new_seek( 1.0, GST_FORMAT_TIME,
 				    GST_SEEK_FLAG_FLUSH,
@@ -1004,12 +998,12 @@ static void perform_seek( guFaderPlayBin * faderplaybin )
             break;
 
         case guFADERPLAYBIN_STATE_SEEKING_PAUSED:
-            guLogDebug( wxT( "leaving paused stream %s unlinked" ), faderplaybin->m_Uri.c_str() );
+            //guLogDebug( wxT( "leaving paused stream %s unlinked" ), faderplaybin->m_Uri.c_str() );
             faderplaybin->m_State = guFADERPLAYBIN_STATE_PAUSED;
             break;
 
         case guFADERPLAYBIN_STATE_SEEKING_EOS:
-            guLogDebug( wxT( "waiting for pad block to complete for %s before unlinking" ), faderplaybin->m_Uri.c_str() );
+            //guLogDebug( wxT( "waiting for pad block to complete for %s before unlinking" ), faderplaybin->m_Uri.c_str() );
             break;
 
         default:
@@ -1030,7 +1024,7 @@ static gboolean perform_seek_idle( guFaderPlayBin * faderplaybin )
 static void link_unblocked_cb( GstPad *pad, gboolean blocked, guFaderPlayBin * faderplaybin )
 {
 	GstStateChangeReturn StateChangeReturn;
-	guLogDebug( wxT( "link_unblocked_cb" ) );
+	//guLogDebug( wxT( "link_unblocked_cb" ) );
 
 	faderplaybin->Lock();
 
@@ -1038,12 +1032,12 @@ static void link_unblocked_cb( GstPad *pad, gboolean blocked, guFaderPlayBin * f
 	if( ( faderplaybin->m_State == guFADERPLAYBIN_STATE_FADING_IN ) ||
         ( faderplaybin->m_State == guFADERPLAYBIN_STATE_PLAYING ) )
     {
-		guLogDebug( wxT( "stream %s already unblocked" ), faderplaybin->m_Uri.c_str() );
+		//guLogDebug( wxT( "stream %s already unblocked" ), faderplaybin->m_Uri.c_str() );
 		faderplaybin->Unlock();
 		return;
 	}
 
-	guLogDebug( wxT( "stream %s is unblocked -> FADING_IN | PLAYING" ), faderplaybin->m_Uri.c_str() );
+	//guLogDebug( wxT( "stream %s is unblocked -> FADING_IN | PLAYING" ), faderplaybin->m_Uri.c_str() );
 	faderplaybin->m_SoureBlocked = false;
 
 	if( faderplaybin->m_Fading )
@@ -1058,8 +1052,7 @@ static void link_unblocked_cb( GstPad *pad, gboolean blocked, guFaderPlayBin * f
 	// should handle state change failures here..
 	StateChangeReturn = gst_element_set_state( GST_ELEMENT( faderplaybin->m_PlayBin ), GST_STATE_PLAYING );
 
-	guLogDebug( wxT( "stream %s state change returned: %s" ), faderplaybin->m_Uri.c_str(),
-		  GST_TO_WXSTRING( gst_element_state_change_return_get_name( StateChangeReturn ) ).c_str() );
+	//guLogDebug( wxT( "stream %s state change returned: %s" ), faderplaybin->m_Uri.c_str(),GST_TO_WXSTRING( gst_element_state_change_return_get_name( StateChangeReturn ) ).c_str() );
 
 	faderplaybin->PostPlayMessage( false );
 }
@@ -1077,12 +1070,12 @@ static void unlink_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBin * 
 
 	if( !faderplaybin->m_NeedsUnlink || !faderplaybin->m_AdderPad )
 	{
-		guLogDebug( wxT( "stream %s doesn't need to be unlinked" ), faderplaybin->m_Uri.c_str() );
+		//guLogDebug( wxT( "stream %s doesn't need to be unlinked" ), faderplaybin->m_Uri.c_str() );
 		faderplaybin->Unlock();
 		return;
 	}
 
-	guLogDebug( wxT( "**stream %s is blocked; unlinking" ), faderplaybin->m_Uri.c_str() );
+	//guLogDebug( wxT( "**stream %s is blocked; unlinking" ), faderplaybin->m_Uri.c_str() );
 
 	if( !gst_pad_unlink( faderplaybin->m_GhostPad, faderplaybin->m_AdderPad ) )
 	{
@@ -1102,13 +1095,13 @@ static void unlink_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBin * 
 	faderplaybin->Unlock();
 
 	// might want a stream-paused signal here?
-	guLogDebug( wxT( "** PAUSED ** now stream %s" ), faderplaybin->m_Uri.c_str() );
-    Player->SetCurrentState( GST_STATE_PAUSED );
+	//guLogDebug( wxT( "** PAUSED ** now stream %s" ), faderplaybin->m_Uri.c_str() );
+    //Player->SetCurrentState( GST_STATE_PAUSED );
 
 
 	Player->m_LinkedStreams--;
 	Last = !Player->m_LinkedStreams;
-	guLogDebug( wxT( "%d linked streams left" ), Player->m_LinkedStreams );
+	//guLogDebug( wxT( "%d linked streams left" ), Player->m_LinkedStreams );
 
 	// handle unlinks for seeking and stream reuse
 	switch( StreamState )
@@ -1145,7 +1138,7 @@ static void unlink_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBin * 
 // -------------------------------------------------------------------------------- //
 static bool adjust_base_time_probe_cb( GstPad * pad, GstBuffer * data, guFaderPlayBin * faderplaybin )
 {
-	guLogDebug( wxT( "attempting to adjust base time for stream %s" ), faderplaybin->m_Uri.c_str() );
+	//guLogDebug( wxT( "attempting to adjust base time for stream %s" ), faderplaybin->m_Uri.c_str() );
 	faderplaybin->AdjustBaseTime();
 	return true;
 }
@@ -1191,7 +1184,7 @@ static bool get_times_and_stream( guMediaCtrl * player, guFaderPlayBin ** pfader
 		}
 		else
 		{
-			guLogDebug( wxT( "found buffering stream %s as current" ), FaderPlayBin->m_Uri.c_str() );
+			//guLogDebug( wxT( "found buffering stream %s as current" ), FaderPlayBin->m_Uri.c_str() );
 			Buffering = true;
 		}
 	}
@@ -1283,9 +1276,9 @@ static bool tick_timeout( guMediaCtrl * mediactrl )
         mediactrl->AddPendingEvent( event );
 	}
 //	if( FaderPlayBin )
-//        guLogDebug( wxT( "%i %s" ), FaderPlayBin->m_State, FaderPlayBin->m_Uri.c_str() );
+//        //guLogDebug( wxT( "%i %s" ), FaderPlayBin->m_State, FaderPlayBin->m_Uri.c_str() );
 //
-//    guLogDebug( wxT( "%"G_GINT64_FORMAT"  %"G_GINT64_FORMAT ), Pos, Duration );
+//    //guLogDebug( wxT( "%"G_GINT64_FORMAT"  %"G_GINT64_FORMAT ), Pos, Duration );
 	return true;
 }
 
@@ -1332,13 +1325,15 @@ static gboolean reap_streams( guMediaCtrl * player )
 
 	for( Index = 0; Index < Count; Index++ )
 	{
-		guLogDebug( wxT( "reaping stream %s" ), ( ( guFaderPlayBin * ) ToDelete[ Index ] )->m_Uri.c_str() );
+		//guLogDebug( wxT( "reaping stream %s" ), ( ( guFaderPlayBin * ) ToDelete[ Index ] )->m_Uri.c_str() );
 		delete ( ( guFaderPlayBin * ) ToDelete[ Index ] );
 	}
 
     player->Lock();
     DumpFaderPlayBins( player->m_FaderPlayBins );
     player->Unlock();
+
+    player->MaybeStopSink();
 
 	return false;
 }
@@ -1352,13 +1347,13 @@ static void stream_src_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBi
 	GError *    error = NULL;
 	bool        StartStream = false;
 
-    guLogDebug( wxT( "Preroll is complete now...?" ) );
+    //guLogDebug( wxT( "Preroll is complete now...?" ) );
 
 	faderplaybin->Lock();
 
 	if( faderplaybin->m_SoureBlocked )
 	{
-		guLogDebug( wxT( "stream %s already blocked" ), faderplaybin->m_Uri.c_str() );
+		//guLogDebug( wxT( "stream %s already blocked" ), faderplaybin->m_Uri.c_str() );
 		faderplaybin->Unlock();
 		return;
 	}
@@ -1374,7 +1369,7 @@ static void stream_src_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBi
 	{
         case guFADERPLAYBIN_STATE_PREROLLING :
         {
-            guLogDebug( wxT( "stream %s is prerolled, not starting yet -> WAITING" ), faderplaybin->m_Uri.c_str() );
+            //guLogDebug( wxT( "stream %s is prerolled, not starting yet -> WAITING" ), faderplaybin->m_Uri.c_str() );
             faderplaybin->m_State = guFADERPLAYBIN_STATE_WAITING;
 
             guMediaEvent event( guEVT_MEDIA_LOADED );
@@ -1385,12 +1380,12 @@ static void stream_src_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBi
         }
 
         case guFADERPLAYBIN_STATE_PREROLL_PLAY:
-            guLogDebug( wxT( "stream %s is prerolled, need to start it" ), faderplaybin->m_Uri.c_str() );
+            //guLogDebug( wxT( "stream %s is prerolled, need to start it" ), faderplaybin->m_Uri.c_str() );
             StartStream = true;
             break;
 
         default:
-            guLogDebug( wxT( "didn't expect to get preroll completion callback in this state (%d)" ), faderplaybin->m_State );
+            //guLogDebug( wxT( "didn't expect to get preroll completion callback in this state (%d)" ), faderplaybin->m_State );
             break;
 
 	}
@@ -1413,7 +1408,7 @@ static void post_eos_seek_blocked_cb( GstPad * pad, gboolean blocked, guFaderPla
 
 	faderplaybin->Lock();
 
-	guLogDebug( wxT( "stream %s is blocked; linking and unblocking" ), faderplaybin->m_Uri.c_str() );
+	//guLogDebug( wxT( "stream %s is blocked; linking and unblocking" ), faderplaybin->m_Uri.c_str() );
 	faderplaybin->m_SoureBlocked = true;
 	if( !faderplaybin->LinkAndUnblock( &Error ) )
 	{
@@ -1737,8 +1732,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 1, wxT( "Crossfader" ) ) * GST_SECOND;
         m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 8, wxT( "Crossfader" ) ) ) / 10.0;
         m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 5, wxT( "Crossfader" ) ) ) / 10.0;
-        guLogDebug( wxT( "FOT: %li  FIT: %li  FIV: %0.2f  FIVT: %0.2f" ),
-            m_FadeOutTime, m_FadeInTime, m_FadeInVolStart, m_FadeInVolTriger );
+        //guLogDebug( wxT( "FOT: %li  FIT: %li  FIV: %0.2f  FIVT: %0.2f" ), m_FadeOutTime, m_FadeInTime, m_FadeInVolStart, m_FadeInVolTriger );
 
         GstCaps * Caps;
         Caps = gst_caps_new_simple( "audio/x-raw-int",
@@ -1925,7 +1919,7 @@ void guMediaCtrl::DisableRecord( void )
 
     if( CurState == GST_STATE_PLAYING )
     {
-        //guLogDebug( wxT( "Trying to set state to pased" ) );
+        ////guLogDebug( wxT( "Trying to set state to pased" ) );
         if( gst_element_set_state( m_RecordBin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
         {
             guLogMessage( wxT( "Could not set record state removing record object" ) );
@@ -2013,7 +2007,7 @@ wxFileOffset guMediaCtrl::GetLength()
 
     if( gst_element_query_duration( m_Pipeline, &format, &len ) && len != -1 )
     {
-        //guLogDebug( wxT( "TrackLength: %lld / %lld = %lld" ), len, GST_SECOND, len / GST_SECOND );
+        ////guLogDebug( wxT( "TrackLength: %lld / %lld = %lld" ), len, GST_SECOND, len / GST_SECOND );
         return ( len / GST_SECOND );
     }
     else
@@ -2025,7 +2019,7 @@ wxFileOffset guMediaCtrl::GetLength()
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetVolume( double dVolume )
 {
-    guLogDebug( wxT( "Volume: %0.5f" ), dVolume );
+    //guLogDebug( wxT( "Volume: %0.5f" ), dVolume );
     g_object_set( G_OBJECT( m_Volume ), "volume", dVolume, NULL );
     return true;
 }
@@ -2117,7 +2111,7 @@ void guMediaCtrl::SetCurrentState( GstState state )
 {
     m_CurrentState = state;
 
-    guLogDebug( wxT( "Setting state to %i" ), state );
+    //guLogDebug( wxT( "Setting state to %i" ), state );
 
     guMediaEvent event( guEVT_MEDIA_CHANGED_STATE );
     event.SetInt( state );
@@ -2177,7 +2171,7 @@ void guMediaCtrl::AddBusWatch( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::StartSink( GError ** error )
 {
-    guLogDebug( wxT( "guMediaCtrl::StartSink" ) );
+    //guLogDebug( wxT( "guMediaCtrl::StartSink" ) );
 
 	wxArrayPtrVoid  Messages;
 	GstBus *        Bus;
@@ -2235,7 +2229,7 @@ bool guMediaCtrl::StartSinkLocked( wxArrayPtrVoid &messages, GError ** error )
 //		     RB_PLAYER_ERROR_INTERNAL,		/* ? */
 //		     _("Failed to open output device"));
 
-	guLogDebug( wxT( "starting sink" ) );
+	//guLogDebug( wxT( "starting sink" ) );
 
 	// first, start the output bin.
 	// this won't preroll until we start the silence bin.
@@ -2339,16 +2333,16 @@ bool guMediaCtrl::StartSinkLocked( wxArrayPtrVoid &messages, GError ** error )
                 {
                     if( GST_MESSAGE_SRC( Message ) == GST_OBJECT( m_PlaybackBin ) )
                     {
-                        guLogDebug( wxT( "outputbin is now PAUSED" ) );
+                        //guLogDebug( wxT( "outputbin is now PAUSED" ) );
                         Waiting = false;
                     }
                     else if( GST_MESSAGE_SRC( Message ) == GST_OBJECT( m_Adder ) )
                     {
-                        guLogDebug( wxT( "adder is now PAUSED" ) );
+                        //guLogDebug( wxT( "adder is now PAUSED" ) );
                     }
                     else if( GST_MESSAGE_SRC( Message ) == GST_OBJECT( m_SilenceBin ) )
                     {
-                        guLogDebug( wxT( "silencebin is now PAUSED" ) );
+                        //guLogDebug( wxT( "silencebin is now PAUSED" ) );
                     }
                 }
                 break;
@@ -2391,7 +2385,7 @@ bool guMediaCtrl::StartSinkLocked( wxArrayPtrVoid &messages, GError ** error )
 		return false;
 	}
 
-	guLogDebug( wxT( "sink playing" ) );
+	//guLogDebug( wxT( "sink playing" ) );
 	m_SinkState = SINK_PLAYING;
 
 	// set the pipeline to PLAYING so it selects a clock
@@ -2417,7 +2411,7 @@ bool guMediaCtrl::StopSink( void )
 	{
         case SINK_PLAYING :
         {
-            guLogDebug( wxT( "stopping sink" ) );
+            //guLogDebug( wxT( "stopping sink" ) );
 
             if( m_TickTimeoutId )
             {
@@ -2460,6 +2454,8 @@ bool guMediaCtrl::StopSink( void )
             gst_element_set_state( m_Pipeline, GST_STATE_READY );
 
             m_SinkState = SINK_STOPPED;
+
+            SetCurrentState( GST_STATE_READY );
             break;
         }
 
@@ -2500,7 +2496,7 @@ void guMediaCtrl::ScheduleReap( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
 {
-    guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Load" ) );
+    //guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Load" ) );
 
 	//GError * Error = NULL;
 	bool Reused = false;
@@ -2545,7 +2541,7 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
 
 		if( Reused )
 		{
-			guLogDebug( wxT( "reusing stream %s for new stream %s" ), FaderPlayBin->m_Uri.c_str(), uri.c_str() );
+			//guLogDebug( wxT( "reusing stream %s for new stream %s" ), FaderPlayBin->m_Uri.c_str(), uri.c_str() );
 			FaderPlayBin->m_State = guFADERPLAYBIN_STATE_REUSING;
 			FaderPlayBin->m_NewUri = uri;
 
@@ -2601,7 +2597,7 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Play( void )
 {
-    guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Play" ) );
+    //guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Play" ) );
 
 	int                 StreamState;
 	bool                Ret = true;
@@ -2632,8 +2628,7 @@ bool guMediaCtrl::Play( void )
 
 	FaderPlayBin->Lock();
 
-	guLogDebug( wxT( "playing stream %s, play type %d, crossfade %" G_GINT64_FORMAT ),
-        FaderPlayBin->m_Uri.c_str(), guFADERPLAYBIN_PLAYTYPE_CROSSFADE, gint64( 6 * GST_SECOND ) );
+	//guLogDebug( wxT( "playing stream %s, play type %d, crossfade %" G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), guFADERPLAYBIN_PLAYTYPE_CROSSFADE, gint64( 6 * GST_SECOND ) );
 
 	// handle transitional states while holding the lock, and handle states that
 	// require action outside it (lock precedence, mostly)
@@ -2641,19 +2636,19 @@ bool guMediaCtrl::Play( void )
 	{
         case guFADERPLAYBIN_STATE_PREROLLING:
         case guFADERPLAYBIN_STATE_PREROLL_PLAY:
-            guLogDebug( wxT( "stream %s is prerolling; will start playback once prerolling is complete -> PREROLL_PLAY" ), FaderPlayBin->m_Uri.c_str() );
+            //guLogDebug( wxT( "stream %s is prerolling; will start playback once prerolling is complete -> PREROLL_PLAY" ), FaderPlayBin->m_Uri.c_str() );
             //FaderPlayBin->m_PlayType = guFADERPLAYBIN_PLAYTYPE_CROSSFADE;
             //FaderPlayBin->m_FadeOutTime = m_FadeOutTime;
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PREROLL_PLAY;
             break;
 
         case guFADERPLAYBIN_STATE_SEEKING_PAUSED:
-            guLogDebug( wxT( "unpausing seeking stream %s" ), FaderPlayBin->m_Uri.c_str() );
+            //guLogDebug( wxT( "unpausing seeking stream %s" ), FaderPlayBin->m_Uri.c_str() );
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING;
             break;
 
         case guFADERPLAYBIN_STATE_PENDING_REMOVE:
-            guLogDebug( wxT( "hmm, can't play streams in PENDING_REMOVE state.." ) );
+            //guLogDebug( wxT( "hmm, can't play streams in PENDING_REMOVE state.." ) );
             break;
 
         default:
@@ -2673,7 +2668,7 @@ bool guMediaCtrl::Play( void )
         case guFADERPLAYBIN_STATE_SEEKING :
         case guFADERPLAYBIN_STATE_SEEKING_EOS :
         {
-            guLogDebug( wxT( "stream %s is already playing" ), FaderPlayBin->m_Uri.c_str() );
+            //guLogDebug( wxT( "stream %s is already playing" ), FaderPlayBin->m_Uri.c_str() );
 
             //_rb_player_emit_playing_stream (RB_PLAYER (player), stream->stream_data);
             SetCurrentState( GST_STATE_PLAYING );
@@ -2682,7 +2677,7 @@ bool guMediaCtrl::Play( void )
 
         case guFADERPLAYBIN_STATE_PAUSED :
         {
-            guLogDebug( wxT( "unpausing stream %s" ), FaderPlayBin->m_Uri.c_str() );
+            //guLogDebug( wxT( "unpausing stream %s" ), FaderPlayBin->m_Uri.c_str() );
             FaderPlayBin->StartFade( 0.0f, 1.0f, guFADERPLAYBIN_FAST_FADER_TIME );
             Ret = FaderPlayBin->LinkAndUnblock( &Error );
             break;
@@ -2705,13 +2700,13 @@ bool guMediaCtrl::Play( void )
                     // probably should split this into two states..
                     if( FaderPlayBin->m_SoureBlocked )
                     {
-                        guLogDebug( wxT( "reusing and restarting paused stream %s" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "reusing and restarting paused stream %s" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->Reuse();
                         Ret = FaderPlayBin->LinkAndUnblock( &Error );
                     }
                     else
                     {
-                        guLogDebug( wxT( "unlinking stream %s for reuse" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "unlinking stream %s for reuse" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->UnlinkAndBlock();
                     }
                     break;
@@ -2731,7 +2726,7 @@ bool guMediaCtrl::Play( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Pause( void )
 {
-    guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Pause" ) );
+    //guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Pause" ) );
 
     guFaderPlayBin * FaderPlayBin = NULL;
 	wxArrayPtrVoid  ToFade;
@@ -2751,50 +2746,50 @@ bool guMediaCtrl::Pause( void )
 		{
             case guFADERPLAYBIN_STATE_WAITING:
             case guFADERPLAYBIN_STATE_WAITING_EOS:
-                guLogDebug( wxT( "stream %s is not yet playing, can't pause" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "stream %s is not yet playing, can't pause" ), FaderPlayBin->m_Uri.c_str() );
                 break;
 
             case guFADERPLAYBIN_STATE_PREROLLING:
             case guFADERPLAYBIN_STATE_PREROLL_PLAY:
-                guLogDebug( wxT( "stream %s is prerolling, can't pause" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "stream %s is prerolling, can't pause" ), FaderPlayBin->m_Uri.c_str() );
                 break;
 
             case guFADERPLAYBIN_STATE_REUSING:
-                guLogDebug( wxT( "stream %s is being reused, can't pause" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "stream %s is being reused, can't pause" ), FaderPlayBin->m_Uri.c_str() );
                 break;
 
             case guFADERPLAYBIN_STATE_PAUSED :
             case guFADERPLAYBIN_STATE_SEEKING_PAUSED :
             case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED :
-                guLogDebug( wxT( "stream %s is already paused" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "stream %s is already paused" ), FaderPlayBin->m_Uri.c_str() );
                 Done = true;
                 break;
 
             case guFADERPLAYBIN_STATE_FADING_IN:
             case guFADERPLAYBIN_STATE_PLAYING:
-                guLogDebug( wxT( "pausing stream %s -> FADING_OUT_PAUSED" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "pausing stream %s -> FADING_OUT_PAUSED" ), FaderPlayBin->m_Uri.c_str() );
                 ToFade.Insert( FaderPlayBin, 0 );
                 Done = true;
                 break;
 
             case guFADERPLAYBIN_STATE_SEEKING:
-                guLogDebug( wxT( "pausing seeking stream %s -> SEEKING_PAUSED" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "pausing seeking stream %s -> SEEKING_PAUSED" ), FaderPlayBin->m_Uri.c_str() );
                 FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_PAUSED;
                 Done = true;
                 break;
 
             case guFADERPLAYBIN_STATE_SEEKING_EOS:
-                guLogDebug( wxT( "stream %s is seeking after EOS -> SEEKING_PAUSED" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "stream %s is seeking after EOS -> SEEKING_PAUSED" ), FaderPlayBin->m_Uri.c_str() );
                 FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_PAUSED;
                 Done = true;
                 break;
 
             case guFADERPLAYBIN_STATE_FADING_OUT:
-                guLogDebug( wxT( "stream %s is fading out, can't be bothered pausing it" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "stream %s is fading out, can't be bothered pausing it" ), FaderPlayBin->m_Uri.c_str() );
                 break;
 
             case guFADERPLAYBIN_STATE_PENDING_REMOVE:
-                guLogDebug( wxT( "stream %s is done, can't pause" ), FaderPlayBin->m_Uri.c_str() );
+                //guLogDebug( wxT( "stream %s is done, can't pause" ), FaderPlayBin->m_Uri.c_str() );
                 break;
 		}
 
@@ -2812,7 +2807,7 @@ bool guMediaCtrl::Pause( void )
             case guFADERPLAYBIN_STATE_FADING_IN :
                 g_object_get( FaderPlayBin->m_Volume, "volume", &FadeOutStart, NULL );
                 FadeOutTime = ( gint64 ) ( ( ( double ) guFADERPLAYBIN_FAST_FADER_TIME ) * FadeOutStart );
-                guLogDebug( wxT( "============== Fading Out a Fading In playbin =================" ) );
+                //guLogDebug( wxT( "============== Fading Out a Fading In playbin =================" ) );
 
             case guFADERPLAYBIN_STATE_PLAYING:
             {
@@ -2835,7 +2830,7 @@ bool guMediaCtrl::Pause( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Stop( void )
 {
-    guLogDebug( wxT( "MediaCtrl::Stop" ) );
+    //guLogDebug( wxT( "MediaCtrl::Stop" ) );
     Pause() && Seek( 0 );
     m_CurrentState = GST_STATE_READY;
     return true;
@@ -2844,7 +2839,7 @@ bool guMediaCtrl::Stop( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Seek( wxFileOffset where )
 {
-    guLogDebug( wxT( "MediaCtrl::Seek( %lli )" ), where );
+    //guLogDebug( wxT( "MediaCtrl::Seek( %lli )" ), where );
 
 	guFaderPlayBin * FaderPlayBin;
 
@@ -2868,24 +2863,21 @@ bool guMediaCtrl::Seek( wxFileOffset where )
 	switch( FaderPlayBin->m_State )
 	{
         case guFADERPLAYBIN_STATE_PAUSED:
-            guLogDebug( wxT( "seeking in paused stream %s; target %"G_GINT64_FORMAT ),
-                FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
+            //guLogDebug( wxT( "seeking in paused stream %s; target %"G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
             perform_seek( FaderPlayBin );
             break;
 
         case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED:
             // don't unblock and relink when the seek is done
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_PAUSED;
-            guLogDebug( wxT( "seeking in pausing stream %s; target %"G_GINT64_FORMAT ),
-                FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
+            //guLogDebug( wxT( "seeking in pausing stream %s; target %"G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
             FaderPlayBin->UnlinkAndBlock();
             break;
 
         case guFADERPLAYBIN_STATE_FADING_IN:
         case guFADERPLAYBIN_STATE_PLAYING:
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING;
-            guLogDebug( wxT( "seeking in playing stream %s; target %"G_GINT64_FORMAT ),
-                FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
+            //guLogDebug( wxT( "seeking in playing stream %s; target %"G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
             perform_seek( FaderPlayBin );
             break;
 
@@ -2894,8 +2886,7 @@ bool guMediaCtrl::Seek( wxFileOffset where )
             // which means we can't wait for the src pad to be blocked
             // before we seek.  we unlink the stream when it reaches EOS,
             // so now we just perform the seek and relink.
-            guLogDebug( wxT( "seeking in EOS stream %s; target %"G_GINT64_FORMAT ),
-                FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
+            //guLogDebug( wxT( "seeking in EOS stream %s; target %"G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_EOS;
 
             gst_pad_set_blocked_async( FaderPlayBin->m_SourcePad, true,
@@ -3025,7 +3016,7 @@ wxString guMediaRecordCtrl::GetRecordFileName( void )
     }
     FileName += NormalizeField( m_TrackInfo.m_SongName ) + m_Ext;
 
-    guLogDebug( wxT( "The New Record Location is : '%s'" ), FileName.c_str() );
+    //guLogDebug( wxT( "The New Record Location is : '%s'" ), FileName.c_str() );
     return FileName;
 }
 
@@ -3113,7 +3104,7 @@ void guMediaRecordCtrl::SetStation( const wxString &station )
 // -------------------------------------------------------------------------------- //
 guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
 {
-	guLogDebug( wxT( "creating new stream for %s" ), uri.c_str() );
+	//guLogDebug( wxT( "creating new stream for %s" ), uri.c_str() );
 
     m_Player = mediactrl;
     m_Parent = mediactrl->m_Pipeline;
@@ -3233,11 +3224,11 @@ guFaderPlayBin::~guFaderPlayBin()
     bool WasLinked = false;
     bool WasInPipeline = false;
 
-    guLogDebug( wxT( "Deleting stream %s" ), m_Uri.c_str() );
+    //guLogDebug( wxT( "Deleting stream %s" ), m_Uri.c_str() );
 
 	if( gst_element_set_state( GST_ELEMENT( m_PlayBin ), GST_STATE_NULL ) == GST_STATE_CHANGE_ASYNC )
 	{
-	    guLogDebug( wxT( "!!! stream %s isn't cooperating" ), m_Uri.c_str() );
+	    //guLogDebug( wxT( "!!! stream %s isn't cooperating" ), m_Uri.c_str() );
 		gst_element_get_state( GST_ELEMENT( m_PlayBin ), NULL, NULL, GST_CLOCK_TIME_NONE );
 	}
 
@@ -3245,7 +3236,7 @@ guFaderPlayBin::~guFaderPlayBin()
 
     if( m_AdderPad )
     {
-        guLogDebug( wxT( "Unlinking stream %s" ), m_Uri.c_str() );
+        //guLogDebug( wxT( "Unlinking stream %s" ), m_Uri.c_str() );
 		if( gst_pad_unlink( m_GhostPad, m_AdderPad ) == FALSE )
 		{
 			guLogWarning( wxT( "Couldn't unlink stream %s: things will probably go quite badly from here on" ), m_Uri.c_str() );
@@ -3267,7 +3258,7 @@ guFaderPlayBin::~guFaderPlayBin()
     if( WasLinked )
     {
         m_Player->m_LinkedStreams--;
-		guLogDebug( wxT( "now have %d linked streams" ), m_Player->m_LinkedStreams );
+		//guLogDebug( wxT( "now have %d linked streams" ), m_Player->m_LinkedStreams );
         if( !m_Player->m_LinkedStreams )
             m_Player->MaybeStopSink();
     }
@@ -3316,7 +3307,7 @@ void guFaderPlayBin::UnlinkAndBlock( void )
 {
 	if( !m_AdderPad )
 	{
-		guLogDebug( wxT( "stream %s is not linked" ), m_Uri.c_str() );
+		//guLogDebug( wxT( "stream %s is not linked" ), m_Uri.c_str() );
 		return;
 	}
 
@@ -3354,14 +3345,11 @@ void guFaderPlayBin::StartFade( double start, double end, gint64 time )
 
 	if( Format != GST_FORMAT_TIME )
 	{
-		guLogDebug( wxT( "got position query results in some other format: %s" ), gst_format_get_name( Format ) );
+		//guLogDebug( wxT( "got position query results in some other format: %s" ), gst_format_get_name( Format ) );
 		Pos = 0;
 	}
 
-	guLogDebug( wxT( "fading stream %s: [%f, %" G_GINT64_FORMAT "] to [%f, %" G_GINT64_FORMAT "]" ),
-		  m_Uri.c_str(),
-		  ( float ) start, Pos,
-		  ( float ) end, Pos + time );
+	//guLogDebug( wxT( "fading stream %s: [%f, %" G_GINT64_FORMAT "] to [%f, %" G_GINT64_FORMAT "]" ), m_Uri.c_str(), ( float ) start, Pos, ( float ) end, Pos + time );
 
 	g_signal_handlers_block_by_func( m_Volume, ( void * ) faderplaybin_volume_changed_cb, this );
 
@@ -3412,13 +3400,13 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
 
     guFaderPlayBinArray ToFade;
 
-	guLogDebug( wxT( "going to start playback for stream %s (play type %d, crossfade %" G_GINT64_FORMAT ") -> FADING_IN | PLAYING" ), m_Uri.c_str(), m_PlayType, m_FadeOutTime );
+	//guLogDebug( wxT( "going to start playback for stream %s (play type %d, crossfade %" G_GINT64_FORMAT ") -> FADING_IN | PLAYING" ), m_Uri.c_str(), m_PlayType, m_FadeOutTime );
 
     switch( m_PlayType )
     {
         case guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
         {
-            guLogDebug( wxT( "Going to do a clean up of previous streams..." ) );
+            //guLogDebug( wxT( "Going to do a clean up of previous streams..." ) );
             int Index;
             m_Player->Lock();
             int Count = m_Player->m_FaderPlayBins.Count();
@@ -3432,7 +3420,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
                 {
                     case guFADERPLAYBIN_STATE_FADING_IN :
                     case guFADERPLAYBIN_STATE_PLAYING :
-                        guLogDebug( wxT( "stream %s is playing; crossfading -> FADING_OUT" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "stream %s is playing; crossfading -> FADING_OUT" ), FaderPlayBin->m_Uri.c_str() );
                         ToFade.Add( FaderPlayBin );
                         break;
 
@@ -3442,7 +3430,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
                     case guFADERPLAYBIN_STATE_SEEKING_PAUSED :
                     case guFADERPLAYBIN_STATE_PREROLLING :
                     case guFADERPLAYBIN_STATE_PREROLL_PLAY :
-                        guLogDebug( wxT( "stream %s is paused; replacing it" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "stream %s is paused; replacing it" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
 
                     case guFADERPLAYBIN_STATE_PENDING_REMOVE :
@@ -3471,7 +3459,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
                         FadeOutTime = ( gint64 ) ( ( ( double ) FaderPlayBin->m_FadeOutTime ) * FadeOutStart );
 
                     case guFADERPLAYBIN_STATE_PLAYING :
-                        guLogDebug( wxT( "))))))))(((((((( Fading Out stream %s" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "))))))))(((((((( Fading Out stream %s" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->StartFade( FadeOutStart, 0.0, FadeOutTime );
                         FaderPlayBin->m_State = guFADERPLAYBIN_STATE_FADING_OUT;
                         m_Fading = true;
@@ -3487,7 +3475,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
             {
                 GValue V = { 0, };
 
-                guLogDebug( wxT( "stream isn't fading; setting volume to 1.0" ) );
+                //guLogDebug( wxT( "stream isn't fading; setting volume to 1.0" ) );
                 g_value_init( &V, G_TYPE_DOUBLE );
                 g_value_set_double( &V, 1.0 );
                 if( !gst_controller_set( m_Fader, ( gchar * ) "volume", 0, &V ) )
@@ -3520,12 +3508,12 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
                     case guFADERPLAYBIN_STATE_PLAYING :
                     case guFADERPLAYBIN_STATE_FADING_IN :
                     case guFADERPLAYBIN_STATE_FADING_OUT :
-                        guLogDebug( wxT( "Stream %s already playing" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "Stream %s already playing" ), FaderPlayBin->m_Uri.c_str() );
                         Playing = true;
                         break;
 
                     case guFADERPLAYBIN_STATE_PAUSED :
-                        guLogDebug( wxT( "stream %s is paused; replacing it" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "stream %s is paused; replacing it" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
 
                     case guFADERPLAYBIN_STATE_PENDING_REMOVE :
@@ -3542,12 +3530,12 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
             if( Playing )
             {
                 // wait for current stream's EOS
-                guLogDebug( wxT( "existing playing stream found; waiting for its EOS -> WAITING_EOS" ) );
+                //guLogDebug( wxT( "existing playing stream found; waiting for its EOS -> WAITING_EOS" ) );
                 m_State = guFADERPLAYBIN_STATE_WAITING_EOS;
             }
             else
             {
-                guLogDebug( wxT( "no playing stream found, so starting immediately" ) );
+                //guLogDebug( wxT( "no playing stream found, so starting immediately" ) );
                 Ret = LinkAndUnblock( &Error );
             }
 
@@ -3571,7 +3559,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
                     case guFADERPLAYBIN_STATE_FADING_IN :
                     case guFADERPLAYBIN_STATE_PENDING_REMOVE :
                         // kill this one
-                        guLogDebug( wxT( "stopping stream %s (replaced by new stream)" ), FaderPlayBin->m_Uri.c_str() );
+                        //guLogDebug( wxT( "stopping stream %s (replaced by new stream)" ), FaderPlayBin->m_Uri.c_str() );
                         NeedReap = true;
                         FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
                         break;
@@ -3583,7 +3571,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
 
             m_Player->m_FaderPlayBinsMutex.Unlock();
 
-            guLogDebug( wxT( "no playing stream found, so starting immediately" ) );
+            //guLogDebug( wxT( "no playing stream found, so starting immediately" ) );
             Ret = LinkAndUnblock( &Error );
 
             break;
@@ -3604,7 +3592,7 @@ bool guFaderPlayBin::LinkAndUnblock( GError ** error )
 	GstPadLinkReturn PadLinkReturn;
 	GstStateChangeReturn StateChangeReturn;
 
-	guLogDebug( wxT( "guFaderPlayBin::LinkAndUnblock" ) );
+	//guLogDebug( wxT( "guFaderPlayBin::LinkAndUnblock" ) );
 
 	if( !m_Player->StartSink( error ) )
 	{
@@ -3614,13 +3602,13 @@ bool guFaderPlayBin::LinkAndUnblock( GError ** error )
 
 	if( m_AdderPad )
 	{
-	    guLogDebug( wxT( "stream %s already linked." ), m_Uri.c_str() );
+	    //guLogDebug( wxT( "stream %s already linked." ), m_Uri.c_str() );
 	    return true;
 	}
 
 	m_NeedsUnlink = false;
 
-	guLogDebug( wxT( "Linking stream %s" ), m_Uri.c_str() );
+	//guLogDebug( wxT( "Linking stream %s" ), m_Uri.c_str() );
 	if( !GST_ELEMENT_PARENT( GST_ELEMENT( m_PlayBin ) ) )
 		gst_bin_add( GST_BIN( m_Player->m_Pipeline ), GST_ELEMENT( m_PlayBin ) );
 
@@ -3644,16 +3632,16 @@ bool guFaderPlayBin::LinkAndUnblock( GError ** error )
 	}
 
     m_Player->m_LinkedStreams++;
-	guLogDebug( wxT( "now have %d linked streams" ), m_Player->m_LinkedStreams );
+	//guLogDebug( wxT( "now have %d linked streams" ), m_Player->m_LinkedStreams );
 
     if( m_SoureBlocked )
     {
-        guLogDebug( wxT( "Unblock now the source pad..." ) );
+        //guLogDebug( wxT( "Unblock now the source pad..." ) );
 		gst_pad_set_blocked_async( m_SourcePad, false, GstPadBlockCallback( link_unblocked_cb ), this );
     }
     else
     {
-		guLogDebug( wxT( "??? stream %s is already unblocked -> PLAYING" ), m_Uri.c_str() );
+		//guLogDebug( wxT( "??? stream %s is already unblocked -> PLAYING" ), m_Uri.c_str() );
 		m_State = guFADERPLAYBIN_STATE_PLAYING;
 
 		AdjustBaseTime();
@@ -3699,10 +3687,7 @@ void guFaderPlayBin::AdjustBaseTime( void )
 	gst_element_query_position( m_Volume, &Format, &StreamPos );
 	if( StreamPos != -1 )
 	{
-		guLogDebug( wxT( "adjusting base time: %" G_GINT64_FORMAT
-		    " - %" G_GINT64_FORMAT " => %" G_GINT64_FORMAT ),
-		    m_BaseTime, StreamPos,
-		    m_BaseTime - StreamPos );
+		//guLogDebug( wxT( "adjusting base time: %" G_GINT64_FORMAT" - %" G_GINT64_FORMAT " => %" G_GINT64_FORMAT ), m_BaseTime, StreamPos, m_BaseTime - StreamPos );
 		m_BaseTime -= StreamPos;
 
 		// once we've successfully adjusted the base time, we don't need the data probe
@@ -3737,7 +3722,7 @@ void guFaderPlayBin::PostPlayMessage( bool fake )
 		return;
 	}
 
-	guLogDebug( wxT( "posting " guFADERPLAYBIN_MESSAGE_PLAYING " message for stream %s" ), m_Uri.c_str() );
+	//guLogDebug( wxT( "posting " guFADERPLAYBIN_MESSAGE_PLAYING " message for stream %s" ), m_Uri.c_str() );
 	S = gst_structure_new( guFADERPLAYBIN_MESSAGE_PLAYING, NULL );
 	Msg = gst_message_new_application( GST_OBJECT( m_PlayBin ), S );
     gst_element_post_message( GST_ELEMENT( m_PlayBin ), Msg );
@@ -3772,7 +3757,7 @@ void guFaderPlayBin::EmitError( GError * error )
 // must be called *without* the stream list lock?
 bool guFaderPlayBin::Preroll( void )
 {
-    guLogDebug( wxT( "FaderPlayBin::Preroll" ) );
+    //guLogDebug( wxT( "FaderPlayBin::Preroll" ) );
 
 	GstStateChangeReturn    State;
 	bool                    Ret = true;
@@ -3788,13 +3773,13 @@ bool guFaderPlayBin::Preroll( void )
 	switch( State )
 	{
         case GST_STATE_CHANGE_FAILURE:
-            guLogDebug( wxT( "preroll for stream %s failed (state change failed)" ), m_Uri.c_str() );
+            //guLogDebug( wxT( "preroll for stream %s failed (state change failed)" ), m_Uri.c_str() );
             Ret = false;
             // attempting to unblock here causes deadlock
             break;
 
         case GST_STATE_CHANGE_NO_PREROLL:
-            guLogDebug( wxT( "no preroll for stream %s, setting to PLAYING instead?" ), m_Uri.c_str() );
+            //guLogDebug( wxT( "no preroll for stream %s, setting to PLAYING instead?" ), m_Uri.c_str() );
             gst_element_set_state( GST_ELEMENT( m_PlayBin ), GST_STATE_PLAYING );
             break;
 
@@ -3803,7 +3788,7 @@ bool guFaderPlayBin::Preroll( void )
             // uridecodebin returns SUCCESS from state changes when streaming, so we can't
             // use that to figure out what to do next.  instead, we wait for pads to be added
             // and for our pad block callbacks to be called.
-            guLogDebug( wxT( "preroll was sucessfully?..." ) );
+            //guLogDebug( wxT( "preroll was sucessfully?..." ) );
             break;
 
         default:
@@ -3813,7 +3798,7 @@ bool guFaderPlayBin::Preroll( void )
 
 //	if( Unblock )
 //	{
-//		guLogDebug( wxT( "unblocking stream source pad" ) );
+//		//guLogDebug( wxT( "unblocking stream source pad" ) );
 //		gst_pad_set_blocked_async( m_SourcePad, false, NULL, NULL );
 //	}
 
