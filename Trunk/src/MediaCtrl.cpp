@@ -813,7 +813,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 
 
 	g_object_get( faderplaybin->m_Volume, "volume", &Vol, NULL );
-	guLogDebug( wxT( "== Volume Changed to %0.2f ===========================================================" ), Vol );
+	//guLogDebug( wxT( "== Volume Changed to %0.2f ===========================================================" ), Vol );
 
 	switch( faderplaybin->m_State )
 	{

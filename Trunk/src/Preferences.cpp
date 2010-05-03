@@ -1302,7 +1302,7 @@ void guPrefDialog::SaveSettings( void )
 
     m_Config->WriteNum( wxT( "FadeOutTime" ), m_XFadeOutLenSlider->GetValue(), wxT( "Crossfader" ) );
 	m_Config->WriteNum( wxT( "FadeInTime" ), m_XFadeInLenSlider->GetValue(), wxT( "Crossfader" ) );
-    m_Config->ReadNum( wxT( "FadeInVolStart" ), m_XFadeInStartSlider->GetValue(), wxT( "Crossfader" ) );
+    m_Config->WriteNum( wxT( "FadeInVolStart" ), m_XFadeInStartSlider->GetValue(), wxT( "Crossfader" ) );
 	m_Config->WriteNum( wxT( "FadeInVolTriger" ), m_XFadeInTrigerSlider->GetValue(), wxT( "Crossfader" ) );
 
     m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->IsEnabled() && m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );

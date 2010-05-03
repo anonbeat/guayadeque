@@ -38,7 +38,7 @@
 #include <wx/regex.h>
 #include <wx/utils.h>
 
-#define GUPLAYER_MIN_PREVTRACK_POS      5000
+#define GUPLAYER_MIN_PREVTRACK_POS      5
 
 #define guPLAYER_SMART_CACHEITEMS       100
 #define guPLAYER_SMART_CACHEARTISTS     20
@@ -1607,7 +1607,7 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaPosition... %i" ), event.GetInt() );
+//    guLogMessage( wxT( "OnMediaPosition... %i" ), event.GetInt() );
 
     if( event.GetInt() < 0 )
         return;
@@ -2036,6 +2036,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     State = m_MediaCtrl->GetState();
     //CurPos = m_MediaCtrl->Tell();
     int CurItem = m_PlayListCtrl->GetCurItem();
+    guLogMessage( wxT( "PrevTrack State: %i %i %li" ), State, CurItem, m_LastCurPos  );
     if( ( ( CurItem == 0 ) && ( State == guMEDIASTATE_PLAYING ) ) ||
         ( ( State != guMEDIASTATE_STOPPED ) && ( m_LastCurPos  > GUPLAYER_MIN_PREVTRACK_POS ) ) )
     {
