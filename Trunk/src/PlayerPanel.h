@@ -249,7 +249,7 @@ class guPlayerPanel : public wxPanel
     void                OnPlayListUpdated( wxCommandEvent &event );
     void                OnPlayListDClick( wxCommandEvent &event );
 
-    void                LoadMedia( const wxString &FileName, bool restart = true );
+    void                LoadMedia( const wxString &FileName, guPlayerPlayType playtype );
     void                OnMediaLoaded( guMediaEvent &event );
     void                OnMediaAboutToFinish( guMediaEvent &event );
     void                OnMediaFinished( guMediaEvent &event );
