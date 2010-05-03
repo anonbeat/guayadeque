@@ -52,8 +52,10 @@ DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_FINISHED )
 
 #define GST_TO_WXSTRING( str )  ( wxString( str, wxConvUTF8 ) )
 
-#define guLogDebug  guLogMessage
+#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+#define guSHOW_DUMPFADERPLAYBINS     1
 
+#ifdef guSHOW_DUMPFADERPLAYBINS
 // -------------------------------------------------------------------------------- //
 static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
 {
@@ -92,10 +94,11 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
             case guFADERPLAYBIN_STATE_PENDING_REMOVE:	    StateName = wxT( "pending remove" );    break;
         }
 
-        guLogDebug( wxT( "[%s] '%s'" ), StateName.c_str(), FaderPlayBin->m_Uri.c_str() );
+        guLogDebug( wxT( "[%s] '%s'" ), StateName.c_str(), FaderPlayBin->m_Uri.AfterLast( '/' ).c_str() );
     }
     guLogDebug( wxT( " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " ) );
 }
+#endif
 
 //// -------------------------------------------------------------------------------- //
 //static guFaderPlayBin * FindFaderPlayBin( const guFaderPlayBinArray &playbins, const wxString &uri )
@@ -571,7 +574,9 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                     // We start here the pending playbins
                     guLogDebug( wxT( "Going to check if pending streams after EOS" ) );
                     ctrl->Lock();
+#ifdef guSHOW_DUMPFADERPLAYBINS
                     DumpFaderPlayBins( ctrl->m_FaderPlayBins );
+#endif
                     int Index;
                     int Count = ctrl->m_FaderPlayBins.Count();
                     for( Index = 0; Index < Count; Index++ )
@@ -1350,9 +1355,11 @@ static gboolean reap_streams( guMediaCtrl * player )
 		delete ( ( guFaderPlayBin * ) ToDelete[ Index ] );
 	}
 
+#ifdef guSHOW_DUMPFADERPLAYBINS
     player->Lock();
     DumpFaderPlayBins( player->m_FaderPlayBins );
     player->Unlock();
+#endif
 
     player->MaybeStopSink();
 
@@ -2506,8 +2513,9 @@ void guMediaCtrl::ScheduleReap( void )
 
 	if( !m_PlayBinReapId )
 	{
+#ifdef guSHOW_DUMPFADERPLAYBINS
         DumpFaderPlayBins( m_FaderPlayBins );
-		//dump_stream_list (player);
+#endif
 		m_PlayBinReapId = g_idle_add( GSourceFunc( reap_streams ), this );
 	}
 
@@ -2597,7 +2605,9 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
     FaderPlayBin->m_PlayType = playtype;
 	Lock();
 	m_FaderPlayBins.Insert( FaderPlayBin, 0 );
+#ifdef guSHOW_DUMPFADERPLAYBINS
     DumpFaderPlayBins( m_FaderPlayBins );
+#endif
 	Unlock();
 
 	// start prerolling it
@@ -3318,9 +3328,11 @@ guFaderPlayBin::~guFaderPlayBin()
 		gst_object_unref( m_CapsFilter );
     }
 
+#ifdef guSHOW_DUMPFADERPLAYBINS
     m_Player->Lock();
     DumpFaderPlayBins( m_Player->m_FaderPlayBins );
     m_Player->Unlock();
+#endif
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3430,6 +3442,9 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
             //guLogDebug( wxT( "Going to do a clean up of previous streams..." ) );
             int Index;
             m_Player->Lock();
+#ifdef guSHOW_DUMPFADERPLAYBINS
+            DumpFaderPlayBins( m_Player->m_FaderPlayBins );
+#endif
             int Count = m_Player->m_FaderPlayBins.Count();
             for( Index = 0; Index < Count; Index++ )
             {
@@ -3446,6 +3461,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
                         break;
 
                     case guFADERPLAYBIN_STATE_PAUSED :
+                    case guFADERPLAYBIN_STATE_WAITING :
                     case guFADERPLAYBIN_STATE_WAITING_EOS :
                     case guFADERPLAYBIN_STATE_SEEKING :
                     case guFADERPLAYBIN_STATE_SEEKING_PAUSED :
