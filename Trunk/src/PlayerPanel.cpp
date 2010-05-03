@@ -1432,7 +1432,7 @@ wxString inline FileNameEncode( const wxString filename )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::LoadMedia( const wxString &FileName, guPlayerPlayType playtype )
 {
-    //guLogMessage( wxT( "LoadMedia Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "LoadMedia Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), playtype );
     //m_MediaCtrl->Load( NextItem->FileName );
     wxURI UriPath( FileName );
     wxString Uri;
@@ -1583,6 +1583,12 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
     guLogMessage( wxT( "OnMediaState: %i" ), event.GetInt() );
     GstState State = ( GstState ) event.GetInt();
 
+    if( m_AboutToFinishPending && ( State == GST_STATE_PLAYING ) )
+    {
+        m_AboutToFinishPending = false;
+    }
+
+
     if( State != m_LastPlayState )
     {
         if( State == GST_STATE_PLAYING ) //guMEDIASTATE_PLAYING )
@@ -1607,7 +1613,7 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 {
-//    guLogMessage( wxT( "OnMediaPosition... %i" ), event.GetInt() );
+    //guLogMessage( wxT( "OnMediaPosition... %i  %i" ), event.GetInt(), m_AboutToFinishPending );
 
     if( event.GetInt() < 0 )
         return;
@@ -1916,11 +1922,11 @@ void guPlayerPanel::OnMediaFadeOutFinished( guMediaEvent &event )
 {
     guLogMessage( wxT( "OnMediaFadeOutFinished Cur: %i" ), m_PlayListCtrl->GetCurItem() );
 
-    if( m_AboutToFinishPending )
-    {
-        m_AboutToFinishPending = false;
-        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-    }
+//    if( m_AboutToFinishPending )
+//    {
+//        //m_AboutToFinishPending = false;
+//        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
