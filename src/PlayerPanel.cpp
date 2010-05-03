@@ -1634,7 +1634,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         m_MediaSong.m_PlayTime = CurPos;
 
         if( ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
-            ( CurPos + m_FadeOutTime + 2 >= m_LastLength ) && !m_AboutToFinishPending )
+            ( CurPos + m_FadeOutTime + 2000 >= m_LastLength ) && !m_AboutToFinishPending )
         {
             //OnAboutToFinish();
             m_AboutToFinishPending = true;
@@ -1852,16 +1852,16 @@ void guPlayerPanel::OnAboutToFinish( void )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaAboutToFinish( guMediaEvent &event )
 {
-    guLogMessage( wxT( "Ending About-To-Finish %i" ), m_AboutToFinishPending );
-    guLogMessage( wxT( "Ending About to Finsih Cur: %i" ), m_PlayListCtrl->GetCurItem() );
-    if( m_AboutToFinishPending )
-    {
-        SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
-        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-        m_AboutToFinishPending = false;
-        //guLogMessage( wxT( "End About-To-Finish %i" ), m_AboutToFinishPending );
-        return;
-    }
+//    guLogMessage( wxT( "Ending About-To-Finish %i" ), m_AboutToFinishPending );
+//    guLogMessage( wxT( "Ending About to Finsih Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+//    if( m_AboutToFinishPending )
+//    {
+//        SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
+//        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+//        m_AboutToFinishPending = false;
+//        //guLogMessage( wxT( "End About-To-Finish %i" ), m_AboutToFinishPending );
+//        return;
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1875,7 +1875,7 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
     {
         m_AboutToFinishPending = false;
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-        guLogMessage( wxT( "EOS cancelled..." ) );
+        guLogMessage( wxT( "EOS cancelled...%i" ), m_AboutToFinishPending );
         return;
     }
 
@@ -2076,7 +2076,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 {
-    //guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), m_AboutToFinishPending );
     guMediaState State;
     guTrack * NextItem;
 
@@ -2103,6 +2103,8 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( m_AboutToFinishPending ? guFADERPLAYBIN_PLAYTYPE_AFTER_EOS : guFADERPLAYBIN_PLAYTYPE_REPLACE ) ) );
         }
+        else
+            guLogMessage( wxT( "Next Track when not playing.." ) );
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     else
