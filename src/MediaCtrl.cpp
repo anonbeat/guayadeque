@@ -2498,7 +2498,7 @@ void guMediaCtrl::ScheduleReap( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMediaCtrl::Load( const wxString &uri, bool restart )
+bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
 {
     guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Load" ) );
 
@@ -2577,6 +2577,7 @@ bool guMediaCtrl::Load( const wxString &uri, bool restart )
 		return false;
 	}
 
+    FaderPlayBin->m_PlayType = playtype;
 	Lock();
 	m_FaderPlayBins.Insert( FaderPlayBin, 0 );
     DumpFaderPlayBins( m_FaderPlayBins );
