@@ -2641,7 +2641,7 @@ bool guMediaCtrl::Play( void )
         case guFADERPLAYBIN_STATE_PREROLLING:
         case guFADERPLAYBIN_STATE_PREROLL_PLAY:
             guLogDebug( wxT( "stream %s is prerolling; will start playback once prerolling is complete -> PREROLL_PLAY" ), FaderPlayBin->m_Uri.c_str() );
-            FaderPlayBin->m_PlayType = guFADERPLAYBIN_PLAYTYPE_CROSSFADE;
+            //FaderPlayBin->m_PlayType = guFADERPLAYBIN_PLAYTYPE_CROSSFADE;
             //FaderPlayBin->m_FadeOutTime = m_FadeOutTime;
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PREROLL_PLAY;
             break;
@@ -2690,7 +2690,7 @@ bool guMediaCtrl::Play( void )
         case guFADERPLAYBIN_STATE_WAITING_EOS :
         case guFADERPLAYBIN_STATE_WAITING :
         {
-            FaderPlayBin->m_PlayType = guFADERPLAYBIN_PLAYTYPE_CROSSFADE;
+            //FaderPlayBin->m_PlayType = guFADERPLAYBIN_PLAYTYPE_CROSSFADE;
             //FaderPlayBin->m_FadeOutTime = m_FadeOutTime;
             Ret = FaderPlayBin->ActuallyStart( &Error );
             break;
@@ -3133,8 +3133,8 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
 
     m_SeekTarget = 0;
 
-    m_PlayType = guFADERPLAYBIN_PLAYTYPE_CROSSFADE;
     m_FadeOutTime = m_Player->m_FadeOutTime;
+    m_PlayType = m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS;
     m_Fading = false;
 
     m_AdjustProbeId = 0;
