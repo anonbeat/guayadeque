@@ -1285,6 +1285,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     // Set the Current Song
     m_MediaSong = * Song;
+    m_MediaSong.m_Length = m_LastLength / 1000;
 
     // Update the Current Playing Song Info
     UpdateLabels();
@@ -1580,13 +1581,14 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaState( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaState: %i" ), event.GetInt() );
+    guLogMessage( wxT( "OnMediaState: %i %i" ), event.GetInt(), m_AboutToFinishPending );
     GstState State = ( GstState ) event.GetInt();
 
-    if( m_AboutToFinishPending && ( State == GST_STATE_PLAYING ) )
-    {
-        m_AboutToFinishPending = false;
-    }
+//    if( m_AboutToFinishPending && ( State == GST_STATE_PLAYING ) )
+//    {
+//        guLogMessage( wxT( "Disabling the AboutToFinishPending flag" ) );
+//        m_AboutToFinishPending = false;
+//    }
 
 
     if( State != m_LastPlayState )
@@ -1613,7 +1615,7 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaPosition... %i  %i" ), event.GetInt(), m_AboutToFinishPending );
+    //guLogMessage( wxT( "OnMediaPosition... %i - %li  %i" ), event.GetInt(), event.GetExtraLong(), m_AboutToFinishPending );
 
     if( event.GetInt() < 0 )
         return;
@@ -1623,8 +1625,12 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     {
         m_LastLength = CurLen;
 
-        UpdatePositionLabel( m_LastCurPos / 1000 );
-        m_MediaSong.m_Length = CurLen / 1000;
+        if( event.GetInt() < 1000 )
+        {
+            guLogMessage( wxT( "Updating the length" ) );
+            m_MediaSong.m_Length = CurLen / 1000;
+            UpdatePositionLabel( m_LastCurPos / 1000 );
+        }
     }
 
     wxFileOffset CurPos = event.GetInt();
@@ -1922,11 +1928,11 @@ void guPlayerPanel::OnMediaFadeOutFinished( guMediaEvent &event )
 {
     guLogMessage( wxT( "OnMediaFadeOutFinished Cur: %i" ), m_PlayListCtrl->GetCurItem() );
 
-//    if( m_AboutToFinishPending )
-//    {
-//        //m_AboutToFinishPending = false;
-//        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-//    }
+    if( m_AboutToFinishPending )
+    {
+        m_AboutToFinishPending = false;
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
