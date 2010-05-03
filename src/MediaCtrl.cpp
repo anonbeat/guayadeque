@@ -63,7 +63,7 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
         return;
     }
 
-    //guLogDebug( wxT( " * * * * * * * * * * current stream list * * * * * * * * * *" ) );
+    guLogDebug( wxT( " * * * * * * * * * * current stream list * * * * * * * * * *" ) );
     int Index;
     int Count = playbins.Count();
     for( Index = 0; Index < Count; Index++ )
@@ -92,9 +92,9 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
             case guFADERPLAYBIN_STATE_PENDING_REMOVE:	    StateName = wxT( "pending remove" );    break;
         }
 
-        //guLogDebug( wxT( "[%s] '%s'" ), StateName.c_str(), FaderPlayBin->m_Uri.c_str() );
+        guLogDebug( wxT( "[%s] '%s'" ), StateName.c_str(), FaderPlayBin->m_Uri.c_str() );
     }
-    //guLogDebug( wxT( " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " ) );
+    guLogDebug( wxT( " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " ) );
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -565,6 +565,27 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                     FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
 
                     unlink_blocked_cb( FaderPlayBin->m_SourcePad, true, FaderPlayBin );
+
+                    // We finished a fading out without receiving the fade in start
+                    // prolly because the seek was dragged after the position to do so
+                    // We start here the pending playbins
+                    guLogDebug( wxT( "Going to check if pending streams after EOS" ) );
+                    ctrl->Lock();
+                    DumpFaderPlayBins( ctrl->m_FaderPlayBins );
+                    int Index;
+                    int Count = ctrl->m_FaderPlayBins.Count();
+                    for( Index = 0; Index < Count; Index++ )
+                    {
+                        guFaderPlayBin * FaderPlayBin = ctrl->m_FaderPlayBins[ Index ];
+                        if( FaderPlayBin->m_State == guFADERPLAYBIN_STATE_WAITING )
+                        {
+                            guLogDebug( wxT( "waiting stream on fade-out-done for stream %s -> FADE_IN" ), FaderPlayBin->m_Uri.c_str() );
+                            FaderPlayBin->StartFade( FaderPlayBin->m_Player->m_FadeInVolStart, 1.0, FaderPlayBin->m_Player->m_FadeInTime );
+                            FaderPlayBin->LinkAndUnblock( NULL );
+                        }
+                    }
+                    ctrl->Unlock();
+
                     ctrl->ScheduleReap();
                 }
                 else
@@ -2597,7 +2618,7 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Play( void )
 {
-    //guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Play" ) );
+    guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Play" ) );
 
 	int                 StreamState;
 	bool                Ret = true;
@@ -2628,7 +2649,7 @@ bool guMediaCtrl::Play( void )
 
 	FaderPlayBin->Lock();
 
-	//guLogDebug( wxT( "playing stream %s, play type %d, crossfade %" G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), guFADERPLAYBIN_PLAYTYPE_CROSSFADE, gint64( 6 * GST_SECOND ) );
+	guLogDebug( wxT( "playing stream %s, play type %d, crossfade %" G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), guFADERPLAYBIN_PLAYTYPE_CROSSFADE, gint64( 6 * GST_SECOND ) );
 
 	// handle transitional states while holding the lock, and handle states that
 	// require action outside it (lock precedence, mostly)
@@ -2636,19 +2657,19 @@ bool guMediaCtrl::Play( void )
 	{
         case guFADERPLAYBIN_STATE_PREROLLING:
         case guFADERPLAYBIN_STATE_PREROLL_PLAY:
-            //guLogDebug( wxT( "stream %s is prerolling; will start playback once prerolling is complete -> PREROLL_PLAY" ), FaderPlayBin->m_Uri.c_str() );
+            guLogDebug( wxT( "stream %s is prerolling; will start playback once prerolling is complete -> PREROLL_PLAY" ), FaderPlayBin->m_Uri.c_str() );
             //FaderPlayBin->m_PlayType = guFADERPLAYBIN_PLAYTYPE_CROSSFADE;
             //FaderPlayBin->m_FadeOutTime = m_FadeOutTime;
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PREROLL_PLAY;
             break;
 
         case guFADERPLAYBIN_STATE_SEEKING_PAUSED:
-            //guLogDebug( wxT( "unpausing seeking stream %s" ), FaderPlayBin->m_Uri.c_str() );
+            guLogDebug( wxT( "unpausing seeking stream %s" ), FaderPlayBin->m_Uri.c_str() );
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING;
             break;
 
         case guFADERPLAYBIN_STATE_PENDING_REMOVE:
-            //guLogDebug( wxT( "hmm, can't play streams in PENDING_REMOVE state.." ) );
+            guLogDebug( wxT( "hmm, can't play streams in PENDING_REMOVE state.." ) );
             break;
 
         default:
@@ -2668,7 +2689,7 @@ bool guMediaCtrl::Play( void )
         case guFADERPLAYBIN_STATE_SEEKING :
         case guFADERPLAYBIN_STATE_SEEKING_EOS :
         {
-            //guLogDebug( wxT( "stream %s is already playing" ), FaderPlayBin->m_Uri.c_str() );
+            guLogDebug( wxT( "stream %s is already playing" ), FaderPlayBin->m_Uri.c_str() );
 
             //_rb_player_emit_playing_stream (RB_PLAYER (player), stream->stream_data);
             SetCurrentState( GST_STATE_PLAYING );
@@ -2677,7 +2698,7 @@ bool guMediaCtrl::Play( void )
 
         case guFADERPLAYBIN_STATE_PAUSED :
         {
-            //guLogDebug( wxT( "unpausing stream %s" ), FaderPlayBin->m_Uri.c_str() );
+            guLogDebug( wxT( "unpausing stream %s" ), FaderPlayBin->m_Uri.c_str() );
             FaderPlayBin->StartFade( 0.0f, 1.0f, guFADERPLAYBIN_FAST_FADER_TIME );
             Ret = FaderPlayBin->LinkAndUnblock( &Error );
             break;
@@ -2700,13 +2721,13 @@ bool guMediaCtrl::Play( void )
                     // probably should split this into two states..
                     if( FaderPlayBin->m_SoureBlocked )
                     {
-                        //guLogDebug( wxT( "reusing and restarting paused stream %s" ), FaderPlayBin->m_Uri.c_str() );
+                        guLogDebug( wxT( "reusing and restarting paused stream %s" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->Reuse();
                         Ret = FaderPlayBin->LinkAndUnblock( &Error );
                     }
                     else
                     {
-                        //guLogDebug( wxT( "unlinking stream %s for reuse" ), FaderPlayBin->m_Uri.c_str() );
+                        guLogDebug( wxT( "unlinking stream %s for reuse" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->UnlinkAndBlock();
                     }
                     break;
@@ -3400,7 +3421,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
 
     guFaderPlayBinArray ToFade;
 
-	//guLogDebug( wxT( "going to start playback for stream %s (play type %d, crossfade %" G_GINT64_FORMAT ") -> FADING_IN | PLAYING" ), m_Uri.c_str(), m_PlayType, m_FadeOutTime );
+	guLogDebug( wxT( "going to start playback for stream %s (play type %d, crossfade %" G_GINT64_FORMAT ") -> FADING_IN | PLAYING" ), m_Uri.c_str(), m_PlayType, m_FadeOutTime );
 
     switch( m_PlayType )
     {
