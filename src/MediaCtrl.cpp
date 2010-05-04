@@ -2709,7 +2709,7 @@ bool guMediaCtrl::Play( void )
         case guFADERPLAYBIN_STATE_PAUSED :
         {
             guLogDebug( wxT( "unpausing stream %s" ), FaderPlayBin->m_Uri.c_str() );
-            FaderPlayBin->StartFade( 0.0f, 1.0f, guFADERPLAYBIN_FAST_FADER_TIME );
+            FaderPlayBin->StartFade( 0.0f, 1.0f, m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : 250 );
             Ret = FaderPlayBin->LinkAndUnblock( &Error );
             break;
         }
@@ -2764,7 +2764,7 @@ bool guMediaCtrl::Pause( void )
 
 	bool            Done = FALSE;
 	double          FadeOutStart = 1.0f;
-	gint64          FadeOutTime = guFADERPLAYBIN_FAST_FADER_TIME;
+	gint64          FadeOutTime;
 
 	Lock();
 	int Index;
@@ -2830,6 +2830,7 @@ bool guMediaCtrl::Pause( void )
 
     Unlock();
 
+	FadeOutTime = FaderPlayBin->m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : 250;
 	Count = ToFade.Count();
 	for( Index = 0; Index < Count; Index++ )
 	{
