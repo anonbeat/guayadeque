@@ -2381,6 +2381,29 @@ void guPlayerPanel::SetVolume( double volume )
 
     m_CurVolume = volume;
 
+    if( m_CurVolume > 75 )
+    {
+        m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_hi ) );
+        m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_hi ) );
+    }
+    else if( m_CurVolume > 50 )
+    {
+        m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_mid ) );
+        m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
+    }
+    else if( m_CurVolume == 0 )
+    {
+        m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_muted ) );
+        m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_muted ) );
+    }
+    else
+    {
+        m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_low ) );
+        m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_low ) );
+    }
+    m_VolumeButton->Refresh();
+    m_LastVolume = m_CurVolume;
+
     m_MediaCtrl->SetVolume(  volume / ( double ) 100.0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %u%%" ), ( int ) volume ) );
 }
