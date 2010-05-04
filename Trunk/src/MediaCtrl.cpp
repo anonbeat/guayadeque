@@ -2659,7 +2659,7 @@ bool guMediaCtrl::Play( void )
 
 	FaderPlayBin->Lock();
 
-	guLogDebug( wxT( "playing stream %s, play type %d, crossfade %" G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), guFADERPLAYBIN_PLAYTYPE_CROSSFADE, gint64( 6 * GST_SECOND ) );
+	guLogDebug( wxT( "playing stream %s, play type %d, crossfade %" G_GINT64_FORMAT ), FaderPlayBin->m_Uri.c_str(), 0, m_FadeOutTime );
 
 	// handle transitional states while holding the lock, and handle states that
 	// require action outside it (lock precedence, mostly)
@@ -2863,8 +2863,9 @@ bool guMediaCtrl::Pause( void )
 bool guMediaCtrl::Stop( void )
 {
     //guLogDebug( wxT( "MediaCtrl::Stop" ) );
-    Pause() && Seek( 0 );
-    m_CurrentState = GST_STATE_READY;
+    Pause();
+    Seek( 0 );
+    SetCurrentState( GST_STATE_READY );
     return true;
 }
 
@@ -3383,7 +3384,7 @@ void guFaderPlayBin::StartFade( double start, double end, gint64 time )
 		Pos = 0;
 	}
 
-	//guLogDebug( wxT( "fading stream %s: [%f, %" G_GINT64_FORMAT "] to [%f, %" G_GINT64_FORMAT "]" ), m_Uri.c_str(), ( float ) start, Pos, ( float ) end, Pos + time );
+	guLogDebug( wxT( "fading stream %s: [%f, %" G_GINT64_FORMAT "] to [%f, %" G_GINT64_FORMAT "]" ), m_Uri.c_str(), ( float ) start, Pos, ( float ) end, Pos + time );
 
 	g_signal_handlers_block_by_func( m_Volume, ( void * ) faderplaybin_volume_changed_cb, this );
 
