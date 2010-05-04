@@ -2079,6 +2079,8 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         else
         {
             SetCurrentTrack( PrevItem );
+            guLogMessage( wxT( "Prev Track when not playing.." ) );
+            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
@@ -2116,7 +2118,10 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
                     ( m_AboutToFinishPending ? guFADERPLAYBIN_PLAYTYPE_AFTER_EOS : guFADERPLAYBIN_PLAYTYPE_REPLACE ) ) );
         }
         else
+        {
             guLogMessage( wxT( "Next Track when not playing.." ) );
+            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
+        }
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     else
@@ -2209,13 +2214,13 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 {
-    //guLogMessage( wxT( "OnStopButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "OnStopButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     //guMediaState State;
     //State = m_MediaCtrl->GetState();
     //guLogMessage( wxT( "State: %i" ), State );
     //if( State != guMEDIASTATE_STOPPED )
     //{
-        m_MediaCtrl->Stop();
+    m_MediaCtrl->Stop();
         //UpdatePositionLabel( 0 );
 //        if( m_MediaSong.m_Length )
 //            m_PlayerPositionSlider->SetValue( 0 );
