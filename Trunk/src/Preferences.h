@@ -103,6 +103,7 @@ class guPrefDialog : public wxDialog
     wxSlider *                  m_XFadeInLenSlider;
     wxSlider *                  m_XFadeInStartSlider;
     wxSlider *                  m_XFadeInTrigerSlider;
+    wxStaticBitmap *            m_FadeBitmap;
 
     wxPanel *                   m_RecordPanel;
     wxCheckBox *                m_RecordChkBox;
@@ -208,6 +209,7 @@ class guPrefDialog : public wxDialog
 	void OnDelCoverBtnClick( wxCommandEvent& event );
     void OnPlayLevelEnabled( wxCommandEvent& event );
     void OnPlayEndTimeEnabled( wxCommandEvent& event );
+    void OnCrossFadeChanged( wxScrollEvent& event );
     void OnRecEnableClicked( wxCommandEvent& event );
     void OnRecDelTracksClicked( wxCommandEvent& event );
 	void OnFiltersListBoxSelected( wxCommandEvent &event );

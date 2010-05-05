@@ -2079,9 +2079,10 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
             if( State == guMEDIASTATE_PLAYING )
             {
                 m_IsSkipping = true;
-                m_AboutToFinishPending = true;
+                m_AboutToFinishPending = m_FadeOutTime || !ForceSkip;
                 LoadMedia( m_MediaSong.m_FileName,
-                    m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
+                ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
+                    ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
             }
         }
         else
@@ -2121,10 +2122,10 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         if( State == guMEDIASTATE_PLAYING )
         {
             m_IsSkipping = true;
-            m_AboutToFinishPending = true;
+            m_AboutToFinishPending = m_FadeOutTime || !ForceSkip;
             LoadMedia( m_MediaSong.m_FileName,
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
-                    ( m_AboutToFinishPending ? guFADERPLAYBIN_PLAYTYPE_AFTER_EOS : guFADERPLAYBIN_PLAYTYPE_REPLACE ) ) );
+                    ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
         }
         else
         {
