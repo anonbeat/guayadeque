@@ -109,9 +109,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_FileBrowserPanel = NULL;
 
     //
-    wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque ) );
-    int IconSize = Config->ReadNum( wxT( "TaskBarIconSize" ), 24, wxT( "General" ) );
-    TaskBarIcon.Rescale( IconSize, IconSize, wxIMAGE_QUALITY_HIGH );
+    wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
     TaskBarIcon.ConvertAlphaToMask();
     m_AppIcon.CopyFromBitmap( TaskBarIcon );
 
