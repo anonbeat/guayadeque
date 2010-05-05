@@ -405,9 +405,10 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 gint channels;
                 const GValue * list;
                 const GValue * value;
-                if( !gst_structure_get_clock_time( s, "endtime", &LevelInfo->m_EndTime ) )
-                    guLogWarning( wxT( "Could not parse endtime" ) );
-
+//                if( !gst_structure_get_clock_time( s, "endtime", &LevelInfo->m_EndTime ) )
+//                    guLogWarning( wxT( "Could not parse endtime" ) );
+//
+//                LevelInfo->m_EndTime /= GST_MSECOND;
                 ////guLogDebug( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
 
                 // we can get the number of channels as the length of any of the value lists

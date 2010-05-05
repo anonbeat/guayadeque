@@ -1497,25 +1497,31 @@ void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
 void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
 {
     guLevelInfo * LevelInfo = ( guLevelInfo * ) event.GetClientObject();
+    // We only enable to check if :
+    // * Its enabled in preferences
+    // * Its not a radiostation
+    // * Not enabled a time range or
+    // * TrackLength bigger in 10 secs of the minimun time range
     if( m_SilenceDetector &&
         ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
         ( !m_SilenceDetectorTime ||
           ( ( m_MediaSong.m_Length * 1000 ) > ( unsigned int ) ( m_SilenceDetectorTime + 10000 ) ) ) )
     {
-        //guLogMessage( wxT( "Decay Level: %f  %s" ), event.m_LevelInfo.m_Decay_L, LenToString( event.m_LevelInfo.m_EndTime / 1000000000 ).c_str() );
-        if( int( LevelInfo->m_Decay_L ) < m_SilenceDetectorLevel )
+        //guLogMessage( wxT( "Decay Level: %0.2f /  %02i  %s  %li > %li" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, LenToString( ( unsigned int ) ( m_LastCurPos / 1000 ) ).c_str(), m_MediaSong.m_Length * 1000, ( unsigned int ) ( m_SilenceDetectorTime + 10000 ) );
+        if( LevelInfo->m_Decay_L < double( m_SilenceDetectorLevel ) )
         {
-            unsigned long EventTime = LevelInfo->m_EndTime / 1000000;
+            unsigned long EventTime = m_LastCurPos; //LevelInfo->m_EndTime;
             unsigned long TrackLength = m_MediaSong.m_Length * 1000;
             //guLogMessage( wxT( "The level is now lower than triger level" ) );
-            //guLogMessage( wxT( "(%f) %u : %u , %i" ), event.m_LevelInfo.m_Decay_L, m_SilenceDetectorTime, EventTime, TrackLength - EventTime );
+            //guLogMessage( wxT( "(%f) %02i : %li , %i, %i     P(%i)" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime, m_AboutToFinishPending );
 
             // We only skip to next track if the level is lower than the triger one and also if
             // we are at the end time period (if configured this way) and the time left is more than 500msecs
-            if( !m_SilenceDetectorTime ||
+            if( !m_AboutToFinishPending && ( !m_SilenceDetectorTime ||
                 ( ( ( unsigned int ) m_SilenceDetectorTime > ( TrackLength - EventTime ) ) &&
-                  ( ( EventTime + 500 ) < TrackLength ) ) )
+                  ( ( EventTime + 500 ) < TrackLength ) ) ) )
             {
+                m_AboutToFinishPending = true;
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
                 //guLogMessage( wxT( "Silence detected. Changed to next track" ) );
@@ -1634,8 +1640,9 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     }
 
     wxFileOffset CurPos = event.GetInt();
-    if( ( CurPos != m_LastCurPos ) && !m_SliderIsDragged )
+    if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )
     {
+        guLogMessage( wxT( "OnMediaPosition... %i - %li  %i" ), event.GetInt(), event.GetExtraLong(), m_AboutToFinishPending );
         m_LastCurPos = CurPos;
 
         UpdatePositionLabel( CurPos / 1000 );
@@ -1645,8 +1652,8 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
         m_MediaSong.m_PlayTime = CurPos;
 
-        if( ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
-            ( CurPos + m_FadeOutTime + 2000 >= m_LastLength ) && !m_AboutToFinishPending )
+        if( !m_AboutToFinishPending && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
+            ( CurPos + m_FadeOutTime + 2000 >= m_LastLength ) )
         {
             //OnAboutToFinish();
             m_AboutToFinishPending = true;
@@ -2072,6 +2079,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
             if( State == guMEDIASTATE_PLAYING )
             {
                 m_IsSkipping = true;
+                m_AboutToFinishPending = true;
                 LoadMedia( m_MediaSong.m_FileName,
                     m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
             }
@@ -2113,6 +2121,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         if( State == guMEDIASTATE_PLAYING )
         {
             m_IsSkipping = true;
+            m_AboutToFinishPending = true;
             LoadMedia( m_MediaSong.m_FileName,
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( m_AboutToFinishPending ? guFADERPLAYBIN_PLAYTYPE_AFTER_EOS : guFADERPLAYBIN_PLAYTYPE_REPLACE ) ) );
