@@ -1135,6 +1135,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+    wxScrollEvent ScrollEvent;
+    OnCrossFadeChanged( ScrollEvent );
     //
     //
     //
@@ -1620,32 +1622,44 @@ void guPrefDialog::OnPlayEndTimeEnabled( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnCrossFadeChanged( wxScrollEvent& event )
 {
-//    wxBitmap * FadeBitmap = new wxBitmap(  );
-//    if( BlankCD )
-//    {
-//        if( BlankCD->IsOk() )
-//        {
-//            if( m_AlbumCovers.Count() && m_AlbumCovers[ m_CurrentImage ].m_Image )
-//            {
-//                wxImage CoverImage = m_AlbumCovers[ m_CurrentImage ].m_Image->Copy();
-//                // 38,6
-//                wxMemoryDC MemDC;
-//                MemDC.SelectObject( * BlankCD );
-//                CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
-//                MemDC.DrawBitmap( wxBitmap( CoverImage ), 34, 4, false );
-//                // Update the Size label
-//                m_SizeStaticText->SetLabel( m_AlbumCovers[ m_CurrentImage ].m_SizeStr );
-//            }
-//            else
-//            {
-//                m_SizeStaticText->SetLabel( wxEmptyString );
-//            }
-//            m_SizeSizer->Layout();
-//            m_CoverBitmap->SetBitmap( * BlankCD );
-//            m_CoverBitmap->Refresh();
-//        }
-//        delete BlankCD;
-//    }
+    wxBitmap * FadeBitmap = new wxBitmap( 400, 200 );
+    if( FadeBitmap )
+    {
+        if( FadeBitmap->IsOk() )
+        {
+            wxMemoryDC MemDC;
+            MemDC.SelectObject( * FadeBitmap );
+            MemDC.Clear();
+
+            wxPoint FadeOutPoints[ 4 ];
+            FadeOutPoints[ 0 ] = wxPoint( 0, 0 );
+            FadeOutPoints[ 1 ] = wxPoint( 0, 200 );
+            FadeOutPoints[ 2 ] = wxPoint( ( m_XFadeOutLenSlider->GetValue() + 1 ) * 20, 200 );
+            FadeOutPoints[ 3 ] = wxPoint( 20, 0 );
+            wxRegion OutRegion( WXSIZEOF( FadeOutPoints ), FadeOutPoints );
+            MemDC.SetClippingRegion( OutRegion );
+            wxRect Rect( 0, 0, 400, 200 );
+            MemDC.GradientFillLinear( Rect, * wxBLUE, * wxLIGHT_GREY, wxRIGHT );
+            MemDC.DestroyClippingRegion();
+
+            wxPoint FadeInPoints[ 5 ];
+            int FadeInStartX = FadeOutPoints[ 2 ].x - ( m_XFadeInTrigerSlider->GetValue() * ( ( FadeOutPoints[ 2 ].x - 20 ) / 10 ) );
+            int FadeInStartY = 200 - ( m_XFadeInStartSlider->GetValue() * 20 );
+            FadeInPoints[ 0 ] = wxPoint( FadeInStartX, 200 );
+            FadeInPoints[ 1 ] = wxPoint( FadeInStartX, FadeInStartY );
+            FadeInPoints[ 2 ] = wxPoint( FadeInStartX + ( m_XFadeInLenSlider->GetValue() * 20 ), 0 );
+            FadeInPoints[ 3 ] = wxPoint( 400, 0 );
+            FadeInPoints[ 4 ] = wxPoint( 400, 200 );
+            wxRegion InRegion( WXSIZEOF( FadeInPoints ), FadeInPoints );
+            MemDC.SetClippingRegion( InRegion );
+            MemDC.GradientFillLinear( Rect, * wxLIGHT_GREY, * wxGREEN, wxRIGHT );
+            MemDC.DestroyClippingRegion();
+
+            m_FadeBitmap->SetBitmap( * FadeBitmap );
+            m_FadeBitmap->Refresh();
+        }
+        delete FadeBitmap;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
