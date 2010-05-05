@@ -484,6 +484,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	XFadeMainSizer->Add( XFadesbSizer, 0, wxEXPAND|wxALL, 5 );
 
+	m_FadeBitmap = new wxStaticBitmap( m_XFadePanel, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 400,200 ), 0 );
+	XFadeMainSizer->Add( m_FadeBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
 	m_XFadePanel->SetSizer( XFadeMainSizer );
 	m_XFadePanel->Layout();
 	XFadeMainSizer->Fit( m_XFadePanel );
@@ -1150,6 +1153,11 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
 	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 
+    m_XFadeOutLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInStartSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+
 	m_RecordChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
 	m_RecDelTracks->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
 
@@ -1607,6 +1615,37 @@ void guPrefDialog::OnPlayLevelEnabled( wxCommandEvent& event )
 void guPrefDialog::OnPlayEndTimeEnabled( wxCommandEvent& event )
 {
 	m_PlayEndTimeSpinCtrl->Enable( event.IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCrossFadeChanged( wxScrollEvent& event )
+{
+//    wxBitmap * FadeBitmap = new wxBitmap(  );
+//    if( BlankCD )
+//    {
+//        if( BlankCD->IsOk() )
+//        {
+//            if( m_AlbumCovers.Count() && m_AlbumCovers[ m_CurrentImage ].m_Image )
+//            {
+//                wxImage CoverImage = m_AlbumCovers[ m_CurrentImage ].m_Image->Copy();
+//                // 38,6
+//                wxMemoryDC MemDC;
+//                MemDC.SelectObject( * BlankCD );
+//                CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
+//                MemDC.DrawBitmap( wxBitmap( CoverImage ), 34, 4, false );
+//                // Update the Size label
+//                m_SizeStaticText->SetLabel( m_AlbumCovers[ m_CurrentImage ].m_SizeStr );
+//            }
+//            else
+//            {
+//                m_SizeStaticText->SetLabel( wxEmptyString );
+//            }
+//            m_SizeSizer->Layout();
+//            m_CoverBitmap->SetBitmap( * BlankCD );
+//            m_CoverBitmap->Refresh();
+//        }
+//        delete BlankCD;
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
