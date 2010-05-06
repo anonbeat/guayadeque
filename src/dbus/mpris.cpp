@@ -473,7 +473,8 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                         PlayStatus = 1;
                     else if( State == guMEDIASTATE_PLAYING )
                         PlayStatus = 0;
-                    int PlayLoop = m_PlayerPanel->GetPlayLoop();
+                    int PlaySingle = ( m_PlayerPanel->GetPlayLoop() == 2 );
+                    int PlayLoop = ( m_PlayerPanel->GetPlayLoop() == 1 );
 
                     DBusMessageIter status;
                     DBusMessageIter args;
@@ -482,7 +483,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     dbus_message_iter_open_container( &args, DBUS_TYPE_STRUCT, NULL, &status );
                     dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayStatus );
                     dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
-                    dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
+                    dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlaySingle );
                     dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayLoop );
                     dbus_message_iter_close_container( &args, &status );
                     Send( reply );
@@ -809,7 +810,10 @@ void guMPRIS::OnPlayerStatusChange()
             PlayStatus = 1;
         else if( State == guMEDIASTATE_PLAYING )
             PlayStatus = 0;
-        int PlayLoop = m_PlayerPanel->GetPlayLoop();
+        int PlaySingle = ( m_PlayerPanel->GetPlayLoop() == 2 );
+        int PlayLoop = ( m_PlayerPanel->GetPlayLoop() == 1 );
+
+        guLogMessage( wxT( "StatusChanged( %i, %i, %i, %i )" ), PlayStatus, Dummy, Dummy, PlayLoop );
 
         DBusMessageIter status;
         DBusMessageIter args;
@@ -818,7 +822,7 @@ void guMPRIS::OnPlayerStatusChange()
         dbus_message_iter_open_container( &args, DBUS_TYPE_STRUCT, NULL, &status );
         dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayStatus );
         dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
-        dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &Dummy );
+        dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlaySingle );
         dbus_message_iter_append_basic( &status, DBUS_TYPE_INT32, &PlayLoop );
         dbus_message_iter_close_container( &args, &status );
 

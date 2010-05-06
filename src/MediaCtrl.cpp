@@ -1750,6 +1750,8 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     m_StopSinkId = 0;
     m_BusWatchId = 0;
 
+    //m_CurrentState = GST_STATE_READY;
+
     if( Init() )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -1816,6 +1818,8 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 //        {
 //            guLogMessage( wxT( "Could not start the main pipeline" ) );
 //        }
+
+        SetCurrentState( GST_STATE_READY );
 
         return;
 
@@ -2864,7 +2868,8 @@ bool guMediaCtrl::Pause( void )
 bool guMediaCtrl::Stop( void )
 {
     //guLogDebug( wxT( "MediaCtrl::Stop" ) );
-    Pause();
+    if( m_CurrentState == GST_STATE_PLAYING )
+        Pause();
     Seek( 0 );
     SetCurrentState( GST_STATE_READY );
     return true;
