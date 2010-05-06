@@ -45,6 +45,7 @@ DEFINE_EVENT_TYPE( guEVT_MEDIA_CHANGED_POSITION )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_CHANGED_LENGTH )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_ERROR )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_FINISHED )
+DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEIN_STARTED )
 
 #define guFADERPLAYBIN_FAST_FADER_TIME          (GST_SECOND)
 
@@ -508,6 +509,9 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                         //guLogDebug( wxT( "got fade-in-start for stream %s -> FADE_IN" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->StartFade( FaderPlayBin->m_Player->m_FadeInVolStart, 1.0, FaderPlayBin->m_Player->m_FadeInTime );
                         FaderPlayBin->LinkAndUnblock( NULL );
+
+                        guMediaEvent event( guEVT_MEDIA_FADEIN_STARTED );
+                        ctrl->AddPendingEvent( event );
                     }
                 }
                 ctrl->Unlock();
