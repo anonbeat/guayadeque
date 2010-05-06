@@ -457,6 +457,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	XFadeFlexSizer->Add( XFadeOutLenLabel, 0, wxALIGN_BOTTOM|wxTOP|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
 
 	m_XFadeOutLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_LABELS );
+    m_XFadeOutLenSlider->SetToolTip( _( "Select the length of the fade out. 0 fot gapless playback" ) );
 	XFadeFlexSizer->Add( m_XFadeOutLenSlider, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
 	wxStaticText * XFadeInLenLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In length:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -464,6 +465,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	XFadeFlexSizer->Add( XFadeInLenLabel, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_RIGHT|wxALIGN_BOTTOM, 5 );
 
 	m_XFadeInLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInTime" ), 1, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+    m_XFadeInLenSlider->SetToolTip( _( "Select the length of the fade in" ) );
 	XFadeFlexSizer->Add( m_XFadeInLenSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
 	wxStaticText * XFadeInStartLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In vol. Start:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -471,6 +473,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	XFadeFlexSizer->Add( XFadeInStartLabel, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
 
 	m_XFadeInStartSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolStart" ), 8, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+    m_XFadeInStartSlider->SetToolTip( _( "Select the initial volume of the fade in" ) );
 	XFadeFlexSizer->Add( m_XFadeInStartSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
 	wxStaticText * XFadeTrigerLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In start:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -478,6 +481,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	XFadeFlexSizer->Add( XFadeTrigerLabel, 0, wxALL|wxALIGN_BOTTOM, 5 );
 
 	m_XFadeInTrigerSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolTriger" ), 5, wxT( "Crossfader" ) ), 1, 9, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+    m_XFadeInTrigerSlider->SetToolTip( _( "Select at which point of the fade out the fade in stars" ) );
 	XFadeFlexSizer->Add( m_XFadeInTrigerSlider, 0, wxEXPAND|wxRIGHT, 5 );
 
 	XFadesbSizer->Add( XFadeFlexSizer, 1, wxEXPAND, 5 );
@@ -1622,6 +1626,11 @@ void guPrefDialog::OnPlayEndTimeEnabled( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnCrossFadeChanged( wxScrollEvent& event )
 {
+    bool IsEnabled = m_XFadeOutLenSlider->GetValue();
+    m_XFadeInLenSlider->Enable( IsEnabled );
+    m_XFadeInStartSlider->Enable( IsEnabled );
+    m_XFadeInTrigerSlider->Enable( IsEnabled );
+
     wxBitmap * FadeBitmap = new wxBitmap( 400, 200 );
     if( FadeBitmap )
     {
@@ -1631,20 +1640,18 @@ void guPrefDialog::OnCrossFadeChanged( wxScrollEvent& event )
             MemDC.SelectObject( * FadeBitmap );
             MemDC.Clear();
 
+            wxRect Rect( 0, 0, 400, 200 );
+
             wxPoint FadeOutPoints[ 4 ];
             FadeOutPoints[ 0 ] = wxPoint( 0, 0 );
             FadeOutPoints[ 1 ] = wxPoint( 0, 200 );
             FadeOutPoints[ 2 ] = wxPoint( ( m_XFadeOutLenSlider->GetValue() + 1 ) * 20, 200 );
             FadeOutPoints[ 3 ] = wxPoint( 20, 0 );
             wxRegion OutRegion( WXSIZEOF( FadeOutPoints ), FadeOutPoints );
-            MemDC.SetClippingRegion( OutRegion );
-            wxRect Rect( 0, 0, 400, 200 );
-            MemDC.GradientFillLinear( Rect, * wxBLUE, * wxLIGHT_GREY, wxRIGHT );
-            MemDC.DestroyClippingRegion();
 
             wxPoint FadeInPoints[ 5 ];
             int FadeInStartX = FadeOutPoints[ 2 ].x - ( m_XFadeInTrigerSlider->GetValue() * ( ( FadeOutPoints[ 2 ].x - 20 ) / 10 ) );
-            int FadeInStartY = 200 - ( m_XFadeInStartSlider->GetValue() * 20 );
+            int FadeInStartY = IsEnabled ? ( 200 - ( m_XFadeInStartSlider->GetValue() * 20 ) ) : 0;
             FadeInPoints[ 0 ] = wxPoint( FadeInStartX, 200 );
             FadeInPoints[ 1 ] = wxPoint( FadeInStartX, FadeInStartY );
             FadeInPoints[ 2 ] = wxPoint( FadeInStartX + ( m_XFadeInLenSlider->GetValue() * 20 ), 0 );
@@ -1653,6 +1660,15 @@ void guPrefDialog::OnCrossFadeChanged( wxScrollEvent& event )
             wxRegion InRegion( WXSIZEOF( FadeInPoints ), FadeInPoints );
             MemDC.SetClippingRegion( InRegion );
             MemDC.GradientFillLinear( Rect, * wxLIGHT_GREY, * wxGREEN, wxRIGHT );
+            MemDC.DestroyClippingRegion();
+
+            MemDC.SetClippingRegion( OutRegion );
+            MemDC.GradientFillLinear( Rect, wxColour( 0, 200, 200 ), wxColour( 0, 128, 128 ), wxRIGHT );
+            MemDC.DestroyClippingRegion();
+
+            OutRegion.Subtract( InRegion );
+            MemDC.SetClippingRegion( OutRegion );
+            MemDC.GradientFillLinear( Rect, * wxBLUE, * wxLIGHT_GREY, wxRIGHT );
             MemDC.DestroyClippingRegion();
 
             m_FadeBitmap->SetBitmap( * FadeBitmap );

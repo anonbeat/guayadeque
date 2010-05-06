@@ -1660,6 +1660,12 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             wxCommandEvent evt;
             OnNextTrackButtonClick( evt );
         }
+
+        if( m_AboutToFinishPending && ( CurPos > 11 ) && ( CurPos < 16 ) )
+        {
+            m_AboutToFinishPending = false;
+            guLogMessage( wxT( "Reset the AboutToFinishPending flag..." ) );
+        }
     }
 }
 
