@@ -251,6 +251,7 @@ class guPlayerPanel : public wxPanel
 
     void                LoadMedia( const wxString &FileName, guPlayerPlayType playtype );
     void                OnMediaLoaded( guMediaEvent &event );
+    void                OnMediaPlayStarted( void );
     void                OnMediaAboutToFinish( guMediaEvent &event );
     void                OnMediaFinished( guMediaEvent &event );
     void                OnMediaFadeOutFinished( guMediaEvent &event );
