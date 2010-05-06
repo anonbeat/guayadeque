@@ -1524,10 +1524,10 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
                 ( ( ( unsigned int ) m_SilenceDetectorTime > ( TrackLength - EventTime ) ) &&
                   ( ( EventTime + 500 ) < TrackLength ) ) ) )
             {
+                guLogMessage( wxT( "Silence detected. Changed to next track %i" ), m_PlayListCtrl->GetCurItem() );
                 m_AboutToFinishPending = true;
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
-                //guLogMessage( wxT( "Silence detected. Changed to next track" ) );
             }
         }
     }
@@ -1548,7 +1548,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaError( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaError: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "OnMediaError: %i" ), m_PlayListCtrl->GetCurItem() );
     wxString * ErrorStr = ( wxString * ) event.GetClientData();
     if( ErrorStr )
     {
@@ -1955,11 +1955,11 @@ void guPlayerPanel::OnMediaFadeInStarted( guMediaEvent &event )
 {
     guLogMessage( wxT( "OnMediaFadeInStarted Cur: %i" ), m_PlayListCtrl->GetCurItem() );
 
-    if( m_AboutToFinishPending )
-    {
-        m_AboutToFinishPending = false;
-        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-    }
+//    if( m_AboutToFinishPending )
+//    {
+//        m_AboutToFinishPending = false;
+//        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
