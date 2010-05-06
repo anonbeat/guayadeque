@@ -3372,6 +3372,8 @@ void guFaderPlayBin::StartFade( double start, double end, gint64 time )
 	gint64 Pos = -1;
 	GstFormat Format = GST_FORMAT_TIME;
 
+    m_EmittedStartFadeIn = false;
+
 	// hmm, can we take the stream lock safely here?  probably should..
 	gst_element_query_position( m_Volume, &Format, &Pos );
 	if( Pos < 0 )
