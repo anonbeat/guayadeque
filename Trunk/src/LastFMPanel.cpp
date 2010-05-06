@@ -1298,7 +1298,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	EditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_UpdateCheckBox->SetValue(true);
+	m_UpdateCheckBox->SetValue( Config->ReadBool( wxT( "LFMFollowPlayer" ), true, wxT( "General" ) ) );
 
 	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -1590,6 +1590,7 @@ guLastFMPanel::~guLastFMPanel()
         Config->WriteBool( wxT( "LFMShowArtists" ), m_ShowArtists, wxT( "General" ) );
         Config->WriteBool( wxT( "LFMShowTracks" ), m_ShowTracks, wxT( "General" ) );
         Config->WriteBool( wxT( "LFMShowEvents" ), m_ShowEvents, wxT( "General" ) );
+        Config->WriteBool( wxT( "LFMFollowPlayer" ), m_UpdateCheckBox->GetValue(), wxT( "General" ) );
     }
 }
 

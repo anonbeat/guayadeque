@@ -51,7 +51,6 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 {
     m_Db = db;
     m_LyricThread = NULL;
-    m_UpdateEnabled = true;
 
 //    m_LyricsTemplate = guLYRICS_TEMPLATE_DEFAULT;
     m_LyricFormat = guLYRIC_FORMAT_NORMAL;
@@ -59,6 +58,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
+    m_UpdateEnabled = Config->ReadBool( wxT( "FollowPlayer" ), true, wxT( "Lyrics" ) );
     m_WriteToFiles = Config->ReadBool( wxT( "SaveToFiles" ), false, wxT( "Lyrics" ) );
     m_WriteToFilesOnlySelected = m_WriteToFiles && Config->ReadBool( wxT( "SaveToFilesOnlySelected" ), false, wxT( "Lyrics" ) );
     m_WriteToDir = Config->ReadBool( wxT( "SaveToDir" ), false, wxT( "Lyrics" ) );
@@ -202,6 +202,12 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 // -------------------------------------------------------------------------------- //
 guLyricsPanel::~guLyricsPanel()
 {
+    // Save the current selected server
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteBool( wxT( "FollowPlayer" ), m_UpdateEnabled, wxT( "Lyrics" ) );
+    Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
+    Config->UnRegisterObject( this );
+
 	m_UpdateCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
 	m_ReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
 	m_EditButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnEditBtnClick ), NULL, this );
@@ -225,11 +231,6 @@ guLyricsPanel::~guLyricsPanel()
         m_LyricThread->Pause();
         m_LyricThread->Delete();
     }
-
-    // Save the current selected server
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
-    Config->UnRegisterObject( this );
 }
 
 // -------------------------------------------------------------------------------- //
