@@ -5183,40 +5183,74 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
   }
   else
   {
-    //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
-                 "FROM radiostations, radiogenres" );
-
-    //else
-    wxString subquery = wxEmptyString;
-    if( m_RaLaFilters.Count() )
+    if( m_RadioIsUser )
     {
-        query += wxT( ", radiosetlabels WHERE radiostation_genreid = radiogenre_id AND radiostation_id = radiosetlabel_stationid AND " );
-        subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
+        //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
+        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+                     "FROM radiostations " );
+
+        //else
+        wxString subquery = wxEmptyString;
+
+        if( m_RaLaFilters.Count() )
+        {
+            query += wxT( ", radiosetlabels WHERE radiostation_id = radiosetlabel_stationid AND radiostation_isuser = 1" );
+            subquery = wxT( " AND " ) + ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
+        }
+        else
+        {
+            query += wxT( "WHERE radiostation_isuser = 1" );
+        }
+
+        if( m_RaTeFilters.Count() )
+        {
+            query += RadioFiltersSQL();
+        }
+
+        if( !subquery.IsEmpty() )
+        {
+            query = query + subquery;
+        }
+
+        query += wxT( "GROUP BY radiostation_name, radiostation_br " );
     }
     else
     {
-        query += wxT( " WHERE radiostation_genreid = radiogenre_id " );
+        //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
+        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+                     "FROM radiostations, radiogenres" );
+
+        //else
+        wxString subquery = wxEmptyString;
+        if( m_RaLaFilters.Count() )
+        {
+            query += wxT( ", radiosetlabels WHERE radiostation_genreid = radiogenre_id AND radiostation_id = radiosetlabel_stationid AND " );
+            subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
+        }
+        else
+        {
+            query += wxT( " WHERE radiostation_genreid = radiogenre_id " );
+        }
+
+        subquery += wxT( " AND radiostation_isuser = 0 " );
+
+        if( m_RaGeFilters.Count() )
+        {
+            subquery += wxT( " AND " ) + ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
+        }
+
+        if( m_RaTeFilters.Count() )
+        {
+            subquery += wxT( " AND " ) + RadioFiltersSQL();
+        }
+
+        if( !subquery.IsEmpty() )
+        {
+            query = query + subquery;
+        }
+
+        query += wxT( "GROUP BY radiostation_name, radiostation_br " );
     }
-
-    subquery += wxT( " AND " ) + wxString::Format( wxT( " radiostation_isuser = %u " ), m_RadioIsUser );
-
-    if( m_RaGeFilters.Count() )
-    {
-        subquery += wxT( " AND " ) + ArrayToFilter( m_RaGeFilters, wxT( "radiostation_genreid" ) );
-    }
-
-    if( m_RaTeFilters.Count() )
-    {
-        subquery += wxT( " AND " ) + RadioFiltersSQL();
-    }
-
-    if( !subquery.IsEmpty() )
-    {
-        query = query + subquery;
-    }
-
-    query += wxT( "GROUP BY radiostation_name, radiostation_br " );
   }
 
   query += wxT( " ORDER BY " );
