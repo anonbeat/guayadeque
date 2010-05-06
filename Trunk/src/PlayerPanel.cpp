@@ -445,6 +445,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     //Connect( guEVT_MEDIA_ABOUT_TO_FINISH, wxMediaEventHandler( guPlayerPanel::OnMediaAboutToFinish ), NULL, this );
     Connect( guEVT_MEDIA_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
     Connect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
+    Connect( guEVT_MEDIA_FADEIN_STARTED, guMediaEventHandler( guPlayerPanel::OnMediaFadeInStarted ), NULL, this );
     Connect( guEVT_MEDIA_TAGINFO, guMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
     Connect( guEVT_MEDIA_CHANGED_BITRATE, guMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
     Connect( guEVT_MEDIA_BUFFERING, guMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
@@ -565,6 +566,7 @@ guPlayerPanel::~guPlayerPanel()
 //    Disconnect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
 //    Disconnect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
 //    Disconnect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
+//    Disconnect( guEVT_MEDIA_FADEIN_STARTED, guMediaEventHandler( guPlayerPanel::OnMediaFadeInStarted ), NULL, this );
 //    Disconnect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
 //    Disconnect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
 //    Disconnect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
@@ -1940,6 +1942,18 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 void guPlayerPanel::OnMediaFadeOutFinished( guMediaEvent &event )
 {
     guLogMessage( wxT( "OnMediaFadeOutFinished Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+
+    if( m_AboutToFinishPending )
+    {
+        m_AboutToFinishPending = false;
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnMediaFadeInStarted( guMediaEvent &event )
+{
+    guLogMessage( wxT( "OnMediaFadeInStarted Cur: %i" ), m_PlayListCtrl->GetCurItem() );
 
     if( m_AboutToFinishPending )
     {
