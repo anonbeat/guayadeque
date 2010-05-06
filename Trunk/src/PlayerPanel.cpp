@@ -80,9 +80,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_PlayerVumeters = NULL;
     ResetVumeterLevel();
 
-    m_LastCurPos = -1;
-    m_LastLength = -1;
-    m_LastPlayState = guMEDIASTATE_STOPPED;
+    m_LastCurPos = 0;
+    m_LastLength = 0;
+    m_LastPlayState = -1; //guMEDIASTATE_STOPPE;
     m_LastTotalLen = -1;
 
     m_AboutToFinishPending = false;
@@ -1285,7 +1285,8 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     // Set the Current Song
     m_MediaSong = * Song;
-    m_MediaSong.m_Length = m_LastLength / 1000;
+    if( m_LastLength )
+        m_MediaSong.m_Length = m_LastLength / 1000;
 
     // Update the Current Playing Song Info
     UpdateLabels();
@@ -1615,7 +1616,6 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
     }
-
 }
 
 // -------------------------------------------------------------------------------- //
