@@ -87,10 +87,12 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
             case guFADERPLAYBIN_STATE_FADING_IN : 	        StateName = wxT( "fading in" ); 	    break;
             case guFADERPLAYBIN_STATE_SEEKING :		        StateName = wxT( "seeking" );		    break;
             case guFADERPLAYBIN_STATE_SEEKING_PAUSED :	    StateName = wxT( "seeking->paused" );   break;
+            case guFADERPLAYBIN_STATE_SEEKING_STOPPED:	    StateName = wxT( "seeking->stopped" );  break;
             case guFADERPLAYBIN_STATE_SEEKING_EOS :	        StateName = wxT( "seeking post EOS" );  break;
             case guFADERPLAYBIN_STATE_WAITING_EOS : 	    StateName = wxT( "waiting for EOS" );   break;
             case guFADERPLAYBIN_STATE_FADING_OUT : 	        StateName = wxT( "fading out" ); 	    break;
             case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED :   StateName = wxT( "fading->paused" );    break;
+            case guFADERPLAYBIN_STATE_FADING_OUT_STOPPED :  StateName = wxT( "fading->stopped" );   break;
 
             case guFADERPLAYBIN_STATE_PENDING_REMOVE:	    StateName = wxT( "pending remove" );    break;
         }
@@ -559,6 +561,29 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                         break;
                     }
 
+                    case guFADERPLAYBIN_STATE_FADING_OUT_STOPPED :
+                    {
+                        // try to seek back a bit to account for the fade
+                        GstFormat Format = GST_FORMAT_TIME;
+                        gint64 Pos = -1;
+                        gst_element_query_position( FaderPlayBin->m_Volume, &Format, &Pos );
+                        if( Pos != -1 )
+                        {
+                            FaderPlayBin->m_SeekTarget = 0;
+                            FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_STOPPED;
+                            //guLogDebug( wxT( "got fade-out-done for stream %s -> SEEKING_STOPPED [%" G_GINT64_FORMAT "]" ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
+                        }
+                        else
+                        {
+                            FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PAUSED;
+                            //guLogDebug( wxT( "got fade-out-done for stream %s -> PAUSED (position query failed)" ), FaderPlayBin->m_Uri.c_str() );
+                        }
+                        FaderPlayBin->UnlinkAndBlock();
+
+                        ctrl->SetCurrentState( GST_STATE_READY );
+                        break;
+                    }
+
                     default:
                         break;
                 }
@@ -863,6 +888,7 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
 
 	    case guFADERPLAYBIN_STATE_FADING_OUT :
 	    case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED :
+	    case guFADERPLAYBIN_STATE_FADING_OUT_STOPPED :
 	    {
 	        //if( Vol == faderplaybin->m_FadeEnd )
             if( Vol < ( faderplaybin->m_FadeEnd + 0.001 ) )
@@ -1031,6 +1057,7 @@ static void perform_seek( guFaderPlayBin * faderplaybin )
             faderplaybin->m_State = guFADERPLAYBIN_STATE_PLAYING;
             break;
 
+        case guFADERPLAYBIN_STATE_SEEKING_STOPPED:
         case guFADERPLAYBIN_STATE_SEEKING_PAUSED:
             //guLogDebug( wxT( "leaving paused stream %s unlinked" ), faderplaybin->m_Uri.c_str() );
             faderplaybin->m_State = guFADERPLAYBIN_STATE_PAUSED;
@@ -1150,6 +1177,7 @@ static void unlink_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBin * 
             break;
         }
 
+        case guFADERPLAYBIN_STATE_SEEKING_STOPPED :
         case guFADERPLAYBIN_STATE_SEEKING_PAUSED :
         {
             g_idle_add( GSourceFunc( perform_seek_idle ), faderplaybin );
@@ -2560,6 +2588,7 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
             case guFADERPLAYBIN_STATE_PENDING_REMOVE:
             case guFADERPLAYBIN_STATE_REUSING:
             case guFADERPLAYBIN_STATE_SEEKING:
+            case guFADERPLAYBIN_STATE_SEEKING_STOPPED:
             case guFADERPLAYBIN_STATE_SEEKING_PAUSED:
             case guFADERPLAYBIN_STATE_SEEKING_EOS:
             case guFADERPLAYBIN_STATE_PREROLLING:
@@ -2569,6 +2598,7 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
             case guFADERPLAYBIN_STATE_PLAYING:
             case guFADERPLAYBIN_STATE_FADING_IN:
             case guFADERPLAYBIN_STATE_FADING_OUT:
+            case guFADERPLAYBIN_STATE_FADING_OUT_STOPPED:
             case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED:
             case guFADERPLAYBIN_STATE_WAITING_EOS:
             case guFADERPLAYBIN_STATE_PAUSED:
@@ -2802,7 +2832,9 @@ bool guMediaCtrl::Pause( void )
                 break;
 
             case guFADERPLAYBIN_STATE_PAUSED :
+            case guFADERPLAYBIN_STATE_SEEKING_STOPPED :
             case guFADERPLAYBIN_STATE_SEEKING_PAUSED :
+            case guFADERPLAYBIN_STATE_FADING_OUT_STOPPED :
             case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED :
                 //guLogDebug( wxT( "stream %s is already paused" ), FaderPlayBin->m_Uri.c_str() );
                 Done = true;
@@ -2874,12 +2906,115 @@ bool guMediaCtrl::Pause( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Stop( void )
 {
-    //guLogDebug( wxT( "MediaCtrl::Stop" ) );
-    if( m_CurrentState == GST_STATE_PLAYING )
-        Pause();
-    Seek( 0 );
-    SetCurrentState( GST_STATE_READY );
-    return true;
+//    //guLogDebug( wxT( "MediaCtrl::Stop" ) );
+//    if( m_CurrentState == GST_STATE_PLAYING )
+//        Pause();
+//    Seek( 0 );
+//    SetCurrentState( GST_STATE_READY );
+//    return true;
+
+    //guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Stop" ) );
+
+    guFaderPlayBin * FaderPlayBin = NULL;
+	wxArrayPtrVoid  ToFade;
+
+	bool            Done = FALSE;
+	double          FadeOutStart = 1.0f;
+	gint64          FadeOutTime;
+
+	Lock();
+	int Index;
+	int Count = m_FaderPlayBins.Count();
+	for( Index = 0; Index < Count; Index++ )
+	{
+        FaderPlayBin = m_FaderPlayBins[ Index ];
+
+		switch( FaderPlayBin->m_State )
+		{
+            case guFADERPLAYBIN_STATE_WAITING:
+            case guFADERPLAYBIN_STATE_WAITING_EOS:
+                //guLogDebug( wxT( "stream %s is not yet playing, can't stop" ), FaderPlayBin->m_Uri.c_str() );
+                break;
+
+            case guFADERPLAYBIN_STATE_PREROLLING:
+            case guFADERPLAYBIN_STATE_PREROLL_PLAY:
+                //guLogDebug( wxT( "stream %s is prerolling, can't stop" ), FaderPlayBin->m_Uri.c_str() );
+                break;
+
+            case guFADERPLAYBIN_STATE_REUSING:
+                //guLogDebug( wxT( "stream %s is being reused, can't stop" ), FaderPlayBin->m_Uri.c_str() );
+                break;
+
+            case guFADERPLAYBIN_STATE_PAUSED :
+            case guFADERPLAYBIN_STATE_SEEKING_PAUSED :
+            case guFADERPLAYBIN_STATE_SEEKING_STOPPED :
+            case guFADERPLAYBIN_STATE_FADING_OUT_STOPPED :
+            case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED :
+                //guLogDebug( wxT( "stream %s is already stopped" ), FaderPlayBin->m_Uri.c_str() );
+                Done = true;
+                break;
+
+            case guFADERPLAYBIN_STATE_FADING_IN:
+            case guFADERPLAYBIN_STATE_PLAYING:
+                //guLogDebug( wxT( "pausing stream %s -> FADING_OUT_STOPPED" ), FaderPlayBin->m_Uri.c_str() );
+                ToFade.Insert( FaderPlayBin, 0 );
+                Done = true;
+                break;
+
+            case guFADERPLAYBIN_STATE_SEEKING:
+                //guLogDebug( wxT( "pausing seeking stream %s -> SEEKING_STOPPED" ), FaderPlayBin->m_Uri.c_str() );
+                FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_STOPPED;
+                Done = true;
+                break;
+
+            case guFADERPLAYBIN_STATE_SEEKING_EOS:
+                //guLogDebug( wxT( "stream %s is seeking after EOS -> SEEKING_STOPPED" ), FaderPlayBin->m_Uri.c_str() );
+                FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_STOPPED;
+                Done = true;
+                break;
+
+            case guFADERPLAYBIN_STATE_FADING_OUT:
+                //guLogDebug( wxT( "stream %s is fading out, can't be bothered stopping it" ), FaderPlayBin->m_Uri.c_str() );
+                break;
+
+            case guFADERPLAYBIN_STATE_PENDING_REMOVE:
+                //guLogDebug( wxT( "stream %s is done, can't stop" ), FaderPlayBin->m_Uri.c_str() );
+                break;
+		}
+
+		if( Done )
+			break;
+	}
+
+    Unlock();
+
+	FadeOutTime = FaderPlayBin->m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : 250;
+	Count = ToFade.Count();
+	for( Index = 0; Index < Count; Index++ )
+	{
+		switch( FaderPlayBin->m_State )
+		{
+            case guFADERPLAYBIN_STATE_FADING_IN :
+                g_object_get( FaderPlayBin->m_Volume, "volume", &FadeOutStart, NULL );
+                FadeOutTime = ( gint64 ) ( ( ( double ) guFADERPLAYBIN_FAST_FADER_TIME ) * FadeOutStart );
+                //guLogDebug( wxT( "============== Fading Out a Fading In playbin =================" ) );
+
+            case guFADERPLAYBIN_STATE_PLAYING:
+            {
+                FaderPlayBin->m_State = guFADERPLAYBIN_STATE_FADING_OUT_STOPPED;
+                FaderPlayBin->StartFade( FadeOutStart, 0.0f, FadeOutTime );
+            }
+
+            default:
+                // shouldn't happen, but ignore it if it does
+                break;
+		}
+	}
+
+	if( !Done )
+		guLogMessage( wxT( "couldn't find a stream to stop" ) );
+
+    return Done;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2894,6 +3029,7 @@ bool guMediaCtrl::Seek( wxFileOffset where )
                         guFADERPLAYBIN_STATE_FADING_IN |
                         guFADERPLAYBIN_STATE_PLAYING |
                         guFADERPLAYBIN_STATE_PAUSED |
+                        guFADERPLAYBIN_STATE_FADING_OUT_STOPPED |
                         guFADERPLAYBIN_STATE_FADING_OUT_PAUSED |
                         guFADERPLAYBIN_STATE_PENDING_REMOVE );
 	Unlock();
@@ -2913,6 +3049,7 @@ bool guMediaCtrl::Seek( wxFileOffset where )
             perform_seek( FaderPlayBin );
             break;
 
+        case guFADERPLAYBIN_STATE_FADING_OUT_STOPPED:
         case guFADERPLAYBIN_STATE_FADING_OUT_PAUSED:
             // don't unblock and relink when the seek is done
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_PAUSED;
@@ -3481,6 +3618,7 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
                     case guFADERPLAYBIN_STATE_WAITING :
                     case guFADERPLAYBIN_STATE_WAITING_EOS :
                     case guFADERPLAYBIN_STATE_SEEKING :
+                    case guFADERPLAYBIN_STATE_SEEKING_STOPPED :
                     case guFADERPLAYBIN_STATE_SEEKING_PAUSED :
                     case guFADERPLAYBIN_STATE_PREROLLING :
                     case guFADERPLAYBIN_STATE_PREROLL_PLAY :
