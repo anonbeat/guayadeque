@@ -3085,15 +3085,9 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
                             "song_albumid = settag_albumid ) AND "
                             "settag_tagid = tag_id ) " );
 
-        query += wxT( "( ( tag_name " ) +
-                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
-                                    playlist->m_Filters[ index ].m_Text ) + wxT( ") OR " );
         query += wxT( "( tag_name " ) +
                  DynPLStringOption( playlist->m_Filters[ index ].m_Option,
-                                    playlist->m_Filters[ index ].m_Text ) + wxT( ") OR " );
-        query += wxT( "( tag_name " ) +
-                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
-                                    playlist->m_Filters[ index ].m_Text ) + wxT( ") )" );
+                                    playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
       case guDYNAMIC_FILTER_TYPE_COMPOSER : // COMPOSER
