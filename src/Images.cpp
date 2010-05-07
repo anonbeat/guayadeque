@@ -90,6 +90,7 @@
 #include "./images/pref_playback.h"
 #include "./images/pref_podcasts.h"
 #include "./images/pref_record.h"
+#include "./images/pref_crossfader.h"
 //
 #include "./images/tiny_close_normal.h"
 #include "./images/tiny_close_highlight.h"
@@ -233,6 +234,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_pref_playback,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_podcasts,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_record,                   wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_crossfader,		    wxBITMAP_TYPE_PNG ),
     //
     GUIMAGE( guImage_tiny_close_normal,		        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_close_highlight,	        wxBITMAP_TYPE_PNG ),

@@ -84,6 +84,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_LastLength = 0;
     m_LastPlayState = -1; //guMEDIASTATE_STOPPE;
     m_LastTotalLen = -1;
+    m_TrackChanged = true;
 
     m_AboutToFinishPending = false;
 
@@ -1293,6 +1294,7 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
 
     // Set the Current Song
     m_MediaSong = * Song;
+    m_TrackChanged = true;
 //    if( m_LastLength )
 //        m_MediaSong.m_Length = m_LastLength / 1000;
 //
@@ -1600,11 +1602,11 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
     guLogMessage( wxT( "OnMediaState: %i %i" ), event.GetInt(), m_AboutToFinishPending );
     GstState State = ( GstState ) event.GetInt();
 
-//    if( m_AboutToFinishPending && ( State == GST_STATE_PLAYING ) )
-//    {
-//        guLogMessage( wxT( "Disabling the AboutToFinishPending flag" ) );
-//        m_AboutToFinishPending = false;
-//    }
+    if( State == GST_STATE_PLAYING && m_TrackChanged )
+    {
+        m_TrackChanged = false;
+        OnMediaPlayStarted();
+    }
 
 
     if( State != m_LastPlayState )
@@ -1644,14 +1646,9 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             m_LastLength = CurLen;
 
             guLogMessage( wxT( "Now the new track started playing" ) );
-            m_MediaSong.m_Length = CurLen / 1000;
-            UpdatePositionLabel( m_LastCurPos / 1000 );
-            OnMediaPlayStarted();
-        }
-        else
-        {
-            guLogMessage( wxT( "Incrementing manually the CurPos..." ) );
-            CurPos = m_LastCurPos + 1000;
+            //m_MediaSong.m_Length = CurLen / 1000;
+            //UpdatePositionLabel( m_LastCurPos / 1000 );
+            //OnMediaPlayStarted();
         }
     }
 
