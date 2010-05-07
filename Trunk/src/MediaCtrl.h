@@ -150,11 +150,13 @@ enum guFaderPlayBinState {
     guFADERPLAYBIN_STATE_FADING_IN =            ( 1 << 6 ),
     guFADERPLAYBIN_STATE_SEEKING =              ( 1 << 7 ),
     guFADERPLAYBIN_STATE_SEEKING_PAUSED =       ( 1 << 8 ),
-    guFADERPLAYBIN_STATE_SEEKING_EOS =          ( 1 << 9 ),
-    guFADERPLAYBIN_STATE_WAITING_EOS =          ( 1 << 10 ),
-    guFADERPLAYBIN_STATE_FADING_OUT =           ( 1 << 11 ),
-    guFADERPLAYBIN_STATE_FADING_OUT_PAUSED =    ( 1 << 12 ),
-    guFADERPLAYBIN_STATE_PENDING_REMOVE =       ( 1 << 13 )
+    guFADERPLAYBIN_STATE_SEEKING_STOPPED =      ( 1 << 9 ),
+    guFADERPLAYBIN_STATE_SEEKING_EOS =          ( 1 << 10 ),
+    guFADERPLAYBIN_STATE_WAITING_EOS =          ( 1 << 11 ),
+    guFADERPLAYBIN_STATE_FADING_OUT =           ( 1 << 12 ),
+    guFADERPLAYBIN_STATE_FADING_OUT_PAUSED =    ( 1 << 13 ),
+    guFADERPLAYBIN_STATE_FADING_OUT_STOPPED =   ( 1 << 14 ),
+    guFADERPLAYBIN_STATE_PENDING_REMOVE =       ( 1 << 15 )
 };
 
 enum guPlayerPlayType {
