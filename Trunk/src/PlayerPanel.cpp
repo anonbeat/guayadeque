@@ -1662,8 +1662,8 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
         UpdatePositionLabel( CurPos / 1000 );
 
-        if( m_MediaSong.m_Length )
-            m_PlayerPositionSlider->SetValue( event.GetInt() / m_MediaSong.m_Length );
+        if( m_LastLength )
+            m_PlayerPositionSlider->SetValue( event.GetInt() / ( m_LastLength / 1000 ) );
 
         m_MediaSong.m_PlayTime = CurPos;
 
