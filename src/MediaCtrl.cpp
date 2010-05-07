@@ -498,23 +498,27 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             }
             else if( !strcmp( Name, guFADERPLAYBIN_MESSAGE_FADEIN_START ) )
             {
-                ctrl->Lock();
-                int Index;
-                int Count = ctrl->m_FaderPlayBins.Count();
-                for( Index = 0; Index < Count; Index++ )
+                if( !FaderPlayBin->m_EmittedStartFadeIn )
                 {
-                    guFaderPlayBin * FaderPlayBin = ctrl->m_FaderPlayBins[ Index ];
-                    if( FaderPlayBin->m_State == guFADERPLAYBIN_STATE_WAITING )
+                    FaderPlayBin->m_EmittedStartFadeIn = true;
+                    ctrl->Lock();
+                    int Index;
+                    int Count = ctrl->m_FaderPlayBins.Count();
+                    for( Index = 0; Index < Count; Index++ )
                     {
-                        //guLogDebug( wxT( "got fade-in-start for stream %s -> FADE_IN" ), FaderPlayBin->m_Uri.c_str() );
-                        FaderPlayBin->StartFade( FaderPlayBin->m_Player->m_FadeInVolStart, 1.0, FaderPlayBin->m_Player->m_FadeInTime );
-                        FaderPlayBin->LinkAndUnblock( NULL );
+                        guFaderPlayBin * NextPlayBin = ctrl->m_FaderPlayBins[ Index ];
+                        if( NextPlayBin->m_State == guFADERPLAYBIN_STATE_WAITING )
+                        {
+                            //guLogDebug( wxT( "got fade-in-start for stream %s -> FADE_IN" ), FaderPlayBin->m_Uri.c_str() );
+                            NextPlayBin->StartFade( NextPlayBin->m_Player->m_FadeInVolStart, 1.0, NextPlayBin->m_Player->m_FadeInTime );
+                            NextPlayBin->LinkAndUnblock( NULL );
 
-                        guMediaEvent event( guEVT_MEDIA_FADEIN_STARTED );
-                        ctrl->AddPendingEvent( event );
+                            guMediaEvent event( guEVT_MEDIA_FADEIN_STARTED );
+                            ctrl->AddPendingEvent( event );
+                        }
                     }
+                    ctrl->Unlock();
                 }
-                ctrl->Unlock();
             }
             else if( !strcmp( Name, guFADERPLAYBIN_MESSAGE_FADEOUT_DONE ) )
             {
@@ -877,7 +881,6 @@ static void faderplaybin_volume_changed_cb( GObject * object, GParamSpec * pspec
                 {
                     Message = guFADERPLAYBIN_MESSAGE_FADEIN_START;
                     //faderplaybin->m_Fading = false;
-                    faderplaybin->m_EmittedStartFadeIn = true;
                 }
 	        }
 	        else
