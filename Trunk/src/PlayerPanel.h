@@ -238,6 +238,8 @@ class guPlayerPanel : public wxPanel
 
     bool                    m_PendingNewRecordName;
 
+    bool                    m_TrackChanged;
+
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
     void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );

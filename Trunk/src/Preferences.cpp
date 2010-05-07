@@ -107,7 +107,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_general ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_library ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_playback ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_playback ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_crossfader ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_record ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_last_fm ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_lyrics ) );
