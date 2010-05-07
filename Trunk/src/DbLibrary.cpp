@@ -3097,8 +3097,18 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
 
       case guDYNAMIC_FILTER_TYPE_COMPOSER : // COMPOSER
-        query += wxT( "( song_composer " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
-                                                   playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+//        query += wxT( "( song_composer " ) + DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+//                                                   playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+        if( dbNames.Find( wxT( "composers" ) ) == wxNOT_FOUND )
+        {
+            dbNames += wxT( ", composers " );
+            if( !dbSets.IsEmpty() )
+                dbSets += wxT( "AND " );
+            dbSets  += wxT( "song_composerid = composer_id " );
+        }
+        query += wxT( "( composer_name " ) +
+                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                    playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
         break;
 
       case guDYNAMIC_FILTER_TYPE_COMMENT : // COMMENT
