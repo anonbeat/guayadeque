@@ -1209,9 +1209,20 @@ static bool adjust_base_time_probe_cb( GstPad * pad, GstBuffer * data, guFaderPl
 static bool emit_stream_error_cb( guFaderPlayBin * faderplaybin )
 {
 	faderplaybin->m_ErrorIdleId = 0;
+
 //	_rb_player_emit_error (RB_PLAYER (stream->player),
 //			       stream->stream_data,
 //			       stream->error);
+
+    wxString * ErrorStr = new wxString( faderplaybin->m_Error->message, wxConvUTF8 );
+
+    guLogError( wxT( "FaderPlayBin error '%s'" ), ErrorStr->c_str() );
+
+    guMediaEvent event( guEVT_MEDIA_ERROR );
+    event.SetClientData( ( void * ) ErrorStr );
+    faderplaybin->m_Player->AddPendingEvent( event );
+
+
 	g_error_free( faderplaybin->m_Error );
 	faderplaybin->m_Error = NULL;
 	return FALSE;
@@ -1487,12 +1498,12 @@ static void post_eos_seek_blocked_cb( GstPad * pad, gboolean blocked, guFaderPla
 
 
 // -------------------------------------------------------------------------------- //
-bool IsValidElement( GstElement * outputsink )
+bool IsValidElement( GstElement * element )
 {
-    if( !GST_IS_ELEMENT( outputsink ) )
+    if( !GST_IS_ELEMENT( element ) )
     {
-        if( G_IS_OBJECT( outputsink ) )
-            g_object_unref( outputsink );
+        if( G_IS_OBJECT( element ) )
+            g_object_unref( element );
         return false;
     }
     return true;
@@ -1812,10 +1823,35 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         AddBusWatch();
 
         m_SilenceBin = gst_bin_new( "silencebin" );
+        if( !IsValidElement( m_SilenceBin ) )
+        {
+            guLogError( wxT( "Could not create the silcence bin object" ) );
+            m_SilenceBin = NULL;
+            return;
+        }
+
         GstElement * AudioTestSrc = gst_element_factory_make( "audiotestsrc", "silencesrc" );
+        if( !IsValidElement( AudioTestSrc ) )
+        {
+            guLogError( wxT( "Could not create the silence object" ) );
+            return;
+        }
+
         g_object_set( AudioTestSrc, "wave", GST_AUDIO_TEST_SRC_WAVE_SILENCE, NULL);
+
         GstElement * SilenceConvert = gst_element_factory_make( "audioconvert", "silenceconvert" );
+        if( !IsValidElement( SilenceConvert ) )
+        {
+            guLogError( wxT( "Could not create the silence audio converter object" ) );
+            return;
+        }
+
         GstElement * CapsFilter = gst_element_factory_make( "capsfilter", "silencecaps" );
+        if( !IsValidElement( CapsFilter ) )
+        {
+            guLogError( wxT( "Could not create the silence caps filter object" ) );
+            return;
+        }
         g_object_set( CapsFilter, "caps", Caps, NULL );
         gst_caps_unref( Caps );
 
@@ -1829,6 +1865,12 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         gst_object_unref( SilencePad );
 
         m_Adder = gst_element_factory_make( "adder", "adder" );
+        if( !IsValidElement( m_Adder ) )
+        {
+            guLogError( wxT( "Could not create the adder object" ) );
+            m_Adder = NULL;
+            return;
+        }
 
         // Get the audio output sink
         m_OutputBin = BuildOutputBin();
@@ -3326,6 +3368,13 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
     m_PlayBin = gst_bin_new( NULL );
 
     m_Decoder = gst_element_factory_make( "uridecodebin", NULL );
+    if( !IsValidElement( m_Decoder ) )
+    {
+        guLogError( wxT( "Could not create the fadebin uridecoder object" ) );
+        m_Decoder = NULL;
+        return;
+    }
+
     gst_object_ref( m_Decoder );
     g_object_set( m_Decoder, "uri", ( const char * ) uri.mb_str( wxConvFile ), NULL );
 
@@ -3336,12 +3385,30 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
     m_Identity = gst_element_factory_make( "identity", NULL );
 
     m_AudioConvert = gst_element_factory_make( "audioconvert", NULL );
+    if( !IsValidElement( m_AudioConvert ) )
+    {
+        guLogError( wxT( "Could not create the fadebin audio convert object" ) );
+        m_AudioConvert = NULL;
+        return;
+    }
     gst_object_ref( m_AudioConvert );
 
     m_AudioResample = gst_element_factory_make( "audioresample", NULL );
+    if( !IsValidElement( m_AudioResample ) )
+    {
+        guLogError( wxT( "Could not create the audio resample object" ) );
+        m_AudioResample = NULL;
+        return;
+    }
     gst_object_ref( m_AudioResample );
 
     m_CapsFilter = gst_element_factory_make( "capsfilter", NULL );
+    if( !IsValidElement( m_CapsFilter ) )
+    {
+        guLogError( wxT( "Could not create the fadebin caps filter object" ) );
+        m_CapsFilter = NULL;
+        return;
+    }
     gst_object_ref( m_CapsFilter );
 
     GstCaps *       Caps;
@@ -3355,16 +3422,34 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
 	gst_caps_unref( Caps );
 
 	m_Volume = gst_element_factory_make( "volume", NULL );
+    if( !IsValidElement( m_Volume ) )
+    {
+        guLogError( wxT( "Could not create the fadebin volume object" ) );
+        m_Volume = NULL;
+        return;
+    }
 	gst_object_ref( m_Volume );
 
 	g_signal_connect( m_Volume, "notify::volume", G_CALLBACK( faderplaybin_volume_changed_cb ), this );
 
 
 	m_Fader = gst_object_control_properties( G_OBJECT( m_Volume ), ( gchar * ) "volume", NULL );
+    if( !m_Fader )
+    {
+        guLogError( wxT( "Could not create the fadebin fader object" ) );
+        return;
+    }
+
 	gst_object_ref( m_Fader );
 	gst_controller_set_interpolation_mode( m_Fader, ( gchar * ) "volume", GST_INTERPOLATE_LINEAR );
 
     m_PreRoll = gst_element_factory_make( "queue", NULL );
+    if( !IsValidElement( m_PreRoll ) )
+    {
+        guLogError( wxT( "Could not create the fadebin queue object" ) );
+        m_PreRoll = NULL;
+        return;
+    }
 	g_object_set( m_PreRoll,
         "min-threshold-time", GST_SECOND,
         "max-size-buffers", 1000,

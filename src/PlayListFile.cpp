@@ -133,10 +133,6 @@ bool guPlayListFile::Save( const wxString &filename )
     {
         return WritePlsFile( filename );
     }
-    else if( filename.Lower().EndsWith( wxT( ".m3u" ) ) )
-    {
-        return WriteM3uFile( filename );
-    }
     else if( filename.Lower().EndsWith( wxT( ".xspf" ) ) )
     {
         return WriteXspfFile( filename );
@@ -144,6 +140,13 @@ bool guPlayListFile::Save( const wxString &filename )
     else if( filename.Lower().EndsWith( wxT( ".asx" ) ) )
     {
         return WriteAsxFile( filename );
+    }
+    else
+    {
+        wxString FileName = filename;
+        if( !FileName.Lower().EndsWith( wxT( ".m3u" ) ) )
+            FileName += wxT( ".m3u" );
+        return WriteM3uFile( FileName );
     }
     return false;
 }
