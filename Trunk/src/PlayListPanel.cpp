@@ -806,15 +806,15 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
                     wxString FileName = Uri.BuildUnescapedURI();
                     if( FileName.StartsWith( wxT( "file:" ) ) )
                         FileName = FileName.Mid( 5 );
-                    //guLogMessage( wxT( "Trying to add file '%s'" ), FileName.c_str() );
+                    guLogMessage( wxT( "Trying to add file '%s'" ), FileName.c_str() );
                     int SongId = m_Db->FindTrackFile( FileName, NULL );
                     if( SongId )
                     {
                         Songs.Add( SongId );
-                    //    guLogMessage( wxT( "Found it!" ) );
+                        guLogMessage( wxT( "Found it!" ) );
                     }
-                    //else
-                    //    guLogMessage( wxT( "Not Found it!" ) );
+                    else
+                        guLogMessage( wxT( "Not Found it!" ) );
                 }
 
                 if( Songs.Count() )

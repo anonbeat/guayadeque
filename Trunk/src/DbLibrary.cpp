@@ -3348,7 +3348,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 
       query = GU_TRACKS_QUERYSTR + DynPlayListToSQLQuery( &PlayList );
 
-      //guLogMessage( wxT( "GetPlayListSongs: <<%s>>" ), query.c_str() );
+      guLogMessage( wxT( "GetPlayListSongs: <<%s>>" ), query.c_str() );
 
       dbRes = ExecuteQuery( query );
 
