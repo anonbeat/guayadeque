@@ -1407,7 +1407,7 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
             UpdateLyrics( Songs, Lyrics );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Songs );
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Songs );
         }
         TrackEditor->Destroy();
     }
