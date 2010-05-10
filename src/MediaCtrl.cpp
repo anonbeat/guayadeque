@@ -1815,8 +1815,8 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         Caps = gst_caps_new_simple( "audio/x-raw-int",
                     "channels", G_TYPE_INT, 2,
                     "rate",	G_TYPE_INT, 44100,
-                    "width", G_TYPE_INT, 16,
-                    "depth", G_TYPE_INT, 16,
+                    "width", G_TYPE_INT, 32,
+                    "depth", G_TYPE_INT, 32,
                     NULL );
 
         m_Pipeline = gst_pipeline_new( "CrossFadeBin" );
@@ -3415,8 +3415,8 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
 	Caps = gst_caps_new_simple( "audio/x-raw-int",
 				    "channels", G_TYPE_INT, 2,
 				    "rate",	G_TYPE_INT, 44100,
-				    "width", G_TYPE_INT, 16,
-				    "depth", G_TYPE_INT, 16,
+				    "width", G_TYPE_INT, 32,
+				    "depth", G_TYPE_INT, 32,
 				    NULL );
 	g_object_set( m_CapsFilter, "caps", Caps, NULL );
 	gst_caps_unref( Caps );
@@ -3960,8 +3960,8 @@ void guFaderPlayBin::AdjustBaseTime( void )
 	}
 
 	// offset the base position to account for the current stream position
-	Format = GST_FORMAT_TIME;
-	gst_element_query_position( m_Volume, &Format, &StreamPos );
+    Format = GST_FORMAT_TIME;
+    gst_element_query_position( m_Volume, &Format, &StreamPos );
 	if( StreamPos != -1 )
 	{
 		//guLogDebug( wxT( "adjusting base time: %" G_GINT64_FORMAT" - %" G_GINT64_FORMAT " => %" G_GINT64_FORMAT ), m_BaseTime, StreamPos, m_BaseTime - StreamPos );

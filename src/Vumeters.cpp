@@ -33,12 +33,12 @@ guVumeter::guVumeter( wxWindow * parent, wxWindowID id, const int style ) : wxCo
     m_Style         = style;
     m_PeakLevel     = -INFINITY;
     m_DecayLevel    = -INFINITY;
-	m_GreenOff      = wxColour( 0, 128, 0 );
-	m_OrangeOff     = wxColour( 191, 95, 0 );
-	m_RedOff        = wxColour( 128, 0, 0 );
-	m_GreenOn       = wxColour( 0, 255, 0 );
-	m_OrangeOn      = wxColour( 255, 128, 0 );
-	m_RedOn         = wxColour( 255, 0, 0 );
+	m_GreenOff      = wxColour(   0, 128,   0 );
+	m_GreenOn       = wxColour(   0, 255,   0 );
+	m_OrangeOff     = wxColour( 191,  95,   0 );
+	m_OrangeOn      = wxColour( 255, 128,   0 );
+	m_RedOff        = wxColour( 128,   0,   0 );
+	m_RedOn         = wxColour( 255,   0,   0 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -51,6 +51,52 @@ wxSize guVumeter::DoGetBestSize() const
 }
 
 // -------------------------------------------------------------------------------- //
+static inline float IEC_Scale( float db )
+{
+	float fScale = 1.0f;
+
+	if( db < -70.0f )
+		fScale = 0.0f;
+	else if( db < -60.0f )
+		fScale = ( db + 70.0f ) * 0.0025f;
+	else if( db < -50.0f )
+		fScale = ( db + 60.0f ) * 0.005f + 0.025f;
+	else if( db < -40.0 )
+		fScale = ( db + 50.0f ) * 0.0075f + 0.075f;
+	else if( db < -30.0f )
+		fScale = ( db + 40.0f ) * 0.015f + 0.15f;
+	else if( db < -20.0f )
+		fScale = ( db + 30.0f ) * 0.02f + 0.3f;
+	else if( db < -0.001f || db > 0.001f )
+		fScale = ( db + 20.0f ) * 0.025f + 0.5f;
+
+	return fScale;
+}
+
+//// -------------------------------------------------------------------------------- //
+//double TestValues[] = {
+//        -60.0,
+//        -55.0,
+//        -50.0,
+//        -45.0,
+//        -40.0,
+//        -35.0,
+//        -30.0,
+//        -25.0,
+//        -20.0,
+//        -15.0,
+//        -10.0,
+//         -8.0,
+//         -6.0,
+//         -5.0,
+//         -4.0,
+//         -3.0,
+//         -2.0,
+//         -1.0,
+//         -0.0
+//};
+
+// -------------------------------------------------------------------------------- //
 void guVumeter::PaintHoriz( void )
 {
 	wxPaintDC dc( this );
@@ -58,123 +104,119 @@ void guVumeter::PaintHoriz( void )
 	wxCoord Width;
 	wxCoord Height;
 	GetClientSize( &Width, &Height );
-    int PeakLevel = pow( 10, m_PeakLevel / 20 ) * 100;
-    int DecayLevel = pow( 10, m_DecayLevel / 20 ) * 100;
+    //guLogMessage( wxT( "%0.2f -> %0.2f" ), m_PeakLevel, IEC_Scale( m_PeakLevel ) );
+    //m_PeakLevel = TestValues[ wxGetUTCTime() % 19 ];
+    int PeakLevel = IEC_Scale( m_PeakLevel ) * 100;
+    int DecayLevel = IEC_Scale( m_DecayLevel ) * 100;
 
-	int SizeG = ( Width * 40 ) / 100;
-	//int SizeO = ( Width / 5 ) - 40;
-	//int SizeR = Width - SizeG - SizeO;
+	int SizeG = ( Width * 10 ) / 100;
 
     dc.SetPen( * wxTRANSPARENT_PEN );
 
-    //guLogMessage( wxT( "Current Level: %i" ), PeakLevel );
+    Rect.x = SizeG * 7;
+    Rect.y = 0;
+    Rect.width = SizeG;
+    Rect.height = Height;
+
     if( !PeakLevel )
     {
         dc.SetBrush( m_GreenOff );
-        dc.DrawRectangle( 0, 0, SizeG, Height );
+        dc.DrawRectangle( 0, 0, Rect.x, Height );
     }
-    else if( PeakLevel > 40 )
+    else if( PeakLevel > 70 )
     {
         dc.SetBrush( m_GreenOn );
-        dc.DrawRectangle( 0, 0, SizeG, Height );
+        dc.DrawRectangle( 0, 0, Rect.x, Height );
     }
     else
     {
         dc.SetBrush( m_GreenOn );
-        int LevelWidth = ( Width * PeakLevel ) / 100;
+        int LevelWidth = PeakLevel * Rect.x / 70;
         dc.DrawRectangle( 0, 0, LevelWidth, Height );
         dc.SetBrush( m_GreenOff );
-        dc.DrawRectangle( LevelWidth, 0, SizeG, Height );
+        dc.DrawRectangle( LevelWidth, 0, Rect.x - LevelWidth, Height );
     }
 
-    Rect.x = SizeG;
-    Rect.width = ( Width / 5 );
-    Rect.height = Height;
-    Rect.y = 0;
-    if( PeakLevel < 40 )
+    if( PeakLevel < 70 )
     {
         dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff );
-    }
-    else if( PeakLevel > 60 )
-    {
-        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
-    }
-    else
-    {
-        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff );
-        wxRect ClipRect = Rect;
-        ClipRect.width = ( Width * ( PeakLevel - 40 ) ) / 100;
-        dc.SetClippingRegion( ClipRect );
-        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
-        dc.DestroyClippingRegion();
-    }
-
-    Rect.x = SizeG + Rect.width;
-    if( PeakLevel < 60 )
-    {
-        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff );
     }
     else if( PeakLevel > 80 )
     {
+        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
+    }
+    else
+    {
+        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff );
+        wxRect ClipRect = Rect;
+        ClipRect.width = ( PeakLevel - 70 ) * Rect.width / 10;
+        dc.SetClippingRegion( ClipRect );
+        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
+        dc.DestroyClippingRegion();
+    }
+
+    Rect.x += Rect.width;
+    if( PeakLevel < 80 )
+    {
+        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff );
+    }
+    else if( PeakLevel > 90 )
+    {
         dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
     }
     else
     {
         dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff );
         wxRect ClipRect = Rect;
-        ClipRect.width = ( Width * ( PeakLevel - 60 ) ) / 100;
+        ClipRect.width = ( PeakLevel - 80 ) * Rect.width / 10;
         dc.SetClippingRegion( ClipRect );
         dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
         dc.DestroyClippingRegion();
     }
 
-    if( PeakLevel < 80 )
+    Rect.x += Rect.width;
+    if( PeakLevel < 90 )
     {
         dc.SetBrush( m_RedOff );
-        dc.DrawRectangle( SizeG + ( Rect.width * 2 ), 0, Width, Height );
-    }
-    else if( PeakLevel == 100 )
-    {
-        dc.SetBrush( m_RedOn );
-        dc.DrawRectangle( SizeG + ( Rect.width * 2 ), 0, Width, Height );
+        dc.DrawRectangle( Rect.x, 0, Rect.width, Height );
     }
     else
     {
         dc.SetBrush( m_RedOn );
-        int LevelWidth = ( Width * ( PeakLevel - 80 ) ) / 100;
-        dc.DrawRectangle( SizeG + ( Rect.width * 2 ), 0, LevelWidth, Height );
-
+        int LevelWidth = ( PeakLevel - 90 ) * Rect.width / 10;
+        dc.DrawRectangle( Rect.x, 0, LevelWidth, Height );
         dc.SetBrush( m_RedOff );
-        dc.DrawRectangle( SizeG + ( Rect.width * 2 ) + LevelWidth, 0, Width, Height );
+        dc.DrawRectangle( Rect.x + LevelWidth, 0, Rect.width - LevelWidth, Height );
     }
 
+    //
     // Draw the decay level
     if( DecayLevel && ( DecayLevel > PeakLevel ) )
     {
         wxRect ClipRect = Rect;
         ClipRect.width = 2;
-        ClipRect.x = ( Width * DecayLevel ) / 100;
+        ClipRect.x = ( DecayLevel * Width ) / 100;
         dc.SetClippingRegion( ClipRect );
 
-        if( DecayLevel < 40 )       // at Solid green
+        if( DecayLevel < 70 )       // at Solid green
         {
             dc.SetBrush( m_GreenOn );
-            dc.DrawRectangle( 0, 0, SizeG, Height );
+            dc.DrawRectangle( 0, 0, SizeG * 7, Height );
         }
-        else if( DecayLevel < 60 )  // at green to orange
+        else if( DecayLevel < 80 )  // at green to orange
         {
-            Rect.x = SizeG;
+            Rect.x = SizeG * 7;
             dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
         }
-        else if( DecayLevel < 80 )  // at orange to red
+        else if( DecayLevel < 90 )  // at orange to red
         {
-            Rect.x = SizeG + Rect.width;
+            Rect.x = SizeG * 8;
             dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
         }
         else                        // at solid red
         {
             dc.SetBrush( m_RedOn );
-            dc.DrawRectangle( SizeG + ( Rect.width * 2 ), 0, Width, Height );
+            dc.DrawRectangle( Width - Rect.width, 0, Rect.width, Height );
         }
         dc.DestroyClippingRegion();
     }
@@ -193,100 +235,102 @@ void guVumeter::PaintVert( void )
 	wxCoord Height;
 	GetClientSize( &Width, &Height );
 
-    int PeakLevel = pow( 10, m_PeakLevel / 20 ) * 100;
-    int DecayLevel = pow( 10, m_DecayLevel / 20 ) * 100;
+    //guLogMessage( wxT( "%0.2f -> %0.2f" ), m_PeakLevel, IEC_Scale( m_PeakLevel ) );
+    //m_PeakLevel = TestValues[ wxGetUTCTime() % 20 ];
+    int PeakLevel = IEC_Scale( m_PeakLevel ) * 100;
+    int DecayLevel = IEC_Scale( m_DecayLevel ) * 100;
 
-	int SizeG = ( Height * 40 ) / 100;
-	//int SizeO = ( Width / 5 ) - 40;
-	//int SizeR = Width - SizeG - SizeO;
+	int SizeG = ( Height * 10 ) / 100;
 
     dc.SetPen( * wxTRANSPARENT_PEN );
+
+    Rect.x = 0;
+    Rect.y = Height - ( SizeG * 7 );
+    Rect.width = Width;
+    Rect.height = Height - Rect.y;
 
     //guLogMessage( wxT( "Current Level: %i" ), PeakLevel );
     if( !PeakLevel )
     {
         dc.SetBrush( m_GreenOff );
-        dc.DrawRectangle( 0, Height - SizeG, Width, Height );
+        dc.DrawRectangle( 0, Rect.y, Width, Rect.height );
     }
-    else if( PeakLevel > 40 )
+    else if( PeakLevel > 70 )
     {
         dc.SetBrush( m_GreenOn );
-        dc.DrawRectangle( 0, Height - SizeG, Width, Height );
+        dc.DrawRectangle( 0, Rect.y, Width, Rect.height );
     }
     else
     {
         int LevelHeight = ( Height * PeakLevel ) / 100;
         dc.SetBrush( m_GreenOff );
-        dc.DrawRectangle( 0, Height - SizeG, Width, Height - LevelHeight );
+        dc.DrawRectangle( 0, Rect.y, Width, Rect.height - LevelHeight );
         dc.SetBrush( m_GreenOn );
-        dc.DrawRectangle( 0, Height - LevelHeight, Width, Height );
+        dc.DrawRectangle( 0, Height - LevelHeight, Width, LevelHeight );
     }
 
-    Rect.x = 0;
-    Rect.width = Width;
-    Rect.y = SizeG;
-    Rect.height = ( Height - SizeG ) - Rect.y;
-    if( PeakLevel < 40 )
-    {
-        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff, wxNORTH );
-    }
-    else if( PeakLevel > 60 )
-    {
-        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn, wxNORTH );
-    }
-    else
-    {
-        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff, wxNORTH );
-        wxRect ClipRect = Rect;
-        ClipRect.height = ( Height * ( PeakLevel - 40 ) ) / 100;
-        ClipRect.y = Rect.y + Rect.height - ClipRect.height;
-        dc.SetClippingRegion( ClipRect );
-        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn, wxNORTH );
-        dc.DestroyClippingRegion();
-    }
+    Rect.height = SizeG;
+    Rect.y -= SizeG;
 
-    Rect.y = Rect.y - ( SizeG / 2 );
-    Rect.height = ( SizeG / 2 );
-    if( PeakLevel < 60 )
+    if( PeakLevel < 70 )
     {
-        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff, wxNORTH );
+        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff, wxNORTH );
     }
     else if( PeakLevel > 80 )
     {
+        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn, wxNORTH );
+    }
+    else
+    {
+        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff, wxNORTH );
+        wxRect ClipRect = Rect;
+        ClipRect.height = ( PeakLevel - 70 ) * SizeG / 10;
+        ClipRect.y += ( SizeG - ClipRect.height );
+        dc.SetClippingRegion( ClipRect );
+        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn, wxNORTH );
+        dc.DestroyClippingRegion();
+    }
+
+    Rect.y -= SizeG;
+    if( PeakLevel < 80 )
+    {
+        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff, wxNORTH );
+    }
+    else if( PeakLevel > 90 )
+    {
         dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn, wxNORTH );
     }
     else
     {
         dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff, wxNORTH );
         wxRect ClipRect = Rect;
-        ClipRect.height = ( Height * ( PeakLevel - 60 ) ) / 100;
-        ClipRect.y = Rect.y + Rect.height - ClipRect.height;
+        ClipRect.height = ( PeakLevel - 80 ) * SizeG / 10;
+        ClipRect.y += ( SizeG - ClipRect.height );
         dc.SetClippingRegion( ClipRect );
         dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn, wxNORTH );
         dc.DestroyClippingRegion();
     }
 
-    if( PeakLevel < 80 )
+    Rect.height = Rect.y;
+    //Rect.y = 0;
+    if( PeakLevel < 90 )
     {
         dc.SetBrush( m_RedOff );
-        dc.DrawRectangle( 0, 0, Width, Rect.y );
-    }
-    else if( PeakLevel == 100 )
-    {
-        dc.SetBrush( m_RedOn );
-        dc.DrawRectangle( 0, 0, Width, Rect.y );
+        dc.DrawRectangle( 0, 0, Width, Rect.height );
     }
     else
     {
-        dc.SetBrush( m_RedOn );
-        int LevelHeight = ( Height * ( PeakLevel - 80 ) ) / 100;
-        dc.DrawRectangle( 0, Rect.y - LevelHeight, Width, LevelHeight );
-
         dc.SetBrush( m_RedOff );
-        dc.DrawRectangle( 0, 0, Width, Rect.y - LevelHeight );
+        int LevelHeight = ( PeakLevel - 90 ) * Rect.height / 10;
+        dc.DrawRectangle( 0, 0, Width, Rect.height - LevelHeight );
+        dc.SetBrush( m_RedOn );
+        dc.DrawRectangle( 0, Rect.height - LevelHeight, Width, LevelHeight );
     }
 
+
     // Draw the decay level
+    Rect.height = SizeG * 7;
+    Rect.y = Height - Rect.height;
     if( DecayLevel && ( DecayLevel > PeakLevel ) )
     {
         wxRect ClipRect = Rect;
@@ -294,26 +338,28 @@ void guVumeter::PaintVert( void )
         ClipRect.y = Height - ( ( Height * DecayLevel ) / 100 );
         dc.SetClippingRegion( ClipRect );
 
-        if( DecayLevel < 40 )       // at Solid green
+        if( DecayLevel < 70 )       // at Solid green
         {
             dc.SetBrush( m_GreenOn );
-            dc.DrawRectangle( 0, Height - SizeG, Width, Height );
+            dc.DrawRectangle( 0, Rect.y, Width, Rect.height );
         }
-        else if( DecayLevel < 60 )  // at green to orange
+        else if( DecayLevel < 80 )  // at green to orange
         {
-            Rect.y = SizeG;
-            Rect.height = ( Height - SizeG ) - Rect.y;
+            Rect.y -= SizeG;
+            Rect.height = SizeG;
             dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn, wxNORTH );
         }
-        else if( DecayLevel < 80 )  // at orange to red
+        else if( DecayLevel < 90 )  // at orange to red
         {
+            Rect.y -= SizeG * 2;
+            Rect.height = SizeG;
             //Rect.y = SizeG + Rect.width;
             dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn, wxNORTH );
         }
         else                        // at solid red
         {
             dc.SetBrush( m_RedOn );
-            dc.DrawRectangle( 0, 0, Width, Rect.y );
+            dc.DrawRectangle( 0, 0, Width, SizeG );
         }
         dc.DestroyClippingRegion();
     }
@@ -354,36 +400,63 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	m_HVumFlexSizer->SetFlexibleDirection( wxBOTH );
 	m_HVumFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_HVumFlexSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	CurrentFont.SetPointSize( 8 );
 
 	wxBoxSizer * HLabelsSizer;
 	HLabelsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	CurrentFont.SetPointSize( 8 );
-	//CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
-
 	wxStaticText * HDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
 	HDbLabel->Wrap( -1 );
 	HDbLabel->SetFont( CurrentFont );
+	m_HVumFlexSizer->Add( HDbLabel, 0, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	//m_HVumFlexSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	HLabelsSizer->Add( HDbLabel, 5, wxALIGN_BOTTOM, 5 );
+
+	//CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+
+//	wxStaticText * HDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
+//	HDbLabel->Wrap( -1 );
+//	HDbLabel->SetFont( CurrentFont );
+//	HLabelsSizer->Add( HDbLabel, 5, wxALIGN_BOTTOM, 5 );
+
+	wxStaticText * HSixtyLevel = new wxStaticText( this, wxID_ANY, wxT("-60"), wxDefaultPosition, wxDefaultSize, 0 );
+	HSixtyLevel->Wrap( -1 );
+	HSixtyLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HSixtyLevel, 13, wxALIGN_BOTTOM, 5 );
+
+	wxStaticText * HFortyLevel = new wxStaticText( this, wxID_ANY, wxT("-40"), wxDefaultPosition, wxDefaultSize, 0 );
+	HFortyLevel->Wrap( -1 );
+	HFortyLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HFortyLevel, 17, wxALIGN_BOTTOM, 5 );
+
+	wxStaticText * HThirtyLevel = new wxStaticText( this, wxID_ANY, wxT("-30"), wxDefaultPosition, wxDefaultSize, 0 );
+	HThirtyLevel->Wrap( -1 );
+	HThirtyLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HThirtyLevel, 23, wxALIGN_BOTTOM, 5 );
+
+	wxStaticText * HTwentyLevel = new wxStaticText( this, wxID_ANY, wxT("-20"), wxDefaultPosition, wxDefaultSize, 0 );
+	HTwentyLevel->Wrap( -1 );
+	HTwentyLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HTwentyLevel, 27, wxALIGN_BOTTOM, 5 );
+
+	wxStaticText * HTenLevel = new wxStaticText( this, wxID_ANY, wxT("-10"), wxDefaultPosition, wxDefaultSize, 0 );
+	HTenLevel->Wrap( -1 );
+	HTenLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HTenLevel, 13, wxALIGN_BOTTOM, 5 );
 
 	wxStaticText * HOrangeLevel = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
 	HOrangeLevel->Wrap( -1 );
 	HOrangeLevel->SetFont( CurrentFont );
-
-	HLabelsSizer->Add( HOrangeLevel, 2, wxALIGN_BOTTOM, 5 );
+	HLabelsSizer->Add( HOrangeLevel, 7, wxALIGN_BOTTOM, 5 );
 
 	wxStaticText * HRedLabel = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
 	HRedLabel->Wrap( -1 );
 	HRedLabel->SetFont( CurrentFont );
-
-	HLabelsSizer->Add( HRedLabel, 3, wxALIGN_BOTTOM, 5 );
+	HLabelsSizer->Add( HRedLabel, 10, wxALIGN_BOTTOM, 5 );
 
 	wxStaticText * HClipLabel = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	HClipLabel->Wrap( -1 );
 	HClipLabel->SetFont( CurrentFont );
-
 	HLabelsSizer->Add( HClipLabel, 0, wxRIGHT|wxALIGN_BOTTOM, 5 );
 
 	m_HVumFlexSizer->Add( HLabelsSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
@@ -429,26 +502,42 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	wxStaticText * VClipLabel = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	VClipLabel->Wrap( -1 );
 	VClipLabel->SetFont( CurrentFont );
-
-	VLabelsSizer->Add( VClipLabel, 3, wxALIGN_BOTTOM|wxALIGN_RIGHT|wxTOP, 5 );
+	VLabelsSizer->Add( VClipLabel, 10, wxALIGN_BOTTOM|wxALIGN_RIGHT|wxTOP, 5 );
 
 	wxStaticText * VRedLabel = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
 	VRedLabel->Wrap( -1 );
 	VRedLabel->SetFont( CurrentFont );
-
-	VLabelsSizer->Add( VRedLabel, 2, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	VLabelsSizer->Add( VRedLabel, 8, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
 
 	wxStaticText * VOrangeLabel = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
 	VOrangeLabel->Wrap( -1 );
 	VOrangeLabel->SetFont( CurrentFont );
+	VLabelsSizer->Add( VOrangeLabel, 12, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
 
-	VLabelsSizer->Add( VOrangeLabel, 5, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	wxStaticText * VTenLabel = new wxStaticText( this, wxID_ANY, wxT("-10"), wxDefaultPosition, wxDefaultSize, 0 );
+	VTenLabel->Wrap( -1 );
+	VTenLabel->SetFont( CurrentFont );
+	VLabelsSizer->Add( VTenLabel, 27, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
 
-	wxStaticText * VDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
-	VDbLabel->Wrap( -1 );
-	VDbLabel->SetFont( CurrentFont );
+	wxStaticText * VTwentyLabel = new wxStaticText( this, wxID_ANY, wxT("-20"), wxDefaultPosition, wxDefaultSize, 0 );
+	VTwentyLabel->Wrap( -1 );
+	VTwentyLabel->SetFont( CurrentFont );
+	VLabelsSizer->Add( VTwentyLabel, 23, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
 
-	VLabelsSizer->Add( VDbLabel, 0, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	wxStaticText * VThirtyLabel = new wxStaticText( this, wxID_ANY, wxT("-30"), wxDefaultPosition, wxDefaultSize, 0 );
+	VThirtyLabel->Wrap( -1 );
+	VThirtyLabel->SetFont( CurrentFont );
+	VLabelsSizer->Add( VThirtyLabel, 17, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+
+	wxStaticText * VFortyLabel = new wxStaticText( this, wxID_ANY, wxT("-40"), wxDefaultPosition, wxDefaultSize, 0 );
+	VFortyLabel->Wrap( -1 );
+	VFortyLabel->SetFont( CurrentFont );
+	VLabelsSizer->Add( VFortyLabel, 15, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+
+	wxStaticText * VSixtyLabel = new wxStaticText( this, wxID_ANY, wxT("-60"), wxDefaultPosition, wxDefaultSize, 0 );
+	VSixtyLabel->Wrap( -1 );
+	VSixtyLabel->SetFont( CurrentFont );
+	VLabelsSizer->Add( VSixtyLabel, 0, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
 
 	m_VVumFlexSizer->Add( VLabelsSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -465,7 +554,10 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	m_VVumFlexSizer->Add( m_VVumRight, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 
-	m_VVumFlexSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	wxStaticText * VDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
+	VDbLabel->Wrap( -1 );
+	VDbLabel->SetFont( CurrentFont );
+	m_VVumFlexSizer->Add( VDbLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * VVumLeftLabel = new wxStaticText( this, wxID_ANY, wxT("L:"), wxDefaultPosition, wxDefaultSize, 0 );
 	VVumLeftLabel->Wrap( -1 );
