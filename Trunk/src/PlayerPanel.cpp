@@ -1273,7 +1273,8 @@ void guPlayerPanel::SetCurrentTrack( const guTrack * Song )
                 m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+            if( ( guMainFrame * ) wxTheApp->GetTopWindow() )
+                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
     }
 
