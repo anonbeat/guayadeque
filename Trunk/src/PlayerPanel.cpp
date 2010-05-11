@@ -811,9 +811,11 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
         SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
         //m_MediaSong.SongId = 0;
 
-        wxCommandEvent event;
-        OnStopButtonClick( event );
-        OnPlayButtonClick( event );
+//        wxCommandEvent event;
+//        OnStopButtonClick( event );
+//        OnPlayButtonClick( event );
+        LoadMedia( m_MediaSong.m_FileName,
+            m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
         TrackListChanged();
 
         // Add the added track to the smart cache
