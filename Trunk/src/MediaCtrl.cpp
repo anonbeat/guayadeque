@@ -1806,10 +1806,10 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         // FadeInTIme defines the length of the song to fade in
         // FadeInVolStart defines the inital volume of the song when fading in
         // FadeInVolTriger defines at which fadeout volume the fade in starts
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ) * GST_SECOND;
-        m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 1, wxT( "Crossfader" ) ) * GST_SECOND;
-        m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 8, wxT( "Crossfader" ) ) ) / 10.0;
-        m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 5, wxT( "Crossfader" ) ) ) / 10.0;
+        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100000000;
+        m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100000000;
+        m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
+        m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
         //guLogDebug( wxT( "FOT: %li  FIT: %li  FIV: %0.2f  FIVT: %0.2f" ), m_FadeOutTime, m_FadeInTime, m_FadeInVolStart, m_FadeInVolTriger );
 
         GstCaps * Caps;
@@ -3137,10 +3137,10 @@ bool guMediaCtrl::CanReuse( const wxString &uri, guFaderPlayBin * faderplaybin )
 void guMediaCtrl::UpdatedConfig( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ) * GST_SECOND;
-    m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 1, wxT( "Crossfader" ) ) * GST_SECOND;
-    m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 8, wxT( "Crossfader" ) ) ) / 10.0;
-    m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 5, wxT( "Crossfader" ) ) ) / 10.0;
+    m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100000000;
+    m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100000000;
+    m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
+    m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
 }
 
 // -------------------------------------------------------------------------------- //

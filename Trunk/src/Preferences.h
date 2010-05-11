@@ -99,6 +99,10 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_NotifyChkBox;
 
     wxPanel *                   m_XFadePanel;
+    wxStaticText *              m_XFadeOutLenVal;
+	wxStaticText *              m_XFadeInLenVal;
+	wxStaticText *              m_XFadeInStartVal;
+	wxStaticText *              m_XFadeTrigerVal;
     wxSlider *                  m_XFadeOutLenSlider;
     wxSlider *                  m_XFadeInLenSlider;
     wxSlider *                  m_XFadeInStartSlider;
