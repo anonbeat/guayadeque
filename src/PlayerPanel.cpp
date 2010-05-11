@@ -134,7 +134,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
         m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
 
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ) * 1000;
+        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
 //        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
     }
 
@@ -607,7 +607,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
         }
 
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ) * 1000;
+        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
 
         if( !m_PlaySmart )
             CheckFiltersEnable();

@@ -447,42 +447,58 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	XFadesbSizer = new wxStaticBoxSizer( new wxStaticBox( m_XFadePanel, wxID_ANY, _(" Crossfader ") ), wxVERTICAL );
 
 	wxFlexGridSizer * XFadeFlexSizer;
-	XFadeFlexSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
-	XFadeFlexSizer->AddGrowableCol( 1 );
+	XFadeFlexSizer = new wxFlexGridSizer( 4, 3, 0, 0 );
+	XFadeFlexSizer->AddGrowableCol( 2 );
 	XFadeFlexSizer->SetFlexibleDirection( wxBOTH );
 	XFadeFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	wxStaticText * XFadeOutLenLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("Out length:"), wxDefaultPosition, wxDefaultSize, 0 );
 	XFadeOutLenLabel->Wrap( -1 );
-	XFadeFlexSizer->Add( XFadeOutLenLabel, 0, wxALIGN_BOTTOM|wxTOP|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
+	XFadeFlexSizer->Add( XFadeOutLenLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_XFadeOutLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeOutTime" ), 5, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_LABELS );
+	m_XFadeOutLenVal = new wxStaticText( m_XFadePanel, wxID_ANY, wxT( "00.0" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_XFadeOutLenVal->Wrap( -1 );
+	XFadeFlexSizer->Add( m_XFadeOutLenVal, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_XFadeOutLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeOutLenSlider->SetToolTip( _( "Select the length of the fade out. 0 fot gapless playback" ) );
 	XFadeFlexSizer->Add( m_XFadeOutLenSlider, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
 	wxStaticText * XFadeInLenLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In length:"), wxDefaultPosition, wxDefaultSize, 0 );
 	XFadeInLenLabel->Wrap( -1 );
-	XFadeFlexSizer->Add( XFadeInLenLabel, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_RIGHT|wxALIGN_BOTTOM, 5 );
+	XFadeFlexSizer->Add( XFadeInLenLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_XFadeInLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInTime" ), 1, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+	m_XFadeInLenVal = new wxStaticText( m_XFadePanel, wxID_ANY, wxT( "00.0" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_XFadeInLenVal->Wrap( -1 );
+	XFadeFlexSizer->Add( m_XFadeInLenVal, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_XFadeInLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInLenSlider->SetToolTip( _( "Select the length of the fade in" ) );
 	XFadeFlexSizer->Add( m_XFadeInLenSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
 	wxStaticText * XFadeInStartLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In vol. Start:"), wxDefaultPosition, wxDefaultSize, 0 );
 	XFadeInStartLabel->Wrap( -1 );
-	XFadeFlexSizer->Add( XFadeInStartLabel, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	XFadeFlexSizer->Add( XFadeInStartLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_XFadeInStartSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolStart" ), 8, wxT( "Crossfader" ) ), 0, 10, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+	m_XFadeInStartVal = new wxStaticText( m_XFadePanel, wxID_ANY, wxT( "00.0" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_XFadeInStartVal->Wrap( -1 );
+	XFadeFlexSizer->Add( m_XFadeInStartVal, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_XFadeInStartSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInStartSlider->SetToolTip( _( "Select the initial volume of the fade in" ) );
 	XFadeFlexSizer->Add( m_XFadeInStartSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
 	wxStaticText * XFadeTrigerLabel = new wxStaticText( m_XFadePanel, wxID_ANY, _("In start:"), wxDefaultPosition, wxDefaultSize, 0 );
 	XFadeTrigerLabel->Wrap( -1 );
-	XFadeFlexSizer->Add( XFadeTrigerLabel, 0, wxALL|wxALIGN_BOTTOM, 5 );
+	XFadeFlexSizer->Add( XFadeTrigerLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_XFadeInTrigerSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolTriger" ), 5, wxT( "Crossfader" ) ), 1, 9, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+	m_XFadeTrigerVal = new wxStaticText( m_XFadePanel, wxID_ANY, wxT( "00.0" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_XFadeTrigerVal->Wrap( -1 );
+	XFadeFlexSizer->Add( m_XFadeTrigerVal, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_XFadeInTrigerSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ), 5, 95, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInTrigerSlider->SetToolTip( _( "Select at which point of the fade out the fade in stars" ) );
-	XFadeFlexSizer->Add( m_XFadeInTrigerSlider, 0, wxEXPAND|wxRIGHT, 5 );
+	XFadeFlexSizer->Add( m_XFadeInTrigerSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
 	XFadesbSizer->Add( XFadeFlexSizer, 1, wxEXPAND, 5 );
 
@@ -1163,6 +1179,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_XFadeInLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
     m_XFadeInStartSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
     m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeOutLenSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInLenSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInStartSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
 
 	m_RecordChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
 	m_RecDelTracks->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
@@ -1631,6 +1651,22 @@ void guPrefDialog::OnCrossFadeChanged( wxScrollEvent& event )
     m_XFadeInStartSlider->Enable( IsEnabled );
     m_XFadeInTrigerSlider->Enable( IsEnabled );
 
+    double FadeOutLen = double( m_XFadeOutLenSlider->GetValue() ) / 10.0;
+    double FadeInLen = double( m_XFadeInLenSlider->GetValue() ) / 10.0;
+    double FadeInTriger = double( m_XFadeInTrigerSlider->GetValue() ) / 10.0;
+    double FadeInVolStart = double( m_XFadeInStartSlider->GetValue() ) / 10.0;
+
+    m_XFadeOutLenVal->SetLabel( wxString::Format( wxT( "%2.1f" ), FadeOutLen ) );
+    m_XFadeInLenVal->SetLabel( wxString::Format( wxT( "%2.1f" ), FadeInLen ) );
+    m_XFadeInStartVal->SetLabel( wxString::Format( wxT( "%2.1f" ), FadeInVolStart ) );
+    m_XFadeTrigerVal->SetLabel( wxString::Format( wxT( "%2.1f" ), FadeInTriger ) );
+
+    m_XFadeInLenVal->Enable( IsEnabled );
+    m_XFadeInStartVal->Enable( IsEnabled );
+    m_XFadeTrigerVal->Enable( IsEnabled );
+
+    m_XFadeTrigerVal->GetParent()->GetSizer()->Layout();
+
     wxBitmap * FadeBitmap = new wxBitmap( 400, 200 );
     if( FadeBitmap )
     {
@@ -1645,16 +1681,16 @@ void guPrefDialog::OnCrossFadeChanged( wxScrollEvent& event )
             wxPoint FadeOutPoints[ 4 ];
             FadeOutPoints[ 0 ] = wxPoint( 0, 0 );
             FadeOutPoints[ 1 ] = wxPoint( 0, 200 );
-            FadeOutPoints[ 2 ] = wxPoint( ( m_XFadeOutLenSlider->GetValue() + 1 ) * 20, 200 );
+            FadeOutPoints[ 2 ] = wxPoint( ( FadeOutLen + 1 ) * 20, 200 );
             FadeOutPoints[ 3 ] = wxPoint( 20, 0 );
             wxRegion OutRegion( WXSIZEOF( FadeOutPoints ), FadeOutPoints );
 
             wxPoint FadeInPoints[ 5 ];
-            int FadeInStartX = FadeOutPoints[ 2 ].x - ( m_XFadeInTrigerSlider->GetValue() * ( ( FadeOutPoints[ 2 ].x - 20 ) / 10 ) );
-            int FadeInStartY = IsEnabled ? ( 200 - ( m_XFadeInStartSlider->GetValue() * 20 ) ) : 0;
+            int FadeInStartX = FadeOutPoints[ 2 ].x - ( FadeInTriger * ( ( FadeOutPoints[ 2 ].x - 20 ) / 10 ) );
+            int FadeInStartY = IsEnabled ? ( 200 - ( FadeInVolStart * 20 ) ) : 0;
             FadeInPoints[ 0 ] = wxPoint( FadeInStartX, 200 );
             FadeInPoints[ 1 ] = wxPoint( FadeInStartX, FadeInStartY );
-            FadeInPoints[ 2 ] = wxPoint( FadeInStartX + ( m_XFadeInLenSlider->GetValue() * 20 ), 0 );
+            FadeInPoints[ 2 ] = wxPoint( FadeInStartX + ( FadeInLen * 20 ), 0 );
             FadeInPoints[ 3 ] = wxPoint( 400, 0 );
             FadeInPoints[ 4 ] = wxPoint( 400, 200 );
             wxRegion InRegion( WXSIZEOF( FadeInPoints ), FadeInPoints );
