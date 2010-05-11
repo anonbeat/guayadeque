@@ -54,6 +54,7 @@ DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEIN_STARTED )
 #define GST_TO_WXSTRING( str )  ( wxString( str, wxConvUTF8 ) )
 
 #define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+//#define guLogDebug(...)
 #define guSHOW_DUMPFADERPLAYBINS     1
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
@@ -2583,7 +2584,7 @@ void guMediaCtrl::MaybeStopSink( void )
 	m_SinkLock.Lock();
 	if( !m_StopSinkId )
 	{
-		m_StopSinkId = g_timeout_add( 1000, GSourceFunc( stop_sink_later ), this );
+		m_StopSinkId = g_timeout_add( 2000, GSourceFunc( stop_sink_later ), this );
 	}
 	m_SinkLock.Unlock();
 }
