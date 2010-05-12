@@ -761,6 +761,7 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
 
     //OnStopButtonClick( event );
     //OnPlayButtonClick( event );
+
     LoadMedia( m_MediaSong.m_FileName,
         m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
     TrackListChanged();
@@ -2359,7 +2360,11 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
         State = m_MediaCtrl->GetState();
         if( State == guMEDIASTATE_PLAYING )
         {
-            m_MediaCtrl->Pause();
+            if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+                m_MediaCtrl->Pause();
+            else
+                m_MediaCtrl->Stop();
+
             ResetVumeterLevel();
         }
         else if( State == guMEDIASTATE_PAUSED )
