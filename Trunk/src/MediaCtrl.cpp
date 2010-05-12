@@ -1587,8 +1587,14 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                                             //g_object_set( queue, "max-size-time", guint64( GST_SECOND / 2 ), NULL );
                                             //g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
-                                            gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
-                                            gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, outputsink, NULL );
+                                          GstElement * QueueOut = gst_element_factory_make( "queue", "pb_queueout" );
+                                          if( IsValidElement( QueueOut ) )
+                                          {
+
+                                            g_object_set( QueueOut, "max-size-buffers", 10, NULL );
+
+                                            gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, QueueOut, outputsink, NULL );
+                                            gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, QueueOut, outputsink, NULL );
 
                                             GstPad * pad = gst_element_get_pad( m_Tee, "sink" );
                                             if( GST_IS_PAD( pad ) )
@@ -1606,7 +1612,14 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                                                 guLogError( wxT( "Could not create the pad element" ) );
                                             }
 
-                                            g_object_unref( queue );
+                                            g_object_unref( QueueOut );
+                                          }
+                                          else
+                                          {
+                                            guLogError( wxT( "Could not create the playback queue out object" ) );
+                                          }
+
+                                          g_object_unref( queue );
                                         }
                                         else
                                         {
@@ -1806,11 +1819,11 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         // FadeInTIme defines the length of the song to fade in
         // FadeInVolStart defines the inital volume of the song when fading in
         // FadeInVolTriger defines at which fadeout volume the fade in starts
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100000000;
-        m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100000000;
+        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * ( GST_SECOND / 10 );
+        m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * ( GST_SECOND / 10 );
         m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
         m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
-        //guLogDebug( wxT( "FOT: %li  FIT: %li  FIV: %0.2f  FIVT: %0.2f" ), m_FadeOutTime, m_FadeInTime, m_FadeInVolStart, m_FadeInVolTriger );
+        //guLogDebug( wxT( "FOT: %lli  FIT: %lli  FIV: %0.2f  FIVT: %0.2f" ), m_FadeOutTime/GST_SECOND, m_FadeInTime/GST_SECOND, m_FadeInVolStart, m_FadeInVolTriger );
 
         GstCaps * Caps;
         Caps = gst_caps_new_simple( "audio/x-raw-int",
@@ -3622,7 +3635,7 @@ void guFaderPlayBin::StartFade( double start, double end, gint64 time )
 		Pos = 0;
 	}
 
-	guLogDebug( wxT( "fading stream %s: [%f, %" G_GINT64_FORMAT "] to [%f, %" G_GINT64_FORMAT "]" ), m_Uri.c_str(), ( float ) start, Pos, ( float ) end, Pos + time );
+	guLogDebug( wxT( "fading stream [%f, %" G_GINT64_FORMAT "] to [%f, %" G_GINT64_FORMAT "] %s" ), ( float ) start, Pos, ( float ) end, Pos + time, m_Uri.c_str() );
 
 	g_signal_handlers_block_by_func( m_Volume, ( void * ) faderplaybin_volume_changed_cb, this );
 
