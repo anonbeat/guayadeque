@@ -357,6 +357,8 @@ class guMediaCtrl : public wxEvtHandler
 
     void            UpdatedConfig( void );
 
+    bool            IsBuffering( void ) { return m_Buffering; }
+
     friend class guFaderPlayBin;
 };
 

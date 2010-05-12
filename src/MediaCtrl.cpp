@@ -2700,7 +2700,7 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
 		return false;
 	}
 
-    FaderPlayBin->m_PlayType = playtype;
+    FaderPlayBin->m_PlayType = m_Buffering ? guFADERPLAYBIN_PLAYTYPE_REPLACE : playtype;
 	Lock();
 	m_FaderPlayBins.Insert( FaderPlayBin, 0 );
 #ifdef guSHOW_DUMPFADERPLAYBINS
