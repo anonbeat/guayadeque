@@ -497,7 +497,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	XFadeFlexSizer->Add( m_XFadeTrigerVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_XFadeInTrigerSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ), 5, 95, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
-    m_XFadeInTrigerSlider->SetToolTip( _( "Select at which point of the fade out the fade in stars" ) );
+    m_XFadeInTrigerSlider->SetToolTip( _( "Select at which volume of the fade out the fade in stars" ) );
 	XFadeFlexSizer->Add( m_XFadeInTrigerSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
 	XFadesbSizer->Add( XFadeFlexSizer, 1, wxEXPAND, 5 );

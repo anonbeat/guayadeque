@@ -1668,7 +1668,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
         m_MediaSong.m_PlayTime = CurPos;
 
-        if( !m_AboutToFinishPending && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
+        if( !m_AboutToFinishPending && !m_TrackChanged && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
             ( CurPos + m_FadeOutTime + 2000 >= m_LastLength ) )
         {
             //OnAboutToFinish();
