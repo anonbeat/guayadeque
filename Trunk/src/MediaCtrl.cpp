@@ -343,43 +343,43 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
         case GST_MESSAGE_BUFFERING :
         {
             gint        Percent;
-            GstState    cur_state;
+//            GstState    cur_state;
 
             //GstElement * src;
 
             gst_message_parse_buffering( message, &Percent );
 
             //match = gst_bin_get_by_name (GST_BIN (sink), name);
-            //guLogDebug( wxT( "Buffering: %i%%" ), Percent );
+            guLogDebug( wxT( "Buffering: %i%%" ), Percent );
 
             if( Percent >= 100 )
             {
                 ctrl->m_Buffering = false;
-                if( ctrl->m_WasPlaying )
-                {
-//                    gst_element_set_state( ctrl->m_Pipeline, GST_STATE_PLAYING );
-//                    gst_element_set_state( ctrl->m_PlaybackBin, GST_STATE_PLAYING );
-//                    if( ctrl->m_RecordBin )
-//                    {
-//                        //gst_element_set_state( ctrl->m_PlaybackBin, GST_STATE_PLAYING );
-//                        gst_element_set_state( ctrl->m_RecordBin, GST_STATE_PLAYING );
-//                    }
-                    ctrl->m_WasPlaying = false;
-                }
+//                if( ctrl->m_WasPlaying )
+//                {
+////                    gst_element_set_state( ctrl->m_Pipeline, GST_STATE_PLAYING );
+////                    gst_element_set_state( ctrl->m_PlaybackBin, GST_STATE_PLAYING );
+////                    if( ctrl->m_RecordBin )
+////                    {
+////                        //gst_element_set_state( ctrl->m_PlaybackBin, GST_STATE_PLAYING );
+////                        gst_element_set_state( ctrl->m_RecordBin, GST_STATE_PLAYING );
+////                    }
+//                    ctrl->m_WasPlaying = false;
+//                }
             }
             else
             {
-                gst_element_get_state( ctrl->m_Pipeline, &cur_state, NULL, 0 );
-                if( cur_state == GST_STATE_PLAYING )
-                {
-//                    ctrl->m_WasPlaying = true;
-//                    if( ctrl->m_RecordBin )
-//                    {
-//                        gst_element_set_state( ctrl->m_RecordBin, GST_STATE_PAUSED );
-//                    }
-//                    gst_element_set_state( ctrl->m_Pipeline, GST_STATE_PAUSED );
-                    //gst_element_set_state( ctrl->m_PlaybackBin, GST_STATE_PAUSED );
-                }
+//                gst_element_get_state( ctrl->m_Pipeline, &cur_state, NULL, 0 );
+//                if( cur_state == GST_STATE_PLAYING )
+//                {
+////                    ctrl->m_WasPlaying = true;
+////                    if( ctrl->m_RecordBin )
+////                    {
+////                        gst_element_set_state( ctrl->m_RecordBin, GST_STATE_PAUSED );
+////                    }
+////                    gst_element_set_state( ctrl->m_Pipeline, GST_STATE_PAUSED );
+//                    //gst_element_set_state( ctrl->m_PlaybackBin, GST_STATE_PAUSED );
+//                }
                 ctrl->m_Buffering = true;
             }
             guMediaEvent event( guEVT_MEDIA_BUFFERING );
@@ -3057,8 +3057,24 @@ bool guMediaCtrl::Stop( void )
 
             case guFADERPLAYBIN_STATE_PLAYING:
             {
-                FaderPlayBin->m_State = guFADERPLAYBIN_STATE_FADING_OUT_STOPPED;
-                FaderPlayBin->StartFade( FadeOutStart, 0.0f, FadeOutTime );
+                if( m_Buffering )
+                {
+                    FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                    FaderPlayBin->m_Player->ScheduleReap();
+
+                    guMediaEvent BufEvent( guEVT_MEDIA_BUFFERING );
+                    BufEvent.SetInt( 100 );
+                    AddPendingEvent( BufEvent );
+
+                    guMediaEvent event( guEVT_MEDIA_FADEOUT_FINISHED );
+                    AddPendingEvent( event );
+                    m_Buffering = false;
+                }
+                else
+                {
+                    FaderPlayBin->m_State = guFADERPLAYBIN_STATE_FADING_OUT_STOPPED;
+                    FaderPlayBin->StartFade( FadeOutStart, 0.0f, FadeOutTime );
+                }
             }
 
             default:
