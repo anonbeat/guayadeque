@@ -458,7 +458,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_XFadeOutLenVal = new wxStaticText( m_XFadePanel, wxID_ANY, wxT( "00.0" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_XFadeOutLenVal->Wrap( -1 );
-	XFadeFlexSizer->Add( m_XFadeOutLenVal, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	XFadeFlexSizer->Add( m_XFadeOutLenVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_XFadeOutLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeOutLenSlider->SetToolTip( _( "Select the length of the fade out. 0 fot gapless playback" ) );
@@ -470,7 +470,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_XFadeInLenVal = new wxStaticText( m_XFadePanel, wxID_ANY, wxT( "00.0" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_XFadeInLenVal->Wrap( -1 );
-	XFadeFlexSizer->Add( m_XFadeInLenVal, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	XFadeFlexSizer->Add( m_XFadeInLenVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_XFadeInLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInLenSlider->SetToolTip( _( "Select the length of the fade in" ) );
@@ -482,7 +482,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_XFadeInStartVal = new wxStaticText( m_XFadePanel, wxID_ANY, wxT( "00.0" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_XFadeInStartVal->Wrap( -1 );
-	XFadeFlexSizer->Add( m_XFadeInStartVal, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	XFadeFlexSizer->Add( m_XFadeInStartVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_XFadeInStartSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInStartSlider->SetToolTip( _( "Select the initial volume of the fade in" ) );
@@ -494,7 +494,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	m_XFadeTrigerVal = new wxStaticText( m_XFadePanel, wxID_ANY, wxT( "00.0" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_XFadeTrigerVal->Wrap( -1 );
-	XFadeFlexSizer->Add( m_XFadeTrigerVal, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	XFadeFlexSizer->Add( m_XFadeTrigerVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_XFadeInTrigerSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ), 5, 95, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInTrigerSlider->SetToolTip( _( "Select at which point of the fade out the fade in stars" ) );
