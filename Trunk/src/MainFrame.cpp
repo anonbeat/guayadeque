@@ -665,8 +665,6 @@ guMainFrame::~guMainFrame()
 
         Config->WriteBool( wxT( "ShowFullScreen" ), IsFullScreen() , wxT( "General" ) );
         Config->WriteBool( wxT( "ShowStatusBar" ), m_MainStatusBar->IsShown() , wxT( "General" ) );
-
-        SaveLayouts();
     }
 
     if( m_LibUpdateThread )
@@ -2661,6 +2659,7 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
             PaneInfo.Caption( PLCaption );
             m_LayoutTabs[ LayoutIndex ] = m_CatNotebook->SavePerspective();
         }
+        SaveLayouts();
     }
 }
 
@@ -2700,6 +2699,8 @@ void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
         m_LayoutDelMenu->Append( MenuItem );
         MenuItem->Enable( false );
     }
+
+    SaveLayouts();
 }
 
 // -------------------------------------------------------------------------------- //
