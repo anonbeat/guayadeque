@@ -3150,8 +3150,8 @@ bool guMediaCtrl::CanReuse( const wxString &uri, guFaderPlayBin * faderplaybin )
 void guMediaCtrl::UpdatedConfig( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100000000;
-    m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100000000;
+    m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * ( GST_SECOND / 10 );
+    m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * ( GST_SECOND / 10 );
     m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
     m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
 }
@@ -3644,6 +3644,7 @@ void guFaderPlayBin::StartFade( double start, double end, gint64 time )
 	g_object_set( m_Volume, "volume", start, NULL );
 
 	gst_controller_unset_all( m_Fader, ( gchar * ) "volume" );
+	//gst_object_sync_values( G_OBJECT( m_Fader ), m_BaseTime );
 
 	g_value_init( &V, G_TYPE_DOUBLE );
 	g_value_set_double( &V, start );
