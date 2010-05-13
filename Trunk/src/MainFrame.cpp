@@ -2611,6 +2611,7 @@ void guMainFrame::SaveLayouts( void )
     Config->WriteAStr( wxT( "Name"   ), m_LayoutName,   wxT( "Layouts" ) );
     Config->WriteAStr( wxT( "Data"   ), m_LayoutData,   wxT( "Layouts" ), false );
     Config->WriteAStr( wxT( "Tabs"   ), m_LayoutTabs,   wxT( "Layouts" ), false );
+    Config->Flush();
 }
 
 // -------------------------------------------------------------------------------- //

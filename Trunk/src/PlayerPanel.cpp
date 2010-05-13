@@ -2365,7 +2365,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
             else
                 m_MediaCtrl->Stop();
 
-            ResetVumeterLevel();
+            //ResetVumeterLevel();
         }
         else if( State == guMEDIASTATE_PAUSED )
         {
