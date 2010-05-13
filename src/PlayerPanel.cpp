@@ -1654,6 +1654,8 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             //UpdatePositionLabel( m_LastCurPos / 1000 );
             //OnMediaPlayStarted();
         }
+        if( !m_LastLength )
+            m_PlayerPositionSlider->SetValue( 0 );
     }
 
     if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )

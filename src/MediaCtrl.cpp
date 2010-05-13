@@ -2726,7 +2726,7 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::Play( void )
 {
-    guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Play" ) );
+    guLogDebug( wxT( "********************************************************************* MediaCtrl::Play" ) );
 
 	int                 StreamState;
 	bool                Ret = true;
