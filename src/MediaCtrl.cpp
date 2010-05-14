@@ -532,6 +532,11 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                         // stop the stream and dispose of it
                         //guLogDebug( wxT( "got fade-out-done for stream %s -> PENDING_REMOVE" ), FaderPlayBin->m_Uri.c_str() );
                         FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+
+                        unlink_blocked_cb( FaderPlayBin->m_SourcePad, true, FaderPlayBin );
+
+                        ctrl->CheckPendingPlayBin();
+
                         FaderPlayBin->m_Player->ScheduleReap();
 
                         guMediaEvent event( guEVT_MEDIA_FADEOUT_FINISHED );
@@ -604,27 +609,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 
                     unlink_blocked_cb( FaderPlayBin->m_SourcePad, true, FaderPlayBin );
 
-                    // We finished a fading out without receiving the fade in start
-                    // prolly because the seek was dragged after the position to do so
-                    // We start here the pending playbins
-                    guLogDebug( wxT( "Going to check if pending streams after EOS" ) );
-                    ctrl->Lock();
-#ifdef guSHOW_DUMPFADERPLAYBINS
-                    DumpFaderPlayBins( ctrl->m_FaderPlayBins );
-#endif
-                    int Index;
-                    int Count = ctrl->m_FaderPlayBins.Count();
-                    for( Index = 0; Index < Count; Index++ )
-                    {
-                        guFaderPlayBin * FaderPlayBin = ctrl->m_FaderPlayBins[ Index ];
-                        if( FaderPlayBin->m_State == guFADERPLAYBIN_STATE_WAITING )
-                        {
-                            guLogDebug( wxT( "waiting stream on fade-out-done for stream %s -> FADE_IN" ), FaderPlayBin->m_Uri.c_str() );
-                            FaderPlayBin->StartFade( FaderPlayBin->m_Player->m_FadeInVolStart, 1.0, FaderPlayBin->m_Player->m_FadeInTime );
-                            FaderPlayBin->LinkAndUnblock( NULL );
-                        }
-                    }
-                    ctrl->Unlock();
+                    ctrl->CheckPendingPlayBin();
 
                     ctrl->ScheduleReap();
                 }
@@ -3163,6 +3148,7 @@ bool guMediaCtrl::CanReuse( const wxString &uri, guFaderPlayBin * faderplaybin )
     return false;
 }
 
+// -------------------------------------------------------------------------------- //
 void guMediaCtrl::UpdatedConfig( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -3170,6 +3156,32 @@ void guMediaCtrl::UpdatedConfig( void )
     m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * ( GST_SECOND / 10 );
     m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
     m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::CheckPendingPlayBin( void )
+{
+    // We finished a fading out without receiving the fade in start
+    // prolly because the seek was dragged after the position to do so
+    // We start here the pending playbins
+    guLogDebug( wxT( "Going to check if pending streams after EOS" ) );
+    Lock();
+#ifdef guSHOW_DUMPFADERPLAYBINS
+    DumpFaderPlayBins( m_FaderPlayBins );
+#endif
+    int Index;
+    int Count = m_FaderPlayBins.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guFaderPlayBin * FaderPlayBin = m_FaderPlayBins[ Index ];
+        if( FaderPlayBin->m_State == guFADERPLAYBIN_STATE_WAITING )
+        {
+            guLogDebug( wxT( "CheckPendingPlayBin : stream %s -> FADE_IN" ), FaderPlayBin->m_Uri.c_str() );
+            FaderPlayBin->StartFade( FaderPlayBin->m_Player->m_FadeInVolStart, 1.0, FaderPlayBin->m_Player->m_FadeInTime );
+            FaderPlayBin->LinkAndUnblock( NULL );
+        }
+    }
+    Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
