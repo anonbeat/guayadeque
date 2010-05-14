@@ -1646,7 +1646,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     wxFileOffset CurLen = event.GetExtraLong();
     if( CurLen != m_LastLength )
     {
-        if( event.GetInt() > 0 && event.GetInt() < 2000 )
+        if( event.GetInt() > 0 )
         {
             m_LastLength = CurLen;
 
@@ -1828,6 +1828,7 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 
         if( m_TrackStartPos )
         {
+            guLogMessage( wxT( "Try to set saved position %i" ), m_TrackStartPos );
             SetPosition( m_TrackStartPos );
             m_TrackStartPos = 0;
         }
