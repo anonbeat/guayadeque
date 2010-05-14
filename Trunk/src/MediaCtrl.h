@@ -349,6 +349,7 @@ class guMediaCtrl : public wxEvtHandler
     bool            StopSink( void );
     void            MaybeStopSink( void );
     void            ScheduleReap( void );
+    void            CheckPendingPlayBin( void );
 
     void            Lock( void ) { m_FaderPlayBinsMutex.Lock(); }
     void            Unlock( void ) { m_FaderPlayBinsMutex.Unlock(); }

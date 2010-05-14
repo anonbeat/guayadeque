@@ -230,15 +230,14 @@ class guPlayerPanel : public wxPanel
 
     int                     m_BufferGaugeId;
 
-    bool                    m_AboutToFinishPending;
+    bool                    m_AutoTrackChanged;
+    bool                    m_TrackChanged;
 
     bool                    m_ShowRevTime;
 
     wxArrayString           m_ErrorStrings;
 
     bool                    m_PendingNewRecordName;
-
-    bool                    m_TrackChanged;
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
@@ -254,7 +253,6 @@ class guPlayerPanel : public wxPanel
     void                LoadMedia( const wxString &FileName, guPlayerPlayType playtype );
     void                OnMediaLoaded( guMediaEvent &event );
     void                OnMediaPlayStarted( void );
-    void                OnMediaAboutToFinish( guMediaEvent &event );
     void                OnMediaFinished( guMediaEvent &event );
     void                OnMediaFadeOutFinished( guMediaEvent &event );
     void                OnMediaFadeInStarted( guMediaEvent &event );
@@ -329,8 +327,6 @@ class guPlayerPanel : public wxPanel
 	void                OnRandomPlayButtonClick( wxCommandEvent &event );
 	void                OnRepeatPlayButtonClick( wxCommandEvent &event );
 	void                OnEqualizerButtonClicked( wxCommandEvent &event );
-
-    void                OnAboutToFinish( void );
 
     void                SetArtistLabel( const wxString &artistname );
     void                SetAlbumLabel( const wxString &albumname );

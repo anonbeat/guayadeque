@@ -86,7 +86,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_LastTotalLen = -1;
     m_TrackChanged = true;
 
-    m_AboutToFinishPending = false;
+    m_AutoTrackChanged = false;
 
     wxArrayInt Equalizer;
 
@@ -443,7 +443,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_PlayListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
 
     Connect( guEVT_MEDIA_LOADED, guMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
-    //Connect( guEVT_MEDIA_ABOUT_TO_FINISH, wxMediaEventHandler( guPlayerPanel::OnMediaAboutToFinish ), NULL, this );
     Connect( guEVT_MEDIA_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
     Connect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
     Connect( guEVT_MEDIA_FADEIN_STARTED, guMediaEventHandler( guPlayerPanel::OnMediaFadeInStarted ), NULL, this );
@@ -1529,16 +1528,16 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
             unsigned long EventTime = m_LastCurPos; //LevelInfo->m_EndTime;
             unsigned long TrackLength = m_MediaSong.m_Length * 1000;
             //guLogMessage( wxT( "The level is now lower than triger level" ) );
-            //guLogMessage( wxT( "(%f) %02i : %li , %i, %i     P(%i)" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime, m_AboutToFinishPending );
+            //guLogMessage( wxT( "(%f) %02i : %li , %i, %i     P(%i)" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime, m_AutoTrackChanged );
 
             // We only skip to next track if the level is lower than the triger one and also if
             // we are at the end time period (if configured this way) and the time left is more than 500msecs
-            if( !m_AboutToFinishPending && ( !m_SilenceDetectorTime ||
+            if( !m_AutoTrackChanged && !m_TrackChanged && ( !m_SilenceDetectorTime ||
                 ( ( ( unsigned int ) m_SilenceDetectorTime > ( TrackLength - EventTime ) ) &&
                   ( ( EventTime + 500 ) < TrackLength ) ) ) )
             {
                 guLogMessage( wxT( "Silence detected. Changed to next track %i" ), m_PlayListCtrl->GetCurItem() );
-                m_AboutToFinishPending = true;
+                m_AutoTrackChanged = true;
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
             }
@@ -1574,8 +1573,11 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
         m_NotifySrv->Notify( wxEmptyString, wxT( "Guayadeque: GStreamer Error" ), _( "Unknown" ), NULL );
     }
 
-    if( m_AboutToFinishPending )
-        m_AboutToFinishPending = false;
+    if( m_TrackChanged )
+        m_TrackChanged = false;
+
+    if( m_AutoTrackChanged )
+        m_AutoTrackChanged = false;
 
     if( m_IsSkipping )
         m_IsSkipping = false;
@@ -1603,12 +1605,11 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaState( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaState: %i %i" ), event.GetInt(), m_AboutToFinishPending );
+    guLogMessage( wxT( "OnMediaState: %i %i %i" ), event.GetInt(), m_TrackChanged, m_AutoTrackChanged );
     GstState State = ( GstState ) event.GetInt();
 
     if( State == GST_STATE_PLAYING && m_TrackChanged )
     {
-        m_TrackChanged = false;
         OnMediaPlayStarted();
     }
 
@@ -1636,7 +1637,7 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaPosition... %i - %li  %i" ), event.GetInt(), event.GetExtraLong(), m_AboutToFinishPending );
+    //guLogMessage( wxT( "OnMediaPosition... %i - %li  %i" ), event.GetInt(), event.GetExtraLong(), m_AutoTrackChanged );
 
     if( event.GetInt() < 0 )
         return;
@@ -1652,7 +1653,6 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             guLogMessage( wxT( "Now the new track started playing" ) );
             //m_MediaSong.m_Length = CurLen / 1000;
             //UpdatePositionLabel( m_LastCurPos / 1000 );
-            //OnMediaPlayStarted();
         }
         if( !m_LastLength )
             m_PlayerPositionSlider->SetValue( 0 );
@@ -1660,7 +1660,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
     if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )
     {
-        guLogMessage( wxT( "OnMediaPosition... %i - %li  %i" ), event.GetInt(), event.GetExtraLong(), m_AboutToFinishPending );
+        guLogMessage( wxT( "OnMediaPosition... %i - %li  %i %i" ), event.GetInt(), event.GetExtraLong(), m_TrackChanged, m_AutoTrackChanged );
         m_LastCurPos = CurPos;
 
         UpdatePositionLabel( CurPos / 1000 );
@@ -1670,19 +1670,12 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
         m_MediaSong.m_PlayTime = CurPos;
 
-        if( !m_AboutToFinishPending && !m_TrackChanged && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
-            ( CurPos + m_FadeOutTime + 2000 >= m_LastLength ) )
+        if( !m_TrackChanged && !m_AutoTrackChanged && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
+            ( CurPos + m_FadeOutTime + 3000 >= m_LastLength ) )
         {
-            //OnAboutToFinish();
-            m_AboutToFinishPending = true;
+            m_AutoTrackChanged = true;
             wxCommandEvent evt;
             OnNextTrackButtonClick( evt );
-        }
-
-        if( m_AboutToFinishPending && ( CurPos > 11 ) && ( CurPos < 16 ) )
-        {
-            m_AboutToFinishPending = false;
-            guLogMessage( wxT( "Reset the AboutToFinishPending flag..." ) );
         }
     }
 }
@@ -1820,37 +1813,12 @@ void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaLoaded Cur: %i %i" ), m_PlayListCtrl->GetCurItem(), event.GetInt() );
-//    if( m_AboutToFinishPending )
-//    {
-//        //SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
-//        //m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-//        //m_AboutToFinishPending = false;
-//        guLogMessage( wxT( "OnMediaLoaded... Push back the OnMediaLoaded event..." ) );
-//        //wxPostEvent( this, event );
-//        //return;
-//    }
+    guLogMessage( wxT( "OnMediaLoaded Cur: %i %i   %i %i" ), m_PlayListCtrl->GetCurItem(), event.GetInt(), m_TrackChanged, m_AutoTrackChanged );
 
     if( m_IsSkipping )
         m_IsSkipping = false;
 
     try {
-        //guLogMessage( wxT("OnMediaLoaded") );
-
-//        if( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION )
-//        {
-//            // Send an event so the LastFMPanel update its content.
-//            //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-//            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-//            event.SetClientData( new guTrack( m_MediaSong ) );
-//            wxPostEvent( wxTheApp->GetTopWindow(), event );
-//        }
-//        else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
-//        {
-//            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-//            event.SetClientData( NULL );
-//            wxPostEvent( wxTheApp->GetTopWindow(), event );
-//        }
 
         if( event.GetInt() )
         {
@@ -1863,16 +1831,8 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
             SetPosition( m_TrackStartPos );
             m_TrackStartPos = 0;
         }
-        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-        //SetVolume( m_CurVolume );
-        // If Enabled LastFM->Submit and no error then send Now Playing Information
-//        if( m_PendingScrob && m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
-//            ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
-//        {
-//            m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
-//            m_PendingScrob = false;
-//        }
 
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     catch(...)
     {
@@ -1883,6 +1843,10 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaPlayStarted( void )
 {
+    guLogMessage( wxT( "OnMediaPlayStarted  %i  %i" ), m_TrackChanged, m_AutoTrackChanged );
+
+    m_TrackChanged = false;
+
     // Update the Current Playing Song Info
     UpdateLabels();
     //UpdatePositionLabel( 0 );
@@ -2026,44 +1990,17 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnAboutToFinish( void )
-{
-//    guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
-//    if( NextItem )
-//    {
-//        guLogMessage( wxT( "Starting of About-To-Finish" ) );
-//        m_AboutToFinishPending = true;
-//        LoadMedia( NextItem->m_FileName, false );
-//    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnMediaAboutToFinish( guMediaEvent &event )
-{
-//    guLogMessage( wxT( "Ending About-To-Finish %i" ), m_AboutToFinishPending );
-//    guLogMessage( wxT( "Ending About to Finsih Cur: %i" ), m_PlayListCtrl->GetCurItem() );
-//    if( m_AboutToFinishPending )
-//    {
-//        SetCurrentTrack( m_PlayListCtrl->GetCurrent() );
-//        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-//        m_AboutToFinishPending = false;
-//        //guLogMessage( wxT( "End About-To-Finish %i" ), m_AboutToFinishPending );
-//        return;
-//    }
-}
-
-// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 {
     guLogMessage( wxT( "OnMediaFinished Cur: %i" ), m_PlayListCtrl->GetCurItem() );
 
     ResetVumeterLevel();
 
-    if( m_AboutToFinishPending )
+    if( m_AutoTrackChanged )
     {
-        m_AboutToFinishPending = false;
+        m_AutoTrackChanged = false;
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-        guLogMessage( wxT( "EOS cancelled...%i" ), m_AboutToFinishPending );
+        guLogMessage( wxT( "Media Finished Cancelled... %i %i" ), m_TrackChanged, m_AutoTrackChanged );
         return;
     }
 
@@ -2102,11 +2039,11 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFadeOutFinished( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaFadeOutFinished Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "OnMediaFadeOutFinished Cur: %i  %i %i" ), m_PlayListCtrl->GetCurItem(), m_TrackChanged, m_AutoTrackChanged );
 
-    if( m_AboutToFinishPending )
+    if( m_AutoTrackChanged )
     {
-        m_AboutToFinishPending = false;
+        m_AutoTrackChanged = false;
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
 }
@@ -2114,13 +2051,7 @@ void guPlayerPanel::OnMediaFadeOutFinished( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFadeInStarted( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaFadeInStarted Cur: %i" ), m_PlayListCtrl->GetCurItem() );
-
-//    if( m_AboutToFinishPending )
-//    {
-//        m_AboutToFinishPending = false;
-//        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-//    }
+    guLogMessage( wxT( "OnMediaFadeInStarted Cur: %i  %i %i" ), m_PlayListCtrl->GetCurItem(), m_TrackChanged, m_AutoTrackChanged );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2260,7 +2191,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
             if( State == guMEDIASTATE_PLAYING )
             {
                 m_IsSkipping = true;
-                m_AboutToFinishPending = m_FadeOutTime || !ForceSkip;
+                m_AutoTrackChanged = m_FadeOutTime || !ForceSkip;
                 LoadMedia( m_MediaSong.m_FileName,
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
@@ -2280,7 +2211,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 {
-    guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), m_AboutToFinishPending );
+    guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i    %i %i" ), m_PlayListCtrl->GetCurItem(), m_TrackChanged, m_AutoTrackChanged );
     guMediaState State;
     guTrack * NextItem;
 
@@ -2294,16 +2225,13 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     if( NextItem )
     {
         State = m_MediaCtrl->GetState();
-//        if( State != guMEDIASTATE_STOPPED )
-//        {
-//            m_MediaCtrl->Stop();
-//        }
-        //m_MediaSong = * NextItem;
+
         SetCurrentTrack( NextItem );
+
         if( State == guMEDIASTATE_PLAYING )
         {
             m_IsSkipping = true;
-            m_AboutToFinishPending = m_FadeOutTime || !ForceSkip;
+            m_AutoTrackChanged = m_FadeOutTime || !ForceSkip;
             LoadMedia( m_MediaSong.m_FileName,
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
@@ -2313,7 +2241,9 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
             guLogMessage( wxT( "Next Track when not playing.." ) );
             m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
+
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+
     }
     else
     {
@@ -2617,8 +2547,6 @@ bool guPlayerPanel::SetPosition( int pos )
 // -------------------------------------------------------------------------------- //
 int guPlayerPanel::GetPosition()
 {
-    if( m_AboutToFinishPending )
-        return 0;
     return m_LastCurPos; //m_MediaCtrl->Tell();
 }
 
