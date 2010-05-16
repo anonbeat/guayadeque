@@ -65,10 +65,12 @@ class guCurrentTrack : public guTrack
     unsigned int    m_PlayTime;           // how many secs the song have been played
     guSongCoverType m_CoverType;
     wxString        m_CoverPath;
+    wxImage *       m_CoverImage;
 
     guCurrentTrack()
     {
         m_Loaded = false;
+        m_CoverImage = NULL;
     }
 
     guCurrentTrack& operator=(const guTrack &Src)
@@ -117,6 +119,7 @@ class guCurrentTrack : public guTrack
             m_CoverType = GU_SONGCOVER_NONE;
         }
         m_CoverPath = wxEmptyString;
+        m_CoverImage = NULL;
         return *this;
     }
 
@@ -143,6 +146,11 @@ class guCurrentTrack : public guTrack
         m_LastPlay = track.m_LastPlay;
         m_AddedTime = track.m_AddedTime;
         m_CoverId = track.m_CoverId;
+        if( m_CoverImage )
+        {
+            delete m_CoverImage;
+            m_CoverImage = NULL;
+        }
     }
 };
 
@@ -235,9 +243,9 @@ class guPlayerPanel : public wxPanel
 
     bool                    m_ShowRevTime;
 
-    wxArrayString           m_ErrorStrings;
-
     bool                    m_PendingNewRecordName;
+
+    bool                    m_ErrorFound;
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
