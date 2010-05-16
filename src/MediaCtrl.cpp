@@ -192,7 +192,14 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             if( !FaderPlayBin )
             {
                 guLogMessage( wxT( "Couldn't find stream for error '%s'" ), GST_TO_WXSTRING( Error->message ).c_str() );
+
+                wxString * ErrorStr = new wxString( Error->message, wxConvUTF8 );
+                guMediaEvent event( guEVT_MEDIA_ERROR );
+                event.SetClientData( ( void * ) ErrorStr );
+                ctrl->AddPendingEvent( event );
+
                 g_error_free( Error );
+
                 break;
             }
 
@@ -3182,6 +3189,34 @@ void guMediaCtrl::CheckPendingPlayBin( void )
         }
     }
     Unlock();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::CleanPlayBins( void )
+{
+    // We finished a fading out without receiving the fade in start
+    // prolly because the seek was dragged after the position to do so
+    // We start here the pending playbins
+    guLogDebug( wxT( "Going to clean all fader playbins" ) );
+    Lock();
+#ifdef guSHOW_DUMPFADERPLAYBINS
+    DumpFaderPlayBins( m_FaderPlayBins );
+#endif
+    int Index;
+    int Count = m_FaderPlayBins.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guFaderPlayBin * FaderPlayBin = m_FaderPlayBins[ Index ];
+//        if( FaderPlayBin->m_State == guFADERPLAYBIN_STATE_PREROLLING )
+        {
+            FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+            guLogDebug( wxT( "CleanPlayBIns: stream %s" ), FaderPlayBin->m_Uri.c_str() );
+            //FaderPlayBin->StartFade( FaderPlayBin->m_Player->m_FadeInVolStart, 1.0, FaderPlayBin->m_Player->m_FadeInTime );
+            FaderPlayBin->UnlinkAndBlock();
+        }
+    }
+    Unlock();
+    ScheduleReap();
 }
 
 // -------------------------------------------------------------------------------- //

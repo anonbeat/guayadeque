@@ -102,6 +102,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_IsSkipping = false;
     m_ShowNotifications = true;
     m_ShowNotificationsTime = 0;
+    m_ErrorFound = false;
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
@@ -1573,6 +1574,36 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
         m_NotifySrv->Notify( wxEmptyString, wxT( "Guayadeque: GStreamer Error" ), _( "Unknown" ), NULL );
     }
 
+    if( m_MediaCtrl->GetState() == guMEDIASTATE_PLAYING )
+        m_ErrorFound = true;
+
+    m_MediaCtrl->ClearError();
+
+//    m_MediaCtrl->SetCurrentState( GST_STATE_READY );
+
+    m_MediaCtrl->CleanPlayBins();
+
+//    OnNextTrackButtonClick( CmdEvent );
+//
+//    OnPlayButtonClick( CmdEvent );
+
+//    // Be sure it will not try to play the track again
+//    event.SetInt( 0 );
+//    // Simulate the track loaded correctly.
+//    OnMediaLoaded( event );
+//
+//    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+//    AddPendingEvent( CmdEvent );
+//
+//    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
+//    AddPendingEvent( CmdEvent );
+
+//    CmdEvent.SetId( ID_PLAYERPANEL_STOP );
+//    AddPendingEvent( CmdEvent );
+//
+//    CmdEvent.SetId( ID_PLAYERPANEL_PLAY );
+//    AddPendingEvent( CmdEvent );
+
     if( m_TrackChanged )
         m_TrackChanged = false;
 
@@ -1582,24 +1613,8 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
     if( m_IsSkipping )
         m_IsSkipping = false;
 
-    m_MediaCtrl->ClearError();
-
-    // Be sure it will not try to play the track again
-    event.SetInt( 0 );
-    // Simulate the track loaded correctly.
-    OnMediaLoaded( event );
-
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
-    AddPendingEvent( CmdEvent );
-
-    CmdEvent.SetId( ID_PLAYERPANEL_NEXTTRACK );
-    AddPendingEvent( CmdEvent );
-
-    CmdEvent.SetId( ID_PLAYERPANEL_STOP );
-    AddPendingEvent( CmdEvent );
-
-    CmdEvent.SetId( ID_PLAYERPANEL_PLAY );
-    AddPendingEvent( CmdEvent );
+//    wxCommandEvent CmdEvent;
+//    OnNextTrackButtonClick( CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1631,6 +1646,16 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
         //
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+    }
+
+    if( m_ErrorFound )
+    {
+        m_ErrorFound = false;
+
+        wxCommandEvent CmdEvent;
+        OnNextTrackButtonClick( CmdEvent );
+        OnPlayButtonClick( CmdEvent );
     }
 }
 
@@ -1646,14 +1671,11 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     wxFileOffset CurLen = event.GetExtraLong();
     if( CurLen != m_LastLength )
     {
-        if( event.GetInt() > 0 )
-        {
-            m_LastLength = CurLen;
+        m_LastLength = CurLen;
 
-            guLogMessage( wxT( "Now the new track started playing" ) );
-            //m_MediaSong.m_Length = CurLen / 1000;
-            //UpdatePositionLabel( m_LastCurPos / 1000 );
-        }
+        guLogMessage( wxT( "Now the new track started playing" ) );
+        //m_MediaSong.m_Length = CurLen / 1000;
+        //UpdatePositionLabel( m_LastCurPos / 1000 );
         if( !m_LastLength )
             m_PlayerPositionSlider->SetValue( 0 );
     }
