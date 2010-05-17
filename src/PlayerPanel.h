@@ -197,6 +197,7 @@ class guPlayerPanel : public wxPanel
 	guMediaRecordCtrl *     m_MediaRecordCtrl;
 	guPlayerPanelTimer *    m_PlayerTimer;
     guCurrentTrack          m_MediaSong;
+    guTrack                 m_NextSong;
 	int                     m_LastPlayState;
 	double                  m_LastVolume;
 	wxFileOffset            m_LastCurPos;
@@ -274,7 +275,7 @@ class guPlayerPanel : public wxPanel
     void                OnMediaLength( guMediaEvent &event );
 
 
-    void                SetCurrentTrack( const guTrack * Song );
+    void                SetNextTrack( const guTrack * Song );
 
     // SmartPlay Events
     void                SmartAddTracks( const guTrack &CurSong );
