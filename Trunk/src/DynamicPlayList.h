@@ -87,6 +87,15 @@ enum guDYNAMIC_FILTER_OPTION_STRING {
     guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH
 };
 
+enum guDYNAMIC_FILTER_OPTION_LABELS {
+    guDYNAMIC_FILTER_OPTION_LABELS_CONTAINS = 0,
+    guDYNAMIC_FILTER_OPTION_LABELS_NOT_CONTAINS,
+    guDYNAMIC_FILTER_OPTION_LABELS_EQUAL,
+    guDYNAMIC_FILTER_OPTION_LABELS_START_WITH,
+    guDYNAMIC_FILTER_OPTION_LABELS_ENDS_WITH,
+    guDYNAMIC_FILTER_OPTION_LABELS_NOTSET
+};
+
 enum guDYNAMIC_FILTER_OPTION_YEAR {
     guDYNAMIC_FILTER_OPTION_YEAR_EQUAL = 0,
     guDYNAMIC_FILTER_OPTION_YEAR_AFTER,
@@ -171,7 +180,8 @@ class guDynPlayListEditor : public wxDialog
 
 		wxListBox * m_FiltersListBox;
 		wxChoice * m_FilterFieldChoice;
-		wxChoice * m_FilterOptionChoice;
+		wxChoice * m_FilterTextOptionChoice;
+		wxChoice * m_FilterLabelOptionChoice;
 		wxTextCtrl * m_FilterText;
 		guRating * m_FilterRating;
 		wxChoice * m_FilterDateOption2Choice;
