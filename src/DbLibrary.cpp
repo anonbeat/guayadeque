@@ -3072,22 +3072,33 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
 
       case guDYNAMIC_FILTER_TYPE_LABEL : // LABEL
-        if( dbNames.Find( wxT( "tags" ) ) == wxNOT_FOUND )
-            dbNames += wxT( ", tags " );
-        if( dbNames.Find( wxT( "settags" ) ) == wxNOT_FOUND )
-            dbNames += wxT( ", settags " );
-        if( !dbSets.IsEmpty() )
+        if( playlist->m_Filters[ index ].m_Option == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET )
         {
-            dbSets += wxT( "AND " );
+            if( !dbSets.IsEmpty() )
+            {
+                dbSets += wxT( "AND " );
+            }
+            query  += wxT( "( song_id NOT IN ( SELECT DISTINCT settag_songid FROM settags WHERE settag_songid > 0 ) ) " );
         }
-        dbSets  += wxT( "( ( song_id = settag_songid OR "
-                            "song_artistid = settag_artistid OR "
-                            "song_albumid = settag_albumid ) AND "
-                            "settag_tagid = tag_id ) " );
+        else
+        {
+            if( dbNames.Find( wxT( "tags" ) ) == wxNOT_FOUND )
+                dbNames += wxT( ", tags " );
+            if( dbNames.Find( wxT( "settags" ) ) == wxNOT_FOUND )
+                dbNames += wxT( ", settags " );
+            if( !dbSets.IsEmpty() )
+            {
+                dbSets += wxT( "AND " );
+            }
+            dbSets  += wxT( "( ( song_id = settag_songid OR "
+                                "song_artistid = settag_artistid OR "
+                                "song_albumid = settag_albumid ) AND "
+                                "settag_tagid = tag_id ) " );
 
-        query += wxT( "( tag_name " ) +
-                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
-                                    playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+            query += wxT( "( tag_name " ) +
+                     DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                        playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+        }
         break;
 
       case guDYNAMIC_FILTER_TYPE_COMPOSER : // COMPOSER
