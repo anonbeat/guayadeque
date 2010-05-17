@@ -1052,24 +1052,6 @@ void guPlayerPanel::UpdateStatus()
     IsUpdatingStatus = true;
 
     State = m_MediaCtrl->GetState();
-//    if( State != m_LastPlayState )
-//    {
-//        if( State == guMEDIASTATE_PLAYING )
-//        {
-//            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_pause ) );
-//            m_PlayButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_pause ) );
-//        }
-//        else
-//        {
-//            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_play ) );
-//            m_PlayButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_play ) );
-//        }
-//        m_PlayButton->Refresh();
-//        m_LastPlayState = State;
-//        //
-//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
-//        wxPostEvent( wxTheApp->GetTopWindow(), event );
-//    }
 
     if( State == guMEDIASTATE_PLAYING )
     {
@@ -1093,29 +1075,6 @@ void guPlayerPanel::UpdateStatus()
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
 
-//        //CurPos = m_MediaCtrl->Tell();
-//        CurPos = GetPosition();
-//        if( ( CurPos != m_LastCurPos ) && !m_SliderIsDragged )
-//        {
-////            if( !m_ShowRevTime )
-////            {
-////                m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
-////            }
-////            else
-////                m_PositionLabel->SetLabel( wxT( "-" ) + LenToString( m_MediaSong.m_Length - ( CurPos / 1000 ) ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
-////
-////            m_PosLabelSizer->Layout();
-//
-//            UpdatePositionLabel( CurPos / 1000 );
-//
-//            if( m_MediaSong.m_Length )
-//                m_PlayerPositionSlider->SetValue( CurPos / m_MediaSong.m_Length );
-//
-//            //printf( "Slider Updated to %lli of %lli\n", CurPos, ( long long int ) m_MediaSong.Length * 1000 );
-//            m_MediaSong.m_PlayTime = ( CurPos / 1000 );
-//            m_LastCurPos = CurPos;
-//        }
-
         // When tags are received while buffering the rename gets pending till the track start playing again
         // To avoid get the stream paused.
         if( m_PendingNewRecordName && ( m_BufferGaugeId == wxNOT_FOUND ) )
@@ -1123,32 +1082,6 @@ void guPlayerPanel::UpdateStatus()
             m_PendingNewRecordName = false;
             m_MediaRecordCtrl->SplitTrack();
         }
-    }
-
-    if( m_CurVolume != m_LastVolume )
-    {
-        if( m_CurVolume > 75 )
-        {
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_hi ) );
-            m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_hi ) );
-        }
-        else if( m_CurVolume > 50 )
-        {
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_mid ) );
-            m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
-        }
-        else if( m_CurVolume == 0 )
-        {
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_muted ) );
-            m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_muted ) );
-        }
-        else
-        {
-            m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_low ) );
-            m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_low ) );
-        }
-        m_VolumeButton->Refresh();
-        m_LastVolume = m_CurVolume;
     }
 
     // Total Length
@@ -1767,24 +1700,50 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
     guRadioTagInfo * RadioTag = ( guRadioTagInfo * ) event.GetClientData();
     if( RadioTag )
     {
-        if( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION )
+        if( ( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION ) ||
+            ( m_TrackChanged && ( m_NextSong.m_Type == guTRACK_TYPE_RADIOSTATION ) ) )
         {
+            //guLogMessage( wxT( "Radio Name: %s" ), wxString( RadioTag->m_Organization, wxConvUTF8 ).c_str() );
             if( RadioTag->m_Organization )
             {
-                m_MediaSong.m_AlbumName = wxString( RadioTag->m_Organization, wxConvUTF8 );
-                SetAlbumLabel( m_MediaSong.m_AlbumName );
-                if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
+                if( m_TrackChanged )
                 {
-                    m_MediaRecordCtrl->SetStation( m_MediaSong.m_AlbumName );
+                    m_NextSong.m_AlbumName = wxString( RadioTag->m_Organization, wxConvUTF8 );
+                    if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
+                    {
+                        m_MediaRecordCtrl->SetStation( m_NextSong.m_AlbumName );
+                    }
+                }
+                else
+                {
+                    m_MediaSong.m_AlbumName = wxString( RadioTag->m_Organization, wxConvUTF8 );
+                    SetAlbumLabel( m_MediaSong.m_AlbumName );
+                    if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
+                    {
+                        m_MediaRecordCtrl->SetStation( m_MediaSong.m_AlbumName );
+                    }
                 }
             }
 
+
             if( RadioTag->m_Genre )
             {
-                m_MediaSong.m_GenreName = wxString( RadioTag->m_Genre, wxConvUTF8 );
-                if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
+                //guLogMessage( wxT( "Radio Genre: %s" ), wxString( RadioTag->m_Genre, wxConvUTF8 ).c_str() );
+                if( m_TrackChanged )
                 {
-                    m_MediaRecordCtrl->SetGenre( m_MediaSong.m_GenreName );
+                    m_NextSong.m_GenreName = wxString( RadioTag->m_Genre, wxConvUTF8 );
+                    if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
+                    {
+                        m_MediaRecordCtrl->SetGenre( m_NextSong.m_GenreName );
+                    }
+                }
+                else
+                {
+                    m_MediaSong.m_GenreName = wxString( RadioTag->m_Genre, wxConvUTF8 );
+                    if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
+                    {
+                        m_MediaRecordCtrl->SetGenre( m_MediaSong.m_GenreName );
+                    }
                 }
             }
 
@@ -1792,17 +1751,30 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
             if( RadioTag->m_Title )
             {
                 wxString Title( RadioTag->m_Title, wxConvUTF8 );
-                ExtractMetaData( Title,
-                        m_MediaSong.m_ArtistName,
-                        m_MediaSong.m_SongName );
+                //guLogMessage( wxT( "Radio Title: %s" ), Title.c_str() );
+                if( m_TrackChanged )
+                {
+                    ExtractMetaData( Title,
+                            m_NextSong.m_ArtistName,
+                            m_NextSong.m_SongName );
+                }
+                else
+                {
+                    ExtractMetaData( Title,
+                            m_MediaSong.m_ArtistName,
+                            m_MediaSong.m_SongName );
+                    SetTitleLabel( m_MediaSong.m_SongName );
+                    SetArtistLabel( m_MediaSong.m_ArtistName );
+                }
 
                 //guLogMessage( wxT( "AlbumName: '%s'" ), m_MediaSong.m_AlbumName.c_str() );
-                SetTitleLabel( m_MediaSong.m_SongName );
-                SetArtistLabel( m_MediaSong.m_ArtistName );
 
                 if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
                 {
-                    m_MediaRecordCtrl->SetTrackName( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
+                    if( m_TrackChanged )
+                        m_MediaRecordCtrl->SetTrackName( m_NextSong.m_ArtistName, m_NextSong.m_SongName );
+                    else
+                        m_MediaRecordCtrl->SetTrackName( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
 
                     SendRecordSplitEvent();
                 }

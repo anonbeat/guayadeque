@@ -2035,33 +2035,39 @@ void guMediaCtrl::DisableRecord( void )
 
     if( CurState == GST_STATE_PLAYING )
     {
-        ////guLogDebug( wxT( "Trying to set state to pased" ) );
+//        guLogDebug( wxT( "Trying to set recordbin to pased" ) );
         if( gst_element_set_state( m_RecordBin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
         {
             guLogMessage( wxT( "Could not set record state removing record object" ) );
         }
 
         //if( gst_element_set_state( m_Pipeline, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
+//        guLogDebug( wxT( "Trying to set pipeline to pased" ) );
         if( !set_state_and_wait( m_Pipeline, GST_STATE_PAUSED, this ) )
         {
             guLogMessage( wxT( "Could not set playbin state removing record object" ) );
         }
     }
 
+//    guLogDebug( wxT( "Trying to set recordbin to null" ) );
     gst_element_set_state( m_RecordBin, GST_STATE_NULL );
 
+//    guLogDebug( wxT( "Trying to remove recordbin" ) );
     gst_bin_remove( GST_BIN( m_PlaybackBin ), m_RecordBin );
+//    guLogDebug( wxT( "Trying to dispose recordbin" ) );
     gst_object_unref( m_RecordBin );
     m_RecordBin = NULL;
     m_FileSink = NULL;
 
     if( CurState == GST_STATE_PLAYING )
     {
+//        guLogDebug( wxT( "Trying to set pipeline to playing" ) );
         if( gst_element_set_state( m_Pipeline, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
         {
             guLogMessage( wxT( "Could not restore state inserting record object" ) );
         }
     }
+//    guLogDebug( wxT( "Exit disable record" ) );
 
 }
 
