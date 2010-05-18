@@ -692,101 +692,101 @@ static void unlink_reuse_relink( guMediaCtrl * mediactrl, guFaderPlayBin * fader
 	}
 }
 
-// -------------------------------------------------------------------------------- //
-static gboolean set_state_and_wait( GstElement * bin, GstState target, guMediaCtrl * ctrl )
-{
-    GstBus * bus;
-    gboolean waiting;
-    gboolean result;
-
-    ////guLogDebug( wxT( "setting playbin state to %s" ), wxString( gst_element_state_get_name( target ), wxConvUTF8 ).c_str() );
-
-    switch( gst_element_set_state( bin, target ) )
-    {
-        case GST_STATE_CHANGE_SUCCESS :
-            ////guLogDebug( wxT( "State change was successful" ) );
-            return true;
-
-        case GST_STATE_CHANGE_NO_PREROLL:
-            ////guLogDebug( wxT( "state change was successful (no preroll)" ) );
-            return true;
-
-        case GST_STATE_CHANGE_ASYNC:
-            ////guLogDebug( wxT( "state is changing asynchronously" ) );
-            result = true;
-            break;
-
-        case GST_STATE_CHANGE_FAILURE:
-            ////guLogDebug( wxT( "state change failed" ) );
-            result = FALSE;
-            break;
-
-        default:
-            ////guLogDebug( wxT( "unknown state change return.." ) );
-            result = true;
-            break;
-    }
-
-    bus = gst_element_get_bus( bin );
-
-    waiting = true;
-
-    while( waiting )
-    {
-        GstMessage * message;
-
-        message = gst_bus_timed_pop( bus, GST_SECOND * 5 );
-        if( message == NULL )
-        {
-            //guLogError( wxT( "Timeout waiting for state change" ) );
-            break;
-        }
-
-        switch( GST_MESSAGE_TYPE( message ) )
-        {
-            case GST_MESSAGE_ERROR :
-            {
-                GError *gst_error = NULL;
-                gst_message_parse_error( message, &gst_error, NULL );
-                guLogError( wxT( "State change error '%s'" ), GST_TO_WXSTRING( gst_error->message ).c_str() );
-                g_error_free( gst_error );
-
-                waiting = FALSE;
-                result = FALSE;
-                break;
-            }
-
-            case GST_MESSAGE_STATE_CHANGED:
-            {
-                GstState oldstate;
-                GstState newstate;
-                GstState pending;
-                gst_message_parse_state_changed( message, &oldstate, &newstate, &pending );
-                if( GST_MESSAGE_SRC( message ) == GST_OBJECT( bin ) )
-                {
-                    ////guLogDebug( wxT( "playbin reached state %s" ), wxString( gst_element_state_get_name( newstate ), wxConvUTF8 ).c_str() );
-                    if( pending == GST_STATE_VOID_PENDING && newstate == target )
-                    {
-                        waiting = FALSE;
-                    }
-                }
-                break;
-            }
-
-            default:
-                // pass back to regular message handler
-                gst_bus_async_callback( bus, message, ctrl );
-            break;
-        }
-    }
-
-    if( result == FALSE )
-    {
-        guLogError( wxT( "Unable to start playback pipeline" ) );
-    }
-
-    return result;
-}
+//// -------------------------------------------------------------------------------- //
+//static gboolean set_state_and_wait( GstElement * bin, GstState target, guMediaCtrl * ctrl )
+//{
+//    GstBus * bus;
+//    gboolean waiting;
+//    gboolean result;
+//
+//    ////guLogDebug( wxT( "setting playbin state to %s" ), wxString( gst_element_state_get_name( target ), wxConvUTF8 ).c_str() );
+//
+//    switch( gst_element_set_state( bin, target ) )
+//    {
+//        case GST_STATE_CHANGE_SUCCESS :
+//            ////guLogDebug( wxT( "State change was successful" ) );
+//            return true;
+//
+//        case GST_STATE_CHANGE_NO_PREROLL:
+//            ////guLogDebug( wxT( "state change was successful (no preroll)" ) );
+//            return true;
+//
+//        case GST_STATE_CHANGE_ASYNC:
+//            ////guLogDebug( wxT( "state is changing asynchronously" ) );
+//            result = true;
+//            break;
+//
+//        case GST_STATE_CHANGE_FAILURE:
+//            ////guLogDebug( wxT( "state change failed" ) );
+//            result = FALSE;
+//            break;
+//
+//        default:
+//            ////guLogDebug( wxT( "unknown state change return.." ) );
+//            result = true;
+//            break;
+//    }
+//
+//    bus = gst_element_get_bus( bin );
+//
+//    waiting = true;
+//
+//    while( waiting )
+//    {
+//        GstMessage * message;
+//
+//        message = gst_bus_timed_pop( bus, GST_SECOND * 5 );
+//        if( message == NULL )
+//        {
+//            //guLogError( wxT( "Timeout waiting for state change" ) );
+//            break;
+//        }
+//
+//        switch( GST_MESSAGE_TYPE( message ) )
+//        {
+//            case GST_MESSAGE_ERROR :
+//            {
+//                GError *gst_error = NULL;
+//                gst_message_parse_error( message, &gst_error, NULL );
+//                guLogError( wxT( "State change error '%s'" ), GST_TO_WXSTRING( gst_error->message ).c_str() );
+//                g_error_free( gst_error );
+//
+//                waiting = FALSE;
+//                result = FALSE;
+//                break;
+//            }
+//
+//            case GST_MESSAGE_STATE_CHANGED:
+//            {
+//                GstState oldstate;
+//                GstState newstate;
+//                GstState pending;
+//                gst_message_parse_state_changed( message, &oldstate, &newstate, &pending );
+//                if( GST_MESSAGE_SRC( message ) == GST_OBJECT( bin ) )
+//                {
+//                    ////guLogDebug( wxT( "playbin reached state %s" ), wxString( gst_element_state_get_name( newstate ), wxConvUTF8 ).c_str() );
+//                    if( pending == GST_STATE_VOID_PENDING && newstate == target )
+//                    {
+//                        waiting = FALSE;
+//                    }
+//                }
+//                break;
+//            }
+//
+//            default:
+//                // pass back to regular message handler
+//                gst_bus_async_callback( bus, message, ctrl );
+//            break;
+//        }
+//    }
+//
+//    if( result == FALSE )
+//    {
+//        guLogError( wxT( "Unable to start playback pipeline" ) );
+//    }
+//
+//    return result;
+//}
 
 // -------------------------------------------------------------------------------- //
 static void faderplaybin_notify_source_cb( GstElement * decoder, GParamSpec * pspec, guFaderPlayBin * faderplaybin )
@@ -1406,6 +1406,7 @@ static gboolean reap_streams( guMediaCtrl * player )
 	return false;
 }
 
+// -------------------------------------------------------------------------------- //
 // called on a streaming thread when the stream src pad is blocked
 // (that is, when prerolling is complete).  in some situations we
 // start playback immediately, otherwise we wait for something else
@@ -1470,6 +1471,7 @@ static void stream_src_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBi
 	}
 }
 
+// -------------------------------------------------------------------------------- //
 static void post_eos_seek_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBin * faderplaybin )
 {
 	GError * Error = NULL;
@@ -1485,6 +1487,59 @@ static void post_eos_seek_blocked_cb( GstPad * pad, gboolean blocked, guFaderPla
     faderplaybin->Unlock();
 }
 
+
+// -------------------------------------------------------------------------------- //
+static void record_unlocked( GstPad * pad, bool isblocked, GstPad * new_pad )
+{
+	GstEvent * segment;
+	if( new_pad == NULL )
+		return;
+
+	// send a very unimaginative new segment through the new pad
+	segment = gst_event_new_new_segment( true, 1.0, GST_FORMAT_DEFAULT, 0, GST_CLOCK_TIME_NONE, 0 );
+	gst_pad_send_event( new_pad, segment );
+	gst_object_unref( new_pad );
+}
+
+// -------------------------------------------------------------------------------- //
+static void add_tee_element( GstPad * pad, bool isblocked, guMediaCtrl * ctrl )
+{
+	// add it into the pipeline
+	gst_bin_add( GST_BIN( ctrl->m_PlaybackBin ), ctrl->m_RecordBin );
+    ctrl->m_RecordPad = gst_element_get_request_pad( ctrl->m_Tee, "src%d" );
+
+	gst_pad_link( ctrl->m_RecordPad, ctrl->m_RecordGhostPad );
+
+	// if we're supposed to be playing, unblock the sink */
+	if( isblocked )
+	{
+		gst_element_set_state( ctrl->m_PlaybackBin, GST_STATE_PLAYING );
+		gst_object_ref( ctrl->m_RecordGhostPad );
+		gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), ctrl->m_RecordGhostPad );
+	}
+	else
+	{
+		gst_element_set_state( ctrl->m_PlaybackBin, GST_STATE_PAUSED );
+		gst_object_ref( ctrl->m_RecordGhostPad );
+		record_unlocked( NULL, false, ctrl->m_RecordGhostPad );
+	}
+
+}
+
+// -------------------------------------------------------------------------------- //
+static void remove_tee_element( GstPad * pad, bool isblocked, guMediaCtrl * ctrl )
+{
+    g_object_ref( ctrl->m_RecordBin );
+    gst_bin_remove( GST_BIN( ctrl->m_PlaybackBin ), ctrl->m_RecordBin );
+
+    gst_element_set_state( ctrl->m_RecordBin, GST_STATE_NULL );
+    g_object_unref( ctrl->m_RecordBin );
+    ctrl->m_RecordBin = NULL;
+    if( isblocked )
+    {
+        gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), NULL );
+    }
+}
 
 
 }
@@ -1703,8 +1758,11 @@ GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * enc
                 GstElement * queue = gst_element_factory_make( "queue", "rb_queue" );
                 if( IsValidElement( queue ) )
                 {
-                    g_object_set( queue, "max-size-time", 10 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
-                    //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
+                    // The bin contains elements that change state asynchronously and not as part of a state change in the entire pipeline.
+                    g_object_set( recordbin, "async-handling", true, NULL );
+
+                    g_object_set( queue, "max-size-buffers", 3, NULL );
+                    //g_object_set( queue, "max-size-time", 10 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
                     if( muxer )
                     {
@@ -1717,21 +1775,20 @@ GstElement * guMediaCtrl::BuildRecordBin( const wxString &path, GstElement * enc
                         gst_element_link_many( queue, converter, encoder, m_FileSink, NULL );
                     }
 
-                    //gst_element_set_state( recordbin, GST_STATE_PAUSED );
-                    gst_bin_add( GST_BIN( m_PlaybackBin ), recordbin );
+//                    //gst_element_set_state( recordbin, GST_STATE_PAUSED );
+//                    gst_bin_add( GST_BIN( m_PlaybackBin ), recordbin );
 
                     GstPad * pad = gst_element_get_pad( queue, "sink" );
                     if( GST_IS_PAD( pad ) )
                     {
-                        GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
-                        gst_element_add_pad( recordbin, ghostpad );
+                        m_RecordGhostPad = gst_ghost_pad_new( "sink", pad );
+                        gst_element_add_pad( recordbin, m_RecordGhostPad );
                         gst_object_unref( pad );
 
-                        //gst_element_link( m_Tee, recordbin );
-                        m_RecordPad = gst_element_get_request_pad( m_Tee, "src%d" );
-                        gst_pad_link( m_RecordPad, ghostpad );
-
-                        //g_object_set( recordbin, "async-handling", true, NULL );
+//                        //gst_element_link( m_Tee, recordbin );
+//                        gst_pad_link( m_RecordPad, ghostpad );
+//
+//                        //g_object_set( recordbin, "async-handling", true, NULL );
 
                         return recordbin;
                     }
@@ -1995,25 +2052,24 @@ bool guMediaCtrl::EnableRecord( const wxString &recfile, const int format, const
 
     if( Encoder )
     {
-        guMediaState State = GetState();
-        if( State == guMEDIASTATE_PLAYING )
-        {
-            if( gst_element_set_state( m_Pipeline, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
-            {
-                guLogMessage( wxT( "Could not set state inserting record object" ) );
-                return false;
-            }
-        }
 
         m_RecordBin = BuildRecordBin( recfile, Encoder, Muxer );
 
-        if( State == guMEDIASTATE_PLAYING )
+        bool NeedBlock = ( m_SinkState == SINK_PLAYING );
+        GstPad * AddPad;
+        GstPad * BlockPad;
+
+        AddPad = gst_element_get_static_pad( m_Tee, "sink" );
+        BlockPad = gst_pad_get_peer( AddPad );
+        gst_object_unref( AddPad );
+
+        if( NeedBlock )
         {
-            if( gst_element_set_state( m_Pipeline, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
-            {
-                guLogMessage( wxT( "Could not restore state inserting record object" ) );
-                return false;
-            }
+            gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( add_tee_element ), this );
+        }
+        else
+        {
+            add_tee_element( BlockPad, false, this );
         }
 
         return true;
@@ -2029,46 +2085,23 @@ bool guMediaCtrl::EnableRecord( const wxString &recfile, const int format, const
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::DisableRecord( void )
 {
-    GstState    CurState;
+    bool NeedBlock = ( m_SinkState == SINK_PLAYING );
 
-    gst_element_get_state( m_Pipeline, &CurState, NULL, 0 );
+    GstPad * AddPad;
+    GstPad * BlockPad;
 
-    if( CurState == GST_STATE_PLAYING )
+    AddPad = gst_element_get_static_pad( m_Tee, "sink" );
+    BlockPad = gst_pad_get_peer( AddPad );
+    gst_object_unref( AddPad );
+
+    if( NeedBlock )
     {
-//        guLogDebug( wxT( "Trying to set recordbin to pased" ) );
-        if( gst_element_set_state( m_RecordBin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
-        {
-            guLogMessage( wxT( "Could not set record state removing record object" ) );
-        }
-
-        //if( gst_element_set_state( m_Pipeline, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
-//        guLogDebug( wxT( "Trying to set pipeline to pased" ) );
-        if( !set_state_and_wait( m_Pipeline, GST_STATE_PAUSED, this ) )
-        {
-            guLogMessage( wxT( "Could not set playbin state removing record object" ) );
-        }
+        gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( remove_tee_element ), this );
     }
-
-//    guLogDebug( wxT( "Trying to set recordbin to null" ) );
-    gst_element_set_state( m_RecordBin, GST_STATE_NULL );
-
-//    guLogDebug( wxT( "Trying to remove recordbin" ) );
-    gst_bin_remove( GST_BIN( m_PlaybackBin ), m_RecordBin );
-//    guLogDebug( wxT( "Trying to dispose recordbin" ) );
-    gst_object_unref( m_RecordBin );
-    m_RecordBin = NULL;
-    m_FileSink = NULL;
-
-    if( CurState == GST_STATE_PLAYING )
+    else
     {
-//        guLogDebug( wxT( "Trying to set pipeline to playing" ) );
-        if( gst_element_set_state( m_Pipeline, GST_STATE_PLAYING ) == GST_STATE_CHANGE_FAILURE )
-        {
-            guLogMessage( wxT( "Could not restore state inserting record object" ) );
-        }
+        remove_tee_element( BlockPad, false, this );
     }
-//    guLogDebug( wxT( "Exit disable record" ) );
-
 }
 
 // -------------------------------------------------------------------------------- //
