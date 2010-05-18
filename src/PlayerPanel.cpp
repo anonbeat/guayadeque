@@ -1170,187 +1170,7 @@ void guPlayerPanel::SetNextTrack( const guTrack * Song )
         return;
 
     m_NextSong = * Song;
-
-//    // Check if the Current Song have played more than the half and if so add it to
-//    // The CachedPlayedSong database to be submitted to LastFM AudioScrobbling
-//    if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ) // If its not a radiostation
-//    {
-//        //guLogMessage( wxT( "PlayTime: %u Length: %u" ), m_MediaSong.PlayTime, m_MediaSong.Length );
-//        if( ( ( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
-//            ( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) ) ) && // If have played at least the half
-//            ( m_MediaSong.m_PlayTime > guAS_MIN_TRACKLEN ) )    // If the Length is more than 30 secs
-//        {
-//            if( !m_MediaSong.m_SongName.IsEmpty() &&    // Check if we have no missing data
-//                !m_MediaSong.m_ArtistName.IsEmpty() )
-//            {
-//                //
-//                m_AudioScrobble->SendPlayedTrack( m_MediaSong );
-//            }
-//        }
-//    }
-//
-//    // Update the play count if it has player at least the half of the track
-//    if( m_MediaSong.m_Loaded &&
-//        ( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
-//          ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) ) )  // If its a song from the library
-//    {
-//        if( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) )  // If have played at least the half
-//        {
-//            m_MediaSong.m_PlayCount++;
-//
-//            if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
-//                m_Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
-//            else
-//                m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
-//
-//            // Update the track in database, playlist, etc
-//            if( ( guMainFrame * ) wxTheApp->GetTopWindow() )
-//                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
-//        }
-//    }
-//
-//    // Enable or disables the record button. Only enabled for radio stations
-//    m_RecordButton->Enable( ( Song->m_Type == guTRACK_TYPE_RADIOSTATION ) );
-//    if( m_RecordButton->GetValue() )
-//    {
-//        m_RecordButton->SetValue( ( Song->m_Type == guTRACK_TYPE_RADIOSTATION ) );
-//        if( !m_RecordButton->GetValue() )
-//        {
-//            m_MediaRecordCtrl->Stop();
-//        }
-//        else
-//        {
-//            m_MediaRecordCtrl->SetTrack( * Song );
-//        }
-//    }
-//
-//    // Set the Current Song
-//    m_MediaSong = * Song;
-//
     m_TrackChanged = true;
-
-////    if( m_LastLength )
-////        m_MediaSong.m_Length = m_LastLength / 1000;
-////
-////    // Update the Current Playing Song Info
-////    UpdateLabels();
-////    //UpdatePositionLabel( 0 );
-////
-//////    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
-//////        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
-//////            m_PlayListCtrl->GetCurItem() + 1,
-//////            m_PlayListCtrl->GetCount(),
-//////            m_PlayListCtrl->GetLengthStr().c_str() ) );
-////    wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
-////    wxPostEvent( wxTheApp->GetTopWindow(), TitleEvent );
-////
-////
-////    wxImage * CoverImage;
-////    //guLogWarning( wxT( "SetNextTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
-////    CoverImage = NULL;
-////    if( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION )
-////    {
-////        CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
-////        m_MediaSong.m_CoverType = GU_SONGCOVER_RADIO;
-////    }
-////    else if( ( CoverImage = guTagGetPicture( m_MediaSong.m_FileName ) ) )
-////    {
-////        m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
-////    }
-////    else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
-////    {
-////        CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
-////        m_MediaSong.m_CoverType = GU_SONGCOVER_PODCAST;
-////    }
-////    else if( m_MediaSong.m_CoverId )
-////    {
-////        //guLogMessage( wxT( "CoverId %i" ), m_MediaSong.m_CoverId );
-////        m_MediaSong.m_CoverPath = m_Db->GetCoverPath( m_MediaSong.m_CoverId );
-////        m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
-////    }
-////    else
-////    {
-////        //guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_MediaSong.m_FileName ).c_str() );
-////        m_MediaSong.m_CoverPath = m_PlayListCtrl->FindCoverFile( wxPathOnly( m_MediaSong.m_FileName ) );
-////    }
-////
-//////    guLogMessage( wxT( "   File : %s" ), m_MediaSong.m_FileName.c_str() );
-//////    guLogMessage( wxT( " Loaded : %i" ), m_MediaSong.m_Loaded );
-//////    guLogMessage( wxT( "   Type : %i" ), m_MediaSong.m_Type );
-//////    guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
-//////    guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
-//////    guLogMessage( wxT( "Co.Type : %i" ), m_MediaSong.m_CoverType );
-//////    guLogMessage( wxT( "  Cover : '%s'" ), m_MediaSong.m_CoverPath.c_str() );
-//////    guLogMessage( wxT( "===========================================" ) );
-////
-////    if( !CoverImage )
-////    {
-////        if( m_MediaSong.m_CoverPath.IsEmpty() || !wxFileExists( m_MediaSong.m_CoverPath ) )
-////        {
-////            //printf( "No coverpath set\n" );
-////            CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
-////            m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
-////            m_MediaSong.m_CoverPath = wxEmptyString;
-////        }
-////        else
-////        {
-////            CoverImage = new wxImage( m_MediaSong.m_CoverPath );
-////            m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
-////            //m_MediaSong.CoverPath = CoverPath;
-////        }
-////    }
-////
-////    // Cover
-////    if( CoverImage )
-////    {
-////        if( CoverImage->IsOk() )
-////        {
-////            CoverImage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
-////            m_PlayerCoverBitmap->SetBitmap( wxBitmap( *CoverImage ) );
-////            m_PlayerCoverBitmap->Refresh();
-////        }
-////    }
-////
-////    // Check if Smart is enabled
-////    if( ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) && m_PlaySmart &&
-////        ( ( m_PlayListCtrl->GetCurItem() + m_SmartPlayMinTracksToPlay ) >= m_PlayListCtrl->GetCount() ) )
-////    {
-////        SmartAddTracks( m_MediaSong );
-////    }
-////
-////    // If its a Radio disable PositionSlider
-////    //m_PlayerPositionSlider->SetValue( 0 );
-////    if( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION )
-////    {
-////        m_PlayerPositionSlider->Disable();
-////    }
-////    else if( !m_PlayerPositionSlider->IsEnabled() )
-////    {
-////        m_PlayerPositionSlider->Enable();
-////    }
-////
-////    // Send the CapsChanged Event
-////    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
-////    wxPostEvent( wxTheApp->GetTopWindow(), event );
-////
-////    if( m_MediaCtrl->GetState() == guMEDIASTATE_PLAYING )
-////    {
-////        // If Enabled LastFM->Submit and no error then send Now Playing Information
-////        if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
-////            ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
-////        {
-////            m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
-////        }
-////    }
-////    else
-////    {
-////        m_PendingScrob = true;
-////    }
-////
-////    SendNotifyInfo( CoverImage );
-////
-////    if( CoverImage )
-////        delete CoverImage;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2317,7 +2137,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 {
-    //guLogMessage( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     guMediaState State;
 
     if( m_PendingNewRecordName )
@@ -2328,14 +2148,21 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     //if( !m_MediaSong.m_SongId && m_PlayListCtrl->GetItemCount() )
     if( !m_MediaSong.m_Loaded && m_PlayListCtrl->GetItemCount() )
     {
-        m_PlayListCtrl->SetCurrent( 0, m_DelTracksPlayed && !m_PlayLoop );
+        guLogMessage( wxT( "Going to load the track..." ) );
+        if( m_PlayListCtrl->GetCurItem() == wxNOT_FOUND )
+            m_PlayListCtrl->SetCurrent( 0, m_DelTracksPlayed && !m_PlayLoop );
         //m_MediaSong = * m_PlayListCtrl->GetCurrent();
         SetNextTrack( m_PlayListCtrl->GetCurrent() );
+
+        LoadMedia( m_NextSong.m_FileName,
+            m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
+        return;
     }
 
     if( m_MediaSong.m_Loaded )
     {
         State = m_MediaCtrl->GetState();
+        guLogMessage( wxT( "State: %i" ), State );
         if( State == guMEDIASTATE_PLAYING )
         {
             if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
@@ -2351,7 +2178,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
         }
         else if( State == guMEDIASTATE_STOPPED )
         {
-            //guLogMessage( wxT( "Loading '%s'" ), m_MediaSong.FileName.c_str() );
+            //guLogMessage( wxT( "Loading '%s'" ), m_NextSong.m_FileName.c_str() );
             LoadMedia( m_NextSong.m_FileName,
                 m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
             return;
