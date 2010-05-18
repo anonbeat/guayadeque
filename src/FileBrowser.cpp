@@ -1981,7 +1981,9 @@ void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
         wxString CurCmd = Commands[ Index ];
         if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
         {
-            CurCmd.Replace( wxT( "{bp}" ), wxT( "\"" ) + m_DirCtrl->GetPath() + wxT( "\"" ) );
+            wxString DirPath = m_DirCtrl->GetPath();
+            DirPath.Replace( wxT( " " ), wxT( "\\ " ) );
+            CurCmd.Replace( wxT( "{bp}" ), DirPath );
         }
 
         if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
@@ -2017,7 +2019,9 @@ void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
         wxString CurCmd = Commands[ Index ];
         if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
         {
-            CurCmd.Replace( wxT( "{bp}" ), wxT( "\"" ) + m_DirCtrl->GetPath() + wxT( "\"" ) );
+            wxString DirPath = m_DirCtrl->GetPath();
+            DirPath.Replace( wxT( " " ), wxT( "\\ " ) );
+            CurCmd.Replace( wxT( "{bp}" ), DirPath );
         }
 
         if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )

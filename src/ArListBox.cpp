@@ -188,26 +188,12 @@ void guArListBox::OnCommandClicked( wxCommandEvent &event )
                 wxArrayInt AlbumList;
                 m_Db->GetArtistsAlbums( Selection, &AlbumList );
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( AlbumList );
-                wxArrayString FilteredAlbumPaths;
                 count = AlbumPaths.Count();
                 wxString Paths = wxEmptyString;
                 for( index = 0; index < count; index++ )
                 {
-                    wxString Path = AlbumPaths[ index ];
-                    if( Path.Last() == wxT( '/' ) )
-                    {
-                        Path.RemoveLast();
-                    }
-                    Path = Path.BeforeLast( wxT( '/' ) );
-                    if( FilteredAlbumPaths.Index( Path ) == wxNOT_FOUND )
-                    {
-                        FilteredAlbumPaths.Add( Path );
-                    }
-                }
-                count = FilteredAlbumPaths.Count();
-                for( index = 0; index < count; index++ )
-                {
-                    Paths += wxT( " \"" ) + FilteredAlbumPaths[ index ] + wxT( "\"" );
+                    AlbumPaths[ index ].Replace( wxT( " " ), wxT( "\\ " ) );
+                    Paths += wxT( " " ) + AlbumPaths[ index ];
                 }
                 CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
             }
