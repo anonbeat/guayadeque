@@ -287,6 +287,7 @@ class guMediaCtrl : public wxEvtHandler
 
     GstElement *            m_Tee;
     GstPad *                m_RecordPad;
+    GstPad *                m_RecordGhostPad;
     GstElement *            m_Volume;
     GstElement *            m_Equalizer;
     GstElement *            m_FileSink;
