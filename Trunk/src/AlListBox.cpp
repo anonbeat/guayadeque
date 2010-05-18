@@ -320,7 +320,9 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
                 count = AlbumPaths.Count();
                 for( index = 0; index < count; index++ )
                 {
-                    Paths += wxT( " \"" ) + AlbumPaths[ index ] + wxT( "\"" );
+                    //Paths += wxT( " \"" ) + AlbumPaths[ index ] + wxT( "\"" );
+                    AlbumPaths[ index ].Replace( wxT( " " ), wxT( "\\ " )  );
+                    Paths += wxT( " " ) + AlbumPaths[ index ];
                 }
                 CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
             }
