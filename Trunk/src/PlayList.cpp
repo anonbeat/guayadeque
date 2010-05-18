@@ -697,7 +697,7 @@ void guPlayList::AddItem( const guTrack &NewItem, const int pos )
     else
     {
         InsertPos = pos;
-        if( InsertPos < 0 || InsertPos > m_Items.Count() )
+        if( InsertPos < 0 || InsertPos > ( int ) m_Items.Count() )
             InsertPos = wxNOT_FOUND;
         if( InsertPos != wxNOT_FOUND )
         {
@@ -1622,7 +1622,9 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
 
             if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
             {
-                wxString Path = wxT( "\"" ) + wxPathOnly( m_Items[ Selection[ 0 ] ].m_FileName ) + wxT( "\"" );
+                //wxString Path = wxT( "\"" ) + wxPathOnly( m_Items[ Selection[ 0 ] ].m_FileName ) + wxT( "\"" );
+                wxString Path = wxPathOnly( m_Items[ Selection[ 0 ] ].m_FileName );
+                Path.Replace( wxT( " " ), wxT( "\\ " ) );
                 CurCmd.Replace( wxT( "{bp}" ), Path );
             }
 
