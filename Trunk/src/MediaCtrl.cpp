@@ -1523,7 +1523,6 @@ static void add_tee_element( GstPad * pad, bool isblocked, guMediaCtrl * ctrl )
 		gst_object_ref( ctrl->m_RecordGhostPad );
 		record_unlocked( NULL, false, ctrl->m_RecordGhostPad );
 	}
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1535,7 +1534,7 @@ static void remove_tee_element( GstPad * pad, bool isblocked, guMediaCtrl * ctrl
     gst_element_set_state( ctrl->m_RecordBin, GST_STATE_NULL );
     g_object_unref( ctrl->m_RecordBin );
     ctrl->m_RecordBin = NULL;
-    if( isblocked )
+   if( isblocked )
     {
         gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), NULL );
     }

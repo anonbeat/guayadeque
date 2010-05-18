@@ -111,9 +111,9 @@ class guPlayList : public guListView
 
     void                        SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
 
-    void                        AddItem( const guTrack &NewItem );
-    void                        AddItem( const guTrack * NewItem );
-    void                        AddPlayListItem( const wxString &FileName, bool AddPath = false );
+    void                        AddItem( const guTrack &NewItem, const int pos = wxNOT_FOUND );
+    //void                        AddItem( const guTrack * NewItem );
+    void                        AddPlayListItem( const wxString &FileName, bool AddPath = false, const int pos = wxNOT_FOUND );
 
     virtual void                ReloadItems( bool reset = true );
 
