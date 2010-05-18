@@ -680,7 +680,7 @@ void guPlayList::ReloadItems( bool reset )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::AddItem( const guTrack &NewItem )
+void guPlayList::AddItem( const guTrack &NewItem, const int pos )
 {
     int InsertPos;
     if( m_DragOverItem != wxNOT_FOUND )
@@ -696,16 +696,28 @@ void guPlayList::AddItem( const guTrack &NewItem )
     }
     else
     {
-        m_Items.Add( NewItem );
+        InsertPos = pos;
+        if( InsertPos < 0 || InsertPos > m_Items.Count() )
+            InsertPos = wxNOT_FOUND;
+        if( InsertPos != wxNOT_FOUND )
+        {
+            if( InsertPos <= m_CurItem )
+                m_CurItem++;
+            m_Items.Insert( NewItem, InsertPos );
+        }
+        else
+        {
+            m_Items.Add( NewItem );
+        }
     }
 }
 
-// -------------------------------------------------------------------------------- //
-void guPlayList::AddItem( const guTrack * NewItem )
-{
-    AddItem( * NewItem );
-}
-
+//// -------------------------------------------------------------------------------- //
+//void guPlayList::AddItem( const guTrack * NewItem )
+//{
+//    AddItem( * NewItem );
+//}
+//
 // -------------------------------------------------------------------------------- //
 void guPlayList::SetCurrent( int curitem, bool delold )
 {
@@ -937,7 +949,7 @@ wxString guPlayList::FindCoverFile( const wxString &dirname )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
+void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const int pos )
 {
     // Check if its a uri or a filename
     int Index;
@@ -954,12 +966,13 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
     // If its a playlist
     if( guPlayListFile::IsValidPlayList( Uri.GetPath() ) )
     {
+        int InsertPos = pos;
         guPlayListFile PlayList( FileName );
         if( ( Count = PlayList.Count() ) )
         {
             for( Index = 0; Index < Count; Index++ )
             {
-                AddPlayListItem( PlayList.GetItem( Index ).m_Location );
+                AddPlayListItem( PlayList.GetItem( Index ).m_Location, InsertPos++ );
             }
         }
     }
@@ -1017,7 +1030,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
 
                 m_TotalLen += Track.m_Length;
 
-                AddItem( Track );
+                AddItem( Track, pos );
             }
             else
             {
@@ -1031,6 +1044,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
             if( !DirName.EndsWith( wxT( "/" ) ) )
                 DirName += wxT( "/" );
 
+            int InsertPos = pos;
             Dir.Open( FileName );
             if( Dir.IsOpened() )
             {
@@ -1039,7 +1053,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
                     do {
                         if( ( FileName[ 0 ] != '.' ) )
                         {
-                            AddPlayListItem( DirName + FileName, addpath );
+                            AddPlayListItem( DirName + FileName, addpath, InsertPos++ );
                         }
                     } while( Dir.GetNext( &FileName ) );
                 }
@@ -1061,7 +1075,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath )
         Track.m_Year     = 0;
         Track.m_Bitrate  = 0;
         Track.m_Rating   = wxNOT_FOUND;
-        AddItem( Track );
+        AddItem( Track, pos );
     }
 }
 
