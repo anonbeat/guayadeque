@@ -246,6 +246,7 @@ class guMainFrame : public wxFrame
 //    void                SetPlayListTracks( wxCommandEvent &event );
 //    void                SetPodcasts( wxCommandEvent &event );
     void                OnUpdateSelInfo( wxCommandEvent &event );
+    void                OnRequestCurrentTrack( wxCommandEvent &event );
 
     //void                OnSysColorChanged( wxSysColourChangedEvent &event );
 

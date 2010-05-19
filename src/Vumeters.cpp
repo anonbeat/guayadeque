@@ -108,6 +108,7 @@ void guVumeter::PaintHoriz( void )
     //m_PeakLevel = TestValues[ wxGetUTCTime() % 19 ];
     int PeakLevel = IEC_Scale( m_PeakLevel ) * 100;
     int DecayLevel = IEC_Scale( m_DecayLevel ) * 100;
+    //guLogMessage( wxT( "Peak: %i" ), PeakLevel );
 
 	int SizeG = ( Width * 10 ) / 100;
 
