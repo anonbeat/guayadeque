@@ -1681,6 +1681,12 @@ void guLastFMPanel::SetUpdateEnable( bool value )
 void guLastFMPanel::OnUpdateChkBoxClick( wxCommandEvent &event )
 {
     m_UpdateEnabled = m_UpdateCheckBox->IsChecked();
+    if( m_UpdateEnabled )
+    {
+        wxCommandEvent UpdateEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_REQUEST_CURRENTTRACK );
+        UpdateEvent.SetClientData( this );
+        wxPostEvent( wxTheApp->GetTopWindow(), UpdateEvent );
+    }
     //
     m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
     m_TrackTextCtrl->Enable( !m_UpdateEnabled );
