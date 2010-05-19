@@ -365,8 +365,9 @@ void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
     }
     if( m_UpdateEnabled )
     {
-        m_ArtistTextCtrl->SetValue( m_CurrentTrackInfo.m_ArtistName );
-        m_TrackTextCtrl->SetValue( m_CurrentTrackInfo.m_TrackName );
+        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_REQUEST_CURRENTTRACK );
+        Event.SetClientData( this );
+        wxPostEvent( wxTheApp->GetTopWindow(), Event );
     }
     m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
     m_TrackTextCtrl->Enable( !m_UpdateEnabled );

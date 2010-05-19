@@ -531,6 +531,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_CatNotebook->Connect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler( guMainFrame::OnPageClosed ), NULL, this );
 
     Connect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
+    Connect( ID_MAINFRAME_REQUEST_CURRENTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRequestCurrentTrack ), NULL, this );
 //    Connect( ID_MAINFRAME_SET_RADIOSTATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetRadioStations ), NULL, this );
 //    Connect( ID_MAINFRAME_SET_PLAYLISTTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPlayListTracks ), NULL, this );
 //    Connect( ID_MAINFRAME_SET_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::SetPodcasts ), NULL, this );
@@ -645,6 +646,7 @@ guMainFrame::~guMainFrame()
     m_CatNotebook->Disconnect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler( guMainFrame::OnPageClosed ), NULL, this );
 
     Disconnect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
+    Disconnect( ID_MAINFRAME_REQUEST_CURRENTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRequestCurrentTrack ), NULL, this );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -2395,6 +2397,25 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
         //m_SelSize = wxNOT_FOUND;
         m_MainStatusBar->SetSelInfo( wxEmptyString );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnRequestCurrentTrack( wxCommandEvent &event )
+{
+    wxCommandEvent UpdateEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+    guTrack * CurTrack = new guTrack( * m_PlayerPanel->GetCurrentTrack() );
+    UpdateEvent.SetClientData( CurTrack );
+
+    if( event.GetClientData() == m_LyricsPanel )
+    {
+        m_LyricsPanel->OnUpdatedTrack( UpdateEvent );
+    }
+    else if( event.GetClientData() == m_LastFMPanel )
+    {
+        m_LastFMPanel->OnUpdatedTrack( UpdateEvent );
+    }
+
+    delete CurTrack;
 }
 
 // -------------------------------------------------------------------------------- //
