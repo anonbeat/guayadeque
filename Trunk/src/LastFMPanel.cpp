@@ -1966,6 +1966,9 @@ void guLastFMPanel::OnEventsTitleDClick( wxMouseEvent &event )
 void guLastFMPanel::OnDropFiles( const wxArrayString &files )
 {
     //guLogMessage( wxT( "guLastFMPanelDropTarget::OnDropFiles" ) );
+    if( !files.Count() )
+        return;
+
     guTrack Track;
     if( m_Db->FindTrackFile( files[ 0 ], &Track ) )
     {
