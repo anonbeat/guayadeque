@@ -785,6 +785,9 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
     //guLogMessage( wxT( "guLastFMPanelDropTarget::OnDropFiles" ) );
     guTrack Track;
 
+    if( !files.Count() )
+        return;
+
     // If have been edited and not saved
     if( m_LyricText->IsModified() )
     {
