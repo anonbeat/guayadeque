@@ -241,6 +241,7 @@ class guPlayerPanel : public wxPanel
 
     bool                    m_AutoTrackChanged;
     bool                    m_TrackChanged;
+    bool                    m_FadeOutFinished;
 
     bool                    m_ShowRevTime;
 

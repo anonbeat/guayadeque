@@ -87,6 +87,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_TrackChanged = true;
 
     m_AutoTrackChanged = false;
+    m_FadeOutFinished = false;
 
     wxArrayInt Equalizer;
 
@@ -1288,6 +1289,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
             {
                 guLogMessage( wxT( "Silence detected. Changed to next track %i" ), m_PlayListCtrl->GetCurItem() );
                 m_AutoTrackChanged = true;
+                m_FadeOutFinished = false;
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
             }
@@ -1445,6 +1447,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             ( CurPos + m_FadeOutTime + 3000 >= m_LastLength ) )
         {
             m_AutoTrackChanged = true;
+            m_FadeOutFinished = false;
             wxCommandEvent evt;
             OnNextTrackButtonClick( evt );
         }
@@ -1862,7 +1865,7 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 
     ResetVumeterLevel();
 
-    if( m_AutoTrackChanged )
+    if( m_AutoTrackChanged || m_FadeOutFinished )
     {
         m_AutoTrackChanged = false;
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
@@ -1907,6 +1910,7 @@ void guPlayerPanel::OnMediaFadeOutFinished( guMediaEvent &event )
 {
     guLogMessage( wxT( "OnMediaFadeOutFinished Cur: %i  %i %i" ), m_PlayListCtrl->GetCurItem(), m_TrackChanged, m_AutoTrackChanged );
 
+    m_FadeOutFinished = true;
     if( m_AutoTrackChanged )
     {
         m_AutoTrackChanged = false;
@@ -2058,6 +2062,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
             {
                 m_IsSkipping = true;
                 m_AutoTrackChanged = m_FadeOutTime || !ForceSkip;
+                m_FadeOutFinished = false;
                 LoadMedia( m_NextSong.m_FileName,
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
@@ -2098,6 +2103,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         {
             m_IsSkipping = true;
             m_AutoTrackChanged = m_FadeOutTime || !ForceSkip;
+            m_FadeOutFinished = false;
             LoadMedia( m_NextSong.m_FileName,
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
