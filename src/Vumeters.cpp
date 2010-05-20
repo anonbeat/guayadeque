@@ -192,7 +192,7 @@ void guVumeter::PaintHoriz( void )
 
     //
     // Draw the decay level
-    if( DecayLevel && ( DecayLevel > PeakLevel ) )
+    if( DecayLevel && ( DecayLevel > PeakLevel ) && ( DecayLevel < 99 ) )
     {
         wxRect ClipRect = Rect;
         ClipRect.width = 2;
@@ -332,7 +332,7 @@ void guVumeter::PaintVert( void )
     // Draw the decay level
     Rect.height = SizeG * 7;
     Rect.y = Height - Rect.height;
-    if( DecayLevel && ( DecayLevel > PeakLevel ) )
+    if( DecayLevel && ( DecayLevel > PeakLevel ) && ( DecayLevel < 99 ) )
     {
         wxRect ClipRect = Rect;
         ClipRect.height = 2;
