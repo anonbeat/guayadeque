@@ -3347,12 +3347,12 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 
               case guDYNAMIC_FILTER_LIMIT_MEGABYTES : // MB -> To bytes
                 Limit = PlayList.m_LimitValue;
-                Limit *= 1000;
+                Limit *= 1000000;
                 break;
 
               case guDYNAMIC_FILTER_LIMIT_GIGABYTES : // GB -> to bytes
                 Limit = PlayList.m_LimitValue;
-                Limit *= 1000000;
+                Limit *= 1000000000;
                 break;
           }
       }
@@ -3369,6 +3369,8 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
         FillTrackFromDb( Track, &dbRes );
         if( PlayList.m_Limited )
         {
+            //guLogMessage( wxT( "Limit: %lli / %lli" ), Count.GetValue(), Limit.GetValue() );
+
             if( PlayList.m_LimitType == guDYNAMIC_FILTER_LIMIT_TRACKS )
             {
                 Count++;
