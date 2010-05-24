@@ -2867,7 +2867,7 @@ void guDbLibrary::GetPlayLists( guListItems * PlayLists, const int type )
   wxSQLite3ResultSet dbRes;
 //  guListItems RetVal;
 
-  query = wxString::Format( wxT( "SELECT playlist_id, playlist_name FROM playlists WHERE playlist_type = %u;" ), type );
+  query = wxString::Format( wxT( "SELECT playlist_id, playlist_name FROM playlists WHERE playlist_type = %u ORDER BY playlist_name COLLATE NOCASE;" ), type );
 
   dbRes = ExecuteQuery( query );
 

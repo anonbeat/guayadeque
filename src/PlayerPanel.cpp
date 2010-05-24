@@ -2682,7 +2682,7 @@ guSmartAddTracksThread::~guSmartAddTracksThread()
 //    printf( "guSmartAddTracksThread Object destroyed\n" );
   if( !TestDestroy() )
     m_PlayerPanel->m_SmartAddTracksThread = NULL;
-};
+}
 
 // -------------------------------------------------------------------------------- //
 void guSmartAddTracksThread::AddSimilarTracks( const wxString &artist, const wxString &track, guTrackArray * songs )
