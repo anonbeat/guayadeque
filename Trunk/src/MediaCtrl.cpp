@@ -3301,6 +3301,8 @@ void guMediaRecordCtrl::UpdatedConfig( void )
             m_Ext = wxT( ".flac" );
             break;
     }
+
+    guLogMessage( wxT( "Record to '%s' %i, %i '%s'" ), m_MainPath.c_str(), m_Format, m_Quality, m_Ext.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //

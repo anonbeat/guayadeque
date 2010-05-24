@@ -1213,6 +1213,7 @@ void guPlayerPanel::LoadMedia( const wxString &FileName, guPlayerPlayType playty
         {
             guLogError( wxT( "ee: Failed load of file '%s'" ), Uri.c_str() );
             //guLogError( wxT( "ee: The filename was '%s'" ), FileName.c_str() );
+            m_MediaCtrl->CleanPlayBins();
         }
     }
     catch(...)
