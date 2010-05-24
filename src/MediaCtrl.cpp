@@ -3011,6 +3011,12 @@ bool guMediaCtrl::Stop( void )
 	Lock();
 	int Index;
 	int Count = m_FaderPlayBins.Count();
+	if( !Count )
+	{
+	    Unlock();
+        return true;
+	}
+
 	for( Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = m_FaderPlayBins[ Index ];
