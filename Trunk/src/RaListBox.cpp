@@ -100,6 +100,10 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
+    MenuItem = new wxMenuItem( Menu, ID_RATING_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected tracks to playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    Menu->Append( MenuItem );
+
     if( SelCount )
     {
         Menu->AppendSeparator();

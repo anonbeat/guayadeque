@@ -846,7 +846,7 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowplay )
+void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowplay, const bool aftercurrent )
 {
     int PrevTrackCount = m_PlayListCtrl->GetCount();
     if( tracks.Count() )
@@ -855,7 +855,7 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowp
         bool ClearPlayList = ( Track->m_TrackMode == guTRACK_MODE_RANDOM ||
                                Track->m_TrackMode == guTRACK_MODE_SMART ) && !m_DelTracksPlayed;
 
-        m_PlayListCtrl->AddToPlayList( tracks, ClearPlayList );
+        m_PlayListCtrl->AddToPlayList( tracks, ClearPlayList, aftercurrent );
 
         TrackListChanged();
 

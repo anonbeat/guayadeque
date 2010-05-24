@@ -401,7 +401,7 @@ void guPlayList::OnKeyDown( wxKeyEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold )
+void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold, const bool aftercurrent )
 {
     wxMutexLocker Lock( m_ItemsMutex );
     int Index;
@@ -412,7 +412,14 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold 
     Count = items.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-      m_Items.Add( items[ Index ] );
+      if( !aftercurrent )
+      {
+        m_Items.Add( items[ Index ] );
+      }
+      else
+      {
+        m_Items.Insert( items[ Index ], m_CurItem + 1 + Index );
+      }
       m_TotalLen += items[ Index ].m_Length;
 
       while( deleteold && ( m_CurItem != 0 ) && ( ( m_CurItem ) > m_MaxPlayedTracks ) )

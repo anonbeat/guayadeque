@@ -370,7 +370,15 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
+    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected songs to the playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    Menu->Append( MenuItem );
+
     MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL, _( "Enqueue All" ), _( "Add all songs to the playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL_ASNEXT, _( "Enqueue All Next" ), _( "Add all songs to the playlist as Next Tracks" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
