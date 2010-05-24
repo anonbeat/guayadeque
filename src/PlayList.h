@@ -131,7 +131,7 @@ class guPlayList : public guListView
     void                        ClearItems();
     long                        GetLength( void ) const;
     wxString                    GetLengthStr( void ) const;
-    void                        AddToPlayList( const guTrackArray &NewItems, const bool DeleteOld = false );
+    void                        AddToPlayList( const guTrackArray &newitems, const bool deleteold = false, const bool aftercurrent = false );
     void                        SetPlayList( const guTrackArray &NewItems );
     wxString                    FindCoverFile( const wxString &DirName );
     void                        Randomize( void );

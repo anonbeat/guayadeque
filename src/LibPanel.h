@@ -92,6 +92,7 @@ class guLibPanel : public wxPanel
     void OnLabelListSelected( wxListEvent &event );
     void OnLabelPlayClicked( wxCommandEvent &event );
     void OnLabelQueueClicked( wxCommandEvent &event );
+    void OnLabelQueueAsNextClicked( wxCommandEvent &event );
 //    void OnLabelClearSelectClicked( wxCommandEvent &event );
     void OnLabelCopyToClicked( wxCommandEvent &event );
 
@@ -100,6 +101,7 @@ class guLibPanel : public wxPanel
     void OnGenreListSelected( wxListEvent &event );
     void OnGenrePlayClicked( wxCommandEvent &event );
     void OnGenreQueueClicked( wxCommandEvent &event );
+    void OnGenreQueueAsNextClicked( wxCommandEvent &event );
     void OnGenreCopyToClicked( wxCommandEvent &event );
 
     // ArtistsListBox Events
@@ -107,6 +109,7 @@ class guLibPanel : public wxPanel
     void OnArtistListSelected( wxListEvent &event );
     void OnArtistPlayClicked( wxCommandEvent &event );
     void OnArtistQueueClicked( wxCommandEvent &event );
+    void OnArtistQueueAsNextClicked( wxCommandEvent &event );
     void OnArtistEditLabelsClicked( wxCommandEvent &event );
     void OnArtistEditTracksClicked( wxCommandEvent &event );
     void OnArtistCopyToClicked( wxCommandEvent &event );
@@ -116,6 +119,7 @@ class guLibPanel : public wxPanel
     void OnAlbumListSelected( wxListEvent &event );
     void OnAlbumPlayClicked( wxCommandEvent &event );
     void OnAlbumQueueClicked( wxCommandEvent &event );
+    void OnAlbumQueueAsNextClicked( wxCommandEvent &event );
     void OnAlbumEditLabelsClicked( wxCommandEvent &event );
     void OnAlbumEditTracksClicked( wxCommandEvent &event );
     void OnAlbumDownloadCoverClicked( wxCommandEvent &event );
@@ -128,6 +132,7 @@ class guLibPanel : public wxPanel
     void OnYearListActivated( wxListEvent &event );
     void OnYearListPlayClicked( wxCommandEvent &event );
     void OnYearListQueueClicked( wxCommandEvent &event );
+    void OnYearListQueueAsNextClicked( wxCommandEvent &event );
     void OnYearListEditTracksClicked( wxCommandEvent &event );
     void OnYearListCopyToClicked( wxCommandEvent &event );
 
@@ -136,6 +141,7 @@ class guLibPanel : public wxPanel
     void OnRatingListActivated( wxListEvent &event );
     void OnRatingListPlayClicked( wxCommandEvent &event );
     void OnRatingListQueueClicked( wxCommandEvent &event );
+    void OnRatingListQueueAsNextClicked( wxCommandEvent &event );
     void OnRatingListEditTracksClicked( wxCommandEvent &event );
     void OnRatingListCopyToClicked( wxCommandEvent &event );
 
@@ -144,6 +150,7 @@ class guLibPanel : public wxPanel
     void OnPlayCountListActivated( wxListEvent &event );
     void OnPlayCountListPlayClicked( wxCommandEvent &event );
     void OnPlayCountListQueueClicked( wxCommandEvent &event );
+    void OnPlayCountListQueueAsNextClicked( wxCommandEvent &event );
     void OnPlayCountListEditTracksClicked( wxCommandEvent &event );
     void OnPlayCountListCopyToClicked( wxCommandEvent &event );
 
@@ -152,6 +159,7 @@ class guLibPanel : public wxPanel
     void OnComposerListActivated( wxListEvent &event );
     void OnComposerListPlayClicked( wxCommandEvent &event );
     void OnComposerListQueueClicked( wxCommandEvent &event );
+    void OnComposerListQueueAsNextClicked( wxCommandEvent &event );
     void OnComposerListEditTracksClicked( wxCommandEvent &event );
     void OnComposerListCopyToClicked( wxCommandEvent &event );
 
@@ -160,7 +168,9 @@ class guLibPanel : public wxPanel
     void OnSongPlayClicked( wxCommandEvent &event );
     void OnSongPlayAllClicked( wxCommandEvent &event );
     void OnSongQueueClicked( wxCommandEvent &event );
+    void OnSongQueueAsNextClicked( wxCommandEvent &event );
     void OnSongQueueAllClicked( wxCommandEvent &event );
+    void OnSongQueueAllAsNextClicked( wxCommandEvent &event );
     void OnSongsEditLabelsClicked( wxCommandEvent &event );
     void OnSongsEditTracksClicked( wxCommandEvent &event );
     void OnSongCopyToClicked( wxCommandEvent &event );

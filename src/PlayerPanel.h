@@ -302,7 +302,7 @@ class guPlayerPanel : public wxPanel
                         ~guPlayerPanel();
     void                UpdateStatus();
     void                SetPlayList( const guTrackArray &SongList );
-    void                AddToPlayList( const guTrackArray &SongList, const bool allowplay = true );
+    void                AddToPlayList( const guTrackArray &SongList, const bool allowplay = true, bool aftercurrent = false );
     void                AddToPlayList( const wxString &FileName );
     void                AddToPlayList( const wxArrayString &files );
     void                ClearPlayList( void ) { m_PlayListCtrl->ClearItems(); };

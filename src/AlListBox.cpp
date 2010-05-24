@@ -186,6 +186,10 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
+    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected albums to the Playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    Menu->Append( MenuItem );
+
     int SelCount = GetSelectedItems().Count();
     if( SelCount )
     {
