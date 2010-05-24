@@ -2143,7 +2143,6 @@ void guLibPanel::DoSelectionChanged( void )
             if( !m_UpdateLock )
             {
                 m_UpdateLock = true;
-                m_ComposerListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
@@ -2213,6 +2212,7 @@ void guLibPanel::DoSelectionChanged( void )
             if( !m_UpdateLock )
             {
                 m_UpdateLock = true;
+                m_ArtistListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems( false );
