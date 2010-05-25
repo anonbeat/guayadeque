@@ -294,6 +294,7 @@ class guLastFMInfoCtrl : public wxPanel
     virtual void        CreateControls( wxWindow * parent );
     virtual void        OnPlayClicked( wxCommandEvent &event );
     virtual void        OnEnqueueClicked( wxCommandEvent &event );
+    virtual void        OnEnqueueAsNextClicked( wxCommandEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnSongSelectName( wxCommandEvent &event );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
