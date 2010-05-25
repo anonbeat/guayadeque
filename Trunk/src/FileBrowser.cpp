@@ -1918,7 +1918,6 @@ void guFileBrowser::OnItemsRename( wxCommandEvent &event )
             if( FileRenamer->ShowModal() == wxID_OK )
             {
                 wxArrayString RenamedFiles = FileRenamer->GetRenamedNames();
-                wxArrayString RenamedDirs;
                 int Index;
                 int Count = RenamedFiles.Count();
                 for( Index = 0; Index < Count; Index++ )
@@ -1940,19 +1939,6 @@ void guFileBrowser::OnItemsRename( wxCommandEvent &event )
                         }
 
                         m_Db->UpdateTrackFileName( Files[ Index ], RenamedFiles[ Index ] );
-                    }
-                }
-
-                for( Index = 0; Index < Count; Index++ )
-                {
-                    wxString NewDirName = wxPathOnly( RenamedFiles[ Index ] );
-                    if( wxPathOnly( Files[ Index ] ) != NewDirName )
-                    {
-                        if( RenamedDirs.Index( NewDirName ) == wxNOT_FOUND )
-                        {
-                            m_Db->UpdatePaths( wxPathOnly( Files[ Index ] ), NewDirName );
-                            RenamedDirs.Add( NewDirName );
-                        }
                     }
                 }
 
