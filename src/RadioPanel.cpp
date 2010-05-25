@@ -496,6 +496,10 @@ void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
         Menu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected songs to playlist as Next Tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+        Menu->Append( MenuItem );
+
         Menu->AppendSeparator();
     }
 
@@ -862,6 +866,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 
     Connect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
     Connect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ) );
+    Connect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ) );
 
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 }
@@ -902,6 +907,7 @@ guRadioPanel::~guRadioPanel()
 
     Disconnect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
     Disconnect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ) );
+    Disconnect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ) );
 
     m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 
@@ -1137,7 +1143,13 @@ void guRadioPanel::OnRadioStationsEnqueue( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::OnSelectStations( bool enqueue )
+void guRadioPanel::OnRadioStationsEnqueueAsNext( wxCommandEvent &event )
+{
+    OnSelectStations( true, true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnSelectStations( bool enqueue, const bool asnext )
 {
     guTrackArray   Tracks;
     guTrack *  NewSong;
@@ -1192,7 +1204,7 @@ void guRadioPanel::OnSelectStations( bool enqueue )
             {
                 if( enqueue )
                 {
-                    m_PlayerPanel->AddToPlayList( Tracks );
+                    m_PlayerPanel->AddToPlayList( Tracks, true, asnext );
                 }
                 else
                 {

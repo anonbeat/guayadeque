@@ -84,7 +84,8 @@ class guRadioPanel : public wxPanel
 	void OnRadioLabelListSelected( wxListEvent &Event );
 	void OnRadioStationsPlay( wxCommandEvent &event );
 	void OnRadioStationsEnqueue( wxCommandEvent &event );
-	void OnSelectStations( bool enqueue = false );
+	void OnRadioStationsEnqueueAsNext( wxCommandEvent &event );
+	void OnSelectStations( bool enqueue = false, const bool asnext = false );
 
 	void OnRadioUserAdd( wxCommandEvent &event );
 	void OnRadioUserEdit( wxCommandEvent &event );
