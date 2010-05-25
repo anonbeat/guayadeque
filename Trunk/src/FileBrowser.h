@@ -240,6 +240,7 @@ class guFileBrowser : public wxPanel
 
     void                    OnFolderPlay( wxCommandEvent &event );
     void                    OnFolderEnqueue( wxCommandEvent &event );
+    void                    OnFolderEnqueueAsNext( wxCommandEvent &event );
     void                    OnFolderNew( wxCommandEvent &event );
     void                    OnFolderRename( wxCommandEvent &event );
     void                    OnFolderDelete( wxCommandEvent &event );
@@ -252,6 +253,7 @@ class guFileBrowser : public wxPanel
 
     void                    OnItemsPlay( wxCommandEvent &event );
     void                    OnItemsEnqueue( wxCommandEvent &event );
+    void                    OnItemsEnqueueAsNext( wxCommandEvent &event );
     void                    OnItemsEditTracks( wxCommandEvent &event );
     void                    OnItemsSaveToPlayList( wxCommandEvent &event );
     void                    OnItemsCopyTo( wxCommandEvent &event );

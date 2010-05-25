@@ -891,11 +891,11 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowp
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const wxString &FileName )
+void guPlayerPanel::AddToPlayList( const wxString &FileName, const bool aftercurrent  )
 {
     int PrevTrackCount = m_PlayListCtrl->GetCount();
 
-    m_PlayListCtrl->AddPlayListItem( FileName );
+    m_PlayListCtrl->AddPlayListItem( FileName, false, aftercurrent ? m_PlayListCtrl->GetCurItem() + 1 : wxNOT_FOUND );
     m_PlayListCtrl->ReloadItems();
     TrackListChanged();
     // Add the added track to the smart cache
@@ -928,7 +928,7 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const wxArrayString &files )
+void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool aftercurrent  )
 {
     int PrevTrackCount = m_PlayListCtrl->GetItemCount();
 
@@ -936,7 +936,7 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files )
     int Count = files.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        m_PlayListCtrl->AddPlayListItem( files[ Index ] );
+        m_PlayListCtrl->AddPlayListItem( files[ Index ], false, aftercurrent ? m_PlayListCtrl->GetCurItem() + 1 + Index : wxNOT_FOUND );
     }
 
     m_PlayListCtrl->ReloadItems();
