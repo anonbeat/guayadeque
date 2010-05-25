@@ -166,6 +166,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 
     Connect( ID_ALBUMBROWSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnPlayClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueAsNextClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditLabelsClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditTracksClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnCopyToClipboard ), NULL, this );
@@ -197,6 +198,7 @@ guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
 
     Disconnect( ID_ALBUMBROWSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnPlayClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueClicked ), NULL, this );
+    Disconnect( ID_ALBUMBROWSER_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueAsNextClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditLabelsClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditTracksClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnCopyToClipboard ), NULL, this );
@@ -311,6 +313,10 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu.Append( MenuItem );
 
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Enqueue the album tracks to the playlist as Next Tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu.Append( MenuItem );
+
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected albums" ) );
@@ -406,6 +412,12 @@ void guAlbumBrowserItemPanel::OnPlayClicked( wxCommandEvent &event )
 void guAlbumBrowserItemPanel::OnEnqueueClicked( wxCommandEvent &event )
 {
     m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId, true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowserItemPanel::OnEnqueueAsNextClicked( wxCommandEvent &event )
+{
+    m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId, true, true );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -845,7 +857,7 @@ void guAlbumBrowser::OnRefreshTimer( wxTimerEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::SelectAlbum( const int albumid, const bool append )
+void guAlbumBrowser::SelectAlbum( const int albumid, const bool append, const bool asnext )
 {
     guTrackArray Tracks;
     wxArrayInt Selections;
@@ -853,7 +865,7 @@ void guAlbumBrowser::SelectAlbum( const int albumid, const bool append )
     if( m_Db->GetAlbumsSongs( Selections, &Tracks ) )
     {
         if( append )
-            m_PlayerPanel->AddToPlayList( Tracks );
+            m_PlayerPanel->AddToPlayList( Tracks, true, asnext );
         else
             m_PlayerPanel->SetPlayList( Tracks );
     }
