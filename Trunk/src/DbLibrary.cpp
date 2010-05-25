@@ -6488,6 +6488,19 @@ int guDbLibrary::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject *
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::UpdateTrackFileName( const wxString &oldname, const wxString &newname )
+{
+    int TrackId = FindTrackFile( oldname, NULL );
+    guLogMessage( wxT( "The track %s was found with id %i" ), oldname.c_str(), TrackId );
+    if( TrackId )
+    {
+        wxString query = wxString::Format( wxT( "UPDATE songs SET song_filename = '%s' WHERE song_id = %u;" ),
+            escape_query_str( newname.AfterLast( '/' ) ).c_str() );
+        ExecuteUpdate( query );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdatePaths( const wxString &oldpath, const wxString &newpath )
 {
   wxString query;
@@ -6495,6 +6508,7 @@ void guDbLibrary::UpdatePaths( const wxString &oldpath, const wxString &newpath 
   query = wxString::Format( wxT( "UPDATE paths SET path_value = replace( path_value, '%s', '%s' )" ),
             escape_query_str( oldpath ).c_str(), escape_query_str( newpath ).c_str() );
 
+  guLogMessage( wxT( "Updating path: %s" ), query.c_str() );
   ExecuteUpdate( query );
 
 }

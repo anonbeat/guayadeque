@@ -545,6 +545,7 @@ class guDbLibrary : public guDb
     int                     GetPodcastFiles( const wxArrayInt &channelid, wxFileDataObject * files );
 
     // File Browser related functions
+    void                    UpdateTrackFileName( const wxString &oldname, const wxString &newname );
     void                    UpdatePaths( const wxString &oldpath, const wxString &newpath );
 
 };

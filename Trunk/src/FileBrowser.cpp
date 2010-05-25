@@ -1918,15 +1918,17 @@ void guFileBrowser::OnItemsRename( wxCommandEvent &event )
             if( FileRenamer->ShowModal() == wxID_OK )
             {
                 wxArrayString RenamedFiles = FileRenamer->GetRenamedNames();
+                wxArrayString RenamedDirs;
                 int Index;
                 int Count = RenamedFiles.Count();
                 for( Index = 0; Index < Count; Index++ )
                 {
                     if( Files[ Index ] != RenamedFiles[ Index ] )
                     {
-                        if( !wxDirExists( wxPathOnly( RenamedFiles[ Index ] ) ) )
+                        wxString NewDirName = wxPathOnly( RenamedFiles[ Index ] );
+                        if( !wxDirExists( NewDirName ) )
                         {
-                            wxFileName::Mkdir( wxPathOnly( RenamedFiles[ Index ] ), 0770, wxPATH_MKDIR_FULL );
+                            wxFileName::Mkdir( NewDirName, 0770, wxPATH_MKDIR_FULL );
                         }
 
                         //if( wxFileExists( Files[ Index ] ) )
@@ -1936,8 +1938,24 @@ void guFileBrowser::OnItemsRename( wxCommandEvent &event )
                                 Files[ Index ].c_str(),
                                 RenamedFiles[ Index ].c_str() );
                         }
+
+                        m_Db->UpdateTrackFileName( Files[ Index ], RenamedFiles[ Index ] );
                     }
                 }
+
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    wxString NewDirName = wxPathOnly( RenamedFiles[ Index ] );
+                    if( wxPathOnly( Files[ Index ] ) != NewDirName )
+                    {
+                        if( RenamedDirs.Index( NewDirName ) == wxNOT_FOUND )
+                        {
+                            m_Db->UpdatePaths( wxPathOnly( Files[ Index ] ), NewDirName );
+                            RenamedDirs.Add( NewDirName );
+                        }
+                    }
+                }
+
                 //m_DirCtrl->ExpandPath( m_DirCtrl->GetPath() );
                 m_FilesCtrl->SetPath( m_DirCtrl->GetPath() );
             }
