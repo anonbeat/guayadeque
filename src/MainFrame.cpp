@@ -99,6 +99,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     //
     m_LibPanel = NULL;
+    m_PlayerPlayList = NULL;
     m_RadioPanel = NULL;
     m_LastFMPanel = NULL;
     m_LyricsPanel = NULL;
@@ -3096,22 +3097,22 @@ void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::UpdatedTrack( int updatedby, const guTrack * track )
 {
-    if( updatedby != guUPDATED_TRACKS_PLAYER )
+    if( m_PlayerPanel && ( updatedby != guUPDATED_TRACKS_PLAYER ) )
     {
         m_PlayerPanel->UpdatedTrack( track );
     }
 
-    if( updatedby != guUPDATED_TRACKS_PLAYER_PLAYLIST )
+    if( m_PlayerPlayList && ( updatedby != guUPDATED_TRACKS_PLAYER_PLAYLIST ) )
     {
         m_PlayerPlayList->UpdatedTrack( track );
     }
 
-    if( ( updatedby != guUPDATED_TRACKS_LIBRARY ) && m_LibPanel )
+    if( m_LibPanel && ( updatedby != guUPDATED_TRACKS_LIBRARY ) )
     {
         m_LibPanel->UpdatedTrack( track );
     }
 
-    if( ( updatedby != guUPDATED_TRACKS_PLAYLISTS ) && m_PlayListPanel )
+    if( m_PlayListPanel && ( updatedby != guUPDATED_TRACKS_PLAYLISTS ) )
     {
         m_PlayListPanel->UpdatedTrack( track );
     }
