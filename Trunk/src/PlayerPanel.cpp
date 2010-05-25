@@ -735,7 +735,7 @@ void guPlayerPanel::SetBitRate( int bitrate )
         bitrate = bitrate / 1000;
         //guLogMessage( wxT( "Bitrate: %u" ), bitrate );
         m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate ) );
-        if( !m_MediaSong.m_Bitrate )
+        if( !m_MediaSong.m_Bitrate && ( GetState() == guMEDIASTATE_PLAYING ) )
         {
             m_MediaSong.m_Bitrate = bitrate;
 
