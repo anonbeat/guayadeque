@@ -124,6 +124,7 @@ class guPodcastPanel : public wxPanel
 
     void                OnPodcastItemPlay( wxCommandEvent &event );
     void                OnPodcastItemEnqueue( wxCommandEvent &event );
+    void                OnPodcastItemEnqueueAsNext( wxCommandEvent &event );
     void                OnPodcastItemDelete( wxCommandEvent &event );
     void                OnPodcastItemDownload( wxCommandEvent &event );
     void                OnPodcastItemCopyTo( wxCommandEvent &event );
@@ -168,7 +169,7 @@ class guPodcastPanel : public wxPanel
     void UpdateChannels( wxCommandEvent &event );
 
     void ClearDownloadThread( void );
-    void OnSelectPodcasts( bool enqueue = false );
+    void OnSelectPodcasts( bool enqueue = false, const bool asnext = false );
 
     void OnConfigUpdated( wxCommandEvent &event );
 
