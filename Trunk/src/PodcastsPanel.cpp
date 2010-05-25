@@ -293,6 +293,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 
     Connect( ID_PODCASTS_ITEM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemPlay ), NULL, this );
     Connect( ID_PODCASTS_ITEM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ), NULL, this );
+    Connect( ID_PODCASTS_ITEM_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueueAsNext ), NULL, this );
     Connect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ), NULL, this );
     Connect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ), NULL, this );
     Connect( ID_PODCASTS_ITEM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
@@ -331,6 +332,7 @@ guPodcastPanel::~guPodcastPanel()
 
     Disconnect( ID_PODCASTS_ITEM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemPlay ), NULL, this );
     Disconnect( ID_PODCASTS_ITEM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ), NULL, this );
+    Disconnect( ID_PODCASTS_ITEM_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueueAsNext ), NULL, this );
     Disconnect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ), NULL, this );
     Disconnect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ), NULL, this );
     Disconnect( ID_PODCASTS_ITEM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
@@ -711,7 +713,7 @@ void guPodcastPanel::OnPodcastItemUpdated( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::OnSelectPodcasts( bool enqueue )
+void guPodcastPanel::OnSelectPodcasts( bool enqueue, const bool asnext )
 {
     int Index;
     int Count;
@@ -774,7 +776,7 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue )
         {
             if( enqueue )
             {
-                m_PlayerPanel->AddToPlayList( Tracks );
+                m_PlayerPanel->AddToPlayList( Tracks, true, asnext );
             }
             else
             {
@@ -801,6 +803,12 @@ void guPodcastPanel::OnPodcastItemPlay( wxCommandEvent &event )
 void guPodcastPanel::OnPodcastItemEnqueue( wxCommandEvent &event )
 {
     OnSelectPodcasts( true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::OnPodcastItemEnqueueAsNext( wxCommandEvent &event )
+{
+    OnSelectPodcasts( true, true );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1235,6 +1243,10 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected songs to playlist as Next Tracks" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
         Menu->Append( MenuItem );
 
