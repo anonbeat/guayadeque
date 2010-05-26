@@ -30,7 +30,7 @@
 #define guAS_PROTOCOL_VERSION       wxT( "1.2.1" )
 
 //#ifdef _DEBUG
-//  #define guAS_DEVELOPMENT
+  #define guAS_DEVELOPMENT
 //#endif
 
 #ifndef guAS_DEVELOPMENT
@@ -41,7 +41,8 @@
     #define guAS_CLIENT_VERSION     wxT( "1.0" )
 #endif
 
-#define guAS_HANDSHAKE_URL          wxT( "http://post.audioscrobbler.com/" )
+#define guLASTFM_POST_SERVER          wxT( "http://post.audioscrobbler.com/" )
+#define guLIBREFM_POST_SERVER         wxT( "http://turtle.libre.fm/" )
 
 #define guAS_MIN_PLAYTIME           240
 #define guAS_MIN_TRACKLEN           30
@@ -62,49 +63,95 @@
 class guASPlayedThread;
 
 // -------------------------------------------------------------------------------- //
-class guAudioScrobble
+class guAudioScrobbleSender
 {
-  private:
+  protected :
     guDbLibrary *               m_Db;
     wxString                    m_UserName;
     wxString                    m_Password;
+    wxString                    m_ServerUrl;
     wxString                    m_SessionId;
     wxString                    m_NowPlayUrl;
     wxString                    m_SubmitUrl;
     int                         m_ErrorCode;
-    guASPlayedThread *          m_SubmitPlayedSongsThread;
 
     wxString                    GetAuthToken( int TimeStamp );
     int                         DoRequest( const wxString &Url, int Timeout = 60, const wxString &PostData = wxEmptyString );
     int                         ProcessError( const wxString &ErrorStr );
 
-    bool                        SubmitNowPlaying( const guAS_SubmitInfo * curtrack );
-    bool                        SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtracks );
+    virtual void                ReadUserConfig( void ) {};
 
   public:
-                                guAudioScrobble( guDbLibrary * NewDb );
-                                ~guAudioScrobble();
+                                guAudioScrobbleSender( guDbLibrary * db, const wxString &serverurl );
+                                ~guAudioScrobbleSender();
 
     void                        SetUserName( const wxString &username ) { m_UserName = username; }
     void                        SetPassword( const wxString &password ) { m_Password = password; }
     bool                        GetSessionId( void );
 
-
-    void                        SendNowPlayingTrack( const guTrack &track );
-    void                        SendPlayedTrack( const guTrack &track );
-
-
     bool                        IsOk() { return ( m_ErrorCode == guAS_ERROR_NOERROR ) ||
                                                 ( m_ErrorCode == guAS_ERROR_NOSESSION ); }
-
     int                         GetErrorCode() { return m_ErrorCode; }
-
-    void                        EndSubmitThread();
 
     void                        OnConfigUpdated( void );
 
-    friend class guASNowPlayingThread;
-    friend class guASPlayedThread;
+    bool                        SubmitNowPlaying( const guAS_SubmitInfo * curtrack );
+    bool                        SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtracks );
+};
+
+// -------------------------------------------------------------------------------- //
+class guLastFMAudioScrobble : public guAudioScrobbleSender
+{
+  protected :
+    guDbLibrary *               m_Db;
+
+    virtual void                ReadUserConfig( void );
+
+  public :
+    guLastFMAudioScrobble( guDbLibrary * db );
+    ~guLastFMAudioScrobble();
+
+};
+
+// -------------------------------------------------------------------------------- //
+class guLibreFMAudioScrobble : public guAudioScrobbleSender
+{
+  protected :
+    virtual void                ReadUserConfig( void );
+
+  public :
+    guLibreFMAudioScrobble( guDbLibrary * db );
+    ~guLibreFMAudioScrobble();
+
+};
+
+// -------------------------------------------------------------------------------- //
+class guAudioScrobble
+{
+    protected :
+        guDbLibrary *               m_Db;
+
+        guLastFMAudioScrobble *     m_LastFMAudioScrobble;
+        guLibreFMAudioScrobble *    m_LibreFMAudioScrobble;
+
+        guASPlayedThread *          m_PlayedThread;
+        bool                        m_PendingNowPlaying;
+        guAS_SubmitInfo *           m_NowPlayingInfo;
+        wxMutex                     m_NowPlayingInfoMutex;
+
+    public :
+        guAudioScrobble( guDbLibrary * db );
+        ~guAudioScrobble();
+
+    bool                        SubmitNowPlaying( const guAS_SubmitInfo * curtrack );
+    bool                        SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtracks );
+
+    void                        SendNowPlayingTrack( const guTrack &track );
+    void                        SendPlayedTrack( const guTrack &track );
+    void                        EndPlayedThread( void );
+
+    void                        OnConfigUpdated( void );
+    bool                        IsOk( void );
 };
 
 // -------------------------------------------------------------------------------- //

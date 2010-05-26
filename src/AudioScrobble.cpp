@@ -22,64 +22,38 @@
 #include "MD5.h"
 #include "Config.h"
 #include "Utils.h"
-//#include "HTTP.h"
 
 #include <wx/curl/http.h>
 #include <wx/tokenzr.h>
 
 // -------------------------------------------------------------------------------- //
-guAudioScrobble::guAudioScrobble( guDbLibrary * db )
+guAudioScrobbleSender::guAudioScrobbleSender( guDbLibrary * db, const wxString &serverurl )
 {
-    m_Db              = db;
-    // Read the configuration saved from previous session
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
-    {
-        m_UserName    = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) );
-        m_Password    = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) );
-        //m_SessionId   = Config->ReadStr( wxT( "ASSessionKey" ), wxEmptyString, wxT( "LastFM" ) );
-        //m_SubmitUrl   = Config->ReadStr( wxT( "SubmitUrl" ), wxEmptyString, wxT( "LastFM" ) );
-    }
+    m_Db            = db;
+    m_ServerUrl     = serverurl;
+
+    ReadUserConfig();
 
     m_SessionId = wxEmptyString;
     m_NowPlayUrl = wxEmptyString;
     m_SubmitUrl = wxEmptyString;
     m_ErrorCode = guAS_ERROR_NOSESSION;
-    m_SubmitPlayedSongsThread = NULL;
 
-    // Create the SubmitThread and start it
-    m_SubmitPlayedSongsThread = new guASPlayedThread( this, m_Db );
-    if( !m_SubmitPlayedSongsThread )
-    {
-        guLogError( wxT( "Could not create the Submit PLayed Songs thread" ) );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
-guAudioScrobble::~guAudioScrobble()
+guAudioScrobbleSender::~guAudioScrobbleSender()
 {
-    if( m_SubmitPlayedSongsThread )
-    {
-        m_SubmitPlayedSongsThread->Pause();
-        m_SubmitPlayedSongsThread->Delete();
-    }
 }
 
 // -------------------------------------------------------------------------------- //
-void guAudioScrobble::OnConfigUpdated( void )
+void guAudioScrobbleSender::OnConfigUpdated( void )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
-    {
-        m_UserName    = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) );
-        m_Password    = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) );
-        //m_SessionId   = Config->ReadStr( wxT( "ASSessionKey" ), wxEmptyString, wxT( "LastFM" ) );
-        //m_SubmitUrl   = Config->ReadStr( wxT( "SubmitUrl" ), wxEmptyString, wxT( "LastFM" ) );
-    }
+    ReadUserConfig();
 }
 
 // -------------------------------------------------------------------------------- //
-int guAudioScrobble::ProcessError( const wxString &ErrorStr )
+int guAudioScrobbleSender::ProcessError( const wxString &ErrorStr )
 {
     if( ErrorStr.Contains( wxT( "BANNED" ) ) )
     {
@@ -101,7 +75,7 @@ int guAudioScrobble::ProcessError( const wxString &ErrorStr )
     else if( ErrorStr.Contains( wxT( "FAILED" ) ) )
     {
         m_ErrorCode = guAS_ERROR_FAILED;
-        guLogError( wxT( "Server Error when connecting to LastFM server :" ) + ErrorStr );
+        guLogError( wxT( "Server Error when connecting to LastFM server : " ) + ErrorStr );
     }
     else
     {
@@ -110,21 +84,17 @@ int guAudioScrobble::ProcessError( const wxString &ErrorStr )
         guLogError( wxT( "Unknown Error autenticating to LastFM server " ) + ErrorStr );
     }
 
-    // Update the MainFrame AudioScrobble Status
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-    event.SetEventObject( ( wxObject * ) this );
-    event.SetInt( m_ErrorCode );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
     return m_ErrorCode;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guAudioScrobble::GetSessionId( void )
+bool guAudioScrobbleSender::GetSessionId( void )
 {
+    //guLogMessage( wxT( "guAudioScrobbleSender:GetSessionId" ) );
     //http://post.audioscrobbler.com/?hs=true&p=1.2.1&c=<client-id>&v=<client-ver>&u=<user>&t=<timestamp>&a=<auth>
     wxString Content;
     long LocalTime = wxGetUTCTime();
-    wxString AS_Url = guAS_HANDSHAKE_URL wxT( "?hs=true" )\
+    wxString AS_Url = m_ServerUrl + wxT( "?hs=true" )\
                       wxT( "&p=" ) guAS_PROTOCOL_VERSION\
                       wxT( "&c=" ) guAS_CLIENT_ID\
                       wxT( "&v=" ) guAS_CLIENT_VERSION\
@@ -160,14 +130,9 @@ bool guAudioScrobble::GetSessionId( void )
                     //guLogMessage( wxT( "NowPlayUrl : " ) + NowPlayUrl );
                     //guLogMessage( wxT( "SubmitUrl  : " ) + SubmitUrl );
                     m_ErrorCode = guAS_ERROR_NOERROR;
-                    guLogMessage( wxT( "Loged in to lastfm AudioScrobble service." ) );
+                    guLogMessage( wxT( "Loged in to AudioScrobble service." ) );
                     //return !SessionId.IsEmpty() && !SubmitUrl.IsEmpty() && !NowPlayUrl.IsEmpty();
 
-                    // Update the MainFrame AudioScrobble Status
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-                    event.SetEventObject( ( wxObject * ) this );
-                    event.SetInt( m_ErrorCode );
-                    wxPostEvent( wxTheApp->GetTopWindow(), event );
                 }
                 else
                 {
@@ -177,40 +142,18 @@ bool guAudioScrobble::GetSessionId( void )
             }
         }
     }
-    if( wxTheApp )
-    {
-        // Update the MainFrame AudioScrobble Status
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-        event.SetEventObject( ( wxObject * ) this );
-        event.SetInt( m_ErrorCode );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
-    }
     return m_ErrorCode == guAS_ERROR_NOERROR;
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guAudioScrobble::GetAuthToken( int TimeStamp )
+wxString guAudioScrobbleSender::GetAuthToken( int TimeStamp )
 {
     guMD5 md5;
     return md5.MD5( m_Password + wxString::Format( wxT( "%u" ), TimeStamp ) );
 }
 
 // -------------------------------------------------------------------------------- //
-void guAudioScrobble::SendPlayedTrack( const guTrack &track )
-{
-    if( !m_Db->AddCachedPlayedSong( track ) )
-        guLogError( wxT( "Could not add Song to CachedSongs Database" ) );
-
-    if( !m_SubmitPlayedSongsThread )
-    {
-        m_SubmitPlayedSongsThread = new guASPlayedThread( this, m_Db );
-        if( !m_SubmitPlayedSongsThread )
-            guLogError( wxT( "Could no create the AudioScrobble Played thread" ) );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs )
+bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs )
 {
     wxString    PostData;
     wxString    Content;
@@ -298,23 +241,7 @@ bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs
 }
 
 // -------------------------------------------------------------------------------- //
-void guAudioScrobble::SendNowPlayingTrack( const guTrack &track )
-{
-    guAS_SubmitInfo * SubmitInfo = new guAS_SubmitInfo();
-
-    SubmitInfo->m_ArtistName = track.m_ArtistName;
-    SubmitInfo->m_AlbumName  = track.m_AlbumName;
-    SubmitInfo->m_TrackName  = track.m_SongName;
-    SubmitInfo->m_TrackLen   = track.m_Length;
-    SubmitInfo->m_TrackNum   = track.m_Number;
-
-    guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, SubmitInfo );
-    if( !NowPlayingThread )
-        guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
-}
-
-// -------------------------------------------------------------------------------- //
-bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
+bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
 {
     wxCurlHTTP  http;
     wxString    PostData;
@@ -342,7 +269,7 @@ bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
                                    wxEmptyString
                         );
 
-    //guLogMessage( wxT( "AudioScrobble::NowPlaying : " ) + PostData );
+    //guLogMessage( wxT( "AudioScrobble::NowPlaying : " ) + m_NowPlayUrl + PostData );
 
     http.AddHeader( wxT( "Content-Type: application/x-www-form-urlencoded" ) );
     if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_NowPlayUrl ) )
@@ -361,14 +288,267 @@ bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
                 ProcessError( Content );
         }
     }
+    else
+    {
+        guLogMessage( wxT( "Error submitting the data to the scrobble server" ) );
+    }
     return false;
 }
 
+
+
+
 // -------------------------------------------------------------------------------- //
-void guAudioScrobble::EndSubmitThread( void )
+guLastFMAudioScrobble::guLastFMAudioScrobble( guDbLibrary * db ) :
+    guAudioScrobbleSender( db, guLASTFM_POST_SERVER )
 {
-    m_SubmitPlayedSongsThread = NULL;
+    ReadUserConfig();
 }
+
+// -------------------------------------------------------------------------------- //
+guLastFMAudioScrobble::~guLastFMAudioScrobble()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMAudioScrobble::ReadUserConfig( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) );
+        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) );
+    }
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+guLibreFMAudioScrobble::guLibreFMAudioScrobble( guDbLibrary * db ) :
+    guAudioScrobbleSender( db, guLIBREFM_POST_SERVER )
+{
+    ReadUserConfig();
+}
+
+// -------------------------------------------------------------------------------- //
+guLibreFMAudioScrobble::~guLibreFMAudioScrobble()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibreFMAudioScrobble::ReadUserConfig( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( Config )
+    {
+        m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LibreFM" ) );
+        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LibreFM" ) );
+    }
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+guAudioScrobble::guAudioScrobble( guDbLibrary * db )
+{
+    m_Db = db;
+    m_LastFMAudioScrobble = NULL;
+    m_LibreFMAudioScrobble = NULL;
+    m_PlayedThread = NULL;
+    m_NowPlayingInfo = NULL;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) )
+    {
+        m_LastFMAudioScrobble = new guLastFMAudioScrobble( db );
+    }
+
+    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) ) )
+    {
+        m_LibreFMAudioScrobble = new guLibreFMAudioScrobble( db );
+    }
+
+    // Update the MainFrame AudioScrobble Status
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+    event.SetEventObject( ( wxObject * ) this );
+    event.SetInt( 0 );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+}
+
+
+// -------------------------------------------------------------------------------- //
+guAudioScrobble::~guAudioScrobble()
+{
+    if( m_PlayedThread )
+    {
+        m_PlayedThread->Pause();
+        m_PlayedThread->Delete();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo * curtrack )
+{
+    //guLogMessage( wxT( "guAudioScrobbler:SubmitNowPlaying: %s" ), curtrack->m_TrackName.c_str() );
+    if( m_LastFMAudioScrobble )
+    {
+        m_LastFMAudioScrobble->SubmitNowPlaying( curtrack );
+    }
+
+    if( m_LibreFMAudioScrobble )
+    {
+        m_LibreFMAudioScrobble->SubmitNowPlaying( curtrack );
+    }
+
+    int HasError = ( m_LastFMAudioScrobble && m_LastFMAudioScrobble->GetErrorCode() ) ||
+                   ( m_LibreFMAudioScrobble && m_LibreFMAudioScrobble->GetErrorCode() );
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+    event.SetEventObject( ( wxObject * ) this );
+    event.SetInt( HasError );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+    return !HasError;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtracks )
+{
+    //guLogMessage( wxT( "guAudioScrobbler:SubmitPlayedSongs" ) );
+    if( m_LastFMAudioScrobble )
+    {
+        m_LastFMAudioScrobble->SubmitPlayedSongs( playedtracks );
+    }
+
+    if( m_LibreFMAudioScrobble )
+    {
+        m_LibreFMAudioScrobble->SubmitPlayedSongs( playedtracks );
+    }
+
+    int HasError = ( m_LastFMAudioScrobble && m_LastFMAudioScrobble->GetErrorCode() ) ||
+                   ( m_LibreFMAudioScrobble && m_LibreFMAudioScrobble->GetErrorCode() );
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+    event.SetEventObject( ( wxObject * ) this );
+    event.SetInt( HasError );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+    return !HasError;
+}
+
+// -------------------------------------------------------------------------------- //
+void guAudioScrobble::SendPlayedTrack( const guTrack &track )
+{
+    if( !m_Db->AddCachedPlayedSong( track ) )
+        guLogError( wxT( "Could not add Song to CachedSongs Database" ) );
+
+    if( !m_PlayedThread )
+    {
+        m_PlayedThread = new guASPlayedThread( this, m_Db );
+        if( !m_PlayedThread )
+            guLogError( wxT( "Could no create the AudioScrobble Played thread" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAudioScrobble::SendNowPlayingTrack( const guTrack &track )
+{
+    wxMutexLocker Lock( m_NowPlayingInfoMutex );
+
+    if( m_NowPlayingInfo )
+    {
+        delete m_NowPlayingInfo;
+    }
+    m_NowPlayingInfo = new guAS_SubmitInfo();
+
+    m_NowPlayingInfo->m_ArtistName = track.m_ArtistName;
+    m_NowPlayingInfo->m_AlbumName  = track.m_AlbumName;
+    m_NowPlayingInfo->m_TrackName  = track.m_SongName;
+    m_NowPlayingInfo->m_TrackLen   = track.m_Length;
+    m_NowPlayingInfo->m_TrackNum   = track.m_Number;
+
+    guAS_SubmitInfoArray    SubmitInfo;
+    SubmitInfo = m_Db->GetCachedPlayedSongs( guAS_SUBMITTRACKS );
+    if( !SubmitInfo.Count() )
+    {
+        guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, m_NowPlayingInfo );
+        if( !NowPlayingThread )
+            guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
+
+        m_NowPlayingInfo = NULL;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAudioScrobble::EndPlayedThread( void )
+{
+    wxMutexLocker Lock( m_NowPlayingInfoMutex );
+
+    m_PlayedThread = NULL;
+    if( m_NowPlayingInfo )
+    {
+        guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, m_NowPlayingInfo );
+        if( !NowPlayingThread )
+            guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
+        m_NowPlayingInfo = NULL;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAudioScrobble::OnConfigUpdated( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) )
+    {
+        if( !m_LastFMAudioScrobble )
+            m_LastFMAudioScrobble = new guLastFMAudioScrobble( m_Db );
+    }
+    else
+    {
+        if( m_LastFMAudioScrobble )
+        {
+            delete m_LastFMAudioScrobble;
+            m_LastFMAudioScrobble = NULL;
+        }
+    }
+
+    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) ) )
+    {
+        if( !m_LibreFMAudioScrobble )
+            m_LibreFMAudioScrobble = new guLibreFMAudioScrobble( m_Db );
+    }
+    else
+    {
+        if( m_LibreFMAudioScrobble )
+        {
+            delete m_LibreFMAudioScrobble;
+            m_LibreFMAudioScrobble = NULL;
+        }
+    }
+
+    if( m_LastFMAudioScrobble )
+    {
+        m_LastFMAudioScrobble->OnConfigUpdated();
+    }
+
+    if( m_LibreFMAudioScrobble )
+    {
+        m_LibreFMAudioScrobble->OnConfigUpdated();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guAudioScrobble::IsOk( void )
+{
+    return ( m_LastFMAudioScrobble && m_LastFMAudioScrobble->IsOk() ) ||
+           ( m_LibreFMAudioScrobble && m_LibreFMAudioScrobble->IsOk() );
+}
+
 
 // -------------------------------------------------------------------------------- //
 // guASNowPlayingThread
@@ -407,15 +587,16 @@ guASNowPlayingThread::ExitCode guASNowPlayingThread::Entry()
         FailCnt++;
         if( FailCnt > 2 )
         {
-            guLogError( wxT( "Reached max number of fail retry submitting to lastfm AudioScrobble service." ) );
-            FailCnt = 0;
-            while( !m_AudioScrobble->GetSessionId() && !TestDestroy() )
-            {
-                Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
-                FailCnt++;
-                if( FailCnt > 2 )
-                    return 0;
-            }
+//            guLogError( wxT( "Reached max number of fail retry submitting to lastfm AudioScrobble service." ) );
+//            FailCnt = 0;
+//            while( !m_AudioScrobble->GetSessionId() && !TestDestroy() )
+//            {
+//                Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
+//                FailCnt++;
+//                if( FailCnt > 2 )
+//                    return 0;
+//            }
+            break;
         }
         // If have not been destroyed wait 2 mins between submits.
         if( !TestDestroy() )
@@ -448,7 +629,7 @@ guASPlayedThread::~guASPlayedThread()
     if( !TestDestroy() )
     {
         if( m_AudioScrobble )
-            m_AudioScrobble->EndSubmitThread();
+            m_AudioScrobble->EndPlayedThread();
     }
 }
 
@@ -478,25 +659,26 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
 //                event.SetInt( m_AudioScrobble->GetErrorCode() );
 //                wxPostEvent( wxTheApp->GetTopWindow(), event );
                 //
-                if( m_AudioScrobble->GetErrorCode() != guAS_ERROR_NOERROR )
-                {
-                    FailCnt++;
-                    if( FailCnt > 2 )
-                    {
-                        guLogError( wxT( "Reached max number of fail retry submitting to lastfm AudioScrobble service." ) );
-                        FailCnt = 0;
-                        while( !m_AudioScrobble->GetSessionId() && !TestDestroy() )
-                        {
-                            Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
-                            FailCnt++;
-                            if( FailCnt > 2 )
-                                return 0;
-                        }
-                    }
-                }
-                else
-                    return 0;
-
+//                if( m_AudioScrobble->GetErrorCode() != guAS_ERROR_NOERROR )
+//                {
+//                    FailCnt++;
+//                    if( FailCnt > 2 )
+//                    {
+//                        guLogError( wxT( "Reached max number of fail retry submitting to lastfm AudioScrobble service." ) );
+//                        FailCnt = 0;
+//                        while( !m_AudioScrobble->GetSessionId() && !TestDestroy() )
+//                        {
+//                            Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
+//                            FailCnt++;
+//                            if( FailCnt > 2 )
+//                                return 0;
+//                        }
+//                    }
+//                }
+//                else
+//                    return 0;
+                if( FailCnt++ > 2 )
+                    break;
                 Sleep( guAS_SUBMIT_RETRY_TIMEOUT ); // Wait 30 Secs between submit attempts
             }
             // if the submit was ok then delete the songs from cache

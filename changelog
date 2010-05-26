@@ -1,4 +1,6 @@
 
+  * Added support for libre.fm
+  * Added Enqueue as Next option so the selection is added as the next track to be played.
   * Implemented crossfading between tracks
   * Read composer, comments from ape and m4a files added
   * Added Lyric support to Ape files

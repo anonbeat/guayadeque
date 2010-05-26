@@ -624,40 +624,80 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	ASMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	LastFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" LastFM Audioscrobble ") ), wxVERTICAL );
+	LastFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" Last.fm Audioscrobble ") ), wxVERTICAL );
 
-	m_ASEnableChkBox = new wxCheckBox( m_LastFMPanel, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_ASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) );
-	LastFMASSizer->Add( m_ASEnableChkBox, 0, wxALL, 5 );
+	m_LastFMASEnableChkBox = new wxCheckBox( m_LastFMPanel, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LastFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) );
+	LastFMASSizer->Add( m_LastFMASEnableChkBox, 0, wxALL, 5 );
 
 	ASLoginSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
 	ASLoginSizer->SetFlexibleDirection( wxBOTH );
 	ASLoginSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_UserNameStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Username:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_UserNameStaticText->Wrap( -1 );
-	ASLoginSizer->Add( m_UserNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	wxStaticText * UserNameStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Username:"), wxDefaultPosition, wxDefaultSize, 0 );
+	UserNameStaticText->Wrap( -1 );
+	ASLoginSizer->Add( UserNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_UserNameTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
-	m_UserNameTextCtrl->SetValue( m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) ) );
-	ASLoginSizer->Add( m_UserNameTextCtrl, 0, wxALL, 5 );
+	m_LastFMUserNameTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
+	m_LastFMUserNameTextCtrl->SetValue( m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) ) );
+	ASLoginSizer->Add( m_LastFMUserNameTextCtrl, 0, wxALL, 5 );
 
-	m_PasswdStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_PasswdStaticText->Wrap( -1 );
-	ASLoginSizer->Add( m_PasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	wxStaticText * PasswdStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
+	PasswdStaticText->Wrap( -1 );
+	ASLoginSizer->Add( PasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_PasswdTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
-	m_PasswdTextCtrl->SetValue( m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
+	m_LastFMPasswdTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
+	m_LastFMPasswdTextCtrl->SetValue( m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
 	// Password is saved in md5 form so we cant load it back
-	ASLoginSizer->Add( m_PasswdTextCtrl, 0, wxALL, 5 );
+	ASLoginSizer->Add( m_LastFMPasswdTextCtrl, 0, wxALL, 5 );
 
-	if( m_PasswdTextCtrl->IsEmpty() ||
-	    m_UserNameTextCtrl->IsEmpty() )
-        m_ASEnableChkBox->Disable();
+	if( m_LastFMPasswdTextCtrl->IsEmpty() ||
+	    m_LastFMUserNameTextCtrl->IsEmpty() )
+        m_LastFMASEnableChkBox->Disable();
 
 	LastFMASSizer->Add( ASLoginSizer, 1, wxEXPAND, 5 );
 
 	ASMainSizer->Add( LastFMASSizer, 0, wxEXPAND|wxALL, 5 );
+
+	wxStaticBoxSizer * LibreFMASSizer;
+	LibreFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" Libre.fm Audioscrobble ") ), wxVERTICAL );
+
+	m_LibreFMASEnableChkBox = new wxCheckBox( m_LastFMPanel, wxID_ANY, _( "Enabled" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LibreFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) ) );
+	LibreFMASSizer->Add( m_LibreFMASEnableChkBox, 0, wxALL, 5 );
+
+	wxFlexGridSizer * LibreFMASLoginSizer;
+	LibreFMASLoginSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	LibreFMASLoginSizer->SetFlexibleDirection( wxBOTH );
+	LibreFMASLoginSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxStaticText * LibreFMUserNameStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _( "Username:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	LibreFMUserNameStaticText->Wrap( -1 );
+	LibreFMASLoginSizer->Add( LibreFMUserNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_LibreFMUserNameTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
+	m_LibreFMUserNameTextCtrl->SetValue( m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LibreFM" ) ) );
+	LibreFMASLoginSizer->Add( m_LibreFMUserNameTextCtrl, 0, wxALL, 5 );
+
+	wxStaticText * LibreFMPasswdStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
+	LibreFMPasswdStaticText->Wrap( -1 );
+	LibreFMASLoginSizer->Add( LibreFMPasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_LibreFMPasswdTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
+	m_LibreFMPasswdTextCtrl->SetValue( m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LibreFM" ) ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
+	// Password is saved in md5 form so we cant load it back
+	LibreFMASLoginSizer->Add( m_LibreFMPasswdTextCtrl, 0, wxALL, 5 );
+
+	if( m_LibreFMPasswdTextCtrl->IsEmpty() ||
+	    m_LibreFMUserNameTextCtrl->IsEmpty() )
+        m_LibreFMASEnableChkBox->Disable();
+
+	LibreFMASSizer->Add( LibreFMASLoginSizer, 0, wxEXPAND, 5 );
+
+	ASMainSizer->Add( LibreFMASSizer, 0, wxEXPAND|wxALL, 5 );
+
+
+
 
 	ASMainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
@@ -669,7 +709,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LastFMPanel->SetSizer( ASMainSizer );
 	m_LastFMPanel->Layout();
 	ASMainSizer->Fit( m_LastFMPanel );
-	m_MainNotebook->AddPage( m_LastFMPanel, wxT( "LastFM" ), false );
+	m_MainNotebook->AddPage( m_LastFMPanel, _( "AudioScrobble" ), false );
 	m_MainNotebook->SetPageImage( 5, 5 );
 
     //
@@ -1202,8 +1242,11 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_OnlineDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
 	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
 
-    m_UserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
-    m_PasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
+    m_LastFMUserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+    m_LastFMPasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+
+    m_LibreFMUserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
+    m_LibreFMPasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
 
 	m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
 	m_LinksAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
@@ -1269,8 +1312,11 @@ guPrefDialog::~guPrefDialog()
 	m_OnlineDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
 	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
 
-    m_UserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
-    m_PasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnASUserNameChanged ), NULL, this );
+    m_LastFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+    m_LastFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+
+    m_LibreFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
+    m_LibreFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
 
 	m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
 	m_LinksAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
@@ -1339,15 +1385,23 @@ void guPrefDialog::SaveSettings( void )
     m_Config->WriteNum( wxT( "FadeInVolStart" ), m_XFadeInStartSlider->GetValue(), wxT( "Crossfader" ) );
 	m_Config->WriteNum( wxT( "FadeInVolTriger" ), m_XFadeInTrigerSlider->GetValue(), wxT( "Crossfader" ) );
 
-    m_Config->WriteBool( wxT( "SubmitEnabled" ), m_ASEnableChkBox->IsEnabled() && m_ASEnableChkBox->GetValue(), wxT( "LastFM" ) );
-    m_Config->WriteStr( wxT( "UserName" ), m_UserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
-    if( !m_PasswdTextCtrl->IsEmpty() && m_PasswdTextCtrl->GetValue() != wxT( "******" ) )
+    m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LastFMASEnableChkBox->IsEnabled() && m_LastFMASEnableChkBox->GetValue(), wxT( "LastFM" ) );
+    m_Config->WriteStr( wxT( "UserName" ), m_LastFMUserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
+    if( !m_LastFMPasswdTextCtrl->IsEmpty() && m_LastFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
     {
         guMD5 MD5;
-        m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_PasswdTextCtrl->GetValue() ), wxT( "LastFM" ) );
+        m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LastFMPasswdTextCtrl->GetValue() ), wxT( "LastFM" ) );
         //guLogMessage( wxT( "Pass: %s" ), PasswdTextCtrl->GetValue().c_str() );
         //guLogMessage( wxT( "MD5 : %s" ), MD5.MD5( PasswdTextCtrl->GetValue() ).c_str() );
     }
+    m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LibreFMASEnableChkBox->IsEnabled() && m_LibreFMASEnableChkBox->GetValue(), wxT( "LibreFM" ) );
+    m_Config->WriteStr( wxT( "UserName" ), m_LibreFMUserNameTextCtrl->GetValue(), wxT( "LibreFM" ) );
+    if( !m_LibreFMPasswdTextCtrl->IsEmpty() && m_LibreFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
+    {
+        guMD5 MD5;
+        m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LibreFMPasswdTextCtrl->GetValue() ), wxT( "LibreFM" ) );
+    }
+
     // LastFM Panel Info language
     m_Config->WriteStr( wxT( "Language" ), m_LangIds[ m_LangChoice->GetSelection() ], wxT( "LastFM" ) );
     m_Config->WriteNum( wxT( "MinTracksToPlay" ), m_MinTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
@@ -1732,15 +1786,28 @@ void guPrefDialog::OnRecDelTracksClicked( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPrefDialog::OnASUserNameChanged( wxCommandEvent &event )
+void guPrefDialog::OnLastFMASUserNameChanged( wxCommandEvent &event )
 {
-    if( m_UserNameTextCtrl->IsEmpty() || m_PasswdTextCtrl->IsEmpty() )
+    if( m_LastFMUserNameTextCtrl->IsEmpty() || m_LastFMPasswdTextCtrl->IsEmpty() )
     {
-        m_ASEnableChkBox->Disable();
+        m_LastFMASEnableChkBox->Disable();
     }
     else
     {
-        m_ASEnableChkBox->Enable();
+        m_LastFMASEnableChkBox->Enable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLibreFMASUserNameChanged( wxCommandEvent &event )
+{
+    if( m_LibreFMUserNameTextCtrl->IsEmpty() || m_LibreFMPasswdTextCtrl->IsEmpty() )
+    {
+        m_LibreFMASEnableChkBox->Disable();
+    }
+    else
+    {
+        m_LibreFMASEnableChkBox->Enable();
     }
 }
 
