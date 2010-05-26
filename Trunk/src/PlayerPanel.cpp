@@ -124,7 +124,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
-        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
+        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
+                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
         Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
 
         m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
@@ -599,7 +600,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
-        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
+        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
+                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
 
         m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
         m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
@@ -1442,7 +1444,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         if( m_LastLength )
             m_PlayerPositionSlider->SetValue( event.GetInt() / ( m_LastLength / 1000 ) );
 
-        m_MediaSong.m_PlayTime = CurPos;
+        m_MediaSong.m_PlayTime = CurPos / 1000;
 
         if( !m_TrackChanged && !m_AutoTrackChanged && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
             ( CurPos + m_FadeOutTime + 3000 >= m_LastLength ) )
@@ -1664,7 +1666,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     // The CachedPlayedSong database to be submitted to LastFM AudioScrobbling
     if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ) // If its not a radiostation
     {
-        //guLogMessage( wxT( "PlayTime: %u Length: %u" ), m_MediaSong.PlayTime, m_MediaSong.Length );
+        guLogMessage( wxT( "PlayTime: %u Length: %u" ), m_MediaSong.m_PlayTime, m_MediaSong.m_Length );
         if( ( ( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
             ( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) ) ) && // If have played at least the half
             ( m_MediaSong.m_PlayTime > guAS_MIN_TRACKLEN ) )    // If the Length is more than 30 secs
@@ -1832,25 +1834,25 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 
-    if( m_MediaCtrl->GetState() == guMEDIASTATE_PLAYING )
-    {
-        // If Enabled LastFM->Submit and no error then send Now Playing Information
-        if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
-            ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
-        {
-            m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
-        }
-    }
-    else
-    {
-        m_PendingScrob = true;
-    }
+//    if( m_MediaCtrl->GetState() == guMEDIASTATE_PLAYING )
+//    {
+//        // If Enabled LastFM->Submit and no error then send Now Playing Information
+//        if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
+//            ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
+//        {
+//            m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
+//        }
+//    }
+//    else
+//    {
+//        m_PendingScrob = true;
+//    }
 
-    if( m_PendingScrob && m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
+    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
         ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
     {
         m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
-        m_PendingScrob = false;
+        //m_PendingScrob = false;
     }
 
     SendNotifyInfo( CoverImage );

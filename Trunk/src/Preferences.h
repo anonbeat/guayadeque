@@ -119,11 +119,13 @@ class guPrefDialog : public wxDialog
     wxSpinCtrl *                m_RecDelTime;
 
     wxPanel *                   m_LastFMPanel;
-    wxCheckBox *                m_ASEnableChkBox;
-    wxStaticText *              m_UserNameStaticText;
-    wxTextCtrl *                m_UserNameTextCtrl;
-    wxStaticText *              m_PasswdStaticText;
-    wxTextCtrl *                m_PasswdTextCtrl;
+    wxCheckBox *                m_LastFMASEnableChkBox;
+    wxTextCtrl *                m_LastFMUserNameTextCtrl;
+    wxTextCtrl *                m_LastFMPasswdTextCtrl;
+    wxCheckBox *                m_LibreFMASEnableChkBox;
+    wxTextCtrl *                m_LibreFMUserNameTextCtrl;
+    wxTextCtrl *                m_LibreFMPasswdTextCtrl;
+
     wxStaticText *              m_LangStaticText;
     wxChoice *                  m_LangChoice;
     wxArrayString               m_LangNames;
@@ -217,7 +219,8 @@ class guPrefDialog : public wxDialog
     void OnRecEnableClicked( wxCommandEvent& event );
     void OnRecDelTracksClicked( wxCommandEvent& event );
 	void OnFiltersListBoxSelected( wxCommandEvent &event );
-	void OnASUserNameChanged( wxCommandEvent &event );
+	void OnLastFMASUserNameChanged( wxCommandEvent &event );
+	void OnLibreFMASUserNameChanged( wxCommandEvent &event );
     void OnOnlineAddBtnClick( wxCommandEvent& event );
 	void OnOnlineDelBtnClick( wxCommandEvent& event );
 	void OnOnlineListBoxDClicked( wxCommandEvent &event );
