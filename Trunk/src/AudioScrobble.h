@@ -30,7 +30,7 @@
 #define guAS_PROTOCOL_VERSION       wxT( "1.2.1" )
 
 //#ifdef _DEBUG
-  #define guAS_DEVELOPMENT
+//  #define guAS_DEVELOPMENT
 //#endif
 
 #ifndef guAS_DEVELOPMENT

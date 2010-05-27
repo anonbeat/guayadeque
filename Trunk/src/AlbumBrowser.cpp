@@ -822,16 +822,28 @@ void guAlbumBrowser::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH 
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnSearchSelected( wxCommandEvent& event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    guTrackArray Tracks;
+    wxArrayInt Selections;
+    int Index;
+    int Count = m_AlbumItems.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
-        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+        Selections.Add( m_AlbumItems[ Index ].m_AlbumId );
+    }
+
+    if( m_Db->GetAlbumsSongs( Selections, &Tracks ) && Tracks.Count() )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
         {
-            //OnSongQueueAllClicked( event );
-        }
-        else
-        {
-            //OnSongPlayAllClicked( event );
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                m_PlayerPanel->AddToPlayList( Tracks, true );
+            }
+            else
+            {
+                m_PlayerPanel->SetPlayList( Tracks );
+            }
         }
     }
 }
@@ -839,14 +851,18 @@ void guAlbumBrowser::OnSearchSelected( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnTextChangedTimer( wxTimerEvent &event )
 {
-    guLogMessage( wxT( "The search timer finished..." ) );
-
     wxString SearchString = m_SearchTextCtrl->GetLineText( 0 );
     if( !SearchString.IsEmpty() )
     {
         if( SearchString.Length() > 1 )
         {
             m_TextSearchFilter = guSplitWords( SearchString );
+
+            RefreshCount();
+            ReloadItems();
+            m_LastItemStart = wxNOT_FOUND;
+            m_NavSlider->SetValue( 0 );
+            RefreshAll();
 
             m_SearchTextCtrl->ShowCancelButton( true );
         }
@@ -873,7 +889,7 @@ void guAlbumBrowser::ReloadItems( void )
     m_AlbumItemsMutex.Lock();
     m_AlbumItems.Empty();
     m_Db->GetAlbums( &m_AlbumItems, m_FilterBtn->GetValue() ? &m_DynFilter : NULL,
-                     m_ItemStart, m_ItemCount, m_OrderChoice->GetSelection() - 1 );
+            m_TextSearchFilter, m_ItemStart, m_ItemCount, m_OrderChoice->GetSelection() - 1 );
     m_AlbumItemsMutex.Unlock();
 //    guLogMessage( wxT( "Read %i items from %i (%i)" ), m_AlbumItems.Count(), m_ItemStart, m_ItemCount );
 //    RefreshAll();
