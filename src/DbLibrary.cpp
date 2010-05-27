@@ -2555,21 +2555,57 @@ int guDbLibrary::GetAlbumTrackCount( const int albumid )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetAlbumsCount( guDynPlayList * filter )
+wxString inline AlbumBrowserTextFilterToSQL( const wxArrayString &textfilters )
+{
+  int index;
+  int count;
+  wxString RetVal;
+  if( ( count = textfilters.Count() ) )
+  {
+    for( index = 0; index < count; index++ )
+    {
+        RetVal += wxT( "( album_name LIKE '%" ) + escape_query_str( textfilters[ index ] ) + wxT( "%' OR " );
+        RetVal += wxT( " artist_name LIKE '%" ) + escape_query_str( textfilters[ index ] ) + wxT( "%' ) " );
+        RetVal += wxT( "AND " );
+    }
+    RetVal = RetVal.RemoveLast( 4 );
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetAlbumsCount( guDynPlayList * filter, const wxArrayString &textfilters )
 {
   wxString              query;
+  wxString              postquery;
   wxSQLite3ResultSet    dbRes;
   int                   RetVal = 0;
 
   query = wxT( "SELECT COUNT( DISTINCT song_albumid ) FROM songs " );
-  if( filter )
+
+  if( textfilters.Count() )
   {
-    query += DynPlayListToSQLQuery( filter );
+      query += wxT( ", albums, artists " );
   }
 
-  //guLogMessage( wxT( "GetAlbumsCount:\n%s" ), query.c_str() );
+  if( filter )
+  {
+    postquery += DynPlayListToSQLQuery( filter );
+  }
 
-  dbRes = ExecuteQuery( query );
+  if( textfilters.Count() )
+  {
+    if( postquery.IsEmpty() )
+      postquery = wxT( "WHERE " );
+    else
+      postquery += wxT( " AND " );
+    postquery += wxT( "song_albumid = album_id AND song_artistid = artist_id AND " );
+    postquery += AlbumBrowserTextFilterToSQL( textfilters );
+  }
+
+  //guLogMessage( wxT( "GetAlbumsCount:\n%s" ), ( query + postquery ).c_str() );
+
+  dbRes = ExecuteQuery( query + postquery );
 
   if( dbRes.NextRow() )
   {
@@ -2582,7 +2618,7 @@ int guDbLibrary::GetAlbumsCount( guDynPlayList * filter )
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * filter,
-                            const int start, const int count, const int order )
+        const wxArrayString &textfilters, const int start, const int count, const int order )
 {
   if( !count )
     return 0;
@@ -2605,6 +2641,11 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
   else
   {
     query += wxT( ", albums, artists WHERE album_artistid = artist_id AND song_albumid = album_id " );
+  }
+
+  if( textfilters.Count() )
+  {
+      query += wxT( " AND " ) + AlbumBrowserTextFilterToSQL( textfilters );
   }
 
   query += wxT( " ORDER BY " );

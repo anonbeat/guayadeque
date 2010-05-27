@@ -181,7 +181,7 @@ class guAlbumBrowser : public wxPanel
 
     void RefreshCount( void )
     {
-        m_AlbumsCount = m_Db->GetAlbumsCount( m_FilterBtn->GetValue() ? &m_DynFilter : NULL );
+        m_AlbumsCount = m_Db->GetAlbumsCount( m_FilterBtn->GetValue() ? &m_DynFilter : NULL, m_TextSearchFilter );
         m_ItemStart = 0;
         RefreshPageCount();
     }
