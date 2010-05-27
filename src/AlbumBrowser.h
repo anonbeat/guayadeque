@@ -36,6 +36,7 @@
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/sizer.h>
+#include <wx/srchctrl.h>
 #include <wx/panel.h>
 
 // -------------------------------------------------------------------------------- //
@@ -153,6 +154,9 @@ class guAlbumBrowser : public wxPanel
 	wxStaticText *                  m_NavLabel;
 	wxSlider *                      m_NavSlider;
 	wxSize                          m_LastSize;
+	wxSearchCtrl *                  m_SearchTextCtrl;
+    wxTimer                         m_TextChangedTimer;
+    wxArrayString                   m_TextSearchFilter;
 
     void                            OnChangedSize( wxSizeEvent &event );
     void                            OnChangingPosition( wxScrollEvent& event );
@@ -165,6 +169,11 @@ class guAlbumBrowser : public wxPanel
 
     void                            OnMouseWheel( wxMouseEvent& event );
 //    void                            OnBeginDrag( wxCommandEvent &event );
+
+    void                            OnSearchTextChanged( wxCommandEvent &event );
+    void                            OnSearchCancelled( wxCommandEvent &event );
+    void                            OnSearchSelected( wxCommandEvent &event );
+    void                            OnTextChangedTimer( wxTimerEvent &event );
 
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
