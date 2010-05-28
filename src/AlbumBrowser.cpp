@@ -643,7 +643,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 	m_EditFilterBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
 	FilterSizer->Add( m_EditFilterBtn, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * SearchLabel = new wxStaticText( this, wxID_ANY, wxT("Search:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * SearchLabel = new wxStaticText( this, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	SearchLabel->Wrap( -1 );
 	FilterSizer->Add( SearchLabel, 0, wxTOP|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 

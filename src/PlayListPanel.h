@@ -47,6 +47,11 @@
 #include <wx/frame.h>
 #include <wx/treectrl.h>
 #include <wx/imaglist.h>
+#include <wx/srchctrl.h>
+
+#define     guPANEL_PLAYLIST_TEXTSEARCH        ( 1 << 0 )
+
+#define     guPANEL_PLAYLIST_VISIBLE_DEFAULT   ( 0 )
 
 class guPLNamesDropTarget;
 
@@ -56,7 +61,8 @@ class guPLNamesDropTarget;
 class guPLNamesTreeCtrl : public wxTreeCtrl
 {
   protected :
-    guDbLibrary *     m_Db;
+    wxArrayString   m_TextSearchFilter;
+    guDbLibrary *   m_Db;
     wxImageList *   m_ImageList;
     wxTreeItemId    m_RootId;
     wxTreeItemId    m_StaticId;
@@ -82,6 +88,7 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
 
     friend class guPLNamesDropTarget;
     friend class guPLNamesDropFilesThread;
+    friend class guPlayListPanel;
 };
 
 // -------------------------------------------------------------------------------- //
@@ -136,6 +143,11 @@ class guPlayListPanel : public wxPanel
     guPLNamesTreeCtrl * m_NamesTreeCtrl;
     guPLSoListBox *     m_PLTracksListBox;
 
+    wxSearchCtrl *      m_InputTextCtrl;
+
+    wxTimer             m_TextChangedTimer;
+    unsigned int        m_VisiblePanels;
+
     void                OnPLNamesSelected( wxTreeEvent &event );
     void                OnPLNamesActivated( wxTreeEvent &event );
     void                OnPLNamesPlay( wxCommandEvent &event );
@@ -167,6 +179,14 @@ class guPlayListPanel : public wxPanel
     void                OnPLTracksSelectArtist( wxCommandEvent &event );
     void                OnPLTracksSelectAlbum( wxCommandEvent &event );
 
+    void                OnSearchActivated( wxCommandEvent &event );
+    //void                OnSearchSelected( wxCommandEvent &event );
+    void                OnSearchCancelled( wxCommandEvent &event );
+
+    void                OnTextChangedTimer( wxTimerEvent &event );
+
+    void                OnPaneClose( wxAuiManagerEvent &event );
+
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();
@@ -177,6 +197,9 @@ class guPlayListPanel : public wxPanel
 
     void inline         UpdatedTracks( const guTrackArray * tracks ) { m_PLTracksListBox->UpdatedTracks( tracks ); };
     void inline         UpdatedTrack( const guTrack * track ) { m_PLTracksListBox->UpdatedTrack( track ); };
+
+    bool                IsPanelShown( const int panelid ) const;
+    void                ShowPanel( const int panelid, bool show );
 
 };
 

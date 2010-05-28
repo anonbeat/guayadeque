@@ -144,7 +144,10 @@ class guMainFrame : public wxFrame
 
     wxMenuItem *                m_ViewLastFM;
     wxMenuItem *                m_ViewLyrics;
+
     wxMenuItem *                m_ViewPlayLists;
+    wxMenuItem *                m_ViewPLTextSearch;
+
     wxMenuItem *                m_ViewAlbumBrowser;
 
     wxMenuItem *                m_ViewFileBrowser;
@@ -267,7 +270,9 @@ class guMainFrame : public wxFrame
 
     void                OnViewLastFM( wxCommandEvent &event );
     void                OnViewLyrics( wxCommandEvent &event );
+
     void                OnViewPlayLists( wxCommandEvent &event );
+    void                OnPlayListShowPanel( wxCommandEvent &event );
 
     void                OnViewPodcasts( wxCommandEvent &event );
     void                OnPodcastsShowPanel( wxCommandEvent &event );
