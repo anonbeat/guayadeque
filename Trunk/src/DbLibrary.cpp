@@ -2901,13 +2901,25 @@ int guDbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * pl
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::GetPlayLists( guListItems * PlayLists, const int type )
+void guDbLibrary::GetPlayLists( guListItems * PlayLists, const int type, const wxArrayString * textfilters )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
-//  guListItems RetVal;
 
-  query = wxString::Format( wxT( "SELECT playlist_id, playlist_name FROM playlists WHERE playlist_type = %u ORDER BY playlist_name COLLATE NOCASE;" ), type );
+  query = wxString::Format( wxT( "SELECT playlist_id, playlist_name FROM playlists "
+                                 "WHERE playlist_type = %u " ), type );
+
+  if( textfilters && textfilters->Count() )
+  {
+      int Index;
+      int Count = textfilters->Count();
+      for( Index = 0; Index < Count; Index++ )
+      {
+          query += wxT( "AND playlist_name LIKE '%" ) + ( * textfilters )[ Index ] + wxT( "%' " );
+      }
+  }
+
+  query += wxT( "ORDER BY playlist_name COLLATE NOCASE;" ),
 
   dbRes = ExecuteQuery( query );
 

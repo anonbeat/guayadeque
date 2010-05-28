@@ -35,6 +35,9 @@
 #include "TrackEdit.h"
 #include "Utils.h"
 
+#define guPLAYLIST_TIMER_TEXTSEARCH        5
+#define guPLAYLIST_TIMER_TEXTSEARCH_VALUE  500
+
 // -------------------------------------------------------------------------------- //
 class guPLNamesData : public wxTreeItemData
 {
@@ -95,7 +98,7 @@ void guPLNamesTreeCtrl::ReloadItems( void )
     DeleteChildren( m_DynamicId );
 
     guListItems m_StaticItems;
-    m_Db->GetPlayLists( &m_StaticItems, GUPLAYLIST_STATIC );
+    m_Db->GetPlayLists( &m_StaticItems, GUPLAYLIST_STATIC, &m_TextSearchFilter );
     if( ( count = m_StaticItems.Count() ) )
     {
         for( index = 0; index < count; index++ )
@@ -106,7 +109,7 @@ void guPLNamesTreeCtrl::ReloadItems( void )
     }
 
     guListItems m_DynamicItems;
-    m_Db->GetPlayLists( &m_DynamicItems, GUPLAYLIST_DYNAMIC );
+    m_Db->GetPlayLists( &m_DynamicItems, GUPLAYLIST_DYNAMIC, &m_TextSearchFilter );
     if( ( count = m_DynamicItems.Count() ) )
     {
         for( index = 0; index < count; index++ )
@@ -439,7 +442,9 @@ wxDragResult guPLNamesDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult
 // guPlayListPanel
 // -------------------------------------------------------------------------------- //
 guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-                 wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
+                wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ),
+                m_TextChangedTimer( this, guPLAYLIST_TIMER_TEXTSEARCH )
+
 {
     m_Db = db;
     m_PlayerPanel = playerpanel;
@@ -473,11 +478,36 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
             wxAUI_GRADIENT_VERTICAL );
 
 
+    m_VisiblePanels = Config->ReadNum( wxT( "PLVisiblePanels" ), guPANEL_PLAYLIST_VISIBLE_DEFAULT, wxT( "Positions" ) );
+
 //	wxBoxSizer* MainSizer;
 //	MainSizer = new wxBoxSizer( wxVERTICAL );
 //
 //	m_MainSplitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
 //    m_MainSplitter->SetMinimumPaneSize( 60 );
+
+	wxBoxSizer * SearchSizer;
+	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxPanel * SearchPanel;
+	SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
+    wxStaticText *      SearchStaticText;
+	SearchStaticText = new wxStaticText( SearchPanel, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	SearchStaticText->Wrap( -1 );
+	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
+
+    m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxRIGHT|wxTOP|wxBOTTOM, 5 );
+
+    SearchPanel->SetSizer( SearchSizer );
+    SearchPanel->Layout();
+	SearchSizer->Fit( SearchPanel );
+
+    m_AuiManager.AddPane( SearchPanel,
+            wxAuiPaneInfo().Name( wxT( "PlayListTextSearch" ) ).Caption( _( "Text Search" ) ).
+            MinSize( 60, 28 ).MaxSize( -1, 28 ).Row( 0 ).Layer( 2 ).Position( 0 ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            Dockable( true ).Top() );
 
     wxPanel * NamesPanel;
 	NamesPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -519,7 +549,10 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 
     wxString PlayListLayout = Config->ReadStr( wxT( "PlayLists" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || PlayListLayout.IsEmpty() )
+    {
         m_AuiManager.Update();
+        m_VisiblePanels = guPANEL_PLAYLIST_VISIBLE_DEFAULT;
+    }
     else
         m_AuiManager.LoadPerspective( PlayListLayout, true );
 
@@ -562,6 +595,13 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
 
+    //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guPlayListPanel::OnSearchSelected ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPlayListPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guPlayListPanel::OnSearchCancelled ), NULL, this );
+
+	Connect( guPLAYLIST_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guPlayListPanel::OnTextChangedTimer ), NULL, this );
+
+    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPlayListPanel::OnPaneClose ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -571,7 +611,7 @@ guPlayListPanel::~guPlayListPanel()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-//        Config->WriteNum( wxT( "PlayListSashPos" ), m_MainSplitter->GetSashPosition(), wxT( "Positions" ) );
+        Config->WriteNum( wxT( "PLVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
         Config->WriteStr( wxT( "PlayLists" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
     }
 
@@ -606,7 +646,57 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
     Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
 
+    //m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guPlayListPanel::OnSearchSelected ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPlayListPanel::OnSearchActivated ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guPlayListPanel::OnSearchCancelled ), NULL, this );
+
+	Disconnect( guPLAYLIST_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guPlayListPanel::OnTextChangedTimer ), NULL, this );
+
+    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPlayListPanel::OnPaneClose ), NULL, this );
+
     m_AuiManager.UnInit();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnSearchActivated( wxCommandEvent& event )
+{
+    if( m_TextChangedTimer.IsRunning() )
+        m_TextChangedTimer.Stop();
+    m_TextChangedTimer.Start( guPLAYLIST_TIMER_TEXTSEARCH_VALUE, wxTIMER_ONE_SHOT );
+}
+
+//// -------------------------------------------------------------------------------- //
+//void guPlayListPanel::OnSearchSelected( wxCommandEvent& event )
+//{
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
+//}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
+{
+    m_InputTextCtrl->Clear();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnTextChangedTimer( wxTimerEvent &event )
+{
+    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
+    if( !SearchString.IsEmpty() )
+    {
+        if( SearchString.Length() > 1 )
+        {
+            m_NamesTreeCtrl->m_TextSearchFilter = guSplitWords( SearchString );
+            m_NamesTreeCtrl->ReloadItems();
+        }
+        m_InputTextCtrl->ShowCancelButton( true );
+    }
+    else
+    {
+        m_NamesTreeCtrl->m_TextSearchFilter.Clear();
+        m_NamesTreeCtrl->ReloadItems();
+        m_InputTextCtrl->ShowCancelButton( false );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1084,7 +1174,7 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
     if( NewSongs.Count() );
     {
         guListItems PlayLists;
-        m_Db->GetPlayLists( &PlayLists,GUPLAYLIST_STATIC );
+        m_Db->GetPlayLists( &PlayLists, GUPLAYLIST_STATIC );
 
         guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &NewSongs, &PlayLists );
 
@@ -1205,6 +1295,69 @@ bool guPlayListPanel::GetPlayListCounters( wxLongLong * count, wxLongLong * len,
         }
     }
     return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayListPanel::IsPanelShown( const int panelid ) const
+{
+    return ( m_VisiblePanels & panelid );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::ShowPanel( const int panelid, bool show )
+{
+    wxString PaneName;
+
+    switch( panelid )
+    {
+        case guPANEL_PLAYLIST_TEXTSEARCH :
+            PaneName = wxT( "PlayListTextSearch" );
+            break;
+
+        default :
+            return;
+
+    }
+
+    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
+    if( PaneInfo.IsOk() )
+    {
+        if( show )
+            PaneInfo.Show();
+        else
+            PaneInfo.Hide();
+
+        m_AuiManager.Update();
+    }
+
+    if( show )
+        m_VisiblePanels |= panelid;
+    else
+        m_VisiblePanels ^= panelid;
+
+    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPaneClose( wxAuiManagerEvent &event )
+{
+    wxAuiPaneInfo * PaneInfo = event.GetPane();
+    wxString PaneName = PaneInfo->name;
+    int CmdId = 0;
+
+    if( PaneName == wxT( "PlayListTextSearch" ) )
+    {
+        CmdId = ID_MENU_VIEW_PL_TEXTSEARCH;
+    }
+
+    guLogMessage( wxT( "OnPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
+    if( CmdId )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, CmdId );
+        AddPendingEvent( evt );
+    }
+
+    event.Veto();
 }
 
 // -------------------------------------------------------------------------------- //

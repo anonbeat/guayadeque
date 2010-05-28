@@ -502,7 +502,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ), NULL, this );
     Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ), NULL, this );
+
     Connect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ), NULL, this );
+    Connect( ID_MENU_VIEW_PL_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListShowPanel ), NULL, this );
 
     Connect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ), NULL, this );
     Connect( ID_MENU_VIEW_POD_CHANNELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
@@ -917,9 +919,19 @@ void guMainFrame::CreateMenu()
     m_MainMenu->Append( m_ViewLyrics );
     m_ViewLyrics->Check( m_VisiblePanels & guPANEL_MAIN_LYRICS );
 
+
+    SubMenu = new wxMenu();
+
     m_ViewPlayLists = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYLISTS, _( "&PlayLists" ), _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
-    m_MainMenu->Append( m_ViewPlayLists );
+    SubMenu->Append( m_ViewPlayLists );
     m_ViewPlayLists->Check( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS );
+
+    m_ViewPLTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_PL_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the playlists text search" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewPLTextSearch );
+    m_ViewPLTextSearch->Check( m_PlayListPanel && m_PlayListPanel->IsPanelShown( guPANEL_PLAYLIST_TEXTSEARCH ) );
+    m_ViewPLTextSearch->Enable( m_ViewPlayLists->IsChecked() );
+
+    m_MainMenu->AppendSubMenu( SubMenu, _( "&PlayLists" ), _( "Set the playlists visible panels" ) );
 
     SubMenu = new wxMenu();
 
@@ -1767,6 +1779,24 @@ void guMainFrame::OnRadioShowPanel( wxCommandEvent &event )
     if( PanelId && m_RadioPanel )
         m_RadioPanel->ShowPanel( PanelId, event.IsChecked() );
 
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPlayListShowPanel( wxCommandEvent &event )
+{
+    unsigned int PanelId = 0;
+
+    switch( event.GetId() )
+    {
+        case ID_MENU_VIEW_PL_TEXTSEARCH :
+            PanelId = guPANEL_PLAYLIST_TEXTSEARCH ;
+            m_ViewPLTextSearch->Check( event.IsChecked() );
+            break;
+
+    }
+
+    if( PanelId && m_PlayListPanel )
+        m_PlayListPanel->ShowPanel( PanelId, event.IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //
