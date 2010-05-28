@@ -518,6 +518,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 //    m_NameStaticText = new wxStaticText( NamesPanel, wxID_ANY, _( "Play lists:" ) );
 //    NameSizer->Add( m_NameStaticText, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5 );
 	m_NamesTreeCtrl = new guPLNamesTreeCtrl( NamesPanel, m_Db );
+	m_NamesTreeCtrl->ExpandAll();
 	NameSizer->Add( m_NamesTreeCtrl, 1, wxEXPAND, 5 );
 
 	NamesPanel->SetSizer( NameSizer );
