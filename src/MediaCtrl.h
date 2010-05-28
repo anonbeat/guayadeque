@@ -247,6 +247,8 @@ class guFaderPlayBin
     bool                Preroll( void );
     void                Reuse( void );
 
+    void                UnsetCrossfader( void );
+
     friend class guMediaCtrl;
 };
 WX_DEFINE_ARRAY_PTR( guFaderPlayBin *, guFaderPlayBinArray );
@@ -361,6 +363,8 @@ class guMediaCtrl : public wxEvtHandler
     void            UpdatedConfig( void );
 
     bool            IsBuffering( void ) { return m_Buffering; }
+
+    void            UnsetCrossfader( void );
 
     friend class guFaderPlayBin;
 };

@@ -3263,6 +3263,16 @@ void guMediaCtrl::CleanPlayBins( void )
     ScheduleReap();
 }
 
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::UnsetCrossfader( void )
+{
+    Lock();
+    if( m_FaderPlayBins.Count() )
+    {
+        m_FaderPlayBins[ 0 ]->UnsetCrossfader();
+    }
+    Unlock();
+}
 
 
 
@@ -4222,6 +4232,15 @@ void guFaderPlayBin::Reuse( void )
 	m_NewUri = wxEmptyString;
 
 	m_EmittedPlaying = false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guFaderPlayBin::UnsetCrossfader( void )
+{
+    if( m_Fader )
+    {
+        gst_controller_unset_all( m_Fader, ( gchar * ) "volume" );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
