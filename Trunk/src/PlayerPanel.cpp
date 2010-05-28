@@ -2046,9 +2046,8 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     if( ( ( CurItem == 0 ) && ( State == guMEDIASTATE_PLAYING ) ) ||
         ( ( State != guMEDIASTATE_STOPPED ) && ( m_LastCurPos  > GUPLAYER_MIN_PREVTRACK_POS ) ) )
     {
-        //m_MediaCtrl->Stop();
+        m_MediaCtrl->UnsetCrossfader();
         SetPosition( 0 );
-        //m_MediaCtrl->Play();
         return;
     }
 
@@ -2369,6 +2368,8 @@ void guPlayerPanel::OnPlayerPositionSliderChanged( wxScrollEvent &event )
         SetPosition( NewPos * m_MediaSong.m_Length );
     }
     m_SliderIsDragged = false;
+
+    m_MediaCtrl->UnsetCrossfader();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2381,6 +2382,8 @@ void guPlayerPanel::OnPlayerPositionSliderMouseWheel( wxMouseEvent &event )
         SetPosition( wxMax( 0, wxMin( ( int ) m_MediaSong.m_Length * 1000, GetPosition() + ( Rotation * 7000 ) ) ) );
     }
     m_SliderIsDragged = false;
+
+    m_MediaCtrl->UnsetCrossfader();
 }
 
 // -------------------------------------------------------------------------------- //
