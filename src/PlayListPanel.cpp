@@ -688,6 +688,7 @@ void guPlayListPanel::OnTextChangedTimer( wxTimerEvent &event )
         if( SearchString.Length() > 1 )
         {
             m_NamesTreeCtrl->m_TextSearchFilter = guSplitWords( SearchString );
+            m_NamesTreeCtrl->ExpandAll();
             m_NamesTreeCtrl->ReloadItems();
         }
         m_InputTextCtrl->ShowCancelButton( true );
@@ -695,6 +696,7 @@ void guPlayListPanel::OnTextChangedTimer( wxTimerEvent &event )
     else
     {
         m_NamesTreeCtrl->m_TextSearchFilter.Clear();
+        m_NamesTreeCtrl->ExpandAll();
         m_NamesTreeCtrl->ReloadItems();
         m_InputTextCtrl->ShowCancelButton( false );
     }
