@@ -1309,24 +1309,18 @@ void guAlbumBrowser::OnMouseWheel( wxMouseEvent& event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::LibraryUpdated( void )
 {
-    int CurPos = m_NavSlider->GetValue();
+    int CurPage = m_NavSlider->GetValue();
+
     RefreshCount();
+
+    if( CurPage > m_NavSlider->GetMax() )
+        CurPage = m_NavSlider->GetMax();
+
+    m_ItemStart = CurPage * m_ItemCount;
+    UpdateNavLabel( CurPage );
+
     ReloadItems();
-//    RefreshAll();
-
-    if( CurPos > m_NavSlider->GetMax() )
-        CurPos = m_NavSlider->GetMax();
-
-    if( CurPos < m_NavSlider->GetMin() )
-        CurPos = m_NavSlider->GetMin();
-
-    m_NavSlider->SetValue( CurPos );
-
-    wxScrollEvent ScrollEvent( wxEVT_SCROLL_CHANGED );
-    ScrollEvent.SetPosition( CurPos );
-    wxPostEvent( m_NavSlider, ScrollEvent );
-
-    UpdateNavLabel( CurPos );
+    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //
