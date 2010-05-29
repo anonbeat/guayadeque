@@ -829,7 +829,8 @@ static void faderplaybin_pad_added_cb( GstElement * decoder, GstPad * pad, guFad
 	else
 	{
 		//guLogDebug( wxT( "got decoded audio pad for stream %s" ), faderplaybin->m_Uri.c_str() );
-		VPad = gst_element_get_static_pad( faderplaybin->m_Identity, "sink" );
+		//VPad = gst_element_get_static_pad( faderplaybin->m_Identity, "sink" );
+		VPad = gst_element_get_static_pad( faderplaybin->m_AudioConvert, "sink" );
 		gst_pad_link( pad, VPad );
 		gst_object_unref( VPad );
 		faderplaybin->m_DecoderLinked = true;
@@ -3518,7 +3519,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
     g_signal_connect( m_Decoder, "pad-added", G_CALLBACK( faderplaybin_pad_added_cb ), this );
     g_signal_connect( m_Decoder, "pad-removed", G_CALLBACK( faderplaybin_pad_removed_cb ), this );
 
-    m_Identity = gst_element_factory_make( "identity", NULL );
+    //m_Identity = gst_element_factory_make( "identity", NULL );
 
     m_AudioConvert = gst_element_factory_make( "audioconvert", NULL );
     if( !IsValidElement( m_AudioConvert ) )
@@ -3592,8 +3593,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
         NULL );
 
 	gst_bin_add_many( GST_BIN( m_PlayBin ),
-        m_Decoder,
-        m_Identity,
+        m_Decoder, //m_Identity,
         m_AudioConvert,
         m_AudioResample,
         m_CapsFilter,
@@ -3601,7 +3601,8 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
         m_Volume,
         NULL );
 
-	gst_element_link_many( m_Identity, m_AudioConvert,
+	//gst_element_link_many( m_Identity, m_AudioConvert,
+	gst_element_link_many( m_AudioConvert,
         m_AudioResample,
         m_CapsFilter,
 		m_PreRoll,
