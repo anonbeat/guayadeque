@@ -463,9 +463,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
 
-    m_PlayerTimer = new guPlayerPanelTimer( this );
-    m_PlayerTimer->Start( 400 );
-
     //
     m_AudioScrobble = NULL;
     if( m_AudioScrobbleEnabled )
@@ -485,9 +482,6 @@ guPlayerPanel::~guPlayerPanel()
 
     if( m_AudioScrobble )
         delete m_AudioScrobble;
-
-    if( m_PlayerTimer )
-        delete m_PlayerTimer;
 
     if( m_MediaRecordCtrl )
         delete m_MediaRecordCtrl;
@@ -1428,11 +1422,33 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     {
         m_LastLength = CurLen;
 
-        guLogMessage( wxT( "Now the new track started playing" ) );
         //m_MediaSong.m_Length = CurLen / 1000;
         //UpdatePositionLabel( m_LastCurPos / 1000 );
         if( !m_LastLength )
             m_PlayerPositionSlider->SetValue( 0 );
+
+
+        // Some track lengths are not correctly read by taglib so
+        // we try to find the length from gstreamer and update the database
+        // We need to not do this for radiostations or online streams
+        if( m_MediaSong.m_Length == 0 &&
+            m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+        {
+            m_MediaSong.m_Length = CurLen / 1000;
+
+            if( m_MediaSong.m_SongId )
+            {
+                if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+                    m_Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+                else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
+                    m_Db->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+            }
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+        }
+
+
     }
 
     if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )
@@ -2649,17 +2665,6 @@ void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
     int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
     //guLogMessage( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
     SetVolume( m_CurVolume + ( Rotation * 4 ) );
-}
-
-// -------------------------------------------------------------------------------- //
-// guPlayerPanelTimer
-// -------------------------------------------------------------------------------- //
-void guPlayerPanelTimer::Notify()
-{
-    if( Player )
-    {
-        //Player->UpdateStatus();
-    }
 }
 
 // -------------------------------------------------------------------------------- //
