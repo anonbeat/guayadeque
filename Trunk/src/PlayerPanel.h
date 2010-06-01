@@ -154,7 +154,6 @@ class guCurrentTrack : public guTrack
     }
 };
 
-class guPlayerPanelTimer;
 class guSmartAddTracksThread;
 
 // -------------------------------------------------------------------------------- //
@@ -195,7 +194,6 @@ class guPlayerPanel : public wxPanel
 	guPlayerVumeters *      m_PlayerVumeters;
 	guMediaCtrl *           m_MediaCtrl;
 	guMediaRecordCtrl *     m_MediaRecordCtrl;
-	guPlayerPanelTimer *    m_PlayerTimer;
     guCurrentTrack          m_MediaSong;
     guTrack                 m_NextSong;
 	int                     m_LastPlayState;
@@ -360,19 +358,6 @@ class guPlayerPanel : public wxPanel
 
 
     friend class guSmartAddTracksThread;
-};
-
-// -------------------------------------------------------------------------------- //
-class guPlayerPanelTimer : public wxTimer
-{
-public:
-    //Ctor
-    guPlayerPanelTimer( guPlayerPanel * NewPlayer ) { Player = NewPlayer; }
-
-    //Called each time the timer's timeout expires
-    void Notify();
-
-    guPlayerPanel * Player;       //
 };
 
 // -------------------------------------------------------------------------------- //
