@@ -1639,12 +1639,22 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
 void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 {
     guLogMessage( wxT( "OnMediaBitrate...%i" ), event.GetInt() );
+    int BitRate = ( event.GetInt() / 1000 );
 
-    if( m_NextSong.m_Bitrate != ( event.GetInt() / 1000 ) )
+    if( m_NextSong.m_Bitrate != BitRate )
     {
-        m_NextSong.m_Bitrate = ( event.GetInt() / 1000 );
+        m_NextSong.m_Bitrate = BitRate;
+
+        if( m_NextSong.m_Type == guTRACK_TYPE_DB )
+        {
+            m_Db->UpdateTrackBitRate( m_NextSong.m_SongId, BitRate );
+
+        }
+        // Update the track in database, playlist, etc
+        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_NextSong );
     }
-    SetBitRate( event.GetInt() );
+    //SetBitRateLabel( BitRate );
+    //SetBitRate( event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
