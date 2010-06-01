@@ -715,6 +715,7 @@ void guPlayerPanel::UpdatePositionLabel( const unsigned int curpos )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetBitRateLabel( int bitrate )
 {
+    //guLogMessage( wxT( "SetBitRateLabel( %i )" ), bitrate );
     if( bitrate )
     {
         m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate ) );
@@ -1422,11 +1423,8 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     {
         m_LastLength = CurLen;
 
-        //m_MediaSong.m_Length = CurLen / 1000;
-        //UpdatePositionLabel( m_LastCurPos / 1000 );
         if( !m_LastLength )
             m_PlayerPositionSlider->SetValue( 0 );
-
 
         // Some track lengths are not correctly read by taglib so
         // we try to find the length from gstreamer and update the database
@@ -1447,8 +1445,6 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
-
-
     }
 
     if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )
@@ -1642,7 +1638,12 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaBitrate..." ) );
+    guLogMessage( wxT( "OnMediaBitrate...%i" ), event.GetInt() );
+
+    if( m_NextSong.m_Bitrate != ( event.GetInt() / 1000 ) )
+    {
+        m_NextSong.m_Bitrate = ( event.GetInt() / 1000 );
+    }
     SetBitRate( event.GetInt() );
 }
 
