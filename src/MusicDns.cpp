@@ -109,6 +109,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMu
             {
                 //guLogMessage( wxT( "Gstreamer got fingerprint '%s'" ), wxString( fingerprint, wxConvUTF8 ).c_str() );
                 pobj->SetFingerprint( fingerprint );
+                g_free( fingerprint );
             }
 
             /* Free the tag list */
