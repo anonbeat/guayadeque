@@ -85,6 +85,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_LastPlayState = -1; //guMEDIASTATE_STOPPE;
     m_LastTotalLen = -1;
     m_TrackChanged = true;
+    m_TrackStartPos = 0;
 
     m_AutoTrackChanged = false;
     m_FadeOutFinished = false;
