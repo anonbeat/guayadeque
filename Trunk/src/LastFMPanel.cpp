@@ -1298,7 +1298,6 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     m_Db = db;
     m_DbCache = dbcache;
     m_PlayerPanel = playerpanel;
-    m_UpdateEnabled = true;
 
     m_CurrentTrackInfo = wxNOT_FOUND;
 
@@ -1317,6 +1316,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
         m_ShowTracks = Config->ReadBool( wxT( "LFMShowTracks" ), true, wxT( "General" )  );
         m_ShowEvents = Config->ReadBool( wxT( "LFMShowEvents" ), true, wxT( "General" )  );
     }
+    m_UpdateEnabled = Config->ReadBool( wxT( "LFMFollowPlayer" ), true, wxT( "General" ) );
 
     wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
@@ -1327,7 +1327,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	EditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_UpdateCheckBox->SetValue( Config->ReadBool( wxT( "LFMFollowPlayer" ), true, wxT( "General" ) ) );
+	m_UpdateCheckBox->SetValue( m_UpdateEnabled );
 
 	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 

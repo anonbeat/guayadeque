@@ -1452,7 +1452,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         guLogMessage( wxT( "OnMediaPosition... %i - %li  %i %i" ), event.GetInt(), event.GetExtraLong(), m_TrackChanged, m_AutoTrackChanged );
         m_LastCurPos = CurPos;
 
-        if( m_TrackChanged && CurPos < 3000 )
+        if( m_TrackChanged && CurPos < 15000 )
             m_TrackChanged = false;
 
         UpdatePositionLabel( CurPos / 1000 );
