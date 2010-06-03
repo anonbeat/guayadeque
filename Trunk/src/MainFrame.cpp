@@ -369,6 +369,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         m_ViewLyrics->Check( false );
 
         m_ViewPlayLists->Check( false );
+        m_ViewPLTextSearch->Check( false );
 
         m_ViewPodcasts->Check( false );
         m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
@@ -2087,6 +2088,9 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
     m_CatNotebook->Refresh();
 
     m_ViewPlayLists->Check( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS );
+
+    m_ViewPLTextSearch->Check( m_PlayListPanel && m_PlayListPanel->IsPanelShown( guPANEL_PLAYLIST_TEXTSEARCH ) );
+    m_ViewPLTextSearch->Enable( m_ViewPlayLists->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //
