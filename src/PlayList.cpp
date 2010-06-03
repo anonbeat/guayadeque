@@ -1128,6 +1128,14 @@ void AddPlayListCommands( wxMenu * Menu, int SelCount )
 void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
+    int TrackCount = m_Items.Count();
+    if( !TrackCount )
+    {
+        MenuItem = new wxMenuItem( Menu, wxNOT_FOUND, _( "The playlist is empty" ), _( "The playlist is empty" ) );
+        Menu->Append( MenuItem );
+        return;
+    }
+
     wxArrayInt SelectedItems = GetSelectedItems( false );
     int SelCount = SelectedItems.Count();
 
