@@ -436,6 +436,7 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
 {
     while( XmlNode )
     {
+        //guLogMessage( wxT( "Reading now : '%s'" ), XmlNode->GetName().c_str() );
         if( XmlNode->GetName() == wxT( "title" ) )
         {
             m_Title = XmlNode->GetNodeContent();
