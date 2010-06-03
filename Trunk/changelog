@@ -1,4 +1,5 @@
 
+  * Added icelandic translation. Thanks to Hreinsi
   * Added text search in album browser
   * Added support for libre.fm
   * Added Enqueue as Next option so the selection is added as the next track to be played.

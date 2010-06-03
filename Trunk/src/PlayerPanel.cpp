@@ -84,9 +84,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_LastLength = 0;
     m_LastPlayState = -1; //guMEDIASTATE_STOPPE;
     m_LastTotalLen = -1;
-    m_TrackChanged = true;
     m_TrackStartPos = 0;
 
+    m_TrackChanged = false;
     m_AutoTrackChanged = false;
     m_FadeOutFinished = false;
 
@@ -1895,7 +1895,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaFinished Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "OnMediaFinished Cur: %i  %i  %i" ), m_PlayListCtrl->GetCurItem(), m_TrackChanged, m_AutoTrackChanged );
 
     ResetVumeterLevel();
 
