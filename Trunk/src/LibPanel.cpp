@@ -770,6 +770,14 @@ void guLibPanel::UpdateLabels( void )
 {
     m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems( false );
+    m_GenreListCtrl->ReloadItems( false );
+    m_ArtistListCtrl->ReloadItems( false );
+    m_ComposerListCtrl->ReloadItems( false );
+    m_AlbumListCtrl->ReloadItems( false );
+    m_RatingListCtrl->ReloadItems( false );
+    m_YearListCtrl->ReloadItems( false );
+    m_PlayCountListCtrl->ReloadItems( false );
+    m_SongListCtrl->ReloadItems( false );
     m_UpdateLock = false;
 }
 
@@ -863,9 +871,10 @@ void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
                 // Update the labels in the artists files
                 m_Db->UpdateArtistsLabels( Artists, LabelEditor->GetCheckedIds() );
 
-                m_UpdateLock = true;
-                m_LabelsListCtrl->ReloadItems( false );
-                m_UpdateLock = false;
+//                m_UpdateLock = true;
+//                m_LabelsListCtrl->ReloadItems( false );
+//                m_UpdateLock = false;
+                UpdateLabels();
             }
             LabelEditor->Destroy();
         }
@@ -996,9 +1005,10 @@ void guLibPanel::OnAlbumEditLabelsClicked( wxCommandEvent &event )
         {
             m_Db->UpdateAlbumsLabels( Albums, LabelEditor->GetCheckedIds() );
 
-            m_UpdateLock = true;
-            m_LabelsListCtrl->ReloadItems( false );
-            m_UpdateLock = false;
+//            m_UpdateLock = true;
+//            m_LabelsListCtrl->ReloadItems( false );
+//            m_UpdateLock = false;
+            UpdateLabels();
         }
         LabelEditor->Destroy();
     }
@@ -1269,9 +1279,10 @@ void guLibPanel::OnSongsEditLabelsClicked( wxCommandEvent &event )
         {
             m_Db->UpdateSongsLabels( SongIds, LabelEditor->GetCheckedIds() );
 
-            m_UpdateLock = true;
-            m_LabelsListCtrl->ReloadItems( false );
-            m_UpdateLock = false;
+//            m_UpdateLock = true;
+//            m_LabelsListCtrl->ReloadItems( false );
+//            m_UpdateLock = false;
+            UpdateLabels();
         }
         LabelEditor->Destroy();
     }
