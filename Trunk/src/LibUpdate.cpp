@@ -48,15 +48,13 @@ guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxStr
     m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
     if( scanpath.IsEmpty() )
     {
-        if( Config )
-        {
-            m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+        m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
 
-            CheckSymLinks( m_LibPaths );
+        CheckSymLinks( m_LibPaths );
 
-            m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
-            //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
-        }
+        m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+        //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
+        m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
     }
 
     if( Create() == wxTHREAD_NO_ERROR )
@@ -143,7 +141,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
                 if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) )                //guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
                     m_ImageFiles.Add( dirname + FileName );
               }
-              else if( guPlayListFile::IsValidPlayList( LowerFileName ) )
+              else if( m_ScanAddPlayLists && guPlayListFile::IsValidPlayList( LowerFileName ) )
               {
                   m_PlayListFiles.Add( dirname + FileName );
               }
