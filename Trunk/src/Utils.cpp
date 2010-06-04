@@ -455,3 +455,49 @@ bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
+int guGetFileMode( const wxString &filepath )
+{
+    mode_t mode;
+    wxStructStat st;
+    if( !filepath.IsEmpty() && stat( ( const char * ) filepath.fn_str(), &st ) == 0 )
+    {
+        mode = st.st_mode;
+    }
+    else
+    {
+        mode_t mask = umask(0777);
+        mode = 0666 & ~mask;
+        umask(mask);
+    }
+    return mode;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guSetFileMode( const wxString &filepath, int mode, bool adding )
+{
+    int m = mode;
+    if( adding )
+    {
+        m |= guGetFileMode( filepath );
+    }
+
+    if( chmod( ( const char * ) filepath.fn_str(), mode ) == -1 )
+    {
+        guLogError( wxT( "Failed to set file permission for '%s'"), filepath.c_str() );
+        return false;
+    }
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwrite )
+{
+    int Mode = guGetFileMode( oldname );
+    if( !wxRenameFile( oldname, newname, overwrite ) )
+    {
+        return false;
+    }
+    return guSetFileMode( newname, Mode );;
+}
+
+// -------------------------------------------------------------------------------- //

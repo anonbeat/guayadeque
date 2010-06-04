@@ -68,6 +68,9 @@ wxFileOffset guGetFileSize( const wxString &FileName );
 wxString GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString, bool encoding = false );
 void CheckSymLinks( wxArrayString &libpaths );
 bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename );
+int guGetFileMode( const wxString &filepath );
+bool guSetFileMode( const wxString &filepath, int mode, bool adding = false );
+bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwrite = true );
 
 // -------------------------------------------------------------------------------- //
 #endif
