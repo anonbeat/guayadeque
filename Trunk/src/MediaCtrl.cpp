@@ -1600,7 +1600,7 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
             if( IsValidElement( replay ) )
             {
                 g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
-                g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
+                //g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
 
                 GstElement * level = gst_element_factory_make( "level", "pb_level" );
                 if( IsValidElement( level ) )
