@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque 0.2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-04 22:14+0100\n"
-"PO-Revision-Date: 2010-06-04 22:16-0000\n"
-"Last-Translator: J.Rios <anonbeat@gmail.com>\n"
+"POT-Creation-Date: 2010-06-07 09:02+0200\n"
+"PO-Revision-Date: 2010-06-07 09:21+0100\n"
+"Last-Translator: Il Metallo <mekanix@aruba.it>\n"
 "Language-Team: guayadeque <anonbeat@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,7 +19,6 @@ msgstr ""
 
 #: AlbumBrowser.cpp:257
 #: AlbumBrowser.cpp:282
-#: DynamicPlayList (copia).cpp:87
 #: DynamicPlayList.cpp:100
 #: LibPanel.cpp:287
 msgid "Tracks"
@@ -98,14 +97,12 @@ msgstr "Accoda i brani dell'album alla playlist"
 #: SoListBox.cpp:373
 #: TaListBox.cpp:95
 #: YeListBox.cpp:68
-#, fuzzy
 msgid "Enqueue Next"
-msgstr "Accoda"
+msgstr "Accoda come prossima"
 
 #: AlbumBrowser.cpp:321
-#, fuzzy
 msgid "Enqueue the album tracks to the playlist as Next Tracks"
-msgstr "Accoda i brani dell'album alla playlist"
+msgstr "Accoda i brani dell'album come prossimi brani"
 
 #: AlbumBrowser.cpp:327
 #: AlListBox.cpp:198
@@ -237,8 +234,6 @@ msgstr "Nome"
 
 #: AlbumBrowser.cpp:653
 #: AlListBox.cpp:242
-#: DynamicPlayList (copia).cpp:48
-#: (copia).cpp:100
 #: DynamicPlayList.cpp:51
 #: DynamicPlayList.cpp:114
 #: PlayList.cpp:1199
@@ -342,9 +337,8 @@ msgid "Add current selected albums to the Playlist"
 msgstr "Aggiungi l'album selezionato alla Playlist"
 
 #: AlListBox.cpp:189
-#, fuzzy
 msgid "Add current selected albums to the Playlist as Next Tracks"
-msgstr "Aggiungi l'album selezionato alla Playlist"
+msgstr "Aggiungi gli album selezionati alla playlist come prossimi brani"
 
 #: AlListBox.cpp:241
 msgid "Albums are sorted by name"
@@ -414,9 +408,8 @@ msgid "Add current selected artists to playlist"
 msgstr "Aggiungi artisti selezionati alla playlist"
 
 #: ArListBox.cpp:107
-#, fuzzy
 msgid "Add current selected artists to playlist as Next Tracks"
-msgstr "Aggiungi artisti selezionati alla playlist"
+msgstr "Aggiungi gli artisti selezionati alla playlist come prossimi brani"
 
 #: ArListBox.cpp:115
 msgid "Edit the labels assigned to the selected artists"
@@ -497,9 +490,8 @@ msgstr "Aggiungi i brani selezionati alla playlist"
 #: CoListBox.cpp:68
 #: RaListBox.cpp:103
 #: YeListBox.cpp:68
-#, fuzzy
 msgid "Add current selected tracks to playlist as Next Tracks"
-msgstr "Aggiungi i brani selezionati alla playlist"
+msgstr "Aggiungi i brani selezionati alla playlist come prossimi brani"
 
 #: CoListBox.cpp:76
 #: PcListBox.cpp:80
@@ -544,8 +536,6 @@ msgstr "Album:"
 msgid "From:"
 msgstr "Da:"
 
-#: DynamicPlayList (copia).cpp:42
-#: (copia).cpp:95
 #: DynamicPlayList.cpp:43
 #: DynamicPlayList.cpp:108
 #: PodcastsPanel.cpp:1038
@@ -553,8 +543,6 @@ msgstr "Da:"
 msgid "Title"
 msgstr "Titolo"
 
-#: DynamicPlayList (copia).cpp:43
-#: (copia).cpp:96
 #: DynamicPlayList.cpp:44
 #: DynamicPlayList.cpp:109
 #: PlayList.cpp:1193
@@ -563,8 +551,6 @@ msgstr "Titolo"
 msgid "Artist"
 msgstr "Artista"
 
-#: DynamicPlayList (copia).cpp:44
-#: (copia).cpp:97
 #: DynamicPlayList.cpp:45
 #: DynamicPlayList.cpp:110
 #: PlayList.cpp:1196
@@ -573,8 +559,6 @@ msgstr "Artista"
 msgid "Album"
 msgstr "Album"
 
-#: DynamicPlayList (copia).cpp:45
-#: (copia).cpp:98
 #: DynamicPlayList.cpp:46
 #: DynamicPlayList.cpp:111
 #: PlayList.cpp:1202
@@ -583,199 +567,10 @@ msgstr "Album"
 msgid "Genre"
 msgstr "Genere"
 
-#: DynamicPlayList (copia).cpp:46
-#: (copia).cpp:99
 #: DynamicPlayList.cpp:47
 #: DynamicPlayList.cpp:112
 msgid "Label"
 msgstr "Etichetta"
-
-#: DynamicPlayList (copia).cpp:47
-#: DynamicPlayList.cpp:50
-msgid "Path"
-msgstr "Percorso"
-
-#: DynamicPlayList (copia).cpp:49
-#: (copia).cpp:101
-#: DynamicPlayList.cpp:52
-#: DynamicPlayList.cpp:115
-#: SoListBox.cpp:310
-msgid "Rating"
-msgstr "Punteggio"
-
-#: DynamicPlayList (copia).cpp:50
-#: (copia).cpp:102
-#: DynamicPlayList.cpp:53
-#: DynamicPlayList.cpp:116
-#: PodcastsPanel.cpp:1042
-#: SoListBox.cpp:307
-msgid "Length"
-msgstr "Durata"
-
-#: DynamicPlayList (copia).cpp:51
-#: (copia).cpp:103
-#: DynamicPlayList.cpp:54
-#: DynamicPlayList.cpp:117
-msgid "Play Count"
-msgstr "Conteggio riproduzioni"
-
-#: DynamicPlayList (copia).cpp:52
-#: (copia).cpp:104
-#: DynamicPlayList.cpp:55
-#: DynamicPlayList.cpp:118
-msgid "Last Play Time"
-msgstr "Ultima riproduzione"
-
-#: DynamicPlayList (copia).cpp:53
-#: DynamicPlayList.cpp:56
-#: SoListBox.cpp:313
-msgid "Added Date"
-msgstr "Data di aggiunta"
-
-#: DynamicPlayList (copia).cpp:58
-#: DynamicPlayList.cpp:61
-#: DynamicPlayList.cpp:70
-msgid "Contains"
-msgstr "Contiene"
-
-#: DynamicPlayList (copia).cpp:59
-msgid "Does not contains"
-msgstr "Non contiene"
-
-#: DynamicPlayList (copia).cpp:60
-#: DynamicPlayList.cpp:63
-#: DynamicPlayList.cpp:72
-msgid "Equals"
-msgstr "Uguale"
-
-#: DynamicPlayList (copia).cpp:61
-#: DynamicPlayList.cpp:64
-#: DynamicPlayList.cpp:73
-msgid "Begins with"
-msgstr "Inizia per"
-
-#: DynamicPlayList (copia).cpp:62
-#: DynamicPlayList.cpp:65
-#: DynamicPlayList.cpp:74
-msgid "Ends with"
-msgstr "Finisce per"
-
-#: DynamicPlayList (copia).cpp:67
-#: DynamicPlayList.cpp:80
-msgid "equals"
-msgstr "uguale"
-
-#: DynamicPlayList (copia).cpp:68
-#: DynamicPlayList.cpp:81
-msgid "at least"
-msgstr "almeno"
-
-#: DynamicPlayList (copia).cpp:69
-#: DynamicPlayList.cpp:82
-msgid "at most"
-msgstr "al massimo"
-
-#: DynamicPlayList (copia).cpp:74
-#: DynamicPlayList.cpp:87
-msgid "in"
-msgstr "in"
-
-#: DynamicPlayList (copia).cpp:75
-#: DynamicPlayList.cpp:88
-msgid "after"
-msgstr "dopo"
-
-#: DynamicPlayList (copia).cpp:76
-#: DynamicPlayList.cpp:89
-msgid "before"
-msgstr "prima"
-
-#: DynamicPlayList (copia).cpp:81
-#: DynamicPlayList.cpp:94
-msgid "in the last"
-msgstr "nell'ultimo"
-
-#: DynamicPlayList (copia).cpp:82
-#: DynamicPlayList.cpp:95
-msgid "before the last"
-msgstr "prima di"
-
-#: DynamicPlayList (copia).cpp:88
-#: DynamicPlayList.cpp:101
-msgid "Minutes"
-msgstr "Minuti"
-
-#: DynamicPlayList (copia).cpp:105
-#: DynamicPlayList.cpp:119
-msgid "Added Time"
-msgstr "Ora di aggiunta"
-
-#: DynamicPlayList (copia).cpp:106
-#: DynamicPlayList.cpp:120
-msgid "Random"
-msgstr "Casuale"
-
-#: DynamicPlayList (copia).cpp:111
-#: DynamicPlayList.cpp:125
-#: Preferences.cpp:151
-msgid "minutes"
-msgstr "minuti"
-
-#: DynamicPlayList (copia).cpp:112
-#: DynamicPlayList.cpp:126
-msgid "hours"
-msgstr "ore"
-
-#: DynamicPlayList (copia).cpp:113
-#: DynamicPlayList.cpp:127
-msgid "days"
-msgstr "giorni"
-
-#: DynamicPlayList (copia).cpp:114
-#: DynamicPlayList.cpp:128
-msgid "weeks"
-msgstr "settimane"
-
-#: DynamicPlayList (copia).cpp:115
-#: DynamicPlayList.cpp:129
-msgid "months"
-msgstr "mesi"
-
-#: DynamicPlayList (copia).cpp:197
-#: DynamicPlayList.cpp:427
-msgid "Dynamic Playlist Editor"
-msgstr "Editor Playlist Dinamico"
-
-#: DynamicPlayList (copia).cpp:214
-#: DynamicPlayList.cpp:445
-msgid " Current Filters "
-msgstr " Filtri Correnti "
-
-#: DynamicPlayList (copia).cpp:288
-#: DynamicPlayList.cpp:526
-msgid " Result "
-msgstr " Risultato "
-
-#: DynamicPlayList (copia).cpp:293
-#: DynamicPlayList.cpp:531
-msgid "Limit To"
-msgstr "Limita a"
-
-#: DynamicPlayList (copia).cpp:313
-#: DynamicPlayList.cpp:551
-#: DynamicPlayList.cpp:589
-msgid "Add tracks on any criteria"
-msgstr "Corrisponde ad almeno un filtro"
-
-#: DynamicPlayList (copia).cpp:323
-#: DynamicPlayList.cpp:561
-msgid "Sort By"
-msgstr "Ordina per"
-
-#: DynamicPlayList (copia).cpp:333
-#: DynamicPlayList.cpp:571
-msgid "Descending"
-msgstr "Decrescente"
 
 #: DynamicPlayList.cpp:48
 #: DynamicPlayList.cpp:113
@@ -787,18 +582,164 @@ msgstr "Compositore"
 msgid "Comment"
 msgstr "Commento"
 
+#: DynamicPlayList.cpp:50
+msgid "Path"
+msgstr "Percorso"
+
+#: DynamicPlayList.cpp:52
+#: DynamicPlayList.cpp:115
+#: SoListBox.cpp:310
+msgid "Rating"
+msgstr "Punteggio"
+
+#: DynamicPlayList.cpp:53
+#: DynamicPlayList.cpp:116
+#: PodcastsPanel.cpp:1042
+#: SoListBox.cpp:307
+msgid "Length"
+msgstr "Durata"
+
+#: DynamicPlayList.cpp:54
+#: DynamicPlayList.cpp:117
+msgid "Play Count"
+msgstr "Conteggio riproduzioni"
+
+#: DynamicPlayList.cpp:55
+#: DynamicPlayList.cpp:118
+msgid "Last Play Time"
+msgstr "Ultima riproduzione"
+
+#: DynamicPlayList.cpp:56
+#: SoListBox.cpp:313
+msgid "Added Date"
+msgstr "Data di aggiunta"
+
+#: DynamicPlayList.cpp:61
+#: DynamicPlayList.cpp:70
+msgid "Contains"
+msgstr "Contiene"
+
 #: DynamicPlayList.cpp:62
 #: DynamicPlayList.cpp:71
 msgid "Does not contain"
 msgstr "Non contiene"
 
+#: DynamicPlayList.cpp:63
+#: DynamicPlayList.cpp:72
+msgid "Equals"
+msgstr "Uguale"
+
+#: DynamicPlayList.cpp:64
+#: DynamicPlayList.cpp:73
+msgid "Begins with"
+msgstr "Inizia per"
+
+#: DynamicPlayList.cpp:65
+#: DynamicPlayList.cpp:74
+msgid "Ends with"
+msgstr "Finisce per"
+
 #: DynamicPlayList.cpp:75
 msgid "Not set"
-msgstr ""
+msgstr "Non impostato"
+
+#: DynamicPlayList.cpp:80
+msgid "equals"
+msgstr "uguale"
+
+#: DynamicPlayList.cpp:81
+msgid "at least"
+msgstr "almeno"
+
+#: DynamicPlayList.cpp:82
+msgid "at most"
+msgstr "al massimo"
+
+#: DynamicPlayList.cpp:87
+msgid "in"
+msgstr "in"
+
+#: DynamicPlayList.cpp:88
+msgid "after"
+msgstr "dopo"
+
+#: DynamicPlayList.cpp:89
+msgid "before"
+msgstr "prima"
+
+#: DynamicPlayList.cpp:94
+msgid "in the last"
+msgstr "nell'ultimo"
+
+#: DynamicPlayList.cpp:95
+msgid "before the last"
+msgstr "prima di"
+
+#: DynamicPlayList.cpp:101
+msgid "Minutes"
+msgstr "Minuti"
+
+#: DynamicPlayList.cpp:119
+msgid "Added Time"
+msgstr "Ora di aggiunta"
+
+#: DynamicPlayList.cpp:120
+msgid "Random"
+msgstr "Casuale"
+
+#: DynamicPlayList.cpp:125
+#: Preferences.cpp:151
+msgid "minutes"
+msgstr "minuti"
+
+#: DynamicPlayList.cpp:126
+msgid "hours"
+msgstr "ore"
+
+#: DynamicPlayList.cpp:127
+msgid "days"
+msgstr "giorni"
+
+#: DynamicPlayList.cpp:128
+msgid "weeks"
+msgstr "settimane"
+
+#: DynamicPlayList.cpp:129
+msgid "months"
+msgstr "mesi"
 
 #: DynamicPlayList.cpp:426
 msgid "Filter Album Browser"
 msgstr "Filtra il Browser"
+
+#: DynamicPlayList.cpp:427
+msgid "Dynamic Playlist Editor"
+msgstr "Editor Playlist Dinamico"
+
+#: DynamicPlayList.cpp:445
+msgid " Current Filters "
+msgstr " Filtri Correnti "
+
+#: DynamicPlayList.cpp:526
+msgid " Result "
+msgstr " Risultato "
+
+#: DynamicPlayList.cpp:531
+msgid "Limit To"
+msgstr "Limita a"
+
+#: DynamicPlayList.cpp:551
+#: DynamicPlayList.cpp:589
+msgid "Add tracks on any criteria"
+msgstr "Corrisponde ad almeno un filtro"
+
+#: DynamicPlayList.cpp:561
+msgid "Sort By"
+msgstr "Ordina per"
+
+#: DynamicPlayList.cpp:571
+msgid "Descending"
+msgstr "Decrescente"
 
 #: Equalizer.cpp:102
 msgid "Preset:"
@@ -825,9 +766,8 @@ msgid "Add the selected folder to playlist"
 msgstr "Aggiungi la cartella selezionata alla playlist"
 
 #: FileBrowser.cpp:276
-#, fuzzy
 msgid "Add the selected folder to playlist as Next Tracks"
-msgstr "Aggiungi la cartella selezionata alla playlist"
+msgstr "Aggiungi le cartelle selezionate alla playlist come prossimi brani"
 
 #: FileBrowser.cpp:282
 msgid "Edit Tracks"
@@ -924,9 +864,8 @@ msgid "Add current selected files to playlist"
 msgstr "Aggiungi i file selezionati alla playlist"
 
 #: FileBrowser.cpp:924
-#, fuzzy
 msgid "Add current selected files to playlist as Next Tracks"
-msgstr "Aggiungi i file selezionati alla playlist"
+msgstr "Aggiungi i file selezionati alla playlist come prossimi brani"
 
 #: FileBrowser.cpp:936
 msgid "Paste to the selected dir"
@@ -1047,9 +986,8 @@ msgid "Add current selected genres to playlist"
 msgstr "Aggiungi i generi selezionati alla playlist"
 
 #: GeListBox.cpp:53
-#, fuzzy
 msgid "Add current selected genres to playlist as Next Tracks"
-msgstr "Aggiungi i generi selezionati alla playlist"
+msgstr "Aggiungi i generi selezionati alla playlist come prossimi brani"
 
 #: LabelEditor.cpp:46
 #: LibPanel.cpp:148
@@ -1123,9 +1061,8 @@ msgstr "Accoda i brani dell'artista alla playlist"
 
 #: LastFMPanel.cpp:569
 #: LastFMPanel.cpp:1119
-#, fuzzy
 msgid "Enqueue the artist tracks to the playlist as Next Tracks"
-msgstr "Accoda i brani dell'artista alla playlist"
+msgstr "Accoda i brani dell'artista alla playlist come prossimi brani"
 
 #: LastFMPanel.cpp:581
 msgid "Copy the artist name to clipboard"
@@ -1145,9 +1082,8 @@ msgstr "Non ci sono informazioni disponibili per questo artista"
 
 #: LastFMPanel.cpp:799
 #: LastFMPanel.cpp:962
-#, fuzzy
 msgid "Enqueue the artist tracks to the playlist as Next Track"
-msgstr "Accoda i brani dell'artista alla playlist"
+msgstr "Accoda i brani dell'artista alla playlist come prossimo brano"
 
 #: LastFMPanel.cpp:974
 #: LastFMPanel.cpp:1135
@@ -1575,14 +1511,12 @@ msgid "Show/Hide the playlists panel"
 msgstr "Mostra/Nascondi il pannello delle Playlist"
 
 #: MainFrame.cpp:930
-#, fuzzy
 msgid "Show/Hide the playlists text search"
-msgstr "Mostra/Nascondi ricerca testuale della libreria"
+msgstr "Mostra/Nascondi ricerca testuale delle playlist"
 
 #: MainFrame.cpp:935
-#, fuzzy
 msgid "Set the playlists visible panels"
-msgstr "Imposta i pannelli visibili deli podcast"
+msgstr "Imposta i pannelli visibili delle playlist"
 
 #: MainFrame.cpp:939
 msgid "P&odcasts"
@@ -1926,7 +1860,7 @@ msgstr "Ferma riproduzione"
 
 #: PlayerPanel.cpp:180
 msgid "Record to a file"
-msgstr ""
+msgstr "Registra in un file"
 
 #: PlayerPanel.cpp:189
 #: PlayerPanel.cpp:2454
@@ -2035,9 +1969,8 @@ msgid "Tracks:"
 msgstr "Brani:"
 
 #: PlayList.cpp:1134
-#, fuzzy
 msgid "The playlist is empty"
-msgstr "casuale quando la playlist è vuota"
+msgstr "La playlist è vuota"
 
 #: PlayList.cpp:1142
 msgid "Edit the current selected songs"
@@ -2154,9 +2087,8 @@ msgstr "Aggiungi alla Playlist i brani selezionati"
 
 #: PlayListPanel.cpp:148
 #: SoListBox.cpp:373
-#, fuzzy
 msgid "Add current selected songs to the playlist as Next Tracks"
-msgstr "Aggiungi alla Playlist i brani selezionati"
+msgstr "Aggiungi i brani selezionati alla playlist come prossimi brani"
 
 #: PlayListPanel.cpp:156
 #: PlayListPanel.cpp:792
@@ -2362,9 +2294,8 @@ msgstr "Aggiungi i brani selezionati alla Playlist"
 
 #: PodcastsPanel.cpp:1249
 #: RadioPanel.cpp:499
-#, fuzzy
 msgid "Add current selected songs to playlist as Next Tracks"
-msgstr "Aggiungi i brani selezionati alla Playlist"
+msgstr "Aggiungi i brani selezionati alla playlist come prossimi brani"
 
 #: PodcastsPanel.cpp:1255
 msgid "Delete the current selected podcasts"
@@ -2555,48 +2486,43 @@ msgstr "Riproduzione"
 
 #: Preferences.cpp:447
 msgid " Crossfader "
-msgstr ""
+msgstr " Crossfader"
 
 #: Preferences.cpp:455
-#, fuzzy
 msgid "Out length:"
-msgstr "Durata:"
+msgstr "Durata fade out:"
 
 #: Preferences.cpp:464
 msgid "Select the length of the fade out. 0 for gapless playback"
-msgstr ""
+msgstr "Seleziona la durata del fade out. 0 per riproduzione gapless"
 
 #: Preferences.cpp:467
-#, fuzzy
 msgid "In length:"
-msgstr "Durata:"
+msgstr "Durata fade in:"
 
 #: Preferences.cpp:476
-#, fuzzy
 msgid "Select the length of the fade in"
-msgstr "Seleziona il genere del brano corrente"
+msgstr "Seleziona la durata del fade in"
 
 #: Preferences.cpp:479
 msgid "In vol. Start:"
-msgstr ""
+msgstr "Volume iniziale:"
 
 #: Preferences.cpp:488
-#, fuzzy
 msgid "Select the initial volume of the fade in"
-msgstr "Seleziona l'album del brano corrente"
+msgstr "Seleziona il volume iniziale del fade in"
 
 #: Preferences.cpp:491
-#, fuzzy
 msgid "In start:"
-msgstr " All'inizio "
+msgstr "Inizio fade in:"
 
 #: Preferences.cpp:500
 msgid "Select at which volume of the fade out the fade in starts"
-msgstr ""
+msgstr "Selezione a quale volume del fade out inizia il fade in"
 
 #: Preferences.cpp:513
 msgid "Crossfader"
-msgstr ""
+msgstr "Crossfader"
 
 #: Preferences.cpp:525
 msgid " Record "
@@ -2659,9 +2585,8 @@ msgid "Record"
 msgstr "Registra"
 
 #: Preferences.cpp:627
-#, fuzzy
 msgid " Last.fm Audioscrobble "
-msgstr " LastFM scrobble "
+msgstr " Last.fm Audioscrobble "
 
 #: Preferences.cpp:637
 #: Preferences.cpp:674
@@ -2674,18 +2599,16 @@ msgid "Password:"
 msgstr "Password:"
 
 #: Preferences.cpp:663
-#, fuzzy
 msgid " Libre.fm Audioscrobble "
-msgstr " LastFM scrobble "
+msgstr " Libre.fm Audioscrobble "
 
 #: Preferences.cpp:705
 msgid "Join the Guayadeque Last.fm users group"
 msgstr "Unisciti al gruppo di Guayadeque su Last.fm"
 
 #: Preferences.cpp:712
-#, fuzzy
 msgid "AudioScrobble"
-msgstr " LastFM scrobble "
+msgstr "AudioScrobble"
 
 #: Preferences.cpp:723
 msgid "Left"
@@ -3102,14 +3025,12 @@ msgid "Add all songs to the playlist"
 msgstr "Aggiunge tutti i brani alla Playlist"
 
 #: SoListBox.cpp:381
-#, fuzzy
 msgid "Enqueue All Next"
-msgstr "Accoda tutto"
+msgstr "Accoda tutto come prossimo"
 
 #: SoListBox.cpp:381
-#, fuzzy
 msgid "Add all songs to the playlist as Next Tracks"
-msgstr "Aggiunge tutti i brani alla Playlist"
+msgstr "Aggiunge tutti i brani alla playlist come prossimi brani"
 
 #: SoListBox.cpp:387
 msgid "Save all selected tracks as a playlist"
@@ -3144,9 +3065,8 @@ msgid "Add current selected labels to playlist"
 msgstr "Aggiungi alla Playlist i brani associati alle etichette selezionate"
 
 #: TaListBox.cpp:95
-#, fuzzy
 msgid "Add current selected labels to playlist as Next Tracks"
-msgstr "Aggiungi alla Playlist i brani associati alle etichette selezionate"
+msgstr "Aggiungi le etichette selezionate alla playlist come prossimi brani"
 
 #: TaskBar.cpp:119
 msgid "Pause"
@@ -3342,6 +3262,8 @@ msgstr ""
 "\n"
 "Attenzione: la durata di alcuni brani è differente sull'album scelto"
 
+#~ msgid "Does not contains"
+#~ msgstr "Non contiene"
 #~ msgid "Save Playlist"
 #~ msgstr "Salva Playlist"
 #~ msgid "Shows the current track album cover if available"

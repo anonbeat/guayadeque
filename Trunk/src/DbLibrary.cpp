@@ -6559,7 +6559,7 @@ void guDbLibrary::UpdateTrackFileName( const wxString &oldname, const wxString &
             PathId,
             TrackId );
 
-        guLogMessage( wxT( "Updating file: %s" ), query.c_str() );
+        //guLogMessage( wxT( "Updating file: %s" ), query.c_str() );
         ExecuteUpdate( query );
     }
 }

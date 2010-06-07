@@ -1931,7 +1931,7 @@ void guFileBrowser::OnItemsRename( wxCommandEvent &event )
                         }
 
                         //if( wxFileExists( Files[ Index ] ) )
-                        if( !wxRenameFile( Files[ Index ], RenamedFiles[ Index ] ) )
+                        if( !guRenameFile( Files[ Index ], RenamedFiles[ Index ] ) )
                         {
                             guLogError( wxT( "Could no rename '%s' to '%s'" ),
                                 Files[ Index ].c_str(),
