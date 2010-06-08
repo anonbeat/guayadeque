@@ -1,0 +1,3006 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-04-11 12:31+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Teerat <teerat.p@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: /home/jrios/Projects/guayadeque/\n"
+"X-Poedit-KeywordsList: _\n"
+"X-Poedit-Language: Thai\n"
+"X-Poedit-Country: THAILAND\n"
+"X-Poedit-SearchPath-0: src\n"
+
+#: AlListBox.cpp:169
+#: ArListBox.cpp:85
+#: FileBrowser.cpp:211
+#: FileBrowser.cpp:845
+#: PlayList.cpp:1085
+#: SoListBox.cpp:348
+msgid "No commands defined"
+msgstr "ไม่มีคำสั่งนี้"
+
+#: AlListBox.cpp:169
+#: ArListBox.cpp:85
+#: FileBrowser.cpp:211
+#: FileBrowser.cpp:845
+#: PlayList.cpp:1085
+#: SoListBox.cpp:348
+msgid "Add commands in preferences"
+msgstr "เพิ่มคำสั่งในการปรับแต่งค่า"
+
+#: AlListBox.cpp:172
+#: ArListBox.cpp:88
+#: FileBrowser.cpp:215
+#: FileBrowser.cpp:849
+#: PlayList.cpp:1088
+#: Preferences.cpp:990
+#: SoListBox.cpp:351
+msgid "Commands"
+msgstr "คำสั่งอื่นๆ"
+
+#: AlListBox.cpp:181
+#: AlbumBrowser.cpp:301
+#: ArListBox.cpp:99
+#: FileBrowser.cpp:226
+#: FileBrowser.cpp:860
+#: GeListBox.cpp:45
+#: LastFMPanel.cpp:548
+#: LastFMPanel.cpp:774
+#: LastFMPanel.cpp:933
+#: LastFMPanel.cpp:1086
+#: PcListBox.cpp:68
+#: PlayListPanel.cpp:137
+#: PodcastsPanel.cpp:1233
+#: RaListBox.cpp:95
+#: RadioPanel.cpp:488
+#: SoListBox.cpp:361
+#: TaListBox.cpp:87
+#: TaskBar.cpp:119
+#: YeListBox.cpp:60
+msgid "Play"
+msgstr "เล่น"
+
+#: AlListBox.cpp:181
+msgid "Play current selected albums"
+msgstr "เล่นอัลบั้มที่เลือกอยู่"
+
+#: AlListBox.cpp:185
+#: AlbumBrowser.cpp:305
+#: ArListBox.cpp:103
+#: FileBrowser.cpp:230
+#: FileBrowser.cpp:864
+#: GeListBox.cpp:49
+#: LastFMPanel.cpp:552
+#: LastFMPanel.cpp:778
+#: LastFMPanel.cpp:937
+#: LastFMPanel.cpp:1090
+#: PcListBox.cpp:72
+#: PlayListPanel.cpp:141
+#: PodcastsPanel.cpp:1237
+#: RaListBox.cpp:99
+#: RadioPanel.cpp:492
+#: SoListBox.cpp:369
+#: TaListBox.cpp:91
+#: YeListBox.cpp:64
+msgid "Enqueue"
+msgstr "เพิ่มเพลงที่เลือกเข้าไปในคิวที่กำลังเล่น"
+
+#: AlListBox.cpp:185
+msgid "Add current selected albums to the Playlist"
+msgstr "เพิ่มอัลบั้มที่เลือกเข้าไปในคิวเพลง"
+
+#: AlListBox.cpp:194
+#: AlbumBrowser.cpp:311
+#: ArListBox.cpp:111
+#: PlayList.cpp:1103
+#: RadioPanel.cpp:520
+#: SoListBox.cpp:391
+msgid "Edit Labels"
+msgstr "แก้ไขป้ายชื่อ"
+
+#: AlListBox.cpp:194
+#: AlbumBrowser.cpp:311
+msgid "Edit the labels assigned to the selected albums"
+msgstr "แก้ไขป้ายชื่อของเพลงที่เลือก"
+
+#: AlListBox.cpp:198
+#: AlbumBrowser.cpp:314
+msgid "Edit Album songs"
+msgstr "แก้ไขชื่ออัลบั้ม"
+
+#: AlListBox.cpp:198
+#: AlbumBrowser.cpp:314
+msgid "Edit the selected albums songs"
+msgstr "แก้ไขชื่ออัลบั้มของเพลงที่เลือก"
+
+#: AlListBox.cpp:206
+#: AlbumBrowser.cpp:329
+msgid "Download Album cover"
+msgstr "ดาวน์โหลดปกอัลบั้ม"
+
+#: AlListBox.cpp:206
+#: AlbumBrowser.cpp:329
+msgid "Download cover for the current selected album"
+msgstr "ดาวน์โหลดปกของอัลบั้มที่เลือก"
+
+#: AlListBox.cpp:210
+#: AlbumBrowser.cpp:333
+msgid "Select cover location"
+msgstr "เลือกปกอัลบั้ม"
+
+#: AlListBox.cpp:210
+#: AlbumBrowser.cpp:333
+msgid "Select the cover image file from disk"
+msgstr "เลือกปกอัลบั้มจากไฟล์ในเครื่อง"
+
+#: AlListBox.cpp:214
+#: AlbumBrowser.cpp:337
+msgid "Delete Album cover"
+msgstr "ลบปกอัลบั้ม"
+
+#: AlListBox.cpp:214
+#: AlbumBrowser.cpp:337
+msgid "Delete the cover for the selected album"
+msgstr "ลบปกของอัลบั้มที่เลือก"
+
+#: AlListBox.cpp:237
+#: AlbumBrowser.cpp:624
+#: FileBrowser.cpp:514
+#: RadioPanel.cpp:414
+msgid "Name"
+msgstr "ชื่อ"
+
+#: AlListBox.cpp:237
+msgid "Albums are sorted by name"
+msgstr "เรียงอัลบั้มตามชื่อ"
+
+#: AlListBox.cpp:238
+#: AlbumBrowser.cpp:624
+#: DynamicPlayList.cpp:50
+#: DynamicPlayList.cpp:103
+#: SoListBox.cpp:308
+msgid "Year"
+msgstr "ปี"
+
+#: AlListBox.cpp:238
+msgid "Albums are sorted by year"
+msgstr "อัลบั้มเรียงตามปี"
+
+#: AlListBox.cpp:239
+msgid "Year descending"
+msgstr "ปี (ใหม่ไปเก่า)"
+
+#: AlListBox.cpp:239
+msgid "Albums are sorted by year descending"
+msgstr "อัลบั้มเรียงตามปี (ใหม่ไปเก่า)"
+
+#: AlListBox.cpp:240
+#: AlbumBrowser.cpp:624
+msgid "Artist, Name"
+msgstr "ศิลปิน, ชื่อ"
+
+#: AlListBox.cpp:240
+msgid "Albums are sorted by artist and album name"
+msgstr "อัลบั้มเรียงตามชื่อศิลปินและชื่ออัลบั้ม"
+
+#: AlListBox.cpp:241
+#: AlbumBrowser.cpp:624
+msgid "Artist, Year"
+msgstr "ศิลปิน, ปี"
+
+#: AlListBox.cpp:241
+msgid "Albums are sorted by artist and year"
+msgstr "อัลบั้มเรียงตามชื่อศิลปินและปี"
+
+#: AlListBox.cpp:242
+msgid "Artist, Year descending"
+msgstr "ศิลปิน, ปี (ใหม่ไปเก่า)"
+
+#: AlListBox.cpp:242
+msgid "Albums are sorted by artist and year descending"
+msgstr "อัลบั้มเรียงตามชื่อศิลปินและปี (ใหม่ไปเก่า)"
+
+#: AlListBox.cpp:247
+msgid "Ordered by"
+msgstr "เรียงตาม..."
+
+#: AlListBox.cpp:247
+msgid "Sets the albums order"
+msgstr "เรียงอัลบั้ม"
+
+#: AlListBox.cpp:253
+#: AlbumBrowser.cpp:349
+#: ArListBox.cpp:121
+#: FileBrowser.cpp:244
+#: FileBrowser.cpp:901
+#: GeListBox.cpp:57
+#: PcListBox.cpp:86
+#: PlayList.cpp:1136
+#: PlayListPanel.cpp:188
+#: PodcastsPanel.cpp:1004
+#: PodcastsPanel.cpp:1254
+#: RaListBox.cpp:113
+#: SoListBox.cpp:383
+#: TaListBox.cpp:97
+#: YeListBox.cpp:78
+msgid "Copy to..."
+msgstr "คัดลอกไปที่..."
+
+#: AlListBox.cpp:253
+#: ArListBox.cpp:121
+#: GeListBox.cpp:57
+#: PcListBox.cpp:86
+#: RaListBox.cpp:113
+#: SoListBox.cpp:383
+#: TaListBox.cpp:97
+#: YeListBox.cpp:78
+msgid "Copy the current selected songs to a directory or device"
+msgstr "คัดลอกเพลงที่เลือกอยู่ไปยังที่อื่นหรืออุปกรณ์ภายนอก"
+
+#: AlListBox.cpp:395
+#: ItemListBox.cpp:82
+#: PlayerFilters.cpp:107
+msgid "All"
+msgstr "ทั้งคลังเพลง"
+
+#: AlbumBrowser.cpp:246
+#: AlbumBrowser.cpp:270
+#: DynamicPlayList.cpp:89
+#: LibPanel.cpp:261
+msgid "Tracks"
+msgstr "เพลง"
+
+#: AlbumBrowser.cpp:301
+#: LastFMPanel.cpp:774
+msgid "Play the album tracks"
+msgstr "เล่นเพลงจากอัลบั้มนี้"
+
+#: AlbumBrowser.cpp:305
+#: LastFMPanel.cpp:778
+msgid "Enqueue the album tracks to the playlist"
+msgstr "เพิ่มเพลงจากอัลบั้มนี้เข้าไปในคิวเพลง"
+
+#: AlbumBrowser.cpp:319
+#: LastFMPanel.cpp:782
+msgid "Search Album"
+msgstr "ค้นหาอัลบั้ม"
+
+#: AlbumBrowser.cpp:319
+#: LastFMPanel.cpp:782
+msgid "Search the album in the library"
+msgstr "ค้นหาอัลบั้มในคอเล็คชั่น"
+
+#: AlbumBrowser.cpp:323
+#: LastFMPanel.cpp:556
+#: LastFMPanel.cpp:941
+#: LastFMPanel.cpp:1098
+msgid "Search Artist"
+msgstr "ค้นหาศิลปิน"
+
+#: AlbumBrowser.cpp:323
+#: LastFMPanel.cpp:556
+#: LastFMPanel.cpp:941
+#: LastFMPanel.cpp:1098
+msgid "Search the artist in the library"
+msgstr "ค้นหาศิลปินในคลังเพลง"
+
+#: AlbumBrowser.cpp:343
+#: LastFMPanel.cpp:790
+msgid "Copy the album info to clipboard"
+msgstr "คัดลอกรายละเอียดของอัลบั้มไปยังคลิปบอร์ด"
+
+#: AlbumBrowser.cpp:349
+msgid "Copy the current album to a directory or device"
+msgstr "คัดลอกอัลบั้มที่เลือกอยู่ไปยังที่อื่นหรืออุปกรณ์ภายนอก"
+
+#: AlbumBrowser.cpp:615
+msgid "Filter"
+msgstr "ตัวกรอง"
+
+#: AlbumBrowser.cpp:624
+msgid "Order By"
+msgstr "เรียงตาม..."
+
+#: AlbumBrowser.cpp:624
+msgid "Year Desc."
+msgstr "ปี (ใหม่ไปเก่า)"
+
+#: AlbumBrowser.cpp:624
+msgid "Artist, Year Desc."
+msgstr "ศิลปิน, ปี (ใหม่ไปเก่า)"
+
+#: AlbumBrowser.cpp:1001
+#: LibPanel.cpp:954
+#: SelCoverFile.cpp:38
+msgid ""
+"Could not find the Album in the songs library.\n"
+"You should update the library."
+msgstr ""
+"ไม่พบอัลบั้มในคลังเพลง\n"
+"กรุณาอัพเดทคลังเพลง"
+
+#: AlbumBrowser.cpp:1002
+#: FileBrowser.cpp:399
+#: LibPanel.cpp:955
+#: SelCoverFile.cpp:39
+msgid "Error"
+msgstr "มีข้อผิดพลาดเกิดขึ้น"
+
+#: AlbumBrowser.cpp:1078
+#: LibPanel.cpp:1047
+msgid "Are you sure to delete the selected album cover?"
+msgstr "คุณต้องการลบปกของอัลบั้มนี้หรือไม่?"
+
+#: AlbumBrowser.cpp:1079
+#: FileBrowser.cpp:388
+#: FileBrowser.cpp:1879
+#: LabelEditor.cpp:175
+#: LibPanel.cpp:1048
+#: PlayListPanel.cpp:735
+#: PodcastsPanel.cpp:436
+#: PodcastsPanel.cpp:810
+#: RadioPanel.cpp:345
+#: RadioPanel.cpp:653
+#: TaListBox.cpp:124
+msgid "Confirm"
+msgstr "ยืนยัน"
+
+#: AlbumBrowser.cpp:1122
+#: LibPanel.cpp:901
+msgid "Albums Labels Editor"
+msgstr "เครื่องมือแก้ไขป้ายชื่อของอัลบั้ม"
+
+#: ArListBox.cpp:99
+#: YeListBox.cpp:60
+msgid "Play current selected artists"
+msgstr "เล่นเพลงของศิลปินที่เลือก"
+
+#: ArListBox.cpp:103
+msgid "Add current selected artists to playlist"
+msgstr "เพิ่มศิลปินที่เลือกอยู่เข้าไปในคิวเพลง"
+
+#: ArListBox.cpp:111
+msgid "Edit the labels assigned to the selected artists"
+msgstr "แก้ไขป้ายชื่อของศิลปินที่เลือก"
+
+#: ArListBox.cpp:115
+#: PcListBox.cpp:80
+#: PlayList.cpp:1099
+#: RaListBox.cpp:107
+#: SoListBox.cpp:395
+#: YeListBox.cpp:72
+msgid "Edit Songs"
+msgstr "แก้ไขรายละเอียดเพลง"
+
+#: ArListBox.cpp:115
+msgid "Edit the songs from the selected artists"
+msgstr "แก้ไขเพลงของศิลปินที่เลือก"
+
+#: ChannelEditor.cpp:38
+msgid "Podcast Channel Editor"
+msgstr "เครื่องมือแก้ไขพอดแคสต์"
+
+#: ChannelEditor.cpp:62
+msgid " Podcast Channel "
+msgstr "พอดแคสต์"
+
+#: ChannelEditor.cpp:107
+#: PodcastsPanel.cpp:166
+msgid "Description:"
+msgstr "ช่อง:"
+
+#: ChannelEditor.cpp:119
+#: PodcastsPanel.cpp:176
+msgid "Author:"
+msgstr "ผู้เขียน:"
+
+#: ChannelEditor.cpp:129
+#: PodcastsPanel.cpp:186
+msgid "Owner:"
+msgstr "เจ้าของ:"
+
+#: ChannelEditor.cpp:140
+msgid "Download:"
+msgstr "ดาวน์โหลด:"
+
+#: ChannelEditor.cpp:147
+msgid "Manually"
+msgstr "แมนนวล"
+
+#: ChannelEditor.cpp:147
+msgid "Only if contains"
+msgstr "ถ้ามีคำว่า"
+
+#: ChannelEditor.cpp:147
+msgid "Everything"
+msgstr "อัตโนมัติ"
+
+#: ChannelEditor.cpp:160
+msgid "Delete:"
+msgstr "ลบ:"
+
+#: ChannelEditor.cpp:164
+msgid "Allow delete old items"
+msgstr "ให้ลบไฟล์เก่าๆได้"
+
+#: ConfirmExit.cpp:26
+msgid "Please confirm"
+msgstr "กรุณายืนยัน"
+
+#: ConfirmExit.cpp:45
+msgid "Are you sure you want to exit the application?"
+msgstr "คุณต้องการออกจากโปรแกรมหรือไม่?"
+
+#: ConfirmExit.cpp:51
+msgid "Don't ask again"
+msgstr "อย่าถามคำถามนี้อีก"
+
+#: CoverEdit.cpp:51
+msgid "Cover Editor"
+msgstr "เครื่องมือแก้ไขปก"
+
+#: CoverEdit.cpp:68
+#: LastFMPanel.cpp:1320
+#: LyricsPanel.cpp:121
+#: TrackEdit.cpp:134
+#: TrackEdit.cpp:375
+#: TrackEdit.cpp:476
+msgid "Artist:"
+msgstr "ศิลปิน:"
+
+#: CoverEdit.cpp:75
+#: TrackEdit.cpp:145
+#: TrackEdit.cpp:442
+#: TrackEdit.cpp:487
+msgid "Album:"
+msgstr "อัลบั้ม:"
+
+#: CoverEdit.cpp:82
+msgid "From:"
+msgstr "จาก:"
+
+#: DynamicPlayList.cpp:42
+#: DynamicPlayList.cpp:97
+#: PodcastsPanel.cpp:1030
+#: SoListBox.cpp:301
+msgid "Title"
+msgstr "ชื่อเพลง"
+
+#: DynamicPlayList.cpp:43
+#: DynamicPlayList.cpp:98
+#: SoListBox.cpp:302
+#: SoListBox.cpp:407
+msgid "Artist"
+msgstr "ศิลปิน"
+
+#: DynamicPlayList.cpp:44
+#: DynamicPlayList.cpp:99
+#: SoListBox.cpp:303
+#: SoListBox.cpp:410
+msgid "Album"
+msgstr "อัลบั้ม"
+
+#: DynamicPlayList.cpp:45
+#: DynamicPlayList.cpp:100
+#: SoListBox.cpp:304
+#: SoListBox.cpp:404
+msgid "Genre"
+msgstr "ประเภทของเพลง"
+
+#: DynamicPlayList.cpp:46
+#: DynamicPlayList.cpp:101
+msgid "Label"
+msgstr "ป้ายชื่อ"
+
+#: DynamicPlayList.cpp:47
+#: DynamicPlayList.cpp:102
+#: SoListBox.cpp:305
+msgid "Composer"
+msgstr "ผู้แต่ง"
+
+#: DynamicPlayList.cpp:48
+msgid "Comment"
+msgstr "รายละเอียดอื่นๆ"
+
+#: DynamicPlayList.cpp:49
+msgid "Path"
+msgstr "ตำแหน่งที่อยู่"
+
+#: DynamicPlayList.cpp:51
+#: DynamicPlayList.cpp:104
+#: SoListBox.cpp:310
+msgid "Rating"
+msgstr "คะแนน"
+
+#: DynamicPlayList.cpp:52
+#: DynamicPlayList.cpp:105
+#: PodcastsPanel.cpp:1034
+#: SoListBox.cpp:307
+msgid "Length"
+msgstr "ความยาว"
+
+#: DynamicPlayList.cpp:53
+#: DynamicPlayList.cpp:106
+msgid "Play Count"
+msgstr "จำนวนครั้งที่เล่น"
+
+#: DynamicPlayList.cpp:54
+#: DynamicPlayList.cpp:107
+msgid "Last Play Time"
+msgstr "ครั้งสุดท้ายที่เล่น"
+
+#: DynamicPlayList.cpp:55
+#: SoListBox.cpp:313
+msgid "Added Date"
+msgstr "เพิ่มเข้ามาในคลังเพลง"
+
+#: DynamicPlayList.cpp:60
+msgid "Contains"
+msgstr "มีคำว่า"
+
+#: DynamicPlayList.cpp:61
+msgid "Does not contain"
+msgstr "ห้ามมีคำว่า"
+
+#: DynamicPlayList.cpp:62
+msgid "Equals"
+msgstr "ตรงกับ"
+
+#: DynamicPlayList.cpp:63
+msgid "Begins with"
+msgstr "เริ่มต้นด้วย"
+
+#: DynamicPlayList.cpp:64
+msgid "Ends with"
+msgstr "ลงท้ายด้วย"
+
+#: DynamicPlayList.cpp:69
+msgid "equals"
+msgstr "เท่ากับ"
+
+#: DynamicPlayList.cpp:70
+msgid "at least"
+msgstr "อย่างน้อย"
+
+#: DynamicPlayList.cpp:71
+msgid "at most"
+msgstr "อย่างมาก"
+
+#: DynamicPlayList.cpp:76
+msgid "in"
+msgstr "ตรงกับ"
+
+#: DynamicPlayList.cpp:77
+msgid "after"
+msgstr "หลัง"
+
+#: DynamicPlayList.cpp:78
+msgid "before"
+msgstr "ก่อน"
+
+#: DynamicPlayList.cpp:83
+msgid "in the last"
+msgstr "ในช่วง"
+
+#: DynamicPlayList.cpp:84
+msgid "before the last"
+msgstr "ก่อน"
+
+#: DynamicPlayList.cpp:90
+msgid "Minutes"
+msgstr "นาที"
+
+#: DynamicPlayList.cpp:108
+msgid "Added Time"
+msgstr "เวลาที่เพิ่ม"
+
+#: DynamicPlayList.cpp:109
+msgid "Random"
+msgstr "สุ่ม"
+
+#: DynamicPlayList.cpp:114
+#: Preferences.cpp:150
+msgid "minutes"
+msgstr "นาที"
+
+#: DynamicPlayList.cpp:115
+msgid "hours"
+msgstr "ชั่วโมง"
+
+#: DynamicPlayList.cpp:116
+msgid "days"
+msgstr "วัน"
+
+#: DynamicPlayList.cpp:117
+msgid "weeks"
+msgstr "สัปดาห์"
+
+#: DynamicPlayList.cpp:118
+msgid "months"
+msgstr "เดือน"
+
+#: DynamicPlayList.cpp:409
+msgid "Filter Album Browser"
+msgstr "ตัวกรองอัลบั้ม"
+
+#: DynamicPlayList.cpp:410
+msgid "Dynamic Playlist Editor"
+msgstr "คิวเพลงแบบยืดหยุ่น"
+
+#: DynamicPlayList.cpp:428
+msgid " Current Filters "
+msgstr "เลือกเพลง (จากคลังเพลง) ที่"
+
+#: DynamicPlayList.cpp:504
+msgid " Result "
+msgstr "ผลลัพธ์"
+
+#: DynamicPlayList.cpp:509
+msgid "Limit To"
+msgstr "อย่างมาก"
+
+#: DynamicPlayList.cpp:529
+#: DynamicPlayList.cpp:567
+msgid "Add tracks on any criteria"
+msgstr "เลือกเพลงที่ตรงอย่างน้อยหนึ่งข้อ"
+
+#: DynamicPlayList.cpp:539
+msgid "Sort By"
+msgstr "เรียงตาม"
+
+#: DynamicPlayList.cpp:549
+msgid "Descending"
+msgstr "มากไปน้อย"
+
+#: Equalizer.cpp:102
+msgid "Preset:"
+msgstr "รูปแบบ:"
+
+#: FileBrowser.cpp:162
+msgid "Switch between see all filesystem and only library locations"
+msgstr "สลับโหมดระหว่างแสดงทุกไฟล์หรือแสดงเฉพาะเพลง"
+
+#: FileBrowser.cpp:226
+msgid "Play the selected folder"
+msgstr "เล่นเพลงในแฟ้มที่เลือก"
+
+#: FileBrowser.cpp:230
+msgid "Add the selected folder to playlist"
+msgstr "เพิ่มเพลงในแฟ้มเข้าไปในคิวเพลง"
+
+#: FileBrowser.cpp:236
+msgid "Edit Tracks"
+msgstr "แก้ไขรายละเอียดเพลง"
+
+#: FileBrowser.cpp:236
+msgid "Edit the tracks in the selected folder"
+msgstr "แก้ไขรายละเอียดเพลงในแฟ้มที่เลือก"
+
+#: FileBrowser.cpp:240
+#: FileBrowser.cpp:897
+#: PlayListAppend.cpp:25
+msgid "Save to Playlist"
+msgstr "บันทึกเพลงที่เลือกลงคิวเพลง..."
+
+#: FileBrowser.cpp:240
+msgid "Add the tracks in the selected folder to a playlist"
+msgstr "เพิ่มเพลงในแฟ้มที่เลือกอยู่เข้าไปในคิวเพลง"
+
+#: FileBrowser.cpp:244
+msgid "Copy the selected folder to a folder or device"
+msgstr "คัดลอกแฟ้มที่เลือกไปยังแฟ้มอื่นหรืออุปกรณ์ภายนอก"
+
+#: FileBrowser.cpp:250
+#: FileBrowser.cpp:871
+msgid "Copy"
+msgstr "คัดลอก"
+
+#: FileBrowser.cpp:250
+#: FileBrowser.cpp:871
+msgid "Copy the selected folder to clipboard"
+msgstr "คัดลอกแฟ้มที่เลือก"
+
+#: FileBrowser.cpp:255
+#: FileBrowser.cpp:876
+#: LyricsPanel.cpp:284
+msgid "Paste"
+msgstr "แปะ"
+
+#: FileBrowser.cpp:255
+msgid "Paste to the selected folder"
+msgstr "แปะในแฟ้มที่เลือก"
+
+#: FileBrowser.cpp:270
+#: FileBrowser.cpp:319
+#: FileBrowser.cpp:323
+msgid "New Folder"
+msgstr "แฟ้มใหม่"
+
+#: FileBrowser.cpp:270
+msgid "Create a new folder"
+msgstr "สร้างแฟ้มใหม่"
+
+#: FileBrowser.cpp:273
+msgid "Rename"
+msgstr "เปลี่ยนชื่อ"
+
+#: FileBrowser.cpp:273
+msgid "Rename the selected folder"
+msgstr "เปลี่ยนชื่อแฟ้มที่เลือก"
+
+#: FileBrowser.cpp:277
+msgid "Remove"
+msgstr "ลบ"
+
+#: FileBrowser.cpp:277
+msgid "Remove the selected folder"
+msgstr "ลบแฟ้มที่เลือก"
+
+#: FileBrowser.cpp:387
+msgid "Are you sure to delete the selected path ?"
+msgstr "คุณต้องการลบตำแหน่งที่อยู่นี้หรือไม่?"
+
+#: FileBrowser.cpp:398
+msgid "Error deleting the folder "
+msgstr "เกิดข้อผิดพลาดระหว่างการลบแฟ้ม"
+
+#: FileBrowser.cpp:515
+msgid "Size"
+msgstr "ขนาด"
+
+#: FileBrowser.cpp:516
+msgid "Modified"
+msgstr "ถูกแก้ไข"
+
+#: FileBrowser.cpp:860
+msgid "Play current selected files"
+msgstr "เล่นเพลงที่เลือก"
+
+#: FileBrowser.cpp:864
+msgid "Add current selected files to playlist"
+msgstr "เพิ่มเพลงที่เลือกเข้าไปในคิวเพลง"
+
+#: FileBrowser.cpp:876
+msgid "Paste to the selected dir"
+msgstr "แปะไว้ในแฟ้มที่เลือก"
+
+#: FileBrowser.cpp:893
+msgid "Edit tracks"
+msgstr "แก้ไขรายละเอียดเพลง"
+
+#: FileBrowser.cpp:893
+msgid "Edit the current selected files"
+msgstr "แก้ไขเพลงที่เลือก"
+
+#: FileBrowser.cpp:897
+msgid "Add the current selected tracks to a playlist"
+msgstr "เพิ่มเพลงที่เลือกเข้าไปในคิวเพลง"
+
+#: FileBrowser.cpp:901
+msgid "Copy the selected files to a folder or device"
+msgstr "คัดลอกเพลงที่เลือกไปยังแฟ้มอื่นหรืออุปกรณ์ภายนอก"
+
+#: FileBrowser.cpp:907
+msgid "Rename files"
+msgstr "เปลี่ยนชื่อเพลง"
+
+#: FileBrowser.cpp:907
+msgid "Rename the current selected file"
+msgstr "เปลี่ยนชื่อเพลงที่เลือก"
+
+#: FileBrowser.cpp:911
+#: PLSoListBox.cpp:82
+#: PodcastsPanel.cpp:983
+#: PodcastsPanel.cpp:1243
+msgid "Delete"
+msgstr "ลบไฟล์"
+
+#: FileBrowser.cpp:911
+msgid "Delete the selected files"
+msgstr "ลบไฟล์ที่เลือก"
+
+#: FileBrowser.cpp:1279
+msgid "Directories"
+msgstr "แฟ้ม"
+
+#: FileBrowser.cpp:1667
+#: FileBrowser.cpp:1789
+#: LibPanel.cpp:1253
+#: PlayList.cpp:1208
+#: PlayListPanel.cpp:1059
+msgid "UnNamed"
+msgstr "ไม่มีชื่อ"
+
+#: FileBrowser.cpp:1878
+msgid "Are you sure to delete the selected files ?"
+msgstr "คุณต้องการลบไฟล์ที่เลือกหรือไม่?"
+
+#: FileBrowser.cpp:1896
+msgid "There was an error deleting "
+msgstr "เกิดข้อผิดพลาดระหว่างการลบ"
+
+#: FileBrowser.cpp:1897
+msgid ""
+"\n"
+"Continue deleting?"
+msgstr ""
+"\n"
+"คุณต้องการลบต่อหรือไม่?"
+
+#: FileBrowser.cpp:1898
+msgid "Continue"
+msgstr "ทำต่อ"
+
+#: FileRenamer.cpp:46
+msgid "Files Renaming"
+msgstr "เปลี่ยนชื่อไฟล์"
+
+#: FileRenamer.cpp:54
+msgid " Names Preview "
+msgstr "ดูชื่อ"
+
+#: FileRenamer.cpp:66
+#: Preferences.cpp:850
+#: Preferences.cpp:960
+#: RadioEditor.cpp:44
+msgid "Name:"
+msgstr "ชื่อสถานี:"
+
+#: FileRenamer.cpp:73
+msgid "Pattern:"
+msgstr "รูปแบบ:"
+
+#: FileRenamer.cpp:81
+msgid ""
+"Pattern flags:\n"
+"{g} \t- Genero\n"
+"{a} \t- Artist Name\n"
+"{b} \t- Album Name\n"
+"{t} \t- Track Title\n"
+"{n} \t- Track Number\n"
+"{y} \t- Track Year\n"
+"{d} \t- Disk\n"
+msgstr ""
+"รูปแบบ:\n"
+"{g} \t- ประเภทของเพลง\n"
+"{a} \t- ศิลปิน\n"
+"{b} \t- อัลบั้ม\n"
+"{t} \t- ชื่อเพลง\n"
+"{n} \t- ลำดับเพลง\n"
+"{y} \t- ปี\n"
+"{d} \t- แผ่น\n"
+
+#: GeListBox.cpp:45
+msgid "Play current selected genres"
+msgstr "เล่นเพลงตามประเภทของเพลงที่เลือก"
+
+#: GeListBox.cpp:49
+msgid "Add current selected genres to playlist"
+msgstr "เพิ่มเพลงตามประเภทของเพลงที่เลือกเข้าไปในคิวเพลง"
+
+#: LabelEditor.cpp:46
+#: LibPanel.cpp:141
+#: LibPanel.cpp:148
+#: MainFrame.cpp:786
+#: MainFrame.cpp:837
+#: RadioPanel.cpp:777
+#: RadioPanel.cpp:785
+msgid "Labels"
+msgstr "ป้ายชื่อ"
+
+#: LabelEditor.cpp:51
+msgid "Add a new label"
+msgstr "เพิ่มป้ายชื่อใหม่"
+
+#: LabelEditor.cpp:56
+msgid "Delete the selected labels"
+msgstr "ลบป้ายชื่อที่เลือก"
+
+#: LabelEditor.cpp:150
+#: RadioPanel.cpp:635
+#: RadioPanel.cpp:674
+#: TaListBox.cpp:106
+#: TaListBox.cpp:145
+msgid "Label Name: "
+msgstr "ป้ายชื่อ:"
+
+#: LabelEditor.cpp:150
+#: RadioPanel.cpp:635
+#: TaListBox.cpp:106
+msgid "Please enter the label name"
+msgstr "กรุณาใส่ชื่อของป้าย"
+
+#: LabelEditor.cpp:174
+#: RadioPanel.cpp:652
+#: TaListBox.cpp:123
+msgid "Are you sure to delete the selected labels?"
+msgstr "คุณต้องการลบป้ายชื่อที่เลือกหรือไม่?"
+
+#: LastFMPanel.cpp:221
+#: OnlineLinks.cpp:65
+msgid "No search link defined"
+msgstr "ไม่ได้ระบุลิงค์ที่ต้องการค้นหา"
+
+#: LastFMPanel.cpp:221
+#: OnlineLinks.cpp:65
+msgid "Add search links in preferences"
+msgstr "เพิ่มลิงค์ค้นหาเข้าไปในการปรับแต่ง"
+
+#: LastFMPanel.cpp:454
+#: LastFMPanel.cpp:642
+msgid "Less..."
+msgstr "น้อยกว่า..."
+
+#: LastFMPanel.cpp:454
+#: LastFMPanel.cpp:642
+msgid "More..."
+msgstr "มากกว่า..."
+
+#: LastFMPanel.cpp:548
+#: LastFMPanel.cpp:933
+#: LastFMPanel.cpp:1086
+msgid "Play the artist tracks"
+msgstr "เล่นเพลงของศิลปิน"
+
+#: LastFMPanel.cpp:552
+#: LastFMPanel.cpp:937
+#: LastFMPanel.cpp:1090
+msgid "Enqueue the artist tracks to the playlist"
+msgstr "เพิ่มเพลงของศิลปินเข้าไปในคิวเพลงที่เล่นอยู๋"
+
+#: LastFMPanel.cpp:564
+msgid "Copy the artist name to clipboard"
+msgstr "คัดลอกชื่อของศิลปิน"
+
+#: LastFMPanel.cpp:572
+#: LastFMPanel.cpp:798
+#: LastFMPanel.cpp:959
+#: LastFMPanel.cpp:1117
+#: LastFMPanel.cpp:1237
+msgid "Visit last.fm page for this item"
+msgstr "เข้าเวบ Last.fm ของเพลงหรือน้กร้องที่เลือก"
+
+#: LastFMPanel.cpp:597
+msgid "There is no information available for this artist."
+msgstr "ไม่มีข้อมูลของศิลปินนี้"
+
+#: LastFMPanel.cpp:949
+#: LastFMPanel.cpp:1106
+msgid "Update the information with the current selected artist"
+msgstr "อัพเดทรายละเอียดของศิลปินที่เลือก"
+
+#: LastFMPanel.cpp:951
+msgid "Copy the artist info to clipboard"
+msgstr "คัดลอกรายละเอียดของศิลปิน"
+
+#: LastFMPanel.cpp:1094
+msgid "Search Track"
+msgstr "ค้นหาเพลง"
+
+#: LastFMPanel.cpp:1094
+msgid "Search the track in the library"
+msgstr "ค้นหาเพลงในคลังเพลง"
+
+#: LastFMPanel.cpp:1109
+msgid "Copy the track info to clipboard"
+msgstr "คัดลอกรายละเอียดของเพลง"
+
+#: LastFMPanel.cpp:1229
+msgid "Copy the event info to clipboard"
+msgstr "คัดลอกรายละเอียดการแสดง"
+
+#: LastFMPanel.cpp:1300
+#: LyricsPanel.cpp:80
+msgid "Follow player"
+msgstr "แสดงรายละเอียดตามเพลงที่เล่นอยู๋"
+
+#: LastFMPanel.cpp:1330
+#: LyricsPanel.cpp:132
+#: TrackEdit.cpp:384
+msgid "Track:"
+msgstr "ชื่อเพลง:"
+
+#: LastFMPanel.cpp:1355
+msgid "Artist Info"
+msgstr "รายละเอียดศิลปิน"
+
+#: LastFMPanel.cpp:1391
+msgid "Top Albums"
+msgstr "อัลบั้มที่เป็นที่นิยม"
+
+#: LastFMPanel.cpp:1422
+msgid "Similar Artists"
+msgstr "ศิลปินที่คล้ายกัน"
+
+#: LastFMPanel.cpp:1454
+msgid "Similar Tracks"
+msgstr "เพลงที่คล้ายกัน"
+
+#: LastFMPanel.cpp:1486
+msgid "Events"
+msgstr "การแสดง"
+
+#: LibPanel.cpp:102
+#: RadioPanel.cpp:732
+msgid "Search:"
+msgstr "ค้นหา"
+
+#: LibPanel.cpp:114
+#: MainFrame.cpp:781
+#: MainFrame.cpp:832
+#: RadioPanel.cpp:744
+msgid "Text Search"
+msgstr "ค้นหาคำว่า"
+
+#: LibPanel.cpp:123
+#: LibPanel.cpp:130
+#: MainFrame.cpp:791
+#: MainFrame.cpp:842
+#: RadioPanel.cpp:765
+msgid "Genres"
+msgstr "ประเภทของเพลง"
+
+#: LibPanel.cpp:159
+#: LibPanel.cpp:166
+#: MainFrame.cpp:796
+msgid "Artists"
+msgstr "ศิลปิน"
+
+#: LibPanel.cpp:176
+#: LibPanel.cpp:183
+#: MainFrame.cpp:801
+msgid "Albums"
+msgstr "อัลบั้ม"
+
+#: LibPanel.cpp:196
+#: LibPanel.cpp:203
+#: MainFrame.cpp:806
+msgid "Years"
+msgstr "ปี"
+
+#: LibPanel.cpp:215
+#: LibPanel.cpp:222
+#: MainFrame.cpp:811
+msgid "Ratings"
+msgstr "คะแนน"
+
+#: LibPanel.cpp:234
+#: LibPanel.cpp:241
+#: MainFrame.cpp:816
+msgid "Play Counts"
+msgstr "จำนวนครั้งที่เล่น"
+
+#: LibPanel.cpp:778
+msgid "Artist Labels Editor"
+msgstr "เครื่องมือแก้ไขป้ายชื่อของศิลปิน"
+
+#: LibPanel.cpp:1154
+#: PlayList.cpp:1301
+#: PlayListPanel.cpp:967
+msgid "Songs Labels Editor"
+msgstr "เครื่องมือแก้ไขป้ายชื่อของเพลง"
+
+#: ListView.cpp:1482
+msgid "Select Columns"
+msgstr "เลือกคอลัมน์"
+
+#: ListView.cpp:1494
+msgid " Columns "
+msgstr "ช่อง"
+
+#: LyricsPanel.cpp:107
+msgid "Reload the lyric"
+msgstr "โหลดเนื้อเพลงอีกครั้ง"
+
+#: LyricsPanel.cpp:111
+msgid "Edit the lyric for the current track"
+msgstr "แก้ไขเนื้อเพลง"
+
+#: LyricsPanel.cpp:117
+msgid "Save the lyrics to files or directory"
+msgstr "บันทึกเนื้อเพลง"
+
+#: LyricsPanel.cpp:272
+msgid "Copy to clipboard"
+msgstr "คัดลอก"
+
+#: LyricsPanel.cpp:272
+msgid "Copy the content of the lyric to clipboard"
+msgstr "คัดลอกเนื้อเพลง"
+
+#: LyricsPanel.cpp:284
+msgid "Paste the content of the lyric from clipboard"
+msgstr "แปะเนื้อเพลง"
+
+#: LyricsPanel.cpp:293
+msgid "Print"
+msgstr "พิมพ์"
+
+#: LyricsPanel.cpp:293
+msgid "Print the content of the lyrics"
+msgstr "พิมพ์เนื้อเพลง"
+
+#: LyricsPanel.cpp:600
+msgid "Searching the lyrics for this track"
+msgstr "หาเนื้อเพลงของเพลงนี้"
+
+#: LyricsPanel.cpp:644
+msgid "No lyrics found for this song."
+msgstr "ไม่พบเนื้อเพลง"
+
+#: MainFrame.cpp:170
+msgid "Welcome to guayadeque "
+msgstr "ยินดีต้อนรับสู่ Guayadeque!"
+
+#: MainFrame.cpp:177
+#: MainFrame.cpp:323
+#: MainFrame.cpp:769
+msgid "Vumeters"
+msgstr "ตัววัดระดับเสียง"
+
+#: MainFrame.cpp:182
+#: MainFrame.cpp:326
+msgid "Filters"
+msgstr "ตัวกรอง"
+
+#: MainFrame.cpp:329
+#: MainFrame.cpp:611
+#: MainFrame.cpp:1360
+#: MainFrame.cpp:2366
+#: MainFrame.cpp:2380
+#: PlayList.cpp:76
+msgid "Now Playing"
+msgstr "คิวเพลงที่กำลังเล่น"
+
+#: MainFrame.cpp:694
+msgid "&Add Directory"
+msgstr "เพิ่มแฟ้มเพลง"
+
+#: MainFrame.cpp:694
+msgid "Add a directory to the Library paths"
+msgstr "เพิ่มแฟ้มเข้าไปในคลังเพลง"
+
+#: MainFrame.cpp:699
+msgid "&Update Library"
+msgstr "&อัพเดทคลังเพลง"
+
+#: MainFrame.cpp:699
+msgid "Update all new songs from the directories configured"
+msgstr "อัพเดทเพลงใหม่ในคลังเพลง"
+
+#: MainFrame.cpp:702
+msgid "&Rescan Library"
+msgstr "&อัพเดทคลังเพลงแบบละเอียด"
+
+#: MainFrame.cpp:702
+msgid "Update all songs from the directories configured"
+msgstr "อัพเดทเพลงทั้งหมดในคลังเพลง"
+
+#: MainFrame.cpp:705
+msgid "Update P&odcasts"
+msgstr "&อัพเดทพอดแคสต์"
+
+#: MainFrame.cpp:705
+msgid "Update the podcasts added"
+msgstr "อัพเดทพอดแคสท์ที่มีอยู่"
+
+#: MainFrame.cpp:709
+msgid "Update Covers"
+msgstr "อัพเดทปก"
+
+#: MainFrame.cpp:709
+msgid "Try to download all missing covers"
+msgstr "พยายามดาวน์โหลดปกที่ยังไม่มี"
+
+#: MainFrame.cpp:715
+msgid "&Preferences"
+msgstr "&การปรับแต่ง"
+
+#: MainFrame.cpp:715
+msgid "Change the options of the application"
+msgstr "เปลี่ยนตัวเลือกของโปรแกรม"
+
+#: MainFrame.cpp:721
+msgid "&Quit"
+msgstr "&ออกจากโปรแกรม"
+
+#: MainFrame.cpp:721
+msgid "Exits the application"
+msgstr "ออกจากโปรแกรม"
+
+#: MainFrame.cpp:725
+#: MainFrame.cpp:775
+msgid "&Library"
+msgstr "&คลังเพลง"
+
+#: MainFrame.cpp:729
+msgid "Save Layout"
+msgstr "บันทึกหน้าตาของโปรแกรม"
+
+#: MainFrame.cpp:729
+msgid "Saves the current layout"
+msgstr "บันทึกหน้าตาของโปรแกรมที่ใช้อยู่"
+
+#: MainFrame.cpp:740
+#: MainFrame.cpp:751
+#: MainFrame.cpp:754
+#: MainFrame.cpp:2372
+#: MainFrame.cpp:2374
+#: MainFrame.cpp:2410
+#: MainFrame.cpp:2417
+#: MainFrame.cpp:2420
+msgid "Load this user defined layout"
+msgstr "โหลดหน้าตาของโปรแกรมที่เคยตั้งไว้"
+
+#: MainFrame.cpp:742
+#: MainFrame.cpp:2412
+msgid "Delete this user defined layout"
+msgstr "ลบหน้าตาของโปรแกรมที่เคยตั้งไว้"
+
+#: MainFrame.cpp:747
+msgid "Load Layout"
+msgstr "โหลดหน้าตาของโปรแกรม"
+
+#: MainFrame.cpp:747
+msgid "Set current view from a user defined layout"
+msgstr "ตั้งหน้าตาของโปรแกรมจากค่าที่เคยตั้งไว้"
+
+#: MainFrame.cpp:748
+msgid "Delete Layout"
+msgstr "ลบหน้าตาของโปรแกรม"
+
+#: MainFrame.cpp:748
+msgid "Delete a user defined layout"
+msgstr "ลบหน้าตาของโปรแกรมจากค่าที่เคยตั้งไว้"
+
+#: MainFrame.cpp:751
+#: MainFrame.cpp:754
+#: MainFrame.cpp:2417
+#: MainFrame.cpp:2420
+msgid "No layouts defined"
+msgstr "ไม่ได้ตั้งค่าหน้าตาของโปรแกรม"
+
+#: MainFrame.cpp:761
+msgid "Player PlayList"
+msgstr "คิวเพลงที่กำลังเล่น"
+
+#: MainFrame.cpp:761
+msgid "Show/Hide the player playlist panel"
+msgstr "แสดง/ซ่อนแถบคิวเพลงที่กำลังเล่น"
+
+#: MainFrame.cpp:765
+msgid "Player Filters"
+msgstr "ตัวกรองของคิวเพลง"
+
+#: MainFrame.cpp:765
+msgid "Show/Hide the player filters panel"
+msgstr "แสดง/ซ่อนตัวกรองของคิวเพลง"
+
+#: MainFrame.cpp:769
+msgid "Show/Hide the player vumeter"
+msgstr "แสดง/ซ่อนตัววัดระดับเสียง"
+
+#: MainFrame.cpp:775
+msgid "Show/Hide the library panel"
+msgstr "แสดง/ซ่อนคลังเพลง"
+
+#: MainFrame.cpp:781
+msgid "Show/Hide the library text search"
+msgstr "แสดง/ซ่อนช่องค้นหาในคลังเพลง"
+
+#: MainFrame.cpp:786
+msgid "Show/Hide the library labels"
+msgstr "แสดง/ซ่อนป้ายชื่อ"
+
+#: MainFrame.cpp:791
+msgid "Show/Hide the library genres"
+msgstr "แสดง/ซ่อนประเภทของเพลง"
+
+#: MainFrame.cpp:796
+msgid "Show/Hide the library artists"
+msgstr "แสดง/ซ่อนศิลปิน"
+
+#: MainFrame.cpp:801
+msgid "Show/Hide the library albums"
+msgstr "แสดง/ซ่อนอัลบั้ม"
+
+#: MainFrame.cpp:806
+msgid "Show/Hide the library years"
+msgstr "แสดง/ซ่อนปี"
+
+#: MainFrame.cpp:811
+msgid "Show/Hide the library ratings"
+msgstr "แสดง/ซ่อนคะแนน"
+
+#: MainFrame.cpp:816
+msgid "Show/Hide the library play counts"
+msgstr "แสดง/ซ่อนจำนวนครั้งที่เล่น"
+
+#: MainFrame.cpp:821
+#: MainFrame.cpp:1191
+#: MainFrame.cpp:1202
+#: MainFrame.cpp:1239
+#: MainFrame.cpp:1459
+#: MainFrame.cpp:2543
+#: Preferences.cpp:285
+msgid "Library"
+msgstr "คลังเพลง"
+
+#: MainFrame.cpp:821
+msgid "Set the library visible panels"
+msgstr "แสดงแถบคลังเพลง"
+
+#: MainFrame.cpp:826
+#: MainFrame.cpp:847
+msgid "&Radio"
+msgstr "&วิทยุ"
+
+#: MainFrame.cpp:826
+msgid "Show/Hide the radio panel"
+msgstr "แสดง/ซ่อนแถบวิทยุ"
+
+#: MainFrame.cpp:832
+msgid "Show/Hide the radio text search"
+msgstr "แสดง/ซ่อนช่องค้นหาในวิทยุ"
+
+#: MainFrame.cpp:837
+msgid "Show/Hide the radio labels"
+msgstr "แสดง/ซ่อนป้ายชื่อวิทยุ"
+
+#: MainFrame.cpp:842
+msgid "Show/Hide the radio genres"
+msgstr "แสดง/ซ่อนประเภทของวิทยุ"
+
+#: MainFrame.cpp:847
+msgid "Set the radio visible panels"
+msgstr "แสดงแถบวิทยุ"
+
+#: MainFrame.cpp:850
+msgid "Last.&fm"
+msgstr "Last.&fm"
+
+#: MainFrame.cpp:850
+msgid "Show/Hide the Last.fm panel"
+msgstr "แสดง/ซ่อนแถบ Last.fm"
+
+#: MainFrame.cpp:854
+msgid "L&yrics"
+msgstr "เนื้อเพลง"
+
+#: MainFrame.cpp:854
+msgid "Show/Hide the lyrics panel"
+msgstr "แสดง/ซ่อนแถบเนื้อเพลง"
+
+#: MainFrame.cpp:858
+msgid "&PlayLists"
+msgstr "คิวเพลง"
+
+#: MainFrame.cpp:858
+msgid "Show/Hide the playlists panel"
+msgstr "แสดง/ซ่อนแถบคิวเพลง"
+
+#: MainFrame.cpp:866
+msgid "P&odcasts"
+msgstr "พอดแคสต์"
+
+#: MainFrame.cpp:866
+msgid "Show/Hide the podcasts panel"
+msgstr "แสดง/ซ่อนแถบพอดแคสต์"
+
+#: MainFrame.cpp:872
+#: PodcastsPanel.cpp:108
+#: PodcastsPanel.cpp:116
+msgid "Channels"
+msgstr "ช่อง"
+
+#: MainFrame.cpp:872
+msgid "Show/Hide the podcasts channels"
+msgstr "แสดง/ซ่อนช่องสัญญาณพอดแคสต์"
+
+#: MainFrame.cpp:877
+#: TrackEdit.cpp:270
+msgid "Details"
+msgstr "รายละเอียด"
+
+#: MainFrame.cpp:877
+msgid "Show/Hide the podcasts details"
+msgstr "แสดง/ซ่อนรายละเอียดของพอดแคสต์"
+
+#: MainFrame.cpp:882
+msgid "&Podcasts"
+msgstr "&พอดแคสต์"
+
+#: MainFrame.cpp:882
+msgid "Set the podcasts visible panels"
+msgstr "แสดงแถบพอดแคสต์"
+
+#: MainFrame.cpp:884
+#: MainFrame.cpp:1754
+#: MainFrame.cpp:2567
+msgid "Browser"
+msgstr "อัลบั้ม"
+
+#: MainFrame.cpp:884
+msgid "Show/Hide the album browser panel"
+msgstr "แสดง/ซ่อนแถบอัลบั้ม"
+
+#: MainFrame.cpp:888
+#: MainFrame.cpp:1783
+#: MainFrame.cpp:2571
+msgid "Files"
+msgstr "แฟ้มเพลง"
+
+#: MainFrame.cpp:888
+msgid "Show/Hide the file browser panel"
+msgstr "แสดง/ซ่อนแถบแฟ้มเพลง"
+
+#: MainFrame.cpp:892
+msgid "&View"
+msgstr "&หน้าตาของโปรแกรม"
+
+#: MainFrame.cpp:895
+msgid "&Next Track"
+msgstr "เล่นเพลงถัดไป"
+
+#: MainFrame.cpp:895
+msgid "Play the next track in the playlist"
+msgstr "เล่นเพลงถัดไปในคิว"
+
+#: MainFrame.cpp:898
+msgid "&Prev. Track"
+msgstr "&เล่นเพลงก่อนหน้า"
+
+#: MainFrame.cpp:898
+msgid "Play the previous track in the playlist"
+msgstr "เล่นเพลงก่อนหน้าในคิว"
+
+#: MainFrame.cpp:902
+msgid "&Play"
+msgstr "&เล่น"
+
+#: MainFrame.cpp:902
+msgid "Play or Pause the current track in the playlist"
+msgstr "เล่นเพลงหรือหยุดชั่วคราว"
+
+#: MainFrame.cpp:905
+msgid "&Stop"
+msgstr "&หยุดเล่น"
+
+#: MainFrame.cpp:905
+msgid "Stop the current played track"
+msgstr "หยุดเพลงที่กำลังเล่น"
+
+#: MainFrame.cpp:909
+msgid "&Smart Mode"
+msgstr "&โหมดอัจฉริยะ"
+
+#: MainFrame.cpp:909
+msgid "Update playlist based on Last.fm statics"
+msgstr "อัพเดทคิวเพลงตามสถิติของ Last.fm"
+
+#: MainFrame.cpp:914
+msgid "R&andomize"
+msgstr "สลับลำดับของเพลงในคิว"
+
+#: MainFrame.cpp:914
+msgid "Randomize the playlist"
+msgstr "สลับลำดับของเพลงในคิว"
+
+#: MainFrame.cpp:917
+msgid "&Repeat Playlist"
+msgstr "เล่นซ้ำทั้งคิวเพลง"
+
+#: MainFrame.cpp:917
+msgid "Repeat the tracks in the playlist"
+msgstr "เล่นซ้ำเพลงเดิม"
+
+#: MainFrame.cpp:922
+msgid "&Repeat Track"
+msgstr "เล่นซ้ำเพลงเดิม"
+
+#: MainFrame.cpp:922
+msgid "Repeat the current track in the playlist"
+msgstr "เล่นซ้ำเพลงเดิม"
+
+#: MainFrame.cpp:927
+msgid "&Control"
+msgstr "&แผงควบคุม"
+
+#: MainFrame.cpp:930
+msgid "&About"
+msgstr "&รายละเอียดของโปรแกรม"
+
+#: MainFrame.cpp:930
+msgid "Show information about guayadeque music player"
+msgstr "แสดงรายละเอียดของโปรแกรมเล่นเพลง Guayadeque"
+
+#: MainFrame.cpp:933
+msgid "&Help"
+msgstr "อื่นๆ"
+
+#: MainFrame.cpp:1175
+msgid "Covers"
+msgstr "ปก"
+
+#: MainFrame.cpp:1209
+#: Preferences.cpp:1339
+msgid "Select library path"
+msgstr "เลือกตำแหน่งที่อยู่ของคลังเพลง"
+
+#: MainFrame.cpp:1244
+msgid "The library is already updating"
+msgstr "กำลังอัพเดทคลังเพลง"
+
+#: MainFrame.cpp:1244
+msgid "Add Directory"
+msgstr "เพิ่มแฟ้มเพลง"
+
+#: MainFrame.cpp:1249
+msgid "This Path is already in the library"
+msgstr "ตำแหน่งที่อยู่นี้มีอยู่ในคลังเพลงแล้ว"
+
+#: MainFrame.cpp:1250
+msgid "Adding path error"
+msgstr "เกิดข้อผิดพลาดระหว่างการเพิ่ม"
+
+#: MainFrame.cpp:1378
+msgid "Select destination directory"
+msgstr "เลือกแฟ้มปลายทาง"
+
+#: MainFrame.cpp:1383
+msgid "Copy To..."
+msgstr "คัดลอกไปที่..."
+
+#: MainFrame.cpp:1568
+#: MainFrame.cpp:2547
+msgid "Radio"
+msgstr "วิทยุ"
+
+#: MainFrame.cpp:1664
+#: MainFrame.cpp:2551
+msgid "Last.fm"
+msgstr "Last.fm"
+
+#: MainFrame.cpp:1692
+#: MainFrame.cpp:2555
+#: Preferences.cpp:623
+#: TrackEdit.cpp:402
+msgid "Lyrics"
+msgstr "เนื้อเพลง"
+
+#: MainFrame.cpp:1720
+#: MainFrame.cpp:2224
+#: MainFrame.cpp:2563
+#: PodcastsPanel.cpp:134
+msgid "Podcasts"
+msgstr "พอดแคสต์"
+
+#: MainFrame.cpp:1811
+#: MainFrame.cpp:2559
+msgid "PlayLists"
+msgstr "คิวเพลง"
+
+#: MainFrame.cpp:2068
+#: MainFrame.cpp:2082
+#, c-format
+msgid "%llu tracks,   %s,   %s"
+msgstr "%llu ชื่อเพลง,   %s,   %s"
+
+#: MainFrame.cpp:2076
+#, c-format
+msgid "%llu stations"
+msgstr "%llu สถานี"
+
+#: MainFrame.cpp:2096
+#, c-format
+msgid "%llu podcasts,   %s,   %s"
+msgstr "%llu พอดแคสต์,   %s,   %s"
+
+#: MainFrame.cpp:2105
+#, c-format
+msgid "%llu dirs, %llu files,   %s"
+msgstr "%llu แฟ้ม, %llu ข้อมูล,   %s"
+
+#: MainFrame.cpp:2342
+msgid "Enter the layout name:"
+msgstr "กรุณาใส่ชื่อหน้าตาของโปรแกรม"
+
+#: MainFrame.cpp:2342
+msgid "New Layout"
+msgstr "บันทึกหน้าตาของโปรแกรม"
+
+#: MainFrame.cpp:2344
+#, c-format
+msgid "Layout %u"
+msgstr "หน้าตาโปรแกรม %u"
+
+#: NewChannel.cpp:86
+msgid "New Podcast Channel"
+msgstr "เพิ่มช่องพอดแคสต์"
+
+#: NewChannel.cpp:99
+msgid " Digital Podcast Directory "
+msgstr " แฟ้มพอดแคสต์"
+
+#: NewChannel.cpp:220
+msgid "Filtered channels"
+msgstr "ช่องที่กรองแล้ว"
+
+#: NewChannel.cpp:294
+#, c-format
+msgid "%u Channels"
+msgstr "%u ช่อง"
+
+#: NewChannel.cpp:299
+#, c-format
+msgid "%u Categories, %u Channels"
+msgstr "%u ประเภท, %u ช่อง"
+
+#: NewChannel.cpp:367
+msgid "Filter Text: "
+msgstr "คำที่ต้องการค้นหา:"
+
+#: NewChannel.cpp:367
+msgid "Enter the text to filter podcasts channels"
+msgstr "กรุณาใส่คำที่ต้องการค้นหา"
+
+#: OnlineLinks.cpp:68
+#: Preferences.cpp:881
+msgid "Links"
+msgstr "ค้นหาเพลงที่เลือกในเว็บ"
+
+#: PLSoListBox.cpp:82
+msgid "Delete the current selected tracks"
+msgstr "ลบเพลงที่เลือก"
+
+#: PcListBox.cpp:68
+msgid "Play current selected tracks"
+msgstr "เล่นเพลงที่เลือก"
+
+#: PcListBox.cpp:72
+#: RaListBox.cpp:99
+#: YeListBox.cpp:64
+msgid "Add current selected tracks to playlist"
+msgstr "เพิ่มเพลงที่เลือกอยู่เข้าไปในคิวเพลง"
+
+#: PcListBox.cpp:80
+#: RaListBox.cpp:107
+#: YeListBox.cpp:72
+msgid "Edit the selected tracks"
+msgstr "แก้ไขรายละเอียดเพลงที่เลือก"
+
+#: PlayList.cpp:1099
+msgid "Edit the current selected songs"
+msgstr "แก้ไขรายละเอียดเพลงที่เลือก"
+
+#: PlayList.cpp:1103
+msgid "Edit the labels of the current selected songs"
+msgstr "เปลี่ยนป้ายชื่อของเพลงที่เลือก"
+
+#: PlayList.cpp:1107
+msgid "Search"
+msgstr "คำที่ต้องการค้นหา"
+
+#: PlayList.cpp:1107
+msgid "Search a track in the playlist by name"
+msgstr "ค้นหาจากชื่อเพลง"
+
+#: PlayList.cpp:1113
+msgid "Clear PlayList"
+msgstr "ล้างคิวเพลง"
+
+#: PlayList.cpp:1113
+msgid "Remove all songs from PlayList"
+msgstr "ลบเพลงทั้งหมดออกจากคิว"
+
+#: PlayList.cpp:1119
+msgid "Remove selected songs"
+msgstr "ลบเพลงที่เลือกออกจากคิว"
+
+#: PlayList.cpp:1119
+msgid "Remove selected songs from PlayList"
+msgstr "ลบเพลงที่เลือกออกจากคิว"
+
+#: PlayList.cpp:1124
+msgid "Save to PlayList"
+msgstr "บันทึกเพลงที่เลือกลงคิวเพลง..."
+
+#: PlayList.cpp:1124
+msgid "Save the selected tracks to PlayList"
+msgstr "บันทึกเพลงที่เลือก"
+
+#: PlayList.cpp:1130
+msgid "Randomize PlayList"
+msgstr "สลับลำดับเพลง"
+
+#: PlayList.cpp:1130
+msgid "Randomize the songs in the PlayList"
+msgstr "สลับลำดับเพลงในคิวที่กำลังเล่น"
+
+#: PlayList.cpp:1136
+#: PlayListPanel.cpp:188
+msgid "Copy the current playlist to a directory or device"
+msgstr "คัดลอกคิวเพลงที่กำลังเล่นไปที่อืนหรืออุปกรณ์ภายนอก"
+
+#: PlayList.cpp:1389
+msgid "Search: "
+msgstr "ค้นหาเพลงที่มีคำว่า"
+
+#: PlayList.cpp:1389
+msgid "Please enter the search term"
+msgstr "กรุณาใส่คำที่ต้องการค้นหา"
+
+#: PlayListAppend.cpp:55
+msgid "Playlist:"
+msgstr "เลือกคิวเพลง:"
+
+#: PlayListAppend.cpp:69
+msgid "Where:"
+msgstr "ตำแหน่งในคิวเพลงที่ต้องการบันทึก:"
+
+#: PlayListAppend.cpp:73
+msgid "Begin"
+msgstr "ตอนต้นของคิว"
+
+#: PlayListAppend.cpp:73
+msgid "End"
+msgstr "ตอนท้ายของคิว"
+
+#: PlayListAppend.cpp:79
+msgid "Tracks:"
+msgstr "จำนวนเพลง:"
+
+#: PlayListPanel.cpp:70
+msgid "Static playlists"
+msgstr "คิวเพลง"
+
+#: PlayListPanel.cpp:71
+msgid "Dynamic playlists"
+msgstr "คิวเพลงแบบยืดหยุ่น"
+
+#: PlayListPanel.cpp:137
+#: PodcastsPanel.cpp:1233
+#: RadioPanel.cpp:488
+#: SoListBox.cpp:361
+msgid "Play current selected songs"
+msgstr "เล่นเพลงที่เลือก"
+
+#: PlayListPanel.cpp:141
+#: SoListBox.cpp:369
+msgid "Add current selected songs to the playlist"
+msgstr "เพิ่มเพลงที่เลือกเข้าไปในคิวเพลง"
+
+#: PlayListPanel.cpp:149
+#: PlayListPanel.cpp:677
+msgid "New Dynamic Playlist"
+msgstr "เพิ่มคิวเพลงแบบยืดหยุ่น"
+
+#: PlayListPanel.cpp:149
+msgid "Create a new dynamic playlist"
+msgstr "เพิ่มคิวเพลงแบบยืดหยุ่น"
+
+#: PlayListPanel.cpp:155
+#: RadioPanel.cpp:272
+msgid "Import"
+msgstr "นำเข้า"
+
+#: PlayListPanel.cpp:155
+msgid "Import a playlist"
+msgstr "นำเข้าคิวเพลง"
+
+#: PlayListPanel.cpp:161
+#: RadioPanel.cpp:276
+msgid "Export"
+msgstr "ส่งออก"
+
+#: PlayListPanel.cpp:161
+msgid "Export the playlist"
+msgstr "ส่งออกคิวเพลง"
+
+#: PlayListPanel.cpp:169
+msgid "Edit Playlist"
+msgstr "แก้ไขคิวเพลง"
+
+#: PlayListPanel.cpp:169
+msgid "Edit the selected playlist"
+msgstr "แก้ไขคิวเพลงที่เลือก"
+
+#: PlayListPanel.cpp:173
+#: SoListBox.cpp:379
+msgid "Save Playlist"
+msgstr "บันทึกคิวเพลง"
+
+#: PlayListPanel.cpp:173
+msgid "Save the selected playlist as a Static Playlist"
+msgstr "บันทึกคิวเพลงที่เลือก"
+
+#: PlayListPanel.cpp:178
+msgid "Rename Playlist"
+msgstr "เปลี่ยนชื่อคิวเพลง"
+
+#: PlayListPanel.cpp:178
+msgid "Change the name of the selected playlist"
+msgstr "เปลี่ยนชื่อคิวเพลงที่เลือก"
+
+#: PlayListPanel.cpp:182
+msgid "Delete Playlist"
+msgstr "ลบคิวเพลง"
+
+#: PlayListPanel.cpp:182
+msgid "Delete the selected playlist"
+msgstr "ลบคิวเพลงที่เลือก"
+
+#: PlayListPanel.cpp:494
+msgid "Play Lists"
+msgstr "คิวเพลง"
+
+#: PlayListPanel.cpp:676
+#: PlayListPanel.cpp:716
+#: PlayListPanel.cpp:787
+msgid "PlayList Name: "
+msgstr "ชื่อของคิวเพลง:"
+
+#: PlayListPanel.cpp:677
+#: PlayListPanel.cpp:717
+#: PlayListPanel.cpp:788
+msgid "Enter the new playlist name"
+msgstr "กรุณาใส่ชื่อคิวเพลง"
+
+#: PlayListPanel.cpp:734
+msgid "Are you sure to delete the selected Playlist?"
+msgstr "คุณต้องการลบคิวเพลงที่เลือกหรือไม่?"
+
+#: PlayListPanel.cpp:788
+#: PlayListPanel.cpp:799
+msgid "New PlayList"
+msgstr "เพิ่มคิวเพลงใหม่"
+
+#: PlayerFilters.cpp:42
+msgid "Allow:"
+msgstr "เลือกเพลงจาก"
+
+#: PlayerFilters.cpp:51
+msgid "Deny:"
+msgstr "ห้ามเลือกจาก"
+
+#: PlayerFilters.cpp:123
+msgid "None"
+msgstr "(ไม่ใช้)"
+
+#: PlayerPanel.cpp:155
+msgid "Go to Previous Track in the Playlist"
+msgstr "กลับไปเพลงก่อนหน้าในคิวเพลง"
+
+#: PlayerPanel.cpp:160
+msgid "Start playing or pauses current track in the Playlist"
+msgstr "เล่น/หยุดเพลงในคิวเพลง"
+
+#: PlayerPanel.cpp:165
+msgid "Go to Next Track in the Playlist"
+msgstr "ข้ามไปเพลงต่อไปในคิวเพลง"
+
+#: PlayerPanel.cpp:170
+msgid "Stop playing"
+msgstr "หยุดเล่น"
+
+#: PlayerPanel.cpp:183
+#: PlayerPanel.cpp:2251
+msgid "Volume"
+msgstr "ระดับเสียง"
+
+#: PlayerPanel.cpp:188
+msgid "Show the equalizer"
+msgstr "ปรับแต่งเสียงในแต่ละย่านความถี่"
+
+#: PlayerPanel.cpp:196
+#: PlayerPanel.cpp:1824
+msgid "Smart Mode: "
+msgstr "โหมดอัจฉริยะ:"
+
+#: PlayerPanel.cpp:199
+#: PlayerPanel.cpp:215
+#: PlayerPanel.cpp:1827
+#: PlayerPanel.cpp:1875
+msgid "Off"
+msgstr "ปิด"
+
+#: PlayerPanel.cpp:203
+#: PlayerPanel.cpp:1831
+msgid "On"
+msgstr "เปิด"
+
+#: PlayerPanel.cpp:212
+#: PlayerPanel.cpp:1872
+msgid "Repeat Mode: "
+msgstr "เล่นซ้ำ:"
+
+#: PlayerPanel.cpp:219
+#: PlayerPanel.cpp:1879
+msgid "Track"
+msgstr "เพลงเดิม"
+
+#: PlayerPanel.cpp:223
+#: PlayerPanel.cpp:1883
+msgid "Playlist"
+msgstr "ทั้งคิวเพลง"
+
+#: PlayerPanel.cpp:231
+msgid "Randomize the tracks in the playlist"
+msgstr "สลับลำดับเพลงในคิว"
+
+#: PlayerPanel.cpp:241
+msgid "Shows the current track album cover if available"
+msgstr "แสดงปกของอัลบั้มที่เล่น"
+
+#: PlayerPanel.cpp:249
+msgid "Show the name of the current track"
+msgstr "แสดงชื่อของเพลงที่เล่น"
+
+#: PlayerPanel.cpp:259
+msgid "Show the album name of the current track"
+msgstr "แสดงชื่ออัลบั้มของเพลงที่เล่น"
+
+#: PlayerPanel.cpp:270
+msgid "Show the artist name of the current track"
+msgstr "แสดงชื่อศิลปินของเพลงที่เล่น"
+
+#: PlayerPanel.cpp:281
+msgid "Show the year of the current track"
+msgstr "แสดงปีของเพลงที่เล่น"
+
+#: PlayerPanel.cpp:284
+msgid "00:00 of 00:00"
+msgstr "00:00 / 00:00"
+
+#: PlayerPanel.cpp:285
+msgid "Show the current position and song length of the current track"
+msgstr "แสดงเวลาและความยาวของเพลงที่เล่น"
+
+#: PlayerPanel.cpp:300
+msgid "Show the bitrate of the current track"
+msgstr "แสดงคุณภาพของเพลงที่เล่น"
+
+#: PlayerPanel.cpp:1446
+msgid "Buffering..."
+msgstr "กำลังโหลด..."
+
+#: PlayerPanel.cpp:1517
+#: TagInfo.cpp:432
+#: TagInfo.cpp:438
+#: TagInfo.cpp:1256
+#: TagInfo.cpp:1262
+msgid "Unknown"
+msgstr "ไม่มี"
+
+#: PodcastsPanel.cpp:146
+#: TrackEdit.cpp:468
+msgid " Details "
+msgstr "รายละเอียด"
+
+#: PodcastsPanel.cpp:197
+#: RadioEditor.cpp:52
+msgid "Link:"
+msgstr "ลิงค์:"
+
+#: PodcastsPanel.cpp:212
+#: TrackEdit.cpp:156
+#: TrackEdit.cpp:511
+msgid "Title:"
+msgstr "ชื่อเพลง:"
+
+#: PodcastsPanel.cpp:222
+msgid "Sumary:"
+msgstr "รายละเอียด:"
+
+#: PodcastsPanel.cpp:232
+#: TrackEdit.cpp:498
+msgid "Date:"
+msgstr "วันที่:"
+
+#: PodcastsPanel.cpp:242
+msgid "Length:"
+msgstr "ความยาว:"
+
+#: PodcastsPanel.cpp:263
+msgid "Podcast Details"
+msgstr "รายละเอียดของพอดแคสต์"
+
+#: PodcastsPanel.cpp:435
+msgid "Are you sure to delete the selected podcast channel?"
+msgstr "คุณต้องการลบพอดแคสต์ช่องที่เลือกหรือไม่?"
+
+#: PodcastsPanel.cpp:809
+msgid "Are you sure to delete the selected podcast item?"
+msgstr "คุณต้องการลบพอดแคสต์ที่เลือกหรือไม่?"
+
+#: PodcastsPanel.cpp:977
+msgid "New Channel"
+msgstr "เพิ่มช่องพอดแคสต์"
+
+#: PodcastsPanel.cpp:977
+msgid "Add a new podcast channel"
+msgstr "เพิ่มช่องพอดแคสต์"
+
+#: PodcastsPanel.cpp:983
+msgid "delete this podcast channels and all its items"
+msgstr "ลบพอดแคสต์ช่องนี้"
+
+#: PodcastsPanel.cpp:992
+msgid "Update"
+msgstr "อัพเดท"
+
+#: PodcastsPanel.cpp:992
+msgid "Update the podcast items of the selected channels"
+msgstr "อัพเดทพอดแคสต์ช่องที่เลือก"
+
+#: PodcastsPanel.cpp:998
+msgid "Properties"
+msgstr "รายละเอียด"
+
+#: PodcastsPanel.cpp:998
+msgid "Edit the podcast channel"
+msgstr "แก้ไขช่องพอดแคสต์"
+
+#: PodcastsPanel.cpp:1004
+#: PodcastsPanel.cpp:1254
+#: PodcastsPanel.cpp:1261
+msgid "Copy the current selected podcasts to a directory or device"
+msgstr "คัดลอกพอดแคสต์ที่เลือกไปที่อื่นหรืออุปกรณ์ภายนอก"
+
+#: PodcastsPanel.cpp:1029
+msgid "Status"
+msgstr "สถานะ"
+
+#: PodcastsPanel.cpp:1031
+msgid "Channel"
+msgstr "ช่อง"
+
+#: PodcastsPanel.cpp:1032
+msgid "Category"
+msgstr "ประเภท"
+
+#: PodcastsPanel.cpp:1033
+msgid "Date"
+msgstr "วันที่"
+
+#: PodcastsPanel.cpp:1035
+msgid "Author"
+msgstr "ผู้แต่ง"
+
+#: PodcastsPanel.cpp:1036
+#: SoListBox.cpp:311
+msgid "PlayCount"
+msgstr "จำนวนครั้งที่เล่น"
+
+#: PodcastsPanel.cpp:1037
+msgid "LastPlay"
+msgstr "เล่นครั้งล่าสุด"
+
+#: PodcastsPanel.cpp:1038
+msgid "Added"
+msgstr "เพิ่มเข้ามาในคลังเพลง"
+
+#: PodcastsPanel.cpp:1172
+#: SoListBox.cpp:177
+msgid "Never"
+msgstr "  -"
+
+#: PodcastsPanel.cpp:1237
+#: RadioPanel.cpp:492
+msgid "Add current selected songs to playlist"
+msgstr "เพิ่มเพลงที่เลือกเข้าไปในคิวเพลง"
+
+#: PodcastsPanel.cpp:1243
+msgid "Delete the current selected podcasts"
+msgstr "ลบพอดแคสต์ที่เลือก"
+
+#: PodcastsPanel.cpp:1249
+msgid "Download"
+msgstr "ดาวน์โหลด"
+
+#: PodcastsPanel.cpp:1249
+msgid "Download the current selected podcasts"
+msgstr "ดาวน์โหลดพอดแคสต์ที่เลือก"
+
+#: PodcastsPanel.cpp:1261
+msgid "No selected items..."
+msgstr "ไม่มีช่องที่ถูกเลือก..."
+
+#: Preferences.cpp:77
+msgid "Preferences"
+msgstr "การปรับแต่ง"
+
+#: Preferences.cpp:91
+msgid "Default"
+msgstr "ค่าปกติ"
+
+#: Preferences.cpp:92
+msgid "English"
+msgstr "ภาษาอังกฤษ"
+
+#: Preferences.cpp:93
+msgid "French"
+msgstr "ภาษาฝรั่งเศส"
+
+#: Preferences.cpp:94
+msgid "German"
+msgstr "ภาษาเยอรมัน"
+
+#: Preferences.cpp:95
+msgid "Italian"
+msgstr "ภาษาอิตาลี"
+
+#: Preferences.cpp:96
+msgid "Portuguese"
+msgstr "ภาษาโปรตุเกส"
+
+#: Preferences.cpp:97
+msgid "Spanish"
+msgstr "ภาษาสเปน"
+
+#: Preferences.cpp:126
+msgid " On Start "
+msgstr "เมื่อเปิดโปรแกรม"
+
+#: Preferences.cpp:128
+msgid "Show splash screen"
+msgstr "แสดงโลโก้ของโปรแกรม"
+
+#: Preferences.cpp:132
+msgid "Start minimized"
+msgstr "ย่อโปรแกรมไว้"
+
+#: Preferences.cpp:139
+msgid "Restore position for tracks longer than"
+msgstr "เล่นต่อจากตำแหน่งที่เล่นค้างไว้ถ้าเพลงนั้นยาวกว่า"
+
+#: Preferences.cpp:146
+msgid "set the minimun length in minutes to save track position"
+msgstr "เวลาอย่างต่ำในการจำตำแหน่งที่เล่นค้างไว้ (นาที)"
+
+#: Preferences.cpp:156
+msgid "Load default layouts"
+msgstr "โหลดหน้าตามาตรฐานของโปรแกรม (เฉพาะครั้งต่อไปที่เปิดโปรแกรม)"
+
+#: Preferences.cpp:162
+msgid " Behaviour "
+msgstr " การใช้งาน"
+
+#: Preferences.cpp:164
+msgid "Activate task bar icon"
+msgstr "เพิ่มไอค่อนในทาสบาร์"
+
+#: Preferences.cpp:168
+msgid "Enqueue as default action"
+msgstr "เพิ่มเพลงในคิวเมื่อคลิกซ้ำสองครั้ง"
+
+#: Preferences.cpp:172
+msgid "Drop files clear playlist"
+msgstr "ล้างคิวเพลงเมื่อลากเพลงใหม่มาวาง"
+
+#: Preferences.cpp:198
+msgid "Save playlist on close"
+msgstr "บันทึกคิวเพลงที่กำลังเล่นอัตโนมัติก่อนออกจากโปรแกรม"
+
+#: Preferences.cpp:202
+msgid "Close to task bar icon"
+msgstr "ย่อโปรแกรมไปยังทาสบาร์เมื่อกดปุ่มกากบาท"
+
+#: Preferences.cpp:207
+msgid "Ask confirmation on exit"
+msgstr "คำถามยืนยันก่อนออกจากโปรแกรม"
+
+#: Preferences.cpp:216
+msgid "General"
+msgstr "พื้นฐาน"
+
+#: Preferences.cpp:226
+msgid " Paths "
+msgstr " ตำแหน่งที่อยู่ของคลังเพลง"
+
+#: Preferences.cpp:245
+msgid " Words to detect covers "
+msgstr " คำที่ใช้ในการค้นหาปก"
+
+#: Preferences.cpp:276
+msgid "Update library on application start"
+msgstr "อัพเดทคลังเพลงเมื่อเปิดโปรแกรม"
+
+#: Preferences.cpp:311
+msgid "Play random"
+msgstr "เพิ่มเพลงแบบสุ่ม"
+
+#: Preferences.cpp:315
+msgid "track"
+msgstr "ครั้งละเพลง"
+
+#: Preferences.cpp:315
+msgid "album"
+msgstr "ครั้งละอัลบั้ม"
+
+#: Preferences.cpp:323
+msgid "when playlist is empty"
+msgstr "เมื่อคิวเพลงว่าง"
+
+#: Preferences.cpp:329
+msgid "Delete played tracks from playlist"
+msgstr "ลบเพลงที่เล่นจบแล้วออกจากคิว"
+
+#: Preferences.cpp:338
+msgid " Silence detector "
+msgstr " ข้ามไปเพลงต่อไปถ้าเพลงทีกำลังเล่นไม่มีเสียงในช่วงท้ายของเพลง"
+
+#: Preferences.cpp:340
+#: Preferences.cpp:532
+msgid "Enabled"
+msgstr "เปิดการใช้งาน"
+
+#: Preferences.cpp:348
+msgid " Random / Smart Play Modes "
+msgstr "โหมดสุ่ม/โหมดอัจฉริยะ"
+
+#: Preferences.cpp:358
+msgid "Tracks left to start search"
+msgstr "= จำนวนเพลงที่เหลือในคิวก่อนจะเพิ่มเพลงอัตโนมัติ"
+
+#: Preferences.cpp:366
+msgid "Tracks added each time"
+msgstr "= จำนวนเพลงที่เพิ่มต่อครั้ง"
+
+#: Preferences.cpp:375
+msgid "Max played tracks kept in playlist"
+msgstr "= จำนวนเพลงสูงสุดในคิว"
+
+#: Preferences.cpp:387
+msgid "Level(db):"
+msgstr "ระดับเสียง(เดซิเบล):"
+
+#: Preferences.cpp:402
+msgid "Only in the last"
+msgstr "ในช่วง"
+
+#: Preferences.cpp:414
+msgid "seconds"
+msgstr "วินาที"
+
+#: Preferences.cpp:424
+msgid " Notifications "
+msgstr " แสดงชื่อเพลงเมื่อเริ่มเพลงใหม่"
+
+#: Preferences.cpp:426
+msgid "Show Notifications"
+msgstr "แสดงในหน้าต่างเตือนของระบบปฏิบัติการ"
+
+#: Preferences.cpp:435
+msgid "Playback"
+msgstr "วิธีการเล่นเพลง"
+
+#: Preferences.cpp:447
+msgid " Record "
+msgstr " การอัดเสียง"
+
+#: Preferences.cpp:449
+msgid "Enable recording"
+msgstr "เปิดใช้งานการอัดเสียง"
+
+#: Preferences.cpp:456
+msgid "Save to:"
+msgstr "บันทึกไปยัง:"
+
+#: Preferences.cpp:460
+msgid "Select a folder"
+msgstr "เลือกแฟ้ม"
+
+#: Preferences.cpp:467
+msgid " Properties "
+msgstr " รายละเอียด"
+
+#: Preferences.cpp:475
+msgid "Format:"
+msgstr "รูปแบบ:"
+
+#: Preferences.cpp:487
+msgid "Quality:"
+msgstr "คุณภาพ:"
+
+#: Preferences.cpp:492
+msgid "Very High"
+msgstr "สูงมาก"
+
+#: Preferences.cpp:493
+msgid "High"
+msgstr "สูง"
+
+#: Preferences.cpp:494
+msgid "Normal"
+msgstr "มาตรฐาน"
+
+#: Preferences.cpp:495
+msgid "Low"
+msgstr "ต่ำ"
+
+#: Preferences.cpp:496
+msgid "Very Low"
+msgstr "ต่ำมาก"
+
+#: Preferences.cpp:508
+msgid "Split tracks"
+msgstr "แบ่งเพลงเป็นสองส่วน"
+
+#: Preferences.cpp:518
+msgid "Record"
+msgstr "วิธีการอัดเสียง"
+
+#: Preferences.cpp:530
+msgid " LastFM Audioscrobble "
+msgstr " บันทึกสถิติการฟังด้วย Last.fm"
+
+#: Preferences.cpp:540
+msgid "Username:"
+msgstr "ชื่อผู้ใช้:"
+
+#: Preferences.cpp:548
+msgid "Password:"
+msgstr "รหัสผ่าน:"
+
+#: Preferences.cpp:568
+msgid "Join the Guayadeque Last.fm users group"
+msgstr "เข้าร่วมกลุ่มผู้ใช้ Guayadeque ใน Last.fm"
+
+#: Preferences.cpp:586
+msgid " Save "
+msgstr " บันทึก"
+
+#: Preferences.cpp:588
+msgid "Save lyrics to audio files"
+msgstr "บันทึกเนื้อเพลงลงในเพลงโดยตรง"
+
+#: Preferences.cpp:592
+#: Preferences.cpp:613
+msgid "Only for the selected tracks"
+msgstr "เฉพาะเพลงที่เลือก"
+
+#: Preferences.cpp:603
+msgid "Save Lyrics to directory"
+msgstr "บันทึกเนื้อเพลงลงในแฟ้ม"
+
+#: Preferences.cpp:607
+msgid "Select lyrics folder"
+msgstr "เลือกแฟ้มสำหรับเก็บเนื้อเพลง"
+
+#: Preferences.cpp:635
+msgid " Filters "
+msgstr " ตัวกรอง"
+
+#: Preferences.cpp:657
+msgid " Language "
+msgstr " ภาษา"
+
+#: Preferences.cpp:659
+msgid "Language:"
+msgstr "ภาษา:"
+
+#: Preferences.cpp:674
+msgid " Browser command "
+msgstr " คำสั่งสำหรับเบราเซอร์"
+
+#: Preferences.cpp:681
+msgid "Radio Min. Allowed Bitrate "
+msgstr "คุณภาพต่ำสุดของวิทยุที่ยอมรับได้"
+
+#: Preferences.cpp:698
+msgid "Online"
+msgstr "ออนไลน์"
+
+#: Preferences.cpp:709
+msgid " Podcasts "
+msgstr " พอดแคสต์ "
+
+#: Preferences.cpp:714
+msgid "Destination directory:"
+msgstr "แฟ้มปลายทาง:"
+
+#: Preferences.cpp:718
+msgid "Select podcasts folder"
+msgstr "เลือกแฟ้มสำหรับพอดแคสต์"
+
+#: Preferences.cpp:726
+msgid "Check every"
+msgstr "ตรวจสอบตอนใหม่ทุกๆ"
+
+#: Preferences.cpp:731
+msgid "Hour"
+msgstr "ชั่วโมง"
+
+#: Preferences.cpp:731
+msgid "Day"
+msgstr "วัน"
+
+#: Preferences.cpp:731
+msgid "Week"
+msgstr "สัปดาห์"
+
+#: Preferences.cpp:731
+msgid "Month"
+msgstr "เดือน"
+
+#: Preferences.cpp:743
+msgid "Delete after"
+msgstr "ลบตอนที่เก่ากว่า"
+
+#: Preferences.cpp:752
+msgid "Days"
+msgstr "วัน"
+
+#: Preferences.cpp:752
+msgid "Weeks"
+msgstr "สัปดาห์"
+
+#: Preferences.cpp:752
+msgid "Months"
+msgstr "เดือน"
+
+#: Preferences.cpp:761
+msgid "Only if played"
+msgstr "ลบเฉพาะตอนที่ฟังแล้ว"
+
+#: Preferences.cpp:784
+msgid " Links "
+msgstr " ลิงค์"
+
+#: Preferences.cpp:842
+msgid "Url:"
+msgstr "ที่อยู่เว็บ:"
+
+#: Preferences.cpp:869
+#: Preferences.cpp:979
+#: Preferences.cpp:1011
+msgid " Help "
+msgstr " คำแนะนำ"
+
+#: Preferences.cpp:872
+msgid ""
+"Add urls using :\n"
+"{lang} : 2 lettes language code.\n"
+"{text} : Text to search."
+msgstr ""
+"เพิ่มที่อยู่เว็บโดยใช้:\n"
+"{lang} : แทนรหัสภาษาสองตัวอักษร.\n"
+"{text} : แทนคำที่ต้องการค้นหา."
+
+#: Preferences.cpp:897
+msgid " Commands "
+msgstr "คำสั่ง"
+
+#: Preferences.cpp:953
+msgid "Command:"
+msgstr "คำสั่ง:"
+
+#: Preferences.cpp:981
+msgid ""
+"Add commands using :\n"
+"{bp}\t: Album path\n"
+"{bc}\t: Album cover file path\n"
+"{tp}\t: Track path"
+msgstr ""
+"เพิ่มคำสั่งโดยใช้ :\n"
+"{bp}\t: แทนตำแหน่งที่อยู่ของอัลบั้ม\n"
+"{bc}\t: แทนตำแหน่งที่อยู่ของปก\n"
+"{tp}\t: แทนตำแหน่งที่อยู่ของเพลง"
+
+#: Preferences.cpp:1002
+msgid " FileName Pattern "
+msgstr " รูปแบบของชื่อไฟล์"
+
+#: Preferences.cpp:1014
+msgid ""
+"{a}\t- Artist\t\t\t('U2')\n"
+"{b}\t- Album\t\t\t('The Josua Tree')\n"
+"{f}\t- Original Filename\t( 'With or without you.mp3')\n"
+"{g}\t- Genre\t\t\t('Pop')\n"
+"{n}\t- Number\t\t('3')\n"
+"{t}\t- Title\t\t\t('With or Without You')\n"
+"{y}\t- Year\t\t\t('1987')\n"
+"{d}\t- Disk\t\t\t('1-2')\n"
+msgstr ""
+"{a}\t- ศิลปิน\t\t\t('U2')\n"
+"{b}\t- อัลบั้ม\t\t\t('The Josua Tree')\n"
+"{f}\t- ชื่อไฟล์\t\t\t( 'With or without you.mp3')\n"
+"{g}\t- ประเภทของเพลง\t('Pop')\n"
+"{n}\t- เพลงที่\t\t\t('3')\n"
+"{t}\t- ชื่อเพลง\t\t\t('With or Without You')\n"
+"{y}\t- ปี\t\t\t\t('1987')\n"
+"{d}\t- แผ่นที่\t\t\t('1-2')\n"
+
+#: Preferences.cpp:1019
+msgid " Example "
+msgstr " ตัวอย่าง"
+
+#: Preferences.cpp:1031
+msgid "Copy To"
+msgstr "คัดลอกไปที่..."
+
+#: Preferences.cpp:1371
+msgid "Change library path"
+msgstr "เปลี่ยนตำแหน่งที่อยู่ของคลังเพลง"
+
+#: Preferences.cpp:1408
+#: Preferences.cpp:1464
+msgid "Word: "
+msgstr "คำ:"
+
+#: Preferences.cpp:1408
+msgid "Enter the text to find covers"
+msgstr "กรุณาใส่คำที่ใช้ในการค้นหาปก"
+
+#: Preferences.cpp:1464
+msgid "Edit the text to find covers"
+msgstr "คำที่ใช้ในการค้นหาปก"
+
+#: Preferences.cpp:1545
+#: Preferences.cpp:1575
+msgid "Filter: "
+msgstr "ตัวกรอง:"
+
+#: Preferences.cpp:1545
+msgid "Enter the text to filter"
+msgstr "กรุณาใส่คำที่ต้องการกรอง"
+
+#: Preferences.cpp:1575
+msgid "Edit the text to filter"
+msgstr "คำที่ต้องการกรอง"
+
+#: RaListBox.cpp:95
+msgid "Play the selected tracks"
+msgstr "เล่นเพลงที่เลือก"
+
+#: RadioPanel.cpp:188
+msgid "Shoutcast"
+msgstr "Shoutcast"
+
+#: RadioPanel.cpp:189
+msgid "User Defined"
+msgstr "สถานีที่ตั้งไว้"
+
+#: RadioPanel.cpp:243
+msgid "Add Genre"
+msgstr "เลือกประเภทของสถานี"
+
+#: RadioPanel.cpp:243
+msgid "Create a new genre"
+msgstr "เพิ่มประเภทของสถานี"
+
+#: RadioPanel.cpp:249
+msgid "Edit genre"
+msgstr "แก้ไขประเภทของสถานี"
+
+#: RadioPanel.cpp:249
+msgid "Change selected genre"
+msgstr "เปลี่ยนประเภทของสถานีที่เลือก"
+
+#: RadioPanel.cpp:253
+msgid "Delete genre"
+msgstr "ลบประเภทของสถานี"
+
+#: RadioPanel.cpp:253
+msgid "Delete selected genre"
+msgstr "ลบประเภทของสถานีที่เลือก"
+
+#: RadioPanel.cpp:260
+msgid "Update Radio Stations"
+msgstr "อัพเดทสถานีวิทยุ"
+
+#: RadioPanel.cpp:260
+msgid "Update the radio station lists"
+msgstr "อัพเดทรายชื่อสถานีวิทยุ"
+
+#: RadioPanel.cpp:266
+#: RadioPanel.cpp:499
+msgid "Add Radio"
+msgstr "เพิ่มสถานีวิทยุ"
+
+#: RadioPanel.cpp:266
+msgid "Create a new radio"
+msgstr "เพิ่มสถานีวิทยุ"
+
+#: RadioPanel.cpp:272
+msgid "Import the radio stations"
+msgstr "นำเข้าสถานีวิทยุ"
+
+#: RadioPanel.cpp:276
+msgid "Export all the radio stations"
+msgstr "ส่งออกสถานีวิทยุ"
+
+#: RadioPanel.cpp:324
+msgid "Genre Name: "
+msgstr "ประเภทของเพลง:"
+
+#: RadioPanel.cpp:324
+msgid "Enter the new Genre Name"
+msgstr "กรุณาใส่ชื่อประเภทของเพลง"
+
+#: RadioPanel.cpp:344
+msgid "Are you sure to delete the selected radio genres?"
+msgstr "คุณต้องการลบประเภทของเพลงที่เลือกหรือไม่?"
+
+#: RadioPanel.cpp:415
+#: SoListBox.cpp:309
+msgid "BitRate"
+msgstr "บิทเรท"
+
+#: RadioPanel.cpp:416
+msgid "Listeners"
+msgstr "จำนวนผู้ฟัง"
+
+#: RadioPanel.cpp:499
+msgid "Add a radio"
+msgstr "เพิ่มสถานีวิทยุ"
+
+#: RadioPanel.cpp:509
+#: RadioPanel.cpp:1190
+msgid "Edit Radio"
+msgstr "แก้ไขวิทยุ"
+
+#: RadioPanel.cpp:509
+msgid "Change the selected radio"
+msgstr "เปลี่ยนวิทยุที่เลือก"
+
+#: RadioPanel.cpp:513
+msgid "Delete Radio"
+msgstr "ลบวิทยุ"
+
+#: RadioPanel.cpp:513
+msgid "Delete the selected radio"
+msgstr "ลบวิทยุที่เลือก"
+
+#: RadioPanel.cpp:520
+msgid "Edit the labels assigned to the selected stations"
+msgstr "แก้ไขป้ายชื่อของสถานีที่เลือก"
+
+#: RadioPanel.cpp:615
+#: TaListBox.cpp:64
+msgid "Add Label"
+msgstr "เพิ่มป้ายชื่อ"
+
+#: RadioPanel.cpp:615
+#: TaListBox.cpp:64
+msgid "Create a new label"
+msgstr "เพิ่มป้ายชื่อ"
+
+#: RadioPanel.cpp:621
+#: TaListBox.cpp:70
+msgid "Edit Label"
+msgstr "แก้ไขป้ายชื่อ"
+
+#: RadioPanel.cpp:621
+#: TaListBox.cpp:70
+msgid "Change selected label"
+msgstr "เปลี่ยนป้ายชื่อที่เลือก"
+
+#: RadioPanel.cpp:625
+#: TaListBox.cpp:74
+msgid "Delete label"
+msgstr "ลบป้ายชื่อ"
+
+#: RadioPanel.cpp:625
+#: TaListBox.cpp:74
+msgid "Delete selected labels"
+msgstr "ลบป้ายชื่อที่เลือก"
+
+#: RadioPanel.cpp:674
+#: TaListBox.cpp:145
+msgid "Enter the new label name"
+msgstr "กรุณาใส่ชื่อของป้ายใหม่"
+
+#: RadioPanel.cpp:806
+msgid "Stations"
+msgstr "สถานี"
+
+#: RadioPanel.cpp:939
+msgid "Stations Labels Editor"
+msgstr "เครื่องมือแก้ไขป้ายชื่อของสถานี"
+
+#: RadioPanel.cpp:990
+#: RadioPanel.cpp:1048
+msgid "Radios"
+msgstr "วิทยุ"
+
+#: RadioPanel.cpp:1153
+msgid "There are not entries for this Radio Station"
+msgstr "ไม่พบสถานีนี้"
+
+#: SelCoverFile.cpp:29
+msgid "Select Cover File"
+msgstr "เลือกปก"
+
+#: SelCoverFile.cpp:52
+msgid "Cover:"
+msgstr "ปก:"
+
+#: SelCoverFile.cpp:91
+msgid "Select the cover filename"
+msgstr "เลือกชื่อไฟล์สำหรับปก"
+
+#: SoListBox.cpp:306
+msgid "Disk"
+msgstr "แผ่นที่"
+
+#: SoListBox.cpp:312
+msgid "Last Play"
+msgstr "เล่นครั้งล่าสุด"
+
+#: SoListBox.cpp:365
+msgid "Play All"
+msgstr "เล่นทั้งหมด"
+
+#: SoListBox.cpp:365
+msgid "Play all songs"
+msgstr "เล่นทั้งหมด"
+
+#: SoListBox.cpp:373
+msgid "Enqueue All"
+msgstr "เพิ่มเพลงทั้งหมดเข้าไปในคิวที่กำลังเล่น"
+
+#: SoListBox.cpp:373
+msgid "Add all songs to the playlist"
+msgstr "เพิ่มเพลงทั้งหมดเข้าไปในคิว"
+
+#: SoListBox.cpp:379
+msgid "Save all selected tracks as a playlist"
+msgstr "บันทึกเพลงที่เลือกลงคิวเพลง"
+
+#: SoListBox.cpp:391
+msgid "Edit the labels assigned to the selected songs"
+msgstr "แก้ไขป้ายชื่อของเพลงที่เลือก"
+
+#: SoListBox.cpp:395
+msgid "Edit the songs selected"
+msgstr "แก้ไขเพลงที่เลือก"
+
+#: SoListBox.cpp:404
+msgid "Selects the genre of the current song"
+msgstr "เลือกประเภทของเพลงที่กำลังเล่น"
+
+#: SoListBox.cpp:407
+msgid "Selects the artist of the current song"
+msgstr "เลือกศิลปินของเพลงที่กำลังเล่น"
+
+#: SoListBox.cpp:410
+msgid "Select the album of the current song"
+msgstr "เลือกอัลบั้มของเพลงที่กำลังเล่น"
+
+#: SoListBox.cpp:413
+msgid "Select"
+msgstr "เลือก"
+
+#: SoListBox.cpp:413
+msgid "Search in the library"
+msgstr "ค้นหาในคลังเพลง"
+
+#: StatusBar.cpp:141
+msgid "Shows the status of the LastFM connection."
+msgstr "แสดงสถานะของการเชื่อมต่อกับ Last.fm "
+
+#: StatusBar.cpp:144
+msgid "Shows information about the selected items."
+msgstr "แสดงข้อมูลของเพลงที่เลือก"
+
+#: TaListBox.cpp:87
+msgid "Play current selected labels"
+msgstr "เล่นประเภทของเพลงที่เลือก"
+
+#: TaListBox.cpp:91
+msgid "Add current selected labels to playlist"
+msgstr "เพิ่มป้ายชื่อที่เลือกลงคิวเพลง"
+
+#: TaskBar.cpp:119
+msgid "Pause"
+msgstr "หยุดชั่วคราว"
+
+#: TaskBar.cpp:119
+#: TaskBar.cpp:124
+msgid "Play current playlist"
+msgstr "เล่นคิวเพลงปัจจุบัน"
+
+#: TaskBar.cpp:124
+msgid "Stop"
+msgstr "หยุด"
+
+#: TaskBar.cpp:128
+msgid "Next Track"
+msgstr "เล่นเพลงต่อไป"
+
+#: TaskBar.cpp:128
+msgid "Skip to next track in current playlist"
+msgstr "ข้ามไปเพลงต่อไป"
+
+#: TaskBar.cpp:132
+msgid "Prev Track"
+msgstr "กลับไปเพลงก่อนหน้า"
+
+#: TaskBar.cpp:132
+msgid "Skip to previous track in current playlist"
+msgstr "กลับไปเพลงก่อนหน้า"
+
+#: TaskBar.cpp:139
+msgid "Exit"
+msgstr "ออกจากโปรแกรม"
+
+#: TaskBar.cpp:139
+msgid "Exit this program"
+msgstr "ออกจากโปรแกรม"
+
+#: TrackEdit.cpp:71
+msgid "Songs Editor"
+msgstr "เครื่องมือแก้ไขเพลง"
+
+#: TrackEdit.cpp:87
+msgid " Songs "
+msgstr " เพลง"
+
+#: TrackEdit.cpp:96
+msgid "Move the track to the previous position"
+msgstr "เลื่อนเพลงกลับไปตำแหน่งก่อนหน้า"
+
+#: TrackEdit.cpp:102
+msgid "Move the track to the next position"
+msgstr "เลื่อนเพลงไปตำแหน่งถัดไป"
+
+#: TrackEdit.cpp:131
+msgid "Copy the Artist name to all the tracks you are editing"
+msgstr "คัดลอกชื่อศิลปินไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:142
+msgid "Copy the Album name to all the tracks you are editing"
+msgstr "คัดลอกชื่ออัลบั้มไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:153
+msgid "Copy the Title name to all the tracks you are editing"
+msgstr "คัดลอกชื่อเพลงไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:164
+msgid "Copy the composer name to all the tracks you are editing"
+msgstr "คัดลอกผู้แต่งไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:168
+msgid "Comp.:"
+msgstr "ผู้แต่ง:"
+
+#: TrackEdit.cpp:176
+msgid "Enumerate the tracks in the order they were added for editing"
+msgstr "ใส่หมายเลขของเพลงตามลำดับที่เพิ่มเข้ามาแก้ไข"
+
+#: TrackEdit.cpp:179
+msgid "Number:"
+msgstr "เพลงที่:"
+
+#: TrackEdit.cpp:195
+msgid "Copy the disk to all the tracks you are editing"
+msgstr "คัดลอกหมายเลขแผ่นไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:199
+msgid "Disk:"
+msgstr "แผ่นที่:"
+
+#: TrackEdit.cpp:211
+msgid "Copy the Genre name to all songs you are editing"
+msgstr "คัดลอกประเภทของเพลงไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:214
+msgid "Genre:"
+msgstr "ประเภท:"
+
+#: TrackEdit.cpp:233
+msgid "Copy the Year to all songs you are editing"
+msgstr "คัดลอกปีไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:236
+msgid "Year:"
+msgstr "ปี:"
+
+#: TrackEdit.cpp:252
+msgid "Rating:"
+msgstr "คะแนน:"
+
+#: TrackEdit.cpp:280
+msgid "Copy the comment to all the tracks you are editing"
+msgstr "คัดลอกรายละเอียดอื่นๆไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:311
+msgid "Add a picture from file to the current track"
+msgstr "เพิ่มรูปจากไฟล์เข้าไปในเพลงที่กำลังเล่น"
+
+#: TrackEdit.cpp:315
+msgid "Delete the picture from the current track"
+msgstr "ลบรูปของเพลงที่กำลังเล่น"
+
+#: TrackEdit.cpp:319
+msgid "Save the current picture to file"
+msgstr "บันทึกรูป"
+
+#: TrackEdit.cpp:323
+msgid "Search the album cover"
+msgstr "ค้นหาปกอัลบั้ม"
+
+#: TrackEdit.cpp:332
+msgid "Copy the current picute to all the tracks you are editing"
+msgstr "คัดลอกรูปไปใส่ทุกเพลงที่กำลังแก้ไข"
+
+#: TrackEdit.cpp:340
+msgid "Pictures"
+msgstr "รูป"
+
+#: TrackEdit.cpp:422
+msgid "Type the artist name to search in musicbrainz"
+msgstr "กรุณาใส่ชื่อศิลปินที่ต้องการการค้นหาด้วย MusicBrainz"
+
+#: TrackEdit.cpp:430
+msgid "Type the album name to search in musicbrainz"
+msgstr "กรุณาใส่ชื่ออัลบั้มที่ต้องการการค้นหาด้วย MusicBrainz"
+
+#: TrackEdit.cpp:434
+msgid "Clear the search fields so it search using the music fingerprint"
+msgstr "ค้นหาโดยใช้การวิเคราะห์คลื่นเสียง"
+
+#: TrackEdit.cpp:448
+msgid "Select the album found in musicbrainz"
+msgstr "เลือกอัลบั้มที่พบใน MusicBrainz"
+
+#: TrackEdit.cpp:454
+msgid "Search albums in musicbrainz"
+msgstr "ค้นหาอัลบั้มด้วย MusicBrainz"
+
+#: TrackEdit.cpp:460
+msgid "Copy the content of the album to the edited tracks"
+msgstr "คัดลอกข้อมูลของอัลบั้มไปยังเพลงที่แก้ไขแล้ว"
+
+#: TrackEdit.cpp:484
+msgid "Copy the artist to the edited tracks"
+msgstr "คัดลอกชื่อศิลปินไปยังเพลงที่แก้ไขแล้ว"
+
+#: TrackEdit.cpp:495
+msgid "Copy the album to the edited tracks"
+msgstr "คัดลอกชื่ออัลบั้มไปยังเพลงที่แก้ไขแล้ว"
+
+#: TrackEdit.cpp:508
+msgid "Copy the date to the edited tracks"
+msgstr "คัดลอกวันที่ไปยังเพลงที่แก้ไขแล้ว"
+
+#: TrackEdit.cpp:519
+msgid "Copy the song names to the edited tracks"
+msgstr "คัดลอกชื่อเพลงไปยังเพลงที่แก้ไขแล้ว"
+
+#: TrackEdit.cpp:544
+msgid "Copy the number to the edited tracks"
+msgstr "คัดลอกหมายเลขของเพลงไปยังเพลงที่แก้ไขแล้ว"
+
+#: TrackEdit.cpp:1430
+#, c-format
+msgid "Error: The album have %u tracks and you are editing %u"
+msgstr "เกิดข้อผิดพลาด: คุณกำลังแก้ไขเพลงที่ %u จากทั้งหมด %u"
+
+#: TrackEdit.cpp:1435
+msgid ""
+"\n"
+"Warning: The length of some edited tracks don't match"
+msgstr ""
+"\n"
+"คำเตื่อน: ความยาวของเพลงบางเพลงมีข้อผิดพลาด"
+
+#~ msgid "Delete podcasts after"
+#~ msgstr "Lösche Podcasts nach"
+#~ msgid "Album Browser"
+#~ msgstr "Albenbrowser"
+#~ msgid "Stops player reproduction"
+#~ msgstr "Wiedergabe stoppen"
+#~ msgid "Add tracks to the playlist based on LastFM"
+#~ msgstr "Fügt Titel nach LastFM-Empfehlungen hinzu"
+#~ msgid "Select the repeat mode"
+#~ msgstr "Wiederholungsmodus auswählen"
+

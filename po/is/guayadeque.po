@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-06-07 14:52+0000\n"
-"PO-Revision-Date: 2010-06-07 15:04-0000\n"
+"PO-Revision-Date: 2010-06-07 18:58-0000\n"
 "Last-Translator: Hreins Jónsson <hreinsijons@simnet.is>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "MIME-Version: 1.0\n"
@@ -164,7 +164,7 @@ msgstr "Velja stað fyrir plötuumslag"
 #: AlListBox.cpp:214
 #: AlbumBrowser.cpp:349
 msgid "Select the cover image file from disk"
-msgstr "Velja mynd fyrir plötuumslag frá tölvu"
+msgstr "Velja mynd fyrir plötuumslag frá disk"
 
 #: AlListBox.cpp:218
 #: AlbumBrowser.cpp:353
@@ -327,7 +327,7 @@ msgstr "Leita að tónlistarflytjanda í safni"
 #: AlbumBrowser.cpp:359
 #: LastFMPanel.cpp:811
 msgid "Copy the album info to clipboard"
-msgstr "afrita plötuupplýsingar á töflu"
+msgstr "afrita Upplýsingar plötu á klippitöflu"
 
 #: AlbumBrowser.cpp:365
 msgid "Copy the current album to a directory or device"
@@ -798,7 +798,7 @@ msgstr "Afrita"
 #: FileBrowser.cpp:296
 #: FileBrowser.cpp:931
 msgid "Copy the selected folder to clipboard"
-msgstr "Afrita valda möppu til töflu"
+msgstr "Afrita valda möppu á klippitöflu"
 
 #: FileBrowser.cpp:301
 #: FileBrowser.cpp:936
@@ -850,7 +850,7 @@ msgstr "Stærð"
 
 #: FileBrowser.cpp:572
 msgid "Modified"
-msgstr "Aðlagað"
+msgstr "Virkt snið"
 
 #: FileBrowser.cpp:916
 msgid "Play current selected files"
@@ -1063,7 +1063,7 @@ msgstr "Bæta við lögum flytjanda í lagalista sem næst spilað"
 
 #: LastFMPanel.cpp:581
 msgid "Copy the artist name to clipboard"
-msgstr "Afrita nafn flytjanda við töflu"
+msgstr "Afrita nafn flytjanda á klippitöflu"
 
 #: LastFMPanel.cpp:589
 #: LastFMPanel.cpp:819
@@ -1089,7 +1089,7 @@ msgstr "Uppfæra upplýsingar um valin flytjanda"
 
 #: LastFMPanel.cpp:976
 msgid "Copy the artist info to clipboard"
-msgstr "Afrita upplýsingar um flytjanda við töflu"
+msgstr "Afrita upplýsingar um flytjanda á klippitöflu"
 
 #: LastFMPanel.cpp:1123
 msgid "Search Track"
@@ -1101,11 +1101,11 @@ msgstr "Leta að lögum í safni"
 
 #: LastFMPanel.cpp:1138
 msgid "Copy the track info to clipboard"
-msgstr "Afrita upplýsingar um lag til töflu"
+msgstr "Afrita upplýsingar um lag á klippitöflu"
 
 #: LastFMPanel.cpp:1258
 msgid "Copy the event info to clipboard"
-msgstr "Afrita upplýsingar um atburð til töflu"
+msgstr "Afrita upplýsingar um atburð á klippitöflu"
 
 #: LastFMPanel.cpp:1329
 #: LyricsPanel.cpp:84
@@ -1223,15 +1223,15 @@ msgstr "Vista texta við valda skrá eða möppu"
 
 #: LyricsPanel.cpp:288
 msgid "Copy to clipboard"
-msgstr "Afrita við töflu"
+msgstr "Afrita á klippispjald"
 
 #: LyricsPanel.cpp:288
 msgid "Copy the content of the lyric to clipboard"
-msgstr "Afrita innihald texta við töflu"
+msgstr "Afrita innihald texta á klippispjald"
 
 #: LyricsPanel.cpp:300
 msgid "Paste the content of the lyric from clipboard"
-msgstr "Líma innihald texta við töflu"
+msgstr "Líma innihald texta á klippispjald"
 
 #: LyricsPanel.cpp:309
 msgid "Print"
@@ -1389,7 +1389,7 @@ msgstr "Spilunarlisti Spilara"
 
 #: MainFrame.cpp:821
 msgid "Show/Hide the player playlist panel"
-msgstr "Sýna/Fela lagalista"
+msgstr "Sýna/Fela lagalista stika"
 
 #: MainFrame.cpp:825
 msgid "Player Filters"
@@ -1397,7 +1397,7 @@ msgstr "Síur"
 
 #: MainFrame.cpp:825
 msgid "Show/Hide the player filters panel"
-msgstr "Sýna/Fela spilara"
+msgstr "Sýna/Fela stiku síur spilara stika"
 
 #: MainFrame.cpp:829
 msgid "Show/Hide the player vumeter"
@@ -1405,7 +1405,7 @@ msgstr "Syna/Fela vu mæla "
 
 #: MainFrame.cpp:835
 msgid "Show/Hide the library panel"
-msgstr "Sýna/Fela safn"
+msgstr "Sýna/Fela safn stika"
 
 #: MainFrame.cpp:841
 msgid "Show/Hide the library text search"
@@ -1413,7 +1413,7 @@ msgstr "Sýna/Fela texta leit í safni"
 
 #: MainFrame.cpp:846
 msgid "Show/Hide the library labels"
-msgstr "Sýna/Fela safn"
+msgstr "Sýna/Fela stikur safns"
 
 #: MainFrame.cpp:851
 msgid "Show/Hide the library genres"
@@ -1425,7 +1425,7 @@ msgstr "Sýna/Fela flytjendur í safni"
 
 #: MainFrame.cpp:861
 msgid "Show/Hide the library composers"
-msgstr "Sýna Fela höfundar í safni"
+msgstr "Sýna/Fela höfundar í safni"
 
 #: MainFrame.cpp:866
 msgid "Show/Hide the library albums"
@@ -1433,7 +1433,7 @@ msgstr "Sýna/Fela plötur í safni"
 
 #: MainFrame.cpp:871
 msgid "Show/Hide the library years"
-msgstr "Sýna Fela texta í safni"
+msgstr "Sýna/Fela texta í safni"
 
 #: MainFrame.cpp:876
 msgid "Show/Hide the library ratings"
@@ -1455,7 +1455,7 @@ msgstr "Safn"
 
 #: MainFrame.cpp:886
 msgid "Set the library visible panels"
-msgstr "Sýna/Fela safn"
+msgstr "Sýna/Fela sjánlega stiku safns"
 
 #: MainFrame.cpp:891
 #: MainFrame.cpp:912
@@ -1464,7 +1464,7 @@ msgstr "&Útvarp"
 
 #: MainFrame.cpp:891
 msgid "Show/Hide the radio panel"
-msgstr "Sýna/Fela útvarp"
+msgstr "Sýna/Fela útvarp stika"
 
 #: MainFrame.cpp:897
 msgid "Show/Hide the radio text search"
@@ -1480,7 +1480,7 @@ msgstr "Sýma/Fela flokka útvarp"
 
 #: MainFrame.cpp:912
 msgid "Set the radio visible panels"
-msgstr "Sýna útvarp"
+msgstr "Sýna sýnilega stikur útvarps"
 
 #: MainFrame.cpp:915
 msgid "Last.&fm"
@@ -1488,7 +1488,7 @@ msgstr "Last.&fm"
 
 #: MainFrame.cpp:915
 msgid "Show/Hide the Last.fm panel"
-msgstr "Sýna/Fela Last.fm "
+msgstr "Sýna/Fela Last.fm stiku "
 
 #: MainFrame.cpp:919
 msgid "L&yrics"
@@ -1496,7 +1496,7 @@ msgstr "T&extar"
 
 #: MainFrame.cpp:919
 msgid "Show/Hide the lyrics panel"
-msgstr "Sýna/Fela texta"
+msgstr "Sýna/Fela texta stiku"
 
 #: MainFrame.cpp:926
 #: MainFrame.cpp:935
@@ -1505,7 +1505,7 @@ msgstr "&Spilunarlisti"
 
 #: MainFrame.cpp:926
 msgid "Show/Hide the playlists panel"
-msgstr "Sýna/Fela spilunarlista"
+msgstr "Sýna/Fela spilunarlista stiku"
 
 #: MainFrame.cpp:930
 msgid "Show/Hide the playlists text search"
@@ -1513,7 +1513,7 @@ msgstr "Sýna/Fela texta leit í spilunarlista"
 
 #: MainFrame.cpp:935
 msgid "Set the playlists visible panels"
-msgstr "Sýna hlaðvarp"
+msgstr "Sýna sjæaanlega spilunarlista stiku"
 
 #: MainFrame.cpp:939
 msgid "P&odcasts"
@@ -1521,7 +1521,7 @@ msgstr "H&laðvarp"
 
 #: MainFrame.cpp:939
 msgid "Show/Hide the podcasts panel"
-msgstr "Sýna/Fela hlaðvarp"
+msgstr "Sýna/Fela hlaðvarps stiku"
 
 #: MainFrame.cpp:945
 #: PodcastsPanel.cpp:108
@@ -1548,7 +1548,7 @@ msgstr "&Hlaðvarp"
 
 #: MainFrame.cpp:955
 msgid "Set the podcasts visible panels"
-msgstr "Sýna hlaðvarp"
+msgstr "Sýna sjáanlega hlaðvarps stiku"
 
 #: MainFrame.cpp:957
 #: MainFrame.cpp:1945
@@ -1558,7 +1558,7 @@ msgstr "Vafri"
 
 #: MainFrame.cpp:957
 msgid "Show/Hide the album browser panel"
-msgstr "Sýna/Fela plötuumslög"
+msgstr "Sýna/Fela plötuumslaga stiku"
 
 #: MainFrame.cpp:961
 #: MainFrame.cpp:1979
@@ -1568,7 +1568,7 @@ msgstr "Skrár"
 
 #: MainFrame.cpp:961
 msgid "Show/Hide the file browser panel"
-msgstr "Sýna/Fela skráarvafra"
+msgstr "Sýna/Fela skráarvafra stiku"
 
 #: MainFrame.cpp:967
 msgid "Full Screen"
@@ -1612,7 +1612,7 @@ msgstr "&Spila"
 
 #: MainFrame.cpp:985
 msgid "Play or Pause the current track in the playlist"
-msgstr "Spila eða Pása lag í spilunarlista"
+msgstr "Spila eða Hvíla lag í spilunarlista"
 
 #: MainFrame.cpp:988
 msgid "&Stop"
@@ -1656,7 +1656,7 @@ msgstr "Endurtaka valið lag í spilunarlista"
 
 #: MainFrame.cpp:1010
 msgid "&Control"
-msgstr "&Stýring"
+msgstr "&Stjórna"
 
 #: MainFrame.cpp:1013
 msgid "&About"
@@ -1685,7 +1685,7 @@ msgstr "Safn er þegar að uppfærast"
 
 #: MainFrame.cpp:1327
 msgid "Add Directory"
-msgstr "Velja staðsetningu"
+msgstr "Velja Möppu"
 
 #: MainFrame.cpp:1332
 msgid "This Path is already in the library"
@@ -1697,7 +1697,7 @@ msgstr "Villa við að bæta in slóð"
 
 #: MainFrame.cpp:1461
 msgid "Select destination directory"
-msgstr "Velja staðsetningu"
+msgstr "Velja staðsetningu möppu"
 
 #: MainFrame.cpp:1466
 msgid "Copy To..."
@@ -1761,11 +1761,11 @@ msgstr "Hlaðvörp"
 
 #: MainFrame.cpp:2414
 msgid "dir"
-msgstr "Skráar stðsetning"
+msgstr "Staðsetning"
 
 #: MainFrame.cpp:2414
 msgid "dirs"
-msgstr "Skráa staðsetning"
+msgstr "Staðsetningar"
 
 #: MainFrame.cpp:2416
 msgid "file"
@@ -1794,7 +1794,7 @@ msgstr "ný Hlaðvarpsveita"
 
 #: NewChannel.cpp:99
 msgid " Digital Podcast Directory "
-msgstr "Digital Hlaðvarps staðsetning"
+msgstr "Digital Hlaðvarps mappa"
 
 #: NewChannel.cpp:220
 msgid "Filtered channels"
@@ -2077,7 +2077,7 @@ msgstr "Fara á næsta lag í spilunarlista"
 
 #: PlayerPanel.cpp:166
 msgid "Play or pause current track in Playlist"
-msgstr "Spila eða pása valið lag í spilunarlista"
+msgstr "Spila eða hvíla valið lag í spilunarlista"
 
 #: PlayerPanel.cpp:171
 msgid "Go to Next Track in Playlist"
@@ -2376,7 +2376,7 @@ msgstr "Virkja merki á tólastiku"
 
 #: Preferences.cpp:169
 msgid "Enqueue as default action"
-msgstr "Bæta við sem upprunaleg skipun"
+msgstr "(Bætt við)sem upprunaleg skipun"
 
 #: Preferences.cpp:173
 msgid "Drop files clear playlist"
@@ -2483,7 +2483,7 @@ msgstr "Spila"
 
 #: Preferences.cpp:447
 msgid " Crossfader "
-msgstr "Deyfa lag"
+msgstr " Deyfa lag "
 
 #: Preferences.cpp:455
 msgid "Out length:"
@@ -2718,7 +2718,7 @@ msgstr "Mánuðir"
 
 #: Preferences.cpp:906
 msgid "Only if played"
-msgstr "Aðeins ef spilað"
+msgstr "Bara ef spilað"
 
 #: Preferences.cpp:929
 msgid " Links "
@@ -3067,7 +3067,7 @@ msgstr "Bæta völdum merkjum við spilunarlista sem næst spilað"
 
 #: TaskBar.cpp:119
 msgid "Pause"
-msgstr "Pása"
+msgstr "Hvíla"
 
 #: TaskBar.cpp:119
 #: TaskBar.cpp:124
