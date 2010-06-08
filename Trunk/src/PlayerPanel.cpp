@@ -2357,9 +2357,9 @@ void guPlayerPanel::OnPlayerPositionSliderBeginSeek( wxScrollEvent &event )
 {
     m_SliderIsDragged = true;
     //
-    if( m_MediaSong.m_Length )
+    if( m_LastLength )
     {
-        int CurPos = event.GetPosition() * m_MediaSong.m_Length;
+        int CurPos = event.GetPosition() * ( m_LastLength / 1000 );
 
 //        m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
 //        m_PosLabelSizer->Layout();
@@ -2393,7 +2393,7 @@ void guPlayerPanel::OnPlayerPositionSliderChanged( wxScrollEvent &event )
     {
         NewPos = event.GetPosition();
         //guLogMessage( wxT( "Slider Changed Set Pos to %i Of %i" ), ( int ) NewPos, 1000 );
-        SetPosition( NewPos * m_MediaSong.m_Length );
+        SetPosition( NewPos * ( m_LastLength / 1000 ) );
     }
     m_SliderIsDragged = false;
 
@@ -2407,7 +2407,7 @@ void guPlayerPanel::OnPlayerPositionSliderMouseWheel( wxMouseEvent &event )
     {
         int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
         //guLogMessage( wxT( "Pos : %i -> %i" ), GetPosition(), GetPosition() + ( Rotation * 7000 ) );
-        SetPosition( wxMax( 0, wxMin( ( int ) m_MediaSong.m_Length * 1000, GetPosition() + ( Rotation * 7000 ) ) ) );
+        SetPosition( wxMax( 0, wxMin( ( int ) m_LastLength, GetPosition() + ( Rotation * 7000 ) ) ) );
     }
     m_SliderIsDragged = false;
 
