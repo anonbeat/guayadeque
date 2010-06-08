@@ -81,6 +81,7 @@ class guPodcastListBox : public guListView
     int                 m_Order;
     bool                m_OrderDesc;
     wxImage *           m_Images[ guPODCAST_STATUS_ERROR + 1 ];
+    wxArrayString       m_ColumnNames;
 
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;

@@ -1033,26 +1033,23 @@ int guChannelsListBox::FindItem( const int channelid )
 // -------------------------------------------------------------------------------- //
 // guPodcastListBox
 // -------------------------------------------------------------------------------- //
-wxString guPODCASTS_COLUMN_NAMES[] = {
-    _( "Status" ),
-    _( "Title" ),
-    _( "Channel" ),
-    _( "Category" ),
-    _( "Date" ),
-    _( "Length" ),
-    _( "Author" ),
-    _( "PlayCount" ),
-    _( "LastPlay" ),
-    _( "Added" )
-};
-
-// -------------------------------------------------------------------------------- //
 guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbLibrary * db ) :
     guListView( parent, wxLB_MULTIPLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING | guLISTVIEW_ALLOWDRAG )
 {
     m_Db = db;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    m_ColumnNames.Add( _( "Status" ) );
+    m_ColumnNames.Add( _( "Title" ) );
+    m_ColumnNames.Add( _( "Channel" ) );
+    m_ColumnNames.Add( _( "Category" ) );
+    m_ColumnNames.Add( _( "Date" ) );
+    m_ColumnNames.Add( _( "Length" ) );
+    m_ColumnNames.Add( _( "Author" ) );
+    m_ColumnNames.Add( _( "PlayCount" ) );
+    m_ColumnNames.Add( _( "LastPlay" ) );
+    m_ColumnNames.Add( _( "Added" ) );
 
     m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
     m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
@@ -1068,12 +1065,12 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbLibrary * db ) :
     int ColId;
     wxString ColName;
     int index;
-    int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
+    int count = m_ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         ColId = Config->ReadNum( wxString::Format( wxT( "PodcastsCol%u" ), index ), index, wxT( "PodcastsColumns" ) );
 
-        ColName = guPODCASTS_COLUMN_NAMES[ ColId ];
+        ColName = m_ColumnNames[ ColId ];
 
         ColName += ( ( ColId == m_Order ) ? ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
 
@@ -1095,7 +1092,7 @@ guPodcastListBox::~guPodcastListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     int index;
-    int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
+    int count = m_ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         Config->WriteNum( wxString::Format( wxT( "PodcastsCol%u" ), index ),
@@ -1303,12 +1300,12 @@ void guPodcastListBox::SetOrder( int columnid )
 
     int CurColId;
     int index;
-    int count = sizeof( guPODCASTS_COLUMN_NAMES ) / sizeof( wxString );
+    int count = m_ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
         CurColId = GetColumnId( index );
         SetColumnLabel( index,
-            guPODCASTS_COLUMN_NAMES[ CurColId ]  + ( ( CurColId == m_Order ) ?
+            m_ColumnNames[ CurColId ]  + ( ( CurColId == m_Order ) ?
                 ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
