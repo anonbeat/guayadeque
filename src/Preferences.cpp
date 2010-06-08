@@ -915,7 +915,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	PodcastPanel->SetSizer( PodcastsMainSizer );
 	PodcastPanel->Layout();
 	PodcastsMainSizer->Fit( PodcastPanel );
-	m_MainNotebook->AddPage( PodcastPanel, wxT("Podcasts"), false );
+	m_MainNotebook->AddPage( PodcastPanel, _("Podcasts"), false );
 	m_MainNotebook->SetPageImage( 8, 8 );
 
     //
