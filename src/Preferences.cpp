@@ -278,6 +278,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_UpdateLibChkBox->SetValue( m_Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_UpdateLibChkBox, 0, wxALL, 5 );
 
+	m_LibScanPlayListChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Create Playlists on library scan"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LibScanPlayListChkBox->SetValue( m_Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) ) );
+	LibOptionsSizer->Add( m_LibScanPlayListChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
 	LibMainSizer->Add( LibOptionsSizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_LibPanel->SetSizer( LibMainSizer );
@@ -1369,6 +1373,7 @@ void guPrefDialog::SaveSettings( void )
 
     m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
     m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
+    m_Config->WriteBool( wxT( "ScanAddPlayLists" ), m_LibScanPlayListChkBox->GetValue(), wxT( "General" ) );
 
     m_Config->WriteBool( wxT( "RndPlayOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
     m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "General" ) );
