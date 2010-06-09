@@ -396,12 +396,12 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
             break;
         }
 
-        case GST_MESSAGE_EOS :
-        {
-            guMediaEvent event( guEVT_MEDIA_FINISHED );
-            ctrl->AddPendingEvent( event );
-          break;
-        }
+//        case GST_MESSAGE_EOS :
+//        {
+//            guMediaEvent event( guEVT_MEDIA_FINISHED );
+//            ctrl->AddPendingEvent( event );
+//          break;
+//        }
 
         case GST_MESSAGE_ELEMENT :
         {
@@ -461,6 +461,8 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
 //                rms = pow( 10, rms_dB / 20 );
 //                  //guLogDebug( wxT( "    normalized rms value: %f" ), rms );
                 event.SetClientObject( ( wxClientData * ) LevelInfo );
+                FaderPlayBin = ctrl->m_FaderPlayBins.Count() ? ctrl->m_FaderPlayBins[ 0 ] : NULL;
+                event.SetExtraLong( FaderPlayBin ? FaderPlayBin->GetId() : 0 );
                 ctrl->AddPendingEvent( event );
 
             }
@@ -547,6 +549,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                         FaderPlayBin->m_Player->ScheduleReap();
 
                         guMediaEvent event( guEVT_MEDIA_FADEOUT_FINISHED );
+                        event.SetExtraLong( FaderPlayBin->GetId() );
                         ctrl->AddPendingEvent( event );
                         break;
                     }
@@ -611,6 +614,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                     //guLogDebug( wxT( "got EOS message for stream %s -> PENDING_REMOVE" ), FaderPlayBin->m_Uri.c_str() );
                     //_rb_player_emit_eos (RB_PLAYER (player), stream->stream_data, FALSE);
                     guMediaEvent event( guEVT_MEDIA_FINISHED );
+                    event.SetExtraLong( FaderPlayBin->GetId() );
                     ctrl->AddPendingEvent( event );
                     FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
 
@@ -2650,7 +2654,7 @@ void guMediaCtrl::ScheduleReap( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
+long guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
 {
     //guLogDebug( wxT( "**************************************************************************************************************** MediaCtrl::Load" ) );
 
@@ -2728,11 +2732,12 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
         //         RB_PLAYER_ERROR_GENERAL,
         //         _("Failed to create GStreamer pipeline to play %s"),
         //         uri);
-		return false;
+		return 0;
 	}
 
     FaderPlayBin->m_PlayType = m_Buffering ? guFADERPLAYBIN_PLAYTYPE_REPLACE : playtype;
 	Lock();
+	FaderPlayBin->SetId( wxGetLocalTime() );
 	m_FaderPlayBins.Insert( FaderPlayBin, 0 );
 #ifdef guSHOW_DUMPFADERPLAYBINS
     DumpFaderPlayBins( m_FaderPlayBins );
@@ -2748,10 +2753,10 @@ bool guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
         //         RB_PLAYER_ERROR_GENERAL,
         //         _("Failed to start playback of %s"),
         //         uri);
-		return false;
+		return 0;
 	}
 
-    return true;
+    return FaderPlayBin->GetId();
 }
 
 // -------------------------------------------------------------------------------- //
