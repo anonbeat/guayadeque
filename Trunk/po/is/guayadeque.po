@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-06-04 22:14+0100\n"
-"PO-Revision-Date: 2010-06-09 12:53-0000\n"
+"PO-Revision-Date: 2010-06-09 21:02-0000\n"
 "Last-Translator: Hreins Jónsson <hreinsijons@simnet.is>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "MIME-Version: 1.0\n"
@@ -2669,7 +2669,7 @@ msgstr "Hægri"
 
 #: Preferences.cpp:724
 msgid "Center"
-msgstr "Miðaja"
+msgstr "Miðja"
 
 #: Preferences.cpp:725
 msgid "Right"
