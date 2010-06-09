@@ -239,6 +239,7 @@ class guPlayerPanel : public wxPanel
 
     long                    m_NextTrackId;
     long                    m_CurTrackId;
+    bool                    m_TrackChanged;
 
     bool                    m_ShowRevTime;
 
