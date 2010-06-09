@@ -1279,12 +1279,12 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
             unsigned long TrackLength = m_MediaSong.m_Length * 1000;
             //guLogMessage( wxT( "The level is now lower than triger level" ) );
             //guLogMessage( wxT( "(%f) %02i : %li , %i, %i" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
-            guLogMessage( wxT( "(%li) %02i : %li , %i, %i" ), event.GetExtraLong(), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
+            guLogMessage( wxT( "(%li) %f %02i : %li , %i, %i" ), event.GetExtraLong(), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
 
 
             // We only skip to next track if the level is lower than the triger one and also if
             // we are at the end time period (if configured this way) and the time left is more than 500msecs
-            if( !m_NextTrackId && ( m_CurTrackId == event.GetExtraLong() ) &&
+            if( !m_TrackChanged && !m_NextTrackId && ( m_CurTrackId == event.GetExtraLong() ) &&
                 ( !m_SilenceDetectorTime || ( ( ( unsigned int ) m_SilenceDetectorTime > ( TrackLength - EventTime ) ) &&
                   ( ( EventTime + 500 ) < TrackLength ) ) ) )
             {
@@ -1448,6 +1448,9 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     {
         guLogMessage( wxT( "OnMediaPosition... %i - %li   %li %li" ), event.GetInt(), event.GetExtraLong(), m_CurTrackId, m_NextTrackId );
         m_LastCurPos = CurPos;
+
+        if( m_TrackChanged )
+            m_TrackChanged = false;
 
         UpdatePositionLabel( CurPos / 1000 );
 
@@ -1742,6 +1745,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     m_CurTrackId = m_NextTrackId;
     m_NextTrackId = 0;
     m_MediaSong = m_NextSong;
+    m_TrackChanged = true;
 
     // Update the Current Playing Song Info
     UpdateLabels();
