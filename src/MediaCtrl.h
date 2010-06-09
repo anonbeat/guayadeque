@@ -230,6 +230,8 @@ class guFaderPlayBin
 
     wxArrayPtrVoid      m_Tags;
 
+    long                m_Id;
+
     guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri );
     ~guFaderPlayBin();
 
@@ -248,6 +250,9 @@ class guFaderPlayBin
     void                Reuse( void );
 
     void                UnsetCrossfader( void );
+
+    long                GetId( void ) { return m_Id; }
+    void                SetId( const long id ) { m_Id = id; }
 
     friend class guMediaCtrl;
 };
@@ -314,7 +319,7 @@ class guMediaCtrl : public wxEvtHandler
     static bool     Init();
 
     //bool Load( const wxURI &uri );
-    bool            Load( const wxString &uri, guPlayerPlayType playtype );
+    long            Load( const wxString &uri, guPlayerPlayType playtype );
     bool            Stop( void );
     bool            Play( void );
     bool            Pause( void );

@@ -237,9 +237,8 @@ class guPlayerPanel : public wxPanel
 
     int                     m_BufferGaugeId;
 
-    bool                    m_AutoTrackChanged;
-    bool                    m_TrackChanged;
-    bool                    m_FadeOutFinished;
+    long                    m_NextTrackId;
+    long                    m_CurTrackId;
 
     bool                    m_ShowRevTime;
 
