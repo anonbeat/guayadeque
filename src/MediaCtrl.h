@@ -56,6 +56,7 @@ class guLevelInfo
 {
   public :
     GstClockTime    m_EndTime;
+    wxFileOffset    m_OutTime;
     gint            m_Channels;
     double          m_RMS_L;
     double          m_RMS_R;
@@ -64,6 +65,7 @@ class guLevelInfo
     double          m_Decay_L;
     double          m_Decay_R;
 };
+WX_DEFINE_ARRAY_PTR( guLevelInfo *, guLevelInfoArray );
 
 // -------------------------------------------------------------------------------- //
 class guRadioTagInfo
