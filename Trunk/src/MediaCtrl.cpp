@@ -416,10 +416,17 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                 gint channels;
                 const GValue * list;
                 const GValue * value;
-//                if( !gst_structure_get_clock_time( s, "endtime", &LevelInfo->m_EndTime ) )
-//                    guLogWarning( wxT( "Could not parse endtime" ) );
-//
-//                LevelInfo->m_EndTime /= GST_MSECOND;
+                if( !gst_structure_get_clock_time( s, "endtime", &LevelInfo->m_EndTime ) )
+                    guLogWarning( wxT( "Could not parse endtime" ) );
+
+                LevelInfo->m_EndTime /= GST_MSECOND;
+
+                GstFormat format = GST_FORMAT_TIME;
+                if( gst_element_query_position( ctrl->m_OutputBin, &format, ( gint64 * ) &LevelInfo->m_OutTime ) )
+                {
+                    LevelInfo->m_OutTime /= GST_MSECOND;
+                }
+
                 ////guLogDebug( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
 
                 // we can get the number of channels as the length of any of the value lists
@@ -1610,8 +1617,9 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                 if( IsValidElement( level ) )
                 {
                     //g_object_set( level, "message", true, NULL );
-                    g_object_set( level, "interval", gint64( 200000000 ), NULL );
-                    //g_object_set( level, "interval", gint64( 100000000 ), NULL );
+                    //g_object_set( level, "interval", gint64( 200000000 ), NULL );
+                    g_object_set( level, "interval", gint64( 100000000 ), NULL );
+                    //g_object_set( level, "interval", gint64( 80000000 ), NULL );
 
                     m_Volume = gst_element_factory_make( "volume", "pb_volume" );
                     if( IsValidElement( m_Volume ) )

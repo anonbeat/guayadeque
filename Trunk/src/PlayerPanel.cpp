@@ -51,8 +51,6 @@
 #define guPLAYER_FONTSIZE_ARTISTNAME    11
 
 
-guLevelInfo LastLevelInfo;
-
 // -------------------------------------------------------------------------------- //
 guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     guPlayList * playlist, guPlayerFilters * filters )
@@ -1258,6 +1256,9 @@ void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
     }
 }
 
+
+guLevelInfoArray LevelInfoArray;
+
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
 {
@@ -1279,7 +1280,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
             unsigned long TrackLength = m_MediaSong.m_Length * 1000;
             //guLogMessage( wxT( "The level is now lower than triger level" ) );
             //guLogMessage( wxT( "(%f) %02i : %li , %i, %i" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
-            guLogMessage( wxT( "(%li) %f %02i : %li , %i, %i" ), event.GetExtraLong(), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
+            //guLogMessage( wxT( "(%li) %f %02i : %li , %i, %i" ), event.GetExtraLong(), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
 
 
             // We only skip to next track if the level is lower than the triger one and also if
@@ -1297,15 +1298,50 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
 
     if( m_PlayerVumeters )
     {
-//        guLogMessage( wxT( "%lli %u" ), GST_TIME_AS_MSECONDS( event.m_LevelInfo.m_EndTime ), GetPosition() );
-        m_PlayerVumeters->SetLevels( LastLevelInfo );
-        LastLevelInfo = * LevelInfo;
+        //guLogMessage( wxT( "%lli %lli   (%lli)" ), LevelInfo->m_EndTime, LevelInfo->m_OutTime, LevelInfo->m_OutTime - LevelInfo->m_EndTime );
+
+        LevelInfoArray.Add( LevelInfo );
+
+        wxFileOffset CurTime = LevelInfo->m_OutTime;
+        int Index = 0;
+        int Count = LevelInfoArray.Count();
+        //guLogMessage( wxT( "=== LevelInfos ========" ) );
+        while( Index < Count )
+        {
+            //guLogMessage( wxT( "%i .- %lli %lli   (%lli)" ), Index, LevelInfoArray[ Index ]->m_EndTime, CurTime, CurTime - LevelInfoArray[ Index ]->m_EndTime );
+            if( ( wxFileOffset ) LevelInfoArray[ Index++ ]->m_EndTime <= CurTime )
+            {
+                do {
+                    if( ( wxFileOffset ) LevelInfoArray[ Index ]->m_EndTime > CurTime )
+                        break;
+                    Index++;
+                } while( Index < Count );
+                break;
+            }
+        }
+
+        //guLogMessage( wxT( "Levels... (%i) %i" ), Count, Index );
+
+        if( Index < Count )
+        {
+            //guLogMessage( wxT( "%lli %lli   (%lli)" ), LevelInfoArray[ Index - 1 ]->m_EndTime, CurTime, CurTime - LevelInfoArray[ Index - 1 ]->m_EndTime );
+            m_PlayerVumeters->SetLevels( * LevelInfoArray[ Index - 1 ] );
+            while( Index )
+            {
+                delete LevelInfoArray[ 0 ];
+                LevelInfoArray.RemoveAt( 0 );
+                Index--;
+            }
+        }
+
 //        guLogMessage( wxT( "L:%02.02f  R:%02.02f" ),
 //            event.m_LevelInfo.m_Peak_L,
 //            event.m_LevelInfo.m_Peak_R );
     }
-
-    delete LevelInfo;
+    else
+    {
+        delete LevelInfo;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2614,7 +2650,6 @@ void guPlayerPanel::ResetVumeterLevel( void )
     {
         m_PlayerVumeters->SetLevels( LevelInfo );
     }
-    LastLevelInfo = LevelInfo;
 }
 
 // -------------------------------------------------------------------------------- //
