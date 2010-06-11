@@ -2663,7 +2663,7 @@ void guPlayerPanel::UpdateLabels( void )
     SetAlbumLabel( m_MediaSong.m_AlbumName );
     SetArtistLabel( m_MediaSong.m_ArtistName );
     SetRatingLabel( m_MediaSong.m_Rating );
-    m_LoveBanButton->SetValue( m_MediaSong.m_ASRating );
+//    m_LoveBanButton->SetValue( m_MediaSong.m_ASRating );
 
     if( m_MediaSong.m_Year > 0 )
     {
