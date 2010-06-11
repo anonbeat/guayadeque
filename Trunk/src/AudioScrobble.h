@@ -60,7 +60,16 @@
 #define guAS_ERROR_UNKNOWN          5
 #define guAS_ERROR_NOSESSION        6
 
+enum guAS_RATING {
+    guAS_RATING_NONE = 0,
+    guAS_RATING_LOVE,
+    guAS_RATING_BAN,
+    guAS_RATING_SKIP
+};
+
 class guASPlayedThread;
+
+class guCurrentTrack;
 
 // -------------------------------------------------------------------------------- //
 class guAudioScrobbleSender
@@ -146,8 +155,8 @@ class guAudioScrobble
     bool                        SubmitNowPlaying( const guAS_SubmitInfo * curtrack );
     bool                        SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtracks );
 
-    void                        SendNowPlayingTrack( const guTrack &track );
-    void                        SendPlayedTrack( const guTrack &track );
+    void                        SendNowPlayingTrack( const guCurrentTrack &track );
+    void                        SendPlayedTrack( const guCurrentTrack &track );
     void                        EndPlayedThread( void );
 
     void                        OnConfigUpdated( void );

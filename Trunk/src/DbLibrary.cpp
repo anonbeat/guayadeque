@@ -27,6 +27,7 @@
 #include "LibUpdate.h"
 #include "MainFrame.h"
 #include "MD5.h"
+#include "PlayerPanel.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
@@ -5628,7 +5629,7 @@ int guDbLibrary::GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * S
 //    audiosc_tracknum INTEGER,
 //    audiosc_mbtrackid INTEGER
 // -------------------------------------------------------------------------------- //
-bool guDbLibrary::AddCachedPlayedSong( const guTrack &Song )
+bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -5653,6 +5654,24 @@ bool guDbLibrary::AddCachedPlayedSong( const guTrack &Song )
       break;
   }
 
+  char Rating;
+  switch( Song.m_ASRating )
+  {
+      case guAS_RATING_LOVE :
+        Rating = 'L';
+        break;
+      case guAS_RATING_BAN :
+        Rating = 'B';
+        break;
+      case guAS_RATING_SKIP :
+        Rating = 'S';
+        break;
+      //case guAS_RATING_NONE :
+      default :
+        Rating = 0;
+        break;
+  }
+
   escape_query_str( &Title );
   escape_query_str( &Artist );
   escape_query_str( &Album );
@@ -5660,16 +5679,17 @@ bool guDbLibrary::AddCachedPlayedSong( const guTrack &Song )
   query = wxString::Format( wxT( "INSERT into audioscs( audiosc_id, audiosc_artist, "\
           "audiosc_album, audiosc_track, audiosc_playedtime, audiosc_source, "\
           "audiosc_ratting, audiosc_len, audiosc_tracknum, audiosc_mbtrackid) "\
-          "VALUES( NULL, '%s', '%s', '%s', %u, '%c', '', %u, %i, %u );" ),
+          "VALUES( NULL, '%s', '%s', '%s', %u, '%c', '%c', %u, %i, %u );" ),
           Artist.c_str(),
           Album.c_str(),
           Title.c_str(),
           wxGetUTCTime() - Song.m_Length,
           Source,
+          Rating,
           Song.m_Length,
           Song.m_Number,
           0 );
-  //guLogMessage( query );
+  guLogMessage( query );
   return ExecuteUpdate( query );
 }
 
@@ -5697,7 +5717,7 @@ guAS_SubmitInfoArray guDbLibrary::GetCachedPlayedSongs( int MaxCount )
     PlayedSong->m_TrackName = dbRes.GetString( 3 );
     PlayedSong->m_PlayedTime = dbRes.GetInt( 4 );
     PlayedSong->m_Source = dbRes.GetString( 5 )[ 0 ];
-    PlayedSong->m_Ratting = dbRes.GetString( 6 )[ 0 ];
+    PlayedSong->m_Rating = dbRes.GetString( 6 )[ 0 ];
     PlayedSong->m_TrackLen = dbRes.GetInt( 7 );
     PlayedSong->m_TrackNum = dbRes.GetInt( 8 );
     PlayedSong->m_MBTrackId = dbRes.GetInt( 9 );

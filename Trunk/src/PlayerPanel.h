@@ -66,11 +66,13 @@ class guCurrentTrack : public guTrack
     guSongCoverType m_CoverType;
     wxString        m_CoverPath;
     wxImage *       m_CoverImage;
+    int             m_ASRating;
 
     guCurrentTrack()
     {
         m_Loaded = false;
         m_CoverImage = NULL;
+        m_ASRating = guAS_RATING_NONE;
     }
 
     guCurrentTrack& operator=(const guTrack &Src)
@@ -100,6 +102,7 @@ class guCurrentTrack : public guTrack
         m_Comments = Src.m_Comments;
         m_Composer = Src.m_Composer;
         m_PlayTime = 0;
+        m_ASRating = guAS_RATING_NONE;
 
         //CoverType = GU_SONGCOVER_NONE;
         if( m_Type == guTRACK_TYPE_RADIOSTATION )
@@ -181,6 +184,7 @@ class guPlayerPanel : public wxPanel
 	guAutoScrollText *      m_ArtistLabel;
 	wxStaticText *          m_YearLabel;
     guRating *              m_Rating;
+    guToggleRoundButton *   m_LoveBanButton;
     wxBoxSizer *            m_BitRateSizer;
 	wxStaticText *          m_BitRateLabel;
 	wxBoxSizer *            m_PosLabelSizer;
@@ -334,6 +338,7 @@ class guPlayerPanel : public wxPanel
 	void                OnSmartPlayButtonClick( wxCommandEvent &event );
 	void                OnRandomPlayButtonClick( wxCommandEvent &event );
 	void                OnRepeatPlayButtonClick( wxCommandEvent &event );
+	void                OnLoveBanButtonClick( wxCommandEvent &event );
 	void                OnEqualizerButtonClicked( wxCommandEvent &event );
 
     void                SetArtistLabel( const wxString &artistname );

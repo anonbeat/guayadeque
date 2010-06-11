@@ -112,6 +112,8 @@
 #include "./images/player_highlight_vol_hi.h"
 #include "./images/player_highlight_vol_low.h"
 #include "./images/player_highlight_vol_mid.h"
+#include "./images/player_highlight_love.h"
+#include "./images/player_highlight_ban.h"
 #include "./images/player_light_equalizer.h"
 #include "./images/player_light_muted.h"
 #include "./images/player_light_next.h"
@@ -129,6 +131,8 @@
 #include "./images/player_light_vol_hi.h"
 #include "./images/player_light_vol_low.h"
 #include "./images/player_light_vol_mid.h"
+#include "./images/player_light_love.h"
+#include "./images/player_light_ban.h"
 #include "./images/player_normal_equalizer.h"
 #include "./images/player_normal_muted.h"
 #include "./images/player_normal_next.h"
@@ -146,6 +150,8 @@
 #include "./images/player_normal_vol_hi.h"
 #include "./images/player_normal_vol_low.h"
 #include "./images/player_normal_vol_mid.h"
+#include "./images/player_normal_love.h"
+#include "./images/player_normal_ban.h"
 #include "./images/player_tiny_light_play.h"
 //
 #include "./images/star_normal_tiny.h"
@@ -256,6 +262,8 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_highlight_vol_hi,       wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_vol_low,      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_vol_mid,      wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_highlight_love,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_highlight_ban,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_equalizer,        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_muted,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_next,             wxBITMAP_TYPE_PNG ),
@@ -273,6 +281,8 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_light_vol_hi,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_vol_low,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_vol_mid,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_light_love,             wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_light_ban,              wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_equalizer,       wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_muted,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_next,            wxBITMAP_TYPE_PNG ),
@@ -290,6 +300,8 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_normal_vol_hi,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_vol_low,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_vol_mid,         wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_normal_love,            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_normal_ban,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_tiny_light_play,        wxBITMAP_TYPE_PNG ),
     //
     GUIMAGE( guImage_star_normal_tiny,              wxBITMAP_TYPE_PNG ),
