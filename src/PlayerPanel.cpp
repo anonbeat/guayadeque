@@ -295,16 +295,20 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_BitRateSizer = new wxBoxSizer( wxHORIZONTAL );
 
     m_Rating = new guRating( this, GURATING_STYLE_MID );
-	m_BitRateSizer->Add( m_Rating, 0, wxRIGHT, 2 );
+	m_BitRateSizer->Add( m_Rating, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 2 );
 
-	m_BitRateSizer->Add( 0, 0, 1, wxALL, 5 );
+	m_LoveBanButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_love ), guImage( guIMAGE_INDEX_player_normal_love ), guImage( guIMAGE_INDEX_player_highlight_love ) );
+    m_LoveBanButton->SetToolTip( _( "Love or Ban a track in AudioScrobble service" ) );
+    m_BitRateSizer->Add( m_LoveBanButton, 0, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
+
+	m_BitRateSizer->Add( 0, 0, 1, wxALL, 2 );
 
 	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "[kbps]" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
 	CurrentFont.SetPointSize( 8 );
 	m_BitRateLabel->SetFont( CurrentFont );
 
-    m_BitRateSizer->Add( m_BitRateLabel, 0, wxEXPAND|wxRIGHT|wxLEFT, 2 );
+    m_BitRateSizer->Add( m_BitRateLabel, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
 
 	PlayerLabelsSizer->Add( m_BitRateSizer, 0, wxEXPAND, 2 );
 
@@ -424,6 +428,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	m_PositionLabel->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
+	m_LoveBanButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
 
     //
 	//m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
@@ -539,6 +544,7 @@ guPlayerPanel::~guPlayerPanel()
 	m_YearLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnYearDClicked ), NULL, this );
 	m_PositionLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
+	m_LoveBanButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
 
     //
 	//m_PlayerCoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
@@ -2340,6 +2346,36 @@ void guPlayerPanel::OnRepeatPlayButtonClick( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnLoveBanButtonClick( wxCommandEvent &event )
+{
+    if( m_MediaSong.m_Loaded )
+    {
+        if( m_MediaSong.m_ASRating == guAS_RATING_NONE )
+            m_MediaSong.m_ASRating = guAS_RATING_LOVE;
+        else if( m_MediaSong.m_ASRating == guAS_RATING_LOVE )
+            m_MediaSong.m_ASRating = guAS_RATING_BAN;
+        else
+            m_MediaSong.m_ASRating = guAS_RATING_NONE;
+
+        m_LoveBanButton->SetBitmapLabel( m_MediaSong.m_ASRating < guAS_RATING_BAN ?
+            guImage( guIMAGE_INDEX_player_normal_love ) :
+            guImage( guIMAGE_INDEX_player_normal_ban ) );
+
+        m_LoveBanButton->SetBitmapDisabled( m_MediaSong.m_ASRating < guAS_RATING_BAN ?
+            guImage( guIMAGE_INDEX_player_light_love ) :
+            guImage( guIMAGE_INDEX_player_light_ban ) );
+
+        m_LoveBanButton->SetBitmapHover( m_MediaSong.m_ASRating < guAS_RATING_BAN ?
+            guImage( guIMAGE_INDEX_player_highlight_love ) :
+            guImage( guIMAGE_INDEX_player_highlight_ban ) );
+
+        m_LoveBanButton->SetValue( m_MediaSong.m_ASRating );
+    }
+    else
+        m_LoveBanButton->SetValue( false );
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
 {
     guEq10Band * Eq10Band = new guEq10Band( this, m_MediaCtrl );
@@ -2627,6 +2663,7 @@ void guPlayerPanel::UpdateLabels( void )
     SetAlbumLabel( m_MediaSong.m_AlbumName );
     SetArtistLabel( m_MediaSong.m_ArtistName );
     SetRatingLabel( m_MediaSong.m_Rating );
+    m_LoveBanButton->SetValue( m_MediaSong.m_ASRating );
 
     if( m_MediaSong.m_Year > 0 )
     {

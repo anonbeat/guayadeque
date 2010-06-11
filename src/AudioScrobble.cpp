@@ -22,6 +22,7 @@
 #include "MD5.h"
 #include "Config.h"
 #include "Utils.h"
+#include "PlayerPanel.h"
 
 #include <wx/curl/http.h>
 #include <wx/tokenzr.h>
@@ -204,12 +205,12 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
             Track  = guURLEncode( PlayedSongs[ index ].m_TrackName );
             Album  = guURLEncode( PlayedSongs[ index ].m_AlbumName );
             //
-            PostData += wxString::Format( wxT( "a[%u]=%s&t[%u]=%s&i[%u]=%u&o[%u]=%c&r[%u]=&l[%u]=%u&b[%u]=%s&n[%u]=%s&m[%u]=&" ),
+            PostData += wxString::Format( wxT( "a[%u]=%s&t[%u]=%s&i[%u]=%u&o[%u]=%c&r[%u]=%c&l[%u]=%u&b[%u]=%s&n[%u]=%s&m[%u]=&" ),
                                 index, Artist.c_str(),
                                 index, Track.c_str(),
                                 index, PlayedSongs[ index ].m_PlayedTime,
                                 index, PlayedSongs[ index ].m_Source,
-                                index,
+                                index, PlayedSongs[ index ].m_Rating,
                                 index, PlayedSongs[ index ].m_TrackLen,
                                 index, Album.c_str(),
                                 index, ( PlayedSongs[ index ].m_TrackNum > 0 ) ?
@@ -219,7 +220,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
         }
         PostData.RemoveLast( 1 ); // we remove the last & added
 
-        //guLogMessage( wxT( "AudioScrobble::Played : " ) + PostData );
+        guLogMessage( wxT( "AudioScrobble::Played : " ) + PostData );
         http.AddHeader( wxT( "Content-Type: application/x-www-form-urlencoded" ) );
         if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_SubmitUrl ) )
         {
@@ -441,7 +442,7 @@ bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtrack
 }
 
 // -------------------------------------------------------------------------------- //
-void guAudioScrobble::SendPlayedTrack( const guTrack &track )
+void guAudioScrobble::SendPlayedTrack( const guCurrentTrack &track )
 {
     if( !m_Db->AddCachedPlayedSong( track ) )
         guLogError( wxT( "Could not add Song to CachedSongs Database" ) );
@@ -455,7 +456,7 @@ void guAudioScrobble::SendPlayedTrack( const guTrack &track )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAudioScrobble::SendNowPlayingTrack( const guTrack &track )
+void guAudioScrobble::SendNowPlayingTrack( const guCurrentTrack &track )
 {
     wxMutexLocker Lock( m_NowPlayingInfoMutex );
 

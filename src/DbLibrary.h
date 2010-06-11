@@ -239,7 +239,7 @@ class guAS_SubmitInfo //guAudioScrobbler_SubmitInfo
     wxString m_TrackName;
     int      m_PlayedTime; // UTC Time since 1/1/1970
     wxChar   m_Source;
-    wxChar   m_Ratting;
+    wxChar   m_Rating;
     int      m_TrackLen;
     int      m_TrackNum;
     int      m_MBTrackId;
@@ -256,6 +256,7 @@ WX_DECLARE_OBJARRAY(guAS_SubmitInfo, guAS_SubmitInfoArray);
 
 class guDynPlayList;
 class guAlbumBrowserItemArray;
+class guCurrentTrack;
 
 // -------------------------------------------------------------------------------- //
 class guDbLibrary : public guDb
@@ -506,7 +507,7 @@ class guDbLibrary : public guDb
     //
     // AudioScrobbler functions
     //
-    bool                    AddCachedPlayedSong( const guTrack &Song );
+    bool                    AddCachedPlayedSong( const guCurrentTrack &Song );
     guAS_SubmitInfoArray    GetCachedPlayedSongs( int MaxCount = 10 );
     bool                    DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo );
 
