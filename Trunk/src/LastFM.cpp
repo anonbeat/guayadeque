@@ -133,7 +133,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
             http.AddHeader( wxT( "Accept: text/html" ) );
             http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
 
-            //guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
+            guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
 
             http.Get( Buffer, UrlStr );
 
@@ -158,6 +158,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
     }
     else
     {
+        guLogMessage( wxT( "LastFM.DoRequest POST %s\n" ), UrlStr.c_str() );
         http.Post( UrlStr.Mid( 1 ).char_str(), UrlStr.Length() - 1, LASTFM_API_ROOT );
     }
 
@@ -1726,6 +1727,94 @@ bool guLastFM::TrackRemoveTag( const wxString &Artist, const wxString &Track, co
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
                 XmlNode->GetPropVal( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
+                if( Status == wxT( "ok" ) )
+                {
+                    return true;
+                }
+                else if( Status == wxT( "failed" ) )
+                {
+                    XmlNode = XmlNode->GetChildren();
+                    if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
+                    {
+                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        Status.ToLong( ( long * ) &m_ErrorCode );
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLastFM::TrackLove( const wxString &artist, const wxString &title )
+{
+    guLastFMRequest     Req; // = guLastFMRequest();
+    wxString            Res;
+    wxString            Status;
+    wxString            ItemName;
+
+    Req.SetMethod( wxT( "track.love" ) );
+    Req.AddArgument( wxT( "api_key" ), LASTFM_API_KEY );
+    Req.AddArgument( wxT( "artist" ), artist, true );
+    Req.AddArgument( wxT( "track" ), title, true );
+    Res = Req.DoRequest( false );
+
+    m_ErrorCode = wxNOT_FOUND;
+    if( Res.Length() )
+    {
+        wxStringInputStream ins( Res );
+        wxXmlDocument XmlDoc( ins );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        if( XmlNode )
+        {
+            if( XmlNode->GetName() == wxT( "lfm" ) )
+            {
+                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                if( Status == wxT( "ok" ) )
+                {
+                    return true;
+                }
+                else if( Status == wxT( "failed" ) )
+                {
+                    XmlNode = XmlNode->GetChildren();
+                    if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
+                    {
+                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        Status.ToLong( ( long * ) &m_ErrorCode );
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLastFM::TrackBan( const wxString &artist, const wxString &title )
+{
+    guLastFMRequest     Req;
+    wxString            Res;
+    wxString            Status;
+    wxString            ItemName;
+
+    Req.SetMethod( wxT( "track.ban" ) );
+    Req.AddArgument( wxT( "api_key" ), LASTFM_API_KEY );
+    Req.AddArgument( wxT( "artist" ), artist, true );
+    Req.AddArgument( wxT( "track" ), title, true );
+    Res = Req.DoRequest( false );
+
+    m_ErrorCode = wxNOT_FOUND;
+    if( Res.Length() )
+    {
+        wxStringInputStream ins( Res );
+        wxXmlDocument XmlDoc( ins );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        if( XmlNode )
+        {
+            if( XmlNode->GetName() == wxT( "lfm" ) )
+            {
+                XmlNode->GetPropVal( wxT( "status" ), &Status );
                 if( Status == wxT( "ok" ) )
                 {
                     return true;
