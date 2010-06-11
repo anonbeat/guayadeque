@@ -231,6 +231,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
                 if( Content.Contains( wxT( "OK" ) ) )
                 {
                     m_ErrorCode = guAS_ERROR_NOERROR;
+
                     return true;
                 }
                 else

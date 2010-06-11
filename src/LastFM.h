@@ -203,6 +203,8 @@ class guLastFM
     wxArrayString               TrackGetTags( const wxString &Artist, const wxString &Track );
     wxArrayString               TrackGetTopTags( const wxString &Artist, const wxString &Track );
     bool                        TrackRemoveTag( const wxString &Artist, const wxString &Track, const wxString &Tag );
+    bool                        TrackLove( const wxString &artist, const wxString &title );
+    bool                        TrackBan( const wxString &artist, const wxString &title );
 
 };
 

@@ -297,9 +297,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_Rating = new guRating( this, GURATING_STYLE_MID );
 	m_BitRateSizer->Add( m_Rating, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 2 );
 
-	m_LoveBanButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_love ), guImage( guIMAGE_INDEX_player_normal_love ), guImage( guIMAGE_INDEX_player_highlight_love ) );
-    m_LoveBanButton->SetToolTip( _( "Love or Ban a track in AudioScrobble service" ) );
-    m_BitRateSizer->Add( m_LoveBanButton, 0, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
+//	m_LoveBanButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_love ), guImage( guIMAGE_INDEX_player_normal_love ), guImage( guIMAGE_INDEX_player_highlight_love ) );
+//    m_LoveBanButton->SetToolTip( _( "Love or Ban a track in AudioScrobble service" ) );
+//    m_BitRateSizer->Add( m_LoveBanButton, 0, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
 
 	m_BitRateSizer->Add( 0, 0, 1, wxALL, 2 );
 
@@ -428,7 +428,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	m_PositionLabel->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
-	m_LoveBanButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
+//	m_LoveBanButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
 
     //
 	//m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
@@ -544,7 +544,7 @@ guPlayerPanel::~guPlayerPanel()
 	m_YearLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnYearDClicked ), NULL, this );
 	m_PositionLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
-	m_LoveBanButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
+//	m_LoveBanButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
 
     //
 	//m_PlayerCoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
