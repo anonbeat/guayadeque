@@ -932,7 +932,8 @@ void guDynPlayListEditor::OnFilterFieldSelected( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::OnFilterOptionSelected( wxCommandEvent &event )
 {
-    bool IsNotSetLabel = ( ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LABEL ) &&
+    bool IsNotSetLabel = m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LENGTH ||
+                          ( ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LABEL ) &&
                           ( m_FilterLabelOptionChoice->GetSelection() == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET ) );
     m_FilterText->Enable( !IsNotSetLabel );
     if( IsNotSetLabel )
