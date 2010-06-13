@@ -5668,7 +5668,7 @@ bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
         break;
       //case guAS_RATING_NONE :
       default :
-        Rating = 0;
+        Rating = ' ';
         break;
   }
 
