@@ -220,7 +220,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
         }
         PostData.RemoveLast( 1 ); // we remove the last & added
 
-        guLogMessage( wxT( "AudioScrobble::Played : " ) + PostData );
+        //guLogMessage( wxT( "AudioScrobble::Played : " ) + PostData );
         http.AddHeader( wxT( "Content-Type: application/x-www-form-urlencoded" ) );
         if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_SubmitUrl ) )
         {
