@@ -2453,7 +2453,7 @@ bool guMediaCtrl::StartSinkLocked( wxArrayPtrVoid &messages, GError ** error )
                 GstObject * MessageSrc;
                 guFaderPlayBin * FaderPlayBin;
 
-            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS( GST_BIN( m_Pipeline ), GST_DEBUG_GRAPH_SHOW_ALL , "guayadeque" );
+                GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS( GST_BIN( m_Pipeline ), GST_DEBUG_GRAPH_SHOW_ALL , "guayadeque" );
 
                 // we only want to process errors from the sink here.
                 // errors from streams should go to the normal message handler.
@@ -2740,6 +2740,7 @@ long guMediaCtrl::Load( const wxString &uri, guPlayerPlayType playtype )
         //         RB_PLAYER_ERROR_GENERAL,
         //         _("Failed to create GStreamer pipeline to play %s"),
         //         uri);
+
 		return 0;
 	}
 
@@ -3295,10 +3296,10 @@ void guMediaCtrl::CleanPlayBins( void )
     for( Index = 0; Index < Count; Index++ )
     {
         guFaderPlayBin * FaderPlayBin = m_FaderPlayBins[ Index ];
-//        if( FaderPlayBin->m_State == guFADERPLAYBIN_STATE_PREROLLING )
+        //if( FaderPlayBin->m_State == guFADERPLAYBIN_STATE_PREROLLING )
         {
             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
-            guLogDebug( wxT( "CleanPlayBIns: stream %s" ), FaderPlayBin->m_Uri.c_str() );
+            guLogDebug( wxT( "Removing PlayBin: '%s'" ), FaderPlayBin->m_Uri.c_str() );
             //FaderPlayBin->StartFade( FaderPlayBin->m_Player->m_FadeInVolStart, 1.0, FaderPlayBin->m_Player->m_FadeInTime );
             FaderPlayBin->UnlinkAndBlock();
         }
@@ -4040,6 +4041,10 @@ bool guFaderPlayBin::ActuallyStart( GError ** error )
     {
         m_Player->ScheduleReap();
     }
+
+#ifdef guSHOW_DUMPFADERPLAYBINS
+    DumpFaderPlayBins( m_Player->m_FaderPlayBins );
+#endif
 
     return Ret;
 }
