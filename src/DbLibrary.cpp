@@ -5689,7 +5689,7 @@ bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
           Song.m_Length,
           Song.m_Number,
           0 );
-  guLogMessage( query );
+  //guLogMessage( query );
   return ExecuteUpdate( query );
 }
 
