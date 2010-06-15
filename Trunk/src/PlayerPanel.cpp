@@ -1217,10 +1217,13 @@ void guPlayerPanel::LoadMedia( const wxString &FileName, guPlayerPlayType playty
             //guLogError( wxT( "ee: The filename was '%s'" ), FileName.c_str() );
             //m_MediaCtrl->CleanPlayBins();
 
+            int CurItem = m_PlayListCtrl->GetCurItem();
             m_IsSkipping = false;
 
             wxCommandEvent event;
             OnNextTrackButtonClick( event );
+
+            m_PlayListCtrl->RemoveItem( CurItem );
         }
     }
     catch(...)

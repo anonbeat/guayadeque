@@ -133,7 +133,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
             http.AddHeader( wxT( "Accept: text/html" ) );
             http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
 
-            guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
+            //guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
 
             http.Get( Buffer, UrlStr );
 
@@ -158,7 +158,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
     }
     else
     {
-        guLogMessage( wxT( "LastFM.DoRequest POST %s\n" ), UrlStr.c_str() );
+        //guLogMessage( wxT( "LastFM.DoRequest POST %s\n" ), UrlStr.c_str() );
         http.Post( UrlStr.Mid( 1 ).char_str(), UrlStr.Length() - 1, LASTFM_API_ROOT );
     }
 
