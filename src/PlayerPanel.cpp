@@ -1223,7 +1223,8 @@ void guPlayerPanel::LoadMedia( const wxString &FileName, guPlayerPlayType playty
             wxCommandEvent event;
             OnNextTrackButtonClick( event );
 
-            m_PlayListCtrl->RemoveItem( CurItem );
+            RemoveItem( CurItem );
+            //m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         }
     }
     catch(...)
