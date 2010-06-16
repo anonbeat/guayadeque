@@ -103,7 +103,7 @@ void guPLNamesTreeCtrl::ReloadItems( void )
     {
         for( index = 0; index < count; index++ )
         {
-            AppendItem( m_StaticId, m_StaticItems[ index ].m_Name, 0, 0,
+            AppendItem( m_StaticId, m_StaticItems[ index ].m_Name, -1, -1,
                                 new guPLNamesData( m_StaticItems[ index ].m_Id, GUPLAYLIST_STATIC ) );
         }
     }
@@ -114,7 +114,7 @@ void guPLNamesTreeCtrl::ReloadItems( void )
     {
         for( index = 0; index < count; index++ )
         {
-            AppendItem( m_DynamicId, m_DynamicItems[ index ].m_Name, 1, 1,
+            AppendItem( m_DynamicId, m_DynamicItems[ index ].m_Name, -1, -1,
                                 new guPLNamesData( m_DynamicItems[ index ].m_Id, GUPLAYLIST_DYNAMIC ) );
         }
     }

@@ -43,7 +43,7 @@ class guShoutCast
   public :
     guShoutCast() { m_LastServerUrl = wxEmptyString; };
     wxArrayString       GetGenres( void ) const;
-    void                GetStations( const wxString &GenreName, const int GenreId, guRadioStations * Stations, long MinBitrate = SHOUTCAST_STATION_ALLBITRATES ) const;
+    void                GetStations( const int source, const int flags, const wxString &text, const int id, guRadioStations * Stations, long MinBitrate = SHOUTCAST_STATION_ALLBITRATES ) const;
     wxString            GetStationUrl( const int id ) const;
     guStationPlayList   GetStationPlayList( const int StationId ) const;
     guStationPlayList   GetStationPlayList( const wxString &stationurl ) const;

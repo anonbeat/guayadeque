@@ -44,18 +44,124 @@
 // -------------------------------------------------------------------------------- //
 // guRadioGenreTreeCtrl
 // -------------------------------------------------------------------------------- //
-class guRadioGenreData : public wxTreeItemData
+class guShoutcastItemData : public wxTreeItemData
 {
   private :
     int         m_Id;
+    int         m_Source;
     wxString    m_Name;
+    int         m_Flags;
+
   public :
-    guRadioGenreData( const int id, const wxString &name ) { m_Id = id; m_Name = name; };
-    int         GetId( void ) { return m_Id; };
-    void        SetId( int id ) { m_Id = id; };
-    wxString    GetName( void ) { return m_Name; };
-    void        SetName( const wxString &name ) { m_Name = name; };
+    guShoutcastItemData( const int id, const int source, const wxString &name, int flags )
+    {
+        m_Id = id;
+        m_Source = source;
+        m_Name = name;
+        m_Flags = flags;
+    }
+
+    int         GetId( void ) { return m_Id; }
+    void        SetId( int id ) { m_Id = id; }
+    int         GetSource( void ) { return m_Source; }
+    void        SetSource( int source ) { m_Source = source; }
+    int         GetFlags( void ) { return m_Flags; }
+    void        SetFlags( int flags ) { m_Flags = flags; }
+    wxString    GetName( void ) { return m_Name; }
+    void        SetName( const wxString &name ) { m_Name = name; }
+
 };
+
+// -------------------------------------------------------------------------------- //
+guShoutcastSearch::guShoutcastSearch( wxWindow * parent, guShoutcastItemData * itemdata ) :
+    wxDialog( parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 435,237 ), wxDEFAULT_DIALOG_STYLE )
+{
+    m_ItemData = itemdata;
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+
+	wxBoxSizer* MainSizer;
+	MainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer* LabelSizer;
+	LabelSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _(" Radio Search ") ), wxVERTICAL );
+
+	wxBoxSizer* SearchSizer;
+	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * SearchLabel = new wxStaticText( this, wxID_ANY, _("Search:"), wxDefaultPosition, wxDefaultSize, 0 );
+	SearchLabel->Wrap( -1 );
+	SearchSizer->Add( SearchLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_SearchTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_SearchTextCtrl->SetValue( m_ItemData->GetName() );
+	SearchSizer->Add( m_SearchTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	LabelSizer->Add( SearchSizer, 0, wxEXPAND, 5 );
+
+	m_SearchPlayChkBox = new wxCheckBox( this, wxID_ANY, _("Search in now playing info"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SearchPlayChkBox->SetValue( m_ItemData->GetFlags() & guRADIO_SEARCH_FLAG_NOWPLAYING );
+	LabelSizer->Add( m_SearchPlayChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_SearchGenreChkBox = new wxCheckBox( this, wxID_ANY, _("Search in genre names"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SearchGenreChkBox->SetValue( m_ItemData->GetFlags() & guRADIO_SEARCH_FLAG_GENRE );
+	LabelSizer->Add( m_SearchGenreChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_SearchNameChkBox = new wxCheckBox( this, wxID_ANY, _("Search in station names"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SearchNameChkBox->SetValue( m_ItemData->GetFlags() & guRADIO_SEARCH_FLAG_STATION );
+	LabelSizer->Add( m_SearchNameChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_AllGenresChkBox = new wxCheckBox( this, wxID_ANY, _("Include results from all genres"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_AllGenresChkBox->SetValue( m_ItemData->GetFlags() & guRADIO_SEARCH_FLAG_ALLGENRES );
+	LabelSizer->Add( m_AllGenresChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	MainSizer->Add( LabelSizer, 1, wxEXPAND|wxALL, 5 );
+
+	wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
+	wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );
+	ButtonsSizer->AddButton( ButtonsSizerOK );
+	wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
+	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->Realize();
+	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+
+	this->SetSizer( MainSizer );
+	this->Layout();
+
+	Connect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guShoutcastSearch::OnOkButton ) );
+}
+
+// -------------------------------------------------------------------------------- //
+guShoutcastSearch::~guShoutcastSearch()
+{
+	Disconnect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guShoutcastSearch::OnOkButton ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guShoutcastSearch::OnOkButton( wxCommandEvent &event )
+{
+    m_ItemData->SetName( m_SearchTextCtrl->GetValue() );
+
+    int flags = guRADIO_SEARCH_FLAG_NONE;
+
+    if( m_SearchPlayChkBox->IsChecked() )
+        flags |= guRADIO_SEARCH_FLAG_NOWPLAYING;
+
+    if( m_SearchGenreChkBox->IsChecked() )
+        flags |= guRADIO_SEARCH_FLAG_GENRE;
+
+    if( m_SearchNameChkBox->IsChecked() )
+        flags |= guRADIO_SEARCH_FLAG_STATION;
+
+    if( m_AllGenresChkBox->IsChecked() )
+        flags |= guRADIO_SEARCH_FLAG_ALLGENRES;
+
+    m_ItemData->SetFlags( flags );
+
+    event.Skip();
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guRadioGenreTreeCtrl
@@ -68,6 +174,8 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
     wxTreeItemId    m_RootId;
     wxTreeItemId    m_ManualId;
     wxTreeItemId    m_ShoutcastId;
+    wxTreeItemId    m_ShoutcastGenreId;
+    wxTreeItemId    m_ShoutcastSearchsId;
 
     void            OnContextMenu( wxTreeEvent &event );
     void            OnRadioGenreAdd( wxCommandEvent &event );
@@ -80,6 +188,8 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
 
     void            ReloadItems( void );
     wxTreeItemId *  GetShoutcastId( void ) { return &m_ShoutcastId; };
+    wxTreeItemId *  GetShoutcastGenreId( void ) { return &m_ShoutcastGenreId; };
+    wxTreeItemId *  GetShoutcastSearchId( void ) { return &m_ShoutcastSearchsId; };
     wxTreeItemId *  GetManualId( void ) { return &m_ManualId; };
 
 };
@@ -110,18 +220,22 @@ class guRadioLabelListBox : public guListBox
 class guUpdateRadiosThread : public wxThread
 {
   private:
-    guDbLibrary *     m_Db;
+    guDbLibrary *   m_Db;
     guRadioPanel *  m_RadioPanel;
     int             m_GaugeId;
-    wxArrayInt      m_GenresIds;
+    wxArrayInt      m_Ids;
+    int             m_Source;
+
+    void            CheckRadioStationsFilters( const int flags, const wxString &text, guRadioStations &stations );
 
   public:
     guUpdateRadiosThread( guDbLibrary * db, guRadioPanel * radiopanel,
-                                const wxArrayInt &genres, int gaugeid = wxNOT_FOUND )
+                                const wxArrayInt &ids, const int source, int gaugeid = wxNOT_FOUND )
     {
         m_Db = db;
         m_RadioPanel = radiopanel;
-        m_GenresIds = genres;
+        m_Ids = ids;
+        m_Source = source;
         m_GaugeId = gaugeid;
     };
 
@@ -146,7 +260,7 @@ class guUpdateRadiosThread : public wxThread
 class guRadioStationListBox : public guListView
 {
   protected :
-    guDbLibrary *       m_Db;
+    guDbLibrary *     m_Db;
     guRadioStations   m_Radios;
     int               m_StationsOrder;
     bool              m_StationsOrderDesc;
@@ -178,17 +292,20 @@ class guRadioStationListBox : public guListView
 // -------------------------------------------------------------------------------- //
 guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbLibrary * db ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_MULTIPLE|wxSUNKEN_BORDER )
+        wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxSUNKEN_BORDER )
 {
     m_Db = db;
     m_ImageList = new wxImageList();
     m_ImageList->Add( guImage( guIMAGE_INDEX_tiny_shoutcast ) );
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_tiny_net_radio ) ) );
+    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_tiny_search ) ) );
 
     AssignImageList( m_ImageList );
 
     m_RootId   = AddRoot( wxT( "Radios" ), -1, -1, NULL );
     m_ShoutcastId = AppendItem( m_RootId, _( "Shoutcast" ), 0, 0, NULL );
+    m_ShoutcastGenreId = AppendItem( m_ShoutcastId, _( "Genres" ), 0, 0, NULL );
+    m_ShoutcastSearchsId = AppendItem( m_ShoutcastId, _( "Searchs" ), 2, 2, NULL );
     m_ManualId = AppendItem( m_RootId, _( "User Defined" ), 1, 1, NULL );
 
     SetIndent( 5 );
@@ -213,18 +330,28 @@ guRadioGenreTreeCtrl::~guRadioGenreTreeCtrl()
 // -------------------------------------------------------------------------------- //
 void guRadioGenreTreeCtrl::ReloadItems( void )
 {
-    DeleteChildren( m_ShoutcastId );
+    DeleteChildren( m_ShoutcastGenreId );
 
     guListItems RadioGenres;
-    m_Db->GetRadioGenres( &RadioGenres );
+    m_Db->GetRadioGenres( guRADIO_SOURCE_GENRE, &RadioGenres );
 
     int index;
     int count = RadioGenres.Count();
-
     for( index = 0; index < count; index++ )
     {
-        AppendItem( m_ShoutcastId, RadioGenres[ index ].m_Name, -1, -1,
-            new guRadioGenreData( RadioGenres[ index ].m_Id, RadioGenres[ index ].m_Name ) );
+        AppendItem( m_ShoutcastGenreId, RadioGenres[ index ].m_Name, -1, -1,
+            new guShoutcastItemData( RadioGenres[ index ].m_Id, guRADIO_SOURCE_GENRE, RadioGenres[ index ].m_Name, 0 ) );
+    }
+
+    DeleteChildren( m_ShoutcastSearchsId );
+    guListItems RadioSearchs;
+    wxArrayInt RadioFlags;
+    m_Db->GetRadioGenres( guRADIO_SOURCE_SEARCH, &RadioSearchs, true, &RadioFlags );
+    count = RadioSearchs.Count();
+    for( index = 0; index < count; index++ )
+    {
+        AppendItem( m_ShoutcastSearchsId, RadioSearchs[ index ].m_Name, -1, -1,
+            new guShoutcastItemData( RadioSearchs[ index ].m_Id, guRADIO_SOURCE_SEARCH, RadioSearchs[ index ].m_Name, RadioFlags[ index ] ) );
     }
 }
 
@@ -237,47 +364,75 @@ void guRadioGenreTreeCtrl::OnContextMenu( wxTreeEvent &event )
     wxPoint Point = event.GetPoint();
 
     wxTreeItemId ItemId = event.GetItem();
-    guRadioGenreData * ItemData = ( guRadioGenreData * ) GetItemData( ItemId );
+    guShoutcastItemData * ItemData = ( guShoutcastItemData * ) GetItemData( ItemId );
 
 
-    if( ItemData || ( ItemId == * GetShoutcastId() ) )
+    if( ( ItemData && ( ItemData->GetSource() == guRADIO_SOURCE_GENRE ) ) || ( ItemId == * GetShoutcastGenreId() ) )
     {
-
         MenuItem = new wxMenuItem( &Menu, ID_RADIO_GENRE_ADD, _( "Add Genre" ), _( "Create a new genre" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu.Append( MenuItem );
 
         if( ItemData )
         {
-            MenuItem = new wxMenuItem( &Menu, ID_RADIO_GENRE_EDIT, _( "Edit genre" ), _( "Change selected genre" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            MenuItem = new wxMenuItem( &Menu, ID_RADIO_GENRE_EDIT, _( "Edit genre" ), _( "Change the selected genre" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu.Append( MenuItem );
 
-            MenuItem = new wxMenuItem( &Menu, ID_RADIO_GENRE_DELETE, _( "Delete genre" ), _( "Delete selected genre" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
+            MenuItem = new wxMenuItem( &Menu, ID_RADIO_GENRE_DELETE, _( "Delete genre" ), _( "Delete the selected search" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
             Menu.Append( MenuItem );
         }
 
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_RADIO_DOUPDATE, _( "Update Radio Stations" ), _( "Update the radio station lists" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_reload ) );
         Menu.Append( MenuItem );
     }
-    else
+    else if( ( ItemData && ( ItemData->GetSource() == guRADIO_SOURCE_SEARCH ) ) || ( ItemId == * GetShoutcastSearchId() ) )
+    {
+        MenuItem = new wxMenuItem( &Menu, ID_RADIO_SEARCH_ADD, _( "Add Search" ), _( "Create a new search" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu.Append( MenuItem );
+
+        if( ItemData )
+        {
+            MenuItem = new wxMenuItem( &Menu, ID_RADIO_SEARCH_EDIT, _( "Edit search" ), _( "Change the selected search" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            Menu.Append( MenuItem );
+
+            MenuItem = new wxMenuItem( &Menu, ID_RADIO_SEARCH_DELETE, _( "Delete search" ), _( "Delete the selected search" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
+            Menu.Append( MenuItem );
+        }
+
+        Menu.AppendSeparator();
+
+        MenuItem = new wxMenuItem( &Menu, ID_RADIO_DOUPDATE, _( "Update Radio Stations" ), _( "Update the radio station lists" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_reload ) );
+        Menu.Append( MenuItem );
+    }
+    else if( ItemId == * GetManualId() )
     {
         MenuItem = new wxMenuItem( &Menu, ID_RADIO_USER_ADD, _( "Add Radio" ), _( "Create a new radio" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu.Append( MenuItem );
 
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_RADIO_USER_IMPORT, _( "Import" ), _( "Import the radio stations" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu.Append( MenuItem );
 
         MenuItem = new wxMenuItem( &Menu, ID_RADIO_USER_EXPORT, _( "Export" ), _( "Export all the radio stations" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        Menu.Append( MenuItem );
+    }
+    else
+    {
+        MenuItem = new wxMenuItem( &Menu, ID_RADIO_DOUPDATE, _( "Update Radio Stations" ), _( "Update the radio station lists" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_reload ) );
         Menu.Append( MenuItem );
     }
 
@@ -302,7 +457,7 @@ void guRadioGenreTreeCtrl::OnRadioGenreAdd( wxCommandEvent &event )
                 //
                 for( index = 0; index < count; index++ )
                 {
-                    m_Db->AddRadioGenre( NewGenres[ index ] );
+                    m_Db->AddRadioGenre( NewGenres[ index ], guRADIO_SOURCE_GENRE, guRADIO_SEARCH_FLAG_NONE );
                 }
                 ReloadItems();
             }
@@ -319,7 +474,7 @@ void guRadioGenreTreeCtrl::OnRadioGenreEdit( wxCommandEvent &event )
 
     if( ItemId.IsOk() )
     {
-        guRadioGenreData * RadioGenreData = ( guRadioGenreData * ) GetItemData( ItemId );
+        guShoutcastItemData * RadioGenreData = ( guShoutcastItemData * ) GetItemData( ItemId );
 
         if( RadioGenreData )
         {
@@ -327,7 +482,7 @@ void guRadioGenreTreeCtrl::OnRadioGenreEdit( wxCommandEvent &event )
             wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Genre Name: " ), _( "Enter the new Genre Name" ), RadioGenreData->GetName() );
             if( EntryDialog->ShowModal() == wxID_OK )
             {
-                m_Db->SetRadioGenreName( RadioGenreData->GetId(), EntryDialog->GetValue() );
+                m_Db->SetRadioGenre( RadioGenreData->GetId(), EntryDialog->GetValue() );
                 ReloadItems();
             }
             EntryDialog->Destroy();
@@ -348,10 +503,10 @@ void guRadioGenreTreeCtrl::OnRadioGenreDelete( wxCommandEvent &event )
                           _( "Confirm" ),
                           wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
         {
-            guRadioGenreData * RadioGenreData;
+            guShoutcastItemData * RadioGenreData;
             for( index = 0; index < count; index++ )
             {
-                RadioGenreData = ( guRadioGenreData * ) GetItemData( ItemIds[ index ] );
+                RadioGenreData = ( guShoutcastItemData * ) GetItemData( ItemIds[ index ] );
                 if( RadioGenreData )
                 {
                     m_Db->DelRadioGenre( RadioGenreData->GetId() );
@@ -511,7 +666,7 @@ void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         guRadioStation RadioStation;
         GetSelected( &RadioStation );
-        if( RadioStation.m_IsUser )
+        if( RadioStation.m_Source == 1 )
         {
             MenuItem = new wxMenuItem( Menu, ID_RADIO_USER_EDIT, _( "Edit Radio" ), _( "Change the selected radio" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
@@ -583,7 +738,7 @@ bool guRadioStationListBox::GetSelected( guRadioStation * radiostation ) const
     radiostation->m_SCId        = m_Radios[ Selected ].m_SCId;
     radiostation->m_BitRate     = m_Radios[ Selected ].m_BitRate;
     radiostation->m_GenreId     = m_Radios[ Selected ].m_GenreId;
-    radiostation->m_IsUser      = m_Radios[ Selected ].m_IsUser;
+    radiostation->m_Source      = m_Radios[ Selected ].m_Source;
     radiostation->m_Link        = m_Radios[ Selected ].m_Link;
     radiostation->m_Listeners   = m_Radios[ Selected ].m_Listeners;
     radiostation->m_Name        = m_Radios[ Selected ].m_Name;
@@ -844,16 +999,20 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
     m_LabelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
 
     //
-    Connect( ID_RADIO_USER_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserAdd ) );
-    Connect( ID_RADIO_USER_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserEdit ) );
-    Connect( ID_RADIO_USER_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserDel ) );
+    Connect( ID_RADIO_USER_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserAdd ), NULL, this );
+    Connect( ID_RADIO_USER_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserEdit ), NULL, this );
+    Connect( ID_RADIO_USER_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserDel ), NULL, this );
 
-    Connect( ID_RADIO_USER_EXPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserExport ) );
-    Connect( ID_RADIO_USER_IMPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserImport ) );
+    Connect( ID_RADIO_SEARCH_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioSearchAdd ), NULL, this );
+    Connect( ID_RADIO_SEARCH_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioSearchEdit ), NULL, this );
+    Connect( ID_RADIO_SEARCH_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioSearchDel ), NULL, this );
 
-    Connect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdate ) );
-    Connect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ) );
-    Connect( ID_RADIO_UPDATE_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdateEnd ) );
+    Connect( ID_RADIO_USER_EXPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserExport ), NULL, this );
+    Connect( ID_RADIO_USER_IMPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserImport ), NULL, this );
+
+    Connect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdate ), NULL, this );
+    Connect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ), NULL, this );
+    Connect( ID_RADIO_UPDATE_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdateEnd ), NULL, this );
 
     m_StationsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guRadioPanel::OnStationListActivated ), NULL, this );
 	m_StationsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
@@ -864,9 +1023,9 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
     //m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
-    Connect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
-    Connect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ) );
-    Connect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ) );
+    Connect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ), NULL, this );
+    Connect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
+    Connect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ), NULL, this );
 
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 }
@@ -882,32 +1041,42 @@ guRadioPanel::~guRadioPanel()
     }
 
     //
+	Disconnect( guRADIO_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnTextChangedTimer ), NULL, this );
+
     Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED,  wxTreeEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
 
     m_GenresTreeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guRadioPanel::OnRadioGenreListActivated ), NULL, this );
 
     m_LabelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guRadioPanel::OnRadioLabelListSelected ), NULL, this );
-    //
-    Disconnect( ID_RADIO_USER_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserAdd ) );
-    Disconnect( ID_RADIO_USER_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserEdit ) );
-    Disconnect( ID_RADIO_USER_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserDel ) );
 
-    Disconnect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdate ) );
-    Disconnect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ) );
-    Disconnect( ID_RADIO_UPDATE_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdateEnd ) );
+    //
+    Disconnect( ID_RADIO_USER_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserAdd ), NULL, this );
+    Disconnect( ID_RADIO_USER_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserEdit ), NULL, this );
+    Disconnect( ID_RADIO_USER_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserDel ), NULL, this );
+
+    Disconnect( ID_RADIO_SEARCH_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioSearchAdd ), NULL, this );
+    Disconnect( ID_RADIO_SEARCH_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioSearchEdit ), NULL, this );
+    Disconnect( ID_RADIO_SEARCH_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioSearchDel ), NULL, this );
+
+    Disconnect( ID_RADIO_USER_EXPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserExport ), NULL, this );
+    Disconnect( ID_RADIO_USER_IMPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUserImport ), NULL, this );
+
+    Disconnect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdate ), NULL, this );
+    Disconnect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ), NULL, this );
+    Disconnect( ID_RADIO_UPDATE_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdateEnd ), NULL, this );
 
     m_StationsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guRadioPanel::OnStationListActivated ), NULL, this );
 	m_StationsListBox->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
     Disconnect( ID_RADIO_EDIT_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationsEditLabelsClicked ) );
 
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchSelected ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchSelected ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
-    //m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
+    //m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
-    Disconnect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ) );
-    Disconnect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ) );
-    Disconnect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ) );
+    Disconnect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ), NULL, this );
+    Disconnect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
+    Disconnect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ), NULL, this );
 
     m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 
@@ -962,6 +1131,7 @@ void guRadioPanel::OnTextChangedTimer( wxTimerEvent &event )
             m_GenresTreeCtrl->ReloadItems();
             m_StationsListBox->ReloadItems();
         }
+
         m_InputTextCtrl->ShowCancelButton( true );
     }
     else
@@ -1019,17 +1189,31 @@ void guRadioPanel::OnRadioGenreListSelected( wxTreeEvent &event )
 {
     wxTreeItemId ItemId = event.GetItem();
 
-    guRadioGenreData * ItemData = ( guRadioGenreData * ) m_GenresTreeCtrl->GetItemData( event.GetItem() );
+    guShoutcastItemData * ItemData = ( guShoutcastItemData * ) m_GenresTreeCtrl->GetItemData( ItemId );
     if( ItemData )
     {
+        //
+        m_Db->SetRadioSourceFilter( ItemData->GetSource() );
+
         wxArrayInt RadioGenres;
         RadioGenres.Add( ItemData->GetId() );
         m_Db->SetRadioGenresFilters( RadioGenres );
     }
+    else if( ItemId == * m_GenresTreeCtrl->GetShoutcastGenreId() )
+    {
+        m_Db->SetRadioSourceFilter( guRADIO_SOURCE_GENRE );
+    }
+    else if( ItemId == * m_GenresTreeCtrl->GetShoutcastSearchId() )
+    {
+        m_Db->SetRadioSourceFilter( guRADIO_SOURCE_SEARCH );
+    }
+    else if( ItemId == * m_GenresTreeCtrl->GetManualId() )
+    {
+        m_Db->SetRadioSourceFilter( guRADIO_SOURCE_USER );
+    }
     else
     {
-        //guLogMessage( wxT( "Selecting Radios... Manual? %u" ), ( ItemId == * m_GenresTreeCtrl->GetManualId() ) );
-        m_Db->SetRadioIsUserFilter( ( ItemId == * m_GenresTreeCtrl->GetManualId() ) );
+        m_Db->SetRadioSourceFilter( -1 );
     }
     m_StationsListBox->ReloadItems();
 }
@@ -1038,15 +1222,17 @@ void guRadioPanel::OnRadioGenreListSelected( wxTreeEvent &event )
 void guRadioPanel::OnRadioGenreListActivated( wxTreeEvent &event )
 {
     wxTreeItemId ItemId = event.GetItem();
-    guRadioGenreData * ItemData = ( guRadioGenreData * ) m_GenresTreeCtrl->GetItemData( ItemId );
+    guShoutcastItemData * ItemData = ( guShoutcastItemData * ) m_GenresTreeCtrl->GetItemData( ItemId );
     if( ItemData )
     {
+        guLogMessage( wxT( "Selected %i %s" ), ItemData->GetSource(), ItemData->GetName().c_str() );
+
         wxArrayInt RadioGenres;
         RadioGenres.Add( ItemData->GetId() );
 
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
         int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Radios" ) );
-        guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, RadioGenres, GaugeId );
+        guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, RadioGenres, ItemData->GetSource(), GaugeId );
         if( UpdateRadiosThread )
         {
             UpdateRadiosThread->Create();
@@ -1068,22 +1254,32 @@ void guRadioPanel::OnRadioLabelListSelected( wxListEvent &Event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioUpdate( wxCommandEvent &event )
 {
-    wxArrayTreeItemIds ItemIds;
-    wxArrayInt         GenresIds;
-    guRadioGenreData * ItemData;
-    int index;
-    int count;
+    wxTreeItemId            ItemId;
+    wxArrayInt              GenresIds;
+    guShoutcastItemData *   ItemData;
+    int Source = guRADIO_SOURCE_GENRE;
 
     wxSetCursor( * wxHOURGLASS_CURSOR );
 
-    if( ( count = m_GenresTreeCtrl->GetSelections( ItemIds ) ) )
+    ItemId = m_GenresTreeCtrl->GetSelection();
+    if( ItemId.IsOk() )
     {
-        for( index = 0; index < count; index++ )
+        ItemData = ( guShoutcastItemData * ) m_GenresTreeCtrl->GetItemData( ItemId );
+        if( ItemData )
         {
-            ItemData = ( guRadioGenreData * ) m_GenresTreeCtrl->GetItemData( ItemIds[ index ] );
-            if( ItemData )
+            Source = ItemData->GetSource();
+            GenresIds.Add( ItemData->GetId() );
+        }
+        else if( ItemId == * m_GenresTreeCtrl->GetShoutcastSearchId() )
+        {
+            Source = guRADIO_SOURCE_SEARCH;
+            guListItems Genres;
+            m_Db->GetRadioGenres( guRADIO_SOURCE_SEARCH, &Genres );
+            int index;
+            int count = Genres.Count();
+            for( index = 0; index < count; index++ )
             {
-                GenresIds.Add( ItemData->GetId() );
+                GenresIds.Add( Genres[ index ].m_Id );
             }
         }
     }
@@ -1091,7 +1287,7 @@ void guRadioPanel::OnRadioUpdate( wxCommandEvent &event )
     if( !GenresIds.Count() )
     {
         guListItems Genres;
-        m_Db->GetRadioGenres( &Genres );
+        m_Db->GetRadioGenres( guRADIO_SOURCE_GENRE, &Genres );
         int index;
         int count = Genres.Count();
         for( index = 0; index < count; index++ )
@@ -1104,7 +1300,7 @@ void guRadioPanel::OnRadioUpdate( wxCommandEvent &event )
     {
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
         int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Radios" ) );
-        guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, GenresIds, GaugeId );
+        guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, GenresIds, Source, GaugeId );
         if( UpdateRadiosThread )
         {
             UpdateRadiosThread->Create();
@@ -1232,7 +1428,7 @@ void guRadioPanel::OnRadioUserAdd( wxCommandEvent &event )
             RadioStation.m_SCId = wxNOT_FOUND;
             RadioStation.m_BitRate = 0;
             RadioStation.m_GenreId = wxNOT_FOUND;
-            RadioStation.m_IsUser = true;
+            RadioStation.m_Source = 1;
             RadioStation.m_Name = RadioEditor->GetName();
             RadioStation.m_Link = RadioEditor->GetLink();
             RadioStation.m_Listeners = 0;
@@ -1273,6 +1469,69 @@ void guRadioPanel::OnRadioUserDel( wxCommandEvent &event )
     m_StationsListBox->GetSelected( &RadioStation );
     m_Db->DelRadioStation( RadioStation.m_Id );
     m_StationsListBox->ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioSearchAdd( wxCommandEvent &event )
+{
+    guShoutcastItemData ShoutcastItem( 0, guRADIO_SOURCE_SEARCH, wxEmptyString, guRADIO_SEARCH_FLAG_DEFAULT );
+    guShoutcastSearch * ShoutcastSearch = new guShoutcastSearch( this, &ShoutcastItem );
+    if( ShoutcastSearch )
+    {
+        if( ShoutcastSearch->ShowModal() == wxID_OK )
+        {
+            m_Db->AddRadioGenre( ShoutcastItem.GetName(), guRADIO_SOURCE_SEARCH, ShoutcastItem.GetFlags() );
+            m_GenresTreeCtrl->ReloadItems();
+        }
+        ShoutcastSearch->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioSearchEdit( wxCommandEvent &event )
+{
+    wxTreeItemId ItemId = m_GenresTreeCtrl->GetSelection();
+    guShoutcastItemData * ItemData = ( guShoutcastItemData * ) m_GenresTreeCtrl->GetItemData( ItemId );
+    if( ItemData && ItemData->GetSource() == guRADIO_SOURCE_SEARCH )
+    {
+        guShoutcastSearch * ShoutcastSearch = new guShoutcastSearch( this, ItemData );
+        if( ShoutcastSearch )
+        {
+            if( ShoutcastSearch->ShowModal() == wxID_OK )
+            {
+                m_Db->SetRadioGenre( ItemData->GetId(), ItemData->GetName(), guRADIO_SOURCE_SEARCH, ItemData->GetFlags() );
+                m_GenresTreeCtrl->ReloadItems();
+            }
+            ShoutcastSearch->Destroy();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioSearchDel( wxCommandEvent &event )
+{
+    wxArrayTreeItemIds ItemIds;
+    int index;
+    int count;
+
+    if( ( count = m_GenresTreeCtrl->GetSelections( ItemIds ) ) )
+    {
+        if( wxMessageBox( _( "Are you sure to delete the selected radio searchs?" ),
+                          _( "Confirm" ),
+                          wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+        {
+            guShoutcastItemData * RadioGenreData;
+            for( index = 0; index < count; index++ )
+            {
+                RadioGenreData = ( guShoutcastItemData * ) m_GenresTreeCtrl->GetItemData( ItemIds[ index ] );
+                if( RadioGenreData )
+                {
+                    m_Db->DelRadioGenre( RadioGenreData->GetId() );
+                }
+            }
+            m_GenresTreeCtrl->ReloadItems();
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1353,7 +1612,7 @@ void ReadXmlRadioStations( wxXmlNode * node, guRadioStations * stations )
         RadioStation->m_SCId = wxNOT_FOUND;
         RadioStation->m_BitRate = 0;
         RadioStation->m_GenreId = wxNOT_FOUND;
-        RadioStation->m_IsUser = true;
+        RadioStation->m_Source = 1;
         RadioStation->m_Listeners = 0;
         RadioStation->m_Type = wxEmptyString;
 
@@ -1506,6 +1765,72 @@ void guRadioPanel::GetRadioCounter( wxLongLong * count )
 // -------------------------------------------------------------------------------- //
 // guUpdateRadiosThread
 // -------------------------------------------------------------------------------- //
+bool inline guListItemsSearchName( guListItems &items, const wxString &name )
+{
+    int Index;
+    int Count = items.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( items[ Index ].m_Name.Lower() == name )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guUpdateRadiosThread::CheckRadioStationsFilters( const int flags, const wxString &text, guRadioStations &stations )
+{
+    guListItems RadioGenres;
+    m_Db->GetRadioGenres( guRADIO_SOURCE_GENRE, &RadioGenres );
+
+    int Index;
+    int Count = stations.Count();
+    if( Count )
+    {
+        for( Index = Count - 1; Index >= 0; Index-- )
+        {
+            if( ( flags & guRADIO_SEARCH_FLAG_NOWPLAYING ) )
+            {
+                if( stations[ Index ].m_NowPlaying.Lower().Find( text ) == wxNOT_FOUND )
+                {
+                    stations.RemoveAt( Index );
+                    continue;
+                }
+            }
+
+            if( ( flags & guRADIO_SEARCH_FLAG_GENRE ) )
+            {
+                if( stations[ Index ].m_GenreName.Lower().Find( text ) == wxNOT_FOUND )
+                {
+                    stations.RemoveAt( Index );
+                    continue;
+                }
+            }
+
+            if( ( flags & guRADIO_SEARCH_FLAG_STATION ) )
+            {
+                if( stations[ Index ].m_Name.Lower().Find( text ) == wxNOT_FOUND )
+                {
+                    stations.RemoveAt( Index );
+                    continue;
+                }
+            }
+
+            // Need to check if the station genre already existed
+            if( !( flags & guRADIO_SEARCH_FLAG_ALLGENRES ) )
+            {
+                if( !guListItemsSearchName( RadioGenres, stations[ Index ].m_GenreName.Lower() ) )
+                {
+                    stations.RemoveAt( Index );
+                }
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
 {
 //    guListItems Genres;
@@ -1516,17 +1841,19 @@ guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
     guRadioStations RadioStations;
     if( ShoutCast )
     {
+        //
         guConfig * Config = ( guConfig * ) guConfig::Get();
         long MinBitRate;
         Config->ReadStr( wxT( "RadioMinBitRate" ), wxT( "128" ), wxT( "Radios" ) ).ToLong( &MinBitRate );
-        //
+
 //        m_Db->GetRadioGenres( &Genres, false );
 //        guLogMessage( wxT ( "Loaded the genres" ) );
         guListItems Genres;
-        m_Db->GetRadioGenresList( &Genres, m_GenresIds );
+        wxArrayInt  Flags;
+        m_Db->GetRadioGenresList( m_Source, m_Ids, &Genres, &Flags );
 
         //
-        m_Db->DelRadioStations( m_GenresIds );
+        m_Db->DelRadioStations( m_Source, m_Ids );
         //guLogMessage( wxT( "Deleted all radio stations" ) );
         count = Genres.Count();
 
@@ -1537,8 +1864,15 @@ guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
         for( index = 0; index < count; index++ )
         {
             guLogMessage( wxT( "Updating radiostations for genre '%s'" ), Genres[ index ].m_Name.c_str() );
-            ShoutCast->GetStations( Genres[ index ].m_Name, Genres[ index ].m_Id, &RadioStations, MinBitRate );
+            ShoutCast->GetStations( m_Source, Flags[ index ], Genres[ index ].m_Name, Genres[ index ].m_Id, &RadioStations, MinBitRate );
+
+            if( m_Source == guRADIO_SOURCE_SEARCH )
+            {
+                CheckRadioStationsFilters( Flags[ index ], Genres[ index ].m_Name.Lower(), RadioStations );
+            }
+
             m_Db->SetRadioStations( &RadioStations );
+
             RadioStations.Clear();
 
             //wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATED );

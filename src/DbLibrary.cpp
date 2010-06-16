@@ -59,7 +59,7 @@ WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "13"
+#define GU_CURRENT_DBVERSION    "14"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
                "song_number, song_pathid, song_filename, song_year, "\
@@ -276,7 +276,7 @@ guDbLibrary::guDbLibrary() : guDb()
     m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
     m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
-  m_RadioIsUser = 0;
+  m_RadioSource = guRADIO_SOURCE_GENRE;
 
   m_GeFilters.Empty();
   m_LaFilters.Empty();
@@ -310,7 +310,7 @@ guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
     m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
     m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
-  m_RadioIsUser = 0;
+  m_RadioSource = guRADIO_SOURCE_GENRE;
 
   m_GeFilters.Empty();
   m_LaFilters.Empty();
@@ -630,42 +630,43 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'audiosc_id' on audioscs (audiosc_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'audiosc_playedtime' on audioscs (audiosc_playedtime ASC);" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiogenres( radiogenre_id INTEGER PRIMARY KEY AUTOINCREMENT, radiogenre_name VARCHAR(255), radio_tunerbase VARCHAR(255) );" ) );
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiogenres( radiogenre_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "radiogenre_name VARCHAR, radiogenre_source INTEGER, radiogenre_flags INTEGER );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'radiogenre_id' on radiogenres (radiogenre_id ASC);" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '60s' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '80s' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '90s' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Alternative' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Ambient' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Blues' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Chillout' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Classical' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Country' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Dance' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Downtempo' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Easy' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Electronic' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Funk' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'House' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Jazz' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'New Age' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Oldies' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Pop' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Reggae' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'RnB' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Rock' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Smooth Jazz' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Slow' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Soundtrack' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Techno' );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, 'Top 40' );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '60s', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '80s', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '90s', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Alternative', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Ambient', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Blues', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Chill', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Classical', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Country', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Dance', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Downtempo', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Easy Listening', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Electronic', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Funk', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Heavy Metal', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'House', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Jazz', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'New Age', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Oldies', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Pop', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Reggae', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'R&B/Urban', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Rock', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Smooth Jazz', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Slow', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Techno', 0, 0 );" ) );
+      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Top 40', 0, 0 );" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "radiostation_scid INTEGER, radiostation_isuser INTEGER, radiostation_genreid INTEGER, "
+                      "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
                       "radiostation_name VARCHAR(255), radiostation_link VARCHAR(255), radiostation_type VARCHAR(32), "
                       "radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_isuser,radiostation_genreid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiolabels( radiolabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiolabel_name VARCHAR(255));" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiolabel_id' on radiolabels (radiolabel_id ASC);" ) );
@@ -710,11 +711,11 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "DROP INDEX 'radiostation_genreid';" ) );
       query.Add( wxT( "DROP TABLE 'radiostations';" ) );
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "radiostation_scid INTEGER, radiostation_isuser INTEGER, radiostation_genreid INTEGER, "
+                      "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
                       "radiostation_name VARCHAR(255), radiostation_link VARCHAR(255), radiostation_type VARCHAR(32), "
                       "radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_isuser,radiostation_genreid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
 
     }
 
@@ -735,7 +736,7 @@ bool guDbLibrary::CheckDbVersion( void )
     {
       if( dbVer > 4 )
       {
-          query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_disk VARCAHR" ) );
+          query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_disk VARCHAR" ) );
           query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_comment VARCHAR" ) );
           //query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_composer VARCHAR(512)" ) );
       }
@@ -770,6 +771,21 @@ bool guDbLibrary::CheckDbVersion( void )
       {
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_composerid' on songs (song_composerid ASC);" ) );
       }
+    }
+
+    case 13 :
+    {
+      if( dbVer > 4 )
+      {
+        query.Add( wxT( "ALTER TABLE radiogenres ADD COLUMN radiogenre_source INTEGER" ) );
+        query.Add( wxT( "ALTER TABLE radiogenres ADD COLUMN radiogenre_flags INTEGER" ) );
+        query.Add( wxT( "UPDATE radiogenres SET radiogenre_source = 0;" ) );
+        query.Add( wxT( "UPDATE radiogenres SET radiogenre_flags = 0;" ) );
+
+        query.Add( wxT( "ALTER TABLE radiostations ADD COLUMN radiostation_source INTEGER" ) );
+        query.Add( wxT( "UPDATE radiostations SET radiostation_source = radiostation_isuser;" ) );
+      }
+
       guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
@@ -5028,16 +5044,16 @@ wxString guDbLibrary::RadioFiltersSQL( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::GetRadioGenresList( guListItems * RadioGenres, const wxArrayInt &GenreIds )
+void guDbLibrary::GetRadioGenresList( const int source, const wxArrayInt &ids, guListItems * listitems, wxArrayInt * radioflags )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  //if( !AllowFilter || !GetRadioFiltersCount() )
-  if( GenreIds.Count() )
+  if( ids.Count() )
   {
-    query = wxT( "SELECT radiogenre_id, radiogenre_name FROM radiogenres WHERE " );
-    query += ArrayToFilter( GenreIds, wxT( "radiogenre_id" ) );
+    query = wxT( "SELECT radiogenre_id, radiogenre_name, radiogenre_flags FROM radiogenres WHERE " );
+    query += wxString::Format( wxT( "radiogenre_source = %i AND " ), source );
+    query += ArrayToFilter( ids, wxT( "radiogenre_id" ) );
     query += wxT( " ORDER BY radiogenre_name COLLATE NOCASE;" );
 
     //guLogMessage( query );
@@ -5045,14 +5061,16 @@ void guDbLibrary::GetRadioGenresList( guListItems * RadioGenres, const wxArrayIn
 
     while( dbRes.NextRow() )
     {
-      RadioGenres->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+      listitems->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+      if( radioflags )
+        radioflags->Add( dbRes.GetInt( 2 ) );
     }
     dbRes.Finalize();
   }
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
+void guDbLibrary::GetRadioGenres( const int source, guListItems * radiogenres, bool AllowFilter, wxArrayInt * radioflags )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -5060,12 +5078,15 @@ void guDbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
   //if( !AllowFilter || !GetRadioFiltersCount() )
   if( !AllowFilter || ( !m_RaTeFilters.Count() && !m_RaLaFilters.Count() ) )
   {
-    query = wxT( "SELECT radiogenre_id, radiogenre_name FROM radiogenres ORDER BY radiogenre_name COLLATE NOCASE;" );
+    query = wxT( "SELECT radiogenre_id, radiogenre_name, radiogenre_flags FROM radiogenres " );
+    query += wxString::Format( wxT( "WHERE radiogenre_source = %i " ), source );
+    query += wxT( "ORDER BY radiogenre_name COLLATE NOCASE;" );
   }
   else
   {
-    query = wxT( "SELECT DISTINCT radiogenre_id, radiogenre_name FROM radiogenres, radiostations " ) \
-            wxT( "WHERE radiostation_isuser = 0 AND radiogenre_id = radiostation_genreid " );
+    query = wxT( "SELECT DISTINCT radiogenre_id, radiogenre_name, radiogenre_flags FROM radiogenres, radiostations " );
+    query += wxString::Format( wxT( "WHERE radiogenre_source = %i " ), source );
+    query += wxT( "AND radiogenre_id = radiostation_genreid " );
     if( m_RaTeFilters.Count() )
     {
         query += wxT( " AND " );
@@ -5085,19 +5106,22 @@ void guDbLibrary::GetRadioGenres( guListItems * RadioGenres, bool AllowFilter )
 
   while( dbRes.NextRow() )
   {
-    RadioGenres->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+    radiogenres->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+    if( radioflags )
+        radioflags->Add( dbRes.GetInt( 2 ) );
   }
   dbRes.Finalize();
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::AddRadioGenre( wxString GenreName )
+int guDbLibrary::AddRadioGenre( const wxString &GenreName, const int source, const int flags )
 {
     wxString query;
-    escape_query_str( &GenreName );
 
-    query = wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name ) VALUES( NULL, '" ) +
-            GenreName + wxT( "');" );
+    query = wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) " );
+    query += wxString::Format( wxT( "VALUES( NULL, '%s', %i, %i );" ),
+            escape_query_str( GenreName ).c_str(),
+            source, flags );
 
     if( ExecuteUpdate( query ) == 1 )
     {
@@ -5107,18 +5131,15 @@ int guDbLibrary::AddRadioGenre( wxString GenreName )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::SetRadioGenreName( const int GenreId, wxString GenreName )
+int guDbLibrary::SetRadioGenre( const int genreid, const wxString &name, const int source, const int flags )
 {
     wxString query;
-    escape_query_str( &GenreName );
 
-    query = query.Format( wxT( "UPDATE radiogenres SET radiogenre_name = '%s' WHERE radiogenre_id = %u;" ), GenreName.c_str(), GenreId );
+    query = wxString::Format( wxT( "UPDATE radiogenres SET radiogenre_name = '%s', radiogenre_source = %i, "
+                                   "radiogenre_flags = %i WHERE radiogenre_id = %u;" ),
+                escape_query_str( name ).c_str(), source, flags, genreid );
 
-    if( ExecuteUpdate( query ) == 1 )
-    {
-      return m_Db.GetLastRowId().GetLo();
-    }
-    return 0;
+    return ExecuteUpdate( query );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -5169,13 +5190,13 @@ void guDbLibrary::SetRadioGenresFilters( const wxArrayInt &filters )
     {
         m_RaGeFilters = filters;
     }
-    m_RadioIsUser = false;
+    //m_RadioSource = false;
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetRadioIsUserFilter( bool isuserradio )
+void guDbLibrary::SetRadioSourceFilter( int source )
 {
-    m_RadioIsUser = isuserradio;
+    m_RadioSource = source;
     m_RaGeFilters.Empty();
 }
 
@@ -5222,7 +5243,7 @@ int guDbLibrary::GetUserRadioStations( guRadioStations * stations )
   guRadioStation * Station;
 
   query = wxT( "SELECT DISTINCT radiostation_name, radiostation_link "
-               "FROM radiostations WHERE radiostation_isuser = 1 " );
+               "FROM radiostations WHERE radiostation_source = 1 " );
 
   dbRes = ExecuteQuery( query );
 
@@ -5248,17 +5269,17 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 
   if( !GetRadioFiltersCount() )
   {
-    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations WHERE " );
-    query += wxString::Format( wxT( "radiostation_isuser = %u " ), m_RadioIsUser );
+    query += wxString::Format( wxT( "radiostation_source = %u " ), m_RadioSource );
     query += wxT( "GROUP BY radiostation_name, radiostation_br " );
   }
   else
   {
-    if( m_RadioIsUser )
+    if( m_RadioSource == guRADIO_SOURCE_USER )
     {
         //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc " );
+        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc " );
         querydb = wxT( "FROM radiostations " );
 
         //else
@@ -5267,12 +5288,12 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
         if( m_RaLaFilters.Count() )
         {
             querydb += wxT( ", radiosetlabels " );
-            subquery += wxT( "WHERE radiostation_id = radiosetlabel_stationid AND radiostation_isuser = 1" );
+            subquery += wxT( "WHERE radiostation_id = radiosetlabel_stationid AND radiostation_source = 1" );
             subquery += wxT( " AND " ) + ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
         }
         else
         {
-            subquery += wxT( "WHERE radiostation_isuser = 1 " );
+            subquery += wxT( "WHERE radiostation_source = 1 " );
         }
 
         if( m_RaTeFilters.Count() )
@@ -5288,7 +5309,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
     else
     {
         //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
                      "FROM radiostations, radiogenres" );
 
         //else
@@ -5303,7 +5324,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
             query += wxT( " WHERE radiostation_genreid = radiogenre_id " );
         }
 
-        subquery += wxT( " AND radiostation_isuser = 0 " );
+        subquery += wxString::Format( wxT( " AND radiostation_source = %i " ), m_RadioSource );
 
         if( m_RaGeFilters.Count() )
         {
@@ -5336,7 +5357,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
   if( m_StationsOrderDesc )
     query += wxT( " DESC;" );
 
-  //guLogMessage( wxT( "GetRadioStations\n%s" ), query.c_str() );
+  guLogMessage( wxT( "GetRadioStations\n%s" ), query.c_str() );
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )
@@ -5345,7 +5366,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
     Station->m_Name       = dbRes.GetString( 0 );
     Station->m_Id         = dbRes.GetInt( 1 );
     Station->m_SCId       = dbRes.GetInt( 2 );
-    Station->m_IsUser     = dbRes.GetBool( 3 );
+    Station->m_Source     = dbRes.GetInt( 3 );
     Station->m_GenreId    = dbRes.GetInt( 4 );
     Station->m_Link       = dbRes.GetString( 5 );
     Station->m_Type       = dbRes.GetString( 6 );
@@ -5366,7 +5387,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 //  if( !GetRadioFiltersCount() )
 //  {
 //    query = wxT( "SELECT COUNT() FROM radiostations WHERE " );
-//    query += wxString::Format( wxT( "radiostation_isuser = %u " ), m_RadioIsUser );
+//    query += wxString::Format( wxT( "radiostation_source = %u " ), m_RadioSource );
 //  }
 //  else
 //  {
@@ -5387,7 +5408,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 //
 //    if( !subquery.IsEmpty() )
 //        subquery += wxT( " AND " );
-//    subquery += wxString::Format( wxT( " radiostation_isuser = %u " ), m_RadioIsUser );
+//    subquery += wxString::Format( wxT( " radiostation_source = %u " ), m_RadioSource );
 //
 //    if( m_RaGeFilters.Count() )
 //    {
@@ -5425,13 +5446,13 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 //}
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::DelRadioStations( const wxArrayInt &RadioGenresIds )
+int guDbLibrary::DelRadioStations( int source, const wxArrayInt &radioids )
 {
   wxString query;
-  if( RadioGenresIds.Count() )
+  if( radioids.Count() )
   {
-    query = wxT( "DELETE FROM radiostations WHERE " );
-    query += ArrayToFilter( RadioGenresIds, wxT( "radiostation_genreid" ) );
+    query = wxString::Format( wxT( "DELETE FROM radiostations WHERE radiostation_source = %i AND " ), source );
+    query += ArrayToFilter( radioids, wxT( "radiostation_genreid" ) );
     return ExecuteUpdate( query );
   }
   return 0;
@@ -5453,11 +5474,11 @@ void guDbLibrary::SetRadioStation( const guRadioStation * radiostation )
   if( radiostation->m_Id != wxNOT_FOUND )
   {
     query = wxString::Format( wxT( "UPDATE radiostations SET "
-                                   "radiostation_scid = %u, radiostation_isuser = %u, radiostation_genreid = %u, "
+                                   "radiostation_scid = %u, radiostation_source = %u, radiostation_genreid = %u, "
                                    "radiostation_name = '%s', radiostation_link = '%s', radiostation_type = '%s', "
                                    "radiostation_br = %u, radiostation_lc = %u WHERE radiostation_id = %u;" ),
                                    radiostation->m_SCId,
-                                   radiostation->m_IsUser,
+                                   radiostation->m_Source,
                                    radiostation->m_GenreId,
                                    escape_query_str( radiostation->m_Name ).c_str(),
                                    escape_query_str( radiostation->m_Link ).c_str(),
@@ -5468,11 +5489,11 @@ void guDbLibrary::SetRadioStation( const guRadioStation * radiostation )
   }
   else
   {
-    query = wxString::Format( wxT( "INSERT INTO radiostations( radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, "\
+    query = wxString::Format( wxT( "INSERT INTO radiostations( radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, "\
                                    "radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc) "\
                                    "VALUES( NULL, %u, %u, %u, '%s', '%s', '%s', %u, %u );" ),
                                    radiostation->m_SCId,
-                                   radiostation->m_IsUser,
+                                   radiostation->m_Source,
                                    radiostation->m_GenreId,
                                    escape_query_str( radiostation->m_Name ).c_str(),
                                    escape_query_str( radiostation->m_Link ).c_str(),
@@ -5480,6 +5501,7 @@ void guDbLibrary::SetRadioStation( const guRadioStation * radiostation )
                                    radiostation->m_BitRate,
                                    radiostation->m_Listeners );
   }
+  guLogMessage( wxT( "SetRadioStation:\n%s" ), query.c_str() );
   ExecuteUpdate( query );
 }
 
@@ -5504,7 +5526,7 @@ bool guDbLibrary::GetRadioStation( const int id, guRadioStation * radiostation )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT radiostation_id, radiostation_scid, radiostation_isuser, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+  query = wxT( "SELECT radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
                  "FROM radiostations WHERE " );
   query += wxString::Format( wxT( "radiostation_id = %u LIMIT 1;" ), id );
 
@@ -5513,7 +5535,7 @@ bool guDbLibrary::GetRadioStation( const int id, guRadioStation * radiostation )
   {
     radiostation->m_Id         = dbRes.GetInt( 0 );
     radiostation->m_SCId       = dbRes.GetInt( 1 );
-    radiostation->m_IsUser     = dbRes.GetBool( 2 );
+    radiostation->m_Source     = dbRes.GetInt( 2 );
     radiostation->m_GenreId    = dbRes.GetInt( 3 );
     radiostation->m_Name       = dbRes.GetString( 4 );
     radiostation->m_Link       = dbRes.GetString( 5 );
@@ -5523,6 +5545,23 @@ bool guDbLibrary::GetRadioStation( const int id, guRadioStation * radiostation )
     return true;
   }
   return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDbLibrary::RadioStationExists( const int shoutcastid )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  bool RetVal;
+
+  query = wxString::Format( wxT( "SELECT radiostation_id WHERE radiostation_scid = %i LIMIT 1;" ), shoutcastid );
+
+  dbRes = ExecuteQuery( query );
+
+  RetVal = dbRes.NextRow();
+
+  dbRes.Finalize();
+  return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
