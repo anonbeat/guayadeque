@@ -72,7 +72,7 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbLibrary * db ) :
 	this->Layout();
 
     // By default enable already added items
-    m_Db->GetRadioGenres( &m_AddedGenres, false );
+    m_Db->GetRadioGenres( guRADIO_SOURCE_GENRE, &m_AddedGenres, false );
     int index;
     int count = m_AddedGenres.Count();
     int item;

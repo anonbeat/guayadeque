@@ -57,6 +57,35 @@ class guRadioGenreTreeCtrl;
 class guRadioStationListBox;
 class guRadioLabelListBox;
 
+#define     guRADIO_SEARCH_FLAG_NONE            ( 0 )
+#define     guRADIO_SEARCH_FLAG_NOWPLAYING      ( 1 << 0 )
+#define     guRADIO_SEARCH_FLAG_STATION         ( 1 << 1 )
+#define     guRADIO_SEARCH_FLAG_GENRE           ( 1 << 2 )
+#define     guRADIO_SEARCH_FLAG_ALLGENRES       ( 1 << 3 )
+#define     guRADIO_SEARCH_FLAG_DEFAULT         ( guRADIO_SEARCH_FLAG_NOWPLAYING | guRADIO_SEARCH_FLAG_ALLGENRES )
+
+
+class guShoutcastItemData;
+
+// -------------------------------------------------------------------------------- //
+class guShoutcastSearch : public wxDialog
+{
+  protected:
+    guShoutcastItemData *   m_ItemData;
+	wxTextCtrl *            m_SearchTextCtrl;
+    wxCheckBox *            m_SearchPlayChkBox;
+	wxCheckBox *            m_SearchGenreChkBox;
+	wxCheckBox *            m_SearchNameChkBox;
+	wxCheckBox *            m_AllGenresChkBox;
+
+    void                    OnOkButton( wxCommandEvent &event );
+
+  public:
+    guShoutcastSearch( wxWindow * parent, guShoutcastItemData * itemdata );
+	~guShoutcastSearch();
+
+};
+
 // -------------------------------------------------------------------------------- //
 // Class guRadioPanel
 // -------------------------------------------------------------------------------- //
@@ -90,6 +119,10 @@ class guRadioPanel : public wxPanel
 	void OnRadioUserAdd( wxCommandEvent &event );
 	void OnRadioUserEdit( wxCommandEvent &event );
 	void OnRadioUserDel( wxCommandEvent &event );
+
+	void OnRadioSearchAdd( wxCommandEvent &event );
+	void OnRadioSearchEdit( wxCommandEvent &event );
+	void OnRadioSearchDel( wxCommandEvent &event );
 
 	void OnRadioUserExport( wxCommandEvent &event );
 	void OnRadioUserImport( wxCommandEvent &event );

@@ -86,6 +86,7 @@
 
 #define SHOUTCAST_GET_GENRE_URL         wxT( "http://yp.shoutcast.com/sbin/newxml.phtml" )
 #define SHOUTCAST_GET_STATIONS_URL      wxT( "http://yp.shoutcast.com/sbin/newxml.phtml?genre=%s" )
+#define SHOUTCAST_SEARCH_STATIONS_URL   wxT( "http://yp.shoutcast.com/sbin/newxml.phtml?search=%s" )
 #define SHOUTCAST_GET_STATION_PLAYLIST  wxT( "http://yp.shoutcast.com/sbin/tunein-station.pls?id=%u" )
 
 
@@ -131,73 +132,80 @@ wxArrayString guShoutCast::GetGenres( void ) const
 }
 
 // -------------------------------------------------------------------------------- //
-void guShoutCast::GetStations( const wxString &GenreName, const int GenreId, guRadioStations * Stations, long MinBitRate ) const
+void guShoutCast::GetStations( const int source, const int flags, const wxString &GenreName, const int GenreId, guRadioStations * Stations, long MinBitRate ) const
 {
     wxString    Content;
     wxString    Value;
     long        BitRate;
-    char *      Buffer = NULL;
     wxCurlHTTP  http;
+    wxString    StationName;
+    wxString    StationType;
+    wxString    StationGenre;
+    wxString    StationCurrent;
+    long        StationId;
+    long        Listeners;
 
     //guLogMessage( wxT( "About to get stations for genre '%s'" ), GenreName.c_str() );
     //
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.Get( Buffer, wxString::Format( SHOUTCAST_GET_STATIONS_URL,
-                                                guURLEncode( GenreName ).c_str() ) );
-    if( Buffer )
-    {
-        Content = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
-        //
-        if( Content.Length() )
-        {
-            wxStringInputStream InStr( Content );
-            wxXmlDocument XmlDoc( InStr );
-            wxXmlNode * XmlNode = XmlDoc.GetRoot();
-            if( XmlNode && XmlNode->GetName() == wxT( "stationlist" ) )
-            {
-                XmlNode = XmlNode->GetChildren();
-                while( XmlNode )
-                {
-                    if( XmlNode->GetName() == wxT( "station" ) )
-                    {
-                        XmlNode->GetPropVal( wxT( "br" ), &Value );
-                        Value.ToLong( &BitRate );
-                        if( ( MinBitRate == SHOUTCAST_STATION_ALLBITRATES ) ||
-                            ( MinBitRate <= BitRate ) )
-                        {
-                            guRadioStation * RadioStation = new guRadioStation();
-                            if( RadioStation )
-                            {
-                                RadioStation->m_Id = wxNOT_FOUND;
-                                XmlNode->GetPropVal( wxT( "name" ), &RadioStation->m_Name );
-                                RadioStation->m_Name.Replace( wxT( " - [SHOUTcast.com]" ), wxT( "" ) );
-                                XmlNode->GetPropVal( wxT( "mt" ), &RadioStation->m_Type );
-                                XmlNode->GetPropVal( wxT( "id" ), &Value );
-                                Value.ToLong( &RadioStation->m_SCId );
-                                //XmlNode->GetPropVal( wxT( "br" ), &Value );
-                                //Value.ToLong( &RadioStation->m_BitRate );
-                                RadioStation->m_BitRate = BitRate;
-                                RadioStation->m_GenreId = GenreId;
-                                RadioStation->m_IsUser = false;
-                                XmlNode->GetPropVal( wxT( "lc" ), &Value );
-                                Value.ToLong( &RadioStation->m_Listeners );
+    guLogMessage( wxT( "GetStations:\n%s" ), wxString::Format( source == guRADIO_SOURCE_GENRE ?
+                SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ).c_str() );
 
-                                Stations->Add( RadioStation );
-                                //guLogMessage( wxT( "Station: '%s'" ), RadioStation->Name.c_str() );
-                            }
+    Content = GetUrlContent( wxString::Format( source == guRADIO_SOURCE_GENRE ?
+                SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ) );
+    //
+    if( Content.Length() )
+    {
+        wxStringInputStream InStr( Content );
+        wxXmlDocument XmlDoc( InStr );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        if( XmlNode && XmlNode->GetName() == wxT( "stationlist" ) )
+        {
+            XmlNode = XmlNode->GetChildren();
+            while( XmlNode )
+            {
+                if( XmlNode->GetName() == wxT( "station" ) )
+                {
+                    XmlNode->GetPropVal( wxT( "br" ), &Value );
+                    Value.ToLong( &BitRate );
+                    if( ( MinBitRate == SHOUTCAST_STATION_ALLBITRATES ) ||
+                        ( MinBitRate <= BitRate ) )
+                    {
+                        XmlNode->GetPropVal( wxT( "name" ), &StationName );
+                        StationName.Replace( wxT( " - [SHOUTcast.com]" ), wxT( "" ) );
+                        XmlNode->GetPropVal( wxT( "mt" ), &StationType );
+                        XmlNode->GetPropVal( wxT( "genre" ), &StationGenre );
+                        XmlNode->GetPropVal( wxT( "ct" ), &StationCurrent );
+                        XmlNode->GetPropVal( wxT( "id" ), &Value );
+                        Value.ToLong( &StationId );
+                        XmlNode->GetPropVal( wxT( "lc" ), &Value );
+                        Value.ToLong( &Listeners );
+
+                        guRadioStation * RadioStation = new guRadioStation();
+                        if( RadioStation )
+                        {
+                            RadioStation->m_Id = wxNOT_FOUND;
+                            RadioStation->m_Name = StationName;
+                            RadioStation->m_SCId = StationId;
+                            RadioStation->m_Type = StationType;
+                            RadioStation->m_GenreId = GenreId;
+                            RadioStation->m_GenreName = StationGenre;
+                            RadioStation->m_Source = source;
+                            RadioStation->m_Listeners = Listeners;
+                            RadioStation->m_BitRate = BitRate;
+                            RadioStation->m_NowPlaying = StationCurrent;
+
+                            Stations->Add( RadioStation );
+                            //guLogMessage( wxT( "Station: '%s'" ), RadioStation->m_Name.c_str() );
                         }
                     }
-                    XmlNode = XmlNode->GetNext();
                 }
+                XmlNode = XmlNode->GetNext();
             }
         }
-        else
-        {
-          guLogError( wxT( "ee: Could not get radio stations for genre '%s'" ), GenreName.c_str() );
-        }
+    }
+    else
+    {
+      guLogError( wxT( "ee: Could not get radio stations for genre '%s'" ), GenreName.c_str() );
     }
 }
 

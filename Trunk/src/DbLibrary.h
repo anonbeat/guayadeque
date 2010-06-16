@@ -183,6 +183,12 @@ class guAlbumItem : public guListItem
 };
 WX_DECLARE_OBJARRAY(guAlbumItem,guAlbumItems);
 
+enum guRadioSource {
+    guRADIO_SOURCE_GENRE = 0,
+    guRADIO_SOURCE_USER,
+    guRADIO_SOURCE_SEARCH
+};
+
 // -------------------------------------------------------------------------------- //
 class guRadioStation
 {
@@ -192,10 +198,12 @@ class guRadioStation
     wxString    m_Name;
     wxString    m_Link;
     long        m_GenreId;
-    bool        m_IsUser;
+    wxString    m_GenreName;
+    int         m_Source;
     wxString    m_Type;
     long        m_BitRate;
     long        m_Listeners;
+    wxString    m_NowPlaying;
 };
 WX_DECLARE_OBJARRAY(guRadioStation,guRadioStations);
 
@@ -281,7 +289,7 @@ class guDbLibrary : public guDb
 
     // Radio Filters Options
     wxArrayInt         m_RaGeFilters;
-    bool               m_RadioIsUser;
+    int                m_RadioSource;
     wxArrayInt         m_RaLaFilters;
     wxArrayString      m_RaTeFilters;
 
@@ -484,24 +492,26 @@ class guDbLibrary : public guDb
     void                    SetRaTeFilters( const wxArrayString &filters );
     void                    SetRadioLabelsFilters( const wxArrayInt &filters );
     void                    SetRadioGenresFilters( const wxArrayInt &filters );
-    void                    SetRadioIsUserFilter( bool isuserradio );
-    void                    GetRadioGenresList( guListItems * RadioGenres, const wxArrayInt &GenreIds );
-    void                    GetRadioGenres( guListItems * RadioGenres, bool AllowFilter = true );
+    void                    SetRadioSourceFilter( int source );
+    void                    GetRadioGenresList( const int source, const wxArrayInt &ids, guListItems * listitems, wxArrayInt * radioflags = NULL );
+    void                    GetRadioGenres( const int source, guListItems * radiogenres, bool allowfilter = true, wxArrayInt * radioflags = NULL );
     void                    SetRadioGenres( const wxArrayString &Genres );
     int                     GetRadioStations( guRadioStations * stations );
 //    void                    GetRadioCounter( wxLongLong * count );
     int                     GetUserRadioStations( guRadioStations * stations );
     void                    SetRadioStation( const guRadioStation * RadioStation );
     bool                    GetRadioStation( const int id, guRadioStation * radiostation );
+    bool                    RadioStationExists( const int shoutcastid );
     void                    SetRadioStations( const guRadioStations * RadioStations );
     guArrayListItems        GetStationsLabels( const wxArrayInt &Stations );
     void                    SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels );
-    int                     DelRadioStations( const wxArrayInt &RadioGenresIds );
+    int                     DelRadioStations( const int source, const wxArrayInt &radioids );
     int                     DelRadioStation( const int radioid );
     void                    SetRadioStationsOrder( int OrderValue );
 
-    int                     AddRadioGenre( wxString GenreName );
-    int                     SetRadioGenreName( const int GenreId, wxString GenreName );
+    int                     AddRadioGenre( const wxString &name, const int source, const int flags );
+    int                     SetRadioGenre( const int id, const wxString &name, const int source = guRADIO_SOURCE_GENRE,
+                                            const int flags = 0 );
     int                     DelRadioGenre( const int GenreId );
 
     //
