@@ -42,7 +42,7 @@
 #define guRADIO_TIMER_TEXTSEARCH_VALUE  500
 
 // -------------------------------------------------------------------------------- //
-// guRadioGenreTreeCtrl
+// guShoutcastItemData
 // -------------------------------------------------------------------------------- //
 class guShoutcastItemData : public wxTreeItemData
 {
@@ -191,6 +191,7 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
     wxTreeItemId *  GetShoutcastGenreId( void ) { return &m_ShoutcastGenreId; };
     wxTreeItemId *  GetShoutcastSearchId( void ) { return &m_ShoutcastSearchsId; };
     wxTreeItemId *  GetManualId( void ) { return &m_ManualId; };
+    wxTreeItemId    GetItemId( wxTreeItemId * itemid, const int id );
 
 };
 
@@ -516,6 +517,34 @@ void guRadioGenreTreeCtrl::OnRadioGenreDelete( wxCommandEvent &event )
         }
     }
 }
+
+// -------------------------------------------------------------------------------- //
+wxTreeItemId guRadioGenreTreeCtrl::GetItemId( wxTreeItemId * itemid, const int id )
+{
+    guLogMessage( wxT( "Searching for Id: %i" ), id );
+    wxTreeItemIdValue Cookie;
+    wxTreeItemId CurItem = GetFirstChild( * itemid, Cookie );
+    while( CurItem.IsOk() )
+    {
+        guShoutcastItemData * ItemData = ( guShoutcastItemData * ) GetItemData( CurItem );
+        if( ItemData )
+        {
+            if( ItemData->GetId() == id )
+                return CurItem;
+        }
+        else
+        {
+            wxTreeItemId ChildItem = GetItemId( &CurItem, id );
+            if( ChildItem.IsOk() )
+                return ChildItem;
+        }
+        CurItem = GetNextChild( * itemid, Cookie );
+    }
+    return CurItem;
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guRadioStationListBox
@@ -1213,7 +1242,7 @@ void guRadioPanel::OnRadioGenreListSelected( wxTreeEvent &event )
     }
     else
     {
-        m_Db->SetRadioSourceFilter( -1 );
+        m_Db->SetRadioSourceFilter( guRADIO_SOURCE_GENRE );
     }
     m_StationsListBox->ReloadItems();
 }
@@ -1480,8 +1509,15 @@ void guRadioPanel::OnRadioSearchAdd( wxCommandEvent &event )
     {
         if( ShoutcastSearch->ShowModal() == wxID_OK )
         {
-            m_Db->AddRadioGenre( ShoutcastItem.GetName(), guRADIO_SOURCE_SEARCH, ShoutcastItem.GetFlags() );
+            int RadioSearchId = m_Db->AddRadioGenre( ShoutcastItem.GetName(), guRADIO_SOURCE_SEARCH, ShoutcastItem.GetFlags() );
             m_GenresTreeCtrl->ReloadItems();
+            m_GenresTreeCtrl->Expand( m_GenresTreeCtrl->GetShoutcastSearchId() );
+            wxTreeItemId ItemId = m_GenresTreeCtrl->GetItemId( m_GenresTreeCtrl->GetShoutcastSearchId(), RadioSearchId );
+            if( ItemId.IsOk() )
+            {
+                m_GenresTreeCtrl->SelectItem( ItemId );
+                OnRadioUpdate( event );
+            }
         }
         ShoutcastSearch->Destroy();
     }

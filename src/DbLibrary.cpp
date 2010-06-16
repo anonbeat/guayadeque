@@ -5357,7 +5357,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
   if( m_StationsOrderDesc )
     query += wxT( " DESC;" );
 
-  guLogMessage( wxT( "GetRadioStations\n%s" ), query.c_str() );
+  //guLogMessage( wxT( "GetRadioStations\n%s" ), query.c_str() );
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )
@@ -5501,7 +5501,7 @@ void guDbLibrary::SetRadioStation( const guRadioStation * radiostation )
                                    radiostation->m_BitRate,
                                    radiostation->m_Listeners );
   }
-  guLogMessage( wxT( "SetRadioStation:\n%s" ), query.c_str() );
+  //guLogMessage( wxT( "SetRadioStation:\n%s" ), query.c_str() );
   ExecuteUpdate( query );
 }
 
