@@ -305,8 +305,8 @@ guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbLibrary * db 
 
     m_RootId   = AddRoot( wxT( "Radios" ), -1, -1, NULL );
     m_ShoutcastId = AppendItem( m_RootId, _( "Shoutcast" ), 0, 0, NULL );
-    m_ShoutcastGenreId = AppendItem( m_ShoutcastId, _( "Genres" ), 0, 0, NULL );
-    m_ShoutcastSearchsId = AppendItem( m_ShoutcastId, _( "Searchs" ), 2, 2, NULL );
+    m_ShoutcastGenreId = AppendItem( m_ShoutcastId, _( "Genre" ), 0, 0, NULL );
+    m_ShoutcastSearchsId = AppendItem( m_ShoutcastId, _( "Searches" ), 2, 2, NULL );
     m_ManualId = AppendItem( m_RootId, _( "User Defined" ), 1, 1, NULL );
 
     SetIndent( 5 );
@@ -960,7 +960,7 @@ guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel
 	GenreSizer->Fit( GenrePanel );
 
 	m_AuiManager.AddPane( GenrePanel,
-            wxAuiPaneInfo().Name( wxT( "RadioGenres" ) ).Caption( _( "Genres" ) ).
+            wxAuiPaneInfo().Name( wxT( "RadioGenres" ) ).Caption( _( "Genre" ) ).
             MinSize( 60, 60 ).Layer( 1 ).Row( 0 ).Position( 0 ).
             CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Left() );
@@ -1552,7 +1552,7 @@ void guRadioPanel::OnRadioSearchDel( wxCommandEvent &event )
 
     if( ( count = m_GenresTreeCtrl->GetSelections( ItemIds ) ) )
     {
-        if( wxMessageBox( _( "Are you sure to delete the selected radio searchs?" ),
+        if( wxMessageBox( _( "Are you sure to delete the selected radio searches?" ),
                           _( "Confirm" ),
                           wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
         {

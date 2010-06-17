@@ -176,7 +176,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_PlayerVumeters = new guPlayerVumeters( this );
 
     m_PlayerFilters = new guPlayerFilters( this, m_Db );
-	m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "Vumeters" ) ).
+	m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "VU Meters" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 20, 20 ).
         CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
         Bottom().Layer( 0 ).Row( 3 ).Position( 0 ).Hide() );
