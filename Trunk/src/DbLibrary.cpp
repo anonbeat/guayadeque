@@ -710,19 +710,21 @@ bool guDbLibrary::CheckDbVersion( void )
 
     case 6 :
     {
-      query.Add( wxT( "DROP INDEX 'radiostation_id';" ) );
-      query.Add( wxT( "DROP INDEX 'radiostation_genreid';" ) );
-      query.Add( wxT( "DROP TABLE 'radiostations';" ) );
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
-                      "radiostation_name VARCHAR, radiostation_link VARCHAR, radiostation_type VARCHAR, "
-                      "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_ct' on radiostations (radiostation_ct ASC);" ) );
-
+      if( dbVer > 4 )
+      {
+          query.Add( wxT( "DROP INDEX 'radiostation_id';" ) );
+          query.Add( wxT( "DROP INDEX 'radiostation_genreid';" ) );
+          query.Add( wxT( "DROP TABLE 'radiostations';" ) );
+          query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                          "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
+                          "radiostation_name VARCHAR, radiostation_link VARCHAR, radiostation_type VARCHAR, "
+                          "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_ct' on radiostations (radiostation_ct ASC);" ) );
+      }
     }
 
     case 7 :
@@ -809,6 +811,12 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
     }
 
+    default:
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_year' on songs(song_year ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_year_desc' on songs(song_year DESC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_disk' on songs(song_disk ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_number' on songs(song_number ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'song_def_order' on songs(song_disk,song_albumid,song_number ASC);" ) );
   }
 
   Count = query.Count();
@@ -2661,7 +2669,8 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
   wxString              query;
   wxSQLite3ResultSet    dbRes;
 
-  query = wxT( "SELECT DISTINCT album_id, album_artistid, artist_name, album_name, album_coverid FROM songs " );
+  //query = wxT( "SELECT DISTINCT album_id, album_artistid, artist_name, album_name, album_coverid FROM songs " );
+  query = wxT( "SELECT DISTINCT album_id, album_artistid, album_name, album_coverid FROM songs " );
   if( filter )
   {
     wxString DynQuery = DynPlayListToSQLQuery( filter );
@@ -2723,9 +2732,9 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
       guAlbumBrowserItem * Item = new guAlbumBrowserItem();
       Item->m_AlbumId = dbRes.GetInt( 0 ); //AlbumId;
       Item->m_ArtistId = dbRes.GetInt( 1 );
-      Item->m_ArtistName = dbRes.GetString( 2 );
-      Item->m_AlbumName = dbRes.GetString( 3 );
-      Item->m_CoverId = dbRes.GetInt( 4 );
+      Item->m_ArtistName = guListItemsGetName( m_ArtistsCache, Item->m_ArtistId );//dbRes.GetString( 2 );
+      Item->m_AlbumName = dbRes.GetString( 2 );
+      Item->m_CoverId = dbRes.GetInt( 3 );
       Item->m_CoverBitmap = GetCoverBitmap( Item->m_CoverId, false );
       Item->m_Year = 0; //dbRes.GetInt( 4 );
       Item->m_TrackCount = 0; //dbRes.GetInt( 5 );
@@ -4265,8 +4274,11 @@ wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
       break;
 
     case guTRACKS_ORDER_ARTIST :
-    case guTRACKS_ORDER_ALBUM :
       query += wxT( ",artists,albums WHERE song_artistid = artist_id AND song_albumid = album_id " );
+      break;
+
+    case guTRACKS_ORDER_ALBUM :
+      query += wxT( ",albums WHERE song_albumid = album_id " );
       break;
 
     case guTRACKS_ORDER_GENRE :
@@ -4363,19 +4375,23 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
   switch( order )
   {
     case guTRACKS_ORDER_DISK :
-      query += wxT( ",album_name COLLATE NOCASE,song_number;" );
+      query += wxT( ",album_name COLLATE NOCASE,song_disk,song_albumid,song_number;" );
       break;
 
     case guTRACKS_ORDER_ARTIST :
-      query += wxT( ",album_name COLLATE NOCASE,song_disk,song_number;" );
+      query += wxT( ",album_name COLLATE NOCASE,song_disk,song_albumid,song_number;" );
+      break;
+
+    case guTRACKS_ORDER_COMPOSER :
+      query += wxT( ",song_disk,song_albumid,song_number;" );
       break;
 
     case guTRACKS_ORDER_ALBUM :
-      query += wxT( ",song_disk,album_id,song_number;" );
+      query += wxT( ",song_disk,song_albumid,song_number;" );
       break;
 
     case guTRACKS_ORDER_YEAR :
-      query += wxT( ",album_name COLLATE NOCASE,song_disk,song_number;" );
+      query += wxT( ",album_name COLLATE NOCASE,song_disk,song_albumid,song_number;" );
       break;
 
     default:
@@ -4454,7 +4470,6 @@ int guDbLibrary::GetSongs( guTrackArray * Songs )
   query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
   //guLogMessage( wxT( "%s" ), query.c_str() );
-
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )
