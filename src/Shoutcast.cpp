@@ -180,22 +180,26 @@ void guShoutCast::GetStations( const int source, const int flags, const wxString
                         XmlNode->GetPropVal( wxT( "lc" ), &Value );
                         Value.ToLong( &Listeners );
 
-                        guRadioStation * RadioStation = new guRadioStation();
-                        if( RadioStation )
+                        if( StationType.StartsWith( wxT( "audio" ) ) )
                         {
-                            RadioStation->m_Id = wxNOT_FOUND;
-                            RadioStation->m_Name = StationName;
-                            RadioStation->m_SCId = StationId;
-                            RadioStation->m_Type = StationType;
-                            RadioStation->m_GenreId = GenreId;
-                            RadioStation->m_GenreName = StationGenre;
-                            RadioStation->m_Source = source;
-                            RadioStation->m_Listeners = Listeners;
-                            RadioStation->m_BitRate = BitRate;
-                            RadioStation->m_NowPlaying = StationCurrent;
 
-                            Stations->Add( RadioStation );
-                            //guLogMessage( wxT( "Station: '%s'" ), RadioStation->m_Name.c_str() );
+                            guRadioStation * RadioStation = new guRadioStation();
+                            if( RadioStation )
+                            {
+                                RadioStation->m_Id = wxNOT_FOUND;
+                                RadioStation->m_Name = StationName;
+                                RadioStation->m_SCId = StationId;
+                                RadioStation->m_Type = StationType;
+                                RadioStation->m_GenreId = GenreId;
+                                RadioStation->m_GenreName = StationGenre;
+                                RadioStation->m_Source = source;
+                                RadioStation->m_Listeners = Listeners;
+                                RadioStation->m_BitRate = BitRate;
+                                RadioStation->m_NowPlaying = StationCurrent;
+
+                                Stations->Add( RadioStation );
+                                //guLogMessage( wxT( "Station: '%s'" ), RadioStation->m_Name.c_str() );
+                            }
                         }
                     }
                 }
