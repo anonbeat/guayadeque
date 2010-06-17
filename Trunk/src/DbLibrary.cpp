@@ -715,10 +715,13 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "DROP TABLE 'radiostations';" ) );
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
-                      "radiostation_name VARCHAR(255), radiostation_link VARCHAR(255), radiostation_type VARCHAR(32), "
-                      "radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
+                      "radiostation_name VARCHAR, radiostation_link VARCHAR, radiostation_type VARCHAR, "
+                      "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_ct' on radiostations (radiostation_ct ASC);" ) );
 
     }
 
@@ -2713,7 +2716,6 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
   query += wxString::Format( wxT( " LIMIT %i, %i" ), start, count );
 
   //guLogMessage( wxT( "GetAlbums:\n%s" ), query.c_str() );
-
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )
