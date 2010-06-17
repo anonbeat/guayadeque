@@ -1,5 +1,7 @@
 
   * Added Now Playing searchs to the shoutcast radios
+  * Added in Radio tab the now playing and stream format info
+  * Added in Radio tab the option to reorder columns
   * Added option in preferences library tab to add playlists when doing a library scanning
   * Added Thailand translation. Thanks to mr_hangman
   * Added Norwegian translation. Thanks to jente_14

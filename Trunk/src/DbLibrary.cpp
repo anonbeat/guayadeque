@@ -59,7 +59,7 @@ WX_DEFINE_OBJARRAY(guRadioStations);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "14"
+#define GU_CURRENT_DBVERSION    "15"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_artistid, song_albumid, song_length, "\
                "song_number, song_pathid, song_filename, song_year, "\
@@ -663,10 +663,13 @@ bool guDbLibrary::CheckDbVersion( void )
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
-                      "radiostation_name VARCHAR(255), radiostation_link VARCHAR(255), radiostation_type VARCHAR(32), "
-                      "radiostation_br INTEGER, radiostation_lc INTEGER );" ) );
+                      "radiostation_name VARCHAR, radiostation_link VARCHAR, radiostation_type VARCHAR, "
+                      "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_ct' on radiostations (radiostation_ct ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiolabels( radiolabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiolabel_name VARCHAR(255));" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiolabel_id' on radiolabels (radiolabel_id ASC);" ) );
@@ -784,6 +787,18 @@ bool guDbLibrary::CheckDbVersion( void )
 
         query.Add( wxT( "ALTER TABLE radiostations ADD COLUMN radiostation_source INTEGER" ) );
         query.Add( wxT( "UPDATE radiostations SET radiostation_source = radiostation_isuser;" ) );
+      }
+    }
+
+    case 14 :
+    {
+      if( dbVer > 4 )
+      {
+        query.Add( wxT( "ALTER TABLE radiostations ADD COLUMN radiostation_ct VARCHAR" ) );
+
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_ct' on radiostations (radiostation_ct ASC);" ) );
       }
 
       guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
@@ -5287,7 +5302,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
 
   if( !GetRadioFiltersCount() )
   {
-    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct "\
                  "FROM radiostations WHERE " );
     query += wxString::Format( wxT( "radiostation_source = %u " ), m_RadioSource );
     query += wxT( "GROUP BY radiostation_name, radiostation_br " );
@@ -5297,7 +5312,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
     if( m_RadioSource == guRADIO_SOURCE_USER )
     {
         //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc " );
+        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct " );
         querydb = wxT( "FROM radiostations " );
 
         //else
@@ -5327,7 +5342,7 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
     else
     {
         //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct "\
                      "FROM radiostations, radiogenres" );
 
         //else
@@ -5369,8 +5384,12 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
     query += wxT( "radiostation_name COLLATE NOCASE" );
   else if( m_StationsOrder == guRADIOSTATIONS_ORDER_BITRATE )
     query += wxT( "radiostation_br" );
-  else
+  else if( m_StationsOrder == guRADIOSTATIONS_ORDER_LISTENERS )
     query += wxT( "radiostation_lc" );
+  else if( m_StationsOrder == guRADIOSTATIONS_ORDER_TYPE )
+    query += wxT( "radiostation_type" );
+  else //if( m_StationsOrder == guRADIOSTATIONS_COLUMN_NOWPLAYING )
+    query += wxT( "radiostation_ct" );
 
   if( m_StationsOrderDesc )
     query += wxT( " DESC;" );
@@ -5390,6 +5409,8 @@ int guDbLibrary::GetRadioStations( guRadioStations * Stations )
     Station->m_Type       = dbRes.GetString( 6 );
     Station->m_BitRate    = dbRes.GetInt( 7 );
     Station->m_Listeners  = dbRes.GetInt( 8 );
+    Station->m_NowPlaying = dbRes.GetString( 9 );
+
     Stations->Add( Station );
   }
   dbRes.Finalize();
@@ -5494,7 +5515,7 @@ void guDbLibrary::SetRadioStation( const guRadioStation * radiostation )
     query = wxString::Format( wxT( "UPDATE radiostations SET "
                                    "radiostation_scid = %u, radiostation_source = %u, radiostation_genreid = %u, "
                                    "radiostation_name = '%s', radiostation_link = '%s', radiostation_type = '%s', "
-                                   "radiostation_br = %u, radiostation_lc = %u WHERE radiostation_id = %u;" ),
+                                   "radiostation_br = %u, radiostation_lc = %u, radiostation_ct = '%s' WHERE radiostation_id = %u;" ),
                                    radiostation->m_SCId,
                                    radiostation->m_Source,
                                    radiostation->m_GenreId,
@@ -5503,13 +5524,14 @@ void guDbLibrary::SetRadioStation( const guRadioStation * radiostation )
                                    escape_query_str( radiostation->m_Type ).c_str(),
                                    radiostation->m_BitRate,
                                    radiostation->m_Listeners,
+                                   escape_query_str( radiostation->m_NowPlaying ).c_str(),
                                    radiostation->m_Id );
   }
   else
   {
     query = wxString::Format( wxT( "INSERT INTO radiostations( radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, "\
-                                   "radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc) "\
-                                   "VALUES( NULL, %u, %u, %u, '%s', '%s', '%s', %u, %u );" ),
+                                   "radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct ) "\
+                                   "VALUES( NULL, %u, %u, %u, '%s', '%s', '%s', %u, %u, '%s' );" ),
                                    radiostation->m_SCId,
                                    radiostation->m_Source,
                                    radiostation->m_GenreId,
@@ -5517,7 +5539,8 @@ void guDbLibrary::SetRadioStation( const guRadioStation * radiostation )
                                    escape_query_str( radiostation->m_Link ).c_str(),
                                    escape_query_str( radiostation->m_Type ).c_str(),
                                    radiostation->m_BitRate,
-                                   radiostation->m_Listeners );
+                                   radiostation->m_Listeners,
+                                   escape_query_str( radiostation->m_NowPlaying ).c_str() );
   }
   //guLogMessage( wxT( "SetRadioStation:\n%s" ), query.c_str() );
   ExecuteUpdate( query );

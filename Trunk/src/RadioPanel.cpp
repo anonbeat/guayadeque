@@ -252,8 +252,10 @@ class guUpdateRadiosThread : public wxThread
 #define guRADIOSTATIONS_COLUMN_NAME         0
 #define guRADIOSTATIONS_COLUMN_BITRATE      1
 #define guRADIOSTATIONS_COLUMN_LISTENERS    2
+#define guRADIOSTATIONS_COLUMN_TYPE         3
+#define guRADIOSTATIONS_COLUMN_NOWPLAYING   4
 
-#define guRADIOSTATIONS_COLUMN_COUNT        3
+#define guRADIOSTATIONS_COLUMN_COUNT        5
 
 // -------------------------------------------------------------------------------- //
 // guRadioStationListBox
@@ -550,7 +552,7 @@ wxTreeItemId guRadioGenreTreeCtrl::GetItemId( wxTreeItemId * itemid, const int i
 // guRadioStationListBox
 // -------------------------------------------------------------------------------- //
 guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbLibrary * db ) :
-    guListView( parent, wxLB_SINGLE )
+    guListView( parent, wxLB_SINGLE | guLISTVIEW_COLUMN_SELECT|guLISTVIEW_COLUMN_SORTING )
 {
     m_Db = db;
 
@@ -561,16 +563,24 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbLibrary * d
 
     wxArrayString ColumnNames = GetColumnNames();
     // Create the Columns
-    //int ColId;
+    int ColId;
+    wxString ColName;
     int index;
     int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
+        ColId = Config->ReadNum( wxString::Format( wxT( "RadioCol%u" ), index ), index, wxT( "RadioColumns" ) );
+
+        ColName = ColumnNames[ ColId ];
+
+        ColName += ( ( ColId == m_StationsOrder ) ? ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
+
         guListViewColumn * Column = new guListViewColumn(
-            ColumnNames[ index ] + ( ( index == m_StationsOrder ) ? ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ),
-            index,
-            Config->ReadNum( wxString::Format( wxT( "RadioColSize%u" ), index ), 80, wxT( "Positions" ) )
-        );
+            ColName,
+            ColId,
+            Config->ReadNum( wxString::Format( wxT( "RadioColWidth%u" ), index ), 80, wxT( "RadioColumns" ) ),
+            Config->ReadBool( wxString::Format( wxT( "RadioColShow%u" ), index ), true, wxT( "RadioColumns" ) )
+            );
         InsertColumn( Column );
     }
 
@@ -582,12 +592,14 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbLibrary * d
 guRadioStationListBox::~guRadioStationListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-
+    //int ColId;
     int index;
     int count = guRADIOSTATIONS_COLUMN_COUNT;
     for( index = 0; index < count; index++ )
     {
-        Config->WriteNum( wxString::Format( wxT( "RadioColSize%u" ), index ), GetColumnWidth( index ), wxT( "Positions" ) );
+        Config->WriteNum( wxString::Format( wxT( "RadioCol%u" ), index ), ( * m_Columns )[ index ].m_Id, wxT( "RadioColumns" ) );
+        Config->WriteNum( wxString::Format( wxT( "RadioColWidth%u" ), index ), ( * m_Columns )[ index ].m_Width, wxT( "RadioColumns" ) );
+        Config->WriteBool( wxString::Format( wxT( "RadioColShow%u" ), index ), ( * m_Columns )[ index ].m_Enabled, wxT( "RadioColumns" ) );
     }
 
     Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "General" ) );
@@ -601,6 +613,8 @@ wxArrayString guRadioStationListBox::GetColumnNames( void )
     ColumnNames.Add( _( "Name" ) );
     ColumnNames.Add( _( "BitRate" ) );
     ColumnNames.Add( _( "Listeners" ) );
+    ColumnNames.Add( _( "Format" ) );
+    ColumnNames.Add( _( "Now Playing" ) );
     return ColumnNames;
 }
 
@@ -609,7 +623,7 @@ wxString guRadioStationListBox::OnGetItemText( const int row, const int col ) co
 {
     guRadioStation * Radio;
     Radio = &m_Radios[ row ];
-    switch( col )
+    switch( ( * m_Columns )[ col ].m_Id )
     {
         case guRADIOSTATIONS_COLUMN_NAME :
           return Radio->m_Name;
@@ -622,7 +636,14 @@ wxString guRadioStationListBox::OnGetItemText( const int row, const int col ) co
         case guRADIOSTATIONS_COLUMN_LISTENERS :
           return wxString::Format( wxT( "%u" ), Radio->m_Listeners );
 
-    }
+        case guRADIOSTATIONS_COLUMN_TYPE :
+          return Radio->m_Type;
+          break;
+
+        case guRADIOSTATIONS_COLUMN_NOWPLAYING :
+          return Radio->m_NowPlaying;
+          break;
+}
     return wxEmptyString;
 }
 
@@ -740,16 +761,31 @@ void guRadioStationListBox::SetStationsOrder( int order )
     m_Db->SetRadioStationsOrder( m_StationsOrder );
 
     wxArrayString ColumnNames = GetColumnNames();
+    int CurColId;
     int index;
     int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
+        CurColId = GetColumnId( index );
         SetColumnLabel( index,
-            ColumnNames[ index ]  + ( ( index == m_StationsOrder ) ?
-                ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+            ColumnNames[ CurColId ]  + ( ( order == CurColId ) ? ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
     ReloadItems();
+
+
+//    wxArrayString ColumnNames = m_SongListCtrl->GetColumnNames();
+//    int CurColId;
+//    int index;
+//    int count = ColumnNames.Count();
+//    for( index = 0; index < count; index++ )
+//    {
+//        CurColId = m_SongListCtrl->GetColumnId( index );
+//        m_SongListCtrl->SetColumnLabel( index,
+//            ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_Db->GetSongsOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+//    }
+//
+//    m_SongListCtrl->ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1177,10 +1213,8 @@ void guRadioPanel::OnTextChangedTimer( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnStationListBoxColClick( wxListEvent &event )
 {
-    int col = event.GetColumn();
-    if( col < 0 )
-        return;
-    m_StationsListBox->SetStationsOrder( col );
+    int ColId = m_StationsListBox->GetColumnId( event.m_col );
+    m_StationsListBox->SetStationsOrder( ColId );
 }
 
 
