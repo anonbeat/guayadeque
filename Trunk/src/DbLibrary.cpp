@@ -3302,11 +3302,24 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
                     dbSets += wxT( "AND " );
                 dbSets  += wxT( "song_genreid = genre_id " );
             }
-            sort += wxT( "song_genrename COLLATE NOCASE" );
+            sort += wxT( "genre_name COLLATE NOCASE" );
             break;
         }
 
-        case guDYNAMIC_FILTER_ORDER_COMPOSER : sort += wxT( "song_composer COLLATE NOCASE" ); break;
+        case guDYNAMIC_FILTER_ORDER_COMPOSER :
+        {
+            //sort += wxT( "song_composer COLLATE NOCASE" ); break;
+            if( !dbNames.Contains( wxT( "composers" ) ) )
+            {
+                dbNames += wxT( ", composers " );
+                if( !dbSets.IsEmpty() )
+                    dbSets += wxT( "AND " );
+                dbSets  += wxT( "song_composerid = composer_id " );
+            }
+            sort += wxT( "composer_name COLLATE NOCASE" );
+            break;
+        }
+
         case guDYNAMIC_FILTER_ORDER_YEAR : sort += wxT( "song_year" ); break;
         case guDYNAMIC_FILTER_ORDER_RATING : sort += wxT( "song_rating" ); break;
         case guDYNAMIC_FILTER_ORDER_LENGTH : sort += wxT( "song_length" ); break;
@@ -4242,6 +4255,11 @@ wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
     case guTRACKS_ORDER_GENRE :
       query += wxT( ",genres WHERE song_genreid = genre_id " );
       break;
+
+    case guTRACKS_ORDER_COMPOSER :
+      query += wxT( ",composers WHERE song_composerid = composer_id " );
+      break;
+
 //    case guTRACKS_ORDER_TITLE :
 //    case guTRACKS_ORDER_NUMBER :
 //    case guTRACKS_ORDER_LENGTH :
@@ -4281,7 +4299,7 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
       break;
 
     case guTRACKS_ORDER_COMPOSER :
-      query += wxT( "song_composer COLLATE NOCASE" );
+      query += wxT( "composer_name COLLATE NOCASE" );
       break;
 
     case guTRACKS_ORDER_DISK :
