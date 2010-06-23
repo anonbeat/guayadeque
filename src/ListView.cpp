@@ -236,12 +236,6 @@ void guListView::OnChangedSize( wxSizeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guListView::OnGetItemText( const int row, const int col ) const
-{
-    return wxEmptyString;
-}
-
-// -------------------------------------------------------------------------------- //
 void guListView::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
     if( ( row == wxNOT_FOUND ) || ( row >= GetItemCount() ) )
@@ -255,11 +249,6 @@ void guListView::DrawBackground( wxDC &dc, const wxRect &rect, const int row, co
     if( row == wxNOT_FOUND )
         return;
     m_ListBox->DoDrawBackground( dc, rect, row, col );
-}
-
-// -------------------------------------------------------------------------------- //
-void guListView::CreateContextMenu( wxMenu * menu ) const
-{
 }
 
 // -------------------------------------------------------------------------------- //
@@ -282,11 +271,6 @@ void guListView::OnContextMenu( wxContextMenuEvent& event )
     PopupMenu( &Menu, Point.x, Point.y );
 }
 
-// -------------------------------------------------------------------------------- //
-int guListView::GetItemCount( void ) const
-{
-    return m_ListBox->GetItemCount();
-}
 
 // -------------------------------------------------------------------------------- //
 void guListView::SetItemCount( const int count )
@@ -294,12 +278,6 @@ void guListView::SetItemCount( const int count )
     m_ListBox->SetItemCount( count );
     if( m_Header )
         m_Header->RefreshWidth();
-}
-
-// -------------------------------------------------------------------------------- //
-void guListView::SetItemHeight( const int height )
-{
-    m_ListBox->SetItemHeigth( height );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -319,30 +297,6 @@ wxCoord guListView::OnMeasureItem( size_t n ) const
 }
 
 // -------------------------------------------------------------------------------- //
-int guListView::GetFirstSelected( unsigned long &cookie ) const
-{
-    return m_ListBox->GetFirstSelected( cookie );
-}
-
-// -------------------------------------------------------------------------------- //
-int guListView::GetNextSelected( unsigned long &cookie ) const
-{
-    return m_ListBox->GetNextSelected( cookie );
-}
-
-// -------------------------------------------------------------------------------- //
-int guListView::GetSelection() const
-{
-    return m_ListBox->GetSelection();
-}
-
-// -------------------------------------------------------------------------------- //
-bool guListView::Select( size_t item, bool select )
-{
-    return m_ListBox->Select( item, select );
-}
-
-// -------------------------------------------------------------------------------- //
 void guListView::SetSelection( int selection )
 {
     m_ListBox->SetSelection( selection );
@@ -354,30 +308,6 @@ void guListView::SetSelection( int selection )
 }
 
 // -------------------------------------------------------------------------------- //
-size_t guListView::GetFirstVisibleLine() const
-{
-    return m_ListBox->GetFirstVisibleLine();
-}
-
-// -------------------------------------------------------------------------------- //
-size_t guListView::GetLastVisibleLine() const
-{
-    return m_ListBox->GetLastVisibleLine();
-}
-
-// -------------------------------------------------------------------------------- //
-bool guListView::ScrollLines( int lines )
-{
-    return m_ListBox->ScrollLines( lines );
-}
-
-// -------------------------------------------------------------------------------- //
-bool guListView::ScrollToLine( size_t line )
-{
-    return m_ListBox->ScrollToLine( line );
-}
-
-// -------------------------------------------------------------------------------- //
 void guListView::RefreshAll( int scroll )
 {
     if( scroll != wxNOT_FOUND )
@@ -386,30 +316,6 @@ void guListView::RefreshAll( int scroll )
             m_ListBox->ScrollToLine( scroll );
     }
     m_ListBox->RefreshAll();
-}
-
-// -------------------------------------------------------------------------------- //
-void guListView::RefreshLines( const int from, const int to )
-{
-    m_ListBox->RefreshLines( from, to );
-}
-
-// -------------------------------------------------------------------------------- //
-void guListView::RefreshLine( const int line )
-{
-    m_ListBox->RefreshLine( line );
-}
-
-// -------------------------------------------------------------------------------- //
-bool guListView::IsSelected( size_t row ) const
-{
-    return m_ListBox->IsSelected( row );
-}
-
-// -------------------------------------------------------------------------------- //
-int guListView::GetDragFiles( wxFileDataObject * files )
-{
-    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -432,12 +338,6 @@ void guListView::OnBeginDrag( wxMouseEvent &event )
         RefreshAll();
         //wxMessageBox( wxT( "DoDragDrop Done" ) );
     }
-}
-
-// -------------------------------------------------------------------------------- //
-int guListView::GetSelectedSongs( guTrackArray * tracks ) const
-{
-    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -515,47 +415,11 @@ void guListView::SetSelectedItems( const wxArrayInt &selection )
 }
 
 // -------------------------------------------------------------------------------- //
-void guListView::ClearSelectedItems()
-{
-    SetSelection( wxNOT_FOUND );
-}
-
-//// -------------------------------------------------------------------------------- //
-//long guListView::FindItem( long start, const wxString &str, bool partial, bool atstart )
-//{
-//    return m_ListBox->FindItem( start, str, partial, atstart );
-//}
-
-// -------------------------------------------------------------------------------- //
 void guListView::SetColumnWidth( const int col, const int width )
 {
     ( * m_Columns )[ col ].m_Width = width;
     if( m_Header )
         m_Header->RefreshWidth();
-}
-
-// -------------------------------------------------------------------------------- //
-int guListView::GetColumnWidth( const int col ) const
-{
-    return m_Columns->Item( col ).m_Width;
-}
-
-// -------------------------------------------------------------------------------- //
-bool guListView::IsAllowedColumnSelect( void ) const
-{
-    return m_ColSelect;
-}
-
-// -------------------------------------------------------------------------------- //
-wxString guListView::GetColumnLabel( const int col ) const
-{
-    return m_Columns->Item( col ).m_Label;
-}
-
-// -------------------------------------------------------------------------------- //
-int guListView::GetColumnId( const int col ) const
-{
-    return m_Columns->Item( col ).m_Id;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -574,17 +438,6 @@ void guListView::SetColumnImage( const int col, const int imageindex )
         m_Header->Refresh();
 }
 
-// -------------------------------------------------------------------------------- //
-void guListView::OnKeyDown( wxKeyEvent &event )
-{
-    event.Skip();
-}
-
-// -------------------------------------------------------------------------------- //
-int guListView::HitTest( wxCoord x, wxCoord y ) const
-{
-    return m_ListBox->HitTest( x, y );
-}
 
 // -------------------------------------------------------------------------------- //
 void guListView::SetImageList( wxImageList * imagelist )
@@ -595,21 +448,6 @@ void guListView::SetImageList( wxImageList * imagelist )
 
     if( m_Header )
         m_Header->SetImageList( imagelist );
-}
-
-// -------------------------------------------------------------------------------- //
-void guListView::OnDropBegin( void )
-{
-}
-
-// -------------------------------------------------------------------------------- //
-void guListView::OnDropFile( const wxString &filename )
-{
-}
-
-// -------------------------------------------------------------------------------- //
-void guListView::OnDropEnd( void )
-{
 }
 
 // -------------------------------------------------------------------------------- //
@@ -672,11 +510,6 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
 }
 
 // -------------------------------------------------------------------------------- //
-void guListView::MoveSelection( void )
-{
-}
-
-// -------------------------------------------------------------------------------- //
 void guListView::OnMouse( wxMouseEvent &event )
 {
     if( event.Dragging() )
@@ -701,12 +534,6 @@ void guListView::OnMouse( wxMouseEvent &event )
     }
 
     event.Skip();
-}
-
-// -------------------------------------------------------------------------------- //
-wxString guListView::GetItemSearchText( const int row )
-{
-    return GetItemName( row );
 }
 
 //// -------------------------------------------------------------------------------- //
@@ -914,9 +741,11 @@ void guListViewClient::OnPaint( wxPaintEvent &event )
     rectLine.width = clientSize.x;
 
     m_Owner->ItemsLock();
-    // iterate over all visible lines
     const size_t lineMax = GetVisibleEnd();
-    for( size_t line = GetFirstVisibleLine(); line < lineMax; line++ )
+    size_t line = GetFirstVisibleLine();
+    m_Owner->ItemsCheckRange( line, lineMax );
+    // iterate over all visible lines
+    for( ; line < lineMax; line++ )
     {
         const wxCoord hLine = OnGetLineHeight(line);
 

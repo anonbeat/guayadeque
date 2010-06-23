@@ -520,7 +520,7 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
 {
     //const wxString &artist, const wxString &tracK
     wxString Artist = trackchangeinfo->m_ArtistName;
-    wxString Track = trackchangeinfo->m_TrackName;
+    wxString Track = RemoveSearchFilters( trackchangeinfo->m_TrackName );
     wxString LyricText;
 
     m_EditButton->Enable( !Artist.IsEmpty() && !Track.IsEmpty() &&

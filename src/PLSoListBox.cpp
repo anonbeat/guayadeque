@@ -45,6 +45,25 @@ guPLSoListBox::~guPLSoListBox()
 {
 }
 
+//// -------------------------------------------------------------------------------- //
+//void guPLSoListBox::ItemsCheckRange( const int start, const int end )
+//{
+////    guLogMessage( wxT( "guPLSoListBox::ItemsCheckRange( %i, %i )" ), start, end );
+////    if( m_ItemsFirst != start || m_ItemsLast != end )
+////    {
+////        m_Items.Empty();
+////
+////        if( m_PLId > 0 )
+////        {
+////            m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Items, &m_TracksLength, &m_TracksSize );
+////            m_Db->GetPlayListSetIds( m_PLId, &m_PLSetIds );
+////        }
+////
+////        m_ItemsFirst = start;
+////        m_ItemsLast = end;
+////    }
+//}
+
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::GetItemsList( void )
 {
@@ -58,6 +77,7 @@ void guPLSoListBox::GetItemsList( void )
     {
         m_Items.Empty();
     }
+    SetItemCount( m_Items.Count() );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );

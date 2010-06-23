@@ -332,8 +332,7 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
     {
         CheckSymLinks( LibPaths );
 
-        query = wxT( "SELECT DISTINCT song_id, song_filename, path_value FROM songs, paths " \
-                   "WHERE song_pathid = path_id;" );
+        query = wxT( "SELECT DISTINCT song_id, song_filename, song_path FROM songs " );
 
         dbRes = m_Db->ExecuteQuery( query );
 
@@ -382,12 +381,12 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
                 }
 
                 // Delete all posible orphan entries
-                Queries.Add( wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" ) );
-                Queries.Add( wxT( "DELETE FROM artists WHERE artist_id NOT IN ( SELECT DISTINCT song_artistid FROM songs );" ) );
-                Queries.Add( wxT( "DELETE FROM composers WHERE composer_id NOT IN ( SELECT DISTINCT song_composerid FROM songs );" ) );
-                Queries.Add( wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" ) );
-                Queries.Add( wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT album_coverid FROM albums );" ) );
-                Queries.Add( wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" ) );
+//                Queries.Add( wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" ) );
+//                Queries.Add( wxT( "DELETE FROM artists WHERE artist_id NOT IN ( SELECT DISTINCT song_artistid FROM songs );" ) );
+//                Queries.Add( wxT( "DELETE FROM composers WHERE composer_id NOT IN ( SELECT DISTINCT song_composerid FROM songs );" ) );
+//                Queries.Add( wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" ) );
+                Queries.Add( wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT song_coverid FROM songs );" ) );
+//                Queries.Add( wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM plsets WHERE plset_type = 0 AND plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM settags WHERE settag_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
 
