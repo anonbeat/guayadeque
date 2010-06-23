@@ -23,6 +23,8 @@
 #include "Utils.h"
 
 //#define DBLIBRARY_SHOW_QUERIES    1
+//#define DBLIBRARY_SHOW_TIMES        1
+//#define DBLIBRARY_TIMEOUT           10
 
 // -------------------------------------------------------------------------------- //
 guDb::guDb()
@@ -73,6 +75,9 @@ wxSQLite3ResultSet guDb::ExecuteQuery( const wxString &query )
 #ifdef  DBLIBRARY_SHOW_QUERIES
   guLogMessage( wxT( "ExecQuery:\n%s" ), query.c_str() );
 #endif
+#ifdef DBLIBRARY_SHOW_TIMES
+  wxLongLong time = wxGetLocalTimeMillis();
+#endif
   wxSQLite3ResultSet RetVal;
   try {
     RetVal = m_Db.ExecuteQuery( query );
@@ -86,6 +91,11 @@ wxSQLite3ResultSet guDb::ExecuteQuery( const wxString &query )
   {
     guLogError( wxT( "Other exception found while executing:\n'%s'" ), query.c_str() );
   }
+#ifdef DBLIBRARY_SHOW_TIMES
+  time = wxGetLocalTimeMillis() - time;
+  if( time > DBLIBRARY_TIMEOUT )
+    guLogWarning( wxT( "Query: %u ms\n%s" ), time.GetLo(), query.c_str() );
+#endif
   return RetVal;
 }
 
@@ -94,6 +104,9 @@ int guDb::ExecuteUpdate( const wxString &query )
 {
 #ifdef  DBLIBRARY_SHOW_QUERIES
   guLogMessage( wxT( "ExecUpdate:\n%s" ), query.c_str() );
+#endif
+#ifdef DBLIBRARY_SHOW_TIMES
+  wxLongLong time = wxGetLocalTimeMillis();
 #endif
   int RetVal = 0;
   try {
@@ -108,6 +121,11 @@ int guDb::ExecuteUpdate( const wxString &query )
   {
     guLogError( wxT( "Other exception found while executing:\n'%s'" ), query.c_str() );
   }
+#ifdef DBLIBRARY_SHOW_TIMES
+  time = wxGetLocalTimeMillis() - time;
+  if( time > DBLIBRARY_TIMEOUT )
+    guLogWarning( wxT( "Query: %u ms\n%s" ), time.GetLo(), query.c_str() );
+#endif
   return RetVal;
 }
 
@@ -127,7 +145,8 @@ int guDb::ExecuteUpdate( const wxSQLite3StatementBuffer &query )
 void guDb::SetInitParams( void )
 {
   wxString query;
-  query = wxT( "PRAGMA page_size=8192; PRAGMA cache_size=4096; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
+  query = wxT( "PRAGMA legacy_file_format=false; PRAGMA page_size=8192; PRAGMA cache_size=4096; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
+  //query = wxT( "PRAGMA page_size=10240; PRAGMA cache_size=65536; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
   ExecuteUpdate( query );
 }
 

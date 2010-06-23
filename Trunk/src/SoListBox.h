@@ -39,8 +39,9 @@
 #define guSONGS_COLUMN_PLAYCOUNT    11
 #define guSONGS_COLUMN_LASTPLAY     12
 #define guSONGS_COLUMN_ADDEDDATE    13
+#define guSONGS_COLUMN_FORMAT       14
 
-#define guSONGS_COLUMN_COUNT        14
+#define guSONGS_COLUMN_COUNT        15
 
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public guListView
@@ -49,6 +50,8 @@ class guSoListBox : public guListView
     guDbLibrary *       m_Db;
     guTrackArray        m_Items;
     wxMutex             m_ItemsMutex;
+    int                 m_ItemsFirst;
+    int                 m_ItemsLast;
     wxString            m_ConfName;
 
     wxBitmap *          m_NormalStar;
@@ -69,6 +72,7 @@ class guSoListBox : public guListView
 
     virtual void                ItemsLock() { m_ItemsMutex.Lock(); };
     virtual void                ItemsUnlock() { m_ItemsMutex.Unlock(); };
+    virtual void                ItemsCheckRange( const int start, const int end );
 
   public :
     guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style = 0 );

@@ -62,12 +62,6 @@ guAlListBox::~guAlListBox()
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlListBox::GetItemsList( void )
-{
-    m_Db->GetAlbums( ( guAlbumItems * ) m_Items );
-}
-
-// -------------------------------------------------------------------------------- //
 bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
 {
     long item = FindItem( 0, AlbumName, false );
@@ -382,6 +376,12 @@ wxString inline guAlListBox::GetItemName( const int row ) const
 int inline guAlListBox::GetItemId( const int row ) const
 {
     return ( * m_Items )[ row ].m_Id;
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlListBox::GetItemsList( void )
+{
+    m_Db->GetAlbums( ( guAlbumItems * ) m_Items );
 }
 
 // -------------------------------------------------------------------------------- //

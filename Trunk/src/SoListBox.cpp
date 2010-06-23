@@ -41,6 +41,8 @@ guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confn
 
     m_Db = NewDb;
     m_ConfName = confname;
+    m_ItemsFirst = -1;
+    m_ItemsLast = -1;
 
     int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
@@ -114,8 +116,9 @@ guSoListBox::~guSoListBox()
 wxString guSoListBox::OnGetItemText( const int row, const int col ) const
 {
     guTrack * Song;
+    //guLogMessage( wxT( "GetItemText( %i, %i )    %i-%i  %i" ), row, col, m_ItemsFirst, m_ItemsLast, m_Items.Count() );
 
-    Song = &m_Items[ row ];
+    Song = &m_Items[ row - m_ItemsFirst ];
 
     switch( ( * m_Columns )[ col ].m_Id )
     {
@@ -183,6 +186,11 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
             AddedDate.Set( ( time_t ) Song->m_AddedTime );
             return AddedDate.FormatDate();
         }
+
+        case guSONGS_COLUMN_FORMAT :
+        {
+            return Song->m_Format;
+        }
     }
     return wxEmptyString;
 }
@@ -198,7 +206,7 @@ void guSoListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 
         for( x = 0; x < 5; x++ )
         {
-           dc.DrawBitmap( ( x >= m_Items[ row ].m_Rating ) ? * m_NormalStar : * m_SelectStar,
+           dc.DrawBitmap( ( x >= m_Items[ row - m_ItemsFirst ].m_Rating ) ? * m_NormalStar : * m_SelectStar,
                           rect.x + 3 + ( w * x ), rect.y + 3, true );
         }
     }
@@ -210,9 +218,24 @@ void guSoListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 
 
 // -------------------------------------------------------------------------------- //
+void guSoListBox::ItemsCheckRange( const int start, const int end )
+{
+    //guLogMessage( wxT( "guSoListBox::ItemsCheckRange( %i, %i )" ), start, end );
+    if( m_ItemsFirst != start || m_ItemsLast != end )
+    {
+        m_Items.Empty();
+        m_Db->GetSongs( &m_Items, start, end );
+        m_ItemsFirst = start;
+        m_ItemsLast = end;
+    }
+    //guLogMessage( wxT( "Updated the items... %i" ), m_Items );
+}
+
+// -------------------------------------------------------------------------------- //
 void guSoListBox::GetItemsList( void )
 {
-    m_Db->GetSongs( &m_Items );
+    //m_Db->GetSongs( &m_Items, GetFirstVisibleLine(), GetLastVisibleLine() );
+    SetItemCount( m_Db->GetSongsCount() );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
@@ -233,10 +256,12 @@ void guSoListBox::ReloadItems( bool reset )
     m_ItemsMutex.Lock();
 
     m_Items.Empty();
+    m_ItemsFirst = -1;
+    m_ItemsLast = -1;
 
     GetItemsList();
 
-    SetItemCount( m_Items.Count() );
+    //SetItemCount( m_Items.Count() );
 
     m_ItemsMutex.Unlock();
 
@@ -256,7 +281,8 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks )
     int item = GetFirstSelected( cookie );
     while( item != wxNOT_FOUND )
     {
-        tracks->Add( new guTrack( m_Items[ item ] ) );
+// TOFIX
+        tracks->Add( new guTrack( m_Items[ item - GetFirstVisibleLine() ] ) );
         item = GetNextSelected( cookie );
     }
     m_ItemsMutex.Unlock();
@@ -271,6 +297,7 @@ void guSoListBox::GetAllSongs( guTrackArray * tracks )
     int count = m_Items.Count();
     for( index = 0; index < count; index++ )
     {
+// TOFIX
         tracks->Add( new guTrack( m_Items[ index ] ) );
     }
     m_ItemsMutex.Unlock();
@@ -311,6 +338,7 @@ wxArrayString guSoListBox::GetColumnNames( void )
     ColumnNames.Add( _( "PlayCount" ) );
     ColumnNames.Add( _( "Last Play" ) );
     ColumnNames.Add( _( "Added Date" ) );
+    ColumnNames.Add( _( "Format" ) );
     return ColumnNames;
 }
 
@@ -537,21 +565,40 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 wxString guSoListBox::GetSearchText( int item ) const
 {
-    return wxString::Format( wxT( "\"%s\" \"%s\"" ),
-        m_Items[ item ].m_ArtistName.c_str(),
-        m_Items[ item ].m_SongName.c_str() );
+    if( item >= m_ItemsFirst && item < m_ItemsLast )
+    {
+        return wxString::Format( wxT( "\"%s\" \"%s\"" ),
+            m_Items[ item - m_ItemsFirst ].m_ArtistName.c_str(),
+            m_Items[ item - m_ItemsFirst ].m_SongName.c_str() );
+    }
+    return wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //
 wxString guSoListBox::GetItemName( const int row ) const
 {
-    return m_Items[ row ].m_SongName;
+    if( row >= m_ItemsFirst && row < m_ItemsLast )
+    {
+        return m_Items[ row - m_ItemsFirst ].m_SongName;
+    }
+    else
+    {
+        return m_Db->GetSongsName( row );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 int guSoListBox::GetItemId( const int row ) const
 {
-    return m_Items[ row ].m_SongId;
+    guLogMessage( wxT( "%i of %i  %i" ), row, m_Items.Count(), m_ItemsFirst );
+    if( row >= m_ItemsFirst && row < m_ItemsLast )
+    {
+        return m_Items[ row - m_ItemsFirst ].m_SongId;
+    }
+    else
+    {
+        return m_Db->GetSongsId( row );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -571,14 +618,14 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
             Rating = wxMin( 5, ( wxMax( 0, MouseX - 3 ) / w ) + 1 );
 
         int Row = event.GetInt();
-        if( m_Items[ Row ].m_Rating == Rating )
+        if( m_Items[ Row - GetFirstVisibleLine() ].m_Rating == Rating )
             Rating = 0;
-        m_Items[ Row ].m_Rating = Rating;
-        m_Db->SetTrackRating( m_Items[ Row ].m_SongId, Rating );
+        m_Items[ Row - GetFirstVisibleLine() ].m_Rating = Rating;
+        m_Db->SetTrackRating( m_Items[ Row - GetFirstVisibleLine() ].m_SongId, Rating );
         //RefreshLine( Row );
 
         // Update the track in database, playlist, etc
-        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_NONE, &m_Items[ Row ] );
+        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_NONE, &m_Items[ Row - m_ItemsFirst ] );
     }
 }
 

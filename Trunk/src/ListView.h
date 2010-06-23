@@ -266,23 +266,24 @@ class guListView : public wxScrolledWindow
 
     //bool                    m_WasLeftUp;
 
+    virtual void        OnKeyDown( wxKeyEvent &event ) { event.Skip(); }
 
-    virtual void        OnKeyDown( wxKeyEvent &event );
     virtual void        GetItemsList( void ) = 0;
     virtual void        DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void        DrawBackground( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
-    virtual wxString    OnGetItemText( const int row, const int column ) const;
-    virtual void        CreateContextMenu( wxMenu * menu ) const;
+    virtual wxString    OnGetItemText( const int row, const int column ) const { return wxEmptyString; }
+    virtual void        CreateContextMenu( wxMenu * menu ) const {}
     virtual wxCoord     OnMeasureItem( size_t row ) const;
-    virtual wxString    GetItemSearchText( const int row );
+    virtual wxString    GetItemSearchText( const int row ) { return GetItemName( row ); }
 
     virtual void        OnBeginDrag( wxMouseEvent &event );
     virtual void        OnDragOver( const wxCoord x, const wxCoord y );
-    virtual void        OnDropBegin( void );
-    virtual void        OnDropFile( const wxString &filename );
-    virtual void        OnDropEnd( void );
-    virtual int         GetDragFiles( wxFileDataObject * files );
-    virtual void        MoveSelection( void );
+    virtual void        OnDropBegin( void ) {}
+    virtual void        OnDropFile( const wxString &filename ) {}
+    virtual void        OnDropEnd( void ) {}
+    virtual int         GetDragFiles( wxFileDataObject * files ) { return 0; }
+
+    virtual void        MoveSelection( void ) {}
     //virtual void        OnSysColorChanged( wxSysColourChangedEvent &event );
     virtual void        OnMouse( wxMouseEvent &event );
 
@@ -292,6 +293,7 @@ class guListView : public wxScrolledWindow
 
     virtual void        ItemsLock() {};
     virtual void        ItemsUnlock() {};
+    virtual void        ItemsCheckRange( const int start, const int end ) {};
 
   public :
     guListView( wxWindow * parent, const int flags = wxLB_MULTIPLE, wxWindowID id = wxID_ANY,
@@ -300,54 +302,59 @@ class guListView : public wxScrolledWindow
     ~guListView();
 
     void                    SetItemCount( const int count );
-    int                     GetItemCount( void ) const;
-    void                    SetItemHeight( const int height );
+    int                     GetItemCount( void ) const { return m_ListBox->GetItemCount(); }
+    void                    SetItemHeight( const int height ) { m_ListBox->SetItemHeigth( height ); }
     void                    SetAttr( const guListViewAttr &attr ) { m_Attr = attr; };
 
-    int                     GetFirstSelected( unsigned long &cookie ) const;
-    int                     GetNextSelected( unsigned long &cookie ) const;
-    int                     GetSelection() const;
-    bool                    Select( size_t item, bool select = true );
+
+    int                     GetFirstSelected( unsigned long &cookie ) const { return m_ListBox->GetFirstSelected( cookie ); }
+    int                     GetNextSelected( unsigned long &cookie ) const { return m_ListBox->GetNextSelected( cookie ); }
+    int                     GetSelection() const { return m_ListBox->GetSelection(); }
+    bool                    Select( size_t item, bool select = true ) { return m_ListBox->Select( item, select ); }
+
     void                    SetSelection( int selection );
 
-    size_t                  GetFirstVisibleLine() const;
-    size_t                  GetLastVisibleLine() const;
-    bool                    ScrollLines( int lines );
+    size_t                  GetVisibleBegin( void ) const { return m_ListBox->GetVisibleBegin(); }
+    size_t                  GetVisibleEnd( void ) const { return m_ListBox->GetVisibleEnd(); }
+    size_t                  GetFirstVisibleLine() const { return m_ListBox->GetFirstVisibleLine(); }
+    size_t                  GetLastVisibleLine() const { return m_ListBox->GetLastVisibleLine(); }
+    bool                    ScrollLines( int lines ) { return m_ListBox->ScrollLines( lines ); }
 
-    bool                    ScrollToLine( size_t line );
+    bool                    ScrollToLine( size_t line ) { return m_ListBox->ScrollToLine( line ); }
+
     void                    RefreshAll( int scroll = wxNOT_FOUND );
-    void                    RefreshLines( const int from, const int to );
-    void                    RefreshLine( const int line );
-    bool                    IsSelected( size_t row ) const;
-    virtual int             GetSelectedSongs( guTrackArray * Songs ) const;
-    int                     HitTest( wxCoord x, wxCoord y ) const;
+    void                    RefreshLines( const int from, const int to ) { m_ListBox->RefreshLines( from, to ); }
+    void                    RefreshLine( const int line ) { m_ListBox->RefreshLine( line ); }
+    bool                    IsSelected( size_t row ) const { return m_ListBox->IsSelected( row ); }
+    virtual int             GetSelectedSongs( guTrackArray * Songs ) const { return 0; }
+
+    int                     HitTest( wxCoord x, wxCoord y ) const { return m_ListBox->HitTest( x, y ); }
 
     virtual void            ReloadItems( bool reset = true ) = 0;
 
     virtual wxArrayInt      GetSelectedItems( bool reallist = true ) const;
     virtual void            SetSelectedItems( const wxArrayInt &selection );
-    virtual void            ClearSelectedItems();
+    virtual void            ClearSelectedItems( void ) { SetSelection( wxNOT_FOUND ); }
+
 
     virtual wxString        GetItemName( const int item ) const = 0;
     virtual int             GetItemId( const int item ) const = 0;
-    long                    FindItem( long start, const wxString &str, bool partial, bool atstart = true )
-    {
-        return m_ListBox->FindItem( start, str, partial, atstart );
-    }
+    long                    FindItem( long start, const wxString &str, bool partial, bool atstart = true ) { return m_ListBox->FindItem( start, str, partial, atstart ); }
 
     void                    SetImageList( wxImageList * imagelist );
 
     void                    InsertColumn( guListViewColumn * column );
     void                    SetColumnWidth( const int col, const int width );
-    int                     GetColumnWidth( const int col ) const;
-    wxString                GetColumnLabel( const int col ) const;
+    int                     GetColumnWidth( const int col ) const { return m_Columns->Item( col ).m_Width; }
+    wxString                GetColumnLabel( const int col ) const { return m_Columns->Item( col ).m_Label; }
     void                    SetColumnLabel( const int col, const wxString &label );
-    int                     GetColumnId( const int col ) const;
+    int                     GetColumnId( const int col ) const { return m_Columns->Item( col ).m_Id; }
     void                    SetColumnImage( const int col, const int imageindex );
 
     wxRect                  GetClientScreenRect( void ) { return m_ListBox->GetScreenRect(); }
 
-    bool                    IsAllowedColumnSelect( void ) const;
+    bool                    IsAllowedColumnSelect( void ) const { return m_ColSelect; }
+
 
     friend class guListViewClient;
     friend class guListViewDropTarget;

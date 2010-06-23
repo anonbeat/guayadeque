@@ -69,14 +69,18 @@ class guTrack
     wxString        m_AlbumName;
     int             m_ArtistId;
     wxString        m_ArtistName;
+    int             m_AlbumArtistId;
+    wxString        m_AlbumArtist;
     int             m_GenreId;
     wxString        m_GenreName;
     int             m_PathId;
+    wxString        m_Path;
     wxString        m_FileName;           // mp3 filename
     unsigned int    m_FileSize;
     int             m_Number;             // the track num of the song into the album
     int             m_Year;               // the year of the song
     unsigned int    m_Length;             // the length of the song in seconds
+    int             m_Offset;
     int             m_Bitrate;
     int             m_Rating;
     int             m_PlayCount;
@@ -88,6 +92,7 @@ class guTrack
     wxString        m_Comments;
     wxString        m_Composer;
     int             m_ComposerId;
+    wxString        m_Format;
     //
     guTrackMode     m_TrackMode;          // Indicate how the track was created
 
@@ -221,7 +226,8 @@ enum guTRACKS_ORDER {
     guTRACKS_ORDER_RATING,
     guTRACKS_ORDER_PLAYCOUNT,
     guTRACKS_ORDER_LASTPLAY,
-    guTRACKS_ORDER_ADDEDDATE
+    guTRACKS_ORDER_ADDEDDATE,
+    guTRACKS_ORDER_FORMAT
 };
 
 #define guRADIOSTATIONS_ORDER_NAME        0
@@ -302,11 +308,11 @@ class guDbLibrary : public guDb
     int                m_AlbumsOrder;   // 0 ->
 
 //    guListItems         Labels;
-    guListItems         m_GenresCache;
-    guListItems         m_ArtistsCache;
-    guListItems         m_ComposersCache;
-    guAlbumItems        m_AlbumsCache;
-    guListItems         m_PathsCache;
+//    guListItems         m_GenresCache;
+//    guListItems         m_ArtistsCache;
+//    guListItems         m_ComposersCache;
+//    guAlbumItems        m_AlbumsCache;
+//    guListItems         m_PathsCache;
 
     wxArrayString       m_CoverSearchWords;
 
@@ -384,7 +390,10 @@ class guDbLibrary : public guDb
 
     bool                GetSong( const int songid, guTrack * song );
     int                 GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs );
-    int                 GetSongs( guTrackArray * Songs );
+    int                 GetSongsCount( void );
+    int                 GetSongs( guTrackArray * Songs, const int start, const int end );
+    int                 GetSongsId( const int start );
+    wxString            GetSongsName( const int start );
     void                GetTracksCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
 
     void                SetSongsOrder( const guTRACKS_ORDER order );
