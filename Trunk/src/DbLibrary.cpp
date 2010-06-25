@@ -496,7 +496,7 @@ void guDbLibrary::CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers
 //  ExecuteUpdate( query );
 //  query = wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" );
 //  ExecuteUpdate( query );
-  query = wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT album_coverid FROM albums );" );
+  query = wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT song_coverid FROM songs );" );
   ExecuteUpdate( query );
 //  query = wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" );
 //  ExecuteUpdate( query );
@@ -5178,7 +5178,7 @@ guCoverInfos guDbLibrary::GetEmptyCovers( void )
     guCoverInfos RetVal;
 
     query = wxT( "SELECT DISTINCT song_albumid, song_album, song_artist, song_path "
-                 "FROM songs WHERE album_coverid = 0" );
+                 "FROM songs WHERE song_coverid = 0" );
 
     dbRes = ExecuteQuery( query );
 

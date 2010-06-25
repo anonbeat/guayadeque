@@ -356,7 +356,7 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
 
         Menu.AppendSeparator();
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the album info to clipboard" ) );
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_COPYTOCLIPBOARD, _( "Copy to clipboard" ), _( "Copy the album info to clipboard" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
         Menu.Append( MenuItem );
 

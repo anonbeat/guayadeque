@@ -322,7 +322,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     else
     {
         Perspective = wxT( "layout2|name=PlayerVumeters;caption=" );
-        Perspective += _( "Vumeters" );
+        Perspective += _( "VU Meters" );
         Perspective += wxT( ";state=2099198;dir=3;layer=0;row=3;pos=0;prop=100000;bestw=20;besth=20;minw=20;minh=20;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=331;floath=249|" );
         Perspective += wxT( "name=PlayerFilters;caption=" );
         Perspective += _( "Filters" );
@@ -826,7 +826,7 @@ void guMainFrame::CreateMenu()
     m_MainMenu->Append( m_ViewPlayerFilters );
     m_ViewPlayerFilters->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS );
 
-    m_ViewPlayerVumeters = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYER_VUMETERS, _( "Vumeters" ), _( "Show/Hide the player vumeter" ), wxITEM_CHECK );
+    m_ViewPlayerVumeters = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYER_VUMETERS, _( "VU Meters" ), _( "Show/Hide the player vumeter" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewPlayerVumeters );
     m_ViewPlayerVumeters->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS );
 
