@@ -2007,7 +2007,7 @@ bool guMediaCtrl::EnableRecord( const wxString &recfile, const int format, const
     GstElement * Muxer = NULL;
     gint Mp3Quality[] = { 320, 192, 128, 96, 64 };
     float OggQuality[] = { 0.9, 0.7, 0.5, 0.3, 0.1 };
-    gint FlacQuality[] = { 9, 7, 5, 3, 1 };
+    gint FlacQuality[] = { 8, 7, 5, 3, 1 };
 
     //
     switch( format )
