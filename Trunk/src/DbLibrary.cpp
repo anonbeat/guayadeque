@@ -764,7 +764,6 @@ bool guDbLibrary::CheckDbVersion( void )
 
     case 7 :
     {
-      query.Add( wxT( "DROP INDEX 'cover_id';" ) );
       query.Add( wxT( "DROP TABLE 'covers';" ) );
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_midsize BLOB, cover_hash VARCHAR( 32 ) );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
@@ -5178,7 +5177,7 @@ guCoverInfos guDbLibrary::GetEmptyCovers( void )
     guCoverInfos RetVal;
 
     query = wxT( "SELECT DISTINCT song_albumid, song_album, song_artist, song_path "
-                 "FROM songs WHERE song_coverid = 0" );
+                 "FROM songs WHERE song_coverid ISNULL OR song_coverid = 0 GROUP BY song_albumid" );
 
     dbRes = ExecuteQuery( query );
 
