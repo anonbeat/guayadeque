@@ -904,11 +904,11 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "CREATE INDEX song_year ON songs( song_year,song_album,song_disk,song_albumid,song_number )" ) );
         query.Add( wxT( "CREATE INDEX song_year_desc ON songs( song_year DESC,song_album,song_disk,song_albumid,song_number )" ) );
 
-        guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
-        query.Add( wxT( "DELETE FROM Version;" ) );
-        query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
-        query.Add( wxT( "VACUUM;" ) );
       }
+      guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
+      query.Add( wxT( "DELETE FROM Version;" ) );
+      query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
+      query.Add( wxT( "VACUUM;" ) );
     }
 
     default:
