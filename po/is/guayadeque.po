@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-24 14:12+0000\n"
-"PO-Revision-Date: 2010-06-24 18:06-0000\n"
+"POT-Creation-Date: 2010-06-25 08:24+0000\n"
+"PO-Revision-Date: 2010-06-25 09:21-0000\n"
 "Last-Translator: Hreins Jónsson <hreinsijons@simnet.is>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "MIME-Version: 1.0\n"
@@ -179,6 +179,11 @@ msgstr "Eyða plötuumslagi"
 #: AlListBox.cpp:212
 msgid "Delete the cover for the selected album"
 msgstr "Eyða plötuumslagi valdrar plötu"
+
+#: AlbumBrowser.cpp:359
+#: LyricsPanel.cpp:288
+msgid "Copy to clipboard"
+msgstr "Afrita við klippispjald"
 
 #: AlbumBrowser.cpp:359
 #: LastFMPanel.cpp:811
@@ -1226,10 +1231,6 @@ msgid "Save the lyrics to files or directory"
 msgstr "Vista texta við valda skrá eða möppu"
 
 #: LyricsPanel.cpp:288
-msgid "Copy to clipboard"
-msgstr "Afrita við klippispjald"
-
-#: LyricsPanel.cpp:288
 msgid "Copy the content of the lyric to clipboard"
 msgstr "Afrita innihald texta á klippispjald"
 
@@ -1258,6 +1259,8 @@ msgid "Welcome to guayadeque "
 msgstr "Velkominn  guayadeque "
 
 #: MainFrame.cpp:179
+#: MainFrame.cpp:325
+#: MainFrame.cpp:829
 msgid "VU Meters"
 msgstr "Vu Mælar"
 
@@ -1265,11 +1268,6 @@ msgstr "Vu Mælar"
 #: MainFrame.cpp:328
 msgid "Filters"
 msgstr "Síur"
-
-#: MainFrame.cpp:325
-#: MainFrame.cpp:829
-msgid "Vumeters"
-msgstr "Vu Mælar"
 
 #: MainFrame.cpp:331
 #: MainFrame.cpp:668
@@ -1624,7 +1622,7 @@ msgstr "Spila eða Hvíla lag í spilunarlista"
 
 #: MainFrame.cpp:988
 msgid "&Stop"
-msgstr "&Stop"
+msgstr "&Stoppa"
 
 #: MainFrame.cpp:988
 msgid "Stop the current played track"
@@ -1850,7 +1848,7 @@ msgstr "Ekkert"
 
 #: PlayerPanel.cpp:158
 msgid "Go to Previous Track in Playlist"
-msgstr "Fara á næsta Lag í Lagalista"
+msgstr "Fara á fyrra Lag í Lagalista"
 
 #: PlayerPanel.cpp:163
 msgid "Play or pause current track in Playlist"
@@ -2437,7 +2435,7 @@ msgstr "Plata"
 
 #: Preferences.cpp:328
 msgid "when playlist is empty"
-msgstr "Lagaisti tómur"
+msgstr "Lagalisti tómur"
 
 #: Preferences.cpp:334
 msgid "Delete played tracks from playlist"
@@ -3147,7 +3145,7 @@ msgstr "Spila núverandi lagalista"
 
 #: TaskBar.cpp:124
 msgid "Stop"
-msgstr "Stop"
+msgstr "Stopp"
 
 #: TaskBar.cpp:128
 msgid "Next Track"
@@ -3330,6 +3328,8 @@ msgstr ""
 "\n"
 "Villa: Lengd sumra breytra laga stemma ekki"
 
+#~ msgid "Vumeters"
+#~ msgstr "Vu Mælar"
 #~ msgid "Does not contains"
 #~ msgstr "Inniheldur ekki"
 #~ msgid "Delete selected genre"
