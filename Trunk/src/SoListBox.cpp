@@ -282,7 +282,7 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks )
     while( item != wxNOT_FOUND )
     {
 // TOFIX
-        tracks->Add( new guTrack( m_Items[ item - GetFirstVisibleLine() ] ) );
+        tracks->Add( new guTrack( m_Items[ item - m_ItemsFirst ] ) );
         item = GetNextSelected( cookie );
     }
     m_ItemsMutex.Unlock();
@@ -618,10 +618,10 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
             Rating = wxMin( 5, ( wxMax( 0, MouseX - 3 ) / w ) + 1 );
 
         int Row = event.GetInt();
-        if( m_Items[ Row - GetFirstVisibleLine() ].m_Rating == Rating )
+        if( m_Items[ Row - m_ItemsFirst ].m_Rating == Rating )
             Rating = 0;
-        m_Items[ Row - GetFirstVisibleLine() ].m_Rating = Rating;
-        m_Db->SetTrackRating( m_Items[ Row - GetFirstVisibleLine() ].m_SongId, Rating );
+        m_Items[ Row - m_ItemsFirst ].m_Rating = Rating;
+        m_Db->SetTrackRating( m_Items[ Row - m_ItemsFirst ].m_SongId, Rating );
         //RefreshLine( Row );
 
         // Update the track in database, playlist, etc
