@@ -281,8 +281,15 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks )
     int item = GetFirstSelected( cookie );
     while( item != wxNOT_FOUND )
     {
-// TOFIX
-        tracks->Add( new guTrack( m_Items[ item - m_ItemsFirst ] ) );
+        guTrack * Track = new guTrack();
+        if( m_Db->GetSong( GetItemId( item ), Track ) )
+        {
+            tracks->Add( Track );
+        }
+        else
+        {
+            delete Track;
+        }
         item = GetNextSelected( cookie );
     }
     m_ItemsMutex.Unlock();
@@ -297,8 +304,15 @@ void guSoListBox::GetAllSongs( guTrackArray * tracks )
     int count = m_Items.Count();
     for( index = 0; index < count; index++ )
     {
-// TOFIX
-        tracks->Add( new guTrack( m_Items[ index ] ) );
+        guTrack * Track = new guTrack();
+        if( m_Db->GetSong( GetItemId( index ), Track ) )
+        {
+            tracks->Add( Track );
+        }
+        else
+        {
+            delete Track;
+        }
     }
     m_ItemsMutex.Unlock();
 }
