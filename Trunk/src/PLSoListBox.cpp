@@ -250,3 +250,31 @@ int guPLSoListBox::GetPlayListSetIds( wxArrayInt * setids ) const
 }
 
 // -------------------------------------------------------------------------------- //
+int guPLSoListBox::GetSelectedSongs( guTrackArray * tracks )
+{
+    unsigned long cookie;
+    m_ItemsMutex.Lock();
+    int item = GetFirstSelected( cookie );
+    while( item != wxNOT_FOUND )
+    {
+        tracks->Add( new guTrack( m_Items[ item ] ) );
+        item = GetNextSelected( cookie );
+    }
+    m_ItemsMutex.Unlock();
+    return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::GetAllSongs( guTrackArray * tracks )
+{
+    int index;
+    m_ItemsMutex.Lock();
+    int count = m_Items.Count();
+    for( index = 0; index < count; index++ )
+    {
+        tracks->Add( new guTrack( m_Items[ index ] ) );
+    }
+    m_ItemsMutex.Unlock();
+}
+
+// -------------------------------------------------------------------------------- //
