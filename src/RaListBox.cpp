@@ -90,7 +90,7 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
 
-    int SelCount = GetSelectedItems().Count();
+    int SelCount = GetSelectedCount();
 
     MenuItem = new wxMenuItem( Menu, ID_RATING_PLAY, _( "Play" ), _( "Play the selected tracks" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );

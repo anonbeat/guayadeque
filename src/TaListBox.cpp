@@ -65,7 +65,7 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
     Menu->Append( MenuItem );
 
-    if( GetSelectedItems().Count() )
+    if( GetSelectedCount() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Edit Label" ), _( "Change selected label" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );

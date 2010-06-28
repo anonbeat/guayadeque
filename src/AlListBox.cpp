@@ -184,7 +184,7 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
-    int SelCount = GetSelectedItems().Count();
+    int SelCount = GetSelectedCount();
     if( SelCount )
     {
         Menu->AppendSeparator();

@@ -398,7 +398,7 @@ void AddSongsCommands( wxMenu * Menu, int SelCount )
 void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
-    int SelCount = GetSelectedItems().Count();
+    int SelCount = GetSelectedCount();
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
@@ -604,7 +604,6 @@ wxString guSoListBox::GetItemName( const int row ) const
 // -------------------------------------------------------------------------------- //
 int guSoListBox::GetItemId( const int row ) const
 {
-    guLogMessage( wxT( "%i of %i  %i" ), row, m_Items.Count(), m_ItemsFirst );
     if( row >= m_ItemsFirst && row < m_ItemsLast )
     {
         return m_Items[ row - m_ItemsFirst ].m_SongId;

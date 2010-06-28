@@ -95,7 +95,7 @@ void guPLSoListBox::SetPlayList( int plid, int pltype )
 void guPLSoListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
-    int SelCount = GetSelectedItems().Count();
+    int SelCount = GetSelectedCount();
 
     if( SelCount )
     {

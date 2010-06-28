@@ -55,7 +55,7 @@ void guCoListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
 
-    int SelCount = GetSelectedItems().Count();
+    int SelCount = GetSelectedCount();
 
     MenuItem = new wxMenuItem( Menu, ID_COMPOSER_PLAY, _( "Play" ), _( "Play current selected composer" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );

@@ -40,7 +40,7 @@ int guGeListBox::GetSelectedSongs( guTrackArray * Songs ) const
 void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
-    int SelCount = GetSelectedItems().Count();
+    int SelCount = GetSelectedCount();
 
     MenuItem = new wxMenuItem( Menu, ID_GENRE_PLAY, _( "Play" ), _( "Play current selected genres" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
