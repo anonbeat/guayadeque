@@ -88,7 +88,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db ) :
 	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 //	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-	wxStaticText * ServerStaticText = new wxStaticText( this, wxID_ANY, wxT("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * ServerStaticText = new wxStaticText( this, wxID_ANY, _("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
 	ServerStaticText->Wrap( -1 );
 	EditorSizer->Add( ServerStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 

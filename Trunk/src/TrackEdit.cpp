@@ -260,7 +260,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 	MainDetailSizer->Add( DataFlexSizer, 0, wxEXPAND, 5 );
 
-	m_DetailInfoStaticText = new wxStaticText( DetailPanel, wxID_ANY, wxT("Type\t: mp3\nBitRate\t: 160 kbps\nLength\t: 04:09\nFileSize\t: 4.9 Mbytes"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailInfoStaticText = new wxStaticText( DetailPanel, wxID_ANY, wxT("Type\t:\nBitRate\t:\nLength\t:\nFileSize\t:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailInfoStaticText->Wrap( -1 );
 	MainDetailSizer->Add( m_DetailInfoStaticText, 1, wxALL|wxEXPAND, 5 );
 
@@ -286,7 +286,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	CommentPanel->SetSizer( CommentSizer );
 	CommentPanel->Layout();
 	CommentSizer->Fit( CommentPanel );
-	MainNoteBook->AddPage( CommentPanel, wxT("Comments"), false );
+	MainNoteBook->AddPage( CommentPanel, _("Comments"), false );
 
 	//
 	// Pictures
@@ -414,7 +414,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
     wxStaticText * MBQueryArtistStaticText;
 	wxStaticText * MBQueryTitleStaticText;
-	MBQueryArtistStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxT("Artist:"), wxDefaultPosition, wxDefaultSize, 0 );
+	MBQueryArtistStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _("Artist:"), wxDefaultPosition, wxDefaultSize, 0 );
 	MBQueryArtistStaticText->Wrap( -1 );
 	MBQuerySizer->Add( MBQueryArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
@@ -422,7 +422,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_MBQueryArtistTextCtrl->SetToolTip( _( "Type the artist name to search in musicbrainz" ) );
 	MBQuerySizer->Add( m_MBQueryArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	MBQueryTitleStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxT("Title:"), wxDefaultPosition, wxDefaultSize, 0 );
+	MBQueryTitleStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _("Title:"), wxDefaultPosition, wxDefaultSize, 0 );
 	MBQueryTitleStaticText->Wrap( -1 );
 	MBQuerySizer->Add( MBQueryTitleStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
@@ -519,7 +519,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_MBrainzTiCopyButton->SetToolTip( _( "Copy the song names to the edited tracks" ) );
 	MBDetailFlexGridSizer->Add( m_MBrainzTiCopyButton, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_MBrainzLengthStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxT("Length:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzLengthStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _("Length:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_MBrainzLengthStaticText->Wrap( -1 );
 	MBDetailFlexGridSizer->Add( m_MBrainzLengthStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -531,7 +531,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 	MBNumberSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_MBrainzNumberStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, wxT("Number:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzNumberStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _("Number:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_MBrainzNumberStaticText->Wrap( -1 );
 	MBNumberSizer->Add( m_MBrainzNumberStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -823,7 +823,7 @@ void guTrackEditor::ReadItemData( void )
         m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
         m_Rating->SetRating( Track->m_Rating );
         m_CommentText->SetValue( Track->m_Comments );
-        m_DetailInfoStaticText->SetLabel( wxString::Format( wxT( "File Type\t: %s\n"
+        m_DetailInfoStaticText->SetLabel( wxString::Format( _( "File Type\t: %s\n"
                                                "BitRate\t: %u Kbps\n"
                                                "Length\t: %s\n"
                                                "File Size\t: %s" ),
