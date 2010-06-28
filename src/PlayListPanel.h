@@ -77,6 +77,7 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     void            OnDragOver( const wxCoord x, const wxCoord y );
     void            OnDropFile( const wxString &filename );
     void            OnDropEnd( void );
+    void            OnKeyDown( wxKeyEvent &event );
 
   public :
     guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db );
@@ -186,6 +187,8 @@ class guPlayListPanel : public wxPanel
     void                OnTextChangedTimer( wxTimerEvent &event );
 
     void                OnPaneClose( wxAuiManagerEvent &event );
+
+    void                DeleteCurrentPlayList( void );
 
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );

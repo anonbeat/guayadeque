@@ -78,6 +78,7 @@ guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db ) :
     SetDropTarget( new guPLNamesDropTarget( this ) );
 
     Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guPLNamesTreeCtrl::OnContextMenu ), NULL, this );
+    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPLNamesTreeCtrl::OnKeyDown ), NULL, this );
 
     ReloadItems();
 }
@@ -86,6 +87,7 @@ guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db ) :
 guPLNamesTreeCtrl::~guPLNamesTreeCtrl()
 {
     Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guPLNamesTreeCtrl::OnContextMenu ), NULL, this );
+    Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPLNamesTreeCtrl::OnKeyDown ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -301,6 +303,18 @@ void guPLNamesTreeCtrl::OnDropEnd( void )
         m_DragOverItem = wxTreeItemId();
     }
     m_DropIds.Clear();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::OnKeyDown( wxKeyEvent &event )
+{
+    if( event.GetKeyCode() == WXK_DELETE )
+    {
+        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_DELETE );
+        wxPostEvent( this, CmdEvent );
+        return;
+    }
+    event.Skip();
 }
 
 
@@ -844,6 +858,23 @@ void guPlayListPanel::OnPLNamesRenamePlaylist( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayListPanel::DeleteCurrentPlayList( void )
+{
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    if( ItemId.IsOk() )
+    {
+        guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
+        if( ItemData )
+        {
+            m_Db->DeletePlayList( ItemData->GetData() );
+            //m_NamesTreeCtrl->Delete( ItemId );
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesDeletePlaylist( wxCommandEvent &event )
 {
     if( wxMessageBox( _( "Are you sure to delete the selected Playlist?" ),
@@ -853,12 +884,7 @@ void guPlayListPanel::OnPLNamesDeletePlaylist( wxCommandEvent &event )
         wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
         if( ItemId.IsOk() )
         {
-            guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
-            wxASSERT( ItemData );
-            m_Db->DeletePlayList( ItemData->GetData() );
-            //m_NamesTreeCtrl->Delete( ItemId );
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            DeleteCurrentPlayList();
         }
     }
 }
