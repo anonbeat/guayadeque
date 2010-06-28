@@ -181,6 +181,7 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
     void            OnRadioGenreAdd( wxCommandEvent &event );
     void            OnRadioGenreEdit( wxCommandEvent &event );
     void            OnRadioGenreDelete( wxCommandEvent &event );
+    void            OnKeyDown( wxKeyEvent &event );
 
   public :
     guRadioGenreTreeCtrl( wxWindow * parent, guDbLibrary * db );
@@ -317,6 +318,7 @@ guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbLibrary * db 
     Connect( ID_RADIO_GENRE_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreAdd ) );
     Connect( ID_RADIO_GENRE_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreEdit ) );
     Connect( ID_RADIO_GENRE_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreDelete ) );
+    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guRadioGenreTreeCtrl::OnKeyDown ), NULL, this );
 
     ReloadItems();
 }
@@ -328,6 +330,8 @@ guRadioGenreTreeCtrl::~guRadioGenreTreeCtrl()
     Disconnect( ID_RADIO_GENRE_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreEdit ) );
     Disconnect( ID_RADIO_GENRE_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreDelete ) );
     Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guRadioGenreTreeCtrl::OnContextMenu ), NULL, this );
+
+    Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guRadioGenreTreeCtrl::OnKeyDown ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -544,6 +548,19 @@ wxTreeItemId guRadioGenreTreeCtrl::GetItemId( wxTreeItemId * itemid, const int i
     }
     return CurItem;
 }
+
+// -------------------------------------------------------------------------------- //
+void guRadioGenreTreeCtrl::OnKeyDown( wxKeyEvent &event )
+{
+    if( event.GetKeyCode() == WXK_DELETE )
+    {
+        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_GENRE_DELETE );
+        wxPostEvent( this, CmdEvent );
+        return;
+    }
+    event.Skip();
+}
+
 
 
 
