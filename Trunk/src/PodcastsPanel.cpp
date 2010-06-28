@@ -980,7 +980,7 @@ int guChannelsListBox::GetDragFiles( wxFileDataObject * files )
 void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
-    int SelCount = GetSelectedItems().Count();
+    int SelCount = GetSelectedCount();
 
     MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_ADD, _( "New Channel" ), _( "Add a new podcast channel" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );

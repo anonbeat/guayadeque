@@ -334,6 +334,7 @@ class guListView : public wxScrolledWindow
 
     virtual wxArrayInt      GetSelectedItems( bool reallist = true ) const;
     virtual void            SetSelectedItems( const wxArrayInt &selection );
+    virtual size_t          GetSelectedCount( void ) const { return m_ListBox->GetSelectedCount(); }
     virtual void            ClearSelectedItems( void ) { SetSelection( wxNOT_FOUND ); }
 
 

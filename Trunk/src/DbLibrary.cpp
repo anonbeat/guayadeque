@@ -4544,8 +4544,6 @@ int guDbLibrary::GetSongs( guTrackArray * Songs, const int start, const int end 
   wxString query;
   wxSQLite3ResultSet dbRes;
   guTrack * Song;
-  guLogMessage( wxT( "guDbLibrary::GetSongs %i, %i" ), start, end );
-//    }
 
   query = GU_TRACKS_QUERYSTR;
   //query += GetSongsDBNamesSQL( m_TracksOrder );
