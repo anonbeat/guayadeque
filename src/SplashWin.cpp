@@ -33,13 +33,34 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
+    m_Bitmap = new wxBitmap( guImage( guIMAGE_INDEX_splash ) );
+
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-//	m_SplashBitmap = new wxStaticBitmap( this, wxID_ANY, wxBitmap( guImage_splash ), wxDefaultPosition, wxDefaultSize, 0 );
-//	MainSizer->Add( m_SplashBitmap, 1, wxEXPAND, 0 );
+	MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-    m_Bitmap = new wxBitmap( guImage( guIMAGE_INDEX_splash ) );
+	m_Email = new wxHyperlinkCtrl( this, wxID_ANY, wxT("J.Rios anonbeat@gmail.com"), wxT("mailto:anonbeat@gmail.com"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+
+	m_Email->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+	m_Email->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+	m_Email->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+	MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxALL, 5 );
+
+    wxString Version = wxT( ID_GUAYADEQUE_VERSION );
+#ifdef ID_GUAYADEQUE_REVISION
+    Version += wxT( "-" ID_GUAYADEQUE_REVISION );
+#endif
+	m_Version = new wxStaticText( this, wxID_ANY, Version, wxDefaultPosition, wxDefaultSize, 0 );
+	m_Version->Wrap( -1 );
+	MainSizer->Add( m_Version, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_Donate = new wxHyperlinkCtrl( this, wxID_ANY, wxT("Please Donate!"), wxT("http://sourceforge.net/donate/index.php?group_id=250783"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+
+	m_Donate->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+	m_Donate->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+	m_Donate->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+	MainSizer->Add( m_Donate, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
@@ -52,7 +73,7 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
     m_Timer.Start( timeout, wxTIMER_ONE_SHOT );
 
 	// Connect Events
-    Connect( wxEVT_PAINT, wxPaintEventHandler( guSplashFrame::OnPaint ), NULL, this );
+//    Connect( wxEVT_PAINT, wxPaintEventHandler( guSplashFrame::OnPaint ), NULL, this );
     Connect( wxEVT_ERASE_BACKGROUND,  wxEraseEventHandler( guSplashFrame::OnEraseBackground ), NULL, this );
 	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSplashFrame::OnSplashClick ), NULL, this );
 	Connect( wxEVT_TIMER, wxTimerEventHandler( guSplashFrame::OnTimeout ), NULL, this );
@@ -67,7 +88,7 @@ guSplashFrame::~guSplashFrame()
     }
 
 	// Disconnect Events
-    Disconnect( wxEVT_PAINT, wxPaintEventHandler( guSplashFrame::OnPaint ), NULL, this );
+//    Disconnect( wxEVT_PAINT, wxPaintEventHandler( guSplashFrame::OnPaint ), NULL, this );
     Disconnect( wxEVT_ERASE_BACKGROUND,  wxEraseEventHandler( guSplashFrame::OnEraseBackground ), NULL, this );
 	Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSplashFrame::OnSplashClick ), NULL, this );
 	Disconnect( wxEVT_TIMER, wxTimerEventHandler( guSplashFrame::OnTimeout ), NULL, this );
@@ -96,25 +117,25 @@ void guSplashFrame::OnTimeout( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guSplashFrame::DoPaint( wxDC &dc )
 {
-    wxString Version = wxT( ID_GUAYADEQUE_VERSION );
-#ifdef ID_GUAYADEQUE_REVISION
-    Version += wxT( "-" ID_GUAYADEQUE_REVISION );
-#endif
-    wxString Credits = wxT( "J.Rios anonbeat@gmail.com" );
-
-    wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
-
-    dc.SetBackgroundMode( wxTRANSPARENT );
-    dc.SetTextForeground( wxColor( 60, 60, 60 ) );
-    dc.SetFont( Font );
-
-    wxCoord width, height;
-
-    dc.GetTextExtent( Version,  &width, &height, 0, 0, &Font );
-    dc.DrawText( Version, 493 - width, 270 - height );
-
-    dc.GetTextExtent( Credits,  &width, &height, 0, 0, &Font );
-    dc.DrawText( Credits, 493 - width, 270 - ( height * 2 ) );
+//    wxString Version = wxT( ID_GUAYADEQUE_VERSION );
+//#ifdef ID_GUAYADEQUE_REVISION
+//    Version += wxT( "-" ID_GUAYADEQUE_REVISION );
+//#endif
+//    wxString Credits = wxT( "J.Rios anonbeat@gmail.com" );
+//
+//    wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
+//
+//    dc.SetBackgroundMode( wxTRANSPARENT );
+//    dc.SetTextForeground( wxColor( 60, 60, 60 ) );
+//    dc.SetFont( Font );
+//
+//    wxCoord width, height;
+//
+//    dc.GetTextExtent( Version,  &width, &height, 0, 0, &Font );
+//    dc.DrawText( Version, 493 - width, 270 - height );
+//
+//    dc.GetTextExtent( Credits,  &width, &height, 0, 0, &Font );
+//    dc.DrawText( Credits, 493 - width, 270 - ( height * 2 ) );
 }
 
 // -------------------------------------------------------------------------------- //
