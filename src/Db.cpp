@@ -22,9 +22,9 @@
 
 #include "Utils.h"
 
-//#define DBLIBRARY_SHOW_QUERIES    1
+//#define DBLIBRARY_SHOW_QUERIES      1
 //#define DBLIBRARY_SHOW_TIMES        1
-//#define DBLIBRARY_TIMEOUT           10
+//#define DBLIBRARY_MIN_TIME          10
 
 // -------------------------------------------------------------------------------- //
 guDb::guDb()
@@ -93,7 +93,7 @@ wxSQLite3ResultSet guDb::ExecuteQuery( const wxString &query )
   }
 #ifdef DBLIBRARY_SHOW_TIMES
   time = wxGetLocalTimeMillis() - time;
-  if( time > DBLIBRARY_TIMEOUT )
+  if( time > DBLIBRARY_MIN_TIME )
     guLogWarning( wxT( "Query: %u ms\n%s" ), time.GetLo(), query.c_str() );
 #endif
   return RetVal;
@@ -123,7 +123,7 @@ int guDb::ExecuteUpdate( const wxString &query )
   }
 #ifdef DBLIBRARY_SHOW_TIMES
   time = wxGetLocalTimeMillis() - time;
-  if( time > DBLIBRARY_TIMEOUT )
+  if( time > DBLIBRARY_MIN_TIME )
     guLogWarning( wxT( "Query: %u ms\n%s" ), time.GetLo(), query.c_str() );
 #endif
   return RetVal;
