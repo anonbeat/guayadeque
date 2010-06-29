@@ -26,11 +26,13 @@
 #include <wx/font.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/hyperlink.h>
 #include <wx/icon.h>
 #include <wx/image.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
+#include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/timer.h>
 
@@ -40,7 +42,9 @@ class guSplashFrame : public wxFrame
   private:
 
   protected:
-//	wxStaticBitmap *    m_SplashBitmap;
+	wxHyperlinkCtrl *   m_Email;
+	wxStaticText *      m_Version;
+    wxHyperlinkCtrl *   m_Donate;
     wxBitmap *          m_Bitmap;
     wxTimer             m_Timer;
 
