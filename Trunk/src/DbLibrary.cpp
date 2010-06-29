@@ -2427,15 +2427,15 @@ void guDbLibrary::GetGenres( guListItems * Genres, const bool FullList )
   //if( !GetFiltersCount() )
   if( FullList )
   {
-    query = wxT( "SELECT DISTINCT song_genreid, song_genre FROM songs GROUP BY song_genreid" );
+    query = wxT( "SELECT song_genreid, song_genre FROM songs GROUP BY song_genreid" );
   }
   else if( !( m_TeFilters.Count() || m_LaFilters.Count() ) )
   {
-    query = wxT( "SELECT DISTINCT song_genreid, song_genre FROM songs GROUP BY song_genreid ORDER BY song_genre" );
+    query = wxT( "SELECT song_genreid, song_genre FROM songs GROUP BY song_genreid ORDER BY song_genre" );
   }
   else
   {
-    query = wxT( "SELECT DISTINCT song_genreid, song_genre FROM songs " );
+    query = wxT( "SELECT song_genreid, song_genre FROM songs " );
     query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_GENRES );
     query += wxT( " GROUP BY song_genreid ORDER BY song_genre" );
   }
@@ -2488,14 +2488,14 @@ void guDbLibrary::GetYears( guListItems * Years, const bool FullList )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  if( FullList || !( m_TeFilters.Count() || m_LaFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() ) )
+  if( FullList || !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() ) )
   {
     query = wxT( "SELECT DISTINCT song_year FROM songs WHERE song_year > 0 ORDER BY song_year DESC;" );
   }
   else
   {
-    query = wxT( "SELECT DISTINCT song_year FROM songs " ) \
-            wxT( "WHERE song_year > 0 AND " ) + FiltersSQL( GULIBRARY_FILTER_YEARS );
+    query = wxT( "SELECT DISTINCT song_year FROM songs "
+                 "WHERE song_year > 0 AND " ) + FiltersSQL( GULIBRARY_FILTER_YEARS );
     query += wxT( " ORDER BY song_year DESC;" );
   }
 
