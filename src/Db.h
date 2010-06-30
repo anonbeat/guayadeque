@@ -66,6 +66,7 @@ class guDb
     int                 ExecuteUpdate( const wxString &query );
     wxSQLite3ResultSet  ExecuteQuery( const wxSQLite3StatementBuffer &query );
     int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
+    int                 GetLastRowId( void ) { return m_Db.GetLastRowId().GetLo(); }
 
     virtual void        SetInitParams( void );
 

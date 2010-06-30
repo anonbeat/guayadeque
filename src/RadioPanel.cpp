@@ -169,7 +169,7 @@ void guShoutcastSearch::OnOkButton( wxCommandEvent &event )
 class guRadioGenreTreeCtrl : public wxTreeCtrl
 {
   private :
-    guDbLibrary *   m_Db;
+    guDbRadios *    m_Db;
     wxImageList *   m_ImageList;
     wxTreeItemId    m_RootId;
     wxTreeItemId    m_ManualId;
@@ -184,7 +184,7 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
     void            OnKeyDown( wxKeyEvent &event );
 
   public :
-    guRadioGenreTreeCtrl( wxWindow * parent, guDbLibrary * db );
+    guRadioGenreTreeCtrl( wxWindow * parent, guDbRadios * db );
     ~guRadioGenreTreeCtrl();
 
     void            ReloadItems( void );
@@ -211,7 +211,7 @@ class guRadioLabelListBox : public guListBox
 
     public :
 
-      guRadioLabelListBox( wxWindow * parent, guDbLibrary * NewDb, wxString Label );
+      guRadioLabelListBox( wxWindow * parent, guDbRadios * NewDb, wxString Label );
       ~guRadioLabelListBox();
 
 };
@@ -222,7 +222,7 @@ class guRadioLabelListBox : public guListBox
 class guUpdateRadiosThread : public wxThread
 {
   private:
-    guDbLibrary *   m_Db;
+    guDbRadios *    m_Db;
     guRadioPanel *  m_RadioPanel;
     int             m_GaugeId;
     wxArrayInt      m_Ids;
@@ -231,7 +231,7 @@ class guUpdateRadiosThread : public wxThread
     void            CheckRadioStationsFilters( const int flags, const wxString &text, guRadioStations &stations );
 
   public:
-    guUpdateRadiosThread( guDbLibrary * db, guRadioPanel * radiopanel,
+    guUpdateRadiosThread( guDbRadios * db, guRadioPanel * radiopanel,
                                 const wxArrayInt &ids, const int source, int gaugeid = wxNOT_FOUND )
     {
         m_Db = db;
@@ -264,7 +264,7 @@ class guUpdateRadiosThread : public wxThread
 class guRadioStationListBox : public guListView
 {
   protected :
-    guDbLibrary *     m_Db;
+    guDbRadios *      m_Db;
     guRadioStations   m_Radios;
     int               m_StationsOrder;
     bool              m_StationsOrderDesc;
@@ -276,7 +276,7 @@ class guRadioStationListBox : public guListView
     virtual wxArrayString       GetColumnNames( void );
 
   public :
-    guRadioStationListBox( wxWindow * parent, guDbLibrary * NewDb );
+    guRadioStationListBox( wxWindow * parent, guDbRadios * NewDb );
     ~guRadioStationListBox();
 
     virtual void                ReloadItems( bool reset = true );
@@ -294,7 +294,7 @@ class guRadioStationListBox : public guListView
 // -------------------------------------------------------------------------------- //
 // guRadioGenreTreeCtrl
 // -------------------------------------------------------------------------------- //
-guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbLibrary * db ) :
+guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbRadios * db ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxSUNKEN_BORDER )
 {
@@ -568,7 +568,7 @@ void guRadioGenreTreeCtrl::OnKeyDown( wxKeyEvent &event )
 // -------------------------------------------------------------------------------- //
 // guRadioStationListBox
 // -------------------------------------------------------------------------------- //
-guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbLibrary * db ) :
+guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbRadios * db ) :
     guListView( parent, wxLB_SINGLE | guLISTVIEW_COLUMN_SELECT|guLISTVIEW_COLUMN_SORTING )
 {
     m_Db = db;
@@ -831,8 +831,8 @@ bool guRadioStationListBox::GetSelected( guRadioStation * radiostation ) const
 // -------------------------------------------------------------------------------- //
 // guRadioLabelListBox
 // -------------------------------------------------------------------------------- //
-guRadioLabelListBox::guRadioLabelListBox( wxWindow * parent, guDbLibrary * NewDb, wxString Label ) :
-    guListBox( parent, NewDb, Label, wxLB_MULTIPLE | guLISTVIEW_HIDE_HEADER )
+guRadioLabelListBox::guRadioLabelListBox( wxWindow * parent, guDbRadios * db, wxString label ) :
+    guListBox( parent, ( guDbLibrary * ) db, label, wxLB_MULTIPLE | guLISTVIEW_HIDE_HEADER )
 {
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::AddLabel ) );
     Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::DelLabel ) );
@@ -851,7 +851,7 @@ guRadioLabelListBox::~guRadioLabelListBox()
 // -------------------------------------------------------------------------------- //
 void guRadioLabelListBox::GetItemsList( void )
 {
-    m_Db->GetRadioLabels( m_Items );
+    ( ( guDbRadios * ) m_Db )->GetRadioLabels( m_Items );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -883,7 +883,7 @@ void guRadioLabelListBox::AddLabel( wxCommandEvent &event )
     if( EntryDialog->ShowModal() == wxID_OK )
     {
         //wxMessageBox( EntryDialog->GetValue(), wxT( "Entered..." ) );
-        m_Db->AddRadioLabel( EntryDialog->GetValue() );
+        ( ( guDbRadios * ) m_Db )->AddRadioLabel( EntryDialog->GetValue() );
         ReloadItems();
     }
     EntryDialog->Destroy();
@@ -902,7 +902,7 @@ void guRadioLabelListBox::DelLabel( wxCommandEvent &event )
         {
             for( int Index = 0; Index < Count; Index++ )
             {
-                m_Db->DelRadioLabel( Selection[ Index ] );
+                ( ( guDbRadios * ) m_Db )->DelRadioLabel( Selection[ Index ] );
             }
             ReloadItems();
         }
@@ -921,7 +921,7 @@ void guRadioLabelListBox::EditLabel( wxCommandEvent &event )
         wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Enter the new label name" ), ( * m_Items )[ item ].m_Name );
         if( EntryDialog->ShowModal() == wxID_OK )
         {
-            m_Db->SetRadioLabelName( Selection[ 0 ], EntryDialog->GetValue() );
+            ( ( guDbRadios * ) m_Db )->SetRadioLabelName( Selection[ 0 ], EntryDialog->GetValue() );
             ReloadItems();
         }
         EntryDialog->Destroy();
@@ -934,14 +934,12 @@ void guRadioLabelListBox::EditLabel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guRadioPanel
 // -------------------------------------------------------------------------------- //
-
-// -------------------------------------------------------------------------------- //
-guRadioPanel::guRadioPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * NewPlayerPanel ) :
+guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
               wxPanel( parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ),
               m_TextChangedTimer( this, guRADIO_TIMER_TEXTSEARCH )
 {
-    m_Db = NewDb;
-    m_PlayerPanel = NewPlayerPanel;
+    m_Db = new guDbRadios( db );
+    m_PlayerPanel = playerpanel;
 
     guConfig *  Config = ( guConfig * ) guConfig::Get();
 
@@ -1163,6 +1161,11 @@ guRadioPanel::~guRadioPanel()
     m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 
     m_AuiManager.UnInit();
+
+    if( m_Db )
+    {
+        delete m_Db;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1244,7 +1247,7 @@ void guRadioPanel::OnStationsEditLabelsClicked( wxCommandEvent &event )
     m_Db->GetRadioLabels( &Labels, true );
 
     Stations = m_StationsListBox->GetSelectedItems();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Stations Labels Editor" ), true, Labels, m_Db->GetStationsLabels( Stations ) );
+    guLabelEditor * LabelEditor = new guLabelEditor( this, ( guDbLibrary * ) m_Db, _( "Stations Labels Editor" ), true, Labels, m_Db->GetStationsLabels( Stations ) );
     if( LabelEditor )
     {
         if( LabelEditor->ShowModal() == wxID_OK )

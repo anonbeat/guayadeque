@@ -80,6 +80,8 @@ ADD_EXECUTABLE( guayadeque
 	Db.h
 	DbLibrary.cpp
 	DbLibrary.h
+	DbRadios.cpp
+	DbRadios.h
 	DbCache.cpp
 	DbCache.h
 	AutoPulseGauge.cpp

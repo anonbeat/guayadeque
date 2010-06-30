@@ -26,9 +26,18 @@ guLabelEditor::guLabelEditor( wxWindow* parent, guDbLibrary * db, const wxString
         const bool isradiolabel, const guListItems &listitems, const guArrayListItems &selitems ) :
              wxDialog( parent, wxID_ANY, Title, wxDefaultPosition, wxSize( 250,300 ), wxDEFAULT_DIALOG_STYLE )
 {
-    m_Db = db;
     m_SelectedItem = wxNOT_FOUND;
     m_IsRadioLabel = isradiolabel;
+    if( isradiolabel )
+    {
+        m_Db = NULL;
+        m_RaDb = ( guDbRadios * ) db;
+    }
+    else
+    {
+        m_Db = db;
+        m_RaDb = NULL;
+    }
 
 	wxArrayString   Choices;
 	wxArrayInt      EnabledIds;
@@ -153,7 +162,7 @@ void guLabelEditor::OnAddLabelBtnClick( wxCommandEvent &event )
         int AddedId;
         if( m_IsRadioLabel )
         {
-            AddedId = m_Db->AddRadioLabel( EntryDialog->GetValue() );
+            AddedId = m_RaDb->AddRadioLabel( EntryDialog->GetValue() );
         }
         else
         {
@@ -177,7 +186,7 @@ void guLabelEditor::OnDelLabelBtnClick( wxCommandEvent &event )
         {
             if( m_IsRadioLabel )
             {
-                m_Db->DelRadioLabel( m_LabelIds[ m_SelectedItem ] );
+                m_RaDb->DelRadioLabel( m_LabelIds[ m_SelectedItem ] );
             }
             else
             {
