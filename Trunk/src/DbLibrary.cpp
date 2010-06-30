@@ -571,7 +571,7 @@ bool guDbLibrary::CheckDbVersion( void )
                       "song_lastplay INTEGER, song_filesize INTEGER );" ) );
 
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_name on songs( song_name ASC )" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumid on songs( song_albumid,song_year,song_artist,song_year DESC, song_album, song_disk )" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumid on songs( song_albumid,song_artist,song_year DESC, song_album, song_disk )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composerid on songs( song_composerid, song_composer )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_artistid on songs( song_artistid, song_artist )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_genreid on songs( song_genreid, song_genre )" ) );
@@ -858,7 +858,7 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "ALTER TABLE songs1 RENAME TO songs" ) );
 
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_name on songs( song_name ASC )" ) );
-        query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumid on songs( song_albumid,song_year,song_artist,song_year DESC, song_album, song_disk )" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumid on songs( song_albumid,song_artist,song_year DESC, song_album, song_disk )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composerid on songs( song_composerid, song_composer )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_artistid on songs( song_artistid, song_artist )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_genreid on songs( song_genreid, song_genre )" ) );
