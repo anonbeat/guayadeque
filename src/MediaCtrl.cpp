@@ -1607,10 +1607,10 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
         GstElement * converter = gst_element_factory_make( "audioconvert", "pb_audioconvert" );
         if( IsValidElement( converter ) )
         {
-            GstElement * replay = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
-            if( IsValidElement( replay ) )
+//            GstElement * replay = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
+//            if( IsValidElement( replay ) )
             {
-                g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
+//                g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
                 //g_object_set( G_OBJECT( replay ), "pre-amp", gdouble( 6 ), NULL );
 
                 GstElement * level = gst_element_factory_make( "level", "pb_level" );
@@ -1652,8 +1652,10 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
 
                                             g_object_set( QueueOut, "max-size-buffers", 10, NULL );
 
-                                            gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, QueueOut, outputsink, NULL );
-                                            gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, QueueOut, outputsink, NULL );
+                                            //gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, QueueOut, outputsink, NULL );
+                                            gst_bin_add_many( GST_BIN( sinkbin ), m_Tee, queue, converter, level, m_Equalizer, m_Volume, outconverter, QueueOut, outputsink, NULL );
+                                            //gst_element_link_many( m_Tee, queue, converter, replay, level, m_Equalizer, limiter, m_Volume, outconverter, QueueOut, outputsink, NULL );
+                                            gst_element_link_many( m_Tee, queue, converter, level, m_Equalizer, m_Volume, outconverter, QueueOut, outputsink, NULL );
 
                                             GstPad * pad = gst_element_get_pad( m_Tee, "sink" );
                                             if( GST_IS_PAD( pad ) )
@@ -1730,12 +1732,12 @@ GstElement * guMediaCtrl::BuildPlaybackBin( GstElement * outputsink )
                     guLogError( wxT( "Could not create the level object" ) );
                 }
 
-                g_object_unref( replay );
+//                g_object_unref( replay );
             }
-            else
-            {
-                guLogError( wxT( "Could not create the replay gain object" ) );
-            }
+//            else
+//            {
+//                guLogError( wxT( "Could not create the replay gain object" ) );
+//            }
 
             g_object_unref( converter );
         }
@@ -3602,6 +3604,16 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
 	g_object_set( m_CapsFilter, "caps", Caps, NULL );
 	gst_caps_unref( Caps );
 
+    GstElement * replay = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
+    if( !IsValidElement( replay ) )
+    {
+        guLogError( wxT( "Could not create the replay gain object" ) );
+        return;
+    }
+
+    g_object_set( G_OBJECT( replay ), "album-mode", false, NULL );
+
+
 	m_Volume = gst_element_factory_make( "volume", NULL );
     if( !IsValidElement( m_Volume ) )
     {
@@ -3612,7 +3624,6 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
 	gst_object_ref( m_Volume );
 
 	g_signal_connect( m_Volume, "notify::volume", G_CALLBACK( faderplaybin_volume_changed_cb ), this );
-
 
 	m_Fader = gst_object_control_properties( G_OBJECT( m_Volume ), ( gchar * ) "volume", NULL );
     if( !m_Fader )
@@ -3641,6 +3652,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
         m_AudioConvert,
         m_AudioResample,
         m_CapsFilter,
+        replay,
         m_PreRoll,
         m_Volume,
         NULL );
@@ -3649,6 +3661,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri )
 	gst_element_link_many( m_AudioConvert,
         m_AudioResample,
         m_CapsFilter,
+        replay,
 		m_PreRoll,
 		m_Volume,
 		NULL );
