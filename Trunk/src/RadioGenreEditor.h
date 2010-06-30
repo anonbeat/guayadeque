@@ -21,7 +21,7 @@
 #ifndef RADIOGENREEDITOR_H
 #define RADIOGENREEDITOR_H
 
-#include "DbLibrary.h"
+#include "DbRadios.h"
 
 #include <wx/string.h>
 #include <wx/checklst.h>
@@ -40,7 +40,7 @@
 class guRadioGenreEditor : public wxDialog
 {
   private:
-    guDbLibrary *             m_Db;
+    guDbRadios *            m_Db;
     guListItems             m_AddedGenres;
     wxArrayString           m_RadioGenres;
 
@@ -50,7 +50,7 @@ class guRadioGenreEditor : public wxDialog
     wxTextCtrl*             m_InputTextCtrl;
 
   public:
-    guRadioGenreEditor( wxWindow* parent, guDbLibrary * db ); //
+    guRadioGenreEditor( wxWindow* parent, guDbRadios * db ); //
     ~guRadioGenreEditor();
     wxArrayString GetGenres( void );
 

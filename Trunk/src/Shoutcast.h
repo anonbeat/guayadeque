@@ -21,7 +21,7 @@
 #ifndef SHOUTCAST_H
 #define SHOUTCAST_H
 
-#include "DbLibrary.h"
+#include "DbRadios.h"
 #include "PlayListFile.h"
 
 #define SHOUTCAST_STATION_STATUS_NAME       0

@@ -194,24 +194,6 @@ enum guRadioSource {
     guRADIO_SOURCE_SEARCH
 };
 
-// -------------------------------------------------------------------------------- //
-class guRadioStation
-{
-  public :
-    int         m_Id;
-    long        m_SCId;
-    wxString    m_Name;
-    wxString    m_Link;
-    long        m_GenreId;
-    wxString    m_GenreName;
-    int         m_Source;
-    wxString    m_Type;
-    long        m_BitRate;
-    long        m_Listeners;
-    wxString    m_NowPlaying;
-};
-WX_DECLARE_OBJARRAY(guRadioStation,guRadioStations);
-
 enum guTRACKS_ORDER {
     guTRACKS_ORDER_NUMBER,
     guTRACKS_ORDER_TITLE,
@@ -229,12 +211,6 @@ enum guTRACKS_ORDER {
     guTRACKS_ORDER_ADDEDDATE,
     guTRACKS_ORDER_FORMAT
 };
-
-#define guRADIOSTATIONS_ORDER_NAME        0
-#define guRADIOSTATIONS_ORDER_BITRATE     1
-#define guRADIOSTATIONS_ORDER_LISTENERS   2
-#define guRADIOSTATIONS_ORDER_TYPE        3
-#define guRADIOSTATIONS_ORDER_NOWPLAYING  4
 
 enum guALBUMS_ORDER {
     guALBUMS_ORDER_NAME = 0,
@@ -295,16 +271,8 @@ class guDbLibrary : public guDb
     wxArrayInt         m_PcFilters; // PlayCount
     wxArrayInt         m_CoFilters; // Composers
 
-    // Radio Filters Options
-    wxArrayInt         m_RaGeFilters;
-    int                m_RadioSource;
-    wxArrayInt         m_RaLaFilters;
-    wxArrayString      m_RaTeFilters;
-
     guTRACKS_ORDER     m_TracksOrder;
     bool               m_TracksOrderDesc;
-    int                m_StationsOrder; // 0 -> Name, 1 -> BitRate, 2 -> Listeners
-    bool               m_StationsOrderDesc;
     int                m_AlbumsOrder;   // 0 ->
 
 //    guListItems         Labels;
@@ -325,8 +293,6 @@ class guDbLibrary : public guDb
 
 
     void inline         FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes );
-    int                 GetRadioFiltersCount( void ) const;
-    wxString            RadioFiltersSQL( void );
 
   public :
                         guDbLibrary();
@@ -370,7 +336,6 @@ class guDbLibrary : public guDb
 
     void                GetGenres( guListItems * Genres, const bool FullList = false );
     void                GetLabels( guListItems * Labels, const bool FullList = false );
-    void                GetRadioLabels( guListItems * Labels, const bool FullList = false );
     void                GetArtists( guListItems * Artists, const bool FullList = false );
     void                GetYears( guListItems * items, const bool FullList = false );
     void                GetRatings( guListItems * items, const bool FullList = false );
@@ -416,12 +381,6 @@ class guDbLibrary : public guDb
     int                 SetLabelName( const int labelid, const wxString &oldlabel, const wxString &newlabel );
     int                 DelLabel( const int LabelId );
     wxArrayInt          GetLabels( void );
-
-    int                 GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs );
-    int                 AddRadioLabel( wxString LabelName );
-    int                 SetRadioLabelName( const int LabelId, wxString NewName );
-    int                 DelRadioLabel( const int LabelId );
-    wxArrayInt          GetRadioLabels( void );
 
     int                 GetStaticPlayList( const wxString &name );
     int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
@@ -496,34 +455,6 @@ class guDbLibrary : public guDb
     guTrack *           FindSong( const wxString &artist, const wxString &track,
                                   const int filterallow, const int filterdeny );
     int                 FindTrackFile( const wxString &filename, guTrack * song );
-
-    //
-    // Radio support functions
-    //
-    void                    SetRaTeFilters( const wxArrayString &filters );
-    void                    SetRadioLabelsFilters( const wxArrayInt &filters );
-    void                    SetRadioGenresFilters( const wxArrayInt &filters );
-    void                    SetRadioSourceFilter( int source );
-    void                    GetRadioGenresList( const int source, const wxArrayInt &ids, guListItems * listitems, wxArrayInt * radioflags = NULL );
-    void                    GetRadioGenres( const int source, guListItems * radiogenres, bool allowfilter = true, wxArrayInt * radioflags = NULL );
-    void                    SetRadioGenres( const wxArrayString &Genres );
-    int                     GetRadioStations( guRadioStations * stations );
-//    void                    GetRadioCounter( wxLongLong * count );
-    int                     GetUserRadioStations( guRadioStations * stations );
-    void                    SetRadioStation( const guRadioStation * RadioStation );
-    bool                    GetRadioStation( const int id, guRadioStation * radiostation );
-    bool                    RadioStationExists( const int shoutcastid );
-    void                    SetRadioStations( const guRadioStations * RadioStations );
-    guArrayListItems        GetStationsLabels( const wxArrayInt &Stations );
-    void                    SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels );
-    int                     DelRadioStations( const int source, const wxArrayInt &radioids );
-    int                     DelRadioStation( const int radioid );
-    void                    SetRadioStationsOrder( int OrderValue );
-
-    int                     AddRadioGenre( const wxString &name, const int source, const int flags );
-    int                     SetRadioGenre( const int id, const wxString &name, const int source = guRADIO_SOURCE_GENRE,
-                                            const int flags = 0 );
-    int                     DelRadioGenre( const int GenreId );
 
     //
     // AudioScrobbler functions

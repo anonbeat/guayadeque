@@ -22,6 +22,7 @@
 #define LABELEDITOR_H
 
 #include "DbLibrary.h"
+#include "DbRadios.h"
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -42,6 +43,7 @@ class guLabelEditor : public wxDialog
 {
   protected:
     guDbLibrary *       m_Db;
+    guDbRadios *        m_RaDb;
     wxCheckListBox *    m_CheckListBox;
     wxBitmapButton *    m_AddLabelBtn;
 	wxBitmapButton *    m_DelLabelBtn;

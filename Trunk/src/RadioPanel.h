@@ -21,6 +21,11 @@
 #ifndef RADIOPANEL_H
 #define RADIOPANEL_H
 
+#include "DbRadios.h"
+#include "PlayerPanel.h"
+#include "ItemListBox.h"
+#include "Shoutcast.h"
+
 #include <wx/aui/aui.h>
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -40,10 +45,6 @@
 #include <wx/splitter.h>
 #include <wx/frame.h>
 #include <wx/srchctrl.h>
-
-#include "PlayerPanel.h"
-#include "ItemListBox.h"
-#include "Shoutcast.h"
 
 #define     guPANEL_RADIO_TEXTSEARCH        ( 1 << 0 )
 #define     guPANEL_RADIO_GENRES            ( 1 << 1 )
@@ -93,7 +94,7 @@ class guRadioPanel : public wxPanel
 {
   private:
     wxAuiManager        m_AuiManager;
-	guDbLibrary *       m_Db;
+	guDbRadios *        m_Db;
 	guPlayerPanel *     m_PlayerPanel;
 
     wxTimer             m_TextChangedTimer;
