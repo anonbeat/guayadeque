@@ -24,7 +24,7 @@
 
 //#define DBLIBRARY_SHOW_QUERIES      1
 //#define DBLIBRARY_SHOW_TIMES        1
-//#define DBLIBRARY_MIN_TIME          10
+//#define DBLIBRARY_MIN_TIME          50
 
 // -------------------------------------------------------------------------------- //
 guDb::guDb()
