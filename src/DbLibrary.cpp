@@ -2543,16 +2543,13 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 {
   wxString              query;
   wxSQLite3ResultSet    dbRes;
-  wxArrayInt            AddedAlbums;
-  int                   AlbumId;
-  int                   AlbumFound;
-  wxString              CoverPath;
+
   //guLogMessage( wxT( "guDbLibrary::GetAlbums" )
-  query = wxT( "SELECT song_albumid, song_album, song_artistid, song_coverid, song_year FROM songs " );
+  query = wxT( "SELECT song_albumid, song_album, song_artistid, song_coverid, MAX(song_year) FROM songs " );
 
   if( FullList )
   {
-      query += wxT( "GROUP BY song_albumid,song_year " );
+      query += wxT( "GROUP BY song_albumid " );
   }
   else
   {
@@ -2562,7 +2559,7 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
       query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_ALBUMS );
     }
 
-    query += wxT( " GROUP BY song_albumid,song_year " );
+    query += wxT( " GROUP BY song_albumid " );
     query += wxT( " ORDER BY " );
 
     switch( m_AlbumsOrder )
@@ -2600,24 +2597,14 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 
   while( dbRes.NextRow() )
   {
-      AlbumId = dbRes.GetInt( 0 );
-      if( ( AlbumFound = AddedAlbums.Index( AlbumId ) ) == wxNOT_FOUND )
-      {
         guAlbumItem * AlbumItem = new guAlbumItem();
-        AlbumItem->m_Id = AlbumId; //dbRes.GetInt( 0 );
+        AlbumItem->m_Id = dbRes.GetInt( 0 );
         AlbumItem->m_Name = dbRes.GetString( 1 );
         AlbumItem->m_ArtistId = dbRes.GetInt( 2 );
         AlbumItem->m_CoverId = dbRes.GetInt( 3 );
         AlbumItem->m_Year = dbRes.GetInt( 4 );
         AlbumItem->m_Thumb = GetCoverBitmap( AlbumItem->m_CoverId );
         Albums->Add( AlbumItem );
-        AddedAlbums.Add( AlbumId );
-      }
-      else
-      {
-          if( ( * Albums )[ AlbumFound ].m_Year < dbRes.GetInt( 4 ) )
-            ( * Albums )[ AlbumFound ].m_Year = dbRes.GetInt( 4 );
-      }
   }
   dbRes.Finalize();
 //  return RetVal;
