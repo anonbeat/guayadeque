@@ -578,6 +578,7 @@ void guLibPanel::ReloadControls( wxCommandEvent &event )
     m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems( false );
     m_GenreListCtrl->ReloadItems( false );
+    m_AlbumArtistListCtrl->ReloadItems( false );
     m_ArtistListCtrl->ReloadItems( false );
     m_ComposerListCtrl->ReloadItems( false );
     m_AlbumListCtrl->ReloadItems( false );
@@ -808,6 +809,7 @@ void guLibPanel::UpdateLabels( void )
     m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems( false );
     m_GenreListCtrl->ReloadItems( false );
+    m_AlbumArtistListCtrl->ReloadItems( false );
     m_ArtistListCtrl->ReloadItems( false );
     m_ComposerListCtrl->ReloadItems( false );
     m_AlbumListCtrl->ReloadItems( false );
@@ -1521,6 +1523,7 @@ void guLibPanel::SelectTrack( const int trackid )
     m_Db->SetTeFilters( Words, false  );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_ComposerListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
@@ -1537,6 +1540,7 @@ void guLibPanel::SelectAlbum( const int albumid )
     m_Db->SetTeFilters( Words, false );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_ComposerListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
@@ -1552,6 +1556,7 @@ void guLibPanel::SelectArtist( const int artistid )
     m_Db->SetTeFilters( Words, false );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_ComposerListCtrl->ReloadItems();
     m_UpdateLock = false;
@@ -1566,6 +1571,7 @@ void guLibPanel::SelectYear( const int year )
     m_Db->SetTeFilters( Words, false );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_ComposerListCtrl->ReloadItems();
     m_YearListCtrl->ReloadItems();
@@ -1581,6 +1587,7 @@ void guLibPanel::SelectAlbumName( const wxString &album )
     m_Db->SetTeFilters( Words, m_UpdateLock );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_ComposerListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
@@ -1596,6 +1603,7 @@ void guLibPanel::SelectArtistName( const wxString &artist )
     m_Db->SetTeFilters( Words, m_UpdateLock );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_ComposerListCtrl->ReloadItems();
     m_UpdateLock = false;
@@ -1622,6 +1630,7 @@ void guLibPanel::SelectArtists( wxArrayInt * artists )
     m_Db->SetTeFilters( Words, m_UpdateLock );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_ComposerListCtrl->ReloadItems();
     m_UpdateLock = false;
@@ -1636,6 +1645,7 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
     m_Db->SetTeFilters( Words, m_UpdateLock );
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
     m_ArtistListCtrl->ReloadItems();
     m_ComposerListCtrl->ReloadItems();
     m_AlbumListCtrl->ReloadItems();
@@ -2309,6 +2319,7 @@ void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
                 m_UpdateLock = true;
                 m_LabelsListCtrl->ReloadItems();
                 m_GenreListCtrl->ReloadItems();
+                m_AlbumArtistListCtrl->ReloadItems();
                 m_ArtistListCtrl->ReloadItems();
                 m_ComposerListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
@@ -2332,6 +2343,7 @@ void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
     //    {
             m_LabelsListCtrl->ReloadItems( false );
             m_GenreListCtrl->ReloadItems( false );
+            m_AlbumArtistListCtrl->ReloadItems();
             m_ArtistListCtrl->ReloadItems( false );
             m_ComposerListCtrl->ReloadItems( false );
             m_AlbumListCtrl->ReloadItems( false );
