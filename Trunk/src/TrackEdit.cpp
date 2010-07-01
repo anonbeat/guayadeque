@@ -138,6 +138,18 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_ArtistTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	DataFlexSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
+	m_AACopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AACopyButton->SetToolTip( _( "Copy the Album Artist name to all the tracks you are editing" ) );
+	DataFlexSizer->Add( m_AACopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	wxStaticText * AAStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "A. Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	AAStaticText->SetToolTip( _( "shows the Album Artist of the track" ) );
+	AAStaticText->Wrap( -1 );
+	DataFlexSizer->Add( AAStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
+
+	m_AlbumArtistTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	DataFlexSizer->Add( m_AlbumArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+
 	m_AlCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_AlCopyButton->SetToolTip( _( "Copy the Album name to all the tracks you are editing" ) );
 	DataFlexSizer->Add( m_AlCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
@@ -619,6 +631,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_MoveUpButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveUpBtnClick ), NULL, this );
 	m_MoveDownButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveDownBtnClick ), NULL, this );
 	m_ArCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnArCopyButtonClicked ), NULL, this );
+	m_AACopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAACopyButtonClicked ), NULL, this );
 	m_AlCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAlCopyButtonClicked ), NULL, this );
 	m_TiCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnTiCopyButtonClicked ), NULL, this );
 	m_CoCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCoCopyButtonClicked ), NULL, this );
@@ -692,6 +705,7 @@ guTrackEditor::~guTrackEditor()
 	m_MoveUpButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveUpBtnClick ), NULL, this );
 	m_MoveDownButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveDownBtnClick ), NULL, this );
 	m_ArCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnArCopyButtonClicked ), NULL, this );
+	m_AACopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAACopyButtonClicked ), NULL, this );
 	m_AlCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAlCopyButtonClicked ), NULL, this );
 	m_TiCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnTiCopyButtonClicked ), NULL, this );
 	m_CoCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCoCopyButtonClicked ), NULL, this );
@@ -813,6 +827,7 @@ void guTrackEditor::ReadItemData( void )
     if( m_CurItem >= 0 )
     {
         guTrack * Track = &( * m_Items )[ m_CurItem ];
+        m_AlbumArtistTextCtrl->SetValue( Track->m_AlbumArtist );
         m_ArtistTextCtrl->SetValue( Track->m_ArtistName );
         m_AlbumTextCtrl->SetValue( Track->m_AlbumName );
         m_TitleTextCtrl->SetValue( Track->m_SongName );
@@ -846,6 +861,7 @@ void guTrackEditor::ReadItemData( void )
     }
     else
     {
+        m_AlbumArtistTextCtrl->SetValue( wxEmptyString );
         m_ArtistTextCtrl->SetValue( wxEmptyString );
         m_AlbumTextCtrl->SetValue( wxEmptyString );
         m_TitleTextCtrl->SetValue( wxEmptyString );
@@ -877,6 +893,8 @@ void guTrackEditor::WriteItemData( void )
     //guLogMessage( wxT( "WriteItemData: %i" ), m_CurItem );
     if( m_CurItem >= 0 )
     {
+        if( m_AlbumArtistTextCtrl->IsModified() )
+          ( * m_Items )[ m_CurItem ].m_AlbumArtist = m_AlbumArtistTextCtrl->GetLineText( 0 );
         if( m_ArtistTextCtrl->IsModified() )
           ( * m_Items )[ m_CurItem ].m_ArtistName = m_ArtistTextCtrl->GetLineText( 0 );
         if( m_AlbumTextCtrl->IsModified() )
@@ -902,6 +920,16 @@ void guTrackEditor::WriteItemData( void )
     }
 }
 
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnAACopyButtonClicked( wxCommandEvent& event )
+{
+    int index;
+    wxString CurData = m_AlbumArtistTextCtrl->GetLineText( 0 );
+    int count = m_Items->Count();
+    for( index = 0; index < count; index++ )
+        ( * m_Items )[ index ].m_AlbumArtist = CurData;
+}
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnArCopyButtonClicked( wxCommandEvent& event )
