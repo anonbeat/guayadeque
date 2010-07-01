@@ -21,6 +21,7 @@
 #ifndef LIBPANEL_H
 #define LIBPANEL_H
 
+#include "AAListBox.h"
 #include "AlListBox.h"
 #include "ArListBox.h"
 #include "CoListBox.h"
@@ -51,6 +52,7 @@
 #define     guPANEL_LIBRARY_RATINGS         ( 1 << 7 )
 #define     guPANEL_LIBRARY_PLAYCOUNT       ( 1 << 8 )
 #define     guPANEL_LIBRARY_COMPOSERS       ( 1 << 9 )
+#define     guPANEL_LIBRARY_ALBUMARTISTS    ( 1 << 10 )
 
 #define     guPANEL_LIBRARY_VISIBLE_DEFAULT ( guPANEL_LIBRARY_TEXTSEARCH | guPANEL_LIBRARY_LABELS |\
                                               guPANEL_LIBRARY_GENRES | guPANEL_LIBRARY_ARTISTS |\
@@ -73,6 +75,7 @@ class guLibPanel : public wxPanel
     guRaListBox *       m_RatingListCtrl;
     guPcListBox *       m_PlayCountListCtrl;
     guCoListBox *       m_ComposerListCtrl;
+    guAAListBox *       m_AlbumArtistListCtrl;
 
     //
     guDbLibrary *       m_Db;
@@ -154,7 +157,7 @@ class guLibPanel : public wxPanel
     void OnPlayCountListEditTracksClicked( wxCommandEvent &event );
     void OnPlayCountListCopyToClicked( wxCommandEvent &event );
 
-    // PlayCountListBoxEvents
+    // ComposersListBoxEvents
     void OnComposerListSelected( wxListEvent &event );
     void OnComposerListActivated( wxListEvent &event );
     void OnComposerListPlayClicked( wxCommandEvent &event );
@@ -162,6 +165,15 @@ class guLibPanel : public wxPanel
     void OnComposerListQueueAsNextClicked( wxCommandEvent &event );
     void OnComposerListEditTracksClicked( wxCommandEvent &event );
     void OnComposerListCopyToClicked( wxCommandEvent &event );
+
+    // AlbumArtistsListBoxEvents
+    void OnAlbumArtistListSelected( wxListEvent &event );
+    void OnAlbumArtistListActivated( wxListEvent &event );
+    void OnAlbumArtistListPlayClicked( wxCommandEvent &event );
+    void OnAlbumArtistListQueueClicked( wxCommandEvent &event );
+    void OnAlbumArtistListQueueAsNextClicked( wxCommandEvent &event );
+    void OnAlbumArtistListEditTracksClicked( wxCommandEvent &event );
+    void OnAlbumArtistListCopyToClicked( wxCommandEvent &event );
 
     // SongsListBox Events
     void OnSongListActivated( wxListEvent &event );
