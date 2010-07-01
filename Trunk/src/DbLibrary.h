@@ -257,11 +257,9 @@ class guCurrentTrack;
 class guDbLibrary : public guDb
 {
   protected :
-//    wxSQLite3Database  m_Db;
     wxArrayString      m_LibPaths;
     guTrack            m_CurSong;
     bool               m_NeedUpdate;
-    //wxString           m_UpTag;
 
     // Library Filter Options
     wxArrayInt         m_GeFilters;
@@ -279,13 +277,6 @@ class guDbLibrary : public guDb
     bool               m_TracksOrderDesc;
     int                m_AlbumsOrder;   // 0 ->
 
-//    guListItems         Labels;
-//    guListItems         m_GenresCache;
-//    guListItems         m_ArtistsCache;
-//    guListItems         m_ComposersCache;
-//    guAlbumItems        m_AlbumsCache;
-//    guListItems         m_PathsCache;
-
     wxArrayString       m_CoverSearchWords;
 
     // Podcasts
@@ -302,8 +293,7 @@ class guDbLibrary : public guDb
                         guDbLibrary();
                         guDbLibrary( const wxString &DbName );
                         ~guDbLibrary();
-//    int                 Open( const wxString &DbPath );
-//    int                 Close();
+
     virtual int         GetDbVersion( void );
 
     void                ConfigChanged( void );
@@ -447,11 +437,6 @@ class guDbLibrary : public guDb
     int                 GetPlayCountsSongs( const wxArrayInt &PlayCounts, guTrackArray * Songs );
     int                 GetComposersSongs( const wxArrayInt &Composers, guTrackArray * Songs );
     int                 GetAlbumArtistsSongs( const wxArrayInt &albumartists, guTrackArray * tracks );
-
-//    wxSQLite3ResultSet  ExecuteQuery(  const wxSQLite3StatementBuffer &query );
-//    int                 ExecuteUpdate( const wxString &query );
-//    int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
-//    wxSQLite3ResultSet  ExecuteQuery( const wxString &query );
 
     wxBitmap *          GetCoverBitmap( const int coverid, const bool thumb = true );
     guCoverInfos        GetEmptyCovers( void );

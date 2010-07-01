@@ -302,6 +302,52 @@ int guPodcastChannel::GetUpdateItems( guDbLibrary * db, guPodcastItemArray * ite
 }
 
 // -------------------------------------------------------------------------------- //
+int guPodcastChannel::GetPendingChannelItems( guDbLibrary * db, int channelid, guPodcastItemArray * items )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id "
+            "AND podcastitem_chid = %u " ), channelid );
+
+  query += wxT( "AND podcastitem_status IN ( 1 ) " );
+
+  dbRes = db->ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastItem * Item = new guPodcastItem();
+    Item->m_Id = dbRes.GetInt( 0 );
+    Item->m_ChId = dbRes.GetInt( 1 );
+    Item->m_Title = dbRes.GetString( 2 );
+    Item->m_Summary = dbRes.GetString( 3 );
+    Item->m_Author = dbRes.GetString( 4 );
+    Item->m_Enclosure = dbRes.GetString( 5 );
+    Item->m_Time = dbRes.GetInt( 6 );
+    Item->m_FileName = dbRes.GetString( 7 );
+    Item->m_FileSize = dbRes.GetInt( 8 );
+    Item->m_Length = dbRes.GetInt( 9 );
+    Item->m_PlayCount = dbRes.GetInt( 10 );
+    Item->m_AddedDate = dbRes.GetInt( 11 );
+    Item->m_LastPlay = dbRes.GetInt( 12 );
+    Item->m_Status = dbRes.GetInt( 13 );
+
+    Item->m_Channel = dbRes.GetString( 14 );
+    Item->m_Category = dbRes.GetString( 15 );
+    items->Add( Item );
+  }
+  dbRes.Finalize();
+  return items->Count();
+}
+
+// -------------------------------------------------------------------------------- //
 int guPodcastChannel::CheckDownloadItems( guDbLibrary * db, guMainFrame * mainframe )
 {
     if( m_DownloadType != guPODCAST_DOWNLOAD_MANUALLY )
@@ -314,6 +360,23 @@ int guPodcastChannel::CheckDownloadItems( guDbLibrary * db, guMainFrame * mainfr
         {
             mainframe->AddPodcastsDownloadItems( &UpdatePodcasts );
             return Count;
+        }
+    }
+    else if( m_DownloadType == guPODCAST_DOWNLOAD_MANUALLY )
+    {
+        // Check if in the download thread this items are included and delete them
+        guPodcastItemArray Podcasts;
+        GetPendingChannelItems( db, m_Id, &Podcasts );
+
+        int Index;
+        int Count = Podcasts.Count();
+        if( Count )
+        {
+            mainframe->RemovePodcastDownloadItems( &Podcasts );
+            for( Index = 0; Index < Count; Index++ )
+            {
+                db->SetPodcastItemStatus( Podcasts[ Index ].m_Id, guPODCAST_STATUS_NORMAL );
+            }
         }
     }
     return 0;

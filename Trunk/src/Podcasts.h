@@ -110,6 +110,7 @@ class guPodcastChannel
     void        ReadXmlOwner( wxXmlNode * XmlNode );
 
     int         GetUpdateItems( guDbLibrary * db, guPodcastItemArray * items );
+    int         GetPendingChannelItems( guDbLibrary * db, int channelid, guPodcastItemArray * items );
     void        CheckDir( void );
 
   public :
