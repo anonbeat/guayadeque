@@ -46,6 +46,8 @@ static wxString     LastPath;
 static int          LastPathId;
 static wxString     LastArtist = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
 static int          LastArtistId = wxNOT_FOUND;
+static wxString     LastAlbumArtist = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
+static int          LastAlbumArtistId = wxNOT_FOUND;
 static wxString     LastComposer = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
 static int          LastComposerId = wxNOT_FOUND;
 
@@ -273,14 +275,6 @@ guDbLibrary::guDbLibrary() : guDb()
     m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
 
-  m_GeFilters.Empty();
-  m_LaFilters.Empty();
-  m_ArFilters.Empty();
-  m_AlFilters.Empty();
-  m_TeFilters.Empty();
-
-  m_PodChFilters.Empty();
-
   LoadCache();
 }
 
@@ -300,14 +294,6 @@ guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
     m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
     m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
-
-  m_GeFilters.Empty();
-  m_LaFilters.Empty();
-  m_ArFilters.Empty();
-  m_AlFilters.Empty();
-  m_TeFilters.Empty();
-
-  m_PodChFilters.Empty();
 
   LoadCache();
 }
@@ -574,6 +560,7 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumid on songs( song_albumid,song_artist,song_year DESC, song_album, song_disk )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composerid on songs( song_composerid, song_composer )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_artistid on songs( song_artistid, song_artist )" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumartistid on songs( song_albumartistid, song_albumartist )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_genreid on songs( song_genreid, song_genre )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_pathid on songs( song_pathid ASC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_length on songs( song_length ASC )" ) );
@@ -595,6 +582,8 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composer_desc ON songs( song_composer DESC,song_artist,song_album,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_artist ON songs( song_artist,song_album,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_artist_desc ON songs( song_artist DESC,song_album,song_disk,song_albumid,song_number )" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumartist ON songs( song_albumartist,song_album,song_disk,song_albumid,song_number )" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumartist_desc ON songs( song_albumartist DESC,song_album,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_album ON songs( song_album,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_album_desc ON songs( song_album DESC,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_disk ON songs( song_disk,song_albumid,song_number )" ) );
@@ -861,6 +850,7 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumid on songs( song_albumid,song_artist,song_year DESC, song_album, song_disk )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composerid on songs( song_composerid, song_composer )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_artistid on songs( song_artistid, song_artist )" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumartistid on songs( song_albumartistid, song_albumartist )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_genreid on songs( song_genreid, song_genre )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_pathid on songs( song_pathid ASC )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_length on songs( song_length ASC )" ) );
@@ -882,6 +872,8 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composer_desc ON songs( song_composer DESC,song_artist,song_album,song_disk,song_albumid,song_number )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_artist ON songs( song_artist,song_album,song_disk,song_albumid,song_number )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_artist_desc ON songs( song_artist DESC,song_album,song_disk,song_albumid,song_number )" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumartist ON songs( song_albumartist,song_album,song_disk,song_albumid,song_number )" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumartist_desc ON songs( song_albumartist DESC,song_album,song_disk,song_albumid,song_number )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_album ON songs( song_album,song_disk,song_albumid,song_number )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_album_desc ON songs( song_album DESC,song_disk,song_albumid,song_number )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_disk ON songs( song_disk,song_albumid,song_number )" ) );
@@ -893,7 +885,10 @@ bool guDbLibrary::CheckDbVersion( void )
       guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
-      query.Add( wxT( "VACUUM;" ) );
+      if( dbVer > 4 )
+      {
+        query.Add( wxT( "VACUUM;" ) );
+      }
     }
 
     default:
@@ -946,7 +941,7 @@ int guDbLibrary::GetGenreId( wxString &genrename )
   }
   else
   {
-    query = wxT( "SELECT song_genreid FROM songs ORDER BY song_genreid DESC LIMIT 1" );
+    query = wxT( "SELECT MAX(song_genreid) FROM songs;" );
 
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
@@ -990,7 +985,7 @@ int guDbLibrary::GetComposerId( wxString &composername, bool create )
   }
   else if( create )
   {
-    query = wxT( "SELECT song_composerid FROM songs ORDER BY song_composerid DESC LIMIT 1" );
+    query = wxT( "SELECT MAX(song_composerid) FROM songs;" );
 
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
@@ -1383,7 +1378,7 @@ int guDbLibrary::GetAlbumId( wxString &albumname, const int artistid, const int 
   }
   else
   {
-    query = wxT( "SELECT song_albumid FROM songs ORDER BY song_albumid DESC LIMIT 1" );
+    query = wxT( "SELECT MAX(song_albumid) FROM songs;" );
 
     dbRes = ExecuteQuery( query );
 
@@ -1505,7 +1500,7 @@ int guDbLibrary::GetPathId( wxString &PathValue )
   }
   else
   {
-    query = wxT( "SELECT song_pathid FROM songs ORDER BY song_pathid DESC LIMIT 1" );
+    query = wxT( "SELECT MAX(song_pathid) FROM songs;" );
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
@@ -1574,6 +1569,12 @@ int guDbLibrary::ReadFileTags( const char * filename )
       //guLogMessage( wxT( "FileName: '%s'" ), FileName.c_str() );
       if( TagInfo->Read() )
       {
+
+            if( !TagInfo->m_AlbumArtist.IsEmpty() )
+            {
+                guLogMessage( wxT( "AA: '%s'" ), TagInfo->m_AlbumArtist.c_str() );
+            }
+
           //wxString PathName = wxGetCwd();
           //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
 
@@ -1584,11 +1585,14 @@ int guDbLibrary::ReadFileTags( const char * filename )
           //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
           m_CurSong.m_PathId = GetPathId( m_CurSong.m_Path );
 
+          m_CurSong.m_ComposerId = GetComposerId( TagInfo->m_Composer );
+          m_CurSong.m_Composer = TagInfo->m_Composer;
+
           m_CurSong.m_ArtistId = GetArtistId( TagInfo->m_ArtistName );
           m_CurSong.m_ArtistName = TagInfo->m_ArtistName;
 
-          m_CurSong.m_ComposerId = GetComposerId( TagInfo->m_Composer );
-          m_CurSong.m_Composer = TagInfo->m_Composer;
+          m_CurSong.m_AlbumArtistId = GetAlbumArtistId( TagInfo->m_AlbumArtist );
+          m_CurSong.m_AlbumArtist = TagInfo->m_AlbumArtist;
 
           m_CurSong.m_AlbumId = GetAlbumId( TagInfo->m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, m_CurSong.m_Path );
           m_CurSong.m_AlbumName = TagInfo->m_AlbumName;
@@ -1786,6 +1790,7 @@ int guDbLibrary::UpdateSong()
   query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
                              "song_genreid = %u, song_genre = '%s', "
                              "song_artistid = %u, song_artist = '%s', "
+                             "song_albumartistid = %u, song_albumartist = '%s', "
                              "song_albumid = %u, song_album = '%s', "
                              "song_pathid = %u, song_path = '%s', "
                              "song_filename = '%s', song_format = '%s', "
@@ -1799,6 +1804,8 @@ int guDbLibrary::UpdateSong()
         escape_query_str( m_CurSong.m_GenreName ).c_str(),
         m_CurSong.m_ArtistId,
         escape_query_str( m_CurSong.m_ArtistName ).c_str(),
+        m_CurSong.m_AlbumArtistId,
+        escape_query_str( m_CurSong.m_AlbumArtist ).c_str(),
         m_CurSong.m_AlbumId,
         escape_query_str( m_CurSong.m_AlbumName ).c_str(),
         m_CurSong.m_PathId,
@@ -1817,31 +1824,7 @@ int guDbLibrary::UpdateSong()
         //m_CurSong.m_Rating,
         m_CurSong.m_FileSize,
         m_CurSong.m_SongId );
-//  }
-//  else
-//  {
-//      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', song_genreid = %u, "
-//                                 "song_artistid = %u, song_albumid = %u, song_pathid = %u, "
-//                                 "song_filename = '%s', song_number = %u, song_year = %u, "
-//                                 "song_composerid = %u, song_comment = '%s', song_disk = '%s', "
-//                                 "song_length = %u, song_bitrate = %u, song_filesize = %u WHERE song_id = %u;" ),
-//            escape_query_str( m_CurSong.m_SongName ).c_str(),
-//            m_CurSong.m_GenreId,
-//            m_CurSong.m_ArtistId,
-//            m_CurSong.m_AlbumId,
-//            m_CurSong.m_PathId,
-//            escape_query_str( m_CurSong.m_FileName ).c_str(),
-//            m_CurSong.m_Number,
-//            m_CurSong.m_Year,
-//            m_CurSong.m_ComposerId, //escape_query_str( m_CurSong.m_Composer ).c_str(),
-//            escape_query_str( m_CurSong.m_Comments ).c_str(),
-//            escape_query_str( m_CurSong.m_Disk ).c_str(),
-//            m_CurSong.m_Length,
-//            m_CurSong.m_Bitrate,
-//            m_CurSong.m_FileSize,
-//            m_CurSong.m_SongId );
-//  }
-  //printf( query.ToAscii() ); printf( "\n" );
+
   return ExecuteUpdate( query );
 }
 
@@ -1943,9 +1926,9 @@ int guDbLibrary::GetFiltersCount() const
 {
     return m_TeFilters.Count() || m_GeFilters.Count() ||
            m_LaFilters.Count() || m_ArFilters.Count() ||
-           m_CoFilters.Count() || m_AlFilters.Count() ||
-           m_YeFilters.Count() || m_RaFilters.Count() ||
-           m_PcFilters.Count();
+           m_AAFilters.Count() || m_CoFilters.Count() ||
+           m_AlFilters.Count() || m_YeFilters.Count() ||
+           m_RaFilters.Count() || m_PcFilters.Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1957,6 +1940,7 @@ void guDbLibrary::SetTeFilters( const wxArrayString &NewTeFilters, const bool lo
         return;
     m_LaFilters.Empty();
     m_GeFilters.Empty();
+    m_AAFilters.Empty();
     m_ArFilters.Empty();
     m_CoFilters.Empty();
     m_AlFilters.Empty();
@@ -1980,6 +1964,7 @@ void guDbLibrary::SetLaFilters( const wxArrayInt &NewLaFilters, const bool locke
     if( locked )
         return;
     m_GeFilters.Empty();
+    m_AAFilters.Empty();
     m_ArFilters.Empty();
     m_CoFilters.Empty();
     m_AlFilters.Empty();
@@ -2002,6 +1987,7 @@ void guDbLibrary::SetGeFilters( const wxArrayInt &NewGeFilters, const bool locke
     }
     if( locked )
         return;
+    m_AAFilters.Empty();
     m_ArFilters.Empty();
     m_CoFilters.Empty();
     m_AlFilters.Empty();
@@ -2041,6 +2027,28 @@ void guDbLibrary::SetCoFilters( const wxArrayInt &filter, const bool locked )
     else
     {
         m_CoFilters = filter;
+    }
+    if( locked )
+        return;
+    m_AAFilters.Empty();
+    m_ArFilters.Empty();
+    m_YeFilters.Empty();
+    m_AlFilters.Empty();
+    m_RaFilters.Empty();
+    m_PcFilters.Empty();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::SetAAFilters( const wxArrayInt &filter, const bool locked )
+{
+    //guLogMessage( wxT( "guDbLibrary::SetAAFilters %i" ), filter.Count() );
+    if( filter.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_AAFilters.Empty();
+    }
+    else
+    {
+        m_AAFilters = filter;
     }
     if( locked )
         return;
@@ -2143,84 +2151,94 @@ wxString guDbLibrary::FiltersSQL( int Level )
     RetVal += TextFilterToSQL( m_TeFilters );
   }
 
-  if( Level > GULIBRARY_FILTER_LABELS )
+  if( Level > guLIBRARY_FILTER_LABELS )
   {
     if( m_LaFilters.Count() )
     {
-      if( RetVal.Len() )
+      if( !RetVal.IsEmpty() )
         RetVal += wxT( " AND " );
       RetVal += LabelFilterToSQL( m_LaFilters );
     }
 
-    if( Level > GULIBRARY_FILTER_GENRES )
+    if( Level > guLIBRARY_FILTER_GENRES )
     {
       if( m_GeFilters.Count() )
       {
-        if( RetVal.Len() )
+        if( !RetVal.IsEmpty() )
           RetVal += wxT( " AND " );
         RetVal += ArrayToFilter( m_GeFilters, wxT( "song_genreid" ) );
       }
 
-      if( Level > GULIBRARY_FILTER_COMPOSERS )
+      if( Level > guLIBRARY_FILTER_COMPOSERS )
       {
         if( m_CoFilters.Count() )
         {
-          if( RetVal.Len() )
+          if( !RetVal.IsEmpty() )
           {
             RetVal += wxT( " AND " );
           }
           RetVal += ArrayToFilter( m_CoFilters, wxT( "song_composerid" ) );
         }
 
-        if( Level > GULIBRARY_FILTER_ARTISTS )
+        if( Level > guLIBRARY_FILTER_ALBUMARTISTS )
         {
-          if( m_ArFilters.Count() )
+          if( m_AAFilters.Count() )
           {
-            if( RetVal.Len() )
+            if( !RetVal.IsEmpty() )
               RetVal += wxT( " AND " );
-            RetVal += ArrayToFilter( m_ArFilters, wxT( "song_artistid" ) );
+            RetVal += ArrayToFilter( m_AAFilters, wxT( "song_albumartistid" ) );
           }
-          if( Level > GULIBRARY_FILTER_YEARS )
-          {
-            if( m_YeFilters.Count() )
-            {
-              if( RetVal.Len() )
-              {
-                RetVal += wxT( " AND " );
-              }
-              RetVal += ArrayToFilter( m_YeFilters, wxT( "song_year" ) );
-            }
 
-            if( Level > GULIBRARY_FILTER_ALBUMS )
+            if( Level > guLIBRARY_FILTER_ARTISTS )
             {
-              if( m_AlFilters.Count() )
+              if( m_ArFilters.Count() )
               {
-                if( RetVal.Len() )
+                if( !RetVal.IsEmpty() )
                   RetVal += wxT( " AND " );
-                RetVal += ArrayToFilter( m_AlFilters, wxT( "song_albumid" ) );
+                RetVal += ArrayToFilter( m_ArFilters, wxT( "song_artistid" ) );
               }
-
-              if( Level >= GULIBRARY_FILTER_SONGS )
+              if( Level > guLIBRARY_FILTER_YEARS )
               {
-                if( m_RaFilters.Count() )
+                if( m_YeFilters.Count() )
                 {
-                  if( RetVal.Len() )
+                  if( !RetVal.IsEmpty() )
                   {
                     RetVal += wxT( " AND " );
                   }
-                  RetVal += ArrayToFilter( m_RaFilters, wxT( "song_rating" ) );
+                  RetVal += ArrayToFilter( m_YeFilters, wxT( "song_year" ) );
                 }
-                if( m_PcFilters.Count() )
+
+                if( Level > guLIBRARY_FILTER_ALBUMS )
                 {
-                  if( RetVal.Len() )
+                  if( m_AlFilters.Count() )
                   {
-                    RetVal += wxT( " AND " );
+                    if( !RetVal.IsEmpty() )
+                      RetVal += wxT( " AND " );
+                    RetVal += ArrayToFilter( m_AlFilters, wxT( "song_albumid" ) );
                   }
-                  RetVal += ArrayToFilter( m_PcFilters, wxT( "song_playcount" ) );
+
+                  if( Level >= guLIBRARY_FILTER_SONGS )
+                  {
+                    if( m_RaFilters.Count() )
+                    {
+                      if( !RetVal.IsEmpty() )
+                      {
+                        RetVal += wxT( " AND " );
+                      }
+                      RetVal += ArrayToFilter( m_RaFilters, wxT( "song_rating" ) );
+                    }
+                    if( m_PcFilters.Count() )
+                    {
+                      if( !RetVal.IsEmpty() )
+                      {
+                        RetVal += wxT( " AND " );
+                      }
+                      RetVal += ArrayToFilter( m_PcFilters, wxT( "song_playcount" ) );
+                    }
+                  }
                 }
               }
             }
-          }
         }
       }
     }
@@ -2353,7 +2371,7 @@ void guDbLibrary::GetGenres( guListItems * Genres, const bool FullList )
   else
   {
     query = wxT( "SELECT song_genreid, song_genre FROM songs " );
-    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_GENRES );
+    query += wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_GENRES );
     query += wxT( " GROUP BY song_genreid ORDER BY song_genre" );
   }
 
@@ -2378,14 +2396,14 @@ void guDbLibrary::GetArtists( guListItems * Artists, const bool FullList )
   {
     query = wxT( "SELECT song_artistid, song_artist FROM songs GROUP BY song_artistid;" );
   }
-  else if( !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() || m_CoFilters.Count() ) )
+  else if( !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() || m_AAFilters.Count() || m_CoFilters.Count() ) )
   {
     query = wxT( "SELECT song_artistid, song_artist FROM songs GROUP BY song_artistid ORDER BY song_artist" );
   }
   else
   {
     query = wxT( "SELECT song_artistid, song_artist FROM songs " );
-    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_ARTISTS );
+    query += wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_ARTISTS );
     query += wxT( " GROUP BY song_artistid ORDER BY song_artist" );
   }
 
@@ -2405,14 +2423,15 @@ void guDbLibrary::GetYears( guListItems * Years, const bool FullList )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  if( FullList || !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() ) )
+  if( FullList || !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() ||
+                     m_AAFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() ) )
   {
     query = wxT( "SELECT DISTINCT song_year FROM songs WHERE song_year > 0 ORDER BY song_year DESC;" );
   }
   else
   {
     query = wxT( "SELECT DISTINCT song_year FROM songs "
-                 "WHERE song_year > 0 AND " ) + FiltersSQL( GULIBRARY_FILTER_YEARS );
+                 "WHERE song_year > 0 AND " ) + FiltersSQL( guLIBRARY_FILTER_YEARS );
     query += wxT( " ORDER BY song_year DESC;" );
   }
 
@@ -2439,7 +2458,7 @@ void guDbLibrary::GetRatings( guListItems * Ratings, const bool FullList )
   else
   {
     query = wxT( "SELECT DISTINCT song_rating FROM songs " ) \
-            wxT( "WHERE song_rating >= 0 AND " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+            wxT( "WHERE song_rating >= 0 AND " ) + FiltersSQL( guLIBRARY_FILTER_SONGS );
     query += wxT( " ORDER BY song_rating DESC;" );
   }
 
@@ -2467,7 +2486,7 @@ void guDbLibrary::GetPlayCounts( guListItems * PlayCounts, const bool FullList )
   else
   {
     query = wxT( "SELECT DISTINCT song_playcount FROM songs " ) \
-            wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+            wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_SONGS );
     query += wxT( " ORDER BY song_playcount;" );
   }
 
@@ -2478,6 +2497,37 @@ void guDbLibrary::GetPlayCounts( guListItems * PlayCounts, const bool FullList )
     int PlayCount = dbRes.GetInt( 0 );
     // To avoid using the 0 as 0 is used for All
     PlayCounts->Add( new guListItem( PlayCount + 1, wxString::Format( wxT( "%i" ), PlayCount ) ) );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetAlbumArtists( guListItems * Items, const bool FullList )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  if( FullList )
+  {
+    query = wxT( "SELECT song_albumartistid, song_albumartist FROM songs GROUP BY song_albumartistid;" );
+  }
+  else if( !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() || m_CoFilters.Count() ) )
+  {
+    query = wxT( "SELECT song_albumartistid, song_albumartist FROM songs WHERE song_albumartist > '' "
+                 "GROUP BY song_albumartistid ORDER BY song_albumartist" );
+  }
+  else
+  {
+    query = wxT( "SELECT song_albumartistid, song_albumartist FROM songs " ) \
+            wxT( "WHERE song_albumartist > '' AND " ) + FiltersSQL( guLIBRARY_FILTER_ALBUMARTISTS );
+    query += wxT( " GROUP BY song_albumartistid ORDER BY song_albumartist" );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Items->Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
   }
   dbRes.Finalize();
 }
@@ -2500,7 +2550,7 @@ void guDbLibrary::GetComposers( guListItems * Items, const bool FullList )
   else
   {
     query = wxT( "SELECT song_composerid, song_composer FROM songs " ) \
-            wxT( "WHERE song_composer > '' AND " ) + FiltersSQL( GULIBRARY_FILTER_COMPOSERS );
+            wxT( "WHERE song_composer > '' AND " ) + FiltersSQL( guLIBRARY_FILTER_COMPOSERS );
     query += wxT( " GROUP BY song_composerid ORDER BY song_composer" );
   }
 
@@ -2554,9 +2604,9 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   else
   {
     if( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() ||
-        m_ArFilters.Count() || m_CoFilters.Count() || m_YeFilters.Count() )
+        m_AAFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() || m_YeFilters.Count() )
     {
-      query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_ALBUMS );
+      query += wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_ALBUMS );
     }
 
     query += wxT( " GROUP BY song_albumid " );
@@ -2618,7 +2668,7 @@ int guDbLibrary::GetAlbumYear( const int albumid )
   wxString              query;
   wxSQLite3ResultSet    dbRes;
   int RetVal = 0;
-  query = wxString::Format( wxT( "SELECT song_year FROM songs WHERE song_albumid = %i ORDER by song_year DESC LIMIT 1" ), albumid );
+  query = wxString::Format( wxT( "SELECT MAX(song_year) FROM songs WHERE song_albumid = %i;" ), albumid );
 
   dbRes = ExecuteQuery( query );
 
@@ -3890,6 +3940,33 @@ int guDbLibrary::GetPlayCountsSongs( const wxArrayInt &PlayCounts, guTrackArray 
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::GetAlbumArtistsSongs( const wxArrayInt &albumartists, guTrackArray * tracks )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Track;
+  if( albumartists.Count() )
+  {
+    query = GU_TRACKS_QUERYSTR;
+    //query += GetSongsDBNamesSQL( m_TracksOrder );
+    query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+    query += wxT( "song_albumartistid IN " ) + ArrayIntToStrList( albumartists );
+    query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+      Track = new guTrack();
+      FillTrackFromDb( Track, &dbRes );
+      tracks->Add( Track );
+    }
+    dbRes.Finalize();
+  }
+  return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetComposersSongs( const wxArrayInt &Composers, guTrackArray * Songs )
 {
   wxString query;
@@ -4043,7 +4120,7 @@ int guDbLibrary::GetArtistId( wxString &artistname, bool create )
   }
   else if( create )
   {
-    query = wxT( "SELECT song_artistid FROM songs ORDER BY song_artistid DESC LIMIT 1" );
+    query = wxT( "SELECT MAX(song_artistid) FROM songs" );
 
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
@@ -4053,6 +4130,48 @@ int guDbLibrary::GetArtistId( wxString &artistname, bool create )
     else
     {
         return LastArtistId = 1;
+    }
+  }
+
+  return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetAlbumArtistId( wxString &albumartist, bool create )
+{
+  if( LastAlbumArtist == albumartist )
+  {
+      return LastAlbumArtistId;
+  }
+
+  // TODO Add a Lock
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  LastAlbumArtist = albumartist;
+
+  query = wxString::Format( wxT( "SELECT song_albumartistid FROM songs "
+                                 "WHERE song_albumartist = '%s' LIMIT 1;" ),
+            escape_query_str( albumartist ).c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    return LastAlbumArtistId = dbRes.GetInt( 0 );
+  }
+  else if( create )
+  {
+    query = wxT( "SELECT MAX(song_albumartistid) FROM songs;" );
+
+    dbRes = ExecuteQuery( query );
+    if( dbRes.NextRow() )
+    {
+      return LastAlbumArtistId = dbRes.GetInt( 0 ) + 1;
+    }
+    else
+    {
+        return LastAlbumArtistId = 1;
     }
   }
 
@@ -4429,7 +4548,7 @@ int guDbLibrary::GetSongsCount( void )
   if( GetFiltersCount() )
   {
     //query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
-    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+    query += wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_SONGS );
   }
 //  query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
 
@@ -4454,7 +4573,7 @@ int guDbLibrary::GetSongs( guTrackArray * Songs, const int start, const int end 
   if( GetFiltersCount() )
   {
     query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
-    query += FiltersSQL( GULIBRARY_FILTER_SONGS );
+    query += FiltersSQL( guLIBRARY_FILTER_SONGS );
   }
   query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
   query += wxString::Format( wxT( " LIMIT %i, %i " ), start, end - start + 1 );
@@ -4483,7 +4602,7 @@ int guDbLibrary::GetSongsId( const int start )
   if( GetFiltersCount() )
   {
     query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
-    query += FiltersSQL( GULIBRARY_FILTER_SONGS );
+    query += FiltersSQL( guLIBRARY_FILTER_SONGS );
   }
   query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
   query += wxString::Format( wxT( " LIMIT %i, 1 " ), start );
@@ -4507,7 +4626,7 @@ wxString guDbLibrary::GetSongsName( const int start )
   if( GetFiltersCount() )
   {
     query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
-    query += FiltersSQL( GULIBRARY_FILTER_SONGS );
+    query += FiltersSQL( guLIBRARY_FILTER_SONGS );
   }
   query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
   query += wxString::Format( wxT( " LIMIT %i, 1 " ), start );
@@ -4530,7 +4649,7 @@ void guDbLibrary::GetTracksCounters( wxLongLong * count, wxLongLong * len, wxLon
   query = wxT( "SELECT COUNT(), SUM(song_length), SUM(song_filesize) FROM songs " );
   if( GetFiltersCount() )
   {
-    query += wxT( "WHERE " ) + FiltersSQL( GULIBRARY_FILTER_SONGS );
+    query += wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_SONGS );
   }
 
   dbRes = ExecuteQuery( query );

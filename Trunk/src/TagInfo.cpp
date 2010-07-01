@@ -766,6 +766,15 @@ bool guFlacTagInfo::Read( void )
                 m_Compilation = TStringTowxString( m_XiphComment->fieldListMap()["COMPILATION"].front() ) == wxT( "1" );
             }
 
+            if( m_XiphComment->fieldListMap().contains( "ALBUMARTIST" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_XiphComment->fieldListMap()["ALBUMARTIST"].front() );
+            }
+            else if( m_XiphComment->fieldListMap().contains( "ALBUM ARTIST" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_XiphComment->fieldListMap()["ALBUM ARTIST"].front() );
+            }
+
             return true;
         }
     }
@@ -780,6 +789,7 @@ bool guFlacTagInfo::Write( void )
         m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
         m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
         m_XiphComment->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+        m_XiphComment->addField( "ALBUMARTIST", wxStringToTString(  m_AlbumArtist ) );
     }
     return guTagInfo::Write();
 }
@@ -984,6 +994,15 @@ bool guOggTagInfo::Read( void )
                 m_Compilation = TStringTowxString( m_XiphComment->fieldListMap()["COMPILATION"].front() ) == wxT( "1" );
             }
 
+            if( m_XiphComment->fieldListMap().contains( "ALBUMARTIST" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_XiphComment->fieldListMap()["ALBUMARTIST"].front() );
+            }
+            else if( m_XiphComment->fieldListMap().contains( "ALBUM ARTIST" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_XiphComment->fieldListMap()["ALBUM ARTIST"].front() );
+            }
+
             return true;
         }
     }
@@ -998,6 +1017,7 @@ bool guOggTagInfo::Write( void )
         m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
         m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
         m_XiphComment->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+        m_XiphComment->addField( "ALBUMARTIST", wxStringToTString(  m_AlbumArtist ) );
     }
     return guTagInfo::Write();
 }

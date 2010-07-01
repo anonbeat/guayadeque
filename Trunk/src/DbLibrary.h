@@ -238,13 +238,16 @@ class guAS_SubmitInfo //guAudioScrobbler_SubmitInfo
 };
 WX_DECLARE_OBJARRAY(guAS_SubmitInfo, guAS_SubmitInfoArray);
 
-#define GULIBRARY_FILTER_LABELS     0
-#define GULIBRARY_FILTER_GENRES     1
-#define GULIBRARY_FILTER_COMPOSERS  2
-#define GULIBRARY_FILTER_ARTISTS    3
-#define GULIBRARY_FILTER_YEARS      4
-#define GULIBRARY_FILTER_ALBUMS     5
-#define GULIBRARY_FILTER_SONGS      6
+enum guLIBRARY_FILTER {
+    guLIBRARY_FILTER_LABELS = 0,
+    guLIBRARY_FILTER_GENRES,
+    guLIBRARY_FILTER_COMPOSERS,
+    guLIBRARY_FILTER_ALBUMARTISTS,
+    guLIBRARY_FILTER_ARTISTS,
+    guLIBRARY_FILTER_YEARS,
+    guLIBRARY_FILTER_ALBUMS,
+    guLIBRARY_FILTER_SONGS
+};
 
 class guDynPlayList;
 class guAlbumBrowserItemArray;
@@ -263,13 +266,14 @@ class guDbLibrary : public guDb
     // Library Filter Options
     wxArrayInt         m_GeFilters;
     wxArrayInt         m_LaFilters; // Label
+    wxArrayInt         m_CoFilters; // Composers
+    wxArrayInt         m_AAFilters; // AlbumArtist
     wxArrayInt         m_ArFilters; // Artist
     wxArrayInt         m_AlFilters; // Album
     wxArrayString      m_TeFilters; // Text string filters
     wxArrayInt         m_YeFilters; // Year
     wxArrayInt         m_RaFilters; // Ratting
     wxArrayInt         m_PcFilters; // PlayCount
-    wxArrayInt         m_CoFilters; // Composers
 
     guTRACKS_ORDER     m_TracksOrder;
     bool               m_TracksOrderDesc;
@@ -316,6 +320,7 @@ class guDbLibrary : public guDb
     int                 GetComposerId( wxString &composername, bool create = true );
     const wxString      GetArtistName( const int ArtistId );
     int                 GetArtistId( wxString &ArtistName, bool Create = true );
+    int                 GetAlbumArtistId( wxString &albumartist, bool create = true );
     int                 AddCoverFile( const wxString &coverfile, const wxString &coverhash = wxEmptyString );
     void                UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash );
     int                 FindCoverFile( const wxString &DirName );
@@ -340,6 +345,7 @@ class guDbLibrary : public guDb
     void                GetYears( guListItems * items, const bool FullList = false );
     void                GetRatings( guListItems * items, const bool FullList = false );
     void                GetPlayCounts( guListItems * items, const bool FullList = false );
+    void                GetAlbumArtists( guListItems * items, const bool FullList = false );
     void                GetComposers( guListItems * items, const bool FullList = false );
     void                SetAlbumsOrder( const int order );
     int                 GetAlbumsOrder( void ) { return m_AlbumsOrder; };
@@ -406,15 +412,16 @@ class guDbLibrary : public guDb
     void                UpdateImageFile( const char * filename );
 
     int                 GetFiltersCount() const;
-    void                SetTeFilters( const wxArrayString &NewTeFilters, const bool locked );
-    void                SetGeFilters( const wxArrayInt &NewGeFilters, const bool locked  );
-    void                SetLaFilters( const wxArrayInt &NewLaFilters, const bool locked );
-    void                SetArFilters( const wxArrayInt &NewArFilters, const bool locked );
-    void                SetAlFilters( const wxArrayInt &NewAlFilters, const bool locked );
+    void                SetTeFilters( const wxArrayString &tefilters, const bool locked );
+    void                SetGeFilters( const wxArrayInt &filters, const bool locked  );
+    void                SetLaFilters( const wxArrayInt &filters, const bool locked );
+    void                SetArFilters( const wxArrayInt &filters, const bool locked );
+    void                SetAlFilters( const wxArrayInt &filters, const bool locked );
     void                SetYeFilters( const wxArrayInt &filter, const bool locked );
     void                SetRaFilters( const wxArrayInt &filter );
     void                SetPcFilters( const wxArrayInt &filter );
     void                SetCoFilters( const wxArrayInt &filter, const bool locked );
+    void                SetAAFilters( const wxArrayInt &filter, const bool locked );
 
     //
     guArrayListItems    GetArtistsLabels( const wxArrayInt &Artists );
@@ -439,6 +446,7 @@ class guDbLibrary : public guDb
     int                 GetRatingsSongs( const wxArrayInt &Ratings, guTrackArray * Songs );
     int                 GetPlayCountsSongs( const wxArrayInt &PlayCounts, guTrackArray * Songs );
     int                 GetComposersSongs( const wxArrayInt &Composers, guTrackArray * Songs );
+    int                 GetAlbumArtistsSongs( const wxArrayInt &albumartists, guTrackArray * tracks );
 
 //    wxSQLite3ResultSet  ExecuteQuery(  const wxSQLite3StatementBuffer &query );
 //    int                 ExecuteUpdate( const wxString &query );
