@@ -79,6 +79,8 @@ class guTrackEditor : public wxDialog
     wxListBox *             m_SongListBox;
     wxBitmapButton *        m_MoveUpButton;
 	wxBitmapButton *        m_MoveDownButton;
+    wxBitmapButton *        m_AACopyButton;
+    wxTextCtrl *            m_AlbumArtistTextCtrl;
     wxBitmapButton *        m_ArCopyButton;
     wxTextCtrl *            m_ArtistTextCtrl;
     wxBitmapButton *        m_AlCopyButton;
@@ -155,6 +157,7 @@ class guTrackEditor : public wxDialog
     void OnSongListBoxSelected( wxCommandEvent &event );
 	void OnMoveUpBtnClick( wxCommandEvent& event );
 	void OnMoveDownBtnClick( wxCommandEvent& event );
+    void OnAACopyButtonClicked( wxCommandEvent &event );
     void OnArCopyButtonClicked( wxCommandEvent &event );
     void OnAlCopyButtonClicked( wxCommandEvent &event );
     void OnTiCopyButtonClicked( wxCommandEvent &event );

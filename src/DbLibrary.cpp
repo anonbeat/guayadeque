@@ -1700,6 +1700,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
         }
 
         TagInfo->m_TrackName = Song->m_SongName;
+        TagInfo->m_AlbumArtist = Song->m_AlbumArtist;
         TagInfo->m_ArtistName = Song->m_ArtistName;
         TagInfo->m_AlbumName = Song->m_AlbumName;
         TagInfo->m_GenreName = Song->m_GenreName;
@@ -1722,6 +1723,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
             //
             wxString PathName;
             int      PathId;
+            int      AlbumArtistId;
             int      ArtistId;
             int      ComposerId;
             int      AlbumId;
@@ -1735,6 +1737,8 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
             //wxSetWorkingDirectory( PathName );
 
             PathId = GetPathId( PathName );
+
+            AlbumArtistId = GetAlbumArtistId( Song->m_AlbumArtist );
 
             ArtistId = GetArtistId( Song->m_ArtistName );
 
@@ -1752,6 +1756,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
             m_CurSong = * Song;
             m_CurSong.m_GenreId = GenreId;
             m_CurSong.m_ArtistId = ArtistId;
+            m_CurSong.m_AlbumArtistId = AlbumArtistId;
             m_CurSong.m_ComposerId = ComposerId;
             m_CurSong.m_AlbumId = AlbumId;
             m_CurSong.m_PathId = PathId;
