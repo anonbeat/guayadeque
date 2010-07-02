@@ -1221,6 +1221,7 @@ void guPlayerPanel::LoadMedia( const wxString &FileName, guPlayerPlayType playty
             m_IsSkipping = false;
 
             wxCommandEvent event;
+            event.SetInt( playtype );
             OnNextTrackButtonClick( event );
 
             RemoveItem( CurItem );
@@ -2174,8 +2175,9 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         {
             m_IsSkipping = true;
             LoadMedia( m_NextSong.m_FileName,
+                ( event.GetInt() ? ( guPlayerPlayType ) event.GetInt() :
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
-                    ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
+                    ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ) );
         }
         else
         {
