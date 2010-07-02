@@ -28,20 +28,21 @@
 #define guSONGS_COLUMN_NUMBER       0
 #define guSONGS_COLUMN_TITLE        1
 #define guSONGS_COLUMN_ARTIST       2
-#define guSONGS_COLUMN_ALBUM        3
-#define guSONGS_COLUMN_GENRE        4
-#define guSONGS_COLUMN_COMPOSER     5
-#define guSONGS_COLUMN_DISK         6
-#define guSONGS_COLUMN_LENGTH       7
-#define guSONGS_COLUMN_YEAR         8
-#define guSONGS_COLUMN_BITRATE      9
-#define guSONGS_COLUMN_RATING       10
-#define guSONGS_COLUMN_PLAYCOUNT    11
-#define guSONGS_COLUMN_LASTPLAY     12
-#define guSONGS_COLUMN_ADDEDDATE    13
-#define guSONGS_COLUMN_FORMAT       14
+#define guSONGS_COLUMN_ALBUMARTIST  3
+#define guSONGS_COLUMN_ALBUM        4
+#define guSONGS_COLUMN_GENRE        5
+#define guSONGS_COLUMN_COMPOSER     6
+#define guSONGS_COLUMN_DISK         7
+#define guSONGS_COLUMN_LENGTH       8
+#define guSONGS_COLUMN_YEAR         9
+#define guSONGS_COLUMN_BITRATE      10
+#define guSONGS_COLUMN_RATING       11
+#define guSONGS_COLUMN_PLAYCOUNT    12
+#define guSONGS_COLUMN_LASTPLAY     13
+#define guSONGS_COLUMN_ADDEDDATE    14
+#define guSONGS_COLUMN_FORMAT       15
 
-#define guSONGS_COLUMN_COUNT        15
+#define guSONGS_COLUMN_COUNT        16
 
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public guListView
