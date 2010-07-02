@@ -42,9 +42,11 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 
 	m_Email = new wxHyperlinkCtrl( this, wxID_ANY, wxT("J.Rios anonbeat@gmail.com"), wxT("mailto:anonbeat@gmail.com"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 
-	m_Email->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-	m_Email->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-	m_Email->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+	wxColour FontColor = wxColour( 120, 120, 120 );
+	m_Email->SetHoverColour( FontColor );
+	m_Email->SetNormalColour( FontColor );
+	m_Email->SetVisitedColour( FontColor );
+	m_Email->SetBackgroundColour( * wxWHITE );
 	MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxALL, 5 );
 
     wxString Version = wxT( ID_GUAYADEQUE_VERSION );
@@ -53,13 +55,16 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 #endif
 	m_Version = new wxStaticText( this, wxID_ANY, Version, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Version->Wrap( -1 );
+	m_Version->SetForegroundColour( FontColor );
+	m_Version->SetBackgroundColour( * wxWHITE );
 	MainSizer->Add( m_Version, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	m_Donate = new wxHyperlinkCtrl( this, wxID_ANY, wxT("Please Donate!"), wxT("http://sourceforge.net/donate/index.php?group_id=250783"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 
-	m_Donate->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-	m_Donate->SetNormalColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-	m_Donate->SetVisitedColour( wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+	m_Donate->SetHoverColour( FontColor );
+	m_Donate->SetNormalColour( FontColor );
+	m_Donate->SetVisitedColour( FontColor );
+	m_Donate->SetBackgroundColour( * wxWHITE );
 	MainSizer->Add( m_Donate, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	this->SetSizer( MainSizer );
