@@ -1584,12 +1584,6 @@ int guDbLibrary::ReadFileTags( const char * filename )
       //guLogMessage( wxT( "FileName: '%s'" ), FileName.c_str() );
       if( TagInfo->Read() )
       {
-
-            if( !TagInfo->m_AlbumArtist.IsEmpty() )
-            {
-                guLogMessage( wxT( "AA: '%s'" ), TagInfo->m_AlbumArtist.c_str() );
-            }
-
           //wxString PathName = wxGetCwd();
           //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
 
