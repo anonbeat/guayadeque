@@ -134,6 +134,9 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
         case guSONGS_COLUMN_ARTIST :
           return Song->m_ArtistName;
 
+        case guSONGS_COLUMN_ALBUMARTIST :
+            return Song->m_AlbumArtist;
+
         case guSONGS_COLUMN_ALBUM :
           return Song->m_AlbumName;
 
@@ -341,6 +344,7 @@ wxArrayString guSoListBox::GetColumnNames( void )
     ColumnNames.Add( wxT( "#" ) );
     ColumnNames.Add( _( "Title" ) );
     ColumnNames.Add( _( "Artist" ) );
+    ColumnNames.Add( _( "Album Artist" ) );
     ColumnNames.Add( _( "Album" ) );
     ColumnNames.Add( _( "Genre" ) );
     ColumnNames.Add( _( "Composer" ) );

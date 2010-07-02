@@ -42,6 +42,7 @@ void inline InitArrayStrings( void )
     {
         m_FilterFieldChoices.Add( _( "Title" ) );
         m_FilterFieldChoices.Add( _( "Artist" ) );
+        m_FilterFieldChoices.Add( _( "Album Artist" ) );
         m_FilterFieldChoices.Add( _( "Album" ) );
         m_FilterFieldChoices.Add( _( "Genre" ) );
         m_FilterFieldChoices.Add( _( "Label" ) );
@@ -58,26 +59,29 @@ void inline InitArrayStrings( void )
 //
 //    if( !m_FilterTextOptionChoices.Count() )
 //    {
-        m_FilterTextOptionChoices.Add( _("Contains") );
-        m_FilterTextOptionChoices.Add( _("Does not contain") );
-        m_FilterTextOptionChoices.Add( _("Equals") );
-        m_FilterTextOptionChoices.Add( _("Begins with") );
-        m_FilterTextOptionChoices.Add( _("Ends with") );
+        m_FilterTextOptionChoices.Add( _("contains") );
+        m_FilterTextOptionChoices.Add( _("does not contain") );
+        m_FilterTextOptionChoices.Add( _("is") );
+        m_FilterTextOptionChoices.Add( _("is not") );
+        m_FilterTextOptionChoices.Add( _("begins with") );
+        m_FilterTextOptionChoices.Add( _("ends with") );
 //    }
 //
 //    if( !m_FilterTextOptionChoices.Count() )
 //    {
-        m_FilterLabelOptionChoices.Add( _("Contains") );
-        m_FilterLabelOptionChoices.Add( _("Does not contain") );
-        m_FilterLabelOptionChoices.Add( _("Equals") );
-        m_FilterLabelOptionChoices.Add( _("Begins with") );
-        m_FilterLabelOptionChoices.Add( _("Ends with") );
-        m_FilterLabelOptionChoices.Add( _("Not set") );
+        m_FilterLabelOptionChoices.Add( _("contains") );
+        m_FilterLabelOptionChoices.Add( _("does not contain") );
+        m_FilterLabelOptionChoices.Add( _("is") );
+        m_FilterLabelOptionChoices.Add( _("is not") );
+        m_FilterLabelOptionChoices.Add( _("begins with") );
+        m_FilterLabelOptionChoices.Add( _("ends with") );
+        m_FilterLabelOptionChoices.Add( _("not set") );
 //    }
 //
 //    if( !m_FilterNumberOptionChoices.Count() )
 //    {
-        m_FilterNumberOptionChoices.Add( _( "equals" ) );
+        m_FilterNumberOptionChoices.Add( _( "is" ) );
+        m_FilterNumberOptionChoices.Add( _( "is not" ) );
         m_FilterNumberOptionChoices.Add( _( "at least" ) );
         m_FilterNumberOptionChoices.Add( _( "at most" ) );
 //    }
@@ -85,6 +89,7 @@ void inline InitArrayStrings( void )
 //    if( !m_FilterYearOptionChoices.Count() )
 //    {
         m_FilterYearOptionChoices.Add( _( "in" ) );
+        m_FilterYearOptionChoices.Add( _( "not in" ) );
         m_FilterYearOptionChoices.Add( _( "after" ) );
         m_FilterYearOptionChoices.Add( _( "before" ) );
 //    }
@@ -107,6 +112,7 @@ void inline InitArrayStrings( void )
 //    {
         m_SortChoices.Add( _( "Title" ) );
         m_SortChoices.Add( _( "Artist" ) );
+        m_SortChoices.Add( _( "Album Artist" ) );
         m_SortChoices.Add( _( "Album" ) );
         m_SortChoices.Add( _( "Genre" ) );
         m_SortChoices.Add( _( "Label" ) );
@@ -162,6 +168,7 @@ void guFilterItem::SetFilterLabel( void )
     {
         case guDYNAMIC_FILTER_TYPE_TITLE : // String
         case guDYNAMIC_FILTER_TYPE_ARTIST :
+        case guDYNAMIC_FILTER_TYPE_ALBUMARTIST :
         case guDYNAMIC_FILTER_TYPE_ALBUM :
         case guDYNAMIC_FILTER_TYPE_GENRE :
         case guDYNAMIC_FILTER_TYPE_COMPOSER :
