@@ -1592,12 +1592,14 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
         if( ( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION ) ||
             ( m_NextTrackId && ( m_NextSong.m_Type == guTRACK_TYPE_RADIOSTATION ) ) )
         {
-            //guLogMessage( wxT( "Radio Name: %s" ), wxString( RadioTag->m_Organization, wxConvUTF8 ).c_str() );
+            guLogMessage( wxT( "Radio Name: %s" ), wxString( RadioTag->m_Organization, wxConvUTF8 ).c_str() );
             if( RadioTag->m_Organization )
             {
                 if( m_NextTrackId )
                 {
                     m_NextSong.m_AlbumName = wxString( RadioTag->m_Organization, wxConvUTF8 );
+                    while( m_NextSong.m_AlbumName.StartsWith( wxT( "." ) ) )
+                        m_NextSong.m_AlbumName = m_NextSong.m_AlbumName.Mid( 1 );
                     if( m_MediaRecordCtrl && m_MediaRecordCtrl->IsRecording() )
                     {
                         m_MediaRecordCtrl->SetStation( m_NextSong.m_AlbumName );
@@ -1617,7 +1619,7 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
 
             if( RadioTag->m_Genre )
             {
-                //guLogMessage( wxT( "Radio Genre: %s" ), wxString( RadioTag->m_Genre, wxConvUTF8 ).c_str() );
+                guLogMessage( wxT( "Radio Genre: %s" ), wxString( RadioTag->m_Genre, wxConvUTF8 ).c_str() );
                 if( m_NextTrackId )
                 {
                     m_NextSong.m_GenreName = wxString( RadioTag->m_Genre, wxConvUTF8 );

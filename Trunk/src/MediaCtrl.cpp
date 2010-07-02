@@ -2125,7 +2125,8 @@ bool guMediaCtrl::SetRecordFileName( const wxString &filename )
         return false;
 
 //    m_RecordFileName = m_RecordPath + filename + m_RecordExt;
-//    wxFileName::Mkdir( wxPathOnly( m_RecordFileName ), 0770, wxPATH_MKDIR_FULL );
+    if( !wxDirExists( wxPathOnly( filename ) ) )
+        wxFileName::Mkdir( wxPathOnly( filename ), 0770, wxPATH_MKDIR_FULL );
 
     gst_pad_set_blocked( m_RecordPad, true );
 
