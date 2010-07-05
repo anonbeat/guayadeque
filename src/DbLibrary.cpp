@@ -1796,7 +1796,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::UpdateSong()
+int guDbLibrary::UpdateSong( void )
 {
   wxString query;
 //  printf( "UpdateSong\n" );
@@ -1812,6 +1812,7 @@ int guDbLibrary::UpdateSong()
                              "song_composerid = %u, song_composer = '%s', "
                              "song_comment = '%s', song_disk = '%s', "
                              "song_length = %u, song_offset = %u, song_bitrate = %u, "
+                             "song_rating = %i, "
                              "song_filesize = %u WHERE song_id = %u;" ),
         escape_query_str( m_CurSong.m_SongName ).c_str(),
         m_CurSong.m_GenreId,
@@ -1835,7 +1836,7 @@ int guDbLibrary::UpdateSong()
         m_CurSong.m_Length,
         0, //m_CurSong.m_Offset,
         m_CurSong.m_Bitrate,
-        //m_CurSong.m_Rating,
+        m_CurSong.m_Rating,
         m_CurSong.m_FileSize,
         m_CurSong.m_SongId );
 

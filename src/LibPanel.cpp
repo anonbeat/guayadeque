@@ -2325,7 +2325,7 @@ void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_RatingListCtrl->ReloadItems();
-                m_PlayCountListCtrl->ReloadItems( false );
+                m_PlayCountListCtrl->ReloadItems();
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -2379,8 +2379,8 @@ void guLibPanel::DoSelectionChanged( void )
                 m_ArtistListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
-                m_RatingListCtrl->ReloadItems( false );
-                m_PlayCountListCtrl->ReloadItems( false );
+                m_RatingListCtrl->ReloadItems();
+                m_PlayCountListCtrl->ReloadItems();
                 m_SongListCtrl->ReloadItems();
                 //
                 //
@@ -2402,8 +2402,8 @@ void guLibPanel::DoSelectionChanged( void )
                 m_ArtistListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
-                m_RatingListCtrl->ReloadItems( false );
-                m_PlayCountListCtrl->ReloadItems( false );
+                m_RatingListCtrl->ReloadItems();
+                m_PlayCountListCtrl->ReloadItems();
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -2420,8 +2420,8 @@ void guLibPanel::DoSelectionChanged( void )
                 m_UpdateLock = true;
                 m_AlbumListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
-                m_RatingListCtrl->ReloadItems( false );
-                m_PlayCountListCtrl->ReloadItems( false );
+                m_RatingListCtrl->ReloadItems();
+                m_PlayCountListCtrl->ReloadItems();
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -2435,8 +2435,8 @@ void guLibPanel::DoSelectionChanged( void )
             {
                 m_UpdateLock = true;
                 m_AlbumListCtrl->ReloadItems();
-                m_RatingListCtrl->ReloadItems( false );
-                m_PlayCountListCtrl->ReloadItems( false );
+                m_RatingListCtrl->ReloadItems();
+                m_PlayCountListCtrl->ReloadItems();
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -2449,8 +2449,8 @@ void guLibPanel::DoSelectionChanged( void )
             if( !m_UpdateLock )
             {
                 m_UpdateLock = true;
-                m_RatingListCtrl->ReloadItems( false );
-                m_PlayCountListCtrl->ReloadItems( false );
+                m_RatingListCtrl->ReloadItems();
+                m_PlayCountListCtrl->ReloadItems();
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -2491,8 +2491,8 @@ void guLibPanel::DoSelectionChanged( void )
                 m_ArtistListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
-                m_RatingListCtrl->ReloadItems( false );
-                m_PlayCountListCtrl->ReloadItems( false );
+                m_RatingListCtrl->ReloadItems();
+                m_PlayCountListCtrl->ReloadItems();
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
@@ -2509,8 +2509,8 @@ void guLibPanel::DoSelectionChanged( void )
                 m_ArtistListCtrl->ReloadItems();
                 m_YearListCtrl->ReloadItems();
                 m_AlbumListCtrl->ReloadItems();
-                m_RatingListCtrl->ReloadItems( false );
-                m_PlayCountListCtrl->ReloadItems( false );
+                m_RatingListCtrl->ReloadItems();
+                m_PlayCountListCtrl->ReloadItems();
                 m_SongListCtrl->ReloadItems();
                 m_UpdateLock = false;
             }
