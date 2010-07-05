@@ -69,6 +69,8 @@
 #define APE_TAG_KEY_COPYRIGHT_URL       wxT( "Copyright URL" )
 #define APE_TAG_KEY_MJ_METADATA         wxT( "Media Jukebox Metadata" )
 
+#define APE_TAG_KEY_ALBUMARTIST         wxT( "Album Artist" )
+
 #define APE_FLAG_HAVE_HEADER            0x80000000
 #define APE_FLAG_HAVE_FOOTER            0x40000000
 #define APE_FLAG_IS_HEADER              0x20000000

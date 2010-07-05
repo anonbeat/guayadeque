@@ -1332,6 +1332,9 @@ bool guApeTagInfo::Read( void )
         m_Comments = Tag->GetItemValue( APE_TAG_KEY_COMMENT );
         m_Composer = Tag->GetItemValue( APE_TAG_KEY_COMPOSER );
         m_Disk = Tag->GetItemValue( APE_TAG_KEY_MEDIA );
+        m_AlbumArtist = Tag->GetItemValue( APE_TAG_KEY_ALBUMARTIST );
+        if( m_AlbumArtist.IsEmpty() )
+            m_AlbumArtist = Tag->GetItemValue( wxT( "AlbumArtist" ) );
 
         return true;
     }
@@ -1357,6 +1360,7 @@ bool guApeTagInfo::Write( void )
         Tag->SetItem( APE_TAG_KEY_COMMENT, m_Comments );
         Tag->SetItem( APE_TAG_KEY_COMPOSER, m_Composer );
         Tag->SetItem( APE_TAG_KEY_MEDIA, m_Disk );
+        Tag->SetItem( APE_TAG_KEY_ALBUMARTIST, m_AlbumArtist );
 
         m_ApeFile.WriteApeTag();
         return true;
