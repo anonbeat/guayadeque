@@ -415,6 +415,50 @@ void guListView::SetSelectedItems( const wxArrayInt &selection )
 }
 
 // -------------------------------------------------------------------------------- //
+void guListView::GetSelectedItems( guListItems * items, const bool convertall ) const
+{
+    unsigned long cookie;
+    int item;
+    int index;
+    int count;
+    bool AppendAll = false;
+    if( ( count = GetItemCount() ) )
+    {
+        if( m_ListBox->HasMultipleSelection() )
+        {
+            item = GetFirstSelected( cookie );
+            while( item != wxNOT_FOUND )
+            {
+                if( convertall && ( item == 0 ) )
+                {
+                    AppendAll = true;
+                    break;
+                }
+                items->Add( new guListItem( GetItemId( item ), GetItemName( item ) ) );
+                item = GetNextSelected( cookie );
+            }
+        }
+        else
+        {
+            item = m_ListBox->GetSelection();
+            if( item != wxNOT_FOUND )
+            {
+                items->Add( new guListItem( GetItemId( item ), GetItemName( item ) ) );
+            }
+        }
+
+        //
+        if( convertall && AppendAll )
+        {
+            for( index = 0; index < count; index++ )
+            {
+                items->Add( new guListItem( GetItemId( index ), GetItemName( index ) ) );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guListView::SetColumnWidth( const int col, const int width )
 {
     ( * m_Columns )[ col ].m_Width = width;

@@ -107,3 +107,5 @@ void  guListBox::SetSelectedItems( const wxArrayInt &selection )
 //    event.SetInt( -1 );
 //    (void) GetEventHandler()->ProcessEvent( event );
 }
+
+// -------------------------------------------------------------------------------- //

@@ -2355,7 +2355,7 @@ void guDbLibrary::GetLabels( guListItems * Labels, const bool FullList )
   //guLogMessage( wxT( "guDbLibrary::GetLabels" ) );
 
   query = wxT( "SELECT tag_id, tag_name FROM tags ORDER BY " );
-  query += FullList ? wxT( "tag_id;" ) : wxT( "tag_name COLLATE NOCASE;" );
+  query += FullList ? wxT( "tag_id;" ) : wxT( "tag_name;" );
 
   dbRes = ExecuteQuery( query );
 
@@ -4983,165 +4983,193 @@ void guDbLibrary::SetSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Lab
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels )
+void guDbLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
 {
   guListItems   LaItems;
   guTrackArray  Songs;
   guTrack *     Song;
-  wxString      ArtistLabelStr = wxEmptyString;
-  int           index;
-  int           count;
+  wxString      ArtistLabelStr;
 
   // The ArtistLabels string is the same for all songs so done out of the loop
   GetLabels( &LaItems, true );
 
-  count = Labels.Count();
-  for( index = 0; index < count; index++ )
+  int           ArIndex;
+  int           ArCount = labelsets.Count();
+  for( ArIndex = 0; ArIndex < ArCount; ArIndex++ )
   {
-    ArtistLabelStr += guListItemsGetName( LaItems, Labels[ index ] );
-    ArtistLabelStr += wxT( "|" );
-  }
-  if( !ArtistLabelStr.IsEmpty() )
-    ArtistLabelStr.RemoveLast( 1 );
+    wxArrayInt ArLabels = labelsets[ ArIndex ].GetData();
+    int Index;
+    int Count = ArLabels.Count();
 
-  //guLogMessage( wxT( "Artist Labels : '%s'" ), ArtistLabelStr.c_str() );
-  // Update the Database
-  SetArtistsLabels( Artists, Labels );
-
-  // Get the affected tracks
-  GetArtistsSongs( Artists, &Songs );
-  count = Songs.Count();
-  for( index = 0; index < count; index++ )
-  {
-    Song = &Songs[ index ];
-
-    if( wxFileExists( Song->m_FileName ) )
+    ArtistLabelStr.Empty();
+    for( Index = 0; Index < Count; Index++ )
     {
-      guTagInfo * TagInfo;
-      TagInfo = guGetTagInfoHandler( Song->m_FileName );
-      if( !TagInfo )
-        continue;
-
-      TagInfo->Read();
-
-      TagInfo->m_ArtistLabelsStr = ArtistLabelStr;
-
-      TagInfo->Write();
-
-      delete TagInfo;
+      ArtistLabelStr += guListItemsGetName( LaItems, ArLabels[ Index ] );
+      ArtistLabelStr += wxT( "|" );
     }
-    else
+    if( !ArtistLabelStr.IsEmpty() )
+      ArtistLabelStr.RemoveLast( 1 );
+
+    //guLogMessage( wxT( "Artist Labels : '%s'" ), ArtistLabelStr.c_str() );
+    // Update the Database
+    wxArrayInt Artists;
+    Artists.Add( labelsets[ ArIndex ].GetId() );
+    SetArtistsLabels( Artists, ArLabels );
+
+    // Get the affected tracks
+    GetArtistsSongs( Artists, &Songs );
+    Count = Songs.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
+      Song = &Songs[ Index ];
+
+      if( wxFileExists( Song->m_FileName ) )
+      {
+        guTagInfo * TagInfo;
+        TagInfo = guGetTagInfoHandler( Song->m_FileName );
+        if( !TagInfo )
+          continue;
+
+        TagInfo->Read();
+
+        TagInfo->m_ArtistLabelsStr = ArtistLabelStr;
+
+        TagInfo->Write();
+
+        delete TagInfo;
+      }
+      else
+      {
         guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+      }
     }
   }
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels )
+void guDbLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
 {
-  guListItems   AlItems;
+  guListItems   LaItems;
   guTrackArray  Songs;
   guTrack *     Song;
-  wxString      AlbumLabelStr = wxEmptyString;
-  int           index;
-  int           count;
+  wxString      AlbumLabelStr;
 
   // The ArtistLabels string is the same for all songs so done out of the loop
-  GetLabels( &AlItems, true );
+  GetLabels( &LaItems, true );
 
-  count = Labels.Count();
-  for( index = 0; index < count; index++ )
+  int           ItemIndex;
+  int           ItemCount = labelsets.Count();
+  for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
   {
-    AlbumLabelStr += guListItemsGetName( AlItems, Labels[ index ] );
-    AlbumLabelStr += wxT( "|" );
-  }
-  if( !AlbumLabelStr.IsEmpty() )
-    AlbumLabelStr.RemoveLast( 1 );
+    wxArrayInt ItemLabels = labelsets[ ItemIndex ].GetData();
+    int Index;
+    int Count = ItemLabels.Count();
 
-  // Update the Database
-  SetAlbumsLabels( Albums, Labels );
-
-  // Get the affected tracks
-  GetAlbumsSongs( Albums, &Songs );
-  count = Songs.Count();
-  for( index = 0; index < count; index++ )
-  {
-    Song = &Songs[ index ];
-
-    if( wxFileExists( Song->m_FileName ) )
+    AlbumLabelStr.Empty();
+    for( Index = 0; Index < Count; Index++ )
     {
-      guTagInfo * TagInfo;
-      TagInfo = guGetTagInfoHandler( Song->m_FileName );
-      if( !TagInfo )
-        continue;
-
-      TagInfo->Read();
-
-      TagInfo->m_AlbumLabelsStr = AlbumLabelStr;
-
-      TagInfo->Write();
-
-      delete TagInfo;
+      AlbumLabelStr += guListItemsGetName( LaItems, ItemLabels[ Index ] ) + wxT( "|" );
     }
-    else
+    if( !AlbumLabelStr.IsEmpty() )
+      AlbumLabelStr.RemoveLast( 1 );
+
+    //guLogMessage( wxT( "Artist Labels : '%s'" ), ArtistLabelStr.c_str() );
+    // Update the Database
+    wxArrayInt ItemIds;
+    ItemIds.Add( labelsets[ ItemIndex ].GetId() );
+    SetAlbumsLabels( ItemIds, ItemLabels );
+
+    // Get the affected tracks
+    GetAlbumsSongs( ItemIds, &Songs );
+
+    Count = Songs.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
+      Song = &Songs[ Index ];
+
+      if( wxFileExists( Song->m_FileName ) )
+      {
+        guTagInfo * TagInfo;
+        TagInfo = guGetTagInfoHandler( Song->m_FileName );
+        if( !TagInfo )
+          continue;
+
+        TagInfo->Read();
+
+        TagInfo->m_AlbumLabelsStr = AlbumLabelStr;
+
+        TagInfo->Write();
+
+        delete TagInfo;
+      }
+      else
+      {
         guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+      }
     }
   }
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateSongsLabels( const wxArrayInt &SongIds, const wxArrayInt &Labels )
+void guDbLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
 {
   guListItems   LaItems;
   guTrackArray  Songs;
   guTrack *     Song;
-  wxString      TrackLabelStr = wxEmptyString;
-  int           index;
-  int           count;
+  wxString      TrackLabelStr;
 
   // The ArtistLabels string is the same for all songs so done out of the loop
   GetLabels( &LaItems, true );
 
-  count = Labels.Count();
-  for( index = 0; index < count; index++ )
+  int           ItemIndex;
+  int           ItemCount = labelsets.Count();
+  for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
   {
-    TrackLabelStr += guListItemsGetName( LaItems, Labels[ index ] );
-    TrackLabelStr += wxT( "|" );
-  }
-  if( !TrackLabelStr.IsEmpty() )
-    TrackLabelStr.RemoveLast( 1 );
+    wxArrayInt ItemLabels = labelsets[ ItemIndex ].GetData();
+    int Index;
+    int Count = ItemLabels.Count();
 
-  // Update the Database
-  SetSongsLabels( SongIds, Labels );
-
-  // Get the affected tracks
-  GetSongs( SongIds, &Songs );
-  count = Songs.Count();
-  for( index = 0; index < count; index++ )
-  {
-    Song = &Songs[ index ];
-
-    //guLogMessage( wxT( "'%s' -> '%s'" ), Song->FileName.c_str(), TrackLabelStr.c_str() );
-    if( wxFileExists( Song->m_FileName ) )
+    TrackLabelStr.Empty();
+    for( Index = 0; Index < Count; Index++ )
     {
-      guTagInfo * TagInfo;
-      TagInfo = guGetTagInfoHandler( Song->m_FileName );
-      if( !TagInfo )
-        continue;
-
-      TagInfo->Read();
-
-      TagInfo->m_TrackLabelsStr = TrackLabelStr;
-
-      TagInfo->Write();
-
-      delete TagInfo;
+      TrackLabelStr += guListItemsGetName( LaItems, ItemLabels[ Index ] ) + wxT( "|" );
     }
-    else
+    if( !TrackLabelStr.IsEmpty() )
+      TrackLabelStr.RemoveLast( 1 );
+
+    //guLogMessage( wxT( "Artist Labels : '%s'" ), ArtistLabelStr.c_str() );
+    // Update the Database
+    wxArrayInt ItemIds;
+    ItemIds.Add( labelsets[ ItemIndex ].GetId() );
+    SetSongsLabels( ItemIds, ItemLabels );
+
+    // Get the affected tracks
+    GetSongs( ItemIds, &Songs );
+
+    Count = Songs.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
+      Song = &Songs[ Index ];
+
+      if( wxFileExists( Song->m_FileName ) )
+      {
+        guTagInfo * TagInfo;
+        TagInfo = guGetTagInfoHandler( Song->m_FileName );
+        if( !TagInfo )
+          continue;
+
+        TagInfo->Read();
+
+        TagInfo->m_TrackLabelsStr = TrackLabelStr;
+
+        TagInfo->Write();
+
+        delete TagInfo;
+      }
+      else
+      {
         guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+      }
     }
   }
 }

@@ -894,27 +894,23 @@ void guLibPanel::OnArtistQueueAsNextClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
 {
-    guListItems Labels;
-    wxArrayInt Artists;
-
-    Artists = m_ArtistListCtrl->GetSelectedItems();
+    guListItems Artists;
+    m_ArtistListCtrl->GetSelectedItems( &Artists );
     if( Artists.Count() )
     {
-        m_Db->GetLabels( &Labels, true );
+        guArrayListItems LabelSets = m_Db->GetArtistsLabels( m_ArtistListCtrl->GetSelectedItems() );
 
-        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Artist Labels Editor" ), false, Labels, m_Db->GetArtistsLabels( Artists ) );
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Artist Labels Editor" ), false, &Artists, &LabelSets );
         if( LabelEditor )
         {
             if( LabelEditor->ShowModal() == wxID_OK )
             {
                 // Update the labels in the artists files
-                m_Db->UpdateArtistsLabels( Artists, LabelEditor->GetCheckedIds() );
-
-//                m_UpdateLock = true;
-//                m_LabelsListCtrl->ReloadItems( false );
-//                m_UpdateLock = false;
-                UpdateLabels();
+                m_Db->UpdateArtistsLabels( LabelSets );
             }
+
+            UpdateLabels();
+
             LabelEditor->Destroy();
         }
     }
@@ -1030,26 +1026,24 @@ void guLibPanel::OnAlbumQueueAsNextClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumEditLabelsClicked( wxCommandEvent &event )
 {
-    guListItems Labels;
-    wxArrayInt  Albums;
-
-    m_Db->GetLabels( &Labels, true );
-
-    Albums = m_AlbumListCtrl->GetSelectedItems();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Albums Labels Editor" ), false,
-                                         Labels, m_Db->GetAlbumsLabels( Albums ) );
-    if( LabelEditor )
+    guListItems Albums;
+    m_AlbumListCtrl->GetSelectedItems( &Albums );
+    if( Albums.Count() )
     {
-        if( LabelEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateAlbumsLabels( Albums, LabelEditor->GetCheckedIds() );
+        guArrayListItems LabelSets = m_Db->GetAlbumsLabels( m_AlbumListCtrl->GetSelectedItems() );
 
-//            m_UpdateLock = true;
-//            m_LabelsListCtrl->ReloadItems( false );
-//            m_UpdateLock = false;
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Albums Labels Editor" ),
+                            false, &Albums, &LabelSets );
+        if( LabelEditor )
+        {
+            if( LabelEditor->ShowModal() == wxID_OK )
+            {
+                m_Db->UpdateAlbumsLabels( LabelSets );
+            }
+            LabelEditor->Destroy();
+
             UpdateLabels();
         }
-        LabelEditor->Destroy();
     }
 }
 
@@ -1304,26 +1298,25 @@ void guLibPanel::OnSongQueueAllAsNextClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongsEditLabelsClicked( wxCommandEvent &event )
 {
-    guListItems Labels;
-    wxArrayInt SongIds;
-
-    m_Db->GetLabels( &Labels, true );
-
-    SongIds = m_SongListCtrl->GetSelectedItems();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ), false,
-                         Labels, m_Db->GetSongsLabels( SongIds ) );
-    if( LabelEditor )
+    guListItems Tracks;
+    m_SongListCtrl->GetSelectedItems( &Tracks );
+    if( Tracks.Count() )
     {
-        if( LabelEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongsLabels( SongIds, LabelEditor->GetCheckedIds() );
+        guArrayListItems LabelSets = m_Db->GetSongsLabels( m_SongListCtrl->GetSelectedItems() );
 
-//            m_UpdateLock = true;
-//            m_LabelsListCtrl->ReloadItems( false );
-//            m_UpdateLock = false;
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Tracks Labels Editor" ), false, &Tracks, &LabelSets );
+        if( LabelEditor )
+        {
+            if( LabelEditor->ShowModal() == wxID_OK )
+            {
+                // Update the labels in the files
+                m_Db->UpdateSongsLabels( LabelSets );
+            }
+
             UpdateLabels();
+
+            LabelEditor->Destroy();
         }
-        LabelEditor->Destroy();
     }
 }
 

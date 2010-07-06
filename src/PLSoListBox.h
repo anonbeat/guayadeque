@@ -55,6 +55,9 @@ class guPLSoListBox : public guSoListBox
     virtual int                 GetSelectedSongs( guTrackArray * Songs );
     virtual void                GetAllSongs( guTrackArray * Songs );
 
+    virtual int                 GetItemId( const int row ) const;
+    virtual wxString            GetItemName( const int row ) const;
+
     void    GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
     {
         * count = GetItemCount();
