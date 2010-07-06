@@ -19,12 +19,13 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "LabelEditor.h"
+
+#include "Config.h"
 #include "Images.h"
 
 // -------------------------------------------------------------------------------- //
 guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxString &title,
-        const bool isradiolabel, const guListItems * items, guArrayListItems * labelsets ) :
-    wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 500,300 ), wxDEFAULT_DIALOG_STYLE )
+        const bool isradiolabel, const guListItems * items, guArrayListItems * labelsets ) //wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 500,300 ), wxDEFAULT_DIALOG_STYLE )
 {
     m_SelectedItem = wxNOT_FOUND;
     m_SelectedLabel = wxNOT_FOUND;
@@ -40,6 +41,19 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
         m_RaDb = NULL;
     }
     m_LabelSets = labelsets;
+
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxPoint WindowPos;
+    WindowPos.x = Config->ReadNum( wxT( "LabelEditPosX" ), -1, wxT( "Positions" ) );
+    WindowPos.y = Config->ReadNum( wxT( "LabelEditPosY" ), -1, wxT( "Positions" ) );
+    wxSize WindowSize;
+    WindowSize.x = Config->ReadNum( wxT( "LabelEditSizeWidth" ), 500, wxT( "Positions" ) );
+    WindowSize.y = Config->ReadNum( wxT( "LabelEditSizeHeight" ), 300, wxT( "Positions" ) );
+
+    //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+    Create( parent, wxID_ANY, title, WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -157,6 +171,23 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
 // -------------------------------------------------------------------------------- //
 guLabelEditor::~guLabelEditor()
 {
+    // Save the window position and size
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteNum( wxT( "LabelEditSashPos" ), m_Splitter->GetSashPosition(), wxT( "Positions" ) );
+    wxPoint WindowPos = GetPosition();
+    Config->WriteNum( wxT( "LabelEditPosX" ), WindowPos.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "LabelEditPosY" ), WindowPos.y, wxT( "Positions" ) );
+    wxSize WindowSize = GetSize();
+    Config->WriteNum( wxT( "LabelEditSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "LabelEditSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
+
+	m_ItemsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnItemSelected ), NULL, this );
+	m_LabelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnLabelSelected ), NULL, this );
+	m_LabelsListBox->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guLabelEditor::OnLabelChecked ), NULL, this );
+	m_LabelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guLabelEditor::OnLabelDoubleClicked ), NULL, this );
+	m_AddButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnAddLabelClicked ), NULL, this );
+	m_DelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnDelLabelClicked ), NULL, this );
+	m_CopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnCopyLabelsClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -312,7 +343,8 @@ void guLabelEditor::OnCopyLabelsClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guLabelEditor::OnIdle( wxIdleEvent &event )
 {
-    m_Splitter->SetSashPosition( 177 );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_Splitter->SetSashPosition( Config->ReadNum( wxT( "LabelEditSashPos" ), 177, wxT( "Positions" ) ) );
     m_Splitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLabelEditor::OnIdle ), NULL, this );
 }
 
