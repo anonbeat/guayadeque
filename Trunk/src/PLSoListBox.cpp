@@ -278,3 +278,15 @@ void guPLSoListBox::GetAllSongs( guTrackArray * tracks )
 }
 
 // -------------------------------------------------------------------------------- //
+wxString guPLSoListBox::GetItemName( const int row ) const
+{
+    return m_Items[ row ].m_SongName;
+}
+
+// -------------------------------------------------------------------------------- //
+int guPLSoListBox::GetItemId( const int row ) const
+{
+    return m_Items[ row ].m_SongId;
+}
+
+// -------------------------------------------------------------------------------- //

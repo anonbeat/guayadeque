@@ -1116,24 +1116,25 @@ void guPlayListPanel::OnPLTracksQueueAllAsNextClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksEditLabelsClicked( wxCommandEvent &event )
 {
-    guListItems Labels;
-    wxArrayInt SongIds;
-
-    m_Db->GetLabels( &Labels, true );
-
-    SongIds = m_PLTracksListBox->GetSelectedItems();
-
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ), false,
-                         Labels, m_Db->GetSongsLabels( SongIds ) );
-    if( LabelEditor )
+    guListItems Tracks;
+    m_PLTracksListBox->GetSelectedItems( &Tracks );
+    if( Tracks.Count() )
     {
-        if( LabelEditor->ShowModal() == wxID_OK )
+        guArrayListItems LabelSets = m_Db->GetSongsLabels( m_PLTracksListBox->GetSelectedItems() );
+
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Tracks Labels Editor" ), false, &Tracks, &LabelSets );
+        if( LabelEditor )
         {
-            m_Db->UpdateSongsLabels( SongIds, LabelEditor->GetCheckedIds() );
+            if( LabelEditor->ShowModal() == wxID_OK )
+            {
+                // Update the labels in the files
+                m_Db->UpdateSongsLabels( LabelSets );
+            }
+            LabelEditor->Destroy();
+            m_PLTracksListBox->ReloadItems( false );
         }
-        LabelEditor->Destroy();
-        m_PLTracksListBox->ReloadItems();
     }
+
 }
 
 // -------------------------------------------------------------------------------- //

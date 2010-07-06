@@ -501,7 +501,7 @@ void guAlbumBrowserItemPanel::OnAlbumCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnAlbumEditLabelsClicked( wxCommandEvent &event )
 {
-    m_AlbumBrowser->OnAlbumEditLabelsClicked( m_AlbumBrowserItem->m_AlbumId );
+    m_AlbumBrowser->OnAlbumEditLabelsClicked( m_AlbumBrowserItem );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1226,24 +1226,34 @@ void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::OnAlbumEditLabelsClicked( const int albumid )
+void guAlbumBrowser::OnAlbumEditLabelsClicked( const guAlbumBrowserItem * albumitem )
 {
-    guListItems Labels;
-    wxArrayInt  Albums;
+    guListItems Albums;
+    Albums.Add( new guListItem( albumitem->m_AlbumId, albumitem->m_AlbumName ) );
+//    if( Albums.Count() )
+//    {
+        wxArrayInt AlbumIds;
+        AlbumIds.Add( albumitem->m_AlbumId );
+        guArrayListItems LabelSets = m_Db->GetAlbumsLabels( AlbumIds );
 
-    m_Db->GetLabels( &Labels, true );
-
-    Albums.Add( albumid );
-    guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Albums Labels Editor" ), false,
-                                         Labels, m_Db->GetAlbumsLabels( Albums ) );
-    if( LabelEditor )
-    {
-        if( LabelEditor->ShowModal() == wxID_OK )
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Albums Labels Editor" ),
+                            false, &Albums, &LabelSets );
+        if( LabelEditor )
         {
-            m_Db->UpdateAlbumsLabels( Albums, LabelEditor->GetCheckedIds() );
+            if( LabelEditor->ShowModal() == wxID_OK )
+            {
+                m_Db->UpdateAlbumsLabels( LabelSets );
+            }
+
+            LabelEditor->Destroy();
+
+            if( m_FilterBtn->GetValue() ) // If its filtered we may need to refresh as the filter can contains the label condition
+            {
+                ReloadItems();
+                RefreshAll();
+            }
         }
-        LabelEditor->Destroy();
-    }
+//    }
 }
 
 // -------------------------------------------------------------------------------- //

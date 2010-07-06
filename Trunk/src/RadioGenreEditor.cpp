@@ -24,7 +24,7 @@
 
 // -------------------------------------------------------------------------------- //
 guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
-    wxDialog( parent, wxID_ANY, wxT("Radio Genre Editor"), wxDefaultPosition, wxSize( 280,360 ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, _("Radio Genre Editor"), wxDefaultPosition, wxSize( 280,360 ), wxDEFAULT_DIALOG_STYLE )
 {
     m_Db = db;
 
@@ -34,7 +34,7 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticBoxSizer* ListBoxSizer;
-	ListBoxSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT(" Genres ") ), wxVERTICAL );
+	ListBoxSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _(" Genres ") ), wxVERTICAL );
 
     guShoutCast ShoutCast;
     m_RadioGenres = ShoutCast.GetGenres();
@@ -45,7 +45,7 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
 	wxBoxSizer* InputSizer;
 	InputSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_InputStaticText = new wxStaticText( this, wxID_ANY, wxT("Other:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_InputStaticText = new wxStaticText( this, wxID_ANY, _("Other:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_InputStaticText->Wrap( -1 );
 	InputSizer->Add( m_InputStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 

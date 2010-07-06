@@ -578,7 +578,7 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !GetSearchText().IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the artist name to clipboard" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, _( "Copy to clipboard" ), _( "Copy the artist name to clipboard" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
@@ -808,7 +808,7 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !GetSearchText().IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the album info to clipboard" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, _( "Copy to clipboard" ), _( "Copy the album info to clipboard" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
@@ -971,9 +971,9 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !GetSearchText().IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_SELECT_ARTIST, wxT( "Show artist info" ), _( "Update the information with the current selected artist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_SELECT_ARTIST, _( "Show artist info" ), _( "Update the information with the current selected artist" ) );
         Menu->Append( MenuItem );
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the artist info to clipboard" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, _( "Copy to clipboard" ), _( "Copy the artist info to clipboard" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
@@ -1132,10 +1132,10 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !GetSearchText().IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_SELECT_ARTIST, wxT( "Show artist info" ), _( "Update the information with the current selected artist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_SELECT_ARTIST, _( "Show artist info" ), _( "Update the information with the current selected artist" ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the track info to clipboard" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, _( "Copy to clipboard" ), _( "Copy the track info to clipboard" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();
@@ -1255,7 +1255,7 @@ void guEventInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( !GetSearchText().IsEmpty() )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, wxT( "Copy to clipboard" ), _( "Copy the event info to clipboard" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_COPYTOCLIPBOARD, _( "Copy to clipboard" ), _( "Copy the event info to clipboard" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
         Menu->AppendSeparator();

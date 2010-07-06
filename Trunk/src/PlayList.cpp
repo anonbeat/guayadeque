@@ -1327,8 +1327,8 @@ void guPlayList::OnCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
 {
-    guListItems Labels;
-    wxArrayInt SongIds;
+    guListItems Tracks;
+    wxArrayInt  TrackIds;
     //
     guTrack * Track;
     wxArrayInt SelectedItems = GetSelectedItems( false );
@@ -1342,7 +1342,8 @@ void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
             Track = &m_Items[ SelectedItems[ index ] ];
             if( Track->m_SongId > 0 )
             {
-                SongIds.Add( Track->m_SongId );
+                Tracks.Add( new guListItem( Track->m_SongId, Track->m_SongName ) );
+                TrackIds.Add( Track->m_SongId );
             }
         }
     }
@@ -1354,27 +1355,29 @@ void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
         for( index = 0; index < count; index++ )
         {
             Track = &m_Items[ index ];
-            if( Track->m_SongId > 0 )
+            if( Track->m_SongId > 0 ) // Shoutl this better be Track->m_Type == guTRACK_TYPE_DB ?
             {
-                SongIds.Add( Track->m_SongId );
+                Tracks.Add( new guListItem( Track->m_SongId, Track->m_SongName ) );
+                TrackIds.Add( Track->m_SongId );
             }
         }
     }
 
-    if( SongIds.Count() )
+    if( Tracks.Count() )
     {
-        m_Db->GetLabels( &Labels, true );
+        guArrayListItems LabelSets = m_Db->GetSongsLabels( TrackIds );
 
-        //SongIds = m_SongListCtrl->GetSelection();
-        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Songs Labels Editor" ), false,
-                             Labels, m_Db->GetSongsLabels( SongIds ) );
+        guLabelEditor * LabelEditor = new guLabelEditor( this, m_Db, _( "Tracks Labels Editor" ), false, &Tracks, &LabelSets );
         if( LabelEditor )
         {
             if( LabelEditor->ShowModal() == wxID_OK )
             {
-                m_Db->UpdateSongsLabels( SongIds, LabelEditor->GetCheckedIds() );
+                // Update the labels in the files
+                m_Db->UpdateSongsLabels( LabelSets );
             }
+
             LabelEditor->Destroy();
+
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LABEL_UPDATELABELS );
             wxPostEvent( wxTheApp->GetTopWindow(), event );
         }

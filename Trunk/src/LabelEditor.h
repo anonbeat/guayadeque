@@ -25,15 +25,21 @@
 #include "DbRadios.h"
 
 #include <wx/string.h>
-#include <wx/stattext.h>
+#include <wx/listbox.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/checklst.h>
 #include <wx/sizer.h>
-#include <wx/checkbox.h>
+#include <wx/statbox.h>
+#include <wx/panel.h>
+#include <wx/checklst.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
+#include <wx/bmpbuttn.h>
 #include <wx/button.h>
+#include <wx/splitter.h>
 #include <wx/dialog.h>
 
 // -------------------------------------------------------------------------------- //
@@ -44,24 +50,42 @@ class guLabelEditor : public wxDialog
   protected:
     guDbLibrary *       m_Db;
     guDbRadios *        m_RaDb;
-    wxCheckListBox *    m_CheckListBox;
-    wxBitmapButton *    m_AddLabelBtn;
-	wxBitmapButton *    m_DelLabelBtn;
-
-    wxArrayInt          m_LabelIds;
+    guListItems         m_Labels;
+    guArrayListItems *  m_LabelSets;
     int                 m_SelectedItem;
-
+    int                 m_SelectedLabel;
     bool                m_IsRadioLabel;
 
-	void SetCheckedItems( const wxArrayInt &Checked );
-    void OnAddLabelBtnClick( wxCommandEvent &event );
-	void OnDelLabelBtnClick( wxCommandEvent &event );
-	void OnCheckListBoxSelected( wxCommandEvent& event );
+    wxSplitterWindow *  m_Splitter;
+    wxPanel *           m_ItemsPanel;
+    wxListBox *         m_ItemsListBox;
+    wxPanel *           m_LabelsPanel;
+    wxCheckListBox *    m_LabelsListBox;
+
+    wxBitmapButton *    m_AddButton;
+    wxBitmapButton *    m_DelButton;
+    wxBitmapButton *    m_CopyButton;
+
+    void                OnItemSelected( wxCommandEvent& event );
+    void                OnLabelSelected( wxCommandEvent& event );
+    void                OnLabelChecked( wxCommandEvent& event );
+    void                OnLabelDoubleClicked( wxCommandEvent& event );
+    void                OnAddLabelClicked( wxCommandEvent& event );
+    void                OnDelLabelClicked( wxCommandEvent& event );
+    void                OnCopyLabelsClicked( wxCommandEvent& event );
+
+    void                OnIdle( wxIdleEvent &event );
+
+    void                ClearCheckedItems( void );
+    void                CheckLabelItems( const wxArrayInt &checkeditems );
+
+    void                AddToAllItems( const int labelid );
+    void                DelToAllItems( const int labelid );
 
   public:
-	guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxString &title, const bool isradiolabel, const guListItems &labels, const guArrayListItems &enabelditems );
+	guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxString &title,
+	    const bool isradiolabel, const guListItems * items, guArrayListItems * labelsets );
 	~guLabelEditor();
-    wxArrayInt GetCheckedIds( void );
 
 };
 

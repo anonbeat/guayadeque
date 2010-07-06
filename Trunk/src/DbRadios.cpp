@@ -668,28 +668,37 @@ guArrayListItems guDbRadios::GetStationsLabels( const wxArrayInt &Stations )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbRadios::SetRadioStationsLabels( const wxArrayInt &Stations, const wxArrayInt &Labels )
+void guDbRadios::SetRadioStationsLabels( const guArrayListItems &labelsets )
 {
   wxString query;
+  wxArrayInt Stations;
+  wxArrayInt Labels;
   int StaIndex;
   int StaCount;
   int LaIndex;
   int LaCount;
 
-  query = wxT( "DELETE FROM radiosetlabels "
-               "WHERE radiosetlabel_stationid IN " ) + ArrayIntToStrList( Stations );
-
-  m_Db->ExecuteUpdate( query );
-
-  StaCount = Stations.Count();
-  LaCount = Labels.Count();
-  for( StaIndex = 0; StaIndex < StaCount; StaIndex++ )
+  if( ( StaCount = labelsets.Count() ) )
   {
-    for( LaIndex = 0; LaIndex < LaCount; LaIndex++ )
+    for( StaIndex = 0; StaIndex < StaCount; StaIndex++ )
     {
-      query = wxString::Format( wxT( "INSERT INTO radiosetlabels( radiosetlabel_labelid, radiosetlabel_stationid ) "\
-                                   "VALUES( %u, %u );" ), Labels[ LaIndex ], Stations[ StaIndex ] );
-      m_Db->ExecuteUpdate( query );
+        Stations.Add( labelsets[ StaIndex ].GetId() );
+    }
+    query = wxT( "DELETE FROM radiosetlabels "
+                 "WHERE radiosetlabel_stationid IN " ) + ArrayIntToStrList( Stations );
+
+    m_Db->ExecuteUpdate( query );
+
+    for( StaIndex = 0; StaIndex < StaCount; StaIndex++ )
+    {
+      Labels = labelsets[ StaIndex ].GetData();
+      LaCount = Labels.Count();
+      for( LaIndex = 0; LaIndex < LaCount; LaIndex++ )
+      {
+        query = wxString::Format( wxT( "INSERT INTO radiosetlabels( radiosetlabel_labelid, radiosetlabel_stationid ) "\
+                                       "VALUES( %u, %u );" ), Labels[ LaIndex ], Stations[ StaIndex ] );
+        m_Db->ExecuteUpdate( query );
+      }
     }
   }
 }

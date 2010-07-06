@@ -1241,22 +1241,24 @@ void guRadioPanel::OnStationListBoxColClick( wxListEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnStationsEditLabelsClicked( wxCommandEvent &event )
 {
-    guListItems Labels;
-    wxArrayInt Stations;
-
-    m_Db->GetRadioLabels( &Labels, true );
-
-    Stations = m_StationsListBox->GetSelectedItems();
-    guLabelEditor * LabelEditor = new guLabelEditor( this, ( guDbLibrary * ) m_Db, _( "Stations Labels Editor" ), true, Labels, m_Db->GetStationsLabels( Stations ) );
-    if( LabelEditor )
+    guListItems Stations;
+    m_StationsListBox->GetSelectedItems( &Stations );
+    if( Stations.Count() )
     {
-        if( LabelEditor->ShowModal() == wxID_OK )
+        guArrayListItems LabelSets = m_Db->GetStationsLabels( m_StationsListBox->GetSelectedItems() );
+
+        guLabelEditor * LabelEditor = new guLabelEditor( this, ( guDbLibrary * ) m_Db, _( "Stations Labels Editor" ), true, &Stations, &LabelSets );
+        if( LabelEditor )
         {
-            // Update the labels for the stations
-            m_Db->SetRadioStationsLabels( Stations, LabelEditor->GetCheckedIds() );
+            if( LabelEditor->ShowModal() == wxID_OK )
+            {
+                // Update the labels in the files
+                m_Db->SetRadioStationsLabels( LabelSets );
+            }
+            LabelEditor->Destroy();
+
             m_LabelsListBox->ReloadItems( false );
         }
-        LabelEditor->Destroy();
     }
 }
 

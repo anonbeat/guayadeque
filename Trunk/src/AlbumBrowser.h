@@ -231,7 +231,7 @@ class guAlbumBrowser : public wxPanel
     void                            OnAlbumSelectCoverClicked( const int albumid );
     void                            OnAlbumDeleteCoverClicked( const int albumid );
     void                            OnAlbumCopyToClicked( const int albumid );
-    void                            OnAlbumEditLabelsClicked( const int albumid );
+    void                            OnAlbumEditLabelsClicked( const guAlbumBrowserItem * albumitem );
     void                            OnAlbumEditTracksClicked( const int albumid );
 
     void                            LibraryUpdated( void );

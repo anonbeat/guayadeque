@@ -133,6 +133,7 @@ class guArrayListItem //: public wxObject
     void DelData( int m_Id ) { m_Data.Remove( m_Id ); };
     wxArrayInt GetData( void ) { return m_Data; };
     int GetId() { return m_Id; };
+    int Index( int id ) { return m_Data.Index( id ); }
 //    const wxString GetName( void ) { return m_Name; };
 //    void SetName( const wxString &NewName ) { m_Name = NewName; };
 };
@@ -422,9 +423,9 @@ class guDbLibrary : public guDb
     void                SetAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels );
     void                SetSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Labels );
 
-    void                UpdateArtistsLabels( const wxArrayInt &Artists, const wxArrayInt &Labels );
-    void                UpdateAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels );
-    void                UpdateSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Labels );
+    void                UpdateArtistsLabels( const guArrayListItems &labelsets );
+    void                UpdateAlbumsLabels( const guArrayListItems &labelsets );
+    void                UpdateSongsLabels( const guArrayListItems &labelsets );
     void                UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newlabel );
 
     void                SetTrackRating( const int songid, const int rating );

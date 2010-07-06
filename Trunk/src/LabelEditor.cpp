@@ -22,11 +22,12 @@
 #include "Images.h"
 
 // -------------------------------------------------------------------------------- //
-guLabelEditor::guLabelEditor( wxWindow* parent, guDbLibrary * db, const wxString &Title,
-        const bool isradiolabel, const guListItems &listitems, const guArrayListItems &selitems ) :
-             wxDialog( parent, wxID_ANY, Title, wxDefaultPosition, wxSize( 250,300 ), wxDEFAULT_DIALOG_STYLE )
+guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxString &title,
+        const bool isradiolabel, const guListItems * items, guArrayListItems * labelsets ) :
+    wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 500,300 ), wxDEFAULT_DIALOG_STYLE )
 {
     m_SelectedItem = wxNOT_FOUND;
+    m_SelectedLabel = wxNOT_FOUND;
     m_IsRadioLabel = isradiolabel;
     if( isradiolabel )
     {
@@ -38,123 +39,212 @@ guLabelEditor::guLabelEditor( wxWindow* parent, guDbLibrary * db, const wxString
         m_Db = db;
         m_RaDb = NULL;
     }
-
-	wxArrayString   Choices;
-	wxArrayInt      EnabledIds;
-	int index;
-	int count;
+    m_LabelSets = labelsets;
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer* TopSizer;
-	TopSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_Splitter = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
+	m_Splitter->SetMinimumPaneSize( 50 );
+	m_ItemsPanel = new wxPanel( m_Splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* ItemsMainSizer;
+	ItemsMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticText * LabelStaticText = new wxStaticText( this, wxID_ANY, _( "Labels" ), wxDefaultPosition, wxDefaultSize, 0 );
-	LabelStaticText->Wrap( -1 );
-	TopSizer->Add( LabelStaticText, 1, wxALIGN_BOTTOM|wxTOP|wxRIGHT|wxLEFT, 5 );
+	wxStaticBoxSizer* ItemsStaticBox;
+	ItemsStaticBox = new wxStaticBoxSizer( new wxStaticBox( m_ItemsPanel, wxID_ANY, _(" Items ") ), wxVERTICAL );
 
-	m_AddLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_AddLabelBtn->SetToolTip( _( "Add a new label" ) );
-
-	TopSizer->Add( m_AddLabelBtn, 0, wxALL, 5 );
-
-	m_DelLabelBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_DelLabelBtn->SetToolTip( _( "Delete the selected labels" ) );
-	m_DelLabelBtn->Enable( false );
-
-	TopSizer->Add( m_DelLabelBtn, 0, wxALL, 5 );
-
-	MainSizer->Add( TopSizer, 0, wxEXPAND, 5 );
-
-    count = listitems.Count();
-    for( index = 0; index < count; index++ )
+	m_ItemsListBox = new wxListBox( m_ItemsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	int Index;
+	int Count = items->Count();
+	for( Index = 0; Index < Count; Index++ )
     {
-        Choices.Add( listitems[ index ].m_Name );
-        m_LabelIds.Add( listitems[ index ].m_Id );
+        m_ItemsListBox->Append( items->Item( Index ).m_Name );
     }
+	ItemsStaticBox->Add( m_ItemsListBox, 1, wxEXPAND|wxALL, 5 );
 
-	m_CheckListBox = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, Choices, wxLB_MULTIPLE|wxLB_NEEDED_SB );
-	MainSizer->Add( m_CheckListBox, 1, wxALL|wxEXPAND, 5 );
+	ItemsMainSizer->Add( ItemsStaticBox, 1, wxEXPAND|wxALL, 5 );
 
-    wxStdDialogButtonSizer * LabelEditorBtnSizer;
-    wxButton * LabelEditorBtnSizerOK;
-    wxButton * LabelEditorBtnSizerCancel;
+	m_ItemsPanel->SetSizer( ItemsMainSizer );
+	m_ItemsPanel->Layout();
+	ItemsMainSizer->Fit( m_ItemsPanel );
+	m_LabelsPanel = new wxPanel( m_Splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* LabelsMainSizer;
+	LabelsMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	LabelEditorBtnSizer = new wxStdDialogButtonSizer();
-	LabelEditorBtnSizerOK = new wxButton( this, wxID_OK );
-	LabelEditorBtnSizer->AddButton( LabelEditorBtnSizerOK );
-	LabelEditorBtnSizerCancel = new wxButton( this, wxID_CANCEL );
-	LabelEditorBtnSizer->AddButton( LabelEditorBtnSizerCancel );
-	LabelEditorBtnSizer->Realize();
-	MainSizer->Add( LabelEditorBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	wxStaticBoxSizer* LabelsStaticBox;
+	LabelsStaticBox = new wxStaticBoxSizer( new wxStaticBox( m_LabelsPanel, wxID_ANY, _(" Labels ") ), wxHORIZONTAL );
+
+	if( m_IsRadioLabel )
+	{
+	    m_RaDb->GetRadioLabels( &m_Labels );
+	}
+	else
+	{
+        m_Db->GetLabels( &m_Labels );
+	}
+
+	m_LabelsListBox = new wxCheckListBox( m_LabelsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	Count = m_Labels.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_LabelsListBox->Append( m_Labels[ Index ].m_Name );
+    }
+	LabelsStaticBox->Add( m_LabelsListBox, 1, wxEXPAND|wxALL, 5 );
+
+	LabelsMainSizer->Add( LabelsStaticBox, 1, wxEXPAND|wxALL, 5 );
+
+	wxBoxSizer* ButtonsSizer;
+	ButtonsSizer = new wxBoxSizer( wxHORIZONTAL );
+
+
+	ButtonsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_AddButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddButton->SetToolTip( _("Add a new label") );
+
+	ButtonsSizer->Add( m_AddButton, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_DelButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelButton->Enable( false );
+	m_DelButton->SetToolTip( _("Delete the current selected label") );
+
+
+	ButtonsSizer->Add( m_DelButton, 0, wxBOTTOM|wxRIGHT, 5 );
+
+	m_CopyButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CopyButton->SetToolTip( _("Copy the label selection to all the items") );
+
+	ButtonsSizer->Add( m_CopyButton, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	LabelsMainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_LabelsPanel->SetSizer( LabelsMainSizer );
+	m_LabelsPanel->Layout();
+	LabelsMainSizer->Fit( m_LabelsPanel );
+	m_Splitter->SplitVertically( m_ItemsPanel, m_LabelsPanel, 177 );
+	MainSizer->Add( m_Splitter, 1, wxEXPAND, 5 );
+
+	wxStdDialogButtonSizer * DialogButtons = new wxStdDialogButtonSizer();
+	wxButton * OkButton = new wxButton( this, wxID_OK );
+	DialogButtons->AddButton( OkButton );
+	wxButton * CancelButton = new wxButton( this, wxID_CANCEL );
+	DialogButtons->AddButton( CancelButton );
+	DialogButtons->Realize();
+	MainSizer->Add( DialogButtons, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
-    //
-    count = selitems.Count();
-    EnabledIds = m_LabelIds;
-    for( index = 0; index < count; index++ )
-    {
-        EnabledIds = GetArraySameItems( EnabledIds, selitems[ index ].GetData() );
-        if( !EnabledIds.Count() )
-            break;
-    }
+	// Connect Events
+	m_Splitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLabelEditor::OnIdle ), NULL, this );
 
-    if( ( count = EnabledIds.Count() ) )
-    {
-        wxArrayInt EnabledIndexs;
-        for( index = 0; index < count; index++ )
-        {
-            EnabledIndexs.Add( guListItemSearch( listitems, 0, listitems.Count() - 1, EnabledIds[ index ] ) );
-        }
-        SetCheckedItems( EnabledIndexs );
-    }
+	m_ItemsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnItemSelected ), NULL, this );
+	m_LabelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnLabelSelected ), NULL, this );
+	m_LabelsListBox->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guLabelEditor::OnLabelChecked ), NULL, this );
+	m_LabelsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guLabelEditor::OnLabelDoubleClicked ), NULL, this );
+	m_AddButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnAddLabelClicked ), NULL, this );
+	m_DelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnDelLabelClicked ), NULL, this );
+	m_CopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnCopyLabelsClicked ), NULL, this );
 
-	m_CheckListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnCheckListBoxSelected ), NULL, this );
-	m_AddLabelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnAddLabelBtnClick ), NULL, this );
-	m_DelLabelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnDelLabelBtnClick ), NULL, this );
-
+    m_ItemsListBox->SetSelection( 0 );
+    wxCommandEvent event;
+    event.SetInt( 0 );
+    OnItemSelected( event );
 }
 
 // -------------------------------------------------------------------------------- //
 guLabelEditor::~guLabelEditor()
 {
-	m_CheckListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnCheckListBoxSelected ), NULL, this );
-	m_AddLabelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnAddLabelBtnClick ), NULL, this );
-	m_DelLabelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnDelLabelBtnClick ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
-void guLabelEditor::SetCheckedItems( const wxArrayInt &Checked )
+void guLabelEditor::ClearCheckedItems( void )
 {
-    int index;
-    int count = Checked.GetCount();
-    for( index = 0; index < count; index++ )
+    int Index;
+    int Count = m_Labels.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
-        m_CheckListBox->Check( Checked[ index ] );
+        m_LabelsListBox->Check( Index, false );
     }
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayInt guLabelEditor::GetCheckedIds( void )
+void guLabelEditor::CheckLabelItems( const wxArrayInt &checkeditems )
 {
-    wxArrayInt RetVal;
-    int index;
-    int count = m_CheckListBox->GetCount();
-    for( index = 0; index < count; index++ )
+    if( checkeditems.Count() )
     {
-        if( m_CheckListBox->IsChecked( index ) )
-            RetVal.Add( m_LabelIds[ index ] );
+        int Index;
+        int Count = m_Labels.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( checkeditems.Index( m_Labels[ Index ].m_Id ) != wxNOT_FOUND )
+            {
+                m_LabelsListBox->Check( Index, true );
+            }
+        }
     }
-    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-void guLabelEditor::OnAddLabelBtnClick( wxCommandEvent &event )
+void guLabelEditor::OnItemSelected( wxCommandEvent &event )
+{
+    m_SelectedItem = event.GetInt();
+    ClearCheckedItems();
+    if( m_SelectedItem >= 0 )
+    {
+        CheckLabelItems( m_LabelSets->Item( m_SelectedItem ).GetData() );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLabelEditor::OnLabelSelected( wxCommandEvent &event )
+{
+    m_SelectedLabel = event.GetInt();
+    m_DelButton->Enable( m_SelectedLabel != wxNOT_FOUND );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLabelEditor::OnLabelChecked( wxCommandEvent &event )
+{
+    m_SelectedLabel = event.GetInt();
+    m_DelButton->Enable( m_SelectedLabel != wxNOT_FOUND );
+
+    if( m_SelectedItem == wxNOT_FOUND )
+        return;
+
+    if( m_LabelsListBox->IsChecked( m_SelectedLabel ) )
+    {
+        m_LabelSets->Item( m_SelectedItem ).AddData( m_Labels[ m_SelectedLabel ].m_Id );
+    }
+    else
+    {
+        m_LabelSets->Item( m_SelectedItem ).DelData( m_Labels[ m_SelectedLabel ].m_Id );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLabelEditor::OnLabelDoubleClicked( wxCommandEvent &event )
+{
+    int LabelIndex = event.GetInt();
+    if( LabelIndex != wxNOT_FOUND )
+    {
+        bool Enabled = m_LabelsListBox->IsChecked( event.GetInt() );
+        int LabelId = m_Labels[ LabelIndex ].m_Id;
+        if( Enabled )
+        {
+            AddToAllItems( LabelId );
+        }
+        else
+        {
+            DelToAllItems( LabelId );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLabelEditor::OnAddLabelClicked( wxCommandEvent &event )
 {
     wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Please enter the label name" ) );
     if( EntryDialog->ShowModal() == wxID_OK )
@@ -168,47 +258,84 @@ void guLabelEditor::OnAddLabelBtnClick( wxCommandEvent &event )
         {
             AddedId = m_Db->AddLabel( EntryDialog->GetValue() );
         }
-        m_CheckListBox->Append( EntryDialog->GetValue() );
-        m_LabelIds.Add( AddedId );
+        m_LabelsListBox->Append( EntryDialog->GetValue() );
+        m_Labels.Add( new guListItem( AddedId, EntryDialog->GetValue() ) );
     }
     EntryDialog->Destroy();
-
 }
 
 // -------------------------------------------------------------------------------- //
-void guLabelEditor::OnDelLabelBtnClick( wxCommandEvent &event )
+void guLabelEditor::OnDelLabelClicked( wxCommandEvent &event )
 {
-    if( m_SelectedItem != wxNOT_FOUND )
+    if( m_SelectedLabel != wxNOT_FOUND )
     {
         if( wxMessageBox( _( "Are you sure to delete the selected labels?" ),
                           _( "Confirm" ),
                           wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
         {
+            int LabelId = m_Labels[ m_SelectedLabel ].m_Id;
             if( m_IsRadioLabel )
             {
-                m_RaDb->DelRadioLabel( m_LabelIds[ m_SelectedItem ] );
+                m_RaDb->DelRadioLabel( LabelId );
             }
             else
             {
-                m_Db->DelLabel( m_LabelIds[ m_SelectedItem ] );
+                m_Db->DelLabel( LabelId );
             }
-            m_CheckListBox->Delete( m_SelectedItem );
+
+            m_LabelsListBox->Delete( m_SelectedLabel );
+
+            // Delete the label id from the items enabled labels
+            DelToAllItems( LabelId );
         }
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guLabelEditor::OnCheckListBoxSelected( wxCommandEvent& event )
+void guLabelEditor::OnCopyLabelsClicked( wxCommandEvent& event )
 {
-    m_SelectedItem = event.GetInt();
-    if( m_SelectedItem != wxNOT_FOUND )
+    int Index;
+    int Count = m_Labels.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
-        m_DelLabelBtn->Enable();
-    }
-    else
-    {
-        m_DelLabelBtn->Disable();
+        if( m_LabelsListBox->IsChecked( Index ) )
+        {
+            AddToAllItems( m_Labels[ Index ].m_Id );
+        }
+        else
+        {
+            DelToAllItems( m_Labels[ Index ].m_Id );
+        }
     }
 }
 
 // -------------------------------------------------------------------------------- //
+void guLabelEditor::OnIdle( wxIdleEvent &event )
+{
+    m_Splitter->SetSashPosition( 177 );
+    m_Splitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLabelEditor::OnIdle ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void  guLabelEditor::AddToAllItems( const int labelid )
+{
+    int Index;
+    int Count = m_LabelSets->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_LabelSets->Item( Index ).Index( labelid ) == wxNOT_FOUND )
+            m_LabelSets->Item( Index ).AddData( labelid );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void  guLabelEditor::DelToAllItems( const int labelid )
+{
+    int Index;
+    int Count = m_LabelSets->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_LabelSets->Item( Index ).DelData( labelid );
+    }
+}
+
