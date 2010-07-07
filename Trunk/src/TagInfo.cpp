@@ -1286,11 +1286,66 @@ bool guMp4TagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 guMpcTagInfo::guMpcTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_ApeTag = ( ( TagLib::MPC::File * ) m_TagFile->file() )->APETag();
+    }
+    else
+        m_ApeTag = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
 guMpcTagInfo::~guMpcTagInfo()
 {
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMpcTagInfo::Read( void )
+{
+    if( guTagInfo::Read() )
+    {
+        if( m_ApeTag )
+        {
+            if( m_ApeTag->itemListMap().contains( "COMPOSER" ) )
+            {
+                m_Composer = TStringTowxString( m_ApeTag->itemListMap()["COMPOSER"].toStringList().front() );
+            }
+
+            if( m_ApeTag->itemListMap().contains( "DISCNUMBER" ) )
+            {
+                m_Disk = TStringTowxString( m_ApeTag->itemListMap()["DISCNUMBER"].toStringList().front() );
+            }
+
+            if( m_ApeTag->itemListMap().contains( "COMPILATION" ) )
+            {
+                m_Compilation = TStringTowxString( m_ApeTag->itemListMap()["COMPILATION"].toStringList().front() ) == wxT( "1" );
+            }
+
+            if( m_ApeTag->itemListMap().contains( "ALBUM ARTIST" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_ApeTag->itemListMap()["ALBUM ARTIST"].toStringList().front() );
+            }
+            else if( m_ApeTag->itemListMap().contains( "ALBUMARTIST" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_ApeTag->itemListMap()["ALBUMARTIST"].toStringList().front() );
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMpcTagInfo::Write( void )
+{
+    if( m_ApeTag )
+    {
+        m_ApeTag->addValue( "COMPOSER", wxStringToTString( m_Composer ) );
+        m_ApeTag->addValue( "DISCNUMBER", wxStringToTString( m_Disk ) );
+        m_ApeTag->addValue( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+        m_ApeTag->addValue( "ALBUM ARTIST", wxStringToTString( m_AlbumArtist ) );
+    }
+    return guTagInfo::Write();
 }
 
 // -------------------------------------------------------------------------------- //
