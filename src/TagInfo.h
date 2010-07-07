@@ -31,9 +31,9 @@
 #include <id3v2framefactory.h>
 #include <textidentificationframe.h>
 #include <unsynchronizedlyricsframe.h>
-#include <id3v2tag.h>
 #include <mpegfile.h>
 #include <flacfile.h>
+#include <mp4file.h>
 #include <mpcfile.h>
 #include <oggfile.h>
 #include <vorbisfile.h>
@@ -41,7 +41,8 @@
 #include <xiphcomment.h>
 
 #include <mp4tag.h>
-#include <mp4file.h>
+#include <apetag.h>
+#include <id3v2tag.h>
 
 // FLAC Dev files
 #include <FLAC/metadata.h>
@@ -197,15 +198,6 @@ class guMp4TagInfo : public guTagInfo
 };
 
 // -------------------------------------------------------------------------------- //
-class guMpcTagInfo : public guTagInfo
-{
-  public :
-    guMpcTagInfo( const wxString &filename = wxEmptyString );
-    ~guMpcTagInfo();
-
-};
-
-// -------------------------------------------------------------------------------- //
 class guApeTagInfo : public guTagInfo
 {
   protected :
@@ -220,6 +212,21 @@ class guApeTagInfo : public guTagInfo
     virtual bool        CanHandleLyrics( void );
     virtual wxString    GetLyrics( void );
     virtual bool        SetLyrics( const wxString &lyrics );
+};
+
+// -------------------------------------------------------------------------------- //
+class guMpcTagInfo : public guTagInfo
+{
+  protected :
+    TagLib::APE::Tag * m_ApeTag;
+
+  public :
+    guMpcTagInfo( const wxString &filename = wxEmptyString );
+    ~guMpcTagInfo();
+
+    virtual bool        Read( void );
+    virtual bool        Write( void );
+
 };
 
 
