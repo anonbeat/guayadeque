@@ -334,7 +334,7 @@ msgstr "Befehle"
 
 #: AlListBox.cpp:181
 msgid "Play current selected albums"
-msgstr "Wiedergabe det ausgewählten Alben"
+msgstr "Wiedergabe des ausgewählten Alben"
 
 #: AlListBox.cpp:185
 msgid "Add current selected albums to the Playlist"
@@ -343,7 +343,7 @@ msgstr "Ausgewähltes Album zur Wiedergabeliste hinzufügen"
 #: AlListBox.cpp:189
 #, fuzzy
 msgid "Add current selected albums to the Playlist as Next Tracks"
-msgstr "Ausgewähltes Album zur Wiedergabeliste hinzufügen"
+msgstr "Ausgewählte Alben als nächste Lieder zur Wiedergabeliste hinzufügen"
 
 #: AlListBox.cpp:241
 msgid "Albums are sorted by name"
@@ -359,7 +359,7 @@ msgstr "Jahr absteigend"
 
 #: AlListBox.cpp:243
 msgid "Albums are sorted by year descending"
-msgstr "Alben nach Jahr absteigend"
+msgstr "Alben nach Jahr absteigend sortiert"
 
 #: AlListBox.cpp:244
 msgid "Albums are sorted by artist and album name"
@@ -415,7 +415,7 @@ msgstr "Ausgewählte Interpreten zur Wiedergabeliste hinzufügen"
 #: ArListBox.cpp:107
 #, fuzzy
 msgid "Add current selected artists to playlist as Next Tracks"
-msgstr "Ausgewählte Interpreten zur Wiedergabeliste hinzufügen"
+msgstr "Ausgewählte Interpreten zur Wiedergabeliste als nächte Titel hinzufügen"
 
 #: ArListBox.cpp:115
 msgid "Edit the labels assigned to the selected artists"
@@ -795,7 +795,7 @@ msgstr "Beinhaltet nicht"
 
 #: DynamicPlayList.cpp:75
 msgid "Not set"
-msgstr ""
+msgstr "Nicht gesetzt"
 
 #: DynamicPlayList.cpp:426
 msgid "Filter Album Browser"
@@ -1128,7 +1128,7 @@ msgstr "Titel des Interpreten zur Wiedergabeliste hinzufügen"
 #: LastFMPanel.cpp:1119
 #, fuzzy
 msgid "Enqueue the artist tracks to the playlist as Next Tracks"
-msgstr "Titel des Interpreten zur Wiedergabeliste hinzufügen"
+msgstr "Titel des Interpreten zur Wiedergabeliste als nächste Titel hinzufügen"
 
 #: LastFMPanel.cpp:581
 msgid "Copy the artist name to clipboard"
@@ -1325,7 +1325,7 @@ msgstr "Keine Liedtexte für dieses Lied gefunden"
 
 #: MainFrame.cpp:172
 msgid "Welcome to guayadeque "
-msgstr "Wilkommen bei Guayadeque!"
+msgstr "Willkommen bei Guayadeque!"
 
 #: MainFrame.cpp:179
 #: MainFrame.cpp:325
@@ -1347,7 +1347,7 @@ msgstr "Filter"
 #: MainFrame.cpp:2714
 #: PlayList.cpp:77
 msgid "Now Playing"
-msgstr "Warteschlange"
+msgstr "Wird gespielt"
 
 #: MainFrame.cpp:754
 msgid "&Add Directory"
@@ -1649,16 +1649,16 @@ msgstr "Anzeigen/Ausblenden des Dateibrowserpanels"
 
 #: MainFrame.cpp:967
 msgid "Full Screen"
-msgstr ""
+msgstr "Vollbild"
 
 #: MainFrame.cpp:967
 msgid "Show/Restore the main window in full screen"
-msgstr ""
+msgstr "Zeigen/Wiederherstellen des Hauptfensters im Vollbild"
 
 #: MainFrame.cpp:971
 #, fuzzy
 msgid "StatusBar"
-msgstr "Status"
+msgstr "Statusleiste"
 
 #: MainFrame.cpp:971
 #, fuzzy
@@ -1695,7 +1695,7 @@ msgstr "Wiedergabe oder Anhalten des aktuellen Titles"
 
 #: MainFrame.cpp:988
 msgid "&Stop"
-msgstr "&Stopp"
+msgstr "&Stop"
 
 #: MainFrame.cpp:988
 msgid "Stop the current played track"
@@ -1723,7 +1723,7 @@ msgstr "Wiedergabeliste wiederholen"
 
 #: MainFrame.cpp:1000
 msgid "Repeat the tracks in the playlist"
-msgstr "Titel der Wiedergabeliste wiedeholen"
+msgstr "Titel der Wiedergabeliste wiederholen"
 
 #: MainFrame.cpp:1005
 msgid "&Repeat Track"
@@ -1731,7 +1731,7 @@ msgstr "Titel wiederholen"
 
 #: MainFrame.cpp:1005
 msgid "Repeat the current track in the playlist"
-msgstr "Aktuellen Titel der Wiedergabeliste wiedeholen"
+msgstr "Aktuellen Titel der Wiedergabeliste wiederholen"
 
 #: MainFrame.cpp:1010
 msgid "&Control"
@@ -1947,7 +1947,7 @@ msgstr "Wiedergabe stoppen"
 
 #: PlayerPanel.cpp:180
 msgid "Record to a file"
-msgstr ""
+msgstr "Aufnehmen"
 
 #: PlayerPanel.cpp:189
 #: PlayerPanel.cpp:2454
@@ -2050,7 +2050,7 @@ msgstr "Beginnt mit"
 
 #: PlayListAppend.cpp:73
 msgid "End"
-msgstr "Beenden"
+msgstr "Ende"
 
 #: PlayListAppend.cpp:79
 msgid "Tracks:"
@@ -2059,7 +2059,7 @@ msgstr "Titel:"
 #: PlayList.cpp:1134
 #, fuzzy
 msgid "The playlist is empty"
-msgstr "Bei leerer Warteschlange "
+msgstr "Die Wiedergabeliste ist leer"
 
 #: PlayList.cpp:1142
 msgid "Edit the current selected songs"
@@ -2079,7 +2079,7 @@ msgstr "Titel in der Biliothek suchen"
 
 #: PlayList.cpp:1156
 msgid "Clear PlayList"
-msgstr "Warteschlange leeren"
+msgstr "Wiedergabeliste leeren"
 
 #: PlayList.cpp:1156
 msgid "Remove all songs from PlayList"
@@ -2117,7 +2117,7 @@ msgstr "Kopiere die aktuelle Wiedergabeliste in einen Ordner oder auf ein Gerät
 #: PlayList.cpp:1190
 #, fuzzy
 msgid "Selects the current selected track in the library"
-msgstr "Ausgewählte Titel löschen"
+msgstr "Markiert den auswaehlten Titel in der Musiksammlung"
 
 #: PlayList.cpp:1193
 #: SoListBox.cpp:415
@@ -2132,7 +2132,7 @@ msgstr "Album des aktuellen Lieds wählen"
 #: PlayList.cpp:1199
 #, fuzzy
 msgid "Select the year of the current song"
-msgstr "Genere des akutellen Titels wählen"
+msgstr "Jahr des akutellen Titels wählen"
 
 #: PlayList.cpp:1202
 #, fuzzy
@@ -2369,7 +2369,7 @@ msgstr "Anzahl der Wiedergaben"
 
 #: PodcastsPanel.cpp:1045
 msgid "LastPlay"
-msgstr "Letzte Widergabe"
+msgstr "Letzte Wiedergabe"
 
 #: PodcastsPanel.cpp:1046
 msgid "Added"
@@ -2481,7 +2481,7 @@ msgstr "Titel standardmäßig verwerfen und Wartschlange leeren"
 
 #: Preferences.cpp:197
 msgid " On Close "
-msgstr ""
+msgstr " Beim schließen"
 
 #: Preferences.cpp:199
 msgid "Save playlist on close"
@@ -2543,11 +2543,11 @@ msgstr " Zufällige Wiedergabe / Smart Mode"
 
 #: Preferences.cpp:359
 msgid "Tracks left to start search"
-msgstr "Anzahle der Resttitel zum Starten der Suche"
+msgstr "Anzahl der fehlenden Titel zum Starten der Suche"
 
 #: Preferences.cpp:367
 msgid "Tracks added each time"
-msgstr "Titel neu hinzufügen"
+msgstr "Durchschnittlich hinzugefügte Titel"
 
 #: Preferences.cpp:376
 msgid "Max played tracks kept in playlist"
@@ -2580,7 +2580,7 @@ msgstr "Wiedergabe"
 
 #: Preferences.cpp:447
 msgid " Crossfader "
-msgstr ""
+msgstr " Überblenden "
 
 #: Preferences.cpp:455
 #, fuzzy
@@ -2589,7 +2589,7 @@ msgstr "Länge:"
 
 #: Preferences.cpp:464
 msgid "Select the length of the fade out. 0 for gapless playback"
-msgstr ""
+msgstr "Ausblendungsdauer. 0 für eine unterbrechungsfreie Wiedergabe"
 
 #: Preferences.cpp:467
 #, fuzzy
@@ -2617,7 +2617,7 @@ msgstr " Beim Start "
 
 #: Preferences.cpp:500
 msgid "Select at which volume of the fade out the fade in starts"
-msgstr ""
+msgstr "Bei welcher Lautstärke des Ausblendens soll das Einblenden starten"
 
 #: Preferences.cpp:513
 msgid "Crossfader"
@@ -2677,7 +2677,7 @@ msgstr "Titel trennen"
 
 #: Preferences.cpp:594
 msgid "Delete Tracks shorter than"
-msgstr ""
+msgstr "Titel löschen die kürzer sind als"
 
 #: Preferences.cpp:615
 msgid "Record"
@@ -2715,21 +2715,21 @@ msgstr " LastFM Audioscrobble "
 #: Preferences.cpp:723
 #, fuzzy
 msgid "Left"
-msgstr "Länge"
+msgstr "Links"
 
 #: Preferences.cpp:724
 #, fuzzy
 msgid "Center"
-msgstr "Kommentar"
+msgstr "Mitte"
 
 #: Preferences.cpp:725
 #, fuzzy
 msgid "Right"
-msgstr "Hoch"
+msgstr "Rechts"
 
 #: Preferences.cpp:726
 msgid " Text Align "
-msgstr ""
+msgstr " Textausrichtung"
 
 #: Preferences.cpp:731
 msgid " Save "
@@ -2778,7 +2778,7 @@ msgstr "Online"
 
 #: Preferences.cpp:854
 msgid " Podcasts "
-msgstr " Podcsts "
+msgstr " Podcasts "
 
 #: Preferences.cpp:859
 msgid "Destination directory:"
@@ -2858,7 +2858,7 @@ msgstr " Befehle "
 
 #: Preferences.cpp:1098
 msgid "Command:"
-msgstr "Befehle:"
+msgstr "Befehl:"
 
 #: Preferences.cpp:1126
 msgid ""
