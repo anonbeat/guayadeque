@@ -329,7 +329,7 @@ class guDbLibrary : public guDb
     int                 GetLabelId( int * LabelId, wxString &LabelName );
     int                 PathExists( const wxString &path );
     int                 GetPathId( wxString &PathValue );
-    int                 UpdateSong( void );
+    int                 UpdateSong( const bool allowrating = false );
 
     void                GetGenres( guListItems * Genres, const bool FullList = false );
     void                GetLabels( guListItems * Labels, const bool FullList = false );
