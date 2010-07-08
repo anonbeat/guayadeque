@@ -447,6 +447,7 @@ class guDbLibrary : public guDb
     int                 FindArtist( const wxString &Artist );
     int                 FindAlbum( const wxString &Artist, const wxString &Album );
     int                 FindTrack( const wxString &Artist, const wxString &m_Name );
+    int                 GetTrackIndex( const int trackid );
     guTrack *           FindSong( const wxString &artist, const wxString &track,
                                   const int filterallow, const int filterdeny );
     int                 FindTrackFile( const wxString &filename, guTrack * song );

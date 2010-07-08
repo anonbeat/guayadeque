@@ -4274,6 +4274,27 @@ int guDbLibrary::FindTrack( const wxString &Artist, const wxString &Name )
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::GetTrackIndex( const int trackid )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int Index = 0;
+
+  query = wxT( "SELECT song_id FROM songs " );
+  query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    if( dbRes.GetInt( 0 ) == trackid )
+        return Index;
+    Index++;
+  }
+  return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
 guTrack * guDbLibrary::FindSong( const wxString &artist, const wxString &trackname,
               const int filterallow, const int filterdeny )
 {
