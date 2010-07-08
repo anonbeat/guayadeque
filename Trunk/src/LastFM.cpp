@@ -31,6 +31,7 @@
 #include <wx/xml/xml.h>
 
 WX_DEFINE_OBJARRAY(guAlbumInfoArray);
+WX_DEFINE_OBJARRAY(guTopTrackInfoArray);
 WX_DEFINE_OBJARRAY(guSimilarArtistInfoArray);
 WX_DEFINE_OBJARRAY(guSimilarTrackInfoArray);
 WX_DEFINE_OBJARRAY(guEventInfoArray);
@@ -1103,12 +1104,100 @@ wxArrayString guLastFM::ArtistGetTopTags( const wxString &Artist )
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guLastFM::ArtistGetTopTracks( const wxString &Artist )
+void GetArtistTopTrackArtist( wxXmlNode * xmlnode, guTopTrackInfo * toptrack )
+{
+//                <name>Modern Talking</name>
+//                <mbid>98913495-8867-43b3-aa8d-db88ee4d4cdc</mbid>
+//                <url>http://www.last.fm/music/Modern+Talking</url>
+    while( xmlnode )
+    {
+        if( xmlnode->GetName() == wxT( "name" ) )
+        {
+            toptrack->m_ArtistName = xmlnode->GetNodeContent();
+        }
+        xmlnode = xmlnode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void GetArtistTopTrack( wxXmlNode * xmlnode, guTopTrackInfo * toptrack )
+{
+//              <name>Brother Louie</name>
+//              <playcount>34061</playcount>
+//              <listeners>11721</listeners>
+//              <mbid/>
+//              <url>http://www.last.fm/music/Modern+Talking/_/Brother+Louie</url>
+//              <streamable fulltrack="0">1</streamable>
+//              <artist>
+//                <name>Modern Talking</name>
+//                <mbid>98913495-8867-43b3-aa8d-db88ee4d4cdc</mbid>
+//                <url>http://www.last.fm/music/Modern+Talking</url>
+//              </artist>
+//              <image size="small">http://userserve-ak.last.fm/serve/34s/31763881.jpg</image>
+//              <image size="medium">http://userserve-ak.last.fm/serve/64s/31763881.jpg</image>
+//              <image size="large">http://userserve-ak.last.fm/serve/126/31763881.jpg</image>
+//              <image size="extralarge">http://userserve-ak.last.fm/serve/300x300/31763881.jpg</image>
+    while( xmlnode )
+    {
+        if( xmlnode->GetName() == wxT( "name" ) )
+        {
+            toptrack->m_TrackName = xmlnode->GetNodeContent();
+        }
+        else if( xmlnode->GetName() == wxT( "playcount" ) )
+        {
+            xmlnode->GetNodeContent().ToLong( &toptrack->m_PlayCount );
+        }
+        else if( xmlnode->GetName() == wxT( "listeners" ) )
+        {
+            xmlnode->GetNodeContent().ToLong( &toptrack->m_Listeners );
+        }
+        else if( xmlnode->GetName() == wxT( "artist" ) )
+        {
+            GetArtistTopTrackArtist( xmlnode->GetChildren(), toptrack );
+        }
+        else if( xmlnode->GetName() == wxT( "url" ) )
+        {
+            toptrack->m_Url = xmlnode->GetNodeContent();
+        }
+        else if( xmlnode->GetName() == wxT( "image" ) )
+        {
+            wxString ImgSize;
+            xmlnode->GetPropVal( wxT( "size" ), &ImgSize );
+            if( ImgSize == wxT( "large" ) && toptrack->m_ImageLink.IsEmpty() )
+            {
+                toptrack->m_ImageLink = xmlnode->GetNodeContent();
+            }
+            else if( ImgSize == wxT( "extralarge" ) && !xmlnode->GetNodeContent().IsEmpty() )
+            {
+                toptrack->m_ImageLink = xmlnode->GetNodeContent();
+            }
+        }
+        xmlnode = xmlnode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void GetArtistTopTracks( wxXmlNode * xmlnode, guTopTrackInfoArray * toptracks )
+{
+    while( xmlnode )
+    {
+        if( xmlnode->GetName() == wxT( "track" ) )
+        {
+            guTopTrackInfo TopTrackInfo;
+            GetArtistTopTrack( xmlnode->GetChildren(), &TopTrackInfo );
+            toptracks->Add( TopTrackInfo );
+        }
+        xmlnode = xmlnode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guTopTrackInfoArray guLastFM::ArtistGetTopTracks( const wxString &Artist )
 {
     guLastFMRequest Req; // = guLastFMRequest();
     wxString Res;
     wxString Status;
-    wxArrayString RetVal;
+    guTopTrackInfoArray RetVal;
 
     Req.SetMethod( wxT( "artist.gettoptracks" ) );
     Req.AddArgument( wxT( "api_key" ), LASTFM_API_KEY );
@@ -1123,6 +1212,27 @@ wxArrayString guLastFM::ArtistGetTopTracks( const wxString &Artist )
         wxXmlNode * XmlNode = XmlDoc.GetRoot();
         if( XmlNode )
         {
+//        <lfm status="ok">
+//          <toptracks artist="Modern Talking">
+//            <track rank="1">
+//              <name>Brother Louie</name>
+//              <playcount>34061</playcount>
+//              <listeners>11721</listeners>
+//              <mbid/>
+//              <url>http://www.last.fm/music/Modern+Talking/_/Brother+Louie</url>
+//              <streamable fulltrack="0">1</streamable>
+//              <artist>
+//                <name>Modern Talking</name>
+//                <mbid>98913495-8867-43b3-aa8d-db88ee4d4cdc</mbid>
+//                <url>http://www.last.fm/music/Modern+Talking</url>
+//              </artist>
+//              <image size="small">http://userserve-ak.last.fm/serve/34s/31763881.jpg</image>
+//              <image size="medium">http://userserve-ak.last.fm/serve/64s/31763881.jpg</image>
+//              <image size="large">http://userserve-ak.last.fm/serve/126/31763881.jpg</image>
+//              <image size="extralarge">http://userserve-ak.last.fm/serve/300x300/31763881.jpg</image>
+//            </track>
+//            <track rank="2">
+
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
@@ -1133,21 +1243,7 @@ wxArrayString guLastFM::ArtistGetTopTracks( const wxString &Artist )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "toptracks" ) )
                     {
-                        wxXmlNode * XmlSubNode = XmlNode->GetChildren();
-                        while( XmlSubNode )
-                        {
-                            XmlNode = XmlSubNode->GetChildren();
-                            while( XmlNode )
-                            {
-                                if( XmlNode->GetName() == wxT( "name" ) )
-                                {
-                                    RetVal.Add( XmlNode->GetNodeContent() );
-                                    break;
-                                }
-                                XmlNode = XmlNode->GetNext();
-                            }
-                            XmlSubNode = XmlSubNode->GetNext();
-                        }
+                        GetArtistTopTracks( XmlNode->GetChildren(), &RetVal );
                     }
                 }
                 else if( Status == wxT( "failed" ) )

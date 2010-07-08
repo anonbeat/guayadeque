@@ -163,6 +163,33 @@ class guLastFMTrackInfo : public guLastFMInfo
 WX_DECLARE_OBJARRAY(guLastFMTrackInfo, guLastFMTrackInfoArray);
 
 // -------------------------------------------------------------------------------- //
+class guLastFMTopTrackInfo : public guLastFMInfo
+{
+  public:
+    guTopTrackInfo *       m_TopTrack;
+    int                    m_TrackId;
+    int                    m_ArtistId;
+
+    guLastFMTopTrackInfo() { m_TopTrack = NULL; m_TrackId = wxNOT_FOUND; };
+
+    guLastFMTopTrackInfo( int index, wxImage * image = NULL,
+                  guTopTrackInfo * track = NULL ) :
+            guLastFMInfo( index, image )
+    {
+        m_TopTrack = track;
+        m_TrackId = wxNOT_FOUND;
+        m_ArtistId = wxNOT_FOUND;
+    };
+
+    ~guLastFMTopTrackInfo()
+    {
+        if( m_TopTrack )
+            delete m_TopTrack;
+    };
+};
+WX_DECLARE_OBJARRAY(guLastFMTopTrackInfo, guLastFMTopTrackInfoArray);
+
+// -------------------------------------------------------------------------------- //
 class guLastFMEventInfo : public guLastFMInfo
 {
   public:
@@ -237,6 +264,23 @@ class guFetchAlbumInfoThread : public guFetchLastFMInfoThread
   public:
     guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname );
     ~guFetchAlbumInfoThread();
+
+    virtual ExitCode Entry();
+
+    friend class guDownloadAlbumImageThread;
+};
+
+// -------------------------------------------------------------------------------- //
+class guFetchTopTracksInfoThread : public guFetchLastFMInfoThread
+{
+  protected:
+    guDbCache *             m_DbCache;
+    wxString                m_ArtistName;
+    int                     m_ArtistId;
+
+  public:
+    guFetchTopTracksInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname );
+    ~guFetchTopTracksInfoThread();
 
     virtual ExitCode Entry();
 
@@ -453,6 +497,37 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
 WX_DEFINE_ARRAY_PTR( guTrackInfoCtrl *, guTrackInfoCtrlArray );
 
 // -------------------------------------------------------------------------------- //
+class guTopTrackInfoCtrl : public guLastFMInfoCtrl
+{
+  private :
+    guLastFMTopTrackInfo * m_Info;
+
+    virtual void        OnContextMenu( wxContextMenuEvent& event );
+    virtual void        CreateContextMenu( wxMenu * Menu );
+    virtual wxString    GetSearchText( void );
+    virtual wxString    GetItemUrl( void );
+    //void                OnClick( wxMouseEvent &event );
+    virtual int         GetSelectedTracks( guTrackArray * tracks );
+    virtual void        OnSongSelectName( wxCommandEvent &event );
+    virtual void        OnArtistSelectName( wxCommandEvent &event );
+
+    void                OnSelectArtist( wxCommandEvent &event );
+
+    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_TrackId != wxNOT_FOUND ); };
+
+  public :
+    guTopTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
+    ~guTopTrackInfoCtrl();
+
+    void SetInfo( guLastFMTopTrackInfo * info );
+    virtual void Clear( void );
+
+};
+WX_DEFINE_ARRAY_PTR( guTopTrackInfoCtrl *, guTopTrackInfoCtrlArray );
+
+// -------------------------------------------------------------------------------- //
 class guEventInfoCtrl : public guLastFMInfoCtrl
 {
   private :
@@ -499,6 +574,9 @@ class guLastFMPanel : public wxScrolledWindow
 	guFetchAlbumInfoThread *            m_AlbumsUpdateThread;
 	wxMutex                             m_AlbumsUpdateThreadMutex;
 
+	guFetchTopTracksInfoThread *        m_TopTracksUpdateThread;
+	wxMutex                             m_TopTracksUpdateThreadMutex;
+
 	guFetchSimilarArtistInfoThread *    m_ArtistsUpdateThread;
 	wxMutex                             m_ArtistsUpdateThreadMutex;
 
@@ -531,6 +609,11 @@ class guLastFMPanel : public wxScrolledWindow
 	wxGridSizer *                       m_AlbumsSizer;
     guAlbumInfoCtrlArray                m_AlbumInfoCtrls;
 
+	bool                                m_ShowTopTracks;
+    wxStaticText *                      m_TopTracksStaticText;
+	wxGridSizer *                       m_TopTracksSizer;
+	guTopTrackInfoCtrlArray             m_TopTrackInfoCtrls;
+
 	bool                                m_ShowArtists;
     wxStaticText *                      m_ArtistsStaticText;
 	wxGridSizer *                       m_ArtistsSizer;
@@ -552,6 +635,7 @@ class guLastFMPanel : public wxScrolledWindow
 
     void    OnUpdateArtistInfo( wxCommandEvent &event );
     void    OnUpdateAlbumItem( wxCommandEvent &event );
+    void    OnUpdateTopTrackItem( wxCommandEvent &event );
     void    OnUpdateArtistItem( wxCommandEvent &event );
     void    OnUpdateTrackItem( wxCommandEvent &event );
     void    OnUpdateEventItem( wxCommandEvent &event );
@@ -560,6 +644,7 @@ class guLastFMPanel : public wxScrolledWindow
 //	  void    OnHtmlLinkClicked( wxHtmlLinkEvent& event );
 	void    OnArInfoTitleDClicked( wxMouseEvent &event );
     void    OnTopAlbumsTitleDClick( wxMouseEvent &event );
+    void    OnTopTracksTitleDClick( wxMouseEvent &event );
 	void    OnSimArTitleDClick( wxMouseEvent &event );
 	void    OnSimTrTitleDClick( wxMouseEvent &event );
 	void    OnEventsTitleDClick( wxMouseEvent &event );
@@ -571,12 +656,12 @@ class guLastFMPanel : public wxScrolledWindow
     void    OnTextUpdated( wxCommandEvent& event );
     void    OnSearchBtnClick( wxCommandEvent &event );
 
-	void    OnAlbumTextClicked( wxMouseEvent &event );
-	void    OnArtistTextClicked( wxMouseEvent &event );
-	void    OnTrackTextClicked( wxMouseEvent &event );
-	void    OnAlbumTextRightClicked( wxMouseEvent &event );
-	void    OnArtistTextRightClicked( wxMouseEvent &event );
-	void    OnTrackTextRightClicked( wxMouseEvent &event );
+//	void    OnAlbumTextClicked( wxMouseEvent &event );
+//	void    OnArtistTextClicked( wxMouseEvent &event );
+//	void    OnTrackTextClicked( wxMouseEvent &event );
+//	void    OnAlbumTextRightClicked( wxMouseEvent &event );
+//	void    OnArtistTextRightClicked( wxMouseEvent &event );
+//	void    OnTrackTextRightClicked( wxMouseEvent &event );
 
     void    UpdateTrackChangeButtons( void );
 
@@ -594,6 +679,7 @@ class guLastFMPanel : public wxScrolledWindow
 
     friend class guFetchLastFMInfoThread;
     friend class guFetchAlbumInfoThread;
+    friend class guFetchTopTracksInfoThread;
     friend class guFetchSimilarArtistInfoThread;
     friend class guFetchTrackInfoThread;
     friend class guDownloadImageThread;

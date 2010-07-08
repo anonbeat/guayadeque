@@ -86,6 +86,18 @@ class guTrackInfo {
 };
 
 // -------------------------------------------------------------------------------- //
+class guTopTrackInfo {
+  public:
+    wxString        m_TrackName;
+    long            m_PlayCount;
+    long            m_Listeners;
+    wxString        m_ArtistName;
+    wxString        m_Url;
+    wxString        m_ImageLink;
+};
+WX_DECLARE_OBJARRAY(guTopTrackInfo, guTopTrackInfoArray);
+
+// -------------------------------------------------------------------------------- //
 class guSimilarArtistInfo {
   public:
     wxString m_Name;
@@ -193,7 +205,7 @@ class guLastFM
     wxArrayString               ArtistGetTags( const wxString &Artist );
     guAlbumInfoArray            ArtistGetTopAlbums( const wxString &Artist );
     wxArrayString               ArtistGetTopTags( const wxString &Artist );
-    wxArrayString               ArtistGetTopTracks( const wxString &Artist );
+    guTopTrackInfoArray         ArtistGetTopTracks( const wxString &Artist );
     guEventInfoArray            ArtistGetEvents( const wxString &Artist );
 
 

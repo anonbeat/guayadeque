@@ -1522,7 +1522,7 @@ void guLibPanel::SelectTrack( const int trackid )
     m_AlbumListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_SongListCtrl->ReloadItems();
-    m_SongListCtrl->SetSelection( m_SongListCtrl->FindItem( trackid ) );
+    m_SongListCtrl->SetSelection( m_Db->GetTrackIndex( trackid ) );
 }
 
 // -------------------------------------------------------------------------------- //
