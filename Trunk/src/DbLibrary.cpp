@@ -1619,7 +1619,7 @@ int guDbLibrary::ReadFileTags( const char * filename )
           m_CurSong.m_Year     = TagInfo->m_Year;
           m_CurSong.m_Length   = TagInfo->m_Length;
           m_CurSong.m_Bitrate  = TagInfo->m_Bitrate;
-          m_CurSong.m_Rating   = -1;
+          //m_CurSong.m_Rating   = -1;
           m_CurSong.m_Composer = TagInfo->m_Composer;
           m_CurSong.m_Comments = TagInfo->m_Comments;
           m_CurSong.m_Disk     = TagInfo->m_Disk;
@@ -1649,7 +1649,7 @@ int guDbLibrary::ReadFileTags( const char * filename )
             SetAlbumsLabels( ArrayIds, AlbumLabelIds );
           }
 
-          UpdateSong();
+          UpdateSong( false );
 
           delete TagInfo;
 
@@ -1775,7 +1775,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
             //CurSong.Number
             //CurSong.Year,
             //CurSong.Length,
-            UpdateSong();
+            UpdateSong( true );
         }
     }
     else
@@ -1796,49 +1796,91 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::UpdateSong( void )
+int guDbLibrary::UpdateSong( const bool allowrating )
 {
   wxString query;
 //  printf( "UpdateSong\n" );
 
-  query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
-                             "song_genreid = %u, song_genre = '%s', "
-                             "song_artistid = %u, song_artist = '%s', "
-                             "song_albumartistid = %u, song_albumartist = '%s', "
-                             "song_albumid = %u, song_album = '%s', "
-                             "song_pathid = %u, song_path = '%s', "
-                             "song_filename = '%s', song_format = '%s', "
-                             "song_number = %u, song_year = %u, "
-                             "song_composerid = %u, song_composer = '%s', "
-                             "song_comment = '%s', song_disk = '%s', "
-                             "song_length = %u, song_offset = %u, song_bitrate = %u, "
-                             "song_rating = %i, "
-                             "song_filesize = %u WHERE song_id = %u;" ),
-        escape_query_str( m_CurSong.m_SongName ).c_str(),
-        m_CurSong.m_GenreId,
-        escape_query_str( m_CurSong.m_GenreName ).c_str(),
-        m_CurSong.m_ArtistId,
-        escape_query_str( m_CurSong.m_ArtistName ).c_str(),
-        m_CurSong.m_AlbumArtistId,
-        escape_query_str( m_CurSong.m_AlbumArtist ).c_str(),
-        m_CurSong.m_AlbumId,
-        escape_query_str( m_CurSong.m_AlbumName ).c_str(),
-        m_CurSong.m_PathId,
-        escape_query_str( m_CurSong.m_Path ).c_str(),
-        escape_query_str( m_CurSong.m_FileName ).c_str(),
-        escape_query_str( m_CurSong.m_FileName.AfterLast( '.' ) ).c_str(),
-        m_CurSong.m_Number,
-        m_CurSong.m_Year,
-        m_CurSong.m_ComposerId, //escape_query_str( m_CurSong.m_Composer ).c_str(),
-        escape_query_str( m_CurSong.m_Composer ).c_str(),
-        escape_query_str( m_CurSong.m_Comments ).c_str(),
-        escape_query_str( m_CurSong.m_Disk ).c_str(),
-        m_CurSong.m_Length,
-        0, //m_CurSong.m_Offset,
-        m_CurSong.m_Bitrate,
-        m_CurSong.m_Rating,
-        m_CurSong.m_FileSize,
-        m_CurSong.m_SongId );
+  if( allowrating )
+  {
+      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
+                                 "song_genreid = %u, song_genre = '%s', "
+                                 "song_artistid = %u, song_artist = '%s', "
+                                 "song_albumartistid = %u, song_albumartist = '%s', "
+                                 "song_albumid = %u, song_album = '%s', "
+                                 "song_pathid = %u, song_path = '%s', "
+                                 "song_filename = '%s', song_format = '%s', "
+                                 "song_number = %u, song_year = %u, "
+                                 "song_composerid = %u, song_composer = '%s', "
+                                 "song_comment = '%s', song_disk = '%s', "
+                                 "song_length = %u, song_offset = %u, song_bitrate = %u, "
+                                 "song_rating = %i, "
+                                 "song_filesize = %u WHERE song_id = %u;" ),
+            escape_query_str( m_CurSong.m_SongName ).c_str(),
+            m_CurSong.m_GenreId,
+            escape_query_str( m_CurSong.m_GenreName ).c_str(),
+            m_CurSong.m_ArtistId,
+            escape_query_str( m_CurSong.m_ArtistName ).c_str(),
+            m_CurSong.m_AlbumArtistId,
+            escape_query_str( m_CurSong.m_AlbumArtist ).c_str(),
+            m_CurSong.m_AlbumId,
+            escape_query_str( m_CurSong.m_AlbumName ).c_str(),
+            m_CurSong.m_PathId,
+            escape_query_str( m_CurSong.m_Path ).c_str(),
+            escape_query_str( m_CurSong.m_FileName ).c_str(),
+            escape_query_str( m_CurSong.m_FileName.AfterLast( '.' ) ).c_str(),
+            m_CurSong.m_Number,
+            m_CurSong.m_Year,
+            m_CurSong.m_ComposerId, //escape_query_str( m_CurSong.m_Composer ).c_str(),
+            escape_query_str( m_CurSong.m_Composer ).c_str(),
+            escape_query_str( m_CurSong.m_Comments ).c_str(),
+            escape_query_str( m_CurSong.m_Disk ).c_str(),
+            m_CurSong.m_Length,
+            0, //m_CurSong.m_Offset,
+            m_CurSong.m_Bitrate,
+            m_CurSong.m_Rating,
+            m_CurSong.m_FileSize,
+            m_CurSong.m_SongId );
+  }
+  else
+  {
+      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
+                                 "song_genreid = %u, song_genre = '%s', "
+                                 "song_artistid = %u, song_artist = '%s', "
+                                 "song_albumartistid = %u, song_albumartist = '%s', "
+                                 "song_albumid = %u, song_album = '%s', "
+                                 "song_pathid = %u, song_path = '%s', "
+                                 "song_filename = '%s', song_format = '%s', "
+                                 "song_number = %u, song_year = %u, "
+                                 "song_composerid = %u, song_composer = '%s', "
+                                 "song_comment = '%s', song_disk = '%s', "
+                                 "song_length = %u, song_offset = %u, song_bitrate = %u, "
+                                 "song_filesize = %u WHERE song_id = %u;" ),
+            escape_query_str( m_CurSong.m_SongName ).c_str(),
+            m_CurSong.m_GenreId,
+            escape_query_str( m_CurSong.m_GenreName ).c_str(),
+            m_CurSong.m_ArtistId,
+            escape_query_str( m_CurSong.m_ArtistName ).c_str(),
+            m_CurSong.m_AlbumArtistId,
+            escape_query_str( m_CurSong.m_AlbumArtist ).c_str(),
+            m_CurSong.m_AlbumId,
+            escape_query_str( m_CurSong.m_AlbumName ).c_str(),
+            m_CurSong.m_PathId,
+            escape_query_str( m_CurSong.m_Path ).c_str(),
+            escape_query_str( m_CurSong.m_FileName ).c_str(),
+            escape_query_str( m_CurSong.m_FileName.AfterLast( '.' ) ).c_str(),
+            m_CurSong.m_Number,
+            m_CurSong.m_Year,
+            m_CurSong.m_ComposerId, //escape_query_str( m_CurSong.m_Composer ).c_str(),
+            escape_query_str( m_CurSong.m_Composer ).c_str(),
+            escape_query_str( m_CurSong.m_Comments ).c_str(),
+            escape_query_str( m_CurSong.m_Disk ).c_str(),
+            m_CurSong.m_Length,
+            0, //m_CurSong.m_Offset,
+            m_CurSong.m_Bitrate,
+            m_CurSong.m_FileSize,
+            m_CurSong.m_SongId );
+  }
 
   return ExecuteUpdate( query );
 }
