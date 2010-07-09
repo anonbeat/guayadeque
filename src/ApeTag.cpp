@@ -276,7 +276,25 @@ wxUint32 guApeTag::ItemLength( void ) const
 // -------------------------------------------------------------------------------- //
 wxUint32 guApeTag::ItemCount( void ) const
 {
-    return m_Items->Count();
+    wxUint32 RetVal = 0;
+    int Index;
+    int Count = m_Items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guApeItem * ApeItem = m_Items->Item( Index );
+
+        //guLogMessage( wxT( "'%s' => '%s'" ), ApeItem->m_Key.c_str(), ApeItem->m_Value.c_str() );
+        if( !ApeItem->m_Value.IsEmpty() )
+        {
+            const wxWX2MBbuf ValueBuf = ApeItem->m_Value.mb_str( wxConvUTF8 );
+            if( ValueBuf )
+            {
+                RetVal++;
+            }
+        }
+    }
+    guLogMessage( wxT( "ItemCount() -> %u" ), RetVal );
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -417,11 +435,13 @@ void guApeFile::WriteApeHeaderFooter( const wxUint32 flags )
 void guApeFile::WriteApeItems( void )
 {
     int index;
-    int count = m_Tag->ItemCount();
+    int count = m_Tag->m_Items->Count();
     char pad = 0;
     for( index = 0; index < count; index++ )
     {
         guApeItem * ApeItem = m_Tag->GetItem( index );
+
+        //guLogMessage( wxT( "Writing item %i   '%s' => '%s' at %08X" ), index, ApeItem->m_Key.c_str(), ApeItem->m_Value.c_str(), m_File->Tell() );
 
         if( ApeItem->m_Value.IsEmpty() )
             continue;
@@ -430,8 +450,7 @@ void guApeFile::WriteApeItems( void )
         if( !ValueBuf )
             continue;
 
-        //guLogMessage( wxT( "writing item %u at %08X" ), index, m_File->Tell() );
-
+        //guLogMessage( wxT( "'%s' => '%s'" ), ApeItem->m_Key.c_str(), ApeItem->m_Value.c_str() );
         //int KeyLen = ApeItem->m_Key.size();
 
 
@@ -449,8 +468,8 @@ void guApeFile::WriteApeItems( void )
         {
             m_File->Write( ValueBuf, ValueLen );
 
-//            guLogMessage( wxT( "'%s'\n Size: %u   Length: %u" ),
-//                ApeItem->m_Value.c_str(), ApeItem->m_Value.size(), ApeItem->m_Value.Length() );
+            //guLogMessage( wxT( "'%s' Size: %u   Length: %u" ),
+            //    ApeItem->m_Value.c_str(), ApeItem->m_Value.size(), ApeItem->m_Value.Length() );
         }
     }
 }
@@ -458,7 +477,7 @@ void guApeFile::WriteApeItems( void )
 // -------------------------------------------------------------------------------- //
 bool guApeFile::WriteApeTag( void )
 {
-    //guLogMessage( wxT( "file length %u" ), m_Tag->FileLength() );
+    guLogMessage( wxT( "file length %u, %08x" ), m_Tag->FileLength(), m_Tag->TagOffset() );
 
     const wxUint32 TagOffset = !m_Tag->TagOffset() ?  m_Tag->FileLength() : m_Tag->TagOffset();
 
@@ -567,6 +586,8 @@ void guApeFile::ReadAndProcessApeHeader( void )
     if( ApeFooter.m_Magic[ 0 ] != APE_MAGIC_0 || ApeFooter.m_Magic[ 1 ] != APE_MAGIC_1 )
     {
         guLogWarning( wxT( "file does not contain ApeFooter tag" ) );
+
+        m_Tag = new guApeTag( FileLength, FileLength, 0 );
         return;
     }
 
@@ -624,6 +645,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
 
     char * CurBufPos = ItemsBuf;
 
+    //guLogMessage( wxT( "Found a valid ape footer with %i items and %i bytes length" ), ApeFooter.m_Items, ApeFooter.m_Length );
     wxString Value;
     wxString Key;
     int index;
@@ -633,7 +655,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
         CurBufPos += sizeof( ValueLen );
         if( ValueLen > ( ApeFooter.m_Length - ( ItemsBuf - CurBufPos ) ) )
         {
-            guLogWarning( wxT( "Aborting reading of corrupt ape tag" ) );
+            guLogWarning( wxT( "Aborting reading of corrupt ape tag %i > %i" ), ValueLen, ( ApeFooter.m_Length - ( ItemsBuf - CurBufPos ) ) );
             m_Tag->DelAllItems();
             break;
         }

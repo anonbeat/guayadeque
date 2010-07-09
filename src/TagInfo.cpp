@@ -1433,15 +1433,21 @@ bool guApeTagInfo::CanHandleLyrics( void )
 wxString guApeTagInfo::GetLyrics( void )
 {
     guApeTag * Tag = m_ApeFile.GetApeTag();
-    return Tag->GetItemValue( APE_TAG_KEY_LYRICS );
+    if( Tag )
+        return Tag->GetItemValue( APE_TAG_KEY_LYRICS );
+    return wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guApeTagInfo::SetLyrics( const wxString &lyrics )
 {
     guApeTag * Tag = m_ApeFile.GetApeTag();
-    Tag->SetItem( APE_TAG_KEY_LYRICS, lyrics );
-    return m_ApeFile.WriteApeTag();
+    if( Tag )
+    {
+        Tag->SetItem( APE_TAG_KEY_LYRICS, lyrics );
+        return m_ApeFile.WriteApeTag();
+    }
+    return false;
 }
 
 
