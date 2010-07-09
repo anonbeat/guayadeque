@@ -1023,6 +1023,10 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
                             Track.m_GenreName   = TagInfo->m_GenreName;
                             Track.m_Length      = TagInfo->m_Length;
                             Track.m_Year        = TagInfo->m_Year;
+                            Track.m_Comments    = TagInfo->m_Comments;
+                            Track.m_Composer    = TagInfo->m_Composer;
+                            Track.m_Disk        = TagInfo->m_Disk;
+                            Track.m_AlbumArtist = TagInfo->m_AlbumArtist;
                             Track.m_Rating      = wxNOT_FOUND;
                             Track.m_CoverId     = 0;
 

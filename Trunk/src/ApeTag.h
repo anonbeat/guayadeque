@@ -123,7 +123,7 @@ int guCompareApeItems( guApeItem * item1, guApeItem * item2 );
 // -------------------------------------------------------------------------------- //
 class guApeTag
 {
-  private:
+  protected :
     wxUint32            m_FileLength;
     wxUint32            m_TagOffset;
     wxUint32            m_ItemCount;
@@ -159,6 +159,8 @@ class guApeTag
     void            SetTrack( const wxUint32 track );
     wxUint32        GetYear( void ) const;
     void            SetYear( const wxUint32 year );
+
+    friend class   guApeFile;
 };
 
 // -------------------------------------------------------------------------------- //
