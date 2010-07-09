@@ -1086,6 +1086,11 @@ bool guMp4TagInfo::Read( void )
     {
         if( m_Mp4Tag )
         {
+            if( m_Mp4Tag->itemListMap().contains( "aArt" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_Mp4Tag->itemListMap()["aArt"].toStringList().front() );
+            }
+
             if( m_Mp4Tag->itemListMap().contains( "\xA9wrt" ) )
             {
                 m_Composer = TStringTowxString( m_Mp4Tag->itemListMap()["\xa9wrt"].toStringList().front() );
@@ -1141,6 +1146,7 @@ bool guMp4TagInfo::Write( void )
 {
     if( m_Mp4Tag )
     {
+        m_Mp4Tag->itemListMap()["aArt"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
         m_Mp4Tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
         int first;
         int second;
