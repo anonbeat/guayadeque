@@ -67,14 +67,20 @@ void guTaskBarIcon::OnStop( wxCommandEvent &event )
 void guTaskBarIcon::OnNextTrack( wxCommandEvent &event )
 {
     if( m_PlayerPanel )
+    {
+        event.SetInt( 0 );
         m_PlayerPanel->OnNextTrackButtonClick( event );
+    }
 }
 
 // ---------------------------------------------------------------------- //
 void guTaskBarIcon::OnPrevTrack( wxCommandEvent &event )
 {
     if( m_PlayerPanel )
+    {
+        event.SetInt( 0 );
         m_PlayerPanel->OnPrevTrackButtonClick( event );
+    }
 }
 
 // ---------------------------------------------------------------------- //
