@@ -816,7 +816,7 @@ void guLibPanel::UpdateLabels( void )
     m_RatingListCtrl->ReloadItems( false );
     m_YearListCtrl->ReloadItems( false );
     m_PlayCountListCtrl->ReloadItems( false );
-    m_SongListCtrl->ReloadItems( false );
+    m_SongListCtrl->ReloadItems( true );
     m_UpdateLock = false;
 }
 
@@ -1299,7 +1299,7 @@ void guLibPanel::OnSongQueueAllAsNextClicked( wxCommandEvent &event )
 void guLibPanel::OnSongsEditLabelsClicked( wxCommandEvent &event )
 {
     guListItems Tracks;
-    m_SongListCtrl->GetSelectedItems( &Tracks );
+    m_SongListCtrl->GetSelectedItems( &Tracks, false );
     if( Tracks.Count() )
     {
         guArrayListItems LabelSets = m_Db->GetSongsLabels( m_SongListCtrl->GetSelectedItems() );

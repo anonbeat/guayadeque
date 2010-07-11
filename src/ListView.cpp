@@ -393,6 +393,7 @@ void guListView::SetSelectedItems( const wxArrayInt &selection )
     int index;
     int count = GetItemCount();
 
+    // TODO Need to speed up this
     ClearSelectedItems();
     if( selection.Count() )
     {
