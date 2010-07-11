@@ -4720,7 +4720,7 @@ wxString guDbLibrary::GetSongsName( const int start )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT song_name FROM songs" );
+  query = wxT( "SELECT song_name FROM songs " );
   if( GetFiltersCount() )
   {
     query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
