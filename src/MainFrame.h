@@ -209,6 +209,8 @@ class guMainFrame : public wxFrame
     void                OnStop( wxCommandEvent &event );
     void                OnNextTrack( wxCommandEvent &event );
     void                OnPrevTrack( wxCommandEvent &event );
+    void                OnNextAlbum( wxCommandEvent &event );
+    void                OnPrevAlbum( wxCommandEvent &event );
     void                OnSmartPlay( wxCommandEvent &event );
     void                OnRandomize( wxCommandEvent &event );
     void                OnRepeat( wxCommandEvent &event );

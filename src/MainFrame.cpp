@@ -466,6 +466,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ), NULL, this );
     Connect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ), NULL, this );
     Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ), NULL, this );
+    Connect( ID_PLAYERPANEL_NEXTALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextAlbum ), NULL, this );
+    Connect( ID_PLAYERPANEL_PREVALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevAlbum ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
@@ -584,6 +586,8 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ), NULL, this );
     Disconnect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ), NULL, this );
     Disconnect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ), NULL, this );
+    Disconnect( ID_PLAYERPANEL_NEXTALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextAlbum ), NULL, this );
+    Disconnect( ID_PLAYERPANEL_PREVALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevAlbum ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
@@ -989,7 +993,17 @@ void guMainFrame::CreateMenu()
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PREVTRACK, _( "&Prev. Track" ), _( "Play the previous track in the playlist" ), wxITEM_NORMAL );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_backward ) );
     m_MainMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_NEXTALBUM, _( "Next Album" ), _( "Play the next album in the playlist" ), wxITEM_NORMAL );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_forward ) );
+    m_MainMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PREVALBUM, _( "Prev. Album" ), _( "Play the previous album in the playlist" ), wxITEM_NORMAL );
+    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_skip_forward ) );
+    m_MainMenu->Append( MenuItem );
+
     m_MainMenu->AppendSeparator();
+
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYERPANEL_PLAY, _( "&Play" ), _( "Play or Pause the current track in the playlist" ), wxITEM_NORMAL );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_playback_start ) );
     m_MainMenu->Append( MenuItem );
@@ -1379,6 +1393,20 @@ void guMainFrame::OnPrevTrack( wxCommandEvent &event )
 {
     if( m_PlayerPanel )
         m_PlayerPanel->OnPrevTrackButtonClick( event );
+}
+
+// ---------------------------------------------------------------------- //
+void guMainFrame::OnNextAlbum( wxCommandEvent &event )
+{
+    if( m_PlayerPanel )
+        m_PlayerPanel->OnNextAlbumButtonClick( event );
+}
+
+// ---------------------------------------------------------------------- //
+void guMainFrame::OnPrevAlbum( wxCommandEvent &event )
+{
+    if( m_PlayerPanel )
+        m_PlayerPanel->OnPrevAlbumButtonClick( event );
 }
 
 // ---------------------------------------------------------------------- //

@@ -332,6 +332,8 @@ class guPlayerPanel : public wxPanel
     const guMediaState  GetState( void );
     void                OnPrevTrackButtonClick( wxCommandEvent &event );
     void                OnNextTrackButtonClick( wxCommandEvent &event );
+    void                OnPrevAlbumButtonClick( wxCommandEvent &event );
+    void                OnNextAlbumButtonClick( wxCommandEvent &event );
     void                OnPlayButtonClick( wxCommandEvent &event );
     void                OnStopButtonClick( wxCommandEvent &event );
     void                OnRecordButtonClick( wxCommandEvent &event );

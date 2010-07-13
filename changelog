@@ -1,4 +1,5 @@
 
+  * Added Jump to Next and Previous albums in playlist
   * Added Album Artist list box to the library tab
   * Improved library browse speed and memory usage
   * Added Now Playing searchs to the shoutcast radios
