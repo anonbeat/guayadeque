@@ -58,7 +58,7 @@ WX_DEFINE_OBJARRAY(guAlbumItems);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "17"
+#define GU_CURRENT_DBVERSION    "18"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
                "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
@@ -567,8 +567,9 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_length on songs( song_length ASC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_bitrate on songs( song_bitrate ASC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_rating on songs( song_rating ASC )" ) );
+      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_rating_desc ON songs( song_rating DESC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_playcount on songs( song_playcount ASC )" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime on songs( song_addedtime ASC )" ) );
+      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime on songs( song_addedtime ASC )" ) );
       //query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime_desc ON songs( song_addedtime DESC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_lastplay on songs( song_lastplay ASC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composerid on songs( song_composerid ASC )" ) );
@@ -576,7 +577,6 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_number ON songs( song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_path ON songs( song_path ASC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_format ON songs( song_format ASC )" ) );
-      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_rating_desc ON songs( song_rating DESC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_genre ON songs( song_genre,song_composer,song_artist,song_album,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_genre_desc ON songs( song_genre DESC,song_composer,song_artist,song_album,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composer ON songs( song_composer,song_artist,song_album,song_disk,song_albumid,song_number )" ) );
@@ -591,6 +591,8 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_disk_desc ON songs( song_disk DESC,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_year ON songs( song_year,song_album,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_year_desc ON songs( song_year DESC,song_album,song_disk,song_albumid,song_number )" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime ON songs( song_addedtime,song_album,song_disk,song_albumid,song_number )" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime_desc ON songs( song_addedtime DESC,song_album,song_disk,song_albumid,song_number )" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS tags( tag_id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR COLLATE NOCASE );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_id' on tags (tag_id ASC);" ) );
@@ -858,7 +860,7 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_bitrate on songs( song_bitrate ASC )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_rating on songs( song_rating ASC )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_playcount on songs( song_playcount ASC )" ) );
-        query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime on songs( song_addedtime ASC )" ) );
+        //query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime on songs( song_addedtime ASC )" ) );
         //query.Add( wxT( "CREATE INDEX song_addedtime_desc ON songs( song_addedtime DESC )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_lastplay on songs( song_lastplay ASC )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composerid on songs( song_composerid ASC )" ) );
@@ -881,6 +883,8 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_disk_desc ON songs( song_disk DESC,song_albumid,song_number )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_year ON songs( song_year,song_album,song_disk,song_albumid,song_number )" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_year_desc ON songs( song_year DESC,song_album,song_disk,song_albumid,song_number )" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime ON songs( song_addedtime,song_album,song_disk,song_albumid,song_number )" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime_desc ON songs( song_addedtime DESC,song_album,song_disk,song_albumid,song_number )" ) );
         NeedVacuum = ( dbVer > 4 );
       }
     }
@@ -895,9 +899,24 @@ bool guDbLibrary::CheckDbVersion( void )
                           "( plset_option > 2 AND plset_type IN ( 9 ) OR"
                           "( plset_option > 0 AND plset_type IN ( 9, 10, 11 ) );" ) );
       }
-      guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
-      query.Add( wxT( "DELETE FROM Version;" ) );
-      query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
+    }
+
+    case 17 :   // Changed addedtime index to sort by album, disk, track also
+    {
+        if( dbVer > 4 )
+        {
+          query.Add( wxT( "DROP INDEX song_addedtime;" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime ON songs( song_addedtime,song_album,song_disk,song_albumid,song_number )" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime_desc ON songs( song_addedtime DESC,song_album,song_disk,song_albumid,song_number )" ) );
+        }
+        query.Add( wxT( "CREATE TABLE IF NOT EXISTS deleted( delete_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                          "delete_path VARCHAR, delete_date INTEGER );" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_path on deleted(delete_path ASC);" ) );
+        query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_date on deleted(delete_date ASC);" ) );
+
+        guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
+        query.Add( wxT( "DELETE FROM Version;" ) );
+        query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
     }
 
 
@@ -4574,6 +4593,10 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
       break;
 
     case guTRACKS_ORDER_YEAR :
+      query += wxT( ",song_album,song_disk,song_albumid,song_number " );
+      break;
+
+    case guTRACKS_ORDER_ADDEDDATE :
       query += wxT( ",song_album,song_disk,song_albumid,song_number " );
       break;
 

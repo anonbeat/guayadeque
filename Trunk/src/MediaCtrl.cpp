@@ -587,20 +587,20 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMe
                     case guFADERPLAYBIN_STATE_FADING_OUT_STOPPED :
                     {
                         // try to seek back a bit to account for the fade
-                        GstFormat Format = GST_FORMAT_TIME;
-                        gint64 Pos = -1;
-                        gst_element_query_position( FaderPlayBin->m_Volume, &Format, &Pos );
-                        if( Pos != -1 )
-                        {
+//                        GstFormat Format = GST_FORMAT_TIME;
+//                        gint64 Pos = -1;
+//                        gst_element_query_position( FaderPlayBin->m_Volume, &Format, &Pos );
+//                        if( Pos != -1 )
+//                        {
                             FaderPlayBin->m_SeekTarget = 0;
                             FaderPlayBin->m_State = guFADERPLAYBIN_STATE_SEEKING_STOPPED;
                             //guLogDebug( wxT( "got fade-out-done for stream %s -> SEEKING_STOPPED [%" G_GINT64_FORMAT "]" ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
-                        }
-                        else
-                        {
-                            FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PAUSED;
-                            //guLogDebug( wxT( "got fade-out-done for stream %s -> PAUSED (position query failed)" ), FaderPlayBin->m_Uri.c_str() );
-                        }
+//                        }
+//                        else
+//                        {
+//                            FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PAUSED;
+//                            //guLogDebug( wxT( "got fade-out-done for stream %s -> PAUSED (position query failed)" ), FaderPlayBin->m_Uri.c_str() );
+//                        }
                         FaderPlayBin->UnlinkAndBlock();
 
                         ctrl->SetCurrentState( GST_STATE_READY );
@@ -1167,7 +1167,7 @@ static void unlink_blocked_cb( GstPad * pad, gboolean blocked, guFaderPlayBin * 
 
 	Player->m_LinkedStreams--;
 	Last = !Player->m_LinkedStreams;
-	//guLogDebug( wxT( "%d linked streams left" ), Player->m_LinkedStreams );
+	guLogDebug( wxT( "%d linked streams left" ), Player->m_LinkedStreams );
 
 	// handle unlinks for seeking and stream reuse
 	switch( StreamState )

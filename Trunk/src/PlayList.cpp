@@ -829,6 +829,85 @@ guTrack * guPlayList::GetPrev( const int playloop, const bool forceskip )
 }
 
 // -------------------------------------------------------------------------------- //
+guTrack * guPlayList::GetNextAlbum( const int playloop, const bool forceskip )
+{
+    if( m_Items.Count() )
+    {
+        if( m_CurItem == wxNOT_FOUND )
+        {
+            m_CurItem = 0;
+            return &m_Items[ m_CurItem ];
+        }
+//        else if( !forceskip && playloop == guPLAYER_PLAYLOOP_TRACK )
+//        {
+//            return &m_Items[ m_CurItem ];
+//        }
+        else if( ( ( size_t ) m_CurItem < ( m_Items.Count() - 1 ) ) )
+        {
+            int CurAlbumId = m_Items[ m_CurItem ].m_AlbumId;
+
+            while( ( size_t ) m_CurItem < ( m_Items.Count() - 1 ) )
+            {
+                if( m_DelTracksPLayed && !playloop )
+                {
+                    m_TotalLen -= m_Items[ m_CurItem ].m_Length;
+                    m_Items.RemoveAt( m_CurItem );
+                    ReloadItems();
+                }
+                else
+                    m_CurItem++;
+                if( m_Items[ m_CurItem ].m_AlbumId != CurAlbumId )
+                    break;
+            }
+
+            if( ( size_t ) m_CurItem < ( m_Items.Count() - 1 ) )
+                return &m_Items[ m_CurItem ];
+
+        }
+//        else if( playloop == guPLAYER_PLAYLOOP_PLAYLIST )
+//        {
+//            m_CurItem = 0;
+//            return &m_Items[ m_CurItem ];
+//        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+guTrack * guPlayList::GetPrevAlbum( const int playloop, const bool forceskip )
+{
+    if( m_Items.Count() )
+    {
+        if( m_CurItem == wxNOT_FOUND )
+        {
+            m_CurItem = 0;
+            return &m_Items[ m_CurItem ];
+        }
+        else if( !forceskip && playloop == guPLAYER_PLAYLOOP_TRACK )
+        {
+            return &m_Items[ m_CurItem ];
+        }
+        else if( m_CurItem > 0 )
+        {
+            if( m_DelTracksPLayed && !playloop )
+            {
+                m_TotalLen -= m_Items[ m_CurItem ].m_Length;
+                m_Items.RemoveAt( m_CurItem );
+                ReloadItems();
+            }
+            m_CurItem--;
+            return &m_Items[ m_CurItem ];
+        }
+        else if( playloop == guPLAYER_PLAYLOOP_PLAYLIST )
+        {
+            m_CurItem = m_Items.Count() - 1;
+            return &m_Items[ m_CurItem ];
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 guTrack * guPlayList::GetItem( size_t item )
 {
     size_t ItemsCount = m_Items.Count();
