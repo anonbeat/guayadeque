@@ -878,31 +878,54 @@ guTrack * guPlayList::GetPrevAlbum( const int playloop, const bool forceskip )
 {
     if( m_Items.Count() )
     {
+        guLogMessage( wxT( "GetPrevAlbum... %i" ), m_CurItem );
         if( m_CurItem == wxNOT_FOUND )
         {
             m_CurItem = 0;
             return &m_Items[ m_CurItem ];
         }
-        else if( !forceskip && playloop == guPLAYER_PLAYLOOP_TRACK )
-        {
-            return &m_Items[ m_CurItem ];
-        }
+//        else if( !forceskip && playloop == guPLAYER_PLAYLOOP_TRACK )
+//        {
+//            return &m_Items[ m_CurItem ];
+//        }
         else if( m_CurItem > 0 )
         {
-            if( m_DelTracksPLayed && !playloop )
+            int CurAlbumId = m_Items[ m_CurItem ].m_AlbumId;
+
+            guLogMessage( wxT( "CurrentAlbum: %i" ), CurAlbumId );
+            while( m_CurItem > 0 )
             {
-                m_TotalLen -= m_Items[ m_CurItem ].m_Length;
-                m_Items.RemoveAt( m_CurItem );
-                ReloadItems();
+                if( m_DelTracksPLayed && !playloop )
+                {
+                    m_TotalLen -= m_Items[ m_CurItem ].m_Length;
+                    m_Items.RemoveAt( m_CurItem );
+                    ReloadItems();
+                }
+                m_CurItem--;
+
+                guLogMessage( wxT( "Album %i:  %i" ), m_CurItem, m_Items[ m_CurItem ].m_AlbumId );
+                if( m_Items[ m_CurItem ].m_AlbumId != CurAlbumId )
+                {
+                    CurAlbumId = m_Items[ m_CurItem ].m_AlbumId;
+                    while( m_CurItem > 0 && m_Items[ m_CurItem ].m_AlbumId == CurAlbumId )
+                    {
+                        guLogMessage( wxT( "New Album %i:  %i" ), m_CurItem, m_Items[ m_CurItem ].m_AlbumId );
+                        m_CurItem--;
+                    }
+                    if( m_Items[ m_CurItem ].m_AlbumId != CurAlbumId )
+                        m_CurItem++;
+                    break;
+                }
             }
-            m_CurItem--;
-            return &m_Items[ m_CurItem ];
+
+            if( m_CurItem >= 0 )
+                return &m_Items[ m_CurItem ];
         }
-        else if( playloop == guPLAYER_PLAYLOOP_PLAYLIST )
-        {
-            m_CurItem = m_Items.Count() - 1;
-            return &m_Items[ m_CurItem ];
-        }
+//        else if( playloop == guPLAYER_PLAYLOOP_PLAYLIST )
+//        {
+//            m_CurItem = m_Items.Count() - 1;
+//            return &m_Items[ m_CurItem ];
+//        }
     }
     return NULL;
 }

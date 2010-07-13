@@ -2214,6 +2214,91 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
+{
+    guLogMessage( wxT( "OnNextAlbumButtonClick Cur: %i    %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
+    guMediaState State;
+
+    if( m_IsSkipping )
+        return;
+
+    guTrack * NextAlbumTrack = m_PlayListCtrl->GetNextAlbum( m_PlayLoop, true );
+    if( NextAlbumTrack )
+    {
+        State = m_MediaCtrl->GetState();
+
+        SetNextTrack( NextAlbumTrack );
+
+        if( State == guMEDIASTATE_PLAYING )
+        {
+            m_IsSkipping = true;
+            LoadMedia( m_NextSong.m_FileName,
+                ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ) );
+        }
+        else
+        {
+            guLogMessage( wxT( "Next ALbum Track when not playing.." ) );
+            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
+        }
+
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+    }
+    else
+    {
+        // If the option to play a random track is set
+        if( m_PlayRandom )
+        {
+            // If Repeat was enabled disable it
+            if( m_PlayLoop )
+                SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
+
+            //guLogMessage( wxT( "Getting Random Tracks..." ) );
+            guTrackArray Tracks;
+            if( m_Db->GetRandomTracks( &Tracks, m_SmartPlayAddTracks, m_PlayRandomMode,
+                    m_PlayerFilters->GetAllowFilterId(),
+                    m_PlayerFilters->GetDenyFilterId() ) )
+            {
+                AddToPlayList( Tracks, false );
+
+                OnNextAlbumButtonClick( event );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
+{
+    guLogMessage( wxT( "OnPrevAlbumButtonClick Cur: %i    %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
+    guMediaState State;
+
+    if( m_IsSkipping )
+        return;
+
+    guTrack * NextAlbumTrack = m_PlayListCtrl->GetPrevAlbum( m_PlayLoop, true );
+    if( NextAlbumTrack )
+    {
+        State = m_MediaCtrl->GetState();
+
+        SetNextTrack( NextAlbumTrack );
+
+        if( State == guMEDIASTATE_PLAYING )
+        {
+            m_IsSkipping = true;
+            LoadMedia( m_NextSong.m_FileName,
+                ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ) );
+        }
+        else
+        {
+            guLogMessage( wxT( "Prev Album Track when not playing.." ) );
+            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
+        }
+
+        m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 {
     guLogMessage( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
