@@ -144,10 +144,11 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
     }
 
     wxString FilePath;
-    bool PlayTrack = false;
+    bool PlayTrack;
     int index;
     for( index = 1; index < argc; index++ )
     {
+        PlayTrack = ( index == 1 );
         FilePath = argv[ index ];
         //guLogMessage( wxT( "Trying to add file '%s'" ), argv[ index ] );
 
@@ -207,18 +208,24 @@ bool guMainApp::OnInit()
     m_SingleInstanceChecker = new wxSingleInstanceChecker( AppName );
     if( m_SingleInstanceChecker->IsAnotherRunning() )
     {
-        if( argc > 1 )
+        int Index;
+        guLogMessage( wxT( "=*=*=*=*=*=*=*=*=\n" ) );
+        for( Index = 0; Index < argc; Index++ )
         {
-            int RetryCnt = 0;
-            while( RetryCnt < 25 )
-            {
-                if( SendFilesByMPRIS( argc, argv ) )
-                {
-                    break;
-                }
-                wxMilliSleep( 100 );
-            }
+            guLogMessage( wxString::Format( wxT( "%i) %s\n" ), Index, argv[ Index ] ) );
         }
+//        if( argc > 1 )
+//        {
+//            int RetryCnt = 0;
+//            while( RetryCnt < 25 )
+//            {
+//                if( SendFilesByMPRIS( argc, argv ) )
+//                {
+//                    break;
+//                }
+//                wxMilliSleep( 100 );
+//            }
+//        }
 
         guLogError( wxT( "Another program instance is already running, aborting." ) );
         return false;
