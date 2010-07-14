@@ -965,6 +965,18 @@ void guChannelsListBox::GetItemsList( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guChannelsListBox::OnKeyDown( wxKeyEvent &event )
+{
+    if( event.GetKeyCode() == WXK_DELETE )
+    {
+        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PODCASTS_CHANNEL_DEL );
+        wxPostEvent( this, CmdEvent );
+        return;
+    }
+    event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
 int guChannelsListBox::GetSelectedSongs( guTrackArray * Songs ) const
 {
     return 0;
@@ -1226,6 +1238,18 @@ void guPodcastListBox::ReloadItems( bool reset )
       ScrollToLine( FirstVisible );
     }
     RefreshAll();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastListBox::OnKeyDown( wxKeyEvent &event )
+{
+    if( event.GetKeyCode() == WXK_DELETE )
+    {
+        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PODCASTS_ITEM_DEL );
+        wxPostEvent( this, CmdEvent );
+        return;
+    }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
