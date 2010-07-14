@@ -1332,6 +1332,7 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, co
   wxString FileName;
   int RetVal = 0;
 
+  //guLogMessage( wxT( "Updating album: %i path: '%s'" ), AlbumId, CoverPath.c_str() );
   // Delete the actual assigned Cover
   // Find the Cover assigned to the album
   query = wxString::Format( wxT( "SELECT song_coverid FROM songs WHERE song_albumid = %i LIMIT 1;" ), AlbumId );
@@ -1915,6 +1916,32 @@ void guDbLibrary::UpdateImageFile( const char * filename )
   wxString              CoverHash;
   wxString              CoverFile = FileName = wxString( filename, wxConvUTF8 );
 
+
+  if( FileName.IsEmpty() )
+    return;
+
+  if( guIsValidAudioFile( FileName ) )
+  {
+    guLogMessage( wxT( "Trying to get image from file '%s'" ), FileName.c_str() );
+    wxImage * Image = guTagGetPicture( FileName );
+    if( Image )
+    {
+        CoverFile = wxPathOnly( FileName ) + wxT( '/' ) + wxT( "cover.jpg" );
+        if( !Image->SaveFile( CoverFile, wxBITMAP_TYPE_JPEG ) )
+        {
+            delete Image;
+            return;
+        }
+        FileName = CoverFile;
+        delete Image;
+    }
+    else
+    {
+        return;
+    }
+  }
+
+
   guMD5 md5;
   wxString NewCoverHash = md5.MD5File( FileName );
 
@@ -1958,10 +1985,10 @@ void guDbLibrary::UpdateImageFile( const char * filename )
     return;
   }
   //An image which appear to not be to any album was found. We do nothing with this
-  else
-  {
-      guLogError( wxT( "The image '%s' with no album set" ), FileName.c_str() );
-  }
+//  else
+//  {
+//      guLogError( wxT( "The image '%s' with no album set" ), FileName.c_str() );
+//  }
   dbRes.Finalize();
 }
 

@@ -100,6 +100,8 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
   wxDir         Dir;
   wxString      FileName;
   wxString      LowerFileName;
+  bool          FoundCover = false;
+  wxString      FirstAudioFile;
 
   if( !dirname.EndsWith( wxT( "/" ) ) )
     dirname += wxT( "/" );
@@ -135,20 +137,30 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
               if( guIsValidAudioFile( LowerFileName ) )
               {
                 m_TrackFiles.Add( dirname + FileName );
+                if( FirstAudioFile.IsEmpty() )
+                    FirstAudioFile = dirname + FileName;
               }
               else if( guIsValidImageFile( LowerFileName ) )
               {
                 if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) )                //guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
+                {
                     m_ImageFiles.Add( dirname + FileName );
+                }
               }
               else if( m_ScanAddPlayLists && guPlayListFile::IsValidPlayList( LowerFileName ) )
               {
+                  FoundCover = true;
                   m_PlayListFiles.Add( dirname + FileName );
               }
             }
           }
         }
       } while( !TestDestroy() && Dir.GetNext( &FileName ) );
+
+      if( !FoundCover )
+      {
+        m_ImageFiles.Add( FirstAudioFile );
+      }
     }
   }
   else
