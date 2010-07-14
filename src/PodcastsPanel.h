@@ -79,6 +79,7 @@ class guPodcastListBox : public guListView
   protected :
     guDbLibrary *       m_Db;
     guPodcastItemArray  m_PodItems;
+    wxArrayInt          m_PodChFilters;
     int                 m_Order;
     bool                m_OrderDesc;
     wxImage *           m_Images[ guPODCAST_STATUS_ERROR + 1 ];
@@ -103,6 +104,10 @@ class guPodcastListBox : public guListView
     virtual int inline          GetItemId( const int item ) const;
 
     void                        SetOrder( int order );
+    int                         GetOrder( void ) { return m_Order; }
+    bool                        GetOrderDesc( void ) { return m_OrderDesc; }
+    void                        SetFilters( const wxArrayInt &filters );
+    wxArrayInt                  GetFilters( void ) { return m_PodChFilters; }
 
     int                         FindItem( const int podcastid );
 
@@ -187,6 +192,11 @@ public:
 
     void SelectPodcast( const int podcastid );
     void SelectChannel( const int channelid );
+
+    void GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+    {
+        m_Db->GetPodcastCounters( m_PodcastsListBox->GetFilters(), count, len, size );
+    }
 
     friend class guPodcastDownloadQueueThread;
 };

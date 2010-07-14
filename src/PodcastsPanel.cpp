@@ -501,7 +501,7 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
     guPodcastItemArray PodcastItems;
     guTrackArray * Tracks = new guTrackArray();
 
-    m_Db->GetPodcastItems( &PodcastItems );
+    m_Db->GetPodcastItems( &PodcastItems, m_PodcastsListBox->GetFilters(), m_PodcastsListBox->GetOrder(), m_PodcastsListBox->GetOrderDesc() );
 
     int Index;
     int Count = PodcastItems.Count();
@@ -558,7 +558,7 @@ void guPodcastPanel::UpdateChannels( wxCommandEvent &event )
 void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
 {
     wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
-    m_Db->SetPodcastChannelFilters( SelectedItems );
+    //m_Db->SetPodcastChannelFilters( SelectedItems );
     m_PodcastsListBox->ReloadItems();
 
     if( SelectedItems.Count() == 1 && SelectedItems[ 0 ] != 0 )
@@ -824,7 +824,7 @@ void guPodcastPanel::OnPodcastItemDelete( wxCommandEvent &event )
 
         // Check if in the download thread this items are included and delete them
         guPodcastItemArray Podcasts;
-        m_Db->GetPodcastItems( Selection, &Podcasts );
+        m_Db->GetPodcastItems( Selection, &Podcasts, m_PodcastsListBox->GetOrder(), m_PodcastsListBox->GetOrderDesc() );
         m_MainFrame->RemovePodcastDownloadItems( &Podcasts );
 
         for( Index = 0; Index < Count; Index++ )
@@ -1201,7 +1201,7 @@ wxString guPodcastListBox::OnGetItemText( const int row, const int col ) const
 // -------------------------------------------------------------------------------- //
 void guPodcastListBox::GetItemsList( void )
 {
-    m_Db->GetPodcastItems( &m_PodItems );
+    m_Db->GetPodcastItems( &m_PodItems, m_PodChFilters, m_Order, m_OrderDesc );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
@@ -1320,7 +1320,7 @@ void guPodcastListBox::SetOrder( int columnid )
     else
         m_OrderDesc = !m_OrderDesc;
 
-    m_Db->SetPodcastOrder( m_Order );
+    //m_Db->SetPodcastOrder( m_Order );
 
     int CurColId;
     int index;
@@ -1334,6 +1334,19 @@ void guPodcastListBox::SetOrder( int columnid )
     }
 
     ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPodcastListBox::SetFilters( const wxArrayInt &filters )
+{
+    if( filters.Index( 0 ) != wxNOT_FOUND )
+    {
+        m_PodChFilters.Empty();
+    }
+    else
+    {
+        m_PodChFilters = filters;
+    }
 }
 
 // -------------------------------------------------------------------------------- //

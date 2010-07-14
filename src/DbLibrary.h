@@ -282,9 +282,9 @@ class guDbLibrary : public guDb
     wxArrayString       m_CoverSearchWords;
 
     // Podcasts
-    wxArrayInt          m_PodChFilters;
-    int                 m_PodcastOrder;
-    bool                m_PodcastOrderDesc;
+    //wxArrayInt          m_PodChFilters;
+    //int                 m_PodcastOrder;
+    //bool                m_PodcastOrderDesc;
 
     wxString            FiltersSQL( int Level );
 
@@ -475,9 +475,9 @@ class guDbLibrary : public guDb
     int                     GetPodcastChannelId( const int id, guPodcastChannel * channel = NULL );
     void                    DelPodcastChannel( const int id );
 
-    int                     GetPodcastItems( guPodcastItemArray * items );
-    void                    GetPodcastCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
-    int                     GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items );
+    int                     GetPodcastItems( guPodcastItemArray * items, const wxArrayInt &filters, const int order, const bool desc );
+    void                    GetPodcastCounters( const wxArrayInt &filters, wxLongLong * count, wxLongLong * len, wxLongLong * size );
+    int                     GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items, const int order, const bool desc );
     void                    SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew = false );
     void                    SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew = false );
     void                    SetPodcastItemStatus( const int itemid, const int status );
@@ -488,8 +488,8 @@ class guDbLibrary : public guDb
     int                     GetPodcastItemFile( const wxString &filename, guPodcastItem * item = NULL );
     void                    DelPodcastItem( const int itemid );
     void                    DelPodcastItems( const int channelid );
-    void                    SetPodcastChannelFilters( const wxArrayInt &filters );
-    void                    SetPodcastOrder( int order );
+    //void                    SetPodcastChannelFilters( const wxArrayInt &filters );
+    //void                    SetPodcastOrder( int order );
     int                     GetPendingPodcasts( guPodcastItemArray * items );
     int                     GetPodcastFiles( const wxArrayInt &channelid, wxFileDataObject * files );
 
