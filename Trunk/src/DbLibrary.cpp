@@ -1906,7 +1906,7 @@ int guDbLibrary::UpdateSong( const bool allowrating )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateImageFile( const char * filename )
+void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto )
 {
   wxString              query;
   wxSQLite3ResultSet    dbRes;
@@ -1915,6 +1915,7 @@ void guDbLibrary::UpdateImageFile( const char * filename )
   int                   CoverId;
   wxString              CoverHash;
   wxString              CoverFile = FileName = wxString( filename, wxConvUTF8 );
+  wxString              SaveTo = wxString( saveto, wxConvUTF8 );
 
 
   if( FileName.IsEmpty() )
@@ -1922,11 +1923,11 @@ void guDbLibrary::UpdateImageFile( const char * filename )
 
   if( guIsValidAudioFile( FileName ) )
   {
-    guLogMessage( wxT( "Trying to get image from file '%s'" ), FileName.c_str() );
+    //guLogMessage( wxT( "Trying to get image from file '%s'" ), FileName.c_str() );
     wxImage * Image = guTagGetPicture( FileName );
     if( Image )
     {
-        CoverFile = wxPathOnly( FileName ) + wxT( '/' ) + wxT( "cover.jpg" );
+        CoverFile = wxPathOnly( FileName ) + wxT( '/' ) + SaveTo;
         if( !Image->SaveFile( CoverFile, wxBITMAP_TYPE_JPEG ) )
         {
             delete Image;

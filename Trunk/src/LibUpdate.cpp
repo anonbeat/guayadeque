@@ -226,6 +226,10 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         }
     }
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+    wxString CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+
     count = m_ImageFiles.Count();
     if( count )
     {
@@ -238,7 +242,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             if( ( index >= count ) )
                 break;
 
-            m_Db->UpdateImageFile( m_ImageFiles[ index ].char_str() );
+            m_Db->UpdateImageFile( m_ImageFiles[ index ].ToUTF8(), CoverName.ToUTF8() );
             index++;
             evtup.SetExtraLong( index );
             wxPostEvent( m_MainFrame, evtup );
