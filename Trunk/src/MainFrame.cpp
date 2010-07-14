@@ -2442,7 +2442,8 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     }
     else if( m_CurrentPage == ( wxWindow * ) m_PodcastsPanel )
     {
-        m_Db->GetPodcastCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+        m_PodcastsPanel->GetCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+        //m_Db->GetPodcastCounters( &m_SelCount, &m_SelLength, &m_SelSize );
 
         wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
         SelInfo += m_SelCount == 1 ? _( "podcast" ) : _( "podcasts" );

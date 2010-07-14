@@ -271,8 +271,8 @@ guDbLibrary::guDbLibrary() : guDb()
     m_TracksOrder = ( guTRACKS_ORDER ) Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
     m_AlbumsOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
-    m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
-    m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
+    //m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
+    //m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
 
   LoadCache();
@@ -291,8 +291,8 @@ guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
     m_TracksOrder = ( guTRACKS_ORDER ) Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
     m_AlbumsOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
-    m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
-    m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
+    //m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
+    //m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
 
   LoadCache();
@@ -306,8 +306,8 @@ guDbLibrary::~guDbLibrary()
   {
     Config->WriteNum( wxT( "TracksOrder" ), m_TracksOrder, wxT( "General" ) );
     Config->WriteBool( wxT( "TracksOrderDesc" ), m_TracksOrderDesc, wxT( "General" ) );
-    Config->WriteNum( wxT( "Order" ), m_PodcastOrder, wxT( "Podcasts" ) );
-    Config->WriteBool( wxT( "OrderDesc" ), m_PodcastOrderDesc, wxT( "Podcasts" ) );
+    //Config->WriteNum( wxT( "Order" ), m_PodcastOrder, wxT( "Podcasts" ) );
+    //Config->WriteBool( wxT( "OrderDesc" ), m_PodcastOrderDesc, wxT( "Podcasts" ) );
     Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlbumsOrder, wxT( "General" ) );
   }
 
@@ -5772,7 +5772,7 @@ void guDbLibrary::DelPodcastChannel( const int id )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastItems( guPodcastItemArray * items )
+int guDbLibrary::GetPodcastItems( guPodcastItemArray * items, const wxArrayInt &filters, const int order, const bool desc )
 {
   wxASSERT( items );
   wxString query;
@@ -5787,34 +5787,48 @@ int guDbLibrary::GetPodcastItems( guPodcastItemArray * items )
             "FROM podcastitems, podcastchs "
             "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
 
-  if( m_PodChFilters.Count() )
+  if( filters.Count() )
   {
-        query += wxT( " AND " ) + ArrayToFilter( m_PodChFilters, wxT( "podcastitem_chid" ) );
+        query += wxT( " AND " ) + ArrayToFilter( filters, wxT( "podcastitem_chid" ) );
   }
 
   query += wxT( " ORDER BY " );
-  if( m_PodcastOrder == guPODCASTS_COLUMN_TITLE )
-    query += wxT( "podcastitem_title COLLATE NOCASE" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_CHANNEL )
-    query += wxT( "podcastch_title COLLATE NOCASE" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_CATEGORY )
-    query += wxT( "podcastch_category COLLATE NOCASE" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_DATE )
-    query += wxT( "podcastitem_time" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_LENGTH )
-    query += wxT( "podcastitem_length" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_AUTHOR )
-    query += wxT( "podcastitem_author COLLATE NOCASE" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_PLAYCOUNT )
-    query += wxT( "podcastitem_playcount" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_LASTPLAY )
-    query += wxT( "podcastitem_lastplay" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_ADDEDDATE )
-    query += wxT( "podcastitem_addeddate" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_STATUS )
-    query += wxT( "podcastitem_status" );
 
-  if( m_PodcastOrderDesc )
+  switch( order )
+  {
+      case guPODCASTS_COLUMN_TITLE :
+        query += wxT( "podcastitem_title COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_CHANNEL :
+        query += wxT( "podcastch_title COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_CATEGORY :
+        query += wxT( "podcastch_category COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_DATE :
+        query += wxT( "podcastitem_time" );
+        break;
+      case guPODCASTS_COLUMN_LENGTH :
+        query += wxT( "podcastitem_length" );
+        break;
+      case guPODCASTS_COLUMN_AUTHOR :
+        query += wxT( "podcastitem_author COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_PLAYCOUNT :
+        query += wxT( "podcastitem_playcount" );
+        break;
+      case guPODCASTS_COLUMN_LASTPLAY :
+        query += wxT( "podcastitem_lastplay" );
+        break;
+      case guPODCASTS_COLUMN_ADDEDDATE :
+        query += wxT( "podcastitem_addeddate" );
+        break;
+      case guPODCASTS_COLUMN_STATUS :
+        query += wxT( "podcastitem_status" );
+        break;
+  }
+
+  if( desc )
     query += wxT( " DESC;" );
 
   dbRes = ExecuteQuery( query );
@@ -5846,7 +5860,7 @@ int guDbLibrary::GetPodcastItems( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::GetPodcastCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+void guDbLibrary::GetPodcastCounters( const wxArrayInt &filters, wxLongLong * count, wxLongLong * len, wxLongLong * size )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -5855,9 +5869,9 @@ void guDbLibrary::GetPodcastCounters( wxLongLong * count, wxLongLong * len, wxLo
             "FROM podcastitems, podcastchs "
             "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
 
-  if( m_PodChFilters.Count() )
+  if( filters.Count() )
   {
-        query += wxT( " AND " ) + ArrayToFilter( m_PodChFilters, wxT( "podcastitem_chid" ) );
+        query += wxT( " AND " ) + ArrayToFilter( filters, wxT( "podcastitem_chid" ) );
   }
 
   dbRes = ExecuteQuery( query );
@@ -5872,7 +5886,7 @@ void guDbLibrary::GetPodcastCounters( wxLongLong * count, wxLongLong * len, wxLo
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items )
+int guDbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items, const int order, const bool desc )
 {
   wxASSERT( items );
   wxString query;
@@ -5889,28 +5903,42 @@ int guDbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * it
             "AND " ) + ArrayToFilter( ids, wxT( "podcastitem_id" ) );
 
   query += wxT( " ORDER BY " );
-  if( m_PodcastOrder == guPODCASTS_COLUMN_TITLE )
-    query += wxT( "podcastitem_title COLLATE NOCASE" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_CHANNEL )
-    query += wxT( "podcastch_title COLLATE NOCASE" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_CATEGORY )
-    query += wxT( "podcastch_category COLLATE NOCASE" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_DATE )
-    query += wxT( "podcastitem_time" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_LENGTH )
-    query += wxT( "podcastitem_length" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_AUTHOR )
-    query += wxT( "podcastitem_author COLLATE NOCASE" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_PLAYCOUNT )
-    query += wxT( "podcastitem_playcount" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_LASTPLAY )
-    query += wxT( "podcastitem_lastplay" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_ADDEDDATE )
-    query += wxT( "podcastitem_addeddate" );
-  else if( m_PodcastOrder == guPODCASTS_COLUMN_STATUS )
-    query += wxT( "podcastitem_status" );
 
-  if( m_PodcastOrderDesc )
+  switch( order )
+  {
+      case guPODCASTS_COLUMN_TITLE :
+        query += wxT( "podcastitem_title COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_CHANNEL :
+        query += wxT( "podcastch_title COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_CATEGORY :
+        query += wxT( "podcastch_category COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_DATE :
+        query += wxT( "podcastitem_time" );
+        break;
+      case guPODCASTS_COLUMN_LENGTH :
+        query += wxT( "podcastitem_length" );
+        break;
+      case guPODCASTS_COLUMN_AUTHOR :
+        query += wxT( "podcastitem_author COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_PLAYCOUNT :
+        query += wxT( "podcastitem_playcount" );
+        break;
+      case guPODCASTS_COLUMN_LASTPLAY :
+        query += wxT( "podcastitem_lastplay" );
+        break;
+      case guPODCASTS_COLUMN_ADDEDDATE :
+        query += wxT( "podcastitem_addeddate" );
+        break;
+      case guPODCASTS_COLUMN_STATUS :
+        query += wxT( "podcastitem_status" );
+        break;
+  }
+
+  if( desc )
     query += wxT( " DESC;" );
 
   dbRes = ExecuteQuery( query );
@@ -6211,30 +6239,30 @@ void guDbLibrary::DelPodcastItems( const int channelid )
   ExecuteUpdate( query );
 }
 
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SetPodcastChannelFilters( const wxArrayInt &filters )
-{
-    if( filters.Index( 0 ) != wxNOT_FOUND )
-    {
-        m_PodChFilters.Empty();
-    }
-    else
-    {
-        m_PodChFilters = filters;
-    }
-}
+//// -------------------------------------------------------------------------------- //
+//void guDbLibrary::SetPodcastChannelFilters( const wxArrayInt &filters )
+//{
+//    if( filters.Index( 0 ) != wxNOT_FOUND )
+//    {
+//        m_PodChFilters.Empty();
+//    }
+//    else
+//    {
+//        m_PodChFilters = filters;
+//    }
+//}
 
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SetPodcastOrder( int order )
-{
-    if( m_PodcastOrder != order )
-    {
-        m_PodcastOrder = order;
-        m_PodcastOrderDesc = ( order != 0 );
-    }
-    else
-        m_PodcastOrderDesc = !m_PodcastOrderDesc;
-}
+//// -------------------------------------------------------------------------------- //
+//void guDbLibrary::SetPodcastOrder( int order )
+//{
+//    if( m_PodcastOrder != order )
+//    {
+//        m_PodcastOrder = order;
+//        m_PodcastOrderDesc = ( order != 0 );
+//    }
+//    else
+//        m_PodcastOrderDesc = !m_PodcastOrderDesc;
+//}
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
