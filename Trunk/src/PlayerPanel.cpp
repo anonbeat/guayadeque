@@ -1330,6 +1330,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
                 do {
                     if( ( wxFileOffset ) LevelInfoArray[ Index ]->m_EndTime > CurTime )
                         break;
+                    //guLogMessage( wxT( "Dropped level event %i .- %lli %lli   (%lli)" ), Index, LevelInfoArray[ Index ]->m_EndTime, CurTime, CurTime - LevelInfoArray[ Index ]->m_EndTime );
                     Index++;
                 } while( Index < Count );
                 break;
