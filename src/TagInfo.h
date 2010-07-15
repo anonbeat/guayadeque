@@ -188,9 +188,9 @@ class guMp4TagInfo : public guTagInfo
     virtual bool        Read( void );
     virtual bool        Write( void );
 
-//    virtual bool        CanHandleImages( void );  // Need taglib 1.6.1 to implement it as I dont want to depend on libmp4
-//    virtual wxImage *   GetImage( void );
-//    virtual bool        SetImage( const wxImage * image );
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
 
     virtual bool        CanHandleLyrics( void );
     virtual wxString    GetLyrics( void );
@@ -227,6 +227,9 @@ class guMpcTagInfo : public guTagInfo
     virtual bool        Read( void );
     virtual bool        Write( void );
 
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
 };
 
 
