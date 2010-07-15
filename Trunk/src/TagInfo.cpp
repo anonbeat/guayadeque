@@ -145,7 +145,7 @@ wxImage * GetID3v2Image( ID3v2::Tag * tagv2 )
 {
     TagLib::ID3v2::FrameList FrameList = tagv2->frameListMap()["APIC"];
 
-    wxImage * CoverImage = GetID3v2ImageType( FrameList );
+    wxImage * CoverImage = GetID3v2ImageType( FrameList, TagLib::ID3v2::AttachedPictureFrame::FrontCover );
 
     if( !CoverImage )
     {
@@ -325,17 +325,76 @@ bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyric
     return false;
 }
 
-//// -------------------------------------------------------------------------------- //
-//wxImage * GetMp4Image( TagLib::MP4::Tag * mp4tag )
-//{
-//    return NULL;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//bool SetMp4Image( TagLib::MP4::Tag * mp4tag, const wxImage * image )
-//{
-//    return false;
-//}
+// -------------------------------------------------------------------------------- //
+wxImage * GetMp4Image( TagLib::MP4::Tag * mp4tag )
+{
+    if( mp4tag && mp4tag->itemListMap().contains( "covr" ) )
+    {
+        TagLib::MP4::CoverArtList Covers = mp4tag->itemListMap()[ "covr" ].toCoverArtList();
+
+        for( TagLib::MP4::CoverArtList::Iterator it = Covers.begin(); it != Covers.end(); it++ )
+        {
+            int ImgType = wxBITMAP_TYPE_INVALID;
+            if( it->format() == TagLib::MP4::CoverArt::PNG )
+            {
+                ImgType = wxBITMAP_TYPE_PNG;
+            }
+            else if( it->format() == TagLib::MP4::CoverArt::JPEG )
+            {
+                ImgType = wxBITMAP_TYPE_JPEG;
+            }
+
+            wxMemoryOutputStream ImgOutStream;
+            ImgOutStream.Write( it->data().data(), it->data().size() );
+            wxMemoryInputStream ImgInputStream( ImgOutStream );
+            wxImage * CoverImage = new wxImage( ImgInputStream, ImgType );
+            if( CoverImage )
+            {
+                if( CoverImage->IsOk() )
+                {
+                    return CoverImage;
+                }
+                else
+                {
+                    delete CoverImage;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+bool SetMp4Image( TagLib::MP4::Tag * mp4tag, const wxImage * image )
+{
+    if( mp4tag )
+    {
+        if( mp4tag->itemListMap().contains( "covr" ) )
+        {
+            mp4tag->itemListMap().erase( "covr" );
+        }
+
+        if( image )
+        {
+            wxMemoryOutputStream ImgOutputStream;
+            if( image && image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
+            {
+                ByteVector ImgData( ( TagLib::uint ) ImgOutputStream.GetSize() );
+                ImgOutputStream.CopyTo( ImgData.data(), ImgOutputStream.GetSize() );
+
+                TagLib::MP4::CoverArtList CoverList;
+                TagLib::MP4::CoverArt Cover( TagLib::MP4::CoverArt::JPEG, ImgData );
+                CoverList.append( Cover );
+                mp4tag->itemListMap()[ "covr" ] = CoverList;
+
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
 
 // -------------------------------------------------------------------------------- //
 wxString GetMp4Lyrics( TagLib::MP4::Tag * mp4tag )
@@ -367,7 +426,57 @@ bool SetMp4Lyrics( TagLib::MP4::Tag * mp4tag, const wxString &lyrics )
     return false;
 }
 
+// -------------------------------------------------------------------------------- //
+wxImage * GetApeItemImage( const TagLib::APE::Item &item )
+{
+    if( item.type() == TagLib::APE::Item::Binary )
+    {
+        TagLib::ByteVector CoverData = item.value();
 
+        if( CoverData.size() )
+        {
+            wxMemoryOutputStream ImgOutStream;
+            ImgOutStream.Write( CoverData.data(), CoverData.size() );
+            wxMemoryInputStream ImgInputStream( ImgOutStream );
+            wxImage * CoverImage = new wxImage( ImgInputStream, wxBITMAP_TYPE_JPEG );
+            if( CoverImage )
+            {
+                if( CoverImage->IsOk() )
+                {
+                    return CoverImage;
+                }
+                else
+                {
+                    delete CoverImage;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * GetApeImage( TagLib::APE::Tag * apetag )
+{
+    if( apetag )
+    {
+        if( apetag->itemListMap().contains( "Cover Art (front)" ) )
+        {
+            return GetApeItemImage( apetag->itemListMap()[ "Cover Art (front)" ] );
+        }
+        else if( apetag->itemListMap().contains( "Cover Art (other)" ) )
+        {
+            return GetApeItemImage( apetag->itemListMap()[ "Cover Art (other)" ] );
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+bool SetApeImage( TagLib::APE::Tag * apetag, const wxImage * image )
+{
+    return false;
+}
 
 
 // -------------------------------------------------------------------------------- //
@@ -1157,113 +1266,23 @@ bool guMp4TagInfo::Write( void )
     return guTagInfo::Write();
 }
 
-//// -------------------------------------------------------------------------------- //
-//bool guMp4TagInfo::CanHandleImages( void )
-//{
-//    return true;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//wxImage * guMp4TagInfo::GetImage( void )
-//{
-//    MP4FileHandle mp4_file = MP4Read( m_FileName.mb_str( wxConvFile ) );
-//    if( mp4_file != MP4_INVALID_FILE_HANDLE )
-//    {
-//        if( MP4GetMetadataCoverArtCount( mp4_file ) )
-//        {
-//            uint8_t *   CoverData;
-//            uint32_t    CoverSize;
-//            if( MP4GetMetadataCoverArt( mp4_file, &CoverData, &CoverSize ) )
-//            {
-//                wxMemoryOutputStream ImgOutStream;
-//                ImgOutStream.Write( CoverData, CoverSize );
-//                wxMemoryInputStream ImgInputStream( ImgOutStream );
-//                // TODO : Determine image type from data stream
-//                wxImage * CoverImage = new wxImage( ImgInputStream, wxBITMAP_TYPE_JPEG );
-//                if( !CoverImage || !CoverImage->IsOk() )
-//                {
-//                    if( CoverImage )
-//                        delete CoverImage;
-//                    CoverImage = new wxImage( ImgInputStream, wxBITMAP_TYPE_PNG );
-//                }
-//
-//                if( CoverImage )
-//                {
-//                    if( CoverImage->IsOk() )
-//                    {
-//                        return CoverImage;
-//                    }
-//                    else
-//                    {
-//                        delete CoverImage;
-//                    }
-//                }
-//            }
-//        }
-//        MP4Close( mp4_file );
-//    }
-//    else
-//    {
-//        guLogError( wxT( "GetImage : could not open the file %s" ), m_FileName.c_str() );
-//    }
-//    return NULL;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//bool guMp4TagInfo::SetImage( const wxImage * image )
-//{
-//    bool RetVal = false;
-//    MP4FileHandle mp4_file = MP4Modify( m_FileName.mb_str( wxConvFile ) );
-//    if( mp4_file != MP4_INVALID_FILE_HANDLE )
-//    {
-//        if( image )
-//        {
-//            wxMemoryOutputStream ImgOutputStream;
-//            if( image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
-//            {
-//                uint8_t * CoverData = ( uint8_t * ) malloc( ImgOutputStream.GetSize() );
-//                if( CoverData )
-//                {
-//                    ImgOutputStream.CopyTo( CoverData, ImgOutputStream.GetSize() );
-//                    RetVal = MP4SetMetadataCoverArt( mp4_file, CoverData, ImgOutputStream.GetSize() );
-//                    free( CoverData );
-//                }
-//                else
-//                {
-//                    guLogError( wxT( "could not allocate memory for image processing %s" ), m_FileName.c_str() );
-//                }
-//            }
-//        }
-//        else
-//        {
-//            RetVal = MP4DeleteMetadataCoverArt( mp4_file );
-//        }
-//        MP4Close( mp4_file );
-//    }
-//    else
-//    {
-//        guLogError( wxT( "SetImage : could not open the file %s" ), m_FileName.c_str() );
-//    }
-//    return RetVal;
-//}
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::CanHandleImages( void )
+{
+    return true;
+}
 
-//// -------------------------------------------------------------------------------- //
-//bool guMp4TagInfo::CanHandleImages( void )
-//{
-//    return true;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//wxImage * guMp4TagInfo::GetImage( void )
-//{
-//    return GetMp4Image( m_Mp4Tag );
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//bool guMp4TagInfo::SetImage( const wxImage * image )
-//{
-//    return SetMp4Image( m_Mp4Tag, image ) && m_TagFile->save();
-//}
+// -------------------------------------------------------------------------------- //
+wxImage * guMp4TagInfo::GetImage( void )
+{
+    return GetMp4Image( m_Mp4Tag );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMp4TagInfo::SetImage( const wxImage * image )
+{
+    return SetMp4Image( m_Mp4Tag, image ) && m_Mp4Tag->save();
+}
 
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::CanHandleLyrics( void )
@@ -1353,6 +1372,27 @@ bool guMpcTagInfo::Write( void )
     }
     return guTagInfo::Write();
 }
+
+// -------------------------------------------------------------------------------- //
+bool guMpcTagInfo::CanHandleImages( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guMpcTagInfo::GetImage( void )
+{
+    return GetApeImage( m_ApeTag );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMpcTagInfo::SetImage( const wxImage * image )
+{
+    return m_ApeTag && SetApeImage( m_ApeTag, image ) && Write();
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guApeTagInfo

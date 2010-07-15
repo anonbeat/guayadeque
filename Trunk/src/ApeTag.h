@@ -60,6 +60,7 @@
 #define APE_TAG_KEY_DUMMY               wxT( "Dummy" )
 
 #define APE_TAG_KEY_COVER_ART_FRONT     wxT( "Cover Art (front)" )
+#define APE_TAG_KEY_COVER_ART_OTHER     wxT( "Cover Art (other)" )
 #define APE_TAG_KEY_NOTES               wxT( "Notes" )
 #define APE_TAG_KEY_LYRICS              wxT( "Lyrics" )
 #define APE_TAG_KEY_BUY_URL             wxT( "Buy URL" )
