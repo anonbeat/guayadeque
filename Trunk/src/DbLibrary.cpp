@@ -219,10 +219,12 @@ wxString TextFilterToSQL( const wxArrayString &TeFilters )
   {
     for( index = 0; index < count; index++ )
     {
-        RetVal += wxT( "( song_name LIKE '%" ) + escape_query_str( TeFilters[ index ] ) + wxT( "%' OR " );
-        RetVal += wxT( " song_artist LIKE '%" ) +  escape_query_str( TeFilters[ index ] ) + wxT( "%' OR " );
-        RetVal += wxT( " song_composer LIKE '%" ) +  escape_query_str( TeFilters[ index ] ) + wxT( "%' OR " );
-        RetVal += wxT( " song_album LIKE '%" ) +  escape_query_str( TeFilters[ index ] ) + wxT( "%' ) " );
+        wxString Filter = escape_query_str( TeFilters[ index ] );
+        RetVal += wxT( "( song_name LIKE '%" ) + Filter + wxT( "%' OR " );
+        RetVal += wxT( " song_albumartist LIKE '%" ) +  Filter + wxT( "%' OR " );
+        RetVal += wxT( " song_artist LIKE '%" ) +  Filter + wxT( "%' OR " );
+        RetVal += wxT( " song_composer LIKE '%" ) +  Filter + wxT( "%' OR " );
+        RetVal += wxT( " song_album LIKE '%" ) +  Filter + wxT( "%' ) " );
         RetVal += wxT( "AND " );
     }
     RetVal = RetVal.RemoveLast( 4 );
@@ -2812,8 +2814,10 @@ wxString inline AlbumBrowserTextFilterToSQL( const wxArrayString &textfilters )
   {
     for( index = 0; index < count; index++ )
     {
-        RetVal += wxT( "( song_album LIKE '%" ) + escape_query_str( textfilters[ index ] ) + wxT( "%' OR " );
-        RetVal += wxT( " song_artist LIKE '%" ) + escape_query_str( textfilters[ index ] ) + wxT( "%' ) " );
+        wxString Filter = escape_query_str( textfilters[ index ] );
+        RetVal += wxT( "( song_album LIKE '%" ) + Filter + wxT( "%' OR " );
+        RetVal += wxT( " song_albumartist LIKE '%" ) + Filter + wxT( "%' OR " );
+        RetVal += wxT( " song_artist LIKE '%" ) + Filter + wxT( "%' ) " );
         RetVal += wxT( "AND " );
     }
     RetVal = RetVal.RemoveLast( 4 );
@@ -2875,7 +2879,7 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
   wxSQLite3ResultSet    dbRes;
   wxString              subquery;
 
-  query = wxT( "SELECT song_albumid, song_album, song_artistid, song_artist, song_coverid FROM songs " );
+  query = wxT( "SELECT song_albumid, song_album, song_artistid, song_albumartist, song_artist, song_coverid FROM songs " );
   if( filter )
   {
     subquery = DynPlayListToSQLQuery( filter );
@@ -2940,7 +2944,9 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
       Item->m_AlbumName = dbRes.GetString( 1 );
       Item->m_ArtistId = dbRes.GetInt( 2 );
       Item->m_ArtistName = dbRes.GetString( 3 );
-      Item->m_CoverId = dbRes.GetInt( 4 );
+      if( Item->m_ArtistName.IsEmpty() )
+        Item->m_ArtistName = dbRes.GetString( 4 );
+      Item->m_CoverId = dbRes.GetInt( 5 );
       Item->m_CoverBitmap = GetCoverBitmap( Item->m_CoverId, false );
       Item->m_Year = 0; //dbRes.GetInt( 4 );
       Item->m_TrackCount = 0; //dbRes.GetInt( 5 );

@@ -1,4 +1,6 @@
-
+  
+  * Implemented reading/writing images into m4a files
+  * Library search covers scan now into audio files too
   * Added Jump to Next and Previous albums in playlist
   * Added Album Artist list box to the library tab
   * Improved library browse speed and memory usage
