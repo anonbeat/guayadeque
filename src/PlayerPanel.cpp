@@ -1041,60 +1041,60 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
     TrackListChanged();
 }
 
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::UpdateStatus()
-{
-    guMediaState State;
-    //wxFileOffset CurPos;
-    static bool IsUpdatingStatus = false;
-
-    if( IsUpdatingStatus )
-        return;
-
-    IsUpdatingStatus = true;
-
-    State = m_MediaCtrl->GetState();
-
-    if( State == guMEDIASTATE_PLAYING )
-    {
-        // Some track lengths are not correctly read by taglib so
-        // we try to find the length from gstreamer and update the database
-        // We need to not do this for radiostations or online streams
-        if( m_MediaSong.m_Length == 0 &&
-            m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
-        {
-            m_MediaSong.m_Length = m_MediaCtrl->GetLength();
-
-            if( m_MediaSong.m_SongId )
-            {
-                if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
-                    m_Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
-                else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
-                    m_Db->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
-            }
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
-        }
-
-        // When tags are received while buffering the rename gets pending till the track start playing again
-        // To avoid get the stream paused.
-        if( m_PendingNewRecordName && ( m_BufferGaugeId == wxNOT_FOUND ) )
-        {
-            m_PendingNewRecordName = false;
-            m_MediaRecordCtrl->SplitTrack();
-        }
-    }
-
-    // Total Length
-    if( m_LastTotalLen != m_PlayListCtrl->GetLength() )
-    {
-        m_LastTotalLen = m_PlayListCtrl->GetLength();
-        TrackListChanged();
-    }
-
-    IsUpdatingStatus = false;
-}
+//// -------------------------------------------------------------------------------- //
+//void guPlayerPanel::UpdateStatus()
+//{
+//    guMediaState State;
+//    //wxFileOffset CurPos;
+//    static bool IsUpdatingStatus = false;
+//
+//    if( IsUpdatingStatus )
+//        return;
+//
+//    IsUpdatingStatus = true;
+//
+//    State = m_MediaCtrl->GetState();
+//
+//    if( State == guMEDIASTATE_PLAYING )
+//    {
+//        // Some track lengths are not correctly read by taglib so
+//        // we try to find the length from gstreamer and update the database
+//        // We need to not do this for radiostations or online streams
+//        if( m_MediaSong.m_Length == 0 &&
+//            m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+//        {
+//            m_MediaSong.m_Length = m_MediaCtrl->GetLength();
+//
+//            if( m_MediaSong.m_SongId )
+//            {
+//                if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+//                    m_Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+//                else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
+//                    m_Db->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+//            }
+//
+//            // Update the track in database, playlist, etc
+//            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+//        }
+//
+//        // When tags are received while buffering the rename gets pending till the track start playing again
+//        // To avoid get the stream paused.
+//        if( m_PendingNewRecordName && ( m_BufferGaugeId == wxNOT_FOUND ) )
+//        {
+//            m_PendingNewRecordName = false;
+//            m_MediaRecordCtrl->SplitTrack();
+//        }
+//    }
+//
+//    // Total Length
+//    if( m_LastTotalLen != m_PlayListCtrl->GetLength() )
+//    {
+//        m_LastTotalLen = m_PlayListCtrl->GetLength();
+//        TrackListChanged();
+//    }
+//
+//    IsUpdatingStatus = false;
+//}
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnSmartAddTracks( wxCommandEvent &event )
@@ -1173,6 +1173,7 @@ void guPlayerPanel::SetNextTrack( const guTrack * Song )
 
     m_NextSong = * Song;
     //m_NextTrackId = true;
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1743,43 +1744,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 {
     guLogMessage( wxT( "OnMediaPlayStarted  %li" ), m_NextTrackId );
 
-    // Check if the Current Song have played more than the half and if so add it to
-    // The CachedPlayedSong database to be submitted to LastFM AudioScrobbling
-    if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ) // If its not a radiostation
-    {
-        guLogMessage( wxT( "PlayTime: %u Length: %u" ), m_MediaSong.m_PlayTime, m_MediaSong.m_Length );
-        if( ( ( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
-            ( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) ) ) && // If have played at least the half
-            ( m_MediaSong.m_PlayTime > guAS_MIN_TRACKLEN ) )    // If the Length is more than 30 secs
-        {
-            if( !m_MediaSong.m_SongName.IsEmpty() &&    // Check if we have no missing data
-                !m_MediaSong.m_ArtistName.IsEmpty() )
-            {
-                //
-                m_AudioScrobble->SendPlayedTrack( m_MediaSong );
-            }
-        }
-    }
-
-    // Update the play count if it has player at least the half of the track
-    if( m_MediaSong.m_Loaded &&
-        ( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
-          ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) ) )  // If its a song from the library
-    {
-        if( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) )  // If have played at least the half
-        {
-            m_MediaSong.m_PlayCount++;
-
-            if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
-                m_Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
-            else
-                m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
-
-            // Update the track in database, playlist, etc
-            if( ( guMainFrame * ) wxTheApp->GetTopWindow() )
-                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
-        }
-    }
+    if( !m_SavedPlayedTrack )
+        SavePlayedTrack();
 
     // Enable or disables the record button. Only enabled for radio stations
     m_RecordButton->Enable( ( m_NextSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
@@ -1801,6 +1767,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     m_NextTrackId = 0;
     m_MediaSong = m_NextSong;
     m_TrackChanged = true;
+    m_SavedPlayedTrack = false;
 
     // Update the Current Playing Song Info
     UpdateLabels();
@@ -1945,6 +1912,56 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::SavePlayedTrack( void )
+{
+    guLogMessage( wxT( "SavePlayedTrack %i     %li" ), m_SavedPlayedTrack, m_NextTrackId );
+
+    if( m_SavedPlayedTrack )
+        return;
+
+    m_SavedPlayedTrack = true;
+
+    // Check if the Current Song have played more than the half and if so add it to
+    // The CachedPlayedSong database to be submitted to LastFM AudioScrobbling
+    if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ) // If its not a radiostation
+    {
+        guLogMessage( wxT( "PlayTime: %u Length: %u" ), m_MediaSong.m_PlayTime, m_MediaSong.m_Length );
+        if( ( ( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
+            ( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) ) ) && // If have played at least the half
+            ( m_MediaSong.m_PlayTime > guAS_MIN_TRACKLEN ) )    // If the Length is more than 30 secs
+        {
+            if( !m_MediaSong.m_SongName.IsEmpty() &&    // Check if we have no missing data
+                !m_MediaSong.m_ArtistName.IsEmpty() )
+            {
+                //
+                m_AudioScrobble->SendPlayedTrack( m_MediaSong );
+            }
+        }
+    }
+
+    // Update the play count if it has player at least the half of the track
+    if( m_MediaSong.m_Loaded &&
+        ( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
+          ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) ) )  // If its a song from the library
+    {
+        if( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) )  // If have played at least the half
+        {
+            m_MediaSong.m_PlayCount++;
+
+            if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+                m_Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+            else
+                m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+
+            // Update the track in database, playlist, etc
+            if( ( guMainFrame * ) wxTheApp->GetTopWindow() )
+                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+        }
+    }
+
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 {
     guLogMessage( wxT( "OnMediaFinished (%li) Cur: %i  %li" ), event.GetExtraLong(), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
@@ -1982,11 +1999,15 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
                     m_PlayerFilters->GetAllowFilterId(),
                     m_PlayerFilters->GetDenyFilterId() ) )
             {
-                AddToPlayList( Tracks, false );
+                if( Tracks.Count() )
+                {
+                    AddToPlayList( Tracks, false );
 
-                OnMediaFinished( event );
+                    OnMediaFinished( event );
+                }
             }
         }
+        SavePlayedTrack();
     }
 }
 
@@ -2343,6 +2364,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
         }
         else if( State == guMEDIASTATE_STOPPED )
         {
+            m_SavedPlayedTrack = false;
             //guLogMessage( wxT( "Loading '%s'" ), m_NextSong.m_FileName.c_str() );
             LoadMedia( m_NextSong.m_FileName,
                 m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
@@ -2389,6 +2411,7 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 //            m_PlayerPositionSlider->SetValue( 0 );
 //        ResetVumeterLevel();
     //}
+    SavePlayedTrack();
 }
 
 // -------------------------------------------------------------------------------- //

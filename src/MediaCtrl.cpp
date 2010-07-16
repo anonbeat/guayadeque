@@ -830,7 +830,7 @@ static void faderplaybin_pad_added_cb( GstElement * decoder, GstPad * pad, guFad
 	MediaType = gst_structure_get_name( Structure );
 	if( g_str_has_prefix( MediaType, "audio/x-raw" ) == FALSE )
 	{
-		guLogMessage( wxT( "got non-audio decoded caps: %s" ), MediaType );
+		guLogMessage( wxT( "got non-audio decoded caps: %s" ), wxString( MediaType, wxConvUTF8 ).c_str() );
 	}
 	else if( faderplaybin->m_DecoderLinked )
 	{
