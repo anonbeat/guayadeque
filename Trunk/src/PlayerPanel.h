@@ -251,6 +251,8 @@ class guPlayerPanel : public wxPanel
 
     bool                    m_ErrorFound;
 
+    int                     m_SavedPlayedTrack;
+
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );
     void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
@@ -265,6 +267,7 @@ class guPlayerPanel : public wxPanel
     void                LoadMedia( const wxString &FileName, guPlayerPlayType playtype );
     void                OnMediaLoaded( guMediaEvent &event );
     void                OnMediaPlayStarted( void );
+    void                SavePlayedTrack( void );
     void                OnMediaFinished( guMediaEvent &event );
     void                OnMediaFadeOutFinished( guMediaEvent &event );
     void                OnMediaFadeInStarted( guMediaEvent &event );
@@ -302,7 +305,7 @@ class guPlayerPanel : public wxPanel
                         guPlayerPanel( wxWindow* parent, guDbLibrary * db,
                                        guPlayList * playlist, guPlayerFilters * filters );
                         ~guPlayerPanel();
-    void                UpdateStatus();
+    //void                UpdateStatus();
     void                SetPlayList( const guTrackArray &SongList );
     void                AddToPlayList( const guTrackArray &SongList, const bool allowplay = true, const bool aftercurrent = false );
     void                AddToPlayList( const wxString &FileName, const bool aftercurrent = false );
