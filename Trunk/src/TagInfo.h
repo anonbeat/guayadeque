@@ -188,9 +188,11 @@ class guMp4TagInfo : public guTagInfo
     virtual bool        Read( void );
     virtual bool        Write( void );
 
+#ifdef TAGLIB_WITH_MP4_COVERS
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
     virtual bool        SetImage( const wxImage * image );
+#endif
 
     virtual bool        CanHandleLyrics( void );
     virtual wxString    GetLyrics( void );

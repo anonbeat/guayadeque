@@ -325,6 +325,7 @@ bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyric
     return false;
 }
 
+#ifdef TAGLIB_WITH_MP4_COVERS
 // -------------------------------------------------------------------------------- //
 wxImage * GetMp4Image( TagLib::MP4::Tag * mp4tag )
 {
@@ -395,6 +396,7 @@ bool SetMp4Image( TagLib::MP4::Tag * mp4tag, const wxImage * image )
     }
     return false;
 }
+#endif
 
 // -------------------------------------------------------------------------------- //
 wxString GetMp4Lyrics( TagLib::MP4::Tag * mp4tag )
@@ -1266,6 +1268,7 @@ bool guMp4TagInfo::Write( void )
     return guTagInfo::Write();
 }
 
+#ifdef TAGLIB_WITH_MP4_COVERS
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::CanHandleImages( void )
 {
@@ -1283,6 +1286,7 @@ bool guMp4TagInfo::SetImage( const wxImage * image )
 {
     return SetMp4Image( m_Mp4Tag, image ) && m_Mp4Tag->save();
 }
+#endif
 
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::CanHandleLyrics( void )
