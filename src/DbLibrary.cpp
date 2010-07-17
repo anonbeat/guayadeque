@@ -2855,7 +2855,7 @@ int guDbLibrary::GetAlbumsCount( guDynPlayList * filter, const wxArrayString &te
     postquery += AlbumBrowserTextFilterToSQL( textfilters );
   }
 
-  //guLogMessage( wxT( "GetAlbumsCount:\n%s" ), ( query + postquery ).c_str() );
+  //SELECT playlist_id, playlist_nameguLogMessage( wxT( "GetAlbumsCount:\n%s" ), ( query + postquery ).c_str() );
 
   dbRes = ExecuteQuery( query + postquery );
 
@@ -3168,7 +3168,8 @@ void guDbLibrary::GetPlayLists( guListItems * PlayLists, const int type, const w
       int Count = textfilters->Count();
       for( Index = 0; Index < Count; Index++ )
       {
-          query += wxT( "AND playlist_name LIKE '%" ) + ( * textfilters )[ Index ] + wxT( "%' " );
+          wxString Filter = escape_query_str( ( * textfilters )[ Index ] );
+          query += wxT( "AND playlist_name LIKE '%" ) + Filter + wxT( "%' " );
       }
   }
 
