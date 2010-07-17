@@ -221,12 +221,14 @@ class guLibPanel : public wxPanel
 
     void inline UpdatedTracks( const guTrackArray * tracks )
     {
-        m_SongListCtrl->UpdatedTracks( tracks );
+        if( m_SongListCtrl )
+            m_SongListCtrl->UpdatedTracks( tracks );
     }
 
     void inline UpdatedTrack( const guTrack * track )
     {
-        m_SongListCtrl->UpdatedTrack( track );
+        if( m_SongListCtrl )
+            m_SongListCtrl->UpdatedTrack( track );
     }
 
 };
