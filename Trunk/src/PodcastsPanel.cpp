@@ -558,7 +558,7 @@ void guPodcastPanel::UpdateChannels( wxCommandEvent &event )
 void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
 {
     wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
-    //m_Db->SetPodcastChannelFilters( SelectedItems );
+    m_PodcastsListBox->SetFilters( SelectedItems );
     m_PodcastsListBox->ReloadItems();
 
     if( SelectedItems.Count() == 1 && SelectedItems[ 0 ] != 0 )
