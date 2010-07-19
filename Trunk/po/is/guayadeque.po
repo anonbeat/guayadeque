@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-15 19:16+0000\n"
-"PO-Revision-Date: 2010-07-15 19:16-0000\n"
+"POT-Creation-Date: 2010-07-19 13:09+0000\n"
+"PO-Revision-Date: 2010-07-19 13:11-0000\n"
 "Last-Translator: Hreinn Jónsson <hreinsijons@simnet.is>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "MIME-Version: 1.0\n"
@@ -33,7 +33,7 @@ msgstr ""
 #: PodcastsPanel.cpp:1262
 #: RadioPanel.cpp:713
 #: RaListBox.cpp:95
-#: SoListBox.cpp:407
+#: SoListBox.cpp:409
 #: TaListBox.cpp:87
 #: TaskBar.cpp:125
 #: YeListBox.cpp:60
@@ -62,7 +62,7 @@ msgstr "Spila valdar plötur flytjanda"
 #: PodcastsPanel.cpp:1266
 #: RadioPanel.cpp:717
 #: RaListBox.cpp:99
-#: SoListBox.cpp:415
+#: SoListBox.cpp:420
 #: TaListBox.cpp:91
 #: YeListBox.cpp:64
 msgid "Enqueue"
@@ -93,7 +93,7 @@ msgstr "Bæta völdum lögum við lagalista"
 #: PodcastsPanel.cpp:1270
 #: RadioPanel.cpp:721
 #: RaListBox.cpp:103
-#: SoListBox.cpp:419
+#: SoListBox.cpp:424
 #: TaListBox.cpp:95
 #: YeListBox.cpp:68
 msgid "Enqueue Next"
@@ -112,7 +112,7 @@ msgstr "Bæta völdum lögum við lagalista sem næst spilað"
 #: PcListBox.cpp:80
 #: PlayList.cpp:1248
 #: RaListBox.cpp:111
-#: SoListBox.cpp:449
+#: SoListBox.cpp:465
 #: YeListBox.cpp:76
 msgid "Edit Songs"
 msgstr "Breyta lögum"
@@ -139,7 +139,7 @@ msgstr "Breyta völdum lögum"
 #: PodcastsPanel.cpp:1024
 #: PodcastsPanel.cpp:1287
 #: RaListBox.cpp:117
-#: SoListBox.cpp:437
+#: SoListBox.cpp:455
 #: TaListBox.cpp:101
 #: YeListBox.cpp:82
 msgid "Copy to..."
@@ -152,7 +152,7 @@ msgstr "Afrita til..."
 #: GeListBox.cpp:61
 #: PcListBox.cpp:86
 #: RaListBox.cpp:117
-#: SoListBox.cpp:437
+#: SoListBox.cpp:455
 #: TaListBox.cpp:101
 #: YeListBox.cpp:82
 msgid "Copy the current selected songs to a directory or device"
@@ -184,7 +184,7 @@ msgstr "Bæta lögum á plötu við lagalista sem Næst Spilað"
 #: ArListBox.cpp:115
 #: PlayList.cpp:1252
 #: RadioPanel.cpp:749
-#: SoListBox.cpp:445
+#: SoListBox.cpp:461
 msgid "Edit Labels"
 msgstr "Breyta merkjum"
 
@@ -283,14 +283,6 @@ msgstr "Afrita valda möppu til möppu eða tækis"
 msgid "Filter"
 msgstr "Sía"
 
-#: AlbumBrowser.cpp:646
-#: LibPanel.cpp:109
-#: PlayListPanel.cpp:509
-#: RadioPanel.cpp:91
-#: RadioPanel.cpp:981
-msgid "Search:"
-msgstr "Leit:"
-
 #: AlbumBrowser.cpp:653
 msgid "Order By"
 msgstr "Raða eftir"
@@ -330,7 +322,7 @@ msgid "Artist, Year Desc."
 msgstr "Flytjandi, Ár Lækkandi."
 
 #: AlbumBrowser.cpp:1116
-#: LibPanel.cpp:1087
+#: LibPanel.cpp:1091
 #: SelCoverFile.cpp:38
 msgid ""
 "Could not find the Album in the songs library.\n"
@@ -341,13 +333,13 @@ msgstr ""
 
 #: AlbumBrowser.cpp:1117
 #: FileBrowser.cpp:445
-#: LibPanel.cpp:1088
+#: LibPanel.cpp:1092
 #: SelCoverFile.cpp:39
 msgid "Error"
 msgstr "Villa"
 
 #: AlbumBrowser.cpp:1193
-#: LibPanel.cpp:1180
+#: LibPanel.cpp:1184
 msgid "Are you sure to delete the selected album cover?"
 msgstr "Ertu viss um að þú viljir eyða völdu plötuumslagi"
 
@@ -355,8 +347,8 @@ msgstr "Ertu viss um að þú viljir eyða völdu plötuumslagi"
 #: FileBrowser.cpp:434
 #: FileBrowser.cpp:1964
 #: LabelEditor.cpp:304
-#: LibPanel.cpp:1181
-#: PlayListPanel.cpp:881
+#: LibPanel.cpp:1185
+#: PlayListPanel.cpp:885
 #: PodcastsPanel.cpp:438
 #: PodcastsPanel.cpp:818
 #: RadioPanel.cpp:510
@@ -367,7 +359,7 @@ msgid "Confirm"
 msgstr "Staðfesta"
 
 #: AlbumBrowser.cpp:1239
-#: LibPanel.cpp:1035
+#: LibPanel.cpp:1039
 msgid "Albums Labels Editor"
 msgstr "Breyta Merkjum"
 
@@ -577,7 +569,7 @@ msgstr "Titill"
 #: DynamicPlayList.cpp:114
 #: PlayList.cpp:1299
 #: SoListBox.cpp:346
-#: SoListBox.cpp:461
+#: SoListBox.cpp:477
 msgid "Artist"
 msgstr "Flytjandi"
 
@@ -594,7 +586,7 @@ msgstr "Flytjandi Plata"
 #: DynamicPlayList.cpp:116
 #: PlayList.cpp:1302
 #: SoListBox.cpp:348
-#: SoListBox.cpp:464
+#: SoListBox.cpp:480
 msgid "Album"
 msgstr "Plata"
 
@@ -604,7 +596,7 @@ msgstr "Plata"
 #: RadioPanel.cpp:311
 #: RadioPanel.cpp:1014
 #: SoListBox.cpp:349
-#: SoListBox.cpp:458
+#: SoListBox.cpp:474
 msgid "Genre"
 msgstr "Flokkur"
 
@@ -829,7 +821,7 @@ msgstr "Breyta lögum í valdri möppu"
 #: FileBrowser.cpp:957
 #: PlayListAppend.cpp:25
 #: PlayListPanel.cpp:182
-#: SoListBox.cpp:433
+#: SoListBox.cpp:451
 msgid "Save to Playlist"
 msgstr "Vista í Lagalista"
 
@@ -944,7 +936,6 @@ msgid "Rename the current selected file"
 msgstr "Endurnefna valda skrá"
 
 #: FileBrowser.cpp:971
-#: PLSoListBox.cpp:102
 #: PodcastsPanel.cpp:1003
 #: PodcastsPanel.cpp:1276
 msgid "Delete"
@@ -960,9 +951,9 @@ msgstr "Staðsetningar"
 
 #: FileBrowser.cpp:1738
 #: FileBrowser.cpp:1870
-#: LibPanel.cpp:1406
+#: LibPanel.cpp:1410
 #: PlayList.cpp:1382
-#: PlayListPanel.cpp:1219
+#: PlayListPanel.cpp:1223
 msgid "UnNamed"
 msgstr "ÓNefnt"
 
@@ -1277,13 +1268,13 @@ msgstr "Teljari"
 msgid "Composers"
 msgstr "Tónskáld"
 
-#: LibPanel.cpp:903
+#: LibPanel.cpp:907
 msgid "Artist Labels Editor"
 msgstr "Breyta Merki Flytjanda"
 
-#: LibPanel.cpp:1307
+#: LibPanel.cpp:1311
 #: PlayList.cpp:1476
-#: PlayListPanel.cpp:1125
+#: PlayListPanel.cpp:1129
 msgid "Tracks Labels Editor"
 msgstr "Breyta Merkjum Laga"
 
@@ -1968,7 +1959,7 @@ msgid "Record to a file"
 msgstr "Taka upp"
 
 #: PlayerPanel.cpp:186
-#: PlayerPanel.cpp:2610
+#: PlayerPanel.cpp:2639
 msgid "Volume"
 msgstr "Hljóð"
 
@@ -1977,35 +1968,35 @@ msgid "Show the equalizer"
 msgstr "Sýna tónjafnara"
 
 #: PlayerPanel.cpp:199
-#: PlayerPanel.cpp:2030
+#: PlayerPanel.cpp:2057
 msgid "Smart Mode: "
 msgstr "Snjall Hamur: "
 
 #: PlayerPanel.cpp:202
 #: PlayerPanel.cpp:218
-#: PlayerPanel.cpp:2033
-#: PlayerPanel.cpp:2081
+#: PlayerPanel.cpp:2060
+#: PlayerPanel.cpp:2108
 msgid "Off"
 msgstr "Af"
 
 #: PlayerPanel.cpp:206
-#: PlayerPanel.cpp:2037
+#: PlayerPanel.cpp:2064
 msgid "On"
 msgstr "Á"
 
 #: PlayerPanel.cpp:215
-#: PlayerPanel.cpp:2078
+#: PlayerPanel.cpp:2105
 msgid "Repeat Mode: "
 msgstr "Endurtekin Hamur "
 
 #: PlayerPanel.cpp:222
-#: PlayerPanel.cpp:2085
+#: PlayerPanel.cpp:2112
 #: PlayList.cpp:1296
 msgid "Track"
 msgstr "Lag"
 
 #: PlayerPanel.cpp:226
-#: PlayerPanel.cpp:2089
+#: PlayerPanel.cpp:2116
 msgid "Playlist"
 msgstr "Lagalisti"
 
@@ -2041,15 +2032,15 @@ msgstr "Sýna núverandi stöðu og lengd valið lag"
 msgid "Show the bitrate of the current track"
 msgstr "Sýna hraða valið lag"
 
-#: PlayerPanel.cpp:1258
+#: PlayerPanel.cpp:1259
 msgid "Buffering..."
 msgstr "Hleður niður..."
 
-#: PlayerPanel.cpp:1377
-#: TagInfo.cpp:542
-#: TagInfo.cpp:548
-#: TagInfo.cpp:1421
-#: TagInfo.cpp:1427
+#: PlayerPanel.cpp:1379
+#: TagInfo.cpp:544
+#: TagInfo.cpp:550
+#: TagInfo.cpp:1425
+#: TagInfo.cpp:1431
 msgid "Unknown"
 msgstr "Óþekkt"
 
@@ -2135,12 +2126,12 @@ msgid "Selects the current selected track in the library"
 msgstr "Velur valið lag í safni"
 
 #: PlayList.cpp:1299
-#: SoListBox.cpp:461
+#: SoListBox.cpp:477
 msgid "Selects the artist of the current song"
 msgstr "Velur flytjanda valins lags"
 
 #: PlayList.cpp:1302
-#: SoListBox.cpp:464
+#: SoListBox.cpp:480
 msgid "Select the album of the current song"
 msgstr "Velja plötu valins lags"
 
@@ -2153,12 +2144,12 @@ msgid "Select the genre of the current song"
 msgstr "Velja flokk valins lags"
 
 #: PlayList.cpp:1311
-#: SoListBox.cpp:467
+#: SoListBox.cpp:483
 msgid "Select"
 msgstr "Velja"
 
 #: PlayList.cpp:1311
-#: SoListBox.cpp:467
+#: SoListBox.cpp:483
 msgid "Search in the library"
 msgstr "Leita í safni"
 
@@ -2181,22 +2172,22 @@ msgstr "Breytanlegur lagalisti"
 #: PlayListPanel.cpp:142
 #: PodcastsPanel.cpp:1262
 #: RadioPanel.cpp:713
-#: SoListBox.cpp:407
+#: SoListBox.cpp:409
 msgid "Play current selected songs"
 msgstr "Spila valin lög"
 
 #: PlayListPanel.cpp:146
-#: SoListBox.cpp:415
+#: SoListBox.cpp:420
 msgid "Add current selected songs to the playlist"
 msgstr "Bæta völdum lögum við lagalista"
 
 #: PlayListPanel.cpp:150
-#: SoListBox.cpp:419
+#: SoListBox.cpp:424
 msgid "Add current selected songs to the playlist as Next Tracks"
 msgstr "Bæta völdum lögum við lagalista sem næst spilað"
 
 #: PlayListPanel.cpp:158
-#: PlayListPanel.cpp:806
+#: PlayListPanel.cpp:810
 msgid "New Dynamic Playlist"
 msgstr "Nýr Breytanlegur Lagalisti"
 
@@ -2254,28 +2245,32 @@ msgstr "Eyða völdum lagalista"
 msgid "Play Lists"
 msgstr "Lagalistar"
 
-#: PlayListPanel.cpp:805
-#: PlayListPanel.cpp:845
-#: PlayListPanel.cpp:928
+#: PlayListPanel.cpp:809
+#: PlayListPanel.cpp:849
+#: PlayListPanel.cpp:932
 msgid "PlayList Name: "
 msgstr "Nafn Lagalista: "
 
-#: PlayListPanel.cpp:806
-#: PlayListPanel.cpp:846
-#: PlayListPanel.cpp:929
+#: PlayListPanel.cpp:810
+#: PlayListPanel.cpp:850
+#: PlayListPanel.cpp:933
 msgid "Enter the new playlist name"
 msgstr "Breyta nafni á nýjum lagalista"
 
-#: PlayListPanel.cpp:880
+#: PlayListPanel.cpp:884
 msgid "Are you sure to delete the selected Playlist?"
 msgstr "Ertu viss um að þú viljir eyða þessum Lagalista?"
 
-#: PlayListPanel.cpp:929
-#: PlayListPanel.cpp:940
+#: PlayListPanel.cpp:933
+#: PlayListPanel.cpp:944
 msgid "New PlayList"
 msgstr "Nýr Lagalisti"
 
-#: PLSoListBox.cpp:102
+#: PLSoListBox.cpp:103
+msgid "Remove from PlayList"
+msgstr "Fjarlægja úr Lagalista"
+
+#: PLSoListBox.cpp:103
 msgid "Delete the current selected tracks"
 msgstr "Eyða völdum lögum"
 
@@ -2956,6 +2951,10 @@ msgstr "Annað:"
 msgid " Radio Search "
 msgstr "Útvarps Leit:"
 
+#: RadioPanel.cpp:91
+msgid "Search:"
+msgstr "Leit:"
+
 #: RadioPanel.cpp:101
 msgid "Search in now playing info"
 msgstr "leit í nú spilað upplýsingum"
@@ -3189,43 +3188,59 @@ msgstr "Diskur"
 msgid "Last Play"
 msgstr "Síðast Spilað"
 
-#: SoListBox.cpp:411
+#: SoListBox.cpp:414
 msgid "Play All"
 msgstr "Spila Allt"
 
-#: SoListBox.cpp:411
+#: SoListBox.cpp:414
 msgid "Play all songs"
 msgstr "Spila Öll Lög"
 
-#: SoListBox.cpp:423
+#: SoListBox.cpp:429
 msgid "Enqueue All"
 msgstr "Bætta Við Öllum"
 
-#: SoListBox.cpp:423
+#: SoListBox.cpp:429
 msgid "Add all songs to the playlist"
 msgstr "Bæta öllum lögum við lagalista"
 
-#: SoListBox.cpp:427
+#: SoListBox.cpp:433
 msgid "Enqueue All Next"
 msgstr "Bætta Öllu við Næst"
 
-#: SoListBox.cpp:427
+#: SoListBox.cpp:433
 msgid "Add all songs to the playlist as Next Tracks"
 msgstr "Bæta öllum lögum við lagaista sem Næst Spilað"
 
-#: SoListBox.cpp:433
+#: SoListBox.cpp:441
+msgid "Remove from Library"
+msgstr "Fjarlægja úr Safni"
+
+#: SoListBox.cpp:441
+msgid "Remove the current selected tracks from library"
+msgstr "Velur nú valib lög í safni"
+
+#: SoListBox.cpp:445
+msgid "Delete from Drive"
+msgstr "Eyða af Drifi"
+
+#: SoListBox.cpp:445
+msgid "Remove the current selected tracks from drive"
+msgstr "Eyða nú völdum lögum af drifi"
+
+#: SoListBox.cpp:451
 msgid "Save all selected tracks as a playlist"
 msgstr "Vista öll valin lög við lagalista"
 
-#: SoListBox.cpp:445
+#: SoListBox.cpp:461
 msgid "Edit the labels assigned to the selected songs"
 msgstr "Breyta merkjum við valið lag"
 
-#: SoListBox.cpp:449
+#: SoListBox.cpp:465
 msgid "Edit the songs selected"
 msgstr "Breyta völdum lögum"
 
-#: SoListBox.cpp:458
+#: SoListBox.cpp:474
 msgid "Selects the genre of the current song"
 msgstr "Velja flokk valins lags"
 
