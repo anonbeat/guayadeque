@@ -1701,8 +1701,13 @@ void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
             m_Db->UpdateTrackBitRate( m_NextSong.m_SongId, BitRate );
 
         }
-        // Update the track in database, playlist, etc
-        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_NextSong );
+
+        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        if( MainFrame )
+        {
+            // Update the track in database, playlist, etc
+            MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_NextSong );
+        }
     }
     //SetBitRateLabel( BitRate );
     //SetBitRate( event.GetInt() );
