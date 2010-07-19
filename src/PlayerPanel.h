@@ -85,6 +85,8 @@ class guCurrentTrack : public guTrack
         m_AlbumName = Src.m_AlbumName;
         m_ArtistId = Src.m_ArtistId;
         m_ArtistName = Src.m_ArtistName;
+        m_AlbumArtistId = Src.m_AlbumArtistId;
+        m_AlbumArtist = Src.m_AlbumArtist;
         m_GenreId = Src.m_GenreId;
         m_GenreName = Src.m_GenreName;
         m_PathId = Src.m_PathId;
@@ -100,6 +102,7 @@ class guCurrentTrack : public guTrack
         m_CoverId = Src.m_CoverId;
         m_Disk = Src.m_Disk;
         m_Comments = Src.m_Comments;
+        m_ComposerId = Src.m_ComposerId;
         m_Composer = Src.m_Composer;
         m_PlayTime = 0;
         m_ASRating = guAS_RATING_NONE;
@@ -136,6 +139,8 @@ class guCurrentTrack : public guTrack
         m_AlbumName = track.m_AlbumName;
         m_ArtistId = track.m_ArtistId;
         m_ArtistName = track.m_ArtistName;
+        m_AlbumArtistId = track.m_AlbumArtistId;
+        m_AlbumArtist = track.m_AlbumArtist;
         m_GenreId = track.m_GenreId;
         m_GenreName = track.m_GenreName;
         m_PathId = track.m_PathId;
@@ -149,6 +154,10 @@ class guCurrentTrack : public guTrack
         m_LastPlay = track.m_LastPlay;
         m_AddedTime = track.m_AddedTime;
         m_CoverId = track.m_CoverId;
+        m_Disk = track.m_Disk;
+        m_Comments = track.m_Comments;
+        m_ComposerId = track.m_ComposerId;
+        m_Composer = track.m_Composer;
         if( m_CoverImage )
         {
             delete m_CoverImage;
