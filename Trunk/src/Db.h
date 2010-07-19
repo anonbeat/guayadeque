@@ -51,8 +51,8 @@ wxString inline escape_query_str( const wxString &str )
 class guDb
 {
   protected :
-    wxString           m_DbName;
-    wxSQLite3Database  m_Db;
+    wxString                m_DbName;
+    wxSQLite3Database  *    m_Db;
 
   public :
     guDb( void );
@@ -61,12 +61,13 @@ class guDb
 
     int                 Open( const wxString &dbname );
     int                 Close( void );
+    wxSQLite3Database * GetDb( void ) { return m_Db; }
 
     wxSQLite3ResultSet  ExecuteQuery( const wxString &query );
     int                 ExecuteUpdate( const wxString &query );
     wxSQLite3ResultSet  ExecuteQuery( const wxSQLite3StatementBuffer &query );
     int                 ExecuteUpdate( const wxSQLite3StatementBuffer &query );
-    int                 GetLastRowId( void ) { return m_Db.GetLastRowId().GetLo(); }
+    int                 GetLastRowId( void ) { return m_Db->GetLastRowId().GetLo(); }
 
     virtual void        SetInitParams( void );
 

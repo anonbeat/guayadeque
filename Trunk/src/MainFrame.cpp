@@ -1136,7 +1136,7 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
 {
     m_LibCleanThread = NULL;
-    m_Db->LoadCache();
+    //m_Db->LoadCache();
 
     if( m_LibPanel )
         m_LibPanel->ReloadControls( event );
