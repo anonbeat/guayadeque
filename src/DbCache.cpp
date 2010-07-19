@@ -109,7 +109,7 @@ bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const int imgtyp
   wxMemoryOutputStream Outs;
   if( img->SaveFile( Outs, imgtype ) )
   {
-      wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT(
+      wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( wxT(
               "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
               "VALUES( NULL, '%s', ?, %u, %u, %u );" ),
               escape_query_str( url ).c_str(), imgtype, wxDateTime::Now().GetTicks(), imagesize ) );
@@ -194,7 +194,7 @@ wxString guDbCache::GetContent( const wxString &url )
 bool guDbCache::SetContent( const wxString &url, const char * str, const int len )
 {
   try {
-    wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT(
+    wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( wxT(
           "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
           "VALUES( NULL, '%s', ?, %u, %u, %u );" ),
           escape_query_str( url ).c_str(), guDBCACHE_TYPE_TEXT, wxDateTime::Now().GetTicks(), 0 ) );

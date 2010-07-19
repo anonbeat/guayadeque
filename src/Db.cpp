@@ -29,6 +29,7 @@
 // -------------------------------------------------------------------------------- //
 guDb::guDb()
 {
+    m_Db = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -40,7 +41,7 @@ guDb::guDb( const wxString &dbname )
 // -------------------------------------------------------------------------------- //
 guDb::~guDb()
 {
-    if( m_Db.IsOpen() )
+    if( m_Db )
     {
         Close();
     }
@@ -50,13 +51,16 @@ guDb::~guDb()
 int guDb::Open( const wxString &dbname )
 {
   m_DbName = dbname;
-  m_Db.Open( dbname );
-
-  if( m_Db.IsOpen() )
+  m_Db = new wxSQLite3Database();
+  if( m_Db )
   {
-    SetInitParams();
+    m_Db->Open( dbname );
 
-    return true;
+    if( m_Db->IsOpen() )
+    {
+      SetInitParams();
+      return true;
+    }
   }
   return false;
 }
@@ -64,8 +68,8 @@ int guDb::Open( const wxString &dbname )
 // -------------------------------------------------------------------------------- //
 int guDb::Close()
 {
-  if( m_Db.IsOpen() )
-    m_Db.Close();
+  if( m_Db->IsOpen() )
+    m_Db->Close();
   return 1;
 }
 
@@ -80,7 +84,7 @@ wxSQLite3ResultSet guDb::ExecuteQuery( const wxString &query )
 #endif
   wxSQLite3ResultSet RetVal;
   try {
-    RetVal = m_Db.ExecuteQuery( query );
+    RetVal = m_Db->ExecuteQuery( query );
   }
   catch( wxSQLite3Exception &e )
   {
@@ -110,7 +114,7 @@ int guDb::ExecuteUpdate( const wxString &query )
 #endif
   int RetVal = 0;
   try {
-    RetVal = m_Db.ExecuteUpdate( query );
+    RetVal = m_Db->ExecuteUpdate( query );
   }
   catch( wxSQLite3Exception &e )
   {
@@ -132,13 +136,13 @@ int guDb::ExecuteUpdate( const wxString &query )
 // -------------------------------------------------------------------------------- //
 wxSQLite3ResultSet guDb::ExecuteQuery( const wxSQLite3StatementBuffer &query )
 {
-  return m_Db.ExecuteQuery( query );
+  return m_Db->ExecuteQuery( query );
 }
 
 // -------------------------------------------------------------------------------- //
 int guDb::ExecuteUpdate( const wxSQLite3StatementBuffer &query )
 {
-  return m_Db.ExecuteUpdate( query );
+  return m_Db->ExecuteUpdate( query );
 }
 
 // -------------------------------------------------------------------------------- //

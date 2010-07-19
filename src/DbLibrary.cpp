@@ -277,7 +277,7 @@ guDbLibrary::guDbLibrary() : guDb()
     //m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
 
-  LoadCache();
+  //LoadCache();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -297,7 +297,13 @@ guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
     //m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
   }
 
-  LoadCache();
+  //LoadCache();
+}
+
+// -------------------------------------------------------------------------------- //
+guDbLibrary::guDbLibrary( guDb * db ) : guDb()
+{
+    m_Db = db->GetDb();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -316,22 +322,22 @@ guDbLibrary::~guDbLibrary()
   Close();
 }
 
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::LoadCache( void )
-{
-//    Labels.Empty();
-//    GetLabels( &Labels );
-//    m_GenresCache.Empty();
-//    GetGenres( &m_GenresCache, true );
-//    m_ArtistsCache.Empty();
-//    GetArtists( &m_ArtistsCache, true );
-//    m_ComposersCache.Empty();
-//    GetComposers( &m_ComposersCache, true );
-//    m_AlbumsCache.Empty();
-//    GetAlbums( &m_AlbumsCache , true );
-//    m_PathsCache.Empty();
-//    GetPaths( &m_PathsCache, true );
-}
+//// -------------------------------------------------------------------------------- //
+//void guDbLibrary::LoadCache( void )
+//{
+////    Labels.Empty();
+////    GetLabels( &Labels );
+////    m_GenresCache.Empty();
+////    GetGenres( &m_GenresCache, true );
+////    m_ArtistsCache.Empty();
+////    GetArtists( &m_ArtistsCache, true );
+////    m_ComposersCache.Empty();
+////    GetComposers( &m_ComposersCache, true );
+////    m_AlbumsCache.Empty();
+////    GetAlbums( &m_AlbumsCache , true );
+////    m_PathsCache.Empty();
+////    GetPaths( &m_PathsCache, true );
+//}
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetDbVersion( void )
@@ -476,7 +482,7 @@ void guDbLibrary::CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers
   query = wxT( "DELETE FROM settags WHERE settag_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" );
   ExecuteUpdate( query );
 
-  LoadCache();
+  //LoadCache();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1119,7 +1125,7 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
         MidImg.Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
 
 
-        wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_midsize, cover_hash ) "
+        wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_midsize, cover_hash ) "
                              "VALUES( NULL, '%s', ?, ?, '%s' );" ), escape_query_str( coverfile ).c_str(), CoverHash.c_str() ) );
         try {
           stmt.Bind( 1, TmpImg.GetData(), TmpImg.GetWidth() * TmpImg.GetHeight() * 3 );
@@ -1180,7 +1186,7 @@ void guDbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const
       if( MidImg.IsOk() )
       {
         //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
-        wxSQLite3Statement stmt = m_Db.PrepareStatement( wxString::Format(
+        wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format(
            wxT( "UPDATE covers SET cover_thumb = ?, cover_midsize = ?, cover_hash = '%s' WHERE cover_id = %u;" ), coverhash.c_str(), coverid ) );
 
         try {

@@ -294,6 +294,7 @@ class guDbLibrary : public guDb
   public :
                         guDbLibrary();
                         guDbLibrary( const wxString &DbName );
+                        guDbLibrary( guDb * db );
                         ~guDbLibrary();
 
     virtual int         GetDbVersion( void );
@@ -306,7 +307,7 @@ class guDbLibrary : public guDb
     void                CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers );
     void                CleanFiles( const wxArrayString &files );
     virtual bool        CheckDbVersion( void );
-    void                LoadCache( void );
+    //void                LoadCache( void );
 
     int                 GetGenreId( wxString &GenreName );
     int                 GetComposerId( wxString &composername, bool create = true );

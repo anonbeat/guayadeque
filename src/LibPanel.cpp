@@ -105,13 +105,13 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
 	SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
-    wxStaticText *      SearchStaticText;
-	SearchStaticText = new wxStaticText( SearchPanel, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	SearchStaticText->Wrap( -1 );
-	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
+//    wxStaticText *      SearchStaticText;
+//	SearchStaticText = new wxStaticText( SearchPanel, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
+//	SearchStaticText->Wrap( -1 );
+//	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
 
     m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxRIGHT|wxTOP|wxBOTTOM, 5 );
+    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxALL, 5 );
 
     SearchPanel->SetSizer( SearchSizer );
     SearchPanel->Layout();
@@ -574,7 +574,7 @@ guLibPanel::~guLibPanel()
 void guLibPanel::ReloadControls( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "ReloadControls..." ) );
-    m_Db->LoadCache();
+    //m_Db->LoadCache();
     m_UpdateLock = true;
     m_LabelsListCtrl->ReloadItems( false );
     m_GenreListCtrl->ReloadItems( false );
