@@ -4826,6 +4826,51 @@ void guDbLibrary::GetTracksCounters( wxLongLong * count, wxLongLong * len, wxLon
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::DeleteLibraryTracks( const guTrackArray * tracks, const bool createdeleted )
+{
+    wxArrayInt Tracks;
+    wxArrayInt Covers;
+    int Index;
+    int Count = tracks->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack &Track = tracks->Item( Index );
+        Tracks.Add( Track.m_SongId );
+
+        if( createdeleted )
+        {
+            FindDeletedFile( Track.m_FileName, true );
+        }
+    }
+    CleanItems( Tracks, Covers );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDbLibrary::FindDeletedFile( const wxString &file, const bool create )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  query = wxString::Format( wxT( "SELECT delete_id FROM deleted WHERE delete_path = '%s' LIMIT 1;" ),
+            escape_query_str( file ).c_str() );
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    return true;
+  }
+
+  if( create )
+  {
+    query = wxT( "INSERT INTO deleted( delete_id, delete_path, delete_date ) " );
+    query += wxString::Format( wxT( "VALUES( NULL, '%s', %u )" ),
+              escape_query_str( file ).c_str(), wxDateTime::GetTimeNow() );
+    ExecuteUpdate( query );
+    return true;
+  }
+  return false;
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::SetSongsOrder( const guTRACKS_ORDER order )
 {
     if( m_TracksOrder != order )

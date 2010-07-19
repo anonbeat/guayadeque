@@ -595,6 +595,8 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 
     m_PLTracksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
     Connect( ID_SONG_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksDeleteClicked ) );
+    Connect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksDeleteLibrary ) );
+    Connect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksDeleteDrive ) );
     Connect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayClicked ) );
     Connect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayAllClicked ) );
     Connect( ID_SONG_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksQueueClicked ) );
@@ -646,6 +648,8 @@ guPlayListPanel::~guPlayListPanel()
 
     m_PLTracksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPlayListPanel::OnPLTracksActivated ), NULL, this );
     Disconnect( ID_SONG_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksDeleteClicked ) );
+    Disconnect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksDeleteLibrary ) );
+    Disconnect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksDeleteDrive ) );
     Disconnect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayClicked ) );
     Disconnect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksPlayAllClicked ) );
     Disconnect( ID_SONG_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksQueueClicked ) );
@@ -1388,6 +1392,52 @@ void guPlayListPanel::OnPaneClose( wxAuiManagerEvent &event )
     }
 
     event.Veto();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksDeleteLibrary( wxCommandEvent &event )
+{
+    if( m_PLTracksListBox->GetSelectedCount() )
+    {
+        if( wxMessageBox( wxT( "Are you sure to remove the selected tracks from your library?" ),
+            wxT( "Remove tracks from library" ), wxYES | wxNO | wxCANCEL ) == wxYES )
+        {
+            guTrackArray Tracks;
+            m_PLTracksListBox->GetSelectedSongs( &Tracks );
+            //
+            m_Db->DeleteLibraryTracks( &Tracks, true );
+
+            m_PLTracksListBox->ReloadItems();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksDeleteDrive( wxCommandEvent &event )
+{
+    if( m_PLTracksListBox->GetSelectedCount() )
+    {
+        if( wxMessageBox( wxT( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
+            wxT( "Remove tracks from library" ), wxYES | wxNO | wxCANCEL ) == wxYES )
+        {
+            guTrackArray Tracks;
+            m_PLTracksListBox->GetSelectedSongs( &Tracks );
+            //
+            m_Db->DeleteLibraryTracks( &Tracks, false );
+            //
+            int Index;
+            int Count = Tracks.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                if( !wxRemoveFile( Tracks[ Index ].m_FileName ) )
+                {
+                    guLogMessage( wxT( "Error deleting '%s'" ), Tracks[ Index ].m_FileName.c_str() );
+                }
+            }
+
+            m_PLTracksListBox->ReloadItems();
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

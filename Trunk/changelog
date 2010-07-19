@@ -1,4 +1,5 @@
   
+  * Added options to delete tracks from library and drive
   * Implemented reading/writing images into m4a files
   * Library search covers scan now into audio files too
   * Added Jump to Next and Previous albums in playlist

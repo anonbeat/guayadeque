@@ -404,42 +404,58 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
     int SelCount = GetSelectedCount();
 
-    MenuItem = new wxMenuItem( Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
-    Menu->Append( MenuItem );
+    if( SelCount )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+        Menu->Append( MenuItem );
+    }
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_PLAYALL, _( "Play All" ), _( "Play all songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu->Append( MenuItem );
+    if( SelCount )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected songs to the playlist as Next Tracks" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected songs to the playlist as Next Tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu->Append( MenuItem );
+    }
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL, _( "Enqueue All" ), _( "Add all songs to the playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL_ASNEXT, _( "Enqueue All Next" ), _( "Add all songs to the playlist as Next Tracks" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu->Append( MenuItem );
-
-    Menu->AppendSeparator();
-
-    MenuItem = new wxMenuItem( Menu, ID_SONG_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Save all selected tracks as a playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-    Menu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
     if( SelCount )
     {
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_DRIVE, _( "Delete from Drive" ), _( "Remove the current selected tracks from drive" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_SONG_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Save all selected tracks as a playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
+
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_SONG_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected songs" ) );

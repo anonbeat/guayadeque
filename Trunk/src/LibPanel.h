@@ -191,6 +191,8 @@ class guLibPanel : public wxPanel
     void OnSongSelectGenre( wxCommandEvent &event );
     void OnSongSelectArtist( wxCommandEvent &event );
     void OnSongSelectAlbum( wxCommandEvent &event );
+    void OnSongDeleteLibrary( wxCommandEvent &event );
+    void OnSongDeleteDrive( wxCommandEvent &event );
 
     //
     void OnPaneClose( wxAuiManagerEvent &event );

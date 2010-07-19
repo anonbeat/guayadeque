@@ -359,6 +359,8 @@ class guDbLibrary : public guDb
     int                 GetSongsId( const int start );
     wxString            GetSongsName( const int start );
     void                GetTracksCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
+    void                DeleteLibraryTracks( const guTrackArray * tracks, const bool savedeleted );
+    bool                FindDeletedFile( const wxString &file, const bool create );
 
     void                SetSongsOrder( const guTRACKS_ORDER order );
     guTRACKS_ORDER      GetSongsOrder( void ) const;

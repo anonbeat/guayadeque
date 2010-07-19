@@ -190,6 +190,9 @@ class guPlayListPanel : public wxPanel
 
     void                DeleteCurrentPlayList( void );
 
+    void                OnPLTracksDeleteLibrary( wxCommandEvent &event );
+    void                OnPLTracksDeleteDrive( wxCommandEvent &event );
+
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();

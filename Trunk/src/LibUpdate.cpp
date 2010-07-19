@@ -136,9 +136,12 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 
               if( guIsValidAudioFile( LowerFileName ) )
               {
-                m_TrackFiles.Add( dirname + FileName );
-                if( FirstAudioFile.IsEmpty() )
-                    FirstAudioFile = dirname + FileName;
+                if( !m_Db->FindDeletedFile( dirname + FileName, false ) )
+                {
+                    m_TrackFiles.Add( dirname + FileName );
+                    if( FirstAudioFile.IsEmpty() )
+                        FirstAudioFile = dirname + FileName;
+                }
               }
               else if( guIsValidImageFile( LowerFileName ) )
               {
