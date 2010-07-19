@@ -436,6 +436,8 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectGenre ), NULL, this );
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectArtist ), NULL, this );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbum ), NULL, this );
+    Connect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteLibrary ), NULL, this );
+    Connect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteDrive ), NULL, this );
 
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guLibPanel::OnPaneClose ), NULL, this );
 }
@@ -564,6 +566,8 @@ guLibPanel::~guLibPanel()
     Disconnect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectGenre ), NULL, this );
     Disconnect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectArtist ), NULL, this );
     Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbum ), NULL, this );
+    Disconnect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteLibrary ), NULL, this );
+    Disconnect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteDrive ), NULL, this );
 
     m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guLibPanel::OnPaneClose ), NULL, this );
 
@@ -2508,6 +2512,52 @@ void guLibPanel::DoSelectionChanged( void )
                 m_UpdateLock = false;
             }
             break;
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongDeleteLibrary( wxCommandEvent &event )
+{
+    if( m_SongListCtrl->GetSelectedCount() )
+    {
+        if( wxMessageBox( wxT( "Are you sure to remove the selected tracks from your library?" ),
+            wxT( "Remove tracks from library" ), wxYES | wxNO | wxCANCEL ) == wxYES )
+        {
+            guTrackArray Tracks;
+            m_SongListCtrl->GetSelectedSongs( &Tracks );
+            //
+            m_Db->DeleteLibraryTracks( &Tracks, true );
+
+            ReloadControls( event );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
+{
+    if( m_SongListCtrl->GetSelectedCount() )
+    {
+        if( wxMessageBox( wxT( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
+            wxT( "Remove tracks from library" ), wxYES | wxNO | wxCANCEL ) == wxYES )
+        {
+            guTrackArray Tracks;
+            m_SongListCtrl->GetSelectedSongs( &Tracks );
+            //
+            m_Db->DeleteLibraryTracks( &Tracks, false );
+            //
+            int Index;
+            int Count = Tracks.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                if( !wxRemoveFile( Tracks[ Index ].m_FileName ) )
+                {
+                    guLogMessage( wxT( "Error deleting '%s'" ), Tracks[ Index ].m_FileName.c_str() );
+                }
+            }
+
+            ReloadControls( event );
         }
     }
 }
