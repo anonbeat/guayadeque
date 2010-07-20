@@ -34,11 +34,7 @@ class guTaskBarIcon : public wxTaskBarIcon
 
     virtual wxMenu * CreatePopupMenu();
 
-    void OnPlay( wxCommandEvent &event );
-    void OnStop( wxCommandEvent &event );
-    void OnNextTrack( wxCommandEvent &event );
-    void OnPrevTrack( wxCommandEvent &event );
-    void OnQuit( wxCommandEvent &event );
+    void SendEventToMainFrame( wxCommandEvent &event );
     void OnClick( wxTaskBarIconEvent &event );
 
   public :

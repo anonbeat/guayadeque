@@ -31,63 +31,43 @@ guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPla
     m_MainFrame = NewMainFrame;
     m_PlayerPanel = NewPlayerPanel;
     //
-    Connect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnPlay ) );
-    Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnStop ) );
-    Connect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnNextTrack ) );
-    Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnPrevTrack ) );
-    Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnQuit ) );
+    Connect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYERPANEL_NEXTALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYERPANEL_PREVALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+
     Connect( wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler( guTaskBarIcon::OnClick ), NULL, this );
 }
 
 // ---------------------------------------------------------------------- //
 guTaskBarIcon::~guTaskBarIcon()
 {
-    Disconnect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnPlay ) );
-    Disconnect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnStop ) );
-    Disconnect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnNextTrack ) );
-    Disconnect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnPrevTrack ) );
-    Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::OnQuit ) );
+    Disconnect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYERPANEL_NEXTALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYERPANEL_PREVALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+
+    Disconnect( wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler( guTaskBarIcon::OnClick ), NULL, this );
 }
 
 // ---------------------------------------------------------------------- //
-void guTaskBarIcon::OnPlay( wxCommandEvent &event )
+void guTaskBarIcon::SendEventToMainFrame( wxCommandEvent &event )
 {
-    if( m_PlayerPanel )
-      m_PlayerPanel->OnPlayButtonClick( event );
-}
-
-// ---------------------------------------------------------------------- //
-void guTaskBarIcon::OnStop( wxCommandEvent &event )
-{
-    if( m_PlayerPanel )
-        m_PlayerPanel->OnStopButtonClick( event );
-}
-
-// ---------------------------------------------------------------------- //
-void guTaskBarIcon::OnNextTrack( wxCommandEvent &event )
-{
-    if( m_PlayerPanel )
-    {
-        event.SetInt( 0 );
-        m_PlayerPanel->OnNextTrackButtonClick( event );
-    }
-}
-
-// ---------------------------------------------------------------------- //
-void guTaskBarIcon::OnPrevTrack( wxCommandEvent &event )
-{
-    if( m_PlayerPanel )
-    {
-        event.SetInt( 0 );
-        m_PlayerPanel->OnPrevTrackButtonClick( event );
-    }
-}
-
-// ---------------------------------------------------------------------- //
-void guTaskBarIcon::OnQuit( wxCommandEvent &event )
-{
-    if( m_MainFrame )
-        m_MainFrame->OnQuit( event );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // ---------------------------------------------------------------------- //
@@ -116,37 +96,63 @@ void guTaskBarIcon::OnClick( wxTaskBarIconEvent &event )
 // ---------------------------------------------------------------------- //
 wxMenu * guTaskBarIcon::CreatePopupMenu()
 {
-    wxMenu * RetVal = new wxMenu;
+    wxMenu * Menu = new wxMenu;
     wxMenuItem * MenuItem;
 
     if( m_PlayerPanel )
     {
         bool IsPaused = ( m_PlayerPanel->GetState() == guMEDIASTATE_PLAYING );
-        MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_PLAY, IsPaused ? _( "Pause" ) : _( "Play" ), _( "Play current playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PLAY, IsPaused ? _( "Pause" ) : _( "Play" ), _( "Play current playlist" ) );
         MenuItem->SetBitmap( guImage( IsPaused ? guIMAGE_INDEX_player_normal_pause :
                                                  guIMAGE_INDEX_player_normal_play ) );
-        RetVal->Append( MenuItem );
+        Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_STOP, _( "Stop" ), _( "Play current playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_STOP, _( "Stop" ), _( "Play current playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_stop ) );
-        RetVal->Append( MenuItem );
+        Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_NEXTTRACK, _( "Next Track" ), _( "Skip to next track in current playlist" ) );
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_NEXTTRACK, _( "Next Track" ), _( "Skip to next track in current playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_next ) );
-        RetVal->Append( MenuItem );
+        Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( RetVal, ID_PLAYERPANEL_PREVTRACK, _( "Prev Track" ), _( "Skip to previous track in current playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_NEXTALBUM, _( "Next Album" ), _( "Skip to next album track in current playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_next ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVTRACK, _( "Prev Track" ), _( "Skip to previous track in current playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
-        RetVal->Append( MenuItem );
+        Menu->Append( MenuItem );
 
-        RetVal->AppendSeparator();
+        MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVTRACK, _( "Prev Album" ), _( "Skip to previous album track in current playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, _( "&Smart Mode" ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
+        Menu->Append( MenuItem );
+        MenuItem->Check( m_PlayerPanel->GetPlaySmart() );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATPLAYLIST, _( "&Repeat Playlist" ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
+        Menu->Append( MenuItem );
+        MenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATTRACK, _( "&Repeat Track" ), _( "Repeat the current track in the playlist" ), wxITEM_CHECK );
+        Menu->Append( MenuItem );
+        MenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, _( "R&andomize" ), _( "Randomize the playlist" ), wxITEM_NORMAL );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
     }
 
-    MenuItem = new wxMenuItem( RetVal, ID_MENU_QUIT, _( "Exit" ), _( "Exit this program" ) );
+    MenuItem = new wxMenuItem( Menu, ID_MENU_QUIT, _( "Exit" ), _( "Exit this program" ) );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );
-    RetVal->Append( MenuItem );
+    Menu->Append( MenuItem );
 
-    return RetVal;
+    return Menu;
 }
 
 // ---------------------------------------------------------------------- //
