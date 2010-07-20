@@ -141,19 +141,19 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
 
         int Rating = m_PlayerPanel->GetRating();
 
-        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_0, wxT( "" ), _( "Set the rating to 0" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_0, wxT( "☆☆☆☆☆" ), _( "Set the rating to 0" ), wxITEM_CHECK );
         RatingMenu->Append( MenuItem );
         MenuItem->Check( Rating <= 0 );
-        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_1, wxT( "★" ), _( "Set the rating to 1" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_1, wxT( "★☆☆☆☆" ), _( "Set the rating to 1" ), wxITEM_CHECK );
         RatingMenu->Append( MenuItem );
         MenuItem->Check( Rating == 1 );
-        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_2, wxT( "★★" ), _( "Set the rating to 2" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_2, wxT( "★★☆☆☆" ), _( "Set the rating to 2" ), wxITEM_CHECK );
         RatingMenu->Append( MenuItem );
         MenuItem->Check( Rating == 2 );
-        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_3, wxT( "★★★" ), _( "Set the rating to 3" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_3, wxT( "★★★☆☆" ), _( "Set the rating to 3" ), wxITEM_CHECK );
         RatingMenu->Append( MenuItem );
         MenuItem->Check( Rating == 3 );
-        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_4, wxT( "★★★★" ), _( "Set the rating to 4" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_4, wxT( "★★★★☆" ), _( "Set the rating to 4" ), wxITEM_CHECK );
         RatingMenu->Append( MenuItem );
         MenuItem->Check( Rating == 4 );
         MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_5, wxT( "★★★★★" ), _( "Set the rating to 5" ), wxITEM_CHECK );
