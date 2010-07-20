@@ -359,6 +359,7 @@ class guPlayerPanel : public wxPanel
     void                SetAlbumLabel( const wxString &albumname );
     void                SetTitleLabel( const wxString &trackname );
     void                SetRatingLabel( const int Rating );
+    int                 GetRating( void ) { return m_MediaSong.m_Rating; }
     void                SetRating( const int rating );
     void                UpdatePositionLabel( const unsigned int curpos );
     void                SetBitRateLabel( const int bitrate );
