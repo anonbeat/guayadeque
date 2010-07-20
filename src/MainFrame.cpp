@@ -1384,6 +1384,7 @@ void guMainFrame::OnStop( wxCommandEvent &event )
 // ---------------------------------------------------------------------- //
 void guMainFrame::OnNextTrack( wxCommandEvent &event )
 {
+    event.SetInt( 0 );
     if( m_PlayerPanel )
         m_PlayerPanel->OnNextTrackButtonClick( event );
 }
