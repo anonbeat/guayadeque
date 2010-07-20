@@ -2522,7 +2522,7 @@ void guLibPanel::OnSongDeleteLibrary( wxCommandEvent &event )
     if( m_SongListCtrl->GetSelectedCount() )
     {
         if( wxMessageBox( wxT( "Are you sure to remove the selected tracks from your library?" ),
-            wxT( "Remove tracks from library" ), wxYES | wxNO | wxCANCEL ) == wxYES )
+            wxT( "Remove tracks from library" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
         {
             guTrackArray Tracks;
             m_SongListCtrl->GetSelectedSongs( &Tracks );
@@ -2540,7 +2540,7 @@ void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
     if( m_SongListCtrl->GetSelectedCount() )
     {
         if( wxMessageBox( wxT( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
-            wxT( "Remove tracks from library" ), wxYES | wxNO | wxCANCEL ) == wxYES )
+            wxT( "Remove tracks from drive" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
         {
             guTrackArray Tracks;
             m_SongListCtrl->GetSelectedSongs( &Tracks );
