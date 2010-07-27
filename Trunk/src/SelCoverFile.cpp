@@ -89,7 +89,7 @@ void guSelCoverFile::OnSelFileClicked( wxCommandEvent& event )
     wxString CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
 
     wxFileDialog * FileDialog = new wxFileDialog( this, _( "Select the cover filename" ),
-        m_AlbumPath, CoverName, wxT( "*.jpg;*.png" ),
+        m_AlbumPath, CoverName, wxT( "*.jpg;*.JPG;*.jpeg;*.JPEG;*.png;*,PNG" ),
         wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_PREVIEW );
 
     if( FileDialog )

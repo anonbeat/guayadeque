@@ -59,6 +59,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     double SavedVol = 50.0;
 
     m_Db = db;
+    m_MainFrame = ( guMainFrame * ) parent;
     m_PlayListCtrl = playlist;
     m_NotifySrv = NULL;
     m_PlayerFilters = filters;
@@ -378,7 +379,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     if( m_PlayListCtrl->StartPlaying() )
     {
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
-        //wxTheApp->GetTopWindow()->AddPendingEvent( event );
         OnPlayButtonClick( event );
     }
     else
@@ -624,7 +624,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         {
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
             event.SetInt( 1 );
-            wxTheApp->GetTopWindow()->AddPendingEvent( event );
+            m_MainFrame->AddPendingEvent( event );
         }
 
         if( m_MediaCtrl )
@@ -744,7 +744,7 @@ void guPlayerPanel::SetBitRate( int bitrate )
                 m_Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
     }
     else
@@ -986,7 +986,7 @@ void guPlayerPanel::TrackListChanged( void )
 //            m_PlayListCtrl->GetCount(),
 //            m_PlayListCtrl->GetLengthStr().c_str() ) );
     wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
-    wxPostEvent( wxTheApp->GetTopWindow(), TitleEvent );
+    wxPostEvent( m_MainFrame, TitleEvent );
 
     wxCommandEvent TracksChangedEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKLISTCHANGED );
     wxPostEvent( this, TracksChangedEvent );
@@ -1199,7 +1199,7 @@ wxString inline FileNameEncode( const wxString filename )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::LoadMedia( const wxString &FileName, guPlayerPlayType playtype )
+void guPlayerPanel::LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE playtype )
 {
     guLogMessage( wxT( "LoadMedia Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), playtype );
     //m_MediaCtrl->Load( NextItem->FileName );
@@ -1247,20 +1247,19 @@ void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
         {
             GaugeEvent.SetId( ID_GAUGE_REMOVE );
             GaugeEvent.SetInt( m_BufferGaugeId );
-            wxPostEvent( wxTheApp->GetTopWindow(), GaugeEvent );
+            wxPostEvent( m_MainFrame, GaugeEvent );
             m_BufferGaugeId = wxNOT_FOUND;
         }
     }
     else
     {
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
         if( m_BufferGaugeId == wxNOT_FOUND )
         {
-              m_BufferGaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Buffering..." ) );
+              m_BufferGaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge( _( "Buffering..." ) );
               GaugeEvent.SetId( ID_GAUGE_SETMAX );
               GaugeEvent.SetInt( m_BufferGaugeId );
               GaugeEvent.SetExtraLong( 100 );
-              wxPostEvent( wxTheApp->GetTopWindow(), GaugeEvent );
+              wxPostEvent( m_MainFrame, GaugeEvent );
         }
 
         if( m_BufferGaugeId != wxNOT_FOUND )
@@ -1268,7 +1267,7 @@ void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
             GaugeEvent.SetId( ID_GAUGE_UPDATE );
             GaugeEvent.SetInt( m_BufferGaugeId );
             GaugeEvent.SetExtraLong( Percent );
-            wxPostEvent( MainFrame, GaugeEvent );
+            wxPostEvent( m_MainFrame, GaugeEvent );
         }
     }
 }
@@ -1447,7 +1446,7 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
         m_LastPlayState = State;
         //
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( m_MainFrame, event );
 
     }
 
@@ -1495,7 +1494,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             }
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
     }
 
@@ -1517,8 +1516,11 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         if( !m_NextTrackId && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
             ( CurPos + m_FadeOutTime + 3000 >= m_LastLength ) )
         {
-            wxCommandEvent evt;
-            OnNextTrackButtonClick( evt );
+            if( GetState() == guMEDIASTATE_PLAYING )
+            {
+                wxCommandEvent evt;
+                OnNextTrackButtonClick( evt );
+            }
         }
     }
 }
@@ -1676,7 +1678,7 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
                 //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
                 event.SetClientData( new guTrack( m_MediaSong ) );
-                wxPostEvent( wxTheApp->GetTopWindow(), event );
+                wxPostEvent( m_MainFrame, event );
 
                 wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
                 SendNotifyInfo( &Image );
@@ -1703,12 +1705,8 @@ void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 
         }
 
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-        if( MainFrame )
-        {
-            // Update the track in database, playlist, etc
-            MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_NextSong );
-        }
+        // Update the track in database, playlist, etc
+        m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_NextSong );
     }
     //SetBitRateLabel( BitRate );
     //SetBitRate( event.GetInt() );
@@ -1764,7 +1762,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
         }
         else
         {
-            m_MediaRecordCtrl->SetTrack( m_NextSong );
+            m_MediaRecordCtrl->Start( &m_NextSong );
+            //m_MediaRecordCtrl->SetTrack( m_NextSong );
         }
     }
 
@@ -1785,7 +1784,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 //            m_PlayListCtrl->GetCount(),
 //            m_PlayListCtrl->GetLengthStr().c_str() ) );
     wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
-    wxPostEvent( wxTheApp->GetTopWindow(), TitleEvent );
+    wxPostEvent( m_MainFrame, TitleEvent );
 
     if( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION )
     {
@@ -1793,13 +1792,13 @@ void guPlayerPanel::OnMediaPlayStarted( void )
         //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
         event.SetClientData( new guTrack( m_MediaSong ) );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( m_MainFrame, event );
     }
     else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
     {
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
         event.SetClientData( NULL );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( m_MainFrame, event );
     }
 
     wxImage * CoverImage;
@@ -1888,7 +1887,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 
     // Send the CapsChanged Event
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MainFrame, event );
 
 //    if( m_MediaCtrl->GetState() == guMEDIASTATE_PLAYING )
 //    {
@@ -1960,8 +1959,7 @@ void guPlayerPanel::SavePlayedTrack( void )
                 m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
 
             // Update the track in database, playlist, etc
-            if( ( guMainFrame * ) wxTheApp->GetTopWindow() )
-                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
         }
     }
 
@@ -2067,7 +2065,7 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
 
     // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2119,7 +2117,7 @@ void guPlayerPanel::SetPlayLoop( int playloop )
 
     // Send Notification for the mpris interface
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2145,7 +2143,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     if( ( ( CurItem == 0 ) && ( State == guMEDIASTATE_PLAYING ) ) ||
         ( ( State != guMEDIASTATE_STOPPED ) && ( m_LastCurPos  > GUPLAYER_MIN_PREVTRACK_POS ) ) )
     {
-        m_MediaCtrl->UnsetCrossfader();
+//        m_MediaCtrl->UnsetCrossfader();
         SetPosition( 0 );
         return;
     }
@@ -2174,7 +2172,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         {
             SetNextTrack( PrevItem );
             guLogMessage( wxT( "Prev Track when not playing.." ) );
-            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
+//            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
@@ -2184,7 +2182,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 {
-    guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i    %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
+    guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt() );
     guMediaState State;
     guTrack * NextItem;
 
@@ -2198,6 +2196,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     if( NextItem )
     {
         State = m_MediaCtrl->GetState();
+        guLogMessage( wxT( "OnNextTrackButtonClick : State = %i" ), State );
 
         SetNextTrack( NextItem );
 
@@ -2205,14 +2204,14 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         {
             m_IsSkipping = true;
             LoadMedia( m_NextSong.m_FileName,
-                ( event.GetInt() ? ( guPlayerPlayType ) event.GetInt() :
+                ( event.GetInt() ? ( guFADERPLAYBIN_PLAYTYPE ) event.GetInt() :
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ) );
         }
         else
         {
             guLogMessage( wxT( "Next Track when not playing.." ) );
-            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
+//            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
 
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
@@ -2266,7 +2265,7 @@ void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
         else
         {
             guLogMessage( wxT( "Next ALbum Track when not playing.." ) );
-            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
+//            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
 
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
@@ -2319,7 +2318,7 @@ void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
         else
         {
             guLogMessage( wxT( "Prev Album Track when not playing.." ) );
-            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
+//            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
 
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
@@ -2582,7 +2581,7 @@ void guPlayerPanel::OnPlayerPositionSliderChanged( wxScrollEvent &event )
     }
     m_SliderIsDragged = false;
 
-    m_MediaCtrl->UnsetCrossfader();
+//    m_MediaCtrl->UnsetCrossfader();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2596,7 +2595,7 @@ void guPlayerPanel::OnPlayerPositionSliderMouseWheel( wxMouseEvent &event )
     }
     m_SliderIsDragged = false;
 
-    m_MediaCtrl->UnsetCrossfader();
+//    m_MediaCtrl->UnsetCrossfader();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2670,7 +2669,7 @@ void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
         evt.SetInt( TrackId );
         evt.SetExtraLong( m_MediaSong.m_Type );
-        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        wxPostEvent( m_MainFrame, evt );
     }
 }
 
@@ -2693,7 +2692,7 @@ void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
         evt.SetInt( AlbumId );
         evt.SetExtraLong( m_MediaSong.m_Type );
-        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        wxPostEvent( m_MainFrame, evt );
     }
 }
 
@@ -2716,7 +2715,7 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
         evt.SetInt( ArtistId );
         evt.SetExtraLong( m_MediaSong.m_Type );
-        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        wxPostEvent( m_MainFrame, evt );
     }
 }
 
@@ -2729,7 +2728,7 @@ void guPlayerPanel::OnYearDClicked( wxMouseEvent &event )
     {
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_YEAR );
         evt.SetInt( Year );
-        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        wxPostEvent( m_MainFrame, evt );
     }
 }
 
@@ -2742,7 +2741,7 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
         m_Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
 
         // Update the track in database, playlist, etc
-        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+        m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
     }
     else
     {

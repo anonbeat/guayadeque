@@ -128,7 +128,14 @@ class guFileBrowserDirCtrl : public wxPanel
     guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db, const wxString &dirpath );
     ~guFileBrowserDirCtrl();
 
-    wxString            GetPath( void ) { return m_DirCtrl->GetPath(); }
+    wxString            GetPath( void )
+    {
+        wxString DirPath = m_DirCtrl->GetPath();
+        if( !DirPath.EndsWith( wxT( "/" ) ) )
+            DirPath.Append( wxT( "/" ) );
+        return DirPath;
+    }
+
     void                SetPath( const wxString &path ) { m_DirCtrl->SetPath( path ); }
 
     void                RenamedDir( const wxString &oldname, const wxString &newname );

@@ -832,10 +832,16 @@ void guTrackEditor::ReadItemData( void )
         m_AlbumTextCtrl->SetValue( Track->m_AlbumName );
         m_TitleTextCtrl->SetValue( Track->m_SongName );
         m_CompTextCtrl->SetValue( Track->m_Composer );
-        m_NumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Number ) );
+        if( Track->m_Number )
+            m_NumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Number ) );
+        else
+            m_NumberTextCtrl->SetValue( wxEmptyString );
         m_DiskTextCtrl->SetValue( Track->m_Disk );
         m_GenreComboBox->SetValue( Track->m_GenreName );
-        m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
+        if( Track->m_Year )
+            m_YearTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Year ) );
+        else
+            m_YearTextCtrl->SetValue( wxEmptyString );
         m_Rating->SetRating( Track->m_Rating );
         m_CommentText->SetValue( Track->m_Comments );
         m_DetailInfoStaticText->SetLabel( wxString::Format( _( "File Type\t: %s\n"

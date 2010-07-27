@@ -224,6 +224,8 @@
 		<Unit filename="src/TaskBar.cpp" />
 		<Unit filename="src/TaskBar.h" />
 		<Unit filename="src/ThreadArray.h" />
+		<Unit filename="src/TimeLine.cpp" />
+		<Unit filename="src/TimeLine.h" />
 		<Unit filename="src/ToggleRoundButton.cpp" />
 		<Unit filename="src/ToggleRoundButton.h" />
 		<Unit filename="src/TrackChangeInfo.cpp" />

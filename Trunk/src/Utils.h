@@ -35,6 +35,14 @@
 #define guRandomInit() (srand( time( NULL ) ))
 #define guRandom(x) (rand() % x)
 
+template <typename T>
+inline const T &guMin( const T &a, const T &b ) { if( a < b ) return a; return b; }
+template <typename T>
+inline const T &guMax( const T &a, const T &b ) { if( a < b ) return b; return a; }
+template <typename T>
+inline const T &guBound( const T &min, const T &val, const T &max ) { return guMax( min, guMin( max, val ) ); }
+
+
 #define guDEFAULT_USER_AGENT    "Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.1.8) Gecko/20100214 Ubuntu/9.10 (karmic) Firefox/3.5.8"
 
 // -------------------------------------------------------------------------------- //

@@ -362,11 +362,11 @@ void guFileBrowserDirCtrl::FolderNew( void )
     {
         m_AddingFolder = true;
 
-        wxString NewDirName = m_DirCtrl->GetPath() + wxT( "/" ) + _( "New Folder" );
+        wxString NewDirName = GetPath() + _( "New Folder" );
         int Index = 1;
         while( wxDirExists( NewDirName ) )
         {
-            NewDirName = m_DirCtrl->GetPath() + wxT( "/" ) + _( "New Folder" );
+            NewDirName = GetPath() + _( "New Folder" );
             NewDirName += wxString::Format( wxT( "%i" ), Index++ );
         }
 
@@ -374,9 +374,22 @@ void guFileBrowserDirCtrl::FolderNew( void )
         {
             TreeCtrl->Collapse( FolderParent );
             //TreeCtrl->Expand( m_AddFolderParent );
-            m_DirCtrl->ExpandPath( NewDirName );
-            wxTextCtrl * TextCtrl = TreeCtrl->EditLabel( TreeCtrl->GetSelection() );
-            TextCtrl->SetSelection( -1, -1 );
+            if( m_DirCtrl->ExpandPath( NewDirName ) )
+            {
+                wxTreeItemId Selected = TreeCtrl->GetSelection();
+                if( Selected.IsOk() )
+                {
+                    wxTextCtrl * TextCtrl = TreeCtrl->EditLabel( Selected );
+                    if( TextCtrl )
+                    {
+                        TextCtrl->SetSelection( -1, -1 );
+                    }
+                }
+                else
+                {
+                    guLogMessage( wxT( "No Selected item" ) );
+                }
+            }
         }
         else
         {
@@ -463,7 +476,7 @@ void guFileBrowserDirCtrl::OnShowLibPathsClick( wxCommandEvent& event )
     if( !ShowPaths )
         ShowPaths |= guFILEBROWSER_SHOWPATH_SYSTEM;
 
-    wxString CurPath = m_DirCtrl->GetPath();
+    wxString CurPath = GetPath();
     m_DirCtrl->SetShowLibPaths( ShowPaths );
     m_DirCtrl->ReCreateTree();
     m_DirCtrl->SetPath( CurPath );

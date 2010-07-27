@@ -54,6 +54,8 @@ wxString inline NormalizeField( const wxString &name )
     RetVal.Replace( wxT( "|" ), wxT( "_" ) );
     RetVal.Replace( wxT( "?" ), wxT( "_" ) );
     RetVal.Replace( wxT( "*" ), wxT( "_" ) );
+    if( RetVal[ 0 ] == wxT( '.' ) )
+        RetVal[ 0 ] = wxT( '_' );
     return RetVal;
 }
 
