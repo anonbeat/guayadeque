@@ -3371,6 +3371,7 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
         {
             FileName = FilePattern;
             FileName.Replace( wxT( "{a}" ), NormalizeField( ( * m_Tracks )[ index ].m_ArtistName ) );
+            FileName.Replace( wxT( "{aa}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumArtist ) );
             FileName.Replace( wxT( "{b}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumName ) );
             FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( ( * m_Tracks )[ index ].m_FileName ) );
             FileName.Replace( wxT( "{g}" ), NormalizeField( ( * m_Tracks )[ index ].m_GenreName ) );

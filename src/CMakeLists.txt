@@ -227,6 +227,8 @@ ADD_EXECUTABLE( guayadeque
 	CoListBox.h
         AAListBox.cpp
 	AAListBox.h
+	TimeLine.cpp
+	TimeLine.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

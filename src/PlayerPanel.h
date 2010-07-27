@@ -201,6 +201,7 @@ class guPlayerPanel : public wxPanel
 	wxSlider *              m_PlayerPositionSlider;
 
     guDbLibrary *           m_Db;
+    guMainFrame *           m_MainFrame;
 	guPlayList *            m_PlayListCtrl;
 	guDBusNotify *          m_NotifySrv;
 	guPlayerFilters *       m_PlayerFilters;
@@ -273,7 +274,7 @@ class guPlayerPanel : public wxPanel
     void                OnPlayListUpdated( wxCommandEvent &event );
     void                OnPlayListDClick( wxCommandEvent &event );
 
-    void                LoadMedia( const wxString &FileName, guPlayerPlayType playtype );
+    void                LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE playtype );
     void                OnMediaLoaded( guMediaEvent &event );
     void                OnMediaPlayStarted( void );
     void                SavePlayedTrack( void );
