@@ -200,7 +200,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
 
             ctrl->GetPlayer()->ScheduleCleanUp();
 
-            guLogMessage( wxT( "***** EOS received..." ) );
+            guLogDebug( wxT( "***** EOS received..." ) );
           break;
         }
 
@@ -1185,6 +1185,7 @@ bool guMediaCtrl::SetRecordFileName( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::DoCleanUp( void )
 {
+    guLogDebug( wxT( "guMediaCtrl::DoCleanUp" ) );
 	wxArrayPtrVoid ToDelete;
 
     Lock();
@@ -1200,6 +1201,10 @@ void guMediaCtrl::DoCleanUp( void )
 		{
 			ToDelete.Add( FaderPlaybin );
 			m_FaderPlayBins.RemoveAt( Index );
+			if( FaderPlaybin == m_CurrentPlayBin )
+			{
+			    m_CurrentPlayBin = NULL;
+			}
 		}
 	}
 	Unlock();
@@ -1293,6 +1298,7 @@ guFaderPlayBin::~guFaderPlayBin()
         gst_element_set_state( m_Playbin, GST_STATE_NULL );
         gst_object_unref( GST_OBJECT( m_Playbin ) );
     }
+    guLogMessage( wxT( "Finished destroying the playbin %i" ), m_Id );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1855,7 +1861,9 @@ bool guFaderPlayBin::StartPlay( void )
                 if( Play() )
                 {
                     m_State = guFADERPLAYBIN_STATE_PLAYING;
+                    m_Player->Lock();
                     m_Player->m_CurrentPlayBin = this;
+                    m_Player->Unlock();
 
                     guMediaEvent event( guEVT_MEDIA_CHANGED_STATE );
                     event.SetInt( GST_STATE_PLAYING );
@@ -1912,7 +1920,9 @@ bool guFaderPlayBin::StartPlay( void )
                 if( Play() )
                 {
                     m_State = guFADERPLAYBIN_STATE_PLAYING;
+                    m_Player->Lock();
                     m_Player->m_CurrentPlayBin = this;
+                    m_Player->Unlock();
 
                     guMediaEvent event( guEVT_MEDIA_CHANGED_STATE );
                     event.SetInt( GST_STATE_PLAYING );
@@ -1956,8 +1966,10 @@ bool guFaderPlayBin::StartPlay( void )
 
             if( Play() )
             {
-                m_Player->m_CurrentPlayBin = this;
                 m_State = guFADERPLAYBIN_STATE_PLAYING;
+                m_Player->Lock();
+                m_Player->m_CurrentPlayBin = this;
+                m_Player->Unlock();
 
                 guMediaEvent event( guEVT_MEDIA_CHANGED_STATE );
                 event.SetInt( GST_STATE_PLAYING );
