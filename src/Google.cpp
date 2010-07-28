@@ -29,7 +29,7 @@
 #include <wx/html/htmlpars.h>
 
 //#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
-#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&start=%u" )
+#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&sout=1&start=%u" )
 
 #define GOOGLE_COVERS_PER_PAGE      15
 #define GOOGLE_COVERINFO_LINK       3           // 3 -> Link
@@ -66,7 +66,7 @@ wxArrayString guGoogleCoverFetcher::ExtractImageInfo( const wxString &content )
         }
         else if( CurChar == wxT( ',' ) /*|| CurChar == wxT( ')' )*/ )
         {
-            //guLogMessage( wxT( "%s" ), CurParam.c_str() );
+            //guLogMessage( wxT( "%i= '%s'" ), RetVal.Count(), CurParam.c_str() );
             RetVal.Add( CurParam );
             CurParam = wxEmptyString;
         }
@@ -79,6 +79,23 @@ wxArrayString guGoogleCoverFetcher::ExtractImageInfo( const wxString &content )
         RetVal.Add( CurParam );
     //guLogMessage( wxT( "ImageLink: %s" ), RetVal[ 3 ].c_str() );
     return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString ExtractCoverFromGoogleLink( wxString &link )
+{
+    int StrPos = link.Find( wxT( "/imgres?imgurl\\x3d" ) );
+    if( StrPos != wxNOT_FOUND )
+    {
+        StrPos += 18;
+        wxString RetVal = link.Mid( StrPos );
+        StrPos = RetVal.Find( wxT( "\\x26imgrefurl" ) );
+        if( StrPos != wxNOT_FOUND )
+        {
+            return RetVal.Mid( 0, StrPos );
+        }
+    }
+    return wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -104,12 +121,20 @@ int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
         GoogleImage = ExtractImageInfo( EntitiesParser.Parse( content.Mid( 0, StrPos ) ) );
         //RetVal.Add( CurImage );
         CurImage.Empty();
-        CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_LINK ] );
-        CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_SIZE ] );
-        m_CoverLinks->Add( CurImage );
-        ImageIndex++;
-        if( ImageIndex == count )
-            break;
+        if( GoogleImage[ GOOGLE_COVERINFO_LINK ].IsEmpty() )
+        {
+            GoogleImage[ GOOGLE_COVERINFO_LINK ] = ExtractCoverFromGoogleLink( GoogleImage[ 0 ] );
+        }
+
+        if( !GoogleImage[ GOOGLE_COVERINFO_LINK ].IsEmpty() )
+        {
+            CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_LINK ] );
+            CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_SIZE ] );
+            m_CoverLinks->Add( CurImage );
+            ImageIndex++;
+            if( ImageIndex == count )
+                break;
+        }
 
         //guLogMessage( wxT( "Pos: %u" ), StrPos );
     }
@@ -122,11 +147,11 @@ int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
     wxString SearchString = wxString::Format( wxT( "\"%s\" \"%s\"" ), m_Artist.c_str(), m_Album.c_str() );
     //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, m_SearchString.c_str() );
     wxString SearchUrl = wxString::Format( GOOGLE_IMAGES_SEARCH_URL, guURLEncode( SearchString ).c_str(), ( pagenum * GOOGLE_COVERS_PER_PAGE ) );
-    //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, SearchUrl.c_str() );
+    //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
     //guHTTP http;
     char * Buffer = NULL;
     wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
     http.AddHeader( wxT( "Accept: text/html" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
     http.SetVerbose( true );

@@ -126,6 +126,11 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
                                  Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
         Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
+        if( Equalizer.Count() != guEQUALIZER_BAND_COUNT )
+        {
+            Equalizer.Empty();
+            Equalizer.Add( 0, guEQUALIZER_BAND_COUNT );
+        }
 
         m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
         m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
@@ -370,10 +375,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     SetVolume( SavedVol );
     //guLogMessage( wxT( "CurVol: %i SavedVol: %i" ), int( m_MediaCtrl->GetVolume() * 100.0 ), ( int ) m_CurVolume );
 
-    if( Equalizer.Count() == guEQUALIZER_BAND_COUNT )
-    {
-        m_MediaCtrl->SetEqualizer( Equalizer );
-    }
+    m_MediaCtrl->SetEqualizer( Equalizer );
 
     // There was a track passed as argument that we will play
     if( m_PlayListCtrl->StartPlaying() )

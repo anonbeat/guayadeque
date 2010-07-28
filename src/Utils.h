@@ -43,7 +43,7 @@ template <typename T>
 inline const T &guBound( const T &min, const T &val, const T &max ) { return guMax( min, guMin( max, val ) ); }
 
 
-#define guDEFAULT_USER_AGENT    "Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.1.8) Gecko/20100214 Ubuntu/9.10 (karmic) Firefox/3.5.8"
+#define guDEFAULT_BROWSER_USER_AGENT    wxT( "Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.1.8) Gecko/20100214 Ubuntu/9.10 (karmic) Firefox/3.5.8" )
 
 // -------------------------------------------------------------------------------- //
 void inline guImageResize( wxImage * image, int maxsize )
