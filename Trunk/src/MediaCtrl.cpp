@@ -442,6 +442,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     m_CurrentPlayBin = NULL;
     m_CleanUpId = 0;
     m_IsRecording = false;
+    m_LastPosition = 0;
 
 	// now that the sink is running, start polling for playing position.
 	// might want to replace this with a complicated set of pad probes
@@ -496,10 +497,20 @@ void guMediaCtrl::UpdatePosition( void )
 		Duration = -1;
         gst_element_query_duration( m_CurrentPlayBin->m_OutputSink, &Format, &Duration );
 
-        guMediaEvent event( guEVT_MEDIA_CHANGED_POSITION );
-        event.SetInt( Pos / GST_MSECOND );
-        event.SetExtraLong( Duration / GST_MSECOND );
-        SendEvent( event );
+        Pos = Pos / GST_MSECOND;
+        if( Pos != m_LastPosition )
+        {
+            if( !m_CurrentPlayBin->AboutToFinishPending() || Pos < m_LastPosition )
+            {
+                guMediaEvent event( guEVT_MEDIA_CHANGED_POSITION );
+                event.SetInt( Pos );
+                event.SetExtraLong( Duration / GST_MSECOND );
+                SendEvent( event );
+                if( m_CurrentPlayBin->AboutToFinishPending() )
+                    m_CurrentPlayBin->ResetAboutToFinishPending();
+            }
+            m_LastPosition = Pos;
+        }
         //guLogMessage( wxT( "Current fade volume: %0.2f" ), m_CurrentPlayBin->GetFaderVolume() );
         m_CurrentPlayBin->Unlock();
 	}
@@ -709,7 +720,8 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
             if( m_CurrentPlayBin )
             {
                 m_CurrentPlayBin->SetNextUri( uri );
-                return m_CurrentPlayBin->GetId();
+                m_CurrentPlayBin->SetNextId( wxGetLocalTime() );
+                return m_CurrentPlayBin->NextId();
             }
             break;
         }
@@ -1124,7 +1136,7 @@ void guMediaCtrl::FadeOutDone( guFaderPlayBin * faderplaybin )
             // try to seek back a bit to account for the fade
             GstFormat Format = GST_FORMAT_TIME;
             gint64 Pos = -1;
-            gst_element_query_position( faderplaybin->Volume(), &Format, &Pos );
+            gst_element_query_position( faderplaybin->OutputSink(), &Format, &Pos );
             if( Pos != -1 )
             {
                 faderplaybin->m_PausePosition = Pos > guFADERPLAYBIN_FAST_FADER_TIME ? Pos - guFADERPLAYBIN_FAST_FADER_TIME : 200;
@@ -1276,7 +1288,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri, co
     m_EmittedStartFadeIn = false;
     m_PlayType = playtype;
     m_FaderTimeLine = NULL;
-    m_AboutToChangePending = false;
+    m_AboutToFinishPending = false;
     m_LastFadeVolume = -1;
 
     guLogMessage( wxT( "guFaderPlayBin::guFaderPlayBin (%i)  %i" ), m_Id, playtype );
@@ -1989,19 +2001,31 @@ void guFaderPlayBin::AboutToFinish( void )
     guLogMessage( wxT( "guFaderPlayBin::AboutToFinish (%i)" ), m_Id );
     Load( m_NextUri, false );
     m_NextUri = wxEmptyString;
-    m_AboutToChangePending = true;
+    m_AboutToFinishPending = true;
 }
+
+// -------------------------------------------------------------------------------- //
+static bool reset_about_to_finish( guFaderPlayBin * faderplaybin )
+{
+    faderplaybin->ResetAboutToFinishPending();
+    return false;
+}
+
 
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::AudioChanged( void )
 {
     guLogMessage( wxT( "guFaderPlayBin::AudioChanged (%i)" ), m_Id );
-    if( m_AboutToChangePending )
+    if( m_AboutToFinishPending )
     {
+        m_Id = m_NextId;
+        m_NextId = 0;
+
         guMediaEvent event( guEVT_MEDIA_CHANGED_STATE );
         event.SetInt( GST_STATE_PLAYING );
         SendEvent( event );
-        m_AboutToChangePending = false;
+        //m_AboutToFinishPending = false;
+        m_AboutToFinishPendingId = g_timeout_add( 2000, GSourceFunc( reset_about_to_finish ), this );
     }
 }
 

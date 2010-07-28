@@ -201,9 +201,12 @@ class guFaderPlayBin
     bool                m_IsFading;
     bool                m_IsBuffering;
     bool                m_EmittedStartFadeIn;
-    bool                m_AboutToChangePending;
+    bool                m_AboutToFinishPending;
+    int                 m_AboutToFinishPendingId;
     long                m_Id;
+    long                m_NextId;
     double              m_LastFadeVolume;
+
 
     int                 m_ErrorCode;
     int                 m_State;
@@ -280,9 +283,14 @@ class guFaderPlayBin
     void                SetNextUri( const wxString &uri ) { m_NextUri = uri; }
     wxString            NextUri( void ) { return m_NextUri; }
 
+    void                SetNextId( const long id ) { m_NextId = id; }
+    long                NextId( void ) { return m_NextId; }
+
 
     void                AboutToFinish( void );
     void                AudioChanged( void );
+    bool                AboutToFinishPending( void ) { return m_AboutToFinishPending; }
+    void                ResetAboutToFinishPending( void ) { m_AboutToFinishPendingId = 0; m_AboutToFinishPending = false; }
 
     void                FadeInStart( void );
     void                FadeOutDone( void );
@@ -320,6 +328,7 @@ class guMediaCtrl : public wxEvtHandler
     bool                    m_IsRecording;
 
     int                     m_TickTimeoutId;
+    gint64                  m_LastPosition;
 
     double                  m_Volume;
     wxArrayInt              m_EqBands;
