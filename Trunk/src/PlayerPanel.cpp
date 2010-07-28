@@ -2171,12 +2171,10 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     PrevItem = m_PlayListCtrl->GetPrev( m_PlayLoop, ForceSkip );
     if( PrevItem )
     {
-        //State = m_MediaCtrl->GetState();
-        if( State != guMEDIASTATE_STOPPED )
+        SetNextTrack( PrevItem );
+
+        if( State == guMEDIASTATE_PLAYING )
         {
-            //m_MediaCtrl->Stop();
-            //m_MediaSong = * PrevItem;
-            SetNextTrack( PrevItem );
             if( State == guMEDIASTATE_PLAYING )
             {
                 m_IsSkipping = true;
@@ -2185,9 +2183,12 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
             }
         }
+        else if( State == guMEDIASTATE_PAUSED )
+        {
+            m_MediaCtrl->Stop();
+        }
         else
         {
-            SetNextTrack( PrevItem );
             guLogMessage( wxT( "Prev Track when not playing.." ) );
 //            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
@@ -2224,6 +2225,10 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
                 ( event.GetInt() ? ( guFADERPLAYBIN_PLAYTYPE ) event.GetInt() :
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ) );
+        }
+        else if( State == guMEDIASTATE_PAUSED )
+        {
+            m_MediaCtrl->Stop();
         }
         else
         {
