@@ -1220,6 +1220,13 @@ void guMediaCtrl::DoCleanUp( void )
 			}
 		}
 	}
+	if( !m_FaderPlayBins.Count() )
+	{
+        guMediaEvent event( guEVT_MEDIA_CHANGED_STATE );
+        event.SetInt( GST_STATE_READY );
+        SendEvent( event );
+	}
+
 	Unlock();
 
 	Count = ToDelete.Count();
@@ -1228,6 +1235,7 @@ void guMediaCtrl::DoCleanUp( void )
 		//guLogDebug( wxT( "reaping stream %s" ), ( ( guFaderPlayBin * ) ToDelete[ Index ] )->m_Uri.c_str() );
 		delete ( ( guFaderPlayBin * ) ToDelete[ Index ] );
 	}
+
 }
 
 // -------------------------------------------------------------------------------- //
