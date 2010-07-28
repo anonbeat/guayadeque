@@ -738,7 +738,7 @@ void guPlayerPanel::SetBitRate( int bitrate )
         bitrate = bitrate / 1000;
         //guLogMessage( wxT( "Bitrate: %u" ), bitrate );
         m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate ) );
-        if( !m_MediaSong.m_Bitrate && ( GetState() == guMEDIASTATE_PLAYING ) )
+        if( ( m_MediaSong.m_Bitrate < bitrate ) && ( GetState() == guMEDIASTATE_PLAYING ) )
         {
             m_MediaSong.m_Bitrate = bitrate;
 
@@ -1694,24 +1694,38 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaBitrate...%i" ), event.GetInt() );
-    int BitRate = ( event.GetInt() / 1000 );
-
-    if( m_NextSong.m_Bitrate != BitRate )
-    {
-        m_NextSong.m_Bitrate = BitRate;
-
-        if( m_NextSong.m_Type == guTRACK_TYPE_DB )
-        {
-            m_Db->UpdateTrackBitRate( m_NextSong.m_SongId, BitRate );
-
-        }
-
-        // Update the track in database, playlist, etc
-        m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_NextSong );
-    }
+    guLogMessage( wxT( "OnMediaBitrate... (%li) %i" ), event.GetExtraLong(), event.GetInt() );
+//
+//    if( m_NextSong.m_Bitrate != BitRate )
+//    {
+//        m_NextSong.m_Bitrate = BitRate;
+//
+//        if( m_NextSong.m_Type == guTRACK_TYPE_DB )
+//        {
+//            m_Db->UpdateTrackBitRate( m_NextSong.m_SongId, BitRate );
+//
+//        }
+//
+//        // Update the track in database, playlist, etc
+//        m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_NextSong );
+//    }
     //SetBitRateLabel( BitRate );
-    //SetBitRate( event.GetInt() );
+    if( event.GetExtraLong() == m_CurTrackId )
+    {
+        SetBitRate( event.GetInt() );
+    }
+    else
+    {
+        int BitRate = ( event.GetInt() / 1000 );
+        if( event.GetExtraLong() == m_NextTrackId )
+        {
+            if( m_NextSong.m_Bitrate != BitRate )
+            {
+                m_NextSong.m_Bitrate = BitRate;
+            }
+        }
+    }
+
 }
 
 // -------------------------------------------------------------------------------- //

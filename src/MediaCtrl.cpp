@@ -244,6 +244,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             {
                 guMediaEvent event( guEVT_MEDIA_CHANGED_BITRATE );
                 event.SetInt( bitrate );
+                event.SetExtraLong( ctrl->GetId() );
                 ctrl->SendEvent( event );
             }
 
