@@ -1474,6 +1474,7 @@ void guRadioPanel::OnSelectStations( bool enqueue, const bool asnext )
                     //NewSong->m_AlbumName = RadioStation.m_Name;
                     NewSong->m_Length = 0;
                     NewSong->m_Rating = -1;
+                    NewSong->m_Bitrate = 0;
                     //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
                     NewSong->m_CoverId = 0;
                     NewSong->m_Year = 0;

@@ -1520,6 +1520,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         {
             if( GetState() == guMEDIASTATE_PLAYING )
             {
+                guLogMessage( wxT( "Detected about to finish track... Trying to load the next track..." ) );
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
             }
@@ -2212,7 +2213,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     if( NextItem )
     {
         State = m_MediaCtrl->GetState();
-        guLogMessage( wxT( "OnNextTrackButtonClick : State = %i" ), State );
+        //guLogMessage( wxT( "OnNextTrackButtonClick : State = %i" ), State );
 
         SetNextTrack( NextItem );
 
