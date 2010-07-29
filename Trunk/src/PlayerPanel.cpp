@@ -104,6 +104,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_ShowNotificationsTime = 0;
     m_ErrorFound = false;
 
+    m_SilenceDetected = false;
+    m_AboutToEndDetected = false;
+
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -1282,11 +1285,12 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
 {
     guLevelInfo * LevelInfo = ( guLevelInfo * ) event.GetClientObject();
     // We only enable to check if :
+    // * Already not detected
     // * Its enabled in preferences
     // * Its not a radiostation
     // * Not enabled a time range or
     // * TrackLength bigger in 10 secs of the minimun time range
-    if( m_SilenceDetector &&
+    if( !m_SilenceDetected && m_SilenceDetector &&
         ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
         ( !m_SilenceDetectorTime ||
           ( ( m_MediaSong.m_Length * 1000 ) > ( unsigned int ) ( m_SilenceDetectorTime + 10000 ) ) ) )
@@ -1307,6 +1311,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
                 ( !m_SilenceDetectorTime || ( ( ( unsigned int ) m_SilenceDetectorTime > ( TrackLength - EventTime ) ) &&
                   ( ( EventTime + 500 ) < TrackLength ) ) ) )
             {
+                m_SilenceDetected = true;
                 guLogMessage( wxT( "Silence detected. Changed to next track %i" ), m_PlayListCtrl->GetCurItem() );
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
@@ -1521,11 +1526,13 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
         m_MediaSong.m_PlayTime = CurPos / 1000;
 
-        if( !m_NextTrackId && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
+        if( !m_AboutToEndDetected && !m_NextTrackId && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
             ( CurPos + m_FadeOutTime + 3000 >= m_LastLength ) )
         {
             if( GetState() == guMEDIASTATE_PLAYING )
             {
+                m_AboutToEndDetected = true;
+
                 guLogMessage( wxT( "Detected about to finish track... Trying to load the next track..." ) );
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
@@ -1796,6 +1803,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     m_MediaSong = m_NextSong;
     m_TrackChanged = true;
     m_SavedPlayedTrack = false;
+    m_SilenceDetected = false;
+    m_AboutToEndDetected = false;
 
     // Update the Current Playing Song Info
     UpdateLabels();
@@ -1995,7 +2004,7 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 
     ResetVumeterLevel();
 
-    if( m_NextTrackId || ( m_CurTrackId != event.GetExtraLong() ) )
+    if( m_SilenceDetected || m_AboutToEndDetected || m_NextTrackId || ( m_CurTrackId != event.GetExtraLong() ) )
     {
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
         guLogMessage( wxT( "Media Finished Cancelled... %li %li" ), m_CurTrackId, m_NextTrackId );
