@@ -1443,6 +1443,11 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
         {
             m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_play ) );
             m_PlayButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_play ) );
+
+            if( State == GST_STATE_READY )
+            {
+                m_PlayerPositionSlider->SetValue( 0 );
+            }
         }
         m_PlayButton->Refresh();
         m_LastPlayState = State;
@@ -2435,8 +2440,8 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
     m_MediaCtrl->Stop();
         //UpdatePositionLabel( 0 );
 //        if( m_MediaSong.m_Length )
-//            m_PlayerPositionSlider->SetValue( 0 );
-//        ResetVumeterLevel();
+//    m_PlayerPositionSlider->SetValue( 0 );
+//    ResetVumeterLevel();
     //}
     SavePlayedTrack();
 }
