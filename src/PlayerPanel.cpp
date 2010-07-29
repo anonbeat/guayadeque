@@ -1446,6 +1446,7 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
 
             if( State == GST_STATE_READY )
             {
+                UpdatePositionLabel( 0 );
                 m_PlayerPositionSlider->SetValue( 0 );
             }
         }
