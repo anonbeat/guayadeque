@@ -226,6 +226,9 @@ class guPlayerPanel : public wxPanel
 	bool                    m_SliderIsDragged;
 	long                    m_LastTotalLen;
 
+	bool                    m_SilenceDetected;
+	bool                    m_AboutToEndDetected;
+
 	wxArrayInt              m_SmartAddedTracks;
 	wxArrayString           m_SmartAddedArtists;
 	bool                    m_SmartSearchEnabled;
