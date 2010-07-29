@@ -48,9 +48,9 @@ DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEIN_STARTED )
 
 #define GST_TO_WXSTRING( str )  ( wxString( str, wxConvUTF8 ) )
 
-//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
-#define guLogDebug(...)
-//#define guSHOW_DUMPFADERPLAYBINS     1
+#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+//#define guLogDebug(...)
+#define guSHOW_DUMPFADERPLAYBINS     1
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
 // -------------------------------------------------------------------------------- //
@@ -88,9 +88,9 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
             default :                                       StateName = wxT( "other" ); break;
         }
 
-        if( !FaderPlayBin->Uri().IsEmpty() )
+        //if( !FaderPlayBin->Uri().IsEmpty() )
         {
-            guLogDebug( wxT( "[%s] '%s'" ), StateName.c_str(), FaderPlayBin->Uri().c_str() );
+            guLogDebug( wxT( "[%i] '%s'" ), FaderPlayBin->GetId(), StateName.c_str() );
         }
     }
     guLogDebug( wxT( " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * " ) );
@@ -145,19 +145,21 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             //gchar * debug;
             gst_message_parse_error( message, &err, NULL );
 
-//            if( ctrl->GetLastError() != err->code )
-//            {
-//                ctrl->SetLastError( err->code );
+            ctrl->SetState( guFADERPLAYBIN_STATE_ERROR );
+
+            guMediaCtrl * MediaCtrl = ctrl->GetPlayer();
+            if( MediaCtrl && ( MediaCtrl->GetLastError() != err->code ) )
+            {
+                MediaCtrl->SetLastError( err->code );
 
                 wxString * ErrorStr = new wxString( err->message, wxConvUTF8 );
 
                 guLogError( wxT( "Gstreamer error '%s'" ), ErrorStr->c_str() );
 
-//                wxMediaEvent event( wxEVT_MEDIA_ERROR );
-//                event.SetClientData( ( void * ) ErrorStr );
-//                ctrl->AddPendingEvent( event );
-//            }
-
+                guMediaEvent event( guEVT_MEDIA_ERROR );
+                event.SetClientData( ( void * ) ErrorStr );
+                MediaCtrl->SendEvent( event );
+            }
 
             g_error_free( err );
             //g_free( debug );
@@ -641,6 +643,9 @@ guMediaState guMediaCtrl::GetState( void )
             case guFADERPLAYBIN_STATE_PLAYING :
                 return guMEDIASTATE_PLAYING;
 
+            case guFADERPLAYBIN_STATE_ERROR :
+                return guMEDIASTATE_ERROR;
+
             default :
                 break;
         }
@@ -734,6 +739,12 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
             guLogDebug( wxT( "Replacing the current track in the current playbin..." ) );
             if( m_CurrentPlayBin )
             {
+                if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
+                {
+                    m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                    ScheduleCleanUp();
+                    break;
+                }
                 m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_WAITING;
                 m_CurrentPlayBin->Load( uri, true );
                 m_CurrentPlayBin->SetBuffering( false );
@@ -1218,7 +1229,8 @@ void guMediaCtrl::DoCleanUp( void )
 	for( Index = Count - 1; Index >= 0; Index-- )
 	{
 	    guFaderPlayBin * FaderPlaybin = m_FaderPlayBins[ Index ];
-		if( FaderPlaybin->m_State == guFADERPLAYBIN_STATE_PENDING_REMOVE )
+		if( ( FaderPlaybin->m_State == guFADERPLAYBIN_STATE_PENDING_REMOVE ) ||
+		    ( FaderPlaybin->m_State == guFADERPLAYBIN_STATE_ERROR ) )
 		{
 			ToDelete.Add( FaderPlaybin );
 			m_FaderPlayBins.RemoveAt( Index );
@@ -1841,6 +1853,7 @@ bool guFaderPlayBin::StartPlay( void )
                         ToFade.Add( FaderPlaybin );
                         break;
 
+                    case guFADERPLAYBIN_STATE_ERROR :
                     case guFADERPLAYBIN_STATE_PAUSED :
                     case guFADERPLAYBIN_STATE_STOPPED :
                     case guFADERPLAYBIN_STATE_WAITING :
