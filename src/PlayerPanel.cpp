@@ -1390,6 +1390,17 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
 
     m_MediaCtrl->ClearError();
 
+    int CurItem = m_PlayListCtrl->GetCurItem();
+
+    m_IsSkipping = false;
+    m_NextTrackId = 0;
+
+    wxCommandEvent CmdEvent;
+    CmdEvent.SetInt( guFADERPLAYBIN_PLAYTYPE_REPLACE );
+    OnNextTrackButtonClick( CmdEvent );
+
+    RemoveItem( CurItem );
+
 //    m_MediaCtrl->SetCurrentState( GST_STATE_READY );
 
 //    m_MediaCtrl->CleanPlayBins();
@@ -1414,12 +1425,6 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
 //
 //    CmdEvent.SetId( ID_PLAYERPANEL_PLAY );
 //    AddPendingEvent( CmdEvent );
-
-    if( m_NextTrackId )
-        m_NextTrackId = 0;
-
-    if( m_IsSkipping )
-        m_IsSkipping = false;
 
 //    wxCommandEvent CmdEvent;
 //    OnNextTrackButtonClick( CmdEvent );
@@ -2233,7 +2238,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 
         SetNextTrack( NextItem );
 
-        if( State == guMEDIASTATE_PLAYING )
+        if( State == guMEDIASTATE_PLAYING || State == guMEDIASTATE_ERROR )
         {
             m_IsSkipping = true;
             LoadMedia( m_NextSong.m_FileName,

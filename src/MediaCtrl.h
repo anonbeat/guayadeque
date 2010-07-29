@@ -101,7 +101,8 @@ enum guMediaState
 {
     guMEDIASTATE_STOPPED,
     guMEDIASTATE_PAUSED,
-    guMEDIASTATE_PLAYING
+    guMEDIASTATE_PLAYING,
+    guMEDIASTATE_ERROR
 };
 
 // -------------------------------------------------------------------------------- //
@@ -279,6 +280,8 @@ class guFaderPlayBin
     wxFileOffset        Length( void );
 
     bool                IsOk( void ) { return !m_ErrorCode; }
+    int                 ErrorCode( void ) { return m_ErrorCode; }
+    void                SetErrorCode( const int error ) { m_ErrorCode = error; }
 
     void                SetNextUri( const wxString &uri ) { m_NextUri = uri; }
     wxString            NextUri( void ) { return m_NextUri; }
