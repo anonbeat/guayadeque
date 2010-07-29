@@ -6433,9 +6433,10 @@ void guDbLibrary::UpdateTrackFileName( const wxString &oldname, const wxString &
 
         int PathId = GetPathId( NewPath );
 
-        wxString query = wxString::Format( wxT( "UPDATE songs SET song_filename = '%s', song_pathid = %i WHERE song_id = %u;" ),
+        wxString query = wxString::Format( wxT( "UPDATE songs SET song_filename = '%s', song_pathid = %i, song_path = '%s' WHERE song_id = %u;" ),
             escape_query_str( newname.AfterLast( '/' ) ).c_str(),
             PathId,
+            escape_query_str( NewPath ).c_str(),
             TrackId );
 
         //guLogMessage( wxT( "Updating file: %s" ), query.c_str() );
