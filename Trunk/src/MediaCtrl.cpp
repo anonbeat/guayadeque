@@ -970,7 +970,6 @@ bool guMediaCtrl::Stop( void )
             case guFADERPLAYBIN_STATE_FADEOUT_STOP :
                 //guLogDebug( wxT( "stream %s is already paused" ), FaderPlayBin->m_Uri.c_str() );
                 FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
-                Done = true;
                 break;
 
             case guFADERPLAYBIN_STATE_FADEIN :
@@ -1034,7 +1033,13 @@ bool guMediaCtrl::Stop( void )
 	}
 
 	if( !Done )
+	{
+        guMediaEvent event( guEVT_MEDIA_CHANGED_STATE );
+        event.SetInt( GST_STATE_READY );
+        SendEvent( event );
+
 		guLogMessage( wxT( "couldn't find a stream to pause" ) );
+	}
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
     Lock();
