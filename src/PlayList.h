@@ -105,6 +105,9 @@ class guPlayList : public guListView
 
     void                        OnConfigUpdated( wxCommandEvent &event );
 
+    void                        OnDeleteFromLibrary( wxCommandEvent &event );
+    void                        OnDeleteFromDrive( wxCommandEvent &event );
+
   public :
     guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL );
     ~guPlayList();

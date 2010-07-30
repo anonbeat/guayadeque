@@ -151,6 +151,9 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayList::OnConfigUpdated ), NULL, this );
 
+    Connect( ID_PLAYER_PLAYLIST_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnDeleteFromLibrary ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnDeleteFromDrive ), NULL, this );
+
     ReloadItems();
 }
 
@@ -210,6 +213,9 @@ guPlayList::~guPlayList()
     Disconnect( ID_PLAYER_PLAYLIST_COMMANDS, ID_PLAYER_PLAYLIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCommandClicked ) );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayList::OnConfigUpdated ), NULL, this );
+
+    Disconnect( ID_PLAYER_PLAYLIST_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnDeleteFromLibrary ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnDeleteFromDrive ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1268,11 +1274,21 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REMOVE, _( "Remove selected songs" ), _( "Remove selected songs from PlayList" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
         Menu->Append( MenuItem );
-    }
 
-    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SAVE, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-    Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SAVE, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_DELETE_DRIVE, _( "Delete from Drive" ), _( "Remove the current selected tracks from drive" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        Menu->Append( MenuItem );
+    }
 
     Menu->AppendSeparator();
 
@@ -1862,6 +1878,116 @@ wxString guPlayList::GetSearchText( int item ) const
     return wxString::Format( wxT( "\"%s\" \"%s\"" ),
         m_Items[ item ].m_ArtistName.c_str(),
         m_Items[ item ].m_SongName.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnDeleteFromLibrary( wxCommandEvent &event )
+{
+    if( GetSelectedCount() )
+    {
+        if( wxMessageBox( wxT( "Are you sure to remove the selected tracks from your library?" ),
+            wxT( "Remove tracks from library" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
+        {
+            guTrackArray Tracks;
+            wxArrayInt PodcastsIds;
+            int Index;
+            int Count;
+            wxArrayInt Selected = GetSelectedItems( false );
+            Count = Selected.Count();
+            for( Index = Count - 1; Index >= 0; Index-- )
+            {
+                guTrack & Track = m_Items[ Selected[ Index ] ];
+                if( ( Track.m_Type == guTRACK_TYPE_DB ) || ( Track.m_Type == guTRACK_TYPE_NOTDB ) )
+                {
+                    Tracks.Add( Track );
+                }
+                else if( Track.m_Type == guTRACK_TYPE_PODCAST )
+                {
+                    PodcastsIds.Add( Track.m_SongId );
+                }
+                RemoveItem( Selected[ Index ] );
+            }
+
+            if( Tracks.Count() )
+            {
+                m_Db->DeleteLibraryTracks( &Tracks, true );
+            }
+
+            if( ( Count = PodcastsIds.Count() ) )
+            {
+                guPodcastItemArray Podcasts;
+                m_Db->GetPodcastItems( &Podcasts, PodcastsIds, 0, 0 );
+
+                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->RemovePodcastDownloadItems( &Podcasts );
+
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    m_Db->SetPodcastItemStatus( PodcastsIds[ Index ], guPODCAST_STATUS_DELETED );
+                }
+            }
+
+            ReloadItems();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
+{
+    if( GetSelectedCount() )
+    {
+        if( wxMessageBox( wxT( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
+            wxT( "Remove tracks from drive" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
+        {
+            guTrackArray Tracks;
+            wxArrayInt PodcastsIds;
+            int Index;
+            int Count;
+            wxArrayInt Selected = GetSelectedItems( false );
+            Count = Selected.Count();
+            for( Index = Count - 1; Index >= 0; Index-- )
+            {
+                guTrack & Track = m_Items[ Selected[ Index ] ];
+                if( ( Track.m_Type == guTRACK_TYPE_DB ) || ( Track.m_Type == guTRACK_TYPE_NOTDB ) )
+                {
+                    Tracks.Add( Track );
+                }
+                else if( Track.m_Type == guTRACK_TYPE_PODCAST )
+                {
+                    PodcastsIds.Add( Track.m_SongId );
+                }
+
+                if( Track.m_Type != guTRACK_TYPE_RADIOSTATION )
+                {
+                    if( !wxRemoveFile( Track.m_FileName ) )
+                    {
+                        guLogMessage( wxT( "Error deleting '%s'" ), Track.m_FileName.c_str() );
+                    }
+                }
+                RemoveItem( Selected[ Index ] );
+            }
+
+            if( Tracks.Count() )
+            {
+                m_Db->DeleteLibraryTracks( &Tracks, true );
+            }
+
+            if( ( Count = PodcastsIds.Count() ) )
+            {
+                guPodcastItemArray Podcasts;
+                m_Db->GetPodcastItems( &Podcasts, PodcastsIds, 0, 0 );
+
+                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->RemovePodcastDownloadItems( &Podcasts );
+
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    m_Db->SetPodcastItemStatus( PodcastsIds[ Index ], guPODCAST_STATUS_DELETED );
+                }
+            }
+
+            ReloadItems();
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
