@@ -2707,7 +2707,7 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
   wxSQLite3ResultSet    dbRes;
 
   //guLogMessage( wxT( "guDbLibrary::GetAlbums" )
-  query = wxT( "SELECT song_albumid, song_album, song_artistid, song_coverid, MAX(song_year) FROM songs " );
+  query = wxT( "SELECT song_albumid, song_album, song_artistid, song_artist, song_albumartist, song_coverid, MAX(song_year) FROM songs " );
 
   if( FullList )
   {
@@ -2759,12 +2759,16 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 
   while( dbRes.NextRow() )
   {
+  //query = wxT( "SELECT song_albumid, song_album, song_artistid, song_artist, song_albumartist, song_coverid, MAX(song_year) FROM songs " );
         guAlbumItem * AlbumItem = new guAlbumItem();
         AlbumItem->m_Id = dbRes.GetInt( 0 );
         AlbumItem->m_Name = dbRes.GetString( 1 );
         AlbumItem->m_ArtistId = dbRes.GetInt( 2 );
-        AlbumItem->m_CoverId = dbRes.GetInt( 3 );
-        AlbumItem->m_Year = dbRes.GetInt( 4 );
+        AlbumItem->m_ArtistName = dbRes.GetString( 4 );
+        if( AlbumItem->m_ArtistName.IsEmpty() )
+            AlbumItem->m_ArtistName = dbRes.GetString( 3 );
+        AlbumItem->m_CoverId = dbRes.GetInt( 5 );
+        AlbumItem->m_Year = dbRes.GetInt( 6 );
         AlbumItem->m_Thumb = GetCoverBitmap( AlbumItem->m_CoverId );
         Albums->Add( AlbumItem );
   }
