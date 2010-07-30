@@ -41,8 +41,9 @@ guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confn
 
     m_Db = NewDb;
     m_ConfName = confname;
-    m_ItemsFirst = -1;
-    m_ItemsLast = -1;
+    m_ItemsFirst = wxNOT_FOUND;
+    m_ItemsLast = wxNOT_FOUND;
+    m_LastColumnRightClicked = wxNOT_FOUND;
 
     int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
     bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
@@ -77,6 +78,7 @@ guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confn
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Connect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
     Connect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
+    Connect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
 
     ReloadItems();
 }
@@ -110,6 +112,7 @@ guSoListBox::~guSoListBox()
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
     Disconnect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
     Disconnect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
+    Disconnect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -399,6 +402,12 @@ void AddSongsCommands( wxMenu * Menu, int SelCount )
 }
 
 // -------------------------------------------------------------------------------- //
+void guSoListBox::AppendFastEditMenu( wxMenu * menu ) const
+{
+    guLogMessage( wxT( "guSoLisBox::AppendFastEditMenu %i" ), m_LastColumnRightClicked );
+}
+
+// -------------------------------------------------------------------------------- //
 void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
@@ -467,6 +476,8 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
+
+        AppendFastEditMenu( Menu );
 
         wxMenu *     SubMenu;
         SubMenu = new wxMenu();
@@ -660,6 +671,13 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
         // Update the track in database, playlist, etc
         ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_NONE, &m_Items[ Row - m_ItemsFirst ] );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::OnItemColumnRClicked( wxListEvent &event )
+{
+    m_LastColumnRightClicked = GetColumnId( event.m_col );
+    //guLogMessage( wxT( "Column %i Right Clicked..." ), ColId );
 }
 
 // -------------------------------------------------------------------------------- //

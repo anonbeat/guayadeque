@@ -99,6 +99,7 @@ class guTrack
     guTrack() {
         m_Type = guTRACK_TYPE_DB;
         m_TrackMode = guTRACK_MODE_USER;
+        m_Bitrate = 0;
     };
 
     ~guTrack() {};
