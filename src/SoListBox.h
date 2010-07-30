@@ -54,6 +54,7 @@ class guSoListBox : public guListView
     int                 m_ItemsFirst;
     int                 m_ItemsLast;
     wxString            m_ConfName;
+    int                 m_LastColumnRightClicked;
 
     wxBitmap *          m_NormalStar;
     wxBitmap *          m_SelectStar;
@@ -70,10 +71,13 @@ class guSoListBox : public guListView
     wxString                    GetSearchText( int item ) const;
 
     void                        OnItemColumnClicked( wxListEvent &event );
+    void                        OnItemColumnRClicked( wxListEvent &event );
 
     virtual void                ItemsLock() { m_ItemsMutex.Lock(); };
     virtual void                ItemsUnlock() { m_ItemsMutex.Unlock(); };
     virtual void                ItemsCheckRange( const int start, const int end );
+
+    virtual void                AppendFastEditMenu( wxMenu * menu ) const;
 
   public :
     guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style = 0 );

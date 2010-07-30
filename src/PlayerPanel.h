@@ -293,7 +293,6 @@ class guPlayerPanel : public wxPanel
     void                OnMediaPosition( guMediaEvent &event );
     void                OnMediaLength( guMediaEvent &event );
 
-
     void                SetNextTrack( const guTrack * Song );
 
     // SmartPlay Events

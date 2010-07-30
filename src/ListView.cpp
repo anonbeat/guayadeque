@@ -308,12 +308,14 @@ void guListView::SetSelection( int selection )
 }
 
 // -------------------------------------------------------------------------------- //
-void guListView::RefreshAll( int scroll )
+void guListView::RefreshAll( int scrollto )
 {
-    if( scroll != wxNOT_FOUND )
+    if( scrollto != wxNOT_FOUND )
     {
-        if( !m_ListBox->IsVisible( scroll ) )
-            m_ListBox->ScrollToLine( scroll );
+        if( !m_ListBox->IsVisible( scrollto ) )
+        {
+            m_ListBox->ScrollToLine( scrollto );
+        }
     }
     m_ListBox->RefreshAll();
 }

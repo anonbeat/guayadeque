@@ -2203,12 +2203,37 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
             }
         }
-        else if( State == guMEDIASTATE_PAUSED )
-        {
-            m_MediaCtrl->Stop();
-        }
         else
         {
+            if( State == guMEDIASTATE_PAUSED )
+            {
+                m_MediaCtrl->Stop();
+            }
+            if( m_MediaSong.m_Loaded )
+            {
+                guCurrentTrack CurrentTrack;
+                CurrentTrack.m_Rating = 0;
+                CurrentTrack.m_Year = 0;
+                m_MediaSong = CurrentTrack;
+                m_LastCurPos = 0;
+                m_LastLength = 0;
+                UpdateLabels();
+                UpdatePositionLabel( 0 );
+
+                m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
+                m_MediaSong.m_CoverPath = wxEmptyString;
+                wxImage * CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+                // Cover
+                if( CoverImage )
+                {
+                    if( CoverImage->IsOk() )
+                    {
+                        m_PlayerCoverBitmap->SetBitmap( wxBitmap( *CoverImage ) );
+                        m_PlayerCoverBitmap->Refresh();
+                    }
+                    delete CoverImage;
+                }
+            }
             guLogMessage( wxT( "Prev Track when not playing.." ) );
 //            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
@@ -2246,12 +2271,38 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
                 ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ) );
         }
-        else if( State == guMEDIASTATE_PAUSED )
-        {
-            m_MediaCtrl->Stop();
-        }
         else
         {
+            if( State == guMEDIASTATE_PAUSED )
+            {
+                m_MediaCtrl->Stop();
+            }
+            if( m_MediaSong.m_Loaded )
+            {
+                guCurrentTrack CurrentTrack;
+                CurrentTrack.m_Rating = 0;
+                CurrentTrack.m_Year = 0;
+                CurrentTrack.m_Length = 0;
+                m_MediaSong = CurrentTrack;
+                m_LastCurPos = 0;
+                m_LastLength = 0;
+                UpdateLabels();
+                UpdatePositionLabel( 0 );
+
+                m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
+                m_MediaSong.m_CoverPath = wxEmptyString;
+                wxImage * CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+                // Cover
+                if( CoverImage )
+                {
+                    if( CoverImage->IsOk() )
+                    {
+                        m_PlayerCoverBitmap->SetBitmap( wxBitmap( *CoverImage ) );
+                        m_PlayerCoverBitmap->Refresh();
+                    }
+                    delete CoverImage;
+                }
+            }
             guLogMessage( wxT( "Next Track when not playing.." ) );
 //            m_MediaCtrl->SetCurrentState( GST_STATE_READY );
         }
