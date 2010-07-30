@@ -2022,7 +2022,7 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
         //m_MediaSong = * NextItem;
         SetNextTrack( NextItem );
         LoadMedia( m_NextSong.m_FileName,
-            m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS );
+            m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     else
