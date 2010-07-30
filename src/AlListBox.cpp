@@ -92,11 +92,22 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 
     dc.DrawText( Item->m_Name, rect.x + 45, rect.y + 4 );
 
-    if( Item->m_Year > 0 )
+    if( Item->m_Year )
     {
+        int Pos;
+        dc.GetTextExtent( Item->m_Name, &Pos, NULL );
+        Pos += rect.x + 45;
         m_Attr.m_Font->SetPointSize( 7 );
         dc.SetFont( * m_Attr.m_Font );
-        dc.DrawText( wxString::Format( wxT( "%4u" ), Item->m_Year ), rect.x + 45, rect.y + 22 );
+        dc.DrawText( wxString::Format( wxT( " (%4u)" ), Item->m_Year ), Pos, rect.y + 7 );
+    }
+
+
+    if( !Item->m_ArtistName.IsEmpty() )
+    {
+        m_Attr.m_Font->SetPointSize( 8 );
+        dc.SetFont( * m_Attr.m_Font );
+        dc.DrawText( _( "by " ) + Item->m_ArtistName, rect.x + 45, rect.y + 22 );
     }
 
     if( Item->m_Thumb && Item->m_Thumb->IsOk() )

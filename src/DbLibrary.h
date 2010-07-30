@@ -168,6 +168,7 @@ class guAlbumItem : public guListItem
     wxString    m_CoverPath;
     wxBitmap *  m_Thumb;
     int         m_Year;
+    wxString    m_ArtistName;
 
     guAlbumItem() : guListItem()
     {
