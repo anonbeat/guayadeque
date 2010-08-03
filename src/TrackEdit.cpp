@@ -1186,8 +1186,12 @@ void guTrackEditor::OnSearchImageClicked( wxCommandEvent &event )
     {
         if( CoverEditor->ShowModal() == wxID_OK )
         {
-            ( * m_Images )[ m_CurItem ] = new wxImage( * CoverEditor->GetSelectedCoverImage() );
-            RefreshImage();
+            wxImage * SelectedCover = CoverEditor->GetSelectedCoverImage();
+            if( SelectedCover )
+            {
+                ( * m_Images )[ m_CurItem ] = new wxImage( * SelectedCover );
+                RefreshImage();
+            }
         }
         CoverEditor->Destroy();
     }
