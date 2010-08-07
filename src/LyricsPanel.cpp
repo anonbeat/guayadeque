@@ -1310,19 +1310,24 @@ bool guLyricPluginEngine::DoSearchLyric( const wxString &content )
 
     if( !TestDestroy() && !Content.IsEmpty() )
     {
-        StartPos = Content.Find( wxT( "<div id=\"lyrics\">" ) );
+        StartPos = Content.Find( wxT( "<textarea name=\"lyrics\" style=" ) );
 
         if( StartPos != wxNOT_FOUND )
         {
-            Content = Content.Mid( StartPos + 17 );
-            if( ( EndPos = Content.Find( wxT( "</div>" ) ) ) != wxNOT_FOUND )
+            Content = Content.Mid( StartPos );
+            StartPos = Content.Find( wxT( ";\">" ) );
+            if( StartPos != wxNOT_FOUND )
             {
-                Content = Content.Mid( 0, EndPos );
+                Content = Content.Mid( StartPos + 3 );
+                if( ( EndPos = Content.Find( wxT( "</textarea>" ) ) ) != wxNOT_FOUND )
+                {
+                    Content = Content.Mid( 0, EndPos );
 
-                Content.Replace( wxT( "<br />" ), wxT( "" ) );
-                Content.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
-                SetLyric( new wxString( Content.c_str() ) );
-                return true;
+                    Content.Replace( wxT( "<br />" ), wxT( "" ) );
+                    Content.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
+                    SetLyric( new wxString( Content.c_str() ) );
+                    return true;
+                }
             }
         }
     }
@@ -1332,7 +1337,8 @@ bool guLyricPluginEngine::DoSearchLyric( const wxString &content )
 // -------------------------------------------------------------------------------- //
 void guLyricPluginEngine::SearchLyric( void )
 {
-    wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/plugin/?artist=%s&title=%s" ),
+    //wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/plugin/?artist=%s&title=%s" ),
+    wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/edit/?artist=%s&title=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
 
     if( !DoSearchLyric( GetUrlContent( UrlStr ) ) && !TestDestroy() )
