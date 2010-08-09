@@ -35,6 +35,7 @@
 #include <wx/printdlg.h>
 #include <wx/settings.h>
 #include <wx/xml/xml.h>
+#include <wx/tokenzr.h>
 
 #define guLYRICS_TEMPLATE_DEFAULT       wxT( "<html><body bgcolor=%s><center><font color=%s size=\"+1\">%s</font></center></body></html>" )
 #define guLYRICS_TEMPLATE_ULTGUITAR     wxT( "<html><body bgcolor=%s><font color=%s><TT>%s</TT></font></body></html>" )
@@ -1302,32 +1303,68 @@ guLyricPluginEngine::~guLyricPluginEngine()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guLyricPluginEngine::DoSearchLyric( const wxString &content )
+wxString GetLyricPluginLyric( wxString &content )
+{
+    int         StartPos;
+    int         EndPos;
+
+    StartPos = content.Find( wxT( "<div id=\"lyrics\">" ) );
+
+    if( StartPos != wxNOT_FOUND )
+    {
+        content = content.Mid( StartPos + 17 );
+        if( ( EndPos = content.Find( wxT( "</div>" ) ) ) != wxNOT_FOUND )
+        {
+            return content.Mid( 0, EndPos );
+        }
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLyricPluginEngine::DoSearchLyric( const wxString &content, const wxString &referer )
 {
     int         StartPos;
     int         EndPos;
     wxString Content = content;
 
+    //guLogMessage( wxT( "Content:\n%s" ), content.c_str() );
+
     if( !TestDestroy() && !Content.IsEmpty() )
     {
-        StartPos = Content.Find( wxT( "<textarea name=\"lyrics\" style=" ) );
+        StartPos = Content.Find( wxT( ":getContent(" ) );
 
         if( StartPos != wxNOT_FOUND )
         {
-            Content = Content.Mid( StartPos );
-            StartPos = Content.Find( wxT( ";\">" ) );
-            if( StartPos != wxNOT_FOUND )
+            Content = Content.Mid( StartPos + 12 );
+            if( ( EndPos = Content.Find( wxT( ")\">" ) ) ) != wxNOT_FOUND )
             {
-                Content = Content.Mid( StartPos + 3 );
-                if( ( EndPos = Content.Find( wxT( "</textarea>" ) ) ) != wxNOT_FOUND )
-                {
-                    Content = Content.Mid( 0, EndPos );
+                Content = Content.Mid( 0, EndPos );
 
-                    Content.Replace( wxT( "<br />" ), wxT( "" ) );
-                    Content.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
-                    SetLyric( new wxString( Content.c_str() ) );
-                    return true;
+                wxArrayString Params = wxStringTokenize( Content, wxT( "," ) );
+                int Index;
+                int Count = Params.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    Params[ Index ].Replace( wxT( "'" ), wxT( "" ) );
+                    Params[ Index ] = Params[ Index ].Strip( wxString::both );
                 }
+
+                //guLogMessage( wxT( "0-%s" ), Params[ 0 ].c_str() );
+                //guLogMessage( wxT( "1-%s" ), Params[ 1 ].c_str() );
+                //guLogMessage( wxT( "2-%s" ), Params[ 2 ].c_str() );
+                //guLogMessage( wxT( "3-%s" ), Params[ 3 ].c_str() );
+
+                wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/plugin/content.php?artist=%s&title=%s&time=%s&check=%s" ),
+                        Params[ 0 ].c_str(), Params[ 1 ].c_str(), Params[ 2 ].c_str(), Params[ 3 ].c_str() );
+
+                Content = GetUrlContent( UrlStr, referer );
+                Content = GetLyricPluginLyric( Content );
+
+                Content.Replace( wxT( "<br />" ), wxT( "" ) );
+                Content.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
+                SetLyric( new wxString( Content.c_str() ) );
+                return true;
             }
         }
     }
@@ -1337,11 +1374,10 @@ bool guLyricPluginEngine::DoSearchLyric( const wxString &content )
 // -------------------------------------------------------------------------------- //
 void guLyricPluginEngine::SearchLyric( void )
 {
-    //wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/plugin/?artist=%s&title=%s" ),
-    wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/edit/?artist=%s&title=%s" ),
+    wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/plugin/?artist=%s&title=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
 
-    if( !DoSearchLyric( GetUrlContent( UrlStr ) ) && !TestDestroy() )
+    if( !DoSearchLyric( GetUrlContent( UrlStr ), UrlStr ) && !TestDestroy() )
     {
         SetLyric( NULL );
     }
