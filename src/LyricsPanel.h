@@ -204,7 +204,7 @@ class guLyrcComArEngine : public guSearchLyricEngine
 class guLyricPluginEngine : public guSearchLyricEngine
 {
   protected :
-    bool    DoSearchLyric( const wxString &content );
+    bool    DoSearchLyric( const wxString &content, const wxString &referer );
 
   public:
     guLyricPluginEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
