@@ -688,8 +688,25 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
 
                         //printf( "AddTrack: %s\n", TrackPath );
 
+                        if( PlayTrack )
+                        {
+                            m_PlayerPanel->ClearPlayList();
+
+                            if( m_PlayerPanel->GetState() != guMEDIASTATE_STOPPED )
+                            {
+                                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+                                wxPostEvent( m_PlayerPanel, event );
+                            }
+                        }
+
                         m_PlayerPanel->AddToPlayList( wxString( TrackPath, wxConvUTF8 ) );
-                        // For now this player dont allow to play current loaded track
+
+                        if( PlayTrack )
+                        {
+                            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                            m_PlayerPanel->OnNextTrackButtonClick( event );
+                            m_PlayerPanel->OnPlayButtonClick( event );
+                        }
 
                         int TrackAdded = 1;
                         if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &TrackAdded ) )
