@@ -208,24 +208,18 @@ bool guMainApp::OnInit()
     m_SingleInstanceChecker = new wxSingleInstanceChecker( AppName );
     if( m_SingleInstanceChecker->IsAnotherRunning() )
     {
-        int Index;
-        guLogMessage( wxT( "=*=*=*=*=*=*=*=*=\n" ) );
-        for( Index = 0; Index < argc; Index++ )
+        if( argc > 1 )
         {
-            guLogMessage( wxString::Format( wxT( "%i) %s\n" ), Index, argv[ Index ] ) );
+            int RetryCnt = 0;
+            while( RetryCnt < 25 )
+            {
+                if( SendFilesByMPRIS( argc, argv ) )
+                {
+                    break;
+                }
+                wxMilliSleep( 100 );
+            }
         }
-//        if( argc > 1 )
-//        {
-//            int RetryCnt = 0;
-//            while( RetryCnt < 25 )
-//            {
-//                if( SendFilesByMPRIS( argc, argv ) )
-//                {
-//                    break;
-//                }
-//                wxMilliSleep( 100 );
-//            }
-//        }
 
         guLogError( wxT( "Another program instance is already running, aborting." ) );
         return false;
