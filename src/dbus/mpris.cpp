@@ -204,7 +204,7 @@ void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
 
     const char * metadata_names[] = {
         "location", "title", "artist", "album", "tracknumber",
-        "time", "mtime", "genre", "rating", "year", "arturl"
+        "time", "mtime", "genre", "rating", "year", "arturl", "bitrate"
     };
 
     dbus_message_iter_init_append( reply->GetMessage(), &args );
@@ -230,6 +230,9 @@ void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
 //    if( !CurTrack->m_CoverPath.IsEmpty() )
 //        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_CoverPath ).mb_str( wxConvUTF8 ) );
 
+    if( CurTrack->m_Rating )
+        FillMetadataDetails( &dict, metadata_names[ 11 ], ( const int ) CurTrack->m_Bitrate );
+
     dbus_message_iter_close_container( &args, &dict );
 
 }
@@ -244,7 +247,7 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
 
     const char * metadata_names[] = {
         "location", "title", "artist", "album", "tracknumber",
-        "time", "mtime", "genre", "rating", "year", "arturl"
+        "time", "mtime", "genre", "rating", "year", "arturl", "bitrate"
     };
 
     dbus_message_iter_init_append( reply->GetMessage(), &args );
@@ -268,6 +271,9 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
 
     if( !CurTrack->m_CoverPath.IsEmpty() )
         FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_CoverPath ).mb_str( wxConvUTF8 ) );
+
+    if( CurTrack->m_Rating )
+        FillMetadataDetails( &dict, metadata_names[ 11 ], ( const int ) CurTrack->m_Bitrate );
 
     dbus_message_iter_close_container( &args, &dict );
 
