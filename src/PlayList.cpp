@@ -401,6 +401,10 @@ void guPlayList::OnKeyDown( wxKeyEvent &event )
     {
         RemoveSelected();
         ReloadItems();
+        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
+        CmdEvent.SetInt( 0 );
+        CmdEvent.SetExtraLong( 0 );
+        wxPostEvent( this, CmdEvent );
         return;
     }
     event.Skip();
@@ -972,6 +976,10 @@ void guPlayList::ClearItems()
     ClearSelectedItems();
     ReloadItems();
     //PlayerPanel->UpdateTotalLength();
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
+    event.SetInt( 0 );
+    event.SetExtraLong( 0 );
+    wxPostEvent( this, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1349,6 +1357,10 @@ void guPlayList::OnRemoveClicked( wxCommandEvent &event )
     RemoveSelected();
     ReloadItems();
     //PlayerPanel->UpdateTotalLength();
+    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
+    CmdEvent.SetInt( 0 );
+    CmdEvent.SetExtraLong( 0 );
+    wxPostEvent( this, CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
