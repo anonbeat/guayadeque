@@ -1189,7 +1189,7 @@ int guFilesListBox::GetDragFiles( wxFileDataObject * files )
     int count = SelectFiles.Count();
     for( index = 0; index < count; index++ )
     {
-       files->AddFile( SelectFiles[ index ] );
+       files->AddFile( guFileDnDEncode( SelectFiles[ index ] ) );
     }
     return count;
 }

@@ -331,8 +331,8 @@ int guSoListBox::GetDragFiles( wxFileDataObject * files )
     int count = GetSelectedSongs( &Songs );
     for( index = 0; index < count; index++ )
     {
-       wxString FileName = Songs[ index ].m_FileName;
-       FileName.Replace( wxT( "#" ), wxT( "%23" ) );
+       wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
+       //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
        //FileName.Replace( wxT( "%" ), wxT( "%25" ) );
        //guLogMessage( wxT( "Adding song '%s'" ), Songs[ index ].m_FileName.c_str() );
        files->AddFile( FileName );

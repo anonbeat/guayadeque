@@ -250,10 +250,10 @@ void guPlayList::OnDropBegin( void )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnDropFile( const wxString &filename )
 {
+    //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
     if( guIsValidAudioFile( filename ) ||
         guPlayListFile::IsValidPlayList( filename ) )
     {
-        //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
         AddPlayListItem( filename, false );
     }
 }
@@ -280,8 +280,8 @@ int  guPlayList::GetDragFiles( wxFileDataObject * files )
     count = Selection.Count();
     for( index = 0; index < count; index++ )
     {
-        wxString FileName = m_Items[ Selection[ index ] ].m_FileName;
-        FileName.Replace( wxT( "#" ), wxT( "%23" ) );
+        wxString FileName = guFileDnDEncode( m_Items[ Selection[ index ] ].m_FileName );
+        //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
         files->AddFile( FileName );
     }
     return count;
