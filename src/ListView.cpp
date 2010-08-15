@@ -1631,11 +1631,15 @@ guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
 {
     int index;
     int Count = m_Files.Count();
+    int Length = 0;
     for( index = 0; index < Count; ++index )
     {
         if( TestDestroy() )
             return 0;
+        Length += m_Files[ index ].Length();
         AddDropFiles( m_Files[ index ] );
+        guLogMessage( wxT( "****: %s" ), m_Files[ index ].c_str() );
+        guLogMessage( wxT( "Length: %i" ), Length );
     }
 
     m_ListView->OnDropEnd();

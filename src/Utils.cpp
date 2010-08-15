@@ -309,6 +309,38 @@ wxString guURLEncode( const wxString &Source )
 }
 
 // -------------------------------------------------------------------------------- //
+wxString guFileDnDEncode( const wxString &file )
+{
+  wxString RetVal;
+  wxString HexCode;
+  size_t index;
+  wxCharBuffer CharBuffer = file.ToUTF8();
+  size_t StrLen = strlen( CharBuffer );
+
+  for( index = 0; index < StrLen; index++ )
+  {
+    unsigned char C = CharBuffer[ index ];
+    {
+      static const wxChar marks[] = wxT( " -_.\"/+!~*()'[]%" );
+
+      if( ( C >= 'a' && C <= 'z' ) ||
+          ( C >= 'A' && C <= 'Z' ) ||
+          ( C >= '0' && C <= '9' ) ||
+          wxStrchr( marks, C ) )
+      {
+        RetVal += C;
+      }
+      else
+      {
+        HexCode.Printf( wxT( "%%%02X" ), C );
+        RetVal += HexCode;
+      }
+    }
+  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 int guWebExecute( const wxString &Url )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();

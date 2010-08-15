@@ -3981,12 +3981,14 @@ int guDbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs,
         query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
     }
 
+    //guLogMessage( wxT( "GetAlbumsSongs: %s" ), query.c_str() );
     dbRes = ExecuteQuery( query );
 
     while( dbRes.NextRow() )
     {
       Song = new guTrack();
       FillTrackFromDb( Song, &dbRes );
+      guLogMessage( wxT( "Title: %s" ), Song->m_SongName.c_str() );
       Songs->Add( Song );
     }
     dbRes.Finalize();
@@ -6414,8 +6416,8 @@ int guDbLibrary::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject *
 
   while( dbRes.NextRow() )
   {
-      wxString FileName = dbRes.GetString( 0 );
-      FileName.Replace( wxT( "#" ), wxT( "%23" ) );
+      wxString FileName = guFileDnDEncode( dbRes.GetString( 0 ) );
+      //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
       files->AddFile( FileName );
       Count++;
   }
