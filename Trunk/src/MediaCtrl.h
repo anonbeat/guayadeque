@@ -373,6 +373,7 @@ class guMediaCtrl : public wxEvtHandler
 
     int             GetEqualizerBand( const int band ) { return m_EqBands[ band ]; }
     bool            SetEqualizer( const wxArrayInt &eqset );
+    wxArrayInt      GetEqualizer( void ) { return m_EqBands; }
     void            ResetEqualizer( void );
     void            SetEqualizerBand( const int band, const int value );
 
