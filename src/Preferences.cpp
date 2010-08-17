@@ -942,6 +942,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     int count = m_LinksListBox->GetCount();
 	while( ( int ) m_LinksNames.Count() < count )
         m_LinksNames.Add( wxEmptyString );
+	while( ( int ) m_LinksNames.Count() > count )
+        m_LinksNames.RemoveAt( count );
+
     int index;
     for( index = 0; index < count; index++ )
     {
