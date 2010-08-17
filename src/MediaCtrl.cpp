@@ -1302,6 +1302,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri, co
     {
         //Load( uri, false );
         SetVolume( m_Player->GetVolume() );
+        SetEqualizer( m_Player->GetEqualizer() );
     }
 }
 
