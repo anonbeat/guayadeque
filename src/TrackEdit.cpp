@@ -37,6 +37,7 @@ const wxEventType guTrackEditEvent = wxNewEventType();
 // -------------------------------------------------------------------------------- //
 void guImagePtrArrayClean( guImagePtrArray * images )
 {
+    guLogMessage( wxT( "guImagePtrArrayClean..." ) );
     int Index;
     int Count;
     if( images && ( Count = images->Count() ) )
@@ -774,9 +775,6 @@ guTrackEditor::~guTrackEditor()
         delete m_MBrainzReleases;
     if( m_MBrainzAlbums )
         delete m_MBrainzAlbums;
-
-    if( m_Images )
-        guImagePtrArrayClean( m_Images );
 }
 
 // -------------------------------------------------------------------------------- //
