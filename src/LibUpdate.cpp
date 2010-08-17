@@ -51,11 +51,12 @@ guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxStr
         m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
 
         CheckSymLinks( m_LibPaths );
-
-        m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
-        //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
-        m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
     }
+
+    m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+    //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
+    m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
+    m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -139,7 +140,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
                 if( !m_Db->FindDeletedFile( dirname + FileName, false ) )
                 {
                     m_TrackFiles.Add( dirname + FileName );
-                    if( FirstAudioFile.IsEmpty() )
+                    if( m_ScanEmbeddedCovers && FirstAudioFile.IsEmpty() )
                         FirstAudioFile = dirname + FileName;
                 }
               }
@@ -160,7 +161,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
         }
       } while( !TestDestroy() && Dir.GetNext( &FileName ) );
 
-      if( !FoundCover )
+      if( m_ScanEmbeddedCovers && !FoundCover )
       {
         m_ImageFiles.Add( FirstAudioFile );
       }
