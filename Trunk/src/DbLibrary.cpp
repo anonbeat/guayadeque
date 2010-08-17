@@ -3988,7 +3988,6 @@ int guDbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs,
     {
       Song = new guTrack();
       FillTrackFromDb( Song, &dbRes );
-      guLogMessage( wxT( "Title: %s" ), Song->m_SongName.c_str() );
       Songs->Add( Song );
     }
     dbRes.Finalize();

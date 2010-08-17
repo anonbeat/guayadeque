@@ -1504,7 +1504,7 @@ void guRadioPanel::OnSelectStations( bool enqueue, const bool asnext )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioUserAdd( wxCommandEvent &event )
 {
-    guRadioEditor * RadioEditor = new guRadioEditor( this );
+    guRadioEditor * RadioEditor = new guRadioEditor( this, _( "Edit Radio" ) );
     if( RadioEditor )
     {
         if( RadioEditor->ShowModal() == wxID_OK )
