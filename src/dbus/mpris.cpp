@@ -339,7 +339,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 Flush();
                 RetVal = DBUS_HANDLER_RESULT_HANDLED;
             }
-            else if( !strcmp( Path, "/Tracklist" ) )
+            else if( !strcmp( Path, "/TrackList" ) )
             {
                 DBusMessageIter args;
                 dbus_message_iter_init_append( reply->GetMessage(), &args );

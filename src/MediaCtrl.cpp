@@ -527,37 +527,43 @@ bool guMediaCtrl::RemovePlayBin( guFaderPlayBin * playbin )
     guLogDebug( wxT( "guMediaCtrl::RemovePlayBin (%i)" ), playbin->m_Id );
     bool RetVal = false;
 
+    Lock();
     if( m_CurrentPlayBin == playbin )
         m_CurrentPlayBin = NULL;
 
-//    Lock();
     if( m_FaderPlayBins.Index( playbin ) )
     {
         m_FaderPlayBins.Remove( playbin );
         RetVal = true;
     }
-//    Unlock();
+    Unlock();
     return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
 wxFileOffset guMediaCtrl::Position( void )
 {
+    wxFileOffset Pos = 0;
+    Lock();
     if( m_CurrentPlayBin )
     {
-        return m_CurrentPlayBin->Position();
+        Pos = m_CurrentPlayBin->Position();
     }
-    return 0;
+    Unlock();
+    return Pos;
 }
 
 // -------------------------------------------------------------------------------- //
 wxFileOffset guMediaCtrl::Length( void )
 {
+    Lock();
+    wxFileOffset Len = 0;
     if( m_CurrentPlayBin )
     {
-        return m_CurrentPlayBin->Length();
+        Len = m_CurrentPlayBin->Length();
     }
-    return 0;
+    Unlock();
+    return Len;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -627,6 +633,8 @@ void guMediaCtrl::ResetEqualizer( void )
 // -------------------------------------------------------------------------------- //
 guMediaState guMediaCtrl::GetState( void )
 {
+    guMediaState State = guMEDIASTATE_STOPPED;
+    Lock();
     if( m_CurrentPlayBin )
     {
         guLogDebug( wxT( "guMediaCtrl::GetState %i" ), m_CurrentPlayBin->GetState() );
@@ -634,24 +642,26 @@ guMediaState guMediaCtrl::GetState( void )
         switch( m_CurrentPlayBin->GetState() )
         {
             case guFADERPLAYBIN_STATE_PAUSED :
-                return guMEDIASTATE_PAUSED;
+                State = guMEDIASTATE_PAUSED;
+                break;
 
             case guFADERPLAYBIN_STATE_FADEIN :
             case guFADERPLAYBIN_STATE_FADEOUT :
             case guFADERPLAYBIN_STATE_FADEOUT_PAUSE :
             case guFADERPLAYBIN_STATE_FADEOUT_STOP :
             case guFADERPLAYBIN_STATE_PLAYING :
-                return guMEDIASTATE_PLAYING;
+                State = guMEDIASTATE_PLAYING;
+                break;
 
             case guFADERPLAYBIN_STATE_ERROR :
-                return guMEDIASTATE_ERROR;
+                State = guMEDIASTATE_ERROR;
 
             default :
                 break;
         }
-
     }
-    return guMEDIASTATE_STOPPED;
+    Unlock();
+    return State;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -660,9 +670,8 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
     guLogDebug( wxT( "guMediaCtrl::Load %i" ), playtype );
 
     guFaderPlayBin * FaderPlaybin;
+    long Result = 0;
 
-//    int FadeOutTime = m_FadeOutTime;
-//    double FadeVolume = 1.0;
 #ifdef guSHOW_DUMPFADERPLAYBINS
     Lock();
     DumpFaderPlayBins( m_FaderPlayBins );
@@ -676,67 +685,23 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
 
     switch( playtype )
     {
-//        case guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
-//        {
-//            Lock();
-//            int Index;
-//            int Count = m_FaderPlayBins.Count();
-//            for( Index = 0; Index < Count; Index++ )
-//            {
-//                FaderPlaybin = m_FaderPlayBins[ Index ];
-//                switch( FaderPlaybin->GetState() )
-//                {
-//                    case guFADERPLAYBIN_STATE_WAITING :
-//                    case guFADERPLAYBIN_STATE_WAITING_EOS :
-//                    case guFADERPLAYBIN_STATE_PAUSED :
-//                    //case guFADERPLAYBIN_STATE_ :
-//                    {
-//                        FaderPlaybin->SetState( guFADERPLAYBIN_STATE_PENDING_REMOVE );
-//                        break;
-//                    }
-//
-//                    case guFADERPLAYBIN_STATE_FADEOUT_PAUSE :
-//                    {
-//                        FaderPlaybin->SetState( guFADERPLAYBIN_STATE_FADEOUT );
-//                        break;
-//                    }
-//
-//                    case guFADERPLAYBIN_STATE_FADEIN :
-//                    {
-//                        FadeVolume = FaderPlaybin->GetFaderVolume();
-//                        FaderPlaybin->StartFade( FadeVolume, 0.0f, FadeVolume * FadeOutTime );
-//                        FaderPlaybin->m_State = guFADERPLAYBIN_STATE_FADEOUT;
-//                        break;
-//                    }
-//
-//                    case guFADERPLAYBIN_STATE_PLAYING :
-//                    {
-//                        FaderPlaybin->StartFade( FadeVolume, 0.0f, FadeOutTime );
-//                        FaderPlaybin->m_State = guFADERPLAYBIN_STATE_FADEOUT;
-//                        break;
-//                    }
-//                }
-//            }
-//            Unlock();
-//
-//
-//            break;
-//        }
-//
         case guFADERPLAYBIN_PLAYTYPE_AFTER_EOS :
         {
+            Lock();
             if( m_CurrentPlayBin )
             {
                 m_CurrentPlayBin->SetNextUri( uri );
                 m_CurrentPlayBin->SetNextId( wxGetLocalTime() );
-                return m_CurrentPlayBin->NextId();
+                Result = m_CurrentPlayBin->NextId();
             }
+            Unlock();
             break;
         }
 
         case guFADERPLAYBIN_PLAYTYPE_REPLACE :
         {
             guLogDebug( wxT( "Replacing the current track in the current playbin..." ) );
+            Lock();
             if( m_CurrentPlayBin )
             {
                 if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
@@ -749,8 +714,9 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
                 m_CurrentPlayBin->Load( uri, true );
                 m_CurrentPlayBin->SetBuffering( false );
                 m_CurrentPlayBin->SetFaderVolume( 1.0 );
-                return m_CurrentPlayBin->GetId();
+                Result = m_CurrentPlayBin->GetId();
             }
+            Unlock();
             break;
         }
 
@@ -773,18 +739,16 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
                 event.SetInt( true );
                 SendEvent( event );
 
-                return FaderPlaybin->GetId();
+                Result = FaderPlaybin->GetId();
             }
             else
             {
-                Lock();
                 RemovePlayBin( FaderPlaybin );
-                Unlock();
             }
         }
         delete FaderPlaybin;
     }
-    return 0;
+    return Result;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1068,11 +1032,14 @@ bool guMediaCtrl::Stop( void )
 bool guMediaCtrl::Seek( wxFileOffset where )
 {
     guLogDebug( wxT( "guMediaCtrl::Seek( %lli )" ), where );
+    bool Result = false;
+    Lock();
     if( m_CurrentPlayBin )
     {
-        return m_CurrentPlayBin->Seek( where );
+        Result = m_CurrentPlayBin->Seek( where );
     }
-    return false;
+    Unlock();
+    return Result;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1193,7 +1160,10 @@ void guMediaCtrl::FadeOutDone( guFaderPlayBin * faderplaybin )
 bool guMediaCtrl::EnableRecord( const wxString &recfile, const int format, const int quality )
 {
     guLogDebug( wxT( "guMediaCtrl::EnableRecord" ) );
-    return ( m_IsRecording = ( m_CurrentPlayBin && m_CurrentPlayBin->EnableRecord( recfile, format, quality ) ) );
+    Lock();
+    bool Result = ( m_IsRecording = ( m_CurrentPlayBin && m_CurrentPlayBin->EnableRecord( recfile, format, quality ) ) );
+    Unlock();
+    return  Result;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1201,17 +1171,22 @@ void guMediaCtrl::DisableRecord( void )
 {
     guLogDebug( wxT( "guMediaCtrl::DisableRecord" ) );
     m_IsRecording = false;
+    Lock();
     if( m_CurrentPlayBin )
     {
         m_CurrentPlayBin->DisableRecord();
     }
+    Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetRecordFileName( const wxString &filename )
 {
     guLogDebug( wxT( "guMediaCtrl::SetRecordFileName  '%s'" ), filename.c_str() );
-    return m_CurrentPlayBin && m_CurrentPlayBin->SetRecordFileName( filename );
+    Lock();
+    bool Result = m_CurrentPlayBin && m_CurrentPlayBin->SetRecordFileName( filename );
+    Unlock();
+    return Result;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1255,7 +1230,6 @@ void guMediaCtrl::DoCleanUp( void )
 		//guLogDebug( wxT( "reaping stream %s" ), ( ( guFaderPlayBin * ) ToDelete[ Index ] )->m_Uri.c_str() );
 		delete ( ( guFaderPlayBin * ) ToDelete[ Index ] );
 	}
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1338,6 +1312,11 @@ guFaderPlayBin::~guFaderPlayBin()
     {
         gst_element_set_state( m_Playbin, GST_STATE_NULL );
         gst_object_unref( GST_OBJECT( m_Playbin ) );
+    }
+
+    if( m_FaderTimeLine )
+    {
+        EndFade();
     }
     guLogDebug( wxT( "Finished destroying the playbin %i" ), m_Id );
 }
@@ -2070,8 +2049,7 @@ bool guFaderPlayBin::StartFade( double volstart, double volend, int timeout )
     {
 //        guLogDebug( wxT( "Reversed the fader for %i" ), m_Id );
 //        m_FaderTimeLine->ToggleDirection();
-        delete m_FaderTimeLine;
-        m_FaderTimeLine = NULL;
+        EndFade();
     }
 
     m_FaderTimeLine = new guFaderTimeLine( timeout, NULL, this, volstart, volend );

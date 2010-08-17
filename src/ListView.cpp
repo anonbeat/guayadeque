@@ -1638,8 +1638,6 @@ guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
             return 0;
         Length += m_Files[ index ].Length();
         AddDropFiles( m_Files[ index ] );
-        guLogMessage( wxT( "****: %s" ), m_Files[ index ].c_str() );
-        guLogMessage( wxT( "Length: %i" ), Length );
     }
 
     m_ListView->OnDropEnd();
