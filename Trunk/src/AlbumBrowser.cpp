@@ -1276,6 +1276,9 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
             m_Db->UpdateSongs( &Songs );
             UpdateImages( Songs, Images );
             UpdateLyrics( Songs, Lyrics );
+
+            guImagePtrArrayClean( &Images );
+
             m_PlayerPanel->UpdatedTracks( &Songs );
         }
         TrackEditor->Destroy();

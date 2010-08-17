@@ -939,6 +939,8 @@ void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
+            guImagePtrArrayClean( &Images );
+
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
@@ -1069,6 +1071,8 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
             m_Db->UpdateSongs( &Tracks );
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
+
+            guImagePtrArrayClean( &Images );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
@@ -1341,6 +1345,8 @@ void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
             m_Db->UpdateSongs( &Tracks );
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
+
+            guImagePtrArrayClean( &Images );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
@@ -1733,6 +1739,8 @@ void guLibPanel::OnYearListEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
+            guImagePtrArrayClean( &Images );
+
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
@@ -1835,6 +1843,8 @@ void guLibPanel::OnRatingListEditTracksClicked( wxCommandEvent &event )
             m_Db->UpdateSongs( &Tracks );
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
+
+            guImagePtrArrayClean( &Images );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
@@ -1939,6 +1949,8 @@ void guLibPanel::OnPlayCountListEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
+            guImagePtrArrayClean( &Images );
+
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
@@ -2042,6 +2054,8 @@ void guLibPanel::OnComposerListEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
+            guImagePtrArrayClean( &Images );
+
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
@@ -2137,6 +2151,8 @@ void guLibPanel::OnAlbumArtistListEditTracksClicked( wxCommandEvent &event )
             m_Db->UpdateSongs( &Tracks );
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
+
+            guImagePtrArrayClean( &Images );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
