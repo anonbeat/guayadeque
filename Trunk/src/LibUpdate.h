@@ -42,6 +42,7 @@ class guLibUpdateThread : public wxThread
     wxArrayString       m_CoverSearchWords;
     wxString            m_ScanPath;
     bool                m_ScanAddPlayLists;
+    bool                m_ScanEmbeddedCovers;
 
     int                 ScanDirectory( wxString dirname, bool includedir = false );
 
