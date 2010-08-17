@@ -35,6 +35,24 @@
 const wxEventType guTrackEditEvent = wxNewEventType();
 
 // -------------------------------------------------------------------------------- //
+void guImagePtrArrayClean( guImagePtrArray * images )
+{
+    int Index;
+    int Count;
+    if( images && ( Count = images->Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( ( * images )[ Index ] )
+            {
+                delete ( * images )[ Index ];
+                ( * images )[ Index ] = NULL;
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray * songs,
     guImagePtrArray * images, wxArrayString * lyrics )
 {
@@ -757,6 +775,8 @@ guTrackEditor::~guTrackEditor()
     if( m_MBrainzAlbums )
         delete m_MBrainzAlbums;
 
+    if( m_Images )
+        guImagePtrArrayClean( m_Images );
 }
 
 // -------------------------------------------------------------------------------- //

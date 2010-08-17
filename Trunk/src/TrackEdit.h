@@ -39,6 +39,9 @@ extern const wxEventType guTrackEditEvent;
 class guTrackEditor;
 
 // -------------------------------------------------------------------------------- //
+void guImagePtrArrayClean( guImagePtrArray * images );
+
+// -------------------------------------------------------------------------------- //
 class guMusicBrainzMetadataThread : public wxThread
 {
   protected :

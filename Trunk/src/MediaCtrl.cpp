@@ -351,6 +351,10 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             }
             else if( !strcmp( Name, guFADERPLAYBIN_MESSAGE_FADEOUT_DONE ) )
             {
+                if( !ctrl->EmittedStartFadeIn() )
+                {
+                    ctrl->FadeInStart();
+                }
                 ctrl->FadeOutDone();
             }
 
@@ -1067,7 +1071,6 @@ void guMediaCtrl::ScheduleCleanUp( void )
 void guMediaCtrl::FadeInStart( void )
 {
     guLogDebug( wxT( "guMediaCtrl::FadeInStart" ) );
-
 
     Lock();
 #ifdef guSHOW_DUMPFADERPLAYBINS
