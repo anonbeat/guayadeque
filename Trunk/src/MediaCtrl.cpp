@@ -739,7 +739,7 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
                 event.SetInt( true );
                 SendEvent( event );
 
-                Result = FaderPlaybin->GetId();
+                return FaderPlaybin->GetId();
             }
             else
             {
