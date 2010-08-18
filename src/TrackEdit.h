@@ -215,6 +215,8 @@ class guTrackEditor : public wxDialog
     void OnSearchLyrics( wxCommandEvent &event );
     void OnDownloadedLyric( wxCommandEvent &event );
 
+    void MBCheckCountAndLengths( void );
+
 public:
     guTrackEditor( wxWindow * parent, guDbLibrary * db,
             guTrackArray * songs, guImagePtrArray * images, wxArrayString * lyrics );

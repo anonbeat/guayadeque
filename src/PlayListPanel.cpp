@@ -1164,6 +1164,7 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYLISTS, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }

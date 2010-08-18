@@ -1343,13 +1343,7 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, co
   //guLogMessage( wxT( "Updating album: %i path: '%s'" ), AlbumId, CoverPath.c_str() );
   // Delete the actual assigned Cover
   // Find the Cover assigned to the album
-  query = wxString::Format( wxT( "SELECT song_coverid FROM songs WHERE song_albumid = %i LIMIT 1;" ), AlbumId );
-  dbRes = ExecuteQuery( query );
-  if( dbRes.NextRow() )
-  {
-    CoverId = dbRes.GetInt( 0 );
-  }
-  dbRes.Finalize();
+  CoverId = GetAlbumCoverId( AlbumId );
 
   if( CoverId > 0 )
   {
@@ -1634,6 +1628,8 @@ int guDbLibrary::ReadFileTags( const char * filename )
           m_CurSong.m_AlbumId = GetAlbumId( TagInfo->m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, m_CurSong.m_Path );
           m_CurSong.m_AlbumName = TagInfo->m_AlbumName;
 
+          m_CurSong.m_CoverId = GetAlbumCoverId( m_CurSong.m_AlbumId );
+
           m_CurSong.m_GenreId = GetGenreId( TagInfo->m_GenreName );
           m_CurSong.m_GenreName = TagInfo->m_GenreName;
 
@@ -1840,7 +1836,7 @@ int guDbLibrary::UpdateSong( const bool allowrating )
                                  "song_filename = '%s', song_format = '%s', "
                                  "song_number = %u, song_year = %u, "
                                  "song_composerid = %u, song_composer = '%s', "
-                                 "song_comment = '%s', song_disk = '%s', "
+                                 "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
                                  "song_length = %u, song_offset = %u, song_bitrate = %u, "
                                  "song_rating = %i, "
                                  "song_filesize = %u WHERE song_id = %u;" ),
@@ -1862,6 +1858,7 @@ int guDbLibrary::UpdateSong( const bool allowrating )
             m_CurSong.m_ComposerId, //escape_query_str( m_CurSong.m_Composer ).c_str(),
             escape_query_str( m_CurSong.m_Composer ).c_str(),
             escape_query_str( m_CurSong.m_Comments ).c_str(),
+            m_CurSong.m_CoverId,
             escape_query_str( m_CurSong.m_Disk ).c_str(),
             m_CurSong.m_Length,
             0, //m_CurSong.m_Offset,
@@ -1881,7 +1878,7 @@ int guDbLibrary::UpdateSong( const bool allowrating )
                                  "song_filename = '%s', song_format = '%s', "
                                  "song_number = %u, song_year = %u, "
                                  "song_composerid = %u, song_composer = '%s', "
-                                 "song_comment = '%s', song_disk = '%s', "
+                                 "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
                                  "song_length = %u, song_offset = %u, song_bitrate = %u, "
                                  "song_filesize = %u WHERE song_id = %u;" ),
             escape_query_str( m_CurSong.m_SongName ).c_str(),
@@ -1902,6 +1899,7 @@ int guDbLibrary::UpdateSong( const bool allowrating )
             m_CurSong.m_ComposerId, //escape_query_str( m_CurSong.m_Composer ).c_str(),
             escape_query_str( m_CurSong.m_Composer ).c_str(),
             escape_query_str( m_CurSong.m_Comments ).c_str(),
+            m_CurSong.m_CoverId,
             escape_query_str( m_CurSong.m_Disk ).c_str(),
             m_CurSong.m_Length,
             0, //m_CurSong.m_Offset,

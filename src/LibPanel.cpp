@@ -939,11 +939,10 @@ void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }
@@ -1072,11 +1071,10 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }
@@ -1148,7 +1146,8 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                         wxImage CoverImage( CoverFile );
                         if( CoverImage.IsOk() )
                         {
-                            if( CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
+                            guLogMessage( wxT( "'%s' => '%s'" ), CoverFile.c_str(), CoverName.c_str() );
+                            if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
                             {
                                 m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
                                 m_AlbumListCtrl->ReloadItems( false );
@@ -1346,11 +1345,10 @@ void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }
@@ -1739,11 +1737,10 @@ void guLibPanel::OnYearListEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }
@@ -1844,11 +1841,10 @@ void guLibPanel::OnRatingListEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }
@@ -1949,11 +1945,10 @@ void guLibPanel::OnPlayCountListEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }
@@ -2054,11 +2049,10 @@ void guLibPanel::OnComposerListEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }
@@ -2152,11 +2146,10 @@ void guLibPanel::OnAlbumArtistListEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Tracks, Images );
             UpdateLyrics( Tracks, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }

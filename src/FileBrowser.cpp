@@ -1713,11 +1713,10 @@ void guFileBrowser::OnFolderEditTracks( wxCommandEvent &event )
                 UpdateImages( Tracks, Images );
                 UpdateLyrics( Tracks, Lyrics );
 
-                guImagePtrArrayClean( &Images );
-
                 // Update the track in database, playlist, etc
                 ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
             }
+            guImagePtrArrayClean( &Images );
             TrackEditor->Destroy();
         }
     }
@@ -1847,11 +1846,10 @@ void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
                 UpdateImages( Tracks, Images );
                 UpdateLyrics( Tracks, Lyrics );
 
-                guImagePtrArrayClean( &Images );
-
                 // Update the track in database, playlist, etc
                 ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
             }
+            guImagePtrArrayClean( &Images );
             TrackEditor->Destroy();
         }
     }
