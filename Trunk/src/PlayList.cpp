@@ -1572,11 +1572,10 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
             UpdateImages( Songs, Images );
             UpdateLyrics( Songs, Lyrics );
 
-            guImagePtrArrayClean( &Images );
-
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Songs );
         }
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }

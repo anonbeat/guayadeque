@@ -795,7 +795,6 @@ void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMoveUpBtnClick( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "UP: %i" ), m_CurItem );
     wxString FileName = m_SongListBox->GetString( m_CurItem );
     guTrack * MovedTrack = m_Items->Detach( m_CurItem );
     wxImage * MovedImage = ( * m_Images )[ m_CurItem ];
@@ -813,12 +812,13 @@ void guTrackEditor::OnMoveUpBtnClick( wxCommandEvent &event )
 
     event.SetInt( m_CurItem );
     OnSongListBoxSelected( event );
+
+    MBCheckCountAndLengths();
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMoveDownBtnClick( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "DOWN: %i" ), m_CurItem );
     wxString FileName = m_SongListBox->GetString( m_CurItem );
     guTrack * MovedTrack = m_Items->Detach( m_CurItem );
     wxImage * MovedImage = ( * m_Images )[ m_CurItem ];
@@ -836,6 +836,8 @@ void guTrackEditor::OnMoveDownBtnClick( wxCommandEvent &event )
 
     event.SetInt( m_CurItem );
     OnSongListBoxSelected( event );
+
+    MBCheckCountAndLengths();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1467,6 +1469,28 @@ int guTrackEditor::CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray *
 }
 
 // -------------------------------------------------------------------------------- //
+void guTrackEditor::MBCheckCountAndLengths( void )
+{
+    if( m_MBrainzReleases && m_MBrainzReleases->Count() )
+    {
+        guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+        // Check the number of tracks
+        wxString InfoText;
+        if( MBRelease->m_Tracks.Count() != m_Items->Count() )
+        {
+            InfoText = wxString::Format( _( "Error: The album have %u tracks and you are editing %u" ),
+                            MBRelease->m_Tracks.Count(), m_Items->Count() );
+        }
+        if( CheckTracksLengths( &MBRelease->m_Tracks, m_Items ) )
+        {
+            InfoText += _( "\n"
+                             "Warning: The length of some edited tracks don't match" );
+        }
+        m_MBrainzInfoStaticText->SetLabel( InfoText );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guTrackEditor::OnMBrainzAlbumChoiceSelected( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "MusicBrainzAlbumSelected..." ) );
@@ -1482,19 +1506,7 @@ void guTrackEditor::OnMBrainzAlbumChoiceSelected( wxCommandEvent &event )
         m_MBrainzCopyButton->Enable( true );
         m_MBrainzAlbumTextCtrl->SetValue( MBRelease->m_Title );
 
-        // Check the number of tracks
-        wxString InfoText;
-        if( MBRelease->m_Tracks.Count() != m_Items->Count() )
-        {
-            InfoText = wxString::Format( _( "Error: The album have %u tracks and you are editing %u" ),
-                            MBRelease->m_Tracks.Count(), m_Items->Count() );
-        }
-        if( CheckTracksLengths( &MBRelease->m_Tracks, m_Items ) )
-        {
-            InfoText += _( "\n"
-                             "Warning: The length of some edited tracks don't match" );
-        }
-        m_MBrainzInfoStaticText->SetLabel( InfoText );
+        MBCheckCountAndLengths();
     }
     else
     {

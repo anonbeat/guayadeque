@@ -75,10 +75,14 @@ guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confn
     m_NormalStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + GURATING_STYLE_MID ) ) );
     m_SelectStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + GURATING_STYLE_MID ) ) );
 
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
-    Connect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
+    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ), NULL, this );
+    Connect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ), NULL, this );
     Connect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
     Connect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
+
+//    Connect( ID_SONG_EDIT_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnColumEdit ), NULL, this );
+//    Connect( ID_SONG_SET_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnColumSet ), NULL, this );
+//    Connect( ID_SONG_SET_RATING_0, ID_SONG_SET_RATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnColumnSetRating ), NULL, this );
 
     ReloadItems();
 }
@@ -164,8 +168,8 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
         case guSONGS_COLUMN_BITRATE :
             return wxString::Format( wxT( "%u" ), Song->m_Bitrate );
 
-//        case guSONGS_COLUMN_RATING :
-//            return wxString::Format( wxT( "%i" ), Song->m_Rating );
+        case guSONGS_COLUMN_RATING :
+            return wxString::Format( wxT( "%i" ), Song->m_Rating );
 
         case guSONGS_COLUMN_PLAYCOUNT :
         {
@@ -341,7 +345,7 @@ int guSoListBox::GetDragFiles( wxFileDataObject * files )
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guSoListBox::GetColumnNames( void )
+wxArrayString guSoListBox::GetColumnNames( void ) const
 {
     wxArrayString ColumnNames;
     ColumnNames.Add( wxT( "#" ) );
@@ -402,9 +406,71 @@ void AddSongsCommands( wxMenu * Menu, int SelCount )
 }
 
 // -------------------------------------------------------------------------------- //
-void guSoListBox::AppendFastEditMenu( wxMenu * menu ) const
+void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
 {
-    guLogMessage( wxT( "guSoLisBox::AppendFastEditMenu %i" ), m_LastColumnRightClicked );
+    wxMenuItem * MenuItem;
+    //guLogMessage( wxT( "guSoLisBox::AppendFastEditMenu %i - %i" ), m_LastColumnRightClicked, m_LastRowRightClicked );
+
+    int ColumnId = GetColumnId( m_LastColumnRightClicked );
+
+    // If its a column not editable
+    if( ColumnId == guSONGS_COLUMN_LENGTH ||
+        ColumnId == guSONGS_COLUMN_BITRATE ||
+        ColumnId == guSONGS_COLUMN_FORMAT )
+        return;
+
+    wxArrayString ColumnNames = GetColumnNames();
+
+    wxString MenuText = _( "Edit" );
+    MenuText += wxT( " " ) + ColumnNames[ ColumnId ];
+
+    MenuItem = new wxMenuItem( menu, ID_SONG_EDIT_COLUMN,  MenuText, _( "Edit the clicked column for the selected tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+    menu->Append( MenuItem );
+
+    if( selcount > 1 )
+    {
+        if( ColumnId == guSONGS_COLUMN_RATING )
+        {
+            wxMenu * RatingMenu = new wxMenu();
+
+            int Rating = m_Items[ m_LastRowRightClicked - m_ItemsFirst ].m_Rating;
+
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_0, wxT( "☆☆☆☆☆" ), _( "Set the rating to 0" ), wxITEM_CHECK );
+            RatingMenu->Append( MenuItem );
+            MenuItem->Check( Rating <= 0 );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_1, wxT( "★☆☆☆☆" ), _( "Set the rating to 1" ), wxITEM_CHECK );
+            RatingMenu->Append( MenuItem );
+            MenuItem->Check( Rating == 1 );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_2, wxT( "★★☆☆☆" ), _( "Set the rating to 2" ), wxITEM_CHECK );
+            RatingMenu->Append( MenuItem );
+            MenuItem->Check( Rating == 2 );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_3, wxT( "★★★☆☆" ), _( "Set the rating to 3" ), wxITEM_CHECK );
+            RatingMenu->Append( MenuItem );
+            MenuItem->Check( Rating == 3 );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_4, wxT( "★★★★☆" ), _( "Set the rating to 4" ), wxITEM_CHECK );
+            RatingMenu->Append( MenuItem );
+            MenuItem->Check( Rating == 4 );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_5, wxT( "★★★★★" ), _( "Set the rating to 5" ), wxITEM_CHECK );
+            RatingMenu->Append( MenuItem );
+            MenuItem->Check( Rating == 5 );
+
+            menu->AppendSubMenu( RatingMenu, _( "Set Rating" ), _( "Set the current track rating" ) );
+        }
+        else
+        {
+            MenuText = _( "Set" );
+            MenuText += wxT( " " ) + ColumnNames[ ColumnId ] + wxT( " " );
+            MenuText += _( "to" );
+            MenuText += wxT( " '" ) + OnGetItemText( m_LastRowRightClicked, m_LastColumnRightClicked ) + wxT( "'" );
+
+            MenuItem = new wxMenuItem( menu, ID_SONG_SET_COLUMN,  MenuText, _( "Set the clicked column for the selected tracks" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            menu->Append( MenuItem );
+        }
+    }
+
+    menu->AppendSeparator();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -477,7 +543,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSeparator();
 
-        AppendFastEditMenu( Menu );
+        AppendFastEditMenu( Menu, SelCount );
 
         wxMenu *     SubMenu;
         SubMenu = new wxMenu();
@@ -676,8 +742,9 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
 // -------------------------------------------------------------------------------- //
 void guSoListBox::OnItemColumnRClicked( wxListEvent &event )
 {
-    m_LastColumnRightClicked = GetColumnId( event.m_col );
-    //guLogMessage( wxT( "Column %i Right Clicked..." ), ColId );
+    m_LastColumnRightClicked = event.m_col;
+    m_LastRowRightClicked = event.GetInt();
+    //guLogMessage( wxT( "Column %i Row %i Right Clicked..." ), m_LastColumnRightClicked, event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
