@@ -711,6 +711,7 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
                 if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
                 {
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                    Unlock();
                     ScheduleCleanUp();
                     break;
                 }
