@@ -432,6 +432,9 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
     Connect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongsEditTracksClicked ), NULL, this );
     Connect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongCopyToClicked ), NULL, this );
     Connect( ID_SONG_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSavePlayListClicked ), NULL, this );
+    Connect( ID_SONG_SET_RATING_0, ID_SONG_SET_RATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSetRating ), NULL, this );
+    Connect( ID_SONG_SET_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSetField ), NULL, this );
+    //Connect( ID_SONG_EDIT_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongEditField ), NULL, this );
 
     Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectGenre ), NULL, this );
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectArtist ), NULL, this );
@@ -1146,7 +1149,6 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                         wxImage CoverImage( CoverFile );
                         if( CoverImage.IsOk() )
                         {
-                            guLogMessage( wxT( "'%s' => '%s'" ), CoverFile.c_str(), CoverName.c_str() );
                             if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
                             {
                                 m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
@@ -1436,6 +1438,86 @@ void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
         PlayListAppendDlg->Destroy();
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongSetRating( wxCommandEvent &event )
+{
+    //guLogMessage( wxT( "guLibPanel::OnSongSetRating %i" ), event.GetId() - ID_SONG_SET_RATING_0 );
+
+    int Rating = event.GetId() - ID_SONG_SET_RATING_0;
+
+    guTrackArray Tracks;
+    m_SongListCtrl->GetSelectedSongs( &Tracks );
+
+    m_Db->SetTracksRating( &Tracks, Rating );
+    m_SongListCtrl->ReloadItems();
+
+    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongSetField( wxCommandEvent &event )
+{
+    int ColumnId = m_SongListCtrl->GetColumnId( m_SongListCtrl->GetLastColumnClicked() );
+    //guLogMessage( wxT( "guLibPanel::OnSongSetField %i" ), ColumnId );
+
+    guTrackArray Tracks;
+    m_SongListCtrl->GetSelectedSongs( &Tracks );
+
+    wxVariant NewData = m_SongListCtrl->GetLastDataClicked();
+
+    //guLogMessage( wxT( "Setting Data to : %s" ), NewData.GetString().c_str() );
+
+    // This should be done in a thread for huge selections of tracks...
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &Tracks[ Index ];
+        switch( ColumnId )
+        {
+            case guSONGS_COLUMN_NUMBER :
+                Track->m_Number = NewData.GetLong();
+                break;
+
+            case guSONGS_COLUMN_TITLE :
+                Track->m_SongName = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_ARTIST :
+                Track->m_ArtistName = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_ALBUMARTIST :
+                Track->m_AlbumArtist = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_ALBUM :
+                Track->m_AlbumName = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_GENRE :
+                Track->m_GenreName = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_COMPOSER :
+                Track->m_Composer = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_DISK :
+                Track->m_Disk = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_YEAR :
+                Track->m_Year = NewData.GetLong();
+                break;
+
+        }
+    }
+
+    m_Db->UpdateSongs( &Tracks );
+}
+
 
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongListColClicked( wxListEvent &event )

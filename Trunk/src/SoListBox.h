@@ -98,6 +98,10 @@ class guSoListBox : public guListView
     void                        UpdatedTrack( const guTrack * track );
     int                         FindItem( const int trackid );
 
+    int                         GetLastColumnClicked( void ) { return m_LastColumnRightClicked; }
+    int                         GetLastRowClicked( void ) { return m_LastRowRightClicked; }
+    wxVariant                   GetLastDataClicked( void );
+
 };
 
 #endif

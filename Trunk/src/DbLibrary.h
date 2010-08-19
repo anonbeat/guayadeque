@@ -368,6 +368,7 @@ class guDbLibrary : public guDb
     guTRACKS_ORDER      GetSongsOrder( void ) const;
     bool                GetSongsOrderDesc( void ) const;
     void                UpdateSongs( guTrackArray * Songs );
+    void                UpdateTracksWithValue( guTrackArray * tracks, const int fieldid, void * value );
     void                UpdateTrackLength( const int trackid, const int length );
     void                UpdateTrackBitRate( const int trackid, const int bitrate );
     int                 GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit = false );
@@ -435,6 +436,7 @@ class guDbLibrary : public guDb
 
     void                SetTrackRating( const int songid, const int rating );
     void                SetTracksRating( const wxArrayInt &songids, const int rating );
+    void                SetTracksRating( const guTrackArray * tracks, const int rating );
 
     void                SetTrackPlayCount( const int songid, const int playcount );
 

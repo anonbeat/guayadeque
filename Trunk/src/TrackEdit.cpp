@@ -37,7 +37,6 @@ const wxEventType guTrackEditEvent = wxNewEventType();
 // -------------------------------------------------------------------------------- //
 void guImagePtrArrayClean( guImagePtrArray * images )
 {
-    guLogMessage( wxT( "guImagePtrArrayClean..." ) );
     int Index;
     int Count;
     if( images && ( Count = images->Count() ) )
