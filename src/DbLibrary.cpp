@@ -5420,6 +5420,22 @@ void guDbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating )
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::SetTracksRating( const guTrackArray * tracks, const int rating )
+{
+    wxArrayInt TrackIds;
+    int Index;
+    int Count = tracks->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        TrackIds.Add( tracks->Item( Index ).m_SongId );
+    }
+    if( Count )
+    {
+        SetTracksRating( TrackIds, rating );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::SetTrackPlayCount( const int songid, const int playcount )
 {
   wxString query;

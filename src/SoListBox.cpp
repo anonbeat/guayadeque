@@ -416,6 +416,9 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
     // If its a column not editable
     if( ColumnId == guSONGS_COLUMN_LENGTH ||
         ColumnId == guSONGS_COLUMN_BITRATE ||
+        ColumnId == guSONGS_COLUMN_PLAYCOUNT ||
+        ColumnId == guSONGS_COLUMN_LASTPLAY ||
+        ColumnId == guSONGS_COLUMN_ADDEDDATE ||
         ColumnId == guSONGS_COLUMN_FORMAT )
         return;
 
@@ -730,12 +733,15 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
         int Row = event.GetInt();
         if( m_Items[ Row - m_ItemsFirst ].m_Rating == Rating )
             Rating = 0;
-        m_Items[ Row - m_ItemsFirst ].m_Rating = Rating;
-        m_Db->SetTrackRating( m_Items[ Row - m_ItemsFirst ].m_SongId, Rating );
-        //RefreshLine( Row );
 
-        // Update the track in database, playlist, etc
-        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_NONE, &m_Items[ Row - m_ItemsFirst ] );
+//        m_Items[ Row - m_ItemsFirst ].m_Rating = Rating;
+//        m_Db->SetTrackRating( m_Items[ Row - m_ItemsFirst ].m_SongId, Rating );
+//        //RefreshLine( Row );
+//
+//        // Update the track in database, playlist, etc
+//        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_NONE, &m_Items[ Row - m_ItemsFirst ] );
+        wxCommandEvent RatingEvent( wxEVT_COMMAND_MENU_SELECTED, ID_SONG_SET_RATING_0 + Rating );
+        AddPendingEvent( RatingEvent );
     }
 }
 
@@ -745,6 +751,45 @@ void guSoListBox::OnItemColumnRClicked( wxListEvent &event )
     m_LastColumnRightClicked = event.m_col;
     m_LastRowRightClicked = event.GetInt();
     //guLogMessage( wxT( "Column %i Row %i Right Clicked..." ), m_LastColumnRightClicked, event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
+wxVariant guSoListBox::GetLastDataClicked( void )
+{
+    guTrack * Track = &m_Items[ m_LastRowRightClicked - m_ItemsFirst ];
+
+    int ColId = GetColumnId( m_LastColumnRightClicked );
+    switch( ColId )
+    {
+        case guSONGS_COLUMN_NUMBER :
+            return wxVariant( ( long ) Track->m_Number );
+
+        case guSONGS_COLUMN_TITLE :
+            return wxVariant( Track->m_SongName );
+
+        case guSONGS_COLUMN_ARTIST :
+            return wxVariant( Track->m_ArtistName );
+
+        case guSONGS_COLUMN_ALBUMARTIST :
+            return wxVariant( Track->m_AlbumArtist );
+
+        case guSONGS_COLUMN_ALBUM :
+            return wxVariant( Track->m_AlbumName );
+
+        case guSONGS_COLUMN_GENRE :
+            return wxVariant( Track->m_GenreName );
+
+        case guSONGS_COLUMN_COMPOSER :
+            return wxVariant( Track->m_Composer );
+
+        case guSONGS_COLUMN_DISK :
+            return wxVariant( Track->m_Disk );
+
+        case guSONGS_COLUMN_YEAR :
+            return wxVariant( ( long ) Track->m_Year );
+    }
+
+    return wxVariant();
 }
 
 // -------------------------------------------------------------------------------- //
