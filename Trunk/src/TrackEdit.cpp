@@ -1304,18 +1304,25 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
     }
     else if( m_MBrainzCurTrack < ( int ) m_Items->Count() )
     {
-        wxSetCursor( * wxHOURGLASS_CURSOR );
-        m_MBrainzAddButton->Enable( false );
-        m_MBrainzThreadMutex.Lock();
-        if( m_MBrainzThread )
+        if( wxFileExists( ( * m_Items )[ m_MBrainzCurTrack ].m_FileName ) )
         {
-            m_MBrainzThread->Pause();
-            m_MBrainzThread->Delete();
-        }
-        m_MBrainzThread = new guMusicBrainzMetadataThread( this, m_MBrainzCurTrack );
-        m_MBrainzThreadMutex.Unlock();
-        m_MBrainzCurTrack++;
+            wxSetCursor( * wxHOURGLASS_CURSOR );
+            m_MBrainzAddButton->Enable( false );
+            m_MBrainzThreadMutex.Lock();
+            if( m_MBrainzThread )
+            {
+                m_MBrainzThread->Pause();
+                m_MBrainzThread->Delete();
+            }
+            m_MBrainzThread = new guMusicBrainzMetadataThread( this, m_MBrainzCurTrack );
+            m_MBrainzThreadMutex.Unlock();
         //guLogMessage( wxT( "Albums search thread created" ) );
+        }
+        else
+        {
+            guLogError( wxT( "Could not find the track '%s'" ), ( * m_Items )[ m_CurItem ].m_FileName.c_str() );
+        }
+        m_MBrainzCurTrack++;
     }
 }
 
@@ -1410,6 +1417,7 @@ void guTrackEditor::UpdateMBrainzTrackInfo( void )
             {
                 m_MBrainzArtistStaticText->SetForegroundColour( Track->m_ArtistName == m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_ArtistName ?
                                         m_NormalColor : m_ErrorColor );
+                m_MBrainzArtistTextCtrl->SetValue( m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_ArtistName );
             }
 
             // ALbum
