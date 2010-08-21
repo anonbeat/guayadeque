@@ -1533,6 +1533,55 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
 
     wxArrayString Items;
 
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        wxVariant Value;
+        guTrack * Track = &Tracks[ Index ];
+
+        switch( ColumnId )
+        {
+            case guSONGS_COLUMN_NUMBER :
+                Value = ( long ) Track->m_Number;
+                break;
+
+            case guSONGS_COLUMN_TITLE :
+                Value = Track->m_SongName;
+                break;
+
+            case guSONGS_COLUMN_ARTIST :
+                Value = Track->m_ArtistName;
+                break;
+
+            case guSONGS_COLUMN_ALBUMARTIST :
+                Value = Track->m_AlbumArtist;
+                break;
+
+            case guSONGS_COLUMN_ALBUM :
+                Value = Track->m_AlbumName;
+                break;
+
+            case guSONGS_COLUMN_GENRE :
+                Value = Track->m_GenreName;
+                break;
+
+            case guSONGS_COLUMN_COMPOSER :
+                Value = Track->m_Composer;
+                break;
+
+            case guSONGS_COLUMN_DISK :
+                Value = Track->m_Disk;
+                break;
+
+            case guSONGS_COLUMN_YEAR :
+                Value = ( long ) Track->m_Year;
+                break;
+        }
+        if( Items.Index( Value.GetString() ) == wxNOT_FOUND )
+            Items.Add( Value.GetString() );
+    }
+
     guFieldEditor * FieldEditor = new guFieldEditor( this, Label, DefValue.GetString(), Items );
 
     if( FieldEditor )
