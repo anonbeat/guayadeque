@@ -812,7 +812,7 @@ void guSoListBox::UpdatedTracks( const guTrackArray * tracks )
             if( CurTrack.m_FileName == m_Items[ ItemIndex ].m_FileName )
             {
                 m_Items[ ItemIndex ] = CurTrack;
-                RefreshLine( ItemIndex );
+                RefreshLine( ItemIndex + m_ItemsFirst );
             }
         }
     }
