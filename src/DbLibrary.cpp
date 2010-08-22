@@ -5427,6 +5427,7 @@ void guDbLibrary::SetTracksRating( const guTrackArray * tracks, const int rating
     int Count = tracks->Count();
     for( Index = 0; Index < Count; Index++ )
     {
+        guLogMessage( wxT( "%i to %s" ), rating, tracks->Item( Index ).m_SongName.c_str() );
         TrackIds.Add( tracks->Item( Index ).m_SongId );
     }
     if( Count )

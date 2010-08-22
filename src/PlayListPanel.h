@@ -175,6 +175,9 @@ class guPlayListPanel : public wxPanel
     void                OnPLTracksEditTracksClicked( wxCommandEvent &event );
     void                OnPLTracksCopyToClicked( wxCommandEvent &event );
     void                OnPLTracksSavePlayListClicked( wxCommandEvent &event );
+    void                OnPLTracksSetRating( wxCommandEvent &event );
+    void                OnPLTracksSetField( wxCommandEvent &event );
+    void                OnPLTracksEditField( wxCommandEvent &event );
 
     void                OnPLTracksSelectGenre( wxCommandEvent &event );
     void                OnPLTracksSelectArtist( wxCommandEvent &event );
