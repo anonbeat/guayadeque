@@ -1451,7 +1451,12 @@ void guLibPanel::OnSongSetRating( wxCommandEvent &event )
     m_SongListCtrl->GetSelectedSongs( &Tracks );
 
     m_Db->SetTracksRating( &Tracks, Rating );
-    m_SongListCtrl->ReloadItems();
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        Tracks[ Index ].m_Rating = Rating;
+    }
 
     ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
 }

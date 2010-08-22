@@ -26,6 +26,7 @@
 #include "Config.h"
 #include "DbLibrary.h"
 #include "DynamicPlayList.h"
+#include "FieldEditor.h"
 #include "Images.h"
 #include "LabelEditor.h"
 #include "MainFrame.h"
@@ -607,6 +608,9 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditTracksClicked ) );
     Connect( ID_SONG_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksCopyToClicked ) );
     Connect( ID_SONG_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSavePlayListClicked ) );
+    Connect( ID_SONG_SET_RATING_0, ID_SONG_SET_RATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSetRating ), NULL, this );
+    Connect( ID_SONG_SET_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSetField ), NULL, this );
+    Connect( ID_SONG_EDIT_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksEditField ), NULL, this );
 
     Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectGenre ) );
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
@@ -1244,6 +1248,213 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
             wxPostEvent( wxTheApp->GetTopWindow(), evt );
         }
         PlayListAppendDlg->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksSetRating( wxCommandEvent &event )
+{
+    int Rating = event.GetId() - ID_SONG_SET_RATING_0;
+
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+
+    m_Db->SetTracksRating( &Tracks, Rating );
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        Tracks[ Index ].m_Rating = Rating;
+    }
+
+    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksSetField( wxCommandEvent &event )
+{
+    int ColumnId = m_PLTracksListBox->GetColumnId( m_PLTracksListBox->GetLastColumnClicked() );
+    //guLogMessage( wxT( "guPlayListPanel::OnSongSetField %i" ), ColumnId );
+
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+
+    wxVariant NewData = m_PLTracksListBox->GetLastDataClicked();
+
+    //guLogMessage( wxT( "Setting Data to : %s" ), NewData.GetString().c_str() );
+
+    // This should be done in a thread for huge selections of tracks...
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &Tracks[ Index ];
+        switch( ColumnId )
+        {
+            case guSONGS_COLUMN_NUMBER :
+                Track->m_Number = NewData.GetLong();
+                break;
+
+            case guSONGS_COLUMN_TITLE :
+                Track->m_SongName = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_ARTIST :
+                Track->m_ArtistName = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_ALBUMARTIST :
+                Track->m_AlbumArtist = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_ALBUM :
+                Track->m_AlbumName = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_GENRE :
+                Track->m_GenreName = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_COMPOSER :
+                Track->m_Composer = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_DISK :
+                Track->m_Disk = NewData.GetString();
+                break;
+
+            case guSONGS_COLUMN_YEAR :
+                Track->m_Year = NewData.GetLong();
+                break;
+
+        }
+    }
+
+    m_Db->UpdateSongs( &Tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksEditField( wxCommandEvent &event )
+{
+    int ColumnId = m_PLTracksListBox->GetColumnId( m_PLTracksListBox->GetLastColumnClicked() );
+    //guLogMessage( wxT( "guLibPanel::OnSongSetField %i" ), ColumnId );
+
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+
+    wxString Label = m_PLTracksListBox->GetColumnNames()[ ColumnId ];
+    wxVariant DefValue = m_PLTracksListBox->GetLastDataClicked();
+
+    wxArrayString Items;
+
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        wxVariant Value;
+        guTrack * Track = &Tracks[ Index ];
+
+        switch( ColumnId )
+        {
+            case guSONGS_COLUMN_NUMBER :
+                Value = ( long ) Track->m_Number;
+                break;
+
+            case guSONGS_COLUMN_TITLE :
+                Value = Track->m_SongName;
+                break;
+
+            case guSONGS_COLUMN_ARTIST :
+                Value = Track->m_ArtistName;
+                break;
+
+            case guSONGS_COLUMN_ALBUMARTIST :
+                Value = Track->m_AlbumArtist;
+                break;
+
+            case guSONGS_COLUMN_ALBUM :
+                Value = Track->m_AlbumName;
+                break;
+
+            case guSONGS_COLUMN_GENRE :
+                Value = Track->m_GenreName;
+                break;
+
+            case guSONGS_COLUMN_COMPOSER :
+                Value = Track->m_Composer;
+                break;
+
+            case guSONGS_COLUMN_DISK :
+                Value = Track->m_Disk;
+                break;
+
+            case guSONGS_COLUMN_YEAR :
+                Value = ( long ) Track->m_Year;
+                break;
+        }
+        if( Items.Index( Value.GetString() ) == wxNOT_FOUND )
+            Items.Add( Value.GetString() );
+    }
+
+    guFieldEditor * FieldEditor = new guFieldEditor( this, Label, DefValue.GetString(), Items );
+
+    if( FieldEditor )
+    {
+        if( FieldEditor->ShowModal() == wxID_OK )
+        {
+            DefValue = FieldEditor->GetData();
+
+            //guLogMessage( wxT( "Setting Data to : %s" ), DefValue.GetString().c_str() );
+
+            // This should be done in a thread for huge selections of tracks...
+            int Index;
+            int Count = Tracks.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                guTrack * Track = &Tracks[ Index ];
+                switch( ColumnId )
+                {
+                    case guSONGS_COLUMN_NUMBER :
+                        Track->m_Number = DefValue.GetLong();
+                        break;
+
+                    case guSONGS_COLUMN_TITLE :
+                        Track->m_SongName = DefValue.GetString();
+                        break;
+
+                    case guSONGS_COLUMN_ARTIST :
+                        Track->m_ArtistName = DefValue.GetString();
+                        break;
+
+                    case guSONGS_COLUMN_ALBUMARTIST :
+                        Track->m_AlbumArtist = DefValue.GetString();
+                        break;
+
+                    case guSONGS_COLUMN_ALBUM :
+                        Track->m_AlbumName = DefValue.GetString();
+                        break;
+
+                    case guSONGS_COLUMN_GENRE :
+                        Track->m_GenreName = DefValue.GetString();
+                        break;
+
+                    case guSONGS_COLUMN_COMPOSER :
+                        Track->m_Composer = DefValue.GetString();
+                        break;
+
+                    case guSONGS_COLUMN_DISK :
+                        Track->m_Disk = DefValue.GetString();
+                        break;
+
+                    case guSONGS_COLUMN_YEAR :
+                        Track->m_Year = DefValue.GetLong();
+                        break;
+                }
+            }
+
+            m_Db->UpdateSongs( &Tracks );
+        }
+        FieldEditor->Destroy();
     }
 }
 
