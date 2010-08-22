@@ -51,6 +51,19 @@
 #include <wx/imaglist.h>
 #include <wx/dialog.h>
 
+#define  guPREFERENCE_PAGE_GENERAL          ( 1 << 0 )
+#define  guPREFERENCE_PAGE_LIBRARY          ( 1 << 1 )
+#define  guPREFERENCE_PAGE_PLAYBACK         ( 1 << 2 )
+#define  guPREFERENCE_PAGE_CROSSFADER       ( 1 << 3 )
+#define  guPREFERENCE_PAGE_RECORD           ( 1 << 4 )
+#define  guPREFERENCE_PAGE_AUDIOSCROBBLE    ( 1 << 5 )
+#define  guPREFERENCE_PAGE_LYRICS           ( 1 << 6 )
+#define  guPREFERENCE_PAGE_ONLINE           ( 1 << 7 )
+#define  guPREFERENCE_PAGE_PODCASTS         ( 1 << 8 )
+#define  guPREFERENCE_PAGE_LINKS            ( 1 << 9 )
+#define  guPREFERENCE_PAGE_COMMANDS         ( 1 << 10 )
+#define  guPREFERENCE_PAGE_COPYTO           ( 1 << 11 )
+
 // -------------------------------------------------------------------------------- //
 class guPrefDialog : public wxDialog
 {
@@ -179,6 +192,7 @@ class guPrefDialog : public wxDialog
     wxRadioBox *                m_RadioMinBitRateRadBox;
     wxArrayString               m_RadioMinBitRateRadBoxChoices;
 
+    wxPanel *                   m_PodcastPanel;
     wxDirPickerCtrl *           m_PodcastPath;
     wxCheckBox *                m_PodcastUpdate;
     wxChoice *                  m_PodcastUpdatePeriod;
@@ -197,8 +211,23 @@ class guPrefDialog : public wxDialog
     int                         m_LinkSelected;
     int                         m_CmdSelected;
     bool                        m_LibPathsChanged;
+    int                         m_VisiblePanels;
+
+    void                        BuildGeneralPage( void );
+    void                        BuildLibraryPage( void );
+    void                        BuildPlaybackPage( void );
+    void                        BuildCrossfaderPage( void );
+    void                        BuildRecordPage( void );
+    void                        BuildAudioScrobblePage( void );
+    void                        BuildLyricsPage( void );
+    void                        BuildOnlinePage( void );
+    void                        BuildPodcastsPage( void );
+    void                        BuildLinksPage( void );
+    void                        BuildCommandsPage( void );
+    void                        BuildCopyToPage( void );
 
     // Event Handlers
+    void OnPageChanged( wxCommandEvent &event );
     void OnActivateTaskBarIcon( wxCommandEvent& event );
     void OnRndPlayClicked( wxCommandEvent& event );
     void OnDelPlayedTracksChecked( wxCommandEvent& event );

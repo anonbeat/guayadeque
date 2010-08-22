@@ -33,33 +33,12 @@ wxString PatternToExample( const wxString &Pattern );
 guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 600, 530 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
 {
 	wxBoxSizer *        MainSizer;
-	wxBoxSizer *        GenMainSizer;
-	wxStaticBoxSizer *  StartSizer;
-	wxStaticBoxSizer *  BehaviSizer;
-	wxStaticBoxSizer *  OnCloseSizer;
-	wxBoxSizer *        LibMainSizer;
-	wxStaticBoxSizer *  PathsSizer;
-	wxBoxSizer *        PathButtonsSizer;
-	wxStaticBoxSizer*   CoversSizer;
-	wxStaticBoxSizer *  LibOptionsSizer;
-	wxBoxSizer *        ASMainSizer;
-	wxStaticBoxSizer *  LastFMASSizer;
-	wxFlexGridSizer *   ASLoginSizer;
-	wxFlexGridSizer *   SmartPlayListFlexGridSizer;
-	wxStaticBoxSizer *  OnlineFiltersSizer;
-	wxBoxSizer *        OnlineBtnSizer;
-	wxStaticBoxSizer *  BrowserCmdSizer;
-    wxPanel *           PodcastPanel;
-    wxStaticText *      PodcastPathStaticText;
-//	wxBoxSizer *        LinksMainSizer;
-//	wxStaticBoxSizer *  LinksSizer;
-//	wxBoxSizer *        LinksBtnSizer;
-//	wxStaticBoxSizer *  LinksHelpSizer;
 
     m_Db = db;
     m_LinkSelected = wxNOT_FOUND;
     m_CmdSelected = wxNOT_FOUND;
     m_LibPathsChanged = false;
+    m_VisiblePanels = 0;
 
     m_Config = ( guConfig * ) guConfig::Get();
     if( !m_Config )
@@ -119,12 +98,220 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_MainNotebook->AssignImageList( m_ImageList );
 
 
+	m_GenPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_GenPanel, _("General"), true, 0 );
+
+	m_LibPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_LibPanel, _("Library"), false );
+	m_MainNotebook->SetPageImage( 1, 1 );
+
+	m_PlayPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_PlayPanel, _( "Playback" ), false );
+	m_MainNotebook->SetPageImage( 2, 2 );
+
+	m_XFadePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_XFadePanel, _( "Crossfader" ), false );
+	m_MainNotebook->SetPageImage( 3, 3 );
+
+	m_RecordPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_RecordPanel, _( "Record" ), false );
+	m_MainNotebook->SetPageImage( 4, 4 );
+
+	m_LastFMPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_LastFMPanel, _( "AudioScrobble" ), false );
+	m_MainNotebook->SetPageImage( 5, 5 );
+
+	m_LyricsPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
+	m_MainNotebook->SetPageImage( 6, 6 );
+
+	m_OnlinePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online" ), false );
+	m_MainNotebook->SetPageImage( 7, 7 );
+
+	m_PodcastPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_PodcastPanel, _("Podcasts"), false );
+	m_MainNotebook->SetPageImage( 8, 8 );
+
+	m_LinksPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
+	m_MainNotebook->SetPageImage( 9, 9 );
+
+	m_CmdPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
+	m_MainNotebook->SetPageImage( 10, 10 );
+
+	m_CopyPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
+	m_MainNotebook->SetPageImage( 11, 11 );
+
+    BuildGeneralPage();
+
+    //
+	MainSizer->Add( m_MainNotebook, 1, wxEXPAND | wxALL, 5 );
+
+    wxStdDialogButtonSizer *    ButtonsSizer;
+    wxButton *                  ButtonsSizerOK;
+    wxButton *                  ButtonsSizerCancel;
+
+	ButtonsSizer = new wxStdDialogButtonSizer();
+	ButtonsSizerOK = new wxButton( this, wxID_OK );
+	ButtonsSizer->AddButton( ButtonsSizerOK );
+	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
+	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->Realize();
+	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
+
+	this->SetSizer( MainSizer );
+	this->Layout();
+
+	m_MainNotebook->Connect( wxEVT_COMMAND_LISTBOOK_PAGE_CHANGED, wxCommandEventHandler( guPrefDialog::OnPageChanged ), NULL, this );
+
+    //
+    //
+    //
+    m_PathSelected = wxNOT_FOUND;
+    m_FilterSelected = wxNOT_FOUND;
+
+}
+
+// -------------------------------------------------------------------------------- //
+guPrefDialog::~guPrefDialog()
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    // Save the window position and size
+    wxPoint WindowPos = GetPosition();
+    Config->WriteNum( wxT( "PreferencesPosX" ), WindowPos.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "PreferencesPosY" ), WindowPos.y, wxT( "Positions" ) );
+    wxSize WindowSize = GetSize();
+    Config->WriteNum( wxT( "PreferencesSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "PreferencesSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
+
+    //
+	m_MainNotebook->Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxCommandEventHandler( guPrefDialog::OnPageChanged ), NULL, this );
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_GENERAL )
+    {
+        m_TaskIconChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LIBRARY )
+    {
+    	m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxSelected ), NULL, this );
+        m_AddPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
+        m_DelPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
+        m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
+
+        m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
+        m_AddCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
+        m_UpCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnUpCoverBtnClick ), NULL, this );
+        m_DownCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
+        m_DelCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
+        m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_PLAYBACK )
+    {
+        m_RndPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
+        m_DelPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
+        m_PlayLevelEnabled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
+        m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_RECORD )
+    {
+        m_RecordChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
+        m_RecDelTracks->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LYRICS )
+    {
+        m_LyricsTracksSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
+        m_LyricsDirSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_ONLINE )
+    {
+        m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
+        m_OnlineAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
+        m_OnlineDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
+        m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_AUDIOSCROBBLE )
+    {
+        m_LastFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+        m_LastFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+
+        m_LibreFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
+        m_LibreFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LINKS )
+    {
+        m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
+        m_LinksAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
+        m_LinksDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
+        m_LinksMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
+        m_LinksMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
+        m_LinksUrlTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
+        m_LinksNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
+        m_LinksAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_COMMANDS )
+    {
+        m_CmdListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
+        m_CmdAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
+        m_CmdDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdDelBtnClick ), NULL, this );
+        m_CmdMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveUpBtnClick ), NULL, this );
+        m_CmdMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveDownBtnClick ), NULL, this );
+        m_CmdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
+        m_CmdNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
+        m_CmdAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_COPYTO )
+    {
+        m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnPageChanged( wxCommandEvent &event )
+{
+    switch( m_MainNotebook->GetSelection() )
+    {
+        case  0 : BuildGeneralPage(); break;
+        case  1 : BuildLibraryPage(); break;
+        case  2 : BuildPlaybackPage(); break;
+        case  3 : BuildCrossfaderPage(); break;
+        case  4 : BuildRecordPage(); break;
+        case  5 : BuildAudioScrobblePage(); break;
+        case  6 : BuildLyricsPage(); break;
+        case  7 : BuildOnlinePage(); break;
+        case  8 : BuildPodcastsPage(); break;
+        case  9 : BuildLinksPage(); break;
+        case 10 : BuildCommandsPage(); break;
+        case 11 : BuildCopyToPage(); break;
+    }
+
+    event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildGeneralPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_GENERAL )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_GENERAL;
+
     //
     // General Preferences Panel
     //
-	m_GenPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	GenMainSizer = new wxBoxSizer( wxVERTICAL );
-	StartSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" On Start ") ), wxVERTICAL );
+	wxBoxSizer * GenMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxStaticBoxSizer * StartSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" On Start ") ), wxVERTICAL );
 
 	m_ShowSplashChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Show splash screen"), wxDefaultPosition, wxDefaultSize, 0 );
     m_ShowSplashChkBox->SetValue( m_Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "General" ) ) );
@@ -134,8 +321,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_MinStartChkBox->SetValue( m_Config->ReadBool( wxT( "StartMinimized" ), false, wxT( "General" ) ) );
 	StartSizer->Add( m_MinStartChkBox, 0, wxALL, 5 );
 
-	wxBoxSizer* StartPlayingSizer;
-	StartPlayingSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * StartPlayingSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Restore position for tracks longer than"), wxDefaultPosition, wxDefaultSize, 0 );
     m_SavePosCheckBox->SetValue( m_Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) );
@@ -160,7 +346,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	GenMainSizer->Add( StartSizer, 0, wxEXPAND|wxALL, 5 );
 
-	BehaviSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" Behaviour ") ), wxVERTICAL );
+	wxStaticBoxSizer * BehaviSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" Behaviour ") ), wxVERTICAL );
 
 	m_TaskIconChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Activate task bar icon"), wxDefaultPosition, wxDefaultSize, 0 );
     m_TaskIconChkBox->SetValue( m_Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) );
@@ -174,27 +360,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_DropFilesChkBox->SetValue( m_Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "General" ) ) );
 	BehaviSizer->Add( m_DropFilesChkBox, 0, wxALL, 5 );
 
-////	m_AlYearOrderChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Albums ordered by Year. Default is by Name"), wxDefaultPosition, wxDefaultSize, 0 );
-////	m_AlYearOrderChkBox->SetValue( m_Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) ) );
-////	BehaviSizer->Add( m_AlYearOrderChkBox, 0, wxALL, 5 );
-//	wxBoxSizer * YearOrderSizer;
-//	YearOrderSizer = new wxBoxSizer( wxHORIZONTAL );
-//
-//	wxStaticText * YearOrderText = new wxStaticText( m_GenPanel, wxID_ANY, _( "Order Albums  by" ), wxDefaultPosition, wxDefaultSize, 0 );
-//	YearOrderText->Wrap( -1 );
-//	YearOrderSizer->Add( YearOrderText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
-//
-//	wxString m_AlbumOrderChoiceChoices[] = { _("Name"), _("Year"), _("Year Desc.") };
-//	int m_AlbumOrderChoiceNChoices = sizeof( m_AlbumOrderChoiceChoices ) / sizeof( wxString );
-//	m_AlYearOrderChoice = new wxChoice( m_GenPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_AlbumOrderChoiceNChoices, m_AlbumOrderChoiceChoices, 0 );
-//	m_AlYearOrderChoice->SetSelection( m_Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) ) );
-//	YearOrderSizer->Add( m_AlYearOrderChoice, 0, wxRIGHT, 5 );
-//
-//	BehaviSizer->Add( YearOrderSizer, 1, wxEXPAND, 5 );
-
 	GenMainSizer->Add( BehaviSizer, 0, wxEXPAND|wxALL, 5 );
 
-	OnCloseSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" On Close ") ), wxVERTICAL );
+	wxStaticBoxSizer * OnCloseSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" On Close ") ), wxVERTICAL );
 
 	m_SavePlayListChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Save playlist on close"), wxDefaultPosition, wxDefaultSize, 0 );
     m_SavePlayListChkBox->SetValue( m_Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) );
@@ -214,23 +382,34 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_GenPanel->SetSizer( GenMainSizer );
 	m_GenPanel->Layout();
 	GenMainSizer->Fit( m_GenPanel );
-	m_MainNotebook->AddPage( m_GenPanel, _("General"), true, 0 );
-	//m_MainNotebook->SetPageImage( 0, 0 );
+
+    //
+    //
+    //
+	m_TaskIconChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildLibraryPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LIBRARY )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_LIBRARY;
 
     //
     // Library Preferences Panel
     //
-	m_LibPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * LibMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	LibMainSizer = new wxBoxSizer( wxVERTICAL );
-
-	PathsSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, _(" Paths ") ), wxHORIZONTAL );
+	wxStaticBoxSizer * PathsSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, _(" Paths ") ), wxHORIZONTAL );
 
 	m_PathsListBox = new wxListBox( m_LibPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_PathsListBox->Append( m_Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) ) );
 	PathsSizer->Add( m_PathsListBox, 1, wxALL|wxEXPAND, 5 );
 
-	PathButtonsSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * PathButtonsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_AddPathButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	PathButtonsSizer->Add( m_AddPathButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -243,14 +422,13 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	LibMainSizer->Add( PathsSizer, 1, wxEXPAND|wxALL, 5 );
 
-	CoversSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, _(" Words to detect covers ") ), wxHORIZONTAL );
+	wxStaticBoxSizer * CoversSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, _(" Words to detect covers ") ), wxHORIZONTAL );
 
 	m_CoversListBox = new wxListBox( m_LibPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
 	m_CoversListBox->Append( m_Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) ) );
 	CoversSizer->Add( m_CoversListBox, 1, wxALL|wxEXPAND, 5 );
 
-	wxBoxSizer* CoversButtonsSizer;
-	CoversButtonsSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * CoversButtonsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_AddCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	CoversButtonsSizer->Add( m_AddCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -272,7 +450,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	LibMainSizer->Add( CoversSizer, 1, wxEXPAND|wxALL, 5 );
 
 
-	LibOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	wxStaticBoxSizer * LibOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
 	m_UpdateLibChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Update library on application start"), wxDefaultPosition, wxDefaultSize, 0 );
     m_UpdateLibChkBox->SetValue( m_Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) );
@@ -287,31 +465,40 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LibPanel->SetSizer( LibMainSizer );
 	m_LibPanel->Layout();
 	LibMainSizer->Fit( m_LibPanel );
-	m_MainNotebook->AddPage( m_LibPanel, _("Library"), false );
-	m_MainNotebook->SetPageImage( 1, 1 );
+
+    //
+    //
+    //
+	m_PathsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxSelected ), NULL, this );
+	m_AddPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
+	m_DelPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
+	m_PathsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
+
+	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
+	m_AddCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
+	m_UpCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnUpCoverBtnClick ), NULL, this );
+	m_DownCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
+	m_DelCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
+	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildPlaybackPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_PLAYBACK )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_PLAYBACK;
 
     //
     // Playback Panel
     //
-	m_PlayPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * PlayMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer * PlayMainSizer;
-	PlayMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxStaticBoxSizer * PlayGenSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
-	wxStaticBoxSizer * PlayGenSizer;
-	PlayGenSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
-
-//	m_RndPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Play random track when playlist is empty"), wxDefaultPosition, wxDefaultSize, 0 );
-//    m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) ) );
-//	PlayGenSizer->Add( m_RndPlayChkBox, 0, wxALL, 5 );
-//
-//	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Delete played tracks from playlist"), wxDefaultPosition, wxDefaultSize, 0 );
-//    m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) ) );
-//	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxALL, 5 );
-//
-//	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
-	wxBoxSizer* RandomPlaySizer;
-	RandomPlaySizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * RandomPlaySizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_RndPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Play random" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) ) );
@@ -337,10 +524,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
 
-
-
-	wxStaticBoxSizer * PlaySilenceSizer;
-	PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
+	wxStaticBoxSizer * PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
 
 	m_PlayLevelEnabled = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enabled" ), wxDefaultPosition, wxDefaultSize, 0 );
 	bool IsPlayLevelEnabled = m_Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
@@ -349,10 +533,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	PlaySilenceSizer->Add( m_PlayLevelEnabled, 0, wxALL|wxEXPAND, 5 );
 
 
-	wxStaticBoxSizer*   SmartPlayListSizer;
-	SmartPlayListSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Random / Smart Play Modes " ) ), wxVERTICAL );
+	wxStaticBoxSizer * SmartPlayListSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Random / Smart Play Modes " ) ), wxVERTICAL );
 
-	SmartPlayListFlexGridSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
+	wxFlexGridSizer * SmartPlayListFlexGridSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
 	SmartPlayListFlexGridSizer->SetFlexibleDirection( wxBOTH );
 	SmartPlayListFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -385,9 +568,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	PlayMainSizer->Add( SmartPlayListSizer, 0, wxALL|wxEXPAND, 5 );
 
-
-	wxBoxSizer* PlayLevelSizer;
-	PlayLevelSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * PlayLevelSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	wxStaticText * LevelStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "Level(db):" ), wxDefaultPosition, wxDefaultSize, 0 );
 	LevelStaticText->Wrap( -1 );
@@ -401,8 +582,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	PlaySilenceSizer->Add( PlayLevelSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer* PlayEndTimeSizer;
-	PlayEndTimeSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * PlayEndTimeSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_PlayEndTimeCheckBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Only in the last" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_PlayEndTimeCheckBox->SetValue( m_Config->ReadBool( wxT( "SilenceAtEnd" ), true, wxT( "Playback" ) ) );
@@ -425,8 +605,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	PlayMainSizer->Add( PlaySilenceSizer, 0, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer* NotifySizer;
-	NotifySizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _(" Notifications ") ), wxHORIZONTAL );
+	wxStaticBoxSizer * NotifySizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _(" Notifications ") ), wxHORIZONTAL );
 
 	m_NotifyChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Show Notifications" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_NotifyChkBox->SetValue( m_Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) ) );
@@ -437,21 +616,33 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_PlayPanel->SetSizer( PlayMainSizer );
 	m_PlayPanel->Layout();
 	PlayMainSizer->Fit( m_PlayPanel );
-	m_MainNotebook->AddPage( m_PlayPanel, _( "Playback" ), false );
-	m_MainNotebook->SetPageImage( 2, 2 );
+
+    //
+    //
+    //
+	m_RndPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
+	m_DelPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
+	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
+	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildCrossfaderPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_CROSSFADER )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_CROSSFADER;
 
     //
     // Crossfader Panel
     //
-	m_XFadePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer * XFadeMainSizer;
-	XFadeMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * XFadeMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer * XFadesbSizer;
-	XFadesbSizer = new wxStaticBoxSizer( new wxStaticBox( m_XFadePanel, wxID_ANY, _(" Crossfader ") ), wxVERTICAL );
+	wxStaticBoxSizer * XFadesbSizer = new wxStaticBoxSizer( new wxStaticBox( m_XFadePanel, wxID_ANY, _(" Crossfader ") ), wxVERTICAL );
 
-	wxFlexGridSizer * XFadeFlexSizer;
-	XFadeFlexSizer = new wxFlexGridSizer( 4, 3, 0, 0 );
+	wxFlexGridSizer * XFadeFlexSizer = new wxFlexGridSizer( 4, 3, 0, 0 );
 	XFadeFlexSizer->AddGrowableCol( 2 );
 	XFadeFlexSizer->SetFlexibleDirection( wxBOTH );
 	XFadeFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -514,26 +705,44 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_XFadePanel->SetSizer( XFadeMainSizer );
 	m_XFadePanel->Layout();
 	XFadeMainSizer->Fit( m_XFadePanel );
-	m_MainNotebook->AddPage( m_XFadePanel, _( "Crossfader" ), false );
-	m_MainNotebook->SetPageImage( 3, 3 );
 
+    //
+    //
+    //
+    m_XFadeOutLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInStartSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeOutLenSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInLenSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInStartSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+
+    //
+    wxScrollEvent ScrollEvent;
+    OnCrossFadeChanged( ScrollEvent );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildRecordPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_RECORD )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_RECORD;
 
     //
     // Record Panel
     //
-	m_RecordPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* RecMainSizer;
-	RecMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * RecMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer* RecordSizer;
-	RecordSizer = new wxStaticBoxSizer( new wxStaticBox( m_RecordPanel, wxID_ANY, _(" Record ") ), wxVERTICAL );
+	wxStaticBoxSizer * RecordSizer = new wxStaticBoxSizer( new wxStaticBox( m_RecordPanel, wxID_ANY, _(" Record ") ), wxVERTICAL );
 
 	m_RecordChkBox = new wxCheckBox( m_RecordPanel, wxID_ANY, _("Enable recording"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_RecordChkBox->SetValue( m_Config->ReadBool( wxT( "Enabled" ), false, wxT( "Record" ) ) );
 	RecordSizer->Add( m_RecordChkBox, 0, wxALL|wxEXPAND, 5 );
 
-	wxBoxSizer* RecSelDirSizer;
-	RecSelDirSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * RecSelDirSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	wxStaticText * RecSelDirLabel = new wxStaticText( m_RecordPanel, wxID_ANY, _("Save to:"), wxDefaultPosition, wxDefaultSize, 0 );
 	RecSelDirLabel->Wrap( -1 );
@@ -545,11 +754,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	RecordSizer->Add( RecSelDirSizer, 0, wxEXPAND, 5 );
 
-	wxStaticBoxSizer* RecPropSizer;
-	RecPropSizer = new wxStaticBoxSizer( new wxStaticBox( m_RecordPanel, wxID_ANY, _(" Properties ") ), wxVERTICAL );
+	wxStaticBoxSizer * RecPropSizer = new wxStaticBoxSizer( new wxStaticBox( m_RecordPanel, wxID_ANY, _(" Properties ") ), wxVERTICAL );
 
-	wxFlexGridSizer* RecPropFlexSizer;
-	RecPropFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	wxFlexGridSizer * RecPropFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
 	RecPropFlexSizer->AddGrowableCol( 1 );
 	RecPropFlexSizer->SetFlexibleDirection( wxBOTH );
 	RecPropFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -592,8 +799,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     m_RecSplitChkBox->Enable( m_RecordChkBox->IsChecked() );
 	RecordSizer->Add( m_RecSplitChkBox, 0, wxALL, 5 );
 
-	wxBoxSizer* RecDelSizer;
-	RecDelSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * RecDelSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_RecDelTracks = new wxCheckBox( m_RecordPanel, wxID_ANY, _("Delete Tracks shorter than"), wxDefaultPosition, wxDefaultSize, 0 );
     m_RecDelTracks->SetValue( m_Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "Record" ) ) );
@@ -616,25 +822,35 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_RecordPanel->SetSizer( RecMainSizer );
 	m_RecordPanel->Layout();
 	RecMainSizer->Fit( m_RecordPanel );
-	m_MainNotebook->AddPage( m_RecordPanel, _( "Record" ), false );
-	m_MainNotebook->SetPageImage( 4, 4 );
 
+    //
+    //
+    //
+	m_RecordChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
+	m_RecDelTracks->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
 
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildAudioScrobblePage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_AUDIOSCROBBLE )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_AUDIOSCROBBLE;
 
     //
     // LastFM Panel
     //
-	m_LastFMPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * ASMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	ASMainSizer = new wxBoxSizer( wxVERTICAL );
-
-	LastFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" Last.fm Audioscrobble ") ), wxVERTICAL );
+	wxStaticBoxSizer * LastFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" Last.fm Audioscrobble ") ), wxVERTICAL );
 
 	m_LastFMASEnableChkBox = new wxCheckBox( m_LastFMPanel, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDefaultSize, 0 );
     m_LastFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) );
 	LastFMASSizer->Add( m_LastFMASEnableChkBox, 0, wxALL, 5 );
 
-	ASLoginSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	wxFlexGridSizer * ASLoginSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
 	ASLoginSizer->SetFlexibleDirection( wxBOTH );
 	ASLoginSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -663,15 +879,13 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	ASMainSizer->Add( LastFMASSizer, 0, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer * LibreFMASSizer;
-	LibreFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" Libre.fm Audioscrobble ") ), wxVERTICAL );
+	wxStaticBoxSizer * LibreFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" Libre.fm Audioscrobble ") ), wxVERTICAL );
 
 	m_LibreFMASEnableChkBox = new wxCheckBox( m_LastFMPanel, wxID_ANY, _( "Enabled" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_LibreFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) ) );
 	LibreFMASSizer->Add( m_LibreFMASEnableChkBox, 0, wxALL, 5 );
 
-	wxFlexGridSizer * LibreFMASLoginSizer;
-	LibreFMASLoginSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	wxFlexGridSizer * LibreFMASLoginSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
 	LibreFMASLoginSizer->SetFlexibleDirection( wxBOTH );
 	LibreFMASLoginSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -701,8 +915,6 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	ASMainSizer->Add( LibreFMASSizer, 0, wxEXPAND|wxALL, 5 );
 
 
-
-
 	ASMainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	wxHyperlinkCtrl * m_UserGroupLink = new wxHyperlinkCtrl( m_LastFMPanel, wxID_ANY,
@@ -713,15 +925,30 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LastFMPanel->SetSizer( ASMainSizer );
 	m_LastFMPanel->Layout();
 	ASMainSizer->Fit( m_LastFMPanel );
-	m_MainNotebook->AddPage( m_LastFMPanel, _( "AudioScrobble" ), false );
-	m_MainNotebook->SetPageImage( 5, 5 );
+
+    //
+    //
+    //
+    m_LastFMUserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+    m_LastFMPasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+
+    m_LibreFMUserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
+    m_LibreFMPasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildLyricsPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LYRICS )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_LYRICS;
 
     //
     // Lyrics
     //
-	m_LyricsPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer * LyricsMainSizer;
-	LyricsMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * LyricsMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxArrayString LyricsAlignSizerChoices;
 	LyricsAlignSizerChoices.Add( _( "Left" ) );
@@ -731,8 +958,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LyricsAlignSizer->SetSelection( m_Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) );
 	LyricsMainSizer->Add( m_LyricsAlignSizer, 0, wxALL|wxEXPAND, 5 );
 
-	wxStaticBoxSizer * LyricsSaveSizer;
-	LyricsSaveSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Save " ) ), wxVERTICAL );
+	wxStaticBoxSizer * LyricsSaveSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Save " ) ), wxVERTICAL );
 
 	m_LyricsTracksSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Save lyrics to audio files" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_LyricsTracksSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToFiles" ), false, wxT( "Lyrics" ) ) );
@@ -746,8 +972,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
     wxStaticLine * LyricsStaticLine = new wxStaticLine( m_LyricsPanel, wxID_ANY );
 	LyricsSaveSizer->Add( LyricsStaticLine, 0, wxEXPAND, 5 );
 
-	wxBoxSizer * LyricsDirSaveSizer;
-	LyricsDirSaveSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * LyricsDirSaveSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_LyricsDirSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Save Lyrics to directory" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_LyricsDirSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToDir" ), false, wxT( "Lyrics" ) ) );
@@ -769,25 +994,29 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LyricsPanel->SetSizer( LyricsMainSizer );
 	m_LyricsPanel->Layout();
 	LyricsMainSizer->Fit( m_LyricsPanel );
-	m_MainNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
-	m_MainNotebook->SetPageImage( 6, 6 );
 
-	//m_MainNotebookBitmap = wxBitmap( wxT("../src/images/orig/pref_lyrics.png"), wxBITMAP_TYPE_ANY );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildOnlinePage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_ONLINE )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_ONLINE;
 
     //
     // Online Services Filter
     //
-	m_OnlinePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* OnlineMainSizer;
-	OnlineMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * OnlineMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	OnlineFiltersSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Filters ") ), wxHORIZONTAL );
+	wxStaticBoxSizer * OnlineFiltersSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Filters ") ), wxHORIZONTAL );
 
 	m_OnlineFiltersListBox = new wxListBox( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_OnlineFiltersListBox->Append( m_Config->ReadAStr( wxT( "Filter" ), wxEmptyString, wxT( "SearchFilters" ) ) );
 	OnlineFiltersSizer->Add( m_OnlineFiltersListBox, 1, wxALL|wxEXPAND, 5 );
 
-	OnlineBtnSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * OnlineBtnSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_OnlineAddBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
 	OnlineBtnSizer->Add( m_OnlineAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -798,12 +1027,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	OnlineFiltersSizer->Add( OnlineBtnSizer, 0, wxEXPAND, 5 );
 
-//	OnlineFiltersSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
 	OnlineMainSizer->Add( OnlineFiltersSizer, 1, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer * OnlineLangSizer;
-	OnlineLangSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Language " ) ), wxHORIZONTAL );
+	wxStaticBoxSizer * OnlineLangSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Language " ) ), wxHORIZONTAL );
 
 	m_LangStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Language:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_LangStaticText->Wrap( -1 );
@@ -820,7 +1046,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	OnlineMainSizer->Add( OnlineLangSizer, 0, wxEXPAND|wxALL, 5 );
 
-	BrowserCmdSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Browser command ") ), wxHORIZONTAL );
+	wxStaticBoxSizer * BrowserCmdSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Browser command ") ), wxHORIZONTAL );
 
 	m_BrowserCmdTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, m_Config->ReadStr( wxT( "BrowserCommand" ), wxT( "firefox --new-tab" ), wxT( "General" ) ), wxDefaultPosition, wxDefaultSize, 0 );
 	BrowserCmdSizer->Add( m_BrowserCmdTextCtrl, 1, wxALL, 5 );
@@ -844,70 +1070,80 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_OnlinePanel->SetSizer( OnlineMainSizer );
 	m_OnlinePanel->Layout();
 	OnlineMainSizer->Fit( m_OnlinePanel );
-	m_MainNotebook->AddPage( m_OnlinePanel, _( "Online" ), false );
-	m_MainNotebook->SetPageImage( 7, 7 );
+
+    //
+    //
+    //
+	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
+	m_OnlineAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
+	m_OnlineDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
+	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildPodcastsPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_PODCASTS )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_PODCASTS;
 
     //
     // Podcasts
     //
-	PodcastPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* PodcastsMainSizer;
-	PodcastsMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * PodcastsMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer* PodcastsSizer;
-	PodcastsSizer = new wxStaticBoxSizer( new wxStaticBox( PodcastPanel, wxID_ANY, _(" Podcasts ") ), wxVERTICAL );
+	wxStaticBoxSizer * PodcastsSizer = new wxStaticBoxSizer( new wxStaticBox( m_PodcastPanel, wxID_ANY, _(" Podcasts ") ), wxVERTICAL );
 
-	wxBoxSizer* PathSizer;
-	PathSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * PathSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	PodcastPathStaticText = new wxStaticText( PodcastPanel, wxID_ANY, _("Destination directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * PodcastPathStaticText = new wxStaticText( m_PodcastPanel, wxID_ANY, _("Destination directory:"), wxDefaultPosition, wxDefaultSize, 0 );
 	PodcastPathStaticText->Wrap( -1 );
 	PathSizer->Add( PodcastPathStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_PodcastPath = new wxDirPickerCtrl( PodcastPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir(), wxT( "Podcasts" ) ), _("Select podcasts folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE | wxDIRP_DIR_MUST_EXIST );
+	m_PodcastPath = new wxDirPickerCtrl( m_PodcastPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir(), wxT( "Podcasts" ) ), _("Select podcasts folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE | wxDIRP_DIR_MUST_EXIST );
 	PathSizer->Add( m_PodcastPath, 1, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 
 	PodcastsSizer->Add( PathSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer* UpdateSizer;
-	UpdateSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * UpdateSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PodcastUpdate = new wxCheckBox( PodcastPanel, wxID_ANY, _("Check every"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PodcastUpdate = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Check every"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PodcastUpdate->SetValue( m_Config->ReadBool( wxT( "Update" ), true, wxT( "Podcasts" ) ) );
 
 	UpdateSizer->Add( m_PodcastUpdate, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	wxString m_PodcastUpdatePeriodChoices[] = { _( "Hour" ), _("Day"), _("Week"), _("Month") };
 	int m_PodcastUpdatePeriodNChoices = sizeof( m_PodcastUpdatePeriodChoices ) / sizeof( wxString );
-	m_PodcastUpdatePeriod = new wxChoice( PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastUpdatePeriodNChoices, m_PodcastUpdatePeriodChoices, 0 );
+	m_PodcastUpdatePeriod = new wxChoice( m_PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastUpdatePeriodNChoices, m_PodcastUpdatePeriodChoices, 0 );
 	m_PodcastUpdatePeriod->SetSelection( m_Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "Podcasts" ) ) );
 	m_PodcastUpdatePeriod->SetMinSize( wxSize( 150,-1 ) );
 	UpdateSizer->Add( m_PodcastUpdatePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	PodcastsSizer->Add( UpdateSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer* DeleteSizer;
-	DeleteSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * DeleteSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PodcastDelete = new wxCheckBox( PodcastPanel, wxID_ANY, _("Delete after"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PodcastDelete = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Delete after"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PodcastDelete->SetValue( m_Config->ReadBool( wxT( "Delete" ), false, wxT( "Podcasts" ) ) );
 
 	DeleteSizer->Add( m_PodcastDelete, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_PodcastDeleteTime = new wxSpinCtrl( PodcastPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 99,
+	m_PodcastDeleteTime = new wxSpinCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 99,
         m_Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "Podcasts" ) ) );
 	DeleteSizer->Add( m_PodcastDeleteTime, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	wxString m_PodcastDeletePeriodChoices[] = { _("Days"), _("Weeks"), _("Months") };
 	int m_PodcastDeletePeriodNChoices = sizeof( m_PodcastDeletePeriodChoices ) / sizeof( wxString );
-	m_PodcastDeletePeriod = new wxChoice( PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastDeletePeriodNChoices, m_PodcastDeletePeriodChoices, 0 );
+	m_PodcastDeletePeriod = new wxChoice( m_PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastDeletePeriodNChoices, m_PodcastDeletePeriodChoices, 0 );
 	m_PodcastDeletePeriod->SetSelection( m_Config->ReadNum( wxT( "DeletePeriod" ), 0, wxT( "Podcasts" ) ) );
 	m_PodcastDeletePeriod->SetMinSize( wxSize( 150,-1 ) );
 	DeleteSizer->Add( m_PodcastDeletePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	DeleteSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_PodcastDeletePlayed = new wxCheckBox( PodcastPanel, wxID_ANY, _("Only if played"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PodcastDeletePlayed = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Only if played"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PodcastDeletePlayed->SetValue( m_Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "Podcasts" ) ) );
 
 	DeleteSizer->Add( m_PodcastDeletePlayed, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -916,24 +1152,28 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	PodcastsMainSizer->Add( PodcastsSizer, 0, wxEXPAND|wxALL, 5 );
 
-	PodcastPanel->SetSizer( PodcastsMainSizer );
-	PodcastPanel->Layout();
-	PodcastsMainSizer->Fit( PodcastPanel );
-	m_MainNotebook->AddPage( PodcastPanel, _("Podcasts"), false );
-	m_MainNotebook->SetPageImage( 8, 8 );
+	m_PodcastPanel->SetSizer( PodcastsMainSizer );
+	m_PodcastPanel->Layout();
+	PodcastsMainSizer->Fit( m_PodcastPanel );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildLinksPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LINKS )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_LINKS;
 
     //
     // Links
     //
-	m_LinksPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* LinksMainSizer;
-	LinksMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * LinksMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer* LinksLabelSizer;
-	LinksLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, _(" Links ") ), wxVERTICAL );
+	wxStaticBoxSizer * LinksLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, _(" Links ") ), wxVERTICAL );
 
-	wxBoxSizer* LinksListBoxSizer;
-	LinksListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * LinksListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_LinksListBox = new wxListBox( m_LinksPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
     wxArrayString SearchLinks = m_Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
@@ -957,8 +1197,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	LinksListBoxSizer->Add( m_LinksListBox, 1, wxALL|wxEXPAND, 5 );
 
-	wxBoxSizer* LinksBtnSizer;
-	LinksBtnSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * LinksBtnSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_LinksAddBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
     m_LinksAddBtn->Enable( false );
@@ -981,25 +1220,21 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	LinksLabelSizer->Add( LinksListBoxSizer, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* LinksEditorSizer;
-	LinksEditorSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * LinksEditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxFlexGridSizer* LinksFieldsSizer;
-	LinksFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	wxFlexGridSizer * LinksFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
 	LinksFieldsSizer->AddGrowableCol( 1 );
 	LinksFieldsSizer->SetFlexibleDirection( wxBOTH );
 	LinksFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-    wxStaticText * LinkUrlStaticText;
-	LinkUrlStaticText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Url:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * LinkUrlStaticText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Url:"), wxDefaultPosition, wxDefaultSize, 0 );
 	LinkUrlStaticText->Wrap( -1 );
 	LinksFieldsSizer->Add( LinkUrlStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
 	m_LinksUrlTextCtrl = new wxTextCtrl( m_LinksPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	LinksFieldsSizer->Add( m_LinksUrlTextCtrl, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 
-    wxStaticText * LinkNameStaticText;
-	LinkNameStaticText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * LinkNameStaticText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	LinkNameStaticText->Wrap( -1 );
 	LinksFieldsSizer->Add( LinkNameStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
@@ -1017,11 +1252,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	LinksMainSizer->Add( LinksLabelSizer, 1, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer* LinksHelpSizer;
-	LinksHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
+	wxStaticBoxSizer * LinksHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_LinksPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
 
-	wxStaticText * LinksHelpText;
-	LinksHelpText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Add urls using :\n{lang} : 2 lettes language code.\n{text} : Text to search."), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * LinksHelpText = new wxStaticText( m_LinksPanel, wxID_ANY, _("Add urls using :\n{lang} : 2 lettes language code.\n{text} : Text to search."), wxDefaultPosition, wxDefaultSize, 0 );
 	LinksHelpText->Wrap( -1 );
 	LinksHelpSizer->Add( LinksHelpText, 0, wxALL, 5 );
 
@@ -1030,32 +1263,44 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_LinksPanel->SetSizer( LinksMainSizer );
 	m_LinksPanel->Layout();
 	LinksMainSizer->Fit( m_LinksPanel );
-	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
-	m_MainNotebook->SetPageImage( 9, 9 );
 
+    //
+    //
+    //
+	m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
+	m_LinksAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
+	m_LinksDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
+	m_LinksMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
+	m_LinksMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
+	m_LinksUrlTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
+	m_LinksNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
+	m_LinksAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildCommandsPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_COMMANDS )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_COMMANDS;
 
     //
     // Commands Panel
     //
-    wxStaticText * CmdStaticText;
-    wxStaticText * CmdNameStaticText;
-    wxStaticText * CmdHelpText;
+	wxBoxSizer * CmdMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_CmdPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* CmdMainSizer;
-	CmdMainSizer = new wxBoxSizer( wxVERTICAL );
+	wxStaticBoxSizer * CmdLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_CmdPanel, wxID_ANY, _(" Commands ") ), wxVERTICAL );
 
-	wxStaticBoxSizer* CmdLabelSizer;
-	CmdLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_CmdPanel, wxID_ANY, _(" Commands ") ), wxVERTICAL );
-
-	wxBoxSizer* CmdListBoxSizer;
-	CmdListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * CmdListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_CmdListBox = new wxListBox( m_CmdPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
     wxArrayString Commands = m_Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
 	m_CmdListBox->Append( Commands );
 	m_CmdNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
-    count = m_CmdListBox->GetCount();
+	int index;
+    int count = m_CmdListBox->GetCount();
 	while( ( int ) m_CmdNames.Count() < count )
         m_CmdNames.Add( wxEmptyString );
     if( ( int ) m_CmdNames.Count() > count )
@@ -1070,8 +1315,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	CmdListBoxSizer->Add( m_CmdListBox, 1, wxALL|wxEXPAND, 5 );
 
-	wxBoxSizer* CmdBtnSizer;
-	CmdBtnSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * CmdBtnSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_CmdAddBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
 	CmdBtnSizer->Add( m_CmdAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
@@ -1093,23 +1337,21 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	CmdLabelSizer->Add( CmdListBoxSizer, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* CmdEditorSizer;
-	CmdEditorSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer * CmdEditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxFlexGridSizer* CmdFieldsSizer;
-	CmdFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	wxFlexGridSizer * CmdFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
 	CmdFieldsSizer->AddGrowableCol( 1 );
 	CmdFieldsSizer->SetFlexibleDirection( wxBOTH );
 	CmdFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	CmdStaticText = new wxStaticText( m_CmdPanel, wxID_ANY, _( "Command:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * CmdStaticText = new wxStaticText( m_CmdPanel, wxID_ANY, _( "Command:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CmdStaticText->Wrap( -1 );
 	CmdFieldsSizer->Add( CmdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
 
 	m_CmdTextCtrl = new wxTextCtrl( m_CmdPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	CmdFieldsSizer->Add( m_CmdTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	CmdNameStaticText = new wxStaticText( m_CmdPanel, wxID_ANY, _( "Name:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * CmdNameStaticText = new wxStaticText( m_CmdPanel, wxID_ANY, _( "Name:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CmdNameStaticText->Wrap( -1 );
 	CmdFieldsSizer->Add( CmdNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
 
@@ -1127,10 +1369,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	CmdMainSizer->Add( CmdLabelSizer, 1, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer* CmdHelpSizer;
-	CmdHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CmdPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
+	wxStaticBoxSizer * CmdHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CmdPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
 
-	CmdHelpText = new wxStaticText( m_CmdPanel, wxID_ANY, _("Add commands using :\n{bp}\t: Album path\n{bc}\t: Album cover file path\n{tp}\t: Track path"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * CmdHelpText = new wxStaticText( m_CmdPanel, wxID_ANY, _("Add commands using :\n{bp}\t: Album path\n{bc}\t: Album cover file path\n{tp}\t: Track path"), wxDefaultPosition, wxDefaultSize, 0 );
 	CmdHelpText->Wrap( -1 );
 	CmdHelpSizer->Add( CmdHelpText, 0, wxALL, 5 );
 
@@ -1139,19 +1380,35 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_CmdPanel->SetSizer( CmdMainSizer );
 	m_CmdPanel->Layout();
 	CmdMainSizer->Fit( m_CmdPanel );
-	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
-	m_MainNotebook->SetPageImage( 10, 10 );
-
 
     //
-    // Copy To Panel
     //
-	m_CopyPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* CopyToMainSizer;
-	CopyToMainSizer = new wxBoxSizer( wxVERTICAL );
+    //
+	m_CmdListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
+	m_CmdAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
+	m_CmdDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdDelBtnClick ), NULL, this );
+	m_CmdMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveUpBtnClick ), NULL, this );
+	m_CmdMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveDownBtnClick ), NULL, this );
+	m_CmdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
+	m_CmdNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
+	m_CmdAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
 
-	wxStaticBoxSizer* CopyToFileNameSizer;
-	CopyToFileNameSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _( " FileName Pattern " ) ), wxVERTICAL );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildCopyToPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_COPYTO )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_COPYTO;
+
+    //
+    // Copy to
+    //
+	wxBoxSizer * CopyToMainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer * CopyToFileNameSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _( " FileName Pattern " ) ), wxVERTICAL );
 
     wxString CopyToPattern = m_Config->ReadStr( wxT( "CopyToPattern" ), wxT("{g}/{a}/{b}/{n} - {a} - {t}"), wxT( "General" ) );
 	m_CopyToFileName = new wxTextCtrl( m_CopyPanel, wxID_ANY, CopyToPattern, wxDefaultPosition, wxDefaultSize, 0 );
@@ -1159,16 +1416,13 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 
 	CopyToMainSizer->Add( CopyToFileNameSizer, 0, wxALL|wxEXPAND, 5 );
 
-	wxStaticBoxSizer* CopyToHelpSizer;
-	CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
+	wxStaticBoxSizer * CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
 
-	wxStaticText * CopyToHelpText;
-	CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "{a}\t- Artist\t\t\t('U2')\n{aa}\t- Album Artist\t('Various Artists')\n{b}\t- Album\t\t\t('The Josua Tree')\n{f}\t- Original Filename\t( 'With or without you.mp3')\n{g}\t- Genre\t\t\t('Pop')\n{n}\t- Number\t\t('3')\n{t}\t- Title\t\t\t('With or Without You')\n{y}\t- Year\t\t\t('1987')\n{d}\t- Disk\t\t\t('1-2')\n" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "{a}\t- Artist\t\t\t('U2')\n{aa}\t- Album Artist\t('Various Artists')\n{b}\t- Album\t\t\t('The Josua Tree')\n{f}\t- Original Filename\t( 'With or without you.mp3')\n{g}\t- Genre\t\t\t('Pop')\n{n}\t- Number\t\t('3')\n{t}\t- Title\t\t\t('With or Without You')\n{y}\t- Year\t\t\t('1987')\n{d}\t- Disk\t\t\t('1-2')\n" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToHelpText->Wrap( -1 );
 	CopyToHelpSizer->Add( CopyToHelpText, 0, wxALL, 5 );
 
-	wxStaticBoxSizer * CopyToExampleSizer;
-	CopyToExampleSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Example ") ), wxVERTICAL );
+	wxStaticBoxSizer * CopyToExampleSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Example ") ), wxVERTICAL );
 
 	m_CopyToExampleTextCtrl = new wxTextCtrl( m_CopyPanel, wxID_ANY, PatternToExample( CopyToPattern ), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
 	CopyToExampleSizer->Add( m_CopyToExampleTextCtrl, 0, wxALL|wxEXPAND, 5 );
@@ -1180,172 +1434,12 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_CopyPanel->SetSizer( CopyToMainSizer );
 	m_CopyPanel->Layout();
 	CopyToMainSizer->Fit( m_CopyPanel );
-	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
-	m_MainNotebook->SetPageImage( 11, 11 );
 
-
-    //
-	MainSizer->Add( m_MainNotebook, 1, wxEXPAND | wxALL, 5 );
-
-    wxStdDialogButtonSizer *    ButtonsSizer;
-    wxButton *                  ButtonsSizerOK;
-    wxButton *                  ButtonsSizerCancel;
-
-	ButtonsSizer = new wxStdDialogButtonSizer();
-	ButtonsSizerOK = new wxButton( this, wxID_OK );
-	ButtonsSizer->AddButton( ButtonsSizerOK );
-	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
-	ButtonsSizer->AddButton( ButtonsSizerCancel );
-	ButtonsSizer->Realize();
-	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
-
-	this->SetSizer( MainSizer );
-	this->Layout();
-
-    wxScrollEvent ScrollEvent;
-    OnCrossFadeChanged( ScrollEvent );
     //
     //
     //
-    m_PathSelected = wxNOT_FOUND;
-    m_FilterSelected = wxNOT_FOUND;
-
-	m_TaskIconChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
-
-	m_PathsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxSelected ), NULL, this );
-	m_AddPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
-	m_DelPathButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
-	m_PathsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
-
-	m_RndPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
-	m_DelPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
-	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
-	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
-
-    m_XFadeOutLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInStartSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeOutLenSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInLenSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInStartSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-
-	m_RecordChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
-	m_RecDelTracks->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
-
-	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
-	m_AddCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
-	m_UpCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnUpCoverBtnClick ), NULL, this );
-	m_DownCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
-	m_DelCoverButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
-	m_CoversListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
-
-    m_LyricsTracksSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
-    m_LyricsDirSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
-
-	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
-	m_OnlineAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
-	m_OnlineDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
-	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
-
-    m_LastFMUserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
-    m_LastFMPasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
-
-    m_LibreFMUserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
-    m_LibreFMPasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
-
-	m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
-	m_LinksAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
-	m_LinksDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
-	m_LinksMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
-	m_LinksMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
-	m_LinksUrlTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
-	m_LinksNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
-	m_LinksAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
-
-	m_CmdListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
-	m_CmdAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
-	m_CmdDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdDelBtnClick ), NULL, this );
-	m_CmdMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveUpBtnClick ), NULL, this );
-	m_CmdMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveDownBtnClick ), NULL, this );
-	m_CmdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
-	m_CmdNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
-	m_CmdAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
-
 	m_CopyToFileName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
 }
-
-// -------------------------------------------------------------------------------- //
-guPrefDialog::~guPrefDialog()
-{
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    // Save the window position and size
-    wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "PreferencesPosX" ), WindowPos.x, wxT( "Positions" ) );
-    Config->WriteNum( wxT( "PreferencesPosY" ), WindowPos.y, wxT( "Positions" ) );
-    wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "PreferencesSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
-    Config->WriteNum( wxT( "PreferencesSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
-
-    //
-	m_TaskIconChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
-
-	m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxSelected ), NULL, this );
-	m_AddPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
-	m_DelPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
-	m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
-
-	m_RndPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
-	m_DelPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
-	m_PlayLevelEnabled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
-	m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
-
-	m_RecordChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
-	m_RecDelTracks->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
-
-	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
-	m_AddCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
-	m_UpCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnUpCoverBtnClick ), NULL, this );
-	m_DownCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
-	m_DelCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
-	m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
-
-    m_LyricsTracksSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
-    m_LyricsDirSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
-
-	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
-	m_OnlineAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
-	m_OnlineDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
-	m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
-
-    m_LastFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
-    m_LastFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
-
-    m_LibreFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
-    m_LibreFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
-
-	m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
-	m_LinksAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
-	m_LinksDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
-	m_LinksMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
-	m_LinksMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
-	m_LinksUrlTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
-	m_LinksNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
-	m_LinksAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
-
-	m_CmdListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
-	m_CmdAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
-	m_CmdDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdDelBtnClick ), NULL, this );
-	m_CmdMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveUpBtnClick ), NULL, this );
-	m_CmdMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveDownBtnClick ), NULL, this );
-	m_CmdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
-	m_CmdNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
-	m_CmdAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
-
-	m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
-}
-
 
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::SaveSettings( void )
@@ -1356,136 +1450,177 @@ void guPrefDialog::SaveSettings( void )
 
 
     // Save all configurations
-    m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "LoadDefaultLayouts" ), m_IgnoreLayoutsChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
-    //m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChoice->GetSelection(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "SavePlayListOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "SaveCurrentTrackPos" ), m_SavePosCheckBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteNum( wxT( "MinSavePlayPosLength" ), m_MinLenSpinCtrl->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_TaskIconChkBox->IsChecked() && m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteAStr( wxT( "LibPath" ), m_PathsListBox->GetStrings(), wxT( "LibPaths" ) );
-    if( m_LibPathsChanged )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_GENERAL )
     {
-        m_Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) );
+        m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "LoadDefaultLayouts" ), m_IgnoreLayoutsChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
+        //m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChoice->GetSelection(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "SavePlayListOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "SaveCurrentTrackPos" ), m_SavePosCheckBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteNum( wxT( "MinSavePlayPosLength" ), m_MinLenSpinCtrl->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_TaskIconChkBox->IsChecked() && m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "General" ) );
     }
 
-    m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
-    m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "ScanAddPlayLists" ), m_LibScanPlayListChkBox->GetValue(), wxT( "General" ) );
-
-    m_Config->WriteBool( wxT( "RndPlayOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
-    m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "DelTracksPlayed" ), m_DelPlayChkBox->GetValue(), wxT( "Playback" ) );
-
-    m_Config->WriteBool( wxT( "SilenceDetector" ), m_PlayLevelEnabled->GetValue(), wxT( "Playback" ) );
-    m_Config->WriteNum( wxT( "SilenceLevel" ), m_PlayLevelSlider->GetValue(), wxT( "Playback" ) );
-    m_Config->WriteBool( wxT( "SilenceAtEnd" ), m_PlayEndTimeCheckBox->GetValue(), wxT( "Playback" ) );
-    m_Config->WriteNum( wxT( "SilenceEndTime" ), m_PlayEndTimeSpinCtrl->GetValue(), wxT( "Playback" ) );
-    m_Config->WriteBool( wxT( "ShowNotifications" ), m_NotifyChkBox->GetValue(), wxT( "General" ) );
-
-    m_Config->WriteNum( wxT( "FadeOutTime" ), m_XFadeOutLenSlider->GetValue(), wxT( "Crossfader" ) );
-	m_Config->WriteNum( wxT( "FadeInTime" ), m_XFadeInLenSlider->GetValue(), wxT( "Crossfader" ) );
-    m_Config->WriteNum( wxT( "FadeInVolStart" ), m_XFadeInStartSlider->GetValue(), wxT( "Crossfader" ) );
-	m_Config->WriteNum( wxT( "FadeInVolTriger" ), m_XFadeInTrigerSlider->GetValue(), wxT( "Crossfader" ) );
-
-    m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LastFMASEnableChkBox->IsEnabled() && m_LastFMASEnableChkBox->GetValue(), wxT( "LastFM" ) );
-    m_Config->WriteStr( wxT( "UserName" ), m_LastFMUserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
-    if( !m_LastFMPasswdTextCtrl->IsEmpty() && m_LastFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LIBRARY )
     {
-        guMD5 MD5;
-        m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LastFMPasswdTextCtrl->GetValue() ), wxT( "LastFM" ) );
-        //guLogMessage( wxT( "Pass: %s" ), PasswdTextCtrl->GetValue().c_str() );
-        //guLogMessage( wxT( "MD5 : %s" ), MD5.MD5( PasswdTextCtrl->GetValue() ).c_str() );
+        m_Config->WriteAStr( wxT( "LibPath" ), m_PathsListBox->GetStrings(), wxT( "LibPaths" ) );
+        if( m_LibPathsChanged )
+        {
+            m_Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) );
+        }
+
+        m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
+        m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "ScanAddPlayLists" ), m_LibScanPlayListChkBox->GetValue(), wxT( "General" ) );
     }
-    m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LibreFMASEnableChkBox->IsEnabled() && m_LibreFMASEnableChkBox->GetValue(), wxT( "LibreFM" ) );
-    m_Config->WriteStr( wxT( "UserName" ), m_LibreFMUserNameTextCtrl->GetValue(), wxT( "LibreFM" ) );
-    if( !m_LibreFMPasswdTextCtrl->IsEmpty() && m_LibreFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_PLAYBACK )
     {
-        guMD5 MD5;
-        m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LibreFMPasswdTextCtrl->GetValue() ), wxT( "LibreFM" ) );
+        m_Config->WriteBool( wxT( "RndPlayOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "DelTracksPlayed" ), m_DelPlayChkBox->GetValue(), wxT( "Playback" ) );
+
+        m_Config->WriteBool( wxT( "SilenceDetector" ), m_PlayLevelEnabled->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteNum( wxT( "SilenceLevel" ), m_PlayLevelSlider->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteBool( wxT( "SilenceAtEnd" ), m_PlayEndTimeCheckBox->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteNum( wxT( "SilenceEndTime" ), m_PlayEndTimeSpinCtrl->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteBool( wxT( "ShowNotifications" ), m_NotifyChkBox->GetValue(), wxT( "General" ) );
+
+        m_Config->WriteNum( wxT( "MinTracksToPlay" ), m_MinTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteNum( wxT( "NumTracksToAdd" ), m_NumTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteNum( wxT( "MaxTracksPlayed" ), m_MaxTracksPlayed->GetValue(), wxT( "Playback" ) );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_CROSSFADER )
+    {
+        m_Config->WriteNum( wxT( "FadeOutTime" ), m_XFadeOutLenSlider->GetValue(), wxT( "Crossfader" ) );
+        m_Config->WriteNum( wxT( "FadeInTime" ), m_XFadeInLenSlider->GetValue(), wxT( "Crossfader" ) );
+        m_Config->WriteNum( wxT( "FadeInVolStart" ), m_XFadeInStartSlider->GetValue(), wxT( "Crossfader" ) );
+        m_Config->WriteNum( wxT( "FadeInVolTriger" ), m_XFadeInTrigerSlider->GetValue(), wxT( "Crossfader" ) );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_AUDIOSCROBBLE )
+    {
+        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LastFMASEnableChkBox->IsEnabled() && m_LastFMASEnableChkBox->GetValue(), wxT( "LastFM" ) );
+        m_Config->WriteStr( wxT( "UserName" ), m_LastFMUserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
+        if( !m_LastFMPasswdTextCtrl->IsEmpty() && m_LastFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
+        {
+            guMD5 MD5;
+            m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LastFMPasswdTextCtrl->GetValue() ), wxT( "LastFM" ) );
+            //guLogMessage( wxT( "Pass: %s" ), PasswdTextCtrl->GetValue().c_str() );
+            //guLogMessage( wxT( "MD5 : %s" ), MD5.MD5( PasswdTextCtrl->GetValue() ).c_str() );
+        }
+        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LibreFMASEnableChkBox->IsEnabled() && m_LibreFMASEnableChkBox->GetValue(), wxT( "LibreFM" ) );
+        m_Config->WriteStr( wxT( "UserName" ), m_LibreFMUserNameTextCtrl->GetValue(), wxT( "LibreFM" ) );
+        if( !m_LibreFMPasswdTextCtrl->IsEmpty() && m_LibreFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
+        {
+            guMD5 MD5;
+            m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LibreFMPasswdTextCtrl->GetValue() ), wxT( "LibreFM" ) );
+        }
     }
 
     // LastFM Panel Info language
-    m_Config->WriteStr( wxT( "Language" ), m_LangIds[ m_LangChoice->GetSelection() ], wxT( "LastFM" ) );
-    m_Config->WriteNum( wxT( "MinTracksToPlay" ), m_MinTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
-    m_Config->WriteNum( wxT( "NumTracksToAdd" ), m_NumTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
-    m_Config->WriteNum( wxT( "MaxTracksPlayed" ), m_MaxTracksPlayed->GetValue(), wxT( "Playback" ) );
-    m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "SearchFilters" ) );
-    m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
-    m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
-//    m_Config->WriteNum( wxT( "LyricSearchEngine" ), m_LyricsChoice->GetSelection(), wxT( "General" ) );
-    m_Config->WriteBool( wxT( "Enabled" ), m_RecordChkBox->GetValue(), wxT( "Record" ) );
-    m_Config->WriteStr( wxT( "Path" ), m_RecSelDirPicker->GetPath(), wxT( "Record" ) );
-    m_Config->WriteNum( wxT( "Format" ), m_RecFormatChoice->GetSelection(), wxT( "Record" ) );
-    m_Config->WriteNum( wxT( "Quality" ), m_RecQualityChoice->GetSelection(), wxT( "Record" ) );
-    m_Config->WriteBool( wxT( "Split" ), m_RecSplitChkBox->GetValue(), wxT( "Record" ) );
-    m_Config->WriteBool( wxT( "DeleteTracks" ), m_RecDelTracks->GetValue(), wxT( "Record" ) );
-    m_Config->WriteNum( wxT( "DeleteTime" ), m_RecDelTime->GetValue(), wxT( "Record" ) );
-
-    m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "Podcasts" ) );
-    m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "Podcasts" ) );
-    m_Config->WriteNum( wxT( "UpdatePeriod" ), m_PodcastUpdatePeriod->GetSelection(), wxT( "Podcasts" ) );
-    m_Config->WriteBool( wxT( "Delete" ), m_PodcastDelete->GetValue(), wxT( "Podcasts" ) );
-    m_Config->WriteNum( wxT( "DeleteTime" ), m_PodcastDeleteTime->GetValue(), wxT( "Podcasts" ) );
-    m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "Podcasts" ) );
-    m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
-
-    m_Config->WriteNum( wxT( "TextAlign" ), m_LyricsAlignSizer->GetSelection(), wxT( "Lyrics" ) );
-    m_Config->WriteBool( wxT( "SaveToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
-    m_Config->WriteBool( wxT( "SaveToFilesOnlySelected" ), m_LyricsTracksSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
-    m_Config->WriteBool( wxT( "SaveToDir" ), m_LyricsDirSaveChkBox->GetValue(), wxT( "Lyrics" ) );
-    m_Config->WriteStr( wxT( "Path" ), m_LyricsDirSavePicker->GetPath(), wxT( "Lyrics" ) );
-    m_Config->WriteBool( wxT( "SaveToDirOnlySelected" ), m_LyricsDirSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
-
-
-
-    wxArrayString SearchLinks = m_LinksListBox->GetStrings();
-    m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
-    m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "SearchLinks" ), false );
-    wxArrayString Commands = m_CmdListBox->GetStrings();
-    m_Config->WriteAStr( wxT( "Cmd" ), Commands, wxT( "Commands" ) );
-    m_Config->WriteAStr( wxT( "Name" ), m_CmdNames, wxT( "Commands" ), false );
-    m_Config->WriteStr( wxT( "CopyToPattern" ), m_CopyToFileName->GetValue(), wxT( "General" ) );
-
-    // TODO : Make this process in a thread
-    int index;
-    int count = SearchLinks.Count();
-    for( index = 0; index < count; index++ )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_ONLINE )
     {
-        wxURI Uri( SearchLinks[ index ] );
-        if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) ) )
+        m_Config->WriteStr( wxT( "Language" ), m_LangIds[ m_LangChoice->GetSelection() ], wxT( "LastFM" ) );
+
+        m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "SearchFilters" ) );
+
+        m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "General" ) );
+        m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_RECORD )
+    {
+        m_Config->WriteBool( wxT( "Enabled" ), m_RecordChkBox->GetValue(), wxT( "Record" ) );
+        m_Config->WriteStr( wxT( "Path" ), m_RecSelDirPicker->GetPath(), wxT( "Record" ) );
+        m_Config->WriteNum( wxT( "Format" ), m_RecFormatChoice->GetSelection(), wxT( "Record" ) );
+        m_Config->WriteNum( wxT( "Quality" ), m_RecQualityChoice->GetSelection(), wxT( "Record" ) );
+        m_Config->WriteBool( wxT( "Split" ), m_RecSplitChkBox->GetValue(), wxT( "Record" ) );
+        m_Config->WriteBool( wxT( "DeleteTracks" ), m_RecDelTracks->GetValue(), wxT( "Record" ) );
+        m_Config->WriteNum( wxT( "DeleteTime" ), m_RecDelTime->GetValue(), wxT( "Record" ) );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_PODCASTS )
+    {
+        m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "Podcasts" ) );
+        m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "Podcasts" ) );
+        m_Config->WriteNum( wxT( "UpdatePeriod" ), m_PodcastUpdatePeriod->GetSelection(), wxT( "Podcasts" ) );
+        m_Config->WriteBool( wxT( "Delete" ), m_PodcastDelete->GetValue(), wxT( "Podcasts" ) );
+        m_Config->WriteNum( wxT( "DeleteTime" ), m_PodcastDeleteTime->GetValue(), wxT( "Podcasts" ) );
+        m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "Podcasts" ) );
+        m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LYRICS )
+    {
+        m_Config->WriteNum( wxT( "TextAlign" ), m_LyricsAlignSizer->GetSelection(), wxT( "Lyrics" ) );
+        m_Config->WriteBool( wxT( "SaveToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
+        m_Config->WriteBool( wxT( "SaveToFilesOnlySelected" ), m_LyricsTracksSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
+        m_Config->WriteBool( wxT( "SaveToDir" ), m_LyricsDirSaveChkBox->GetValue(), wxT( "Lyrics" ) );
+        m_Config->WriteStr( wxT( "Path" ), m_LyricsDirSavePicker->GetPath(), wxT( "Lyrics" ) );
+        m_Config->WriteBool( wxT( "SaveToDirOnlySelected" ), m_LyricsDirSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_LINKS )
+    {
+        wxArrayString SearchLinks = m_LinksListBox->GetStrings();
+        m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
+        m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "SearchLinks" ), false );
+
+        // TODO : Make this process in a thread
+        int index;
+        int count = SearchLinks.Count();
+        for( index = 0; index < count; index++ )
         {
-            wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons" ), 0770 );
-        }
-        wxString IconFile = wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) + Uri.GetServer() + wxT( ".ico" );
-        if( !wxFileExists( IconFile ) )
-        {
-            if( DownloadFile( Uri.GetServer() + wxT( "/favicon.ico" ), IconFile ) )
+            wxURI Uri( SearchLinks[ index ] );
+            if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) ) )
             {
-                wxImage Image( IconFile, wxBITMAP_TYPE_ANY );
-                if( Image.IsOk() )
+                wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons" ), 0770 );
+            }
+            wxString IconFile = wxGetHomeDir() + wxT( "/.guayadeque/LinkIcons/" ) + Uri.GetServer() + wxT( ".ico" );
+            if( !wxFileExists( IconFile ) )
+            {
+                if( DownloadFile( Uri.GetServer() + wxT( "/favicon.ico" ), IconFile ) )
                 {
-                    if( Image.GetWidth() > 25 || Image.GetHeight() > 25 )
-                    {
-                        Image.Rescale( 25, 25, wxIMAGE_QUALITY_HIGH );
-                    }
+                    wxImage Image( IconFile, wxBITMAP_TYPE_ANY );
                     if( Image.IsOk() )
                     {
-                        Image.SaveFile( IconFile, wxBITMAP_TYPE_ICO );
+                        if( Image.GetWidth() > 25 || Image.GetHeight() > 25 )
+                        {
+                            Image.Rescale( 25, 25, wxIMAGE_QUALITY_HIGH );
+                        }
+                        if( Image.IsOk() )
+                        {
+                            Image.SaveFile( IconFile, wxBITMAP_TYPE_ICO );
+                        }
                     }
                 }
-            }
-            else
-            {
-                guLogError( wxT( "Coult not get the icon from SearchLink server '%s'" ), Uri.GetServer().c_str() );
+                else
+                {
+                    guLogError( wxT( "Coult not get the icon from SearchLink server '%s'" ), Uri.GetServer().c_str() );
+                }
             }
         }
     }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_COMMANDS )
+    {
+        wxArrayString Commands = m_CmdListBox->GetStrings();
+        m_Config->WriteAStr( wxT( "Cmd" ), Commands, wxT( "Commands" ) );
+        m_Config->WriteAStr( wxT( "Name" ), m_CmdNames, wxT( "Commands" ), false );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_COPYTO )
+    {
+        m_Config->WriteStr( wxT( "CopyToPattern" ), m_CopyToFileName->GetValue(), wxT( "General" ) );
+    }
+
     m_Config->Flush();
 }
 
