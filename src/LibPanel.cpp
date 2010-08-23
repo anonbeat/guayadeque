@@ -1816,7 +1816,7 @@ void guLibPanel::SelectAlbumName( const wxString &album )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false );
     ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
@@ -1833,7 +1833,7 @@ void guLibPanel::SelectArtistName( const wxString &artist )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false );
     ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
@@ -1849,7 +1849,7 @@ void guLibPanel::SelectGenres( wxArrayInt * genres )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false );
     ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
@@ -1862,7 +1862,7 @@ void guLibPanel::SelectArtists( wxArrayInt * artists )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false );
     ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
@@ -1878,7 +1878,7 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
 {
     wxArrayString Words;
     m_UpdateLock = true;
-    m_Db->SetTeFilters( Words, m_UpdateLock );
+    m_Db->SetTeFilters( Words, false );
     ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
@@ -2579,8 +2579,8 @@ void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
         wxArrayString Words;
         //guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
         //m_InputTextCtrl->Clear();
-        m_UpdateLock = true;
         m_Db->SetTeFilters( Words, m_UpdateLock );
+        m_UpdateLock = true;
     //    if( !m_UpdateLock )
     //    {
             m_LabelsListCtrl->ReloadItems( false );
