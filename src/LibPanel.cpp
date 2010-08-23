@@ -839,7 +839,7 @@ void guLibPanel::UpdateLabels( void )
     m_RatingListCtrl->ReloadItems( false );
     m_YearListCtrl->ReloadItems( false );
     m_PlayCountListCtrl->ReloadItems( false );
-    m_SongListCtrl->ReloadItems( true );
+    m_SongListCtrl->ReloadItems();
     m_UpdateLock = false;
 }
 
@@ -2592,7 +2592,7 @@ void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
             m_YearListCtrl->ReloadItems( false );
             m_RatingListCtrl->ReloadItems( false );
             m_PlayCountListCtrl->ReloadItems( false );
-            m_SongListCtrl->ReloadItems( false );
+            m_SongListCtrl->ReloadItems();
             m_UpdateLock = false;
     //    }
         m_InputTextCtrl->ShowCancelButton( false );
