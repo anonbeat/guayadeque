@@ -465,10 +465,6 @@ void guPrefDialog::BuildLibraryPage( void )
 	m_LibPanel->SetSizer( LibMainSizer );
 	m_LibPanel->Layout();
 	LibMainSizer->Fit( m_LibPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 1 );
-	m_MainNotebook->Thaw();
 
     //
     //
@@ -620,10 +616,6 @@ void guPrefDialog::BuildPlaybackPage( void )
 	m_PlayPanel->SetSizer( PlayMainSizer );
 	m_PlayPanel->Layout();
 	PlayMainSizer->Fit( m_PlayPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 2 );
-	m_MainNotebook->Thaw();
 
     //
     //
@@ -713,10 +705,6 @@ void guPrefDialog::BuildCrossfaderPage( void )
 	m_XFadePanel->SetSizer( XFadeMainSizer );
 	m_XFadePanel->Layout();
 	XFadeMainSizer->Fit( m_XFadePanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 3 );
-	m_MainNotebook->Thaw();
 
     //
     //
@@ -834,10 +822,6 @@ void guPrefDialog::BuildRecordPage( void )
 	m_RecordPanel->SetSizer( RecMainSizer );
 	m_RecordPanel->Layout();
 	RecMainSizer->Fit( m_RecordPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 4 );
-	m_MainNotebook->Thaw();
 
     //
     //
@@ -941,10 +925,6 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	m_LastFMPanel->SetSizer( ASMainSizer );
 	m_LastFMPanel->Layout();
 	ASMainSizer->Fit( m_LastFMPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 5 );
-	m_MainNotebook->Thaw();
 
     //
     //
@@ -1014,10 +994,6 @@ void guPrefDialog::BuildLyricsPage( void )
 	m_LyricsPanel->SetSizer( LyricsMainSizer );
 	m_LyricsPanel->Layout();
 	LyricsMainSizer->Fit( m_LyricsPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 6 );
-	m_MainNotebook->Thaw();
 
 }
 
@@ -1094,10 +1070,6 @@ void guPrefDialog::BuildOnlinePage( void )
 	m_OnlinePanel->SetSizer( OnlineMainSizer );
 	m_OnlinePanel->Layout();
 	OnlineMainSizer->Fit( m_OnlinePanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 7 );
-	m_MainNotebook->Thaw();
 
     //
     //
@@ -1183,10 +1155,6 @@ void guPrefDialog::BuildPodcastsPage( void )
 	m_PodcastPanel->SetSizer( PodcastsMainSizer );
 	m_PodcastPanel->Layout();
 	PodcastsMainSizer->Fit( m_PodcastPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 8 );
-	m_MainNotebook->Thaw();
 
 }
 
@@ -1295,10 +1263,6 @@ void guPrefDialog::BuildLinksPage( void )
 	m_LinksPanel->SetSizer( LinksMainSizer );
 	m_LinksPanel->Layout();
 	LinksMainSizer->Fit( m_LinksPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 9 );
-	m_MainNotebook->Thaw();
 
     //
     //
@@ -1416,10 +1380,6 @@ void guPrefDialog::BuildCommandsPage( void )
 	m_CmdPanel->SetSizer( CmdMainSizer );
 	m_CmdPanel->Layout();
 	CmdMainSizer->Fit( m_CmdPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 10 );
-	m_MainNotebook->Thaw();
 
     //
     //
@@ -1474,10 +1434,6 @@ void guPrefDialog::BuildCopyToPage( void )
 	m_CopyPanel->SetSizer( CopyToMainSizer );
 	m_CopyPanel->Layout();
 	CopyToMainSizer->Fit( m_CopyPanel );
-	m_MainNotebook->Freeze();
-	m_MainNotebook->SetSelection( 0 );
-	m_MainNotebook->SetSelection( 11 );
-	m_MainNotebook->Thaw();
 
     //
     //
