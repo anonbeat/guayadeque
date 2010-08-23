@@ -69,6 +69,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 
     m_Db = NewDb;
     m_PlayerPanel = NewPlayerPanel;
+    m_DoneClearSearchText = false;
 
     m_AuiManager.SetManagedWindow( this );
     m_AuiManager.SetArtProvider( new guAuiDockArt() );
@@ -606,6 +607,12 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
 {
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
+
+    if( m_DoneClearSearchText )
+    {
+        m_DoneClearSearchText = false;
+        return;
+    }
     m_TextChangedTimer.Start( guPANEL_TIMER_TEXTCHANGED, wxTIMER_ONE_SHOT );
 }
 
@@ -630,6 +637,14 @@ void guLibPanel::OnSearchSelected( wxCommandEvent& event )
             OnSongPlayAllClicked( event );
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::ClearSearchText( void )
+{
+    m_DoneClearSearchText = true;
+    m_InputTextCtrl->Clear();
+    m_InputTextCtrl->ShowCancelButton( false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1734,6 +1749,7 @@ void guLibPanel::SelectTrack( const int trackid )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, false  );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_AlbumArtistListCtrl->ReloadItems();
@@ -1751,6 +1767,7 @@ void guLibPanel::SelectAlbum( const int albumid )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, false );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_AlbumArtistListCtrl->ReloadItems();
@@ -1767,6 +1784,7 @@ void guLibPanel::SelectArtist( const int artistid )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, false );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_AlbumArtistListCtrl->ReloadItems();
@@ -1782,6 +1800,7 @@ void guLibPanel::SelectYear( const int year )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, false );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_AlbumArtistListCtrl->ReloadItems();
@@ -1798,6 +1817,7 @@ void guLibPanel::SelectAlbumName( const wxString &album )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, m_UpdateLock );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_AlbumArtistListCtrl->ReloadItems();
@@ -1814,6 +1834,7 @@ void guLibPanel::SelectArtistName( const wxString &artist )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, m_UpdateLock );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_AlbumArtistListCtrl->ReloadItems();
@@ -1829,6 +1850,7 @@ void guLibPanel::SelectGenres( wxArrayInt * genres )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, m_UpdateLock );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_UpdateLock = false;
@@ -1841,6 +1863,7 @@ void guLibPanel::SelectArtists( wxArrayInt * artists )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, m_UpdateLock );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_AlbumArtistListCtrl->ReloadItems();
@@ -1856,6 +1879,7 @@ void guLibPanel::SelectAlbums( wxArrayInt * albums )
     wxArrayString Words;
     m_UpdateLock = true;
     m_Db->SetTeFilters( Words, m_UpdateLock );
+    ClearSearchText();
     m_LabelsListCtrl->ReloadItems();
     m_GenreListCtrl->ReloadItems();
     m_AlbumArtistListCtrl->ReloadItems();
