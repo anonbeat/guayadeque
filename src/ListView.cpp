@@ -637,12 +637,13 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
     int MouseX = event.m_x;
     int MouseY = event.m_y;
     int Item = HitTest( MouseX, MouseY );
+    bool ResetVals = false;
     // We want to get a better experience for dragging as before
     // when you click over selected items the items was unselected
     // even when you tried to drag then.
     // Here we check if the item was selected and if so wait for the button up
     // to unselecte the item
-    //guLogMessage( wxT( "WasLeftUp: %i  Selecting: %i" ), m_MouseWasLeftUp, m_MouseSelecting );
+    //guLogMessage( wxT( "ID: %u LD: %i LU: %i WasLeftUp: %i  Selecting: %i " ), event.GetId(), event.LeftDown(), event.LeftUp(), m_MouseWasLeftUp, m_MouseSelecting );
     if( !m_MouseWasLeftUp && !event.ShiftDown() && !event.ControlDown() )
     {
         m_MouseWasLeftUp = event.LeftUp();
@@ -652,9 +653,9 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
             {
                 if( IsSelected( Item ) )
                 {
-                    //guLogMessage( wxT( "Event Left Down/Up..." ) );
                     if( !m_MouseSelecting && event.LeftUp() )
                     {
+                        //guLogMessage( wxT( "Sending LeftDown event %i" ), m_MouseSelecting );
                         // Its a LeftUp event
                         event.SetEventType( wxEVT_LEFT_DOWN );
                         event.m_leftDown = true;
@@ -668,12 +669,13 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
     }
     else
     {
-        m_MouseWasLeftUp = false;
-        m_MouseSelecting = false;
+        //m_MouseWasLeftUp = false;
+        //m_MouseSelecting = false;
+        ResetVals = true;
     }
 
     // Only when the left or right is down and the click events are enabled
-    if( ( event.LeftDown() || event.RightDown() ) &&
+    if( ( event.LeftDown() || event.RightDown() ) && !( ResetVals && m_MouseSelecting ) &&
         m_ColumnClickEvents &&
         ( Item != wxNOT_FOUND ) )
     {
@@ -719,6 +721,12 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
     // The wxVListBox dont handle the right click to select items. We add this functionality
     if( event.RightDown() && ( Item != wxNOT_FOUND ) && !IsSelected( Item ) )
         OnLeftDown( event );
+
+    if( ResetVals )
+    {
+        m_MouseWasLeftUp = false;
+        m_MouseSelecting = false;
+    }
 
     event.Skip();
 }
