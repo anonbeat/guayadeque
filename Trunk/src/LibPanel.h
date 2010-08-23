@@ -84,11 +84,13 @@ class guLibPanel : public wxPanel
     wxTimer             m_SelChangedTimer;
     wxTimer             m_TextChangedTimer;
     int                 m_SelChangedObject;
+    bool                m_DoneClearSearchText;
 
     // Search Str events
     void OnSearchActivated( wxCommandEvent &event );
     void OnSearchCancelled( wxCommandEvent &event );
     void OnSearchSelected( wxCommandEvent &event );
+    void ClearSearchText( void );
 
     // LabelsListBox Events
     void OnLabelListActivated( wxListEvent &event );
