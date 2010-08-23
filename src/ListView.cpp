@@ -390,6 +390,50 @@ wxArrayInt guListView::GetSelectedItems( const bool convertall ) const
 }
 
 // -------------------------------------------------------------------------------- //
+wxArrayInt guListView::GetSelectedIndexs( const bool convertall ) const
+{
+    wxArrayInt RetVal;
+    unsigned long cookie;
+    int item;
+    int index;
+    int count;
+    if( GetItemCount() )
+    {
+        if( m_ListBox->HasMultipleSelection() )
+        {
+            item = GetFirstSelected( cookie );
+            while( item != wxNOT_FOUND )
+            {
+                RetVal.Add( item );
+                if( convertall && ( item == 0 ) )
+                    break;
+                item = GetNextSelected( cookie );
+            }
+        }
+        else
+        {
+            item = m_ListBox->GetSelection();
+            if( item != wxNOT_FOUND )
+            {
+                RetVal.Add( item );
+            }
+        }
+
+        //
+        if( convertall && ( RetVal.Index( 0 ) != wxNOT_FOUND ) )
+        {
+            RetVal.Empty();
+            count = GetItemCount();
+            for( index = 0; index < count; index++ )
+            {
+                RetVal.Add( index );
+            }
+        }
+    }
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 void guListView::SetSelectedItems( const wxArrayInt &selection )
 {
     int index;
@@ -409,6 +453,31 @@ void guListView::SetSelectedItems( const wxArrayInt &selection )
                 else
                     SetSelection( index );
             }
+        }
+        wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, m_ListBox->GetId() );
+        event.SetEventObject( m_ListBox );
+        event.SetInt( selection[ 0 ] );
+        (void) GetEventHandler()->ProcessEvent( event );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guListView::SetSelectedIndexs( const wxArrayInt &selection )
+{
+    int index;
+    int count;
+
+    // TODO Need to speed up this
+    ClearSelectedItems();
+    if( ( count = selection.Count() ) )
+    {
+        bool IsMultiple = m_ListBox->HasMultipleSelection();
+        for( index = 0; index < count; index++ )
+        {
+            if( IsMultiple )
+                Select( selection[ index ] );
+            else
+                SetSelection( selection[ index ] );
         }
         wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, m_ListBox->GetId() );
         event.SetEventObject( m_ListBox );
@@ -678,9 +747,9 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
     }
 
     // Only when the left or right is down and the click events are enabled
-    if( ( event.LeftDown() || event.RightDown() ) && !( ResetVals && m_MouseSelecting ) &&
-        m_ColumnClickEvents &&
-        ( Item != wxNOT_FOUND ) )
+    if( m_ColumnClickEvents &&
+        ( Item != wxNOT_FOUND ) &&
+        ( ( event.LeftDown() && !( ResetVals && m_MouseSelecting ) ) || event.RightDown() ) )
     {
         // We want get the left click events, calculate which column clicked on and
         // send a Column_Clicked event
@@ -732,99 +801,6 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
     }
 
     event.Skip();
-
-////////    // We want to get a better experience for dragging as before
-////////    // when you click over selected items the items was unselected
-////////    // even when you tried to drag then.
-////////    // Here we check if the item was selected and if so wait for the button up
-////////    // to unselecte the item
-////////    //guLogMessage( wxT( "ID: %u LD: %i LU: %i WasLeftUp: %i  Selecting: %i " ), event.GetId(), event.LeftDown(), event.LeftUp(), m_MouseWasLeftUp, m_MouseSelecting );
-////////    if( !event.ShiftDown() && !event.ControlDown() && !event.AltDown() )
-////////    {
-////////        int MouseX = event.m_x;
-////////        int MouseY = event.m_y;
-////////        int Item = HitTest( MouseX, MouseY );
-////////
-////////        if( event.LeftDown() || event.LeftUp() || event.RightDown() )
-////////        {
-////////            guLogMessage( wxT( "LD: %i LU: %i RD: %i   %i  ->%i" ), event.LeftDown(), event.LeftUp(), event.RightDown(), m_MouseWasLeftUp, Item );
-////////            if( event.LeftDown() && m_MouseWasLeftUp )
-////////            {
-////////                m_MouseWasLeftUp = false;
-////////            }
-////////            else //if( event.LeftUp() )
-////////            {
-////////                if( Item != wxNOT_FOUND && IsSelected( Item ) )
-////////                {
-////////                    if( event.LeftUp() )
-////////                    {
-////////                        event.SetEventType( wxEVT_LEFT_DOWN );
-////////                        event.m_leftDown = true;
-////////                        AddPendingEvent( event );
-////////                        m_MouseWasLeftUp = true;
-////////                        guLogMessage( wxT( "LeftUp converted to leftDown..." ) );
-////////                        return;
-////////                    }
-////////                    else if( event.LeftDown() )
-////////                    {
-////////                        return;
-////////                    }
-////////                }
-////////            }
-////////
-////////            guLogMessage( wxT( "About to check if should send column clicked event %i" ), m_MouseWasLeftUp );
-////////            if( m_ColumnClickEvents &&
-////////                ( event.LeftDown() || event.RightDown() ) &&
-////////                ( Item != wxNOT_FOUND ) )
-////////            {
-////////                // We want get the left click events, calculate which column clicked on and
-////////                // send a Column_Clicked event
-////////                int Col_Num = wxNOT_FOUND;
-////////
-////////                MouseX += GetScrollPos( wxHORIZONTAL );
-////////
-////////                int Index;
-////////                int Col_Start = 0;
-////////                int Col_Border = 0;
-////////                int Count = m_Columns->Count();
-////////                for( Index = 0; Index < Count; Index++ )
-////////                {
-////////                    if( ( * m_Columns )[ Index ].m_Enabled )
-////////                    {
-////////                        Col_Border += ( * m_Columns )[ Index ].m_Width;
-////////                        if( MouseX < Col_Border )
-////////                        {
-////////                            Col_Num = Index;
-////////                            break;
-////////                        }
-////////                        Col_Start = Col_Border;
-////////                    }
-////////                }
-////////
-////////                if( Col_Num != wxNOT_FOUND )
-////////                {
-////////                    wxListEvent le( event.LeftDown() ? guEVT_LISTBOX_ITEM_COL_CLICKED :
-////////                                                       guEVT_LISTBOX_ITEM_COL_RCLICKED, m_Owner->GetId() );
-////////                    le.SetEventObject( m_Owner );
-////////                    le.m_pointDrag.x = MouseX - Col_Start;
-////////                    le.m_pointDrag.y = MouseY;
-////////                    le.SetInt( Item );
-////////                    le.m_col = Col_Num;
-////////                    m_Owner->GetEventHandler()->ProcessEvent( le );
-////////                    //guLogMessage( wxT( "Col %i have been clicked (%i-%i) %i-%i" ), Col_Num, Col_Start, Col_Border, MouseX - Col_Start, MouseY );
-////////                    //return;
-////////                }
-////////            }
-////////
-////////
-////////        }
-////////        else if( event.RightDown() && ( Item != wxNOT_FOUND ) && !IsSelected( Item ) )
-////////        {
-////////            OnLeftDown( event );
-////////        }
-////////    }
-////////
-////////    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
