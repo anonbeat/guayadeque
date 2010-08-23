@@ -333,8 +333,10 @@ class guListView : public wxScrolledWindow
     virtual void            ReloadItems( bool reset = true ) = 0;
 
     virtual wxArrayInt      GetSelectedItems( bool reallist = true ) const;
+    virtual wxArrayInt      GetSelectedIndexs( bool reallist = true ) const;
     virtual void            GetSelectedItems( guListItems * items, bool convertall = true ) const;
     virtual void            SetSelectedItems( const wxArrayInt &selection );
+    virtual void            SetSelectedIndexs( const wxArrayInt &selection );
     virtual size_t          GetSelectedCount( void ) const { return m_ListBox->GetSelectedCount(); }
     virtual void            ClearSelectedItems( void ) { SetSelection( wxNOT_FOUND ); }
 
