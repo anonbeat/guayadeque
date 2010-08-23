@@ -904,7 +904,7 @@ bool guDbLibrary::CheckDbVersion( void )
           query.Add( wxT( "UPDATE playlists SET playlist_sorttype = playlist_sorttype + 1 WHERE playlist_sorttype > 1;" ) );
           query.Add( wxT( "UPDATE plsets SET plset_type = plset_type + 1 WHERE plset_type > 1;" ) );
           query.Add( wxT( "UPDATE plsets SET plset_option = plset_option + 1 WHERE "
-                          "( plset_option > 2 AND plset_type IN ( 9 ) OR"
+                          "( plset_option > 2 AND plset_type IN ( 9 ) ) OR"
                           "( plset_option > 0 AND plset_type IN ( 9, 10, 11 ) );" ) );
       }
     }
