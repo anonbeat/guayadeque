@@ -68,6 +68,7 @@ class guStatusBar : public wxStatusBar
     void                OnSize( wxSizeEvent &event );
     void                SetSizes( int fieldcnt );
     void                UpdateGauges( void );
+    void                OnAudioScrobbleClicked( wxMouseEvent &event );
 
   public:
                         guStatusBar( wxWindow * parent );
