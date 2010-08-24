@@ -51,18 +51,34 @@
 #include <wx/imaglist.h>
 #include <wx/dialog.h>
 
-#define  guPREFERENCE_PAGE_GENERAL          ( 1 << 0 )
-#define  guPREFERENCE_PAGE_LIBRARY          ( 1 << 1 )
-#define  guPREFERENCE_PAGE_PLAYBACK         ( 1 << 2 )
-#define  guPREFERENCE_PAGE_CROSSFADER       ( 1 << 3 )
-#define  guPREFERENCE_PAGE_RECORD           ( 1 << 4 )
-#define  guPREFERENCE_PAGE_AUDIOSCROBBLE    ( 1 << 5 )
-#define  guPREFERENCE_PAGE_LYRICS           ( 1 << 6 )
-#define  guPREFERENCE_PAGE_ONLINE           ( 1 << 7 )
-#define  guPREFERENCE_PAGE_PODCASTS         ( 1 << 8 )
-#define  guPREFERENCE_PAGE_LINKS            ( 1 << 9 )
-#define  guPREFERENCE_PAGE_COMMANDS         ( 1 << 10 )
-#define  guPREFERENCE_PAGE_COPYTO           ( 1 << 11 )
+#define  guPREFERENCE_PAGE_FLAG_GENERAL          ( 1 << 0 )
+#define  guPREFERENCE_PAGE_FLAG_LIBRARY          ( 1 << 1 )
+#define  guPREFERENCE_PAGE_FLAG_PLAYBACK         ( 1 << 2 )
+#define  guPREFERENCE_PAGE_FLAG_CROSSFADER       ( 1 << 3 )
+#define  guPREFERENCE_PAGE_FLAG_RECORD           ( 1 << 4 )
+#define  guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE    ( 1 << 5 )
+#define  guPREFERENCE_PAGE_FLAG_LYRICS           ( 1 << 6 )
+#define  guPREFERENCE_PAGE_FLAG_ONLINE           ( 1 << 7 )
+#define  guPREFERENCE_PAGE_FLAG_PODCASTS         ( 1 << 8 )
+#define  guPREFERENCE_PAGE_FLAG_LINKS            ( 1 << 9 )
+#define  guPREFERENCE_PAGE_FLAG_COMMANDS         ( 1 << 10 )
+#define  guPREFERENCE_PAGE_FLAG_COPYTO           ( 1 << 11 )
+
+enum guPreference_Page {
+    guPREFERENCE_PAGE_GENERAL,
+    guPREFERENCE_PAGE_LIBRARY,
+    guPREFERENCE_PAGE_PLAYBACK,
+    guPREFERENCE_PAGE_CROSSFADER,
+    guPREFERENCE_PAGE_RECORD,
+    guPREFERENCE_PAGE_AUDIOSCROBBLE,
+    guPREFERENCE_PAGE_LYRICS,
+    guPREFERENCE_PAGE_ONLINE,
+    guPREFERENCE_PAGE_PODCASTS,
+    guPREFERENCE_PAGE_LINKS,
+    guPREFERENCE_PAGE_COMMANDS,
+    guPREFERENCE_PAGE_COPYTO,
+    guPREFERENCE_PAGE_LASTUSED = -1
+};
 
 // -------------------------------------------------------------------------------- //
 class guPrefDialog : public wxDialog
@@ -275,7 +291,7 @@ class guPrefDialog : public wxDialog
 	void OnCopyToFileNameUpdated( wxCommandEvent &event );
 
   public:
-    guPrefDialog( wxWindow * parent, guDbLibrary * db );
+    guPrefDialog( wxWindow * parent, guDbLibrary * db, int pagenum = guPREFERENCE_PAGE_LASTUSED );
     ~guPrefDialog();
 
     void SaveSettings( void );
