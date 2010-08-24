@@ -697,6 +697,8 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
                 m_CurrentPlayBin->SetNextUri( uri );
                 m_CurrentPlayBin->SetNextId( wxGetLocalTime() );
                 Result = m_CurrentPlayBin->NextId();
+                Unlock();
+                return Result;
             }
             Unlock();
             break;
@@ -720,6 +722,8 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
                 m_CurrentPlayBin->SetBuffering( false );
                 m_CurrentPlayBin->SetFaderVolume( 1.0 );
                 Result = m_CurrentPlayBin->GetId();
+                Unlock();
+                return Result;
             }
             Unlock();
             break;
@@ -945,6 +949,7 @@ bool guMediaCtrl::Stop( void )
             case guFADERPLAYBIN_STATE_WAITING :
             case guFADERPLAYBIN_STATE_WAITING_EOS :
                 FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                ScheduleCleanUp();
                 //guLogDebug( wxT( "stream %s is not yet playing, can't pause" ), FaderPlayBin->m_Uri.c_str() );
                 break;
 
@@ -953,6 +958,7 @@ bool guMediaCtrl::Stop( void )
             case guFADERPLAYBIN_STATE_FADEOUT_STOP :
                 //guLogDebug( wxT( "stream %s is already paused" ), FaderPlayBin->m_Uri.c_str() );
                 FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                ScheduleCleanUp();
                 break;
 
             case guFADERPLAYBIN_STATE_FADEIN :
@@ -992,7 +998,7 @@ bool guMediaCtrl::Stop( void )
                 if( IsBuffering() )
                 {
                     FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
-                    FaderPlayBin->m_Player->ScheduleCleanUp();
+                    ScheduleCleanUp();
 
                     guMediaEvent BufEvent( guEVT_MEDIA_BUFFERING );
                     BufEvent.SetInt( 100 );
@@ -1979,8 +1985,8 @@ bool guFaderPlayBin::StartPlay( void )
                     case guFADERPLAYBIN_STATE_PENDING_REMOVE :
                         // kill this one
                         //guLogDebug( wxT( "stopping stream %s (replaced by new stream)" ), FaderPlaybin->m_Uri.c_str() );
-                        NeedReap = true;
                         FaderPlaybin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                        NeedReap = true;
                         break;
 
                     default:
@@ -2005,6 +2011,12 @@ bool guFaderPlayBin::StartPlay( void )
             break;
         }
     }
+
+    if( NeedReap )
+    {
+        m_Player->ScheduleCleanUp();
+    }
+
     return Ret;
 }
 
