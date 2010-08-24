@@ -21,6 +21,8 @@
 #include "StatusBar.h"
 #include "Images.h"
 #include "Utils.h"
+#include "Commands.h"
+#include "Preferences.h"
 
 #define guTRACKCOUNT_SIZE   300
 
@@ -144,6 +146,7 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     m_SelInfo->SetToolTip( _( "Shows information about the selected items." ) );
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
+	m_ASBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnAudioScrobbleClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -153,6 +156,7 @@ guStatusBar::~guStatusBar()
         delete m_ASBitmap;
 
     Disconnect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
+	m_ASBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnAudioScrobbleClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -187,6 +191,15 @@ void guStatusBar::SetAudioScrobbleService( bool Enabled )
         m_ASBitmap->SetBitmap( guImage( Enabled ? guIMAGE_INDEX_lastfm_as_on : guIMAGE_INDEX_lastfm_as_off ) );
         m_ASBitmap->Refresh();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::OnAudioScrobbleClicked( wxMouseEvent &event )
+{
+    //guLogMessage( wxT( "AUdioScrobble clicked..." ) );
+    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    CmdEvent.SetInt( guPREFERENCE_PAGE_AUDIOSCROBBLE );
+    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -1043,7 +1043,7 @@ void guMainFrame::CreateMenu()
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPreferences( wxCommandEvent &event )
 {
-    guPrefDialog * PrefDialog = new guPrefDialog( this, m_Db );
+    guPrefDialog * PrefDialog = new guPrefDialog( this, m_Db, event.GetInt() ? event.GetInt() : wxNOT_FOUND );
     if( PrefDialog )
     {
         if( PrefDialog->ShowModal() == wxID_OK )
