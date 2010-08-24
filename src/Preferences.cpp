@@ -381,7 +381,6 @@ void guPrefDialog::BuildGeneralPage( void )
 
 	m_GenPanel->SetSizer( GenMainSizer );
 	m_GenPanel->Layout();
-	GenMainSizer->Fit( m_GenPanel );
 
     //
     //
@@ -464,7 +463,7 @@ void guPrefDialog::BuildLibraryPage( void )
 
 	m_LibPanel->SetSizer( LibMainSizer );
 	m_LibPanel->Layout();
-	LibMainSizer->Fit( m_LibPanel );
+
 
     //
     //
@@ -615,7 +614,6 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	m_PlayPanel->SetSizer( PlayMainSizer );
 	m_PlayPanel->Layout();
-	PlayMainSizer->Fit( m_PlayPanel );
 
     //
     //
@@ -704,7 +702,6 @@ void guPrefDialog::BuildCrossfaderPage( void )
 
 	m_XFadePanel->SetSizer( XFadeMainSizer );
 	m_XFadePanel->Layout();
-	XFadeMainSizer->Fit( m_XFadePanel );
 
     //
     //
@@ -821,7 +818,6 @@ void guPrefDialog::BuildRecordPage( void )
 
 	m_RecordPanel->SetSizer( RecMainSizer );
 	m_RecordPanel->Layout();
-	RecMainSizer->Fit( m_RecordPanel );
 
     //
     //
@@ -924,7 +920,6 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 
 	m_LastFMPanel->SetSizer( ASMainSizer );
 	m_LastFMPanel->Layout();
-	ASMainSizer->Fit( m_LastFMPanel );
 
     //
     //
@@ -993,7 +988,6 @@ void guPrefDialog::BuildLyricsPage( void )
 
 	m_LyricsPanel->SetSizer( LyricsMainSizer );
 	m_LyricsPanel->Layout();
-	LyricsMainSizer->Fit( m_LyricsPanel );
 
 }
 
@@ -1069,7 +1063,6 @@ void guPrefDialog::BuildOnlinePage( void )
 
 	m_OnlinePanel->SetSizer( OnlineMainSizer );
 	m_OnlinePanel->Layout();
-	OnlineMainSizer->Fit( m_OnlinePanel );
 
     //
     //
@@ -1154,7 +1147,6 @@ void guPrefDialog::BuildPodcastsPage( void )
 
 	m_PodcastPanel->SetSizer( PodcastsMainSizer );
 	m_PodcastPanel->Layout();
-	PodcastsMainSizer->Fit( m_PodcastPanel );
 
 }
 
@@ -1262,7 +1254,6 @@ void guPrefDialog::BuildLinksPage( void )
 
 	m_LinksPanel->SetSizer( LinksMainSizer );
 	m_LinksPanel->Layout();
-	LinksMainSizer->Fit( m_LinksPanel );
 
     //
     //
@@ -1379,7 +1370,6 @@ void guPrefDialog::BuildCommandsPage( void )
 
 	m_CmdPanel->SetSizer( CmdMainSizer );
 	m_CmdPanel->Layout();
-	CmdMainSizer->Fit( m_CmdPanel );
 
     //
     //
@@ -1433,7 +1423,6 @@ void guPrefDialog::BuildCopyToPage( void )
 
 	m_CopyPanel->SetSizer( CopyToMainSizer );
 	m_CopyPanel->Layout();
-	CopyToMainSizer->Fit( m_CopyPanel );
 
     //
     //
