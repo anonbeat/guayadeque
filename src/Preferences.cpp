@@ -30,7 +30,7 @@
 wxString PatternToExample( const wxString &Pattern );
 
 // -------------------------------------------------------------------------------- //
-guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 600, 530 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //:wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 600, 530 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
 {
 	wxBoxSizer *        MainSizer;
 
@@ -145,7 +145,63 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db ) //:wxDialog( pa
 	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
 	m_MainNotebook->SetPageImage( 11, 11 );
 
-    BuildGeneralPage();
+    if( pagenum == guPREFERENCE_PAGE_LASTUSED )
+    {
+        pagenum = m_Config->ReadNum( wxT( "LasPreferencePage" ), guPREFERENCE_PAGE_GENERAL, wxT( "General" ) );
+    }
+
+    switch( pagenum )
+    {
+        case guPREFERENCE_PAGE_GENERAL :
+            BuildGeneralPage();
+            break;
+
+        case guPREFERENCE_PAGE_LIBRARY :
+            BuildLibraryPage();
+            break;
+
+        case guPREFERENCE_PAGE_PLAYBACK :
+            BuildPlaybackPage();
+            break;
+
+        case guPREFERENCE_PAGE_CROSSFADER :
+            BuildCrossfaderPage();
+            break;
+
+        case guPREFERENCE_PAGE_RECORD :
+            BuildRecordPage();
+            break;
+
+        case guPREFERENCE_PAGE_AUDIOSCROBBLE :
+            BuildAudioScrobblePage();
+            break;
+
+        case guPREFERENCE_PAGE_LYRICS :
+            BuildLyricsPage();
+            break;
+
+        case guPREFERENCE_PAGE_ONLINE :
+            BuildOnlinePage();
+            break;
+
+        case guPREFERENCE_PAGE_PODCASTS :
+            BuildPodcastsPage();
+            break;
+
+        case guPREFERENCE_PAGE_LINKS :
+            BuildLinksPage();
+            break;
+
+        case guPREFERENCE_PAGE_COMMANDS :
+            BuildCommandsPage();
+            break;
+
+        case guPREFERENCE_PAGE_COPYTO :
+            BuildCopyToPage();
+            break;
+    }
+
+    m_MainNotebook->SetSelection( pagenum );
 
     //
 	MainSizer->Add( m_MainNotebook, 1, wxEXPAND | wxALL, 5 );
@@ -186,16 +242,17 @@ guPrefDialog::~guPrefDialog()
     wxSize WindowSize = GetSize();
     Config->WriteNum( wxT( "PreferencesSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
     Config->WriteNum( wxT( "PreferencesSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
+    m_Config->WriteNum( wxT( "LasPreferencePage" ), m_MainNotebook->GetSelection(), wxT( "General" ) );
 
     //
 	m_MainNotebook->Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxCommandEventHandler( guPrefDialog::OnPageChanged ), NULL, this );
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_GENERAL )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
         m_TaskIconChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LIBRARY )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LIBRARY )
     {
     	m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxSelected ), NULL, this );
         m_AddPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
@@ -210,7 +267,7 @@ guPrefDialog::~guPrefDialog()
         m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_PLAYBACK )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PLAYBACK )
     {
         m_RndPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
         m_DelPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
@@ -218,19 +275,19 @@ guPrefDialog::~guPrefDialog()
         m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_RECORD )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_RECORD )
     {
         m_RecordChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
         m_RecDelTracks->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LYRICS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LYRICS )
     {
         m_LyricsTracksSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
         m_LyricsDirSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_ONLINE )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ONLINE )
     {
         m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
         m_OnlineAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
@@ -238,7 +295,7 @@ guPrefDialog::~guPrefDialog()
         m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_AUDIOSCROBBLE )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE )
     {
         m_LastFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
         m_LastFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
@@ -247,7 +304,7 @@ guPrefDialog::~guPrefDialog()
         m_LibreFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LINKS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LINKS )
     {
         m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
         m_LinksAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
@@ -259,7 +316,7 @@ guPrefDialog::~guPrefDialog()
         m_LinksAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_COMMANDS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COMMANDS )
     {
         m_CmdListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
         m_CmdAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
@@ -271,7 +328,7 @@ guPrefDialog::~guPrefDialog()
         m_CmdAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_COPYTO )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
     {
         m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
     }
@@ -302,10 +359,10 @@ void guPrefDialog::OnPageChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildGeneralPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_GENERAL )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_GENERAL )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_GENERAL;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_GENERAL;
 
     //
     // General Preferences Panel
@@ -392,10 +449,10 @@ void guPrefDialog::BuildGeneralPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildLibraryPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LIBRARY )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LIBRARY )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_LIBRARY;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_LIBRARY;
 
     //
     // Library Preferences Panel
@@ -485,10 +542,10 @@ void guPrefDialog::BuildLibraryPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildPlaybackPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_PLAYBACK )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PLAYBACK )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_PLAYBACK;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_PLAYBACK;
 
     //
     // Playback Panel
@@ -628,10 +685,10 @@ void guPrefDialog::BuildPlaybackPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildCrossfaderPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_CROSSFADER )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_CROSSFADER )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_CROSSFADER;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_CROSSFADER;
 
     //
     // Crossfader Panel
@@ -723,10 +780,10 @@ void guPrefDialog::BuildCrossfaderPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildRecordPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_RECORD )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_RECORD )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_RECORD;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_RECORD;
 
     //
     // Record Panel
@@ -830,10 +887,10 @@ void guPrefDialog::BuildRecordPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildAudioScrobblePage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_AUDIOSCROBBLE )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_AUDIOSCROBBLE;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE;
 
     //
     // LastFM Panel
@@ -935,10 +992,10 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildLyricsPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LYRICS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LYRICS )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_LYRICS;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_LYRICS;
 
     //
     // Lyrics
@@ -994,10 +1051,10 @@ void guPrefDialog::BuildLyricsPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildOnlinePage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_ONLINE )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ONLINE )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_ONLINE;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_ONLINE;
 
     //
     // Online Services Filter
@@ -1077,10 +1134,10 @@ void guPrefDialog::BuildOnlinePage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildPodcastsPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_PODCASTS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PODCASTS )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_PODCASTS;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_PODCASTS;
 
     //
     // Podcasts
@@ -1153,10 +1210,10 @@ void guPrefDialog::BuildPodcastsPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildLinksPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LINKS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LINKS )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_LINKS;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_LINKS;
 
     //
     // Links
@@ -1272,10 +1329,10 @@ void guPrefDialog::BuildLinksPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildCommandsPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_COMMANDS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COMMANDS )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_COMMANDS;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_COMMANDS;
 
     //
     // Commands Panel
@@ -1388,10 +1445,10 @@ void guPrefDialog::BuildCommandsPage( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildCopyToPage( void )
 {
-    if( m_VisiblePanels & guPREFERENCE_PAGE_COPYTO )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
         return;
 
-    m_VisiblePanels |= guPREFERENCE_PAGE_COPYTO;
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_COPYTO;
 
     //
     // Copy to
@@ -1439,7 +1496,7 @@ void guPrefDialog::SaveSettings( void )
 
 
     // Save all configurations
-    if( m_VisiblePanels & guPREFERENCE_PAGE_GENERAL )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
         m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "General" ) );
@@ -1455,7 +1512,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "General" ) );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LIBRARY )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LIBRARY )
     {
         m_Config->WriteAStr( wxT( "LibPath" ), m_PathsListBox->GetStrings(), wxT( "LibPaths" ) );
         if( m_LibPathsChanged )
@@ -1468,7 +1525,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "ScanAddPlayLists" ), m_LibScanPlayListChkBox->GetValue(), wxT( "General" ) );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_PLAYBACK )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PLAYBACK )
     {
         m_Config->WriteBool( wxT( "RndPlayOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "General" ) );
@@ -1485,7 +1542,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteNum( wxT( "MaxTracksPlayed" ), m_MaxTracksPlayed->GetValue(), wxT( "Playback" ) );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_CROSSFADER )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_CROSSFADER )
     {
         m_Config->WriteNum( wxT( "FadeOutTime" ), m_XFadeOutLenSlider->GetValue(), wxT( "Crossfader" ) );
         m_Config->WriteNum( wxT( "FadeInTime" ), m_XFadeInLenSlider->GetValue(), wxT( "Crossfader" ) );
@@ -1493,7 +1550,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteNum( wxT( "FadeInVolTriger" ), m_XFadeInTrigerSlider->GetValue(), wxT( "Crossfader" ) );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_AUDIOSCROBBLE )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE )
     {
         m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LastFMASEnableChkBox->IsEnabled() && m_LastFMASEnableChkBox->GetValue(), wxT( "LastFM" ) );
         m_Config->WriteStr( wxT( "UserName" ), m_LastFMUserNameTextCtrl->GetValue(), wxT( "LastFM" ) );
@@ -1514,7 +1571,7 @@ void guPrefDialog::SaveSettings( void )
     }
 
     // LastFM Panel Info language
-    if( m_VisiblePanels & guPREFERENCE_PAGE_ONLINE )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ONLINE )
     {
         m_Config->WriteStr( wxT( "Language" ), m_LangIds[ m_LangChoice->GetSelection() ], wxT( "LastFM" ) );
 
@@ -1524,7 +1581,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "Radios" ) );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_RECORD )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_RECORD )
     {
         m_Config->WriteBool( wxT( "Enabled" ), m_RecordChkBox->GetValue(), wxT( "Record" ) );
         m_Config->WriteStr( wxT( "Path" ), m_RecSelDirPicker->GetPath(), wxT( "Record" ) );
@@ -1535,7 +1592,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteNum( wxT( "DeleteTime" ), m_RecDelTime->GetValue(), wxT( "Record" ) );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_PODCASTS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PODCASTS )
     {
         m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "Podcasts" ) );
         m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "Podcasts" ) );
@@ -1546,7 +1603,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "Podcasts" ) );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LYRICS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LYRICS )
     {
         m_Config->WriteNum( wxT( "TextAlign" ), m_LyricsAlignSizer->GetSelection(), wxT( "Lyrics" ) );
         m_Config->WriteBool( wxT( "SaveToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
@@ -1556,7 +1613,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "SaveToDirOnlySelected" ), m_LyricsDirSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_LINKS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LINKS )
     {
         wxArrayString SearchLinks = m_LinksListBox->GetStrings();
         m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "SearchLinks" ) );
@@ -1598,14 +1655,14 @@ void guPrefDialog::SaveSettings( void )
         }
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_COMMANDS )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COMMANDS )
     {
         wxArrayString Commands = m_CmdListBox->GetStrings();
         m_Config->WriteAStr( wxT( "Cmd" ), Commands, wxT( "Commands" ) );
         m_Config->WriteAStr( wxT( "Name" ), m_CmdNames, wxT( "Commands" ), false );
     }
 
-    if( m_VisiblePanels & guPREFERENCE_PAGE_COPYTO )
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
     {
         m_Config->WriteStr( wxT( "CopyToPattern" ), m_CopyToFileName->GetValue(), wxT( "General" ) );
     }
