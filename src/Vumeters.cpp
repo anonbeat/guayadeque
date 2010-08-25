@@ -223,7 +223,7 @@ void guVumeter::PaintHoriz( void )
     }
 
     dc.SetPen( * wxBLACK_PEN );
-    dc.DrawText( wxString::Format( wxT( "%02.0f" ), m_PeakLevel ), 2,  ( Height / 2 ) - 8 );
+    dc.DrawText( wxString::Format( wxT( "%02.1f" ), m_PeakLevel ), 2,  ( Height / 2 ) - 8 );
     //guLogMessage( wxT( "%f" ), m_PeakLevel );
 }
 
@@ -366,7 +366,7 @@ void guVumeter::PaintVert( void )
     }
 
     dc.SetPen( * wxBLACK_PEN );
-    dc.DrawRotatedText( wxString::Format( wxT( "%02.0f" ), m_PeakLevel ), ( Width / 2 ) - 7,  Height - 2, 90 );
+    dc.DrawRotatedText( wxString::Format( wxT( "%02.1f" ), m_PeakLevel ), ( Width / 2 ) - 7,  Height - 2, 90 );
     //guLogMessage( wxT( "%f" ), m_PeakLevel );
 }
 

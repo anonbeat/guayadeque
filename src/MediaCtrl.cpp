@@ -148,9 +148,11 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             ctrl->SetState( guFADERPLAYBIN_STATE_ERROR );
 
             guMediaCtrl * MediaCtrl = ctrl->GetPlayer();
-            if( MediaCtrl && ( MediaCtrl->GetLastError() != err->code ) )
+            if( MediaCtrl && ctrl->IsOk() )
             {
                 MediaCtrl->SetLastError( err->code );
+                ctrl->SetErrorCode( err->code );
+                ctrl->SetState( guFADERPLAYBIN_STATE_ERROR );
 
                 wxString * ErrorStr = new wxString( err->message, wxConvUTF8 );
 
