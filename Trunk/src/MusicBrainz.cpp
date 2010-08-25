@@ -216,27 +216,8 @@ void guMusicBrainz::GetTracks( guMBTrackArray * mbtracks, const wxString &trackp
                 "&puid=%s&releasetype=official" ), trackpuid.c_str() );
 
     //guLogMessage( wxT( "MusicBrainz: %s" ), QueryUrl.c_str() );
-
-    wxCurlHTTP  http;
-    char *      Buffer = NULL;
-    //wxString Content = GetUrlContent( QueryUrl );
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    //guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, QueryUrl );
-    if( !Buffer )
-    {
-        guLogError( wxT( "Got no data from MusiBrainz GetTrack" ) );
-        return;
-    }
-
-    wxString Content = wxString( Buffer, wxConvUTF8 );
-    free( Buffer );
-
+    wxString Content = GetUrlContent( QueryUrl );
     //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
-
     if( Content.Length() )
     {
         wxStringInputStream ins( Content );
@@ -331,22 +312,7 @@ void guMusicBrainz::GetReleases( guMBReleaseArray * mbreleases, const wxString &
                 guURLEncode( artist ).c_str(), guURLEncode( title ).c_str() );
 
     //guLogMessage( wxT( "GetRelease: %s" ), QueryUrl.c_str() );
-    wxCurlHTTP  http;
-    char *      Buffer = NULL;
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, QueryUrl );
-    if( !Buffer )
-    {
-        guLogError( wxT( "Got no data from MusicBrainz GetRelease" ) );
-        return;
-    }
-
-    wxString Content = wxString( Buffer, wxConvUTF8 );
-    free( Buffer );
-
+    wxString Content = GetUrlContent( QueryUrl );
     //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
     if( Content.Length() )
     {
@@ -372,22 +338,7 @@ void guMusicBrainz::GetRelease( guMBRelease * mbrelease, const wxString &release
                 "&inc=tracks+artist+release-events" ), releaseid.c_str() );
 
     //guLogMessage( wxT( "GetRelease: %s" ), QueryUrl.c_str() );
-    wxCurlHTTP  http;
-    char *      Buffer = NULL;
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, QueryUrl );
-    if( !Buffer )
-    {
-        guLogError( wxT( "Got no data from MusicBrainz GetRelease" ) );
-        return;
-    }
-
-    wxString Content = wxString( Buffer, wxConvUTF8 );
-    free( Buffer );
-
+    wxString Content = GetUrlContent( QueryUrl );
     //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
     if( Content.Length() )
     {

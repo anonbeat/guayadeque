@@ -25,8 +25,6 @@
 #include "Images.h"
 #include "Utils.h"
 
-#include <wx/curl/http.h>
-
 #include <wx/filename.h>
 
 const wxEventType guChannelEditorEvent = wxNewEventType();
@@ -244,51 +242,24 @@ guChannelUpdateImageThread::~guChannelUpdateImageThread()
 guChannelUpdateImageThread::ExitCode guChannelUpdateImageThread::Entry()
 {
     wxImage *       Image = NULL;
-    long            ImageType;
-
-    //wxASSERT( pImage );
+    int             ImageType;
 
     if( !m_ImageUrl.IsEmpty() )
     {
-        if( m_ImageUrl.Lower().EndsWith( wxT( ".jpg" ) ) ||
-            m_ImageUrl.Lower().EndsWith( wxT( ".jpeg" ) ) )
-          ImageType = wxBITMAP_TYPE_JPEG;
-        else if( m_ImageUrl.Lower().EndsWith( wxT( ".png" ) ) )
-          ImageType = wxBITMAP_TYPE_PNG;
-        else if( m_ImageUrl.Lower().EndsWith( wxT( ".gif" ) ) )    // Removed because of some random segfaults
-          ImageType = wxBITMAP_TYPE_GIF;                                  // in gifs handler functions
-        else if( m_ImageUrl.Lower().EndsWith( wxT( ".bmp" ) ) )
-          ImageType = wxBITMAP_TYPE_BMP;
-        else
-          ImageType = wxBITMAP_TYPE_INVALID;
-
-        if( ImageType > wxBITMAP_TYPE_INVALID )
+        if( !TestDestroy() )
         {
-            wxMemoryOutputStream Buffer;
-            wxCurlHTTP http;
-            http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-            if( http.Get( Buffer, m_ImageUrl ) )
+            Image = guGetRemoteImage( m_ImageUrl, ImageType );
+            if( Image )
             {
-                if( Buffer.IsOk() && !TestDestroy() )
+                //guLogMessage( wxT( "Image loaded ok %u" ), Index );
+                if( Image->IsOk() && !TestDestroy() )
                 {
-                    wxMemoryInputStream Ins( Buffer );
-                    if( Ins.IsOk() && !TestDestroy() )
-                    {
-                        Image = new wxImage( Ins, ImageType );
-                        if( Image )
-                        {
-                            //guLogMessage( wxT( "Image loaded ok %u" ), Index );
-                            if( Image->IsOk() && !TestDestroy() )
-                            {
-                                Image->Rescale( guPODCASTS_IMAGE_SIZE, guPODCASTS_IMAGE_SIZE, wxIMAGE_QUALITY_HIGH );
-                            }
-                            else
-                            {
-                              delete Image;
-                              Image = NULL;
-                            }
-                        }
-                    }
+                    Image->Rescale( guPODCASTS_IMAGE_SIZE, guPODCASTS_IMAGE_SIZE, wxIMAGE_QUALITY_HIGH );
+                }
+                else
+                {
+                  delete Image;
+                  Image = NULL;
                 }
             }
         }
