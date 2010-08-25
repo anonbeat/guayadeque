@@ -180,6 +180,7 @@ class guPlayListPanel : public wxPanel
     void                OnPLTracksEditField( wxCommandEvent &event );
 
     void                OnPLTracksSelectGenre( wxCommandEvent &event );
+    void                OnPLTracksSelectAlbumArtist( wxCommandEvent &event );
     void                OnPLTracksSelectArtist( wxCommandEvent &event );
     void                OnPLTracksSelectAlbum( wxCommandEvent &event );
 

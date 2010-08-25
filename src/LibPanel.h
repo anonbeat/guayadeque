@@ -191,6 +191,7 @@ class guLibPanel : public wxPanel
     void OnSongSavePlayListClicked( wxCommandEvent &event );
     void OnSongListColClicked( wxListEvent &event );
     void OnSongSelectGenre( wxCommandEvent &event );
+    void OnSongSelectAlbumArtist( wxCommandEvent &event );
     void OnSongSelectArtist( wxCommandEvent &event );
     void OnSongSelectAlbum( wxCommandEvent &event );
     void OnSongDeleteLibrary( wxCommandEvent &event );
@@ -221,6 +222,7 @@ class guLibPanel : public wxPanel
     void SelectArtistName( const wxString &artist );
     void SelectGenres( wxArrayInt * genres );
     void SelectArtists( wxArrayInt * artits );
+    void SelectAlbumArtists( wxArrayInt * ids );
     void SelectAlbums( wxArrayInt * albums );
 
     bool IsPanelShown( const int panelid ) const;
