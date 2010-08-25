@@ -148,39 +148,22 @@ int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
     //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, m_SearchString.c_str() );
     wxString SearchUrl = wxString::Format( GOOGLE_IMAGES_SEARCH_URL, guURLEncode( SearchString ).c_str(), ( pagenum * GOOGLE_COVERS_PER_PAGE ) );
     //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
-    //guHTTP http;
-    char * Buffer = NULL;
-    wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, SearchUrl );
-    if( Buffer )
+    if( !m_MainThread->TestDestroy() )
     {
-        if( !m_MainThread->TestDestroy() )
+        //printf( "Buffer:\n%s\n", Buffer );
+        wxString Content = GetUrlContent( SearchUrl );
+        if( Content.Length() )
         {
-            //printf( "Buffer:\n%s\n", Buffer );
-            wxString Content = wxString( Buffer, wxConvUTF8 );
-            //Content = http.GetContent( SearchUrl, 60 );
-            if( Content.Length() )
+            if( !m_MainThread->TestDestroy() )
             {
-                if( !m_MainThread->TestDestroy() )
-                {
-                    //guLogMessage( Content );
-                    return ExtractImagesInfo( Content, GOOGLE_COVERS_PER_PAGE );
-                }
-            }
-            else
-            {
-                guLogError( wxT( "Could not get the remote data from connection" ) );
+                //guLogMessage( Content );
+                return ExtractImagesInfo( Content, GOOGLE_COVERS_PER_PAGE );
             }
         }
-        free( Buffer );
-    }
-    else
-    {
-        guLogWarning( wxT( "No data received when searching for images" ) );
+        else
+        {
+            guLogError( wxT( "Could not get the remote data from connection" ) );
+        }
     }
     return 0;
 }

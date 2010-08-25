@@ -28,8 +28,8 @@
 #include "hmac_sha2.h"
 
 #include <wx/arrimpl.cpp>
-#include <wx/curl/http.h>
 #include <wx/statline.h>
+#include <wx/sstream.h>
 
 // see http://docs.amazonwebservices.com/AWSEcommerceService/2005-03-23/
 //    http://webservices.amazon.com/onca/xml?Service=AWSECommerceService
@@ -261,38 +261,23 @@ int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
 
     //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
 
-    char * Buffer = NULL;
-    wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, SearchUrl );
-    if( Buffer )
+    if( !m_MainThread->TestDestroy() )
     {
-        if( !m_MainThread->TestDestroy() )
+        //printf( "Buffer:\n%s\n", Buffer );
+        wxString Content = GetUrlContent( SearchUrl );
+        //Content = http.GetContent( SearchUrl, 60 );
+        if( Content.Length() )
         {
-            //printf( "Buffer:\n%s\n", Buffer );
-            wxString Content = wxString( Buffer, wxConvUTF8 );
-            //Content = http.GetContent( SearchUrl, 60 );
-            if( Content.Length() )
+            if( !m_MainThread->TestDestroy() )
             {
-                if( !m_MainThread->TestDestroy() )
-                {
-                    //guLogMessage( Content );
-                    return ExtractImagesInfo( Content );
-                }
-            }
-            else
-            {
-                guLogError( wxT( "Could not get the remote data from connection" ) );
+                //guLogMessage( Content );
+                return ExtractImagesInfo( Content );
             }
         }
-        free( Buffer );
-    }
-    else
-    {
-        guLogWarning( wxT( "No data received when searching for images" ) );
+        else
+        {
+            guLogError( wxT( "Could not get the remote data from connection" ) );
+        }
     }
     return 0;
 }

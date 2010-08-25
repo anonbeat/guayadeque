@@ -79,7 +79,6 @@
 #include "Utils.h"
 #include "PlayListFile.h"
 
-#include <wx/curl/http.h>
 #include <wx/xml/xml.h>
 #include <wx/fileconf.h>
 
@@ -96,36 +95,24 @@ wxArrayString guShoutCast::GetGenres( void ) const
     wxArrayString   RetVal;
     wxString        Content;
     wxString        GenreName;
-    wxCurlHTTP      http;
-    char *          Buffer = NULL;    //
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, SHOUTCAST_GET_GENRE_URL );
-    if( Buffer )
+    Content = GetUrlContent( SHOUTCAST_GET_GENRE_URL );
+    if( Content.Length() )
     {
-        Content = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
-        //
-        if( Content.Length() )
+        wxStringInputStream InStr( Content );
+        wxXmlDocument XmlDoc( InStr );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        if( XmlNode && XmlNode->GetName() == wxT( "genrelist" ) )
         {
-            wxStringInputStream InStr( Content );
-            wxXmlDocument XmlDoc( InStr );
-            wxXmlNode * XmlNode = XmlDoc.GetRoot();
-            if( XmlNode && XmlNode->GetName() == wxT( "genrelist" ) )
+            XmlNode = XmlNode->GetChildren();
+            while( XmlNode )
             {
-                XmlNode = XmlNode->GetChildren();
-                while( XmlNode )
+                if( XmlNode->GetName() == wxT( "genre" ) )
                 {
-                    if( XmlNode->GetName() == wxT( "genre" ) )
-                    {
-                        XmlNode->GetPropVal( wxT( "name" ), &GenreName );
-                        RetVal.Add( GenreName );
-                        //guLogMessage( wxT( "Genre : %s" ), GenreName.c_str() );
-                    }
-                    XmlNode = XmlNode->GetNext();
+                    XmlNode->GetPropVal( wxT( "name" ), &GenreName );
+                    RetVal.Add( GenreName );
+                    //guLogMessage( wxT( "Genre : %s" ), GenreName.c_str() );
                 }
+                XmlNode = XmlNode->GetNext();
             }
         }
     }
@@ -226,69 +213,53 @@ guStationPlayList guShoutCast::GetStationPlayList( const int StationId ) const
     guStationPlayList       RetVal;
     guStationPlayListItem * NewStation;
     wxFileConfig *          Config;
-    char *                  Buffer = NULL;
-    wxCurlHTTP              http;
-    //
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, wxString::Format( SHOUTCAST_GET_STATION_PLAYLIST, StationId ) );
-    if( Buffer )
+    Content = GetUrlContent( wxString::Format( SHOUTCAST_GET_STATION_PLAYLIST, StationId ) );
+    if( Content.Length() )
     {
-        Content = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
-        if( Content.Length() )
+        //guLogMessage( Content );
+        wxStringInputStream ConfigData( Content );
+        Config = new wxFileConfig( ConfigData );
+        if( Config )
         {
-            //guLogMessage( Content );
-            wxStringInputStream ConfigData( Content );
-            Config = new wxFileConfig( ConfigData );
-            if( Config )
+            if( Config->HasGroup( wxT( "playlist" ) ) )
             {
-                if( Config->HasGroup( wxT( "playlist" ) ) )
+                Config->SetPath( wxT( "playlist" ) );
+                int count;
+                if( Config->Read( wxT( "numberofentries" ), &count ) )
                 {
-                    Config->SetPath( wxT( "playlist" ) );
-                    int count;
-                    if( Config->Read( wxT( "numberofentries" ), &count ) )
+                    if( !count )
                     {
-                        if( !count )
+                        guLogMessage( wxT( "This station playlist is empty" ) );
+                    }
+                    else
+                    {
+                        for( int index = 1; index <= count; index++ )
                         {
-                            guLogMessage( wxT( "This station playlist is empty" ) );
-                        }
-                        else
-                        {
-                            for( int index = 1; index <= count; index++ )
-                            {
-                                NewStation = new guStationPlayListItem();
+                            NewStation = new guStationPlayListItem();
 
-                                wxASSERT( NewStation );
+                            wxASSERT( NewStation );
 
-                                Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
-                                Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
-                                if( NewStation->m_Name.IsEmpty() )
-                                    NewStation->m_Name = NewStation->m_Location;
-                                RetVal.Add( NewStation );
-                            }
+                            Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
+                            Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
+                            if( NewStation->m_Name.IsEmpty() )
+                                NewStation->m_Name = NewStation->m_Location;
+                            RetVal.Add( NewStation );
                         }
                     }
                 }
-                else
-                {
-                    guLogError( wxT( "ee: Station Playlist without 'playlist' group" ) );
-                }
-                delete Config;
             }
             else
-              guLogError( wxT( "ee: Station Playlist empty" ) );
+            {
+                guLogError( wxT( "ee: Station Playlist without 'playlist' group" ) );
+            }
+            delete Config;
         }
         else
-        {
-            guLogError( wxT( "Retrieving station playlist empty response" ) );
-        }
+          guLogError( wxT( "ee: Station Playlist empty" ) );
     }
     else
     {
-        guLogError( wxT( "No response from server retrieving the station playlist." ) );
+        guLogError( wxT( "Retrieving station playlist empty response" ) );
     }
     return RetVal;
 }
@@ -300,69 +271,53 @@ guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) 
     guStationPlayList       RetVal;
     guStationPlayListItem * NewStation;
     wxFileConfig *          Config;
-    char *                  Buffer = NULL;
-    wxCurlHTTP              http;
-    //
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, stationurl );
-    if( Buffer )
+    Content = GetUrlContent( stationurl );
+    if( Content.Length() )
     {
-        Content = wxString( Buffer, wxConvUTF8 );
-        free( Buffer );
-        if( Content.Length() )
+        //guLogMessage( Content );
+        wxStringInputStream ConfigData( Content );
+        Config = new wxFileConfig( ConfigData );
+        if( Config )
         {
-            //guLogMessage( Content );
-            wxStringInputStream ConfigData( Content );
-            Config = new wxFileConfig( ConfigData );
-            if( Config )
+            if( Config->HasGroup( wxT( "playlist" ) ) )
             {
-                if( Config->HasGroup( wxT( "playlist" ) ) )
+                Config->SetPath( wxT( "playlist" ) );
+                int count;
+                if( Config->Read( wxT( "numberofentries" ), &count ) )
                 {
-                    Config->SetPath( wxT( "playlist" ) );
-                    int count;
-                    if( Config->Read( wxT( "numberofentries" ), &count ) )
+                    if( !count )
                     {
-                        if( !count )
+                        guLogMessage( wxT( "This station playlist is empty" ) );
+                    }
+                    else
+                    {
+                        for( int index = 1; index <= count; index++ )
                         {
-                            guLogMessage( wxT( "This station playlist is empty" ) );
-                        }
-                        else
-                        {
-                            for( int index = 1; index <= count; index++ )
-                            {
-                                NewStation = new guStationPlayListItem();
+                            NewStation = new guStationPlayListItem();
 
-                                wxASSERT( NewStation );
+                            wxASSERT( NewStation );
 
-                                Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
-                                Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
-                                if( NewStation->m_Name.IsEmpty() )
-                                    NewStation->m_Name = NewStation->m_Location;
-                                RetVal.Add( NewStation );
-                            }
+                            Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
+                            Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
+                            if( NewStation->m_Name.IsEmpty() )
+                                NewStation->m_Name = NewStation->m_Location;
+                            RetVal.Add( NewStation );
                         }
                     }
                 }
-                else
-                {
-                    guLogError( wxT( "ee: Station Playlist without 'playlist' group" ) );
-                }
-                delete Config;
             }
             else
-              guLogError( wxT( "ee: Station Playlist empty" ) );
+            {
+                guLogError( wxT( "ee: Station Playlist without 'playlist' group" ) );
+            }
+            delete Config;
         }
         else
-        {
-            guLogError( wxT( "Retrieving station playlist empty response" ) );
-        }
+          guLogError( wxT( "ee: Station Playlist empty" ) );
     }
     else
     {
-        guLogError( wxT( "No response from server retrieving the station playlist." ) );
+        guLogError( wxT( "Retrieving station playlist empty response" ) );
     }
     return RetVal;
 }
@@ -388,8 +343,6 @@ wxArrayString guShoutCast::GetStationStatus( const wxString ServerUrl )
 {
     wxString        Content;
     wxArrayString   RetVal;
-    char *          Buffer = NULL;
-    wxCurlHTTP      http;
     //
     if( m_LastServerUrl != ServerUrl )
     {
@@ -397,27 +350,16 @@ wxArrayString guShoutCast::GetStationStatus( const wxString ServerUrl )
         if( !Content.EndsWith( wxT( "/" ) ) )
             Content.Append( wxT( "/" ) );
 
-        http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-        http.AddHeader( wxT( "Accept: text/html" ) );
-        http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-        http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-        http.Get( Buffer, Content );
-        if( Buffer )
+        Content = GetUrlContent( Content );
+        if( Content.Length() )
         {
-            Content = wxString( Buffer, wxConvUTF8 );
-            free( Buffer );
-
-//            if( Content.Len() && http.GetResHeader( wxT( "Content-Type" ) ).Find( wxT( "text/html" ) ) != wxNOT_FOUND )
-            if( Content.Length() )
-            {
-                Content = Content.Mid( Content.Find( wxT( "Current Stream Information" ) ) );
-                RetVal.Add( GetProperty( Content, wxT( "Stream Title: " ) ) );
-                RetVal.Add( GetProperty( Content, wxT( "Content Type: " ) ) );
-                RetVal.Add( GetProperty( Content, wxT( "Current Song: " ) ) );
-            }
-            m_LastServerData = RetVal;
-            m_LastServerUrl = ServerUrl;
+            Content = Content.Mid( Content.Find( wxT( "Current Stream Information" ) ) );
+            RetVal.Add( GetProperty( Content, wxT( "Stream Title: " ) ) );
+            RetVal.Add( GetProperty( Content, wxT( "Content Type: " ) ) );
+            RetVal.Add( GetProperty( Content, wxT( "Current Song: " ) ) );
         }
+        m_LastServerData = RetVal;
+        m_LastServerUrl = ServerUrl;
     }
     return m_LastServerData;
 }
