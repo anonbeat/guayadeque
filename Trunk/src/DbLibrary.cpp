@@ -4905,7 +4905,7 @@ bool guDbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxStrin
   wxSQLite3ResultSet dbRes;
   bool RetVal = false;
 
-  query = wxString::Format( wxT( "SELECT DISTINCT song_album, song_artist, song_path "
+  query = wxString::Format( wxT( "SELECT DISTINCT song_album, song_albumartist, song_artist, song_path "
           "FROM songs WHERE song_albumid = %u LIMIT 1" ), AlbumId );
 
   //guLogMessage( query );
@@ -4916,9 +4916,13 @@ bool guDbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxStrin
     if( AlbumName )
         * AlbumName = dbRes.GetString( 0 );
     if( ArtistName )
+    {
         * ArtistName = dbRes.GetString( 1 );
+        if( ArtistName->IsEmpty() )
+            * ArtistName = dbRes.GetString( 2 );
+    }
     if( AlbumPath )
-        * AlbumPath = dbRes.GetString( 2 );
+        * AlbumPath = dbRes.GetString( 3 );
     RetVal = true;
   }
   dbRes.Finalize();

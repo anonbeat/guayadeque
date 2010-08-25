@@ -614,6 +614,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 
     Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectGenre ) );
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
+    Connect( ID_SONG_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbumArtist ) );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
 
     //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guPlayListPanel::OnSearchSelected ), NULL, this );
@@ -667,6 +668,7 @@ guPlayListPanel::~guPlayListPanel()
 
     Disconnect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectGenre ) );
     Disconnect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ) );
+    Disconnect( ID_SONG_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbumArtist ) );
     Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ) );
 
     //m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guPlayListPanel::OnSearchSelected ), NULL, this );
@@ -1502,6 +1504,26 @@ void guPlayListPanel::OnPLTracksSelectArtist( wxCommandEvent &event )
     }
     event.SetId( ID_ARTIST_SETSELECTION );
     event.SetClientData( ( void * ) Artists );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksSelectAlbumArtist( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+    wxArrayInt * Ids = new wxArrayInt();
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Ids->Index( Tracks[ index ].m_AlbumArtistId ) == wxNOT_FOUND )
+        {
+            Ids->Add( Tracks[ index ].m_AlbumArtistId );
+        }
+    }
+    event.SetId( ID_ALBUMARTIST_SETSELECTION );
+    event.SetClientData( ( void * ) Ids );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 

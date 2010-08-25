@@ -440,6 +440,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * NewDb, guPlayerPanel * N
 
     Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectGenre ), NULL, this );
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectArtist ), NULL, this );
+    Connect( ID_SONG_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbumArtist ), NULL, this );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbum ), NULL, this );
     Connect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteLibrary ), NULL, this );
     Connect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteDrive ), NULL, this );
@@ -570,6 +571,7 @@ guLibPanel::~guLibPanel()
 
     Disconnect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectGenre ), NULL, this );
     Disconnect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectArtist ), NULL, this );
+    Disconnect( ID_SONG_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbumArtist ), NULL, this );
     Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbum ), NULL, this );
     Disconnect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteLibrary ), NULL, this );
     Disconnect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteDrive ), NULL, this );
@@ -1724,6 +1726,25 @@ void guLibPanel::OnSongSelectArtist( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::OnSongSelectAlbumArtist( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_SongListCtrl->GetSelectedSongs( &Tracks );
+    wxArrayInt * AlbumArtists = new wxArrayInt();
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( AlbumArtists->Index( Tracks[ index ].m_AlbumArtistId ) == wxNOT_FOUND )
+        {
+            AlbumArtists->Add( Tracks[ index ].m_AlbumArtistId );
+        }
+    }
+    SelectAlbumArtists( AlbumArtists );
+    delete AlbumArtists;
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongSelectAlbum( wxCommandEvent &event )
 {
     guTrackArray Tracks;
@@ -1871,6 +1892,22 @@ void guLibPanel::SelectArtists( wxArrayInt * artists )
     m_ComposerListCtrl->ReloadItems();
     m_UpdateLock = false;
     m_ArtistListCtrl->SetSelectedItems( * artists );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SelectAlbumArtists( wxArrayInt * ids )
+{
+    wxArrayString Words;
+    m_UpdateLock = true;
+    m_Db->SetTeFilters( Words, false );
+    ClearSearchText();
+    m_LabelsListCtrl->ReloadItems();
+    m_GenreListCtrl->ReloadItems();
+    m_ComposerListCtrl->ReloadItems();
+    m_AlbumArtistListCtrl->ReloadItems();
+//    m_ArtistListCtrl->ReloadItems();
+    m_UpdateLock = false;
+    m_AlbumArtistListCtrl->SetSelectedItems( * ids );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -460,6 +460,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
 	Connect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
 	Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
+	Connect( ID_ALBUMARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumArtistSetSelection ), NULL, this );
 	Connect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumSetSelection ), NULL, this );
 
     Connect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlay ), NULL, this );
@@ -580,6 +581,7 @@ guMainFrame::~guMainFrame()
 
 	Disconnect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
 	Disconnect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
+	Disconnect( ID_ALBUMARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumArtistSetSelection ), NULL, this );
 	Disconnect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumSetSelection ), NULL, this );
 
     Disconnect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlay ), NULL, this );
@@ -2268,6 +2270,18 @@ void guMainFrame::OnArtistSetSelection( wxCommandEvent &event )
         m_CatNotebook->SetSelection( 0 );
         m_LibPanel->SelectArtists( artists );
         delete artists;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnAlbumArtistSetSelection( wxCommandEvent &event )
+{
+    wxArrayInt * Ids = ( wxArrayInt * ) event.GetClientData();
+    if( Ids )
+    {
+        m_CatNotebook->SetSelection( 0 );
+        m_LibPanel->SelectAlbumArtists( Ids );
+        delete Ids;
     }
 }
 
