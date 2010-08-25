@@ -182,6 +182,7 @@ wxImage * guGetRemoteImage( const wxString &url, int &imgtype )
     {
         wxMemoryOutputStream Buffer;
         wxCurlHTTP http;
+        http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
         if( http.Get( Buffer, url ) )
         {
             if( http.GetResponseCode() != 200 )
@@ -241,30 +242,31 @@ int DownloadFile( const wxString &Source, const wxString &Target )
 {
     //guLogMessage( wxT( "Downloading %s" ), Source.c_str() );
     wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
     //http.SetVerbose( true );
+    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     http.Get( Target, Source );
 
     long ResCode = http.GetResponseCode();
-    if( ( ResCode < 200 ) || ( ResCode > 299 ) )
-    {
-        //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
-        if( ( ResCode == 301 ) || ( ResCode == 302 ) || ( ResCode == 307 ) )
-        {
-            wxString Location = http.GetResponseHeader();
-            int Pos = Location.Lower().Find( wxT( "location: " ) );
-            if( Pos != wxNOT_FOUND )
-            {
-                Location = Location.Mid( Pos + 10 );
-                Location.Truncate( Location.Find( wxT( "\r\n" ) ) );
-                return DownloadFile( Location, Target );
-            }
-            return 0;
-        }
-    }
-    else
-        return 1;
-    return 0;
+//    if( ( ResCode < 200 ) || ( ResCode > 299 ) )
+//    {
+//        //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
+//        if( ( ResCode == 301 ) || ( ResCode == 302 ) || ( ResCode == 307 ) )
+//        {
+//            wxString Location = http.GetResponseHeader();
+//            int Pos = Location.Lower().Find( wxT( "location: " ) );
+//            if( Pos != wxNOT_FOUND )
+//            {
+//                Location = Location.Mid( Pos + 10 );
+//                Location.Truncate( Location.Find( wxT( "\r\n" ) ) );
+//                return DownloadFile( Location, Target );
+//            }
+//            return 0;
+//        }
+//    }
+//    else
+//        return 1;
+    return ResCode == 200;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -379,7 +381,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     //char *      Buffer;
     wxString RetVal = wxEmptyString;
 
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
     http.AddHeader( wxT( "Accept: */*" ) );
     if( gzipped )
     {
@@ -394,22 +396,24 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     //guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
 
     wxMemoryOutputStream Buffer;
+    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     http.Get( Buffer, url );
     if( Buffer.IsOk() )
     {
         int ResponseCode = http.GetResponseCode();
-        if( ResponseCode >= 300  && ResponseCode < 400 )
-        {
-            wxString Location = http.GetResponseHeader();
-            int Pos = Location.Lower().Find( wxT( "location: " ) );
-            if( Pos != wxNOT_FOUND )
-            {
-                Location = Location.Mid( Pos + 10 );
-                Location.Truncate( Location.Find( wxT( "\r\n" ) ) );
-                return GetUrlContent( Location, referer, gzipped );
-            }
-        }
-        else if( ResponseCode >= 400 )
+//        if( ResponseCode >= 300  && ResponseCode < 400 )
+//        {
+//            wxString Location = http.GetResponseHeader();
+//            int Pos = Location.Lower().Find( wxT( "location: " ) );
+//            if( Pos != wxNOT_FOUND )
+//            {
+//                Location = Location.Mid( Pos + 10 );
+//                Location.Truncate( Location.Find( wxT( "\r\n" ) ) );
+//                return GetUrlContent( Location, referer, gzipped );
+//            }
+//        }
+//        else if( ResponseCode >= 400 )
+        if( ResponseCode >= 400 )
             return wxEmptyString;
 
         wxString ResponseHeaders = http.GetResponseHeader();

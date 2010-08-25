@@ -266,6 +266,7 @@ guChannelUpdateImageThread::ExitCode guChannelUpdateImageThread::Entry()
         {
             wxMemoryOutputStream Buffer;
             wxCurlHTTP http;
+            http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
             if( http.Get( Buffer, m_ImageUrl ) )
             {
                 if( Buffer.IsOk() && !TestDestroy() )

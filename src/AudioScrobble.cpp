@@ -106,9 +106,10 @@ bool guAudioScrobbleSender::GetSessionId( void )
     //guLogMessage( wxT( "AudioScrobble:GetSesionId : " ) + AS_Url );
     char * Buffer = NULL;
     wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
     http.AddHeader( wxT( "Accept: text/html" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     http.Get( Buffer, AS_Url );
     if( Buffer )
     {
@@ -222,6 +223,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
 
         //guLogMessage( wxT( "AudioScrobble::Played : " ) + PostData );
         http.AddHeader( wxT( "Content-Type: application/x-www-form-urlencoded" ) );
+        http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
         if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_SubmitUrl ) )
         {
             Content = http.GetResponseBody();
@@ -274,6 +276,7 @@ bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
     //guLogMessage( wxT( "AudioScrobble::NowPlaying : " ) + m_NowPlayUrl + PostData );
 
     http.AddHeader( wxT( "Content-Type: application/x-www-form-urlencoded" ) );
+    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_NowPlayUrl ) )
     {
         Content = http.GetResponseBody();

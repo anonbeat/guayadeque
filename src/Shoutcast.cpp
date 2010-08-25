@@ -98,9 +98,10 @@ wxArrayString guShoutCast::GetGenres( void ) const
     wxString        GenreName;
     wxCurlHTTP      http;
     char *          Buffer = NULL;    //
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
     http.AddHeader( wxT( "Accept: text/html" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     http.Get( Buffer, SHOUTCAST_GET_GENRE_URL );
     if( Buffer )
     {
@@ -137,7 +138,6 @@ void guShoutCast::GetStations( const int source, const int flags, const wxString
     wxString    Content;
     wxString    Value;
     long        BitRate;
-    wxCurlHTTP  http;
     wxString    StationName;
     wxString    StationType;
     wxString    StationGenre;
@@ -147,8 +147,8 @@ void guShoutCast::GetStations( const int source, const int flags, const wxString
 
     //guLogMessage( wxT( "About to get stations for genre '%s'" ), GenreName.c_str() );
     //
-    guLogMessage( wxT( "GetStations:\n%s" ), wxString::Format( source == guRADIO_SOURCE_GENRE ?
-                SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ).c_str() );
+    //guLogMessage( wxT( "GetStations:\n%s" ), wxString::Format( source == guRADIO_SOURCE_GENRE ?
+    //            SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ).c_str() );
 
     Content = GetUrlContent( wxString::Format( source == guRADIO_SOURCE_GENRE ?
                 SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ) );
@@ -229,9 +229,10 @@ guStationPlayList guShoutCast::GetStationPlayList( const int StationId ) const
     char *                  Buffer = NULL;
     wxCurlHTTP              http;
     //
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
     http.AddHeader( wxT( "Accept: text/html" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     http.Get( Buffer, wxString::Format( SHOUTCAST_GET_STATION_PLAYLIST, StationId ) );
     if( Buffer )
     {
@@ -302,9 +303,10 @@ guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) 
     char *                  Buffer = NULL;
     wxCurlHTTP              http;
     //
-    http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
     http.AddHeader( wxT( "Accept: text/html" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     http.Get( Buffer, stationurl );
     if( Buffer )
     {
@@ -395,9 +397,10 @@ wxArrayString guShoutCast::GetStationStatus( const wxString ServerUrl )
         if( !Content.EndsWith( wxT( "/" ) ) )
             Content.Append( wxT( "/" ) );
 
-        http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+        http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
         http.AddHeader( wxT( "Accept: text/html" ) );
         http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+        http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
         http.Get( Buffer, Content );
         if( Buffer )
         {
