@@ -154,7 +154,7 @@ int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
     http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
     http.AddHeader( wxT( "Accept: text/html" ) );
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetVerbose( true );
+    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     http.Get( Buffer, SearchUrl );
     if( Buffer )
     {

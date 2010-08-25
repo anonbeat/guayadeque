@@ -130,12 +130,11 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
         if( RetVal.IsEmpty() )
         {
             // Only with a UserAgent is accepted the Charset requested
-            http.AddHeader( wxT( "User-Agent: Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.0.5) Gecko/2008121622 Ubuntu/8.10 (intrepid) Firefox/3.0.5" ) );
+            http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
             http.AddHeader( wxT( "Accept: text/html" ) );
             http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-
             //guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
-
+            http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
             http.Get( Buffer, UrlStr );
 
             if( Buffer )
