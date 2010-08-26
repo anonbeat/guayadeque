@@ -1046,6 +1046,8 @@ void guPrefDialog::BuildLyricsPage( void )
 	m_LyricsPanel->SetSizer( LyricsMainSizer );
 	m_LyricsPanel->Layout();
 
+    m_LyricsTracksSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
+    m_LyricsDirSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
