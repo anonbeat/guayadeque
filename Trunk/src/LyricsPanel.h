@@ -46,12 +46,12 @@
 class guSearchLyricEngine;
 
 enum guLYRIC_ENGINE_ID {
-    guLYRIC_ENGINE_LYRICWIKI = 0,
-    guLYRIC_ENGINE_LEOSLYRICS,
-    guLYRIC_ENGINE_LYRC_COM_AR,
+    guLYRIC_ENGINE_LYRICPLUGIN,
+    guLYRIC_ENGINE_LYRICWIKI,
+//    guLYRIC_ENGINE_LEOSLYRICS,
+//    guLYRIC_ENGINE_LYRC_COM_AR,
     guLYRIC_ENGINE_CDUNIVERSE,
     guLYRIC_ENGINE_CHARTLYRICS,
-    guLYRIC_ENGINE_LYRICPLUGIN,
     guLYRIC_ENGINE_ULTGUITAR
 };
 
@@ -173,32 +173,32 @@ class guLyricWikiEngine : public guSearchLyricEngine
     virtual void            SearchLyric( void );
 };
 
+//// -------------------------------------------------------------------------------- //
+//class guLeosLyricsEngine : public guSearchLyricEngine
+//{
+//  private:
+//    wxString                GetLyricId( void );
+//    wxString                GetLyricText( const wxString &lyricid );
+//
+//  public:
+//    guLeosLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
+//    ~guLeosLyricsEngine();
+//
+//    virtual void            SearchLyric( void );
+//};
+
 // -------------------------------------------------------------------------------- //
-class guLeosLyricsEngine : public guSearchLyricEngine
-{
-  private:
-    wxString                GetLyricId( void );
-    wxString                GetLyricText( const wxString &lyricid );
-
-  public:
-    guLeosLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-    ~guLeosLyricsEngine();
-
-    virtual void            SearchLyric( void );
-};
-
-// -------------------------------------------------------------------------------- //
-class guLyrcComArEngine : public guSearchLyricEngine
-{
-  protected :
-    bool    DoSearchLyric( const wxString &content );
-
-  public:
-    guLyrcComArEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-    ~guLyrcComArEngine();
-
-    virtual void            SearchLyric( void );
-};
+//class guLyrcComArEngine : public guSearchLyricEngine
+//{
+//  protected :
+//    bool    DoSearchLyric( const wxString &content );
+//
+//  public:
+//    guLyrcComArEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
+//    ~guLyrcComArEngine();
+//
+//    virtual void            SearchLyric( void );
+//};
 
 // -------------------------------------------------------------------------------- //
 class guLyricPluginEngine : public guSearchLyricEngine
