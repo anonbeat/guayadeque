@@ -385,18 +385,21 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 
 	wxString LyricsChoiceChoices[] = {
+        wxT( "http://lyricsplugin.com" ),
 	    wxT( "http://lyricwiki.org" ),
-	    wxT( "http://leoslyrics.com" ),
-	    wxT( "http://lyrc.com.ar" ),
+//	    wxT( "http://leoslyrics.com" ),
+//	    wxT( "http://lyrc.com.ar" ),
 	    wxT( "http://cduniverse.com" ),
 //	    wxT( "http://lyricsfly.com" ),
         wxT( "http://chartlyrics.com" ),
-        wxT( "http://lyricsplugin.com" ),
 	    wxT( "http://ultimate-guitar.com" )
 	    };
 	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
 	m_LyricSrvChoice = new wxChoice( LyricsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
-	m_LyricSrvChoice->SetSelection( Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) ) );
+	int SelectEngine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
+	if( SelectEngine < 0 || SelectEngine > LyricsChoiceNChoices )
+        SelectEngine = 0;
+	m_LyricSrvChoice->SetSelection( SelectEngine );
 	LyricsTopSizer->Add( m_LyricSrvChoice, 1, wxLEFT|wxTOP|wxRIGHT, 5 );
 
 	m_LyricReloadButton = new wxBitmapButton( LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
