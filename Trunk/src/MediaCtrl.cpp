@@ -48,9 +48,9 @@ DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEIN_STARTED )
 
 #define GST_TO_WXSTRING( str )  ( wxString( str, wxConvUTF8 ) )
 
-//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
-#define guLogDebug(...)
-//#define guSHOW_DUMPFADERPLAYBINS     1
+#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+//#define guLogDebug(...)
+#define guSHOW_DUMPFADERPLAYBINS     1
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
 // -------------------------------------------------------------------------------- //
@@ -951,7 +951,9 @@ bool guMediaCtrl::Stop( void )
             case guFADERPLAYBIN_STATE_WAITING :
             case guFADERPLAYBIN_STATE_WAITING_EOS :
                 FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                Unlock();
                 ScheduleCleanUp();
+                Lock();
                 //guLogDebug( wxT( "stream %s is not yet playing, can't pause" ), FaderPlayBin->m_Uri.c_str() );
                 break;
 
@@ -960,7 +962,9 @@ bool guMediaCtrl::Stop( void )
             case guFADERPLAYBIN_STATE_FADEOUT_STOP :
                 //guLogDebug( wxT( "stream %s is already paused" ), FaderPlayBin->m_Uri.c_str() );
                 FaderPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                Unlock();
                 ScheduleCleanUp();
+                Lock();
                 break;
 
             case guFADERPLAYBIN_STATE_FADEIN :
