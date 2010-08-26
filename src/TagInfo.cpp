@@ -164,7 +164,9 @@ void SetID3v2Image( ID3v2::Tag * tagv2, const wxImage * image )
     for( std::list<TagLib::ID3v2::Frame*>::iterator iter = FrameList.begin(); iter != FrameList.end(); iter++ )
     {
         PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
-        if( PicFrame->type() == TagLib::ID3v2::AttachedPictureFrame::FrontCover )
+        // TODO : Ppl should be able to select which image types want guayadeque to remove from the audio files
+        if( ( PicFrame->type() == TagLib::ID3v2::AttachedPictureFrame::FrontCover ) ||
+            ( PicFrame->type() == TagLib::ID3v2::AttachedPictureFrame::FrontCover ) )
             tagv2->removeFrame( PicFrame, TRUE );
     }
 
