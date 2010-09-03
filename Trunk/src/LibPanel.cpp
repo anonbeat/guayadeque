@@ -670,7 +670,6 @@ void guLibPanel::OnGenreListActivated( wxListEvent &event )
     m_GenreListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -691,7 +690,6 @@ void guLibPanel::OnGenrePlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_GenreListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -700,7 +698,6 @@ void guLibPanel::OnGenreQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_GenreListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -709,7 +706,6 @@ void guLibPanel::OnGenreQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_GenreListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -718,8 +714,6 @@ void guLibPanel::OnGenreCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_GenreListCtrl->GetSelectedSongs( Tracks );
-
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
@@ -762,7 +756,6 @@ void guLibPanel::OnLabelListActivated( wxListEvent &event )
     m_LabelsListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -783,7 +776,6 @@ void guLibPanel::OnLabelPlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_LabelsListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -792,7 +784,6 @@ void guLibPanel::OnLabelQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_LabelsListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -801,7 +792,6 @@ void guLibPanel::OnLabelQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_LabelsListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -816,7 +806,6 @@ void guLibPanel::OnLabelCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_LabelsListCtrl->GetSelectedSongs( Tracks );
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
@@ -872,7 +861,6 @@ void guLibPanel::OnArtistListActivated( wxListEvent &event )
     m_ArtistListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -893,7 +881,6 @@ void guLibPanel::OnArtistPlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_ArtistListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -902,7 +889,6 @@ void guLibPanel::OnArtistQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_ArtistListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -911,7 +897,6 @@ void guLibPanel::OnArtistQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_ArtistListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -950,7 +935,6 @@ void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    NormalizeTracks( &Tracks );
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
@@ -973,7 +957,6 @@ void guLibPanel::OnArtistCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_ArtistListCtrl->GetSelectedSongs( Tracks );
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
@@ -1002,7 +985,6 @@ void guLibPanel::OnAlbumListActivated( wxListEvent &event )
     m_AlbumListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -1023,7 +1005,6 @@ void guLibPanel::OnAlbumPlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_AlbumListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -1032,7 +1013,6 @@ void guLibPanel::OnAlbumQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_AlbumListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -1041,7 +1021,6 @@ void guLibPanel::OnAlbumQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_AlbumListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -1079,7 +1058,7 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
     m_Db->GetAlbumsSongs( m_AlbumListCtrl->GetSelectedItems(), &Tracks, true );
     if( !Tracks.Count() )
         return;
-    NormalizeTracks( &Tracks );
+
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
@@ -1227,7 +1206,6 @@ void guLibPanel::OnAlbumCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_AlbumListCtrl->GetSelectedSongs( Tracks );
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
@@ -1245,7 +1223,6 @@ void guLibPanel::OnSongListActivated( wxListEvent &event )
     m_SongListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -1270,7 +1247,6 @@ void guLibPanel::OnSongPlayClicked( wxCommandEvent &event )
     {
         m_SongListCtrl->GetAllSongs( &Songs );
     }
-    NormalizeTracks( &Songs );
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -1291,7 +1267,6 @@ void guLibPanel::OnSongQueueClicked( wxCommandEvent &event )
     {
         m_SongListCtrl->GetAllSongs( &Songs );
     }
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -1304,7 +1279,6 @@ void guLibPanel::OnSongQueueAsNextClicked( wxCommandEvent &event )
     {
         m_SongListCtrl->GetAllSongs( &Songs );
     }
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -1358,7 +1332,7 @@ void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
     wxArrayString Lyrics;
     if( !Tracks.Count() )
         return;
-    NormalizeTracks( &Tracks );
+
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
@@ -1387,7 +1361,6 @@ void guLibPanel::OnSongCopyToClicked( wxCommandEvent &event )
 
     if( Tracks.Count() )
     {
-        NormalizeTracks( &Tracks );
 
         event.SetId( ID_MAINFRAME_COPYTO );
         event.SetClientData( ( void * ) new guTrackArray( Tracks ) );
@@ -1471,7 +1444,6 @@ void guLibPanel::OnSongSetRating( wxCommandEvent &event )
 
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-    NormalizeTracks( &Tracks );
 
     m_Db->SetTracksRating( &Tracks, Rating );
     int Index;
@@ -1493,7 +1465,6 @@ void guLibPanel::OnSongSetField( wxCommandEvent &event )
 
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-    NormalizeTracks( &Tracks );
 
     wxVariant NewData = m_SongListCtrl->GetLastDataClicked();
 
@@ -1557,7 +1528,6 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
 
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-    NormalizeTracks( &Tracks );
 
     wxString Label = m_SongListCtrl->GetColumnNames()[ ColumnId ];
     wxVariant DefValue = m_SongListCtrl->GetLastDataClicked();
@@ -1961,7 +1931,6 @@ void guLibPanel::OnYearListActivated( wxListEvent &event )
     m_YearListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -1982,7 +1951,6 @@ void guLibPanel::OnYearListPlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_YearListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -1991,7 +1959,6 @@ void guLibPanel::OnYearListQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_YearListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -2000,7 +1967,6 @@ void guLibPanel::OnYearListQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_YearListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -2014,7 +1980,6 @@ void guLibPanel::OnYearListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    NormalizeTracks( &Tracks );
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
@@ -2037,8 +2002,6 @@ void guLibPanel::OnYearListCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_YearListCtrl->GetSelectedSongs( Tracks );
-
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
@@ -2072,7 +2035,6 @@ void guLibPanel::OnRatingListActivated( wxListEvent &event )
     m_RatingListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -2093,7 +2055,6 @@ void guLibPanel::OnRatingListPlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_RatingListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -2102,7 +2063,6 @@ void guLibPanel::OnRatingListQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_RatingListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -2111,7 +2071,6 @@ void guLibPanel::OnRatingListQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_RatingListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -2125,7 +2084,6 @@ void guLibPanel::OnRatingListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    NormalizeTracks( &Tracks );
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
@@ -2148,8 +2106,6 @@ void guLibPanel::OnRatingListCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_RatingListCtrl->GetSelectedSongs( Tracks );
-
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
@@ -2183,7 +2139,6 @@ void guLibPanel::OnPlayCountListActivated( wxListEvent &event )
     m_PlayCountListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -2204,7 +2159,6 @@ void guLibPanel::OnPlayCountListPlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_PlayCountListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -2213,7 +2167,6 @@ void guLibPanel::OnPlayCountListQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_PlayCountListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -2222,7 +2175,6 @@ void guLibPanel::OnPlayCountListQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_PlayCountListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -2236,7 +2188,6 @@ void guLibPanel::OnPlayCountListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    NormalizeTracks( &Tracks );
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
@@ -2259,8 +2210,6 @@ void guLibPanel::OnPlayCountListCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_PlayCountListCtrl->GetSelectedSongs( Tracks );
-
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
@@ -2294,7 +2243,6 @@ void guLibPanel::OnComposerListActivated( wxListEvent &event )
     m_ComposerListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -2315,7 +2263,7 @@ void guLibPanel::OnComposerListPlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_ComposerListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
+
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -2324,7 +2272,7 @@ void guLibPanel::OnComposerListQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_ComposerListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
+
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -2333,7 +2281,7 @@ void guLibPanel::OnComposerListQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_ComposerListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
+
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -2347,7 +2295,6 @@ void guLibPanel::OnComposerListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    NormalizeTracks( &Tracks );
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
@@ -2370,8 +2317,6 @@ void guLibPanel::OnComposerListCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_ComposerListCtrl->GetSelectedSongs( Tracks );
-
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );
@@ -2398,7 +2343,6 @@ void guLibPanel::OnAlbumArtistListActivated( wxListEvent &event )
     m_AlbumArtistListCtrl->GetSelectedSongs( &Songs );
     if( Songs.Count() )
     {
-        NormalizeTracks( &Songs );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -2419,7 +2363,7 @@ void guLibPanel::OnAlbumArtistListPlayClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_AlbumArtistListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
+
     m_PlayerPanel->SetPlayList( Songs );
 }
 
@@ -2428,7 +2372,7 @@ void guLibPanel::OnAlbumArtistListQueueClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_AlbumArtistListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
+
     m_PlayerPanel->AddToPlayList( Songs );
 }
 
@@ -2437,7 +2381,7 @@ void guLibPanel::OnAlbumArtistListQueueAsNextClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
     m_AlbumArtistListCtrl->GetSelectedSongs( &Songs );
-    NormalizeTracks( &Songs );
+
     m_PlayerPanel->AddToPlayList( Songs, true, true );
 }
 
@@ -2451,7 +2395,6 @@ void guLibPanel::OnAlbumArtistListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    NormalizeTracks( &Tracks );
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
@@ -2474,8 +2417,6 @@ void guLibPanel::OnAlbumArtistListCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks = new guTrackArray();
     m_AlbumArtistListCtrl->GetSelectedSongs( Tracks );
-
-    NormalizeTracks( Tracks );
 
     event.SetId( ID_MAINFRAME_COPYTO );
     event.SetClientData( ( void * ) Tracks );

@@ -50,7 +50,9 @@ void guYeListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 int guYeListBox::GetSelectedSongs( guTrackArray * songs ) const
 {
-    return m_Db->GetYearsSongs( GetSelectedItems(), songs );
+    int Count = m_Db->GetYearsSongs( GetSelectedItems(), songs );
+    m_LibPanel->NormalizeTracks( songs );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

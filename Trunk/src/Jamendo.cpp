@@ -322,7 +322,13 @@ void guJamendoPanel::OnConfigUpdated( wxCommandEvent &event )
 {
     if( event.GetInt() & guPREFERENCE_PAGE_FLAG_JAMENDO )
     {
-        OnUpgrade( event );
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        bool DoUpgrade = Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "Jamendo" ) );
+
+        if( DoUpgrade )
+        {
+            OnUpgrade( event );
+        }
     }
 }
 

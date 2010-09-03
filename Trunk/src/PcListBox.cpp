@@ -58,7 +58,9 @@ int guPcListBox::GetSelectedSongs( guTrackArray * songs ) const
         if( Items[ Index ] )
             Items[ Index ]--;
     }
-    return m_Db->GetPlayCountsSongs( Items, songs );
+    Count = m_Db->GetPlayCountsSongs( Items, songs );
+    m_LibPanel->NormalizeTracks( songs );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

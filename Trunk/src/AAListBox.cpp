@@ -50,7 +50,9 @@ void guAAListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 int guAAListBox::GetSelectedSongs( guTrackArray * songs ) const
 {
-    return m_Db->GetAlbumArtistsSongs( GetSelectedItems(), songs );
+    int Count = m_Db->GetAlbumArtistsSongs( GetSelectedItems(), songs );
+    m_LibPanel->NormalizeTracks( songs );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

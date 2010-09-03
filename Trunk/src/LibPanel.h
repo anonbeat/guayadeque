@@ -230,8 +230,6 @@ class guLibPanel : public wxPanel
     virtual void OnSongSetField( wxCommandEvent &event );
     virtual void OnSongEditField( wxCommandEvent &event );
 
-    virtual void NormalizeTracks( guTrackArray * tracks ) {};
-
     //
     void OnPaneClose( wxAuiManagerEvent &event );
 
@@ -257,6 +255,7 @@ class guLibPanel : public wxPanel
     ~guLibPanel();
 
     virtual void CreateContextMenu( wxMenu * menu );
+    virtual void NormalizeTracks( guTrackArray * tracks ) {};
     void ReloadControls( void );
     void UpdateLabels( void );
 
