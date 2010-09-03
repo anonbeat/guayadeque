@@ -93,6 +93,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_pref_podcasts,
     guIMAGE_INDEX_pref_record,
     guIMAGE_INDEX_pref_crossfader,
+    guIMAGE_INDEX_pref_jamendo,
     //
     guIMAGE_INDEX_tiny_close_normal,
     guIMAGE_INDEX_tiny_close_highlight,

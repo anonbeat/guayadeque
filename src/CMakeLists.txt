@@ -231,6 +231,8 @@ ADD_EXECUTABLE( guayadeque
 	TimeLine.h
 	FieldEditor.cpp
 	FieldEditor.h
+	Jamendo.cpp
+	Jamendo.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "Images.h"
 #include "Utils.h"
+#include "LibPanel.h"
 
 // -------------------------------------------------------------------------------- //
 void guGeListBox::GetItemsList( void )
@@ -54,7 +55,7 @@ void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
-    if( SelCount )
+    if( SelCount && ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
     {
         Menu->AppendSeparator();
 
@@ -62,6 +63,8 @@ void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
         Menu->Append( MenuItem );
     }
+
+    m_LibPanel->CreateContextMenu( Menu );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -25,11 +25,14 @@
 #include "OnlineLinks.h"
 #include "MainApp.h"
 #include "Utils.h"
+#include "LibPanel.h"
 
 // -------------------------------------------------------------------------------- //
-guPcListBox::guPcListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
+guPcListBox::guPcListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
 {
+    m_LibPanel = libpanel;
+
     ReloadItems();
 };
 
@@ -64,6 +67,7 @@ void guPcListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     int SelCount = GetSelectedCount();
+    int ContextMenuFlags = m_LibPanel->GetContextMenuFlags();
 
     MenuItem = new wxMenuItem( Menu, ID_PLAYCOUNT_PLAY, _( "Play" ), _( "Play current selected tracks" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
@@ -73,21 +77,31 @@ void guPcListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
+    MenuItem = new wxMenuItem( Menu, ID_PLAYCOUNT_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected tracks to playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    Menu->Append( MenuItem );
+
     if( SelCount )
     {
-        Menu->AppendSeparator();
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        {
+            Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_PLAYCOUNT_EDITTRACKS, _( "Edit Songs" ), _( "Edit the selected tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
-        Menu->Append( MenuItem );
+            MenuItem = new wxMenuItem( Menu, ID_PLAYCOUNT_EDITTRACKS, _( "Edit Songs" ), _( "Edit the selected tracks" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            Menu->Append( MenuItem );
+        }
 
-        Menu->AppendSeparator();
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+        {
+            Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_PLAYCOUNT_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
-        Menu->Append( MenuItem );
-
+            MenuItem = new wxMenuItem( Menu, ID_PLAYCOUNT_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
+            Menu->Append( MenuItem );
+        }
     }
+    m_LibPanel->CreateContextMenu( Menu );
 }
 
 // -------------------------------------------------------------------------------- //

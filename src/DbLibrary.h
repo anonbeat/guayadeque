@@ -43,7 +43,10 @@ enum guTrackType {
     guTRACK_TYPE_DB,
     guTRACK_TYPE_NOTDB,
     guTRACK_TYPE_RADIOSTATION,
-    guTRACK_TYPE_PODCAST
+    guTRACK_TYPE_PODCAST,
+    guTRACK_TYPE_JAMENDO,
+    guTRACK_TYPE_MAGNATUNE,
+    guTRACK_TYPE_IPOD
 };
 
 enum guTrackMode {
@@ -429,10 +432,10 @@ class guDbLibrary : public guDb
     void                SetAlbumsLabels( const wxArrayInt &Albums, const wxArrayInt &Labels );
     void                SetSongsLabels( const wxArrayInt &Songs, const wxArrayInt &Labels );
 
-    void                UpdateArtistsLabels( const guArrayListItems &labelsets );
-    void                UpdateAlbumsLabels( const guArrayListItems &labelsets );
-    void                UpdateSongsLabels( const guArrayListItems &labelsets );
-    void                UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newlabel );
+    virtual void        UpdateArtistsLabels( const guArrayListItems &labelsets );
+    virtual void        UpdateAlbumsLabels( const guArrayListItems &labelsets );
+    virtual void        UpdateSongsLabels( const guArrayListItems &labelsets );
+    virtual void        UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newlabel );
 
     void                SetTrackRating( const int songid, const int rating );
     void                SetTracksRating( const wxArrayInt &songids, const int rating );

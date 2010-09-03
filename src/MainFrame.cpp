@@ -81,6 +81,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 //    m_DbCache->SetDbCache();
     m_Db = db;
     m_DbCache = dbcache;
+    m_JamendoDb = NULL;
 
     //
     m_Db->SetLibPath( Config->ReadAStr( wxT( "LibPath" ),
@@ -108,6 +109,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_PlayerVumeters = NULL;
     m_AlbumBrowserPanel = NULL;
     m_FileBrowserPanel = NULL;
+    m_JamendoPanel = NULL;
 
     //
     wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
@@ -225,80 +227,55 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         // Library Page
         if( m_VisiblePanels & guPANEL_MAIN_LIBRARY )
         {
-            //m_LibPanel = new guLibPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-            //m_CatNotebook->AddPage( m_LibPanel, _( "Library" ), true );
             OnViewLibrary( ShowEvent );
         }
-        else
-            m_LibPanel = NULL;
 
         // Radio Page
         if( m_VisiblePanels & guPANEL_MAIN_RADIOS )
         {
-            //m_RadioPanel = new guRadioPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-            //m_CatNotebook->AddPage( m_RadioPanel, _( "Radio" ), false );
             OnViewRadio( ShowEvent );
         }
-        else
-            m_RadioPanel = NULL;
 
         // LastFM Info Panel
         if( m_VisiblePanels & guPANEL_MAIN_LASTFM )
         {
-            //m_LastFMPanel = new guLastFMPanel( m_CatNotebook, m_Db, m_DbCache, m_PlayerPanel );
-            //m_CatNotebook->AddPage( m_LastFMPanel, _( "Last.fm" ), false );
             OnViewLastFM( ShowEvent );
         }
-        else
-            m_LastFMPanel = NULL;
 
         // Lyrics Panel
         if( m_VisiblePanels & guPANEL_MAIN_LYRICS )
         {
-            //m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db );
-            //m_CatNotebook->AddPage( m_LyricsPanel, _( "Lyrics" ), false );
             OnViewLyrics( ShowEvent );
         }
-        else
-            m_LyricsPanel = NULL;
 
         // PlayList Page
         if( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS )
         {
-            //m_PlayListPanel = new guPlayListPanel( m_CatNotebook, m_Db, m_PlayerPanel );
-            //m_CatNotebook->AddPage( m_PlayListPanel, _( "PlayLists" ), false );
             OnViewPlayLists( ShowEvent );
         }
-        else
-            m_PlayListPanel = NULL;
 
         // Podcasts Page
         if( m_VisiblePanels & guPANEL_MAIN_PODCASTS )
         {
-            //m_PodcastsPanel = new guPodcastPanel( m_CatNotebook, m_Db, this, m_PlayerPanel );
-            //m_CatNotebook->AddPage( m_PodcastsPanel, _( "Podcasts" ), false );
             OnViewPodcasts( ShowEvent );
         }
-        else
-            m_PodcastsPanel = NULL;
 
         // Album Browser Page
         if( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
         {
-            //m_AlbumBrowserPanel = new guAlbumBrowser( m_CatNotebook, m_Db, m_PlayerPanel );
-            //m_CatNotebook->AddPage( m_AlbumBrowserPanel, _( "Browser" ), false );
             OnViewAlbumBrowser( ShowEvent );
         }
-        else
-            m_AlbumBrowserPanel = NULL;
 
         // FileSystem Page
         if( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER )
         {
             OnViewFileBrowser( ShowEvent );
         }
-        else
-            m_FileBrowserPanel = NULL;
+
+        if( m_VisiblePanels & guPANEL_MAIN_JAMENDO )
+        {
+            OnViewJamendo( ShowEvent );
+        }
 
     }
 
@@ -379,6 +356,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         m_ViewAlbumBrowser->Check( false );
 
         m_ViewFileBrowser->Check( false );
+
+        m_ViewJamendo->Check( false );
     }
 
     m_CurrentPage = m_CatNotebook->GetPage( m_CatNotebook->GetSelection() );
@@ -438,6 +417,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
 
     Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
+    Connect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoUpdated ), NULL, this );
     Connect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
     Connect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryCleanFinished ), NULL, this );
 
@@ -520,6 +500,20 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     Connect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
 
+    Connect( ID_MENU_VIEW_JAMENDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewJamendo ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_ARTISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_COMPOSERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_ALBUMARTISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_ALBUMS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_YEARS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_RATINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_JAMENDO_PLAYCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
+
+    Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoCoverDownloaded ), NULL, this );
+
     Connect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
     Connect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
 
@@ -560,6 +554,7 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
 
     Disconnect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
+    Disconnect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoUpdated ), NULL, this );
     Disconnect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
     Disconnect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryCleanFinished ), NULL, this );
 
@@ -976,6 +971,67 @@ void guMainFrame::CreateMenu()
     m_MainMenu->Append( m_ViewFileBrowser );
     m_ViewFileBrowser->Check( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER );
 
+
+    SubMenu = new wxMenu();
+
+    m_ViewJamendo = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO, wxT( "Jamendo" ), _( "Show/Hide the Jamendo panel" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamendo );
+    m_ViewJamendo->Check( m_VisiblePanels & guPANEL_MAIN_JAMENDO );
+
+    SubMenu->AppendSeparator();
+
+    m_ViewJamTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the Jamendo text search" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamTextSearch );
+    m_ViewJamTextSearch->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
+    m_ViewJamTextSearch->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_LABELS, _( "Labels" ), _( "Show/Hide the Jamendo labels" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamLabels );
+    m_ViewJamLabels->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
+    m_ViewJamLabels->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_GENRES, _( "Genres" ), _( "Show/Hide the Jamendo genres" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamGenres );
+    m_ViewJamGenres->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
+    m_ViewJamGenres->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_ARTISTS, _( "Artists" ), _( "Show/Hide the Jamendo artists" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamArtists );
+    m_ViewJamArtists->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
+    m_ViewJamArtists->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamComposers = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_COMPOSERS, _( "Composers" ), _( "Show/Hide the Jamendo composers" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamComposers );
+    m_ViewJamComposers->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_COMPOSERS ) );
+    m_ViewJamComposers->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamAlbumArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_ALBUMARTISTS, _( "Album Artist" ), _( "Show/Hide the Jamendo album artist" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamAlbumArtists );
+    m_ViewJamAlbumArtists->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMARTISTS ) );
+    m_ViewJamAlbumArtists->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamAlbums = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_ALBUMS, _( "Albums" ), _( "Show/Hide the Jamendo albums" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamAlbums );
+    m_ViewJamAlbums->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
+    m_ViewJamAlbums->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamYears = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_YEARS, _( "Years" ), _( "Show/Hide the Jamendo years" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamYears );
+    m_ViewJamYears->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
+    m_ViewJamYears->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamRatings = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_RATINGS, _( "Ratings" ), _( "Show/Hide the Jamendo ratings" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamRatings );
+    m_ViewJamRatings->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
+    m_ViewJamRatings->Enable( m_ViewJamendo->IsChecked() );
+
+    m_ViewJamPlayCounts = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_PLAYCOUNT, _( "Play Counts" ), _( "Show/Hide the Jamendo play counts" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewJamPlayCounts );
+    m_ViewJamPlayCounts->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
+    m_ViewJamPlayCounts->Enable( m_ViewJamendo->IsChecked() );
+
+    m_MainMenu->AppendSubMenu( SubMenu, wxT( "Jamendo" ), _( "Set the Jamendo visible panels" ) );
+
     m_MainMenu->AppendSeparator();
 
     m_ViewFullScreen = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_FULLSCREEN, _( "Full Screen" ), _( "Show/Restore the main window in full screen" ), wxITEM_CHECK );
@@ -1064,7 +1120,7 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
                 m_TaskBarIcon = NULL;
             }
 
-            Config->SendConfigChangedEvent();
+            Config->SendConfigChangedEvent( PrefDialog->GetVisiblePanels() );
             m_Db->ConfigChanged();
         }
         PrefDialog->Destroy();
@@ -1141,7 +1197,7 @@ void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
     //m_Db->LoadCache();
 
     if( m_LibPanel )
-        m_LibPanel->ReloadControls( event );
+        m_LibPanel->ReloadControls();
 
     if( m_AlbumBrowserPanel )
         m_AlbumBrowserPanel->LibraryUpdated();
@@ -1166,7 +1222,7 @@ void guMainFrame::LibraryUpdated( wxCommandEvent &event )
     //m_Db->DoCleanUp();
 
 //    if( m_LibPanel )
-//        m_LibPanel->ReloadControls( event );
+//        m_LibPanel->ReloadControls();
 //
 //    if( m_AlbumBrowserPanel )
 //        m_AlbumBrowserPanel->LibraryUpdated();
@@ -1174,6 +1230,13 @@ void guMainFrame::LibraryUpdated( wxCommandEvent &event )
     m_LibUpdateThread = NULL;
 
     DoLibraryClean( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnJamendoUpdated( wxCommandEvent &event )
+{
+    if( m_JamendoPanel )
+        m_JamendoPanel->ReloadControls();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1689,7 +1752,7 @@ void guMainFrame::OnViewLibrary( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnLibraryShowPanel( wxCommandEvent &event )
 {
-    unsigned int PanelId = 0;
+    int PanelId = 0;
 
     switch( event.GetId() )
     {
@@ -1746,6 +1809,69 @@ void guMainFrame::OnLibraryShowPanel( wxCommandEvent &event )
 
     if( PanelId && m_LibPanel )
         m_LibPanel->ShowPanel( PanelId, event.IsChecked() );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnJamendoShowPanel( wxCommandEvent &event )
+{
+    int PanelId = 0;
+
+    switch( event.GetId() )
+    {
+        case ID_MENU_VIEW_JAMENDO_TEXTSEARCH :
+            PanelId = guPANEL_LIBRARY_TEXTSEARCH;
+            m_ViewJamTextSearch->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_LABELS :
+            PanelId = guPANEL_LIBRARY_LABELS;
+            m_ViewJamLabels->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_GENRES :
+            PanelId = guPANEL_LIBRARY_GENRES;
+            m_ViewJamGenres->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_ARTISTS :
+            PanelId = guPANEL_LIBRARY_ARTISTS;
+            m_ViewJamArtists->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_ALBUMS :
+            PanelId = guPANEL_LIBRARY_ALBUMS;
+            m_ViewJamAlbums->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_YEARS :
+            PanelId = guPANEL_LIBRARY_YEARS;
+            m_ViewJamYears->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_RATINGS :
+            PanelId = guPANEL_LIBRARY_RATINGS;
+            m_ViewJamRatings->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_PLAYCOUNT :
+            PanelId = guPANEL_LIBRARY_PLAYCOUNT;
+            m_ViewJamPlayCounts->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_COMPOSERS :
+            PanelId = guPANEL_LIBRARY_COMPOSERS;
+            m_ViewJamComposers->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_JAMENDO_ALBUMARTISTS :
+            PanelId = guPANEL_LIBRARY_ALBUMARTISTS;
+            m_ViewJamAlbumArtists->Check( event.IsChecked() );
+            break;
+    }
+
+    if( PanelId && m_JamendoPanel )
+        m_JamendoPanel->ShowPanel( PanelId, event.IsChecked() );
 
 }
 
@@ -2045,6 +2171,62 @@ void guMainFrame::OnViewFileBrowser( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewJamendo( wxCommandEvent &event )
+{
+    bool IsEnabled = event.IsChecked();
+    if( IsEnabled )
+    {
+        if( !m_JamendoDb )
+            m_JamendoDb = new guJamendoLibrary( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Jamendo.db" ) );
+
+        if( !m_JamendoPanel )
+            m_JamendoPanel = new guJamendoPanel( m_CatNotebook, m_JamendoDb, m_PlayerPanel );
+
+        InsertTabPanel( m_JamendoPanel, 8, wxT( "Jamendo" ) );
+
+        m_VisiblePanels |= guPANEL_MAIN_JAMENDO;
+    }
+    else
+    {
+        RemoveTabPanel( m_JamendoPanel );
+        m_VisiblePanels ^= guPANEL_MAIN_JAMENDO;
+    }
+    m_CatNotebook->Refresh();
+
+    m_ViewJamendo->Check( m_VisiblePanels & guPANEL_MAIN_JAMENDO );
+
+    m_ViewJamTextSearch->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
+    m_ViewJamTextSearch->Enable( IsEnabled );
+
+    m_ViewJamLabels->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
+    m_ViewJamLabels->Enable( IsEnabled );
+
+    m_ViewJamGenres->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
+    m_ViewJamGenres->Enable( IsEnabled );
+
+    m_ViewJamArtists->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
+    m_ViewJamArtists->Enable( IsEnabled );
+
+    m_ViewJamComposers->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_COMPOSERS ) );
+    m_ViewJamComposers->Enable( IsEnabled );
+
+    m_ViewJamAlbumArtists->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMARTISTS ) );
+    m_ViewJamAlbumArtists->Enable( IsEnabled );
+
+    m_ViewJamAlbums->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
+    m_ViewJamAlbums->Enable( IsEnabled );
+
+    m_ViewJamYears->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
+    m_ViewJamYears->Enable( IsEnabled );
+
+    m_ViewJamRatings->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
+    m_ViewJamRatings->Enable( IsEnabled );
+
+    m_ViewJamPlayCounts->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
+    m_ViewJamPlayCounts->Enable( IsEnabled );
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewFullScreen( wxCommandEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -2143,7 +2325,8 @@ void guMainFrame::OnViewPlayLists( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnSelectTrack( wxCommandEvent &event )
 {
-    if( event.GetExtraLong() == guTRACK_TYPE_PODCAST )
+    int Type = event.GetExtraLong();
+    if( Type == guTRACK_TYPE_PODCAST )
     {
         if( m_PodcastsPanel )
         {
@@ -2153,6 +2336,18 @@ void guMainFrame::OnSelectTrack( wxCommandEvent &event )
                 m_CatNotebook->SetSelection( PaneIndex );
             }
             m_PodcastsPanel->SelectPodcast( event.GetInt() );
+        }
+    }
+    else if( Type == guTRACK_TYPE_JAMENDO )
+    {
+        if( m_JamendoPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_JamendoPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_JamendoPanel->SelectTrack( event.GetInt() );
         }
     }
     else
@@ -2172,7 +2367,8 @@ void guMainFrame::OnSelectTrack( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnSelectAlbum( wxCommandEvent &event )
 {
-    if( event.GetExtraLong() == guTRACK_TYPE_PODCAST )
+    int Type = event.GetExtraLong();
+    if( Type == guTRACK_TYPE_PODCAST )
     {
         if( m_PodcastsPanel )
         {
@@ -2182,6 +2378,18 @@ void guMainFrame::OnSelectAlbum( wxCommandEvent &event )
                 m_CatNotebook->SetSelection( PaneIndex );
             }
             m_PodcastsPanel->SelectChannel( event.GetInt() );
+        }
+    }
+    else if( Type == guTRACK_TYPE_JAMENDO )
+    {
+        if( m_JamendoPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_JamendoPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_JamendoPanel->SelectAlbum( event.GetInt() );
         }
     }
     else
@@ -2201,9 +2409,22 @@ void guMainFrame::OnSelectAlbum( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnSelectArtist( wxCommandEvent &event )
 {
-    if( event.GetExtraLong() == guTRACK_TYPE_PODCAST )
+    int Type = event.GetExtraLong();
+    if( Type == guTRACK_TYPE_PODCAST )
     {
         return;
+    }
+    else if( Type == guTRACK_TYPE_JAMENDO )
+    {
+        if( m_JamendoPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_JamendoPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_JamendoPanel->SelectArtist( event.GetInt() );
+        }
     }
     else
     {
@@ -2222,30 +2443,64 @@ void guMainFrame::OnSelectArtist( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnSelectYear( wxCommandEvent &event )
 {
-    if( m_LibPanel )
+    int Type = event.GetExtraLong();
+    if( Type == guTRACK_TYPE_JAMENDO )
     {
-        int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
-        if( PaneIndex != wxNOT_FOUND )
+        if( m_JamendoPanel )
         {
-            m_CatNotebook->SetSelection( PaneIndex );
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_JamendoPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_JamendoPanel->SelectYear( event.GetInt() );
         }
-        m_LibPanel->SelectYear( event.GetInt() );
+    }
+    else
+    {
+        if( m_LibPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_LibPanel->SelectYear( event.GetInt() );
+        }
     }
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnSelectGenre( wxCommandEvent &event )
 {
-    if( m_LibPanel )
+    int Type = event.GetExtraLong();
+    if( Type == guTRACK_TYPE_JAMENDO )
     {
-        int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
-        if( PaneIndex != wxNOT_FOUND )
+        if( m_JamendoPanel )
         {
-            m_CatNotebook->SetSelection( PaneIndex );
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_JamendoPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            wxArrayInt Genres;
+            Genres.Add( event.GetInt() );
+            m_JamendoPanel->SelectGenres( &Genres );
         }
-        wxArrayInt Genres;
-        Genres.Add( event.GetInt() );
-        m_LibPanel->SelectGenres( &Genres );
+    }
+    else
+    {
+        if( m_LibPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            wxArrayInt Genres;
+            Genres.Add( event.GetInt() );
+            m_LibPanel->SelectGenres( &Genres );
+        }
     }
 }
 
@@ -2410,6 +2665,11 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
         m_ViewFileBrowser->Check( false );
         PanelId = guPANEL_MAIN_FILEBROWSER;
     }
+    else if( CurPage == m_JamendoPanel )
+    {
+        m_ViewJamendo->Check( false );
+        PanelId = guPANEL_MAIN_JAMENDO;
+    }
 
     //CheckHideNotebook();
     m_VisiblePanels ^= PanelId;
@@ -2485,6 +2745,17 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
         {
             m_MainStatusBar->SetSelInfo( wxEmptyString );
         }
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_JamendoPanel )
+    {
+        m_JamendoDb->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+
+        wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+        SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
+        SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
+            LenToString( m_SelLength.GetLo() ).c_str(),
+            SizeToString( m_SelSize.GetValue() ).c_str() );
+        m_MainStatusBar->SetSelInfo( SelInfo );
     }
     else
     {
@@ -2902,12 +3173,14 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
         m_ViewPlayLists->Check( false );
 
         m_ViewPodcasts->Check( false );
-        m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
-        m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
+        m_ViewPodChannels->Enable( false );
+        m_ViewPodDetails->Enable( false );
 
         m_ViewAlbumBrowser->Check( false );
 
         m_ViewFileBrowser->Check( false );
+
+        m_ViewJamendo->Check( false );
     }
 
     m_AuiManager.Update();
@@ -2968,12 +3241,14 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     m_ViewPlayLists->Check( false );
 
     m_ViewPodcasts->Check( false );
-    m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
-    m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
+    m_ViewPodChannels->Enable( false );
+    m_ViewPodDetails->Enable( false );
 
     m_ViewAlbumBrowser->Check( false );
 
     m_ViewFileBrowser->Check( false );
+
+    m_ViewJamendo->Check( false );
 
 
     Index = 0;
@@ -3018,7 +3293,10 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
         {
             OnViewFileBrowser( event );
         }
-
+        else if( TabName == wxT( "Jamendo" ) )
+        {
+            OnViewJamendo( event );
+        }
         Index++;
     }
 
@@ -3109,6 +3387,9 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
 
             if( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER )
                 OnViewFileBrowser( event );
+
+            if( m_VisiblePanels & guPANEL_MAIN_JAMENDO )
+                OnViewJamendo( event );
 
             break;
         }
@@ -3216,7 +3497,25 @@ void guMainFrame::UpdatedTrack( int updatedby, const guTrack * track )
 }
 
 
-
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnJamendoCoverDownloaded( wxCommandEvent &event )
+{
+    if( m_PlayerPanel )
+    {
+        const guCurrentTrack * CurrentTrack = m_PlayerPanel->GetCurrentTrack();
+        if( CurrentTrack->m_Type == guTRACK_TYPE_JAMENDO &&
+            CurrentTrack->m_AlbumId == event.GetInt() )
+        {
+            wxString CoverPath;
+            wxImage * CoverImage = m_JamendoPanel->GetAlbumCover( event.GetInt(), CoverPath );
+            if( CoverImage )
+            {
+                m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
+                delete CoverImage;
+            }
+        }
+    }
+}
 
 
 // -------------------------------------------------------------------------------- //

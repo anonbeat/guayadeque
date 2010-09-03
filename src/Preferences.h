@@ -60,9 +60,10 @@
 #define  guPREFERENCE_PAGE_FLAG_LYRICS           ( 1 << 6 )
 #define  guPREFERENCE_PAGE_FLAG_ONLINE           ( 1 << 7 )
 #define  guPREFERENCE_PAGE_FLAG_PODCASTS         ( 1 << 8 )
-#define  guPREFERENCE_PAGE_FLAG_LINKS            ( 1 << 9 )
-#define  guPREFERENCE_PAGE_FLAG_COMMANDS         ( 1 << 10 )
-#define  guPREFERENCE_PAGE_FLAG_COPYTO           ( 1 << 11 )
+#define  guPREFERENCE_PAGE_FLAG_JAMENDO          ( 1 << 9 )
+#define  guPREFERENCE_PAGE_FLAG_LINKS            ( 1 << 10 )
+#define  guPREFERENCE_PAGE_FLAG_COMMANDS         ( 1 << 11 )
+#define  guPREFERENCE_PAGE_FLAG_COPYTO           ( 1 << 12 )
 
 enum guPreference_Page {
     guPREFERENCE_PAGE_GENERAL,
@@ -74,6 +75,7 @@ enum guPreference_Page {
     guPREFERENCE_PAGE_LYRICS,
     guPREFERENCE_PAGE_ONLINE,
     guPREFERENCE_PAGE_PODCASTS,
+    guPREFERENCE_PAGE_JAMENDO,
     guPREFERENCE_PAGE_LINKS,
     guPREFERENCE_PAGE_COMMANDS,
     guPREFERENCE_PAGE_COPYTO,
@@ -207,6 +209,7 @@ class guPrefDialog : public wxDialog
 
     wxRadioBox *                m_RadioMinBitRateRadBox;
     wxArrayString               m_RadioMinBitRateRadBoxChoices;
+    wxSlider *                  m_BufferSizeSlider;
 
     wxPanel *                   m_PodcastPanel;
     wxDirPickerCtrl *           m_PodcastPath;
@@ -216,7 +219,15 @@ class guPrefDialog : public wxDialog
     wxSpinCtrl *                m_PodcastDeleteTime;
     wxChoice *                  m_PodcastDeletePeriod;
 
-    wxCheckBox* m_PodcastDeletePlayed;
+    wxCheckBox *                m_PodcastDeletePlayed;
+
+    wxPanel *                   m_JamendoPanel;
+    wxCheckListBox *            m_JamGenresListBox;
+    wxButton *                  m_JamSelAllBtn;
+    wxButton *                  m_JamSelNoneBtn;
+    wxButton *                  m_JamInvertBtn;
+    wxChoice *                  m_JamFormatChoice;
+    wxTextCtrl *                m_JamBTCmd;
 
     wxChoice *                  m_LyricsChoice;
 
@@ -238,6 +249,7 @@ class guPrefDialog : public wxDialog
     void                        BuildLyricsPage( void );
     void                        BuildOnlinePage( void );
     void                        BuildPodcastsPage( void );
+    void                        BuildJamendoPage( void );
     void                        BuildLinksPage( void );
     void                        BuildCommandsPage( void );
     void                        BuildCopyToPage( void );
@@ -271,6 +283,10 @@ class guPrefDialog : public wxDialog
 	void OnOnlineDelBtnClick( wxCommandEvent& event );
 	void OnOnlineListBoxDClicked( wxCommandEvent &event );
 
+    void OnJamendoSelectAll( wxCommandEvent& event );
+    void OnJamendoSelectNone( wxCommandEvent& event );
+    void OnJamendoInvertSelection( wxCommandEvent& event );
+
     void OnLinksListBoxSelected( wxCommandEvent &event );
     void OnLinksAddBtnClick( wxCommandEvent& event );
 	void OnLinksDelBtnClick( wxCommandEvent& event );
@@ -287,7 +303,6 @@ class guPrefDialog : public wxDialog
 	void OnCmdTextChanged( wxCommandEvent &event );
 	void OnCmdSaveBtnClick( wxCommandEvent &event );
 
-
 	void OnCopyToFileNameUpdated( wxCommandEvent &event );
 
   public:
@@ -295,6 +310,7 @@ class guPrefDialog : public wxDialog
     ~guPrefDialog();
 
     void SaveSettings( void );
+    int  GetVisiblePanels( void ) { return m_VisiblePanels; }
 
 };
 

@@ -25,11 +25,14 @@
 #include "OnlineLinks.h"
 #include "MainApp.h"
 #include "Utils.h"
+#include "LibPanel.h"
 
 // -------------------------------------------------------------------------------- //
-guArListBox::guArListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
+guArListBox::guArListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
 {
+    m_LibPanel = libpanel;
+
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );
     Connect( ID_ARTIST_COMMANDS, ID_ARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnCommandClicked ) );
     ReloadItems();
@@ -95,6 +98,7 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     int SelCount = GetSelectedCount();
+    int ContextMenuFlags = m_LibPanel->GetContextMenuFlags();
 
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_PLAY, _( "Play" ), _( "Play current selected artists" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
@@ -116,24 +120,38 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs from the selected artists" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-        Menu->Append( MenuItem );
-
-        Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_ARTIST_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
-
-        Menu->AppendSeparator();
-        if( SelCount == 1 )
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
         {
-            AddOnlineLinksMenu( Menu );
+            MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs from the selected artists" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            Menu->Append( MenuItem );
         }
 
-        AddArtistCommands( Menu, SelCount );
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+        {
+            Menu->AppendSeparator();
+
+            MenuItem = new wxMenuItem( Menu, ID_ARTIST_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+            Menu->Append( MenuItem );
+        }
+
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
+        {
+            Menu->AppendSeparator();
+
+            if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
+            {
+                AddOnlineLinksMenu( Menu );
+            }
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+                AddArtistCommands( Menu, SelCount );
+        }
     }
+
+    m_LibPanel->CreateContextMenu( Menu );
 }
 
 // -------------------------------------------------------------------------------- //

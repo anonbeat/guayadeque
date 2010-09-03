@@ -228,6 +228,7 @@ class guPlayerPanel : public wxPanel
 
 	bool                    m_SilenceDetected;
 	bool                    m_AboutToEndDetected;
+	bool                    m_FadeInStarted;
 
 	wxArrayInt              m_SmartAddedTracks;
 	wxArrayString           m_SmartAddedArtists;
@@ -330,7 +331,7 @@ class guPlayerPanel : public wxPanel
     bool                SetPosition( int pos );
     int                 GetPosition();
     void                TrackListChanged( void );
-    const guCurrentTrack * GetCurrentTrack();
+    const guCurrentTrack * GetCurrentTrack() { return &m_MediaSong; }
     int                 GetCurrentItem();
     int                 GetItemCount();
     const guTrack *     GetTrack( int index );
@@ -341,6 +342,8 @@ class guPlayerPanel : public wxPanel
     bool                GetPlaySmart();
     void                SetPlaySmart( bool playsmart );
     void                UpdatePlayListFilters( void );
+
+    void                SetCurrentCoverImage( wxImage * coverimage, const guSongCoverType CoverType, const wxString &CoverPath = wxEmptyString );
 
     int                 GetCaps();
 

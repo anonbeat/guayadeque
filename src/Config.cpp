@@ -221,9 +221,10 @@ void guConfig::UnRegisterObject( wxEvtHandler * object )
 }
 
 // -------------------------------------------------------------------------------- //
-void guConfig::SendConfigChangedEvent( void )
+void guConfig::SendConfigChangedEvent( const int flags )
 {
     wxCommandEvent event( guConfigUpdatedEvent, ID_CONFIG_UPDATED );
+    event.SetInt( flags );
 
     int Index;
     int Count = m_Objects.Count();
