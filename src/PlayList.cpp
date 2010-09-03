@@ -248,11 +248,17 @@ void guPlayList::OnDropBegin( void )
 }
 
 // -------------------------------------------------------------------------------- //
+bool inline guIsJamendoFile( const wxString &filename )
+{
+    return filename.StartsWith( wxT( "http://api.jamendo.com/get2/stream/track" ) );
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::OnDropFile( const wxString &filename )
 {
-    //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
     if( guIsValidAudioFile( filename ) ||
-        guPlayListFile::IsValidPlayList( filename ) )
+        guPlayListFile::IsValidPlayList( filename ) ||
+        guIsJamendoFile( filename ) )
     {
         AddPlayListItem( filename, false );
     }
@@ -1190,7 +1196,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
             guLogError( wxT( "File doesnt exist '%s'" ), FileName.c_str() );
         }
     }
-    else if( FileName.StartsWith( wxT( "http://api.jamendo.com/get2/stream/track" ) ) )
+    else if( guIsJamendoFile( FileName ) )
     {
         Track.m_Type     = guTRACK_TYPE_JAMENDO;
         Track.m_CoverId  = 0;

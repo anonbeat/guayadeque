@@ -1264,13 +1264,13 @@ void guPrefDialog::BuildJamendoPage( void )
 
     } while( true );
 
-    wxArrayInt EnabledGenres = m_Config->ReadANum( wxT( "Genre" ), 0, wxT( "JamendoGenres" ) );
+    m_LastJamendoGenres = m_Config->ReadANum( wxT( "Genre" ), 0, wxT( "JamendoGenres" ) );
 
 	m_JamGenresListBox = new wxCheckListBox( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, JamendoGenres, 0 );
-	int Count = EnabledGenres.Count();
+	int Count = m_LastJamendoGenres.Count();
 	for( Index = 0; Index < Count; Index++ )
 	{
-        m_JamGenresListBox->Check( EnabledGenres[ Index ] );
+        m_JamGenresListBox->Check( m_LastJamendoGenres[ Index ] );
 	}
 	JamGenresSizer->Add( m_JamGenresListBox, 1, wxALL|wxEXPAND, 5 );
 
@@ -1745,7 +1745,23 @@ void guPrefDialog::SaveSettings( void )
             if( m_JamGenresListBox->IsChecked( Index ) )
                 EnabledGenres.Add( Index );
         }
+
         m_Config->WriteANum( wxT( "Genre" ), EnabledGenres, wxT( "JamendoGenres" ) );
+        bool DoUpgrade = ( EnabledGenres.Count() != m_LastJamendoGenres.Count() );
+        if( !DoUpgrade )
+        {
+            Count = EnabledGenres.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                if( m_LastJamendoGenres.Index( EnabledGenres[ Index ] ) == wxNOT_FOUND )
+                {
+                    DoUpgrade = true;
+                    break;
+                }
+            }
+        }
+
+        m_Config->WriteBool( wxT( "NeedUpgrade" ), DoUpgrade, wxT( "Jamendo" ) );
         m_Config->WriteNum( wxT( "AudioFormat" ), m_JamFormatChoice->GetSelection(), wxT( "Jamendo" ) );
         m_Config->WriteStr( wxT( "TorrentCommand" ), m_JamBTCmd->GetValue(), wxT( "Jamendo" ) );
     }

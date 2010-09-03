@@ -142,7 +142,9 @@ wxCoord guAlListBox::OnMeasureItem( size_t n ) const
 // -------------------------------------------------------------------------------- //
 int guAlListBox::GetSelectedSongs( guTrackArray * tracks ) const
 {
-    return m_Db->GetAlbumsSongs( GetSelectedItems(), tracks );
+    int Count = m_Db->GetAlbumsSongs( GetSelectedItems(), tracks );
+    m_LibPanel->NormalizeTracks( tracks );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -454,13 +456,13 @@ int guAlListBox::GetDragFiles( wxFileDataObject * files )
     guTrackArray Songs;
     int index;
     int count = GetSelectedSongs( &Songs );
+    m_LibPanel->NormalizeTracks( &Songs );
     for( index = 0; index < count; index++ )
     {
        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
        //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
 
        //FileName.Replace( wxT( "%" ), wxT( "%25" ) );
-       //guLogMessage( wxT( "Adding song '%s'" ), FileName.c_str() );
        files->AddFile( FileName );
     }
     return count;

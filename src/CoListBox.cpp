@@ -50,7 +50,9 @@ void guCoListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 int guCoListBox::GetSelectedSongs( guTrackArray * songs ) const
 {
-    return m_Db->GetComposersSongs( GetSelectedItems(), songs );
+    int Count = m_Db->GetComposersSongs( GetSelectedItems(), songs );
+    m_LibPanel->NormalizeTracks( songs );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

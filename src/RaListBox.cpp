@@ -62,7 +62,9 @@ int guRaListBox::GetSelectedSongs( guTrackArray * songs ) const
         if( Items[ Index ] )
             Items[ Index ]--;
     }
-    return m_Db->GetRatingsSongs( Items, songs );
+    Count = m_Db->GetRatingsSongs( Items, songs );
+    m_LibPanel->NormalizeTracks( songs );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

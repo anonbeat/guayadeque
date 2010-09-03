@@ -304,6 +304,7 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks )
         item = GetNextSelected( cookie );
     }
     m_ItemsMutex.Unlock();
+    m_LibPanel->NormalizeTracks( tracks );
     return tracks->Count();
 }
 

@@ -52,9 +52,11 @@ void guTaListBox::GetItemsList( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guTaListBox::GetSelectedSongs( guTrackArray * Songs ) const
+int guTaListBox::GetSelectedSongs( guTrackArray * songs ) const
 {
-    return m_Db->GetLabelsSongs( GetSelectedItems(), Songs );
+    int Count = m_Db->GetLabelsSongs( GetSelectedItems(), songs );
+    m_LibPanel->NormalizeTracks( songs );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

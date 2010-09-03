@@ -32,9 +32,11 @@ void guGeListBox::GetItemsList( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guGeListBox::GetSelectedSongs( guTrackArray * Songs ) const
+int guGeListBox::GetSelectedSongs( guTrackArray * songs ) const
 {
-    return m_Db->GetGenresSongs( GetSelectedItems(), Songs );
+    int Count = m_Db->GetGenresSongs( GetSelectedItems(), songs );
+    m_LibPanel->NormalizeTracks( songs );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

@@ -1672,7 +1672,6 @@ void guListViewDropFilesThread::AddDropFiles( const wxString &dirname )
     wxString FileName;
     //wxString SavedDir( wxGetCwd() );
 
-    //guLogMessage( wxT( "Adding drop item: '%s'" ), dirname.c_str() );
     if( wxDirExists( dirname ) )
     {
         wxString DirName = dirname;
@@ -1711,12 +1710,10 @@ guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
 {
     int index;
     int Count = m_Files.Count();
-    int Length = 0;
     for( index = 0; index < Count; ++index )
     {
         if( TestDestroy() )
             return 0;
-        Length += m_Files[ index ].Length();
         AddDropFiles( m_Files[ index ] );
     }
 
@@ -1747,7 +1744,6 @@ guListViewDropTarget::~guListViewDropTarget()
 // -------------------------------------------------------------------------------- //
 bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
 {
-    //guLogMessage( wxT( "guListViewDropTarget::OnDropFiles" ) );
     // We are moving items inside this object.
     if( m_ListView->m_DragSelfItems )
     {

@@ -54,7 +54,9 @@ void guArListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 int guArListBox::GetSelectedSongs( guTrackArray * songs ) const
 {
-    return m_Db->GetArtistsSongs( GetSelectedItems(), songs );
+    int Count = m_Db->GetArtistsSongs( GetSelectedItems(), songs );
+    m_LibPanel->NormalizeTracks( songs );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

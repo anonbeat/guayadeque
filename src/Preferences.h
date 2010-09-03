@@ -228,6 +228,7 @@ class guPrefDialog : public wxDialog
     wxButton *                  m_JamInvertBtn;
     wxChoice *                  m_JamFormatChoice;
     wxTextCtrl *                m_JamBTCmd;
+    wxArrayInt                  m_LastJamendoGenres;
 
     wxChoice *                  m_LyricsChoice;
 
