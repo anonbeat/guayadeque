@@ -23,11 +23,13 @@
 
 #include "ItemListBox.h"
 
+class guLibPanel;
+
 // -------------------------------------------------------------------------------- //
 class guGeListBox : public guListBox
 {
-
   protected :
+    guLibPanel *    m_LibPanel;
 
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * Menu ) const;
@@ -36,10 +38,12 @@ class guGeListBox : public guListBox
 
   public :
 
-    guGeListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
+    guGeListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
          guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
     {
-          ReloadItems();
+        m_LibPanel = libpanel;
+
+        ReloadItems();
     };
 
     virtual int GetSelectedSongs( guTrackArray * Songs ) const;

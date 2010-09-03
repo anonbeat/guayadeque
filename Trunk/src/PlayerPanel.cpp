@@ -1143,13 +1143,6 @@ int guPlayerPanel::GetItemCount()
 }
 
 // -------------------------------------------------------------------------------- //
-const guCurrentTrack * guPlayerPanel::GetCurrentTrack()
-{
-    //return m_PlayListCtrl->GetCurrent();
-    return &m_MediaSong;
-}
-
-// -------------------------------------------------------------------------------- //
 const guTrack * guPlayerPanel::GetTrack( int index )
 {
     return m_PlayListCtrl->GetItem( index );
@@ -1372,7 +1365,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaError( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaError: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "OnMediaError: %i" ), m_PlayListCtrl->GetCurItem() );
     wxString * ErrorStr = ( wxString * ) event.GetClientData();
     if( ErrorStr )
     {
@@ -1433,7 +1426,7 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaState( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaState: %i %li %li" ), event.GetInt(), m_CurTrackId, m_NextTrackId );
+    guLogMessage( wxT( "OnMediaState: %i %li %li" ), event.GetInt(), m_CurTrackId, m_NextTrackId );
     GstState State = ( GstState ) event.GetInt();
 
     if( State == GST_STATE_PLAYING && m_NextTrackId )
@@ -1486,6 +1479,14 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     if( event.GetInt() < 0 )
         return;
 
+#if __WORDSIZE == 64
+     int EventId = ( gint64 ) event.GetClientData();
+#else
+     int EventId = ( int ) event.GetClientData();
+#endif
+    if( EventId != m_CurTrackId )
+        return;
+
     wxFileOffset CurPos = event.GetInt();
     wxFileOffset CurLen = event.GetExtraLong();
     if( CurLen != m_LastLength )
@@ -1498,7 +1499,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         // Some track lengths are not correctly read by taglib so
         // we try to find the length from gstreamer and update the database
         // We need to not do this for radiostations or online streams
-        if( m_MediaSong.m_Length == 0 &&
+        if( CurLen > 0 && m_MediaSong.m_Length == 0 &&
             m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
         {
             m_MediaSong.m_Length = CurLen / 1000;
@@ -1518,7 +1519,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
     if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )
     {
-        //guLogMessage( wxT( "OnMediaPosition... %i - %li   %li %li" ), event.GetInt(), event.GetExtraLong(), m_CurTrackId, m_NextTrackId );
+        guLogMessage( wxT( "OnMediaPosition... %i - %li   %li %li" ), event.GetInt(), event.GetExtraLong(), m_CurTrackId, m_NextTrackId );
         m_LastCurPos = CurPos;
 
         if( m_TrackChanged )
@@ -1532,13 +1533,13 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         m_MediaSong.m_PlayTime = CurPos / 1000;
 
         if( !m_AboutToEndDetected && !m_NextTrackId && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
-            ( CurPos + m_FadeOutTime + 3000 >= m_LastLength ) )
+            ( CurPos > 0 ) && ( m_LastLength > 0 ) && ( CurPos + m_FadeOutTime + 3000 >= m_LastLength ) )
         {
             if( GetState() == guMEDIASTATE_PLAYING )
             {
                 m_AboutToEndDetected = true;
 
-                //guLogMessage( wxT( "Detected about to finish track... Trying to load the next track..." ) );
+                guLogMessage( wxT( "Detected about to finish track... Trying to load the next track..." ) );
                 wxCommandEvent evt;
                 OnNextTrackButtonClick( evt );
             }
@@ -1549,7 +1550,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaLength( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaLength... %i" ), event.GetInt() );
+    guLogMessage( wxT( "OnMediaLength... %i" ), event.GetInt() );
     wxFileOffset CurLen = event.GetInt() / 1000;
 
     if( CurLen != m_LastLength )
@@ -1611,7 +1612,7 @@ void guPlayerPanel::SendRecordSplitEvent( void )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaTags( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaTags..." ) );
+    guLogMessage( wxT( "OnMediaTags..." ) );
     guRadioTagInfo * RadioTag = ( guRadioTagInfo * ) event.GetClientData();
     if( RadioTag )
     {
@@ -1713,7 +1714,7 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaBitrate... (%li) %i" ), event.GetExtraLong(), event.GetInt() );
+    guLogMessage( wxT( "OnMediaBitrate... (%li) %i" ), event.GetExtraLong(), event.GetInt() );
 //
 //    if( m_NextSong.m_Bitrate != BitRate )
 //    {
@@ -1750,7 +1751,7 @@ void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaLoaded Cur: %i %i   %li" ), m_PlayListCtrl->GetCurItem(), event.GetInt(), m_NextTrackId );
+    guLogMessage( wxT( "OnMediaLoaded Cur: %i %i   %li" ), m_PlayListCtrl->GetCurItem(), event.GetInt(), m_NextTrackId );
 
     if( m_IsSkipping )
         m_IsSkipping = false;
@@ -1781,7 +1782,7 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaPlayStarted( void )
 {
-    //guLogMessage( wxT( "OnMediaPlayStarted  %li" ), m_NextTrackId );
+    guLogMessage( wxT( "OnMediaPlayStarted  %li" ), m_NextTrackId );
 
     if( !m_SavedPlayedTrack )
         SavePlayedTrack();
@@ -1823,7 +1824,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
     wxPostEvent( m_MainFrame, TitleEvent );
 
-    if( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION )
+    if( ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ||
+        ( m_MediaSong.m_Type > guTRACK_TYPE_PODCAST ) )
     {
         // Send an event so the LastFMPanel update its content.
         //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
@@ -1854,6 +1856,19 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     {
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_PODCAST;
+    }
+    else if( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO )
+    {
+        // TODO
+        // From MainFrame get the Jamendo Db And search for the cover
+        // If not there download it and ask for a message once its downloaded...
+        guJamendoPanel * JamendoPanel = m_MainFrame->GetJamendoPanel();
+        if( JamendoPanel )
+        {
+            guLogMessage( wxT( "Tried to get the CoverImage for the jamendo album %i" ), m_MediaSong.m_AlbumId );
+            CoverImage = JamendoPanel->GetAlbumCover( m_MediaSong.m_AlbumId, m_MediaSong.m_CoverPath );
+            m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
+        }
     }
     else if( m_MediaSong.m_CoverId )
     {
@@ -1894,15 +1909,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     }
 
     // Cover
-    if( CoverImage )
-    {
-        if( CoverImage->IsOk() )
-        {
-            CoverImage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
-            m_PlayerCoverBitmap->SetBitmap( wxBitmap( *CoverImage ) );
-            m_PlayerCoverBitmap->Refresh();
-        }
-    }
+    SetCurrentCoverImage( CoverImage, m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
 
     // Check if Smart is enabled
     if( ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) && m_PlaySmart &&
@@ -1951,6 +1958,23 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 
     if( CoverImage )
         delete CoverImage;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetCurrentCoverImage( wxImage * coverimage, const guSongCoverType covertype, const wxString &coverpath )
+{
+    if( coverimage )
+    {
+        if( coverimage->IsOk() )
+        {
+            coverimage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
+            m_PlayerCoverBitmap->SetBitmap( wxBitmap( * coverimage ) );
+            m_PlayerCoverBitmap->Refresh();
+
+            m_MediaSong.m_CoverType = covertype;
+            m_MediaSong.m_CoverPath = coverpath;
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2005,14 +2029,14 @@ void guPlayerPanel::SavePlayedTrack( void )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaFinished (%li) Cur: %i  %li" ), event.GetExtraLong(), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
+    guLogMessage( wxT( "OnMediaFinished (%li) Cur: %i  %li" ), event.GetExtraLong(), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
 
     ResetVumeterLevel();
 
     if( m_SilenceDetected || m_AboutToEndDetected || m_NextTrackId || ( m_CurTrackId != event.GetExtraLong() ) )
     {
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
-        //guLogMessage( wxT( "Media Finished Cancelled... %li %li" ), m_CurTrackId, m_NextTrackId );
+        guLogMessage( wxT( "Media Finished Cancelled... %li %li" ), m_CurTrackId, m_NextTrackId );
         return;
     }
 
@@ -2055,13 +2079,13 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFadeOutFinished( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaFadeOutFinished (%li) Cur: %i  %li" ), event.GetExtraLong(), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
+    guLogMessage( wxT( "OnMediaFadeOutFinished (%li) Cur: %i  %li" ), event.GetExtraLong(), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFadeInStarted( guMediaEvent &event )
 {
-    //guLogMessage( wxT( "OnMediaFadeInStarted Cur: %i  %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
+    guLogMessage( wxT( "OnMediaFadeInStarted Cur: %i  %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2748,6 +2772,7 @@ void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
 {
     int TrackId = wxNOT_FOUND;
     if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
         TrackId = m_MediaSong.m_SongId;
@@ -2771,6 +2796,7 @@ void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
 {
     int AlbumId = wxNOT_FOUND;
     if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
         AlbumId = m_MediaSong.m_AlbumId;
@@ -2794,6 +2820,7 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
 {
     int ArtistId = wxNOT_FOUND;
     if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
         ArtistId = m_MediaSong.m_ArtistId;
@@ -2821,6 +2848,7 @@ void guPlayerPanel::OnYearDClicked( wxMouseEvent &event )
     {
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_YEAR );
         evt.SetInt( Year );
+        evt.SetExtraLong( m_MediaSong.m_Type );
         wxPostEvent( m_MainFrame, evt );
     }
 }

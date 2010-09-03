@@ -506,8 +506,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     }
 
     // The DB or NODB Tracks
-    if( Item.m_Type < guTRACK_TYPE_RADIOSTATION ||
-        Item.m_Type == guTRACK_TYPE_PODCAST )
+    if( Item.m_Type != guTRACK_TYPE_RADIOSTATION )
     {
         CutRect.width -= ( 50 + 6 + 2 );
 
@@ -543,7 +542,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
         //guLogMessage( wxT( "%i - %i" ), TextSize.GetWidth(), TextSize.GetHeight() );
 
 
-        if( Item.m_Type < guTRACK_TYPE_RADIOSTATION )
+        if( Item.m_Type != guTRACK_TYPE_RADIOSTATION )
         {
             // Draw the rating
             int index;
@@ -1191,6 +1190,19 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
             guLogError( wxT( "File doesnt exist '%s'" ), FileName.c_str() );
         }
     }
+    else if( FileName.StartsWith( wxT( "http://api.jamendo.com/get2/stream/track" ) ) )
+    {
+        Track.m_Type     = guTRACK_TYPE_JAMENDO;
+        Track.m_CoverId  = 0;
+        Track.m_FileName = FileName;
+        Track.m_SongName = FileName;
+        //Track.m_AlbumName = FileName;
+        Track.m_Length   = 0;
+        Track.m_Year     = 0;
+        Track.m_Bitrate  = 0;
+        Track.m_Rating   = wxNOT_FOUND;
+        AddItem( Track, pos );
+    }
     else    // This should be a radiostation
     {
         Track.m_Type     = guTRACK_TYPE_RADIOSTATION;
@@ -1615,6 +1627,7 @@ void guPlayList::OnSelectTrack( wxCommandEvent &event )
         int SelItem = SelectedItems[ 0 ];
         int SelType = m_Items[ SelItem ].m_Type;
         if( ( SelType == guTRACK_TYPE_DB ) ||
+            ( SelType == guTRACK_TYPE_JAMENDO ) ||
             ( SelType == guTRACK_TYPE_PODCAST ) )
         {
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
@@ -1633,7 +1646,8 @@ void guPlayList::OnSelectArtist( wxCommandEvent &event )
     {
         int SelItem = SelectedItems[ 0 ];
         int SelType = m_Items[ SelItem ].m_Type;
-        if( ( SelType == guTRACK_TYPE_DB ) )
+        if( ( SelType == guTRACK_TYPE_DB ) ||
+            ( SelType == guTRACK_TYPE_JAMENDO ) )
         {
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
             evt.SetInt( m_Items[ SelItem ].m_ArtistId );
@@ -1652,6 +1666,7 @@ void guPlayList::OnSelectAlbum( wxCommandEvent &event )
         int SelItem = SelectedItems[ 0 ];
         int SelType = m_Items[ SelItem ].m_Type;
         if( ( SelType == guTRACK_TYPE_DB ) ||
+            ( SelType == guTRACK_TYPE_JAMENDO ) ||
             ( SelType == guTRACK_TYPE_PODCAST ) )
         {
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
@@ -1674,7 +1689,7 @@ void guPlayList::OnSelectYear( wxCommandEvent &event )
         {
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_YEAR );
             evt.SetInt( SelYear );
-            //evt.SetExtraLong( SelType );
+            evt.SetExtraLong( m_Items[ SelItem ].m_Type );
             wxPostEvent( wxTheApp->GetTopWindow(), evt );
         }
     }
@@ -1688,11 +1703,12 @@ void guPlayList::OnSelectGenre( wxCommandEvent &event )
     {
         int SelItem = SelectedItems[ 0 ];
         int SelType = m_Items[ SelItem ].m_Type;
-        if( ( SelType == guTRACK_TYPE_DB ) )
+        if( ( SelType == guTRACK_TYPE_DB ) ||
+            ( SelType == guTRACK_TYPE_JAMENDO ) )
         {
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_GENRE );
             evt.SetInt( m_Items[ SelItem ].m_GenreId );
-            //evt.SetExtraLong( SelType );
+            evt.SetExtraLong( m_Items[ SelItem ].m_Type );
             wxPostEvent( wxTheApp->GetTopWindow(), evt );
         }
     }

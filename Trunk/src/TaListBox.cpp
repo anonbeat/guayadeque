@@ -23,11 +23,14 @@
 #include "Config.h"
 #include "Images.h"
 #include "Utils.h"
+#include "LibPanel.h"
 
 // -------------------------------------------------------------------------------- //
-guTaListBox::guTaListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
+guTaListBox::guTaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
      guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
 {
+    m_LibPanel = libpanel;
+
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::AddLabel ) );
     Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::DelLabel ) );
     Connect( ID_LABEL_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::EditLabel ) );
@@ -96,11 +99,16 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
-    Menu->AppendSeparator();
+    if( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO )
+    {
+        Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-    Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_LABEL_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+        Menu->Append( MenuItem );
+    }
+
+    m_LibPanel->CreateContextMenu( Menu );
 }
 
 // -------------------------------------------------------------------------------- //

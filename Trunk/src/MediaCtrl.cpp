@@ -54,8 +54,9 @@ DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEIN_STARTED )
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
 // -------------------------------------------------------------------------------- //
-static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins )
+static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins, guFaderPlayBin * current )
 {
+    guLogMessage( wxT( "CurrentPlayBin: %i" ), current ? current->GetId() : 0 );
     if( !playbins.Count() )
     {
         guLogMessage( wxT( "The faderplaybins list is empty" ) );
@@ -187,7 +188,17 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             gint        Percent;
             gst_message_parse_buffering( message, &Percent );
 
-            guLogDebug( wxT( "Buffering: %i%%" ), Percent );
+            guLogDebug( wxT( "Buffering (%i): %i%%" ), ctrl->GetId(), Percent );
+
+            if( Percent != 100 )
+            {
+                if( !ctrl->IsBuffering() )
+                    ctrl->Pause();
+            }
+            else
+            {
+                ctrl->Play();
+            }
             ctrl->SetBuffering( Percent != 100 );
 
             guMediaEvent event( guEVT_MEDIA_BUFFERING );
@@ -377,6 +388,10 @@ static void gst_about_to_finish( GstElement * playbin, guFaderPlayBin * ctrl )
     {
         ctrl->AboutToFinish();
     }
+    else if( !ctrl->EmittedStartFadeIn() )
+    {
+        ctrl->FadeInStart();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -469,6 +484,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
         m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
         m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
+        m_BufferSize        = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
    }
 }
 
@@ -512,9 +528,11 @@ void guMediaCtrl::UpdatePosition( void )
         {
             if( !m_CurrentPlayBin->AboutToFinishPending() || Pos < m_LastPosition )
             {
+                //guLogMessage( wxT( "Sent UpdatePositon event for %i" ), m_CurrentPlayBin->GetId() );
                 guMediaEvent event( guEVT_MEDIA_CHANGED_POSITION );
                 event.SetInt( Pos );
                 event.SetExtraLong( Duration / GST_MSECOND );
+                event.SetClientData( ( void * ) m_CurrentPlayBin->GetId() );
                 SendEvent( event );
                 if( m_CurrentPlayBin->AboutToFinishPending() )
                     m_CurrentPlayBin->ResetAboutToFinishPending();
@@ -680,7 +698,7 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
     Lock();
-    DumpFaderPlayBins( m_FaderPlayBins );
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
     Unlock();
 #endif
 
@@ -715,17 +733,18 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
                 if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
                 {
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
-                    Unlock();
                     ScheduleCleanUp();
-                    break;
                 }
-                m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_WAITING;
-                m_CurrentPlayBin->Load( uri, true );
-                m_CurrentPlayBin->SetBuffering( false );
-                m_CurrentPlayBin->SetFaderVolume( 1.0 );
-                Result = m_CurrentPlayBin->GetId();
-                Unlock();
-                return Result;
+                else
+                {
+                    m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_WAITING;
+                    m_CurrentPlayBin->Load( uri, true );
+                    m_CurrentPlayBin->SetBuffering( false );
+                    m_CurrentPlayBin->SetFaderVolume( 1.0 );
+                    Result = m_CurrentPlayBin->GetId();
+                    Unlock();
+                    return Result;
+                }
             }
             Unlock();
             break;
@@ -774,6 +793,9 @@ bool guMediaCtrl::Play( void )
         return false;
     }
 
+#ifdef guSHOW_DUMPFADERPLAYBINS
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
+#endif
     guFaderPlayBin * FaderPlaybin = m_FaderPlayBins[ 0 ];
     guLogDebug( wxT( "CurrentFaderPlayBin State %i" ), FaderPlaybin->GetState() );
 
@@ -797,6 +819,12 @@ bool guMediaCtrl::Play( void )
 
         case guFADERPLAYBIN_STATE_PAUSED :
         {
+            Lock();
+            if( m_CurrentPlayBin != FaderPlaybin )
+            {
+                m_CurrentPlayBin = FaderPlaybin;
+            }
+            Unlock();
             FaderPlaybin->StartFade( 0.0, 1.0, m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : 200 );
             FaderPlaybin->m_State = guFADERPLAYBIN_STATE_FADEIN;
             FaderPlaybin->Play();
@@ -839,7 +867,7 @@ bool guMediaCtrl::Pause( void )
         return true;
 	}
 #ifdef guSHOW_DUMPFADERPLAYBINS
-    DumpFaderPlayBins( m_FaderPlayBins );
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
 #endif
 
 	for( Index = 0; Index < Count; Index++ )
@@ -910,7 +938,7 @@ bool guMediaCtrl::Pause( void )
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
     Lock();
-    DumpFaderPlayBins( m_FaderPlayBins );
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
     Unlock();
 #endif
 
@@ -939,7 +967,7 @@ bool guMediaCtrl::Stop( void )
 	}
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
-    DumpFaderPlayBins( m_FaderPlayBins );
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
 #endif
 
 	for( Index = 0; Index < Count; Index++ )
@@ -1038,7 +1066,7 @@ bool guMediaCtrl::Stop( void )
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
     Lock();
-    DumpFaderPlayBins( m_FaderPlayBins );
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
     Unlock();
 #endif
 
@@ -1067,17 +1095,18 @@ void guMediaCtrl::UpdatedConfig( void )
     m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
     m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
     m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
+    m_BufferSize        = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::ScheduleCleanUp( void )
 {
-    Lock();
+    //Lock();
     if( !m_CleanUpId )
     {
         m_CleanUpId = g_timeout_add( 4000, GSourceFunc( cleanup_mediactrl ), this );
     }
-    Unlock();
+    //Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1087,7 +1116,7 @@ void guMediaCtrl::FadeInStart( void )
 
     Lock();
 #ifdef guSHOW_DUMPFADERPLAYBINS
-    DumpFaderPlayBins( m_FaderPlayBins );
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
 #endif
     int Index;
     int Count = m_FaderPlayBins.Count();
@@ -1376,6 +1405,7 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
   if( IsValidElement( m_Playbin ) )
   {
     g_object_set( m_Playbin, "uri", ( const char * ) m_Uri.mb_str( wxConvFile ), NULL );
+    g_object_set( m_Playbin, "buffer-size", m_Player->BufferSize() * 1024, NULL );
     //g_object_set( m_Playbin, "volume", 1.0, NULL );
 
     m_Playbackbin = gst_bin_new( "playbackbin" );
@@ -1822,7 +1852,7 @@ bool guFaderPlayBin::StartPlay( void )
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
     m_Player->Lock();
-    DumpFaderPlayBins( m_Player->m_FaderPlayBins );
+    DumpFaderPlayBins( m_Player->m_FaderPlayBins, m_Player->m_CurrentPlayBin );
     m_Player->Unlock();
 #endif
 

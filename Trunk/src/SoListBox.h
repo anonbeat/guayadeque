@@ -44,10 +44,14 @@
 
 #define guSONGS_COLUMN_COUNT        16
 
+class guLibPanel;
+
 // -------------------------------------------------------------------------------- //
 class guSoListBox : public guListView
 {
   protected :
+    guLibPanel *        m_LibPanel;
+
     guDbLibrary *       m_Db;
     guTrackArray        m_Items;
     wxMutex             m_ItemsMutex;
@@ -81,7 +85,7 @@ class guSoListBox : public guListView
     virtual void                AppendFastEditMenu( wxMenu * menu, const int selcount ) const;
 
   public :
-    guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style = 0 );
+    guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * NewDb, wxString confname, long style = 0 );
     ~guSoListBox();
 
     virtual void                ReloadItems( bool reset = true );

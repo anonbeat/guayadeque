@@ -338,6 +338,8 @@ class guMediaCtrl : public wxEvtHandler
 
     int                     m_LastError;
 
+    int                     m_BufferSize;
+
     bool                    RemovePlayBin( guFaderPlayBin * playbin );
 
     void                    FadeOutDone( guFaderPlayBin * faderplaybin );
@@ -364,6 +366,7 @@ class guMediaCtrl : public wxEvtHandler
     wxFileOffset    Length( void );
 
     bool            IsBuffering( void ) { return ( m_CurrentPlayBin && m_CurrentPlayBin->IsBuffering() ); }
+    int             BufferSize( void ) { return m_BufferSize; }
     bool            IsRecording( void ) { return m_IsRecording; }
 
     double          GetVolume( void ) { return m_Volume; }

@@ -1,4 +1,11 @@
+
+  * Added Jamendo support
+  * Added network buffer size option in Preferences under Online
+
+2010-08-26 0.2.7
   
+  * Double clicking in audioscroble icon in status bar opens AudioScrobble preferences
+  * Now Preferences opens where it was closed 
   * Added options to delete tracks from library and drive
   * Implemented reading/writing images into m4a files
   * Library search covers scan now into audio files too

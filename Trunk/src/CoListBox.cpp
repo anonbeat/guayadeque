@@ -25,11 +25,14 @@
 #include "OnlineLinks.h"
 #include "MainApp.h"
 #include "Utils.h"
+#include "LibPanel.h"
 
 // -------------------------------------------------------------------------------- //
-guCoListBox::guCoListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
+guCoListBox::guCoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
 {
+    m_LibPanel = libpanel;
+
     ReloadItems();
 };
 
@@ -56,6 +59,7 @@ void guCoListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     int SelCount = GetSelectedCount();
+    int ContextMenuFlags = m_LibPanel->GetContextMenuFlags();
 
     MenuItem = new wxMenuItem( Menu, ID_COMPOSER_PLAY, _( "Play" ), _( "Play current selected composer" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
@@ -71,19 +75,26 @@ void guCoListBox::CreateContextMenu( wxMenu * Menu ) const
 
     if( SelCount )
     {
-        Menu->AppendSeparator();
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        {
+            Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_COMPOSER_EDITTRACKS, _( "Edit Songs" ), _( "Edit the selected tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
-        Menu->Append( MenuItem );
+            MenuItem = new wxMenuItem( Menu, ID_COMPOSER_EDITTRACKS, _( "Edit Songs" ), _( "Edit the selected tracks" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            Menu->Append( MenuItem );
+        }
 
-        Menu->AppendSeparator();
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+        {
+            Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_COMPOSER_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
-        Menu->Append( MenuItem );
-
+            MenuItem = new wxMenuItem( Menu, ID_COMPOSER_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
+            Menu->Append( MenuItem );
+        }
     }
+
+    m_LibPanel->CreateContextMenu( Menu );
 }
 
 // -------------------------------------------------------------------------------- //

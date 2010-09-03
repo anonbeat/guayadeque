@@ -53,7 +53,7 @@ class guConfig : public wxConfig
 
     void            RegisterObject( wxEvtHandler * object );
     void            UnRegisterObject( wxEvtHandler * object );
-    void            SendConfigChangedEvent( void );
+    void            SendConfigChangedEvent( const int flags = 0 );
 
     bool            GetIgnoreLayouts( void ) { return m_IgnoreLayouts; }
     void            SetIgnoreLayouts( const bool ignorelayouts ) { m_IgnoreLayouts = ignorelayouts; };

@@ -23,10 +23,14 @@
 
 #include "ItemListBox.h"
 
+class guLibPanel;
+
 // -------------------------------------------------------------------------------- //
 class guTaListBox : public guListBox
 {
   protected :
+    guLibPanel *    m_LibPanel;
+
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * Menu ) const;
     void            AddLabel( wxCommandEvent &event );
@@ -37,7 +41,7 @@ class guTaListBox : public guListBox
 
   public :
 
-    guTaListBox( wxWindow * parent, guDbLibrary * NewDb, const wxString &Label );
+    guTaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * NewDb, const wxString &Label );
     ~guTaListBox();
 
     virtual int GetSelectedSongs( guTrackArray * Songs ) const;

@@ -27,6 +27,7 @@
 class guPLSoListBox : public guSoListBox
 {
   protected :
+
     int             m_PLId;     // The PlayList id
     int             m_PLType;   // The PlayList type
     wxArrayInt      m_PLSetIds; // The array containing the list of plset_id

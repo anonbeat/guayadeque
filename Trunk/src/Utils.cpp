@@ -166,54 +166,59 @@ wxImage * guGetRemoteImage( const wxString &url, int &imgtype )
 
     wxString FileName = Uri.GetPath().Lower();
 
-    if( FileName.EndsWith( wxT( ".jpg" ) ) ||
-        FileName.EndsWith( wxT( ".jpeg" ) ) )
-      imgtype = wxBITMAP_TYPE_JPEG;
-    else if( FileName.EndsWith( wxT( ".png" ) ) )
-      imgtype = wxBITMAP_TYPE_PNG;
-    else if( FileName.EndsWith( wxT( ".gif" ) ) )
-      imgtype = wxBITMAP_TYPE_GIF;
-    else if( FileName.EndsWith( wxT( ".bmp" ) ) )
-      imgtype = wxBITMAP_TYPE_BMP;
-    else
-      imgtype = wxBITMAP_TYPE_INVALID;
+    //guLogMessage( wxT( "Downloading %s from %s" ), FileName.c_str(), url.c_str() );
 
-    if( imgtype != wxBITMAP_TYPE_INVALID )
+    wxMemoryOutputStream Buffer;
+    wxCurlHTTP http;
+    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
+    //http.AddHeader( wxT( "Accept: */*" ) );
+    //http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
+    http.Get( Buffer, url );
     {
-        wxMemoryOutputStream Buffer;
-        wxCurlHTTP http;
-        http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-        if( http.Get( Buffer, url ) )
+        long ResCode = http.GetResponseCode();
+        //guLogMessage( wxT( "ResCode: %lu" ), ResCode );
+        if( ( ResCode < 200 ) || ( ResCode > 299 ) )
         {
-            long ResCode = http.GetResponseCode();
-            if( ( ResCode < 200 ) || ( ResCode > 299 ) )
+            //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
+            if( ( ResCode == 301 ) || ( ResCode == 302 ) || ( ResCode == 307 ) )
             {
-                //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
-                if( ( ResCode == 301 ) || ( ResCode == 302 ) || ( ResCode == 307 ) )
+                wxString Location = http.GetResponseHeader();
+                int Pos = Location.Lower().Find( wxT( "location: " ) );
+                if( Pos != wxNOT_FOUND )
                 {
-                    wxString Location = http.GetResponseHeader();
-                    int Pos = Location.Lower().Find( wxT( "location: " ) );
-                    if( Pos != wxNOT_FOUND )
-                    {
-                        Location = Location.Mid( Pos + 10 );
-                        Location.Truncate( Location.Find( wxT( "\r\n" ) ) );
-                        return guGetRemoteImage( Location, imgtype );
-                    }
+                    Location = Location.Mid( Pos + 10 );
+                    Location.Truncate( Location.Find( wxT( "\r\n" ) ) );
+                    return guGetRemoteImage( Location, imgtype );
                 }
             }
+        }
 
-            if( ResCode != 200 )
-            {
-                guLogMessage( wxT( "Error %u getting remote image '%s'\n%s" ),
-                    http.GetResponseCode(),
-                    url.c_str(),
-                    http.GetResponseHeader().c_str() );
-            }
+        if( ResCode != 200 )
+        {
+            guLogMessage( wxT( "Error %u getting remote image '%s'\n%s" ),
+                http.GetResponseCode(),
+                url.c_str(),
+                http.GetResponseHeader().c_str() );
+        }
 
-            if( Buffer.IsOk() )
+        if( Buffer.IsOk() )
+        {
+            wxMemoryInputStream Ins( Buffer );
+            if( Ins.IsOk() )
             {
-                wxMemoryInputStream Ins( Buffer );
-                if( Ins.IsOk() )
+                if( FileName.EndsWith( wxT( ".jpg" ) ) ||
+                    FileName.EndsWith( wxT( ".jpeg" ) ) )
+                  imgtype = wxBITMAP_TYPE_JPEG;
+                else if( FileName.EndsWith( wxT( ".png" ) ) )
+                  imgtype = wxBITMAP_TYPE_PNG;
+                else if( FileName.EndsWith( wxT( ".gif" ) ) )
+                  imgtype = wxBITMAP_TYPE_GIF;
+                else if( FileName.EndsWith( wxT( ".bmp" ) ) )
+                  imgtype = wxBITMAP_TYPE_BMP;
+                else
+                  imgtype = wxBITMAP_TYPE_INVALID;
+
+                if( imgtype != wxBITMAP_TYPE_INVALID )
                 {
                     Image = new wxImage( Ins, imgtype );
                     if( Image )

@@ -33,12 +33,13 @@
 #include <wx/imaglist.h>
 
 // -------------------------------------------------------------------------------- //
-guSoListBox::guSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, long style ) :
+guSoListBox::guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * NewDb, wxString confname, long style ) :
     guListView( parent, style|wxLB_MULTIPLE|guLISTVIEW_ALLOWDRAG|guLISTVIEW_COLUMN_CLICK_EVENTS,
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
+    m_LibPanel = libpanel;
     m_Db = NewDb;
     m_ConfName = confname;
     m_ItemsFirst = wxNOT_FOUND;
@@ -481,6 +482,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
     int SelCount = GetSelectedCount();
+    int ContextMenuFlags = m_LibPanel ? m_LibPanel->GetContextMenuFlags() : guLIBRARY_CONTEXTMENU_DEFAULT;
 
     if( SelCount )
     {
@@ -514,15 +516,18 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
     if( SelCount )
     {
-        Menu->AppendSeparator();
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        {
+            Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
-        Menu->Append( MenuItem );
+            MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+            Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_DRIVE, _( "Delete from Drive" ), _( "Remove the current selected tracks from drive" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
-        Menu->Append( MenuItem );
+            MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_DRIVE, _( "Delete from Drive" ), _( "Remove the current selected tracks from drive" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+            Menu->Append( MenuItem );
+        }
 
         Menu->AppendSeparator();
 
@@ -530,9 +535,12 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+            Menu->Append( MenuItem );
+        }
 
         Menu->AppendSeparator();
 
@@ -540,13 +548,16 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-        Menu->Append( MenuItem );
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            Menu->Append( MenuItem );
 
-        Menu->AppendSeparator();
+            Menu->AppendSeparator();
 
-        AppendFastEditMenu( Menu, SelCount );
+            AppendFastEditMenu( Menu, SelCount );
+        }
 
         wxMenu *     SubMenu;
         SubMenu = new wxMenu();
@@ -565,15 +576,24 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSubMenu( SubMenu, _( "Select" ), _( "Search in the library" ) );
 
-        Menu->AppendSeparator();
-
-        if( SelCount == 1 )
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
         {
-            AddOnlineLinksMenu( Menu );
-        }
+            Menu->AppendSeparator();
 
-        AddSongsCommands( Menu, SelCount );
+            if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
+            {
+                AddOnlineLinksMenu( Menu );
+            }
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+            {
+                AddSongsCommands( Menu, SelCount );
+            }
+        }
     }
+
+    m_LibPanel->CreateContextMenu( Menu );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -812,7 +832,8 @@ void guSoListBox::UpdatedTracks( const guTrackArray * tracks )
 
         for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
         {
-            if( CurTrack.m_FileName == m_Items[ ItemIndex ].m_FileName )
+            if( ( ( CurTrack.m_SongId == m_Items[ ItemIndex ].m_SongId ) && CurTrack.m_Type == guTRACK_TYPE_JAMENDO ) ||
+                ( CurTrack.m_FileName == m_Items[ ItemIndex ].m_FileName ) )
             {
                 m_Items[ ItemIndex ] = CurTrack;
                 RefreshLine( ItemIndex + m_ItemsFirst );

@@ -33,6 +33,7 @@
 #include "DbLibrary.h"
 #include "DbCache.h"
 #include "FileBrowser.h"
+#include "Jamendo.h"
 #include "LastFM.h"
 #include "LastFMPanel.h"
 #include "LibPanel.h"
@@ -67,6 +68,9 @@
 #define     guPANEL_MAIN_PODCASTS           ( 1 << 8 )
 #define     guPANEL_MAIN_ALBUMBROWSER       ( 1 << 9 )
 #define     guPANEL_MAIN_FILEBROWSER        ( 1 << 10 )
+#define     guPANEL_MAIN_JAMENDO            ( 1 << 11 )
+#define     guPANEL_MAIN_MAGNATUNE          ( 1 << 12 )
+#define     guPANEL_MAIN_IPOD               ( 1 << 13 )
 
 #define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | \
                                               guPANEL_MAIN_LASTFM | guPANEL_MAIN_LYRICS  | \
@@ -110,6 +114,7 @@ class guMainFrame : public wxFrame
     guPodcastPanel *            m_PodcastsPanel;
     guAlbumBrowser *            m_AlbumBrowserPanel;
     guFileBrowser *             m_FileBrowserPanel;
+    guJamendoPanel *            m_JamendoPanel;
 
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
@@ -153,6 +158,18 @@ class guMainFrame : public wxFrame
 
     wxMenuItem *                m_ViewFileBrowser;
 
+    wxMenuItem *                m_ViewJamendo;
+    wxMenuItem *                m_ViewJamTextSearch;
+    wxMenuItem *                m_ViewJamLabels;
+    wxMenuItem *                m_ViewJamGenres;
+    wxMenuItem *                m_ViewJamArtists;
+    wxMenuItem *                m_ViewJamAlbums;
+    wxMenuItem *                m_ViewJamYears;
+    wxMenuItem *                m_ViewJamRatings;
+    wxMenuItem *                m_ViewJamPlayCounts;
+    wxMenuItem *                m_ViewJamComposers;
+    wxMenuItem *                m_ViewJamAlbumArtists;
+
     wxMenuItem *                m_ViewPodcasts;
     wxMenuItem *                m_ViewPodChannels;
     wxMenuItem *                m_ViewPodDetails;
@@ -163,6 +180,7 @@ class guMainFrame : public wxFrame
 
     guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
+    guJamendoLibrary *          m_JamendoDb;
     guLibUpdateThread *         m_LibUpdateThread;
     guLibCleanThread *          m_LibCleanThread;
 
@@ -285,6 +303,9 @@ class guMainFrame : public wxFrame
 
     void                OnViewFileBrowser( wxCommandEvent &event );
 
+    void                OnViewJamendo( wxCommandEvent &event );
+    void                OnJamendoShowPanel( wxCommandEvent &event );
+
     void                OnMainPaneClose( wxAuiManagerEvent &event );
 
     void                LoadTabsPerspective( const wxString &layout );
@@ -305,11 +326,14 @@ class guMainFrame : public wxFrame
     void                RemoveTabPanel( wxPanel * panel );
     void                InsertTabPanel( wxPanel * panel, const int index, const wxString &label );
 
+    void                OnJamendoCoverDownloaded( wxCommandEvent &event );
+
   public:
                         guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                         ~guMainFrame();
     void                DoLibraryClean( wxCommandEvent &event );
     void                LibraryUpdated( wxCommandEvent &event );
+    void                OnJamendoUpdated( wxCommandEvent &event );
     void                LibraryCleanFinished( wxCommandEvent &event );
     void                OnQuit( wxCommandEvent &WXUNUSED(event) );
     void                UpdatePodcasts( void );
@@ -322,6 +346,10 @@ class guMainFrame : public wxFrame
     void                UpdatedTrack( int updatedby, const guTrack * track );
 
     guDBusNotify *      GetNotifyObject( void ) { return m_NotifySrv; };
+
+    guJamendoPanel *    GetJamendoPanel( void ) { return m_JamendoPanel; }
+    guJamendoLibrary *  GetJamendoDb( void ) { return m_JamendoDb; }
+
 };
 
 // -------------------------------------------------------------------------------- //

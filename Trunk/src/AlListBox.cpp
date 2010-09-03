@@ -27,6 +27,7 @@
 #include "MainFrame.h"
 #include "OnlineLinks.h"
 #include "Utils.h"
+#include "LibPanel.h"
 
 #include <wx/renderer.h>
 
@@ -35,11 +36,12 @@
 // -------------------------------------------------------------------------------- //
 // guAlListBox
 // -------------------------------------------------------------------------------- //
-guAlListBox::guAlListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
+guAlListBox::guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
     guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
 {
     m_Db = db;
     m_Items = new guAlbumItems();
+    m_LibPanel = libpanel;
 
     guListViewColumn * Column = new guListViewColumn( label, 0 );
     InsertColumn( Column );
@@ -182,6 +184,7 @@ void AddAlbumCommands( wxMenu * Menu, int SelCount )
 void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
+    int ContextMenuFlags = m_LibPanel->GetContextMenuFlags();
 
     MenuItem = new wxMenuItem( Menu, ID_ALBUM_PLAY, _( "Play" ), _( "Play current selected albums" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
@@ -204,11 +207,14 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITTRACKS, _( "Edit Album songs" ), _( "Edit the selected albums songs" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-        Menu->Append( MenuItem );
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITTRACKS, _( "Edit Album songs" ), _( "Edit the selected albums songs" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            Menu->Append( MenuItem );
+        }
 
-        if( SelCount == 1 )
+        if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS ) )
         {
             Menu->AppendSeparator();
 
@@ -257,20 +263,31 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
 
     if( SelCount )
     {
-        Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_ALBUM_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
-
-        Menu->AppendSeparator();
-        if( SelCount == 1 )
+        if( ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
         {
-            AddOnlineLinksMenu( Menu );
+            Menu->AppendSeparator();
+
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+            Menu->Append( MenuItem );
         }
 
-        AddAlbumCommands( Menu, SelCount );
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
+        {
+            Menu->AppendSeparator();
+
+            if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
+            {
+                AddOnlineLinksMenu( Menu );
+            }
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+                AddAlbumCommands( Menu, SelCount );
+        }
     }
+
+    m_LibPanel->CreateContextMenu( Menu );
 }
 
 // -------------------------------------------------------------------------------- //

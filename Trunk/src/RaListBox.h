@@ -25,12 +25,16 @@
 
 #include "ItemListBox.h"
 
+class guLibPanel;
+
 // -------------------------------------------------------------------------------- //
 class guRaListBox : public guListBox
 {
   protected :
-    wxBitmap *          m_NormalStar;
-    wxBitmap *          m_SelectStar;
+    guLibPanel *    m_LibPanel;
+
+    wxBitmap *      m_NormalStar;
+    wxBitmap *      m_SelectStar;
 
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * menu ) const;
@@ -41,7 +45,7 @@ class guRaListBox : public guListBox
     virtual void    DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
 
   public :
-                    guRaListBox( wxWindow * parent, guDbLibrary * db, const wxString &label );
+                    guRaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                     ~guRaListBox();
     virtual int     GetSelectedSongs( guTrackArray * songs ) const;
 

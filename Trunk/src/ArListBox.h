@@ -25,10 +25,14 @@
 
 #include "ItemListBox.h"
 
+class guLibPanel;
+
 // -------------------------------------------------------------------------------- //
 class guArListBox : public guListBox
 {
   protected :
+    guLibPanel *    m_LibPanel;
+
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * menu ) const;
     void            OnSearchLinkClicked( wxCommandEvent &event );
@@ -38,7 +42,7 @@ class guArListBox : public guListBox
     virtual int     GetDragFiles( wxFileDataObject * files );
 
   public :
-                    guArListBox( wxWindow * parent, guDbLibrary * db, const wxString &label );
+                    guArListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                     ~guArListBox();
     virtual int     GetSelectedSongs( guTrackArray * songs ) const;
     bool            SelectArtistName( const wxString &ArtistName );

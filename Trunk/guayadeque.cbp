@@ -136,6 +136,8 @@
 		<Unit filename="src/Images.h" />
 		<Unit filename="src/ItemListBox.cpp" />
 		<Unit filename="src/ItemListBox.h" />
+		<Unit filename="src/Jamendo.cpp" />
+		<Unit filename="src/Jamendo.h" />
 		<Unit filename="src/LabelEditor.cpp" />
 		<Unit filename="src/LabelEditor.h" />
 		<Unit filename="src/LastFM.cpp" />

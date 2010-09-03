@@ -50,6 +50,12 @@ guMainApp::guMainApp() : wxApp()
         guLogMessage( wxT( "Created the lyrics directory" ) );
     }
 
+    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo" ) ) )
+    {
+        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo" ), 0770 );
+        guLogMessage( wxT( "Created the Jamendo directory" ) );
+    }
+
     if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ) ) )
     {
         if( wxFileExists( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ) ) )

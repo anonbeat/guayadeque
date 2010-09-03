@@ -24,12 +24,15 @@
 #include "DbLibrary.h"
 #include "ItemListBox.h"
 
+class guLibPanel;
+
 // -------------------------------------------------------------------------------- //
 class guAlListBox : public  guListView
 {
   private :
     guDbLibrary *       m_Db;
     guAlbumItems *      m_Items;
+    guLibPanel *        m_LibPanel;
 
     void                OnAlbumListActivated( wxListEvent &event );
     void                OnAlbumListSelected( wxListEvent &event );
@@ -46,7 +49,7 @@ class guAlListBox : public  guListView
     virtual int         GetDragFiles( wxFileDataObject * files );
 
   public :
-                        guAlListBox( wxWindow * parent, guDbLibrary * db, const wxString &label );
+                        guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                         ~guAlListBox();
     bool                SelectAlbumName( const wxString &AlbumName );
 //    void                ReloadItems( const bool reset = true );

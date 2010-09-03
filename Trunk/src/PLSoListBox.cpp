@@ -32,7 +32,7 @@
 
 // -------------------------------------------------------------------------------- //
 guPLSoListBox::guPLSoListBox( wxWindow * parent, guDbLibrary * db, wxString confname, int style ) :
-             guSoListBox( parent, db, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
+             guSoListBox( parent, NULL, db, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
     m_PLId = wxNOT_FOUND;
     m_PLType = wxNOT_FOUND;
