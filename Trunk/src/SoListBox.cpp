@@ -594,7 +594,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         }
     }
 
-    m_LibPanel->CreateContextMenu( Menu );
+    m_LibPanel->CreateContextMenu( Menu, guLIBRARY_ELEMENT_TRACKS );
 }
 
 // -------------------------------------------------------------------------------- //

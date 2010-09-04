@@ -254,7 +254,7 @@ class guLibPanel : public wxPanel
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
     ~guLibPanel();
 
-    virtual void CreateContextMenu( wxMenu * menu );
+    virtual void CreateContextMenu( wxMenu * menu, const int windowid = 0 );
     virtual void NormalizeTracks( guTrackArray * tracks ) {};
     void ReloadControls( void );
     void UpdateLabels( void );
