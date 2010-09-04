@@ -239,6 +239,13 @@ guJamendoPanel::guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlay
     Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnCoverDownloaded ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guJamendoPanel::OnConfigUpdated ), NULL, this );
+
+    wxArrayInt AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "JamendoGenres" ) );
+    if( AllowedGenres.IsEmpty() )
+    {
+        wxCommandEvent event;
+        OnEditSetup( event );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -508,6 +515,14 @@ void guJamendoPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
 void guJamendoPanel::OnDownloadAlbum( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnDownloadAlbum" ) );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
+    if( TorrentCmd.IsEmpty() )
+    {
+        OnEditSetup( event );
+        return;
+    }
+
     wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
     if( Albums.Count() )
     {
@@ -519,6 +534,14 @@ void guJamendoPanel::OnDownloadAlbum( wxCommandEvent &event )
 void guJamendoPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
+    if( TorrentCmd.IsEmpty() )
+    {
+        OnEditSetup( event );
+        return;
+    }
+
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
 
@@ -934,6 +957,7 @@ void ReadJamendoXmlAlbums( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, 
     {
         if( xmlnode->GetName() == wxT( "album" ) )
         {
+            track->m_CoverId = 0;
             ReadJamendoXmlAlbum( xmlnode->GetChildren(), thread, track, db, genres );
         }
         xmlnode = xmlnode->GetNext();
@@ -1125,7 +1149,7 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
             if( GenresToDel.Count() )
             {
                 query = wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( GenresToDel, wxT( "song_genreid" ) );
-                guLogMessage( wxT( "%s" ), query.c_str() );
+                //guLogMessage( wxT( "%s" ), query.c_str() );
                 m_Db->ExecuteUpdate( query );
             }
 
@@ -1136,28 +1160,31 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
             query = wxT( "BEGIN TRANSACTION" );
             m_Db->ExecuteUpdate( query );
 
-            wxString ArtistChunk = GetNextArtistChunk( XmlFile, CurPos );
-            while( !TestDestroy() && !ArtistChunk.IsEmpty() )
+            if( m_AllowedGenres.Count() )
             {
-                wxStringInputStream Ins( ArtistChunk );
-                wxXmlDocument XmlDoc( Ins );
-                if( XmlDoc.IsOk() )
+                wxString ArtistChunk = GetNextArtistChunk( XmlFile, CurPos );
+                while( !TestDestroy() && !ArtistChunk.IsEmpty() )
                 {
-                    wxXmlNode * XmlNode = XmlDoc.GetRoot();
-
-                    if( XmlNode && XmlNode->GetName() == wxT( "artist" ) )
+                    wxStringInputStream Ins( ArtistChunk );
+                    wxXmlDocument XmlDoc( Ins );
+                    if( XmlDoc.IsOk() )
                     {
-                        ReadJamendoXmlArtist( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db, m_AllowedGenres );
-                    }
-                }
-                else
-                {
-                    guLogMessage( wxT( "Error in artist chunk:\n%s" ), ArtistChunk.c_str() );
-                }
+                        wxXmlNode * XmlNode = XmlDoc.GetRoot();
 
-                ArtistChunk = GetNextArtistChunk( XmlFile, CurPos );
-                evtup.SetExtraLong( CurPos );
-                wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+                        if( XmlNode && XmlNode->GetName() == wxT( "artist" ) )
+                        {
+                            ReadJamendoXmlArtist( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db, m_AllowedGenres );
+                        }
+                    }
+                    else
+                    {
+                        guLogMessage( wxT( "Error in artist chunk:\n%s" ), ArtistChunk.c_str() );
+                    }
+
+                    ArtistChunk = GetNextArtistChunk( XmlFile, CurPos );
+                    evtup.SetExtraLong( CurPos );
+                    wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+                }
             }
 
             query = wxT( "END TRANSACTION" );
