@@ -36,6 +36,7 @@ guPLSoListBox::guPLSoListBox( wxWindow * parent, guDbLibrary * db, wxString conf
 {
     m_PLId = wxNOT_FOUND;
     m_PLType = wxNOT_FOUND;
+    m_LibPanel = NULL;
 
     ReloadItems();
 }
