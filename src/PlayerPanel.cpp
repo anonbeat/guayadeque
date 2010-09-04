@@ -1489,12 +1489,12 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
     wxFileOffset CurPos = event.GetInt();
     wxFileOffset CurLen = event.GetExtraLong();
-    if( CurLen != m_LastLength )
+    if( CurLen && ( CurLen != m_LastLength ) )
     {
         m_LastLength = CurLen;
 
-        if( !m_LastLength )
-            m_PlayerPositionSlider->SetValue( 0 );
+//        if( !m_LastLength )
+//            m_PlayerPositionSlider->SetValue( 0 );
 
         // Some track lengths are not correctly read by taglib so
         // we try to find the length from gstreamer and update the database
@@ -1528,7 +1528,9 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         UpdatePositionLabel( CurPos / 1000 );
 
         if( m_LastLength )
+        {
             m_PlayerPositionSlider->SetValue( event.GetInt() / ( m_LastLength / 1000 ) );
+        }
 
         m_MediaSong.m_PlayTime = CurPos / 1000;
 
@@ -1811,6 +1813,9 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     m_SavedPlayedTrack = false;
     m_SilenceDetected = false;
     m_AboutToEndDetected = false;
+    m_LastLength = m_MediaSong.m_Length * 1000;
+    if( !m_LastLength )
+        m_PlayerPositionSlider->SetValue( 0 );
 
     // Update the Current Playing Song Info
     UpdateLabels();

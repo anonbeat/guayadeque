@@ -2830,7 +2830,7 @@ void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::CreateContextMenu( wxMenu * menu )
+void guLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
 {
 }
 

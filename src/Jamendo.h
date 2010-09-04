@@ -30,12 +30,15 @@
 #include <wx/window.h>
 
 #define guJAMENDO_DATABASE_DUMP_URL         wxT( "http://img.jamendo.com/data/dbdump_artistalbumtrack.xml.gz" )
-#define guJAMENDO_FILE_FORMAT_MP3           wxT( "mp31" )
-#define guJAMENDO_FILE_FORMAT_OGG           wxT( "ogg2" )
+#define guJAMENDO_STREAM_FORMAT_MP3         wxT( "mp31" )
+#define guJAMENDO_STREAM_FORMAT_OGG         wxT( "ogg2" )
 #define guJAMENDO_FILE_STREAM_URL           wxT( "http://api.jamendo.com/get2/stream/track/redirect/?id=%u&streamencoding=" )
 #define guJAMENDO_FILE_STREAM_MP3_URL       wxT( "http://api.jamendo.com/get2/stream/track/redirect/?id=%u&streamencoding=mp31" )
 #define guJAMENDO_FILE_STREAM_OGG_URL       wxT( "http://api.jamendo.com/get2/stream/track/redirect/?id=%u&streamencoding=ogg2" )
 #define guJAMENDO_COVER_DOWNLOAD_URL        wxT( "http://api.jamendo.com/get2/image/album/redirect/?id=%u&imagesize=%u" )
+#define guJAMENDO_TORRENT_DOWNLOAD_URL      wxT( "http://api.jamendo.com/get2/bittorrent/file/plain/?album_id=%u&type=archive&class=" )
+#define guJAMENDO_DOWNLOAD_FORMAT_MP3       wxT( "mp32" )
+#define guJAMENDO_DOWNLOAD_FORMAT_OGG       wxT( "ogg3" )
 
 #define guJAMENDO_ACTION_UPDATE             0   // Download the database and then upgrade
 #define guJAMENDO_ACTION_UPGRADE            1   // Just refresh the tracks not updating the database
@@ -77,48 +80,69 @@ class guJamendoUpdateThread : public wxThread
 
 };
 
+class guJamendoDownloadThread;
+
 // -------------------------------------------------------------------------------- //
 class guJamendoPanel : public guLibPanel
 {
   protected :
-    virtual void        NormalizeTracks( guTrackArray * tracks );
-    virtual void        CreateContextMenu( wxMenu * menu );
-    void                OnEditSetup( wxCommandEvent &event );
-    void                OnUpdate( wxCommandEvent &event );
-    void                OnUpgrade( wxCommandEvent &event );
+    guJamendoUpdateThread *     m_UpdateThread;
+    wxMutex                     m_UpdateThreadMutex;
 
-    void                OnConfigUpdated( wxCommandEvent &event );
-    void                OnCoverDownloaded( wxCommandEvent &event );
+    guJamendoDownloadThread *   m_DownloadThread;
+    wxMutex                     m_DownloadThreadMutex;
 
-    void                OnAlbumDownloadCoverClicked( wxCommandEvent &event );
-    void                OnAlbumSelectCoverClicked( wxCommandEvent &event );
+    virtual void                NormalizeTracks( guTrackArray * tracks );
+    virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
+    void                        OnEditSetup( wxCommandEvent &event );
+
+    void                        OnUpdate( wxCommandEvent &event );
+    void                        OnUpgrade( wxCommandEvent &event );
+    void                        StartUpdateTracks( const int action );
+
+    void                        OnConfigUpdated( wxCommandEvent &event );
+    void                        OnCoverDownloaded( wxCommandEvent &event );
+
+    void                        OnAlbumDownloadCoverClicked( wxCommandEvent &event );
+    void                        OnAlbumSelectCoverClicked( wxCommandEvent &event );
+
+    void                        OnDownloadAlbum( wxCommandEvent &event );
+    void                        OnDownloadTrackAlbum( wxCommandEvent &event );
 
   public :
     guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Jam" ) );
     ~guJamendoPanel();
 
-    guJamendoLibrary *  GetJamendoDb( void ) { return ( guJamendoLibrary * ) m_Db; }
-    wxImage *           GetAlbumCover( const int albumid, wxString &coverpath );
-    void                DownloadCover( const int albumid );
+    guJamendoLibrary *          GetJamendoDb( void ) { return ( guJamendoLibrary * ) m_Db; }
+    wxImage *                   GetAlbumCover( const int albumid, wxString &coverpath );
+    void                        AddDownload( const int albumid, const bool iscover = true );
+    void                        AddDownloads( wxArrayInt &albumids, const bool iscover = true );
+
+    void                        EndUpdateThread( void );
+    void                        EndDownloadThread( void );
+
 
 };
 
 // -------------------------------------------------------------------------------- //
-class guJamendoDownloadCoverThread : public wxThread
+class guJamendoDownloadThread : public wxThread
 {
   private :
     guJamendoLibrary *  m_Db;
     guJamendoPanel *    m_JamendoPanel;
+    wxArrayInt          m_Covers;
+    wxMutex             m_CoversMutex;
     wxArrayInt          m_Albums;
     wxMutex             m_AlbumsMutex;
 
   protected :
 
   public :
-    guJamendoDownloadCoverThread( guJamendoPanel * jamendopanel );
-    ~guJamendoDownloadCoverThread();
+    guJamendoDownloadThread( guJamendoPanel * jamendopanel );
+    ~guJamendoDownloadThread();
 
-    void AddAlbum( const int albumid );
+    void AddAlbum( const int albumid, const bool iscover = true );
+    void AddAlbums( wxArrayInt &albums, const bool iscover = true );
 
     ExitCode Entry();
 
