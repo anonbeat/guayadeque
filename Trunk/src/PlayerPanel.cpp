@@ -109,44 +109,42 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     // Load configuration
     Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+
+    Config->RegisterObject( this );
+
+    //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
+    SavedVol = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
+    //guLogMessage( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
+    m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
+    m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
+    m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
+    m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) );
+    m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
+    m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
+
+    m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
+    m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
+    m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
+    m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
+                             Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
+    Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
+    if( Equalizer.Count() != guEQUALIZER_BAND_COUNT )
     {
-        Config->RegisterObject( this );
-
-        //guLogMessage( wxT( "Reading PlayerPanel Config" ) );
-        SavedVol = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
-        //guLogMessage( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
-        m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
-        m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
-        m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
-        m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) );
-        m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
-        m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
-
-        m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
-        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
-        m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
-        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
-                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
-        Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
-        if( Equalizer.Count() != guEQUALIZER_BAND_COUNT )
-        {
-            Equalizer.Empty();
-            Equalizer.Add( 0, guEQUALIZER_BAND_COUNT );
-        }
-
-        m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
-        m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
-        if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "Playback" ) ) )
-        {
-            m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
-        }
-
-        m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
-
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
-//        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
+        Equalizer.Empty();
+        Equalizer.Add( 0, guEQUALIZER_BAND_COUNT );
     }
+
+    m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
+    m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
+    if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "Playback" ) ) )
+    {
+        m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
+    }
+
+    m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
+
+    m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+//        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
 
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;

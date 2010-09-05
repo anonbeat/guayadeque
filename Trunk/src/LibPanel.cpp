@@ -1518,6 +1518,7 @@ void guLibPanel::OnSongSetField( wxCommandEvent &event )
     }
 
     m_Db->UpdateSongs( &Tracks );
+    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1640,6 +1641,7 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
             }
 
             m_Db->UpdateSongs( &Tracks );
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         FieldEditor->Destroy();
     }

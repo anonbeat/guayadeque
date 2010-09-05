@@ -732,6 +732,12 @@ guMainFrame::~guMainFrame()
 //        m_DbCache->Close();
 //        delete m_DbCache;
 //    }
+
+    if( m_JamendoDb )
+    {
+        m_JamendoDb->Close();
+        delete m_JamendoDb;
+    }
 }
 
 extern void wxClearGtkSystemObjects();

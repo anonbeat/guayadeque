@@ -496,6 +496,8 @@ guMediaCtrl::~guMediaCtrl()
         g_source_remove( m_TickTimeoutId );
         m_TickTimeoutId = 0;
     }
+
+    gst_deinit();
 }
 
 // -------------------------------------------------------------------------------- //
