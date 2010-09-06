@@ -255,7 +255,7 @@ class guLibPanel : public wxPanel
     ~guLibPanel();
 
     virtual void CreateContextMenu( wxMenu * menu, const int windowid = 0 );
-    virtual void NormalizeTracks( guTrackArray * tracks ) {};
+    virtual void NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
     void ReloadControls( void );
     void UpdateLabels( void );
 
