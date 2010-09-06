@@ -3656,12 +3656,15 @@ guCopyToDirThread::~guCopyToDirThread()
 // -------------------------------------------------------------------------------- //
 guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 {
-    int         count = m_Tracks->Count();
-    int         index;
-    wxString    FileName;
-    wxString    FilePattern;
-	guConfig *  Config;
-	bool        FileOverwrite = true;
+    int             count = m_Tracks->Count();
+    int             index;
+    wxString        FileName;
+    wxString        FilePattern;
+	guConfig *      Config;
+	bool            FileOverwrite = true;
+	wxFileOffset    SizeCounter = 0;
+	unsigned int    TimeCounter = wxGetLocalTime();
+	guMainFrame *   MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
 
     Config = ( guConfig * ) guConfig::Get();
     FilePattern = Config->ReadStr( wxT( "CopyToPattern" ), wxT( "{g}/{a}/{b}/{n} - {a} - {t}" ), wxT( "General" ) );
@@ -3673,7 +3676,7 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
     event.SetInt( m_GaugeId );
     event.SetExtraLong( count );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( MainFrame, event );
 
     for( index = 0; index < count; index++ )
     {
@@ -3727,18 +3730,32 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
         {
             guLogError( wxT( "Could not create path for copy the file '%s'" ), FileName.c_str() );
         }
+        SizeCounter += ( * m_Tracks )[ index ].m_FileSize;
         //
         event.SetId( ID_GAUGE_UPDATE );
         event.SetInt( m_GaugeId );
         event.SetExtraLong( index + 1 );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( MainFrame, event );
     }
 
     //
     event.SetId( ID_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( MainFrame, event );
     //wxMessageBox( "Copy to dir finished" );
+
+    guDBusNotify * NotifySrv = MainFrame->GetNotifyObject();
+    if( NotifySrv )
+    {
+        TimeCounter = wxGetLocalTime() - TimeCounter;
+        wxString FinishMsg = wxString::Format( _( "Copied %u files (%s)\nin %s seconds" ),
+            m_Tracks->Count(),
+            SizeToString( SizeCounter ).c_str(),
+            LenToString( TimeCounter ).c_str() );
+        wxImage IconImg = guImage( guIMAGE_INDEX_guayadeque );
+        NotifySrv->Notify( wxEmptyString, _( "Finished copying files" ), FinishMsg, &IconImg );
+    }
+
     return 0;
 }
 
