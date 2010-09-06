@@ -617,7 +617,7 @@ wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * 
                 else
                 {
                     // Prevent that </artist was partially included
-                    CurPos += ReadCount - ( endstrlen - 1 );
+                    CurPos += ReadCount - endstrlen;
                     xmlfile.Seek( -endstrlen, wxFromCurrent );
                 }
             }
