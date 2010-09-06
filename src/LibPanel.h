@@ -239,15 +239,15 @@ class guLibPanel : public wxPanel
     void DoSelectionChanged( void );
 
 
-    void ReloadLabels( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_LABELS ) m_LabelsListCtrl->ReloadItems( reset ); }
-    void ReloadGenres( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_GENRES ) m_GenreListCtrl->ReloadItems( reset ); }
-    void ReloadAlbumArtists( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_ALBUMARTISTS ) m_AlbumArtistListCtrl->ReloadItems( reset ); }
-    void ReloadArtists( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_ARTISTS ) m_ArtistListCtrl->ReloadItems( reset ); }
-    void ReloadComposers( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_COMPOSERS ) m_ComposerListCtrl->ReloadItems( reset ); }
-    void ReloadAlbums( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_ALBUMS ) m_AlbumListCtrl->ReloadItems( reset ); }
-    void ReloadYears( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_YEARS ) m_YearListCtrl->ReloadItems( reset ); }
-    void ReloadRatings( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_RATINGS ) m_RatingListCtrl->ReloadItems( reset ); }
-    void ReloadPlayCounts( bool reset = true ) { if( m_VisiblePanels & guLIBRARY_ELEMENT_PLAYCOUNT ) m_PlayCountListCtrl->ReloadItems( reset ); }
+    void ReloadLabels( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_LABELS ) m_LabelsListCtrl->ReloadItems( reset ); }
+    void ReloadGenres( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_GENRES ) m_GenreListCtrl->ReloadItems( reset ); }
+    void ReloadAlbumArtists( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ALBUMARTISTS ) m_AlbumArtistListCtrl->ReloadItems( reset ); }
+    void ReloadArtists( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ARTISTS ) m_ArtistListCtrl->ReloadItems( reset ); }
+    void ReloadComposers( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_COMPOSERS ) m_ComposerListCtrl->ReloadItems( reset ); }
+    void ReloadAlbums( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ALBUMS ) m_AlbumListCtrl->ReloadItems( reset ); }
+    void ReloadYears( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_YEARS ) m_YearListCtrl->ReloadItems( reset ); }
+    void ReloadRatings( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_RATINGS ) m_RatingListCtrl->ReloadItems( reset ); }
+    void ReloadPlayCounts( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_PLAYCOUNT ) m_PlayCountListCtrl->ReloadItems( reset ); }
     void ReloadSongs( bool reset = true ) { m_SongListCtrl->ReloadItems( reset ); }
 
   public :
