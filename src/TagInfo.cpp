@@ -109,6 +109,7 @@ wxImage * GetID3v2ImageType( TagLib::ID3v2::FrameList &framelist,
     for( std::list<TagLib::ID3v2::Frame*>::iterator iter = framelist.begin(); iter != framelist.end(); iter++ )
     {
         PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
+
         if( PicFrame->type() == frametype )
         {
             int ImgDataSize = PicFrame->picture().size();
@@ -119,7 +120,9 @@ wxImage * GetID3v2ImageType( TagLib::ID3v2::FrameList &framelist,
                 wxMemoryOutputStream ImgOutStream;
                 ImgOutStream.Write( PicFrame->picture().data(), ImgDataSize );
                 wxMemoryInputStream ImgInputStream( ImgOutStream );
-                wxImage * CoverImage = new wxImage( ImgInputStream, wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 ) );
+                wxString ImgHandler = wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 );
+                ImgHandler.Replace( wxT( "/jpg" ), wxT( "/jpeg" ) );
+                wxImage * CoverImage = new wxImage( ImgInputStream, ImgHandler );
                 if( CoverImage )
                 {
                     if( CoverImage->IsOk() )
