@@ -47,7 +47,7 @@ guPlayerPlayList::guPlayerPlayList( wxWindow * parent, guDbLibrary * db ) :
 {
     wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
-    m_PlayListCtrl = new guPlayList( this, db );
+    m_PlayListCtrl = new guPlayList( this, db, NULL, ( guMainFrame * ) parent );
     MainSizer->Add( m_PlayListCtrl, 1, wxEXPAND, 5 );
 
 	SetSizer( MainSizer );
@@ -64,7 +64,7 @@ void guPlayerPlayList::SetPlayerPanel( guPlayerPanel * player )
 // -------------------------------------------------------------------------------- //
 //
 // -------------------------------------------------------------------------------- //
-guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
+guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, guMainFrame * mainframe ) :
             guListView( parent, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG |
                 guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS | guLISTVIEW_HIDE_HEADER )
 {
@@ -78,6 +78,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
 
     m_Db = db;
     m_PlayerPanel = playerpanel;
+    m_MainFrame = mainframe;
     m_TotalLen = 0;
     m_CurItem = wxNOT_FOUND;
     m_StartPlaying = false;
@@ -1204,15 +1205,29 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
     else if( guIsJamendoFile( FileName ) )
     {
         //http://api.jamendo.com/get2/stream/track/redirect/?id=594731&streamencoding=ogg2
-        Track.m_Type     = guTRACK_TYPE_JAMENDO;
         Track.m_CoverId  = 0;
-        Track.m_FileName = FileName;
         Track.m_SongName = FileName;
         //Track.m_AlbumName = FileName;
         Track.m_Length   = 0;
         Track.m_Year     = 0;
         Track.m_Bitrate  = 0;
         Track.m_Rating   = wxNOT_FOUND;
+
+        long Id;
+        wxString IdStr = FileName.Mid( FileName.Find( wxT( "/?id=" ) ) + 5 );
+        IdStr = IdStr.Mid( 0, IdStr.Find( wxT( "&" ) ) );
+        IdStr.ToLong( &Id );
+        if( Id )
+        {
+            guJamendoLibrary * JamendoDb = m_MainFrame->GetJamendoDb();
+            if( JamendoDb )
+            {
+                JamendoDb->FindTrackId( Id, &Track );
+            }
+        }
+
+        Track.m_Type     = guTRACK_TYPE_JAMENDO;
+        Track.m_FileName = FileName;
         AddItem( Track, pos );
     }
     else    // This should be a radiostation

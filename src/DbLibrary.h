@@ -460,7 +460,8 @@ class guDbLibrary : public guDb
     int                 GetTrackIndex( const int trackid );
     guTrack *           FindSong( const wxString &artist, const wxString &track,
                                   const int filterallow, const int filterdeny );
-    int                 FindTrackFile( const wxString &filename, guTrack * song );
+    int                 FindTrackFile( const wxString &filename, guTrack * track );
+    int                 FindTrackId( const int trackid, guTrack * track );
 
     //
     // AudioScrobbler functions

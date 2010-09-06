@@ -319,6 +319,8 @@ class guPlayerPanel : public wxPanel
                                        guPlayList * playlist, guPlayerFilters * filters );
                         ~guPlayerPanel();
     //void                UpdateStatus();
+    guMainFrame *       MainFrame( void ) { return m_MainFrame; }
+
     void                SetPlayList( const guTrackArray &SongList );
     void                AddToPlayList( const guTrackArray &SongList, const bool allowplay = true, const bool aftercurrent = false );
     void                AddToPlayList( const wxString &FileName, const bool aftercurrent = false );
