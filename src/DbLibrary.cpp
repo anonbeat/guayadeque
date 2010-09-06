@@ -1496,25 +1496,6 @@ int guDbLibrary::GetLabelId( int * LabelId, wxString &LabelName )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDbLibrary::FindPath( const wxString &path )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-  bool RetVal = false;
-
-  query = wxString::Format( wxT( "SELECT song_pathid FROM songs WHERE song_path LIKE '%%%s' LIMIT 1;" ),
-                    escape_query_str( path ).c_str() );
-  dbRes = ExecuteQuery( query );
-
-  if( dbRes.NextRow() )
-  {
-      RetVal = true;
-  }
-  dbRes.Finalize();
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
 int guDbLibrary::PathExists( const wxString &path )
 {
   wxString query;
