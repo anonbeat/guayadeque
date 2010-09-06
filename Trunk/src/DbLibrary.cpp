@@ -4453,7 +4453,7 @@ guTrack * guDbLibrary::FindSong( const wxString &artist, const wxString &trackna
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::FindTrackFile( const wxString &filename, guTrack * song )
+int guDbLibrary::FindTrackFile( const wxString &filename, guTrack * track )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -4487,13 +4487,36 @@ int guDbLibrary::FindTrackFile( const wxString &filename, guTrack * song )
     if( dbRes.NextRow() )
     {
       RetVal = dbRes.GetInt( 0 );
-      if( song )
+      if( track )
       {
-          FillTrackFromDb( song, &dbRes );
+          FillTrackFromDb( track, &dbRes );
       }
     }
     dbRes.Finalize();
 //  }
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::FindTrackId( const int trackid, guTrack * track )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int RetVal = 0;
+
+  query = GU_TRACKS_QUERYSTR + wxString::Format( wxT( " WHERE song_id = %u LIMIT 1;" ), trackid );
+
+  dbRes = ExecuteQuery( query );
+  if( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( track )
+    {
+        FillTrackFromDb( track, &dbRes );
+    }
+  }
+  dbRes.Finalize();
+
   return RetVal;
 }
 

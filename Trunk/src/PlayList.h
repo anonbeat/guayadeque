@@ -36,12 +36,14 @@ wxString LenToString( int Len );
 
 class guPlayerPanel;
 class guPlayList;
+class guMainFrame;
 
 // -------------------------------------------------------------------------------- //
 class guPlayList : public guListView
 {
   private :
     guDbLibrary *   m_Db;
+    guMainFrame *   m_MainFrame;
     guPlayerPanel * m_PlayerPanel;
     guTrackArray    m_Items;
     wxMutex         m_ItemsMutex;
@@ -109,7 +111,7 @@ class guPlayList : public guListView
     void                        OnDeleteFromDrive( wxCommandEvent &event );
 
   public :
-    guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL );
+    guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL, guMainFrame * mainframe = NULL );
     ~guPlayList();
 
     void                        SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }

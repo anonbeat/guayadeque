@@ -348,7 +348,12 @@ class guMainFrame : public wxFrame
     guDBusNotify *      GetNotifyObject( void ) { return m_NotifySrv; };
 
     guJamendoPanel *    GetJamendoPanel( void ) { return m_JamendoPanel; }
-    guJamendoLibrary *  GetJamendoDb( void ) { return m_JamendoDb; }
+    guJamendoLibrary *  GetJamendoDb( void )
+    {
+        if( !m_JamendoDb )
+            m_JamendoDb = new guJamendoLibrary( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Jamendo.db" ) );
+         return m_JamendoDb;
+    }
 
 };
 
