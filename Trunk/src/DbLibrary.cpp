@@ -615,18 +615,29 @@ bool guDbLibrary::CheckDbVersion( void )
                       "playlist_type INTEGER(2), playlist_limited BOOLEAN, playlist_limitvalue INTEGER, playlist_limittype INTEGER(2), "
                       "playlist_sorted BOOLEAN, playlist_sorttype INTEGER(2), playlist_sortdesc BOOLEAN, playlist_anyoption BOOLEAN);" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'playlist_id' on playlists (playlist_id ASC);" ) );
-      query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
+
+      wxString querystr = wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                      "VALUES( NULL, 'Recent Added Tracks', 1, 0, 0, 0, 1, 12, 1, 0 );" ) );
-      query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
+                      "VALUES( NULL, '" );
+      querystr += _( "Recent Added Tracks" );
+      querystr += wxT( "', 1, 0, 0, 0, 1, 12, 1, 0 );" );
+      query.Add( querystr );
+      querystr = wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                      "VALUES( NULL, 'Last Played Tracks', 1, 0, 0, 0, 1, 11, 1, 0 );" ) );
-      query.Add( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
+                      "VALUES( NULL, '" );
+
+      querystr += _( "Last Played Tracks" );
+      querystr += wxT( "', 1, 0, 0, 0, 1, 11, 1, 0 );" );
+      query.Add( querystr );
+      querystr = wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
-                      "VALUES( NULL, 'Most Rated Tracks', 1, 0, 0, 0, 1, 8, 1, 0 );" ) );
+                      "VALUES( NULL, '" );
+      querystr += _( "Most Rated Tracks" );
+      querystr += wxT( "', 1, 0, 0, 0, 1, 8, 1, 0 );" );
+      query.Add( querystr );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsets( plset_id INTEGER PRIMARY KEY AUTOINCREMENT, plset_plid INTEGER, plset_songid INTEGER, "
                       "plset_type INTEGER(2), plset_option INTEGER(2), plset_text TEXT(255), plset_number INTEGER, plset_option2 INTEGER );" ) );
