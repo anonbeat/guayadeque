@@ -277,7 +277,7 @@ void guJamendoPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
             Track->m_FileName += AudioFormat ? guJAMENDO_STREAM_FORMAT_OGG : guJAMENDO_STREAM_FORMAT_MP3;
             Track->m_Type = guTRACK_TYPE_JAMENDO;
             if( isdrag )
-                track->m_FileName.Replace( wxT( "http://" ), wxT( "//" ) );
+                Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
         }
     }
 }
