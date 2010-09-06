@@ -45,6 +45,12 @@
 //
 //        * Album Covers are available here: http://api.jamendo.com/get2/image/album/redirect/?id={ALBUMID}&imagesize={100-600}
 //
+//
+// To download directly in zip format
+// http://www.jamendo.com/en/download/album/57557
+// >> http://download25.jamendo.com/request/album/61518/mp32/fabc1123
+// << Jamendo_HttpDownloadCallback('ready','fb267e3f92');
+// >> http://download25.jamendo.com/download/album/61518/mp32/"+data+"/"+encodeURIComponent("noblemo - PIANO -- Jamendo - MP3 VBR 192k - 2010.02.16 [www.jamendo.com].zip")
 
 // -------------------------------------------------------------------------------- //
 // guJamendoLibrary
@@ -233,8 +239,10 @@ guJamendoPanel::guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlay
     Connect( ID_JAMENDO_SETUP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnEditSetup ), NULL, this );
     Connect( ID_JAMENDO_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnUpdate ), NULL, this );
     Connect( ID_JAMENDO_UPGRADE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnUpgrade ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
 
     Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnCoverDownloaded ), NULL, this );
 
@@ -254,7 +262,7 @@ guJamendoPanel::~guJamendoPanel()
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::NormalizeTracks( guTrackArray * tracks )
+void guJamendoPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
 {
     int Index;
     int Count;
@@ -268,6 +276,8 @@ void guJamendoPanel::NormalizeTracks( guTrackArray * tracks )
             Track->m_FileName = wxString::Format( guJAMENDO_FILE_STREAM_URL, Track->m_SongId );
             Track->m_FileName += AudioFormat ? guJAMENDO_STREAM_FORMAT_OGG : guJAMENDO_STREAM_FORMAT_MP3;
             Track->m_Type = guTRACK_TYPE_JAMENDO;
+            if( isdrag )
+                track->m_FileName.Replace( wxT( "http://" ), wxT( "//" ) );
         }
     }
 }
@@ -280,13 +290,23 @@ void guJamendoPanel::CreateContextMenu( wxMenu * menu, const int windowid )
 
     if( ( windowid == guLIBRARY_ELEMENT_ALBUMS ) )
     {
-        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
+        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
         SubMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, _( "Download Albums torrents" ), _( "Download the current selected album" ) );
+        SubMenu->Append( MenuItem );
+
+        SubMenu->AppendSeparator();
     }
     else if( ( windowid == guLIBRARY_ELEMENT_TRACKS ) )
     {
-        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
+        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
         SubMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, _( "Download Albums torrents" ), _( "Download the current selected album" ) );
+        SubMenu->Append( MenuItem );
+
+        SubMenu->AppendSeparator();
     }
 
     wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_UPDATE, _( "Update Database" ), _( "Download the latest Jamendo database" ) );
@@ -515,6 +535,7 @@ void guJamendoPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
 void guJamendoPanel::OnDownloadAlbum( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnDownloadAlbum" ) );
+
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
     if( TorrentCmd.IsEmpty() )
@@ -523,10 +544,22 @@ void guJamendoPanel::OnDownloadAlbum( wxCommandEvent &event )
         return;
     }
 
+    int Index;
+    int Count;
     wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-    if( Albums.Count() )
+    if( ( Count = Albums.Count() ) )
     {
-        AddDownloads( Albums, false );
+        if( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM )
+        {
+            AddDownloads( Albums, false );
+        }
+        else
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                guWebExecute( wxString::Format( guJAMENDO_DOWNLOAD_DIRECT, Albums[ Index ] ) );
+            }
+        }
     }
 }
 
@@ -534,6 +567,7 @@ void guJamendoPanel::OnDownloadAlbum( wxCommandEvent &event )
 void guJamendoPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
+
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
     if( TorrentCmd.IsEmpty() )
@@ -553,9 +587,19 @@ void guJamendoPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
         if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
             Albums.Add( Tracks[ Index ].m_AlbumId );
     }
-    if( Albums.Count() )
+    if( ( Count = Albums.Count() ) )
     {
-        AddDownloads( Albums, false );
+        if( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM )
+        {
+            AddDownloads( Albums, false );
+        }
+        else
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                guWebExecute( wxString::Format( guJAMENDO_DOWNLOAD_DIRECT, Albums[ Index ] ) );
+            }
+        }
     }
 }
 

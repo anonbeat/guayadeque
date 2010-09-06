@@ -39,6 +39,8 @@
 #define guJAMENDO_TORRENT_DOWNLOAD_URL      wxT( "http://api.jamendo.com/get2/bittorrent/file/plain/?album_id=%u&type=archive&class=" )
 #define guJAMENDO_DOWNLOAD_FORMAT_MP3       wxT( "mp32" )
 #define guJAMENDO_DOWNLOAD_FORMAT_OGG       wxT( "ogg3" )
+#define guJAMENDO_DOWNLOAD_DIRECT           wxT( "http://www.jamendo.com/en/download/album/%u" )
+
 
 #define guJAMENDO_ACTION_UPDATE             0   // Download the database and then upgrade
 #define guJAMENDO_ACTION_UPGRADE            1   // Just refresh the tracks not updating the database
@@ -92,7 +94,7 @@ class guJamendoPanel : public guLibPanel
     guJamendoDownloadThread *   m_DownloadThread;
     wxMutex                     m_DownloadThreadMutex;
 
-    virtual void                NormalizeTracks( guTrackArray * tracks );
+    virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
     virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
     void                        OnEditSetup( wxCommandEvent &event );
 
