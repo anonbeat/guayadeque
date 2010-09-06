@@ -233,6 +233,8 @@ ADD_EXECUTABLE( guayadeque
 	FieldEditor.h
 	Jamendo.cpp
 	Jamendo.h
+	Magnatune.cpp
+	Magnatune.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

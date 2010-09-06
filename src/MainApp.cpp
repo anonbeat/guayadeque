@@ -56,6 +56,12 @@ guMainApp::guMainApp() : wxApp()
         guLogMessage( wxT( "Created the Jamendo directory" ) );
     }
 
+    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune" ) ) )
+    {
+        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune" ), 0770 );
+        guLogMessage( wxT( "Created the Magnatune directory" ) );
+    }
+
     if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ) ) )
     {
         if( wxFileExists( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ) ) )

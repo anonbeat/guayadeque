@@ -18,7 +18,7 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#include "Jamendo.h"
+#include "Magnatune.h"
 
 #include "TagInfo.h"
 #include "MainFrame.h"
@@ -32,41 +32,22 @@
 
 #include <id3v1genres.h>
 
-//
-//    Data not in the dump but easily fetchable with the IDs
-//
-//    (Please replace {TRACKID} and {ALBUMID} in these urls by the numeric IDs found in the dump)
-//
-//        * MP3s for streaming : http://api.jamendo.com/get2/stream/track/redirect/?id={TRACKID}&streamencoding=mp31
-//        * OGGs for streaming : http://api.jamendo.com/get2/stream/track/redirect/?id={TRACKID}&streamencoding=ogg2
-//
-//        * .torrent file for download (MP3 archive) : http://api.jamendo.com/get2/bittorrent/file/plain/?album_id={ALBUMID}&type=archive&class=mp32
-//        * .torrent file for download (OGG archive) : http://api.jamendo.com/get2/bittorrent/file/plain/?album_id={ALBUMID}&type=archive&class=ogg3
-//
-//        * Album Covers are available here: http://api.jamendo.com/get2/image/album/redirect/?id={ALBUMID}&imagesize={100-600}
-//
-//
-// To download directly in zip format
-// http://www.jamendo.com/en/download/album/57557
-// >> http://download25.jamendo.com/request/album/61518/mp32/fabc1123
-// << Jamendo_HttpDownloadCallback('ready','fb267e3f92');
-// >> http://download25.jamendo.com/download/album/61518/mp32/"+data+"/"+encodeURIComponent("noblemo - PIANO -- Jamendo - MP3 VBR 192k - 2010.02.16 [www.jamendo.com].zip")
 
 // -------------------------------------------------------------------------------- //
-// guJamendoLibrary
+// guMagnatuneLibrary
 // -------------------------------------------------------------------------------- //
-guJamendoLibrary::guJamendoLibrary( const wxString &dbname ) :
+guMagnatuneLibrary::guMagnatuneLibrary( const wxString &dbname ) :
     guDbLibrary( dbname )
 {
 }
 
 // -------------------------------------------------------------------------------- //
-guJamendoLibrary::~guJamendoLibrary()
+guMagnatuneLibrary::~guMagnatuneLibrary()
 {
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
+void guMagnatuneLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
 {
   guListItems   LaItems;
 
@@ -89,7 +70,7 @@ void guJamendoLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
+void guMagnatuneLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
 {
   guListItems   LaItems;
 
@@ -112,7 +93,7 @@ void guJamendoLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
+void guMagnatuneLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
 {
   guListItems   LaItems;
 
@@ -134,7 +115,7 @@ void guJamendoLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoLibrary::CreateNewSong( guTrack * track )
+void guMagnatuneLibrary::CreateNewSong( guTrack * track )
 {
     wxString query;
     wxSQLite3ResultSet dbRes;
@@ -220,12 +201,12 @@ void guJamendoLibrary::CreateNewSong( guTrack * track )
 
 
 // -------------------------------------------------------------------------------- //
-// guJamendoPanel
+// guMagnatunePanel
 // -------------------------------------------------------------------------------- //
-guJamendoPanel::guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix ) :
+guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix ) :
     guLibPanel( parent, db, playerpanel, prefix )
 {
-    SetBaseCommand( ID_MENU_VIEW_JAMENDO );
+    SetBaseCommand( ID_MENU_VIEW_MAGNATUNE );
 
     m_ContextMenuFlags = ( guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS | guLIBRARY_CONTEXTMENU_LINKS );
 
@@ -235,20 +216,18 @@ guJamendoPanel::guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlay
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this ); // Get notified when configuration changes
 
-    Connect( ID_JAMENDO_EDIT_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnEditSetup ), NULL, this );
-    Connect( ID_JAMENDO_SETUP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnEditSetup ), NULL, this );
-    Connect( ID_JAMENDO_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnUpdate ), NULL, this );
-    Connect( ID_JAMENDO_UPGRADE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnUpgrade ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
+    Connect( ID_MAGNATUNE_EDIT_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnEditSetup ), NULL, this );
+    Connect( ID_MAGNATUNE_SETUP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnEditSetup ), NULL, this );
+    Connect( ID_MAGNATUNE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnUpdate ), NULL, this );
+    Connect( ID_MAGNATUNE_UPGRADE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnUpgrade ), NULL, this );
+    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnDownloadAlbum ), NULL, this );
+    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnDownloadTrackAlbum ), NULL, this );
 
-    Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnCoverDownloaded ), NULL, this );
+    Connect( ID_MAGNATUNE_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnCoverDownloaded ), NULL, this );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guJamendoPanel::OnConfigUpdated ), NULL, this );
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMagnatunePanel::OnConfigUpdated ), NULL, this );
 
-    wxArrayInt AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "JamendoGenres" ) );
+    wxArrayInt AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "MagnatuneGenres" ) );
     if( AllowedGenres.IsEmpty() )
     {
         wxCommandEvent event;
@@ -257,128 +236,122 @@ guJamendoPanel::guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlay
 }
 
 // -------------------------------------------------------------------------------- //
-guJamendoPanel::~guJamendoPanel()
+guMagnatunePanel::~guMagnatunePanel()
 {
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+void guMagnatunePanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
 {
-    int Index;
-    int Count;
-    if( tracks && ( Count = tracks->Count() ) )
-    {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Jamendo" ) );
-        for( Index = 0; Index < Count; Index++ )
-        {
-            guTrack * Track = &( * tracks )[ Index ];
-            Track->m_FileName = wxString::Format( guJAMENDO_FILE_STREAM_URL, Track->m_SongId );
-            Track->m_FileName += AudioFormat ? guJAMENDO_STREAM_FORMAT_OGG : guJAMENDO_STREAM_FORMAT_MP3;
-            Track->m_Type = guTRACK_TYPE_JAMENDO;
-            if( isdrag )
-                Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
-        }
-    }
+//    int Index;
+//    int Count;
+//    if( tracks && ( Count = tracks->Count() ) )
+//    {
+//        guConfig * Config = ( guConfig * ) guConfig::Get();
+//        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) );
+//        for( Index = 0; Index < Count; Index++ )
+//        {
+//            guTrack * Track = &( * tracks )[ Index ];
+//            Track->m_FileName = wxString::Format( guMAGNATUNE_FILE_STREAM_URL, Track->m_SongId );
+//            Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
+//            Track->m_Type = guTRACK_TYPE_MAGNATUNE;
+//            if( isdrag )
+//                Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
+//        }
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::CreateContextMenu( wxMenu * menu, const int windowid )
+void guMagnatunePanel::CreateContextMenu( wxMenu * menu, const int windowid )
 {
     wxMenu *     SubMenu;
     SubMenu = new wxMenu();
 
     if( ( windowid == guLIBRARY_ELEMENT_ALBUMS ) )
     {
-        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
-        SubMenu->Append( MenuItem );
-
-        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, _( "Download Albums torrents" ), _( "Download the current selected album" ) );
+        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
         SubMenu->Append( MenuItem );
 
         SubMenu->AppendSeparator();
     }
     else if( ( windowid == guLIBRARY_ELEMENT_TRACKS ) )
     {
-        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
-        SubMenu->Append( MenuItem );
-
-        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, _( "Download Albums torrents" ), _( "Download the current selected album" ) );
+        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
         SubMenu->Append( MenuItem );
 
         SubMenu->AppendSeparator();
     }
 
-    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_UPDATE, _( "Update Database" ), _( "Download the latest Jamendo database" ) );
+    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_UPDATE, _( "Update Database" ), _( "Download the latest Magnatune database" ) );
     SubMenu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( menu, ID_JAMENDO_EDIT_GENRES, _( "Select Genres" ), _( "Selects the enabled Jamendo genres" ) );
+    MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_EDIT_GENRES, _( "Select Genres" ), _( "Selects the enabled Magnatune genres" ) );
     SubMenu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( menu, ID_JAMENDO_SETUP, _( "Preferences" ), _( "Configure the Jamendo options" ) );
+    MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_SETUP, _( "Preferences" ), _( "Configure the Magnatune options" ) );
     SubMenu->Append( MenuItem );
 
     menu->AppendSeparator();
-    menu->AppendSubMenu( SubMenu, _( "Jamendo" ), _( "Global Jamendo options" ) );
+    menu->AppendSubMenu( SubMenu, _( "Magnatune" ), _( "Global Magnatune options" ) );
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnEditSetup( wxCommandEvent &event )
+void guMagnatunePanel::OnEditSetup( wxCommandEvent &event )
 {
     wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
-    CmdEvent.SetInt( guPREFERENCE_PAGE_JAMENDO );
+    //CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );
     wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::StartUpdateTracks( const int action )
+void guMagnatunePanel::StartUpdateTracks( const int action )
 {
     wxMutexLocker Lock( m_UpdateThreadMutex );
 
     guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     guStatusBar * StatusBar = ( guStatusBar * ) MainFrame->GetStatusBar();
-    int GaugeId = StatusBar->AddGauge( _( "Jamendo" ) );
+    int GaugeId = StatusBar->AddGauge( _( "Magnatune" ) );
     if( m_UpdateThread )
     {
         m_UpdateThread->Pause();
         m_UpdateThread->Delete();
     }
 
-    m_UpdateThread = new guJamendoUpdateThread( ( guJamendoLibrary * ) m_Db,
+    m_UpdateThread = new guMagnatuneUpdateThread( ( guMagnatuneLibrary * ) m_Db,
                                 action, GaugeId );
     if( !m_UpdateThread )
     {
-        guLogError( wxT( "Could not create the Jamendo update thread" ) );
+        guLogError( wxT( "Could not create the Magnatune update thread" ) );
         StatusBar->RemoveGauge( GaugeId );
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::EndUpdateThread( void )
+void guMagnatunePanel::EndUpdateThread( void )
 {
     wxMutexLocker Lock( m_UpdateThreadMutex );
     m_UpdateThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnUpdate( wxCommandEvent &event )
+void guMagnatunePanel::OnUpdate( wxCommandEvent &event )
 {
-    StartUpdateTracks( guJAMENDO_ACTION_UPDATE );
+    StartUpdateTracks( guMAGNATUNE_ACTION_UPDATE );
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnUpgrade( wxCommandEvent &event )
+void guMagnatunePanel::OnUpgrade( wxCommandEvent &event )
 {
-    StartUpdateTracks( guJAMENDO_ACTION_UPGRADE );
+    StartUpdateTracks( guMAGNATUNE_ACTION_UPGRADE );
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnConfigUpdated( wxCommandEvent &event )
+void guMagnatunePanel::OnConfigUpdated( wxCommandEvent &event )
 {
-    if( event.GetInt() & guPREFERENCE_PAGE_FLAG_JAMENDO )
+//    if( event.GetInt() & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        bool DoUpgrade = Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "Jamendo" ) );
+        bool DoUpgrade = Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "Magnatune" ) );
 
         if( DoUpgrade )
         {
@@ -388,17 +361,17 @@ void guJamendoPanel::OnConfigUpdated( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::AddDownload( const int albumid, const bool iscover )
+void guMagnatunePanel::AddDownload( const int albumid, const bool iscover )
 {
     wxMutexLocker Lock( m_DownloadThreadMutex );
 
     if( !m_DownloadThread )
     {
-        m_DownloadThread = new guJamendoDownloadThread( this );
+        m_DownloadThread = new guMagnatuneDownloadThread( this );
 
         if( !m_DownloadThread )
         {
-            guLogMessage( wxT( "Could not create the jamendo download thread" ) );
+            guLogMessage( wxT( "Could not create the magnatune download thread" ) );
             return;
         }
     }
@@ -407,17 +380,17 @@ void guJamendoPanel::AddDownload( const int albumid, const bool iscover )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::AddDownloads( wxArrayInt &albumids, const bool iscover )
+void guMagnatunePanel::AddDownloads( wxArrayInt &albumids, const bool iscover )
 {
     wxMutexLocker Lock( m_DownloadThreadMutex );
 
     if( !m_DownloadThread )
     {
-        m_DownloadThread = new guJamendoDownloadThread( this );
+        m_DownloadThread = new guMagnatuneDownloadThread( this );
 
         if( !m_DownloadThread )
         {
-            guLogMessage( wxT( "Could not create the jamendo download thread" ) );
+            guLogMessage( wxT( "Could not create the magnatune download thread" ) );
             return;
         }
     }
@@ -426,16 +399,16 @@ void guJamendoPanel::AddDownloads( wxArrayInt &albumids, const bool iscover )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::EndDownloadThread( void )
+void guMagnatunePanel::EndDownloadThread( void )
 {
     wxMutexLocker Lock( m_DownloadThreadMutex );
     m_DownloadThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * guJamendoPanel::GetAlbumCover( const int albumid, wxString &coverpath )
+wxImage * guMagnatunePanel::GetAlbumCover( const int albumid, wxString &coverpath )
 {
-    wxString CoverFile = wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Covers/" );
+    wxString CoverFile = wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" );
     CoverFile += wxString::Format( wxT( "%u.jpg" ), albumid );
     if( wxFileExists( CoverFile ) )
     {
@@ -455,7 +428,7 @@ wxImage * guJamendoPanel::GetAlbumCover( const int albumid, wxString &coverpath 
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnCoverDownloaded( wxCommandEvent &event )
+void guMagnatunePanel::OnCoverDownloaded( wxCommandEvent &event )
 {
     int AlbumId =  event.GetInt();
     if( AlbumId )
@@ -466,7 +439,7 @@ void guJamendoPanel::OnCoverDownloaded( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
+void guMagnatunePanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
 {
     wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
     if( Albums.Count() )
@@ -476,7 +449,7 @@ void guJamendoPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
+void guMagnatunePanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
 {
     wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
     if( Albums.Count() )
@@ -487,44 +460,44 @@ void guJamendoPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
         {
             if( SelCoverFile->ShowModal() == wxID_OK )
             {
-                wxString CoverFile = SelCoverFile->GetSelFile();
-                if( !CoverFile.IsEmpty() )
-                {
-                    guConfig * Config = ( guConfig * ) guConfig::Get();
-                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-                    wxString CoverName = wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Covers/" );
-                    CoverName += wxString::Format( wxT( "%u.jpg" ), AlbumId );
-
-                    wxURI Uri( CoverFile );
-                    if( Uri.IsReference() )
-                    {
-                        wxImage CoverImage( CoverFile );
-                        if( CoverImage.IsOk() )
-                        {
-                            if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
-                            {
-                                m_Db->SetAlbumCover( AlbumId, CoverName );
-                                ReloadAlbums( false );
-                            }
-                        }
-                        else
-                        {
-                            guLogError( wxT( "Could not load the imate '%s'" ), CoverFile.c_str() );
-                        }
-                    }
-                    else
-                    {
-                        if( DownloadImage( CoverFile, CoverName ) )
-                        {
-                            m_Db->SetAlbumCover( AlbumId, CoverName );
-                            ReloadAlbums( false );
-                        }
-                        else
-                        {
-                            guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
-                        }
-                    }
-                }
+//                wxString CoverFile = SelCoverFile->GetSelFile();
+//                if( !CoverFile.IsEmpty() )
+//                {
+//                    guConfig * Config = ( guConfig * ) guConfig::Get();
+//                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+//                    wxString CoverName = wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" );
+//                    CoverName += wxString::Format( wxT( "%u.jpg" ), AlbumId );
+//
+//                    wxURI Uri( CoverFile );
+//                    if( Uri.IsReference() )
+//                    {
+//                        wxImage CoverImage( CoverFile );
+//                        if( CoverImage.IsOk() )
+//                        {
+//                            if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
+//                            {
+//                                m_Db->SetAlbumCover( AlbumId, CoverName );
+//                                ReloadAlbums( false );
+//                            }
+//                        }
+//                        else
+//                        {
+//                            guLogError( wxT( "Could not load the imate '%s'" ), CoverFile.c_str() );
+//                        }
+//                    }
+//                    else
+//                    {
+//                        if( DownloadImage( CoverFile, CoverName ) )
+//                        {
+//                            m_Db->SetAlbumCover( AlbumId, CoverName );
+//                            ReloadAlbums( false );
+//                        }
+//                        else
+//                        {
+//                            guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
+//                        }
+//                    }
+//                }
             }
             delete SelCoverFile;
         }
@@ -532,84 +505,84 @@ void guJamendoPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnDownloadAlbum( wxCommandEvent &event )
+void guMagnatunePanel::OnDownloadAlbum( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnDownloadAlbum" ) );
 
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
-    if( TorrentCmd.IsEmpty() )
-    {
-        OnEditSetup( event );
-        return;
-    }
-
-    int Index;
-    int Count;
-    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-    if( ( Count = Albums.Count() ) )
-    {
-        if( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM )
-        {
-            AddDownloads( Albums, false );
-        }
-        else
-        {
-            for( Index = 0; Index < Count; Index++ )
-            {
-                guWebExecute( wxString::Format( guJAMENDO_DOWNLOAD_DIRECT, Albums[ Index ] ) );
-            }
-        }
-    }
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Magnatune" ) );
+//    if( TorrentCmd.IsEmpty() )
+//    {
+//        OnEditSetup( event );
+//        return;
+//    }
+//
+//    int Index;
+//    int Count;
+//    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
+//    if( ( Count = Albums.Count() ) )
+//    {
+//        if( event.GetId() == ID_MAGNATUNE_DOWNLOAD_TORRENT_ALBUM )
+//        {
+//            AddDownloads( Albums, false );
+//        }
+//        else
+//        {
+//            for( Index = 0; Index < Count; Index++ )
+//            {
+//                guWebExecute( wxString::Format( guMAGNATUNE_DOWNLOAD_DIRECT, Albums[ Index ] ) );
+//            }
+//        }
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
+void guMagnatunePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
 
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
-    if( TorrentCmd.IsEmpty() )
-    {
-        OnEditSetup( event );
-        return;
-    }
-
-    guTrackArray Tracks;
-    m_SongListCtrl->GetSelectedSongs( &Tracks );
-
-    wxArrayInt Albums;
-    int Index;
-    int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
-            Albums.Add( Tracks[ Index ].m_AlbumId );
-    }
-    if( ( Count = Albums.Count() ) )
-    {
-        if( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM )
-        {
-            AddDownloads( Albums, false );
-        }
-        else
-        {
-            for( Index = 0; Index < Count; Index++ )
-            {
-                guWebExecute( wxString::Format( guJAMENDO_DOWNLOAD_DIRECT, Albums[ Index ] ) );
-            }
-        }
-    }
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Magnatune" ) );
+//    if( TorrentCmd.IsEmpty() )
+//    {
+//        OnEditSetup( event );
+//        return;
+//    }
+//
+//    guTrackArray Tracks;
+//    m_SongListCtrl->GetSelectedSongs( &Tracks );
+//
+//    wxArrayInt Albums;
+//    int Index;
+//    int Count = Tracks.Count();
+//    for( Index = 0; Index < Count; Index++ )
+//    {
+//        if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
+//            Albums.Add( Tracks[ Index ].m_AlbumId );
+//    }
+//    if( ( Count = Albums.Count() ) )
+//    {
+//        if( event.GetId() == ID_MAGNATUNE_DOWNLOAD_TORRENT_TRACK_ALBUM )
+//        {
+//            AddDownloads( Albums, false );
+//        }
+//        else
+//        {
+//            for( Index = 0; Index < Count; Index++ )
+//            {
+//                guWebExecute( wxString::Format( guMAGNATUNE_DOWNLOAD_DIRECT, Albums[ Index ] ) );
+//            }
+//        }
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
-// guJamendoDownloadThread
+// guMagnatuneDownloadThread
 // -------------------------------------------------------------------------------- //
-guJamendoDownloadThread::guJamendoDownloadThread( guJamendoPanel * jamendopanel )
+guMagnatuneDownloadThread::guMagnatuneDownloadThread( guMagnatunePanel * magnatunepanel )
 {
-    m_JamendoPanel = jamendopanel;
-    m_Db = jamendopanel->GetJamendoDb();
+    m_MagnatunePanel = magnatunepanel;
+    m_Db = magnatunepanel->GetMagnatuneDb();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -619,16 +592,16 @@ guJamendoDownloadThread::guJamendoDownloadThread( guJamendoPanel * jamendopanel 
 }
 
 // -------------------------------------------------------------------------------- //
-guJamendoDownloadThread::~guJamendoDownloadThread()
+guMagnatuneDownloadThread::~guMagnatuneDownloadThread()
 {
     if( !TestDestroy() )
     {
-        m_JamendoPanel->EndDownloadThread();
+        m_MagnatunePanel->EndDownloadThread();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoDownloadThread::AddAlbum( const int albumid, const bool iscover )
+void guMagnatuneDownloadThread::AddAlbum( const int albumid, const bool iscover )
 {
     if( iscover )
     {
@@ -645,7 +618,7 @@ void guJamendoDownloadThread::AddAlbum( const int albumid, const bool iscover )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoDownloadThread::AddAlbums( wxArrayInt &albumids, const bool iscover )
+void guMagnatuneDownloadThread::AddAlbums( wxArrayInt &albumids, const bool iscover )
 {
     int Index;
     int Count = albumids.Count();
@@ -671,136 +644,136 @@ void guJamendoDownloadThread::AddAlbums( wxArrayInt &albumids, const bool iscove
 }
 
 // -------------------------------------------------------------------------------- //
-guJamendoDownloadThread::ExitCode guJamendoDownloadThread::Entry()
+guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
 {
-    int Count;
-    int LoopCount = 0;
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Jamendo" ) );
-    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
-    while( !TestDestroy() )
-    {
-        m_CoversMutex.Lock();
-        Count = m_Covers.Count();
-        m_CoversMutex.Unlock();
-
-        size_t CurTime = wxGetLocalTimeMillis().GetLo();
-        if( Count )
-        {
-            LoopCount = 0;
-            wxString CoverFile = wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Covers/" );
-            CoverFile += wxString::Format( wxT( "%u.jpg" ), m_Covers[ 0 ] );
-
-            if( !wxFileExists( CoverFile ) )
-            {
-                if( !wxDirExists( wxPathOnly( CoverFile ) + wxT( "/" ) ) )
-                {
-                    wxMkdir( wxPathOnly( CoverFile ) + wxT( "/" ), 0770 );
-                }
-                wxString CoverUrl = wxString::Format( guJAMENDO_COVER_DOWNLOAD_URL, m_Covers[ 0 ], 300 );
-                DownloadImage( CoverUrl, CoverFile, 300 );
-            }
-
-            if( wxFileExists( CoverFile ) )
-            {
-                int CoverId = m_Db->AddCoverFile( CoverFile );
-
-                wxString query = wxString::Format( wxT( "UPDATE songs SET song_coverid = %u WHERE song_albumid = %u" ),
-                                    CoverId, m_Covers[ 0 ] );
-
-                m_Db->ExecuteUpdate( query );
-
-                // Notify the panel that the cover is downloaded
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_JAMENDO_COVER_DOWNLAODED );
-                event.SetInt( m_Covers[ 0 ] );
-                wxPostEvent( m_JamendoPanel, event );
-            }
-            else
-            {
-                guLogMessage( wxT( "Could not get the jamendo cover art %s" ), CoverFile.c_str() );
-            }
-
-            m_CoversMutex.Lock();
-            m_Covers.RemoveAt( 0 );
-            m_CoversMutex.Unlock();
-        }
-        else
-        {
-            LoopCount++;
-            if( LoopCount > 8 )
-            {
-                break;
-            }
-        }
-
-        if( TestDestroy() )
-            break;
-
-        size_t Elapsed = wxGetLocalTimeMillis().GetLo() - CurTime;
-        if( !( Elapsed > 1000 ) )
-        {
-            Sleep( 1000 - Elapsed );
-        }
-
-        //
-        // Album Torrents
-        //
-        m_AlbumsMutex.Lock();
-        Count = m_Albums.Count();
-        m_AlbumsMutex.Unlock();
-
-        CurTime = wxGetLocalTimeMillis().GetLo();
-        if( Count )
-        {
-            LoopCount = 0;
-
-            wxString Url = wxString::Format( guJAMENDO_TORRENT_DOWNLOAD_URL, m_Albums[ 0 ] );
-            Url += AudioFormat ? guJAMENDO_DOWNLOAD_FORMAT_OGG : guJAMENDO_DOWNLOAD_FORMAT_MP3;
-
-            //guLogMessage( wxT( "Getting %s" ), Url.c_str() );
-
-            wxString TorrentUrl = GetUrlContent( Url );
-
-            //guLogMessage( wxT( "Downloading '%s'" ), TorrentUrl.c_str() );
-            if( !TorrentUrl.IsEmpty() )
-            {
-                wxString TmpFileName = wxFileName::CreateTempFileName( wxString::Format( wxT( "%u" ), m_Albums[ 0 ] ) );
-                TmpFileName += wxT( ".torrent" );
-                if( DownloadFile( TorrentUrl, TmpFileName ) )
-                {
-                    guExecute( TorrentCmd + wxT( " " ) + TmpFileName );
-                }
-            }
-
-            m_AlbumsMutex.Lock();
-            m_Albums.RemoveAt( 0 );
-            m_AlbumsMutex.Unlock();
-        }
-        else
-        {
-            LoopCount++;
-            if( LoopCount > 8 )
-            {
-                break;
-            }
-        }
-
-        if( TestDestroy() )
-            break;
-
-        Elapsed = wxGetLocalTimeMillis().GetLo() - CurTime;
-        if( !( Elapsed > 1000 ) )
-        {
-            Sleep( 1000 - Elapsed );
-        }
-    }
+//    int Count;
+//    int LoopCount = 0;
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) );
+//    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Magnatune" ) );
+//    while( !TestDestroy() )
+//    {
+//        m_CoversMutex.Lock();
+//        Count = m_Covers.Count();
+//        m_CoversMutex.Unlock();
+//
+//        size_t CurTime = wxGetLocalTimeMillis().GetLo();
+//        if( Count )
+//        {
+//            LoopCount = 0;
+//            wxString CoverFile = wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" );
+//            CoverFile += wxString::Format( wxT( "%u.jpg" ), m_Covers[ 0 ] );
+//
+//            if( !wxFileExists( CoverFile ) )
+//            {
+//                if( !wxDirExists( wxPathOnly( CoverFile ) + wxT( "/" ) ) )
+//                {
+//                    wxMkdir( wxPathOnly( CoverFile ) + wxT( "/" ), 0770 );
+//                }
+//                wxString CoverUrl = wxString::Format( guMAGNATUNE_COVER_DOWNLOAD_URL, m_Covers[ 0 ], 300 );
+//                DownloadImage( CoverUrl, CoverFile, 300 );
+//            }
+//
+//            if( wxFileExists( CoverFile ) )
+//            {
+//                int CoverId = m_Db->AddCoverFile( CoverFile );
+//
+//                wxString query = wxString::Format( wxT( "UPDATE songs SET song_coverid = %u WHERE song_albumid = %u" ),
+//                                    CoverId, m_Covers[ 0 ] );
+//
+//                m_Db->ExecuteUpdate( query );
+//
+//                // Notify the panel that the cover is downloaded
+//                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAGNATUNE_COVER_DOWNLAODED );
+//                event.SetInt( m_Covers[ 0 ] );
+//                wxPostEvent( m_MagnatunePanel, event );
+//            }
+//            else
+//            {
+//                guLogMessage( wxT( "Could not get the magnatune cover art %s" ), CoverFile.c_str() );
+//            }
+//
+//            m_CoversMutex.Lock();
+//            m_Covers.RemoveAt( 0 );
+//            m_CoversMutex.Unlock();
+//        }
+//        else
+//        {
+//            LoopCount++;
+//            if( LoopCount > 8 )
+//            {
+//                break;
+//            }
+//        }
+//
+//        if( TestDestroy() )
+//            break;
+//
+//        size_t Elapsed = wxGetLocalTimeMillis().GetLo() - CurTime;
+//        if( !( Elapsed > 1000 ) )
+//        {
+//            Sleep( 1000 - Elapsed );
+//        }
+//
+//        //
+//        // Album Torrents
+//        //
+//        m_AlbumsMutex.Lock();
+//        Count = m_Albums.Count();
+//        m_AlbumsMutex.Unlock();
+//
+//        CurTime = wxGetLocalTimeMillis().GetLo();
+//        if( Count )
+//        {
+//            LoopCount = 0;
+//
+//            wxString Url = wxString::Format( guMAGNATUNE_TORRENT_DOWNLOAD_URL, m_Albums[ 0 ] );
+//            Url += AudioFormat ? guMAGNATUNE_DOWNLOAD_FORMAT_OGG : guMAGNATUNE_DOWNLOAD_FORMAT_MP3;
+//
+//            //guLogMessage( wxT( "Getting %s" ), Url.c_str() );
+//
+//            wxString TorrentUrl = GetUrlContent( Url );
+//
+//            //guLogMessage( wxT( "Downloading '%s'" ), TorrentUrl.c_str() );
+//            if( !TorrentUrl.IsEmpty() )
+//            {
+//                wxString TmpFileName = wxFileName::CreateTempFileName( wxString::Format( wxT( "%u" ), m_Albums[ 0 ] ) );
+//                TmpFileName += wxT( ".torrent" );
+//                if( DownloadFile( TorrentUrl, TmpFileName ) )
+//                {
+//                    guExecute( TorrentCmd + wxT( " " ) + TmpFileName );
+//                }
+//            }
+//
+//            m_AlbumsMutex.Lock();
+//            m_Albums.RemoveAt( 0 );
+//            m_AlbumsMutex.Unlock();
+//        }
+//        else
+//        {
+//            LoopCount++;
+//            if( LoopCount > 8 )
+//            {
+//                break;
+//            }
+//        }
+//
+//        if( TestDestroy() )
+//            break;
+//
+//        Elapsed = wxGetLocalTimeMillis().GetLo() - CurTime;
+//        if( !( Elapsed > 1000 ) )
+//        {
+//            Sleep( 1000 - Elapsed );
+//        }
+//    }
     return 0;
 }
 
 // -------------------------------------------------------------------------------- //
-// guJamendoUpdateThread
+// guMagnatuneUpdateThread
 // -------------------------------------------------------------------------------- //
-guJamendoUpdateThread::guJamendoUpdateThread( guJamendoLibrary * db, int action, int gaugeid )
+guMagnatuneUpdateThread::guMagnatuneUpdateThread( guMagnatuneLibrary * db, int action, int gaugeid )
 {
     m_Db = db;
     m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
@@ -808,8 +781,8 @@ guJamendoUpdateThread::guJamendoUpdateThread( guJamendoLibrary * db, int action,
     m_GaugeId = gaugeid;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    //m_LastUpdate = Config->ReadNum( wxT( "JamendoLastUpdate" ), 0, wxT( "General" ) );
-    m_AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "JamendoGenres" ) );
+    //m_LastUpdate = Config->ReadNum( wxT( "MagnatuneLastUpdate" ), 0, wxT( "General" ) );
+    m_AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "MagnatuneGenres" ) );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -819,7 +792,7 @@ guJamendoUpdateThread::guJamendoUpdateThread( guJamendoLibrary * db, int action,
 }
 
 // -------------------------------------------------------------------------------- //
-guJamendoUpdateThread::~guJamendoUpdateThread()
+guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
 {
     //
     guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
@@ -833,74 +806,48 @@ guJamendoUpdateThread::~guJamendoUpdateThread()
         if( Config )
         {
             wxDateTime Now = wxDateTime::Now();
-            Config->WriteNum( wxT( "JamendoLastUpdate" ), Now.GetTicks(), wxT( "General" ) );
+            Config->WriteNum( wxT( "MagnatuneLastUpdate" ), Now.GetTicks(), wxT( "General" ) );
             Config->Flush();
         }
 
-        event.SetId( ID_JAMENDO_UPDATE_FINISHED );
+        event.SetId( ID_MAGNATUNE_UPDATE_FINISHED );
         event.SetEventObject( ( wxObject * ) this );
         wxPostEvent( MainFrame, event );
 
-        m_MainFrame->GetJamendoPanel()->EndUpdateThread();
+//        m_MainFrame->GetMagnatunePanel()->EndUpdateThread();
     }
 }
 
 #if 0
-<JamendoData epoch="1282819258" documentation="http://developer.jamendo.com/en/wiki/DatabaseDumps" type="artistalbumtrack">
-<Artists>
-    <artist>
-        <id>338334</id>
-        <name>0/20</name>
-        <url>http://www.jamendo.com/artist/0_20</url>
-        <mbgid></mbgid>
-        <location>
-            <country>ECU</country>
-            <state></state>
-            <city>QUITO</city>
-            <latitude>-0.229498</latitude>
-            <longitude>-78.5243</longitude>
-        </location>
-        <Albums>
-            <album>
-                <id>19831</id>
-                <name>!Ya Estoy Harto de Mis Profesores¡¡¡¡¡¡¡(DEMO VERSION)</name>
-                <url>http://www.jamendo.com/album/19831</url>
-                <releasedate>2008-02-29T15:29:52+01:00</releasedate>
-                <filename>0 20 - !Ya Estoy Harto de Mis Profesores DEMO VERSION</filename>
-                <id3genre>43</id3genre>
-                <mbgid></mbgid>
-                <license_artwork>http://creativecommons.org/licenses/by-sa/3.0/</license_artwork>
-                <Tracks>
-                    <track><id>138701</id>
-                        <name>Odio Estudiar</name>
-                        <duration>40</duration>
-                        <numalbum>1</numalbum>
-                        <filename>01 - 0 20 - Odio Estudiar</filename>
-                        <mbgid></mbgid>
-                        <id3genre>43</id3genre>
-                        <license>http://creativecommons.org/licenses/by-sa/3.0/</license>
-                    </track>
-                    <track>
-                        <id>138702</id>
-                        <name>Turro Colegio</name>
-                        <duration>145</duration>
-                        <numalbum>2</numalbum>
-                        <filename>02 - 0 20 - Turro Colegio</filename>
-                        <mbgid></mbgid>
-                        <id3genre>40</id3genre>
-                        <license>http://creativecommons.org/licenses/by-sa/3.0/</license>
-                    </track>
-                </Tracks>
-            </album>
-        </Albums>
-    </artist>
-...
-</Artists>
+<AllSongs>
+  <Track>
+    <artist>Dr Kuch</artist>
+    <artistphoto>http://magnatune.com//artists/img/drkuch_cover_small.jpg</artistphoto>
+    <artistdesc>Fun electro-poppy dance up and down tempo chill out</artistdesc>
+    <albumname>We Cant Stop Progress</albumname>
+    <trackname>Intro</trackname>
+    <tracknum>1</tracknum>
+    <year>2009</year>
+    <mp3genre>(52)</mp3genre>
+    <magnatunegenres>Electronica,Euro-Techno</magnatunegenres>
+    <license>http://creativecommons.org/licenses/by-nc-sa/1.0/</license>
+    <seconds>18</seconds>
+    <url>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch.mp3</url>
+    <mp3lofi>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch-lofi.mp3</mp3lofi>
+    <oggurl>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch.ogg</oggurl>
+    <buy>https://magnatune.com/artists/buy_album?artist=Dr+Kuch&album=We+Can%27t+Stop+Progress&genre=Electronica</buy>
+    <home>http://magnatune.com/artists/dr_kuch</home>
+    <launchdate>2009-10-08</launchdate>
+    <cover_small>http://he3.magnatune.com/music/Dr%20Kuch/We%20Can't%20Stop%20Progress/cover_200.jpg</cover_small>
+    <albumsku>drkuch-progress</albumsku>
+  </Track>
+  ...
+</AllSongs>
 #endif
 
 
 // -------------------------------------------------------------------------------- //
-void ReadJamendoXmlTrack( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, guTrack * track )
+void ReadMagnatuneXmlTrack( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track )
 {
     long Id;
     while( xmlnode && !thread->TestDestroy() )
@@ -940,13 +887,13 @@ void ReadJamendoXmlTrack( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, g
 }
 
 // -------------------------------------------------------------------------------- //
-void ReadJamendoXmlTracks( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, guTrack * track, guJamendoLibrary * db, wxArrayInt &genres )
+void ReadMagnatuneXmlTracks( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db, wxArrayInt &genres )
 {
     while( xmlnode && !thread->TestDestroy() )
     {
         if( xmlnode->GetName() == wxT( "track" ) )
         {
-            ReadJamendoXmlTrack( xmlnode->GetChildren(), thread, track );
+            ReadMagnatuneXmlTrack( xmlnode->GetChildren(), thread, track );
 
             if( genres.Index( track->m_GenreId - 1 ) != wxNOT_FOUND )
                 db->CreateNewSong( track );
@@ -956,7 +903,7 @@ void ReadJamendoXmlTracks( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, 
 }
 
 // -------------------------------------------------------------------------------- //
-void ReadJamendoXmlAlbum( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, guTrack * track, guJamendoLibrary * db, wxArrayInt &genres )
+void ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db, wxArrayInt &genres )
 {
     long Id;
     while( xmlnode && !thread->TestDestroy() )
@@ -988,28 +935,28 @@ void ReadJamendoXmlAlbum( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, g
         }
         else if( ItemName == wxT( "Tracks" ) )
         {
-            ReadJamendoXmlTracks( xmlnode->GetChildren(), thread, track, db, genres );
+            ReadMagnatuneXmlTracks( xmlnode->GetChildren(), thread, track, db, genres );
         }
         xmlnode = xmlnode->GetNext();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void ReadJamendoXmlAlbums( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, guTrack * track, guJamendoLibrary * db, wxArrayInt &genres )
+void ReadMagnatuneXmlAlbums( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db, wxArrayInt &genres )
 {
     while( xmlnode && !thread->TestDestroy() )
     {
         if( xmlnode->GetName() == wxT( "album" ) )
         {
             track->m_CoverId = 0;
-            ReadJamendoXmlAlbum( xmlnode->GetChildren(), thread, track, db, genres );
+            ReadMagnatuneXmlAlbum( xmlnode->GetChildren(), thread, track, db, genres );
         }
         xmlnode = xmlnode->GetNext();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void ReadJamendoXmlArtist( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, guTrack * track, guJamendoLibrary * db, wxArrayInt &genres )
+void ReadMagnatuneXmlArtist( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db, wxArrayInt &genres )
 {
     while( xmlnode && !thread->TestDestroy() )
     {
@@ -1027,41 +974,41 @@ void ReadJamendoXmlArtist( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, 
         }
         else if( ItemName == wxT( "Albums" ) )
         {
-            ReadJamendoXmlAlbums( xmlnode->GetChildren(), thread, track, db, genres );
+            ReadMagnatuneXmlAlbums( xmlnode->GetChildren(), thread, track, db, genres );
         }
         xmlnode = xmlnode->GetNext();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-bool guJamendoUpdateThread::UpdateDatabase( void )
+bool guMagnatuneUpdateThread::UpdateDatabase( void )
 {
-    if( DownloadFile( guJAMENDO_DATABASE_DUMP_URL, wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml.gz" ) ) )
-    {
-        wxFileInputStream Ins( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml.gz" ) );
-        if( Ins.IsOk() )
-        {
-            wxZlibInputStream ZIn( Ins );
-            if( ZIn.IsOk() )
-            {
-                wxFileOutputStream ZOuts( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml" ) );
-                if( ZOuts.IsOk() )
-                {
-                    ZIn.Read( ZOuts );
-                    return true;
-                }
-            }
-        }
-        else
-        {
-            guLogError( wxT( "Could not open the Jamendo local database copy" ) );
-        }
-    }
+//    if( DownloadFile( guMAGNATUNE_DATABASE_DUMP_URL, wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml.gz" ) ) )
+//    {
+//        wxFileInputStream Ins( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml.gz" ) );
+//        if( Ins.IsOk() )
+//        {
+//            wxZlibInputStream ZIn( Ins );
+//            if( ZIn.IsOk() )
+//            {
+//                wxFileOutputStream ZOuts( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml" ) );
+//                if( ZOuts.IsOk() )
+//                {
+//                    ZIn.Read( ZOuts );
+//                    return true;
+//                }
+//            }
+//        }
+//        else
+//        {
+//            guLogError( wxT( "Could not open the Magnatune local database copy" ) );
+//        }
+//    }
     return false;
 }
 
 // -------------------------------------------------------------------------------- //
-guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
+guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
 {
     wxString query;
 
@@ -1071,16 +1018,16 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
     wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
-    if( m_Action == guJAMENDO_ACTION_UPGRADE &&
-        !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml" ) ) )
+    if( m_Action == guMAGNATUNE_ACTION_UPGRADE &&
+        !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml" ) ) )
     {
-        m_Action = guJAMENDO_ACTION_UPDATE;
+        m_Action = guMAGNATUNE_ACTION_UPDATE;
     }
 
-    guLogMessage( wxT( "Starting the Jamendo Update process..." ) );
-    if( !TestDestroy() && ( m_Action == guJAMENDO_ACTION_UPGRADE || UpdateDatabase() ) )
+    guLogMessage( wxT( "Starting the Magnatune Update process..." ) );
+    if( !TestDestroy() && ( m_Action == guMAGNATUNE_ACTION_UPGRADE || UpdateDatabase() ) )
     {
-        wxFile XmlFile( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml" ), wxFile::read );
+        wxFile XmlFile( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml" ), wxFile::read );
         if( XmlFile.IsOpened() )
         {
             guListItems CurrentGenres;
@@ -1122,7 +1069,7 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
 
                         if( XmlNode && XmlNode->GetName() == wxT( "artist" ) )
                         {
-                            ReadJamendoXmlArtist( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db, m_AllowedGenres );
+                            ReadMagnatuneXmlArtist( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db, m_AllowedGenres );
                         }
                     }
                     else

@@ -21,6 +21,11 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 #include <wx/wx.h>
+#include <wx/file.h>
+#include <wx/wfstream.h>
+#include <wx/mstream.h>
+#include <wx/xml/xml.h>
+
 
 #if 0
 #define guLogMessage    //wxLogMessage
@@ -80,6 +85,7 @@ bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename )
 int guGetFileMode( const wxString &filepath );
 bool guSetFileMode( const wxString &filepath, int mode, bool adding = false );
 bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwrite = true );
+wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr );
 
 // -------------------------------------------------------------------------------- //
 #endif

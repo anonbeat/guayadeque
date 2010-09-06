@@ -39,6 +39,7 @@
 #include "LibPanel.h"
 //#include "LibUpdate.h"
 #include "LyricsPanel.h"
+#include "Magnatune.h"
 #include "PlayerFilters.h"
 #include "PlayerPanel.h"
 #include "PlayListPanel.h"
@@ -115,6 +116,7 @@ class guMainFrame : public wxFrame
     guAlbumBrowser *            m_AlbumBrowserPanel;
     guFileBrowser *             m_FileBrowserPanel;
     guJamendoPanel *            m_JamendoPanel;
+    guMagnatunePanel *          m_MagnatunePanel;
 
     guTaskBarIcon *             m_TaskBarIcon;
     guStatusBar *               m_MainStatusBar;
@@ -170,6 +172,18 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewJamComposers;
     wxMenuItem *                m_ViewJamAlbumArtists;
 
+    wxMenuItem *                m_ViewMagnatune;
+    wxMenuItem *                m_ViewMagTextSearch;
+    wxMenuItem *                m_ViewMagLabels;
+    wxMenuItem *                m_ViewMagGenres;
+    wxMenuItem *                m_ViewMagArtists;
+    wxMenuItem *                m_ViewMagAlbums;
+    wxMenuItem *                m_ViewMagYears;
+    wxMenuItem *                m_ViewMagRatings;
+    wxMenuItem *                m_ViewMagPlayCounts;
+    wxMenuItem *                m_ViewMagComposers;
+    wxMenuItem *                m_ViewMagAlbumArtists;
+
     wxMenuItem *                m_ViewPodcasts;
     wxMenuItem *                m_ViewPodChannels;
     wxMenuItem *                m_ViewPodDetails;
@@ -181,6 +195,7 @@ class guMainFrame : public wxFrame
     guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
     guJamendoLibrary *          m_JamendoDb;
+    guMagnatuneLibrary *        m_MagnatuneDb;
     guLibUpdateThread *         m_LibUpdateThread;
     guLibCleanThread *          m_LibCleanThread;
 
@@ -305,6 +320,9 @@ class guMainFrame : public wxFrame
 
     void                OnViewJamendo( wxCommandEvent &event );
     void                OnJamendoShowPanel( wxCommandEvent &event );
+
+    void                OnViewMagnatune( wxCommandEvent &event );
+    void                OnMagnatuneShowPanel( wxCommandEvent &event );
 
     void                OnMainPaneClose( wxAuiManagerEvent &event );
 

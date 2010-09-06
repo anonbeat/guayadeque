@@ -558,3 +558,99 @@ bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwr
 }
 
 // -------------------------------------------------------------------------------- //
+wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr )
+{
+    #define XMLREAD_BUFFER_SIZE     2048
+    wxString RetVal;
+    //wxFileOffset CurPos = xmlfile.Tell();
+    CurPos = xmlfile.Tell();
+    wxFileOffset StartPos = wxNOT_FOUND;
+    wxFileOffset EndPos = wxNOT_FOUND;
+    int endstrlen = strlen( endstr );
+    char * Buffer = ( char * ) malloc( XMLREAD_BUFFER_SIZE + 1 );
+    if( Buffer )
+    {
+        while( StartPos == wxNOT_FOUND )
+        {
+            int ReadCount = xmlfile.Read( Buffer, XMLREAD_BUFFER_SIZE );
+            if( ReadCount != wxInvalidOffset && ReadCount > 0 )
+            {
+                Buffer[ ReadCount ] = 0;
+            }
+            else
+            {
+                break;
+            }
+            char * StartString = strstr( Buffer, startstr );
+            if( StartString )
+            {
+                StartPos = CurPos + ( StartString - Buffer );
+                break;
+            }
+            else
+            {
+                CurPos += ReadCount;
+            }
+        }
+
+        if( StartPos != wxNOT_FOUND )
+        {
+            xmlfile.Seek( StartPos );
+            CurPos = StartPos;
+            while( EndPos == wxNOT_FOUND )
+            {
+                int ReadCount = xmlfile.Read( Buffer, XMLREAD_BUFFER_SIZE );
+                if( ReadCount != wxInvalidOffset && ReadCount > 0 )
+                {
+                    Buffer[ ReadCount ] = 0;
+                }
+                else
+                {
+                    break;
+                }
+                char * EndString = strstr( Buffer, endstr );
+                if( EndString )
+                {
+                    EndPos = CurPos + ( EndString - Buffer ) + endstrlen;
+                    break;
+                }
+                else
+                {
+                    // Prevent that </artist was partially included
+                    CurPos += ReadCount - ( endstrlen - 1 );
+                    xmlfile.Seek( -endstrlen, wxFromCurrent );
+                }
+            }
+
+            if( EndPos != wxNOT_FOUND )
+            {
+                //guLogMessage( wxT( "Found From %lli => %lli  (%lli)" ), StartPos, EndPos, EndPos - StartPos );
+                int BufferSize = EndPos - StartPos;
+                if( BufferSize )
+                {
+                    char * BufferString = ( char * ) malloc( BufferSize + 1 );
+                    if( BufferString )
+                    {
+                        xmlfile.Seek( StartPos );
+                        int ReadCount = xmlfile.Read( BufferString, BufferSize );
+                        if( ReadCount != wxInvalidOffset )
+                        {
+                            BufferString[ ReadCount ] = 0;
+                            RetVal = wxString( BufferString, wxConvUTF8 );
+                            //guLogMessage( wxT( "%s" ), RetVal.c_str() );
+                        }
+
+                        free( BufferString );
+                    }
+                }
+            }
+        }
+
+        free( Buffer );
+    }
+
+
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
