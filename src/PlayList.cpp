@@ -255,6 +255,12 @@ bool inline guIsJamendoFile( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
+bool inline guIsMagnatuneFile( const wxString &filename )
+{
+    return filename.Find( wxT( "/he3.magnatune.com/all/" ) ) != wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::OnDropFile( const wxString &filename )
 {
     guLogMessage( wxT( "Dropping '%s'" ), filename.c_str() );
@@ -1227,6 +1233,20 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
         }
 
         Track.m_Type     = guTRACK_TYPE_JAMENDO;
+        Track.m_FileName = FileName;
+        AddItem( Track, pos );
+    }
+    else if( guIsMagnatuneFile( FileName ) )
+    {
+        Track.m_CoverId  = 0;
+        Track.m_SongName = FileName;
+        guLogMessage( wxT( "1) '%s'" ), FileName.c_str() );
+        //Track.m_AlbumName = FileName;
+        Track.m_Length   = 0;
+        Track.m_Year     = 0;
+        Track.m_Bitrate  = 0;
+        Track.m_Rating   = wxNOT_FOUND;
+        Track.m_Type     = guTRACK_TYPE_MAGNATUNE;
         Track.m_FileName = FileName;
         AddItem( Track, pos );
     }

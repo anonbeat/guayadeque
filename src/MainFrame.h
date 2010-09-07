@@ -345,6 +345,7 @@ class guMainFrame : public wxFrame
     void                InsertTabPanel( wxPanel * panel, const int index, const wxString &label );
 
     void                OnJamendoCoverDownloaded( wxCommandEvent &event );
+    void                OnMagnatuneCoverDownloaded( wxCommandEvent &event );
 
   public:
                         guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
@@ -352,6 +353,7 @@ class guMainFrame : public wxFrame
     void                DoLibraryClean( wxCommandEvent &event );
     void                LibraryUpdated( wxCommandEvent &event );
     void                OnJamendoUpdated( wxCommandEvent &event );
+    void                OnMagnatuneUpdated( wxCommandEvent &event );
     void                LibraryCleanFinished( wxCommandEvent &event );
     void                OnQuit( wxCommandEvent &WXUNUSED(event) );
     void                UpdatePodcasts( void );
@@ -371,6 +373,13 @@ class guMainFrame : public wxFrame
         if( !m_JamendoDb )
             m_JamendoDb = new guJamendoLibrary( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Jamendo.db" ) );
          return m_JamendoDb;
+    }
+    guMagnatunePanel *    GetMagnatunePanel( void ) { return m_MagnatunePanel; }
+    guMagnatuneLibrary *  GetMagnatuneDb( void )
+    {
+        if( !m_MagnatuneDb )
+            m_MagnatuneDb = new guMagnatuneLibrary( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Magnatune.db" ) );
+         return m_MagnatuneDb;
     }
 
 };

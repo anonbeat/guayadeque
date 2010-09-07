@@ -333,7 +333,6 @@ class guDbLibrary : public guDb
     wxArrayInt          GetLabelIds( const wxArrayString &Labels );
     wxArrayString       GetLabelNames( const wxArrayInt &LabelIds );
     int                 GetLabelId( int * LabelId, wxString &LabelName );
-    bool                FindPath( const wxString &path );
     int                 PathExists( const wxString &path );
     int                 GetPathId( wxString &PathValue );
     int                 UpdateSong( const bool allowrating = false );

@@ -82,6 +82,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_Db = db;
     m_DbCache = dbcache;
     m_JamendoDb = NULL;
+    m_MagnatuneDb = NULL;
 
     //
     m_Db->SetLibPath( Config->ReadAStr( wxT( "LibPath" ),
@@ -110,6 +111,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_AlbumBrowserPanel = NULL;
     m_FileBrowserPanel = NULL;
     m_JamendoPanel = NULL;
+    m_MagnatunePanel = NULL;
 
     //
     wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
@@ -277,6 +279,10 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
             OnViewJamendo( ShowEvent );
         }
 
+        if( m_VisiblePanels & guPANEL_MAIN_MAGNATUNE )
+        {
+            OnViewMagnatune( ShowEvent );
+        }
     }
 
     m_AuiManager.AddPane( m_CatNotebook, wxAuiPaneInfo().Name( wxT("PlayerSelector") ).
@@ -358,6 +364,28 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         m_ViewFileBrowser->Check( false );
 
         m_ViewJamendo->Check( false );
+        m_ViewJamTextSearch->Enable( false );
+        m_ViewJamLabels->Enable( false );
+        m_ViewJamGenres->Enable( false );
+        m_ViewJamArtists->Enable( false );
+        m_ViewJamAlbums->Enable( false );
+        m_ViewJamYears->Enable( false );
+        m_ViewJamRatings->Enable( false );
+        m_ViewJamPlayCounts->Enable( false );
+        m_ViewJamComposers->Enable( false );
+        m_ViewJamAlbumArtists->Enable( false );
+
+        m_ViewMagnatune->Check( false );
+        m_ViewMagTextSearch->Enable( false );
+        m_ViewMagLabels->Enable( false );
+        m_ViewMagGenres->Enable( false );
+        m_ViewMagArtists->Enable( false );
+        m_ViewMagAlbums->Enable( false );
+        m_ViewMagYears->Enable( false );
+        m_ViewMagRatings->Enable( false );
+        m_ViewMagPlayCounts->Enable( false );
+        m_ViewMagComposers->Enable( false );
+        m_ViewMagAlbumArtists->Enable( false );
     }
 
     m_CurrentPage = m_CatNotebook->GetPage( m_CatNotebook->GetSelection() );
@@ -418,6 +446,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
     Connect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoUpdated ), NULL, this );
+    Connect( ID_MAGNATUNE_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneUpdated ), NULL, this );
     Connect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
     Connect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryCleanFinished ), NULL, this );
 
@@ -512,7 +541,20 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_VIEW_JAMENDO_RATINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_JAMENDO_PLAYCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoShowPanel ), NULL, this );
 
+    Connect( ID_MENU_VIEW_MAGNATUNE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewMagnatune ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_ARTISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_COMPOSERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_ALBUMARTISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_ALBUMS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_YEARS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_RATINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAGNATUNE_PLAYCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
+
     Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoCoverDownloaded ), NULL, this );
+    Connect( ID_MAGNATUNE_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneCoverDownloaded ), NULL, this );
 
     Connect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
     Connect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
@@ -1038,6 +1080,67 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSubMenu( SubMenu, wxT( "Jamendo" ), _( "Set the Jamendo visible panels" ) );
 
+    SubMenu = new wxMenu();
+
+    m_ViewMagnatune = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE, wxT( "Magnatune" ), _( "Show/Hide the Magnatune panel" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagnatune );
+    m_ViewMagnatune->Check( m_VisiblePanels & guPANEL_MAIN_MAGNATUNE );
+
+    SubMenu->AppendSeparator();
+
+    m_ViewMagTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the Magnatune text search" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagTextSearch );
+    m_ViewMagTextSearch->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
+    m_ViewMagTextSearch->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_LABELS, _( "Labels" ), _( "Show/Hide the Magnatune labels" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagLabels );
+    m_ViewMagLabels->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
+    m_ViewMagLabels->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_GENRES, _( "Genres" ), _( "Show/Hide the Magnatune genres" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagGenres );
+    m_ViewMagGenres->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
+    m_ViewMagGenres->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_ARTISTS, _( "Artists" ), _( "Show/Hide the Magnatune artists" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagArtists );
+    m_ViewMagArtists->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
+    m_ViewMagArtists->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagComposers = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_COMPOSERS, _( "Composers" ), _( "Show/Hide the Magnatune composers" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagComposers );
+    m_ViewMagComposers->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_COMPOSERS ) );
+    m_ViewMagComposers->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagAlbumArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_ALBUMARTISTS, _( "Album Artist" ), _( "Show/Hide the Magnatune album artist" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagAlbumArtists );
+    m_ViewMagAlbumArtists->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ALBUMARTISTS ) );
+    m_ViewMagAlbumArtists->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagAlbums = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_ALBUMS, _( "Albums" ), _( "Show/Hide the Magnatune albums" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagAlbums );
+    m_ViewMagAlbums->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
+    m_ViewMagAlbums->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagYears = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_YEARS, _( "Years" ), _( "Show/Hide the Magnatune years" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagYears );
+    m_ViewMagYears->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
+    m_ViewMagYears->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagRatings = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_RATINGS, _( "Ratings" ), _( "Show/Hide the Magnatune ratings" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagRatings );
+    m_ViewMagRatings->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
+    m_ViewMagRatings->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_ViewMagPlayCounts = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_PLAYCOUNT, _( "Play Counts" ), _( "Show/Hide the Magnatune play counts" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewMagPlayCounts );
+    m_ViewMagPlayCounts->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
+    m_ViewMagPlayCounts->Enable( m_ViewMagnatune->IsChecked() );
+
+    m_MainMenu->AppendSubMenu( SubMenu, wxT( "Magnatune" ), _( "Set the Magnatune visible panels" ) );
+
+
     m_MainMenu->AppendSeparator();
 
     m_ViewFullScreen = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_FULLSCREEN, _( "Full Screen" ), _( "Show/Restore the main window in full screen" ), wxITEM_CHECK );
@@ -1243,6 +1346,13 @@ void guMainFrame::OnJamendoUpdated( wxCommandEvent &event )
 {
     if( m_JamendoPanel )
         m_JamendoPanel->ReloadControls();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnMagnatuneUpdated( wxCommandEvent &event )
+{
+    if( m_MagnatunePanel )
+        m_MagnatunePanel->ReloadControls();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1882,6 +1992,69 @@ void guMainFrame::OnJamendoShowPanel( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnMagnatuneShowPanel( wxCommandEvent &event )
+{
+    int PanelId = 0;
+
+    switch( event.GetId() )
+    {
+        case ID_MENU_VIEW_MAGNATUNE_TEXTSEARCH :
+            PanelId = guPANEL_LIBRARY_TEXTSEARCH;
+            m_ViewMagTextSearch->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_LABELS :
+            PanelId = guPANEL_LIBRARY_LABELS;
+            m_ViewMagLabels->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_GENRES :
+            PanelId = guPANEL_LIBRARY_GENRES;
+            m_ViewMagGenres->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_ARTISTS :
+            PanelId = guPANEL_LIBRARY_ARTISTS;
+            m_ViewMagArtists->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_ALBUMS :
+            PanelId = guPANEL_LIBRARY_ALBUMS;
+            m_ViewMagAlbums->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_YEARS :
+            PanelId = guPANEL_LIBRARY_YEARS;
+            m_ViewMagYears->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_RATINGS :
+            PanelId = guPANEL_LIBRARY_RATINGS;
+            m_ViewMagRatings->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_PLAYCOUNT :
+            PanelId = guPANEL_LIBRARY_PLAYCOUNT;
+            m_ViewMagPlayCounts->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_COMPOSERS :
+            PanelId = guPANEL_LIBRARY_COMPOSERS;
+            m_ViewMagComposers->Check( event.IsChecked() );
+            break;
+
+        case ID_MENU_VIEW_MAGNATUNE_ALBUMARTISTS :
+            PanelId = guPANEL_LIBRARY_ALBUMARTISTS;
+            m_ViewMagAlbumArtists->Check( event.IsChecked() );
+            break;
+    }
+
+    if( PanelId && m_MagnatunePanel )
+        m_MagnatunePanel->ShowPanel( PanelId, event.IsChecked() );
+
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewRadio( wxCommandEvent &event )
 {
 //	guConfig *      Config = ( guConfig * ) guConfig::Get();
@@ -2186,7 +2359,7 @@ void guMainFrame::OnViewJamendo( wxCommandEvent &event )
             m_JamendoDb = new guJamendoLibrary( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Jamendo.db" ) );
 
         if( !m_JamendoPanel )
-            m_JamendoPanel = new guJamendoPanel( m_CatNotebook, m_JamendoDb, m_PlayerPanel );
+            m_JamendoPanel = new guJamendoPanel( m_CatNotebook, m_JamendoDb, m_PlayerPanel, wxT( "Jam" ) );
 
         InsertTabPanel( m_JamendoPanel, 8, wxT( "Jamendo" ) );
 
@@ -2230,6 +2403,62 @@ void guMainFrame::OnViewJamendo( wxCommandEvent &event )
 
     m_ViewJamPlayCounts->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
     m_ViewJamPlayCounts->Enable( IsEnabled );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewMagnatune( wxCommandEvent &event )
+{
+    bool IsEnabled = event.IsChecked();
+    if( IsEnabled )
+    {
+        if( !m_MagnatuneDb )
+            m_MagnatuneDb = new guMagnatuneLibrary( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Magnatune.db" ) );
+
+        if( !m_MagnatunePanel )
+            m_MagnatunePanel = new guMagnatunePanel( m_CatNotebook, m_MagnatuneDb, m_PlayerPanel, wxT( "Mag" ) );
+
+        InsertTabPanel( m_MagnatunePanel, 9, wxT( "Magnatune" ) );
+
+        m_VisiblePanels |= guPANEL_MAIN_MAGNATUNE;
+    }
+    else
+    {
+        RemoveTabPanel( m_MagnatunePanel );
+        m_VisiblePanels ^= guPANEL_MAIN_MAGNATUNE;
+    }
+    m_CatNotebook->Refresh();
+
+    m_ViewMagnatune->Check( m_VisiblePanels & guPANEL_MAIN_MAGNATUNE );
+
+    m_ViewMagTextSearch->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
+    m_ViewMagTextSearch->Enable( IsEnabled );
+
+    m_ViewMagLabels->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
+    m_ViewMagLabels->Enable( IsEnabled );
+
+    m_ViewMagGenres->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
+    m_ViewMagGenres->Enable( IsEnabled );
+
+    m_ViewMagArtists->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
+    m_ViewMagArtists->Enable( IsEnabled );
+
+    m_ViewMagComposers->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_COMPOSERS ) );
+    m_ViewMagComposers->Enable( IsEnabled );
+
+    m_ViewMagAlbumArtists->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ALBUMARTISTS ) );
+    m_ViewMagAlbumArtists->Enable( IsEnabled );
+
+    m_ViewMagAlbums->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
+    m_ViewMagAlbums->Enable( IsEnabled );
+
+    m_ViewMagYears->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
+    m_ViewMagYears->Enable( IsEnabled );
+
+    m_ViewMagRatings->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
+    m_ViewMagRatings->Enable( IsEnabled );
+
+    m_ViewMagPlayCounts->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
+    m_ViewMagPlayCounts->Enable( IsEnabled );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2356,6 +2585,18 @@ void guMainFrame::OnSelectTrack( wxCommandEvent &event )
             m_JamendoPanel->SelectTrack( event.GetInt() );
         }
     }
+    else if( Type == guTRACK_TYPE_MAGNATUNE )
+    {
+        if( m_MagnatunePanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_MagnatunePanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_MagnatunePanel->SelectTrack( event.GetInt() );
+        }
+    }
     else
     {
         if( m_LibPanel )
@@ -2398,6 +2639,18 @@ void guMainFrame::OnSelectAlbum( wxCommandEvent &event )
             m_JamendoPanel->SelectAlbum( event.GetInt() );
         }
     }
+    else if( Type == guTRACK_TYPE_MAGNATUNE )
+    {
+        if( m_MagnatunePanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_MagnatunePanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_MagnatunePanel->SelectAlbum( event.GetInt() );
+        }
+    }
     else
     {
         if( m_LibPanel )
@@ -2432,6 +2685,18 @@ void guMainFrame::OnSelectArtist( wxCommandEvent &event )
             m_JamendoPanel->SelectArtist( event.GetInt() );
         }
     }
+    else if( Type == guTRACK_TYPE_MAGNATUNE )
+    {
+        if( m_MagnatunePanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_MagnatunePanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_MagnatunePanel->SelectArtist( event.GetInt() );
+        }
+    }
     else
     {
         if( m_LibPanel )
@@ -2460,6 +2725,18 @@ void guMainFrame::OnSelectYear( wxCommandEvent &event )
                 m_CatNotebook->SetSelection( PaneIndex );
             }
             m_JamendoPanel->SelectYear( event.GetInt() );
+        }
+    }
+    else if( Type == guTRACK_TYPE_MAGNATUNE )
+    {
+        if( m_MagnatunePanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_MagnatunePanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            m_MagnatunePanel->SelectYear( event.GetInt() );
         }
     }
     else
@@ -2492,6 +2769,20 @@ void guMainFrame::OnSelectGenre( wxCommandEvent &event )
             wxArrayInt Genres;
             Genres.Add( event.GetInt() );
             m_JamendoPanel->SelectGenres( &Genres );
+        }
+    }
+    else if( Type == guTRACK_TYPE_MAGNATUNE )
+    {
+        if( m_MagnatunePanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( m_MagnatunePanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            wxArrayInt Genres;
+            Genres.Add( event.GetInt() );
+            m_MagnatunePanel->SelectGenres( &Genres );
         }
     }
     else
@@ -2676,6 +2967,11 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
         m_ViewJamendo->Check( false );
         PanelId = guPANEL_MAIN_JAMENDO;
     }
+    else if( CurPage == m_MagnatunePanel )
+    {
+        m_ViewMagnatune->Check( false );
+        PanelId = guPANEL_MAIN_MAGNATUNE;
+    }
 
     //CheckHideNotebook();
     m_VisiblePanels ^= PanelId;
@@ -2755,6 +3051,17 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     else if( m_CurrentPage == ( wxWindow * ) m_JamendoPanel )
     {
         m_JamendoDb->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+
+        wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+        SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
+        SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
+            LenToString( m_SelLength.GetLo() ).c_str(),
+            SizeToString( m_SelSize.GetValue() ).c_str() );
+        m_MainStatusBar->SetSelInfo( SelInfo );
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_MagnatunePanel )
+    {
+        m_MagnatuneDb->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
 
         wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
         SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
@@ -3187,6 +3494,28 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
         m_ViewFileBrowser->Check( false );
 
         m_ViewJamendo->Check( false );
+        m_ViewJamTextSearch->Enable( false );
+        m_ViewJamLabels->Enable( false );
+        m_ViewJamGenres->Enable( false );
+        m_ViewJamArtists->Enable( false );
+        m_ViewJamAlbums->Enable( false );
+        m_ViewJamYears->Enable( false );
+        m_ViewJamRatings->Enable( false );
+        m_ViewJamPlayCounts->Enable( false );
+        m_ViewJamComposers->Enable( false );
+        m_ViewJamAlbumArtists->Enable( false );
+
+        m_ViewMagnatune->Check( false );
+        m_ViewMagTextSearch->Enable( false );
+        m_ViewMagLabels->Enable( false );
+        m_ViewMagGenres->Enable( false );
+        m_ViewMagArtists->Enable( false );
+        m_ViewMagAlbums->Enable( false );
+        m_ViewMagYears->Enable( false );
+        m_ViewMagRatings->Enable( false );
+        m_ViewMagPlayCounts->Enable( false );
+        m_ViewMagComposers->Enable( false );
+        m_ViewMagAlbumArtists->Enable( false );
     }
 
     m_AuiManager.Update();
@@ -3255,6 +3584,28 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     m_ViewFileBrowser->Check( false );
 
     m_ViewJamendo->Check( false );
+    m_ViewJamTextSearch->Enable( false );
+    m_ViewJamLabels->Enable( false );
+    m_ViewJamGenres->Enable( false );
+    m_ViewJamArtists->Enable( false );
+    m_ViewJamAlbums->Enable( false );
+    m_ViewJamYears->Enable( false );
+    m_ViewJamRatings->Enable( false );
+    m_ViewJamPlayCounts->Enable( false );
+    m_ViewJamComposers->Enable( false );
+    m_ViewJamAlbumArtists->Enable( false );
+
+    m_ViewMagnatune->Check( false );
+    m_ViewMagTextSearch->Enable( false );
+    m_ViewMagLabels->Enable( false );
+    m_ViewMagGenres->Enable( false );
+    m_ViewMagArtists->Enable( false );
+    m_ViewMagAlbums->Enable( false );
+    m_ViewMagYears->Enable( false );
+    m_ViewMagRatings->Enable( false );
+    m_ViewMagPlayCounts->Enable( false );
+    m_ViewMagComposers->Enable( false );
+    m_ViewMagAlbumArtists->Enable( false );
 
 
     Index = 0;
@@ -3302,6 +3653,10 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
         else if( TabName == wxT( "Jamendo" ) )
         {
             OnViewJamendo( event );
+        }
+        else if( TabName == wxT( "Magnatune" ) )
+        {
+            OnViewMagnatune( event );
         }
         Index++;
     }
@@ -3396,6 +3751,9 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
 
             if( m_VisiblePanels & guPANEL_MAIN_JAMENDO )
                 OnViewJamendo( event );
+
+            if( m_VisiblePanels & guPANEL_MAIN_MAGNATUNE )
+                OnViewMagnatune( event );
 
             break;
         }
@@ -3514,6 +3872,26 @@ void guMainFrame::OnJamendoCoverDownloaded( wxCommandEvent &event )
         {
             wxString CoverPath;
             wxImage * CoverImage = m_JamendoPanel->GetAlbumCover( event.GetInt(), CoverPath );
+            if( CoverImage )
+            {
+                m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
+                delete CoverImage;
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnMagnatuneCoverDownloaded( wxCommandEvent &event )
+{
+    if( m_PlayerPanel )
+    {
+        const guCurrentTrack * CurrentTrack = m_PlayerPanel->GetCurrentTrack();
+        if( CurrentTrack->m_Type == guTRACK_TYPE_MAGNATUNE &&
+            CurrentTrack->m_AlbumId == event.GetInt() )
+        {
+            wxString CoverPath;
+            wxImage * CoverImage = m_MagnatunePanel->GetAlbumCover( event.GetInt(), CoverPath );
             if( CoverImage )
             {
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );

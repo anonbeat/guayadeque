@@ -120,15 +120,8 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track )
     wxString query;
     wxSQLite3ResultSet dbRes;
 
-    track->m_Path = track->m_GenreName + wxT( "/" ) +
-                    track->m_ArtistName + wxT( "/" ) +
-                    track->m_AlbumName + wxT( "/" );
-    track->m_PathId = GetPathId( track->m_Path );
-
-    query = wxString::Format( wxT( "SELECT song_id FROM songs WHERE song_id = %i LIMIT 1" ), track->m_SongId );
-    dbRes = ExecuteQuery( query );
-
-    if( dbRes.NextRow() )
+    track->m_SongId = FindTrack( track->m_ArtistName, track->m_AlbumName );
+    if( track->m_SongId != wxNOT_FOUND )
     {
       query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
                                  "song_genreid = %u, song_genre = '%s', "
@@ -163,9 +156,8 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track )
                     "song_name, song_genreid, song_genre, song_artistid, song_artist, "
                     "song_albumid, song_album, song_pathid, song_path, song_filename, song_format, song_number, song_year, "
                     "song_coverid, song_disk, song_length, song_offset, song_bitrate, song_rating, "
-                    "song_filesize ) VALUES( %u, 0, %u, '%s', %u, '%s', %u, '%s', %u, '%s', "
+                    "song_filesize ) VALUES( NULL, 0, %u, '%s', %u, '%s', %u, '%s', %u, '%s', "
                     "%u, '%s', '%s', 'mp3,ogg', %u, %u, %u, '%s', %u, 0, 0, -1, 0 )" ),
-                    track->m_SongId,
                     wxDateTime::GetTimeNow(),
                     escape_query_str( track->m_SongName ).c_str(),
                     track->m_GenreId,
@@ -243,22 +235,23 @@ guMagnatunePanel::~guMagnatunePanel()
 // -------------------------------------------------------------------------------- //
 void guMagnatunePanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
 {
-//    int Index;
-//    int Count;
-//    if( tracks && ( Count = tracks->Count() ) )
-//    {
-//        guConfig * Config = ( guConfig * ) guConfig::Get();
-//        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) );
-//        for( Index = 0; Index < Count; Index++ )
-//        {
-//            guTrack * Track = &( * tracks )[ Index ];
-//            Track->m_FileName = wxString::Format( guMAGNATUNE_FILE_STREAM_URL, Track->m_SongId );
-//            Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
-//            Track->m_Type = guTRACK_TYPE_MAGNATUNE;
-//            if( isdrag )
-//                Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
-//        }
-//    }
+    int Index;
+    int Count;
+    if( tracks && ( Count = tracks->Count() ) )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) );
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guTrack * Track = &( * tracks )[ Index ];
+            guLogMessage( wxT( "'%s'" ), Track->m_FileName.c_str() );
+            Track->m_FileName = Track->m_FileName.Mid( Track->m_FileName.Find( wxT( "http://he3" ) ) );
+            Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
+            Track->m_Type = guTRACK_TYPE_MAGNATUNE;
+            if( isdrag )
+                Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -819,162 +812,131 @@ guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
 }
 
 #if 0
-<AllSongs>
-  <Track>
-    <artist>Dr Kuch</artist>
-    <artistphoto>http://magnatune.com//artists/img/drkuch_cover_small.jpg</artistphoto>
-    <artistdesc>Fun electro-poppy dance up and down tempo chill out</artistdesc>
-    <albumname>We Cant Stop Progress</albumname>
-    <trackname>Intro</trackname>
-    <tracknum>1</tracknum>
-    <year>2009</year>
-    <mp3genre>(52)</mp3genre>
-    <magnatunegenres>Electronica,Euro-Techno</magnatunegenres>
-    <license>http://creativecommons.org/licenses/by-nc-sa/1.0/</license>
-    <seconds>18</seconds>
-    <url>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch.mp3</url>
-    <mp3lofi>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch-lofi.mp3</mp3lofi>
-    <oggurl>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch.ogg</oggurl>
-    <buy>https://magnatune.com/artists/buy_album?artist=Dr+Kuch&album=We+Can%27t+Stop+Progress&genre=Electronica</buy>
-    <home>http://magnatune.com/artists/dr_kuch</home>
-    <launchdate>2009-10-08</launchdate>
-    <cover_small>http://he3.magnatune.com/music/Dr%20Kuch/We%20Can't%20Stop%20Progress/cover_200.jpg</cover_small>
-    <albumsku>drkuch-progress</albumsku>
-  </Track>
-  ...
-</AllSongs>
+<AllAlbums>
+    <Album>
+        <artist>Dr Kuch</artist>
+		<artistdesc>Fun electro-poppy dance up and down tempo chill out</artistdesc>
+		<cover_small>http://he3.magnatune.com/music/Dr%20Kuch/We%20Can&#39;t%20Stop%20Progress/cover_200.jpg</cover_small>
+        <artistphoto>http://magnatune.com//artists/img/drkuch_cover_small.jpg</artistphoto>
+		<albumname>We Can&#39;t Stop Progress</albumname>
+		<year>2009</year>
+		<album_notes></album_notes>
+		<mp3genre>(52)</mp3genre>
+		<home>http://magnatune.com/artists/dr_kuch</home>
+		<buy>https://magnatune.com/artists/buy_album?artist=Dr+Kuch&amp;album=We+Can%27t+Stop+Progress&amp;genre=Electronica</buy>
+		<magnatunegenres>Electronica,Euro-Techno</magnatunegenres>
+		<launchdate>2009-10-08</launchdate>
+		<albumsku>drkuch-progress</albumsku>
+        <Track>
+            <artist>Dr Kuch</artist>
+            <artistphoto>http://magnatune.com//artists/img/drkuch_cover_small.jpg</artistphoto>
+            <artistdesc>Fun electro-poppy dance up and down tempo chill out</artistdesc>
+            <albumname>We Can&#39;t Stop Progress</albumname>
+            <trackname>Intro</trackname>
+            <tracknum>1</tracknum>
+            <year>2009</year>
+            <mp3genre>(52)</mp3genre>
+            <magnatunegenres>Electronica,Euro-Techno</magnatunegenres>
+            <license>http://creativecommons.org/licenses/by-nc-sa/1.0/</license>
+            <seconds>18</seconds>
+            <url>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch.mp3</url>
+            <mp3lofi>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch-lofi.mp3</mp3lofi>
+            <oggurl>http://he3.magnatune.com/all/01-Intro-Dr%20Kuch.ogg</oggurl>
+            <buy>https://magnatune.com/artists/buy_album?artist=Dr+Kuch&amp;album=We+Can%27t+Stop+Progress&amp;genre=Electronica</buy>
+            <home>http://magnatune.com/artists/dr_kuch</home>
+            <launchdate>2009-10-08</launchdate>
+            <cover_small>http://he3.magnatune.com/music/Dr%20Kuch/We%20Can&#39;t%20Stop%20Progress/cover_200.jpg</cover_small>
+            <albumsku>drkuch-progress</albumsku>
+        </Track>
+        ...
+    </Album>
+    ...
+</AllAlbums>
 #endif
 
 
 // -------------------------------------------------------------------------------- //
-void ReadMagnatuneXmlTrack( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track )
+void ReadMagnatuneXmlTrack( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db )
 {
     long Id;
     while( xmlnode && !thread->TestDestroy() )
     {
         wxString ItemName = xmlnode->GetName();
-        if( ItemName == wxT( "id" ) )
-        {
-            xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_SongId = Id;
-        }
-        else if( ItemName == wxT( "name" ) )
+        if( ItemName == wxT( "trackname" ) )
         {
             track->m_SongName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
         }
-        else if( ItemName == wxT( "duration" ) )
-        {
-            xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_Length = Id;
-        }
-        else if( ItemName == wxT( "numalbum" ) )
+        else if( ItemName == wxT( "tracknum" ) )
         {
             xmlnode->GetNodeContent().ToLong( &Id );
             track->m_Number = Id;
         }
-        else if( ItemName == wxT( "filename" ) )
-        {
-            track->m_FileName = xmlnode->GetNodeContent();
-        }
-        else if( ItemName == wxT( "id3genre" ) )
+        else if( ItemName == wxT( "year" ) )
         {
             xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_GenreName = TStringTowxString( TagLib::ID3v1::genre( Id ) );
-            track->m_GenreId = Id + 1;  // Avoid use Id 0 ('Blues') as for us its 'All Genres'
+            track->m_Year = Id;
         }
-        xmlnode = xmlnode->GetNext();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadMagnatuneXmlTracks( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db, wxArrayInt &genres )
-{
-    while( xmlnode && !thread->TestDestroy() )
-    {
-        if( xmlnode->GetName() == wxT( "track" ) )
+        else if( ItemName == wxT( "seconds" ) )
         {
-            ReadMagnatuneXmlTrack( xmlnode->GetChildren(), thread, track );
-
-            if( genres.Index( track->m_GenreId - 1 ) != wxNOT_FOUND )
-                db->CreateNewSong( track );
+            xmlnode->GetNodeContent().ToLong( &Id );
+            track->m_Length = Id;
+        }
+        else if( ItemName == wxT( "url" ) )
+        {
+            track->m_FileName = xmlnode->GetNodeContent();
+            track->m_FileName.Replace( wxT( ".mp3" ), wxT( "" ) );
+            track->m_FileName.Replace( wxT( ".ogg" ), wxT( "" ) );
+        }
+        else if( ItemName == wxT( "magnatunegenres" ) )
+        {
+            track->m_GenreName = xmlnode->GetNodeContent();
+            track->m_GenreId = db->GetGenreId( track->m_GenreName );
         }
         xmlnode = xmlnode->GetNext();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db, wxArrayInt &genres )
+void ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db )
 {
     long Id;
     while( xmlnode && !thread->TestDestroy() )
     {
         wxString ItemName = xmlnode->GetName();
-        if( ItemName == wxT( "id" ) )
-        {
-            xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_AlbumId = Id;
-        }
-        else if( ItemName == wxT( "name" ) )
-        {
-            track->m_AlbumName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
-        }
-        else if( ItemName == wxT( "releasedate" ) )
-        {
-            wxString ReleaseDate = xmlnode->GetNodeContent();
-            if( !ReleaseDate.IsEmpty() )
-            {
-                ReleaseDate.Mid( 0, 4 ).ToLong( &Id );
-                track->m_Year = Id;
-            }
-        }
-        else if( ItemName == wxT( "id3genre" ) )
-        {
-            xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_GenreName = TStringTowxString( TagLib::ID3v1::genre( Id ) );
-            track->m_GenreId = Id + 1;  // Avoid use Id 0 ('Blues') as for us its 'All Genres'
-        }
-        else if( ItemName == wxT( "Tracks" ) )
-        {
-            ReadMagnatuneXmlTracks( xmlnode->GetChildren(), thread, track, db, genres );
-        }
-        xmlnode = xmlnode->GetNext();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadMagnatuneXmlAlbums( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db, wxArrayInt &genres )
-{
-    while( xmlnode && !thread->TestDestroy() )
-    {
-        if( xmlnode->GetName() == wxT( "album" ) )
-        {
-            track->m_CoverId = 0;
-            ReadMagnatuneXmlAlbum( xmlnode->GetChildren(), thread, track, db, genres );
-        }
-        xmlnode = xmlnode->GetNext();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void ReadMagnatuneXmlArtist( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db, wxArrayInt &genres )
-{
-    while( xmlnode && !thread->TestDestroy() )
-    {
-        wxString ItemName = xmlnode->GetName();
-        if( ItemName == wxT( "id" ) )
-        {
-            long Id;
-            xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_ArtistId = Id;
-        }
-        else if( ItemName == wxT( "name" ) )
+        if( ItemName == wxT( "artist" ) )
         {
             track->m_ArtistName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
-            guLogMessage( wxT( "Artist: '%s'" ), track->m_ArtistName.c_str() );
+            track->m_ArtistId = db->GetArtistId( track->m_ArtistName );
         }
-        else if( ItemName == wxT( "Albums" ) )
+        else if( ItemName == wxT( "albumname" ) )
         {
-            ReadMagnatuneXmlAlbums( xmlnode->GetChildren(), thread, track, db, genres );
+            track->m_AlbumName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
+            track->m_AlbumId = 0;
+            guLogMessage( wxT( "%s" ), track->m_AlbumName.c_str() );
+        }
+        else if( ItemName == wxT( "year" ) )
+        {
+            xmlnode->GetNodeContent().ToLong( &Id );
+            track->m_Year = Id;
+        }
+        else if( ItemName == wxT( "magnatunegenres" ) )
+        {
+            track->m_GenreName = xmlnode->GetNodeContent();
+            track->m_GenreId = db->GetGenreId( track->m_GenreName );
+        }
+        else if( ItemName == wxT( "Track" ) )
+        {
+            if( !track->m_AlbumId )
+            {
+                track->m_Path = track->m_GenreName + wxT( "/" ) +
+                                track->m_ArtistName + wxT( "/" ) +
+                                track->m_AlbumName + wxT( "/" );
+                track->m_PathId = db->GetPathId( track->m_Path );
+                track->m_AlbumId = db->GetAlbumId( track->m_AlbumName, track->m_ArtistId, track->m_PathId, track->m_Path );
+            }
+            ReadMagnatuneXmlTrack( xmlnode->GetChildren(), thread, track, db );
+
+            db->CreateNewSong( track );
         }
         xmlnode = xmlnode->GetNext();
     }
@@ -983,27 +945,27 @@ void ReadMagnatuneXmlArtist( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thre
 // -------------------------------------------------------------------------------- //
 bool guMagnatuneUpdateThread::UpdateDatabase( void )
 {
-//    if( DownloadFile( guMAGNATUNE_DATABASE_DUMP_URL, wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml.gz" ) ) )
-//    {
-//        wxFileInputStream Ins( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml.gz" ) );
-//        if( Ins.IsOk() )
-//        {
-//            wxZlibInputStream ZIn( Ins );
-//            if( ZIn.IsOk() )
-//            {
-//                wxFileOutputStream ZOuts( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml" ) );
-//                if( ZOuts.IsOk() )
-//                {
-//                    ZIn.Read( ZOuts );
-//                    return true;
-//                }
-//            }
-//        }
-//        else
-//        {
-//            guLogError( wxT( "Could not open the Magnatune local database copy" ) );
-//        }
-//    }
+    if( DownloadFile( guMAGNATUNE_DATABASE_DUMP_URL, wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info_xml.gz" ) ) )
+    {
+        wxFileInputStream Ins( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info_xml.gz" ) );
+        if( Ins.IsOk() )
+        {
+            wxZlibInputStream ZIn( Ins );
+            if( ZIn.IsOk() )
+            {
+                wxFileOutputStream ZOuts( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info.xml" ) );
+                if( ZOuts.IsOk() )
+                {
+                    ZIn.Read( ZOuts );
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            guLogError( wxT( "Could not open the Magnatune local database copy" ) );
+        }
+    }
     return false;
 }
 
@@ -1019,7 +981,7 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
     evtmax.SetInt( m_GaugeId );
 
     if( m_Action == guMAGNATUNE_ACTION_UPGRADE &&
-        !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml" ) ) )
+        !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info.xml" ) ) )
     {
         m_Action = guMAGNATUNE_ACTION_UPDATE;
     }
@@ -1027,28 +989,9 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
     guLogMessage( wxT( "Starting the Magnatune Update process..." ) );
     if( !TestDestroy() && ( m_Action == guMAGNATUNE_ACTION_UPGRADE || UpdateDatabase() ) )
     {
-        wxFile XmlFile( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/dbdump_artistalbumtrack.xml" ), wxFile::read );
+        wxFile XmlFile( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info.xml" ), wxFile::read );
         if( XmlFile.IsOpened() )
         {
-            guListItems CurrentGenres;
-            m_Db->GetGenres( &CurrentGenres, true );
-
-            wxArrayInt GenresToDel;
-            int Index;
-            int Count = CurrentGenres.Count();
-            for( Index = 0; Index < Count; Index++ )
-            {
-                if( m_AllowedGenres.Index( CurrentGenres[ Index ].m_Id - 1 ) == wxNOT_FOUND )
-                    GenresToDel.Add( CurrentGenres[ Index ].m_Id );
-            }
-
-            if( GenresToDel.Count() )
-            {
-                query = wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( GenresToDel, wxT( "song_genreid" ) );
-                //guLogMessage( wxT( "%s" ), query.c_str() );
-                m_Db->ExecuteUpdate( query );
-            }
-
             evtmax.SetExtraLong( XmlFile.Length() );
             wxPostEvent( wxTheApp->GetTopWindow(), evtmax );
 
@@ -1056,31 +999,35 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
             query = wxT( "BEGIN TRANSACTION" );
             m_Db->ExecuteUpdate( query );
 
-            if( m_AllowedGenres.Count() )
+            //query = wxT( "DELETE FROM songs" );
+            //m_Db->ExecuteUpdate( query );
+
+            wxString AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
+            while( !TestDestroy() && !AlbumChunk.IsEmpty() )
             {
-                wxString ArtistChunk = guGetNextXMLChunk( XmlFile, CurPos, "<artist>", "</artist>" );
-                while( !TestDestroy() && !ArtistChunk.IsEmpty() )
+                wxHtmlEntitiesParser EntitiesParser;
+                AlbumChunk = EntitiesParser.Parse( AlbumChunk );
+                AlbumChunk.Replace( wxT( "&" ), wxT( "&amp;" ) );
+
+                wxStringInputStream Ins( AlbumChunk );
+                wxXmlDocument XmlDoc( Ins );
+                if( XmlDoc.IsOk() )
                 {
-                    wxStringInputStream Ins( ArtistChunk );
-                    wxXmlDocument XmlDoc( Ins );
-                    if( XmlDoc.IsOk() )
-                    {
-                        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+                    wxXmlNode * XmlNode = XmlDoc.GetRoot();
 
-                        if( XmlNode && XmlNode->GetName() == wxT( "artist" ) )
-                        {
-                            ReadMagnatuneXmlArtist( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db, m_AllowedGenres );
-                        }
-                    }
-                    else
+                    if( XmlNode && XmlNode->GetName() == wxT( "Album" ) )
                     {
-                        guLogMessage( wxT( "Error in artist chunk:\n%s" ), ArtistChunk.c_str() );
+                        ReadMagnatuneXmlAlbum( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db );
                     }
-
-                    ArtistChunk = guGetNextXMLChunk( XmlFile, CurPos, "<artist>", "</artist>" );
-                    evtup.SetExtraLong( CurPos );
-                    wxPostEvent( wxTheApp->GetTopWindow(), evtup );
                 }
+                else
+                {
+                    guLogMessage( wxT( "Error in album chunk:\n%s" ), AlbumChunk.c_str() );
+                }
+
+                AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
+                evtup.SetExtraLong( CurPos );
+                wxPostEvent( wxTheApp->GetTopWindow(), evtup );
             }
 
             query = wxT( "END TRANSACTION" );
