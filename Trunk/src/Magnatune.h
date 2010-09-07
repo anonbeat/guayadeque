@@ -29,6 +29,10 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
+#define guMAGNATUNE_DATABASE_DUMP_URL         wxT( "http://he3.magnatune.com/info/album_info_xml.gz" )
+//#define guMAGNATUNE_FILE_STREAM_URL
+#define guMAGNATUNE_STREAM_FORMAT_MP3         wxT( ".mp3" )
+#define guMAGNATUNE_STREAM_FORMAT_OGG         wxT( ".ogg" )
 
 #define guMAGNATUNE_ACTION_UPDATE             0   // Download the database and then upgrade
 #define guMAGNATUNE_ACTION_UPGRADE            1   // Just refresh the tracks not updating the database

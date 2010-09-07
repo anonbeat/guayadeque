@@ -1188,7 +1188,11 @@ void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 wxString inline FileNameEncode( const wxString filename )
 {
-    wxString RetVal = filename;
+    //wxString RetVal = filename;
+    //RetVal.Replace( wxT( "%" ), wxT( "%25" ) );
+    //RetVal.Replace( wxT( "#" ), wxT( "%23" ) );
+    wxURI Uri( filename );
+    wxString RetVal = Uri.BuildUnescapedURI();
     RetVal.Replace( wxT( "%" ), wxT( "%25" ) );
     RetVal.Replace( wxT( "#" ), wxT( "%23" ) );
     return RetVal;
