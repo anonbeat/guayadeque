@@ -1877,6 +1877,20 @@ void guPlayerPanel::OnMediaPlayStarted( void )
             m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
         }
     }
+    else if( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE )
+    {
+        // TODO
+        // From MainFrame get the Jamendo Db And search for the cover
+        // If not there download it and ask for a message once its downloaded...
+        guMagnatunePanel * MagnatunePanel = m_MainFrame->GetMagnatunePanel();
+        if( MagnatunePanel )
+        {
+            guLogMessage( wxT( "Tried to get the CoverImage for the magnatune album %i" ), m_MediaSong.m_AlbumId );
+            CoverImage = MagnatunePanel->GetAlbumCover( m_MediaSong.m_AlbumId, m_MediaSong.m_ArtistName,
+                                                        m_MediaSong.m_AlbumName, m_MediaSong.m_CoverPath );
+            m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
+        }
+    }
     else if( m_MediaSong.m_CoverId )
     {
         //guLogMessage( wxT( "CoverId %i" ), m_MediaSong.m_CoverId );

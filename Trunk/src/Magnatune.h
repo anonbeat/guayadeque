@@ -81,10 +81,10 @@ class guMagnatuneDownloadThread;
 class guMagnatunePanel : public guLibPanel
 {
   protected :
-    guMagnatuneUpdateThread *     m_UpdateThread;
+    guMagnatuneUpdateThread *   m_UpdateThread;
     wxMutex                     m_UpdateThreadMutex;
 
-    guMagnatuneDownloadThread *   m_DownloadThread;
+    guMagnatuneDownloadThread * m_DownloadThread;
     wxMutex                     m_DownloadThreadMutex;
 
     virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
@@ -108,10 +108,9 @@ class guMagnatunePanel : public guLibPanel
     guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Jam" ) );
     ~guMagnatunePanel();
 
-    guMagnatuneLibrary *          GetMagnatuneDb( void ) { return ( guMagnatuneLibrary * ) m_Db; }
-    wxImage *                   GetAlbumCover( const int albumid, wxString &coverpath );
-    void                        AddDownload( const int albumid, const bool iscover = true );
-    void                        AddDownloads( wxArrayInt &albumids, const bool iscover = true );
+    guMagnatuneLibrary *        GetMagnatuneDb( void ) { return ( guMagnatuneLibrary * ) m_Db; }
+    wxImage *                   GetAlbumCover( const int albumid, const wxString &artist, const wxString &album, wxString &coverpath );
+    void                        AddDownload( const int albumid, const wxString &artist, const wxString &album );
 
     void                        EndUpdateThread( void );
     void                        EndDownloadThread( void );
@@ -122,22 +121,17 @@ class guMagnatunePanel : public guLibPanel
 // -------------------------------------------------------------------------------- //
 class guMagnatuneDownloadThread : public wxThread
 {
-  private :
-    guMagnatuneLibrary *  m_Db;
-    guMagnatunePanel *    m_MagnatunePanel;
-    wxArrayInt          m_Covers;
-    wxMutex             m_CoversMutex;
-    wxArrayInt          m_Albums;
-    wxMutex             m_AlbumsMutex;
-
   protected :
+    guMagnatuneLibrary *    m_Db;
+    guMagnatunePanel *      m_MagnatunePanel;
+    wxString                m_ArtistName;
+    wxString                m_AlbumName;
+    int                     m_AlbumId;
 
   public :
-    guMagnatuneDownloadThread( guMagnatunePanel * jamendopanel );
+    guMagnatuneDownloadThread( guMagnatunePanel * jamendopanel, const int albumid,
+                                const wxString &artist, const wxString &album );
     ~guMagnatuneDownloadThread();
-
-    void AddAlbum( const int albumid, const bool iscover = true );
-    void AddAlbums( wxArrayInt &albums, const bool iscover = true );
 
     ExitCode Entry();
 

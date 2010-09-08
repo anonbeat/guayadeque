@@ -363,13 +363,13 @@ void guMagnatunePanel::OnConfigUpdated( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMagnatunePanel::AddDownload( const int albumid, const bool iscover )
+void guMagnatunePanel::AddDownload( const int albumid, const wxString &artist, const wxString &album )
 {
     wxMutexLocker Lock( m_DownloadThreadMutex );
 
     if( !m_DownloadThread )
     {
-        m_DownloadThread = new guMagnatuneDownloadThread( this );
+        m_DownloadThread = new guMagnatuneDownloadThread( this, albumid, artist, album );
 
         if( !m_DownloadThread )
         {
@@ -377,27 +377,6 @@ void guMagnatunePanel::AddDownload( const int albumid, const bool iscover )
             return;
         }
     }
-
-    m_DownloadThread->AddAlbum( albumid, iscover );
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::AddDownloads( wxArrayInt &albumids, const bool iscover )
-{
-    wxMutexLocker Lock( m_DownloadThreadMutex );
-
-    if( !m_DownloadThread )
-    {
-        m_DownloadThread = new guMagnatuneDownloadThread( this );
-
-        if( !m_DownloadThread )
-        {
-            guLogMessage( wxT( "Could not create the magnatune download thread" ) );
-            return;
-        }
-    }
-
-    m_DownloadThread->AddAlbums( albumids, iscover );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -408,24 +387,28 @@ void guMagnatunePanel::EndDownloadThread( void )
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * guMagnatunePanel::GetAlbumCover( const int albumid, wxString &coverpath )
+wxImage * guMagnatunePanel::GetAlbumCover( const int albumid, const wxString &artist, const wxString &album, wxString &coverpath )
 {
-    wxString CoverFile = wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" );
-    CoverFile += wxString::Format( wxT( "%u.jpg" ), albumid );
-    if( wxFileExists( CoverFile ) )
+    wxFileName CoverFile = wxFileName( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" ) +
+                 wxString::Format( wxT( "%s-%s.jpg" ), artist.c_str(), album.c_str() ) );
+
+    if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
     {
-        wxImage * CoverImage = new wxImage( CoverFile, wxBITMAP_TYPE_JPEG );
-        if( CoverImage )
+        if( CoverFile.FileExists() )
         {
-            if( CoverImage->IsOk() )
+            wxImage * CoverImage = new wxImage( CoverFile.GetFullPath(), wxBITMAP_TYPE_JPEG );
+            if( CoverImage )
             {
-                coverpath = CoverFile;
-                return CoverImage;
+                if( CoverImage->IsOk() )
+                {
+                    coverpath = CoverFile.GetFullPath();
+                    return CoverImage;
+                }
+                delete CoverImage;
             }
-            delete CoverImage;
         }
     }
-    AddDownload( albumid );
+    AddDownload( albumid, artist, album );
     return NULL;
 }
 
@@ -446,7 +429,12 @@ void guMagnatunePanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
     wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
     if( Albums.Count() )
     {
-        AddDownloads( Albums );
+        wxString Artist;
+        wxString Album;
+        if( m_Db->GetAlbumInfo( Albums[ 0 ], &Album, &Artist, NULL ) )
+        {
+            AddDownload( Albums[ 0 ], Artist, Album );
+        }
     }
 }
 
@@ -581,10 +569,14 @@ void guMagnatunePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 // guMagnatuneDownloadThread
 // -------------------------------------------------------------------------------- //
-guMagnatuneDownloadThread::guMagnatuneDownloadThread( guMagnatunePanel * magnatunepanel )
+guMagnatuneDownloadThread::guMagnatuneDownloadThread( guMagnatunePanel * magnatunepanel,
+                const int albumid, const wxString &artist, const wxString &album )
 {
     m_MagnatunePanel = magnatunepanel;
     m_Db = magnatunepanel->GetMagnatuneDb();
+    m_ArtistName = artist;
+    m_AlbumName = album;
+    m_AlbumId = albumid;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -603,172 +595,44 @@ guMagnatuneDownloadThread::~guMagnatuneDownloadThread()
 }
 
 // -------------------------------------------------------------------------------- //
-void guMagnatuneDownloadThread::AddAlbum( const int albumid, const bool iscover )
-{
-    if( iscover )
-    {
-        m_CoversMutex.Lock();
-        m_Covers.Add( albumid );
-        m_CoversMutex.Unlock();
-    }
-    else
-    {
-        m_AlbumsMutex.Lock();
-        m_Albums.Add( albumid );
-        m_AlbumsMutex.Unlock();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatuneDownloadThread::AddAlbums( wxArrayInt &albumids, const bool iscover )
-{
-    int Index;
-    int Count = albumids.Count();
-
-    if( iscover )
-    {
-        m_CoversMutex.Lock();
-        for( Index = 0; Index < Count; Index++ )
-        {
-            m_Covers.Add( albumids[ Index ] );
-        }
-        m_CoversMutex.Unlock();
-    }
-    else
-    {
-        m_AlbumsMutex.Lock();
-        for( Index = 0; Index < Count; Index++ )
-        {
-            m_Albums.Add( albumids[ Index ] );
-        }
-        m_AlbumsMutex.Unlock();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
 {
-//    int Count;
-//    int LoopCount = 0;
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) );
-//    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Magnatune" ) );
-//    while( !TestDestroy() )
-//    {
-//        m_CoversMutex.Lock();
-//        Count = m_Covers.Count();
-//        m_CoversMutex.Unlock();
-//
-//        size_t CurTime = wxGetLocalTimeMillis().GetLo();
-//        if( Count )
-//        {
-//            LoopCount = 0;
-//            wxString CoverFile = wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" );
-//            CoverFile += wxString::Format( wxT( "%u.jpg" ), m_Covers[ 0 ] );
-//
-//            if( !wxFileExists( CoverFile ) )
-//            {
-//                if( !wxDirExists( wxPathOnly( CoverFile ) + wxT( "/" ) ) )
-//                {
-//                    wxMkdir( wxPathOnly( CoverFile ) + wxT( "/" ), 0770 );
-//                }
-//                wxString CoverUrl = wxString::Format( guMAGNATUNE_COVER_DOWNLOAD_URL, m_Covers[ 0 ], 300 );
-//                DownloadImage( CoverUrl, CoverFile, 300 );
-//            }
-//
-//            if( wxFileExists( CoverFile ) )
-//            {
-//                int CoverId = m_Db->AddCoverFile( CoverFile );
-//
-//                wxString query = wxString::Format( wxT( "UPDATE songs SET song_coverid = %u WHERE song_albumid = %u" ),
-//                                    CoverId, m_Covers[ 0 ] );
-//
-//                m_Db->ExecuteUpdate( query );
-//
-//                // Notify the panel that the cover is downloaded
-//                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAGNATUNE_COVER_DOWNLAODED );
-//                event.SetInt( m_Covers[ 0 ] );
-//                wxPostEvent( m_MagnatunePanel, event );
-//            }
-//            else
-//            {
-//                guLogMessage( wxT( "Could not get the magnatune cover art %s" ), CoverFile.c_str() );
-//            }
-//
-//            m_CoversMutex.Lock();
-//            m_Covers.RemoveAt( 0 );
-//            m_CoversMutex.Unlock();
-//        }
-//        else
-//        {
-//            LoopCount++;
-//            if( LoopCount > 8 )
-//            {
-//                break;
-//            }
-//        }
-//
-//        if( TestDestroy() )
-//            break;
-//
-//        size_t Elapsed = wxGetLocalTimeMillis().GetLo() - CurTime;
-//        if( !( Elapsed > 1000 ) )
-//        {
-//            Sleep( 1000 - Elapsed );
-//        }
-//
-//        //
-//        // Album Torrents
-//        //
-//        m_AlbumsMutex.Lock();
-//        Count = m_Albums.Count();
-//        m_AlbumsMutex.Unlock();
-//
-//        CurTime = wxGetLocalTimeMillis().GetLo();
-//        if( Count )
-//        {
-//            LoopCount = 0;
-//
-//            wxString Url = wxString::Format( guMAGNATUNE_TORRENT_DOWNLOAD_URL, m_Albums[ 0 ] );
-//            Url += AudioFormat ? guMAGNATUNE_DOWNLOAD_FORMAT_OGG : guMAGNATUNE_DOWNLOAD_FORMAT_MP3;
-//
-//            //guLogMessage( wxT( "Getting %s" ), Url.c_str() );
-//
-//            wxString TorrentUrl = GetUrlContent( Url );
-//
-//            //guLogMessage( wxT( "Downloading '%s'" ), TorrentUrl.c_str() );
-//            if( !TorrentUrl.IsEmpty() )
-//            {
-//                wxString TmpFileName = wxFileName::CreateTempFileName( wxString::Format( wxT( "%u" ), m_Albums[ 0 ] ) );
-//                TmpFileName += wxT( ".torrent" );
-//                if( DownloadFile( TorrentUrl, TmpFileName ) )
-//                {
-//                    guExecute( TorrentCmd + wxT( " " ) + TmpFileName );
-//                }
-//            }
-//
-//            m_AlbumsMutex.Lock();
-//            m_Albums.RemoveAt( 0 );
-//            m_AlbumsMutex.Unlock();
-//        }
-//        else
-//        {
-//            LoopCount++;
-//            if( LoopCount > 8 )
-//            {
-//                break;
-//            }
-//        }
-//
-//        if( TestDestroy() )
-//            break;
-//
-//        Elapsed = wxGetLocalTimeMillis().GetLo() - CurTime;
-//        if( !( Elapsed > 1000 ) )
-//        {
-//            Sleep( 1000 - Elapsed );
-//        }
-//    }
+    wxFileName CoverFile = wxFileName( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" ) +
+                 wxString::Format( wxT( "%s-%s.jpg" ), m_ArtistName.c_str(), m_AlbumName.c_str() ) );
+
+    if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+    {
+        wxString CoverUrl = wxString::Format( wxT( "http://he3.magnatune.com/music/%s/%s/cover_300.jpg" ),
+                m_ArtistName.c_str(),
+                m_AlbumName.c_str() );
+
+        if( !wxDirExists( wxPathOnly( CoverFile.GetFullPath() ) + wxT( "/" ) ) )
+        {
+            wxMkdir( wxPathOnly( CoverFile.GetFullPath() ) + wxT( "/" ), 0770 );
+        }
+
+        DownloadImage( CoverUrl, CoverFile.GetFullPath(), 300 );
+
+        if( CoverFile.FileExists() )
+        {
+            int CoverId = m_Db->AddCoverFile( CoverFile.GetFullPath() );
+
+            wxString query = wxString::Format( wxT( "UPDATE songs SET song_coverid = %u WHERE song_albumid = %u" ),
+                                CoverId, m_AlbumId );
+
+            m_Db->ExecuteUpdate( query );
+
+            // Notify the panel that the cover is downloaded
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAGNATUNE_COVER_DOWNLAODED );
+            event.SetInt( m_AlbumId );
+            wxPostEvent( m_MagnatunePanel, event );
+        }
+        else
+        {
+            guLogMessage( wxT( "Could not get the magnatune cover art %s" ), CoverFile.GetFullPath().c_str() );
+        }
+
+    }
     return 0;
 }
 
