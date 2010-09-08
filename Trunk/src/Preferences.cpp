@@ -96,6 +96,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_online_services ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_podcasts ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_jamendo ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_magnatune ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_links ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_commands ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_copy_to ) );
@@ -141,17 +142,21 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
 	m_MainNotebook->AddPage( m_JamendoPanel, wxT("Jamendo"), false );
 	m_MainNotebook->SetPageImage( 9, 9 );
 
+	m_MagnatunePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_MagnatunePanel, wxT("Magnatune"), false );
+	m_MainNotebook->SetPageImage( 10, 10 );
+
 	m_LinksPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_MainNotebook->AddPage( m_LinksPanel, _("Links"), false );
-	m_MainNotebook->SetPageImage( 10, 10 );
+	m_MainNotebook->SetPageImage( 11, 11 );
 
 	m_CmdPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_MainNotebook->AddPage( m_CmdPanel, _( "Commands" ), false );
-	m_MainNotebook->SetPageImage( 11, 11 );
+	m_MainNotebook->SetPageImage( 12, 12 );
 
 	m_CopyPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
-	m_MainNotebook->SetPageImage( 12, 12 );
+	m_MainNotebook->SetPageImage( 13, 13 );
 
     if( pagenum == guPREFERENCE_PAGE_LASTUSED )
     {
@@ -198,6 +203,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
 
         case guPREFERENCE_PAGE_JAMENDO :
             BuildJamendoPage();
+            break;
+
+        case guPREFERENCE_PAGE_MAGNATUNE :
+            BuildMagnatunePage();
             break;
 
         case guPREFERENCE_PAGE_LINKS :
@@ -358,21 +367,21 @@ void guPrefDialog::OnPageChanged( wxCommandEvent &event )
 {
     switch( m_MainNotebook->GetSelection() )
     {
-        case  0 : BuildGeneralPage(); break;
-        case  1 : BuildLibraryPage(); break;
-        case  2 : BuildPlaybackPage(); break;
-        case  3 : BuildCrossfaderPage(); break;
-        case  4 : BuildRecordPage(); break;
-        case  5 : BuildAudioScrobblePage(); break;
-        case  6 : BuildLyricsPage(); break;
-        case  7 : BuildOnlinePage(); break;
-        case  8 : BuildPodcastsPage(); break;
-        case  9 : BuildJamendoPage(); break;
-        case 10 : BuildLinksPage(); break;
-        case 11 : BuildCommandsPage(); break;
-        case 12 : BuildCopyToPage(); break;
+        case guPREFERENCE_PAGE_GENERAL          : BuildGeneralPage();       break;
+        case guPREFERENCE_PAGE_LIBRARY          : BuildLibraryPage();       break;
+        case guPREFERENCE_PAGE_PLAYBACK         : BuildPlaybackPage();      break;
+        case guPREFERENCE_PAGE_CROSSFADER       : BuildCrossfaderPage();    break;
+        case guPREFERENCE_PAGE_RECORD           : BuildRecordPage();        break;
+        case guPREFERENCE_PAGE_AUDIOSCROBBLE    : BuildAudioScrobblePage(); break;
+        case guPREFERENCE_PAGE_LYRICS           : BuildLyricsPage();        break;
+        case guPREFERENCE_PAGE_ONLINE           : BuildOnlinePage();        break;
+        case guPREFERENCE_PAGE_PODCASTS         : BuildPodcastsPage();      break;
+        case guPREFERENCE_PAGE_JAMENDO          : BuildJamendoPage();       break;
+        case guPREFERENCE_PAGE_MAGNATUNE        : BuildMagnatunePage();     break;
+        case guPREFERENCE_PAGE_LINKS            : BuildLinksPage();         break;
+        case guPREFERENCE_PAGE_COMMANDS         : BuildCommandsPage();      break;
+        case guPREFERENCE_PAGE_COPYTO           : BuildCopyToPage();        break;
     }
-
     event.Skip();
 }
 
@@ -1329,6 +1338,132 @@ void guPrefDialog::BuildJamendoPage( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildMagnatunePage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_MAGNATUNE;
+
+    //
+    // Magnatune
+    //
+	wxBoxSizer * MagMainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer * MagGenresSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, _(" Genres ") ), wxHORIZONTAL );
+
+	wxArrayString MagnatuneGenres;
+	int Index = 0;
+    do {
+        wxString GenreName = TStringTowxString( TagLib::ID3v1::genre( Index++ ) );
+
+        if( !GenreName.IsEmpty() )
+            MagnatuneGenres.Add( GenreName );
+        else
+            break;
+
+    } while( true );
+
+    m_LastMagnatuneGenres = m_Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "MagnatuneGenres" ) );
+
+	m_MagGenresListBox = new wxCheckListBox( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, MagnatuneGenres, 0 );
+	int Count = m_LastMagnatuneGenres.Count();
+	for( Index = 0; Index < Count; Index++ )
+	{
+        int Pos = MagnatuneGenres.Index( m_LastMagnatuneGenres[ Index ] );
+        if( Pos != wxNOT_FOUND )
+            m_MagGenresListBox->Check( Pos );
+	}
+	MagGenresSizer->Add( m_MagGenresListBox, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer * MagGenresBtnSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_MagSelAllBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _( "All" ), wxDefaultPosition, wxDefaultSize, 0 );
+	MagGenresBtnSizer->Add( m_MagSelAllBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_MagSelNoneBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _("None"), wxDefaultPosition, wxDefaultSize, 0 );
+	MagGenresBtnSizer->Add( m_MagSelNoneBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_MagInvertBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _("Invert"), wxDefaultPosition, wxDefaultSize, 0 );
+	MagGenresBtnSizer->Add( m_MagInvertBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	MagGenresSizer->Add( MagGenresBtnSizer, 0, wxEXPAND, 5 );
+
+	MagMainSizer->Add( MagGenresSizer, 1, wxEXPAND|wxALL, 5 );
+
+	wxStaticBoxSizer * MagOtherSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
+
+	wxFlexGridSizer * MagFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	MagFlexSizer->AddGrowableCol( 1 );
+	MagFlexSizer->SetFlexibleDirection( wxBOTH );
+	MagFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxStaticText * MagMemberLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Membership :" ), wxDefaultPosition, wxDefaultSize, 0 );
+	MagMemberLabel->Wrap( -1 );
+	MagFlexSizer->Add( MagMemberLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	wxBoxSizer * MagMembSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_MagNoRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "None" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+	m_MagStRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Streaming" ), wxDefaultPosition, wxDefaultSize );
+	m_MagDlRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Downloading" ), wxDefaultPosition, wxDefaultSize );
+	int Membership = m_Config->ReadNum( wxT( "Membership" ), 0, wxT( "Magnatune" ) );
+	if( Membership == 1 )
+        m_MagStRadioItem->SetValue( true );
+    else if( Membership == 2 )
+        m_MagDlRadioItem->SetValue( true );
+    else
+        m_MagNoRadioItem->SetValue( true );
+	MagMembSizer->Add( m_MagNoRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	MagMembSizer->Add( m_MagStRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	MagMembSizer->Add( m_MagDlRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	MagFlexSizer->Add( MagMembSizer, 1, wxEXPAND, 5 );
+
+	wxStaticText * MagUserLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Username :" ), wxDefaultPosition, wxDefaultSize, 0 );
+	MagUserLabel->Wrap( -1 );
+	MagFlexSizer->Add( MagUserLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	m_MagUserTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "Magnatune" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_MagUserTextCtrl->Enable( !m_MagNoRadioItem->GetValue() );
+	MagFlexSizer->Add( m_MagUserTextCtrl, 0, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * MagPassLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Password :" ), wxDefaultPosition, wxDefaultSize, 0 );
+	MagPassLabel->Wrap( -1 );
+	MagFlexSizer->Add( MagPassLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
+
+	m_MagPassTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "Magnatune" ) ), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    m_MagPassTextCtrl->Enable( !m_MagNoRadioItem->GetValue() );
+	MagFlexSizer->Add( m_MagPassTextCtrl, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Format :" ), wxDefaultPosition, wxDefaultSize, 0 );
+	MagFormatLabel->Wrap( -1 );
+	MagFlexSizer->Add( MagFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	wxArrayString MagFormatChoices;
+	MagFormatChoices.Add( wxT( "mp3" ) );
+	MagFormatChoices.Add( wxT( "ogg" ) );
+	m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, MagFormatChoices, 0 );
+	m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) ) );
+	MagFlexSizer->Add( m_MagFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	MagOtherSizer->Add( MagFlexSizer, 1, wxEXPAND, 5 );
+
+	MagMainSizer->Add( MagOtherSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_MagnatunePanel->SetSizer( MagMainSizer );
+	m_MagnatunePanel->Layout();
+
+	m_MagSelAllBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneSelectAll ), NULL, this );
+	m_MagSelNoneBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneSelectNone ), NULL, this );
+	m_MagInvertBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneInvertSelection ), NULL, this );
+	m_MagNoRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
+	m_MagStRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
+	m_MagDlRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
+
+}
+
+// -------------------------------------------------------------------------------- //
 void guPrefDialog::BuildLinksPage( void )
 {
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LINKS )
@@ -1764,6 +1899,44 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "NeedUpgrade" ), DoUpgrade, wxT( "Jamendo" ) );
         m_Config->WriteNum( wxT( "AudioFormat" ), m_JamFormatChoice->GetSelection(), wxT( "Jamendo" ) );
         m_Config->WriteStr( wxT( "TorrentCommand" ), m_JamBTCmd->GetValue(), wxT( "Jamendo" ) );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
+    {
+        wxArrayString EnabledGenres;
+        int Index;
+        int Count = m_MagGenresListBox->GetCount();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( m_MagGenresListBox->IsChecked( Index ) )
+                EnabledGenres.Add( m_MagGenresListBox->GetString( Index ) );
+        }
+        m_Config->WriteAStr( wxT( "Genre" ), EnabledGenres, wxT( "MagnatuneGenres" ) );
+
+        bool DoUpgrade = ( EnabledGenres.Count() != m_LastMagnatuneGenres.Count() );
+        if( !DoUpgrade )
+        {
+            Count = EnabledGenres.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                if( m_LastMagnatuneGenres.Index( EnabledGenres[ Index ] ) == wxNOT_FOUND )
+                {
+                    DoUpgrade = true;
+                    break;
+                }
+            }
+        }
+
+        m_Config->WriteBool( wxT( "NeedUpgrade" ), DoUpgrade, wxT( "Magnatune" ) );
+        if( m_MagNoRadioItem->GetValue() )
+            m_Config->WriteNum( wxT( "Membership" ), 0, wxT( "Magnatune" ) );
+        else if( m_MagStRadioItem->GetValue() )
+            m_Config->WriteNum( wxT( "Membership" ), 1, wxT( "Magnatune" ) );
+        else
+            m_Config->WriteNum( wxT( "Membership" ), 2, wxT( "Magnatune" ) );
+        m_Config->WriteStr( wxT( "UserName" ), m_MagUserTextCtrl->GetValue(), wxT( "Magnatune" ) );
+        m_Config->WriteStr( wxT( "Password" ), m_MagPassTextCtrl->GetValue(), wxT( "Magnatune" ) );
+        m_Config->WriteNum( wxT( "AudioFormat" ), m_MagFormatChoice->GetSelection(), wxT( "Magnatune" ) );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LINKS )
@@ -2232,6 +2405,47 @@ void guPrefDialog::OnJamendoInvertSelection( wxCommandEvent& event )
     {
         m_JamGenresListBox->Check( Index, !m_JamGenresListBox->IsChecked( Index ) );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnMagnatuneSelectAll( wxCommandEvent& event )
+{
+    int Index;
+    int Count = m_MagGenresListBox->GetCount();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_MagGenresListBox->Check( Index );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnMagnatuneSelectNone( wxCommandEvent& event )
+{
+    int Index;
+    int Count = m_MagGenresListBox->GetCount();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_MagGenresListBox->Check( Index, false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnMagnatuneInvertSelection( wxCommandEvent& event )
+{
+    int Index;
+    int Count = m_MagGenresListBox->GetCount();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_MagGenresListBox->Check( Index, !m_MagGenresListBox->IsChecked( Index ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnMagNoRadioItemChanged( wxCommandEvent& event )
+{
+    bool Enabled = !m_MagNoRadioItem->GetValue();
+    m_MagUserTextCtrl->Enable( Enabled );
+    m_MagPassTextCtrl->Enable( Enabled );
 }
 
 // -------------------------------------------------------------------------------- //

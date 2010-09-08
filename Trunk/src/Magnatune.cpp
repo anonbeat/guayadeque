@@ -27,6 +27,7 @@
 
 #include <wx/wfstream.h>
 #include <wx/mstream.h>
+#include <wx/tokenzr.h>
 #include <wx/zstream.h>
 #include <wx/xml/xml.h>
 
@@ -118,9 +119,9 @@ void guMagnatuneLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
 void guMagnatuneLibrary::CreateNewSong( guTrack * track )
 {
     wxString query;
-    wxSQLite3ResultSet dbRes;
+    //wxSQLite3ResultSet dbRes;
 
-    track->m_SongId = FindTrack( track->m_ArtistName, track->m_AlbumName );
+    track->m_SongId = FindTrack( track->m_ArtistName, track->m_SongName );
     if( track->m_SongId != wxNOT_FOUND )
     {
       query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
@@ -189,7 +190,30 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track )
 
 }
 
+// -------------------------------------------------------------------------------- //
+int guMagnatuneLibrary::GetTrackId( const wxString &url, guTrack * track )
+{
+    wxString query;
+    wxSQLite3ResultSet dbRes;
+    int RetVal = wxNOT_FOUND;
 
+    query = GU_TRACKS_QUERYSTR +
+            wxString::Format( wxT( " WHERE song_filename = '%s' LIMIT 1;" ),
+                    escape_query_str( url.BeforeLast( '.' ) ).c_str() );
+    //guLogMessage( wxT( "Searching:\n%s" ), query.c_str() );
+    dbRes = ExecuteQuery( query );
+    if( dbRes.NextRow() )
+    {
+      RetVal = dbRes.GetInt( 0 );
+      if( track )
+      {
+          FillTrackFromDb( track, &dbRes );
+      }
+    }
+    dbRes.Finalize();
+
+    return RetVal;
+}
 
 
 // -------------------------------------------------------------------------------- //
@@ -260,26 +284,11 @@ void guMagnatunePanel::CreateContextMenu( wxMenu * menu, const int windowid )
     wxMenu *     SubMenu;
     SubMenu = new wxMenu();
 
-    if( ( windowid == guLIBRARY_ELEMENT_ALBUMS ) )
-    {
-        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
-        SubMenu->Append( MenuItem );
-
-        SubMenu->AppendSeparator();
-    }
-    else if( ( windowid == guLIBRARY_ELEMENT_TRACKS ) )
-    {
-        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
-        SubMenu->Append( MenuItem );
-
-        SubMenu->AppendSeparator();
-    }
-
     wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_UPDATE, _( "Update Database" ), _( "Download the latest Magnatune database" ) );
     SubMenu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_EDIT_GENRES, _( "Select Genres" ), _( "Selects the enabled Magnatune genres" ) );
-    SubMenu->Append( MenuItem );
+//    MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_EDIT_GENRES, _( "Select Genres" ), _( "Selects the enabled Magnatune genres" ) );
+//    SubMenu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_SETUP, _( "Preferences" ), _( "Configure the Magnatune options" ) );
     SubMenu->Append( MenuItem );
@@ -341,7 +350,7 @@ void guMagnatunePanel::OnUpgrade( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMagnatunePanel::OnConfigUpdated( wxCommandEvent &event )
 {
-//    if( event.GetInt() & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
+    if( event.GetInt() & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
         bool DoUpgrade = Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "Magnatune" ) );
@@ -453,44 +462,44 @@ void guMagnatunePanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
         {
             if( SelCoverFile->ShowModal() == wxID_OK )
             {
-//                wxString CoverFile = SelCoverFile->GetSelFile();
-//                if( !CoverFile.IsEmpty() )
-//                {
-//                    guConfig * Config = ( guConfig * ) guConfig::Get();
-//                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-//                    wxString CoverName = wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" );
-//                    CoverName += wxString::Format( wxT( "%u.jpg" ), AlbumId );
-//
-//                    wxURI Uri( CoverFile );
-//                    if( Uri.IsReference() )
-//                    {
-//                        wxImage CoverImage( CoverFile );
-//                        if( CoverImage.IsOk() )
-//                        {
-//                            if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
-//                            {
-//                                m_Db->SetAlbumCover( AlbumId, CoverName );
-//                                ReloadAlbums( false );
-//                            }
-//                        }
-//                        else
-//                        {
-//                            guLogError( wxT( "Could not load the imate '%s'" ), CoverFile.c_str() );
-//                        }
-//                    }
-//                    else
-//                    {
-//                        if( DownloadImage( CoverFile, CoverName ) )
-//                        {
-//                            m_Db->SetAlbumCover( AlbumId, CoverName );
-//                            ReloadAlbums( false );
-//                        }
-//                        else
-//                        {
-//                            guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
-//                        }
-//                    }
-//                }
+                wxString CoverFile = SelCoverFile->GetSelFile();
+                if( !CoverFile.IsEmpty() )
+                {
+                    guConfig * Config = ( guConfig * ) guConfig::Get();
+                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+                    wxString CoverName = wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" );
+                    CoverName += wxString::Format( wxT( "%u.jpg" ), AlbumId );
+
+                    wxURI Uri( CoverFile );
+                    if( Uri.IsReference() )
+                    {
+                        wxImage CoverImage( CoverFile );
+                        if( CoverImage.IsOk() )
+                        {
+                            if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
+                            {
+                                m_Db->SetAlbumCover( AlbumId, CoverName );
+                                ReloadAlbums( false );
+                            }
+                        }
+                        else
+                        {
+                            guLogError( wxT( "Could not load the imate '%s'" ), CoverFile.c_str() );
+                        }
+                    }
+                    else
+                    {
+                        if( DownloadImage( CoverFile, CoverName ) )
+                        {
+                            m_Db->SetAlbumCover( AlbumId, CoverName );
+                            ReloadAlbums( false );
+                        }
+                        else
+                        {
+                            guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
+                        }
+                    }
+                }
             }
             delete SelCoverFile;
         }
@@ -775,7 +784,7 @@ guMagnatuneUpdateThread::guMagnatuneUpdateThread( guMagnatuneLibrary * db, int a
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     //m_LastUpdate = Config->ReadNum( wxT( "MagnatuneLastUpdate" ), 0, wxT( "General" ) );
-    m_AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "MagnatuneGenres" ) );
+    m_AllowedGenres = Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "MagnatuneGenres" ) );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -807,7 +816,7 @@ guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
         event.SetEventObject( ( wxObject * ) this );
         wxPostEvent( MainFrame, event );
 
-//        m_MainFrame->GetMagnatunePanel()->EndUpdateThread();
+        m_MainFrame->GetMagnatunePanel()->EndUpdateThread();
     }
 }
 
@@ -853,6 +862,20 @@ guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
     ...
 </AllAlbums>
 #endif
+// -------------------------------------------------------------------------------- //
+bool inline IsGenreEnabled( const wxArrayString &genrelist, const wxString &current )
+{
+    wxArrayString CurrentGenres = wxStringTokenize( current, wxT( "," ) );
+    int Index;
+    int Count = CurrentGenres.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( genrelist.Index( CurrentGenres[ Index ] ) != wxNOT_FOUND )
+            return true;
+    }
+    return false;
+}
+
 
 
 // -------------------------------------------------------------------------------- //
@@ -897,7 +920,8 @@ void ReadMagnatuneXmlTrack( wxXmlNode * xmlnode, guMagnatuneUpdateThread * threa
 }
 
 // -------------------------------------------------------------------------------- //
-void ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db )
+void ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread,
+            guTrack * track, guMagnatuneLibrary * db, wxArrayString &allowedgenres )
 {
     long Id;
     while( xmlnode && !thread->TestDestroy() )
@@ -936,7 +960,10 @@ void ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode, guMagnatuneUpdateThread * threa
             }
             ReadMagnatuneXmlTrack( xmlnode->GetChildren(), thread, track, db );
 
-            db->CreateNewSong( track );
+            if( IsGenreEnabled( allowedgenres, track->m_GenreName ) )
+            {
+                db->CreateNewSong( track );
+            }
         }
         xmlnode = xmlnode->GetNext();
     }
@@ -992,6 +1019,28 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
         wxFile XmlFile( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info.xml" ), wxFile::read );
         if( XmlFile.IsOpened() )
         {
+            guListItems CurrentGenres;
+            m_Db->GetGenres( &CurrentGenres, true );
+
+            wxArrayInt GenresToDel;
+            int Index;
+            int Count = CurrentGenres.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                if( !IsGenreEnabled( m_AllowedGenres, CurrentGenres[ Index ].m_Name ) )
+                {
+                    GenresToDel.Add( CurrentGenres[ Index ].m_Id );
+                }
+            }
+
+            if( GenresToDel.Count() )
+            {
+                query = wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( GenresToDel, wxT( "song_genreid" ) );
+                //guLogMessage( wxT( "%s" ), query.c_str() );
+                m_Db->ExecuteUpdate( query );
+            }
+
+
             evtmax.SetExtraLong( XmlFile.Length() );
             wxPostEvent( wxTheApp->GetTopWindow(), evtmax );
 
@@ -1002,32 +1051,35 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
             //query = wxT( "DELETE FROM songs" );
             //m_Db->ExecuteUpdate( query );
 
-            wxString AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
-            while( !TestDestroy() && !AlbumChunk.IsEmpty() )
+            if( m_AllowedGenres.Count() )
             {
-                wxHtmlEntitiesParser EntitiesParser;
-                AlbumChunk = EntitiesParser.Parse( AlbumChunk );
-                AlbumChunk.Replace( wxT( "&" ), wxT( "&amp;" ) );
-
-                wxStringInputStream Ins( AlbumChunk );
-                wxXmlDocument XmlDoc( Ins );
-                if( XmlDoc.IsOk() )
+                wxString AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
+                while( !TestDestroy() && !AlbumChunk.IsEmpty() )
                 {
-                    wxXmlNode * XmlNode = XmlDoc.GetRoot();
+                    wxHtmlEntitiesParser EntitiesParser;
+                    AlbumChunk = EntitiesParser.Parse( AlbumChunk );
+                    AlbumChunk.Replace( wxT( "&" ), wxT( "&amp;" ) );
 
-                    if( XmlNode && XmlNode->GetName() == wxT( "Album" ) )
+                    wxStringInputStream Ins( AlbumChunk );
+                    wxXmlDocument XmlDoc( Ins );
+                    if( XmlDoc.IsOk() )
                     {
-                        ReadMagnatuneXmlAlbum( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db );
-                    }
-                }
-                else
-                {
-                    guLogMessage( wxT( "Error in album chunk:\n%s" ), AlbumChunk.c_str() );
-                }
+                        wxXmlNode * XmlNode = XmlDoc.GetRoot();
 
-                AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
-                evtup.SetExtraLong( CurPos );
-                wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+                        if( XmlNode && XmlNode->GetName() == wxT( "Album" ) )
+                        {
+                            ReadMagnatuneXmlAlbum( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db, m_AllowedGenres );
+                        }
+                    }
+                    else
+                    {
+                        guLogMessage( wxT( "Error in album chunk:\n%s" ), AlbumChunk.c_str() );
+                    }
+
+                    AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
+                    evtup.SetExtraLong( CurPos );
+                    wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+                }
             }
 
             query = wxT( "END TRANSACTION" );
