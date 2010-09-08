@@ -270,7 +270,7 @@ void guPlayList::OnDropFile( const wxString &filename )
     {
         AddPlayListItem( filename, false );
     }
-    else if( guIsJamendoFile( filename ) )
+    else if( guIsJamendoFile( filename ) || guIsMagnatuneFile( filename ) )
     {
         AddPlayListItem( wxT( "http:/" ) + filename, false );
     }
@@ -1243,7 +1243,6 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
         {
             Track.m_CoverId  = 0;
             Track.m_SongName = FileName;
-            guLogMessage( wxT( "1) '%s'" ), FileName.c_str() );
             //Track.m_AlbumName = FileName;
             Track.m_Length   = 0;
             Track.m_Year     = 0;

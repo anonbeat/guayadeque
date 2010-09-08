@@ -3891,7 +3891,8 @@ void guMainFrame::OnMagnatuneCoverDownloaded( wxCommandEvent &event )
             CurrentTrack->m_AlbumId == event.GetInt() )
         {
             wxString CoverPath;
-            wxImage * CoverImage = m_MagnatunePanel->GetAlbumCover( event.GetInt(), CoverPath );
+            wxImage * CoverImage = m_MagnatunePanel->GetAlbumCover( CurrentTrack->m_AlbumId,
+                     CurrentTrack->m_ArtistName, CurrentTrack->m_AlbumName, CoverPath );
             if( CoverImage )
             {
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
