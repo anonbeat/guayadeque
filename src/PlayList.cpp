@@ -263,16 +263,15 @@ bool inline guIsMagnatuneFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnDropFile( const wxString &filename )
 {
-    guLogMessage( wxT( "Dropping '%s'" ), filename.c_str() );
-
-    if( guIsValidAudioFile( filename ) ||
-        guPlayListFile::IsValidPlayList( filename ) )
-    {
-        AddPlayListItem( filename, false );
-    }
-    else if( guIsJamendoFile( filename ) || guIsMagnatuneFile( filename ) )
+    //guLogMessage( wxT( "Dropping '%s'" ), filename.c_str() );
+    if( guIsJamendoFile( filename ) || guIsMagnatuneFile( filename ) )
     {
         AddPlayListItem( wxT( "http:/" ) + filename, false );
+    }
+    else if( guIsValidAudioFile( filename ) ||
+             guPlayListFile::IsValidPlayList( filename ) )
+    {
+        AddPlayListItem( filename, false );
     }
 }
 
@@ -1239,6 +1238,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
     else if( guIsMagnatuneFile( FileName ) )
     {
         guMagnatuneLibrary * MagnatuneDb = m_MainFrame->GetMagnatuneDb();
+        FileName.Replace( wxT( " " ), wxT( "%20" ) );
         if( !MagnatuneDb || ( MagnatuneDb->GetTrackId( FileName, &Track ) == wxNOT_FOUND ) )
         {
             Track.m_CoverId  = 0;

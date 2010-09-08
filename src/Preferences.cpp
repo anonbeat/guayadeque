@@ -1352,21 +1352,25 @@ void guPrefDialog::BuildMagnatunePage( void )
 
 	wxStaticBoxSizer * MagGenresSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, _(" Genres ") ), wxHORIZONTAL );
 
-	wxArrayString MagnatuneGenres;
-	int Index = 0;
-    do {
-        wxString GenreName = TStringTowxString( TagLib::ID3v1::genre( Index++ ) );
+	wxArrayString MagnatuneGenres = m_Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "MagnatuneGenreList" ) );
+	if( !MagnatuneGenres.Count() )
+	{
+        int Index = 0;
+        do {
+            wxString GenreName = TStringTowxString( TagLib::ID3v1::genre( Index++ ) );
 
-        if( !GenreName.IsEmpty() )
-            MagnatuneGenres.Add( GenreName );
-        else
-            break;
+            if( !GenreName.IsEmpty() )
+                MagnatuneGenres.Add( GenreName );
+            else
+                break;
 
-    } while( true );
+        } while( true );
+	}
 
     m_LastMagnatuneGenres = m_Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "MagnatuneGenres" ) );
 
 	m_MagGenresListBox = new wxCheckListBox( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, MagnatuneGenres, 0 );
+	int Index;
 	int Count = m_LastMagnatuneGenres.Count();
 	for( Index = 0; Index < Count; Index++ )
 	{
