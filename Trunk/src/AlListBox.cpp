@@ -456,6 +456,7 @@ int guAlListBox::GetDragFiles( wxFileDataObject * files )
     guTrackArray Songs;
     int index;
     int count = GetSelectedSongs( &Songs );
+    m_LibPanel->NormalizeTracks( &Songs, true );
     for( index = 0; index < count; index++ )
     {
        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );

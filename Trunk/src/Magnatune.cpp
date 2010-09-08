@@ -268,8 +268,10 @@ void guMagnatunePanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag
         for( Index = 0; Index < Count; Index++ )
         {
             guTrack * Track = &( * tracks )[ Index ];
-            guLogMessage( wxT( "'%s'" ), Track->m_FileName.c_str() );
+            //guLogMessage( wxT( "'%s'" ), Track->m_FileName.c_str() );
             Track->m_FileName = Track->m_FileName.Mid( Track->m_FileName.Find( wxT( "http://he3" ) ) );
+            Track->m_FileName.Replace( wxT( ".mp3" ), wxT( "" ) );
+            Track->m_FileName.Replace( wxT( ".ogg" ), wxT( "" ) );
             Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
             Track->m_Type = guTRACK_TYPE_MAGNATUNE;
             if( isdrag )
@@ -743,90 +745,105 @@ bool inline IsGenreEnabled( const wxArrayString &genrelist, const wxString &curr
 
 
 // -------------------------------------------------------------------------------- //
-void ReadMagnatuneXmlTrack( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread, guTrack * track, guMagnatuneLibrary * db )
+void guMagnatuneUpdateThread::AddGenres( const wxString &genres )
+{
+    wxArrayString Genres = wxStringTokenize( genres, wxT( "," ) );
+    int Index;
+    int Count = Genres.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_GenreList.Index( Genres[ Index ] ) == wxNOT_FOUND )
+        {
+            m_GenreList.Add( Genres[ Index ]  );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMagnatuneUpdateThread::ReadMagnatuneXmlTrack( wxXmlNode * xmlnode )
 {
     long Id;
-    while( xmlnode && !thread->TestDestroy() )
+    while( xmlnode && !TestDestroy() )
     {
         wxString ItemName = xmlnode->GetName();
         if( ItemName == wxT( "trackname" ) )
         {
-            track->m_SongName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
+            m_CurrentTrack.m_SongName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
         }
         else if( ItemName == wxT( "tracknum" ) )
         {
             xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_Number = Id;
+            m_CurrentTrack.m_Number = Id;
         }
         else if( ItemName == wxT( "year" ) )
         {
             xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_Year = Id;
+            m_CurrentTrack.m_Year = Id;
         }
         else if( ItemName == wxT( "seconds" ) )
         {
             xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_Length = Id;
+            m_CurrentTrack.m_Length = Id;
         }
         else if( ItemName == wxT( "url" ) )
         {
-            track->m_FileName = xmlnode->GetNodeContent();
-            track->m_FileName.Replace( wxT( ".mp3" ), wxT( "" ) );
-            track->m_FileName.Replace( wxT( ".ogg" ), wxT( "" ) );
+            m_CurrentTrack.m_FileName = xmlnode->GetNodeContent();
+            m_CurrentTrack.m_FileName.Replace( wxT( ".mp3" ), wxT( "" ) );
         }
         else if( ItemName == wxT( "magnatunegenres" ) )
         {
-            track->m_GenreName = xmlnode->GetNodeContent();
-            track->m_GenreId = db->GetGenreId( track->m_GenreName );
+            m_CurrentTrack.m_GenreName = xmlnode->GetNodeContent();
+            m_CurrentTrack.m_GenreId = m_Db->GetGenreId( m_CurrentTrack.m_GenreName );
+            AddGenres( m_CurrentTrack.m_GenreName );
         }
         xmlnode = xmlnode->GetNext();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode, guMagnatuneUpdateThread * thread,
-            guTrack * track, guMagnatuneLibrary * db, wxArrayString &allowedgenres )
+void guMagnatuneUpdateThread::ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode )
 {
     long Id;
-    while( xmlnode && !thread->TestDestroy() )
+    while( xmlnode && !TestDestroy() )
     {
         wxString ItemName = xmlnode->GetName();
         if( ItemName == wxT( "artist" ) )
         {
-            track->m_ArtistName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
-            track->m_ArtistId = db->GetArtistId( track->m_ArtistName );
+            m_CurrentTrack.m_ArtistName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
+            m_CurrentTrack.m_ArtistId = m_Db->GetArtistId( m_CurrentTrack.m_ArtistName );
         }
         else if( ItemName == wxT( "albumname" ) )
         {
-            track->m_AlbumName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
-            track->m_AlbumId = 0;
-            guLogMessage( wxT( "%s" ), track->m_AlbumName.c_str() );
+            m_CurrentTrack.m_AlbumName = xmlnode->GetNodeContent().Trim( true ).Trim( false );
+            m_CurrentTrack.m_AlbumId = 0;
+            //guLogMessage( wxT( "%s" ), m_CurrentTrack.m_AlbumName.c_str() );
         }
         else if( ItemName == wxT( "year" ) )
         {
             xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_Year = Id;
+            m_CurrentTrack.m_Year = Id;
         }
         else if( ItemName == wxT( "magnatunegenres" ) )
         {
-            track->m_GenreName = xmlnode->GetNodeContent();
-            track->m_GenreId = db->GetGenreId( track->m_GenreName );
+            m_CurrentTrack.m_GenreName = xmlnode->GetNodeContent();
+            m_CurrentTrack.m_GenreId = m_Db->GetGenreId( m_CurrentTrack.m_GenreName );
+            AddGenres( m_CurrentTrack.m_GenreName );
         }
         else if( ItemName == wxT( "Track" ) )
         {
-            if( !track->m_AlbumId )
+            if( !m_CurrentTrack.m_AlbumId )
             {
-                track->m_Path = track->m_GenreName + wxT( "/" ) +
-                                track->m_ArtistName + wxT( "/" ) +
-                                track->m_AlbumName + wxT( "/" );
-                track->m_PathId = db->GetPathId( track->m_Path );
-                track->m_AlbumId = db->GetAlbumId( track->m_AlbumName, track->m_ArtistId, track->m_PathId, track->m_Path );
+                m_CurrentTrack.m_Path = m_CurrentTrack.m_GenreName + wxT( "/" ) +
+                                m_CurrentTrack.m_ArtistName + wxT( "/" ) +
+                                m_CurrentTrack.m_AlbumName + wxT( "/" );
+                m_CurrentTrack.m_PathId = m_Db->GetPathId( m_CurrentTrack.m_Path );
+                m_CurrentTrack.m_AlbumId = m_Db->GetAlbumId( m_CurrentTrack.m_AlbumName, m_CurrentTrack.m_ArtistId, m_CurrentTrack.m_PathId, m_CurrentTrack.m_Path );
             }
-            ReadMagnatuneXmlTrack( xmlnode->GetChildren(), thread, track, db );
+            ReadMagnatuneXmlTrack( xmlnode->GetChildren() );
 
-            if( IsGenreEnabled( allowedgenres, track->m_GenreName ) )
+            if( IsGenreEnabled( m_AllowedGenres, m_CurrentTrack.m_GenreName ) )
             {
-                db->CreateNewSong( track );
+                m_Db->CreateNewSong( &m_CurrentTrack );
             }
         }
         xmlnode = xmlnode->GetNext();
@@ -932,7 +949,7 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
 
                         if( XmlNode && XmlNode->GetName() == wxT( "Album" ) )
                         {
-                            ReadMagnatuneXmlAlbum( XmlNode->GetChildren(), this, &m_CurrentTrack, m_Db, m_AllowedGenres );
+                            ReadMagnatuneXmlAlbum( XmlNode->GetChildren() );
                         }
                     }
                     else
@@ -943,6 +960,13 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
                     AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
                     evtup.SetExtraLong( CurPos );
                     wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+                }
+
+                if( m_GenreList.Count() )
+                {
+                    guConfig * Config = ( guConfig * ) guConfig::Get();
+                    Config->WriteAStr( wxT( "Genre" ), m_GenreList, wxT( "MagnatuneGenreList" ) );
+                    Config->Flush();
                 }
             }
 

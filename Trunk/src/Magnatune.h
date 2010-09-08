@@ -56,14 +56,19 @@ class guMagnatuneLibrary : public guDbLibrary
 class guMagnatuneUpdateThread : public wxThread
 {
   private :
-    guMagnatuneLibrary *              m_Db;
-    guMainFrame *                   m_MainFrame;
-    int                             m_GaugeId;
-    int                             m_Action;
-    wxArrayString                   m_AllowedGenres;
-    guTrack                         m_CurrentTrack;
+    guMagnatuneLibrary *    m_Db;
+    guMainFrame *           m_MainFrame;
+    int                     m_GaugeId;
+    int                     m_Action;
+    wxSortedArrayString     m_GenreList;
+    wxArrayString           m_AllowedGenres;
+    guTrack                 m_CurrentTrack;
 
     bool                UpdateDatabase( void );
+    void                ReadMagnatuneXmlTrack( wxXmlNode * xmlnode );
+    void                ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode );
+    void                AddGenres( const wxString &genre );
+
 
   protected :
 
