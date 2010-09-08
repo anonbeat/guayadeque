@@ -1238,14 +1238,18 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
     }
     else if( guIsMagnatuneFile( FileName ) )
     {
-        Track.m_CoverId  = 0;
-        Track.m_SongName = FileName;
-        guLogMessage( wxT( "1) '%s'" ), FileName.c_str() );
-        //Track.m_AlbumName = FileName;
-        Track.m_Length   = 0;
-        Track.m_Year     = 0;
-        Track.m_Bitrate  = 0;
-        Track.m_Rating   = wxNOT_FOUND;
+        guMagnatuneLibrary * MagnatuneDb = m_MainFrame->GetMagnatuneDb();
+        if( !MagnatuneDb || ( MagnatuneDb->GetTrackId( FileName, &Track ) == wxNOT_FOUND ) )
+        {
+            Track.m_CoverId  = 0;
+            Track.m_SongName = FileName;
+            guLogMessage( wxT( "1) '%s'" ), FileName.c_str() );
+            //Track.m_AlbumName = FileName;
+            Track.m_Length   = 0;
+            Track.m_Year     = 0;
+            Track.m_Bitrate  = 0;
+            Track.m_Rating   = wxNOT_FOUND;
+        }
         Track.m_Type     = guTRACK_TYPE_MAGNATUNE;
         Track.m_FileName = FileName;
         AddItem( Track, pos );

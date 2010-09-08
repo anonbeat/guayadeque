@@ -61,9 +61,10 @@
 #define  guPREFERENCE_PAGE_FLAG_ONLINE           ( 1 << 7 )
 #define  guPREFERENCE_PAGE_FLAG_PODCASTS         ( 1 << 8 )
 #define  guPREFERENCE_PAGE_FLAG_JAMENDO          ( 1 << 9 )
-#define  guPREFERENCE_PAGE_FLAG_LINKS            ( 1 << 10 )
-#define  guPREFERENCE_PAGE_FLAG_COMMANDS         ( 1 << 11 )
-#define  guPREFERENCE_PAGE_FLAG_COPYTO           ( 1 << 12 )
+#define  guPREFERENCE_PAGE_FLAG_MAGNATUNE        ( 1 << 10 )
+#define  guPREFERENCE_PAGE_FLAG_LINKS            ( 1 << 11 )
+#define  guPREFERENCE_PAGE_FLAG_COMMANDS         ( 1 << 12 )
+#define  guPREFERENCE_PAGE_FLAG_COPYTO           ( 1 << 13 )
 
 enum guPreference_Page {
     guPREFERENCE_PAGE_GENERAL,
@@ -76,6 +77,7 @@ enum guPreference_Page {
     guPREFERENCE_PAGE_ONLINE,
     guPREFERENCE_PAGE_PODCASTS,
     guPREFERENCE_PAGE_JAMENDO,
+    guPREFERENCE_PAGE_MAGNATUNE,
     guPREFERENCE_PAGE_LINKS,
     guPREFERENCE_PAGE_COMMANDS,
     guPREFERENCE_PAGE_COPYTO,
@@ -230,6 +232,20 @@ class guPrefDialog : public wxDialog
     wxTextCtrl *                m_JamBTCmd;
     wxArrayInt                  m_LastJamendoGenres;
 
+    wxPanel *                   m_MagnatunePanel;
+    wxCheckListBox *            m_MagGenresListBox;
+    wxButton *                  m_MagSelAllBtn;
+    wxButton *                  m_MagSelNoneBtn;
+    wxButton *                  m_MagInvertBtn;
+    wxRadioButton *             m_MagNoRadioItem;
+    wxRadioButton *             m_MagStRadioItem;
+    wxRadioButton *             m_MagDlRadioItem;
+    wxTextCtrl *                m_MagUserTextCtrl;
+    wxTextCtrl *                m_MagPassTextCtrl;
+    wxChoice *                  m_MagFormatChoice;
+    wxArrayString               m_LastMagnatuneGenres;
+
+
     wxChoice *                  m_LyricsChoice;
 
     guConfig *                  m_Config;
@@ -251,6 +267,7 @@ class guPrefDialog : public wxDialog
     void                        BuildOnlinePage( void );
     void                        BuildPodcastsPage( void );
     void                        BuildJamendoPage( void );
+    void                        BuildMagnatunePage( void );
     void                        BuildLinksPage( void );
     void                        BuildCommandsPage( void );
     void                        BuildCopyToPage( void );
@@ -287,6 +304,11 @@ class guPrefDialog : public wxDialog
     void OnJamendoSelectAll( wxCommandEvent& event );
     void OnJamendoSelectNone( wxCommandEvent& event );
     void OnJamendoInvertSelection( wxCommandEvent& event );
+
+    void OnMagnatuneSelectAll( wxCommandEvent& event );
+    void OnMagnatuneSelectNone( wxCommandEvent& event );
+    void OnMagnatuneInvertSelection( wxCommandEvent& event );
+    void OnMagNoRadioItemChanged( wxCommandEvent& event );
 
     void OnLinksListBoxSelected( wxCommandEvent &event );
     void OnLinksAddBtnClick( wxCommandEvent& event );

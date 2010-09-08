@@ -35,6 +35,13 @@
 // wxSqlite3
 #include "wx/wxsqlite3.h"
 
+#define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
+               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
+               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, "\
+               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, "\
+               "song_addedtime, song_lastplay, song_filesize "\
+               "FROM songs " )
+
 // PLAYLISTS
 #define GUPLAYLIST_STATIC       0
 #define GUPLAYLIST_DYNAMIC      1
@@ -543,6 +550,48 @@ wxString inline ArrayIntToStrList( const wxArrayInt &Data )
 wxString inline ArrayToFilter( const wxArrayInt &Filters, const wxString &VarName )
 {
   return VarName + wxT( " IN " ) + ArrayIntToStrList( Filters );
+}
+
+// -------------------------------------------------------------------------------- //
+void inline guDbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes )
+{
+/*
+#define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
+               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
+               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, "\
+               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, "\
+               "song_addedtime, song_lastplay, song_filesize "\
+               "FROM songs " )
+*/
+  Song->m_SongId        = dbRes->GetInt( 0 );
+  Song->m_SongName      = dbRes->GetString( 1 );
+  Song->m_GenreId       = dbRes->GetInt( 2 );
+  Song->m_GenreName     = dbRes->GetString( 3 );
+  Song->m_ArtistId      = dbRes->GetInt( 4 );
+  Song->m_ArtistName    = dbRes->GetString( 5 );
+  Song->m_AlbumArtistId = dbRes->GetInt( 6 );
+  Song->m_AlbumArtist   = dbRes->GetString( 7 );
+  Song->m_ComposerId    = dbRes->GetInt( 8 );
+  Song->m_Composer      = dbRes->GetString( 9 );
+  Song->m_AlbumId       = dbRes->GetInt( 10 );
+  Song->m_AlbumName     = dbRes->GetString( 11 );
+  Song->m_PathId        = dbRes->GetInt( 12 );
+  Song->m_Path          = dbRes->GetString( 13 );
+  Song->m_FileName      = Song->m_Path + dbRes->GetString( 14 );
+  Song->m_Format        = dbRes->GetString( 15 );
+  Song->m_Disk          = dbRes->GetString( 16 );
+  Song->m_Number        = dbRes->GetInt( 17 );
+  Song->m_Year          = dbRes->GetInt( 18 );
+  Song->m_Comments      = dbRes->GetString( 19 );
+  Song->m_CoverId       = dbRes->GetInt( 20 );
+  Song->m_Offset        = dbRes->GetInt( 21 );
+  Song->m_Length        = dbRes->GetInt( 22 );
+  Song->m_Bitrate       = dbRes->GetInt( 23 );
+  Song->m_Rating        = dbRes->GetInt( 24 );
+  Song->m_PlayCount     = dbRes->GetInt( 25 );
+  Song->m_AddedTime     = dbRes->GetInt( 26 );
+  Song->m_LastPlay      = dbRes->GetInt( 27 );
+  Song->m_FileSize      = dbRes->GetInt( 28 );
 }
 
 #endif

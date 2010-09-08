@@ -156,6 +156,8 @@
 		<Unit filename="src/LyricsPanel.h" />
 		<Unit filename="src/MD5.cpp" />
 		<Unit filename="src/MD5.h" />
+		<Unit filename="src/Magnatune.cpp" />
+		<Unit filename="src/Magnatune.h" />
 		<Unit filename="src/MainApp.cpp" />
 		<Unit filename="src/MainApp.h" />
 		<Unit filename="src/MainFrame.cpp" />

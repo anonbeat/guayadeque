@@ -49,6 +49,7 @@ class guMagnatuneLibrary : public guDbLibrary
     virtual void        UpdateSongsLabels( const guArrayListItems &labelsets );
 
     void                CreateNewSong( guTrack * track );
+    int                 GetTrackId( const wxString &url, guTrack * track = NULL );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -59,7 +60,7 @@ class guMagnatuneUpdateThread : public wxThread
     guMainFrame *                   m_MainFrame;
     int                             m_GaugeId;
     int                             m_Action;
-    wxArrayInt                      m_AllowedGenres;
+    wxArrayString                   m_AllowedGenres;
     guTrack                         m_CurrentTrack;
 
     bool                UpdateDatabase( void );
