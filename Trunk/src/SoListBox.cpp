@@ -304,7 +304,8 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks )
         item = GetNextSelected( cookie );
     }
     m_ItemsMutex.Unlock();
-    m_LibPanel->NormalizeTracks( tracks );
+    if( m_LibPanel )
+        m_LibPanel->NormalizeTracks( tracks );
     return tracks->Count();
 }
 
@@ -335,7 +336,8 @@ int guSoListBox::GetDragFiles( wxFileDataObject * files )
     guTrackArray Songs;
     int index;
     int count = GetSelectedSongs( &Songs );
-    m_LibPanel->NormalizeTracks( &Songs, true );
+    if( m_LibPanel )
+        m_LibPanel->NormalizeTracks( &Songs, true );
     for( index = 0; index < count; index++ )
     {
        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );

@@ -2965,11 +2965,31 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
     else if( CurPage == m_JamendoPanel )
     {
         m_ViewJamendo->Check( false );
+        m_ViewJamTextSearch->Enable( false );
+        m_ViewJamLabels->Enable( false );
+        m_ViewJamGenres->Enable( false );
+        m_ViewJamArtists->Enable( false );
+        m_ViewJamComposers->Enable( false );
+        m_ViewJamAlbumArtists->Enable( false );
+        m_ViewJamAlbums->Enable( false );
+        m_ViewJamYears->Enable( false );
+        m_ViewJamRatings->Enable( false );
+        m_ViewJamPlayCounts->Enable( false );
         PanelId = guPANEL_MAIN_JAMENDO;
     }
     else if( CurPage == m_MagnatunePanel )
     {
         m_ViewMagnatune->Check( false );
+        m_ViewMagTextSearch->Enable( false );
+        m_ViewMagLabels->Enable( false );
+        m_ViewMagGenres->Enable( false );
+        m_ViewMagArtists->Enable( false );
+        m_ViewMagComposers->Enable( false );
+        m_ViewMagAlbumArtists->Enable( false );
+        m_ViewMagAlbums->Enable( false );
+        m_ViewMagYears->Enable( false );
+        m_ViewMagRatings->Enable( false );
+        m_ViewMagPlayCounts->Enable( false );
         PanelId = guPANEL_MAIN_MAGNATUNE;
     }
 
