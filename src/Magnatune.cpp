@@ -226,7 +226,6 @@ guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, 
 
     m_ContextMenuFlags = ( guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS | guLIBRARY_CONTEXTMENU_LINKS );
 
-    m_DownloadThread = NULL;
     m_UpdateThread = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -367,25 +366,12 @@ void guMagnatunePanel::OnConfigUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMagnatunePanel::AddDownload( const int albumid, const wxString &artist, const wxString &album )
 {
-    wxMutexLocker Lock( m_DownloadThreadMutex );
+    guMagnatuneDownloadThread * DownloadThread = new guMagnatuneDownloadThread( this, albumid, artist, album );
 
-    if( !m_DownloadThread )
+    if( !DownloadThread )
     {
-        m_DownloadThread = new guMagnatuneDownloadThread( this, albumid, artist, album );
-
-        if( !m_DownloadThread )
-        {
-            guLogMessage( wxT( "Could not create the magnatune download thread" ) );
-            return;
-        }
+        guLogMessage( wxT( "Could not create the magnatune download thread" ) );
     }
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::EndDownloadThread( void )
-{
-    wxMutexLocker Lock( m_DownloadThreadMutex );
-    m_DownloadThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -590,10 +576,6 @@ guMagnatuneDownloadThread::guMagnatuneDownloadThread( guMagnatunePanel * magnatu
 // -------------------------------------------------------------------------------- //
 guMagnatuneDownloadThread::~guMagnatuneDownloadThread()
 {
-    if( !TestDestroy() )
-    {
-        m_MagnatunePanel->EndDownloadThread();
-    }
 }
 
 // -------------------------------------------------------------------------------- //

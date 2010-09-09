@@ -89,9 +89,6 @@ class guMagnatunePanel : public guLibPanel
     guMagnatuneUpdateThread *   m_UpdateThread;
     wxMutex                     m_UpdateThreadMutex;
 
-    guMagnatuneDownloadThread * m_DownloadThread;
-    wxMutex                     m_DownloadThreadMutex;
-
     virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
     virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
     void                        OnEditSetup( wxCommandEvent &event );
@@ -118,7 +115,6 @@ class guMagnatunePanel : public guLibPanel
     void                        AddDownload( const int albumid, const wxString &artist, const wxString &album );
 
     void                        EndUpdateThread( void );
-    void                        EndDownloadThread( void );
 
 
 };
@@ -141,9 +137,6 @@ class guMagnatuneDownloadThread : public wxThread
     ExitCode Entry();
 
 };
-
-
-
 
 #endif
 // -------------------------------------------------------------------------------- //
