@@ -243,7 +243,7 @@ guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, 
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMagnatunePanel::OnConfigUpdated ), NULL, this );
 
-    wxArrayInt AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "MagnatuneGenres" ) );
+    wxArrayString AllowedGenres = Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "MagnatuneGenres" ) );
     if( AllowedGenres.IsEmpty() )
     {
         wxCommandEvent event;
