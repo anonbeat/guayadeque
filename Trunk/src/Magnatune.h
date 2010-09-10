@@ -86,6 +86,9 @@ class guMagnatuneDownloadThread;
 class guMagnatunePanel : public guLibPanel
 {
   protected :
+    int                         m_Membership;
+    wxString                    m_UserName;
+    wxString                    m_Password;
     guMagnatuneUpdateThread *   m_UpdateThread;
     wxMutex                     m_UpdateThreadMutex;
 

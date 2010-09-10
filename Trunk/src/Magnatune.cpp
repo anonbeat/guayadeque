@@ -242,6 +242,13 @@ guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, 
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMagnatunePanel::OnConfigUpdated ), NULL, this );
 
+    m_Membership = Config->ReadNum( wxT( "Membership" ), 0, wxT( "Magnatune" ) );
+    m_UserName = Config->ReadStr( wxT( "Username" ), wxEmptyString, wxT( "Magnatune" ) );
+    m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "Magnatune" ) );
+    if( m_UserName.IsEmpty() || m_Password.IsEmpty() )
+    {
+        m_Membership = 0;
+    }
     wxArrayString AllowedGenres = Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "MagnatuneGenres" ) );
     if( AllowedGenres.IsEmpty() )
     {
@@ -253,6 +260,8 @@ guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, 
 // -------------------------------------------------------------------------------- //
 guMagnatunePanel::~guMagnatunePanel()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -268,13 +277,23 @@ void guMagnatunePanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag
         {
             guTrack * Track = &( * tracks )[ Index ];
             //guLogMessage( wxT( "'%s'" ), Track->m_FileName.c_str() );
-            Track->m_FileName = Track->m_FileName.Mid( Track->m_FileName.Find( wxT( "http://he3" ) ) );
-            Track->m_FileName.Replace( wxT( ".mp3" ), wxT( "" ) );
-            Track->m_FileName.Replace( wxT( ".ogg" ), wxT( "" ) );
-            Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
-            Track->m_Type = guTRACK_TYPE_MAGNATUNE;
-            if( isdrag )
-                Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
+            if( !Track->m_FileName.EndsWith( AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3 ) )
+            {
+                Track->m_FileName = Track->m_FileName.Mid( Track->m_FileName.Find( wxT( "http://he3." ) ) );
+                if( m_Membership > 0 ) // Streaming or Downloading
+                {
+                    Track->m_FileName.Replace( wxT( "//he3." ), wxT( "//" ) + m_UserName + wxT( ":" ) + m_Password + wxT( "@stream." ) );
+                }
+
+                if( m_Membership > 0 )
+                {
+                    Track->m_FileName += wxT( "_nospeech" );
+                }
+                Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
+                Track->m_Type = guTRACK_TYPE_MAGNATUNE;
+                if( isdrag )
+                    Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
+            }
         }
     }
 }
@@ -354,6 +373,13 @@ void guMagnatunePanel::OnConfigUpdated( wxCommandEvent &event )
     if( event.GetInt() & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_Membership = Config->ReadNum( wxT( "Membership" ), 0, wxT( "Magnatune" ) );
+        m_UserName = Config->ReadStr( wxT( "Username" ), wxEmptyString, wxT( "Magnatune" ) );
+        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "Magnatune" ) );
+        if( m_UserName.IsEmpty() || m_Password.IsEmpty() )
+        {
+            m_Membership = 0;
+        }
         bool DoUpgrade = Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "Magnatune" ) );
 
         if( DoUpgrade )

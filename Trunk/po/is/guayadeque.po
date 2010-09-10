@@ -2116,9 +2116,8 @@ msgstr "Útlit %u"
 #: MainFrame.cpp:4130
 #, c-format
 msgid ""
-"Copied %u files (%s)\n"
-"in %s seconds"
-msgstr "Afritað %u Skrár (%s)\n"
+"Copied %u files (%s)\nin %s seconds"
+msgstr "Afritað %u Skrár (%s)\nin %s seconds"
 
 #: MainFrame.cpp:4135
 msgid "Finished copying files"
