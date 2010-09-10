@@ -2587,7 +2587,6 @@ void guMainFrame::OnSelectTrack( wxCommandEvent &event )
     }
     else if( Type == guTRACK_TYPE_MAGNATUNE )
     {
-        guLogMessage( wxT( "SelectTrack..." ) );
         if( m_MagnatunePanel )
         {
             int PaneIndex = m_CatNotebook->GetPageIndex( m_MagnatunePanel );
