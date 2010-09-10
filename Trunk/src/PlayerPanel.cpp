@@ -2790,6 +2790,7 @@ void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
     int TrackId = wxNOT_FOUND;
     if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
         TrackId = m_MediaSong.m_SongId;
@@ -2814,6 +2815,7 @@ void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
     int AlbumId = wxNOT_FOUND;
     if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
         AlbumId = m_MediaSong.m_AlbumId;
@@ -2838,6 +2840,7 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
     int ArtistId = wxNOT_FOUND;
     if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
+        ( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
         ArtistId = m_MediaSong.m_ArtistId;
