@@ -193,13 +193,13 @@ wxImage * guGetRemoteImage( const wxString &url, int &imgtype )
             }
         }
 
-        if( ResCode != 200 )
-        {
-            guLogMessage( wxT( "Error %u getting remote image '%s'\n%s" ),
-                http.GetResponseCode(),
-                url.c_str(),
-                http.GetResponseHeader().c_str() );
-        }
+//        if( ResCode != 200 )
+//        {
+//            guLogMessage( wxT( "Error %u getting remote image '%s'\n%s" ),
+//                http.GetResponseCode(),
+//                url.c_str(),
+//                http.GetResponseHeader().c_str() );
+//        }
 
         if( Buffer.IsOk() )
         {
