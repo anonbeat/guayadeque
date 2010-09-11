@@ -119,23 +119,25 @@ int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
         //guLogMessage( wxT( "%s" ), Content.Mid( 0, StrPos ).c_str() );
         wxHtmlEntitiesParser EntitiesParser;
         GoogleImage = ExtractImageInfo( EntitiesParser.Parse( content.Mid( 0, StrPos ) ) );
-        //RetVal.Add( CurImage );
-        CurImage.Empty();
-        if( GoogleImage[ GOOGLE_COVERINFO_LINK ].IsEmpty() )
+        if( GoogleImage.Count() >= GOOGLE_COVERINFO_SIZE )
         {
-            GoogleImage[ GOOGLE_COVERINFO_LINK ] = ExtractCoverFromGoogleLink( GoogleImage[ 0 ] );
-        }
+            //RetVal.Add( CurImage );
+            CurImage.Empty();
+            if( GoogleImage[ GOOGLE_COVERINFO_LINK ].IsEmpty() )
+            {
+                GoogleImage[ GOOGLE_COVERINFO_LINK ] = ExtractCoverFromGoogleLink( GoogleImage[ 0 ] );
+            }
 
-        if( !GoogleImage[ GOOGLE_COVERINFO_LINK ].IsEmpty() )
-        {
-            CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_LINK ] );
-            CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_SIZE ] );
-            m_CoverLinks->Add( CurImage );
-            ImageIndex++;
-            if( ImageIndex == count )
-                break;
+            if( !GoogleImage[ GOOGLE_COVERINFO_LINK ].IsEmpty() )
+            {
+                CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_LINK ] );
+                CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_SIZE ] );
+                m_CoverLinks->Add( CurImage );
+                ImageIndex++;
+                if( ImageIndex == count )
+                    break;
+            }
         }
-
         //guLogMessage( wxT( "Pos: %u" ), StrPos );
     }
     return ImageIndex;

@@ -1519,6 +1519,8 @@ int guDbLibrary::GetPathId( wxString &PathValue )
       return LastPathId;
   }
 
+  int RetVal = 0;
+
 //TODO Add a Lock
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -1535,22 +1537,24 @@ int guDbLibrary::GetPathId( wxString &PathValue )
 
   if( dbRes.NextRow() )
   {
-    return LastPathId = dbRes.GetInt( 0 );
+    RetVal = LastPathId = dbRes.GetInt( 0 );
   }
   else
   {
+    dbRes.Finalize();
     query = wxT( "SELECT MAX(song_pathid) FROM songs;" );
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
-        return LastPathId = dbRes.GetInt( 0 ) + 1;
+        RetVal = LastPathId = dbRes.GetInt( 0 ) + 1;
     }
     else
     {
-        return LastPathId = 1;
+        RetVal = LastPathId = 1;
     }
   }
-  return 0;
+  dbRes.Finalize();
+  return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
