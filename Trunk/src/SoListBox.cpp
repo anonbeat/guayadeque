@@ -470,7 +470,9 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
             MenuText = _( "Set" );
             MenuText += wxT( " " ) + ColumnNames[ ColumnId ] + wxT( " " );
             MenuText += _( "to" );
-            MenuText += wxT( " '" ) + OnGetItemText( m_LastRowRightClicked, m_LastColumnRightClicked ) + wxT( "'" );
+            wxString ItemText = OnGetItemText( m_LastRowRightClicked, m_LastColumnRightClicked );
+            ItemText.Replace( wxT( "&" ), wxT( "&&" ) );
+            MenuText += wxT( " '" ) + ItemText + wxT( "'" );
 
             MenuItem = new wxMenuItem( menu, ID_SONG_SET_COLUMN,  MenuText, _( "Set the clicked column for the selected tracks" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );

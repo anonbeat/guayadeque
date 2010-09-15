@@ -2940,10 +2940,16 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
       query += wxT( "song_artist, song_year" );
       break;
 
+    case guALBUMS_ORDER_ADDEDTIME :
+      query += wxT( "song_addedtime DESC,song_album,song_disk " );
+      break;
+
     case guALBUMS_ORDER_ARTIST_YEAR_REVERSE :
     default :
       query += wxT( "song_artist, song_year DESC" );
       break;
+
+
   }
 
   query += wxString::Format( wxT( " LIMIT %i, %i" ), start, count );

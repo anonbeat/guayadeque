@@ -307,8 +307,8 @@ void guMagnatunePanel::CreateContextMenu( wxMenu * menu, const int windowid )
     wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_UPDATE, _( "Update Database" ), _( "Download the latest Magnatune database" ) );
     SubMenu->Append( MenuItem );
 
-//    MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_EDIT_GENRES, _( "Select Genres" ), _( "Selects the enabled Magnatune genres" ) );
-//    SubMenu->Append( MenuItem );
+    MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_EDIT_GENRES, _( "Select Genres" ), _( "Selects the enabled Magnatune genres" ) );
+    SubMenu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_SETUP, _( "Preferences" ), _( "Configure the Magnatune options" ) );
     SubMenu->Append( MenuItem );
@@ -321,7 +321,7 @@ void guMagnatunePanel::CreateContextMenu( wxMenu * menu, const int windowid )
 void guMagnatunePanel::OnEditSetup( wxCommandEvent &event )
 {
     wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
-    //CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );
+    CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );
     wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 }
 
