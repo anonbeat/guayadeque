@@ -1318,7 +1318,15 @@ wxString GetLyricPluginLyric( wxString &content )
         content = content.Mid( StartPos + 17 );
         if( ( EndPos = content.Find( wxT( "</div>" ) ) ) != wxNOT_FOUND )
         {
-            return content.Mid( 0, EndPos );
+            content = content.Mid( 0, EndPos );
+            if( !content.IsEmpty() )
+            {
+                if( ( EndPos = content.Find( wxT( "<a href=\"http://www.tunerankings" ) ) ) != wxNOT_FOUND )
+                {
+                    content = content.Mid( 0, EndPos );
+                }
+                return content;
+            }
         }
     }
     return wxEmptyString;
@@ -1363,11 +1371,13 @@ bool guLyricPluginEngine::DoSearchLyric( const wxString &content, const wxString
 
                 Content = GetUrlContent( UrlStr, referer );
                 Content = GetLyricPluginLyric( Content );
-
-                Content.Replace( wxT( "<br />" ), wxT( "" ) );
-                Content.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
-                SetLyric( new wxString( Content.c_str() ) );
-                return true;
+                if( !Content.IsEmpty() )
+                {
+                    Content.Replace( wxT( "<br />" ), wxT( "" ) );
+                    Content.Replace( wxT( "<br>" ), guLYRICS_LINEFEED );
+                    SetLyric( new wxString( Content.c_str() ) );
+                    return true;
+                }
             }
         }
     }

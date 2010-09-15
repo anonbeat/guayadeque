@@ -232,7 +232,8 @@ enum guALBUMS_ORDER {
     guALBUMS_ORDER_YEAR_REVERSE,
     guALBUMS_ORDER_ARTIST_NAME,
     guALBUMS_ORDER_ARTIST_YEAR,
-    guALBUMS_ORDER_ARTIST_YEAR_REVERSE
+    guALBUMS_ORDER_ARTIST_YEAR_REVERSE,
+    guALBUMS_ORDER_ADDEDTIME
 };
 
 // -------------------------------------------------------------------------------- //
