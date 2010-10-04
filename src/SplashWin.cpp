@@ -59,7 +59,7 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 	m_Email->SetBackgroundColour( * wxWHITE );
 	MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxALL, 5 );
 
-	m_HomePage = new wxHyperlinkCtrl( this, wxID_ANY, _("Home Page"), wxT("http://guayadeque.org"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_HomePage = new wxHyperlinkCtrl( this, wxID_ANY, _("guayadeque.org"), wxT("http://guayadeque.org"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	m_HomePage->SetHoverColour( FontColor );
 	m_HomePage->SetNormalColour( FontColor );
 	m_HomePage->SetVisitedColour( FontColor );
