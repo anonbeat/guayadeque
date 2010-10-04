@@ -1714,7 +1714,8 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
   guTrack * Song;
   int index;
   int count = Songs->Count();
-  //guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+  wxArrayPtrVoid PanelPtrs;
+  bool SendMainLibPanel = false;
 
   // Process each Track
   for( index = 0; index < count; index++ )
@@ -1757,6 +1758,16 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 
         if( Song->m_Type == guTRACK_TYPE_DB )
         {
+            if( Song->m_LibPanel )
+            {
+                if( PanelPtrs.Index( Song->m_LibPanel ) == wxNOT_FOUND )
+                    PanelPtrs.Add( Song->m_LibPanel );
+            }
+            else if( !SendMainLibPanel )
+            {
+                SendMainLibPanel = true;
+            }
+
             //
             // Update the Library
             //
@@ -1814,14 +1825,21 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
     }
     //wxSafeYield();
   }
-  //MainFrame->SetStatusText( _( "Done updating the tracks" ) );
 
-  //DoCleanUp();
-
-//////////////////////////
+  // We added in PanelPtr all panels we are updating tracks
+  // And send the clean db event to all of them
   wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_DOCLEANDB );
   event.SetEventObject( ( wxObject * ) this );
-  wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+  if( SendMainLibPanel )
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+
+  count = PanelPtrs.Count();
+  for( index = 0; index < count; index++ )
+  {
+    event.SetClientData( ( void * ) PanelPtrs[ index ] );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+  }
 
 }
 

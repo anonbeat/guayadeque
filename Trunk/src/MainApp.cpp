@@ -64,6 +64,12 @@ guMainApp::guMainApp() : wxApp()
         guLogMessage( wxT( "Created the Magnatune directory" ) );
     }
 
+    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Devices" ) ) )
+    {
+        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Devices" ), 0770 );
+        guLogMessage( wxT( "Created the Devices directory" ) );
+    }
+
     if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ) ) )
     {
         if( wxFileExists( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ) ) )

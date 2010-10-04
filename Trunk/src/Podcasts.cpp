@@ -162,6 +162,8 @@ bool guPodcastChannel::ReadXml( wxXmlNode * XmlNode )
                 {
                     guPodcastItem * PodcastItem = new guPodcastItem( XmlNode->GetChildren() );
                     //PodcastItem->ReadXml( XmlNode->GetChildren() );
+                    if( PodcastItem->m_Author.IsEmpty() )
+                        PodcastItem->m_Author = m_Author;
                     //guLogMessage( wxT( "Item Length: %i" ), PodcastItem->m_Length );
                     m_Items.Add( PodcastItem );
                 }

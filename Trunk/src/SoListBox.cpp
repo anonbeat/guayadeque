@@ -543,9 +543,15 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
         {
-            MenuItem = new wxMenuItem( Menu, ID_SONG_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-            Menu->Append( MenuItem );
+            if( m_LibPanel )
+            {
+                m_LibPanel->CreateCopyToMenu( Menu, ID_SONG_COPYTO );
+            }
+            else
+            {
+                guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+                MainFrame->CreateCopyToMenu( Menu, ID_SONG_COPYTO );
+            }
         }
 
         Menu->AppendSeparator();

@@ -40,15 +40,7 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 
 	MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_Email = new wxHyperlinkCtrl( this, wxID_ANY, wxT("J.Rios anonbeat@gmail.com"), wxT("mailto:anonbeat@gmail.com"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
-
 	wxColour FontColor = wxColour( 120, 120, 120 );
-	m_Email->SetHoverColour( FontColor );
-	m_Email->SetNormalColour( FontColor );
-	m_Email->SetVisitedColour( FontColor );
-	m_Email->SetBackgroundColour( * wxWHITE );
-	MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxALL, 5 );
-
     wxString Version = wxT( ID_GUAYADEQUE_VERSION );
 #ifdef ID_GUAYADEQUE_REVISION
     Version += wxT( "-" ID_GUAYADEQUE_REVISION );
@@ -59,7 +51,22 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 	m_Version->SetBackgroundColour( * wxWHITE );
 	MainSizer->Add( m_Version, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_Donate = new wxHyperlinkCtrl( this, wxID_ANY, wxT("Please Donate!"), wxT("http://sourceforge.net/donate/index.php?group_id=250783"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_Email = new wxHyperlinkCtrl( this, wxID_ANY, wxT("J.Rios anonbeat@gmail.com"), wxT("mailto:anonbeat@gmail.com"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+
+	m_Email->SetHoverColour( FontColor );
+	m_Email->SetNormalColour( FontColor );
+	m_Email->SetVisitedColour( FontColor );
+	m_Email->SetBackgroundColour( * wxWHITE );
+	MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxALL, 5 );
+
+	m_HomePage = new wxHyperlinkCtrl( this, wxID_ANY, _("Home Page"), wxT("http://guayadeque.org"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_HomePage->SetHoverColour( FontColor );
+	m_HomePage->SetNormalColour( FontColor );
+	m_HomePage->SetVisitedColour( FontColor );
+	m_HomePage->SetBackgroundColour( * wxWHITE );
+	MainSizer->Add( m_HomePage, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_Donate = new wxHyperlinkCtrl( this, wxID_ANY, _( "Please Donate!" ), wxT("http://sourceforge.net/donate/index.php?group_id=250783"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 
 	m_Donate->SetHoverColour( FontColor );
 	m_Donate->SetNormalColour( FontColor );

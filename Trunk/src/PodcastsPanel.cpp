@@ -280,8 +280,8 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     Connect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ), NULL, this );
-    Connect( ID_PODCASTS_CHANNEL_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::UpdateChannels ), NULL, this );
+    Connect( ID_PODCASTS_CHANNEL_COPYTO, ID_PODCASTS_CHANNEL_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
 
     Connect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guPodcastPanel::OnPodcastItemUpdated ), NULL, this );
 
@@ -296,7 +296,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     Connect( ID_PODCASTS_ITEM_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueueAsNext ), NULL, this );
     Connect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ), NULL, this );
     Connect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ), NULL, this );
-    Connect( ID_PODCASTS_ITEM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
+    Connect( ID_PODCASTS_ITEM_COPYTO, ID_PODCASTS_ITEM_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
 
@@ -319,7 +319,7 @@ guPodcastPanel::~guPodcastPanel()
     Disconnect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ), NULL, this );
-    Disconnect( ID_PODCASTS_CHANNEL_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
+    Disconnect( ID_PODCASTS_CHANNEL_COPYTO, ID_PODCASTS_CHANNEL_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::UpdateChannels ), NULL, this );
 
     Disconnect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guPodcastPanel::OnPodcastItemUpdated ), NULL, this );
@@ -335,7 +335,7 @@ guPodcastPanel::~guPodcastPanel()
     Disconnect( ID_PODCASTS_ITEM_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueueAsNext ), NULL, this );
     Disconnect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ), NULL, this );
     Disconnect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ), NULL, this );
-    Disconnect( ID_PODCASTS_ITEM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
+    Disconnect( ID_PODCASTS_ITEM_COPYTO, ID_PODCASTS_ITEM_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
 
@@ -528,7 +528,17 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
         }
     }
 
-    event.SetId( ID_MAINFRAME_COPYTO );
+    Index = event.GetId() - ID_PODCASTS_CHANNEL_COPYTO;
+    if( Index > 99 )
+    {
+        Index -= 100;
+        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+    }
+    else
+    {
+        event.SetId( ID_MAINFRAME_COPYTO );
+    }
+    event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( m_MainFrame, event );
 }
@@ -859,7 +869,18 @@ void guPodcastPanel::OnPodcastItemCopyTo( wxCommandEvent &event )
     guTrackArray * Tracks = new guTrackArray();
     m_PodcastsListBox->GetSelectedSongs( Tracks );
 
-    event.SetId( ID_MAINFRAME_COPYTO );
+
+    int Index = event.GetId() - ID_PODCASTS_ITEM_COPYTO;
+    if( Index > 99 )
+    {
+        Index -= 100;
+        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+    }
+    else
+    {
+        event.SetId( ID_MAINFRAME_COPYTO );
+    }
+    event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
@@ -1021,9 +1042,11 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
         }
 
         Menu->AppendSeparator();
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_COPYTO, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
+//        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_COPYTO, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
+//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+//        Menu->Append( MenuItem );
+        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        MainFrame->CreateCopyToMenu( Menu, ID_PODCASTS_CHANNEL_COPYTO );
     }
 }
 
@@ -1284,9 +1307,11 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
-        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_COPYTO, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
+//        MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_COPYTO, _( "Copy to..." ), _( "Copy the current selected podcasts to a directory or device" ) );
+//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+//        Menu->Append( MenuItem );
+        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        MainFrame->CreateCopyToMenu( Menu, ID_PODCASTS_ITEM_COPYTO );
     }
     else
     {

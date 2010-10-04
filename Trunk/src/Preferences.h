@@ -204,8 +204,15 @@ class guPrefDialog : public wxDialog
     wxArrayString               m_CmdNames;
 
 	wxPanel *                   m_CopyPanel;
-	wxTextCtrl *                m_CopyToFileName;
-	wxTextCtrl *                m_CopyToExampleTextCtrl;
+    wxListBox *                 m_CopyToListBox;
+    wxArrayString               m_CopyToNames;
+    wxBitmapButton *            m_CopyToAddBtn;
+    wxBitmapButton *            m_CopyToUpBtn;
+    wxBitmapButton *            m_CopyToDownBtn;
+    wxBitmapButton *            m_CopyToDelBtn;
+    wxTextCtrl *                m_CopyToPatternTextCtrl;
+    wxTextCtrl *                m_CopyToNameTextCtrl;
+    wxBitmapButton *            m_CopyToAcceptBtn;
 
     wxTextCtrl *                m_BrowserCmdTextCtrl;
 
@@ -254,6 +261,7 @@ class guPrefDialog : public wxDialog
     int                         m_FilterSelected;
     int                         m_LinkSelected;
     int                         m_CmdSelected;
+    int                         m_CopyToSelected;
     bool                        m_LibPathsChanged;
     int                         m_VisiblePanels;
 
@@ -326,7 +334,13 @@ class guPrefDialog : public wxDialog
 	void OnCmdTextChanged( wxCommandEvent &event );
 	void OnCmdSaveBtnClick( wxCommandEvent &event );
 
-	void OnCopyToFileNameUpdated( wxCommandEvent &event );
+    void OnCopyToListBoxSelected( wxCommandEvent &event );
+    void OnCopyToAddBtnClick( wxCommandEvent& event );
+	void OnCopyToDelBtnClick( wxCommandEvent& event );
+	void OnCopyToMoveUpBtnClick( wxCommandEvent &event );
+	void OnCopyToMoveDownBtnClick( wxCommandEvent &event );
+	void OnCopyToTextChanged( wxCommandEvent &event );
+	void OnCopyToSaveBtnClick( wxCommandEvent &event );
 
   public:
     guPrefDialog( wxWindow * parent, guDbLibrary * db, int pagenum = guPREFERENCE_PAGE_LASTUSED );

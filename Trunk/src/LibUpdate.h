@@ -23,6 +23,7 @@
 
 #include "DbLibrary.h"
 #include "MainFrame.h"
+#include "LibPanel.h"
 
 // -------------------------------------------------------------------------------- //
 bool guIsValidImageFile( const wxString &filename );
@@ -32,6 +33,7 @@ class guLibUpdateThread : public wxThread
 {
   private :
     guDbLibrary *       m_Db;
+    guLibPanel *        m_LibPanel;
     guMainFrame *       m_MainFrame;
     wxArrayString       m_TrackFiles;
     wxArrayString       m_ImageFiles;
@@ -47,11 +49,12 @@ class guLibUpdateThread : public wxThread
     int                 ScanDirectory( wxString dirname, bool includedir = false );
 
   public :
-    guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath = wxEmptyString );
+    guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath = wxEmptyString );
     ~guLibUpdateThread();
 
     ExitCode Entry();
 
+    guLibPanel *        LibPanel( void ) { return m_LibPanel; }
 };
 
 // -------------------------------------------------------------------------------- //
@@ -59,16 +62,18 @@ class guLibCleanThread : public wxThread
 {
   private :
     guDbLibrary *       m_Db;
+    guLibPanel *        m_LibPanel;
     guMainFrame *       m_MainFrame;
     wxTimer             m_ProgressTimer;
 
     void                OnTimer( wxTimerEvent &event );
 
   public :
-    guLibCleanThread( guDbLibrary * db );
+    guLibCleanThread( guLibPanel * libpanel );
     ~guLibCleanThread();
 
-    ExitCode Entry();
+    ExitCode            Entry();
+    guLibPanel *        LibPanel( void ) { return m_LibPanel; }
 
 };
 

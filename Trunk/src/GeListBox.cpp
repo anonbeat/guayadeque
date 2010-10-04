@@ -59,11 +59,7 @@ void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
 
     if( SelCount && ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
     {
-        Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_GENRE_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-        Menu->Append( MenuItem );
+        m_LibPanel->CreateCopyToMenu( Menu, ID_GENRE_COPYTO );
     }
 
     m_LibPanel->CreateContextMenu( Menu );

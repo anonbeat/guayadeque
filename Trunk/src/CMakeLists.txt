@@ -27,6 +27,7 @@ INCLUDE_DIRECTORIES(
 	${LIBMP4_INCLUDE_DIRS}
 	${LIBFLAC_INCLUDE_DIRS}
         ${LIBDBUS_INCLUDE_DIRS} 
+        ${LIBGIO_INCLUDE_DIRS} 
 )
 
 SET( WXSQLITE3_SOURCES
@@ -235,6 +236,12 @@ ADD_EXECUTABLE( guayadeque
 	Jamendo.h
 	Magnatune.cpp
 	Magnatune.h
+	GIO_Volume.cpp
+	GIO_Volume.h
+	PortableMedia.cpp
+	PortableMedia.h
+	Transcode.cpp
+	Transcode.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
@@ -251,6 +258,7 @@ TARGET_LINK_LIBRARIES( guayadeque
 	${LIBMP4_LIBRARIES}
 	${LIBFLAC_LIBRARIES}
         ${LIBDBUS_LIBRARIES}
+	${LIBGIO_LIBRARIES}
 	)
 
 INSTALL( TARGETS guayadeque

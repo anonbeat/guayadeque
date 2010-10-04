@@ -37,9 +37,10 @@ int inline GetFileLastChangeTime( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
-guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath )
+guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath )
 {
-    m_Db = db;
+    m_LibPanel = libpanel;
+    m_Db = libpanel->GetDb();
     m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     m_GaugeId = gaugeid;
     m_ScanPath = scanpath;
@@ -48,12 +49,12 @@ guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxStr
     m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
     if( scanpath.IsEmpty() )
     {
-        m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+        m_LibPaths = libpanel->GetPaths();
 
         CheckSymLinks( m_LibPaths );
     }
 
-    m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+//    m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
     //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
     m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
     m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) );
@@ -77,8 +78,12 @@ guLibUpdateThread::~guLibUpdateThread()
     }
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
-    event.SetEventObject( ( wxObject * ) this );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    if( !TestDestroy() )
+    {
+        event.SetEventObject( ( wxObject * ) this );
+        event.SetClientData( ( void * ) m_LibPanel );
+        wxPostEvent( wxTheApp->GetTopWindow(), event );
+    }
     //
     event.SetId( ID_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
@@ -107,7 +112,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
   if( !dirname.EndsWith( wxT( "/" ) ) )
     dirname += wxT( "/" );
 
-  //guLogMessage( wxT( "Scanning dir (%i) '%s'" ), includedir, dirname.c_str() );
+  guLogMessage( wxT( "Scanning dir (%i) '%s'" ), includedir, dirname.c_str() );
   Dir.Open( dirname );
 
   if( !TestDestroy() && Dir.IsOpened() )
@@ -177,6 +182,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 {
+    guLogMessage( wxT( "The update thread is entering..." ) );
     int index;
     int count;
     wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
@@ -288,6 +294,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                                     PlayListIds );
 
                         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+                        evt.SetClientData( ( void * ) m_LibPanel );
                         wxPostEvent( wxTheApp->GetTopWindow(), evt );
                     }
                 }
@@ -313,9 +320,10 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guLibCleanThread
 // -------------------------------------------------------------------------------- //
-guLibCleanThread::guLibCleanThread( guDbLibrary * db )
+guLibCleanThread::guLibCleanThread( guLibPanel * libpanel )
 {
-    m_Db = db;
+    m_LibPanel = libpanel;
+    m_Db = libpanel->GetDb();
     m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
 
     if( Create() == wxTHREAD_NO_ERROR )
@@ -332,6 +340,7 @@ guLibCleanThread::~guLibCleanThread()
     {
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_CLEANFINISHED );
         event.SetEventObject( ( wxObject * ) this );
+        event.SetClientData( ( void * ) m_LibPanel );
         wxPostEvent( m_MainFrame, event );
     }
 }
@@ -345,8 +354,7 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
     wxSQLite3ResultSet dbRes;
     wxString FileName;
 
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+    wxArrayString LibPaths = m_LibPanel->GetPaths();
 
     if( !TestDestroy() )
     {
@@ -358,8 +366,8 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
 
         while( !TestDestroy() && dbRes.NextRow() )
         {
-            FileName = dbRes.GetString( 2 ) + wxT( "/" ) + dbRes.GetString( 1 );
-            //guLogMessage( wxT( "Checking %s" ), FileName.c_str() );
+            FileName = dbRes.GetString( 2 ) + dbRes.GetString( 1 );
+            guLogMessage( wxT( "Checking %s" ), FileName.c_str() );
 
             if( !wxFileExists( FileName ) || !CheckFileLibPath( LibPaths, FileName ) )
             {
@@ -401,12 +409,7 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
                 }
 
                 // Delete all posible orphan entries
-//                Queries.Add( wxT( "DELETE FROM genres WHERE genre_id NOT IN ( SELECT DISTINCT song_genreid FROM songs );" ) );
-//                Queries.Add( wxT( "DELETE FROM artists WHERE artist_id NOT IN ( SELECT DISTINCT song_artistid FROM songs );" ) );
-//                Queries.Add( wxT( "DELETE FROM composers WHERE composer_id NOT IN ( SELECT DISTINCT song_composerid FROM songs );" ) );
-//                Queries.Add( wxT( "DELETE FROM albums WHERE album_id NOT IN ( SELECT DISTINCT song_albumid FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT song_coverid FROM songs );" ) );
-//                Queries.Add( wxT( "DELETE FROM paths WHERE path_id NOT IN ( SELECT DISTINCT song_pathid FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM plsets WHERE plset_type = 0 AND plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM settags WHERE settag_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
 

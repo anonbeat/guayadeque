@@ -31,6 +31,7 @@
 #include <wx/utils.h>
 #include <wx/filefn.h>
 #include <wx/dir.h>
+#include <wx/dynarray.h>
 
 // wxSqlite3
 #include "wx/wxsqlite3.h"
@@ -67,6 +68,8 @@ enum guRandomMode {
     guRANDOM_MODE_TRACK,
     guRANDOM_MODE_ALBUM
 };
+
+class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
 class guTrack
@@ -105,11 +108,14 @@ class guTrack
     wxString        m_Format;
     //
     guTrackMode     m_TrackMode;          // Indicate how the track was created
+    guLibPanel *    m_LibPanel;
 
     guTrack() {
+        m_LibPanel = NULL;
         m_Type = guTRACK_TYPE_DB;
         m_TrackMode = guTRACK_MODE_USER;
         m_Bitrate = 0;
+
     };
 
     ~guTrack() {};

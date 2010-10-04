@@ -744,7 +744,10 @@ void guPlayerPanel::SetBitRate( int bitrate )
             m_MediaSong.m_Bitrate = bitrate;
 
             if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
-                m_Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
+            {
+                guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+                Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
+            }
 
             // Update the track in database, playlist, etc
             m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
@@ -1505,9 +1508,14 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             if( m_MediaSong.m_SongId )
             {
                 if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
-                    m_Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+                {
+                    guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+                    Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+                }
                 else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
+                {
                     m_Db->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+                }
             }
 
             // Update the track in database, playlist, etc
@@ -1890,7 +1898,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     else if( m_MediaSong.m_CoverId )
     {
         //guLogMessage( wxT( "CoverId %i" ), m_MediaSong.m_CoverId );
-        m_MediaSong.m_CoverPath = m_Db->GetCoverPath( m_MediaSong.m_CoverId );
+        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+        m_MediaSong.m_CoverPath = Db->GetCoverPath( m_MediaSong.m_CoverId );
         m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
     }
     else
@@ -2032,9 +2041,14 @@ void guPlayerPanel::SavePlayedTrack( void )
             m_MediaSong.m_PlayCount++;
 
             if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
-                m_Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+            {
+                guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+                Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+            }
             else
+            {
                 m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+            }
 
             // Update the track in database, playlist, etc
             m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
@@ -2797,7 +2811,8 @@ void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
     }
     else
     {
-        TrackId = m_Db->FindTrack( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
+        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+        TrackId = Db->FindTrack( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
     }
 
     if( TrackId != wxNOT_FOUND )
@@ -2805,6 +2820,7 @@ void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
         evt.SetInt( TrackId );
         evt.SetExtraLong( m_MediaSong.m_Type );
+        evt.SetClientData( ( void * ) m_MediaSong.m_LibPanel );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -2822,7 +2838,8 @@ void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
     }
     else
     {
-        AlbumId = m_Db->FindAlbum( m_MediaSong.m_ArtistName, m_MediaSong.m_AlbumName );
+        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+        AlbumId = Db->FindAlbum( m_MediaSong.m_ArtistName, m_MediaSong.m_AlbumName );
     }
 
     if( AlbumId != wxNOT_FOUND )
@@ -2830,6 +2847,7 @@ void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
         evt.SetInt( AlbumId );
         evt.SetExtraLong( m_MediaSong.m_Type );
+        evt.SetClientData( ( void * ) m_MediaSong.m_LibPanel );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -2847,7 +2865,8 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
     }
     else
     {
-        ArtistId = m_Db->FindArtist( m_MediaSong.m_ArtistName );
+        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+        ArtistId = Db->FindArtist( m_MediaSong.m_ArtistName );
     }
 
     if( ArtistId != wxNOT_FOUND )
@@ -2855,6 +2874,7 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
         evt.SetInt( ArtistId );
         evt.SetExtraLong( m_MediaSong.m_Type );
+        evt.SetClientData( ( void * ) m_MediaSong.m_LibPanel );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -2869,6 +2889,7 @@ void guPlayerPanel::OnYearDClicked( wxMouseEvent &event )
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_YEAR );
         evt.SetInt( Year );
         evt.SetExtraLong( m_MediaSong.m_Type );
+        evt.SetClientData( ( void * ) m_MediaSong.m_LibPanel );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -2879,7 +2900,8 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
     m_MediaSong.m_Rating = event.GetInt();
     if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
     {
-        m_Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
+        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+        Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
 
         // Update the track in database, playlist, etc
         m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );

@@ -37,13 +37,14 @@
 #include "LastFM.h"
 #include "LastFMPanel.h"
 #include "LibPanel.h"
-//#include "LibUpdate.h"
+#include "GIO_Volume.h"
 #include "LyricsPanel.h"
 #include "Magnatune.h"
 #include "PlayerFilters.h"
 #include "PlayerPanel.h"
 #include "PlayListPanel.h"
 #include "PodcastsPanel.h"
+#include "PortableMedia.h"
 #include "RadioPanel.h"
 #include "StatusBar.h"
 #include "SplashWin.h"
@@ -191,6 +192,8 @@ class guMainFrame : public wxFrame
     wxMenuItem *                m_ViewFullScreen;
     wxMenuItem *                m_ViewStatusBar;
 
+    wxMenu *                    m_PortableDevicesMenu;
+
 
     guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
@@ -212,6 +215,10 @@ class guMainFrame : public wxFrame
     guGSession *                m_GSession;
     guDBusNotify *              m_NotifySrv;
 
+    guGIO_VolumeMonitor *       m_VolumeMonitor;
+    guPortableMediaLibraryArray m_PortableMediaDbs;
+    guPortableMediaPanelArray   m_PortableMediaPanels;
+
     wxWindow *                  m_CurrentPage;
 
     wxLongLong                  m_SelCount;
@@ -232,6 +239,7 @@ class guMainFrame : public wxFrame
     void                OnPlayerTrackListChanged( wxCommandEvent &event );
     void                OnPlayerCapsChanged( wxCommandEvent &event );
     void                OnAudioScrobbleUpdate( wxCommandEvent &event );
+    void                CreatePortablePlayersMenu( wxMenu * menu );
     void                CreateMenu();
     void                DoCreateStatusBar( int kind );
     void                OnCloseWindow( wxCloseEvent &event );
@@ -249,6 +257,7 @@ class guMainFrame : public wxFrame
     void                OnRepeat( wxCommandEvent &event );
     void                OnAbout( wxCommandEvent &event );
     void                OnCopyTracksTo( wxCommandEvent &event );
+    void                OnCopyTracksToDevice( wxCommandEvent &event );
     void                OnUpdateLabels( wxCommandEvent &event );
     void                OnPlayerPlayListUpdateTitle( wxCommandEvent &event );
 
@@ -324,6 +333,9 @@ class guMainFrame : public wxFrame
     void                OnViewMagnatune( wxCommandEvent &event );
     void                OnMagnatuneShowPanel( wxCommandEvent &event );
 
+    void                OnViewPortableDevice( wxCommandEvent &event );
+    void                OnViewPortableDevicePanel( wxCommandEvent &event );
+
     void                OnMainPaneClose( wxAuiManagerEvent &event );
 
     void                LoadTabsPerspective( const wxString &layout );
@@ -346,6 +358,10 @@ class guMainFrame : public wxFrame
 
     void                OnJamendoCoverDownloaded( wxCommandEvent &event );
     void                OnMagnatuneCoverDownloaded( wxCommandEvent &event );
+
+    void                OnVolumeMonitorUpdated( wxCommandEvent &event );
+    void                CreatePortableMediaDeviceMenu( wxMenu * menu, const wxString &devicename, const int basecmd );
+    guPortableMediaPanel *  GetPortableMediaPanel( const int basecmd );
 
   public:
                         guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
@@ -382,6 +398,8 @@ class guMainFrame : public wxFrame
          return m_MagnatuneDb;
     }
 
+    void                CreateCopyToMenu( wxMenu * menu, const int basecmd );
+
 };
 
 // -------------------------------------------------------------------------------- //
@@ -404,11 +422,32 @@ class guCopyToDirThread : public wxThread
   private:
     wxString        m_DestDir;
     guTrackArray *  m_Tracks;
+    int             m_Pattern;
     int             m_GaugeId;
+    wxFileOffset    m_SizeCounter;
 
   public:
-    guCopyToDirThread( const wxChar * destdir, guTrackArray * tracks, int gaugeid );
+    guCopyToDirThread( const wxChar * destdir, guTrackArray * tracks, int pattern, int gaugeid );
     ~guCopyToDirThread();
+
+    virtual ExitCode Entry();
+};
+
+// -------------------------------------------------------------------------------- //
+class guCopyToDeviceThread : public wxThread
+{
+  private:
+    guPortableMediaDevice *     m_Device;
+    guTrackArray *              m_Tracks;
+    int                         m_GaugeId;
+    wxFileOffset                m_SizeCounter;
+
+    void                        CopyFile( const wxString &from, const wxString &to );
+    void                        TranscodeFile( const wxString &from, const wxString &to );
+
+  public:
+    guCopyToDeviceThread( guPortableMediaDevice * mediadevice, guTrackArray * tracks, int gaugeid );
+    ~guCopyToDeviceThread();
 
     virtual ExitCode Entry();
 };

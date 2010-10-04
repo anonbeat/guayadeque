@@ -40,6 +40,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
     m_Db = db;
     m_LinkSelected = wxNOT_FOUND;
     m_CmdSelected = wxNOT_FOUND;
+    m_CopyToSelected = wxNOT_FOUND;
     m_LibPathsChanged = false;
     m_VisiblePanels = 0;
 
@@ -358,7 +359,14 @@ guPrefDialog::~guPrefDialog()
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
     {
-        m_CopyToFileName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
+        m_CopyToListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToListBoxSelected ), NULL, this );
+        m_CopyToAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToAddBtnClick ), NULL, this );
+        m_CopyToDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToDelBtnClick ), NULL, this );
+        m_CopyToUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveUpBtnClick ), NULL, this );
+        m_CopyToDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveDownBtnClick ), NULL, this );
+        m_CopyToPatternTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
+        m_CopyToNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
+        m_CopyToAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToSaveBtnClick ), NULL, this );
     }
 }
 
@@ -831,7 +839,7 @@ void guPrefDialog::BuildRecordPage( void )
 	RecSelDirLabel->Wrap( -1 );
 	RecSelDirSizer->Add( RecSelDirLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_RecSelDirPicker = new wxDirPickerCtrl( m_RecordPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Records" ), wxT( "Record" ) ), _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
+	m_RecSelDirPicker = new wxDirPickerCtrl( m_RecordPanel, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
     m_RecSelDirPicker->SetPath( m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Records" ), wxT( "Record" ) ) );
     m_RecSelDirPicker->Enable( m_RecordChkBox->IsChecked() );
 	RecSelDirSizer->Add( m_RecSelDirPicker, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -1060,7 +1068,7 @@ void guPrefDialog::BuildLyricsPage( void )
     m_LyricsDirSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToDir" ), false, wxT( "Lyrics" ) ) );
 	LyricsDirSaveSizer->Add( m_LyricsDirSaveChkBox, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_LyricsDirSavePicker = new wxDirPickerCtrl( m_LyricsPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) ), _( "Select lyrics folder" ), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_LyricsDirSavePicker = new wxDirPickerCtrl( m_LyricsPanel, wxID_ANY, wxEmptyString, _( "Select lyrics folder" ), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
 	m_LyricsDirSavePicker->SetPath( m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) ) );
     m_LyricsDirSavePicker->Enable( m_LyricsDirSaveChkBox->IsChecked() );
 	LyricsDirSaveSizer->Add( m_LyricsDirSavePicker, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -1191,7 +1199,8 @@ void guPrefDialog::BuildPodcastsPage( void )
 	PodcastPathStaticText->Wrap( -1 );
 	PathSizer->Add( PodcastPathStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_PodcastPath = new wxDirPickerCtrl( m_PodcastPanel, wxID_ANY, m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir(), wxT( "Podcasts" ) ), _("Select podcasts folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE | wxDIRP_DIR_MUST_EXIST );
+	m_PodcastPath = new wxDirPickerCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, _("Select podcasts folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE | wxDIRP_DIR_MUST_EXIST );
+    m_PodcastPath->SetPath( m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir(), wxT( "Podcasts" ) ) );
 	PathSizer->Add( m_PodcastPath, 1, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 
 	PodcastsSizer->Add( PathSizer, 0, wxEXPAND, 5 );
@@ -1711,40 +1720,110 @@ void guPrefDialog::BuildCopyToPage( void )
     m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_COPYTO;
 
     //
-    // Copy to
+    // Copy To patterns
     //
 	wxBoxSizer * CopyToMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer * CopyToFileNameSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _( " FileName Pattern " ) ), wxVERTICAL );
+	wxStaticBoxSizer * CopyToLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, wxT(" Patterns ") ), wxVERTICAL );
 
-    wxString CopyToPattern = m_Config->ReadStr( wxT( "CopyToPattern" ), wxT("{g}/{a}/{b}/{n} - {a} - {t}"), wxT( "General" ) );
-	m_CopyToFileName = new wxTextCtrl( m_CopyPanel, wxID_ANY, CopyToPattern, wxDefaultPosition, wxDefaultSize, 0 );
-	CopyToFileNameSizer->Add( m_CopyToFileName, 1, wxEXPAND|wxALL, 5 );
+	wxBoxSizer * CopyToListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	CopyToMainSizer->Add( CopyToFileNameSizer, 0, wxALL|wxEXPAND, 5 );
+	m_CopyToListBox = new wxListBox( m_CopyPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+    wxArrayString Patterns = m_Config->ReadAStr( wxT( "Pattern" ), wxEmptyString, wxT( "CopyTo" ) );
+    if( !Patterns.Count() )
+        Patterns.Add( wxT( "{g}/{a}/{b}/{n} - {a} - {t}" ) );
+	m_CopyToListBox->Append( Patterns );
+	m_CopyToNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "CopyTo" ) );
+	if( !m_CopyToNames.Count() )
+        m_CopyToNames.Add( _( "Default" ) );
+	int index;
+    int count = m_CopyToListBox->GetCount();
+	while( ( int ) m_CopyToNames.Count() < count )
+        m_CopyToNames.Add( wxEmptyString );
+    if( ( int ) m_CopyToNames.Count() > count )
+        m_CopyToNames.RemoveAt( count, m_CopyToNames.Count() - count );
+    for( index = 0; index < count; index++ )
+    {
+        if( m_CopyToNames[ index ].IsEmpty() )
+        {
+            m_CopyToNames[ index ] = Patterns[ index ];
+        }
+    }
 
-	wxStaticBoxSizer * CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
+	CopyToListBoxSizer->Add( m_CopyToListBox, 1, wxALL|wxEXPAND, 5 );
 
-	wxStaticText * CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "{a}\t- Artist\t\t\t('U2')\n{aa}\t- Album Artist\t('Various Artists')\n{b}\t- Album\t\t\t('The Josua Tree')\n{f}\t- Original Filename\t( 'With or without you.mp3')\n{g}\t- Genre\t\t\t('Pop')\n{n}\t- Number\t\t('3')\n{t}\t- Title\t\t\t('With or Without You')\n{y}\t- Year\t\t\t('1987')\n{d}\t- Disk\t\t\t('1-2')\n" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxBoxSizer * CopyToBtnSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_CopyToAddBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToBtnSizer->Add( m_CopyToAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_CopyToUpBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToBtnSizer->Add( m_CopyToUpBtn, 0, wxALL, 5 );
+
+	m_CopyToDownBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToBtnSizer->Add( m_CopyToDownBtn, 0, wxALL, 5 );
+
+	m_CopyToDelBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CopyToDelBtn->Enable( false );
+
+	CopyToBtnSizer->Add( m_CopyToDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	CopyToListBoxSizer->Add( CopyToBtnSizer, 0, wxEXPAND, 5 );
+
+	CopyToLabelSizer->Add( CopyToListBoxSizer, 1, wxEXPAND, 5 );
+
+	wxBoxSizer* CopyToEditorSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxFlexGridSizer * CopyToFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	CopyToFieldsSizer->AddGrowableCol( 1 );
+	CopyToFieldsSizer->SetFlexibleDirection( wxBOTH );
+	CopyToFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+	wxStaticText * CopyToPatternStaticText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Command:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToPatternStaticText->Wrap( -1 );
+	CopyToFieldsSizer->Add( CopyToPatternStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+
+	m_CopyToPatternTextCtrl = new wxTextCtrl( m_CopyPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToFieldsSizer->Add( m_CopyToPatternTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * CopyToNameStaticText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Name:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToNameStaticText->Wrap( -1 );
+	CopyToFieldsSizer->Add( CopyToNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+
+	m_CopyToNameTextCtrl = new wxTextCtrl( m_CopyPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToFieldsSizer->Add( m_CopyToNameTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	CopyToEditorSizer->Add( CopyToFieldsSizer, 1, wxEXPAND, 5 );
+
+	m_CopyToAcceptBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CopyToAcceptBtn->Enable( false );
+
+	CopyToEditorSizer->Add( m_CopyToAcceptBtn, 0, wxALL, 5 );
+
+	CopyToLabelSizer->Add( CopyToEditorSizer, 0, wxEXPAND, 5 );
+
+	CopyToMainSizer->Add( CopyToLabelSizer, 1, wxEXPAND|wxALL, 5 );
+
+	wxStaticBoxSizer* CopyToHelpSizer;
+	CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, wxT(" Help ") ), wxVERTICAL );
+
+	wxStaticText * CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _("{a}\t: Artist\t\t\t{aa} : Album Artist\n{b}\t: Album\t\t\t{d}\t : Disk\n{f}\t: Filename\t\t{g}\t : Genre\n{n}\t: Number\t\t\t{t}\t : Title\n{y}\t: Year"), wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToHelpText->Wrap( -1 );
 	CopyToHelpSizer->Add( CopyToHelpText, 0, wxALL, 5 );
-
-	wxStaticBoxSizer * CopyToExampleSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Example ") ), wxVERTICAL );
-
-	m_CopyToExampleTextCtrl = new wxTextCtrl( m_CopyPanel, wxID_ANY, PatternToExample( CopyToPattern ), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	CopyToExampleSizer->Add( m_CopyToExampleTextCtrl, 0, wxALL|wxEXPAND, 5 );
-
-	CopyToHelpSizer->Add( CopyToExampleSizer, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 
 	CopyToMainSizer->Add( CopyToHelpSizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_CopyPanel->SetSizer( CopyToMainSizer );
 	m_CopyPanel->Layout();
 
-    //
-    //
-    //
-	m_CopyToFileName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToFileNameUpdated ), NULL, this );
+	m_CopyToListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToListBoxSelected ), NULL, this );
+	m_CopyToAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToAddBtnClick ), NULL, this );
+	m_CopyToDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToDelBtnClick ), NULL, this );
+	m_CopyToUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveUpBtnClick ), NULL, this );
+	m_CopyToDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveDownBtnClick ), NULL, this );
+	m_CopyToPatternTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
+	m_CopyToNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
+	m_CopyToAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToSaveBtnClick ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1994,7 +2073,9 @@ void guPrefDialog::SaveSettings( void )
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
     {
-        m_Config->WriteStr( wxT( "CopyToPattern" ), m_CopyToFileName->GetValue(), wxT( "General" ) );
+        wxArrayString Patterns = m_CopyToListBox->GetStrings();
+        m_Config->WriteAStr( wxT( "Pattern" ), Patterns, wxT( "CopyTo" ) );
+        m_Config->WriteAStr( wxT( "Name" ), m_CopyToNames, wxT( "CopyTo" ), false );
     }
 
     m_Config->Flush();
@@ -2688,26 +2769,121 @@ void guPrefDialog::OnCmdSaveBtnClick( wxCommandEvent &event )
     m_CmdAcceptBtn->Disable();
 }
 
-
 // -------------------------------------------------------------------------------- //
-wxString PatternToExample( const wxString &Pattern )
+void guPrefDialog::OnCopyToListBoxSelected( wxCommandEvent &event )
 {
-    wxString RetVal = Pattern;
-    RetVal.Replace( wxT( "{a}" ), wxT( "U2" ) );
-    RetVal.Replace( wxT( "{aa}" ), wxT( "Various Artists" ) );
-    RetVal.Replace( wxT( "{b}" ), wxT( "The Josua Tree" ) );
-    RetVal.Replace( wxT( "{f}" ), wxT( "With or without you.mp3" ) );
-    RetVal.Replace( wxT( "{g}" ), wxT( "Pop" ) );
-    RetVal.Replace( wxT( "{n}" ), wxT( "03" ) );
-    RetVal.Replace( wxT( "{t}" ), wxT( "With or Without You" ) );
-    RetVal.Replace( wxT( "{y}" ), wxT( "1987" ) );
-    RetVal.Replace( wxT( "{d}" ), wxT( "1-2" ) );
-    RetVal.Append( wxT( ".mp3" ) );
-    return RetVal;
+    m_CopyToSelected = event.GetInt();
+    if( m_CopyToSelected != wxNOT_FOUND )
+    {
+        m_CopyToDelBtn->Enable();
+
+        if( m_CopyToSelected > 0 )
+            m_CopyToUpBtn->Enable();
+        else
+            m_CopyToUpBtn->Disable();
+
+        if( m_CopyToSelected < ( int ) ( m_CopyToListBox->GetCount() - 1 ) )
+            m_CopyToDownBtn->Enable();
+        else
+            m_CopyToDownBtn->Disable();
+
+        m_CopyToPatternTextCtrl->SetValue( m_CopyToListBox->GetString( m_CopyToSelected ) );
+        m_CopyToNameTextCtrl->SetValue( m_CopyToNames[ m_CopyToSelected ] );
+        m_CopyToAcceptBtn->Disable();
+    }
+    else
+    {
+        m_CopyToDelBtn->Disable();
+        m_CopyToUpBtn->Disable();
+        m_CopyToDownBtn->Disable();
+        m_CopyToAcceptBtn->Disable();
+        m_CopyToPatternTextCtrl->SetValue( wxEmptyString );
+        m_CopyToNameTextCtrl->SetValue( wxEmptyString );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
-void guPrefDialog::OnCopyToFileNameUpdated( wxCommandEvent &event )
+void guPrefDialog::OnCopyToAddBtnClick( wxCommandEvent& event )
 {
-    m_CopyToExampleTextCtrl->SetValue( PatternToExample( m_CopyToFileName->GetValue() ) );
+    wxString Cmd = m_CopyToPatternTextCtrl->GetValue();
+    if( !Cmd.IsEmpty() )
+    {
+        m_CopyToListBox->Append( m_CopyToPatternTextCtrl->GetValue() );
+        m_CopyToNames.Add( m_CopyToNameTextCtrl->GetValue() );
+    }
 }
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToDelBtnClick( wxCommandEvent& event )
+{
+    if( m_CopyToSelected != wxNOT_FOUND )
+    {
+        m_CopyToNames.RemoveAt( m_CopyToSelected );
+        m_CopyToListBox->Delete( m_CopyToSelected );
+        m_CopyToSelected = wxNOT_FOUND;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToMoveUpBtnClick( wxCommandEvent &event )
+{
+    wxString CurUrl = m_CopyToListBox->GetString( m_CopyToSelected );
+    wxString CurName = m_CopyToNames[ m_CopyToSelected ];
+    m_CopyToListBox->SetString( m_CopyToSelected, m_CopyToListBox->GetString( m_CopyToSelected - 1 ) );
+    m_CopyToNames[ m_CopyToSelected ] = m_CopyToNames[ m_CopyToSelected - 1 ];
+    m_CopyToSelected--;
+    m_CopyToListBox->SetString( m_CopyToSelected, CurUrl );
+    m_CopyToNames[ m_CopyToSelected ] = CurName;
+    m_CopyToListBox->SetSelection( m_CopyToSelected );
+
+    event.SetInt( m_CopyToSelected );
+    OnCopyToListBoxSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToMoveDownBtnClick( wxCommandEvent &event )
+{
+    wxString CurUrl = m_CopyToListBox->GetString( m_CopyToSelected );
+    wxString CurName = m_CopyToNames[ m_CopyToSelected ];
+    m_CopyToListBox->SetString( m_CopyToSelected, m_CopyToListBox->GetString( m_CopyToSelected + 1 ) );
+    m_CopyToNames[ m_CopyToSelected ] = m_CopyToNames[ m_CopyToSelected + 1 ];
+    m_CopyToSelected++;
+    m_CopyToListBox->SetString( m_CopyToSelected, CurUrl );
+    m_CopyToNames[ m_CopyToSelected ] = CurName;
+    m_CopyToListBox->SetSelection( m_CopyToSelected );
+
+    event.SetInt( m_CopyToSelected );
+    OnCopyToListBoxSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToTextChanged( wxCommandEvent &event )
+{
+    if( !m_CopyToPatternTextCtrl->IsEmpty() )
+    {
+        m_CopyToAddBtn->Enable();
+        if( m_CopyToSelected != wxNOT_FOUND )
+            m_CopyToAcceptBtn->Enable();
+    }
+    else
+    {
+        m_CopyToAddBtn->Disable();
+        if( m_CopyToSelected != wxNOT_FOUND )
+            m_CopyToAcceptBtn->Disable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToSaveBtnClick( wxCommandEvent &event )
+{
+    m_CopyToListBox->SetString( m_CopyToSelected, m_CopyToPatternTextCtrl->GetValue() );
+    m_CopyToNames[ m_CopyToSelected ] = m_CopyToNameTextCtrl->GetValue();
+    if( m_CopyToNames[ m_CopyToSelected ].IsEmpty() )
+    {
+        m_CopyToNames[ m_CopyToSelected ] = m_CopyToPatternTextCtrl->GetValue();
+        m_CopyToNameTextCtrl->SetValue( m_CopyToNames[ m_CopyToSelected ] );
+    }
+    m_CopyToAcceptBtn->Disable();
+}
+
+// -------------------------------------------------------------------------------- //
