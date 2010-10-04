@@ -67,6 +67,8 @@
 			<Add library="libcurl" />
 			<Add library="/usr/lib/libtag.so" />
 		</Linker>
+		<Unit filename="src/AAListBox.cpp" />
+		<Unit filename="src/AAListBox.h" />
 		<Unit filename="src/AlListBox.cpp" />
 		<Unit filename="src/AlListBox.h" />
 		<Unit filename="src/AlbumBrowser.cpp" />
@@ -128,6 +130,8 @@
 		<Unit filename="src/FileBrowser.h" />
 		<Unit filename="src/FileRenamer.cpp" />
 		<Unit filename="src/FileRenamer.h" />
+		<Unit filename="src/GIO_Volume.cpp" />
+		<Unit filename="src/GIO_Volume.h" />
 		<Unit filename="src/GeListBox.cpp" />
 		<Unit filename="src/GeListBox.h" />
 		<Unit filename="src/Google.cpp" />
@@ -193,6 +197,8 @@
 		<Unit filename="src/Podcasts.h" />
 		<Unit filename="src/PodcastsPanel.cpp" />
 		<Unit filename="src/PodcastsPanel.h" />
+		<Unit filename="src/PortableMedia.cpp" />
+		<Unit filename="src/PortableMedia.h" />
 		<Unit filename="src/Preferences.cpp" />
 		<Unit filename="src/Preferences.h" />
 		<Unit filename="src/RaListBox.cpp" />

@@ -36,15 +36,15 @@ guDBusNotify::~guDBusNotify()
     if( m_MsgId )
     {
         //guLogMessage( wxT( "Sending Close Message... %i" ), m_MsgId );
-        guDBusMethodCall * Msg = new guDBusMethodCall( "org.freedesktop.Notifications",
-                                               "/org/freedesktop/Notifications",
-                                               "org.freedesktop.Notifications",
-                                               "CloseNotification" );
-        dbus_message_append_args( Msg->GetMessage(), DBUS_TYPE_UINT32, &m_MsgId, DBUS_TYPE_INVALID );
-        Msg->SetNoReply( true );
-        Send( Msg );
-
-        delete Msg;
+//        guDBusMethodCall * Msg = new guDBusMethodCall( "org.freedesktop.Notifications",
+//                                               "/org/freedesktop/Notifications",
+//                                               "org.freedesktop.Notifications",
+//                                               "CloseNotification" );
+//        dbus_message_append_args( Msg->GetMessage(), DBUS_TYPE_UINT32, &m_MsgId, DBUS_TYPE_INVALID );
+//        Msg->SetNoReply( true );
+//        Send( Msg );
+//
+//        delete Msg;
     }
 }
 

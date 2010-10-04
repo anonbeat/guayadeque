@@ -44,6 +44,7 @@ class guSplashFrame : public wxFrame
   protected:
 	wxHyperlinkCtrl *   m_Email;
 	wxStaticText *      m_Version;
+    wxHyperlinkCtrl *   m_HomePage;
     wxHyperlinkCtrl *   m_Donate;
     wxBitmap *          m_Bitmap;
     wxTimer             m_Timer;

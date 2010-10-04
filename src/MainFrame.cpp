@@ -28,8 +28,9 @@
 #include "LibUpdate.h"
 #include "Preferences.h"
 //#include "SplashWin.h"
-#include "TrackChangeInfo.h"
 #include "TaskBar.h"
+#include "TrackChangeInfo.h"
+#include "Transcode.h"
 #include "Utils.h"
 #include "Version.h"
 
@@ -37,6 +38,7 @@
 #include <wx/statline.h>
 #include <wx/notebook.h>
 #include <wx/datetime.h>
+#include <wx/tokenzr.h>
 
 // The default update podcasts timeout is 15 minutes
 #define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
@@ -434,6 +436,10 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_PlayerPanel->SetNotifySrv( m_NotifySrv );
     //m_DBusServer->Run();
 
+
+    m_VolumeMonitor = new guGIO_VolumeMonitor();
+
+
     //
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
@@ -486,6 +492,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
 
     Connect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
+    Connect( ID_MAINFRAME_COPYTODEVICE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
 
     Connect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ), NULL, this );
 
@@ -559,6 +566,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
     Connect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
 
+
+    Connect( ID_VOLUMEMANAGER_MOUNT_CHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnVolumeMonitorUpdated ), NULL, this );
+    //Connect( ID_MENU_VIEW_PORTABLE_DEVICES, ID_MENU_VIEW_PORTABLE_DEVICES + 100, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnVolumeMonitorUpdated ), NULL, this );
 
     Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
     Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
@@ -635,6 +645,7 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
 
     Disconnect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
+    Disconnect( ID_MAINFRAME_COPYTODEVICE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
 
     Disconnect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ), NULL, this );
 
@@ -698,6 +709,27 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
     Disconnect( ID_MAINFRAME_REQUEST_CURRENTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRequestCurrentTrack ), NULL, this );
 
+    if( m_LibUpdateThread )
+    {
+        m_LibUpdateThread->Pause();
+        m_LibUpdateThread->Delete();
+    }
+
+    if( m_LibCleanThread )
+    {
+        m_LibCleanThread->Pause();
+        m_LibCleanThread->Delete();
+    }
+
+    while( m_PortableMediaPanels.Count() )
+    {
+        RemoveTabPanel( m_PortableMediaPanels[ 0 ] );
+        delete m_PortableMediaPanels[ 0 ];
+        delete m_PortableMediaDbs[ 0 ];
+        m_PortableMediaPanels.RemoveAt( 0 );
+        m_PortableMediaDbs.RemoveAt( 0 );
+    }
+
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
@@ -717,18 +749,6 @@ guMainFrame::~guMainFrame()
 
         Config->WriteBool( wxT( "ShowFullScreen" ), IsFullScreen() , wxT( "General" ) );
         Config->WriteBool( wxT( "ShowStatusBar" ), m_MainStatusBar->IsShown() , wxT( "General" ) );
-    }
-
-    if( m_LibUpdateThread )
-    {
-        m_LibUpdateThread->Pause();
-        m_LibUpdateThread->Delete();
-    }
-
-    if( m_LibCleanThread )
-    {
-        m_LibCleanThread->Pause();
-        m_LibCleanThread->Delete();
     }
 
     if( m_TaskBarIcon )
@@ -761,19 +781,12 @@ guMainFrame::~guMainFrame()
         delete m_DBusServer;
     }
 
-    m_AuiManager.UnInit();
+    if( m_VolumeMonitor )
+    {
+        delete m_VolumeMonitor;
+    }
 
-//    if( m_Db )
-//    {
-//        m_Db->Close();
-//        delete m_Db;
-//    }
-//
-//    if( m_DbCache )
-//    {
-//        m_DbCache->Close();
-//        delete m_DbCache;
-//    }
+    m_AuiManager.UnInit();
 
     if( m_JamendoDb )
     {
@@ -791,6 +804,167 @@ extern void wxClearGtkSystemObjects();
 //    wxClearGtkSystemObjects();
 //    event.Skip();
 //}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "guMainFrame::OnVolumeMonitorUpdated" ) );
+    // a mount point have been removed
+    if( !event.GetInt() )
+    {
+        guLogMessage( wxT( "It was unmounted..." ) );
+        GMount * Mount = ( GMount * ) event.GetClientData();
+        int Index;
+        int Count = m_PortableMediaPanels.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guPortableMediaPanel * PortableMediaPanel = m_PortableMediaPanels[ Index ];
+            guLogMessage( wxT( "Checking device %i" ), Index );
+            if( PortableMediaPanel->IsMount( Mount ) )
+            {
+                guLogMessage( wxT( "The mount had a panel already added ..." ) );
+                if( PortableMediaPanel->PanelActive() )
+                {
+                    guLogMessage( wxT( "The mount panel was visible... Need to close it" ) );
+                    event.SetClientData( ( void * ) PortableMediaPanel );
+                    OnViewPortableDevice( event );
+                }
+                break;
+            }
+        }
+    }
+    CreatePortablePlayersMenu( m_PortableDevicesMenu );
+}
+
+#define guPORTABLEDEVICE_COMMANDS_COUNT     20
+
+// -------------------------------------------------------------------------------- //
+guPortableMediaPanel * guMainFrame::GetPortableMediaPanel( const int basecmd )
+{
+    int Index;
+    int Count = m_PortableMediaPanels.Count();
+    guLogMessage( wxT( "Searching for basecmd %u" ), basecmd );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guLogMessage( wxT( "Current basecmd %u" ), m_PortableMediaPanels[ Index ]->BaseCommand() );
+        if( m_PortableMediaPanels[ Index ]->BaseCommand() == basecmd )
+        {
+            guLogMessage( wxT( "found the basecmd %u" ), basecmd );
+            return m_PortableMediaPanels[ Index ];
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::CreatePortableMediaDeviceMenu( wxMenu * menu, const wxString &devicename, const int basecmd )
+{
+    wxMenu *                SubMenu;
+    wxMenuItem *            MenuItem;
+    guPortableMediaPanel *  PortableMediaPanel = GetPortableMediaPanel( basecmd );
+
+    SubMenu = new wxMenu();
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd, devicename, _( "Show/Hide the portable media device panel" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel );
+
+    SubMenu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 1, _( "Text Search" ), _( "Show/Hide the Portable Media Device text search" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 2, _( "Labels" ), _( "Show/Hide the Portable Media Device labels" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 3, _( "Genres" ), _( "Show/Hide the Portable Media Device genres" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 4, _( "Artists" ), _( "Show/Hide the Portable Media Device artists" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 5, _( "Composers" ), _( "Show/Hide the Portable Media Device composers" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_COMPOSERS ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 6, _( "Album Artist" ), _( "Show/Hide the Portable Media Device album artist" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMARTISTS ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 7, _( "Albums" ), _( "Show/Hide the Portable Media Device albums" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 8, _( "Years" ), _( "Show/Hide the Portable Media Device years" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 9, _( "Ratings" ), _( "Show/Hide the Portable Media Device ratings" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    MenuItem = new wxMenuItem( SubMenu, basecmd + 10, _( "Play Counts" ), _( "Show/Hide the Portable Media Device play counts" ), wxITEM_CHECK );
+    SubMenu->Append( MenuItem );
+    MenuItem->Check( PortableMediaPanel && PortableMediaPanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
+    MenuItem->Enable( PortableMediaPanel );
+
+    menu->AppendSubMenu( SubMenu, devicename, _( "Set the Portable Media Device visible panels" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::CreatePortablePlayersMenu( wxMenu * menu )
+{
+	wxMenuItem * MenuItem;
+
+    // Empty the submenu items
+    int Index = 0;
+    int BaseCmd;
+    while( menu->GetMenuItemCount() )
+    {
+        menu->Delete( menu->FindItemByPosition( 0 ) );
+        BaseCmd = ID_MENU_VIEW_PORTABLE_DEVICE + ( Index * guPORTABLEDEVICE_COMMANDS_COUNT );
+        Disconnect( BaseCmd, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPortableDevice ), NULL, this );
+        Disconnect( BaseCmd + 1, BaseCmd + guPORTABLEDEVICE_COMMANDS_COUNT - 1, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPortableDevicePanel ), NULL, this );
+        Index++;
+    }
+
+	if( m_VolumeMonitor )
+	{
+	    wxArrayString VolumeNames = m_VolumeMonitor->GetMountNames();
+	    int Count;
+	    if( ( Count = VolumeNames.Count() ) )
+	    {
+	        for( Index = 0; Index < Count; Index++ )
+	        {
+                BaseCmd = ID_MENU_VIEW_PORTABLE_DEVICE + ( Index * guPORTABLEDEVICE_COMMANDS_COUNT );
+	            CreatePortableMediaDeviceMenu( menu, VolumeNames[ Index ], BaseCmd );
+
+                Connect( BaseCmd, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPortableDevice ), NULL, this );
+                Connect( BaseCmd + 1, BaseCmd + guPORTABLEDEVICE_COMMANDS_COUNT - 1, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPortableDevicePanel ), NULL, this );
+	        }
+	    }
+	    else
+	    {
+            MenuItem = new wxMenuItem( m_MainMenu, -1, _( "No device found" ), _( "Show the Library for the selected portable volume" ), wxITEM_NORMAL );
+            menu->Append( MenuItem );
+            MenuItem->Enable( false );
+	    }
+	}
+
+}
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::CreateMenu()
@@ -1140,6 +1314,12 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSubMenu( SubMenu, wxT( "Magnatune" ), _( "Set the Magnatune visible panels" ) );
 
+    m_PortableDevicesMenu = new wxMenu();
+
+    CreatePortablePlayersMenu( m_PortableDevicesMenu );
+
+    m_MainMenu->AppendSubMenu( m_PortableDevicesMenu, _( "Portable devices" ), _( "View the portable devices library" ) );
+
 
     m_MainMenu->AppendSeparator();
 
@@ -1303,10 +1483,13 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
 {
     m_LibCleanThread = NULL;
-    //m_Db->LoadCache();
+    guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
 
-    if( m_LibPanel )
-        m_LibPanel->ReloadControls();
+    if( !LibPanel )
+        LibPanel = m_LibPanel;
+
+    if( LibPanel )
+        LibPanel->ReloadControls();
 
     if( m_AlbumBrowserPanel )
         m_AlbumBrowserPanel->LibraryUpdated();
@@ -1315,13 +1498,17 @@ void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::DoLibraryClean( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "guMainFrame::DoLibraryClean" ) );
     if( m_LibCleanThread )
     {
         m_LibCleanThread->Pause();
         m_LibCleanThread->Delete();
     }
 
-    m_LibCleanThread = new guLibCleanThread( m_Db );
+    guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+    if( !LibPanel )
+        LibPanel = m_LibPanel;
+    m_LibCleanThread = new guLibCleanThread( LibPanel );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1470,23 +1657,45 @@ void guMainFrame::OnUpdateCovers( wxCommandEvent &WXUNUSED( event ) )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnUpdateLibrary( wxCommandEvent& WXUNUSED(event) )
+void guMainFrame::OnUpdateLibrary( wxCommandEvent &event )
 {
     if( m_LibUpdateThread )
         return;
-    int gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
-    m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid );
+
+    int gaugeid;
+    guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+    if( LibPanel )
+    {
+        gaugeid = m_MainStatusBar->AddGauge( LibPanel->GetName(), false );
+        m_LibUpdateThread = new guLibUpdateThread( LibPanel, gaugeid );
+    }
+    else
+    {
+        gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
+        m_LibUpdateThread = new guLibUpdateThread( m_LibPanel, gaugeid );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnForceUpdateLibrary( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "The forced update started..." ) );
     if( m_LibUpdateThread )
         return;
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
-    int gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
-    m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid );
+    int gaugeid;
+    guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+    if( LibPanel )
+    {
+        gaugeid = m_MainStatusBar->AddGauge( LibPanel->GetName(), false );
+        m_LibUpdateThread = new guLibUpdateThread( LibPanel, gaugeid );
+    }
+    else
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        Config->WriteNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+        gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
+        m_LibUpdateThread = new guLibUpdateThread( m_LibPanel, gaugeid );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1522,8 +1731,9 @@ void guMainFrame::OnAddLibraryPath( wxCommandEvent &event )
                     //AddPendingEvent( event );
                     if( !m_LibUpdateThread )
                     {
-                        int gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
-                        m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid, PathValue );
+                        int gaugeid;
+                        gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
+                        m_LibUpdateThread = new guLibUpdateThread( m_LibPanel, gaugeid );
                     }
                     else
                     {
@@ -1683,19 +1893,53 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
                 {
                     int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ) );
                     guCopyToDirThread * CopyToDirThread = new guCopyToDirThread( DirDialog->GetPath().c_str(),
-                        Tracks, GaugeId );
+                        Tracks, event.GetInt(), GaugeId );
                     if( !CopyToDirThread )
                     {
                         guLogError( wxT( "Could not create the CopyTo thread object" ) );
                         delete Tracks;
                     }
                 }
-                else
-                {
-                    delete Tracks;
-                }
                 DirDialog->Destroy();
             }
+        }
+        else
+        {
+            delete Tracks;
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "guMainFrame::OnCopyTracksToDevice" ) );
+    guTrackArray * Tracks = ( guTrackArray * ) event.GetClientData();
+    if( Tracks )
+    {
+        if( Tracks->Count() )
+        {
+            int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To Device" ) );
+            int PortableIndex = event.GetInt();
+            if( PortableIndex >= 0 && PortableIndex < ( int ) m_PortableMediaPanels.Count() )
+            {
+                guPortableMediaPanel * PortableMediaPanel = m_PortableMediaPanels[ event.GetInt() ];
+                guPortableMediaDevice * PortableMediaDevice = PortableMediaPanel->PortableMediaDevice();
+                guCopyToDeviceThread * CopyToDeviceThread = new guCopyToDeviceThread( PortableMediaDevice, Tracks, GaugeId );
+                if( !CopyToDeviceThread )
+                {
+                    guLogError( wxT( "Could not create the CopyTo thread object" ) );
+                    delete Tracks;
+                }
+            }
+            else
+            {
+                guLogMessage( wxT( "Wrong portable device index in copy to device command" ) );
+            }
+        }
+        else
+        {
+            delete Tracks;
         }
     }
 }
@@ -2462,6 +2706,168 @@ void guMainFrame::OnViewMagnatune( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
+{
+    bool IsEnabled = event.IsChecked();
+    int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
+    guLogMessage( wxT( "Its the device %i" ), DeviceNum );
+
+    if( IsEnabled )
+    {
+        guGIO_Mount * DeviceMount = m_VolumeMonitor->GetMount( DeviceNum );
+        if( DeviceMount)
+        {
+            guPortableMediaDevice * MediaDevice = new guPortableMediaDevice( m_VolumeMonitor->GetMount( DeviceNum ) );
+            if( MediaDevice )
+            {
+                wxString DeviceDbPath = wxGetHomeDir() + wxT( "/.guayadeque/Devices/" ) + MediaDevice->DevicePath() + wxT( "/guayadeque.db" );
+                wxFileName::Mkdir( wxPathOnly( DeviceDbPath ), 0775, wxPATH_MKDIR_FULL );
+
+                guPortableMediaLibrary * PortableMediaDb = new guPortableMediaLibrary( DeviceDbPath );
+                if( PortableMediaDb )
+                {
+                    PortableMediaDb->SetLibPath( wxStringTokenize( MediaDevice->AudioFolders(), wxT( "," ) ) );
+
+                    guPortableMediaPanel * PortableDevicePanel = new guPortableMediaPanel( m_CatNotebook, PortableMediaDb, m_PlayerPanel, wxT( "PMD" ) );
+                    PortableDevicePanel->SetPortableMediaDevice( MediaDevice );
+                    PortableDevicePanel->SetBaseCommand( event.GetId() );
+
+                    InsertTabPanel( PortableDevicePanel, 10, MediaDevice->DeviceName() );
+                    m_PortableMediaDbs.Add( PortableMediaDb );
+                    m_PortableMediaPanels.Add( PortableDevicePanel );
+                    PortableDevicePanel->SetPanelActive( true );
+                    CreatePortablePlayersMenu( m_PortableDevicesMenu );
+
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARYFORCED );
+                    event.SetClientData( ( void * ) PortableDevicePanel );
+                    AddPendingEvent( event );
+                }
+                else
+                {
+                    guLogMessage( wxT( "Could not create the database object '%s'" ), DeviceDbPath.c_str() );
+                }
+            }
+            else
+            {
+                guLogMessage( wxT( "Could not create the media device object" ) );
+            }
+        }
+        else
+        {
+            guLogMessage( wxT( "Could not find the mount device object %i" ), DeviceNum );
+        }
+    }
+    else
+    {
+        guPortableMediaPanel * PortableDevicePanel;
+        if( event.GetId() == ID_VOLUMEMANAGER_MOUNT_CHANGED )
+        {
+            PortableDevicePanel = ( guPortableMediaPanel * ) event.GetClientData();
+        }
+        else
+        {
+            PortableDevicePanel = GetPortableMediaPanel( event.GetId() );
+        }
+        if( PortableDevicePanel )
+            RemoveTabPanel( PortableDevicePanel );
+
+        //PortableDevicePanel->SetPanelActive( false );
+
+        if( m_LibUpdateThread )
+        {
+            if( m_LibUpdateThread->LibPanel() == ( guLibPanel * ) PortableDevicePanel )
+            {
+                m_LibUpdateThread->Pause();
+                m_LibUpdateThread->Delete();
+                m_LibUpdateThread = NULL;
+            }
+        }
+
+        if( m_LibCleanThread )
+        {
+            if( m_LibCleanThread->LibPanel() == ( guLibPanel * ) PortableDevicePanel )
+            {
+                m_LibCleanThread->Pause();
+                m_LibCleanThread->Delete();
+                m_LibCleanThread = NULL;
+            }
+        }
+
+        int DeviceIndex = m_PortableMediaPanels.Index( PortableDevicePanel );
+
+        if( DeviceIndex != wxNOT_FOUND ) // This should never happen
+        {
+            delete m_PortableMediaPanels[ DeviceIndex ];
+            delete m_PortableMediaDbs[ DeviceIndex ];
+            m_PortableMediaDbs.RemoveAt( DeviceIndex );
+            m_PortableMediaPanels.RemoveAt( DeviceIndex );
+        }
+
+        CreatePortablePlayersMenu( m_PortableDevicesMenu );
+    }
+    m_CatNotebook->Refresh();
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewPortableDevicePanel( wxCommandEvent &event )
+{
+    int PanelId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
+    int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
+    //guLogMessage( wxT( "Its the device %i pane %i" ), DeviceNum, PanelId );
+
+    guPortableMediaPanel * PortableMediaPanel = m_PortableMediaPanels[ DeviceNum ];
+
+    switch( PanelId )
+    {
+        case guLIBRARY_ELEMENT_TEXTSEARCH :
+            PanelId = guPANEL_LIBRARY_TEXTSEARCH;
+            break;
+
+        case guLIBRARY_ELEMENT_LABELS :
+            PanelId = guPANEL_LIBRARY_LABELS;
+            break;
+
+        case guLIBRARY_ELEMENT_GENRES :
+            PanelId = guPANEL_LIBRARY_GENRES;
+            break;
+
+        case guLIBRARY_ELEMENT_ARTISTS :
+            PanelId = guPANEL_LIBRARY_ARTISTS;
+            break;
+
+        case guLIBRARY_ELEMENT_COMPOSERS :
+            PanelId = guPANEL_LIBRARY_COMPOSERS;
+            break;
+
+        case guLIBRARY_ELEMENT_ALBUMARTISTS :
+            PanelId = guPANEL_LIBRARY_ALBUMARTISTS;
+            break;
+
+        case guLIBRARY_ELEMENT_ALBUMS :
+            PanelId = guPANEL_LIBRARY_ALBUMS;
+            break;
+
+        case guLIBRARY_ELEMENT_YEARS :
+            PanelId = guPANEL_LIBRARY_YEARS;
+            break;
+
+        case guLIBRARY_ELEMENT_RATINGS :
+            PanelId = guPANEL_LIBRARY_RATINGS;
+            break;
+
+        case guLIBRARY_ELEMENT_PLAYCOUNT :
+            PanelId = guPANEL_LIBRARY_PLAYCOUNT;
+            break;
+    }
+
+    if( PanelId && PortableMediaPanel )
+        PortableMediaPanel->ShowPanel( PanelId, event.IsChecked() );
+
+    CreatePortablePlayersMenu( m_PortableDevicesMenu );
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewFullScreen( wxCommandEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -2599,14 +3005,17 @@ void guMainFrame::OnSelectTrack( wxCommandEvent &event )
     }
     else
     {
-        if( m_LibPanel )
+        guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
+        if( LibPanel )
         {
-            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            int PaneIndex = m_CatNotebook->GetPageIndex( LibPanel );
             if( PaneIndex != wxNOT_FOUND )
             {
                 m_CatNotebook->SetSelection( PaneIndex );
             }
-            m_LibPanel->SelectTrack( event.GetInt() );
+            LibPanel->SelectTrack( event.GetInt() );
         }
     }
 }
@@ -2653,14 +3062,17 @@ void guMainFrame::OnSelectAlbum( wxCommandEvent &event )
     }
     else
     {
-        if( m_LibPanel )
+        guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
+        if( LibPanel )
         {
-            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            int PaneIndex = m_CatNotebook->GetPageIndex( LibPanel );
             if( PaneIndex != wxNOT_FOUND )
             {
                 m_CatNotebook->SetSelection( PaneIndex );
             }
-            m_LibPanel->SelectAlbum( event.GetInt() );
+            LibPanel->SelectAlbum( event.GetInt() );
         }
     }
 }
@@ -2699,14 +3111,17 @@ void guMainFrame::OnSelectArtist( wxCommandEvent &event )
     }
     else
     {
-        if( m_LibPanel )
+        guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
+        if( LibPanel )
         {
-            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            int PaneIndex = m_CatNotebook->GetPageIndex( LibPanel );
             if( PaneIndex != wxNOT_FOUND )
             {
                 m_CatNotebook->SetSelection( PaneIndex );
             }
-            m_LibPanel->SelectArtist( event.GetInt() );
+            LibPanel->SelectArtist( event.GetInt() );
         }
     }
 }
@@ -2741,14 +3156,17 @@ void guMainFrame::OnSelectYear( wxCommandEvent &event )
     }
     else
     {
-        if( m_LibPanel )
+        guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
+        if( LibPanel )
         {
-            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            int PaneIndex = m_CatNotebook->GetPageIndex( LibPanel );
             if( PaneIndex != wxNOT_FOUND )
             {
                 m_CatNotebook->SetSelection( PaneIndex );
             }
-            m_LibPanel->SelectYear( event.GetInt() );
+            LibPanel->SelectYear( event.GetInt() );
         }
     }
 }
@@ -2787,16 +3205,19 @@ void guMainFrame::OnSelectGenre( wxCommandEvent &event )
     }
     else
     {
-        if( m_LibPanel )
+        guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
+        if( LibPanel )
         {
-            int PaneIndex = m_CatNotebook->GetPageIndex( m_LibPanel );
+            int PaneIndex = m_CatNotebook->GetPageIndex( LibPanel );
             if( PaneIndex != wxNOT_FOUND )
             {
                 m_CatNotebook->SetSelection( PaneIndex );
             }
             wxArrayInt Genres;
             Genres.Add( event.GetInt() );
-            m_LibPanel->SelectGenres( &Genres );
+            LibPanel->SelectGenres( &Genres );
         }
     }
 }
@@ -2992,6 +3413,42 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
         m_ViewMagPlayCounts->Enable( false );
         PanelId = guPANEL_MAIN_MAGNATUNE;
     }
+    else
+    {
+        guPortableMediaPanel * PortableMediaPanel = ( guPortableMediaPanel * ) CurPage;
+        int DeviceIndex = m_PortableMediaPanels.Index( PortableMediaPanel );
+
+        //PortableMediaPanel->SetPanelActive( false );
+        if( m_LibUpdateThread )
+        {
+            if( m_LibUpdateThread->LibPanel() == ( guLibPanel * ) PortableMediaPanel )
+            {
+                m_LibUpdateThread->Pause();
+                m_LibUpdateThread->Delete();
+                m_LibUpdateThread = NULL;
+            }
+        }
+
+        if( m_LibCleanThread )
+        {
+            if( m_LibCleanThread->LibPanel() == ( guLibPanel * ) PortableMediaPanel )
+            {
+                m_LibCleanThread->Pause();
+                m_LibCleanThread->Delete();
+                m_LibCleanThread = NULL;
+            }
+        }
+
+        if( DeviceIndex != wxNOT_FOUND )
+        {
+            delete m_PortableMediaPanels[ DeviceIndex ];
+            delete m_PortableMediaDbs[ DeviceIndex ];
+            m_PortableMediaDbs.RemoveAt( DeviceIndex );
+            m_PortableMediaPanels.RemoveAt( DeviceIndex );
+        }
+
+        CreatePortablePlayersMenu( m_PortableDevicesMenu );
+    }
 
     //CheckHideNotebook();
     m_VisiblePanels ^= PanelId;
@@ -3074,9 +3531,7 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
 
         wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
         SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
-        SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
-            LenToString( m_SelLength.GetLo() ).c_str(),
-            SizeToString( m_SelSize.GetValue() ).c_str() );
+        SelInfo += wxString::Format( wxT( ",   %s" ), LenToString( m_SelLength.GetLo() ).c_str() );
         m_MainStatusBar->SetSelInfo( SelInfo );
     }
     else if( m_CurrentPage == ( wxWindow * ) m_MagnatunePanel )
@@ -3085,9 +3540,7 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
 
         wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
         SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
-        SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
-            LenToString( m_SelLength.GetLo() ).c_str(),
-            SizeToString( m_SelSize.GetValue() ).c_str() );
+        SelInfo += wxString::Format( wxT( ",   %s" ), LenToString( m_SelLength.GetLo() ).c_str() );
         m_MainStatusBar->SetSelInfo( SelInfo );
     }
     else
@@ -3151,6 +3604,8 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 
     // Now we can start the dbus server
     m_DBusServer->Run();
+
+    CreatePortablePlayersMenu( m_PortableDevicesMenu );
 
 //    // If enabled Show the Splash Screen on Startup
 //    guSplashFrame * SplashFrame = NULL;
@@ -3835,6 +4290,9 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
 {
+    if( !tracks->Count() )
+        return;
+
     if( updatedby != guUPDATED_TRACKS_PLAYER )
     {
         m_PlayerPanel->UpdatedTracks( tracks );
@@ -3845,9 +4303,12 @@ void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
         m_PlayerPlayList->UpdatedTracks( tracks );
     }
 
-    if( ( updatedby != guUPDATED_TRACKS_LIBRARY ) && m_LibPanel )
+    if( updatedby != guUPDATED_TRACKS_LIBRARY )
     {
-        m_LibPanel->UpdatedTracks( tracks );
+        guLibPanel * LibPanel = tracks->Item( 0 ).m_LibPanel;
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
+        LibPanel->UpdatedTracks( tracks );
     }
 
     if( ( updatedby != guUPDATED_TRACKS_PLAYLISTS ) && m_PlayListPanel )
@@ -3921,6 +4382,56 @@ void guMainFrame::OnMagnatuneCoverDownloaded( wxCommandEvent &event )
         }
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::CreateCopyToMenu( wxMenu * menu, const int basecmd )
+{
+    int Index;
+    int Count;
+    wxMenuItem * MenuItem;
+    wxMenu * SubMenu = new wxMenu();
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "CopyTo" ) );
+    if( ( Count = Names.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            MenuItem = new wxMenuItem( SubMenu, basecmd + Index, Names[ Index ], _( "Copy the current selected songs to a directory or device" ) );
+            SubMenu->Append( MenuItem );
+        }
+    }
+
+    bool SeparatorAdded = false;
+    Names = m_VolumeMonitor->GetMountNames();
+    if( ( Count = Names.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( m_VolumeMonitor->PanelActive( Index ) )
+            {
+                if( !SeparatorAdded && SubMenu->GetMenuItemCount() )
+                {
+                    SubMenu->AppendSeparator();
+                    SeparatorAdded = true;
+                }
+
+                MenuItem = new wxMenuItem( SubMenu, basecmd + 100 + Index, Names[ Index ], _( "Copy the current selected songs to a directory or device" ) );
+                //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+                SubMenu->Append( MenuItem );
+            }
+        }
+    }
+
+    if( SubMenu->GetMenuItemCount() )
+    {
+        menu->AppendSubMenu( SubMenu, _( "Copy To..." ), _( "Copy the selected tracks to a folder or device" ) );
+    }
+    else
+    {
+        delete SubMenu;
+    }
+}
+
 
 
 // -------------------------------------------------------------------------------- //
@@ -4032,11 +4543,12 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guCopyToDirThread
 // -------------------------------------------------------------------------------- //
-guCopyToDirThread::guCopyToDirThread( const wxChar * destdir, guTrackArray * tracks, int gaugeid ) :
+guCopyToDirThread::guCopyToDirThread( const wxChar * destdir, guTrackArray * tracks, int pattern, int gaugeid ) :
     wxThread()
 {
     m_DestDir   = wxString( destdir );
     m_Tracks    = tracks;
+    m_Pattern   = pattern;
     m_GaugeId   = gaugeid;
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -4061,12 +4573,23 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
     wxString        FilePattern;
 	guConfig *      Config;
 	bool            FileOverwrite = true;
-	wxFileOffset    SizeCounter = 0;
+	m_SizeCounter = 0;
 	unsigned int    TimeCounter = wxGetLocalTime();
 	guMainFrame *   MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
 
     Config = ( guConfig * ) guConfig::Get();
-    FilePattern = Config->ReadStr( wxT( "CopyToPattern" ), wxT( "{g}/{a}/{b}/{n} - {a} - {t}" ), wxT( "General" ) );
+    wxArrayString Patterns = Config->ReadAStr( wxT( "Pattern" ), wxEmptyString, wxT( "CopyTo" ) );
+    if( m_Pattern >= 0 && m_Pattern < ( int ) Patterns.Count() )
+    {
+        FilePattern = Patterns[ m_Pattern ];
+    }
+    else
+    {
+        guLogError( wxT( "Using default pattern as the selected one was not found" ) );
+        FilePattern = wxT( "{g}/{a}/{b}/{n} - {a} - {t}" );
+    }
+
+    guLogMessage( wxT( "Using pattern '%s'" ), FilePattern.c_str() );
 
     if( !m_DestDir.EndsWith( wxT( "/" ) ) )
         m_DestDir.Append( wxT( "/" ) );
@@ -4084,25 +4607,17 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
         if( ( * m_Tracks )[ index ].m_Type == guTRACK_TYPE_RADIOSTATION )
             continue;
 
-        if( ( * m_Tracks )[ index ].m_Type == guTRACK_TYPE_PODCAST )
-        {
-            FileName = ( * m_Tracks )[ index ].m_AlbumName + wxT( "/" ) + wxFileNameFromPath( ( * m_Tracks )[ index ].m_FileName );
-        }
-        else
-        {
-            FileName = FilePattern;
-            FileName.Replace( wxT( "{a}" ), NormalizeField( ( * m_Tracks )[ index ].m_ArtistName ) );
-            FileName.Replace( wxT( "{aa}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumArtist ) );
-            FileName.Replace( wxT( "{b}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumName ) );
-            FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( ( * m_Tracks )[ index ].m_FileName ) );
-            FileName.Replace( wxT( "{g}" ), NormalizeField( ( * m_Tracks )[ index ].m_GenreName ) );
-            FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), ( * m_Tracks )[ index ].m_Number ) );
-            FileName.Replace( wxT( "{t}" ), NormalizeField( ( * m_Tracks )[ index ].m_SongName ) );
-            FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), ( * m_Tracks )[ index ].m_Year ) );
-            FileName.Replace( wxT( "{d}" ), NormalizeField( ( * m_Tracks )[ index ].m_Disk ) );
-            //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );
-
-        }
+        FileName = FilePattern;
+        FileName.Replace( wxT( "{a}" ), NormalizeField( ( * m_Tracks )[ index ].m_ArtistName ) );
+        FileName.Replace( wxT( "{aa}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumArtist ) );
+        FileName.Replace( wxT( "{b}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumName ) );
+        FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( ( * m_Tracks )[ index ].m_FileName ) );
+        FileName.Replace( wxT( "{g}" ), NormalizeField( ( * m_Tracks )[ index ].m_GenreName ) );
+        FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), ( * m_Tracks )[ index ].m_Number ) );
+        FileName.Replace( wxT( "{t}" ), NormalizeField( ( * m_Tracks )[ index ].m_SongName ) );
+        FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), ( * m_Tracks )[ index ].m_Year ) );
+        FileName.Replace( wxT( "{d}" ), NormalizeField( ( * m_Tracks )[ index ].m_Disk ) );
+        //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );
 
         FileName += wxT( '.' ) + ( * m_Tracks )[ index ].m_FileName.Lower().AfterLast( wxT( '.' ) );
 
@@ -4117,7 +4632,7 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
         FileName.Replace( wxT( "?" ), wxT( "_" ) );
         FileName.Replace( wxT( "*" ), wxT( "_" ) );
 
-        guLogMessage( wxT( "Copy %s =>> %s" ), ( * m_Tracks )[ index ].m_FileName.c_str(), FileName.c_str() );
+        //guLogMessage( wxT( "Copy %s =>> %s" ), ( * m_Tracks )[ index ].m_FileName.c_str(), FileName.c_str() );
         if( wxFileName::Mkdir( wxPathOnly( FileName ), 0777, wxPATH_MKDIR_FULL ) )
         {
             if( !wxCopyFile( ( * m_Tracks )[ index ].m_FileName, FileName, FileOverwrite ) )
@@ -4129,7 +4644,7 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
         {
             guLogError( wxT( "Could not create path for copy the file '%s'" ), FileName.c_str() );
         }
-        SizeCounter += ( * m_Tracks )[ index ].m_FileSize;
+        m_SizeCounter += ( * m_Tracks )[ index ].m_FileSize;
         //
         event.SetId( ID_GAUGE_UPDATE );
         event.SetInt( m_GaugeId );
@@ -4149,7 +4664,249 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
         TimeCounter = wxGetLocalTime() - TimeCounter;
         wxString FinishMsg = wxString::Format( _( "Copied %u files (%s)\nin %s seconds" ),
             m_Tracks->Count(),
-            SizeToString( SizeCounter ).c_str(),
+            SizeToString( m_SizeCounter ).c_str(),
+            LenToString( TimeCounter ).c_str() );
+        wxImage IconImg = guImage( guIMAGE_INDEX_guayadeque );
+        NotifySrv->Notify( wxEmptyString, _( "Finished copying files" ), FinishMsg, &IconImg );
+    }
+
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+// guCopyToDeviceThread
+// -------------------------------------------------------------------------------- //
+guCopyToDeviceThread::guCopyToDeviceThread( guPortableMediaDevice * mediadevice, guTrackArray * tracks, int gaugeid ) :
+    wxThread()
+{
+    m_Device    = mediadevice;
+    m_Tracks    = tracks;
+    m_GaugeId   = gaugeid;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guCopyToDeviceThread::~guCopyToDeviceThread()
+{
+    if( m_Tracks )
+        delete m_Tracks;
+};
+
+// -------------------------------------------------------------------------------- //
+void guCopyToDeviceThread::CopyFile( const wxString &from, const wxString &to )
+{
+    guLogMessage( wxT( "Copy %s =>> %s" ), from.c_str(), to.c_str() );
+    if( wxFileName::Mkdir( wxPathOnly( to ), 0777, wxPATH_MKDIR_FULL ) )
+    {
+        if( !wxCopyFile( from, to ) )
+        {
+            guLogError( wxT( "Could not copy the file '%s'" ), from.c_str() );
+        }
+    }
+    else
+    {
+        guLogError( wxT( "Could not create path for copy the file '%s'" ), from.c_str() );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guCopyToDeviceThread::TranscodeFile( const wxString &source, const wxString &target )
+{
+    guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\n%s\n%s" ), source.c_str(), target.c_str() );
+    int Format = m_Device->TranscodeFormat();
+    int Quality = m_Device->TranscodeQuality();
+    wxString OutFile = target + wxT( "." ) + guGetTranscodeFormatString( Format );
+    if( wxFileName::Mkdir( wxPathOnly( target ), 0777, wxPATH_MKDIR_FULL ) )
+    {
+        guTranscodeThread * TranscodeThread = new guTranscodeThread( source, OutFile, Format, Quality );
+        if( TranscodeThread && TranscodeThread->IsOk() )
+        {
+            // TODO : Make a better aproach to be sure its running
+            Sleep( 1000 );
+            while( TranscodeThread->IsTranscoding() )
+            {
+                Sleep( 200 );
+            }
+
+            m_SizeCounter += guGetFileSize( OutFile );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
+{
+    int             Count = m_Tracks->Count();
+    int             Index;
+    wxString        FileName;
+    wxString        FilePattern;
+    wxString        DestDir;
+//	bool            FileOverwrite = true;
+	m_SizeCounter = 0;
+	unsigned int    TimeCounter = wxGetLocalTime();
+	guMainFrame *   MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+
+//    Config = ( guConfig * ) guConfig::Get();
+//    wxArrayString Patterns = Config->ReadAStr( wxT( "Pattern" ), wxEmptyString, wxT( "CopyTo" ) );
+//    if( m_Pattern >= 0 && m_Pattern < ( int ) Patterns.Count() )
+//    {
+//        FilePattern = Patterns[ m_Pattern ];
+//    }
+//    else
+//    {
+//        guLogError( wxT( "Using default pattern as the selected one was not found" ) );
+//        FilePattern = wxT( "{g}/{a}/{b}/{n} - {a} - {t}" );
+//    }
+
+    FilePattern = m_Device->Pattern();
+    guLogMessage( wxT( "Using pattern '%s'" ), FilePattern.c_str() );
+
+    DestDir = m_Device->MountPath();
+    wxArrayString AudioFolders = wxStringTokenize( m_Device->AudioFolders(), wxT( "," ) );
+    DestDir += AudioFolders[ 0 ].Trim( true ).Trim( false );
+    if( !DestDir.EndsWith( wxT( "/" ) ) )
+        DestDir.Append( wxT( "/" ) );
+
+    //
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+    event.SetInt( m_GaugeId );
+    event.SetExtraLong( Count );
+    wxPostEvent( MainFrame, event );
+
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * CurTrack = &m_Tracks->Item( Index );
+
+        if( CurTrack->m_Type == guTRACK_TYPE_RADIOSTATION )
+            continue;
+
+        FileName = FilePattern;
+        FileName.Replace( wxT( "{a}" ), NormalizeField( CurTrack->m_ArtistName ) );
+        FileName.Replace( wxT( "{aa}" ), NormalizeField( CurTrack->m_AlbumArtist ) );
+        FileName.Replace( wxT( "{b}" ), NormalizeField( CurTrack->m_AlbumName ) );
+        FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( CurTrack->m_FileName ) );
+        FileName.Replace( wxT( "{g}" ), NormalizeField( CurTrack->m_GenreName ) );
+        FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), CurTrack->m_Number ) );
+        FileName.Replace( wxT( "{t}" ), NormalizeField( CurTrack->m_SongName ) );
+        FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), CurTrack->m_Year ) );
+        FileName.Replace( wxT( "{d}" ), NormalizeField( CurTrack->m_Disk ) );
+        //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );
+
+//        FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
+//
+        //FileName = m_DestDir + FileName;
+
+        // Replace all the special chars < > : " / \ | ? *
+        FileName.Replace( wxT( "<" ), wxT( "_" ) );
+        FileName.Replace( wxT( ">" ), wxT( "_" ) );
+        FileName.Replace( wxT( ":" ), wxT( "_" ) );
+        FileName.Replace( wxT( "\"" ), wxT( "_" ) );
+        FileName.Replace( wxT( "|" ), wxT( "_" ) );
+        FileName.Replace( wxT( "?" ), wxT( "_" ) );
+        FileName.Replace( wxT( "*" ), wxT( "_" ) );
+
+        if( m_Device->TranscodeFormat() == guTRANSCODE_FORMAT_KEEP )
+        {
+            FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
+            CopyFile( CurTrack->m_FileName, DestDir + FileName );
+            m_SizeCounter += CurTrack->m_FileSize;
+        }
+        else
+        {
+            int FileFormat = guGetTranscodeFileFormat( CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) ) );
+
+            // If the file is not supported then need to transcode it
+            if( !m_Device->AudioFormats() & FileFormat )
+            {
+                TranscodeFile( CurTrack->m_FileName, DestDir + FileName );
+            }
+            else    // The file is supported
+            {
+                // The file is supported and we dont need to trasncode in all cases so copy the file
+                if( m_Device->TranscodeScope() != guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS )
+                {
+                    FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
+                    CopyFile( CurTrack->m_FileName, DestDir + FileName );
+                    m_SizeCounter += CurTrack->m_FileSize;
+                }
+                else
+                {
+                    // The file is the same selected in the format so check if the bitrate is
+                    if( m_Device->TranscodeFormat() == FileFormat )
+                    {
+                        if( ( ( FileFormat == guPORTABLEMEDIA_AUDIO_FORMAT_MP3 ) ||
+                              ( FileFormat == guPORTABLEMEDIA_AUDIO_FORMAT_OGG ) ) &&
+                            ( m_Device->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP ) )
+                        {
+                            if( FileFormat == guPORTABLEMEDIA_AUDIO_FORMAT_MP3 )
+                            {
+                                // If the bitrate is higher
+                                if( CurTrack->m_Bitrate > guGetMp3QualityBitRate( m_Device->TranscodeQuality() ) )
+                                {
+                                    TranscodeFile( CurTrack->m_FileName, DestDir + FileName );
+                                }
+                                else
+                                {
+                                    FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
+                                    CopyFile( CurTrack->m_FileName, DestDir + FileName );
+                                    m_SizeCounter += CurTrack->m_FileSize;
+                                }
+                            }
+                            else  //if( FileFormat == guPORTABLEMEDIA_AUDIO_FORMAT_OGG )
+                            {
+                                if( CurTrack->m_Bitrate > guGetOggQualityBitRate( m_Device->TranscodeQuality() ) )
+                                {
+                                    TranscodeFile( CurTrack->m_FileName, DestDir + FileName );
+                                }
+                                else
+                                {
+                                    FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
+                                    CopyFile( CurTrack->m_FileName, DestDir + FileName );
+                                    m_SizeCounter += CurTrack->m_FileSize;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
+                            CopyFile( CurTrack->m_FileName, DestDir + FileName );
+                            m_SizeCounter += CurTrack->m_FileSize;
+                        }
+                    }
+                    else
+                    {
+                        TranscodeFile( CurTrack->m_FileName, DestDir + FileName );
+                    }
+                }
+            }
+        }
+
+//        m_SizeCounter += CurTrack->m_FileSize;
+//        //
+        event.SetId( ID_GAUGE_UPDATE );
+        event.SetInt( m_GaugeId );
+        event.SetExtraLong( Index + 1 );
+        wxPostEvent( MainFrame, event );
+    }
+
+    //
+    event.SetId( ID_GAUGE_REMOVE );
+    event.SetInt( m_GaugeId );
+    wxPostEvent( MainFrame, event );
+    //wxMessageBox( "Copy to dir finished" );
+
+    guDBusNotify * NotifySrv = MainFrame->GetNotifyObject();
+    if( NotifySrv )
+    {
+        TimeCounter = wxGetLocalTime() - TimeCounter;
+        wxString FinishMsg = wxString::Format( _( "Copied %u files (%s)\nin %s seconds" ),
+            Count,
+            SizeToString( m_SizeCounter ).c_str(),
             LenToString( TimeCounter ).c_str() );
         wxImage IconImg = guImage( guIMAGE_INDEX_guayadeque );
         NotifySrv->Notify( wxEmptyString, _( "Finished copying files" ), FinishMsg, &IconImg );

@@ -62,8 +62,9 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 	MainSizer->Add( ControlsSizer, 1, wxEXPAND, 5 );
 
 	wxStdDialogButtonSizer * StdBtnSizer = new wxStdDialogButtonSizer();
-	wxButton * StdBtnSizerOK = new wxButton( this, wxID_OK );
-	StdBtnSizer->AddButton( StdBtnSizerOK );
+	m_StdBtnOk = new wxButton( this, wxID_OK );
+	m_StdBtnOk->Enable( false );
+	StdBtnSizer->AddButton( m_StdBtnOk );
 	wxButton * StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	StdBtnSizer->AddButton( StdBtnSizerCancel );
 	StdBtnSizer->Realize();
@@ -73,6 +74,8 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 	this->Layout();
 
 	m_SelFileBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guSelCoverFile::OnSelFileClicked ), NULL, this );
+	m_FileLink->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guSelCoverFile::OnPathChanged ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -106,6 +109,12 @@ void guSelCoverFile::OnSelFileClicked( wxCommandEvent& event )
 wxString guSelCoverFile::GetSelFile( void )
 {
     return m_FileLink->GetValue();
+}
+
+// -------------------------------------------------------------------------------- //
+void guSelCoverFile::OnPathChanged( wxCommandEvent &event )
+{
+	m_StdBtnOk->Enable( !m_FileLink->GetValue().IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -26,6 +26,7 @@
 #include "Images.h"
 #include "LabelEditor.h"
 #include "MainApp.h"
+#include "MainFrame.h"
 #include "OnlineLinks.h"
 #include "SelCoverFile.h"
 #include "TagInfo.h"
@@ -181,7 +182,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     Connect( ID_ALBUMBROWSER_SEARCHCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDownloadCoverClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_SELECTCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumSelectCoverClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_DELETECOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumCopyToClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_COPYTO, ID_ALBUMBROWSER_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumCopyToClicked ), NULL, this );
 
 	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
 	m_Bitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
@@ -213,7 +214,7 @@ guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
     Disconnect( ID_ALBUMBROWSER_SEARCHCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDownloadCoverClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_SELECTCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumSelectCoverClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_DELETECOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked ), NULL, this );
-    Disconnect( ID_ALBUMBROWSER_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumCopyToClicked ), NULL, this );
+    Disconnect( ID_ALBUMBROWSER_COPYTO, ID_ALBUMBROWSER_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumCopyToClicked ), NULL, this );
 
 	m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
 	m_Bitmap->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
@@ -362,8 +363,10 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
 
         Menu.AppendSeparator();
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_COPYTO, _( "Copy to..." ), _( "Copy the current album to a directory or device" ) );
-        Menu.Append( MenuItem );
+        //MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_COPYTO, _( "Copy to..." ), _( "Copy the current album to a directory or device" ) );
+        //Menu.Append( MenuItem );
+        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        MainFrame->CreateCopyToMenu( &Menu, ID_ALBUMBROWSER_COPYTO );
 
         Menu.AppendSeparator();
 
@@ -495,7 +498,7 @@ void guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnAlbumCopyToClicked( wxCommandEvent &event )
 {
-    m_AlbumBrowser->OnAlbumCopyToClicked( m_AlbumBrowserItem->m_AlbumId );
+    m_AlbumBrowser->OnAlbumCopyToClicked( m_AlbumBrowserItem->m_AlbumId, event.GetId() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1212,7 +1215,7 @@ void guAlbumBrowser::OnAlbumDeleteCoverClicked( const int albumid )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid )
+void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid, const int commandid )
 {
     guTrackArray * Tracks = new guTrackArray();
     wxArrayInt Albums;
@@ -1221,6 +1224,13 @@ void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid )
     m_Db->GetAlbumsSongs( Albums, Tracks );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTO );
+    int Index = commandid - ID_ALBUMBROWSER_COPYTO;
+    if( Index > 99 )
+    {
+        Index -= 100;
+        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+    }
+    event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }

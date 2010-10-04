@@ -96,11 +96,7 @@ void guPcListBox::CreateContextMenu( wxMenu * Menu ) const
 
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
         {
-            Menu->AppendSeparator();
-
-            MenuItem = new wxMenuItem( Menu, ID_PLAYCOUNT_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
-            Menu->Append( MenuItem );
+            m_LibPanel->CreateCopyToMenu( Menu, ID_PLAYCOUNT_COPYTO );
         }
     }
     m_LibPanel->CreateContextMenu( Menu );

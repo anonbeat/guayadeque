@@ -106,6 +106,7 @@ class guCurrentTrack : public guTrack
         m_Composer = Src.m_Composer;
         m_PlayTime = 0;
         m_ASRating = guAS_RATING_NONE;
+        m_LibPanel = Src.m_LibPanel;
 
         //CoverType = GU_SONGCOVER_NONE;
         if( m_Type == guTRACK_TYPE_RADIOSTATION )
@@ -158,6 +159,7 @@ class guCurrentTrack : public guTrack
         m_Comments = track.m_Comments;
         m_ComposerId = track.m_ComposerId;
         m_Composer = track.m_Composer;
+        m_LibPanel = track.m_LibPanel;
         if( m_CoverImage )
         {
             delete m_CoverImage;

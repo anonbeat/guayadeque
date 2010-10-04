@@ -77,6 +77,11 @@ IF( NOT LIBFLAC_LIBRARIES )
 	MESSAGE( FATAL_ERROR "libflac not found!" )
 ENDIF( NOT LIBFLAC_LIBRARIES )
 
+PKG_CHECK_MODULES( LIBGIO gio-2.0 )
+IF( NOT LIBGIO_LIBRARIES )
+	MESSAGE( FATAL_ERROR "gio not found!" )
+ENDIF( NOT LIBGIO_LIBRARIES )
+
 
 # Include wxWidgets macros
 INCLUDE(${wxWidgets_USE_FILE})
@@ -112,6 +117,7 @@ INCLUDE_DIRECTORIES(${Guayadeque_SOURCE_DIR}
 			${LIBTAG_INCLUDE_DIRS}
 			${LIBMP4_INCLUDE_DIRS}
               		${LIBDBUS_INCLUDE_DIRS}
+              		${LIBGIO_INCLUDE_DIRS}
                          )
  
 ADD_SUBDIRECTORY( src )

@@ -47,13 +47,13 @@ enum guLibraryElement {
     guLIBRARY_ELEMENT_LABELS,
     guLIBRARY_ELEMENT_GENRES,
     guLIBRARY_ELEMENT_ARTISTS,
+    guLIBRARY_ELEMENT_COMPOSERS,
+    guLIBRARY_ELEMENT_ALBUMARTISTS,
     guLIBRARY_ELEMENT_ALBUMS,
-    guLIBRARY_ELEMENT_TRACKS,
     guLIBRARY_ELEMENT_YEARS,
     guLIBRARY_ELEMENT_RATINGS,
     guLIBRARY_ELEMENT_PLAYCOUNT,
-    guLIBRARY_ELEMENT_COMPOSERS,
-    guLIBRARY_ELEMENT_ALBUMARTISTS
+    guLIBRARY_ELEMENT_TRACKS
 };
 
 #define     guPANEL_LIBRARY_TEXTSEARCH      ( 1 << 0 )
@@ -113,8 +113,6 @@ class guLibPanel : public wxPanel
     int                 m_BaseCommand;
     wxString            m_ConfigPrefixVarName;
     int                 m_ContextMenuFlags;
-
-    void SetBaseCommand( int basecmd ) { m_BaseCommand = basecmd; }
 
     // Search Str events
     virtual void OnSearchActivated( wxCommandEvent &event );
@@ -217,7 +215,6 @@ class guLibPanel : public wxPanel
     virtual void OnSongQueueAllAsNextClicked( wxCommandEvent &event );
     virtual void OnSongsEditLabelsClicked( wxCommandEvent &event );
     virtual void OnSongsEditTracksClicked( wxCommandEvent &event );
-    virtual void OnSongCopyToClicked( wxCommandEvent &event );
     virtual void OnSongSavePlayListClicked( wxCommandEvent &event );
     virtual void OnSongListColClicked( wxListEvent &event );
     virtual void OnSongSelectGenre( wxCommandEvent &event );
@@ -229,6 +226,7 @@ class guLibPanel : public wxPanel
     virtual void OnSongSetRating( wxCommandEvent &event );
     virtual void OnSongSetField( wxCommandEvent &event );
     virtual void OnSongEditField( wxCommandEvent &event );
+    virtual void OnSongCopyToClicked( wxCommandEvent &event );
 
     //
     void OnPaneClose( wxAuiManagerEvent &event );
@@ -254,21 +252,25 @@ class guLibPanel : public wxPanel
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
     ~guLibPanel();
 
-    virtual void CreateContextMenu( wxMenu * menu, const int windowid = 0 );
-    virtual void NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
-    void ReloadControls( void );
-    void UpdateLabels( void );
+    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
+    virtual wxString        GetName( void );
+    virtual guDbLibrary *   GetDb( void ) { return m_Db; };
+    virtual wxArrayString   GetPaths( void );
+    void                    SetBaseCommand( int basecmd ) { m_BaseCommand = basecmd; }
 
-    void SelectTrack( const int trackid );
-    void SelectAlbum( const int albumid );
-    void SelectArtist( const int artistid );
-    void SelectYear( const int year );
-    void SelectAlbumName( const wxString &album );
-    void SelectArtistName( const wxString &artist );
-    void SelectGenres( wxArrayInt * genres );
-    void SelectArtists( wxArrayInt * artits );
-    void SelectAlbumArtists( wxArrayInt * ids );
-    void SelectAlbums( wxArrayInt * albums );
+    void                    ReloadControls( void );
+    void                    UpdateLabels( void );
+
+    void                    SelectTrack( const int trackid );
+    void                    SelectAlbum( const int albumid );
+    void                    SelectArtist( const int artistid );
+    void                    SelectYear( const int year );
+    void                    SelectAlbumName( const wxString &album );
+    void                    SelectArtistName( const wxString &artist );
+    void                    SelectGenres( wxArrayInt * genres );
+    void                    SelectArtists( wxArrayInt * artits );
+    void                    SelectAlbumArtists( wxArrayInt * ids );
+    void                    SelectAlbums( wxArrayInt * albums );
 
     bool IsPanelShown( const int panelid ) const;
     void ShowPanel( const int panelid, bool show );
@@ -286,6 +288,8 @@ class guLibPanel : public wxPanel
     }
 
     int GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
+    virtual void            CreateContextMenu( wxMenu * menu, const int windowid = 0 );
+    virtual void            CreateCopyToMenu( wxMenu * menu, const int basecmd );
 
 };
 

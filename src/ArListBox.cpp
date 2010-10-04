@@ -131,11 +131,7 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
 
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
         {
-            Menu->AppendSeparator();
-
-            MenuItem = new wxMenuItem( Menu, ID_ARTIST_COPYTO, _( "Copy to..." ), _( "Copy the current selected songs to a directory or device" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-            Menu->Append( MenuItem );
+            m_LibPanel->CreateCopyToMenu( Menu, ID_ARTIST_COPYTO );
         }
 
         if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
