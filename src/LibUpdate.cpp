@@ -54,7 +54,7 @@ guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const 
         CheckSymLinks( m_LibPaths );
     }
 
-//    m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+    m_LastUpdate = libpanel->LastUpdate();
     //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
     m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
     m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) );
@@ -69,13 +69,14 @@ guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const 
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::~guLibUpdateThread()
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
-    {
-        wxDateTime Now = wxDateTime::Now();
-        Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "General" ) );
-        Config->Flush();
-    }
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    if( Config )
+//    {
+//        wxDateTime Now = wxDateTime::Now();
+//        Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "General" ) );
+//        Config->Flush();
+//    }
+    m_LibPanel->SetLastUpdate();
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
     if( !TestDestroy() )
@@ -112,7 +113,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
   if( !dirname.EndsWith( wxT( "/" ) ) )
     dirname += wxT( "/" );
 
-  guLogMessage( wxT( "Scanning dir (%i) '%s'" ), includedir, dirname.c_str() );
+  //guLogMessage( wxT( "Scanning dir (%i) '%s'" ), includedir, dirname.c_str() );
   Dir.Open( dirname );
 
   if( !TestDestroy() && Dir.IsOpened() )

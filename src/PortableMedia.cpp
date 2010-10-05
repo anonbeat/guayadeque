@@ -617,6 +617,18 @@ void guPortableMediaPanel::OnPortableUnmount( wxCommandEvent &event )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+int guPortableMediaPanel::LastUpdate( void )
+{
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaPanel::SetLastUpdate( int lastupdate )
+{
+    // The portable media devices cant set lastupdate
+}
+
 
 
 // -------------------------------------------------------------------------------- //

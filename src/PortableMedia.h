@@ -301,6 +301,9 @@ class guPortableMediaPanel : public guLibPanel
 
     bool                        IsMount( GMount * mount ) { return m_PortableMediaDevice->IsMount( mount ); }
 
+    virtual int                 LastUpdate( void );
+    virtual void                SetLastUpdate( int lastupdate = wxNOT_FOUND );
+
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaPanel *, guPortableMediaPanelArray );
 
