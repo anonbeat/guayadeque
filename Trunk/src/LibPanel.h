@@ -291,6 +291,9 @@ class guLibPanel : public wxPanel
     virtual void            CreateContextMenu( wxMenu * menu, const int windowid = 0 );
     virtual void            CreateCopyToMenu( wxMenu * menu, const int basecmd );
 
+    virtual int             LastUpdate( void );
+    virtual void            SetLastUpdate( int lastupdate = wxNOT_FOUND );
+
 };
 
 #endif

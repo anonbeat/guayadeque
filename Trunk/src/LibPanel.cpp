@@ -2962,3 +2962,23 @@ wxArrayString guLibPanel::GetPaths( void )
 }
 
 // -------------------------------------------------------------------------------- //
+int guLibPanel::LastUpdate( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    return Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::SetLastUpdate( int lastupdate )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    if( lastupdate == wxNOT_FOUND )
+    {
+        wxDateTime Now = wxDateTime::Now();
+        lastupdate = Now.GetTicks();
+    }
+    Config->WriteNum( wxT( "LastUpdate" ), lastupdate, wxT( "General" ) );
+    Config->Flush();
+}
+
+// -------------------------------------------------------------------------------- //

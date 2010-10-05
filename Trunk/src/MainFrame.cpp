@@ -1687,13 +1687,13 @@ void guMainFrame::OnForceUpdateLibrary( wxCommandEvent &event )
     guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
     if( LibPanel )
     {
+        LibPanel->SetLastUpdate( 0 );
         gaugeid = m_MainStatusBar->AddGauge( LibPanel->GetName(), false );
         m_LibUpdateThread = new guLibUpdateThread( LibPanel, gaugeid );
     }
     else
     {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        Config->WriteNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+        m_LibPanel->SetLastUpdate( 0 );
         gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
         m_LibUpdateThread = new guLibUpdateThread( m_LibPanel, gaugeid );
     }
