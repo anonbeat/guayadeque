@@ -1724,7 +1724,7 @@ void guPrefDialog::BuildCopyToPage( void )
     //
 	wxBoxSizer * CopyToMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer * CopyToLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, wxT(" Patterns ") ), wxVERTICAL );
+	wxStaticBoxSizer * CopyToLabelSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Patterns ") ), wxVERTICAL );
 
 	wxBoxSizer * CopyToListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -1779,7 +1779,7 @@ void guPrefDialog::BuildCopyToPage( void )
 	CopyToFieldsSizer->SetFlexibleDirection( wxBOTH );
 	CopyToFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	wxStaticText * CopyToPatternStaticText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Command:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * CopyToPatternStaticText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Pattern:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToPatternStaticText->Wrap( -1 );
 	CopyToFieldsSizer->Add( CopyToPatternStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
 
@@ -1805,7 +1805,7 @@ void guPrefDialog::BuildCopyToPage( void )
 	CopyToMainSizer->Add( CopyToLabelSizer, 1, wxEXPAND|wxALL, 5 );
 
 	wxStaticBoxSizer* CopyToHelpSizer;
-	CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, wxT(" Help ") ), wxVERTICAL );
+	CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
 
 	wxStaticText * CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _("{a}\t: Artist\t\t\t{aa} : Album Artist\n{b}\t: Album\t\t\t{d}\t : Disk\n{f}\t: Filename\t\t{g}\t : Genre\n{n}\t: Number\t\t\t{t}\t : Title\n{y}\t: Year"), wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToHelpText->Wrap( -1 );
