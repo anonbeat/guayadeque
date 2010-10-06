@@ -824,7 +824,7 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
             if( PortableMediaPanel->IsMount( Mount ) )
             {
                 guLogMessage( wxT( "The mount had a panel already added ..." ) );
-                if( PortableMediaPanel->PanelActive() )
+                if( PortableMediaPanel->PanelActive() != wxNOT_FOUND )
                 {
                     guLogMessage( wxT( "The mount panel was visible... Need to close it" ) );
                     event.SetClientData( ( void * ) PortableMediaPanel );
@@ -2736,7 +2736,7 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
                     InsertTabPanel( PortableDevicePanel, 10, MediaDevice->DeviceName() );
                     m_PortableMediaDbs.Add( PortableMediaDb );
                     m_PortableMediaPanels.Add( PortableDevicePanel );
-                    PortableDevicePanel->SetPanelActive( true );
+                    PortableDevicePanel->SetPanelActive( m_PortableMediaPanels.Count() - 1 );
                     CreatePortablePlayersMenu( m_PortableDevicesMenu );
 
                     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARYFORCED );
@@ -2772,7 +2772,7 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
         if( PortableDevicePanel )
             RemoveTabPanel( PortableDevicePanel );
 
-        //PortableDevicePanel->SetPanelActive( false );
+        PortableDevicePanel->SetPanelActive( wxNOT_FOUND );
 
         if( m_LibUpdateThread )
         {
@@ -3419,7 +3419,7 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
         guPortableMediaPanel * PortableMediaPanel = ( guPortableMediaPanel * ) CurPage;
         int DeviceIndex = m_PortableMediaPanels.Index( PortableMediaPanel );
 
-        //PortableMediaPanel->SetPanelActive( false );
+        PortableMediaPanel->SetPanelActive( wxNOT_FOUND );
         if( m_LibUpdateThread )
         {
             if( m_LibUpdateThread->LibPanel() == ( guLibPanel * ) PortableMediaPanel )
@@ -4408,7 +4408,8 @@ void guMainFrame::CreateCopyToMenu( wxMenu * menu, const int basecmd )
     {
         for( Index = 0; Index < Count; Index++ )
         {
-            if( m_VolumeMonitor->PanelActive( Index ) )
+            int PanelIndex = m_VolumeMonitor->PanelActive( Index );
+            if( PanelIndex != wxNOT_FOUND )
             {
                 if( !SeparatorAdded && SubMenu->GetMenuItemCount() )
                 {
@@ -4416,7 +4417,7 @@ void guMainFrame::CreateCopyToMenu( wxMenu * menu, const int basecmd )
                     SeparatorAdded = true;
                 }
 
-                MenuItem = new wxMenuItem( SubMenu, basecmd + 100 + Index, Names[ Index ], _( "Copy the current selected songs to a directory or device" ) );
+                MenuItem = new wxMenuItem( SubMenu, basecmd + 100 + PanelIndex, Names[ Index ], _( "Copy the current selected songs to a directory or device" ) );
                 //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
                 SubMenu->Append( MenuItem );
             }
@@ -4800,7 +4801,7 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
 
 //        FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
 //
-        //FileName = m_DestDir + FileName;
+        FileName = DestDir + FileName;
 
         // Replace all the special chars < > : " / \ | ? *
         FileName.Replace( wxT( "<" ), wxT( "_" ) );
@@ -4814,7 +4815,7 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
         if( m_Device->TranscodeFormat() == guTRANSCODE_FORMAT_KEEP )
         {
             FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-            CopyFile( CurTrack->m_FileName, DestDir + FileName );
+            CopyFile( CurTrack->m_FileName, FileName );
             m_SizeCounter += CurTrack->m_FileSize;
         }
         else
@@ -4824,7 +4825,7 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
             // If the file is not supported then need to transcode it
             if( !m_Device->AudioFormats() & FileFormat )
             {
-                TranscodeFile( CurTrack->m_FileName, DestDir + FileName );
+                TranscodeFile( CurTrack->m_FileName, FileName );
             }
             else    // The file is supported
             {
@@ -4832,7 +4833,7 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                 if( m_Device->TranscodeScope() != guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS )
                 {
                     FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                    CopyFile( CurTrack->m_FileName, DestDir + FileName );
+                    CopyFile( CurTrack->m_FileName, FileName );
                     m_SizeCounter += CurTrack->m_FileSize;
                 }
                 else
@@ -4849,12 +4850,12 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                                 // If the bitrate is higher
                                 if( CurTrack->m_Bitrate > guGetMp3QualityBitRate( m_Device->TranscodeQuality() ) )
                                 {
-                                    TranscodeFile( CurTrack->m_FileName, DestDir + FileName );
+                                    TranscodeFile( CurTrack->m_FileName, FileName );
                                 }
                                 else
                                 {
                                     FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                                    CopyFile( CurTrack->m_FileName, DestDir + FileName );
+                                    CopyFile( CurTrack->m_FileName, FileName );
                                     m_SizeCounter += CurTrack->m_FileSize;
                                 }
                             }
@@ -4862,12 +4863,12 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                             {
                                 if( CurTrack->m_Bitrate > guGetOggQualityBitRate( m_Device->TranscodeQuality() ) )
                                 {
-                                    TranscodeFile( CurTrack->m_FileName, DestDir + FileName );
+                                    TranscodeFile( CurTrack->m_FileName, FileName );
                                 }
                                 else
                                 {
                                     FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                                    CopyFile( CurTrack->m_FileName, DestDir + FileName );
+                                    CopyFile( CurTrack->m_FileName, FileName );
                                     m_SizeCounter += CurTrack->m_FileSize;
                                 }
                             }
@@ -4875,13 +4876,13 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                         else
                         {
                             FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                            CopyFile( CurTrack->m_FileName, DestDir + FileName );
+                            CopyFile( CurTrack->m_FileName, FileName );
                             m_SizeCounter += CurTrack->m_FileSize;
                         }
                     }
                     else
                     {
-                        TranscodeFile( CurTrack->m_FileName, DestDir + FileName );
+                        TranscodeFile( CurTrack->m_FileName, FileName );
                     }
                 }
             }

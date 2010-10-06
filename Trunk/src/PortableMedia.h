@@ -185,8 +185,8 @@ class guPortableMediaDevice
     void                    SetCoverSize( const int size ) { m_CoverSize = size; }
     int                     CoverSize( void ) { return m_CoverSize; }
 
-    bool                    PanelActive( void ) { return m_Mount->PanelActive(); }
-    void                    SetPanelActive( const bool isactive ) { m_Mount->SetPanelActive( isactive ); }
+    int                     PanelActive( void ) { return m_Mount->PanelActive(); }
+    void                    SetPanelActive( const int panelactive ) { m_Mount->SetPanelActive( panelactive ); }
 
     bool                    IsMount( GMount * mount ) { return m_Mount->IsMount( mount ); }
     bool                    CanUnmount( void ) { return m_Mount->CanUnmount(); }
@@ -296,8 +296,8 @@ class guPortableMediaPanel : public guLibPanel
 
     int                         BaseCommand( void ) { return m_BaseCommand; }
 
-    bool                        PanelActive( void ) { return m_PortableMediaDevice->PanelActive(); }
-    void                        SetPanelActive( const bool isactive ) { m_PortableMediaDevice->SetPanelActive( isactive ); }
+    int                         PanelActive( void ) { return m_PortableMediaDevice->PanelActive(); }
+    void                        SetPanelActive( const int panelactive ) { m_PortableMediaDevice->SetPanelActive( panelactive ); }
 
     bool                        IsMount( GMount * mount ) { return m_PortableMediaDevice->IsMount( mount ); }
 
