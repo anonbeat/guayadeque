@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-06 15:47+0000\n"
-"PO-Revision-Date: 2010-10-06 15:48-0000\n"
+"POT-Creation-Date: 2010-10-06 18:59+0000\n"
+"PO-Revision-Date: 2010-10-06 19:06-0000\n"
 "Last-Translator: Hreinn Jónsson <hreinsijons@simnet.is>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "Language: \n"
@@ -2173,7 +2173,7 @@ msgid "Copy the selected tracks to a folder or device"
 msgstr "Afrita völd lög í möppu eða til tækis"
 
 #: MainFrame.cpp:4668
-#: MainFrame.cpp:4910
+#: MainFrame.cpp:4921
 #, c-format
 msgid ""
 "Copied %u files (%s)\n"
@@ -2181,7 +2181,7 @@ msgid ""
 msgstr "Afritað %u Skrár (%s)\n"
 
 #: MainFrame.cpp:4673
-#: MainFrame.cpp:4915
+#: MainFrame.cpp:4926
 msgid "Finished copying files"
 msgstr "Lokið við að afrita skrár"
 
@@ -2789,13 +2789,11 @@ msgid ""
 "{n}\t: Number\t\t\t{t}\t : Title\n"
 "{y}\t: Year"
 msgstr ""
-"\"\"{f}\t: Filename\t\t{g}\t : Genre\n"
-"\"\"{n}\t: Number\t\t\t{t}\t : Title\n"
-"\"\"{y}\t: Year\"{a}\t: Flytjandi\t\t\t{aa} : Plata Flytjandi\n"
-"{b}\t: Album\t\t\t{d}\t : Disk\n"
-"{f}\t: Filename\t\t{g}\t : Genre\n"
-"{n}\t: Number\t\t\t{t}\t : Title\n"
-"{y}\t: Year"
+"{a}\t: Flytjandi\t\t\t{aa} : Plata Flytjandi\n"
+"{b}\t: Plata\t\t\t{d}\t : Diskur\n"
+"{f}\t: Skráarnafn\t\t{g}\t : Flokkur\n"
+"{n}\t: Númer\t\t\t{t}\t : Titill\n"
+"{y}\t: Ár"
 
 #: PortableMedia.cpp:737
 msgid "Audio Folders:"
