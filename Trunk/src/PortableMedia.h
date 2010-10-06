@@ -82,13 +82,14 @@ wxString guGetTranscodeFormatString( const int format );
 int inline guGetMp3QualityBitRate( int quality )
 {
     int guPortableMediaMp3QualityBitrate[] = {
-        320000,
-        256000,
-        192000,
-        160000,
-        128000,
-        96000,
-        64000
+        128,
+        320,
+        256,
+        192,
+        160,
+        128,
+        96,
+        64
     };
 
     return guPortableMediaMp3QualityBitrate[ quality ];
@@ -98,13 +99,14 @@ int inline guGetMp3QualityBitRate( int quality )
 int inline guGetOggQualityBitRate( int quality )
 {
     int guPortableMediaOggQualityBitrate[] = {
-        240000,
-        160000,
-        140000,
-        120000,
-        110000,
-        96000,
-        70000
+        110,
+        240,
+        160,
+        140,
+        120,
+        110,
+        96,
+        70
     };
     return guPortableMediaOggQualityBitrate[ quality ];
 }

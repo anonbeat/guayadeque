@@ -163,6 +163,7 @@ guTranscodeThread::~guTranscodeThread()
 }
 
 int guTranscodeMp3Bitrates[] = {
+    128,
     320,
     256,
     192,
@@ -173,6 +174,7 @@ int guTranscodeMp3Bitrates[] = {
 };
 
 float guTranscodeOggQuality[] = {
+    0.6,
     1,
     0.9,
     0.8,
@@ -183,16 +185,18 @@ float guTranscodeOggQuality[] = {
 };
 
 int guTranscodeFlacQuality[] = {
-    9,
+    4,
     8,
     7,
     6,
     5,
     4,
-    2
+    3,
+    1
 };
 
 unsigned long guTranscodeWmaBitrates[] = {
+    128000,
     320000,
     256000,
     192000,
@@ -209,7 +213,7 @@ bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
     {
         case guTRANSCODE_FORMAT_MP3 :
         {
-            guLogMessage( wxT( "Creating mp3 encoder" ) );
+            guLogMessage( wxT( "Creating mp3 encoder with %i bitrate" ), guTranscodeMp3Bitrates[ m_Quality ] );
             * enc = gst_element_factory_make( "lame", "guTransLame" );
             if( GST_IS_ELEMENT( * enc ) )
             {
