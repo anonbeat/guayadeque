@@ -589,7 +589,7 @@ wxArrayString guPortableMediaPanel::GetPaths( void )
 // -------------------------------------------------------------------------------- //
 void guPortableMediaPanel::OnPortableLibraryUpdate( wxCommandEvent &event )
 {
-    event.SetId( ID_LIBRARY_UPDATED );
+    event.SetId( ID_MENU_UPDATE_LIBRARY );
     event.SetClientData( ( void * ) this );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
@@ -766,7 +766,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	m_TransFormatChoice->SetSelection( mediadevice->TranscodeFormat() );
 	TranscodeSizer->Add( m_TransFormatChoice, 1, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
-	wxString m_TransScopeChoiceChoices[] = { _("Unsupported formats only"), _("allways") };
+	wxString m_TransScopeChoiceChoices[] = { _("Unsupported formats only"), _("always") };
 	int m_TransScopeChoiceNChoices = sizeof( m_TransScopeChoiceChoices ) / sizeof( wxString );
 	m_TransScopeChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_TransScopeChoiceNChoices, m_TransScopeChoiceChoices, 0 );
 	m_TransScopeChoice->SetSelection( mediadevice->TranscodeScope() );

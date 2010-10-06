@@ -28,6 +28,7 @@
 #include "LibUpdate.h"
 #include "Preferences.h"
 //#include "SplashWin.h"
+#include "TagInfo.h"
 #include "TaskBar.h"
 #include "TrackChangeInfo.h"
 #include "Transcode.h"
