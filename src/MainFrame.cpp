@@ -4823,13 +4823,16 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
         {
             int FileFormat = guGetTranscodeFileFormat( CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) ) );
 
+            //guLogMessage( wxT( "AudioFormats: %08X  %08X" ), m_Device->AudioFormats(), FileFormat );
             // If the file is not supported then need to transcode it
             if( !m_Device->AudioFormats() & FileFormat )
             {
+                //guLogMessage( wxT( "Its an unsupported format... Transcoding" ) );
                 TranscodeFile( CurTrack->m_FileName, FileName );
             }
             else    // The file is supported
             {
+                //guLogMessage( wxT( "Its a supported format" ) );
                 // The file is supported and we dont need to trasncode in all cases so copy the file
                 if( m_Device->TranscodeScope() != guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS )
                 {
@@ -4839,40 +4842,48 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                 }
                 else
                 {
+                    //guLogMessage( wxT( "TranscodeFOrmat: %u      FileFormat: %i" ), m_Device->TranscodeFormat(), FileFormat );
                     // The file is the same selected in the format so check if the bitrate is
                     if( m_Device->TranscodeFormat() == FileFormat )
                     {
-                        if( ( ( FileFormat == guPORTABLEMEDIA_AUDIO_FORMAT_MP3 ) ||
-                              ( FileFormat == guPORTABLEMEDIA_AUDIO_FORMAT_OGG ) ) &&
-                            ( m_Device->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP ) )
+                        if( m_Device->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP )
                         {
-                            if( FileFormat == guPORTABLEMEDIA_AUDIO_FORMAT_MP3 )
+                            int FileBitrate = 0;
+                            switch( FileFormat )
                             {
-                                // If the bitrate is higher
-                                if( CurTrack->m_Bitrate > guGetMp3QualityBitRate( m_Device->TranscodeQuality() ) )
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_MP3 :
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_AAC :
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_WMA :
                                 {
-                                    TranscodeFile( CurTrack->m_FileName, FileName );
+                                    FileBitrate = guGetMp3QualityBitRate( m_Device->TranscodeQuality() );
+                                    break;
                                 }
-                                else
+
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_OGG :
                                 {
-                                    FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                                    CopyFile( CurTrack->m_FileName, FileName );
-                                    m_SizeCounter += CurTrack->m_FileSize;
+                                    FileBitrate = guGetOggQualityBitRate( m_Device->TranscodeQuality() );
+                                    break;
+                                }
+
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_FLAC :
+                                {
+                                    FileBitrate = 0;
+                                    break;
                                 }
                             }
-                            else  //if( FileFormat == guPORTABLEMEDIA_AUDIO_FORMAT_OGG )
+
+                            if( CurTrack->m_Bitrate > FileBitrate )
                             {
-                                if( CurTrack->m_Bitrate > guGetOggQualityBitRate( m_Device->TranscodeQuality() ) )
-                                {
-                                    TranscodeFile( CurTrack->m_FileName, FileName );
-                                }
-                                else
-                                {
-                                    FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                                    CopyFile( CurTrack->m_FileName, FileName );
-                                    m_SizeCounter += CurTrack->m_FileSize;
-                                }
+                                TranscodeFile( CurTrack->m_FileName, FileName );
                             }
+                            else
+                            {
+                                FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
+                                CopyFile( CurTrack->m_FileName, FileName );
+                                m_SizeCounter += CurTrack->m_FileSize;
+                            }
+
+
                         }
                         else
                         {
