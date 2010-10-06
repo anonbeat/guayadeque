@@ -62,7 +62,7 @@ static void append_mount( GMount * mount, guGIO_VolumeMonitor * volmon )
 guGIO_Mount::guGIO_Mount( GMount * mount )
 {
     m_Mount = mount;
-    m_PanelActive = false;
+    m_PanelActive = wxNOT_FOUND;
 
     char * mount_name = g_mount_get_name( m_Mount );
     if( mount_name )
@@ -98,7 +98,7 @@ guGIO_Mount::guGIO_Mount( GMount * mount )
 guGIO_Mount::guGIO_Mount( GMount * mount, wxString &mountpath )
 {
     m_Mount = mount;
-    m_PanelActive = false;
+    m_PanelActive = wxNOT_FOUND;
     m_MountPath = mountpath;
     if( !m_MountPath.EndsWith( wxT( "/" ) ) )
         m_MountPath.Append( wxT( "/" ) );

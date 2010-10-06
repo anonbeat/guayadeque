@@ -62,7 +62,7 @@ class guGIO_Mount
     GMount * m_Mount;
 
   protected :
-    bool            m_PanelActive;
+    int             m_PanelActive;
     bool            m_IsReadOnly;
     wxString        m_Name;
     wxString        m_MountPath;
@@ -77,8 +77,8 @@ class guGIO_Mount
 
     bool            IsReadOnly( void ) { return m_IsReadOnly; }
 
-    bool            PanelActive( void ) { guLogMessage( wxT( "PanelActive: %i" ), m_PanelActive ); return m_PanelActive; }
-    void            SetPanelActive( bool active ) { m_PanelActive = active; }
+    int             PanelActive( void ) { guLogMessage( wxT( "PanelActive: %i" ), m_PanelActive ); return m_PanelActive; }
+    void            SetPanelActive( int active ) { m_PanelActive = active; }
 
     wxString        GetName( void ) { return m_Name; }
     wxString        GetMountPath( void ) { return m_MountPath; }
@@ -122,7 +122,7 @@ class guGIO_VolumeMonitor
     int                 GetMountCount( void ) { return m_MountedVolumes->Count(); }
     guGIO_Mount *       GetMount( const int index ) { return m_MountedVolumes->Item( index ); }
     guGIO_Mount *       GetMount( const wxString &mountname );
-    bool                PanelActive( const int index ) { return m_MountedVolumes->Item( index )->PanelActive(); }
+    int                 PanelActive( const int index ) { return m_MountedVolumes->Item( index )->PanelActive(); }
 };
 
 #endif
