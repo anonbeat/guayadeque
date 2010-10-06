@@ -183,7 +183,6 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 {
-    guLogMessage( wxT( "The update thread is entering..." ) );
     int index;
     int count;
     wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
@@ -368,7 +367,7 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
         while( !TestDestroy() && dbRes.NextRow() )
         {
             FileName = dbRes.GetString( 2 ) + dbRes.GetString( 1 );
-            guLogMessage( wxT( "Checking %s" ), FileName.c_str() );
+            //guLogMessage( wxT( "Checking %s" ), FileName.c_str() );
 
             if( !wxFileExists( FileName ) || !CheckFileLibPath( LibPaths, FileName ) )
             {

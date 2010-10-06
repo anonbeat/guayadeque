@@ -415,6 +415,10 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
 {
     wxMenuItem * MenuItem;
     //guLogMessage( wxT( "guSoLisBox::AppendFastEditMenu %i - %i" ), m_LastColumnRightClicked, m_LastRowRightClicked );
+    if( m_LastColumnRightClicked == wxNOT_FOUND || ( m_LastColumnRightClicked >= m_Columns->Count() ) )
+    {
+        return;
+    }
 
     int ColumnId = GetColumnId( m_LastColumnRightClicked );
 

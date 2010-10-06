@@ -3584,7 +3584,7 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     // If the database need to be updated
     if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) )
     {
-        guLogMessage( wxT( "Database updating started." ) );
+        guLogMessage( wxT( "Database updating started. %i" ),  m_Db->NeedUpdate() );
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED,
             m_Db->NeedUpdate() ? ID_MENU_UPDATE_LIBRARYFORCED : ID_MENU_UPDATE_LIBRARY );
         AddPendingEvent( event );
