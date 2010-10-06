@@ -728,6 +728,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMFlexSizer->Add( NamePatternLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_NamePatternText = new wxTextCtrl( PMAudioPanel, wxID_ANY, mediadevice->Pattern(), wxDefaultPosition, wxDefaultSize, 0 );
+	m_NamePatternText->SetToolTip( _("{a}\t: Artist\t\t\t{aa} : Album Artist\n{b}\t: Album\t\t\t{d}\t : Disk\n{f}\t: Filename\t\t{g}\t : Genre\n{n}\t: Number\t\t\t{t}\t : Title\n{y}\t: Year") );
 	PMFlexSizer->Add( m_NamePatternText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
 
@@ -842,7 +843,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMFlexSizer->SetFlexibleDirection( wxBOTH );
 	PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	CoverFormatLabel = new wxStaticText( PMCoversPanel, wxID_ANY, wxT("Cover Format:"), wxDefaultPosition, wxDefaultSize, 0 );
+	CoverFormatLabel = new wxStaticText( PMCoversPanel, wxID_ANY, _("Cover Format:"), wxDefaultPosition, wxDefaultSize, 0 );
 	CoverFormatLabel->Wrap( -1 );
 	PMFlexSizer->Add( CoverFormatLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
@@ -853,7 +854,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	m_CoverFormatBtn = new wxButton( PMCoversPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
 	PMFlexSizer->Add( m_CoverFormatBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	CoverNameLabel = new wxStaticText( PMCoversPanel, wxID_ANY, wxT("Cover Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	CoverNameLabel = new wxStaticText( PMCoversPanel, wxID_ANY, _("Cover Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	CoverNameLabel->Wrap( -1 );
 	PMFlexSizer->Add( CoverNameLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -863,7 +864,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
 	PMFlexSizer->Add( 0, 0, 0, wxEXPAND, 5 );
 
-	CoverSizeLabel = new wxStaticText( PMCoversPanel, wxID_ANY, wxT("Covers Size:"), wxDefaultPosition, wxDefaultSize, 0 );
+	CoverSizeLabel = new wxStaticText( PMCoversPanel, wxID_ANY, _("Covers Size (pixels):"), wxDefaultPosition, wxDefaultSize, 0 );
 	CoverSizeLabel->Wrap( -1 );
 	PMFlexSizer->Add( CoverSizeLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -873,7 +874,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMCoversPanel->SetSizer( PMFlexSizer );
 	PMCoversPanel->Layout();
 	PMFlexSizer->Fit( PMCoversPanel );
-	PMNotebook->AddPage( PMCoversPanel, wxT("Covers"), false );
+	PMNotebook->AddPage( PMCoversPanel, _("Covers"), false );
 
 	PMBoxSizer->Add( PMNotebook, 1, wxEXPAND | wxALL, 5 );
 
@@ -949,6 +950,7 @@ void guPortableMediaProperties::OnAudioFolderBtnClick( wxCommandEvent &event )
         if( DirDialog->ShowModal() == wxID_OK )
         {
             wxString NewFolder = DirDialog->GetPath() + wxT( "/" );
+            guLogMessage( wxT( "MountPath: '%s'\nFolder: '%s'" ), MountPath.c_str(), NewFolder.c_str() );
             if( NewFolder.StartsWith( MountPath ) )
             {
                 NewFolder = NewFolder.Mid( MountPath.Length() );
