@@ -61,7 +61,7 @@ END_EVENT_TABLE()
 // -------------------------------------------------------------------------------- //
 guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_SINGLE|wxSUNKEN_BORDER )
+        wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_MULTIPLE|wxSUNKEN_BORDER )
 {
     m_Db = db;
     m_ImageList = new wxImageList();
@@ -130,6 +130,8 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
     wxMenuItem * MenuItem;
 
     wxPoint Point = event.GetPoint();
+    wxArrayTreeItemIds SelectedItems;
+    int SelectCount = GetSelections( SelectedItems );
 
     wxTreeItemId ItemId = event.GetItem();
     guPLNamesData * ItemData = NULL;
@@ -174,20 +176,23 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
 
         Menu.AppendSeparator();
 
-        if( ItemData->GetType() == GUPLAYLIST_DYNAMIC )
+        if( SelectCount == 1 )
         {
-            MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDIT, _( "Edit Playlist" ), _( "Edit the selected playlist" ) );
+            if( ItemData->GetType() == GUPLAYLIST_DYNAMIC )
+            {
+                MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDIT, _( "Edit Playlist" ), _( "Edit the selected playlist" ) );
+                MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+                Menu.Append( MenuItem );
+
+                MenuItem = new wxMenuItem( &Menu, ID_SONG_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Save the selected playlist as a Static Playlist" ) );
+                MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+                Menu.Append( MenuItem );
+            }
+
+            MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RENAME, _( "Rename Playlist" ), _( "Change the name of the selected playlist" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
             Menu.Append( MenuItem );
-
-            MenuItem = new wxMenuItem( &Menu, ID_SONG_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Save the selected playlist as a Static Playlist" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-            Menu.Append( MenuItem );
         }
-
-        MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RENAME, _( "Rename Playlist" ), _( "Change the name of the selected playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-        Menu.Append( MenuItem );
 
         MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_DELETE, _( "Delete Playlist" ), _( "Delete the selected playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
@@ -195,9 +200,6 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
 
         Menu.AppendSeparator();
 
-//        MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_COPYTO, _( "Copy to..." ), _( "Copy the current playlist to a directory or device" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
-//        Menu.Append( MenuItem );
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
         MainFrame->CreateCopyToMenu( &Menu, ID_PLAYLIST_COPYTO );
     }
@@ -731,10 +733,23 @@ void guPlayListPanel::OnTextChangedTimer( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesSelected( wxTreeEvent& event )
 {
-    guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( event.GetItem() );
-    if( ItemData )
+    wxArrayTreeItemIds Selections;
+    if( m_NamesTreeCtrl->GetSelections( Selections ) )
     {
-        m_PLTracksListBox->SetPlayList( ItemData->GetData(), ItemData->GetType() );
+        wxArrayInt Ids;
+        wxArrayInt Types;
+        int Index;
+        int Count = Selections.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( Selections[ Index ] );
+            if( ItemData )
+            {
+                Ids.Add( ItemData->GetData() );
+                Types.Add( ItemData->GetType() );
+            }
+        }
+        m_PLTracksListBox->SetPlayList( Ids, Types );
     }
     else
     {
@@ -872,17 +887,21 @@ void guPlayListPanel::OnPLNamesRenamePlaylist( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::DeleteCurrentPlayList( void )
 {
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
-    if( ItemId.IsOk() )
+    wxArrayTreeItemIds SelectedItems;
+    int Index;
+    int Count = m_NamesTreeCtrl->GetSelections( SelectedItems );
+    if( Count )
     {
-        guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
-        if( ItemData )
+        for( Index = 0; Index < Count; Index++ )
         {
-            m_Db->DeletePlayList( ItemData->GetData() );
-            //m_NamesTreeCtrl->Delete( ItemId );
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( SelectedItems[ Index ] );
+            if( ItemData )
+            {
+                m_Db->DeletePlayList( ItemData->GetData() );
+            }
         }
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+        wxPostEvent( wxTheApp->GetTopWindow(), evt );
     }
 }
 
@@ -893,11 +912,7 @@ void guPlayListPanel::OnPLNamesDeletePlaylist( wxCommandEvent &event )
                       _( "Confirm" ),
                       wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
     {
-        wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
-        if( ItemId.IsOk() )
-        {
-            DeleteCurrentPlayList();
-        }
+        DeleteCurrentPlayList();
     }
 }
 

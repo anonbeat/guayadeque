@@ -37,6 +37,14 @@ int inline GetFileLastChangeTime( const wxString &FileName )
 }
 
 // -------------------------------------------------------------------------------- //
+bool inline IsFileSymbolicLink( const wxString &FileName )
+{
+    wxStructStat St;
+    wxLstat( FileName, &St );
+    return S_ISLNK( St.st_mode );
+}
+
+// -------------------------------------------------------------------------------- //
 guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath )
 {
     m_LibPanel = libpanel;
@@ -58,6 +66,7 @@ guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const 
     //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
     m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
     m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) );
+    m_ScanSymlinks = Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "General" ) );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -121,47 +130,51 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
     if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
     {
       do {
-        if( ( FileName[ 0 ] != '.' ) )
+        if( FileName[ 0 ] == '.' )
+          continue;
+
+        if ( !m_ScanSymlinks && IsFileSymbolicLink( dirname + FileName ) )
+            continue;
+
+        int FileDate = GetFileLastChangeTime( dirname + FileName );
+        if( Dir.Exists( dirname + FileName ) )
         {
-          int FileDate = GetFileLastChangeTime( dirname + FileName );
-          if( Dir.Exists( dirname + FileName ) )
-          {
-            //guLogMessage( wxT( "Scanning dir '%s' : FileDate: %u  -> %u\n%u Tracks found" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate, m_TrackFiles.Count() );
-            ScanDirectory( dirname + FileName, includedir || ( FileDate > m_LastUpdate ) );
+          //guLogMessage( wxT( "Scanning dir '%s' : FileDate: %u  -> %u\n%u Tracks found" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate, m_TrackFiles.Count() );
+          ScanDirectory( dirname + FileName, includedir || ( FileDate > m_LastUpdate ) );
 
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
-            event.SetInt( m_GaugeId );
-            event.SetExtraLong( m_TrackFiles.Count() );
-            wxPostEvent( m_MainFrame, event );
-          }
-          else
+          wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+          event.SetInt( m_GaugeId );
+          event.SetExtraLong( m_TrackFiles.Count() );
+          wxPostEvent( m_MainFrame, event );
+        }
+        else
+        {
+          //guLogMessage( wxT( "%s (%i): FileDate: %u  -> %u" ), ( dirname + FileName ).c_str(), includedir, m_LastUpdate, FileDate );
+          if( includedir || ( FileDate > m_LastUpdate ) )
           {
-            //guLogMessage( wxT( "%s (%i): FileDate: %u  -> %u" ), ( dirname + FileName ).c_str(), includedir, m_LastUpdate, FileDate );
-            if( includedir || ( FileDate > m_LastUpdate ) )
+            LowerFileName = FileName.Lower();
+
+            if( guIsValidAudioFile( LowerFileName ) )
             {
-              LowerFileName = FileName.Lower();
-
-              if( guIsValidAudioFile( LowerFileName ) )
+              if( !m_Db->FindDeletedFile( dirname + FileName, false ) )
               {
-                if( !m_Db->FindDeletedFile( dirname + FileName, false ) )
-                {
-                    m_TrackFiles.Add( dirname + FileName );
-                    if( m_ScanEmbeddedCovers && FirstAudioFile.IsEmpty() )
-                        FirstAudioFile = dirname + FileName;
-                }
+                m_TrackFiles.Add( dirname + FileName );
+                if( m_ScanEmbeddedCovers && FirstAudioFile.IsEmpty() )
+                    FirstAudioFile = dirname + FileName;
               }
-              else if( guIsValidImageFile( LowerFileName ) )
+            }
+            else if( guIsValidImageFile( LowerFileName ) )
+            {
+              if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) )
               {
-                if( SearchCoverWords( LowerFileName, m_CoverSearchWords ) )                //guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
-                {
-                    m_ImageFiles.Add( dirname + FileName );
-                }
+                //guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
+                m_ImageFiles.Add( dirname + FileName );
               }
-              else if( m_ScanAddPlayLists && guPlayListFile::IsValidPlayList( LowerFileName ) )
-              {
-                  FoundCover = true;
-                  m_PlayListFiles.Add( dirname + FileName );
-              }
+            }
+            else if( m_ScanAddPlayLists && guPlayListFile::IsValidPlayList( LowerFileName ) )
+            {
+              FoundCover = true;
+              m_PlayListFiles.Add( dirname + FileName );
             }
           }
         }

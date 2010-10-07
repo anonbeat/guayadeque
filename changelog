@@ -1,4 +1,7 @@
 
+  * Playlist panel now allow to select multiple playlists
+  * Added an option to dont follow symbolic lyncs while doing the scanning. ( Thanks symphom )
+  * Added an option to dont search for embedded covers in audio files
   * Fixed bug not preserving the directory selected for podcasts, recordings or saving lyrics
   * Added Magnatune support
   * Added Jamendo support

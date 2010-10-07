@@ -119,6 +119,8 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_DelCoverButton;
     wxCheckBox *                m_UpdateLibChkBox;
     wxCheckBox *                m_LibScanPlayListChkBox;
+    wxCheckBox *                m_LibScanSymlinksChkBox;
+    wxCheckBox *                m_LibScanEmbCoversChkBox;
     wxCheckBox *                m_SaveLyricsChkBox;
 
     wxPanel *                   m_PlayPanel;
