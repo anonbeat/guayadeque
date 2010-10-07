@@ -34,8 +34,8 @@
 guPLSoListBox::guPLSoListBox( wxWindow * parent, guDbLibrary * db, wxString confname, int style ) :
              guSoListBox( parent, NULL, db, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
-    m_PLId = wxNOT_FOUND;
-    m_PLType = wxNOT_FOUND;
+    //m_PLId = wxNOT_FOUND;
+    //m_PLType = wxNOT_FOUND;
     m_LibPanel = NULL;
 
     ReloadItems();
@@ -46,33 +46,14 @@ guPLSoListBox::~guPLSoListBox()
 {
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guPLSoListBox::ItemsCheckRange( const int start, const int end )
-//{
-////    guLogMessage( wxT( "guPLSoListBox::ItemsCheckRange( %i, %i )" ), start, end );
-////    if( m_ItemsFirst != start || m_ItemsLast != end )
-////    {
-////        m_Items.Empty();
-////
-////        if( m_PLId > 0 )
-////        {
-////            m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Items, &m_TracksLength, &m_TracksSize );
-////            m_Db->GetPlayListSetIds( m_PLId, &m_PLSetIds );
-////        }
-////
-////        m_ItemsFirst = start;
-////        m_ItemsLast = end;
-////    }
-//}
-
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::GetItemsList( void )
 {
     m_PLSetIds.Empty();
-    if( m_PLId > 0 )
+    if( m_PLIds.Count() )
     {
-        m_Db->GetPlayListSongs( m_PLId, m_PLType, &m_Items, &m_TracksLength, &m_TracksSize );
-        m_Db->GetPlayListSetIds( m_PLId, &m_PLSetIds );
+        m_Db->GetPlayListSongs( m_PLIds, m_PLTypes, &m_Items, &m_TracksLength, &m_TracksSize );
+        m_Db->GetPlayListSetIds( m_PLIds, &m_PLSetIds );
     }
     else
     {
@@ -87,8 +68,21 @@ void guPLSoListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::SetPlayList( int plid, int pltype )
 {
-    m_PLId = plid;
-    m_PLType = pltype;
+    m_PLIds.Empty();
+    m_PLTypes.Empty();
+    if( plid != wxNOT_FOUND )
+    {
+        m_PLIds.Add( plid );
+        m_PLTypes.Add( pltype );
+    }
+    ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::SetPlayList( const wxArrayInt &ids, const wxArrayInt &types )
+{
+    m_PLIds = ids;
+    m_PLTypes = types;
     ReloadItems();
 }
 
@@ -124,7 +118,7 @@ void guPLSoListBox::OnKeyDown( wxKeyEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::OnDropFile( const wxString &filename )
 {
-    if( m_PLId > 0 && m_PLType == GUPLAYLIST_STATIC )
+    if( ( m_PLIds.Count() == 1 ) && m_PLTypes[ 0 ] == GUPLAYLIST_STATIC )
     {
         //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
         if( guIsValidAudioFile( filename ) )
@@ -148,7 +142,7 @@ void guPLSoListBox::OnDropEnd( void )
     int count;
     wxArrayInt ItemIds;
 
-    if( m_PLId > 0 && m_PLType == GUPLAYLIST_STATIC )
+    if( ( m_PLIds.Count() == 1 ) && ( m_PLTypes[ 0 ] == GUPLAYLIST_STATIC ) )
     {
         if( m_DropIds.Count() )
         {
@@ -171,7 +165,7 @@ void guPLSoListBox::OnDropEnd( void )
             }
 
             // Save it to the database
-            m_Db->UpdateStaticPlayList( m_PLId, ItemIds );
+            m_Db->UpdateStaticPlayList( m_PLIds[ 0 ], ItemIds );
 
             m_DropIds.Clear();
         }
@@ -186,7 +180,7 @@ void guPLSoListBox::MoveSelection( void )
     wxArrayInt   MoveIndex;
     wxArrayInt   ItemIds;
 
-    if( m_PLType != GUPLAYLIST_STATIC )
+    if( ( m_PLIds.Count() != 1 ) || ( m_PLTypes[ 0 ] != GUPLAYLIST_STATIC ) )
         return;
 
     // Copy the elements we are going to move
@@ -230,7 +224,7 @@ void guPLSoListBox::MoveSelection( void )
     }
 
     // Save it to the database
-    m_Db->UpdateStaticPlayList( m_PLId, ItemIds );
+    m_Db->UpdateStaticPlayList( m_PLIds[ 0 ], ItemIds );
 
     ReloadItems();
 }

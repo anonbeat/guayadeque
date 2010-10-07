@@ -509,7 +509,7 @@ void guPrefDialog::BuildLibraryPage( void )
 
 	m_DelPathButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelPathButton->Disable();
-	PathButtonsSizer->Add( m_DelPathButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	PathButtonsSizer->Add( m_DelPathButton, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	PathsSizer->Add( PathButtonsSizer, 0, wxEXPAND, 5 );
 
@@ -528,19 +528,19 @@ void guPrefDialog::BuildLibraryPage( void )
 
 	m_UpCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_UpCoverButton->Enable( false );
-	CoversButtonsSizer->Add( m_UpCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	CoversButtonsSizer->Add( m_UpCoverButton, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_DownCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DownCoverButton->Enable( false );
-	CoversButtonsSizer->Add( m_DownCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	CoversButtonsSizer->Add( m_DownCoverButton, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_DelCoverButton = new wxBitmapButton( m_LibPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelCoverButton->Enable( false );
-	CoversButtonsSizer->Add( m_DelCoverButton, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	CoversButtonsSizer->Add( m_DelCoverButton, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	CoversSizer->Add( CoversButtonsSizer, 0, wxEXPAND, 5 );
 
-	LibMainSizer->Add( CoversSizer, 1, wxEXPAND|wxALL, 5 );
+	LibMainSizer->Add( CoversSizer, 0, wxEXPAND|wxALL, 5 );
 
 
 	wxStaticBoxSizer * LibOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
@@ -552,6 +552,14 @@ void guPrefDialog::BuildLibraryPage( void )
 	m_LibScanPlayListChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Create Playlists on library scan"), wxDefaultPosition, wxDefaultSize, 0 );
     m_LibScanPlayListChkBox->SetValue( m_Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_LibScanPlayListChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_LibScanSymlinksChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Follow symbolic links on library scan"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_LibScanSymlinksChkBox->SetValue( m_Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "General" ) ) );
+	LibOptionsSizer->Add( m_LibScanSymlinksChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_LibScanEmbCoversChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Scan embedded covers in audio fiels"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_LibScanEmbCoversChkBox->SetValue( m_Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) ) );
+	LibOptionsSizer->Add( m_LibScanEmbCoversChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	LibMainSizer->Add( LibOptionsSizer, 0, wxEXPAND|wxALL, 5 );
 
@@ -1115,7 +1123,7 @@ void guPrefDialog::BuildOnlinePage( void )
 
 	m_OnlineDelBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_OnlineDelBtn->Disable();
-	OnlineBtnSizer->Add( m_OnlineDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	OnlineBtnSizer->Add( m_OnlineDelBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	OnlineFiltersSizer->Add( OnlineBtnSizer, 0, wxEXPAND, 5 );
 
@@ -1523,16 +1531,15 @@ void guPrefDialog::BuildLinksPage( void )
 
 	m_LinksMoveUpBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LinksMoveUpBtn->Enable( false );
-	LinksBtnSizer->Add( m_LinksMoveUpBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	LinksBtnSizer->Add( m_LinksMoveUpBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_LinksMoveDownBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LinksMoveDownBtn->Enable( false );
-	LinksBtnSizer->Add( m_LinksMoveDownBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	LinksBtnSizer->Add( m_LinksMoveDownBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_LinksDelBtn = new wxBitmapButton( m_LinksPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_LinksDelBtn->Enable( false );
-
-	LinksBtnSizer->Add( m_LinksDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	LinksBtnSizer->Add( m_LinksDelBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	LinksListBoxSizer->Add( LinksBtnSizer, 0, wxEXPAND, 5 );
 
@@ -1635,20 +1642,20 @@ void guPrefDialog::BuildCommandsPage( void )
 	wxBoxSizer * CmdBtnSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_CmdAddBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_CmdAddBtn->Enable( false );
 	CmdBtnSizer->Add( m_CmdAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_CmdMoveUpBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CmdMoveUpBtn->Enable( false );
-	CmdBtnSizer->Add( m_CmdMoveUpBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	CmdBtnSizer->Add( m_CmdMoveUpBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_CmdMoveDownBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CmdMoveDownBtn->Enable( false );
-	CmdBtnSizer->Add( m_CmdMoveDownBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	CmdBtnSizer->Add( m_CmdMoveDownBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_CmdDelBtn = new wxBitmapButton( m_CmdPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CmdDelBtn->Enable( false );
-
-	CmdBtnSizer->Add( m_CmdDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	CmdBtnSizer->Add( m_CmdDelBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	CmdListBoxSizer->Add( CmdBtnSizer, 0, wxEXPAND, 5 );
 
@@ -1755,18 +1762,20 @@ void guPrefDialog::BuildCopyToPage( void )
 	wxBoxSizer * CopyToBtnSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_CopyToAddBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_CopyToAddBtn->Enable( false );
 	CopyToBtnSizer->Add( m_CopyToAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_CopyToUpBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, 0 );
-	CopyToBtnSizer->Add( m_CopyToUpBtn, 0, wxALL, 5 );
+	m_CopyToUpBtn->Enable( false );
+	CopyToBtnSizer->Add( m_CopyToUpBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_CopyToDownBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, 0 );
-	CopyToBtnSizer->Add( m_CopyToDownBtn, 0, wxALL, 5 );
+	m_CopyToDownBtn->Enable( false );
+	CopyToBtnSizer->Add( m_CopyToDownBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_CopyToDelBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CopyToDelBtn->Enable( false );
-
-	CopyToBtnSizer->Add( m_CopyToDelBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	CopyToBtnSizer->Add( m_CopyToDelBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	CopyToListBoxSizer->Add( CopyToBtnSizer, 0, wxEXPAND, 5 );
 
@@ -1862,6 +1871,8 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteAStr( wxT( "Word" ), m_CoversListBox->GetStrings(), wxT( "CoverSearch" ) );
         m_Config->WriteBool( wxT( "UpdateLibOnStart" ), m_UpdateLibChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "ScanAddPlayLists" ), m_LibScanPlayListChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "ScanSymlinks" ), m_LibScanSymlinksChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "ScanEmbeddedCovers" ), m_LibScanEmbCoversChkBox->GetValue(), wxT( "General" ) );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PLAYBACK )

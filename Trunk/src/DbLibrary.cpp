@@ -3646,6 +3646,25 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &types, guTrackArray * tracks,
+                    wxLongLong * len, wxLongLong * size )
+{
+    int Index;
+    int Count = wxMin( ids.Count(), types.Count() );
+    wxLongLong Length;
+    wxLongLong Size;
+    * len = 0;
+    * size = 0;
+    for( Index = 0; Index < Count; Index++ )
+    {
+        GetPlayListSongs( ids[ Index ], types[ Index ], tracks, &Length, &Size );
+        * len += Length;
+        * size += Size;
+    }
+    return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPlayListSetIds( const int plid, wxArrayInt * setids )
 {
   wxString query;
@@ -3663,6 +3682,18 @@ int guDbLibrary::GetPlayListSetIds( const int plid, wxArrayInt * setids )
   dbRes.Finalize();
 
   return setids->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetPlayListSetIds( const wxArrayInt &plids, wxArrayInt * setids )
+{
+    int Index;
+    int Count = plids.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        GetPlayListSetIds( plids[ Index ], setids );
+    }
+    return setids->Count();
 }
 
 // -------------------------------------------------------------------------------- //

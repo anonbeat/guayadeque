@@ -27,39 +27,39 @@
 class guPLSoListBox : public guSoListBox
 {
   protected :
+    wxArrayInt          m_PLIds;    // The PlayLists ids
+    wxArrayInt          m_PLTypes;  // The PlayLists types
+    wxArrayInt          m_PLSetIds; // The array containing the list of plset_id
+    wxArrayInt          m_DropIds;  // The array containing the id of the songs dropped
+    wxLongLong          m_TracksSize;
+    wxLongLong          m_TracksLength;
 
-    int             m_PLId;     // The PlayList id
-    int             m_PLType;   // The PlayList type
-    wxArrayInt      m_PLSetIds; // The array containing the list of plset_id
-    wxArrayInt      m_DropIds;  // The array containing the id of the songs dropped
-    wxLongLong      m_TracksSize;
-    wxLongLong      m_TracksLength;
+    virtual void        GetItemsList( void );
+    virtual void        CreateContextMenu( wxMenu * Menu ) const;
 
-    virtual void                GetItemsList( void );
-    virtual void                CreateContextMenu( wxMenu * Menu ) const;
+    virtual void        OnKeyDown( wxKeyEvent &event );
 
-    virtual void                OnKeyDown( wxKeyEvent &event );
+    virtual void        OnDropFile( const wxString &filename );
+    virtual void        OnDropEnd( void );
+    virtual void        MoveSelection( void );
 
-    virtual void                OnDropFile( const wxString &filename );
-    virtual void                OnDropEnd( void );
-    virtual void                MoveSelection( void );
-
-    virtual void                ItemsCheckRange( const int start, const int end ) { m_ItemsFirst = 0; m_ItemsLast = 0; }
+    virtual void        ItemsCheckRange( const int start, const int end ) { m_ItemsFirst = 0; m_ItemsLast = 0; }
 
   public :
     guPLSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, int style = 0 );
     ~guPLSoListBox();
 
-    void    SetPlayList( int plid, int pltype );
-    int     GetPlayListSetIds( wxArrayInt * setids ) const;
+    void                SetPlayList( int plid, int pltype );
+    void                SetPlayList( const wxArrayInt &ids, const wxArrayInt &types );
+    int                 GetPlayListSetIds( wxArrayInt * setids ) const;
 
-    virtual int                 GetSelectedSongs( guTrackArray * Songs );
-    virtual void                GetAllSongs( guTrackArray * Songs );
+    virtual int         GetSelectedSongs( guTrackArray * Songs );
+    virtual void        GetAllSongs( guTrackArray * Songs );
 
-    virtual int                 GetItemId( const int row ) const;
-    virtual wxString            GetItemName( const int row ) const;
+    virtual int         GetItemId( const int row ) const;
+    virtual wxString    GetItemName( const int row ) const;
 
-    void    GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+    void                GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
     {
         * count = GetItemCount();
         * len   = m_TracksLength;

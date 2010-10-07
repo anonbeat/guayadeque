@@ -413,7 +413,10 @@ class guDbLibrary : public guDb
     int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
     int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks,
                             wxLongLong * len, wxLongLong * size );
+    int                 GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &types, guTrackArray * tracks,
+                            wxLongLong * len, wxLongLong * size );
     int                 GetPlayListSetIds( const int plid, wxArrayInt * setids );
+    int                 GetPlayListSetIds( const wxArrayInt &plid, wxArrayInt * setids );
     void                DeletePlayList( const int plid );
     void                SetPlayListName( const int plid, const wxString &plname );
     void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
