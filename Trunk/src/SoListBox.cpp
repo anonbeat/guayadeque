@@ -202,6 +202,11 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
         {
             return Song->m_Format;
         }
+
+        case guSONGS_COLUMN_FILEPATH :
+        {
+            return Song->m_FileName; // contains both path and filename
+        }
     }
     return wxEmptyString;
 }
@@ -314,7 +319,7 @@ void guSoListBox::GetAllSongs( guTrackArray * tracks )
 {
     int index;
     m_ItemsMutex.Lock();
-    int count = m_Items.Count();
+    int count = GetItemCount();
     for( index = 0; index < count; index++ )
     {
         guTrack * Track = new guTrack();
@@ -369,6 +374,7 @@ wxArrayString guSoListBox::GetColumnNames( void ) const
     ColumnNames.Add( _( "Last Play" ) );
     ColumnNames.Add( _( "Added Date" ) );
     ColumnNames.Add( _( "Format" ) );
+    ColumnNames.Add( _( "Filepath" ) );
     return ColumnNames;
 }
 
@@ -428,7 +434,8 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
         ColumnId == guSONGS_COLUMN_PLAYCOUNT ||
         ColumnId == guSONGS_COLUMN_LASTPLAY ||
         ColumnId == guSONGS_COLUMN_ADDEDDATE ||
-        ColumnId == guSONGS_COLUMN_FORMAT )
+        ColumnId == guSONGS_COLUMN_FORMAT ||
+        ColumnId == guSONGS_COLUMN_FILEPATH )
         return;
 
     wxArrayString ColumnNames = GetColumnNames();

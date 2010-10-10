@@ -88,7 +88,7 @@ class guTrack
     wxString        m_GenreName;
     int             m_PathId;
     wxString        m_Path;
-    wxString        m_FileName;           // mp3 filename
+    wxString        m_FileName;           // mp3 path + filename
     unsigned int    m_FileSize;
     int             m_Number;             // the track num of the song into the album
     int             m_Year;               // the year of the song
@@ -229,7 +229,8 @@ enum guTRACKS_ORDER {
     guTRACKS_ORDER_PLAYCOUNT,
     guTRACKS_ORDER_LASTPLAY,
     guTRACKS_ORDER_ADDEDDATE,
-    guTRACKS_ORDER_FORMAT
+    guTRACKS_ORDER_FORMAT,
+    guTRACKS_ORDER_FILEPATH
 };
 
 enum guALBUMS_ORDER {

@@ -630,16 +630,29 @@ void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSearchSelected( wxCommandEvent& event )
 {
+    // perform text search immediately
+
+    if( m_TextChangedTimer.IsRunning() )
+        m_TextChangedTimer.Stop();
+
+    if( !DoTextSearch() )
+        return;
+
+    // if text search was successful, possibly enqueue results
+
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+        if( !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) ) )
         {
-            OnSongQueueAllClicked( event );
-        }
-        else
-        {
-            OnSongPlayAllClicked( event );
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            {
+                OnSongQueueAllClicked( event );
+            }
+            else
+            {
+                OnSongPlayAllClicked( event );
+            }
         }
     }
 }
@@ -650,6 +663,70 @@ void guLibPanel::ClearSearchText( void )
     m_DoneClearSearchText = true;
     m_InputTextCtrl->Clear();
     m_InputTextCtrl->ShowCancelButton( false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
+{
+    DoTextSearch();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLibPanel::DoTextSearch( void )
+{
+    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
+    if( !SearchString.IsEmpty() )
+    {
+        if( SearchString.Length() > 1 )
+        {
+            wxArrayString Words = guSplitWords( SearchString );
+
+            m_Db->SetTeFilters( Words, m_UpdateLock );
+            if( !m_UpdateLock )
+            {
+                m_UpdateLock = true;
+                ReloadLabels();
+                ReloadGenres();
+                ReloadAlbumArtists();
+                ReloadArtists();
+                ReloadComposers();
+                ReloadAlbums();
+                ReloadYears();
+                ReloadRatings();
+                ReloadPlayCounts();
+                ReloadSongs();
+                m_UpdateLock = false;
+            }
+            m_InputTextCtrl->ShowCancelButton( true );
+        }
+
+        return true;
+    }
+    else
+    {
+        wxArrayString Words;
+        //guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
+        //m_InputTextCtrl->Clear();
+        m_Db->SetTeFilters( Words, m_UpdateLock );
+        m_UpdateLock = true;
+    //    if( !m_UpdateLock )
+    //    {
+            ReloadLabels( false );
+            ReloadGenres( false );
+            ReloadAlbumArtists();
+            ReloadArtists( false );
+            ReloadComposers( false );
+            ReloadAlbums( false );
+            ReloadYears( false );
+            ReloadRatings( false );
+            ReloadPlayCounts( false );
+            ReloadSongs( false );
+            m_UpdateLock = false;
+    //    }
+        m_InputTextCtrl->ShowCancelButton( false );
+
+        return false;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2672,60 +2749,6 @@ void guLibPanel::OnSelChangedTimer( wxTimerEvent &event )
 {
     DoSelectionChanged();
     m_SelChangedObject = 0;
-}
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::OnTextChangedTimer( wxTimerEvent &event )
-{
-    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
-    if( !SearchString.IsEmpty() )
-    {
-        if( SearchString.Length() > 1 )
-        {
-            wxArrayString Words = guSplitWords( SearchString );
-
-            m_Db->SetTeFilters( Words, m_UpdateLock );
-            if( !m_UpdateLock )
-            {
-                m_UpdateLock = true;
-                ReloadLabels();
-                ReloadGenres();
-                ReloadAlbumArtists();
-                ReloadArtists();
-                ReloadComposers();
-                ReloadAlbums();
-                ReloadYears();
-                ReloadRatings();
-                ReloadPlayCounts();
-                ReloadSongs();
-                m_UpdateLock = false;
-            }
-            m_InputTextCtrl->ShowCancelButton( true );
-        }
-    }
-    else
-    {
-        wxArrayString Words;
-        //guLogMessage( wxT( "guLibPanel::SearchCancelled" ) );
-        //m_InputTextCtrl->Clear();
-        m_Db->SetTeFilters( Words, m_UpdateLock );
-        m_UpdateLock = true;
-    //    if( !m_UpdateLock )
-    //    {
-            ReloadLabels( false );
-            ReloadGenres( false );
-            ReloadAlbumArtists();
-            ReloadArtists( false );
-            ReloadComposers( false );
-            ReloadAlbums( false );
-            ReloadYears( false );
-            ReloadRatings( false );
-            ReloadPlayCounts( false );
-            ReloadSongs( false );
-            m_UpdateLock = false;
-    //    }
-        m_InputTextCtrl->ShowCancelButton( false );
-    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -928,6 +928,10 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "DELETE FROM Version;" ) );
         query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
     }
+    // TODO: minor schema changes postponed for a major version bump:
+    //
+    // - for ordering by path:
+    // query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_path_filename ON songs( song_path, song_filename )" ) );
 
 
     default:
@@ -4652,6 +4656,10 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
 
     case guTRACKS_ORDER_FORMAT :
       query += wxT( "song_format" );
+      break;
+
+    case guTRACKS_ORDER_FILEPATH :
+      query += wxT( "song_path,song_filename" );
       break;
 
   }
