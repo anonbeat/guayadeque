@@ -119,6 +119,7 @@ class guLibPanel : public wxPanel
     virtual void OnSearchCancelled( wxCommandEvent &event );
     virtual void OnSearchSelected( wxCommandEvent &event );
     virtual void ClearSearchText( void );
+    bool         DoTextSearch( void );
 
     // LabelsListBox Events
     virtual void OnLabelListActivated( wxListEvent &event );

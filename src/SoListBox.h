@@ -41,8 +41,9 @@
 #define guSONGS_COLUMN_LASTPLAY     13
 #define guSONGS_COLUMN_ADDEDDATE    14
 #define guSONGS_COLUMN_FORMAT       15
+#define guSONGS_COLUMN_FILEPATH     16
 
-#define guSONGS_COLUMN_COUNT        16
+#define guSONGS_COLUMN_COUNT        17
 
 class guLibPanel;
 
