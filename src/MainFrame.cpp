@@ -4825,7 +4825,7 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
 
             //guLogMessage( wxT( "AudioFormats: %08X  %08X" ), m_Device->AudioFormats(), FileFormat );
             // If the file is not supported then need to transcode it
-            if( !m_Device->AudioFormats() & FileFormat )
+            if( !( m_Device->AudioFormats() & FileFormat ) )
             {
                 //guLogMessage( wxT( "Its an unsupported format... Transcoding" ) );
                 TranscodeFile( CurTrack->m_FileName, FileName );
