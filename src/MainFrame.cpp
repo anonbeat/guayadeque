@@ -1927,7 +1927,7 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
             {
                 guPortableMediaPanel * PortableMediaPanel = m_PortableMediaPanels[ event.GetInt() ];
                 guPortableMediaDevice * PortableMediaDevice = PortableMediaPanel->PortableMediaDevice();
-                guCopyToDeviceThread * CopyToDeviceThread = new guCopyToDeviceThread( PortableMediaDevice, Tracks, GaugeId );
+                guCopyToDeviceThread * CopyToDeviceThread = new guCopyToDeviceThread( m_Db, PortableMediaDevice, Tracks, GaugeId );
                 if( !CopyToDeviceThread )
                 {
                     guLogError( wxT( "Could not create the CopyTo thread object" ) );
@@ -4679,10 +4679,11 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guCopyToDeviceThread
 // -------------------------------------------------------------------------------- //
-guCopyToDeviceThread::guCopyToDeviceThread( guPortableMediaDevice * mediadevice, guTrackArray * tracks, int gaugeid ) :
+guCopyToDeviceThread::guCopyToDeviceThread( guDbLibrary * db, guPortableMediaDevice * mediadevice, guTrackArray * tracks, int gaugeid ) :
     wxThread()
 {
     m_Device    = mediadevice;
+    m_Db        = db;
     m_Tracks    = tracks;
     m_GaugeId   = gaugeid;
 
@@ -4749,22 +4750,9 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
     wxString        FileName;
     wxString        FilePattern;
     wxString        DestDir;
-//	bool            FileOverwrite = true;
 	m_SizeCounter = 0;
 	unsigned int    TimeCounter = wxGetLocalTime();
 	guMainFrame *   MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-
-//    Config = ( guConfig * ) guConfig::Get();
-//    wxArrayString Patterns = Config->ReadAStr( wxT( "Pattern" ), wxEmptyString, wxT( "CopyTo" ) );
-//    if( m_Pattern >= 0 && m_Pattern < ( int ) Patterns.Count() )
-//    {
-//        FilePattern = Patterns[ m_Pattern ];
-//    }
-//    else
-//    {
-//        guLogError( wxT( "Using default pattern as the selected one was not found" ) );
-//        FilePattern = wxT( "{g}/{a}/{b}/{n} - {a} - {t}" );
-//    }
 
     FilePattern = m_Device->Pattern();
     guLogMessage( wxT( "Using pattern '%s'" ), FilePattern.c_str() );
@@ -4780,6 +4768,8 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
     event.SetInt( m_GaugeId );
     event.SetExtraLong( Count );
     wxPostEvent( MainFrame, event );
+
+    wxArrayInt CoversOnDevice;
 
     for( Index = 0; Index < Count; Index++ )
     {
@@ -4898,6 +4888,46 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                     }
                 }
             }
+
+            //
+            // If the device supports covers
+            //
+            int DevCoverFormats = m_Device->CoverFormats();
+            if( DevCoverFormats ) // if has cover handling enabled
+            {
+                // If have cover assigned
+                if( CurTrack->m_CoverId )
+                {
+                    wxString CoverPath = m_Db->GetCoverPath( CurTrack->m_CoverId );
+                    wxImage * CoverImage = new wxImage( CoverPath );
+                    if( CoverImage )
+                    {
+                        if( CoverImage->IsOk() )
+                        {
+                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
+                            {
+                                if( !guTagSetPicture( FileName, CoverImage ) )
+                                {
+                                    guLogMessage( wxT( "Couldnt set the picture to %s" ), FileName.c_str() );
+                                }
+                            }
+                            else //if( m_Device->CoverFormats() & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
+                            {
+                                // Check if the file have not been already saved
+                                if( CoversOnDevice.Index( CurTrack->m_CoverId ) == wxNOT_FOUND )
+                                {
+                                    // Convert the file to the appropiate format and save it
+
+                                    CoversOnDevice.Add( CurTrack->m_CoverId );
+                                }
+                            }
+                        }
+
+                        delete CoverImage;
+                    }
+                }
+            }
+
         }
 
 //        m_SizeCounter += CurTrack->m_FileSize;
