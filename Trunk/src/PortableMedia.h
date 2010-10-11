@@ -60,10 +60,12 @@
 #define guPORTABLEMEDIA_PLAYLIST_FORMAT_XSPF    ( 1 << 2 )
 #define guPORTABLEMEDIA_PLAYLIST_FORMAT_ASX     ( 1 << 3 )
 
-#define guPORTABLEMEDIA_COVER_FORMAT_JPEG       ( 1 << 0 )
-#define guPORTABLEMEDIA_COVER_FORMAT_PNG        ( 1 << 1 )
-#define guPORTABLEMEDIA_COVER_FORMAT_BMP        ( 1 << 2 )
-#define guPORTABLEMEDIA_COVER_FORMAT_GIF        ( 1 << 3 )
+#define guPORTABLEMEDIA_COVER_FORMAT_NONE       0
+#define guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED   ( 1 << 0 )
+#define guPORTABLEMEDIA_COVER_FORMAT_JPEG       ( 1 << 1 )
+#define guPORTABLEMEDIA_COVER_FORMAT_PNG        ( 1 << 2 )
+#define guPORTABLEMEDIA_COVER_FORMAT_BMP        ( 1 << 3 )
+#define guPORTABLEMEDIA_COVER_FORMAT_GIF        ( 1 << 4 )
 
 
 enum guPortableMediaTranscodeScope {

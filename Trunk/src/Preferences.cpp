@@ -557,7 +557,7 @@ void guPrefDialog::BuildLibraryPage( void )
 	m_LibScanSymlinksChkBox->SetValue( m_Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_LibScanSymlinksChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_LibScanEmbCoversChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Scan embedded covers in audio fiels"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_LibScanEmbCoversChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Scan embedded covers in audio files"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_LibScanEmbCoversChkBox->SetValue( m_Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_LibScanEmbCoversChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 

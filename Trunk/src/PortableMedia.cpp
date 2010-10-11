@@ -44,6 +44,7 @@ wxString guPortablePlaylistFormatString[] = {
 
 // -------------------------------------------------------------------------------- //
 wxString guPortableCoverFormatString[] = {
+    wxT( "embedded" ),
     wxT( "jpeg" ),
     wxT( "png" ),
     wxT( "bmp" ),
@@ -459,8 +460,16 @@ wxString guPortableMediaDevice::PlaylistFormatsStr( const int formats )
 wxString guPortableMediaDevice::CoverFormatsStr( const int formats )
 {
     wxString Formats;
+
+    if( formats & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
+    {
+        Formats += _( "embedded" );
+    }
+
     if( formats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
     {
+        if( !Formats.IsEmpty() )
+            Formats += wxT( ", " );
         Formats += wxT( "jpeg" );
     }
 
@@ -1100,12 +1109,14 @@ void guPortableMediaProperties::OnCoverFormatBtnClick( wxCommandEvent &event )
 {
     wxArrayInt Selection;
     wxArrayString Items;
-    Items.Add( guPortableCoverFormatString[ 0 ] );
+    Items.Add( _( "embedded" ) );
     Items.Add( guPortableCoverFormatString[ 1 ] );
     Items.Add( guPortableCoverFormatString[ 2 ] );
     Items.Add( guPortableCoverFormatString[ 3 ] );
+    Items.Add( guPortableCoverFormatString[ 4 ] );
 
     wxArrayInt ItemFlags;
+    ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED );
     ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_JPEG );
     ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_PNG );
     ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_BMP );
