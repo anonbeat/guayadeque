@@ -256,6 +256,8 @@ class guMainFrame : public wxFrame
     void                OnRandomize( wxCommandEvent &event );
     void                OnRepeat( wxCommandEvent &event );
     void                OnAbout( wxCommandEvent &event );
+    void                OnHelp( wxCommandEvent &event );
+    void                OnCommunity( wxCommandEvent &event );
     void                OnCopyTracksTo( wxCommandEvent &event );
     void                OnCopyTracksToDevice( wxCommandEvent &event );
     void                OnUpdateLabels( wxCommandEvent &event );

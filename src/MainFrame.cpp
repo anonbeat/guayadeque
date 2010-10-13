@@ -492,6 +492,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_UPDATETITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerPlayListUpdateTitle ), NULL, this );
     Connect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
+    Connect( ID_MENU_HELP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnHelp ), NULL, this );
+    Connect( ID_MENU_COMMUNITY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCommunity ), NULL, this );
 
     Connect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
     Connect( ID_MAINFRAME_COPYTODEVICE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
@@ -645,6 +647,8 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_UPDATETITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerPlayListUpdateTitle ), NULL, this );
     Disconnect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
+    Disconnect( ID_MENU_HELP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnHelp ), NULL, this );
+    Disconnect( ID_MENU_COMMUNITY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCommunity ), NULL, this );
 
     Disconnect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
     Disconnect( ID_MAINFRAME_COPYTODEVICE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
@@ -1381,9 +1385,18 @@ void guMainFrame::CreateMenu()
     MenuBar->Append( m_MainMenu, _( "&Control" ) );
 
     m_MainMenu = new wxMenu();
+
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_HELP, _( "&Help" ), _( "Get help using guayadeque" ), wxITEM_NORMAL );
+    m_MainMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_COMMUNITY, _( "&Community" ), _( "Get guayadeque support from guayadeque.org" ), wxITEM_NORMAL );
+    m_MainMenu->Append( MenuItem );
+
+    m_MainMenu->AppendSeparator();
     MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_ABOUT, _( "&About" ), _( "Show information about guayadeque music player" ), wxITEM_NORMAL );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_volume_high ) );
     m_MainMenu->Append( MenuItem );
+
     MenuBar->Append( m_MainMenu, _( "&Help" ) );
 
 	SetMenuBar( MenuBar );
@@ -1860,6 +1873,18 @@ void guMainFrame::OnAbout( wxCommandEvent &event )
     {
         guLogError( wxT( "Could not create the splash screen window" ) );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnHelp( wxCommandEvent &event )
+{
+    guWebExecute( wxT( "http://guayadeque.org/forums/index.php?p=/page/manual#TableOfContent" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnCommunity( wxCommandEvent &event )
+{
+    guWebExecute( wxT( "http://guayadeque.org/forums/index.php?p=/discussions" ) );
 }
 
 // -------------------------------------------------------------------------------- //
