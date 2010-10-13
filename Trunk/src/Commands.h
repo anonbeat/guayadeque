@@ -94,6 +94,8 @@ enum guCommandIds {
     ID_MENU_LAYOUT_CREATE,
     ID_MENU_LAYOUT_DUMMY,
     ID_MENU_ABOUT,
+    ID_MENU_HELP,
+    ID_MENU_COMMUNITY,
 
     //
     ID_MAINFRAME_COPYTO,
