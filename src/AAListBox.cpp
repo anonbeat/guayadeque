@@ -33,12 +33,16 @@ guAAListBox::guAAListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 {
     m_LibPanel = libpanel;
 
+    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnSearchLinkClicked ) );
+    Connect( ID_ARTIST_COMMANDS, ID_ALBUMARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnCommandClicked ) );
     ReloadItems();
 };
 
 // -------------------------------------------------------------------------------- //
 guAAListBox::~guAAListBox()
 {
+    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnSearchLinkClicked ) );
+    Disconnect( ID_ARTIST_COMMANDS, ID_ARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnCommandClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -53,6 +57,41 @@ int guAAListBox::GetSelectedSongs( guTrackArray * songs ) const
     int Count = m_Db->GetAlbumArtistsSongs( GetSelectedItems(), songs );
     m_LibPanel->NormalizeTracks( songs );
     return Count;
+}
+
+// -------------------------------------------------------------------------------- //
+void AddAlbumArtistCommands( wxMenu * Menu, int SelCount )
+{
+    wxMenu * SubMenu;
+    int index;
+    int count;
+    wxMenuItem * MenuItem;
+    if( Menu )
+    {
+        SubMenu = new wxMenu();
+        wxASSERT( SubMenu );
+
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+        if( ( count = Commands.Count() ) )
+        {
+            for( index = 0; index < count; index++ )
+            {
+                if( ( Commands[ index ].Find( wxT( "{bc}" ) ) == wxNOT_FOUND ) || ( SelCount == 1 ) )
+                {
+                    MenuItem = new wxMenuItem( Menu, ID_ALBUMARTIST_COMMANDS + index, Names[ index ], Commands[ index ] );
+                    SubMenu->Append( MenuItem );
+                }
+            }
+        }
+        else
+        {
+            MenuItem = new wxMenuItem( Menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+            SubMenu->Append( MenuItem );
+        }
+        Menu->AppendSubMenu( SubMenu, _( "Commands" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -89,6 +128,20 @@ void guAAListBox::CreateContextMenu( wxMenu * Menu ) const
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
         {
             m_LibPanel->CreateCopyToMenu( Menu, ID_ALBUMARTIST_COPYTO );
+        }
+
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
+        {
+            Menu->AppendSeparator();
+
+            if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
+            {
+                AddOnlineLinksMenu( Menu );
+            }
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+                AddAlbumArtistCommands( Menu, SelCount );
         }
     }
 
@@ -131,6 +184,106 @@ int guAAListBox::FindAlbumArtist( const wxString &albumartist )
         }
     }
     return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guAAListBox::OnSearchLinkClicked( wxCommandEvent &event )
+{
+    int Item = wxNOT_FOUND;
+    unsigned long cookie;
+    Item = GetFirstSelected( cookie );
+    if( Item != wxNOT_FOUND )
+    {
+        int index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
+            wxASSERT( Links.Count() > 0 );
+
+            index -= ID_LASTFM_SEARCH_LINK;
+            wxString SearchLink = Links[ index ];
+            wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
+            if( Lang.IsEmpty() )
+            {
+                Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
+                //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
+            }
+            SearchLink.Replace( wxT( "{lang}" ), Lang );
+            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
+            guWebExecute( SearchLink );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAAListBox::OnCommandClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt Selection = GetSelectedItems();
+    if( Selection.Count() )
+    {
+        index = event.GetId();
+
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config )
+        {
+            wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+            wxASSERT( Commands.Count() > 0 );
+
+            //guLogMessage( wxT( "CommandId: %u" ), index );
+            index -= ID_ALBUMARTIST_COMMANDS;
+            wxString CurCmd = Commands[ index ];
+
+            if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+            {
+                wxArrayInt AlbumList;
+                m_Db->GetAlbumArtistsAlbums( Selection, &AlbumList );
+                wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( AlbumList );
+                count = AlbumPaths.Count();
+                wxString Paths = wxEmptyString;
+                for( index = 0; index < count; index++ )
+                {
+                    AlbumPaths[ index ].Replace( wxT( " " ), wxT( "\\ " ) );
+                    Paths += wxT( " " ) + AlbumPaths[ index ];
+                }
+                CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
+            }
+
+            if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+            {
+                wxArrayInt AlbumList;
+                m_Db->GetAlbumArtistsAlbums( Selection, &AlbumList );
+                int CoverId = m_Db->GetAlbumCoverId( AlbumList[ 0 ] );
+                wxString CoverPath = wxEmptyString;
+                if( CoverId > 0 )
+                {
+                    CoverPath = wxT( "\"" ) + m_Db->GetCoverPath( CoverId ) + wxT( "\"" );
+                }
+                CurCmd.Replace( wxT( "{bc}" ), CoverPath );
+            }
+
+            if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+            {
+                guTrackArray Songs;
+                wxString SongList = wxEmptyString;
+                if( m_Db->GetAlbumArtistsSongs( Selection, &Songs ) )
+                {
+                    count = Songs.Count();
+                    for( index = 0; index < count; index++ )
+                    {
+                        SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
+                    }
+                    CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                }
+            }
+
+            //guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
+            guExecute( CurCmd );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

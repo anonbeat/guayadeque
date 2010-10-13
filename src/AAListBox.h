@@ -35,6 +35,9 @@ class guAAListBox : public guListBox
 
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * menu ) const;
+
+    void            OnSearchLinkClicked( wxCommandEvent &event );
+    void            OnCommandClicked( wxCommandEvent &event );
     wxString        GetSearchText( int Item ) const;
 
     virtual int     GetDragFiles( wxFileDataObject * files );
