@@ -3982,6 +3982,27 @@ int guDbLibrary::GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Album
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::GetAlbumArtistsAlbums( const wxArrayInt &albumartists, wxArrayInt * Albums )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  if( albumartists.Count() )
+  {
+    query = wxT( "SELECT DISTINCT song_albumid FROM songs WHERE song_albumartistid IN " );
+    query += ArrayIntToStrList( albumartists );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+        Albums->Add( dbRes.GetInt( 0 ) );
+    }
+    dbRes.Finalize();
+  }
+  return Albums->Count();
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs, bool ordertoedit )
 {
   wxString query;

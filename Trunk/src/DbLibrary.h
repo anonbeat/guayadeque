@@ -395,6 +395,7 @@ class guDbLibrary : public guDb
     int                 GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Songs,
                                          const int count, const int filterallow, const int filterdeny );
     int                 GetArtistsAlbums( const wxArrayInt &Artists, wxArrayInt * Albums );
+    int                 GetAlbumArtistsAlbums( const wxArrayInt &albumartists, wxArrayInt * Albums );
     int                 GetGenresSongs( const wxArrayInt &Genres, guTrackArray * Songs );
     int                 GetRandomTracks( guTrackArray * Tracks, const int count, const int rndmode,
                                          const int allowplaylist, const int denyplaylist );
