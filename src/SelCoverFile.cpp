@@ -21,6 +21,7 @@
 #include "SelCoverFile.h"
 
 #include "Config.h"
+#include "Commands.h"
 
 #include <wx/filedlg.h>
 
@@ -76,6 +77,7 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 	m_SelFileBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guSelCoverFile::OnSelFileClicked ), NULL, this );
 	m_FileLink->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guSelCoverFile::OnPathChanged ), NULL, this );
 
+	Connect( ID_SELCOVERDIALOG_FINISH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSelCoverFile::OnCoverFinish ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -100,9 +102,18 @@ void guSelCoverFile::OnSelFileClicked( wxCommandEvent& event )
         if( FileDialog->ShowModal() == wxID_OK )
         {
             m_FileLink->SetValue( FileDialog->GetPath() );
+
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_SELCOVERDIALOG_FINISH );
+            AddPendingEvent( event );
         }
         FileDialog->Destroy();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guSelCoverFile::OnCoverFinish( wxCommandEvent& event )
+{
+    EndModal( wxID_OK );
 }
 
 // -------------------------------------------------------------------------------- //
