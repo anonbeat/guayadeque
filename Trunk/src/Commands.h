@@ -272,6 +272,7 @@ enum guCommandIds {
     // Commands for the CoverEditor
     ID_COVEREDITOR_ADDCOVERIMAGE,
     ID_COVEREDITOR_DOWNLOADEDLINKS,
+    ID_SELCOVERDIALOG_FINISH,
     // Commands for LastFM Panel
     //ID_LASTFM_UPDATE_TRACK,               // The Player notifies the panel to update the content
     ID_LASTFM_UPDATE_ARTISTINFO,            // The thread update the Artist Info
