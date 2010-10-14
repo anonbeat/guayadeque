@@ -2606,7 +2606,7 @@ void guPlayerPanel::OnSmartPlayButtonClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 {
-    m_PlayListCtrl->Randomize();
+    m_PlayListCtrl->Randomize( ( GetState() == guMEDIASTATE_PLAYING ) );
     wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKLISTCHANGED );
     wxPostEvent( this, evt );
 }
