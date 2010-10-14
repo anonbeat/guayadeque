@@ -999,7 +999,7 @@ void guPlayList::ClearItems()
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayList::Randomize( void )
+void guPlayList::Randomize( const bool isplaying )
 {
     int index;
     int pos;
@@ -1009,19 +1009,24 @@ void guPlayList::Randomize( void )
 
     if( count > 2 )
     {
-        if( m_CurItem > 0 )
+        if( isplaying && m_CurItem > 0 )
         {
             SavedItem = m_Items[ 0 ];
             m_Items[ 0 ] = m_Items[ m_CurItem ];
             m_Items[ m_CurItem ] = SavedItem;
             m_CurItem = 0;
         }
+        else if( !isplaying )
+        {
+            if( m_CurItem != wxNOT_FOUND )
+                m_CurItem = wxNOT_FOUND;
+        }
         for( index = 0; index < count; index++ )
         {
             do {
                 pos = guRandom( count );
                 newpos = guRandom( count );
-            } while( ( pos == newpos ) || ( ( m_CurItem == 0 ) && ( !pos || !newpos ) ) );
+            } while( ( pos == newpos ) || ( isplaying && ( m_CurItem == 0 ) && ( !pos || !newpos ) ) );
             SavedItem = m_Items[ pos ];
             m_Items[ pos ] = m_Items[ newpos ];
             m_Items[ newpos ] = SavedItem;
