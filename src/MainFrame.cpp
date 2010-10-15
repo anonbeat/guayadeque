@@ -4929,6 +4929,12 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                     {
                         if( CoverImage->IsOk() )
                         {
+                            int DevCoverSize = m_Device->CoverSize();
+                            if( DevCoverSize && ( ( CoverImage->GetWidth() != DevCoverSize ) || ( CoverImage->GetHeight() != DevCoverSize ) ) )
+                            {
+                                CoverImage->Rescale( DevCoverSize, DevCoverSize, wxIMAGE_QUALITY_HIGH );
+                            }
+
                             if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
                             {
                                 if( !guTagSetPicture( FileName, CoverImage ) )
@@ -4936,14 +4942,55 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                                     guLogMessage( wxT( "Couldnt set the picture to %s" ), FileName.c_str() );
                                 }
                             }
-                            else //if( m_Device->CoverFormats() & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
-                            {
-                                // Check if the file have not been already saved
-                                if( CoversOnDevice.Index( CurTrack->m_CoverId ) == wxNOT_FOUND )
-                                {
-                                    // Convert the file to the appropiate format and save it
 
-                                    CoversOnDevice.Add( CurTrack->m_CoverId );
+                            wxString DevCoverName = m_Device->CoverName();
+                            if( DevCoverName.IsEmpty() )
+                            {
+                                DevCoverName = wxT( "cover" );
+                            }
+                            DevCoverName = wxPathOnly( FileName ) + wxT( "/" ) + DevCoverName;
+
+                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
+                            {
+                                if( !wxFileExists( DevCoverName + wxT( ".jpg" ) ) )
+                                {
+                                    if( !CoverImage->SaveFile( DevCoverName + wxT( ".jpg" ), wxBITMAP_TYPE_JPEG ) )
+                                    {
+                                        guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
+                                    }
+                                }
+                            }
+
+                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
+                            {
+                                if( !wxFileExists( DevCoverName + wxT( ".png" ) ) )
+                                {
+                                    if( !CoverImage->SaveFile( DevCoverName + wxT( ".png" ), wxBITMAP_TYPE_PNG ) )
+                                    {
+                                        guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
+                                    }
+                                }
+                            }
+
+                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
+                            {
+                                if( !wxFileExists( DevCoverName + wxT( ".gif" ) ) )
+                                {
+                                    if( !CoverImage->SaveFile( DevCoverName + wxT( ".gif" ), wxBITMAP_TYPE_GIF ) )
+                                    {
+                                        guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
+                                    }
+                                }
+                            }
+
+                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
+                            {
+                                if( !wxFileExists( DevCoverName + wxT( ".bmp" ) ) )
+                                {
+                                    if( !CoverImage->SaveFile( DevCoverName + wxT( ".bmp" ), wxBITMAP_TYPE_BMP ) )
+                                    {
+                                        guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
+                                    }
                                 }
                             }
                         }

@@ -242,6 +242,8 @@
 		<Unit filename="src/TrackChangeInfo.h" />
 		<Unit filename="src/TrackEdit.cpp" />
 		<Unit filename="src/TrackEdit.h" />
+		<Unit filename="src/Transcode.cpp" />
+		<Unit filename="src/Transcode.h" />
 		<Unit filename="src/Utils.cpp" />
 		<Unit filename="src/Utils.h" />
 		<Unit filename="src/Version.h" />
