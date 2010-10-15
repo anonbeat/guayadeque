@@ -1951,8 +1951,7 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
             if( PortableIndex >= 0 && PortableIndex < ( int ) m_PortableMediaPanels.Count() )
             {
                 guPortableMediaPanel * PortableMediaPanel = m_PortableMediaPanels[ event.GetInt() ];
-                guPortableMediaDevice * PortableMediaDevice = PortableMediaPanel->PortableMediaDevice();
-                guCopyToDeviceThread * CopyToDeviceThread = new guCopyToDeviceThread( m_Db, PortableMediaDevice, Tracks, GaugeId );
+                guCopyToDeviceThread * CopyToDeviceThread = new guCopyToDeviceThread( m_Db, PortableMediaPanel, Tracks, GaugeId );
                 if( !CopyToDeviceThread )
                 {
                     guLogError( wxT( "Could not create the CopyTo thread object" ) );
@@ -4704,10 +4703,11 @@ guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guCopyToDeviceThread
 // -------------------------------------------------------------------------------- //
-guCopyToDeviceThread::guCopyToDeviceThread( guDbLibrary * db, guPortableMediaDevice * mediadevice, guTrackArray * tracks, int gaugeid ) :
+guCopyToDeviceThread::guCopyToDeviceThread( guDbLibrary * db, guPortableMediaPanel * mediapanel, guTrackArray * tracks, int gaugeid ) :
     wxThread()
 {
-    m_Device    = mediadevice;
+    m_Panel     = mediapanel;
+    m_Device    = mediapanel->PortableMediaDevice();
     m_Db        = db;
     m_Tracks    = tracks;
     m_GaugeId   = gaugeid;
@@ -4914,14 +4914,14 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                 }
             }
 
-            //
-            // If the device supports covers
-            //
-            int DevCoverFormats = m_Device->CoverFormats();
-            if( DevCoverFormats ) // if has cover handling enabled
+            // If have cover assigned
+            if( CurTrack->m_CoverId )
             {
-                // If have cover assigned
-                if( CurTrack->m_CoverId )
+                //
+                // If the device supports covers
+                //
+                int DevCoverFormats = m_Device->CoverFormats();
+                if( DevCoverFormats ) // if has cover handling enabled
                 {
                     wxString CoverPath = m_Db->GetCoverPath( CurTrack->m_CoverId );
                     wxImage * CoverImage = new wxImage( CoverPath );
@@ -4999,7 +4999,6 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
                     }
                 }
             }
-
         }
 
 //        m_SizeCounter += CurTrack->m_FileSize;
@@ -5015,6 +5014,10 @@ guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
     event.SetInt( m_GaugeId );
     wxPostEvent( MainFrame, event );
     //wxMessageBox( "Copy to dir finished" );
+
+    event.SetId( ID_MENU_UPDATE_LIBRARY );
+    event.SetClientData( m_Panel );
+    wxPostEvent( MainFrame, event );
 
     guDBusNotify * NotifySrv = MainFrame->GetNotifyObject();
     if( NotifySrv )
