@@ -440,6 +440,7 @@ class guCopyToDeviceThread : public wxThread
 {
   private:
     guDbLibrary *               m_Db;
+    guPortableMediaPanel *      m_Panel;
     guPortableMediaDevice *     m_Device;
     guTrackArray *              m_Tracks;
     int                         m_GaugeId;
@@ -449,7 +450,7 @@ class guCopyToDeviceThread : public wxThread
     void                        TranscodeFile( const wxString &from, const wxString &to );
 
   public:
-    guCopyToDeviceThread( guDbLibrary * db, guPortableMediaDevice * mediadevice, guTrackArray * tracks, int gaugeid );
+    guCopyToDeviceThread( guDbLibrary * db, guPortableMediaPanel * mediapanel, guTrackArray * tracks, int gaugeid );
     ~guCopyToDeviceThread();
 
     virtual ExitCode Entry();

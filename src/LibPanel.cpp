@@ -2932,6 +2932,83 @@ void guLibPanel::OnSongDeleteLibrary( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guIsDirectoryEmpty( const wxString &path )
+{
+    wxString FileName;
+    wxString Path= path;
+    wxDir Dir;
+
+    if( !Path.EndsWith( wxT( "/" ) ) )
+        Path += wxT( "/" );
+
+    Dir.Open( Path );
+
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+        {
+            do {
+                if( FileName[ 0 ] == '.' )
+                    continue;
+                if( Dir.Exists( Path + FileName ) )
+                {
+                    if( !guIsDirectoryEmpty( Path + FileName ) )
+                        return false;
+                }
+                else
+                {
+                    if( guIsValidAudioFile( FileName.Lower() ) )
+                        return false;
+                }
+            } while( Dir.GetNext( &FileName ) );
+        }
+    }
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guRmDirRecursive( const wxString &path )
+{
+    wxString FileName;
+    wxString Path= path;
+    wxDir Dir;
+
+    if( !Path.EndsWith( wxT( "/" ) ) )
+        Path += wxT( "/" );
+
+    Dir.Open( Path );
+
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+        {
+            do {
+                if( FileName[ 0 ] == '.' )
+                    continue;
+                if( Dir.Exists( Path + FileName ) )
+                {
+                    if( !guRmDirRecursive( Path + FileName ) )
+                        return false;
+                }
+                else
+                {
+                    if( !wxRemoveFile( Path + FileName ) )
+                        return false;
+                }
+            } while( Dir.GetNext( &FileName ) );
+        }
+    }
+
+    if( !wxRmdir( Path ) )
+    {
+        guLogMessage( wxT( "Could not delete the dir %s" ), Path.c_str() );
+        return false;
+    }
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
 {
     if( m_SongListCtrl->GetSelectedCount() )
@@ -2939,6 +3016,7 @@ void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
         if( wxMessageBox( wxT( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
             wxT( "Remove tracks from drive" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
         {
+            wxArrayString DeletePaths;
             guTrackArray Tracks;
             m_SongListCtrl->GetSelectedSongs( &Tracks );
             //
@@ -2948,9 +3026,28 @@ void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
             int Count = Tracks.Count();
             for( Index = 0; Index < Count; Index++ )
             {
+                if( DeletePaths.Index( wxPathOnly( Tracks[ Index ].m_FileName ) ) == wxNOT_FOUND )
+                {
+                    DeletePaths.Add( wxPathOnly( Tracks[ Index ].m_FileName ) );
+                }
+
                 if( !wxRemoveFile( Tracks[ Index ].m_FileName ) )
                 {
                     guLogMessage( wxT( "Error deleting '%s'" ), Tracks[ Index ].m_FileName.c_str() );
+                }
+            }
+
+            if( ( Count = DeletePaths.Count() ) )
+            {
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    if( guIsDirectoryEmpty( DeletePaths[ Index ] ) )
+                    {
+                        if( !guRmDirRecursive( DeletePaths[ Index ] ) )
+                        {
+                            guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
+                        }
+                    }
                 }
             }
 
