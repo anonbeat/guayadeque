@@ -37,6 +37,7 @@
 #include "./images/edit_delete.h"
 #include "./images/edit.h"
 #include "./images/exit.h"
+#include "./images/filter.h"
 #include "./images/guayadeque.h"
 #include "./images/guayadeque_taskbar.h"
 #include "./images/lastfm_as_off.h"
@@ -62,6 +63,7 @@
 #include "./images/tiny_edit_clear.h"
 #include "./images/tiny_edit.h"
 #include "./images/tiny_edit_copy.h"
+#include "./images/tiny_filter.h"
 #include "./images/tiny_left.h"
 #include "./images/tiny_net_radio.h"
 #include "./images/tiny_numerate.h"
@@ -189,6 +191,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_edit_delete,                   wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_edit,                          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_exit,                          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_filter,                        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_guayadeque,                    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_guayadeque_taskbar,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_lastfm_as_off,                 wxBITMAP_TYPE_PNG ),
@@ -214,6 +217,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_musicbrainz,	                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_edit,                     wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_edit_copy,	            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_filter,	                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_search_again,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_numerate,	                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_edit_clear,               wxBITMAP_TYPE_PNG ),
