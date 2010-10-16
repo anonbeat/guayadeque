@@ -78,18 +78,11 @@ guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const 
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::~guLibUpdateThread()
 {
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    if( Config )
-//    {
-//        wxDateTime Now = wxDateTime::Now();
-//        Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "General" ) );
-//        Config->Flush();
-//    }
-    m_LibPanel->SetLastUpdate();
-
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
     if( !TestDestroy() )
     {
+        m_LibPanel->SetLastUpdate();
+
         event.SetEventObject( ( wxObject * ) this );
         event.SetClientData( ( void * ) m_LibPanel );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
