@@ -3481,18 +3481,18 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
     sort = wxT( " ORDER BY " );
     switch( playlist->m_SortType )
     {
-        case guDYNAMIC_FILTER_ORDER_TITLE :         sort += wxT( "song_name " ); break;
-        case guDYNAMIC_FILTER_ORDER_ARTIST :        sort += wxT( "song_artist " ); break;
-        case guDYNAMIC_FILTER_ORDER_ALBUMARTIST :   sort += wxT( "song_albumartist " ); break;
-        case guDYNAMIC_FILTER_ORDER_ALBUM :         sort += wxT( "song_album " ); break;
-        case guDYNAMIC_FILTER_ORDER_GENRE :         sort += wxT( "genre_name " ); break;
-        case guDYNAMIC_FILTER_ORDER_COMPOSER :      sort += wxT( "song_composer " ); break;
-        case guDYNAMIC_FILTER_ORDER_YEAR :          sort += wxT( "song_year" ); break;
-        case guDYNAMIC_FILTER_ORDER_RATING :        sort += wxT( "song_rating" ); break;
+        case guDYNAMIC_FILTER_ORDER_TITLE :         sort += wxT( "song_name" ); break;
+        case guDYNAMIC_FILTER_ORDER_ARTIST :        sort += wxT( "song_artist, song_album, song_disk, song_number" ); break;
+        case guDYNAMIC_FILTER_ORDER_ALBUMARTIST :   sort += wxT( "song_albumartist, song_album, song_disk, song_number" ); break;
+        case guDYNAMIC_FILTER_ORDER_ALBUM :         sort += wxT( "song_album, song_disk, song_number" ); break;
+        case guDYNAMIC_FILTER_ORDER_GENRE :         sort += wxT( "genre_name, song_artist, song_album, song_disk, song_number" ); break;
+        case guDYNAMIC_FILTER_ORDER_COMPOSER :      sort += wxT( "song_composer, song_album, song_disk, song_number" ); break;
+        case guDYNAMIC_FILTER_ORDER_YEAR :          sort += wxT( "song_year, song_album, song_disk, song_number" ); break;
+        case guDYNAMIC_FILTER_ORDER_RATING :        sort += wxT( "song_rating, song_album, song_disk, song_number" ); break;
         case guDYNAMIC_FILTER_ORDER_LENGTH :        sort += wxT( "song_length" ); break;
         case guDYNAMIC_FILTER_ORDER_PLAYCOUNT :     sort += wxT( "song_playcount" ); break;
         case guDYNAMIC_FILTER_ORDER_LASTPLAY :      sort += wxT( "song_lastplay" ); break;
-        case guDYNAMIC_FILTER_ORDER_ADDEDDATE :     sort += wxT( "song_addedtime" ); break;
+        case guDYNAMIC_FILTER_ORDER_ADDEDDATE :     sort += wxT( "song_addedtime, song_album, song_disk, song_number" ); break;
         case guDYNAMIC_FILTER_ORDER_RANDOM :        sort += wxT( "RANDOM()" ); break;
     }
     if( playlist->m_SortDesc )
