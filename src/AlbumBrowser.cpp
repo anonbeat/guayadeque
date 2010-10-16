@@ -639,12 +639,16 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 //	m_FilterChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterChoiceNChoices, m_FilterChoiceChoices, 0 );
 //	m_FilterChoice->SetSelection( 0 );
 //	FilterSizer->Add( m_FilterChoice, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_EditFilterBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_filter ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
+	m_EditFilterBtn->SetToolTip( _( "Edit filter" ) );
+	FilterSizer->Add( m_EditFilterBtn, 0, wxTOP|wxLEFT, 5 );
+
 	m_FilterBtn = new wxToggleButton( this, wxID_ANY, _( "Filter" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_FilterBtn->SetValue( Config->ReadBool( wxT( "Enable" ), false, wxT( "AlbumBrowser" ) ) );
-	FilterSizer->Add( m_FilterBtn, 0, wxTOP|wxLEFT, 5 );
 
-	m_EditFilterBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
-	FilterSizer->Add( m_EditFilterBtn, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_FilterBtn->SetToolTip( _( "Toggle filter on/off" ) );
+	m_FilterBtn->Enable( m_DynFilter.m_Filters.Count() );
+	FilterSizer->Add( m_FilterBtn, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
 //	wxStaticText * SearchLabel = new wxStaticText( this, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
 //	SearchLabel->Wrap( -1 );
@@ -992,6 +996,7 @@ void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
 
         if( m_DynFilter.m_Filters.Count() )
         {
+            m_FilterBtn->Enable( true );
             m_FilterBtn->SetValue( true );
             RefreshCount();
             ReloadItems();
@@ -1011,23 +1016,28 @@ void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnFilterSelected( wxCommandEvent &event )
 {
-    // If its enabled
-    if( event.GetInt() && !m_DynFilter.m_Filters.Count() )
-    {
-        OnEditFilterClicked( event );
-        if( !m_DynFilter.m_Filters.Count() )
-        {
-            m_FilterBtn->SetValue( false );
-        }
-    }
-    else
-    {
-        RefreshCount();
-        ReloadItems();
-        m_LastItemStart = wxNOT_FOUND;
-        m_NavSlider->SetValue( 0 );
-        RefreshAll();
-    }
+//    // If its enabled
+//    if( event.GetInt() && !m_DynFilter.m_Filters.Count() )
+//    {
+//        OnEditFilterClicked( event );
+//        if( !m_DynFilter.m_Filters.Count() )
+//        {
+//            m_FilterBtn->SetValue( false );
+//        }
+//    }
+//    else
+//    {
+//        RefreshCount();
+//        ReloadItems();
+//        m_LastItemStart = wxNOT_FOUND;
+//        m_NavSlider->SetValue( 0 );
+//        RefreshAll();
+//    }
+    RefreshCount();
+    ReloadItems();
+    m_LastItemStart = wxNOT_FOUND;
+    m_NavSlider->SetValue( 0 );
+    RefreshAll();
 }
 
 // -------------------------------------------------------------------------------- //
