@@ -22,6 +22,7 @@
 
 #include "AuiDockArt.h"
 #include "Commands.h"
+#include "CopyTo.h"
 #include "ConfirmExit.h"
 #include "FileRenamer.h"    // NormalizeField
 #include "Images.h"
@@ -86,6 +87,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_DbCache = dbcache;
     m_JamendoDb = NULL;
     m_MagnatuneDb = NULL;
+    m_CopyToThread = NULL;
 
     //
     m_Db->SetLibPath( Config->ReadAStr( wxT( "LibPath" ),
@@ -798,6 +800,13 @@ guMainFrame::~guMainFrame()
     {
         m_JamendoDb->Close();
         delete m_JamendoDb;
+    }
+
+    if( m_CopyToThread )
+    {
+        m_CopyToThreadMutex.Lock();
+        delete m_CopyToThread;
+        m_CopyToThreadMutex.Unlock();
     }
 }
 
@@ -1918,14 +1927,25 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
             {
                 if( DirDialog->ShowModal() == wxID_OK )
                 {
-                    int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ) );
-                    guCopyToDirThread * CopyToDirThread = new guCopyToDirThread( DirDialog->GetPath().c_str(),
-                        Tracks, event.GetInt(), GaugeId );
-                    if( !CopyToDirThread )
+                    m_CopyToThreadMutex.Lock();
+
+                    if( !m_CopyToThread )
                     {
-                        guLogError( wxT( "Could not create the CopyTo thread object" ) );
-                        delete Tracks;
+                        int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ) );
+                        m_CopyToThread = new guCopyToThread( this, GaugeId );
                     }
+
+                    guConfig * Config = ( guConfig * ) guConfig::Get();
+                    wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option"), wxEmptyString, wxT( "CopyTo") );
+                    wxArrayString SelCopyTo = wxStringTokenize( CopyToOptions[ event.GetInt() ], wxT( ":") );
+
+                    m_CopyToThread->AddAction( Tracks, DirDialog->GetPath(),
+                            unescape_configlist_str( SelCopyTo[ 1 ] ),
+                            wxAtoi( SelCopyTo[ 2 ] ),
+                            wxAtoi( SelCopyTo[ 3 ] ) );
+
+                    m_CopyToThreadMutex.Unlock();
+
                 }
                 DirDialog->Destroy();
             }
@@ -1946,17 +1966,23 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
     {
         if( Tracks->Count() )
         {
-            int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To Device" ) );
             int PortableIndex = event.GetInt();
             if( PortableIndex >= 0 && PortableIndex < ( int ) m_PortableMediaPanels.Count() )
             {
                 guPortableMediaPanel * PortableMediaPanel = m_PortableMediaPanels[ event.GetInt() ];
-                guCopyToDeviceThread * CopyToDeviceThread = new guCopyToDeviceThread( m_Db, PortableMediaPanel, Tracks, GaugeId );
-                if( !CopyToDeviceThread )
+
+                m_CopyToThreadMutex.Lock();
+
+                if( !m_CopyToThread )
                 {
-                    guLogError( wxT( "Could not create the CopyTo thread object" ) );
-                    delete Tracks;
+                    int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ) );
+                    m_CopyToThread = new guCopyToThread( this, GaugeId );
                 }
+
+                m_CopyToThread->AddAction( Tracks, m_Db, PortableMediaPanel );
+
+                m_CopyToThreadMutex.Unlock();
+
             }
             else
             {
@@ -4416,20 +4442,23 @@ void guMainFrame::CreateCopyToMenu( wxMenu * menu, const int basecmd )
     int Count;
     wxMenuItem * MenuItem;
     wxMenu * SubMenu = new wxMenu();
+
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "CopyTo" ) );
-    if( ( Count = Names.Count() ) )
+    wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "CopyTo" ) );
+
+    if( ( Count = CopyToOptions.Count() ) )
     {
         for( Index = 0; Index < Count; Index++ )
         {
-            MenuItem = new wxMenuItem( SubMenu, basecmd + Index, Names[ Index ], _( "Copy the current selected songs to a directory or device" ) );
+            wxArrayString CurOption = wxStringTokenize( CopyToOptions[ Index ], wxT( ":") );
+            MenuItem = new wxMenuItem( SubMenu, basecmd + Index, unescape_configlist_str( CurOption[ 0 ] ), _( "Copy the current selected songs to a directory or device" ) );
             SubMenu->Append( MenuItem );
         }
     }
 
     bool SeparatorAdded = false;
-    Names = m_VolumeMonitor->GetMountNames();
-    if( ( Count = Names.Count() ) )
+    wxArrayString DeviceNames = m_VolumeMonitor->GetMountNames();
+    if( ( Count = DeviceNames.Count() ) )
     {
         for( Index = 0; Index < Count; Index++ )
         {
@@ -4442,7 +4471,7 @@ void guMainFrame::CreateCopyToMenu( wxMenu * menu, const int basecmd )
                     SeparatorAdded = true;
                 }
 
-                MenuItem = new wxMenuItem( SubMenu, basecmd + 100 + PanelIndex, Names[ Index ], _( "Copy the current selected songs to a directory or device" ) );
+                MenuItem = new wxMenuItem( SubMenu, basecmd + 100 + PanelIndex, DeviceNames[ Index ], _( "Copy the current selected songs to a directory or device" ) );
                 //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
                 SubMenu->Append( MenuItem );
             }
@@ -4458,6 +4487,18 @@ void guMainFrame::CreateCopyToMenu( wxMenu * menu, const int basecmd )
         delete SubMenu;
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::CopyToThreadFinished( void )
+{
+    if( m_CopyToThread )
+    {
+        m_CopyToThreadMutex.Lock();
+        m_CopyToThread = NULL;
+        m_CopyToThreadMutex.Unlock();
+    }
+}
+
 
 
 
@@ -4567,472 +4608,8 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
     return 0;
 }
 
-// -------------------------------------------------------------------------------- //
-// guCopyToDirThread
-// -------------------------------------------------------------------------------- //
-guCopyToDirThread::guCopyToDirThread( const wxChar * destdir, guTrackArray * tracks, int pattern, int gaugeid ) :
-    wxThread()
-{
-    m_DestDir   = wxString( destdir );
-    m_Tracks    = tracks;
-    m_Pattern   = pattern;
-    m_GaugeId   = gaugeid;
-    if( Create() == wxTHREAD_NO_ERROR )
-    {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-        Run();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guCopyToDirThread::~guCopyToDirThread()
-{
-    if( m_Tracks )
-        delete m_Tracks;
-};
-
-// -------------------------------------------------------------------------------- //
-guCopyToDirThread::ExitCode guCopyToDirThread::Entry()
-{
-    int             count = m_Tracks->Count();
-    int             index;
-    wxString        FileName;
-    wxString        FilePattern;
-	guConfig *      Config;
-	bool            FileOverwrite = true;
-	m_SizeCounter = 0;
-	unsigned int    TimeCounter = wxGetLocalTime();
-	guMainFrame *   MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-
-    Config = ( guConfig * ) guConfig::Get();
-    wxArrayString Patterns = Config->ReadAStr( wxT( "Pattern" ), wxEmptyString, wxT( "CopyTo" ) );
-    if( m_Pattern >= 0 && m_Pattern < ( int ) Patterns.Count() )
-    {
-        FilePattern = Patterns[ m_Pattern ];
-    }
-    else
-    {
-        guLogError( wxT( "Using default pattern as the selected one was not found" ) );
-        FilePattern = wxT( "{g}/{a}/{b}/{n} - {a} - {t}" );
-    }
-
-    guLogMessage( wxT( "Using pattern '%s'" ), FilePattern.c_str() );
-
-    if( !m_DestDir.EndsWith( wxT( "/" ) ) )
-        m_DestDir.Append( wxT( "/" ) );
-
-    //
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
-    event.SetInt( m_GaugeId );
-    event.SetExtraLong( count );
-    wxPostEvent( MainFrame, event );
-
-    for( index = 0; index < count; index++ )
-    {
-        FileName = wxEmptyString;
-
-        if( ( * m_Tracks )[ index ].m_Type == guTRACK_TYPE_RADIOSTATION )
-            continue;
-
-        FileName = FilePattern;
-        FileName.Replace( wxT( "{a}" ), NormalizeField( ( * m_Tracks )[ index ].m_ArtistName ) );
-        FileName.Replace( wxT( "{aa}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumArtist ) );
-        FileName.Replace( wxT( "{b}" ), NormalizeField( ( * m_Tracks )[ index ].m_AlbumName ) );
-        FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( ( * m_Tracks )[ index ].m_FileName ) );
-        FileName.Replace( wxT( "{g}" ), NormalizeField( ( * m_Tracks )[ index ].m_GenreName ) );
-        FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), ( * m_Tracks )[ index ].m_Number ) );
-        FileName.Replace( wxT( "{t}" ), NormalizeField( ( * m_Tracks )[ index ].m_SongName ) );
-        FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), ( * m_Tracks )[ index ].m_Year ) );
-        FileName.Replace( wxT( "{d}" ), NormalizeField( ( * m_Tracks )[ index ].m_Disk ) );
-        //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );
-
-        FileName += wxT( '.' ) + ( * m_Tracks )[ index ].m_FileName.Lower().AfterLast( wxT( '.' ) );
-
-        FileName = m_DestDir + FileName;
-
-        // Replace all the special chars < > : " / \ | ? *
-        FileName.Replace( wxT( "<" ), wxT( "_" ) );
-        FileName.Replace( wxT( ">" ), wxT( "_" ) );
-        FileName.Replace( wxT( ":" ), wxT( "_" ) );
-        FileName.Replace( wxT( "\"" ), wxT( "_" ) );
-        FileName.Replace( wxT( "|" ), wxT( "_" ) );
-        FileName.Replace( wxT( "?" ), wxT( "_" ) );
-        FileName.Replace( wxT( "*" ), wxT( "_" ) );
-
-        //guLogMessage( wxT( "Copy %s =>> %s" ), ( * m_Tracks )[ index ].m_FileName.c_str(), FileName.c_str() );
-        if( wxFileName::Mkdir( wxPathOnly( FileName ), 0777, wxPATH_MKDIR_FULL ) )
-        {
-            if( !wxCopyFile( ( * m_Tracks )[ index ].m_FileName, FileName, FileOverwrite ) )
-            {
-                guLogError( wxT( "Could not copy the file '%s'" ), FileName.c_str() );
-            }
-        }
-        else
-        {
-            guLogError( wxT( "Could not create path for copy the file '%s'" ), FileName.c_str() );
-        }
-        m_SizeCounter += ( * m_Tracks )[ index ].m_FileSize;
-        //
-        event.SetId( ID_GAUGE_UPDATE );
-        event.SetInt( m_GaugeId );
-        event.SetExtraLong( index + 1 );
-        wxPostEvent( MainFrame, event );
-    }
-
-    //
-    event.SetId( ID_GAUGE_REMOVE );
-    event.SetInt( m_GaugeId );
-    wxPostEvent( MainFrame, event );
-    //wxMessageBox( "Copy to dir finished" );
-
-    guDBusNotify * NotifySrv = MainFrame->GetNotifyObject();
-    if( NotifySrv )
-    {
-        TimeCounter = wxGetLocalTime() - TimeCounter;
-        wxString FinishMsg = wxString::Format( _( "Copied %u files (%s)\nin %s seconds" ),
-            m_Tracks->Count(),
-            SizeToString( m_SizeCounter ).c_str(),
-            LenToString( TimeCounter ).c_str() );
-        wxImage IconImg = guImage( guIMAGE_INDEX_guayadeque );
-        NotifySrv->Notify( wxEmptyString, _( "Finished copying files" ), FinishMsg, &IconImg );
-    }
-
-    return 0;
-}
-
-// -------------------------------------------------------------------------------- //
-// guCopyToDeviceThread
-// -------------------------------------------------------------------------------- //
-guCopyToDeviceThread::guCopyToDeviceThread( guDbLibrary * db, guPortableMediaPanel * mediapanel, guTrackArray * tracks, int gaugeid ) :
-    wxThread()
-{
-    m_Panel     = mediapanel;
-    m_Device    = mediapanel->PortableMediaDevice();
-    m_Db        = db;
-    m_Tracks    = tracks;
-    m_GaugeId   = gaugeid;
-
-    if( Create() == wxTHREAD_NO_ERROR )
-    {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-        Run();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guCopyToDeviceThread::~guCopyToDeviceThread()
-{
-    if( m_Tracks )
-        delete m_Tracks;
-};
-
-// -------------------------------------------------------------------------------- //
-void guCopyToDeviceThread::CopyFile( const wxString &from, const wxString &to )
-{
-    guLogMessage( wxT( "Copy %s =>> %s" ), from.c_str(), to.c_str() );
-    if( wxFileName::Mkdir( wxPathOnly( to ), 0777, wxPATH_MKDIR_FULL ) )
-    {
-        if( !wxCopyFile( from, to ) )
-        {
-            guLogError( wxT( "Could not copy the file '%s'" ), from.c_str() );
-        }
-    }
-    else
-    {
-        guLogError( wxT( "Could not create path for copy the file '%s'" ), from.c_str() );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guCopyToDeviceThread::TranscodeFile( const wxString &source, const wxString &target )
-{
-    guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\n%s\n%s" ), source.c_str(), target.c_str() );
-    int Format = m_Device->TranscodeFormat();
-    int Quality = m_Device->TranscodeQuality();
-    wxString OutFile = target + wxT( "." ) + guGetTranscodeFormatString( Format );
-    if( wxFileName::Mkdir( wxPathOnly( target ), 0777, wxPATH_MKDIR_FULL ) )
-    {
-        guTranscodeThread * TranscodeThread = new guTranscodeThread( source, OutFile, Format, Quality );
-        if( TranscodeThread && TranscodeThread->IsOk() )
-        {
-            // TODO : Make a better aproach to be sure its running
-            Sleep( 1000 );
-            while( TranscodeThread->IsTranscoding() )
-            {
-                Sleep( 200 );
-            }
-
-            m_SizeCounter += guGetFileSize( OutFile );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guCopyToDeviceThread::ExitCode guCopyToDeviceThread::Entry()
-{
-    int             Count = m_Tracks->Count();
-    int             Index;
-    wxString        FileName;
-    wxString        FilePattern;
-    wxString        DestDir;
-	m_SizeCounter = 0;
-	unsigned int    TimeCounter = wxGetLocalTime();
-	guMainFrame *   MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-
-    FilePattern = m_Device->Pattern();
-    guLogMessage( wxT( "Using pattern '%s'" ), FilePattern.c_str() );
-
-    DestDir = m_Device->MountPath();
-    wxArrayString AudioFolders = wxStringTokenize( m_Device->AudioFolders(), wxT( "," ) );
-    DestDir += AudioFolders[ 0 ].Trim( true ).Trim( false );
-    if( !DestDir.EndsWith( wxT( "/" ) ) )
-        DestDir.Append( wxT( "/" ) );
-
-    //
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
-    event.SetInt( m_GaugeId );
-    event.SetExtraLong( Count );
-    wxPostEvent( MainFrame, event );
-
-    wxArrayInt CoversOnDevice;
-
-    for( Index = 0; Index < Count; Index++ )
-    {
-        guTrack * CurTrack = &m_Tracks->Item( Index );
-
-        if( CurTrack->m_Type == guTRACK_TYPE_RADIOSTATION )
-            continue;
-
-        FileName = FilePattern;
-        FileName.Replace( wxT( "{a}" ), NormalizeField( CurTrack->m_ArtistName ) );
-        FileName.Replace( wxT( "{aa}" ), NormalizeField( CurTrack->m_AlbumArtist ) );
-        FileName.Replace( wxT( "{b}" ), NormalizeField( CurTrack->m_AlbumName ) );
-        FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( CurTrack->m_FileName ) );
-        FileName.Replace( wxT( "{g}" ), NormalizeField( CurTrack->m_GenreName ) );
-        FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), CurTrack->m_Number ) );
-        FileName.Replace( wxT( "{t}" ), NormalizeField( CurTrack->m_SongName ) );
-        FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), CurTrack->m_Year ) );
-        FileName.Replace( wxT( "{d}" ), NormalizeField( CurTrack->m_Disk ) );
-        //guLogMessage( wxT( "File: '%s' " ), FileName.c_str() );
-
-//        FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-//
-        FileName = DestDir + FileName;
-
-        // Replace all the special chars < > : " / \ | ? *
-        FileName.Replace( wxT( "<" ), wxT( "_" ) );
-        FileName.Replace( wxT( ">" ), wxT( "_" ) );
-        FileName.Replace( wxT( ":" ), wxT( "_" ) );
-        FileName.Replace( wxT( "\"" ), wxT( "_" ) );
-        FileName.Replace( wxT( "|" ), wxT( "_" ) );
-        FileName.Replace( wxT( "?" ), wxT( "_" ) );
-        FileName.Replace( wxT( "*" ), wxT( "_" ) );
-
-        if( m_Device->TranscodeFormat() == guTRANSCODE_FORMAT_KEEP )
-        {
-            FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-            CopyFile( CurTrack->m_FileName, FileName );
-            m_SizeCounter += CurTrack->m_FileSize;
-        }
-        else
-        {
-            int FileFormat = guGetTranscodeFileFormat( CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) ) );
-
-            //guLogMessage( wxT( "AudioFormats: %08X  %08X" ), m_Device->AudioFormats(), FileFormat );
-            // If the file is not supported then need to transcode it
-            if( !( m_Device->AudioFormats() & FileFormat ) )
-            {
-                //guLogMessage( wxT( "Its an unsupported format... Transcoding" ) );
-                TranscodeFile( CurTrack->m_FileName, FileName );
-            }
-            else    // The file is supported
-            {
-                //guLogMessage( wxT( "Its a supported format" ) );
-                // The file is supported and we dont need to trasncode in all cases so copy the file
-                if( m_Device->TranscodeScope() != guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS )
-                {
-                    FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                    CopyFile( CurTrack->m_FileName, FileName );
-                    m_SizeCounter += CurTrack->m_FileSize;
-                }
-                else
-                {
-                    //guLogMessage( wxT( "TranscodeFOrmat: %u      FileFormat: %i" ), m_Device->TranscodeFormat(), FileFormat );
-                    // The file is the same selected in the format so check if the bitrate is
-                    if( m_Device->TranscodeFormat() == FileFormat )
-                    {
-                        if( m_Device->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP )
-                        {
-                            int FileBitrate = 0;
-                            switch( FileFormat )
-                            {
-                                case guPORTABLEMEDIA_AUDIO_FORMAT_MP3 :
-                                case guPORTABLEMEDIA_AUDIO_FORMAT_AAC :
-                                case guPORTABLEMEDIA_AUDIO_FORMAT_WMA :
-                                {
-                                    FileBitrate = guGetMp3QualityBitRate( m_Device->TranscodeQuality() );
-                                    break;
-                                }
-
-                                case guPORTABLEMEDIA_AUDIO_FORMAT_OGG :
-                                {
-                                    FileBitrate = guGetOggQualityBitRate( m_Device->TranscodeQuality() );
-                                    break;
-                                }
-
-                                case guPORTABLEMEDIA_AUDIO_FORMAT_FLAC :
-                                {
-                                    FileBitrate = 0;
-                                    break;
-                                }
-                            }
-
-                            if( CurTrack->m_Bitrate > FileBitrate )
-                            {
-                                TranscodeFile( CurTrack->m_FileName, FileName );
-                            }
-                            else
-                            {
-                                FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                                CopyFile( CurTrack->m_FileName, FileName );
-                                m_SizeCounter += CurTrack->m_FileSize;
-                            }
 
 
-                        }
-                        else
-                        {
-                            FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-                            CopyFile( CurTrack->m_FileName, FileName );
-                            m_SizeCounter += CurTrack->m_FileSize;
-                        }
-                    }
-                    else
-                    {
-                        TranscodeFile( CurTrack->m_FileName, FileName );
-                    }
-                }
-            }
-
-            // If have cover assigned
-            if( CurTrack->m_CoverId )
-            {
-                //
-                // If the device supports covers
-                //
-                int DevCoverFormats = m_Device->CoverFormats();
-                if( DevCoverFormats ) // if has cover handling enabled
-                {
-                    wxString CoverPath = m_Db->GetCoverPath( CurTrack->m_CoverId );
-                    wxImage * CoverImage = new wxImage( CoverPath );
-                    if( CoverImage )
-                    {
-                        if( CoverImage->IsOk() )
-                        {
-                            int DevCoverSize = m_Device->CoverSize();
-                            if( DevCoverSize && ( ( CoverImage->GetWidth() != DevCoverSize ) || ( CoverImage->GetHeight() != DevCoverSize ) ) )
-                            {
-                                CoverImage->Rescale( DevCoverSize, DevCoverSize, wxIMAGE_QUALITY_HIGH );
-                            }
-
-                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
-                            {
-                                if( !guTagSetPicture( FileName, CoverImage ) )
-                                {
-                                    guLogMessage( wxT( "Couldnt set the picture to %s" ), FileName.c_str() );
-                                }
-                            }
-
-                            wxString DevCoverName = m_Device->CoverName();
-                            if( DevCoverName.IsEmpty() )
-                            {
-                                DevCoverName = wxT( "cover" );
-                            }
-                            DevCoverName = wxPathOnly( FileName ) + wxT( "/" ) + DevCoverName;
-
-                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
-                            {
-                                if( !wxFileExists( DevCoverName + wxT( ".jpg" ) ) )
-                                {
-                                    if( !CoverImage->SaveFile( DevCoverName + wxT( ".jpg" ), wxBITMAP_TYPE_JPEG ) )
-                                    {
-                                        guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
-                                    }
-                                }
-                            }
-
-                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
-                            {
-                                if( !wxFileExists( DevCoverName + wxT( ".png" ) ) )
-                                {
-                                    if( !CoverImage->SaveFile( DevCoverName + wxT( ".png" ), wxBITMAP_TYPE_PNG ) )
-                                    {
-                                        guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
-                                    }
-                                }
-                            }
-
-                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
-                            {
-                                if( !wxFileExists( DevCoverName + wxT( ".gif" ) ) )
-                                {
-                                    if( !CoverImage->SaveFile( DevCoverName + wxT( ".gif" ), wxBITMAP_TYPE_GIF ) )
-                                    {
-                                        guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
-                                    }
-                                }
-                            }
-
-                            if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
-                            {
-                                if( !wxFileExists( DevCoverName + wxT( ".bmp" ) ) )
-                                {
-                                    if( !CoverImage->SaveFile( DevCoverName + wxT( ".bmp" ), wxBITMAP_TYPE_BMP ) )
-                                    {
-                                        guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
-                                    }
-                                }
-                            }
-                        }
-
-                        delete CoverImage;
-                    }
-                }
-            }
-        }
-
-//        m_SizeCounter += CurTrack->m_FileSize;
-//        //
-        event.SetId( ID_GAUGE_UPDATE );
-        event.SetInt( m_GaugeId );
-        event.SetExtraLong( Index + 1 );
-        wxPostEvent( MainFrame, event );
-    }
-
-    //
-    event.SetId( ID_GAUGE_REMOVE );
-    event.SetInt( m_GaugeId );
-    wxPostEvent( MainFrame, event );
-    //wxMessageBox( "Copy to dir finished" );
-
-    event.SetId( ID_MENU_UPDATE_LIBRARY );
-    event.SetClientData( m_Panel );
-    wxPostEvent( MainFrame, event );
-
-    guDBusNotify * NotifySrv = MainFrame->GetNotifyObject();
-    if( NotifySrv )
-    {
-        TimeCounter = wxGetLocalTime() - TimeCounter;
-        wxString FinishMsg = wxString::Format( _( "Copied %u files (%s)\nin %s seconds" ),
-            Count,
-            SizeToString( m_SizeCounter ).c_str(),
-            LenToString( TimeCounter ).c_str() );
-        wxImage IconImg = guImage( guIMAGE_INDEX_guayadeque );
-        NotifySrv->Notify( wxEmptyString, _( "Finished copying files" ), FinishMsg, &IconImg );
-    }
-
-    return 0;
-}
 
 // -------------------------------------------------------------------------------- //
 // guUpdatePodcastsTimer

@@ -50,6 +50,7 @@
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
 #include <wx/dialog.h>
+#include <wx/dynarray.h>
 
 #define  guPREFERENCE_PAGE_FLAG_GENERAL          ( 1 << 0 )
 #define  guPREFERENCE_PAGE_FLAG_LIBRARY          ( 1 << 1 )
@@ -83,6 +84,24 @@ enum guPreference_Page {
     guPREFERENCE_PAGE_COPYTO,
     guPREFERENCE_PAGE_LASTUSED = -1
 };
+
+// -------------------------------------------------------------------------------- //
+class guCopyToPattern
+{
+  public :
+    wxString    m_Name;
+    wxString    m_Pattern;
+    int         m_Format;
+    int         m_Quality;
+
+    guCopyToPattern();
+    guCopyToPattern( const wxString &pattern );
+
+    ~guCopyToPattern();
+
+    wxString    ToString( void );
+};
+WX_DECLARE_OBJARRAY( guCopyToPattern, guCopyToPatternArray );
 
 // -------------------------------------------------------------------------------- //
 class guPrefDialog : public wxDialog
@@ -207,13 +226,14 @@ class guPrefDialog : public wxDialog
 
 	wxPanel *                   m_CopyPanel;
     wxListBox *                 m_CopyToListBox;
-    wxArrayString               m_CopyToNames;
     wxBitmapButton *            m_CopyToAddBtn;
     wxBitmapButton *            m_CopyToUpBtn;
     wxBitmapButton *            m_CopyToDownBtn;
     wxBitmapButton *            m_CopyToDelBtn;
     wxTextCtrl *                m_CopyToPatternTextCtrl;
     wxTextCtrl *                m_CopyToNameTextCtrl;
+    wxChoice *                  m_CopyToFormatChoice;
+    wxChoice *                  m_CopyToQualityChoice;
     wxBitmapButton *            m_CopyToAcceptBtn;
 
     wxTextCtrl *                m_BrowserCmdTextCtrl;
@@ -264,6 +284,7 @@ class guPrefDialog : public wxDialog
     int                         m_LinkSelected;
     int                         m_CmdSelected;
     int                         m_CopyToSelected;
+    guCopyToPatternArray *      m_CopyToOptions;
     bool                        m_LibPathsChanged;
     int                         m_VisiblePanels;
 
@@ -342,6 +363,8 @@ class guPrefDialog : public wxDialog
 	void OnCopyToMoveUpBtnClick( wxCommandEvent &event );
 	void OnCopyToMoveDownBtnClick( wxCommandEvent &event );
 	void OnCopyToTextChanged( wxCommandEvent &event );
+	void OnCopyToFormatChanged( wxCommandEvent &event );
+	void OnCopyToQualityChanged( wxCommandEvent &event );
 	void OnCopyToSaveBtnClick( wxCommandEvent &event );
 
   public:

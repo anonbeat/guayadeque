@@ -126,7 +126,7 @@ ADD_SUBDIRECTORY( po )
 # default configuration and desktop icon
 INSTALL( FILES guayadeque.desktop DESTINATION share/applications )
 INSTALL( FILES guayadeque.png DESTINATION share/pixmaps/ )
-INSTALL( FILES guayadeque.png DESTINATION share/app-install/icons/ )
+#INSTALL( FILES guayadeque.png DESTINATION share/app-install/icons/ )
 INSTALL( FILES guayadeque.default.conf DESTINATION share/guayadeque )
 INSTALL( FILES equalizers.default.conf DESTINATION share/guayadeque )
 

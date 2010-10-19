@@ -60,5 +60,23 @@ class guConfig : public wxConfig
 
 };
 
+// -------------------------------------------------------------------------------- //
+wxString inline escape_configlist_str( const wxString &val )
+{
+    wxString RetVal = val;
+    RetVal.Replace( wxT( ":" ), wxT( "_$&" ) );
+    RetVal.Replace( wxT( ";" ), wxT( "_&$" ) );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline unescape_configlist_str( const wxString &val )
+{
+    wxString RetVal = val;
+    RetVal.Replace( wxT( "_$&" ), wxT( ":" ) );
+    RetVal.Replace( wxT( "_&$" ), wxT( ";" ) );
+    return RetVal;
+}
+
 #endif
 // -------------------------------------------------------------------------------- //
