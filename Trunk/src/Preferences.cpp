@@ -23,15 +23,66 @@
 #include "Images.h"
 #include "MD5.h"
 #include "TagInfo.h"
+#include "Transcode.h"
 #include "Utils.h"
 
 #include <wx/statline.h>
+#include <wx/tokenzr.h>
 #include <wx/uri.h>
+#include <wx/arrimpl.cpp>
 
 #include <id3v1genres.h>
 
-wxString PatternToExample( const wxString &Pattern );
+WX_DEFINE_OBJARRAY( guCopyToPatternArray );
 
+// -------------------------------------------------------------------------------- //
+// guCopyToPattern
+// -------------------------------------------------------------------------------- //
+guCopyToPattern::guCopyToPattern()
+{
+    m_Format = guTRANSCODE_FORMAT_KEEP;
+    m_Quality = guTRANSCODE_QUALITY_NORMAL;
+}
+
+// -------------------------------------------------------------------------------- //
+guCopyToPattern::guCopyToPattern( const wxString &pattern )
+{
+    int Index;
+    int Count;
+    // Default:{g}/{a}/{b}/{n} - {a} - {t}:0:4
+    wxArrayString Fields = wxStringTokenize( pattern, wxT( ":" ) );
+    if( ( Count = Fields.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            switch( Index )
+            {
+                case 0 : m_Name    = unescape_configlist_str( Fields[ Index ] ); break;
+                case 1 : m_Pattern = unescape_configlist_str( Fields[ Index ] ); break;
+                case 2 : m_Format  = wxAtoi( Fields[ Index ] ); break;
+                case 3 : m_Quality = wxAtoi( Fields[ Index ] ); break;
+                default :
+                    return;
+            }
+        }
+    }
+}
+
+
+// -------------------------------------------------------------------------------- //
+guCopyToPattern::~guCopyToPattern()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guCopyToPattern::ToString( void )
+{
+    return wxString::Format( wxT( "%s:%s:%i:%i" ),
+        escape_configlist_str( m_Name ).c_str(), escape_configlist_str( m_Pattern ).c_str(), m_Format, m_Quality );
+}
+
+// -------------------------------------------------------------------------------- //
+// guPrefDialog
 // -------------------------------------------------------------------------------- //
 guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //:wxDialog( parent, wxID_ANY, _( "Preferences" ), wxDefaultPosition, wxSize( 600, 530 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
 {
@@ -43,6 +94,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
     m_CopyToSelected = wxNOT_FOUND;
     m_LibPathsChanged = false;
     m_VisiblePanels = 0;
+    m_CopyToOptions = NULL;
 
     m_Config = ( guConfig * ) guConfig::Get();
     if( !m_Config )
@@ -366,7 +418,14 @@ guPrefDialog::~guPrefDialog()
         m_CopyToDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveDownBtnClick ), NULL, this );
         m_CopyToPatternTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
         m_CopyToNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
+        m_CopyToFormatChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToFormatChanged ), NULL, this );
+        m_CopyToQualityChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToQualityChanged ), NULL, this );
         m_CopyToAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToSaveBtnClick ), NULL, this );
+
+        if( m_CopyToOptions )
+        {
+            delete m_CopyToOptions;
+        }
     }
 }
 
@@ -1736,26 +1795,41 @@ void guPrefDialog::BuildCopyToPage( void )
 	wxBoxSizer * CopyToListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_CopyToListBox = new wxListBox( m_CopyPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-    wxArrayString Patterns = m_Config->ReadAStr( wxT( "Pattern" ), wxEmptyString, wxT( "CopyTo" ) );
-    if( !Patterns.Count() )
-        Patterns.Add( wxT( "{g}/{a}/{b}/{n} - {a} - {t}" ) );
-	m_CopyToListBox->Append( Patterns );
-	m_CopyToNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "CopyTo" ) );
-	if( !m_CopyToNames.Count() )
-        m_CopyToNames.Add( _( "Default" ) );
-	int index;
-    int count = m_CopyToListBox->GetCount();
-	while( ( int ) m_CopyToNames.Count() < count )
-        m_CopyToNames.Add( wxEmptyString );
-    if( ( int ) m_CopyToNames.Count() > count )
-        m_CopyToNames.RemoveAt( count, m_CopyToNames.Count() - count );
-    for( index = 0; index < count; index++ )
-    {
-        if( m_CopyToNames[ index ].IsEmpty() )
+
+	m_CopyToOptions = new guCopyToPatternArray();
+
+	wxArrayString Options = m_Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "CopyTo" ) );
+	wxArrayString Names;
+    int Index;
+    int Count;
+	if( !Options.Count() )
+	{
+        wxArrayString Patterns = m_Config->ReadAStr( wxT( "Pattern" ), wxEmptyString, wxT( "CopyTo" ) );
+        wxArrayString PatNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "CopyTo" ) );
+        Count = wxMin( Patterns.Count(), PatNames.Count() );
+        for( Index = 0; Index < Count; Index++ )
         {
-            m_CopyToNames[ index ] = Patterns[ index ];
+            Options.Add( wxString::Format( wxT( "%s:%s:%i:%i" ),
+                escape_configlist_str( PatNames[ Index ] ).c_str(),
+                escape_configlist_str( Patterns[ Index ] ).c_str(),
+                guTRANSCODE_FORMAT_KEEP, guTRANSCODE_QUALITY_KEEP ) );
         }
-    }
+	}
+
+	if( ( Count = Options.Count() ) )
+	{
+	    for( Index = 0; Index < Count; Index++ )
+	    {
+	        guCopyToPattern * CopyToPattern = new guCopyToPattern( Options[ Index ] );
+	        if( CopyToPattern )
+	        {
+	            m_CopyToOptions->Add( CopyToPattern );
+	            Names.Add( CopyToPattern->m_Name );
+	        }
+	    }
+	}
+
+	m_CopyToListBox->Append( Names );
 
 	CopyToListBoxSizer->Add( m_CopyToListBox, 1, wxALL|wxEXPAND, 5 );
 
@@ -1783,17 +1857,12 @@ void guPrefDialog::BuildCopyToPage( void )
 
 	wxBoxSizer* CopyToEditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
+	wxStaticBoxSizer * CopyToOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Options ") ), wxHORIZONTAL );
+
 	wxFlexGridSizer * CopyToFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
 	CopyToFieldsSizer->AddGrowableCol( 1 );
 	CopyToFieldsSizer->SetFlexibleDirection( wxBOTH );
 	CopyToFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-
-	wxStaticText * CopyToPatternStaticText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Pattern:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	CopyToPatternStaticText->Wrap( -1 );
-	CopyToFieldsSizer->Add( CopyToPatternStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
-
-	m_CopyToPatternTextCtrl = new wxTextCtrl( m_CopyPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	CopyToFieldsSizer->Add( m_CopyToPatternTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	wxStaticText * CopyToNameStaticText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Name:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToNameStaticText->Wrap( -1 );
@@ -1802,12 +1871,38 @@ void guPrefDialog::BuildCopyToPage( void )
 	m_CopyToNameTextCtrl = new wxTextCtrl( m_CopyPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToFieldsSizer->Add( m_CopyToNameTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	CopyToEditorSizer->Add( CopyToFieldsSizer, 1, wxEXPAND, 5 );
+	wxStaticText * CopyToPatternStaticText = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Pattern:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToPatternStaticText->Wrap( -1 );
+	CopyToFieldsSizer->Add( CopyToPatternStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+
+	m_CopyToPatternTextCtrl = new wxTextCtrl( m_CopyPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToFieldsSizer->Add( m_CopyToPatternTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * CopyToFormatLabel = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Format:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToFormatLabel->Wrap( -1 );
+	CopyToFieldsSizer->Add( CopyToFormatLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+	m_CopyToFormatChoice = new wxChoice( m_CopyPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeFormatStrings(), 0 );
+	m_CopyToFormatChoice->SetSelection( 0 );
+	CopyToFieldsSizer->Add( m_CopyToFormatChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * CopyToQualityLabel = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Quality:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToQualityLabel->Wrap( -1 );
+	CopyToFieldsSizer->Add( CopyToQualityLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_CopyToQualityChoice = new wxChoice( m_CopyPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeQualityStrings(), 0 );
+	m_CopyToQualityChoice->SetSelection( guTRANSCODE_QUALITY_KEEP );
+	m_CopyToQualityChoice->Enable( false );
+	CopyToFieldsSizer->Add( m_CopyToQualityChoice, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	CopyToOptionsSizer->Add( CopyToFieldsSizer, 1, wxEXPAND, 5 );
+
+	CopyToEditorSizer->Add( CopyToOptionsSizer, 1, wxEXPAND|wxRIGHT, 5 );
 
 	m_CopyToAcceptBtn = new wxBitmapButton( m_CopyPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CopyToAcceptBtn->Enable( false );
 
-	CopyToEditorSizer->Add( m_CopyToAcceptBtn, 0, wxALL, 5 );
+	CopyToEditorSizer->Add( m_CopyToAcceptBtn, 0, wxALL|wxALIGN_BOTTOM, 5 );
 
 	CopyToLabelSizer->Add( CopyToEditorSizer, 0, wxEXPAND, 5 );
 
@@ -1816,7 +1911,7 @@ void guPrefDialog::BuildCopyToPage( void )
 	wxStaticBoxSizer* CopyToHelpSizer;
 	CopyToHelpSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Help ") ), wxVERTICAL );
 
-	wxStaticText * CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _("{a}\t: Artist\t\t\t{aa} : Album Artist\n{b}\t: Album\t\t\t{d}\t : Disk\n{f}\t: Filename\t\t{g}\t : Genre\n{n}\t: Number\t\t\t{t}\t : Title\n{y}\t: Year"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * CopyToHelpText = new wxStaticText( m_CopyPanel, wxID_ANY, _("{a}\t: Artist\t\t\t{aa} : Album Artist\t\t{b}\t: Album\n{d}\t: Disk  \t\t\t{f}\t: Filename\t\t\t{g}\t: Genre\n{n}\t: Number\t\t\t{t}\t: Title\t\t\t\t{y}\t: Year"), wxDefaultPosition, wxDefaultSize, 0 );
 	CopyToHelpText->Wrap( -1 );
 	CopyToHelpSizer->Add( CopyToHelpText, 0, wxALL, 5 );
 
@@ -1832,6 +1927,8 @@ void guPrefDialog::BuildCopyToPage( void )
 	m_CopyToDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveDownBtnClick ), NULL, this );
 	m_CopyToPatternTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
 	m_CopyToNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
+	m_CopyToFormatChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToFormatChanged ), NULL, this );
+	m_CopyToQualityChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToQualityChanged ), NULL, this );
 	m_CopyToAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToSaveBtnClick ), NULL, this );
 }
 
@@ -2084,9 +2181,19 @@ void guPrefDialog::SaveSettings( void )
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
     {
-        wxArrayString Patterns = m_CopyToListBox->GetStrings();
-        m_Config->WriteAStr( wxT( "Pattern" ), Patterns, wxT( "CopyTo" ) );
-        m_Config->WriteAStr( wxT( "Name" ), m_CopyToNames, wxT( "CopyTo" ), false );
+        wxArrayString Options;
+        int Index;
+        int Count = m_CopyToOptions->Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guCopyToPattern &CopyToPattern = m_CopyToOptions->Item( Index );
+            Options.Add( wxString::Format( wxT( "%s:%s:%i:%i" ),
+                escape_configlist_str( CopyToPattern.m_Name ).c_str(),
+                escape_configlist_str( CopyToPattern.m_Pattern ).c_str(),
+                CopyToPattern.m_Format, CopyToPattern.m_Quality ) );
+        }
+
+        m_Config->WriteAStr( wxT( "Option" ), Options, wxT( "CopyTo" ) );
     }
 
     m_Config->Flush();
@@ -2798,8 +2905,12 @@ void guPrefDialog::OnCopyToListBoxSelected( wxCommandEvent &event )
         else
             m_CopyToDownBtn->Disable();
 
-        m_CopyToPatternTextCtrl->SetValue( m_CopyToListBox->GetString( m_CopyToSelected ) );
-        m_CopyToNameTextCtrl->SetValue( m_CopyToNames[ m_CopyToSelected ] );
+        guCopyToPattern &CopyToPattern = m_CopyToOptions->Item( m_CopyToSelected );
+        m_CopyToNameTextCtrl->SetValue( CopyToPattern.m_Name );
+        m_CopyToPatternTextCtrl->SetValue( CopyToPattern.m_Pattern );
+        m_CopyToFormatChoice->SetSelection( CopyToPattern.m_Format );
+        m_CopyToQualityChoice->SetSelection( CopyToPattern.m_Quality );
+
         m_CopyToAcceptBtn->Disable();
     }
     else
@@ -2819,8 +2930,13 @@ void guPrefDialog::OnCopyToAddBtnClick( wxCommandEvent& event )
     wxString Cmd = m_CopyToPatternTextCtrl->GetValue();
     if( !Cmd.IsEmpty() )
     {
-        m_CopyToListBox->Append( m_CopyToPatternTextCtrl->GetValue() );
-        m_CopyToNames.Add( m_CopyToNameTextCtrl->GetValue() );
+        m_CopyToListBox->Append( m_CopyToNameTextCtrl->GetValue() );
+        guCopyToPattern * CopyToPattern = new guCopyToPattern();
+        CopyToPattern->m_Name = m_CopyToNameTextCtrl->GetValue();
+        CopyToPattern->m_Pattern = m_CopyToPatternTextCtrl->GetValue();
+        CopyToPattern->m_Format = m_CopyToFormatChoice->GetSelection();
+        CopyToPattern->m_Quality = m_CopyToQualityChoice->GetSelection();
+        m_CopyToOptions->Add( CopyToPattern );
     }
 }
 
@@ -2829,7 +2945,7 @@ void guPrefDialog::OnCopyToDelBtnClick( wxCommandEvent& event )
 {
     if( m_CopyToSelected != wxNOT_FOUND )
     {
-        m_CopyToNames.RemoveAt( m_CopyToSelected );
+        m_CopyToOptions->RemoveAt( m_CopyToSelected );
         m_CopyToListBox->Delete( m_CopyToSelected );
         m_CopyToSelected = wxNOT_FOUND;
     }
@@ -2838,13 +2954,13 @@ void guPrefDialog::OnCopyToDelBtnClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnCopyToMoveUpBtnClick( wxCommandEvent &event )
 {
-    wxString CurUrl = m_CopyToListBox->GetString( m_CopyToSelected );
-    wxString CurName = m_CopyToNames[ m_CopyToSelected ];
+    wxString CurName = m_CopyToListBox->GetString( m_CopyToSelected );
+    guCopyToPattern CopyToPattern = m_CopyToOptions->Item( m_CopyToSelected );
     m_CopyToListBox->SetString( m_CopyToSelected, m_CopyToListBox->GetString( m_CopyToSelected - 1 ) );
-    m_CopyToNames[ m_CopyToSelected ] = m_CopyToNames[ m_CopyToSelected - 1 ];
+    m_CopyToOptions->Item( m_CopyToSelected ) = m_CopyToOptions->Item( m_CopyToSelected - 1 );
     m_CopyToSelected--;
-    m_CopyToListBox->SetString( m_CopyToSelected, CurUrl );
-    m_CopyToNames[ m_CopyToSelected ] = CurName;
+    m_CopyToListBox->SetString( m_CopyToSelected, CurName );
+    m_CopyToOptions->Item( m_CopyToSelected ) = CopyToPattern;
     m_CopyToListBox->SetSelection( m_CopyToSelected );
 
     event.SetInt( m_CopyToSelected );
@@ -2854,13 +2970,13 @@ void guPrefDialog::OnCopyToMoveUpBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnCopyToMoveDownBtnClick( wxCommandEvent &event )
 {
-    wxString CurUrl = m_CopyToListBox->GetString( m_CopyToSelected );
-    wxString CurName = m_CopyToNames[ m_CopyToSelected ];
+    wxString CurName = m_CopyToListBox->GetString( m_CopyToSelected );
+    guCopyToPattern CopyToPattern = m_CopyToOptions->Item( m_CopyToSelected );
     m_CopyToListBox->SetString( m_CopyToSelected, m_CopyToListBox->GetString( m_CopyToSelected + 1 ) );
-    m_CopyToNames[ m_CopyToSelected ] = m_CopyToNames[ m_CopyToSelected + 1 ];
+    m_CopyToOptions->Item( m_CopyToSelected ) = m_CopyToOptions->Item( m_CopyToSelected + 1 );
     m_CopyToSelected++;
-    m_CopyToListBox->SetString( m_CopyToSelected, CurUrl );
-    m_CopyToNames[ m_CopyToSelected ] = CurName;
+    m_CopyToListBox->SetString( m_CopyToSelected, CurName );
+    m_CopyToOptions->Item( m_CopyToSelected ) = CopyToPattern;
     m_CopyToListBox->SetSelection( m_CopyToSelected );
 
     event.SetInt( m_CopyToSelected );
@@ -2885,14 +3001,45 @@ void guPrefDialog::OnCopyToTextChanged( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToFormatChanged( wxCommandEvent &event )
+{
+    m_CopyToQualityChoice->Enable( m_CopyToFormatChoice->GetSelection() );
+    if( m_CopyToSelected != wxNOT_FOUND )
+    {
+        if( !m_CopyToPatternTextCtrl->IsEmpty() )
+        {
+            m_CopyToAcceptBtn->Enable();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToQualityChanged( wxCommandEvent &event )
+{
+    m_CopyToQualityChoice->Enable( m_CopyToFormatChoice->GetSelection() );
+    if( m_CopyToSelected != wxNOT_FOUND )
+    {
+        if( !m_CopyToPatternTextCtrl->IsEmpty() )
+        {
+            m_CopyToAcceptBtn->Enable();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPrefDialog::OnCopyToSaveBtnClick( wxCommandEvent &event )
 {
-    m_CopyToListBox->SetString( m_CopyToSelected, m_CopyToPatternTextCtrl->GetValue() );
-    m_CopyToNames[ m_CopyToSelected ] = m_CopyToNameTextCtrl->GetValue();
-    if( m_CopyToNames[ m_CopyToSelected ].IsEmpty() )
+    m_CopyToListBox->SetString( m_CopyToSelected, m_CopyToNameTextCtrl->GetValue() );
+    guCopyToPattern &CopyToPattern = m_CopyToOptions->Item( m_CopyToSelected );
+    CopyToPattern.m_Name = m_CopyToNameTextCtrl->GetValue();
+    CopyToPattern.m_Pattern = m_CopyToPatternTextCtrl->GetValue();
+    CopyToPattern.m_Format = m_CopyToFormatChoice->GetSelection();
+    CopyToPattern.m_Quality = m_CopyToQualityChoice->GetSelection();
+
+    if( CopyToPattern.m_Name.IsEmpty() )
     {
-        m_CopyToNames[ m_CopyToSelected ] = m_CopyToPatternTextCtrl->GetValue();
-        m_CopyToNameTextCtrl->SetValue( m_CopyToNames[ m_CopyToSelected ] );
+        CopyToPattern.m_Name = CopyToPattern.m_Pattern;
+        m_CopyToNameTextCtrl->SetValue( CopyToPattern.m_Pattern );
     }
     m_CopyToAcceptBtn->Disable();
 }

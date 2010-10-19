@@ -93,6 +93,7 @@ class guTaskBarIcon;
 class guLibUpdateThread;
 class guLibCleanThread;
 class guUpdatePodcastsTimer;
+class guCopyToThread;
 
 // -------------------------------------------------------------------------------- //
 class guMainFrame : public wxFrame
@@ -229,6 +230,9 @@ class guMainFrame : public wxFrame
     wxArrayString               m_LayoutName;
     wxArrayString               m_LayoutData;
     wxArrayString               m_LayoutTabs;
+
+    guCopyToThread *            m_CopyToThread;
+    wxMutex                     m_CopyToThreadMutex;
 
 
     void                OnUpdateLibrary( wxCommandEvent &event );
@@ -402,6 +406,8 @@ class guMainFrame : public wxFrame
 
     void                CreateCopyToMenu( wxMenu * menu, const int basecmd );
 
+    void                CopyToThreadFinished( void );
+
 };
 
 // -------------------------------------------------------------------------------- //
@@ -414,44 +420,6 @@ class guUpdateCoversThread : public wxThread
   public:
     guUpdateCoversThread( guDbLibrary * db, int gaugeid );
     ~guUpdateCoversThread();
-
-    virtual ExitCode Entry();
-};
-
-// -------------------------------------------------------------------------------- //
-class guCopyToDirThread : public wxThread
-{
-  private:
-    wxString        m_DestDir;
-    guTrackArray *  m_Tracks;
-    int             m_Pattern;
-    int             m_GaugeId;
-    wxFileOffset    m_SizeCounter;
-
-  public:
-    guCopyToDirThread( const wxChar * destdir, guTrackArray * tracks, int pattern, int gaugeid );
-    ~guCopyToDirThread();
-
-    virtual ExitCode Entry();
-};
-
-// -------------------------------------------------------------------------------- //
-class guCopyToDeviceThread : public wxThread
-{
-  private:
-    guDbLibrary *               m_Db;
-    guPortableMediaPanel *      m_Panel;
-    guPortableMediaDevice *     m_Device;
-    guTrackArray *              m_Tracks;
-    int                         m_GaugeId;
-    wxFileOffset                m_SizeCounter;
-
-    void                        CopyFile( const wxString &from, const wxString &to );
-    void                        TranscodeFile( const wxString &from, const wxString &to );
-
-  public:
-    guCopyToDeviceThread( guDbLibrary * db, guPortableMediaPanel * mediapanel, guTrackArray * tracks, int gaugeid );
-    ~guCopyToDeviceThread();
 
     virtual ExitCode Entry();
 };

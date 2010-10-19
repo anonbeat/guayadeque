@@ -207,6 +207,58 @@ unsigned long guTranscodeWmaBitrates[] = {
 };
 
 // -------------------------------------------------------------------------------- //
+wxArrayString TranscodeFormatStrings;
+wxArrayString TranscodeQualityStrings;
+
+// -------------------------------------------------------------------------------- //
+wxArrayString guTranscodeFormatStrings( void )
+{
+    if( !TranscodeFormatStrings.Count() )
+    {
+        TranscodeFormatStrings.Add( _( "Keep Format" ) );
+        TranscodeFormatStrings.Add( wxT( "mp3" ) );
+        TranscodeFormatStrings.Add( wxT( "ogg" ) );
+        TranscodeFormatStrings.Add( wxT( "flac" ) );
+        TranscodeFormatStrings.Add( wxT( "m4a" ) );
+        TranscodeFormatStrings.Add( wxT( "wma" ) );
+    }
+    return TranscodeFormatStrings;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guTranscodeFormatString( const int format )
+{
+    if( !TranscodeFormatStrings.Count() )
+        guTranscodeFormatStrings();
+    return TranscodeFormatStrings[ format ];
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayString guTranscodeQualityStrings( void )
+{
+    if( !TranscodeQualityStrings.Count() )
+    {
+        TranscodeQualityStrings.Add( _( "Keep Quality" ) );
+        TranscodeQualityStrings.Add( _( "Very High" ) );
+        TranscodeQualityStrings.Add( _( "High" ) );
+        TranscodeQualityStrings.Add( _( "Very Good" ) );
+        TranscodeQualityStrings.Add( _( "Good" ) );
+        TranscodeQualityStrings.Add( _( "Normal" ) );
+        TranscodeQualityStrings.Add( _( "Low" ) );
+        TranscodeQualityStrings.Add( _( "Very Low" ) );
+    }
+    return TranscodeQualityStrings;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guTranscodeQualityString( const int quality )
+{
+    if( !TranscodeQualityStrings.Count() )
+        guTranscodeQualityStrings();
+    return TranscodeQualityStrings[ quality ];
+}
+
+// -------------------------------------------------------------------------------- //
 bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
 {
     switch( m_Format )

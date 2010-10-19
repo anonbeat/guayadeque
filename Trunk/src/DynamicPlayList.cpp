@@ -21,6 +21,7 @@
 #include "DynamicPlayList.h"
 
 #include "Images.h"
+#include "Config.h"
 #include "Utils.h"
 
 WX_DEFINE_OBJARRAY(guFilterItemArray);
@@ -222,31 +223,13 @@ void guFilterItem::SetFilterLabel( void )
 // -------------------------------------------------------------------------------- //
 // guDynPlayList
 // -------------------------------------------------------------------------------- //
-wxString inline escape_dynplaylist_str( const wxString &val )
-{
-    wxString RetVal = val;
-    RetVal.Replace( wxT( ":" ), wxT( "_$&" ) );
-    RetVal.Replace( wxT( ";" ), wxT( "_&$" ) );
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-wxString inline unescape_dynplaylist_str( const wxString &val )
-{
-    wxString RetVal = val;
-    RetVal.Replace( wxT( "_$&" ), wxT( ":" ) );
-    RetVal.Replace( wxT( "_&$" ), wxT( ";" ) );
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
 wxString guDynPlayList::ToString( void )
 {
     wxString RetVal = wxT( "DynPlayList0:" );
 
     RetVal += wxString::Format( wxT( "%i:%s:%i:%i:%i:%i:%i:%i:%i:" ),
         m_Id,
-        escape_dynplaylist_str( m_Name ).c_str(), // Need to escape the ':'
+        escape_configlist_str( m_Name ).c_str(), // Need to escape the ':'
         m_Limited,
         m_LimitValue,
         m_LimitType,
@@ -263,10 +246,10 @@ wxString guDynPlayList::ToString( void )
         RetVal += wxString::Format( wxT( "{%i;%i;%s;%i;%i;%s}:" ),
             FilterItem.m_Type,
             FilterItem.m_Option,
-            escape_dynplaylist_str( FilterItem.m_Text ).c_str(),
+            escape_configlist_str( FilterItem.m_Text ).c_str(),
             FilterItem.m_Number,
             FilterItem.m_Option2,
-            escape_dynplaylist_str( FilterItem.m_Label ).c_str() );
+            escape_configlist_str( FilterItem.m_Label ).c_str() );
     }
 
     return RetVal;
@@ -299,7 +282,7 @@ void ReadFilterFromString( guFilterItem * filteritem, wxString &filterstr )
 
             case 2 :
             {
-                filteritem->m_Text = unescape_dynplaylist_str( Val );
+                filteritem->m_Text = unescape_configlist_str( Val );
                 break;
             }
 
@@ -317,7 +300,7 @@ void ReadFilterFromString( guFilterItem * filteritem, wxString &filterstr )
 
             case 5 :
             {
-                filteritem->m_Label = unescape_dynplaylist_str( Val );
+                filteritem->m_Label = unescape_configlist_str( Val );
                 break;
             }
         }
@@ -370,7 +353,7 @@ void guDynPlayList::FromString( const wxString &playlist )
 
             case 2 :
             {
-                m_Name = unescape_dynplaylist_str( Val );
+                m_Name = unescape_configlist_str( Val );
                 break;
             }
 

@@ -242,6 +242,8 @@ ADD_EXECUTABLE( guayadeque
 	PortableMedia.h
 	Transcode.cpp
 	Transcode.h
+	CopyTo.cpp
+	CopyTo.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
