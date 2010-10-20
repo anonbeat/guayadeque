@@ -412,6 +412,9 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             TranscodeFile( CurTrack->m_FileName, FileName, copytoaction.Format(), copytoaction.Quality() );
         }
 
+        // Add the file to the files to add list so the library update it when this job is done
+        m_FilesToAdd.Add( FileName );
+
         // If have cover assigned
         if( CurTrack->m_CoverId )
         {
@@ -537,6 +540,7 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
                 FileCounter = 0;
             }
 
+            m_FilesToAdd.Empty();
             m_CopyToActionsMutex.Lock();
             guCopyToAction &CopyToAction = m_CopyToActions->Item( 0 );
             m_CopyToActionsMutex.Unlock();
@@ -547,7 +551,8 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
 
             if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTODEVICE )
             {
-                CopyToAction.PortableMediaPanel()->GetDb()->UpdateSongs( CopyToAction.Tracks() );
+                CopyToAction.PortableMediaPanel()->GetDb()->AddFiles( m_FilesToAdd );
+                CopyToAction.PortableMediaPanel()->ReloadControls();
             }
 
             if( CopyToAction.MoveFiles() )
