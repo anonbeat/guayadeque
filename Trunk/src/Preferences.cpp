@@ -758,7 +758,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	m_PlayEndTimeSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 360,
 	    m_Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) );
-	m_PlayEndTimeSpinCtrl->Enable( IsPlayLevelEnabled );
+	m_PlayEndTimeSpinCtrl->Enable( IsPlayLevelEnabled && m_PlayEndTimeCheckBox->IsChecked() );
 
 	PlayEndTimeSizer->Add( m_PlayEndTimeSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
