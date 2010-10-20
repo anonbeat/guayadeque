@@ -87,6 +87,7 @@ class guCopyToThread : public wxThread
     wxFileOffset                m_SizeCounter;
     int                         m_CurrentFile;
     int                         m_FileCount;
+    wxArrayString               m_FilesToAdd;
 
     guCopyToActionArray *       m_CopyToActions;
     wxMutex                     m_CopyToActionsMutex;
@@ -94,6 +95,7 @@ class guCopyToThread : public wxThread
     void                        CopyFile( const wxString &from, const wxString &to );
     void                        TranscodeFile( const wxString &from, const wxString &to, int format, int quality );
     void                        DoCopyToAction( guCopyToAction &copytoaction );
+
 
   public:
     guCopyToThread( guMainFrame * mainframe, int gaugeid );

@@ -1697,6 +1697,18 @@ int guDbLibrary::ReadFileTags( const char * filename )
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::AddFiles( const wxArrayString &files )
+{
+    int Index;
+    int Count = files.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        ReadFileTags( files[ Index ].mb_str( wxConvFile ) );
+    }
+    return Count;
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdateTrackLength( const int trackid, const int length )
 {
     wxString query = wxString::Format( wxT( "UPDATE songs SET song_length = %i "
