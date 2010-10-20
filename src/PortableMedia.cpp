@@ -950,7 +950,9 @@ void guPortableMediaProperties::WriteConfig( void )
 // -------------------------------------------------------------------------------- //
 void guPortableMediaProperties::OnAudioFolderBtnClick( wxCommandEvent &event )
 {
-    wxString MountPath = m_PortableMediaDevice->MountPath() + wxT( "/" );
+    wxString MountPath = m_PortableMediaDevice->MountPath();
+    if( !MountPath.EndsWith( wxT( "/" ) ) )
+        MountPath.Append( wxT( "/" ) );
 
     wxDirDialog * DirDialog = new wxDirDialog( this,
                         _( "Select audio folder" ), MountPath, wxDD_DIR_MUST_EXIST );
@@ -1030,7 +1032,9 @@ void guPortableMediaProperties::OnAudioFormatBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPortableMediaProperties::OnPlaylistFolderBtnClick( wxCommandEvent &event )
 {
-    wxString MountPath = m_PortableMediaDevice->MountPath() + wxT( "/" );
+    wxString MountPath = m_PortableMediaDevice->MountPath();
+    if( !MountPath.EndsWith( wxT( "/" ) ) )
+        MountPath.Append( wxT( "/" ) );
 
     wxDirDialog * DirDialog = new wxDirDialog( this,
                         _( "Select audio folder" ), MountPath, wxDD_DIR_MUST_EXIST );
@@ -1039,6 +1043,9 @@ void guPortableMediaProperties::OnPlaylistFolderBtnClick( wxCommandEvent &event 
         if( DirDialog->ShowModal() == wxID_OK )
         {
             wxString NewFolder = DirDialog->GetPath() + wxT( "/" );
+            guLogMessage( wxT( "Selecting Folders: '%s'\n'%s'" ),
+                NewFolder.c_str(),
+                MountPath.c_str() );
             if( NewFolder.StartsWith( MountPath ) )
             {
                 NewFolder = NewFolder.Mid( MountPath.Length() );
