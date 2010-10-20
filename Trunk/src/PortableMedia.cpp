@@ -410,7 +410,7 @@ wxString guPortableMediaDevice::AudioFormatsStr( const int formats )
     {
         if( !AudioFormats.IsEmpty() )
             AudioFormats += wxT( ", " );
-        AudioFormats += wxT( "aac" );
+        AudioFormats += wxT( "m4a" );
     }
 
     if( formats & guPORTABLEMEDIA_AUDIO_FORMAT_WMA )

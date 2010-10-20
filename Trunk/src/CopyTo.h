@@ -46,21 +46,25 @@ class guCopyToAction
     wxString                m_Pattern;
     int                     m_Format;
     int                     m_Quality;
+    bool                    m_MoveFiles;
+    guLibPanel *            m_LibPanel;
     guDbLibrary *           m_Db;
     guPortableMediaPanel *  m_PortableMediaPanel;
 
   public :
     guCopyToAction();
-    guCopyToAction( guTrackArray * tracks, const wxString &destdir, const wxString &pattern, int format, int quality );
+    guCopyToAction( guTrackArray * tracks, guLibPanel * libpanel, const wxString &destdir,
+            const wxString &pattern, int format, int quality, bool movefiles );
     guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaPanel * portablemediapanel );
     ~guCopyToAction();
 
     int                     Type( void ) { return m_Type; }
     guTrackArray *          Tracks( void ) { return m_Tracks; }
-    wxString                DestDir( void );
-    wxString                Pattern( void );
-    int                     Format( void );
-    int                     Quality( void );
+    wxString                DestDir( void ) { return m_DestDir; }
+    wxString                Pattern( void ) { return m_Pattern; }
+    int                     Format( void ) { return m_Format; }
+    int                     Quality( void ) { return m_Quality; };
+    bool                    MoveFiles( void ) { return m_MoveFiles; }
 
     size_t                  Count( void  ) { return m_Tracks ? m_Tracks->Count() : 0; }
     guTrack *               Track( const int index ) { return &m_Tracks->Item( index ); }
@@ -69,6 +73,7 @@ class guCopyToAction
     guPortableMediaDevice * PortableMediaDevice( void ) { return m_PortableMediaPanel->PortableMediaDevice(); }
 
     guDbLibrary *           Db( void ) { return m_Db; }
+    guLibPanel *            LibPanel( void ) { return m_LibPanel; }
 
 };
 WX_DECLARE_OBJARRAY( guCopyToAction, guCopyToActionArray );
@@ -94,7 +99,8 @@ class guCopyToThread : public wxThread
     guCopyToThread( guMainFrame * mainframe, int gaugeid );
     ~guCopyToThread();
 
-    void    AddAction( guTrackArray * tracks, const wxString &destdir, const wxString &pattern, int format, int quality );
+    void    AddAction( guTrackArray * tracks, guLibPanel * libpanel, const wxString &destdir,
+                    const wxString &pattern, int format, int quality, bool movefiles );
     void    AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaPanel * portablemediapanel );
 
     virtual ExitCode Entry();

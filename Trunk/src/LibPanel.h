@@ -273,8 +273,8 @@ class guLibPanel : public wxPanel
     void                    SelectAlbumArtists( wxArrayInt * ids );
     void                    SelectAlbums( wxArrayInt * albums );
 
-    bool IsPanelShown( const int panelid ) const;
-    void ShowPanel( const int panelid, bool show );
+    bool                    IsPanelShown( const int panelid ) const;
+    void                    ShowPanel( const int panelid, bool show );
 
     void UpdatedTracks( const guTrackArray * tracks )
     {
@@ -288,12 +288,14 @@ class guLibPanel : public wxPanel
             m_SongListCtrl->UpdatedTrack( track );
     }
 
-    int GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
+    int                     GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
     virtual void            CreateContextMenu( wxMenu * menu, const int windowid = 0 );
     virtual void            CreateCopyToMenu( wxMenu * menu, const int basecmd );
 
     virtual int             LastUpdate( void );
     virtual void            SetLastUpdate( int lastupdate = wxNOT_FOUND );
+
+    virtual void            DeleteTracks( guTrackArray * tracks );
 
 };
 

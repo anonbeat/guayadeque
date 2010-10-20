@@ -1308,6 +1308,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
                 m_SilenceDetected = true;
                 //guLogMessage( wxT( "Silence detected. Changed to next track %i" ), m_PlayListCtrl->GetCurItem() );
                 wxCommandEvent evt;
+                evt.SetId( ID_PLAYERPANEL_NEXTTRACK );
                 OnNextTrackButtonClick( evt );
             }
         }
