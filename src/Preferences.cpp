@@ -41,7 +41,8 @@ WX_DEFINE_OBJARRAY( guCopyToPatternArray );
 guCopyToPattern::guCopyToPattern()
 {
     m_Format = guTRANSCODE_FORMAT_KEEP;
-    m_Quality = guTRANSCODE_QUALITY_NORMAL;
+    m_Quality = guTRANSCODE_QUALITY_KEEP;
+    m_MoveFiles = false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -49,7 +50,10 @@ guCopyToPattern::guCopyToPattern( const wxString &pattern )
 {
     int Index;
     int Count;
-    // Default:{g}/{a}/{b}/{n} - {a} - {t}:0:4
+    // Default:{g}/{a}/{b}/{n} - {a} - {t}:0:4:0
+    m_Format = guTRANSCODE_FORMAT_KEEP;
+    m_Quality = guTRANSCODE_QUALITY_KEEP;
+    m_MoveFiles = false;
     wxArrayString Fields = wxStringTokenize( pattern, wxT( ":" ) );
     if( ( Count = Fields.Count() ) )
     {
@@ -61,6 +65,7 @@ guCopyToPattern::guCopyToPattern( const wxString &pattern )
                 case 1 : m_Pattern = unescape_configlist_str( Fields[ Index ] ); break;
                 case 2 : m_Format  = wxAtoi( Fields[ Index ] ); break;
                 case 3 : m_Quality = wxAtoi( Fields[ Index ] ); break;
+                case 4 : m_MoveFiles = wxAtoi( Fields[ Index ] ); break;
                 default :
                     return;
             }
@@ -77,8 +82,8 @@ guCopyToPattern::~guCopyToPattern()
 // -------------------------------------------------------------------------------- //
 wxString guCopyToPattern::ToString( void )
 {
-    return wxString::Format( wxT( "%s:%s:%i:%i" ),
-        escape_configlist_str( m_Name ).c_str(), escape_configlist_str( m_Pattern ).c_str(), m_Format, m_Quality );
+    return wxString::Format( wxT( "%s:%s:%i:%i:%i" ),
+        escape_configlist_str( m_Name ).c_str(), escape_configlist_str( m_Pattern ).c_str(), m_Format, m_Quality, m_MoveFiles );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -420,6 +425,7 @@ guPrefDialog::~guPrefDialog()
         m_CopyToNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
         m_CopyToFormatChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToFormatChanged ), NULL, this );
         m_CopyToQualityChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToQualityChanged ), NULL, this );
+        m_CopyToMoveFilesChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveFilesChanged ), NULL, this );
         m_CopyToAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToSaveBtnClick ), NULL, this );
 
         if( m_CopyToOptions )
@@ -1809,10 +1815,10 @@ void guPrefDialog::BuildCopyToPage( void )
         Count = wxMin( Patterns.Count(), PatNames.Count() );
         for( Index = 0; Index < Count; Index++ )
         {
-            Options.Add( wxString::Format( wxT( "%s:%s:%i:%i" ),
+            Options.Add( wxString::Format( wxT( "%s:%s:%i:%i:%i" ),
                 escape_configlist_str( PatNames[ Index ] ).c_str(),
                 escape_configlist_str( Patterns[ Index ] ).c_str(),
-                guTRANSCODE_FORMAT_KEEP, guTRANSCODE_QUALITY_KEEP ) );
+                guTRANSCODE_FORMAT_KEEP, guTRANSCODE_QUALITY_KEEP, false ) );
         }
 	}
 
@@ -1882,18 +1888,37 @@ void guPrefDialog::BuildCopyToPage( void )
 	CopyToFormatLabel->Wrap( -1 );
 	CopyToFieldsSizer->Add( CopyToFormatLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
+//	m_CopyToFormatChoice = new wxChoice( m_CopyPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeFormatStrings(), 0 );
+//	m_CopyToFormatChoice->SetSelection( 0 );
+//	CopyToFieldsSizer->Add( m_CopyToFormatChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+//
+//	wxStaticText * CopyToQualityLabel = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Quality:" ), wxDefaultPosition, wxDefaultSize, 0 );
+//	CopyToQualityLabel->Wrap( -1 );
+//	CopyToFieldsSizer->Add( CopyToQualityLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+//
+//	m_CopyToQualityChoice = new wxChoice( m_CopyPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeQualityStrings(), 0 );
+//	m_CopyToQualityChoice->SetSelection( guTRANSCODE_QUALITY_KEEP );
+//	m_CopyToQualityChoice->Enable( false );
+//	CopyToFieldsSizer->Add( m_CopyToQualityChoice, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	wxBoxSizer* CopyToFormatSizer;
+	CopyToFormatSizer = new wxBoxSizer( wxHORIZONTAL );
+
 	m_CopyToFormatChoice = new wxChoice( m_CopyPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeFormatStrings(), 0 );
 	m_CopyToFormatChoice->SetSelection( 0 );
-	CopyToFieldsSizer->Add( m_CopyToFormatChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
-
-	wxStaticText * CopyToQualityLabel = new wxStaticText( m_CopyPanel, wxID_ANY, _( "Quality:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	CopyToQualityLabel->Wrap( -1 );
-	CopyToFieldsSizer->Add( CopyToQualityLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+	CopyToFormatSizer->Add( m_CopyToFormatChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	m_CopyToQualityChoice = new wxChoice( m_CopyPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeQualityStrings(), 0 );
 	m_CopyToQualityChoice->SetSelection( guTRANSCODE_QUALITY_KEEP );
 	m_CopyToQualityChoice->Enable( false );
-	CopyToFieldsSizer->Add( m_CopyToQualityChoice, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	CopyToFormatSizer->Add( m_CopyToQualityChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+
+	CopyToFieldsSizer->Add( CopyToFormatSizer, 1, wxEXPAND, 5 );
+
+	CopyToFieldsSizer->Add( 0, 0, 0, wxEXPAND, 5 );
+
+	m_CopyToMoveFilesChkBox = new wxCheckBox( m_CopyPanel, wxID_ANY, _("Remove source files"), wxDefaultPosition, wxDefaultSize, 0 );
+	CopyToFieldsSizer->Add( m_CopyToMoveFilesChkBox, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	CopyToOptionsSizer->Add( CopyToFieldsSizer, 1, wxEXPAND, 5 );
 
@@ -1929,6 +1954,7 @@ void guPrefDialog::BuildCopyToPage( void )
 	m_CopyToNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
 	m_CopyToFormatChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToFormatChanged ), NULL, this );
 	m_CopyToQualityChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToQualityChanged ), NULL, this );
+	m_CopyToMoveFilesChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveFilesChanged ), NULL, this );
 	m_CopyToAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToSaveBtnClick ), NULL, this );
 }
 
@@ -2187,10 +2213,7 @@ void guPrefDialog::SaveSettings( void )
         for( Index = 0; Index < Count; Index++ )
         {
             guCopyToPattern &CopyToPattern = m_CopyToOptions->Item( Index );
-            Options.Add( wxString::Format( wxT( "%s:%s:%i:%i" ),
-                escape_configlist_str( CopyToPattern.m_Name ).c_str(),
-                escape_configlist_str( CopyToPattern.m_Pattern ).c_str(),
-                CopyToPattern.m_Format, CopyToPattern.m_Quality ) );
+            Options.Add( CopyToPattern.ToString() );
         }
 
         m_Config->WriteAStr( wxT( "Option" ), Options, wxT( "CopyTo" ) );
@@ -2910,6 +2933,7 @@ void guPrefDialog::OnCopyToListBoxSelected( wxCommandEvent &event )
         m_CopyToPatternTextCtrl->SetValue( CopyToPattern.m_Pattern );
         m_CopyToFormatChoice->SetSelection( CopyToPattern.m_Format );
         m_CopyToQualityChoice->SetSelection( CopyToPattern.m_Quality );
+        m_CopyToMoveFilesChkBox->SetValue( CopyToPattern.m_MoveFiles );
 
         m_CopyToAcceptBtn->Disable();
     }
@@ -2936,6 +2960,7 @@ void guPrefDialog::OnCopyToAddBtnClick( wxCommandEvent& event )
         CopyToPattern->m_Pattern = m_CopyToPatternTextCtrl->GetValue();
         CopyToPattern->m_Format = m_CopyToFormatChoice->GetSelection();
         CopyToPattern->m_Quality = m_CopyToQualityChoice->GetSelection();
+        CopyToPattern->m_MoveFiles = m_CopyToMoveFilesChkBox->GetValue();
         m_CopyToOptions->Add( CopyToPattern );
     }
 }
@@ -3027,6 +3052,18 @@ void guPrefDialog::OnCopyToQualityChanged( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPrefDialog::OnCopyToMoveFilesChanged( wxCommandEvent &event )
+{
+    if( m_CopyToSelected != wxNOT_FOUND )
+    {
+        if( !m_CopyToPatternTextCtrl->IsEmpty() )
+        {
+            m_CopyToAcceptBtn->Enable();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPrefDialog::OnCopyToSaveBtnClick( wxCommandEvent &event )
 {
     m_CopyToListBox->SetString( m_CopyToSelected, m_CopyToNameTextCtrl->GetValue() );
@@ -3035,6 +3072,7 @@ void guPrefDialog::OnCopyToSaveBtnClick( wxCommandEvent &event )
     CopyToPattern.m_Pattern = m_CopyToPatternTextCtrl->GetValue();
     CopyToPattern.m_Format = m_CopyToFormatChoice->GetSelection();
     CopyToPattern.m_Quality = m_CopyToQualityChoice->GetSelection();
+    CopyToPattern.m_MoveFiles = m_CopyToMoveFilesChkBox->GetValue();
 
     if( CopyToPattern.m_Name.IsEmpty() )
     {

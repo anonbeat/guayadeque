@@ -93,6 +93,7 @@ class guCopyToPattern
     wxString    m_Pattern;
     int         m_Format;
     int         m_Quality;
+    bool        m_MoveFiles;
 
     guCopyToPattern();
     guCopyToPattern( const wxString &pattern );
@@ -234,6 +235,7 @@ class guPrefDialog : public wxDialog
     wxTextCtrl *                m_CopyToNameTextCtrl;
     wxChoice *                  m_CopyToFormatChoice;
     wxChoice *                  m_CopyToQualityChoice;
+    wxCheckBox *                m_CopyToMoveFilesChkBox;
     wxBitmapButton *            m_CopyToAcceptBtn;
 
     wxTextCtrl *                m_BrowserCmdTextCtrl;
@@ -365,6 +367,7 @@ class guPrefDialog : public wxDialog
 	void OnCopyToTextChanged( wxCommandEvent &event );
 	void OnCopyToFormatChanged( wxCommandEvent &event );
 	void OnCopyToQualityChanged( wxCommandEvent &event );
+	void OnCopyToMoveFilesChanged( wxCommandEvent &event );
 	void OnCopyToSaveBtnClick( wxCommandEvent &event );
 
   public:

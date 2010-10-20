@@ -3009,6 +3009,43 @@ bool guRmDirRecursive( const wxString &path )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::DeleteTracks( guTrackArray * tracks )
+{
+    m_Db->DeleteLibraryTracks( tracks, false );
+    //
+    wxArrayString DeletePaths;
+    int Index;
+    int Count = tracks->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack &CurTrack = tracks->Item( Index );
+        if( DeletePaths.Index( wxPathOnly( CurTrack.m_FileName ) ) == wxNOT_FOUND )
+        {
+            DeletePaths.Add( wxPathOnly( CurTrack.m_FileName ) );
+        }
+
+        if( !wxRemoveFile( CurTrack.m_FileName ) )
+        {
+            guLogMessage( wxT( "Error deleting '%s'" ), CurTrack.m_FileName.c_str() );
+        }
+    }
+
+    if( ( Count = DeletePaths.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( guIsDirectoryEmpty( DeletePaths[ Index ] ) )
+            {
+                if( !guRmDirRecursive( DeletePaths[ Index ] ) )
+                {
+                    guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
+                }
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
 {
     if( m_SongListCtrl->GetSelectedCount() )
@@ -3016,40 +3053,10 @@ void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
         if( wxMessageBox( wxT( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
             wxT( "Remove tracks from drive" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
         {
-            wxArrayString DeletePaths;
             guTrackArray Tracks;
             m_SongListCtrl->GetSelectedSongs( &Tracks );
             //
-            m_Db->DeleteLibraryTracks( &Tracks, false );
-            //
-            int Index;
-            int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
-            {
-                if( DeletePaths.Index( wxPathOnly( Tracks[ Index ].m_FileName ) ) == wxNOT_FOUND )
-                {
-                    DeletePaths.Add( wxPathOnly( Tracks[ Index ].m_FileName ) );
-                }
-
-                if( !wxRemoveFile( Tracks[ Index ].m_FileName ) )
-                {
-                    guLogMessage( wxT( "Error deleting '%s'" ), Tracks[ Index ].m_FileName.c_str() );
-                }
-            }
-
-            if( ( Count = DeletePaths.Count() ) )
-            {
-                for( Index = 0; Index < Count; Index++ )
-                {
-                    if( guIsDirectoryEmpty( DeletePaths[ Index ] ) )
-                    {
-                        if( !guRmDirRecursive( DeletePaths[ Index ] ) )
-                        {
-                            guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
-                        }
-                    }
-                }
-            }
+            DeleteTracks( &Tracks );
 
             ReloadControls();
         }
