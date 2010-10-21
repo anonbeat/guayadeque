@@ -82,6 +82,21 @@ enum guLibraryElement {
 #define     guLIBRARY_CONTEXTMENU_DEFAULT           ( guLIBRARY_CONTEXTMENU_EDIT_TRACKS | guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS |\
                                                     guLIBRARY_CONTEXTMENU_COPY_TO | guLIBRARY_CONTEXTMENU_LINKS | guLIBRARY_CONTEXTMENU_COMMANDS )
 
+class guLibPanel;
+
+// -------------------------------------------------------------------------------- //
+class guLibPanelDropTarget : public wxFileDropTarget
+{
+  protected :
+    guLibPanel * m_LibPanel;
+
+  public :
+    guLibPanelDropTarget( guLibPanel * libpanel );
+    ~guLibPanelDropTarget();
+
+    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &filenames );
+};
+
 // -------------------------------------------------------------------------------- //
 class guLibPanel : public wxPanel
 {
@@ -249,6 +264,8 @@ class guLibPanel : public wxPanel
     void ReloadPlayCounts( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_PLAYCOUNT ) m_PlayCountListCtrl->ReloadItems( reset ); }
     void ReloadSongs( bool reset = true ) { m_SongListCtrl->ReloadItems( reset ); }
 
+    virtual bool OnDropFiles( const wxArrayString &filenames );
+
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
     ~guLibPanel();
@@ -299,6 +316,7 @@ class guLibPanel : public wxPanel
 
     virtual wxArrayString   GetCoverSearchWords( void );
 
+    friend class guLibPanelDropTarget;
 };
 
 #endif
