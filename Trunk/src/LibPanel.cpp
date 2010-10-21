@@ -320,6 +320,9 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
         m_AuiManager.LoadPerspective( LibraryLayout, true );
     }
 
+
+    SetDropTarget( new guLibPanelDropTarget( this ) );
+
     //
     m_UpdateLock = false;
 
@@ -3114,4 +3117,30 @@ wxArrayString guLibPanel::GetCoverSearchWords( void )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     return Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
 }
+
+// -------------------------------------------------------------------------------- //
+bool guLibPanel::OnDropFiles( const wxArrayString &filenames )
+{
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+// guLibPanelDropTarget
+// -------------------------------------------------------------------------------- //
+guLibPanelDropTarget::guLibPanelDropTarget( guLibPanel * libpanel ) : wxFileDropTarget()
+{
+    m_LibPanel = libpanel;
+}
+
+// -------------------------------------------------------------------------------- //
+guLibPanelDropTarget::~guLibPanelDropTarget()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLibPanelDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &filenames )
+{
+    return m_LibPanel->OnDropFiles( filenames );
+}
+
 // -------------------------------------------------------------------------------- //
