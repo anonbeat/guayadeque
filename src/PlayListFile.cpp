@@ -180,7 +180,7 @@ bool guPlayListFile::ReadPlsStream( wxInputStream &playlist, const wxString &pat
                             Config->Read( wxString::Format( wxT( "Title%u" ), Index ), &Title );
 
                             wxURI Uri( Location );
-                            if( Uri.HasScheme() || path.IsEmpty() )
+                            if( Location.StartsWith( wxT( "/" ) ) || Uri.HasScheme() || path.IsEmpty() )
                             {
                                 m_PlayList.Add( new guStationPlayListItem( Location, Title ) );
                             }
@@ -256,7 +256,7 @@ bool guPlayListFile::ReadM3uStream( wxInputStream &playlist, const wxString &pat
             {
 
                 wxURI Uri( Lines[ Index ] );
-                if( Uri.HasScheme() || path.IsEmpty() )
+                if( Lines[ Index ].StartsWith( wxT( "/" ) ) || Uri.HasScheme() || path.IsEmpty() )
                 {
                     m_PlayList.Add( new guStationPlayListItem( Lines[ Index ], ItemName ) );
                 }
