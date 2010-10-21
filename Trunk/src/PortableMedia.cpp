@@ -638,6 +638,18 @@ void guPortableMediaPanel::SetLastUpdate( int lastupdate )
     // The portable media devices cant set lastupdate
 }
 
+// -------------------------------------------------------------------------------- //
+wxArrayString guPortableMediaPanel::GetCoverSearchWords( void )
+{
+    wxArrayString CoverWords = guLibPanel::GetCoverSearchWords();
+    if( CoverWords.Index( m_PortableMediaDevice->CoverName() ) == wxNOT_FOUND )
+    {
+        CoverWords.Add( m_PortableMediaDevice->CoverName() );
+    }
+    return CoverWords;
+}
+
+
 
 
 // -------------------------------------------------------------------------------- //

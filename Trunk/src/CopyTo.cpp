@@ -552,7 +552,10 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
             if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTODEVICE )
             {
                 CopyToAction.PortableMediaPanel()->GetDb()->AddFiles( m_FilesToAdd );
-                CopyToAction.PortableMediaPanel()->ReloadControls();
+
+                wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_RELOADCONTROLS );
+                Event.SetClientData( CopyToAction.PortableMediaPanel() );
+                m_MainFrame->AddPendingEvent( Event );
             }
 
             if( CopyToAction.MoveFiles() )

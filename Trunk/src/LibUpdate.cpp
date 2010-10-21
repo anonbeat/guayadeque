@@ -54,7 +54,9 @@ guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const 
     m_ScanPath = scanpath;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+    //m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+    m_CoverSearchWords = libpanel->GetCoverSearchWords();
+
     if( scanpath.IsEmpty() )
     {
         m_LibPaths = libpanel->GetPaths();

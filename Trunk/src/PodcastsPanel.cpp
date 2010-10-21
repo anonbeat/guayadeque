@@ -125,7 +125,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 	MainPodcastsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_PodcastsListBox = new guPodcastListBox( PodcastsPanel, m_Db );
-	MainPodcastsSizer->Add( m_PodcastsListBox, 1, wxALL|wxEXPAND, 1 );
+	MainPodcastsSizer->Add( m_PodcastsListBox, 1, wxEXPAND, 5 );
 
 	PodcastsPanel->SetSizer( MainPodcastsSizer );
 	PodcastsPanel->Layout();
@@ -252,7 +252,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 	m_DetailScrolledWindow->SetSizer( m_DetailFlexGridSizer );
 	m_DetailScrolledWindow->Layout();
 	m_DetailFlexGridSizer->Fit( m_DetailScrolledWindow );
-	DetailSizer->Add( m_DetailScrolledWindow, 1, wxEXPAND | wxALL, 5 );
+	DetailSizer->Add( m_DetailScrolledWindow, 1, wxEXPAND|wxALL, 5 );
 
 	m_DetailMainSizer->Add( DetailSizer, 1, wxEXPAND|wxALL, 5 );
 
