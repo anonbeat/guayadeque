@@ -516,7 +516,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 //	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
 
     m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxALL, 5 );
+    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER, 5 );
 
     SearchPanel->SetSizer( SearchSizer );
     SearchPanel->Layout();
@@ -565,7 +565,6 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     m_AuiManager.AddPane( DetailsPanel, wxAuiPaneInfo().Name( wxT( "PlayListTracks" ) ).Caption( wxT( "PlayList" ) ).
             MinSize( 50, 50 ).
             CenterPane() );
-
 
     wxString PlayListLayout = Config->ReadStr( wxT( "PlayLists" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || PlayListLayout.IsEmpty() )

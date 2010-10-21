@@ -297,6 +297,8 @@ class guLibPanel : public wxPanel
 
     virtual void            DeleteTracks( guTrackArray * tracks );
 
+    virtual wxArrayString   GetCoverSearchWords( void );
+
 };
 
 #endif

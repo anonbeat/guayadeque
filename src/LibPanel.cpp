@@ -37,7 +37,7 @@
 #include <wx/event.h>
 #include <wx/uri.h>
 
-#define     LISTCTRL_BORDER 1
+#define     LISTCTRL_BORDER                 5
 
 #define     guPANEL_TIMER_SELECTION         1
 #define     guPANEL_TIMER_TEXTSEARCH        2
@@ -112,7 +112,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
     m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxALL, 5 );
+    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER, 5 );
 
     SearchPanel->SetSizer( SearchSizer );
     SearchPanel->Layout();
@@ -129,7 +129,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	GenrePanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
 	m_GenreListCtrl = new guGeListBox( GenrePanel, this, m_Db, _( "Genres" ) );
-	GenreSizer->Add( m_GenreListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	GenreSizer->Add( m_GenreListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	GenrePanel->SetSizer( GenreSizer );
 	GenrePanel->Layout();
@@ -147,7 +147,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	LabelsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_LabelsListCtrl = new guTaListBox( LabelsPanel, this, m_Db, _( "Labels" ) );
-	LabelsSizer->Add( m_LabelsListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	LabelsSizer->Add( m_LabelsListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	LabelsPanel->SetSizer( LabelsSizer );
 	LabelsPanel->Layout();
@@ -165,7 +165,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	ArtistSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_ArtistListCtrl = new guArListBox( ArtistPanel, this, m_Db, _( "Artists" ) );
-	ArtistSizer->Add( m_ArtistListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	ArtistSizer->Add( m_ArtistListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	ArtistPanel->SetSizer( ArtistSizer );
 	ArtistPanel->Layout();
@@ -182,7 +182,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	AlbumSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_AlbumListCtrl = new guAlListBox( AlbumPanel, this, m_Db, _( "Albums" ) );
-	AlbumSizer->Add( m_AlbumListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	AlbumSizer->Add( m_AlbumListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	AlbumPanel->SetSizer( AlbumSizer );
 	AlbumPanel->Layout();
@@ -202,7 +202,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	wxBoxSizer * YearsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_YearListCtrl = new guYeListBox( YearPanel, this, m_Db, _( "Years" ) );
-	YearsSizer->Add( m_YearListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	YearsSizer->Add( m_YearListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	YearPanel->SetSizer( YearsSizer );
 	YearPanel->Layout();
@@ -221,7 +221,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	wxBoxSizer * RatingSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_RatingListCtrl = new guRaListBox( RatingPanel, this, m_Db, _( "Ratings" ) );
-	RatingSizer->Add( m_RatingListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	RatingSizer->Add( m_RatingListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	RatingPanel->SetSizer( RatingSizer );
 	RatingPanel->Layout();
@@ -240,7 +240,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	wxBoxSizer * PlayCountSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_PlayCountListCtrl = new guPcListBox( PlayCountPanel, this, m_Db, _( "Play Counts" ) );
-	PlayCountSizer->Add( m_PlayCountListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	PlayCountSizer->Add( m_PlayCountListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	PlayCountPanel->SetSizer( PlayCountSizer );
 	PlayCountPanel->Layout();
@@ -259,7 +259,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	wxBoxSizer * ComposerSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_ComposerListCtrl = new guCoListBox( ComposerPanel, this, m_Db, _( "Composers" ) );
-	ComposerSizer->Add( m_ComposerListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	ComposerSizer->Add( m_ComposerListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	ComposerPanel->SetSizer( ComposerSizer );
 	ComposerPanel->Layout();
@@ -278,7 +278,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	wxBoxSizer * AlbumArtistSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_AlbumArtistListCtrl = new guAAListBox( AlbumArtistPanel, this, m_Db, _( "Album Artist" ) );
-	AlbumArtistSizer->Add( m_AlbumArtistListCtrl, 1, wxALL|wxEXPAND, LISTCTRL_BORDER );
+	AlbumArtistSizer->Add( m_AlbumArtistListCtrl, 1, wxEXPAND, LISTCTRL_BORDER );
 
 	AlbumArtistPanel->SetSizer( AlbumArtistSizer );
 	AlbumArtistPanel->Layout();
@@ -587,7 +587,7 @@ guLibPanel::~guLibPanel()
 // -------------------------------------------------------------------------------- //
 void guLibPanel::ReloadControls( void )
 {
-    //guLogMessage( wxT( "ReloadControls..." ) );
+    guLogMessage( wxT( "ReloadControls...%08X" ), m_VisiblePanels );
     //m_Db->LoadCache();
     m_UpdateLock = true;
     ReloadLabels( false );
@@ -3108,4 +3108,10 @@ void guLibPanel::SetLastUpdate( int lastupdate )
     Config->Flush();
 }
 
+// -------------------------------------------------------------------------------- //
+wxArrayString guLibPanel::GetCoverSearchWords( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    return Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+}
 // -------------------------------------------------------------------------------- //

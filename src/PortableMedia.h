@@ -308,6 +308,8 @@ class guPortableMediaPanel : public guLibPanel
     virtual int                 LastUpdate( void );
     virtual void                SetLastUpdate( int lastupdate = wxNOT_FOUND );
 
+    virtual wxArrayString       GetCoverSearchWords( void );
+
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaPanel *, guPortableMediaPanelArray );
 

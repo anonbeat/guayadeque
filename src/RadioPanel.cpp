@@ -983,7 +983,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 //	SearchSizer->Add( SearchStaticText, 0, wxALIGN_CENTER|wxALL, 5 );
 
     m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxALL, 5 );
+    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER, 5 );
 
     SearchPanel->SetSizer( SearchSizer );
     SearchPanel->Layout();
@@ -1004,7 +1004,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
 
     m_GenresTreeCtrl = new guRadioGenreTreeCtrl( GenrePanel, m_Db );
-	GenreSizer->Add( m_GenresTreeCtrl, 1, wxALL|wxEXPAND, 1 );
+	GenreSizer->Add( m_GenresTreeCtrl, 1, wxEXPAND, 5 );
 
 	GenrePanel->SetSizer( GenreSizer );
 	GenrePanel->Layout();
@@ -1016,15 +1016,13 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
             CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Left() );
 
-
-
     wxPanel * LabelsPanel;
 	LabelsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer * LabelsSizer;
 	LabelsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_LabelsListBox = new guRadioLabelListBox( LabelsPanel, m_Db, _( "Labels" ) );
-	LabelsSizer->Add( m_LabelsListBox, 1, wxALL|wxEXPAND, 1 );
+	LabelsSizer->Add( m_LabelsListBox, 1, wxEXPAND, 5 );
 
 	LabelsPanel->SetSizer( LabelsSizer );
 	LabelsPanel->Layout();

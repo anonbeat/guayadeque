@@ -459,6 +459,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MAGNATUNE_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneUpdated ), NULL, this );
     Connect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
     Connect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryCleanFinished ), NULL, this );
+    Connect( ID_LIBRARY_RELOADCONTROLS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryReloadControls ), NULL, this );
 
     Connect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
     Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
@@ -615,6 +616,7 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoUpdated ), NULL, this );
     Disconnect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
     Disconnect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryCleanFinished ), NULL, this );
+    Disconnect( ID_LIBRARY_RELOADCONTROLS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryReloadControls ), NULL, this );
 
     Disconnect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
     Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
@@ -1507,6 +1509,13 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
 {
     m_LibCleanThread = NULL;
+
+    LibraryReloadControls( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::LibraryReloadControls( wxCommandEvent &event )
+{
     guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
 
     if( !LibPanel )

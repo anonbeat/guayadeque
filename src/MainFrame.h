@@ -377,6 +377,7 @@ class guMainFrame : public wxFrame
     void                OnJamendoUpdated( wxCommandEvent &event );
     void                OnMagnatuneUpdated( wxCommandEvent &event );
     void                LibraryCleanFinished( wxCommandEvent &event );
+    void                LibraryReloadControls( wxCommandEvent &event );
     void                OnQuit( wxCommandEvent &WXUNUSED(event) );
     void                UpdatePodcasts( void );
 
