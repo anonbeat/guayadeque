@@ -58,7 +58,7 @@ WX_DEFINE_OBJARRAY(guAlbumItems);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "18"
+#define GU_CURRENT_DBVERSION    "19"
 
 // -------------------------------------------------------------------------------- //
 // Various functions
@@ -575,6 +575,7 @@ bool guDbLibrary::CheckDbVersion( void )
       //query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_composerid_desc ON songs( song_composerid DESC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_number ON songs( song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_path ON songs( song_path ASC )" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_path_filename ON songs( song_path, song_filename )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_format ON songs( song_format ASC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_genre ON songs( song_genre,song_composer,song_artist,song_album,song_disk,song_albumid,song_number )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_genre_desc ON songs( song_genre DESC,song_composer,song_artist,song_album,song_disk,song_albumid,song_number )" ) );
@@ -595,6 +596,7 @@ bool guDbLibrary::CheckDbVersion( void )
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS tags( tag_id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR COLLATE NOCASE );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_id' on tags (tag_id ASC);" ) );
+      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_name' on tags (tag_name ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS settags( settag_tagid INTEGER, settag_artistid INTEGER, settag_albumid INTEGER, settag_songid INTEGER );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'settag_tagid' on settags (settag_tagid ASC);" ) );
@@ -924,14 +926,21 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_path on deleted(delete_path ASC);" ) );
         query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_date on deleted(delete_date ASC);" ) );
 
+    }
+
+    case 18 :
+    {
+        if( dbVer > 4 )
+        {
+            query.Add( wxT( "DROP INDEX song_path;" ) );
+            query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_path_filename ON songs( song_path, song_filename )" ) );
+            query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_name' on tags (tag_name ASC);" ) );
+        }
+
         guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
         query.Add( wxT( "DELETE FROM Version;" ) );
         query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
     }
-    // TODO: minor schema changes postponed for a major version bump:
-    //
-    // - for ordering by path:
-    // query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_path_filename ON songs( song_path, song_filename )" ) );
 
 
     default:
@@ -4705,7 +4714,7 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
       break;
 
     case guTRACKS_ORDER_FILEPATH :
-      query += wxT( "song_path,song_filename" );
+      query += wxT( "song_path" );
       break;
 
   }
@@ -4739,6 +4748,11 @@ wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
     case guTRACKS_ORDER_ADDEDDATE :
       query += wxT( ",song_album,song_disk,song_albumid,song_number " );
       break;
+
+    case guTRACKS_ORDER_FILEPATH :
+      query += wxT( ", song_filename " );
+      if( orderdesc )
+        query += wxT( "DESC " );
 
     default:
       break;
