@@ -431,6 +431,10 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                     {
                         guLogMessage( wxT( "Could not copy the cover %s" ), NewCoverFile.c_str() );
                     }
+                    else
+                    {
+                        m_CoversToAdd.Add( NewCoverFile );
+                    }
                 }
             }
             else
@@ -454,6 +458,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                                 CoverImage->Rescale( DevCoverSize, DevCoverSize, wxIMAGE_QUALITY_HIGH );
                             }
 
+                            bool CoverAdded = false;
                             if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
                             {
                                 if( !guTagSetPicture( FileName, CoverImage ) )
@@ -477,6 +482,11 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                                     {
                                         guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
                                     }
+                                    else
+                                    {
+                                        m_CoversToAdd.Add( DevCoverName + wxT( ".jpg" ) );
+                                        CoverAdded = true;
+                                    }
                                 }
                             }
 
@@ -487,6 +497,11 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                                     if( !CoverImage->SaveFile( DevCoverName + wxT( ".png" ), wxBITMAP_TYPE_PNG ) )
                                     {
                                         guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
+                                    }
+                                    else if( !CoverAdded )
+                                    {
+                                        m_CoversToAdd.Add( DevCoverName + wxT( ".png" ) );
+                                        CoverAdded = true;
                                     }
                                 }
                             }
@@ -499,6 +514,11 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                                     {
                                         guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
                                     }
+                                    else if( !CoverAdded )
+                                    {
+                                        m_CoversToAdd.Add( DevCoverName + wxT( ".gif" ) );
+                                        CoverAdded = true;
+                                    }
                                 }
                             }
 
@@ -509,6 +529,11 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                                     if( !CoverImage->SaveFile( DevCoverName + wxT( ".bmp" ), wxBITMAP_TYPE_BMP ) )
                                     {
                                         guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
+                                    }
+                                    else if( !CoverAdded )
+                                    {
+                                        m_CoversToAdd.Add( DevCoverName + wxT( ".bmp" ) );
+                                        //CoverAdded = true;
                                     }
                                 }
                             }
@@ -541,6 +566,7 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
             }
 
             m_FilesToAdd.Empty();
+            m_CoversToAdd.Empty();
             m_CopyToActionsMutex.Lock();
             guCopyToAction &CopyToAction = m_CopyToActions->Item( 0 );
             m_CopyToActionsMutex.Unlock();
@@ -551,7 +577,22 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
 
             if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTODEVICE )
             {
+                // Update the files
                 CopyToAction.PortableMediaPanel()->GetDb()->AddFiles( m_FilesToAdd );
+
+                // Update the covers
+                wxString DevCoverName = CopyToAction.PortableMediaDevice()->CoverName();
+                if( DevCoverName.IsEmpty() )
+                {
+                    DevCoverName = wxT( "cover" );
+                }
+                DevCoverName += wxT( ".jpg" );
+                int Index;
+                int Count = m_CoversToAdd.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    CopyToAction.PortableMediaPanel()->GetDb()->UpdateImageFile( m_CoversToAdd[ Index ].ToUTF8(), DevCoverName.ToUTF8() );
+                }
 
                 wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_RELOADCONTROLS );
                 Event.SetClientData( CopyToAction.PortableMediaPanel() );

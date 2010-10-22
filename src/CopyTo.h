@@ -88,6 +88,7 @@ class guCopyToThread : public wxThread
     int                         m_CurrentFile;
     int                         m_FileCount;
     wxArrayString               m_FilesToAdd;
+    wxArrayString               m_CoversToAdd;
 
     guCopyToActionArray *       m_CopyToActions;
     wxMutex                     m_CopyToActionsMutex;
