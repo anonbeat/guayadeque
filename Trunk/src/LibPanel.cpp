@@ -1341,6 +1341,8 @@ void guLibPanel::OnAlbumEmbedCoverClicked( wxCommandEvent &event )
                         delete CoverImage;
                         continue;
                     }
+
+                    guImageResize( CoverImage, 600 );
                 }
                 else
                     continue;
