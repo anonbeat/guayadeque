@@ -232,6 +232,10 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
             Menu->Append( MenuItem );
         }
+
+        MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_EMBED, _( "Embed cover" ), _( "Embed the current cover to the album files" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        Menu->Append( MenuItem );
     }
 
     Menu->AppendSeparator();

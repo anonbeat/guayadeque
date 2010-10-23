@@ -21,6 +21,7 @@
 #include "PortableMedia.h"
 #include "MD5.h"
 #include "Transcode.h"
+#include "Utils.h"
 
 #include <wx/tokenzr.h>
 
@@ -349,7 +350,7 @@ guPortableMediaDevice::guPortableMediaDevice( guGIO_Mount * mount )
     m_CoverName = Config->ReadStr( wxT( "cover_art_file_name" ), wxT( "cover" ) );
     m_CoverSize = Config->ReadNum( wxT( "cover_art_size" ), 100 );
 
-    wxGetDiskSpace( m_Mount->GetMountPath(), &m_DiskSize, &m_DiskFree );
+    UpdateDiskFree();
 
     Config->WriteStr( wxT( "audio_player_id" ), m_Id );
     Config->Flush();
@@ -681,6 +682,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
 
     m_PortableMediaDevice = mediadevice;
+    m_PortableMediaDevice->UpdateDiskFree();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
@@ -709,31 +711,37 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	NameLabel = new wxStaticText( this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	NameLabel->Wrap( -1 );
 	NameLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
-
 	PMFlexSizer->Add( NameLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_NameText = new wxStaticText( this, wxID_ANY, mediadevice->DeviceName(), wxDefaultPosition, wxDefaultSize, 0 );
 	m_NameText->Wrap( -1 );
-	PMFlexSizer->Add( m_NameText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	PMFlexSizer->Add( m_NameText, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxTOP, 5 );
 
 	MountPathLabel = new wxStaticText( this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	MountPathLabel->Wrap( -1 );
 	MountPathLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
-
-	PMFlexSizer->Add( MountPathLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	PMFlexSizer->Add( MountPathLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxBOTTOM, 5 );
 
 	m_MountPathText = new wxStaticText( this, wxID_ANY, mediadevice->MountPath(), wxDefaultPosition, wxDefaultSize, 0 );
 	m_MountPathText->Wrap( -1 );
-	PMFlexSizer->Add( m_MountPathText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	PMFlexSizer->Add( m_MountPathText, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	UsedLabel = new wxStaticText( this, wxID_ANY, _("Used:"), wxDefaultPosition, wxDefaultSize, 0 );
 	UsedLabel->Wrap( -1 );
-	PMFlexSizer->Add( UsedLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+	PMFlexSizer->Add( UsedLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxRIGHT|wxBOTTOM, 5 );
 
 	m_UsedGauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL );
 	m_UsedGauge->SetValue( ( m_PortableMediaDevice->DiskSize() - m_PortableMediaDevice->DiskFree() ) * double( 100 ) / m_PortableMediaDevice->DiskSize() );
-	PMFlexSizer->Add( m_UsedGauge, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
-	guLogMessage( wxT( "Disk %.0f free of %.0f" ), m_PortableMediaDevice->DiskFree(), m_PortableMediaDevice->DiskSize() );
+	PMFlexSizer->Add( m_UsedGauge, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+	//guLogMessage( wxT( "Disk %.0f free of %.0f" ), m_PortableMediaDevice->DiskFree(), m_PortableMediaDevice->DiskSize() );
+
+	PMFlexSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_UsedLabel = new wxStaticText( this, wxID_ANY, wxString::Format( _( "%s free of %s" ),
+                                    SizeToString( m_PortableMediaDevice->DiskFree() ).c_str(),
+                                    SizeToString( m_PortableMediaDevice->DiskSize() ).c_str() ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_UsedLabel->Wrap( -1 );
+	PMFlexSizer->Add( m_UsedLabel, 0, wxRIGHT|wxALIGN_RIGHT, 5 );
 
 	PMBoxSizer->Add( PMFlexSizer, 0, wxEXPAND, 5 );
 
