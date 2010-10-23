@@ -75,12 +75,14 @@ enum guLibraryElement {
 
 #define     guLIBRARY_CONTEXTMENU_EDIT_TRACKS       ( 1 << 0 )
 #define     guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS   ( 1 << 1 )
-#define     guLIBRARY_CONTEXTMENU_COPY_TO           ( 1 << 2 )
-#define     guLIBRARY_CONTEXTMENU_LINKS             ( 1 << 3 )
-#define     guLIBRARY_CONTEXTMENU_COMMANDS          ( 1 << 4 )
+#define     guLIBRARY_CONTEXTMENU_EMBED_COVERS      ( 1 << 2 )
+#define     guLIBRARY_CONTEXTMENU_COPY_TO           ( 1 << 3 )
+#define     guLIBRARY_CONTEXTMENU_LINKS             ( 1 << 4 )
+#define     guLIBRARY_CONTEXTMENU_COMMANDS          ( 1 << 5 )
 
 #define     guLIBRARY_CONTEXTMENU_DEFAULT           ( guLIBRARY_CONTEXTMENU_EDIT_TRACKS | guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS |\
-                                                    guLIBRARY_CONTEXTMENU_COPY_TO | guLIBRARY_CONTEXTMENU_LINKS | guLIBRARY_CONTEXTMENU_COMMANDS )
+                                                    guLIBRARY_CONTEXTMENU_EMBED_COVERS | guLIBRARY_CONTEXTMENU_COPY_TO |\
+                                                    guLIBRARY_CONTEXTMENU_LINKS | guLIBRARY_CONTEXTMENU_COMMANDS )
 
 class guLibPanel;
 
