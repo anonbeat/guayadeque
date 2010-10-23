@@ -102,6 +102,7 @@ class guAlbumBrowserItemPanel : public wxPanel
     void                    OnAlbumDownloadCoverClicked( wxCommandEvent &event );
     void                    OnAlbumSelectCoverClicked( wxCommandEvent &event );
     void                    OnAlbumDeleteCoverClicked( wxCommandEvent &event );
+    void                    OnAlbumEmbedCoverClicked( wxCommandEvent &event );
     void                    OnAlbumCopyToClicked( wxCommandEvent &event );
     void                    OnAlbumEditLabelsClicked( wxCommandEvent &event );
     void                    OnAlbumEditTracksClicked( wxCommandEvent &event );
@@ -230,6 +231,7 @@ class guAlbumBrowser : public wxPanel
     void                            OnAlbumDownloadCoverClicked( const int albumid );
     void                            OnAlbumSelectCoverClicked( const int albumid );
     void                            OnAlbumDeleteCoverClicked( const int albumid );
+    void                            OnAlbumEmbedCoverClicked( const int albumid );
     void                            OnAlbumCopyToClicked( const int albumid, const int commandid );
     void                            OnAlbumEditLabelsClicked( const guAlbumBrowserItem * albumitem );
     void                            OnAlbumEditTracksClicked( const int albumid );
