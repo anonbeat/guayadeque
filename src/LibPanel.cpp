@@ -296,7 +296,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	SongListPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	SongListSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_SongListCtrl = new guSoListBox( SongListPanel, this, m_Db, wxT( "Song" ), guLISTVIEW_COLUMN_SELECT|guLISTVIEW_COLUMN_SORTING );
+	m_SongListCtrl = new guSoListBox( SongListPanel, this, m_Db, m_ConfigPrefixVarName, guLISTVIEW_COLUMN_SELECT|guLISTVIEW_COLUMN_SORTING );
 	//ReloadSongs();
 	SongListSizer->Add( m_SongListCtrl, 1, wxEXPAND, 5 );
 
