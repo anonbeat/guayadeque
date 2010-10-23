@@ -233,9 +233,12 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
             Menu->Append( MenuItem );
         }
 
-        MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_EMBED, _( "Embed cover" ), _( "Embed the current cover to the album files" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-        Menu->Append( MenuItem );
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EMBED_COVERS )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_EMBED, _( "Embed cover" ), _( "Embed the current cover to the album files" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+            Menu->Append( MenuItem );
+        }
     }
 
     Menu->AppendSeparator();
