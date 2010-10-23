@@ -1253,6 +1253,8 @@ void guAlbumBrowser::OnAlbumEmbedCoverClicked( const int albumid )
                 delete CoverImage;
                 return;
             }
+
+            guImageResize( CoverImage, 600 );
         }
         else
             return;
