@@ -182,6 +182,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     Connect( ID_ALBUMBROWSER_SEARCHCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDownloadCoverClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_SELECTCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumSelectCoverClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_DELETECOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_EMBEDCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEmbedCoverClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_COPYTO, ID_ALBUMBROWSER_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumCopyToClicked ), NULL, this );
 
 	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
@@ -214,6 +215,7 @@ guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
     Disconnect( ID_ALBUMBROWSER_SEARCHCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDownloadCoverClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_SELECTCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumSelectCoverClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_DELETECOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked ), NULL, this );
+    Disconnect( ID_ALBUMBROWSER_EMBEDCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEmbedCoverClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_COPYTO, ID_ALBUMBROWSER_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumCopyToClicked ), NULL, this );
 
 	m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
@@ -355,6 +357,10 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
         Menu.Append( MenuItem );
 
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EMBEDCOVER, _( "Embed Album cover" ), _( "Embed the cover to the selected album tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        Menu.Append( MenuItem );
+
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_COPYTOCLIPBOARD, _( "Copy to clipboard" ), _( "Copy the album info to clipboard" ) );
@@ -493,6 +499,12 @@ void guAlbumBrowserItemPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
 void guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked( wxCommandEvent &event )
 {
     m_AlbumBrowser->OnAlbumDeleteCoverClicked( m_AlbumBrowserItem->m_AlbumId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowserItemPanel::OnAlbumEmbedCoverClicked( wxCommandEvent &event )
+{
+    m_AlbumBrowser->OnAlbumEmbedCoverClicked( m_AlbumBrowserItem->m_AlbumId );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1222,6 +1234,48 @@ void guAlbumBrowser::OnAlbumDeleteCoverClicked( const int albumid )
             RefreshAll();
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnAlbumEmbedCoverClicked( const int albumid )
+{
+    wxImage * CoverImage = NULL;
+    int CoverId = m_Db->GetAlbumCoverId( albumid );
+    if( CoverId > 0 )
+    {
+        wxString CoverPath = m_Db->GetCoverPath( CoverId );
+
+        CoverImage = new wxImage( CoverPath, wxBITMAP_TYPE_ANY );
+        if( CoverImage )
+        {
+            if( !CoverImage->IsOk() )
+            {
+                delete CoverImage;
+                return;
+            }
+        }
+        else
+            return;
+    }
+
+    guTrackArray AlbumTracks;
+    wxArrayInt Albums;
+    Albums.Add( albumid );
+    m_Db->GetAlbumsSongs( Albums, &AlbumTracks );
+
+    int TrackIndex;
+    int TrackCount;
+    if( ( TrackCount = AlbumTracks.Count() ) )
+    {
+        for( TrackIndex = 0; TrackIndex < TrackCount; TrackIndex++ )
+        {
+            guTagSetPicture( AlbumTracks[ TrackIndex ].m_FileName, CoverImage );
+        }
+    }
+
+    if( CoverImage )
+        delete CoverImage;
+
 }
 
 // -------------------------------------------------------------------------------- //
