@@ -148,7 +148,7 @@ class guPortableMediaDevice
     wxString                DeviceName( void ) { return m_Mount->GetName(); }
     double                  DiskSize( void ) { return m_DiskSize.ToDouble(); }
     double                  DiskFree( void ) { return m_DiskFree.ToDouble(); }
-
+    void                    UpdateDiskFree( void ) { wxGetDiskSpace( m_Mount->GetMountPath(), &m_DiskSize, &m_DiskFree ); }
 
     wxString                Pattern( void ) { return m_Pattern; }
     void                    SetPattern( const wxString &pattern ) { m_Pattern = pattern; }
@@ -222,6 +222,7 @@ class guPortableMediaProperties : public wxDialog
     wxStaticText *              m_NameText;
     wxStaticText *              m_MountPathText;
     wxGauge *                   m_UsedGauge;
+    wxStaticText *              m_UsedLabel;
 
     wxTextCtrl *                m_NamePatternText;
 

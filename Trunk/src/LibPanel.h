@@ -174,6 +174,7 @@ class guLibPanel : public wxPanel
     virtual void OnAlbumDownloadCoverClicked( wxCommandEvent &event );
     virtual void OnAlbumSelectCoverClicked( wxCommandEvent &event );
     virtual void OnAlbumDeleteCoverClicked( wxCommandEvent &event );
+    virtual void OnAlbumEmbedCoverClicked( wxCommandEvent &event );
     virtual void OnAlbumCopyToClicked( wxCommandEvent &event );
 
     // YearsListBoxEvents
