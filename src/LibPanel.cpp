@@ -1267,6 +1267,11 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                             {
                                 m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
                                 ReloadAlbums( false );
+
+                                if( SelCoverFile->EmbedToFiles() )
+                                {
+                                    OnAlbumEmbedCoverClicked( event );
+                                }
                             }
                         }
                         else
@@ -1280,6 +1285,11 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                         {
                             m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
                             ReloadAlbums( false );
+
+                            if( SelCoverFile->EmbedToFiles() )
+                            {
+                                OnAlbumEmbedCoverClicked( event );
+                            }
                         }
                         else
                         {
