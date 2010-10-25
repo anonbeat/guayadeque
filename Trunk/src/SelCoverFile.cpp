@@ -41,6 +41,8 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
         }
     }
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
     // GUI
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -63,6 +65,7 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 	MainSizer->Add( ControlsSizer, 1, wxEXPAND, 5 );
 
 	m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "General" ) ) );
 	MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
 	wxStdDialogButtonSizer * StdBtnSizer = new wxStdDialogButtonSizer();
@@ -86,7 +89,13 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 // -------------------------------------------------------------------------------- //
 guSelCoverFile::~guSelCoverFile()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "General" ) );
+
 	m_SelFileBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guSelCoverFile::OnSelFileClicked ), NULL, this );
+	m_FileLink->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guSelCoverFile::OnPathChanged ), NULL, this );
+
+	Disconnect( ID_SELCOVERDIALOG_FINISH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSelCoverFile::OnCoverFinish ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //

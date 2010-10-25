@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-23 21:49+0000\n"
-"PO-Revision-Date: 2010-10-24 10:33-0000\n"
+"POT-Creation-Date: 2010-10-25 16:25+0000\n"
+"PO-Revision-Date: 2010-10-25 18:02-0000\n"
 "Last-Translator: Hreinn Jonsson <hreinsijons@gmail.com>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "Language: \n"
@@ -263,11 +263,11 @@ msgstr "Eyða plötuumslagi valdrar plötu"
 
 #: AlbumBrowser.cpp:360
 msgid "Embed Album cover"
-msgstr "Fella við Plötuumslag"
+msgstr "Ívafið Plötuumslag"
 
 #: AlbumBrowser.cpp:360
 msgid "Embed the cover to the selected album tracks"
-msgstr "Fella við plötuumslag við valin lög"
+msgstr "Ívefja plötuumslag við valin lög"
 
 #: AlbumBrowser.cpp:366
 #: LastFMPanel.cpp:584
@@ -357,7 +357,7 @@ msgid "Error"
 msgstr "Villa"
 
 #: AlbumBrowser.cpp:1218
-#: LibPanel.cpp:1299
+#: LibPanel.cpp:1313
 msgid "Are you sure to delete the selected album cover?"
 msgstr "Ertu viss um að þú viljir eyða völdu plötuumslagi"
 
@@ -365,7 +365,7 @@ msgstr "Ertu viss um að þú viljir eyða völdu plötuumslagi"
 #: FileBrowser.cpp:452
 #: FileBrowser.cpp:2007
 #: LabelEditor.cpp:304
-#: LibPanel.cpp:1300
+#: LibPanel.cpp:1314
 #: PlayListPanel.cpp:911
 #: PodcastsPanel.cpp:438
 #: PodcastsPanel.cpp:828
@@ -376,7 +376,7 @@ msgstr "Ertu viss um að þú viljir eyða völdu plötuumslagi"
 msgid "Confirm"
 msgstr "Staðfesta"
 
-#: AlbumBrowser.cpp:1313
+#: AlbumBrowser.cpp:1315
 #: LibPanel.cpp:1152
 msgid "Albums Labels Editor"
 msgstr "Breyta Merkjum"
@@ -399,11 +399,11 @@ msgstr "Bæta völdum plötum við Lagalista sem Næst Spilað"
 
 #: AlListBox.cpp:238
 msgid "Embed cover"
-msgstr "Fella við plötualbum"
+msgstr "Ívafið plötualbum"
 
 #: AlListBox.cpp:238
 msgid "Embed the current cover to the album files"
-msgstr "Fella við valið plötuumslag við plötuskrár"
+msgstr "Nota Ívafið plötuumslag við plötuskrár"
 
 #: AlListBox.cpp:261
 msgid "Albums are sorted by name"
@@ -574,6 +574,11 @@ msgstr "Plata:"
 #: CoverEdit.cpp:82
 msgid "From:"
 msgstr "Frá:"
+
+#: CoverEdit.cpp:137
+#: SelCoverFile.cpp:65
+msgid "Embed into tracks"
+msgstr "Innbyggt í lög"
 
 #: DbLibrary.cpp:616
 msgid "Recent Added Tracks"
@@ -981,7 +986,7 @@ msgstr "Staðsetningar"
 
 #: FileBrowser.cpp:1760
 #: FileBrowser.cpp:1903
-#: LibPanel.cpp:1599
+#: LibPanel.cpp:1615
 #: PlayList.cpp:1475
 #: PlayListPanel.cpp:1267
 msgid "UnNamed"
@@ -1016,7 +1021,7 @@ msgid " Names Preview "
 msgstr " Forskoða nöfn "
 
 #: FileRenamer.cpp:66
-#: PortableMedia.cpp:711
+#: PortableMedia.cpp:716
 #: Preferences.cpp:1627
 #: Preferences.cpp:1743
 #: Preferences.cpp:1873
@@ -1387,19 +1392,19 @@ msgstr "Tónskáld"
 msgid "Artist Labels Editor"
 msgstr "Breyta Merki Flytjanda"
 
-#: LibPanel.cpp:1488
+#: LibPanel.cpp:1504
 #: PlayList.cpp:1580
 #: PlayListPanel.cpp:1162
 msgid "Tracks Labels Editor"
 msgstr "Breyta Merkjum Laga"
 
-#: LibPanel.cpp:3136
+#: LibPanel.cpp:3152
 #: MainFrame.cpp:1134
 #: MainFrame.cpp:1707
 #: MainFrame.cpp:1729
 #: MainFrame.cpp:1768
-#: MainFrame.cpp:2122
-#: MainFrame.cpp:4158
+#: MainFrame.cpp:2125
+#: MainFrame.cpp:4161
 #: Preferences.cpp:168
 msgid "Library"
 msgstr "Safn"
@@ -1491,10 +1496,10 @@ msgstr "Síur"
 #: MainFrame.cpp:320
 #: MainFrame.cpp:756
 #: MainFrame.cpp:1916
-#: MainFrame.cpp:2943
-#: MainFrame.cpp:2964
-#: MainFrame.cpp:3882
-#: MainFrame.cpp:3896
+#: MainFrame.cpp:2946
+#: MainFrame.cpp:2967
+#: MainFrame.cpp:3885
+#: MainFrame.cpp:3899
 #: PlayList.cpp:77
 #: RadioPanel.cpp:634
 msgid "Now Playing"
@@ -1628,16 +1633,16 @@ msgstr "Vistar núverandi útlit"
 #: MainFrame.cpp:1043
 #: MainFrame.cpp:1054
 #: MainFrame.cpp:1057
-#: MainFrame.cpp:3888
-#: MainFrame.cpp:3890
-#: MainFrame.cpp:3927
-#: MainFrame.cpp:3934
+#: MainFrame.cpp:3891
+#: MainFrame.cpp:3893
+#: MainFrame.cpp:3930
 #: MainFrame.cpp:3937
+#: MainFrame.cpp:3940
 msgid "Load this user defined layout"
 msgstr "Hlaða útlit notanda"
 
 #: MainFrame.cpp:1045
-#: MainFrame.cpp:3929
+#: MainFrame.cpp:3932
 msgid "Delete this user defined layout"
 msgstr "Eyða þessu útliti notanda"
 
@@ -1659,8 +1664,8 @@ msgstr "Eyða útliti notanda"
 
 #: MainFrame.cpp:1054
 #: MainFrame.cpp:1057
-#: MainFrame.cpp:3934
 #: MainFrame.cpp:3937
+#: MainFrame.cpp:3940
 msgid "No layouts defined"
 msgstr "Ekkert útlit valið"
 
@@ -1826,8 +1831,8 @@ msgid "Set the podcasts visible panels"
 msgstr "Velja hlaðvarps stiku"
 
 #: MainFrame.cpp:1205
-#: MainFrame.cpp:2603
-#: MainFrame.cpp:4182
+#: MainFrame.cpp:2606
+#: MainFrame.cpp:4185
 msgid "Browser"
 msgstr "Vafri"
 
@@ -1836,8 +1841,8 @@ msgid "Show/Hide the album browser panel"
 msgstr "Sýna/Fela plötuumslög"
 
 #: MainFrame.cpp:1209
-#: MainFrame.cpp:2637
-#: MainFrame.cpp:4186
+#: MainFrame.cpp:2640
+#: MainFrame.cpp:4189
 msgid "Files"
 msgstr "Skrár"
 
@@ -2088,7 +2093,7 @@ msgid "Show information about guayadeque music player"
 msgstr "Sýna upplýsingar um guayadeque"
 
 #: MainFrame.cpp:1681
-#: PortableMedia.cpp:906
+#: PortableMedia.cpp:911
 msgid "Covers"
 msgstr "Plötuumslög"
 
@@ -2118,107 +2123,107 @@ msgid "Select destination directory"
 msgstr "Velja staðsetningu"
 
 #: MainFrame.cpp:1943
-#: MainFrame.cpp:1988
-#: MainFrame.cpp:4493
+#: MainFrame.cpp:1991
+#: MainFrame.cpp:4496
 msgid "Copy To..."
 msgstr "Afrita til..."
 
-#: MainFrame.cpp:2378
-#: MainFrame.cpp:4162
+#: MainFrame.cpp:2381
+#: MainFrame.cpp:4165
 msgid "Radio"
 msgstr "Útvarp"
 
-#: MainFrame.cpp:2496
-#: MainFrame.cpp:4166
+#: MainFrame.cpp:2499
+#: MainFrame.cpp:4169
 msgid "Last.fm"
 msgstr "Last.fm"
 
-#: MainFrame.cpp:2530
-#: MainFrame.cpp:4170
+#: MainFrame.cpp:2533
+#: MainFrame.cpp:4173
 #: Preferences.cpp:188
 #: TrackEdit.cpp:435
 msgid "Lyrics"
 msgstr "Textar"
 
-#: MainFrame.cpp:2563
-#: MainFrame.cpp:3739
-#: MainFrame.cpp:4178
+#: MainFrame.cpp:2566
+#: MainFrame.cpp:3742
+#: MainFrame.cpp:4181
 #: PodcastsPanel.cpp:134
 #: Preferences.cpp:196
 msgid "Podcasts"
 msgstr "Hlaðvörp"
 
-#: MainFrame.cpp:3003
-#: MainFrame.cpp:4174
+#: MainFrame.cpp:3006
+#: MainFrame.cpp:4177
 msgid "PlayLists"
 msgstr "Lagalistar"
 
-#: MainFrame.cpp:3529
-#: MainFrame.cpp:3548
-#: MainFrame.cpp:3595
-#: MainFrame.cpp:3604
+#: MainFrame.cpp:3532
+#: MainFrame.cpp:3551
+#: MainFrame.cpp:3598
+#: MainFrame.cpp:3607
 #: Preferences.cpp:673
 msgid "track"
 msgstr "lag"
 
-#: MainFrame.cpp:3529
-#: MainFrame.cpp:3548
-#: MainFrame.cpp:3595
-#: MainFrame.cpp:3604
+#: MainFrame.cpp:3532
+#: MainFrame.cpp:3551
+#: MainFrame.cpp:3598
+#: MainFrame.cpp:3607
 msgid "tracks"
 msgstr "lög"
 
-#: MainFrame.cpp:3540
+#: MainFrame.cpp:3543
 msgid "station"
 msgstr "stöð"
 
-#: MainFrame.cpp:3540
+#: MainFrame.cpp:3543
 msgid "stations"
 msgstr "stöðvar"
 
-#: MainFrame.cpp:3565
+#: MainFrame.cpp:3568
 msgid "podcast"
 msgstr "hlaðvarp"
 
-#: MainFrame.cpp:3565
+#: MainFrame.cpp:3568
 msgid "podcasts"
 msgstr "hlaðvörp"
 
-#: MainFrame.cpp:3576
+#: MainFrame.cpp:3579
 msgid "dir"
 msgstr "Skráar stðsetning"
 
-#: MainFrame.cpp:3576
+#: MainFrame.cpp:3579
 msgid "dirs"
 msgstr "Skráa staðsetning"
 
-#: MainFrame.cpp:3578
+#: MainFrame.cpp:3581
 msgid "file"
 msgstr "Skrá"
 
-#: MainFrame.cpp:3578
+#: MainFrame.cpp:3581
 msgid "files"
 msgstr "Skrár"
 
-#: MainFrame.cpp:3858
+#: MainFrame.cpp:3861
 msgid "Enter the layout name:"
 msgstr "Setja inn nafn útlits:"
 
-#: MainFrame.cpp:3858
+#: MainFrame.cpp:3861
 msgid "New Layout"
 msgstr "Nýtt Útlit"
 
-#: MainFrame.cpp:3860
+#: MainFrame.cpp:3863
 #, c-format
 msgid "Layout %u"
 msgstr "Útlit %u"
 
-#: MainFrame.cpp:4464
-#: MainFrame.cpp:4484
+#: MainFrame.cpp:4467
+#: MainFrame.cpp:4487
 msgid "Copy the current selected songs to a directory or device"
 msgstr "Afritar valdið lag til möppu eða tækis"
 
-#: MainFrame.cpp:4493
+#: MainFrame.cpp:4496
 msgid "Copy the selected tracks to a folder or device"
 msgstr "Afrita völd lög í möppu eða til tækis"
 
@@ -2297,7 +2302,7 @@ msgid "Record to a file"
 msgstr "Taka upp"
 
 #: PlayerPanel.cpp:193
-#: PlayerPanel.cpp:2787
+#: PlayerPanel.cpp:2790
 msgid "Volume"
 msgstr "Hljóð"
 
@@ -2375,10 +2380,10 @@ msgid "Buffering..."
 msgstr "Hleður niður..."
 
 #: PlayerPanel.cpp:1380
-#: TagInfo.cpp:549
-#: TagInfo.cpp:555
-#: TagInfo.cpp:1430
-#: TagInfo.cpp:1436
+#: TagInfo.cpp:599
+#: TagInfo.cpp:605
+#: TagInfo.cpp:1585
+#: TagInfo.cpp:1591
 msgid "Unknown"
 msgstr "Óþekkt"
 
@@ -2769,9 +2774,9 @@ msgid "Copy the current selected podcasts to a directory or device"
 msgstr "Afrita valda podcast veitur í möppu eða til tækis"
 
 #: PortableMedia.cpp:467
-#: PortableMedia.cpp:1139
+#: PortableMedia.cpp:1144
 msgid "embedded"
-msgstr "fellt við"
+msgstr "Ívafið"
 
 #: PortableMedia.cpp:567
 msgid "Update the device library"
@@ -2793,33 +2798,33 @@ msgstr "Aftengja drif"
 msgid "Portable Device"
 msgstr "Tengjanlegt tæki"
 
-#: PortableMedia.cpp:695
+#: PortableMedia.cpp:700
 msgid "Portable Media Properties"
 msgstr "Hljóðskrár tengjanlegs tækis"
 
-#: PortableMedia.cpp:703
+#: PortableMedia.cpp:708
 #: Preferences.cpp:922
 msgid " Properties "
 msgstr " Stillingar "
 
-#: PortableMedia.cpp:720
+#: PortableMedia.cpp:725
 msgid "Path:"
 msgstr "Slóð:"
 
-#: PortableMedia.cpp:729
+#: PortableMedia.cpp:734
 msgid "Used:"
 msgstr "Notað:"
 
-#: PortableMedia.cpp:740
+#: PortableMedia.cpp:745
 #, c-format
 msgid "%s free of %s"
 msgstr "%s frítt af %s"
 
-#: PortableMedia.cpp:755
+#: PortableMedia.cpp:760
 msgid "Name Pattern:"
 msgstr "Nafn mynstur:"
 
-#: PortableMedia.cpp:760
+#: PortableMedia.cpp:765
 msgid ""
 "{a}\t: Artist\t\t\t{aa} : Album Artist\n"
 "{b}\t: Album\t\t\t{d}\t : Disk\n"
@@ -2833,117 +2838,117 @@ msgstr ""
 "{n}\t: Númer\t\t\t{t}\t : Titill\n"
 "{y}\t: Ár"
 
-#: PortableMedia.cpp:766
+#: PortableMedia.cpp:771
 msgid "Audio Folders:"
 msgstr "Hljóð Möppur:"
 
-#: PortableMedia.cpp:776
+#: PortableMedia.cpp:781
 msgid "Audio Formats:"
 msgstr "Snið Hljóðs:"
 
-#: PortableMedia.cpp:787
+#: PortableMedia.cpp:792
 msgid "Transcode to:"
 msgstr "Umkóða sem:"
 
-#: PortableMedia.cpp:799
+#: PortableMedia.cpp:804
 msgid "Unsupported formats only"
 msgstr "Óstutt snið eingöngu"
 
-#: PortableMedia.cpp:799
+#: PortableMedia.cpp:804
 msgid "always"
 msgstr "alltaf"
 
-#: PortableMedia.cpp:811
+#: PortableMedia.cpp:816
 #: Preferences.cpp:941
 msgid "Quality:"
 msgstr "Gæði:"
 
-#: PortableMedia.cpp:816
+#: PortableMedia.cpp:821
 msgid "Keep quality"
 msgstr "Halda gæðum"
 
-#: PortableMedia.cpp:817
+#: PortableMedia.cpp:822
 #: Preferences.cpp:946
 #: Transcode.cpp:242
 msgid "Very High"
 msgstr "Mjög Hátt"
 
-#: PortableMedia.cpp:818
+#: PortableMedia.cpp:823
 #: Preferences.cpp:947
 #: Transcode.cpp:243
 msgid "High"
 msgstr "Hátt"
 
-#: PortableMedia.cpp:819
+#: PortableMedia.cpp:824
 #: Transcode.cpp:244
 msgid "Very Good"
 msgstr "Mjög Gott"
 
-#: PortableMedia.cpp:820
+#: PortableMedia.cpp:825
 #: Transcode.cpp:245
 msgid "Good"
 msgstr "Gott"
 
-#: PortableMedia.cpp:821
+#: PortableMedia.cpp:826
 #: Preferences.cpp:948
 #: Transcode.cpp:246
 msgid "Normal"
 msgstr "Venjulegt"
 
-#: PortableMedia.cpp:822
+#: PortableMedia.cpp:827
 #: Preferences.cpp:949
 #: Transcode.cpp:247
 msgid "Low"
 msgstr "Lágt"
 
-#: PortableMedia.cpp:823
+#: PortableMedia.cpp:828
 #: Preferences.cpp:950
 #: Transcode.cpp:248
 msgid "Very Low"
 msgstr "Mjög lágt"
 
-#: PortableMedia.cpp:837
+#: PortableMedia.cpp:842
 msgid "Audio"
 msgstr "Hljóð"
 
-#: PortableMedia.cpp:844
+#: PortableMedia.cpp:849
 msgid "PlayList Folders:"
 msgstr "Lagalisti Möppur:"
 
-#: PortableMedia.cpp:854
+#: PortableMedia.cpp:859
 msgid "PlayList Format:"
 msgstr "Lagaliti Snið:: "
 
-#: PortableMedia.cpp:868
+#: PortableMedia.cpp:873
 msgid "Playlists"
 msgstr "Lagalistar"
 
-#: PortableMedia.cpp:875
+#: PortableMedia.cpp:880
 msgid "Cover Format:"
 msgstr "Plötuumslag snið:"
 
-#: PortableMedia.cpp:886
+#: PortableMedia.cpp:891
 msgid "Cover Name:"
 msgstr "Plötuumslag Nafn:"
 
-#: PortableMedia.cpp:896
+#: PortableMedia.cpp:901
 msgid "Covers Size (pixels):"
 msgstr "Plötuunslag Stærð (pixlar)"
 
-#: PortableMedia.cpp:978
-#: PortableMedia.cpp:1060
+#: PortableMedia.cpp:983
+#: PortableMedia.cpp:1065
 msgid "Select audio folder"
 msgstr "Velja Hljóðmöppu"
 
-#: PortableMedia.cpp:1034
+#: PortableMedia.cpp:1039
 msgid "Audio format"
 msgstr "Hljóð snið"
 
-#: PortableMedia.cpp:1116
+#: PortableMedia.cpp:1121
 msgid "Playlist format"
 msgstr "Lagalisti snið"
 
-#: PortableMedia.cpp:1162
+#: PortableMedia.cpp:1167
 msgid "Cover format"
 msgstr "Plötuumslag snið"
 
@@ -3081,7 +3086,7 @@ msgstr "Elta tákn í safn skönnun"
 
 #: Preferences.cpp:625
 msgid "Scan embedded covers in audio files"
-msgstr "Skanna innfeld plötuumslög í hljóðskrám"
+msgstr "Skanna Ívafin plötuumslög í hljóðskrám"
 
 #: Preferences.cpp:669
 msgid "Play random"
@@ -3723,7 +3728,7 @@ msgstr "Velja Skrá Plötuumslags"
 msgid "Cover:"
 msgstr "Plötuumslag:"
 
-#: SelCoverFile.cpp:96
+#: SelCoverFile.cpp:99
 msgid "Select the cover filename"
 msgstr "Velja skráarnafn plötuumslags"
 

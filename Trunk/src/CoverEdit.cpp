@@ -99,13 +99,13 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
 	CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_left ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_left ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
 	CoverSizer->Add( m_PrevButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_blank_cd_cover ), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	CoverSizer->Add( m_CoverBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_NextButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_right ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_NextButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_right ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
 	CoverSizer->Add( m_NextButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
@@ -135,6 +135,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
 
 	m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "General" ) ) );
 	MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
     wxStdDialogButtonSizer * ButtonsSizer;
@@ -184,6 +185,7 @@ guCoverEditor::~guCoverEditor()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteNum( wxT( "CoverSearchEngine" ), m_EngineChoice->GetSelection(), wxT( "General" ) );
+    Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "General" ) );
 
     m_DownloadThreadMutex.Lock();
     int index;
@@ -349,12 +351,23 @@ void guCoverEditor::UpdateCoverBitmap( void )
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::OnCoverLeftDClick( wxMouseEvent &event )
 {
-    EndModal( wxID_OK );
+    if( event.m_x >= 75 && event.m_x <= 225 )
+        EndModal( wxID_OK );
 }
 
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::OnCoverLeftClick( wxMouseEvent &event )
 {
+    wxCommandEvent CmdEvent;
+    if( event.m_x < 75 )
+    {
+        OnPrevButtonClick( CmdEvent );
+    }
+    else if( event.m_x > 225 )
+    {
+        OnNextButtonClick( CmdEvent );
+    }
+    //guLogMessage( wxT( "%i %i" ), event.m_x, event.m_y );
     event.Skip();
 }
 
