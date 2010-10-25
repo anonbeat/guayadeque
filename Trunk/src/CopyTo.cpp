@@ -187,7 +187,7 @@ void guCopyToThread::CopyFile( const wxString &from, const wxString &to )
 void guCopyToThread::TranscodeFile( const wxString &source, const wxString &target, int format, int quality )
 {
     guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\n%s\n%s" ), source.c_str(), target.c_str() );
-    wxString OutFile = target + wxT( "." ) + guGetTranscodeFormatString( format );
+    wxString OutFile = target + wxT( "." ) + guTranscodeFormatString( format );
     if( wxFileName::Mkdir( wxPathOnly( target ), 0777, wxPATH_MKDIR_FULL ) )
     {
         guTranscodeThread * TranscodeThread = new guTranscodeThread( source, OutFile, format, quality );

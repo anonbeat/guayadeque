@@ -25,16 +25,16 @@
 
 #include <wx/tokenzr.h>
 
-// -------------------------------------------------------------------------------- //
-wxString guPortableMediaAudioFormatString[] = {
-    wxT( "Keep format" ),
-    wxT( "mp3" ),
-    wxT( "ogg" ),
-    wxT( "flac" ),
-    wxT( "m4a" ),
-    wxT( "wma" )
-};
-
+//// -------------------------------------------------------------------------------- //
+//wxString guPortableMediaAudioFormatString[] = {
+//    wxT( "Keep format" ),
+//    wxT( "mp3" ),
+//    wxT( "ogg" ),
+//    wxT( "flac" ),
+//    wxT( "m4a" ),
+//    wxT( "wma" )
+//};
+//
 // -------------------------------------------------------------------------------- //
 wxString guPortablePlaylistFormatString[] = {
     wxT( "m3u" ),
@@ -79,12 +79,6 @@ int guGetTranscodeFileFormat( const wxString &filetype )
         return guPORTABLEMEDIA_AUDIO_FORMAT_WMA;
     }
     return guTRANSCODE_FORMAT_KEEP;
-}
-
-// -------------------------------------------------------------------------------- //
-wxString guGetTranscodeFormatString( const int format )
-{
-    return guPortableMediaAudioFormatString[ format ];
 }
 
 // -------------------------------------------------------------------------------- //
@@ -796,12 +790,11 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	wxBoxSizer* TranscodeSizer;
 	TranscodeSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	int m_TransFormatChoiceNChoices = sizeof( guPortableMediaAudioFormatString ) / sizeof( wxString );
-	m_TransFormatChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_TransFormatChoiceNChoices, guPortableMediaAudioFormatString, 0 );
+	m_TransFormatChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeFormatStrings(), 0 );
 	m_TransFormatChoice->SetSelection( mediadevice->TranscodeFormat() );
 	TranscodeSizer->Add( m_TransFormatChoice, 1, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
-	wxString m_TransScopeChoiceChoices[] = { _("Unsupported formats only"), _("always") };
+	wxString m_TransScopeChoiceChoices[] = { _( "Unsupported formats only" ), _( "always" ) };
 	int m_TransScopeChoiceNChoices = sizeof( m_TransScopeChoiceChoices ) / sizeof( wxString );
 	m_TransScopeChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_TransScopeChoiceNChoices, m_TransScopeChoiceChoices, 0 );
 	m_TransScopeChoice->SetSelection( mediadevice->TranscodeScope() );
@@ -817,17 +810,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	TransQualityLabel->Wrap( -1 );
 	PMFlexSizer->Add( TransQualityLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-    wxArrayString QualityStrings;
-    QualityStrings.Add( _( "Keep quality" ) );
-	QualityStrings.Add( _( "Very High" ) );
-	QualityStrings.Add( _( "High" ) );
-	QualityStrings.Add( _( "Very Good" ) );
-	QualityStrings.Add( _( "Good" ) );
-	QualityStrings.Add( _( "Normal" ) );
-	QualityStrings.Add( _( "Low" ) );
-	QualityStrings.Add( _( "Very Low" ) );
-
-	m_TransQualityChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, QualityStrings, 0 );
+	m_TransQualityChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeQualityStrings(), 0 );
 	m_TransQualityChoice->SetSelection( mediadevice->TranscodeQuality() );
     m_TransQualityChoice->Enable( ( m_PortableMediaDevice->TranscodeFormat() != guTRANSCODE_FORMAT_KEEP ) &&
                                   ( m_PortableMediaDevice->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP ) );
@@ -1013,11 +996,11 @@ void guPortableMediaProperties::OnAudioFormatBtnClick( wxCommandEvent &event )
 {
     wxArrayInt Selection;
     wxArrayString Items;
-    Items.Add( guPortableMediaAudioFormatString[ 1 ] );
-    Items.Add( guPortableMediaAudioFormatString[ 2 ] );
-    Items.Add( guPortableMediaAudioFormatString[ 3 ] );
-    Items.Add( guPortableMediaAudioFormatString[ 4 ] );
-    Items.Add( guPortableMediaAudioFormatString[ 5 ] );
+    Items.Add( guTranscodeFormatString( 1 ) );
+    Items.Add( guTranscodeFormatString( 2 ) );
+    Items.Add( guTranscodeFormatString( 3 ) );
+    Items.Add( guTranscodeFormatString( 4 ) );
+    Items.Add( guTranscodeFormatString( 5 ) );
 
     wxArrayInt ItemFlags;
     ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_MP3 );
