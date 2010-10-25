@@ -1228,6 +1228,10 @@ void guLibPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
                     //Db->SetAlFilters( wxArrayInt() );
                     ReloadAlbums( false );
                     //guLogMessage( wxT( "Cover downloaded ok\n" ) );
+                    if( CoverEditor->EmbedToFiles() )
+                    {
+                        OnAlbumEmbedCoverClicked( event );
+                    }
                 }
             }
             CoverEditor->Destroy();
