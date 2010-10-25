@@ -78,9 +78,6 @@ enum guPortableMediaTranscodeScope {
 int guGetTranscodeFileFormat( const wxString &filetype );
 
 // -------------------------------------------------------------------------------- //
-wxString guGetTranscodeFormatString( const int format );
-
-// -------------------------------------------------------------------------------- //
 int inline guGetMp3QualityBitRate( int quality )
 {
     int guPortableMediaMp3QualityBitrate[] = {
