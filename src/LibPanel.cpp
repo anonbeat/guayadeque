@@ -3108,7 +3108,7 @@ void guLibPanel::DeleteTracks( guTrackArray * tracks )
         for( Index = 0; Index < Count; Index++ )
         {
             wxString CurPath = DeletePaths[ Index ] + wxT( "/" );
-            while( LibPaths.Index( CurPath ) == wxNOT_FOUND )
+            while( !CurPath.IsEmpty() && ( LibPaths.Index( CurPath ) == wxNOT_FOUND ) )
             {
                 if( guIsDirectoryEmpty( CurPath ) )
                 {
