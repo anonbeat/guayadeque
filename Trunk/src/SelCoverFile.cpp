@@ -27,7 +27,7 @@
 
 // -------------------------------------------------------------------------------- //
 guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int albumid ) :
-    wxDialog( parent, wxID_ANY, _( "Select Cover File" ), wxDefaultPosition, wxSize( 400, 125 ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, _( "Select Cover File" ), wxDefaultPosition, wxSize( 400, 132 ), wxDEFAULT_DIALOG_STYLE )
 {
     m_Db = db;
     if( albumid != wxNOT_FOUND )
@@ -61,6 +61,9 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 	ControlsSizer->Add( m_SelFileBtn, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	MainSizer->Add( ControlsSizer, 1, wxEXPAND, 5 );
+
+	m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
+	MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
 	wxStdDialogButtonSizer * StdBtnSizer = new wxStdDialogButtonSizer();
 	m_StdBtnOk = new wxButton( this, wxID_OK );

@@ -47,6 +47,7 @@ class guSelCoverFile : public wxDialog
     // GUI
     wxTextCtrl *    m_FileLink;
     wxButton *      m_SelFileBtn;
+    wxCheckBox *    m_EmbedToFilesChkBox;
     wxButton *      m_StdBtnOk;
 
     void            OnSelFileClicked( wxCommandEvent& event );
@@ -60,6 +61,8 @@ class guSelCoverFile : public wxDialog
 
     wxString GetSelFile( void );
     wxString GetAlbumPath( void ) { return m_AlbumPath; }
+
+    bool     EmbedToFiles( void ) { return m_EmbedToFilesChkBox->IsChecked(); }
 };
 
 #endif
