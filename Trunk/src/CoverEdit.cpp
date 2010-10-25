@@ -48,7 +48,7 @@ WX_DEFINE_OBJARRAY(guCoverImageArray);
 
 // -------------------------------------------------------------------------------- //
 guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wxString &Album ) :
-               wxDialog( parent, wxID_ANY, _( "Cover Editor" ), wxDefaultPosition, wxSize( 520, 430 ), wxDEFAULT_DIALOG_STYLE )
+               wxDialog( parent, wxID_ANY, _( "Cover Editor" ), wxDefaultPosition, wxSize( 520, 446 ), wxDEFAULT_DIALOG_STYLE )
 {
     wxStaticText* ArtistStaticText;
     wxStaticText* AlbumStaticText;
@@ -134,6 +134,9 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
 	MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
 
+	m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
+	MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
+
     wxStdDialogButtonSizer * ButtonsSizer;
     wxButton * ButtonsSizerOK;
     wxButton * ButtonsSizerCancel;
@@ -162,6 +165,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	m_EngineChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guCoverEditor::OnEngineChanged ), NULL, this );
 
 	m_CoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
+	m_CoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnCoverLeftClick ), NULL, this );
 
 	m_PrevButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
 	m_NextButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
@@ -209,6 +213,7 @@ guCoverEditor::~guCoverEditor()
 	m_EngineChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guCoverEditor::OnEngineChanged ), NULL, this );
 
 	m_CoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
+	m_CoverBitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnCoverLeftClick ), NULL, this );
 
 	m_PrevButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
 	m_NextButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
@@ -345,6 +350,12 @@ void guCoverEditor::UpdateCoverBitmap( void )
 void guCoverEditor::OnCoverLeftDClick( wxMouseEvent &event )
 {
     EndModal( wxID_OK );
+}
+
+// -------------------------------------------------------------------------------- //
+void guCoverEditor::OnCoverLeftClick( wxMouseEvent &event )
+{
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //

@@ -35,6 +35,7 @@
 #include <wx/dialog.h>
 #include <wx/gauge.h>
 #include <wx/choice.h>
+#include <wx/checkbox.h>
 
 #define GUCOVERINFO_LINK    0
 #define GUCOVERINFO_SIZE    1
@@ -133,6 +134,8 @@ class guCoverEditor : public wxDialog
     guAutoPulseGauge *          m_Gauge;
     wxStaticText *              m_InfoTextCtrl;
 
+    wxCheckBox *                m_EmbedToFilesChkBox;
+
 	guCoverImageArray           m_AlbumCovers;
 	guFetchCoverLinksThread *   m_DownloadCoversThread;
 	guThreadArray               m_DownloadThreads;
@@ -144,6 +147,7 @@ class guCoverEditor : public wxDialog
 	void OnTextCtrlEnter( wxCommandEvent& event );
     void OnEngineChanged( wxCommandEvent& event );
 	void OnCoverLeftDClick( wxMouseEvent& event );
+	void OnCoverLeftClick( wxMouseEvent& event );
 	void OnPrevButtonClick( wxCommandEvent& event );
 	void OnNextButtonClick( wxCommandEvent& event );
 	void OnAddCoverImage( wxCommandEvent &event );
@@ -157,6 +161,7 @@ class guCoverEditor : public wxDialog
 	~guCoverEditor();
     wxString    GetSelectedCoverUrl( void );
     wxImage *   GetSelectedCoverImage( void );
+    bool        EmbedToFiles( void ) { return m_EmbedToFilesChkBox->IsChecked(); }
 
   friend class guFetchCoverLinksThread;
   friend class guDownloadCoverThread;
