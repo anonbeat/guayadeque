@@ -47,6 +47,7 @@ bool guIsValidAudioFile( const wxString &filename )
         FileName.EndsWith( wxT( ".wav"  ) ) ||
         FileName.EndsWith( wxT( ".aif"  ) ) ||
         FileName.EndsWith( wxT( ".wv"  ) ) ||
+        FileName.EndsWith( wxT( ".tta"  ) ) ||
         FileName.EndsWith( wxT( ".mpc"  ) ) )
     {
         return true;
@@ -89,6 +90,10 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
     else if( filename.Lower().EndsWith( wxT( ".wv" ) ) )
     {
         return new guWavPackTagInfo( filename );
+    }
+    else if( filename.Lower().EndsWith( wxT( ".tta" ) ) )
+    {
+        return new guTrueAudioTagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".wma" ) ) ||
              filename.Lower().EndsWith( wxT( ".asf" ) ) ||
@@ -1654,6 +1659,157 @@ bool guApeTagInfo::SetLyrics( const wxString &lyrics )
     }
     return false;
 }
+
+
+
+// -------------------------------------------------------------------------------- //
+// guTrueAudioTagInfo
+// -------------------------------------------------------------------------------- //
+guTrueAudioTagInfo::guTrueAudioTagInfo( const wxString &filename ) : guTagInfo( filename )
+{
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_TagId3v2 = ( ( TagLib::TrueAudio::File * ) m_TagFile->file() )->ID3v2Tag();
+    }
+    else
+    {
+        m_TagId3v2 = NULL;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guTrueAudioTagInfo::~guTrueAudioTagInfo()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTrueAudioTagInfo::Read( void )
+{
+    if( guTagInfo::Read() )
+    {
+        // If its a ID3v2 Tag try to load the labels
+        if( m_TagId3v2 )
+        {
+            if( m_TagId3v2->frameListMap().contains( "TPOS" ) )
+            {
+                m_Disk = TStringTowxString( m_TagId3v2->frameListMap()[ "TPOS" ].front()->toString() );
+            }
+
+            if( m_TagId3v2->frameListMap().contains( "TCOM" ) )
+            {
+                m_Composer = TStringTowxString( m_TagId3v2->frameListMap()[ "TCOM" ].front()->toString() );
+            }
+
+            if( m_TagId3v2->frameListMap().contains( "TPE2" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_TagId3v2->frameListMap()[ "TPE2" ].front()->toString() );
+            }
+
+            if( m_TagId3v2->frameListMap().contains( "TCMP" ) )
+            {
+                m_Compilation = TStringTowxString( m_TagId3v2->frameListMap()[ "TCMP" ].front()->toString() ) == wxT( "1" );
+            }
+        }
+    }
+    else
+    {
+      guLogError( wxT( "Could not read tags from file '%s'" ), m_FileName.c_str() );
+    }
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTrueAudioTagInfo::Write( void )
+{
+    if( m_TagId3v2 )
+    {
+        TagLib::ID3v2::TextIdentificationFrame * frame;
+        m_TagId3v2->removeFrames( "TPOS" );
+        frame = new TagLib::ID3v2::TextIdentificationFrame( "TPOS" );
+        frame->setText( wxStringToTString( m_Disk ) );
+        m_TagId3v2->addFrame( frame );
+
+        m_TagId3v2->removeFrames( "TCOM" );
+        frame = new TagLib::ID3v2::TextIdentificationFrame( "TCOM" );
+        frame->setText( wxStringToTString( m_Composer ) );
+        m_TagId3v2->addFrame( frame );
+
+        m_TagId3v2->removeFrames( "TPE2" );
+        frame = new TagLib::ID3v2::TextIdentificationFrame( "TPE2" );
+        frame->setText( wxStringToTString( m_AlbumArtist ) );
+        m_TagId3v2->addFrame( frame );
+
+        m_TagId3v2->removeFrames( "TCMP" );
+        frame = new TagLib::ID3v2::TextIdentificationFrame( "TCMP" );
+        frame->setText( wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+        m_TagId3v2->addFrame( frame );
+
+        // I have found several TRCK fields in the mp3s
+        m_TagId3v2->removeFrames( "TRCK" );
+        m_TagId3v2->setTrack( m_Track );
+
+    }
+
+    return guTagInfo::Write();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTrueAudioTagInfo::CanHandleImages( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guTrueAudioTagInfo::GetImage( void )
+{
+    if( m_TagId3v2 )
+    {
+        return GetID3v2Image( m_TagId3v2 );
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTrueAudioTagInfo::SetImage( const wxImage * image )
+{
+    if( m_TagId3v2 )
+    {
+        SetID3v2Image( m_TagId3v2, image );
+    }
+    else
+        return false;
+
+    return m_TagFile->save();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTrueAudioTagInfo::CanHandleLyrics( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guTrueAudioTagInfo::GetLyrics( void )
+{
+    if( m_TagId3v2 )
+    {
+        return GetID3v2Lyrics( m_TagId3v2  );
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTrueAudioTagInfo::SetLyrics( const wxString &lyrics )
+{
+	if( m_TagId3v2 )
+    {
+        SetID3v2Lyrics( m_TagId3v2, lyrics );
+        return m_TagFile->save();
+    }
+    return false;
+}
+
 
 
 

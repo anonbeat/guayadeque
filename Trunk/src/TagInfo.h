@@ -38,6 +38,7 @@
 #include <oggfile.h>
 #include <vorbisfile.h>
 #include <wavpackfile.h>
+#include <trueaudiofile.h>
 
 #include <xiphcomment.h>
 
@@ -244,6 +245,27 @@ class guWavPackTagInfo : public guTagInfo
   public :
     guWavPackTagInfo( const wxString &filename = wxEmptyString );
     ~guWavPackTagInfo();
+
+    virtual bool        Read( void );
+    virtual bool        Write( void );
+
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
+};
+
+// -------------------------------------------------------------------------------- //
+class guTrueAudioTagInfo : public guTagInfo
+{
+  protected :
+    ID3v2::Tag *        m_TagId3v2;
+
+  public :
+    guTrueAudioTagInfo( const wxString &filename = wxEmptyString );
+    ~guTrueAudioTagInfo();
 
     virtual bool        Read( void );
     virtual bool        Write( void );
