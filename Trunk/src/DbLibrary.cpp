@@ -3578,6 +3578,7 @@ wxString guDbLibrary::GetPlayListQuery( const int plid )
 
       RetVal = wxT( "SELECT song_id FROM songs " ) + DynPlayListToSQLQuery( &PlayList );
     }
+    //guLogMessage( wxT( "::GetPlaylistQuery %s"), RetVal.c_str() );
     return RetVal;
 }
 
