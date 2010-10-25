@@ -1948,6 +1948,9 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
                     wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option"), wxEmptyString, wxT( "CopyTo") );
                     wxArrayString SelCopyTo = wxStringTokenize( CopyToOptions[ event.GetInt() ], wxT( ":") );
 
+                    while( SelCopyTo.Count() != 5 )
+                        SelCopyTo.Add( wxT( "0" ) );
+
                     m_CopyToThread->AddAction( Tracks, m_LibPanel, DirDialog->GetPath(),
                             unescape_configlist_str( SelCopyTo[ 1 ] ),
                             wxAtoi( SelCopyTo[ 2 ] ),

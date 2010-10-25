@@ -2505,6 +2505,9 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
         //guLogMessage( wxT( "State: %i" ), State );
         if( State == guMEDIASTATE_PLAYING )
         {
+            if( m_SilenceDetector )
+                m_SilenceDetected = true;
+
             if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
                 m_MediaCtrl->Pause();
             else
