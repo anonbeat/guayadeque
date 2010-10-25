@@ -3076,6 +3076,7 @@ bool guRmDirRecursive( const wxString &path )
         guLogMessage( wxT( "Could not delete the dir %s" ), Path.c_str() );
         return false;
     }
+
     return true;
 }
 
@@ -3103,14 +3104,23 @@ void guLibPanel::DeleteTracks( guTrackArray * tracks )
 
     if( ( Count = DeletePaths.Count() ) )
     {
+        wxArrayString LibPaths = GetPaths();
         for( Index = 0; Index < Count; Index++ )
         {
-            if( guIsDirectoryEmpty( DeletePaths[ Index ] ) )
+            wxString CurPath = DeletePaths[ Index ] + wxT( "/" );
+            while( LibPaths.Index( CurPath ) == wxNOT_FOUND )
             {
-                if( !guRmDirRecursive( DeletePaths[ Index ] ) )
+                if( guIsDirectoryEmpty( CurPath ) )
                 {
-                    guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
+                    if( !guRmDirRecursive( CurPath ) )
+                    {
+                        guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
+                    }
                 }
+                else
+                    break;
+
+                CurPath = CurPath.RemoveLast().BeforeLast( wxT( '/' ) );
             }
         }
     }
