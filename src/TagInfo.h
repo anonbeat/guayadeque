@@ -37,6 +37,7 @@
 #include <mpcfile.h>
 #include <oggfile.h>
 #include <vorbisfile.h>
+#include <wavpackfile.h>
 
 #include <xiphcomment.h>
 
@@ -232,6 +233,27 @@ class guMpcTagInfo : public guTagInfo
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
     virtual bool        SetImage( const wxImage * image );
+};
+
+// -------------------------------------------------------------------------------- //
+class guWavPackTagInfo : public guTagInfo
+{
+  protected :
+    TagLib::APE::Tag * m_ApeTag;
+
+  public :
+    guWavPackTagInfo( const wxString &filename = wxEmptyString );
+    ~guWavPackTagInfo();
+
+    virtual bool        Read( void );
+    virtual bool        Write( void );
+
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
 };
 
 

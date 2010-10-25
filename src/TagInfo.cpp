@@ -46,6 +46,7 @@ bool guIsValidAudioFile( const wxString &filename )
         FileName.EndsWith( wxT( ".ape"  ) ) ||
         FileName.EndsWith( wxT( ".wav"  ) ) ||
         FileName.EndsWith( wxT( ".aif"  ) ) ||
+        FileName.EndsWith( wxT( ".wv"  ) ) ||
         FileName.EndsWith( wxT( ".mpc"  ) ) )
     {
         return true;
@@ -84,6 +85,10 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
             filename.Lower().EndsWith( wxT( ".aac" ) ) )
     {
         return new guMp4TagInfo( filename );
+    }
+    else if( filename.Lower().EndsWith( wxT( ".wv" ) ) )
+    {
+        return new guWavPackTagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".wma" ) ) ||
              filename.Lower().EndsWith( wxT( ".asf" ) ) ||
@@ -485,6 +490,46 @@ bool SetApeImage( TagLib::APE::Tag * apetag, const wxImage * image )
     return false;
 }
 
+
+// -------------------------------------------------------------------------------- //
+wxString GetApeLyrics( APE::Tag * apetag )
+{
+    if( apetag )
+    {
+        if( apetag->itemListMap().contains( "LYRICS" ) )
+        {
+            return TStringTowxString( apetag->itemListMap()[ "LYRICS" ].toStringList().front() );
+        }
+        else if( apetag->itemListMap().contains( "UNSYNCED LYRICS" ) )
+        {
+            return TStringTowxString( apetag->itemListMap()[ "UNSYNCED LYRICS" ].toStringList().front() );
+        }
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+bool SetApeLyrics( APE::Tag * apetag, const wxString &lyrics )
+{
+    if( apetag )
+    {
+        if( apetag->itemListMap().contains( "LYRICS" ) )
+        {
+            apetag->removeItem( "LYRICS" );
+        }
+        if( apetag->itemListMap().contains( "UNSYNCED LYRICS" ) )
+        {
+            apetag->removeItem( "UNSYNCED LYRICS" );
+        }
+        if( !lyrics.IsEmpty() )
+        {
+            const TagLib::String Lyrics = wxStringToTString( lyrics );
+            apetag->addValue( "Lyrics", Lyrics );
+        }
+        return true;
+    }
+    return false;
+}
 
 // -------------------------------------------------------------------------------- //
 // guTagInfo
@@ -1400,6 +1445,111 @@ bool guMpcTagInfo::SetImage( const wxImage * image )
     return m_ApeTag && SetApeImage( m_ApeTag, image ) && Write();
 }
 
+
+
+
+// -------------------------------------------------------------------------------- //
+// guWavPackTagInfo
+// -------------------------------------------------------------------------------- //
+guWavPackTagInfo::guWavPackTagInfo( const wxString &filename ) : guTagInfo( filename )
+{
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_ApeTag = ( ( TagLib::WavPack::File * ) m_TagFile->file() )->APETag();
+    }
+    else
+        m_ApeTag = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+guWavPackTagInfo::~guWavPackTagInfo()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guWavPackTagInfo::Read( void )
+{
+    if( guTagInfo::Read() )
+    {
+        if( m_ApeTag )
+        {
+            if( m_ApeTag->itemListMap().contains( "COMPOSER" ) )
+            {
+                m_Composer = TStringTowxString( m_ApeTag->itemListMap()["COMPOSER"].toStringList().front() );
+            }
+
+            if( m_ApeTag->itemListMap().contains( "DISCNUMBER" ) )
+            {
+                m_Disk = TStringTowxString( m_ApeTag->itemListMap()["DISCNUMBER"].toStringList().front() );
+            }
+
+            if( m_ApeTag->itemListMap().contains( "COMPILATION" ) )
+            {
+                m_Compilation = TStringTowxString( m_ApeTag->itemListMap()["COMPILATION"].toStringList().front() ) == wxT( "1" );
+            }
+
+            if( m_ApeTag->itemListMap().contains( "ALBUM ARTIST" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_ApeTag->itemListMap()["ALBUM ARTIST"].toStringList().front() );
+            }
+            else if( m_ApeTag->itemListMap().contains( "ALBUMARTIST" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_ApeTag->itemListMap()["ALBUMARTIST"].toStringList().front() );
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guWavPackTagInfo::Write( void )
+{
+    if( m_ApeTag )
+    {
+        m_ApeTag->addValue( "COMPOSER", wxStringToTString( m_Composer ) );
+        m_ApeTag->addValue( "DISCNUMBER", wxStringToTString( m_Disk ) );
+        m_ApeTag->addValue( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+        m_ApeTag->addValue( "ALBUM ARTIST", wxStringToTString( m_AlbumArtist ) );
+    }
+    return guTagInfo::Write();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guWavPackTagInfo::CanHandleImages( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guWavPackTagInfo::GetImage( void )
+{
+    return GetApeImage( m_ApeTag );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guWavPackTagInfo::SetImage( const wxImage * image )
+{
+    return m_ApeTag && SetApeImage( m_ApeTag, image ) && Write();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guWavPackTagInfo::CanHandleLyrics( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guWavPackTagInfo::GetLyrics( void )
+{
+    return GetApeLyrics( m_ApeTag );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guWavPackTagInfo::SetLyrics( const wxString &lyrics )
+{
+    return SetApeLyrics( m_ApeTag, lyrics ) && m_TagFile->save();
+}
 
 
 

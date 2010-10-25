@@ -650,6 +650,11 @@ wxArrayString guPortableMediaPanel::GetCoverSearchWords( void )
     return CoverWords;
 }
 
+// -------------------------------------------------------------------------------- //
+bool guPortableMediaPanel::OnDropFiles( const wxArrayString &filenames )
+{
+    return false;
+}
 
 
 

@@ -289,6 +289,8 @@ class guPortableMediaPanel : public guLibPanel
     void                        OnPortableUnmount( wxCommandEvent &event );
     void                        OnPortableProperties( wxCommandEvent &event );
 
+    virtual bool                OnDropFiles( const wxArrayString &filenames );
+
   public :
     guPortableMediaPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "PMD" ) );
     ~guPortableMediaPanel();
