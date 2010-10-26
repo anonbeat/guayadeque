@@ -78,7 +78,9 @@ guCopyToAction::guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPorta
     m_DestDir = PortableMediaDevice->MountPath();
     wxArrayString AudioFolders = wxStringTokenize( PortableMediaDevice->AudioFolders(), wxT( "," ) );
     m_DestDir += AudioFolders[ 0 ].Trim( true ).Trim( false );
-    if( !m_DestDir.EndsWith( wxT( "/" ) ) )
+    if( m_DestDir.EndsWith( wxT( "//" ) ) )
+        m_DestDir.RemoveLast();
+    else if( !m_DestDir.EndsWith( wxT( "/" ) ) )
         m_DestDir.Append( wxT( "/" ) );
 }
 

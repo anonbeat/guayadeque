@@ -3100,21 +3100,36 @@ void guLibPanel::DeleteTracks( guTrackArray * tracks )
         {
             guLogMessage( wxT( "Error deleting '%s'" ), CurTrack.m_FileName.c_str() );
         }
+        guLogMessage( wxT( "Deleted '%s'" ), CurTrack.m_FileName.c_str() );
     }
 
     if( ( Count = DeletePaths.Count() ) )
     {
         wxArrayString LibPaths = GetPaths();
+        for( Index = 0; Index < ( int ) LibPaths.Count(); Index++ )
+        {
+            guLogMessage( wxT( "Libath: %s"), LibPaths[ Index ].c_str() );
+        }
+
         for( Index = 0; Index < Count; Index++ )
         {
             wxString CurPath = DeletePaths[ Index ];
-            guLogMessage( wxT( "Deleting '%s'" ), CurPath.c_str() );
-            if( guIsDirectoryEmpty( CurPath ) )
+            while( !CurPath.IsEmpty() && LibPaths.Index( CurPath + wxT( "/" ) ) == wxNOT_FOUND )
             {
-                if( !guRmDirRecursive( CurPath ) )
+                guLogMessage( wxT( "Deleting '%s'" ), CurPath.c_str() );
+                if( guIsDirectoryEmpty( CurPath ) )
                 {
-                    guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
+                    if( !guRmDirRecursive( CurPath ) )
+                    {
+                        guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
+                        break;
+                    }
                 }
+                else
+                {
+                    break;
+                }
+                CurPath = CurPath.BeforeLast( wxT( '/' ) );
             }
         }
     }
