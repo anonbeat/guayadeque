@@ -95,9 +95,12 @@ void guPLSoListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         guSoListBox::CreateContextMenu( Menu );
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE, _( "Remove from PlayList" ), _( "Delete the current selected tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
-        Menu->Insert( 7, MenuItem );
+        if( m_PLTypes.Count() == 1 && m_PLTypes[ 0 ] == GUPLAYLIST_STATIC )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE, _( "Remove from PlayList" ), _( "Delete the current selected tracks" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
+            Menu->Insert( 7, MenuItem );
+        }
     }
 
 }
