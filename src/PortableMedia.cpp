@@ -586,6 +586,10 @@ wxArrayString guPortableMediaPanel::GetPaths( void )
     for( Index = 0; Index < Count; Index++ )
     {
         Paths[ Index ] = m_PortableMediaDevice->MountPath() + Paths[ Index ];
+        if( Paths[ Index ].EndsWith( wxT( "//" ) ) )
+        {
+            Paths[ Index ].RemoveLast();
+        }
     }
     return Paths;
 }
