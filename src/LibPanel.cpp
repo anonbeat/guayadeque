@@ -3107,20 +3107,14 @@ void guLibPanel::DeleteTracks( guTrackArray * tracks )
         wxArrayString LibPaths = GetPaths();
         for( Index = 0; Index < Count; Index++ )
         {
-            wxString CurPath = DeletePaths[ Index ] + wxT( "/" );
-            while( !CurPath.IsEmpty() && ( LibPaths.Index( CurPath ) == wxNOT_FOUND ) )
+            wxString CurPath = DeletePaths[ Index ];
+            guLogMessage( wxT( "Deleting '%s'" ), CurPath.c_str() );
+            if( guIsDirectoryEmpty( CurPath ) )
             {
-                if( guIsDirectoryEmpty( CurPath ) )
+                if( !guRmDirRecursive( CurPath ) )
                 {
-                    if( !guRmDirRecursive( CurPath ) )
-                    {
-                        guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
-                    }
+                    guLogMessage( wxT( "Error removing dir '%s'" ), DeletePaths[ Index ].c_str() );
                 }
-                else
-                    break;
-
-                CurPath = CurPath.RemoveLast().BeforeLast( wxT( '/' ) );
             }
         }
     }
@@ -3131,8 +3125,8 @@ void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
 {
     if( m_SongListCtrl->GetSelectedCount() )
     {
-        if( wxMessageBox( wxT( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
-            wxT( "Remove tracks from drive" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
+        if( wxMessageBox( _( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
+            _( "Remove tracks from drive" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
         {
             guTrackArray Tracks;
             m_SongListCtrl->GetSelectedSongs( &Tracks );
