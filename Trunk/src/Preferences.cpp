@@ -1550,7 +1550,7 @@ void guPrefDialog::BuildMagnatunePage( void )
 	MagDownLabel->Wrap( -1 );
 	FormatSizer->Add( MagDownLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	wxString m_MagDownFormatChoiceChoices[] = { wxT("mp3 (VBR)"), wxT("mp3 (128Kbits)"), wxT("ogg"), wxT("flac"), wxT("wav") };
+	wxString m_MagDownFormatChoiceChoices[] = { _( "Download Page" ), wxT("mp3 (VBR)"), wxT("mp3 (128Kbits)"), wxT("ogg"), wxT("flac"), wxT("wav") };
 	int m_MagDownFormatChoiceNChoices = sizeof( m_MagDownFormatChoiceChoices ) / sizeof( wxString );
 	m_MagDownFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagDownFormatChoiceNChoices, m_MagDownFormatChoiceChoices, 0 );
 	m_MagDownFormatChoice->SetSelection( m_Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "Magnatune" ) ) );
