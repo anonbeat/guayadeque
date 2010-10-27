@@ -581,6 +581,7 @@ void guMagnatunePanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
 void guMagnatunePanel::DownloadAlbums( const wxArrayInt &albumids )
 {
     wxString StartLabel[] = {
+        wxT( "<DL_PAGE>" ),
         wxT( "<URL_VBRZIP>" ),
         wxT( "<URL_128KMP3ZIP>" ),
         wxT( "<URL_OGGZIP>" ),
@@ -588,6 +589,7 @@ void guMagnatunePanel::DownloadAlbums( const wxArrayInt &albumids )
         wxT( "<URL_WAVZIP>" ),
     };
     wxString EndLabel[] = {
+        wxT( "</DL_PAGE>" ),
         wxT( "</URL_VBRZIP>" ),
         wxT( "</URL_128KMP3ZIP>" ),
         wxT( "</URL_OGGZIP>" ),
@@ -616,7 +618,7 @@ void guMagnatunePanel::DownloadAlbums( const wxArrayInt &albumids )
                 //             StartLabel[ DownloadFormat ].c_str(),
                 //             EndLabel[ DownloadFormat ].c_str() );
 
-                if( ( DownloadFormat < 0 ) || ( DownloadFormat > 4 ) )
+                if( ( DownloadFormat < 0 ) || ( DownloadFormat > 5 ) )
                 {
                     DownloadFormat = 0;
                 }
@@ -627,7 +629,11 @@ void guMagnatunePanel::DownloadAlbums( const wxArrayInt &albumids )
                 if( Pos != wxNOT_FOUND )
                 {
                     DownloadUrl = Content.Mid( Pos );
-                    DownloadUrl = DownloadUrl.Mid( DownloadUrl.Find( wxT( "path=http://" ) ) + 12 );
+
+                    if( DownloadFormat > 0 )
+                        DownloadUrl = DownloadUrl.Mid( DownloadUrl.Find( wxT( "path=http://" ) ) + 12 );
+                    else
+                        DownloadUrl = DownloadUrl.Mid( StartLabel[ DownloadFormat ].Length() + 7 );
                     DownloadUrl = DownloadUrl.Mid( 0, DownloadUrl.Find( EndLabel[ DownloadFormat ] ) );
                 }
 

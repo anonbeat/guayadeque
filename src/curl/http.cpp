@@ -396,5 +396,6 @@ void wxCurlHTTP::SetCurlHandleToDefaults(const wxString& relativeURL)
     {
         SetStringOpt(CURLOPT_COOKIEJAR, m_szCookieFile);
     }
+    SetOpt( CURLOPT_NOSIGNAL, true );
 }
 
