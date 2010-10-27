@@ -58,7 +58,7 @@ WX_DEFINE_OBJARRAY(guAlbumItems);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "19"
+#define GU_CURRENT_DBVERSION    "20"
 
 // -------------------------------------------------------------------------------- //
 // Various functions
@@ -554,7 +554,7 @@ bool guDbLibrary::CheckDbVersion( void )
                       "song_number INTEGER(3), song_year INTEGER(4), song_comment VARCHAR COLLATE NOCASE, "
                       "song_coverid INTEGER, song_offset INTEGER, song_length INTEGER, song_bitrate INTEGER, "
                       "song_rating INTEGER DEFAULT -1, song_playcount INTEGER DEFAULT 0, song_addedtime INTEGER, "
-                      "song_lastplay INTEGER, song_filesize INTEGER );" ) );
+                      "song_lastplay INTEGER, song_filesize INTEGER, song_albumsku VARCHAR, song_coverlink VARCHAR );" ) );
 
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_name on songs( song_name ASC )" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_albumid on songs( song_albumid,song_artist,song_year DESC, song_album, song_disk )" ) );
@@ -936,12 +936,20 @@ bool guDbLibrary::CheckDbVersion( void )
             query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_path_filename ON songs( song_path, song_filename )" ) );
             query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_name' on tags (tag_name ASC);" ) );
         }
+    }
+
+    case 19 :
+    {
+      if( dbVer > 4 )
+      {
+        query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_albumsku VARCHAR" ) );
+        query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_coverlink VARCHAR" ) );
 
         guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
         query.Add( wxT( "DELETE FROM Version;" ) );
         query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
+      }
     }
-
 
     default:
       break;

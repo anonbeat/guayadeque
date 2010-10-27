@@ -423,6 +423,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     if( Buffer.IsOk() )
     {
         int ResponseCode = http.GetResponseCode();
+        //guLogMessage( wxT( "ResponseCode: %i" ), ResponseCode );
         if( ResponseCode >= 300  && ResponseCode < 400 )
         {
             wxString Location = http.GetResponseHeader();
@@ -438,8 +439,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
             return wxEmptyString;
 
         wxString ResponseHeaders = http.GetResponseHeader();
-//        guLogMessage( wxT( "Response %u:\n%s\n%s" ),
-//            http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
+        //guLogMessage( wxT( "Response %u:\n%s\n%s" ), http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
 
         if( ResponseHeaders.Lower().Find( wxT( "content-encoding: gzip" ) ) != wxNOT_FOUND )
         {
@@ -457,14 +457,18 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
 //            Ins.Read( Outs );
             if( Buffer.GetLength() )
             {
-                RetVal = wxString::FromUTF8( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
+                RetVal = wxString( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), wxConvLibc );
                 if( RetVal.IsEmpty() )
                 {
-                    RetVal = wxString::From8BitData( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
-                }
-                if( RetVal.IsEmpty() )
-                {
-                    RetVal = wxString( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), wxConvISO8859_1 );
+                    RetVal = wxString::FromUTF8( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
+                    if( RetVal.IsEmpty() )
+                    {
+                        RetVal = wxString::From8BitData( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
+                        if( RetVal.IsEmpty() )
+                        {
+                            RetVal = wxString( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), wxConvISO8859_1 );
+                        }
+                    }
                 }
             }
         }

@@ -257,7 +257,7 @@ bool inline guIsJamendoFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool inline guIsMagnatuneFile( const wxString &filename )
 {
-    return filename.Find( wxT( "/he3.magnatune.com/all/" ) ) != wxNOT_FOUND;
+    return filename.Find( wxT( ".magnatune.com/all/" ) ) != wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1244,7 +1244,24 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
     {
         guMagnatuneLibrary * MagnatuneDb = m_MainFrame->GetMagnatuneDb();
         FileName.Replace( wxT( " " ), wxT( "%20" ) );
-        if( !MagnatuneDb || ( MagnatuneDb->GetTrackId( FileName, &Track ) == wxNOT_FOUND ) )
+        wxString SearchStr = FileName;
+        int FoundPos;
+        if( ( FoundPos = SearchStr.Find( wxT( "@stream.magnatune" ) ) ) != wxNOT_FOUND )
+        {
+            SearchStr = SearchStr.Mid( FoundPos );
+            SearchStr.Replace( wxT( "@stream." ), wxT( "http://he3." ) );
+            SearchStr.Replace( wxT( "_nospeech" ), wxEmptyString );
+        }
+        else if( ( FoundPos = SearchStr.Find( wxT( "@download.magnatune" ) ) ) != wxNOT_FOUND )
+        {
+            SearchStr = SearchStr.Mid( FoundPos );
+            SearchStr.Replace( wxT( "@download." ), wxT( "http://he3." ) );
+            SearchStr.Replace( wxT( "_nospeech" ), wxEmptyString );
+        }
+
+        guLogMessage( wxT( "Searching for track '%s'" ), SearchStr.c_str() );
+
+        if( !MagnatuneDb || ( MagnatuneDb->GetTrackId( SearchStr, &Track ) == wxNOT_FOUND ) )
         {
             Track.m_CoverId  = 0;
             Track.m_SongName = FileName;
