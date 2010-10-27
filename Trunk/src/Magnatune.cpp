@@ -24,6 +24,7 @@
 #include "MainFrame.h"
 #include "SelCoverFile.h"
 #include "StatusBar.h"
+#include "Utils.h"
 
 #include <wx/wfstream.h>
 #include <wx/mstream.h>
@@ -116,7 +117,7 @@ void guMagnatuneLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMagnatuneLibrary::CreateNewSong( guTrack * track )
+void guMagnatuneLibrary::CreateNewSong( guTrack * track, const wxString &albumsku, const wxString &coverlink )
 {
     wxString query;
     //wxSQLite3ResultSet dbRes;
@@ -131,7 +132,9 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track )
                                  "song_pathid = %u, song_path = '%s', "
                                  "song_filename = '%s', "
                                  "song_number = %u, song_year = %u, "
-                                 "song_length = %u "
+                                 "song_length = %u, "
+                                 "song_albumsku = '%s', "
+                                 "song_coverlink = '%s' "
                                  "WHERE song_id = %u;" ),
                     escape_query_str( track->m_SongName ).c_str(),
                     track->m_GenreId,
@@ -146,6 +149,8 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track )
                     track->m_Number,
                     track->m_Year,
                     track->m_Length,
+                    escape_query_str( albumsku ).c_str(),
+                    escape_query_str( coverlink ).c_str(),
                     track->m_SongId );
 
         ExecuteUpdate( query );
@@ -157,8 +162,8 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track )
                     "song_name, song_genreid, song_genre, song_artistid, song_artist, "
                     "song_albumid, song_album, song_pathid, song_path, song_filename, song_format, song_number, song_year, "
                     "song_coverid, song_disk, song_length, song_offset, song_bitrate, song_rating, "
-                    "song_filesize ) VALUES( NULL, 0, %u, '%s', %u, '%s', %u, '%s', %u, '%s', "
-                    "%u, '%s', '%s', 'mp3,ogg', %u, %u, %u, '%s', %u, 0, 0, -1, 0 )" ),
+                    "song_filesize, song_albumsku, song_coverlink ) VALUES( NULL, 0, %u, '%s', %u, '%s', %u, '%s', %u, '%s', "
+                    "%u, '%s', '%s', 'mp3,ogg', %u, %u, %u, '%s', %u, 0, 0, -1, 0, '%s', '%s' )" ),
                     wxDateTime::GetTimeNow(),
                     escape_query_str( track->m_SongName ).c_str(),
                     track->m_GenreId,
@@ -174,7 +179,9 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track )
                     track->m_Year,
                     track->m_CoverId,
                     escape_query_str( track->m_Disk ).c_str(),
-                    track->m_Length );
+                    track->m_Length,
+                    escape_query_str( albumsku ).c_str(),
+                    escape_query_str( coverlink ).c_str() );
 
         //guLogMessage( wxT( "%s" ), query.c_str() );
         ExecuteUpdate( query );
@@ -209,6 +216,25 @@ int guMagnatuneLibrary::GetTrackId( const wxString &url, guTrack * track )
       {
           FillTrackFromDb( track, &dbRes );
       }
+    }
+    dbRes.Finalize();
+
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMagnatuneLibrary::GetAlbumSku( const int albumid )
+{
+    wxString query;
+    wxSQLite3ResultSet dbRes;
+    wxString RetVal;
+
+    query = wxString::Format( wxT( "SELECT song_albumsku FROM songs WHERE song_albumid = %i LIMIT 1;" ), albumid );
+    //guLogMessage( wxT( "Searching:\n%s" ), query.c_str() );
+    dbRes = ExecuteQuery( query );
+    if( dbRes.NextRow() )
+    {
+      RetVal = dbRes.GetString( 0 );
     }
     dbRes.Finalize();
 
@@ -280,15 +306,14 @@ void guMagnatunePanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag
             if( !Track->m_FileName.EndsWith( AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3 ) )
             {
                 Track->m_FileName = Track->m_FileName.Mid( Track->m_FileName.Find( wxT( "http://he3." ) ) );
-                if( m_Membership > 0 ) // Streaming or Downloading
+                if( m_Membership > guMAGNATUNE_MEMBERSHIP_FREE ) // Streaming or Downloading
                 {
-                    Track->m_FileName.Replace( wxT( "//he3." ), wxT( "//" ) + m_UserName + wxT( ":" ) + m_Password + wxT( "@stream." ) );
-                }
+                    Track->m_FileName.Replace( wxT( "//he3." ), wxT( "//" ) + m_UserName + wxT( ":" ) +
+                        m_Password + ( ( m_Membership == guMAGNATUNE_MEMBERSHIP_STREAM ) ? wxT( "@stream." ) : wxT( "@download." ) ) );
 
-                if( m_Membership > 0 )
-                {
                     Track->m_FileName += wxT( "_nospeech" );
                 }
+
                 Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
                 Track->m_Type = guTRACK_TYPE_MAGNATUNE;
                 if( isdrag )
@@ -303,6 +328,24 @@ void guMagnatunePanel::CreateContextMenu( wxMenu * menu, const int windowid )
 {
     wxMenu *     SubMenu;
     SubMenu = new wxMenu();
+
+    if( m_Membership == guMAGNATUNE_MEMBERSHIP_DOWNLOAD )
+    {
+        if( ( windowid == guLIBRARY_ELEMENT_ALBUMS ) )
+        {
+            wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
+            SubMenu->Append( MenuItem );
+
+            SubMenu->AppendSeparator();
+        }
+        else if( ( windowid == guLIBRARY_ELEMENT_TRACKS ) )
+        {
+            wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
+            SubMenu->Append( MenuItem );
+
+            SubMenu->AppendSeparator();
+        }
+    }
 
     wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_UPDATE, _( "Update Database" ), _( "Download the latest Magnatune database" ) );
     SubMenu->Append( MenuItem );
@@ -508,76 +551,123 @@ void guMagnatunePanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
     }
 }
 
+//<RESULT>
+//  <CC_AMOUNT>$</CC_AMOUNT>
+//  <CC_TRANSID></CC_TRANSID>
+//  <DL_PAGE>http://download.magnatune.com/artists/albums/satori-rainsleep/download</DL_PAGE>
+//  <URL_WAVZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=wav.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/wav.zip</URL_WAVZIP>
+//  <URL_128KMP3ZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=mp3.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/mp3.zip</URL_128KMP3ZIP>
+//  <URL_OGGZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20ogg.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-ogg.zip</URL_OGGZIP>
+//  <URL_VBRZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20vbr.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-vbr.zip</URL_VBRZIP>
+//  <URL_FLACZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20flac.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-flac.zip</URL_FLACZIP>
+//  <DL_MSG>
+//Go here to download your music:
+//http://download.magnatune.com/artists/albums/satori-rainsleep/download
+//----------
+//Give this album away for free!
+//You can pass these download instructions on to 3 friends. It's completely legal
+//and you'll be helping us fight the evil music industry!  Complete details here:
+//http://magnatune.com/info/give
+//Help spread the word of Magnatune, with our free recruiting cards!
+//http://magnatune.com/cards
+//Podcasters, use our music:<br>
+//http://magnatune.com/info/podcast
+//To send us email:
+//https://magnatune.com/info/email_us
+//  </DL_MSG>
+//</RESULT>
+
+// -------------------------------------------------------------------------------- //
+void guMagnatunePanel::DownloadAlbums( const wxArrayInt &albumids )
+{
+    wxString StartLabel[] = {
+        wxT( "<URL_VBRZIP>" ),
+        wxT( "<URL_128KMP3ZIP>" ),
+        wxT( "<URL_OGGZIP>" ),
+        wxT( "<URL_FLACZIP>" ),
+        wxT( "<URL_WAVZIP>" ),
+    };
+    wxString EndLabel[] = {
+        wxT( "</URL_VBRZIP>" ),
+        wxT( "</URL_128KMP3ZIP>" ),
+        wxT( "</URL_OGGZIP>" ),
+        wxT( "</URL_FLACZIP>" ),
+        wxT( "</URL_WAVZIP>" ),
+    };
+
+    int Index;
+    int Count;
+    if( ( Count = albumids.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            wxString DownloadUrl = wxString::Format( guMAGNATUNE_DOWNLOAD_URL,
+                                m_UserName.c_str(), m_Password.c_str(),
+                                ( ( guMagnatuneLibrary * ) m_Db )->GetAlbumSku( albumids[ Index ] ).c_str() );
+
+            //guLogMessage( wxT( "Trying to download %s" ), DownloadUrl.c_str() );
+            wxString Content = GetUrlContent( DownloadUrl );
+            if( !Content.IsEmpty() )
+            {
+                //guLogMessage( wxT( "Result:\n%s" ), Content.c_str() );
+                guConfig * Config = ( guConfig * ) guConfig::Get();
+                int DownloadFormat = Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "Magnatune" ) );
+                //guLogMessage( wxT( "DownloadFormat: %i %s  %s" ), DownloadFormat,
+                //             StartLabel[ DownloadFormat ].c_str(),
+                //             EndLabel[ DownloadFormat ].c_str() );
+
+                if( ( DownloadFormat < 0 ) || ( DownloadFormat > 4 ) )
+                {
+                    DownloadFormat = 0;
+                }
+
+                DownloadUrl = wxEmptyString;
+
+                int Pos = Content.Find( StartLabel[ DownloadFormat ] );
+                if( Pos != wxNOT_FOUND )
+                {
+                    DownloadUrl = Content.Mid( Pos );
+                    DownloadUrl = DownloadUrl.Mid( DownloadUrl.Find( wxT( "path=http://" ) ) + 12 );
+                    DownloadUrl = DownloadUrl.Mid( 0, DownloadUrl.Find( EndLabel[ DownloadFormat ] ) );
+                }
+
+                if( !DownloadUrl.IsEmpty() )
+                {
+                    DownloadUrl = wxString::Format( wxT( "http://%s:%s@" ), m_UserName.c_str(), m_Password.c_str() ) + DownloadUrl;
+                    //guLogMessage( wxT( "Trying to download the url : '%s'" ), DownloadUrl.c_str() );
+                    guWebExecute( DownloadUrl );
+                }
+            }
+            else
+            {
+                guLogError( wxT( "Could not get the album download info" ) );
+            }
+        }
+    }
+}
 // -------------------------------------------------------------------------------- //
 void guMagnatunePanel::OnDownloadAlbum( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "OnDownloadAlbum" ) );
-
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Magnatune" ) );
-//    if( TorrentCmd.IsEmpty() )
-//    {
-//        OnEditSetup( event );
-//        return;
-//    }
-//
-//    int Index;
-//    int Count;
-//    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-//    if( ( Count = Albums.Count() ) )
-//    {
-//        if( event.GetId() == ID_MAGNATUNE_DOWNLOAD_TORRENT_ALBUM )
-//        {
-//            AddDownloads( Albums, false );
-//        }
-//        else
-//        {
-//            for( Index = 0; Index < Count; Index++ )
-//            {
-//                guWebExecute( wxString::Format( guMAGNATUNE_DOWNLOAD_DIRECT, Albums[ Index ] ) );
-//            }
-//        }
-//    }
+    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
+    DownloadAlbums( Albums );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMagnatunePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
+    guTrackArray Tracks;
+    m_SongListCtrl->GetSelectedSongs( &Tracks );
 
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Magnatune" ) );
-//    if( TorrentCmd.IsEmpty() )
-//    {
-//        OnEditSetup( event );
-//        return;
-//    }
-//
-//    guTrackArray Tracks;
-//    m_SongListCtrl->GetSelectedSongs( &Tracks );
-//
-//    wxArrayInt Albums;
-//    int Index;
-//    int Count = Tracks.Count();
-//    for( Index = 0; Index < Count; Index++ )
-//    {
-//        if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
-//            Albums.Add( Tracks[ Index ].m_AlbumId );
-//    }
-//    if( ( Count = Albums.Count() ) )
-//    {
-//        if( event.GetId() == ID_MAGNATUNE_DOWNLOAD_TORRENT_TRACK_ALBUM )
-//        {
-//            AddDownloads( Albums, false );
-//        }
-//        else
-//        {
-//            for( Index = 0; Index < Count; Index++ )
-//            {
-//                guWebExecute( wxString::Format( guMAGNATUNE_DOWNLOAD_DIRECT, Albums[ Index ] ) );
-//            }
-//        }
-//    }
+    wxArrayInt Albums;
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
+            Albums.Add( Tracks[ Index ].m_AlbumId );
+    }
+
+    DownloadAlbums( Albums );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -612,7 +702,7 @@ guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
 
     if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
     {
-        wxString CoverUrl = wxString::Format( wxT( "http://he3.magnatune.com/music/%s/%s/cover_300.jpg" ),
+        wxString CoverUrl = wxString::Format( wxT( "http://he3.magnatune.com/music/%s/%s/cover_600.jpg" ),
                 m_ArtistName.c_str(),
                 m_AlbumName.c_str() );
 
@@ -804,6 +894,16 @@ void guMagnatuneUpdateThread::ReadMagnatuneXmlTrack( wxXmlNode * xmlnode )
             m_CurrentTrack.m_GenreId = m_Db->GetGenreId( m_CurrentTrack.m_GenreName );
             AddGenres( m_CurrentTrack.m_GenreName );
         }
+        else if( ItemName == wxT( "cover_small" ) )
+        {
+            //<cover_small>http://he3.magnatune.com/music/Dr%20Kuch/We%20Can&#39;t%20Stop%20Progress/cover_200.jpg</cover_small>
+            m_CoverLink = xmlnode->GetNodeContent();
+            m_CoverLink.Replace( wxT( "cover_200" ), wxT( "cover_600" ) );
+        }
+        else if( ItemName == wxT( "albumsku" ) )
+        {
+            m_AlbumSku = xmlnode->GetNodeContent();
+        }
         xmlnode = xmlnode->GetNext();
     }
 }
@@ -839,6 +939,8 @@ void guMagnatuneUpdateThread::ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode )
         }
         else if( ItemName == wxT( "Track" ) )
         {
+            m_AlbumSku = wxEmptyString;
+            m_CoverLink = wxEmptyString;
             if( !m_CurrentTrack.m_AlbumId )
             {
                 m_CurrentTrack.m_Path = m_CurrentTrack.m_GenreName + wxT( "/" ) +
@@ -851,7 +953,7 @@ void guMagnatuneUpdateThread::ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode )
 
             if( IsGenreEnabled( m_AllowedGenres, m_CurrentTrack.m_GenreName ) )
             {
-                m_Db->CreateNewSong( &m_CurrentTrack );
+                m_Db->CreateNewSong( &m_CurrentTrack, m_AlbumSku, m_CoverLink );
             }
         }
         xmlnode = xmlnode->GetNext();

@@ -274,6 +274,7 @@ class guPrefDialog : public wxDialog
     wxTextCtrl *                m_MagUserTextCtrl;
     wxTextCtrl *                m_MagPassTextCtrl;
     wxChoice *                  m_MagFormatChoice;
+    wxChoice *                  m_MagDownFormatChoice;
     wxArrayString               m_LastMagnatuneGenres;
 
 

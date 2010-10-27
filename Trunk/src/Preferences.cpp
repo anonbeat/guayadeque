@@ -1522,16 +1522,44 @@ void guPrefDialog::BuildMagnatunePage( void )
     m_MagPassTextCtrl->Enable( !m_MagNoRadioItem->GetValue() );
 	MagFlexSizer->Add( m_MagPassTextCtrl, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Format :" ), wxDefaultPosition, wxDefaultSize, 0 );
+//	wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Format :" ), wxDefaultPosition, wxDefaultSize, 0 );
+//	MagFormatLabel->Wrap( -1 );
+//	MagFlexSizer->Add( MagFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+//
+//	wxArrayString MagFormatChoices;
+//	MagFormatChoices.Add( wxT( "mp3" ) );
+//	MagFormatChoices.Add( wxT( "ogg" ) );
+//	m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, MagFormatChoices, 0 );
+//	m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) ) );
+//	MagFlexSizer->Add( m_MagFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Stream as :" ), wxDefaultPosition, wxDefaultSize, 0 );
 	MagFormatLabel->Wrap( -1 );
 	MagFlexSizer->Add( MagFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	wxArrayString MagFormatChoices;
-	MagFormatChoices.Add( wxT( "mp3" ) );
-	MagFormatChoices.Add( wxT( "ogg" ) );
-	m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, MagFormatChoices, 0 );
+	wxBoxSizer * FormatSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxString m_MagFormatChoiceChoices[] = { wxT("mp3"), wxT("ogg") };
+	int m_MagFormatChoiceNChoices = sizeof( m_MagFormatChoiceChoices ) / sizeof( wxString );
+	m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagFormatChoiceNChoices, m_MagFormatChoiceChoices, 0 );
 	m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) ) );
-	MagFlexSizer->Add( m_MagFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	m_MagFormatChoice->SetMinSize( wxSize( 100,-1 ) );
+
+	FormatSizer->Add( m_MagFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
+
+	wxStaticText * MagDownLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, wxT("Download as :"), wxDefaultPosition, wxDefaultSize, 0 );
+	MagDownLabel->Wrap( -1 );
+	FormatSizer->Add( MagDownLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	wxString m_MagDownFormatChoiceChoices[] = { wxT("mp3 (VBR)"), wxT("mp3 (128Kbits)"), wxT("ogg"), wxT("flac"), wxT("wav") };
+	int m_MagDownFormatChoiceNChoices = sizeof( m_MagDownFormatChoiceChoices ) / sizeof( wxString );
+	m_MagDownFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagDownFormatChoiceNChoices, m_MagDownFormatChoiceChoices, 0 );
+	m_MagDownFormatChoice->SetSelection( m_Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "Magnatune" ) ) );
+	m_MagDownFormatChoice->Enable( Membership == 2 );
+	m_MagDownFormatChoice->SetMinSize( wxSize( 100,-1 ) );
+
+	FormatSizer->Add( m_MagDownFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+
+	MagFlexSizer->Add( FormatSizer, 1, wxEXPAND, 5 );
 
 	MagOtherSizer->Add( MagFlexSizer, 1, wxEXPAND, 5 );
 
@@ -2154,6 +2182,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteStr( wxT( "UserName" ), m_MagUserTextCtrl->GetValue(), wxT( "Magnatune" ) );
         m_Config->WriteStr( wxT( "Password" ), m_MagPassTextCtrl->GetValue(), wxT( "Magnatune" ) );
         m_Config->WriteNum( wxT( "AudioFormat" ), m_MagFormatChoice->GetSelection(), wxT( "Magnatune" ) );
+        m_Config->WriteNum( wxT( "DownloadFormat" ), m_MagDownFormatChoice->GetSelection(), wxT( "Magnatune" ) );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LINKS )
@@ -2672,6 +2701,7 @@ void guPrefDialog::OnMagNoRadioItemChanged( wxCommandEvent& event )
     bool Enabled = !m_MagNoRadioItem->GetValue();
     m_MagUserTextCtrl->Enable( Enabled );
     m_MagPassTextCtrl->Enable( Enabled );
+    m_MagDownFormatChoice->Enable( Enabled );
 }
 
 // -------------------------------------------------------------------------------- //

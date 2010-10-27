@@ -37,6 +37,15 @@
 #define guMAGNATUNE_ACTION_UPDATE             0   // Download the database and then upgrade
 #define guMAGNATUNE_ACTION_UPGRADE            1   // Just refresh the tracks not updating the database
 
+#define guMAGNATUNE_PARTNER_ID                wxT( "guayadeque" )
+#define guMAGNATUNE_DOWNLOAD_URL              wxT( "http://%s:%s@download.magnatune.com/buy/membership_free_dl_xml.php?sku=%s&id=guayadeque" )
+
+enum guMagnatune_Membership {
+    guMAGNATUNE_MEMBERSHIP_FREE,
+    guMAGNATUNE_MEMBERSHIP_STREAM,
+    guMAGNATUNE_MEMBERSHIP_DOWNLOAD
+};
+
 // -------------------------------------------------------------------------------- //
 class guMagnatuneLibrary : public guDbLibrary
 {
@@ -48,8 +57,10 @@ class guMagnatuneLibrary : public guDbLibrary
     virtual void        UpdateAlbumsLabels( const guArrayListItems &labelsets );
     virtual void        UpdateSongsLabels( const guArrayListItems &labelsets );
 
-    void                CreateNewSong( guTrack * track );
+    void                CreateNewSong( guTrack * track, const wxString &albumsku, const wxString &coverlink );
     int                 GetTrackId( const wxString &url, guTrack * track = NULL );
+
+    wxString            GetAlbumSku( const int trackid );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -63,6 +74,8 @@ class guMagnatuneUpdateThread : public wxThread
     wxSortedArrayString     m_GenreList;
     wxArrayString           m_AllowedGenres;
     guTrack                 m_CurrentTrack;
+    wxString                m_AlbumSku;
+    wxString                m_CoverLink;
 
     bool                UpdateDatabase( void );
     void                ReadMagnatuneXmlTrack( wxXmlNode * xmlnode );
@@ -108,6 +121,8 @@ class guMagnatunePanel : public guLibPanel
 
     void                        OnDownloadAlbum( wxCommandEvent &event );
     void                        OnDownloadTrackAlbum( wxCommandEvent &event );
+
+    void                        DownloadAlbums( const wxArrayInt &albumids );
 
   public :
     guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Jam" ) );
