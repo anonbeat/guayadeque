@@ -2701,7 +2701,7 @@ void guPrefDialog::OnMagNoRadioItemChanged( wxCommandEvent& event )
     bool Enabled = !m_MagNoRadioItem->GetValue();
     m_MagUserTextCtrl->Enable( Enabled );
     m_MagPassTextCtrl->Enable( Enabled );
-    m_MagDownFormatChoice->Enable( Enabled );
+    m_MagDownFormatChoice->Enable( m_MagDlRadioItem->GetValue() );
 }
 
 // -------------------------------------------------------------------------------- //
