@@ -678,8 +678,11 @@ void guPlayerPanel::SetRatingLabel( const int rating )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetRating( const int rating )
 {
-    m_MediaSong.m_Rating = rating;
+    //m_MediaSong.m_Rating = rating;
     m_Rating->SetRating( rating );
+    guRatingEvent Event;
+    Event.SetInt( rating );
+    OnRatingChanged( Event );
 }
 
 // -------------------------------------------------------------------------------- //
