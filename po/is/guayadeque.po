@@ -1404,9 +1404,8 @@ msgstr "Breyta Merkjum Laga"
 
 #: LibPanel.cpp:3143
 msgid ""
-"Are you sure to delete the selected tracks from your drive?\n"
-"This will permanently erase the selected tracks."
-msgstr "Ertu viss um að þú viljir eyða völdum lögum af drifi ?\n"
+"Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks."
+msgstr "Ertu viss um að þú viljir eyða völdum lögum af drifi ?\nThis will permanently erase the selected tracks."
 
 #: LibPanel.cpp:3144
 msgid "Remove tracks from drive"
