@@ -688,6 +688,20 @@ void guPrefDialog::BuildPlaybackPage( void )
     m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) ) );
 	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxALL, 5 );
 
+	wxBoxSizer * PlayReplaySizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * PlayReplayLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("Replaygain Mode :"), wxDefaultPosition, wxDefaultSize, 0 );
+	PlayReplayLabel->Wrap( -1 );
+	PlayReplaySizer->Add( PlayReplayLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	wxString m_PlayReplayModeChoiceChoices[] = { _("Track"), _("Album") };
+	int m_PlayReplayModeChoiceNChoices = sizeof( m_PlayReplayModeChoiceChoices ) / sizeof( wxString );
+	m_PlayReplayModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PlayReplayModeChoiceNChoices, m_PlayReplayModeChoiceChoices, 0 );
+	m_PlayReplayModeChoice->SetSelection( m_Config->ReadNum( wxT( "ReplayGainMode"), 0, wxT( "General" ) ) );
+	PlayReplaySizer->Add( m_PlayReplayModeChoice, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	PlayGenSizer->Add( PlayReplaySizer, 1, wxEXPAND, 5 );
+
 	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
 
 	wxStaticBoxSizer * PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
@@ -2031,6 +2045,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "RndPlayOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "DelTracksPlayed" ), m_DelPlayChkBox->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteNum( wxT( "ReplayGainMode" ), m_PlayReplayModeChoice->GetSelection(), wxT( "General" ) );
 
         m_Config->WriteBool( wxT( "SilenceDetector" ), m_PlayLevelEnabled->GetValue(), wxT( "Playback" ) );
         m_Config->WriteNum( wxT( "SilenceLevel" ), m_PlayLevelSlider->GetValue(), wxT( "Playback" ) );

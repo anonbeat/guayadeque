@@ -153,6 +153,7 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_PlayEndTimeCheckBox;
     wxSpinCtrl *                m_PlayEndTimeSpinCtrl;
     wxCheckBox *                m_NotifyChkBox;
+    wxChoice *                  m_PlayReplayModeChoice;
 
     wxPanel *                   m_XFadePanel;
     wxStaticText *              m_XFadeOutLenVal;
