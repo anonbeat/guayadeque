@@ -340,6 +340,8 @@ class guMediaCtrl : public wxEvtHandler
 
     int                     m_BufferSize;
 
+    bool                    m_ReplayGainMode;
+
     bool                    RemovePlayBin( guFaderPlayBin * playbin );
 
     void                    FadeOutDone( guFaderPlayBin * faderplaybin );

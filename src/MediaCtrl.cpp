@@ -485,6 +485,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
         m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
         m_BufferSize        = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
+        m_ReplayGainMode    = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
    }
 }
 
@@ -1098,6 +1099,7 @@ void guMediaCtrl::UpdatedConfig( void )
     m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
     m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
     m_BufferSize        = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
+    m_ReplayGainMode    = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1419,8 +1421,8 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
         m_ReplayGain = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
         if( IsValidElement( m_ReplayGain ) )
         {
-          g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", false, NULL );
-          g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", gdouble( 6 ), NULL );
+          g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode, NULL );
+          //g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", gdouble( 6 ), NULL );
 
           m_FaderVolume = gst_element_factory_make( "volume", "fader_volume" );
           if( IsValidElement( m_FaderVolume ) )
