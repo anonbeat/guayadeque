@@ -668,25 +668,25 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	m_RndPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Play random" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) ) );
-	RandomPlaySizer->Add( m_RndPlayChkBox, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	RandomPlaySizer->Add( m_RndPlayChkBox, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	wxString m_RndModeChoiceChoices[] = { _( "track" ), _( "album" ) };
 	int m_RndModeChoiceNChoices = sizeof( m_RndModeChoiceChoices ) / sizeof( wxString );
 	m_RndModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_RndModeChoiceNChoices, m_RndModeChoiceChoices, 0 );
     m_RndModeChoice->Enable( m_RndPlayChkBox->IsChecked() );
 	m_RndModeChoice->SetSelection( m_Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) ) );
-	m_RndModeChoice->SetMinSize( wxSize( 150,-1 ) );
-	RandomPlaySizer->Add( m_RndModeChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+	//m_RndModeChoice->SetMinSize( wxSize( 150,-1 ) );
+	RandomPlaySizer->Add( m_RndModeChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	wxStaticText * RndTextStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "when playlist is empty" ), wxDefaultPosition, wxDefaultSize, 0 );
 	RndTextStaticText->Wrap( -1 );
-	RandomPlaySizer->Add( RndTextStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	RandomPlaySizer->Add( RndTextStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	PlayGenSizer->Add( RandomPlaySizer, 1, wxEXPAND, 5 );
 
 	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Delete played tracks from playlist" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) ) );
-	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxALL, 5 );
+	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
 	wxBoxSizer * PlayReplaySizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -704,16 +704,8 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	PlayMainSizer->Add( PlayGenSizer, 0, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer * PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
 
-	m_PlayLevelEnabled = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enabled" ), wxDefaultPosition, wxDefaultSize, 0 );
-	bool IsPlayLevelEnabled = m_Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
-    m_PlayLevelEnabled->SetValue( IsPlayLevelEnabled );
-
-	PlaySilenceSizer->Add( m_PlayLevelEnabled, 0, wxALL|wxEXPAND, 5 );
-
-
-	wxStaticBoxSizer * SmartPlayListSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Random / Smart Play Modes " ) ), wxVERTICAL );
+    wxStaticBoxSizer * SmartPlayListSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Random / Smart Play Modes " ) ), wxVERTICAL );
 
 	wxFlexGridSizer * SmartPlayListFlexGridSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
 	SmartPlayListFlexGridSizer->SetFlexibleDirection( wxBOTH );
@@ -721,43 +713,49 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	m_MinTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 4 );
     m_MinTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) ) );
-	SmartPlayListFlexGridSizer->Add( m_MinTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
+	SmartPlayListFlexGridSizer->Add( m_MinTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * MinTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Tracks left to start search"), wxDefaultPosition, wxDefaultSize, 0 );
 	MinTracksStaticText->Wrap( -1 );
-	SmartPlayListFlexGridSizer->Add( MinTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	SmartPlayListFlexGridSizer->Add( MinTracksStaticText, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_NumTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 3 );
     m_NumTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) ) );
-	SmartPlayListFlexGridSizer->Add( m_NumTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT, 5 );
+	SmartPlayListFlexGridSizer->Add( m_NumTracksSpinCtrl, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * AddTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Tracks added each time"), wxDefaultPosition, wxDefaultSize, 0 );
 	AddTracksStaticText->Wrap( -1 );
-	SmartPlayListFlexGridSizer->Add( AddTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	SmartPlayListFlexGridSizer->Add( AddTracksStaticText, 0, wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_MaxTracksPlayed = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 999, 20 );
     m_MaxTracksPlayed->SetValue( m_Config->ReadNum( wxT( "MaxTracksPlayed" ), 20, wxT( "Playback" ) ) );
     m_MaxTracksPlayed->Enable( !m_DelPlayChkBox->IsChecked() );
-	SmartPlayListFlexGridSizer->Add( m_MaxTracksPlayed, 0, wxALL|wxALIGN_RIGHT, 5 );
+	SmartPlayListFlexGridSizer->Add( m_MaxTracksPlayed, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * MaxTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Max played tracks kept in playlist"), wxDefaultPosition, wxDefaultSize, 0 );
 	MaxTracksStaticText->Wrap( -1 );
-	SmartPlayListFlexGridSizer->Add( MaxTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	SmartPlayListFlexGridSizer->Add( MaxTracksStaticText, 0, wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
 	SmartPlayListSizer->Add( SmartPlayListFlexGridSizer, 1, wxEXPAND, 5 );
 
 	PlayMainSizer->Add( SmartPlayListSizer, 0, wxALL|wxEXPAND, 5 );
 
+
+	wxStaticBoxSizer * PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
+
+	m_PlayLevelEnabled = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enabled" ), wxDefaultPosition, wxDefaultSize, 0 );
+	bool IsPlayLevelEnabled = m_Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
+    m_PlayLevelEnabled->SetValue( IsPlayLevelEnabled );
+	PlaySilenceSizer->Add( m_PlayLevelEnabled, 0, wxALL|wxEXPAND, 5 );
+
 	wxBoxSizer * PlayLevelSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	wxStaticText * LevelStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "Level(db):" ), wxDefaultPosition, wxDefaultSize, 0 );
 	LevelStaticText->Wrap( -1 );
-
-	PlayLevelSizer->Add( LevelStaticText, 0, wxALL|wxALIGN_BOTTOM, 5 );
+	PlayLevelSizer->Add( LevelStaticText, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_BOTTOM, 5 );
 
 	m_PlayLevelSlider = new wxSlider( m_PlayPanel, wxID_ANY, m_Config->ReadNum( wxT( "SilenceLevel" ), -50, wxT( "Playback" ) ), -65, 0, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
 	m_PlayLevelSlider->Enable( IsPlayLevelEnabled );
-
 	PlayLevelSizer->Add( m_PlayLevelSlider, 1, wxEXPAND|wxALIGN_BOTTOM|wxBOTTOM, 5 );
 
 	PlaySilenceSizer->Add( PlayLevelSizer, 0, wxEXPAND, 5 );
@@ -767,21 +765,19 @@ void guPrefDialog::BuildPlaybackPage( void )
 	m_PlayEndTimeCheckBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Only in the last" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_PlayEndTimeCheckBox->SetValue( m_Config->ReadBool( wxT( "SilenceAtEnd" ), true, wxT( "Playback" ) ) );
 	m_PlayEndTimeCheckBox->Enable( IsPlayLevelEnabled );
-
-	PlayEndTimeSizer->Add( m_PlayEndTimeCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	PlayEndTimeSizer->Add( m_PlayEndTimeCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxBOTTOM, 5 );
 
 	m_PlayEndTimeSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 360,
 	    m_Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) );
 	m_PlayEndTimeSpinCtrl->Enable( IsPlayLevelEnabled && m_PlayEndTimeCheckBox->IsChecked() );
-
-	PlayEndTimeSizer->Add( m_PlayEndTimeSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	PlayEndTimeSizer->Add( m_PlayEndTimeSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	wxStaticText * PlayEndTimeStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "seconds" ), wxDefaultPosition, wxDefaultSize, 0 );
 	PlayEndTimeStaticText->Wrap( -1 );
-
-	PlayEndTimeSizer->Add( PlayEndTimeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	PlayEndTimeSizer->Add( PlayEndTimeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	PlaySilenceSizer->Add( PlayEndTimeSizer, 0, wxEXPAND, 5 );
+
 
 	PlayMainSizer->Add( PlaySilenceSizer, 0, wxEXPAND|wxALL, 5 );
 
