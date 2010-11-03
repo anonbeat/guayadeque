@@ -263,7 +263,7 @@ void guAlbumBrowserItemPanel::SetAlbumItem( const int index, guAlbumBrowserItem 
     }
     else
     {
-        m_Bitmap->SetBitmap( * blankcd );
+        //m_Bitmap->SetBitmap( * blankcd );
         m_Bitmap->Hide();
         m_ArtistLabel->SetLabel( wxEmptyString );
         m_AlbumLabel->SetLabel( wxEmptyString );

@@ -2935,7 +2935,7 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
                 PortableMediaViewCtrl = new guPortableMediaViewCtrl( this, DeviceMount, event.GetId() );
                 guPortableMediaLibPanel * PortableMediaLibPanel = PortableMediaViewCtrl->CreateLibPanel( m_CatNotebook, m_PlayerPanel );
 
-                InsertTabPanel( PortableMediaLibPanel, 10, PortableMediaViewCtrl->DeviceName() );
+                InsertTabPanel( PortableMediaLibPanel, 10, PortableMediaViewCtrl->DeviceName() + wxT( " : " ) + _( "Library" ) );
                 m_PortableMediaViewCtrls.Add( PortableMediaViewCtrl );
 
                 PortableMediaLibPanel->SetPanelActive( m_PortableMediaViewCtrls.Count() - 1 );
@@ -2961,8 +2961,8 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
                 {
                     guPortableMediaLibPanel * PortableMediaLibPanel = PortableMediaViewCtrl->CreateLibPanel( m_CatNotebook, m_PlayerPanel );
 
-                    InsertTabPanel( PortableMediaLibPanel, 10, PortableMediaViewCtrl->DeviceName() );
-                    m_PortableMediaViewCtrls.Add( PortableMediaViewCtrl );
+                    InsertTabPanel( PortableMediaLibPanel, 10, PortableMediaViewCtrl->DeviceName() + wxT( " : " ) + _( "Library" ) );
+                    //m_PortableMediaViewCtrls.Add( PortableMediaViewCtrl ); // Sure about this ?
 
                     PortableMediaLibPanel->SetPanelActive( m_PortableMediaViewCtrls.Count() - 1 );
 
@@ -2978,6 +2978,16 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
             }
             else if( CmdId == 19 )      // Its the AlbumBrowser panel
             {
+                if( !( VisiblePanels & guPANEL_MAIN_ALBUMBROWSER ) )
+                {
+                    guPortableMediaAlbumBrowser * PortableMediaAlbumBrowser = PortableMediaViewCtrl->CreateAlbumBrowser( m_CatNotebook, m_PlayerPanel );
+
+                    InsertTabPanel( PortableMediaAlbumBrowser, 10, PortableMediaViewCtrl->DeviceName() + wxT( " : " ) + _( "Album Browser" ) );
+
+                    //PortableMediaLibPanel->SetPanelActive( m_PortableMediaViewCtrls.Count() - 1 );
+
+                    CreatePortablePlayersMenu( m_PortableDevicesMenu );
+                }
             }
         }
     }
@@ -3015,18 +3025,26 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
                     }
                 }
 
-                if( !PortableMediaViewCtrl->VisiblePanels() )
-                {
-                    int DeviceIndex = m_PortableMediaViewCtrls.Index( PortableMediaViewCtrl );
-                    delete m_PortableMediaViewCtrls[ DeviceIndex ];
-                    m_PortableMediaViewCtrls.RemoveAt( DeviceIndex );
-                }
             }
             else if( CmdId == 18 )  // Its the Playlists panel
             {
             }
             else if( CmdId == 19 )  // Its the AlbumBrowser panel
             {
+                guPortableMediaAlbumBrowser * PortableMediaAlbumBrowser = PortableMediaViewCtrl->AlbumBrowserPanel();
+                if( PortableMediaAlbumBrowser )
+                {
+                    RemoveTabPanel( PortableMediaAlbumBrowser );
+                    PortableMediaViewCtrl->DestroyAlbumBrowser();
+                }
+
+            }
+
+            if( !PortableMediaViewCtrl->VisiblePanels() )
+            {
+                int DeviceIndex = m_PortableMediaViewCtrls.Index( PortableMediaViewCtrl );
+                delete m_PortableMediaViewCtrls[ DeviceIndex ];
+                m_PortableMediaViewCtrls.RemoveAt( DeviceIndex );
             }
 
             CreatePortablePlayersMenu( m_PortableDevicesMenu );
