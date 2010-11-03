@@ -711,6 +711,20 @@ bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
 
 
 // -------------------------------------------------------------------------------- //
+// guPortableMediaAlbumBrowser
+// -------------------------------------------------------------------------------- //
+guPortableMediaAlbumBrowser::guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel ) :
+    guAlbumBrowser( parent, db, playerpanel )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guPortableMediaAlbumBrowser::~guPortableMediaAlbumBrowser()
+{
+}
+
+
+// -------------------------------------------------------------------------------- //
 // guPortableMediaProperties
 // -------------------------------------------------------------------------------- //
 guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPortableMediaDevice * mediadevice )
@@ -1350,6 +1364,27 @@ void guPortableMediaViewCtrl::DestroyLibPanel( void )
         delete m_LibPanel;
         m_LibPanel = NULL;
         m_VisiblePanels ^= guPANEL_MAIN_LIBRARY;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guPortableMediaAlbumBrowser * guPortableMediaViewCtrl::CreateAlbumBrowser( wxWindow * parent, guPlayerPanel * playerpanel )
+{
+    m_AlbumBrowserPanel = new guPortableMediaAlbumBrowser( parent, m_Db, playerpanel );
+    //m_AlbumBrowserPanel->SetPortableMediaDevice( m_MediaDevice );
+    //m_LibPanel->SetBaseCommand( m_BaseCommand );
+    m_VisiblePanels |= guPANEL_MAIN_ALBUMBROWSER;
+    return m_AlbumBrowserPanel;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaViewCtrl::DestroyAlbumBrowser( void )
+{
+    if( m_AlbumBrowserPanel )
+    {
+        delete m_AlbumBrowserPanel;
+        m_AlbumBrowserPanel = NULL;
+        m_VisiblePanels ^= guPANEL_MAIN_ALBUMBROWSER;
     }
 }
 
