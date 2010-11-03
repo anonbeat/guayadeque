@@ -43,7 +43,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guTr
                 wxString( debug, wxConvUTF8 ).c_str() );
             g_error_free( err );
             g_free( debug );
-
+            pobj->SetError( true );
             pobj->Stop();
             break;
         }
@@ -110,6 +110,7 @@ guTranscodeThread::guTranscodeThread( const wxChar * source, const wxChar * targ
     m_Quality = quality;
 
     m_Running = false;
+    m_HasError = false;
 
     BuildPipeline();
 
@@ -456,6 +457,7 @@ void guTranscodeThread::BuildPipeline( void )
   {
     guLogError( wxT( "Error creating the transcode pipeline" ) );
   }
+  m_HasError = true;
 }
 
 // -------------------------------------------------------------------------------- //

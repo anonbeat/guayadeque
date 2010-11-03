@@ -296,7 +296,7 @@ class guRadioStationListBox : public guListView
 // -------------------------------------------------------------------------------- //
 guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbRadios * db ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxSUNKEN_BORDER )
+        wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT )
 {
     m_Db = db;
     m_ImageList = new wxImageList();

@@ -19,9 +19,13 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "PortableMedia.h"
+
+#include "MainFrame.h"
 #include "MD5.h"
+#include "TagInfo.h"
 #include "Transcode.h"
 #include "Utils.h"
+
 
 #include <wx/tokenzr.h>
 
@@ -512,9 +516,9 @@ void guPortableMediaLibrary::CreateNewSong( guTrack * track )
 
 
 // -------------------------------------------------------------------------------- //
-// guPortableMediaPanel
+// guPortableMediaLibPanel
 // -------------------------------------------------------------------------------- //
-guPortableMediaPanel::guPortableMediaPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix ) :
+guPortableMediaLibPanel::guPortableMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix ) :
     guLibPanel( parent, db, playerpanel, prefix )
 {
     //SetBaseCommand( ID_MENU_VIEW_PORTABLE_DEVICES );
@@ -524,22 +528,22 @@ guPortableMediaPanel::guPortableMediaPanel( wxWindow * parent, guPortableMediaLi
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this ); // Get notified when configuration changes
 
-    Connect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaPanel::OnPortableLibraryUpdate ), NULL, this );
-    Connect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaPanel::OnPortableUnmount ), NULL, this );
-    Connect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaPanel::OnPortableProperties ), NULL, this );
+    Connect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableLibraryUpdate ), NULL, this );
+    Connect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableUnmount ), NULL, this );
+    Connect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableProperties ), NULL, this );
 
 }
 
 // -------------------------------------------------------------------------------- //
-guPortableMediaPanel::~guPortableMediaPanel()
+guPortableMediaLibPanel::~guPortableMediaLibPanel()
 {
-    Disconnect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaPanel::OnPortableLibraryUpdate ), NULL, this );
-    Disconnect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaPanel::OnPortableUnmount ), NULL, this );
-    Disconnect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaPanel::OnPortableProperties ), NULL, this );
+    Disconnect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableLibraryUpdate ), NULL, this );
+    Disconnect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableUnmount ), NULL, this );
+    Disconnect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableProperties ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
-void guPortableMediaPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+void guPortableMediaLibPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
 {
     int Index;
     int Count;
@@ -554,7 +558,7 @@ void guPortableMediaPanel::NormalizeTracks( guTrackArray * tracks, const bool is
 }
 
 // -------------------------------------------------------------------------------- //
-void guPortableMediaPanel::CreateContextMenu( wxMenu * menu, const int windowid )
+void guPortableMediaLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
 {
     wxMenu *     SubMenu = new wxMenu();
 
@@ -572,13 +576,13 @@ void guPortableMediaPanel::CreateContextMenu( wxMenu * menu, const int windowid 
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guPortableMediaPanel::GetName( void )
+wxString guPortableMediaLibPanel::GetName( void )
 {
     return m_PortableMediaDevice->DeviceName();
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guPortableMediaPanel::GetPaths( void )
+wxArrayString guPortableMediaLibPanel::GetPaths( void )
 {
     wxArrayString Paths = wxStringTokenize( m_PortableMediaDevice->AudioFolders(), wxT( "," ) );
     int Index;
@@ -595,7 +599,7 @@ wxArrayString guPortableMediaPanel::GetPaths( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPortableMediaPanel::OnPortableLibraryUpdate( wxCommandEvent &event )
+void guPortableMediaLibPanel::OnPortableLibraryUpdate( wxCommandEvent &event )
 {
     event.SetId( ID_MENU_UPDATE_LIBRARY );
     event.SetClientData( ( void * ) this );
@@ -603,7 +607,7 @@ void guPortableMediaPanel::OnPortableLibraryUpdate( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPortableMediaPanel::OnPortableProperties( wxCommandEvent &event )
+void guPortableMediaLibPanel::OnPortableProperties( wxCommandEvent &event )
 {
     guPortableMediaProperties * PortableMediaProperties = new guPortableMediaProperties( this, m_PortableMediaDevice );
     if( PortableMediaProperties )
@@ -617,7 +621,7 @@ void guPortableMediaPanel::OnPortableProperties( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPortableMediaPanel::OnPortableUnmount( wxCommandEvent &event )
+void guPortableMediaLibPanel::OnPortableUnmount( wxCommandEvent &event )
 {
     if( m_PortableMediaDevice->CanUnmount() )
     {
@@ -626,19 +630,19 @@ void guPortableMediaPanel::OnPortableUnmount( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-int guPortableMediaPanel::LastUpdate( void )
+int guPortableMediaLibPanel::LastUpdate( void )
 {
     return 0;
 }
 
 // -------------------------------------------------------------------------------- //
-void guPortableMediaPanel::SetLastUpdate( int lastupdate )
+void guPortableMediaLibPanel::SetLastUpdate( int lastupdate )
 {
     // The portable media devices cant set lastupdate
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guPortableMediaPanel::GetCoverSearchWords( void )
+wxArrayString guPortableMediaLibPanel::GetCoverSearchWords( void )
 {
     wxArrayString CoverWords = guLibPanel::GetCoverSearchWords();
     if( CoverWords.Index( m_PortableMediaDevice->CoverName() ) == wxNOT_FOUND )
@@ -649,9 +653,59 @@ wxArrayString guPortableMediaPanel::GetCoverSearchWords( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPortableMediaPanel::OnDropFiles( const wxArrayString &filenames )
+bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
 {
-    return false;
+    guTrackArray * CopyTracks = new guTrackArray();
+    int Index;
+    int Count = filenames.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        wxString CurFile = filenames[ Index ];
+        if( guIsValidAudioFile( CurFile ) )
+        {
+            guTagInfo * TagInfo = guGetTagInfoHandler( CurFile );
+            if( TagInfo )
+            {
+                guTrack * CurTrack = new guTrack();
+                if( CurTrack )
+                {
+                    CurTrack->m_Type = guTRACK_TYPE_NOTDB;
+
+                    TagInfo->Read();
+
+                    CurTrack->m_FileName    = CurFile;
+                    CurTrack->m_ArtistName  = TagInfo->m_ArtistName;
+                    CurTrack->m_AlbumName   = TagInfo->m_AlbumName;
+                    CurTrack->m_SongName    = TagInfo->m_TrackName;
+                    CurTrack->m_Number      = TagInfo->m_Track;
+                    CurTrack->m_GenreName   = TagInfo->m_GenreName;
+                    CurTrack->m_Length      = TagInfo->m_Length;
+                    CurTrack->m_Year        = TagInfo->m_Year;
+                    CurTrack->m_Comments    = TagInfo->m_Comments;
+                    CurTrack->m_Composer    = TagInfo->m_Composer;
+                    CurTrack->m_Disk        = TagInfo->m_Disk;
+                    CurTrack->m_AlbumArtist = TagInfo->m_AlbumArtist;
+                    CurTrack->m_Rating      = wxNOT_FOUND;
+                    CurTrack->m_CoverId     = 0;
+
+                    CopyTracks->Add( CurTrack );
+                }
+
+                delete TagInfo;
+            }
+            else
+            {
+                guLogError( wxT( "Could not read tags from file '%s'" ), CurFile.c_str() );
+            }
+        }
+    }
+
+    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE );
+    Event.SetClientData( CopyTracks );
+    Event.SetInt( PanelActive() );
+    wxPostEvent( wxTheApp->GetTopWindow(), Event );
+
+    return true;
 }
 
 
@@ -1232,6 +1286,71 @@ int guListCheckOptionsDialog::GetSelectedItems( wxArrayInt &selection )
             selection.Add( Index );
     }
     return selection.Count();
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guPortableMediaViewCtrl
+// -------------------------------------------------------------------------------- //
+guPortableMediaViewCtrl::guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO_Mount * mount, int basecommand )
+{
+    m_MainFrame = mainframe;
+    m_BaseCommand = basecommand;
+    m_MediaDevice = new guPortableMediaDevice( mount );
+
+    wxString DeviceDbPath = wxGetHomeDir() + wxT( "/.guayadeque/Devices/" ) + m_MediaDevice->DevicePath() + wxT( "/guayadeque.db" );
+    wxFileName::Mkdir( wxPathOnly( DeviceDbPath ), 0775, wxPATH_MKDIR_FULL );
+
+    m_Db = new guPortableMediaLibrary( DeviceDbPath );
+    m_Db->SetLibPath( wxStringTokenize( m_MediaDevice->AudioFolders(), wxT( "," ) ) );
+
+    m_LibPanel = NULL;
+
+    //m_PlayListPanel = NULL;
+    //m_AlbumBrowserPanel = NULL;
+    m_VisiblePanels = 0;
+}
+
+// -------------------------------------------------------------------------------- //
+guPortableMediaViewCtrl::~guPortableMediaViewCtrl()
+{
+    if( m_LibPanel )
+        delete m_LibPanel;
+
+//    if( m_PlayListPanel )
+//        delete m_PlayListPanel;
+//
+//    if( m_AlbumBrowserPanel )
+//        delete m_AlbumBrowserPanel;
+
+    if( m_MediaDevice )
+        delete m_MediaDevice;
+
+    if( m_Db )
+        delete m_Db;
+}
+
+// -------------------------------------------------------------------------------- //
+guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * parent, guPlayerPanel * playerpanel )
+{
+    m_LibPanel = new guPortableMediaLibPanel( parent, m_Db, playerpanel, wxT( "PMD" ) );
+    m_LibPanel->SetPortableMediaDevice( m_MediaDevice );
+    m_LibPanel->SetBaseCommand( m_BaseCommand );
+    m_VisiblePanels |= guPANEL_MAIN_LIBRARY;
+    return m_LibPanel;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaViewCtrl::DestroyLibPanel( void )
+{
+    if( m_LibPanel )
+    {
+        delete m_LibPanel;
+        m_LibPanel = NULL;
+        m_VisiblePanels ^= guPANEL_MAIN_LIBRARY;
+    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -558,7 +558,7 @@ bool guMediaCtrl::RemovePlayBin( guFaderPlayBin * playbin )
     if( m_CurrentPlayBin == playbin )
         m_CurrentPlayBin = NULL;
 
-    if( m_FaderPlayBins.Index( playbin ) )
+    if( m_FaderPlayBins.Index( playbin ) != wxNOT_FOUND )
     {
         m_FaderPlayBins.Remove( playbin );
         RetVal = true;
@@ -762,22 +762,22 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
     {
         if( FaderPlaybin->IsOk() )
         {
-            Lock();
-            m_FaderPlayBins.Insert( FaderPlaybin, 0 );
-            Unlock();
-
             if( gst_element_set_state( FaderPlaybin->Playbin(), GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE )
             {
+                Lock();
+                m_FaderPlayBins.Insert( FaderPlaybin, 0 );
+                Unlock();
+
                 guMediaEvent event( guEVT_MEDIA_LOADED );
                 event.SetInt( true );
                 SendEvent( event );
 
                 return FaderPlaybin->GetId();
             }
-            else
-            {
-                RemovePlayBin( FaderPlaybin );
-            }
+//            else
+//            {
+//                RemovePlayBin( FaderPlaybin );
+//            }
         }
         delete FaderPlaybin;
     }

@@ -49,7 +49,7 @@ END_EVENT_TABLE()
 // -------------------------------------------------------------------------------- //
 guGenericDirCtrl::guGenericDirCtrl( wxWindow * parent, const int showpaths  ) :
               wxGenericDirCtrl( parent, wxID_ANY, wxDirDialogDefaultFolderStr,
-                wxDefaultPosition, wxDefaultSize, wxDIRCTRL_DIR_ONLY|wxDIRCTRL_3D_INTERNAL|wxSUNKEN_BORDER,
+                wxDefaultPosition, wxDefaultSize, wxDIRCTRL_DIR_ONLY|wxDIRCTRL_3D_INTERNAL|wxNO_BORDER,
                 wxEmptyString, 0, wxTreeCtrlNameStr )
 {
     m_ShowPaths = showpaths;
@@ -164,7 +164,7 @@ void guGenericDirCtrl::FolderRename( void )
 // guFileBrowserDirCtrl
 // -------------------------------------------------------------------------------- //
 guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db, const wxString &dirpath ) :
-    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxNO_BORDER )
 {
     m_Db = db;
     m_AddingFolder = false;
@@ -190,17 +190,17 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db,
 	m_ShowRecPathsBtn = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_record ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_ShowRecPathsBtn->SetToolTip( _( "Switch between see all filesystem and only recording locations" ) );
 	m_ShowRecPathsBtn->SetValue( ShowPaths & guFILEBROWSER_SHOWPATH_RECORDS );
-	DirBtnSizer->Add( m_ShowRecPathsBtn, 0, wxALL, 5 );
+	DirBtnSizer->Add( m_ShowRecPathsBtn, 0, wxTOP|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
 	m_ShowPodPathsBtn = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_podcast ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_ShowPodPathsBtn->SetToolTip( _( "Switch between see all filesystem and only podcast locations" ) );
 	m_ShowPodPathsBtn->SetValue( ShowPaths & guFILEBROWSER_SHOWPATH_PODCASTS );
-	DirBtnSizer->Add( m_ShowPodPathsBtn, 0, wxALL, 5 );
+	DirBtnSizer->Add( m_ShowPodPathsBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	m_ShowLibPathsBtn = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_ShowLibPathsBtn->SetToolTip( _( "Switch between see all filesystem and only library locations" ) );
 	m_ShowLibPathsBtn->SetValue( ShowPaths & guFILEBROWSER_SHOWPATH_LIBRARY );
-	DirBtnSizer->Add( m_ShowLibPathsBtn, 0, wxALL, 5 );
+	DirBtnSizer->Add( m_ShowLibPathsBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	MainSizer->Add( DirBtnSizer, 0, wxEXPAND, 5 );
 

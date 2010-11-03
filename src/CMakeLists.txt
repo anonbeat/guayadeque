@@ -244,6 +244,8 @@ ADD_EXECUTABLE( guayadeque
 	Transcode.h
 	CopyTo.cpp
 	CopyTo.h
+	LocationPanel.cpp
+	LocationPanel.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

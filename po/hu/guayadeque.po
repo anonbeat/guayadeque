@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque Music Player SVN 0.2.8-1325\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-27 21:15+0100\n"
-"PO-Revision-Date: 2010-10-29 21:34+0100\n"
+"PO-Revision-Date: 2010-11-02 08:12+0100\n"
 "Last-Translator: Andrássy László <andrassy.laszlo@gmail.com>\n"
 "Language-Team: Hungarian\n"
 "Language: \n"
@@ -1181,7 +1181,7 @@ msgstr "Keresési link megadása a tulajdonságoknál"
 #: LastFMPanel.cpp:468
 #: LastFMPanel.cpp:662
 msgid "Less..."
-msgstr "Keveseb..."
+msgstr "Kevesebb..."
 
 #: LastFMPanel.cpp:468
 #: LastFMPanel.cpp:662

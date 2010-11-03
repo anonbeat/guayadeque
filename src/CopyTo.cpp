@@ -42,7 +42,7 @@ guCopyToAction::guCopyToAction()
     m_Quality = wxNOT_FOUND;
     m_MoveFiles = false;
     m_Db = NULL;
-    m_PortableMediaPanel = NULL;
+    m_PortableMediaViewCtrl = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -57,21 +57,21 @@ guCopyToAction::guCopyToAction( guTrackArray * tracks, guLibPanel * libpanel, co
     m_Format = format;
     m_Quality = quality;
     m_MoveFiles = movefiles;
-    m_PortableMediaPanel = NULL;
+    m_PortableMediaViewCtrl = NULL;
 
     if( !m_DestDir.EndsWith( wxT( "/" ) ) )
         m_DestDir.Append( wxT( "/" ) );
 }
 
 // -------------------------------------------------------------------------------- //
-guCopyToAction::guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaPanel * portablemediapanel )
+guCopyToAction::guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
 {
     m_Type = guCOPYTO_ACTION_COPYTODEVICE;
     m_Tracks = tracks;
     m_MoveFiles = false;
     m_Db = db;
-    m_PortableMediaPanel = portablemediapanel;
-    guPortableMediaDevice * PortableMediaDevice = m_PortableMediaPanel->PortableMediaDevice();
+    m_PortableMediaViewCtrl = portablemediaviewctrl;
+    guPortableMediaDevice * PortableMediaDevice = m_PortableMediaViewCtrl->MediaDevice();
     m_Format = PortableMediaDevice->TranscodeFormat();
     m_Quality = PortableMediaDevice->TranscodeQuality();
     m_Pattern = PortableMediaDevice->Pattern();
@@ -151,9 +151,9 @@ void guCopyToThread::AddAction( guTrackArray * tracks, guLibPanel * libpanel, co
 }
 
 // -------------------------------------------------------------------------------- //
-void guCopyToThread::AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaPanel * portablemediapanel )
+void guCopyToThread::AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
 {
-    guCopyToAction * CopyToAction = new guCopyToAction( tracks, db, portablemediapanel );
+    guCopyToAction * CopyToAction = new guCopyToAction( tracks, db, portablemediaviewctrl );
     if( CopyToAction )
     {
         m_CopyToActionsMutex.Lock();
@@ -169,26 +169,31 @@ void guCopyToThread::AddAction( guTrackArray * tracks, guDbLibrary * db, guPorta
 }
 
 // -------------------------------------------------------------------------------- //
-void guCopyToThread::CopyFile( const wxString &from, const wxString &to )
+bool guCopyToThread::CopyFile( const wxString &from, const wxString &to )
 {
+    bool RetVal = true;
     guLogMessage( wxT( "Copy %s =>> %s" ), from.c_str(), to.c_str() );
     if( wxFileName::Mkdir( wxPathOnly( to ), 0777, wxPATH_MKDIR_FULL ) )
     {
         if( !wxCopyFile( from, to ) )
         {
+            RetVal = false;
             guLogError( wxT( "Could not copy the file '%s'" ), from.c_str() );
         }
     }
     else
     {
+        RetVal = false;
         guLogError( wxT( "Could not create path for copy the file '%s'" ), from.c_str() );
     }
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-void guCopyToThread::TranscodeFile( const wxString &source, const wxString &target, int format, int quality )
+bool guCopyToThread::TranscodeFile( const wxString &source, const wxString &target, int format, int quality )
 {
     guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\n%s\n%s" ), source.c_str(), target.c_str() );
+    bool RetVal = false;
     wxString OutFile = target + wxT( "." ) + guTranscodeFormatString( format );
     if( wxFileName::Mkdir( wxPathOnly( target ), 0777, wxPATH_MKDIR_FULL ) )
     {
@@ -204,7 +209,9 @@ void guCopyToThread::TranscodeFile( const wxString &source, const wxString &targ
 
             m_SizeCounter += guGetFileSize( OutFile );
         }
+        RetVal = TranscodeThread->IsOk();
     }
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -403,15 +410,23 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             }
         }
 
+        bool Result;
         if( ActionIsCopy )
         {
             FileName += wxT( '.' ) + CurTrack->m_FileName.Lower().AfterLast( wxT( '.' ) );
-            CopyFile( CurTrack->m_FileName, FileName );
+            Result = CopyFile( CurTrack->m_FileName, FileName );
             m_SizeCounter += CurTrack->m_FileSize;
         }
         else
         {
-            TranscodeFile( CurTrack->m_FileName, FileName, copytoaction.Format(), copytoaction.Quality() );
+            Result = TranscodeFile( CurTrack->m_FileName, FileName, copytoaction.Format(), copytoaction.Quality() );
+        }
+
+        if( Result && copytoaction.MoveFiles() )
+        {
+            // Need to delete the old files
+            //CopyToAction.LibPanel()->DeleteTracks( CopyToAction.Tracks() );
+            m_DeleteTracks.Add( CurTrack );
         }
 
         // Add the file to the files to add list so the library update it when this job is done
@@ -568,6 +583,7 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
             }
 
             m_FilesToAdd.Empty();
+            m_DeleteTracks.Empty();
             m_CoversToAdd.Empty();
             m_CopyToActionsMutex.Lock();
             guCopyToAction &CopyToAction = m_CopyToActions->Item( 0 );
@@ -580,7 +596,7 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
             if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTODEVICE )
             {
                 // Update the files
-                CopyToAction.PortableMediaPanel()->GetDb()->AddFiles( m_FilesToAdd );
+                CopyToAction.PortableMediaViewCtrl()->Db()->AddFiles( m_FilesToAdd );
 
                 // Update the covers
                 wxString DevCoverName = CopyToAction.PortableMediaDevice()->CoverName();
@@ -593,18 +609,21 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
                 int Count = m_CoversToAdd.Count();
                 for( Index = 0; Index < Count; Index++ )
                 {
-                    CopyToAction.PortableMediaPanel()->GetDb()->UpdateImageFile( m_CoversToAdd[ Index ].ToUTF8(), DevCoverName.ToUTF8() );
+                    CopyToAction.PortableMediaViewCtrl()->Db()->UpdateImageFile( m_CoversToAdd[ Index ].ToUTF8(), DevCoverName.ToUTF8() );
                 }
 
-                wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_RELOADCONTROLS );
-                Event.SetClientData( CopyToAction.PortableMediaPanel() );
-                m_MainFrame->AddPendingEvent( Event );
+                if( CopyToAction.PortableMediaViewCtrl()->LibPanel() )
+                {
+                    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_RELOADCONTROLS );
+                    Event.SetClientData( CopyToAction.PortableMediaViewCtrl()->LibPanel() );
+                    m_MainFrame->AddPendingEvent( Event );
+                }
             }
 
-            if( CopyToAction.MoveFiles() )
+            if( m_DeleteTracks.Count() )
             {
                 // Need to delete the old files
-                CopyToAction.LibPanel()->DeleteTracks( CopyToAction.Tracks() );
+                CopyToAction.LibPanel()->DeleteTracks( &m_DeleteTracks );
             }
 
             m_CopyToActionsMutex.Lock();
