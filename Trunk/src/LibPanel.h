@@ -319,6 +319,8 @@ class guLibPanel : public wxPanel
 
     virtual wxArrayString   GetCoverSearchWords( void );
 
+    int                     VisiblePanels( void ) { return m_VisiblePanels; }
+
     friend class guLibPanelDropTarget;
 };
 

@@ -82,7 +82,7 @@ class guGIO_Mount
 
     wxString        GetName( void ) { return m_Name; }
     wxString        GetMountPath( void ) { return m_MountPath; }
-    wxString        GetIconString( void ) { return m_IconString; }
+    wxString        IconString( void ) { return m_IconString; }
 
     GVolume         GetVolume( void );
 

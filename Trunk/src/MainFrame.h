@@ -72,7 +72,7 @@
 #define     guPANEL_MAIN_FILEBROWSER        ( 1 << 10 )
 #define     guPANEL_MAIN_JAMENDO            ( 1 << 11 )
 #define     guPANEL_MAIN_MAGNATUNE          ( 1 << 12 )
-#define     guPANEL_MAIN_IPOD               ( 1 << 13 )
+#define     guPANEL_MAIN_LOCATIONS          ( 1 << 13 )
 
 #define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | \
                                               guPANEL_MAIN_LASTFM | guPANEL_MAIN_LYRICS  | \
@@ -80,6 +80,9 @@
                                               guPANEL_MAIN_ALBUMBROWSER | guPANEL_MAIN_FILEBROWSER )
 #define     guPANEL_MAIN_VISIBLE_DEFAULT    ( guPANEL_MAIN_PLAYERPLAYLIST | guPANEL_MAIN_PLAYERFILTERS | \
                                               guPANEL_MAIN_SELECTOR )
+
+#define     guPORTABLEDEVICE_COMMANDS_COUNT 20  // 0 .. 9 Main Window Commands
+                                                // 10 .. 19 -> Library Pane Windows
 
 enum guUPDATED_TRACKS {
     guUPDATED_TRACKS_NONE = 0,
@@ -94,263 +97,268 @@ class guLibUpdateThread;
 class guLibCleanThread;
 class guUpdatePodcastsTimer;
 class guCopyToThread;
+class guLocationPanel;
 
 // -------------------------------------------------------------------------------- //
 class guMainFrame : public wxFrame
 {
   private:
-    wxAuiManager                m_AuiManager;
-    unsigned int                m_VisiblePanels;
+    wxAuiManager                    m_AuiManager;
+    unsigned int                    m_VisiblePanels;
 
-    guAuiNotebook *             m_CatNotebook;
-    wxString                    m_NBPerspective;
-    wxSplitterWindow *          m_PlayerSplitter;
-    guPlayerFilters *           m_PlayerFilters;
-    guPlayerPlayList *          m_PlayerPlayList;
-    guPlayerVumeters *          m_PlayerVumeters;
-    guPlayerPanel *             m_PlayerPanel;
-    guLibPanel *                m_LibPanel;
-    guRadioPanel *              m_RadioPanel;
-    guLastFMPanel *             m_LastFMPanel;
-    guLyricsPanel *             m_LyricsPanel;
-    guPlayListPanel *           m_PlayListPanel;
-    guPodcastPanel *            m_PodcastsPanel;
-    guAlbumBrowser *            m_AlbumBrowserPanel;
-    guFileBrowser *             m_FileBrowserPanel;
-    guJamendoPanel *            m_JamendoPanel;
-    guMagnatunePanel *          m_MagnatunePanel;
+    guAuiNotebook *                 m_CatNotebook;
+    wxString                        m_NBPerspective;
+    wxSplitterWindow *              m_PlayerSplitter;
+    guPlayerFilters *               m_PlayerFilters;
+    guPlayerPlayList *              m_PlayerPlayList;
+    guPlayerVumeters *              m_PlayerVumeters;
+    guPlayerPanel *                 m_PlayerPanel;
+    guLibPanel *                    m_LibPanel;
+    guRadioPanel *                  m_RadioPanel;
+    guLastFMPanel *                 m_LastFMPanel;
+    guLyricsPanel *                 m_LyricsPanel;
+    guPlayListPanel *               m_PlayListPanel;
+    guPodcastPanel *                m_PodcastsPanel;
+    guAlbumBrowser *                m_AlbumBrowserPanel;
+    guFileBrowser *                 m_FileBrowserPanel;
+    guJamendoPanel *                m_JamendoPanel;
+    guMagnatunePanel *              m_MagnatunePanel;
+    guLocationPanel *               m_LocationPanel;
 
-    guTaskBarIcon *             m_TaskBarIcon;
-    guStatusBar *               m_MainStatusBar;
+    guTaskBarIcon *                 m_TaskBarIcon;
+    guStatusBar *                   m_MainStatusBar;
 
-    wxMenuItem *                m_PlaySmartMenuItem;
-    wxMenuItem *                m_LoopPlayListMenuItem;
-    wxMenuItem *                m_LoopTrackMenuItem;
+    wxMenuItem *                    m_PlaySmartMenuItem;
+    wxMenuItem *                    m_LoopPlayListMenuItem;
+    wxMenuItem *                    m_LoopTrackMenuItem;
 
-    wxMenu *                    m_MainMenu;
-    wxMenu *                    m_LayoutLoadMenu;
-    wxMenu *                    m_LayoutDelMenu;
+    wxMenu *                        m_MainMenu;
+    wxMenu *                        m_LayoutLoadMenu;
+    wxMenu *                        m_LayoutDelMenu;
 
-    wxMenuItem *                m_ViewPlayerPlayList;
-    wxMenuItem *                m_ViewPlayerFilters;
-    wxMenuItem *                m_ViewPlayerSelector;
-    wxMenuItem *                m_ViewPlayerVumeters;
-    wxMenuItem *                m_ViewLibrary;
-    wxMenuItem *                m_ViewLibTextSearch;
-    wxMenuItem *                m_ViewLibLabels;
-    wxMenuItem *                m_ViewLibGenres;
-    wxMenuItem *                m_ViewLibArtists;
-    wxMenuItem *                m_ViewLibAlbums;
-    wxMenuItem *                m_ViewLibYears;
-    wxMenuItem *                m_ViewLibRatings;
-    wxMenuItem *                m_ViewLibPlayCounts;
-    wxMenuItem *                m_ViewLibComposers;
-    wxMenuItem *                m_ViewLibAlbumArtists;
+    wxMenuItem *                    m_ViewPlayerPlayList;
+    wxMenuItem *                    m_ViewPlayerFilters;
+    wxMenuItem *                    m_ViewPlayerSelector;
+    wxMenuItem *                    m_ViewPlayerVumeters;
+    wxMenuItem *                    m_ViewMainLocations;
+    wxMenuItem *                    m_ViewLibrary;
+    wxMenuItem *                    m_ViewLibTextSearch;
+    wxMenuItem *                    m_ViewLibLabels;
+    wxMenuItem *                    m_ViewLibGenres;
+    wxMenuItem *                    m_ViewLibArtists;
+    wxMenuItem *                    m_ViewLibAlbums;
+    wxMenuItem *                    m_ViewLibYears;
+    wxMenuItem *                    m_ViewLibRatings;
+    wxMenuItem *                    m_ViewLibPlayCounts;
+    wxMenuItem *                    m_ViewLibComposers;
+    wxMenuItem *                    m_ViewLibAlbumArtists;
 
-    wxMenuItem *                m_ViewRadios;
-    wxMenuItem *                m_ViewRadTextSearch;
-    wxMenuItem *                m_ViewRadLabels;
-    wxMenuItem *                m_ViewRadGenres;
+    wxMenuItem *                    m_ViewRadios;
+    wxMenuItem *                    m_ViewRadTextSearch;
+    wxMenuItem *                    m_ViewRadLabels;
+    wxMenuItem *                    m_ViewRadGenres;
 
-    wxMenuItem *                m_ViewLastFM;
-    wxMenuItem *                m_ViewLyrics;
+    wxMenuItem *                    m_ViewLastFM;
+    wxMenuItem *                    m_ViewLyrics;
 
-    wxMenuItem *                m_ViewPlayLists;
-    wxMenuItem *                m_ViewPLTextSearch;
+    wxMenuItem *                    m_ViewPlayLists;
+    wxMenuItem *                    m_ViewPLTextSearch;
 
-    wxMenuItem *                m_ViewAlbumBrowser;
+    wxMenuItem *                    m_ViewAlbumBrowser;
 
-    wxMenuItem *                m_ViewFileBrowser;
+    wxMenuItem *                    m_ViewFileBrowser;
 
-    wxMenuItem *                m_ViewJamendo;
-    wxMenuItem *                m_ViewJamTextSearch;
-    wxMenuItem *                m_ViewJamLabels;
-    wxMenuItem *                m_ViewJamGenres;
-    wxMenuItem *                m_ViewJamArtists;
-    wxMenuItem *                m_ViewJamAlbums;
-    wxMenuItem *                m_ViewJamYears;
-    wxMenuItem *                m_ViewJamRatings;
-    wxMenuItem *                m_ViewJamPlayCounts;
-    wxMenuItem *                m_ViewJamComposers;
-    wxMenuItem *                m_ViewJamAlbumArtists;
+    wxMenuItem *                    m_ViewJamendo;
+    wxMenuItem *                    m_ViewJamTextSearch;
+    wxMenuItem *                    m_ViewJamLabels;
+    wxMenuItem *                    m_ViewJamGenres;
+    wxMenuItem *                    m_ViewJamArtists;
+    wxMenuItem *                    m_ViewJamAlbums;
+    wxMenuItem *                    m_ViewJamYears;
+    wxMenuItem *                    m_ViewJamRatings;
+    wxMenuItem *                    m_ViewJamPlayCounts;
+    wxMenuItem *                    m_ViewJamComposers;
+    wxMenuItem *                    m_ViewJamAlbumArtists;
 
-    wxMenuItem *                m_ViewMagnatune;
-    wxMenuItem *                m_ViewMagTextSearch;
-    wxMenuItem *                m_ViewMagLabels;
-    wxMenuItem *                m_ViewMagGenres;
-    wxMenuItem *                m_ViewMagArtists;
-    wxMenuItem *                m_ViewMagAlbums;
-    wxMenuItem *                m_ViewMagYears;
-    wxMenuItem *                m_ViewMagRatings;
-    wxMenuItem *                m_ViewMagPlayCounts;
-    wxMenuItem *                m_ViewMagComposers;
-    wxMenuItem *                m_ViewMagAlbumArtists;
+    wxMenuItem *                    m_ViewMagnatune;
+    wxMenuItem *                    m_ViewMagTextSearch;
+    wxMenuItem *                    m_ViewMagLabels;
+    wxMenuItem *                    m_ViewMagGenres;
+    wxMenuItem *                    m_ViewMagArtists;
+    wxMenuItem *                    m_ViewMagAlbums;
+    wxMenuItem *                    m_ViewMagYears;
+    wxMenuItem *                    m_ViewMagRatings;
+    wxMenuItem *                    m_ViewMagPlayCounts;
+    wxMenuItem *                    m_ViewMagComposers;
+    wxMenuItem *                    m_ViewMagAlbumArtists;
 
-    wxMenuItem *                m_ViewPodcasts;
-    wxMenuItem *                m_ViewPodChannels;
-    wxMenuItem *                m_ViewPodDetails;
+    wxMenuItem *                    m_ViewPodcasts;
+    wxMenuItem *                    m_ViewPodChannels;
+    wxMenuItem *                    m_ViewPodDetails;
 
-    wxMenuItem *                m_ViewFullScreen;
-    wxMenuItem *                m_ViewStatusBar;
+    wxMenuItem *                    m_ViewFullScreen;
+    wxMenuItem *                    m_ViewStatusBar;
 
-    wxMenu *                    m_PortableDevicesMenu;
+    wxMenu *                        m_PortableDevicesMenu;
 
 
-    guDbLibrary *               m_Db;
-    guDbCache *                 m_DbCache;
-    guJamendoLibrary *          m_JamendoDb;
-    guMagnatuneLibrary *        m_MagnatuneDb;
-    guLibUpdateThread *         m_LibUpdateThread;
-    guLibCleanThread *          m_LibCleanThread;
+    guDbLibrary *                   m_Db;
+    guDbCache *                     m_DbCache;
+    guJamendoLibrary *              m_JamendoDb;
+    guMagnatuneLibrary *            m_MagnatuneDb;
+    guLibUpdateThread *             m_LibUpdateThread;
+    guLibCleanThread *              m_LibCleanThread;
 
-    wxIcon                      m_AppIcon;
+    wxIcon                          m_AppIcon;
 
-    guUpdatePodcastsTimer *     m_UpdatePodcastsTimer;
+    guUpdatePodcastsTimer *         m_UpdatePodcastsTimer;
 
     guPodcastDownloadQueueThread    * m_DownloadThread;
-    wxMutex                     m_DownloadThreadMutex;
+    wxMutex                         m_DownloadThreadMutex;
 
-    guDBusServer *              m_DBusServer;
-    guMPRIS *                   m_MPRIS;
-    guMMKeys *                  m_MMKeys;
-    guGSession *                m_GSession;
-    guDBusNotify *              m_NotifySrv;
+    guDBusServer *                  m_DBusServer;
+    guMPRIS *                       m_MPRIS;
+    guMMKeys *                      m_MMKeys;
+    guGSession *                    m_GSession;
+    guDBusNotify *                  m_NotifySrv;
 
-    guGIO_VolumeMonitor *       m_VolumeMonitor;
-    guPortableMediaLibraryArray m_PortableMediaDbs;
-    guPortableMediaPanelArray   m_PortableMediaPanels;
+    guGIO_VolumeMonitor *           m_VolumeMonitor;
+//    guPortableMediaLibraryArray     m_PortableMediaDbs;
+//    guPortableMediaPanelArray       m_PortableMediaPanels;
+    guPortableMediaViewCtrlArray    m_PortableMediaViewCtrls;
 
-    wxWindow *                  m_CurrentPage;
+    wxWindow *                      m_CurrentPage;
 
-    wxLongLong                  m_SelCount;
-    wxLongLong                  m_SelLength;
-    wxLongLong                  m_SelSize;
+    wxLongLong                      m_SelCount;
+    wxLongLong                      m_SelLength;
+    wxLongLong                      m_SelSize;
 
     // Layouts
-    wxArrayString               m_LayoutName;
-    wxArrayString               m_LayoutData;
-    wxArrayString               m_LayoutTabs;
+    wxArrayString                   m_LayoutName;
+    wxArrayString                   m_LayoutData;
+    wxArrayString                   m_LayoutTabs;
 
-    guCopyToThread *            m_CopyToThread;
-    wxMutex                     m_CopyToThreadMutex;
+    guCopyToThread *                m_CopyToThread;
+    wxMutex                         m_CopyToThreadMutex;
 
 
-    void                OnUpdateLibrary( wxCommandEvent &event );
-    void                OnUpdatePodcasts( wxCommandEvent &event );
-    void                OnUpdateCovers( wxCommandEvent &event );
-    void                OnUpdateTrack( wxCommandEvent &event );
-    void                OnPlayerStatusChanged( wxCommandEvent &event );
-    void                OnPlayerTrackListChanged( wxCommandEvent &event );
-    void                OnPlayerCapsChanged( wxCommandEvent &event );
-    void                OnAudioScrobbleUpdate( wxCommandEvent &event );
-    void                CreatePortablePlayersMenu( wxMenu * menu );
-    void                CreateMenu();
-    void                DoCreateStatusBar( int kind );
-    void                OnCloseWindow( wxCloseEvent &event );
-    //void                OnIconizeWindow( wxIconizeEvent &event );
-    void                OnPreferences( wxCommandEvent &event );
+    void                            OnUpdateLibrary( wxCommandEvent &event );
+    void                            OnUpdatePodcasts( wxCommandEvent &event );
+    void                            OnUpdateCovers( wxCommandEvent &event );
+    void                            OnUpdateTrack( wxCommandEvent &event );
+    void                            OnPlayerStatusChanged( wxCommandEvent &event );
+    void                            OnPlayerTrackListChanged( wxCommandEvent &event );
+    void                            OnPlayerCapsChanged( wxCommandEvent &event );
+    void                            OnAudioScrobbleUpdate( wxCommandEvent &event );
+    void                            CreatePortablePlayersMenu( wxMenu * menu );
+    void                            CreateMenu();
+    void                            DoCreateStatusBar( int kind );
+    void                            OnCloseWindow( wxCloseEvent &event );
+    //void                            OnIconizeWindow( wxIconizeEvent &event );
+    void                            OnPreferences( wxCommandEvent &event );
 
-    void                OnPlay( wxCommandEvent &event );
-    void                OnStop( wxCommandEvent &event );
-    void                OnNextTrack( wxCommandEvent &event );
-    void                OnPrevTrack( wxCommandEvent &event );
-    void                OnNextAlbum( wxCommandEvent &event );
-    void                OnPrevAlbum( wxCommandEvent &event );
-    void                OnSmartPlay( wxCommandEvent &event );
-    void                OnRandomize( wxCommandEvent &event );
-    void                OnRepeat( wxCommandEvent &event );
-    void                OnAbout( wxCommandEvent &event );
-    void                OnHelp( wxCommandEvent &event );
-    void                OnCommunity( wxCommandEvent &event );
-    void                OnCopyTracksTo( wxCommandEvent &event );
-    void                OnCopyTracksToDevice( wxCommandEvent &event );
-    void                OnUpdateLabels( wxCommandEvent &event );
-    void                OnPlayerPlayListUpdateTitle( wxCommandEvent &event );
+    void                            OnPlay( wxCommandEvent &event );
+    void                            OnStop( wxCommandEvent &event );
+    void                            OnNextTrack( wxCommandEvent &event );
+    void                            OnPrevTrack( wxCommandEvent &event );
+    void                            OnNextAlbum( wxCommandEvent &event );
+    void                            OnPrevAlbum( wxCommandEvent &event );
+    void                            OnSmartPlay( wxCommandEvent &event );
+    void                            OnRandomize( wxCommandEvent &event );
+    void                            OnRepeat( wxCommandEvent &event );
+    void                            OnAbout( wxCommandEvent &event );
+    void                            OnHelp( wxCommandEvent &event );
+    void                            OnCommunity( wxCommandEvent &event );
+    void                            OnCopyTracksTo( wxCommandEvent &event );
+    void                            OnCopyTracksToDevice( wxCommandEvent &event );
+    void                            OnUpdateLabels( wxCommandEvent &event );
+    void                            OnPlayerPlayListUpdateTitle( wxCommandEvent &event );
 
-    void                CheckShowNotebook( void );
-    void                CheckHideNotebook( void );
+    void                            CheckShowNotebook( void );
+    void                            CheckHideNotebook( void );
 
-    void                OnGaugePulse( wxCommandEvent &event );
-    void                OnGaugeSetMax( wxCommandEvent &event );
-    void                OnGaugeUpdate( wxCommandEvent &event );
-    void                OnGaugeRemove( wxCommandEvent &event );
+    void                            OnGaugePulse( wxCommandEvent &event );
+    void                            OnGaugeSetMax( wxCommandEvent &event );
+    void                            OnGaugeUpdate( wxCommandEvent &event );
+    void                            OnGaugeRemove( wxCommandEvent &event );
 
-    void                OnSelectTrack( wxCommandEvent &event );
-    void                OnSelectAlbum( wxCommandEvent &event );
-    void                OnSelectArtist( wxCommandEvent &event );
-    void                OnSelectYear( wxCommandEvent &event );
-    void                OnSelectGenre( wxCommandEvent &event );
-    void                OnGenreSetSelection( wxCommandEvent &event );
-    void                OnAlbumArtistSetSelection( wxCommandEvent &event );
-    void                OnArtistSetSelection( wxCommandEvent &event );
-    void                OnAlbumSetSelection( wxCommandEvent &event );
+    void                            OnSelectTrack( wxCommandEvent &event );
+    void                            OnSelectAlbum( wxCommandEvent &event );
+    void                            OnSelectArtist( wxCommandEvent &event );
+    void                            OnSelectYear( wxCommandEvent &event );
+    void                            OnSelectGenre( wxCommandEvent &event );
+    void                            OnSelectLocation( wxCommandEvent &event );
+    void                            OnGenreSetSelection( wxCommandEvent &event );
+    void                            OnAlbumArtistSetSelection( wxCommandEvent &event );
+    void                            OnArtistSetSelection( wxCommandEvent &event );
+    void                            OnAlbumSetSelection( wxCommandEvent &event );
 
-    void                OnPlayListUpdated( wxCommandEvent &event );
+    void                            OnPlayListUpdated( wxCommandEvent &event );
 
-    void                CreateTaskBarIcon( void );
+    void                            CreateTaskBarIcon( void );
 
-    void                OnPodcastItemUpdated( wxCommandEvent &event );
-    void                OnRemovePodcastThread( wxCommandEvent &event );
+    void                            OnPodcastItemUpdated( wxCommandEvent &event );
+    void                            OnRemovePodcastThread( wxCommandEvent &event );
 
-    void                OnIdle( wxIdleEvent &event );
-    void                OnPageChanged( wxAuiNotebookEvent& event );
-    void                OnPageClosed( wxAuiNotebookEvent& event );
+    void                            OnIdle( wxIdleEvent &event );
+    void                            OnPageChanged( wxAuiNotebookEvent& event );
+    void                            OnPageClosed( wxAuiNotebookEvent& event );
 
-//    void                SetLibTracks( wxCommandEvent &event );
-//    void                SetRadioStations( wxCommandEvent &event );
-//    void                SetPlayListTracks( wxCommandEvent &event );
-//    void                SetPodcasts( wxCommandEvent &event );
-    void                OnUpdateSelInfo( wxCommandEvent &event );
-    void                OnRequestCurrentTrack( wxCommandEvent &event );
+//    void                            SetLibTracks( wxCommandEvent &event );
+//    void                            SetRadioStations( wxCommandEvent &event );
+//    void                            SetPlayListTracks( wxCommandEvent &event );
+//    void                            SetPodcasts( wxCommandEvent &event );
+    void                            OnUpdateSelInfo( wxCommandEvent &event );
+    void                            OnRequestCurrentTrack( wxCommandEvent &event );
 
-    //void                OnSysColorChanged( wxSysColourChangedEvent &event );
+    //void                            OnSysColorChanged( wxSysColourChangedEvent &event );
 
-    void                OnCreateNewLayout( wxCommandEvent &event );
-    void                LoadLayouts( void );
-    void                SaveLayouts( void );
-    void                OnLoadLayout( wxCommandEvent &event );
-    void                OnDeleteLayout( wxCommandEvent &event );
+    void                            OnCreateNewLayout( wxCommandEvent &event );
+    void                            LoadLayouts( void );
+    void                            SaveLayouts( void );
+    void                            OnLoadLayout( wxCommandEvent &event );
+    void                            OnDeleteLayout( wxCommandEvent &event );
 
-    void                OnPlayerShowPanel( wxCommandEvent &event );
-    void                ShowMainPanel( const int panelid, const bool enable );
+    void                            OnPlayerShowPanel( wxCommandEvent &event );
+    void                            ShowMainPanel( const int panelid, const bool enable );
 
-    void                OnViewLibrary( wxCommandEvent &event );
-    void                OnLibraryShowPanel( wxCommandEvent &event );
+    void                            OnViewLibrary( wxCommandEvent &event );
+    void                            OnLibraryShowPanel( wxCommandEvent &event );
 
-    void                OnViewRadio( wxCommandEvent &event );
-    void                OnRadioShowPanel( wxCommandEvent &event );
+    void                            OnViewRadio( wxCommandEvent &event );
+    void                            OnRadioShowPanel( wxCommandEvent &event );
 
-    void                OnViewLastFM( wxCommandEvent &event );
-    void                OnViewLyrics( wxCommandEvent &event );
+    void                            OnViewLastFM( wxCommandEvent &event );
+    void                            OnViewLyrics( wxCommandEvent &event );
 
-    void                OnViewPlayLists( wxCommandEvent &event );
-    void                OnPlayListShowPanel( wxCommandEvent &event );
+    void                            OnViewPlayLists( wxCommandEvent &event );
+    void                            OnPlayListShowPanel( wxCommandEvent &event );
 
-    void                OnViewPodcasts( wxCommandEvent &event );
-    void                OnPodcastsShowPanel( wxCommandEvent &event );
+    void                            OnViewPodcasts( wxCommandEvent &event );
+    void                            OnPodcastsShowPanel( wxCommandEvent &event );
 
-    void                OnViewAlbumBrowser( wxCommandEvent &event );
+    void                            OnViewAlbumBrowser( wxCommandEvent &event );
 
-    void                OnViewFileBrowser( wxCommandEvent &event );
+    void                            OnViewFileBrowser( wxCommandEvent &event );
 
-    void                OnViewJamendo( wxCommandEvent &event );
-    void                OnJamendoShowPanel( wxCommandEvent &event );
+    void                            OnViewJamendo( wxCommandEvent &event );
+    void                            OnJamendoShowPanel( wxCommandEvent &event );
 
-    void                OnViewMagnatune( wxCommandEvent &event );
-    void                OnMagnatuneShowPanel( wxCommandEvent &event );
+    void                            OnViewMagnatune( wxCommandEvent &event );
+    void                            OnMagnatuneShowPanel( wxCommandEvent &event );
 
-    void                OnViewPortableDevice( wxCommandEvent &event );
-    void                OnViewPortableDevicePanel( wxCommandEvent &event );
+    void                            OnViewPortableDevice( wxCommandEvent &event );
+    void                            OnViewPortableDevicePanel( wxCommandEvent &event );
 
-    void                OnMainPaneClose( wxAuiManagerEvent &event );
+    void                            OnMainPaneClose( wxAuiManagerEvent &event );
 
-    void                LoadTabsPerspective( const wxString &layout );
+    void                            LoadTabsPerspective( const wxString &layout );
 
-    void                OnForceUpdateLibrary( wxCommandEvent &event );
-    void                OnAddLibraryPath( wxCommandEvent &event );
+    void                            OnForceUpdateLibrary( wxCommandEvent &event );
+    void                            OnAddLibraryPath( wxCommandEvent &event );
 
-    void                OnViewFullScreen( wxCommandEvent &event );
-    void                OnViewStatusBar( wxCommandEvent &event );
+    void                            OnViewFullScreen( wxCommandEvent &event );
+    void                            OnViewStatusBar( wxCommandEvent &event );
 
     // There is a bug that dont removes correctly the last window from the AuiNotebook
     // When a new one is inserted if it was already in the Notebook then
@@ -359,55 +367,58 @@ class guMainFrame : public wxFrame
     // Instead of remove it we hide the Notebook
     // When inserting we need to control if it was hiden and if so add the new one and remove the first
     // We create two functions RemoveTabPanel and InsertTabPanel that controls this
-    void                RemoveTabPanel( wxPanel * panel );
-    void                InsertTabPanel( wxPanel * panel, const int index, const wxString &label );
+    void                            RemoveTabPanel( wxPanel * panel );
+    void                            InsertTabPanel( wxPanel * panel, const int index, const wxString &label );
 
-    void                OnJamendoCoverDownloaded( wxCommandEvent &event );
-    void                OnMagnatuneCoverDownloaded( wxCommandEvent &event );
+    void                            OnJamendoCoverDownloaded( wxCommandEvent &event );
+    void                            OnMagnatuneCoverDownloaded( wxCommandEvent &event );
 
-    void                OnVolumeMonitorUpdated( wxCommandEvent &event );
-    void                CreatePortableMediaDeviceMenu( wxMenu * menu, const wxString &devicename, const int basecmd );
-    guPortableMediaPanel *  GetPortableMediaPanel( const int basecmd );
+    void                            OnVolumeMonitorUpdated( wxCommandEvent &event );
+    void                            CreatePortableMediaDeviceMenu( wxMenu * menu, const wxString &devicename, const int basecmd );
 
   public:
-                        guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
-                        ~guMainFrame();
-    void                DoLibraryClean( wxCommandEvent &event );
-    void                LibraryUpdated( wxCommandEvent &event );
-    void                OnJamendoUpdated( wxCommandEvent &event );
-    void                OnMagnatuneUpdated( wxCommandEvent &event );
-    void                LibraryCleanFinished( wxCommandEvent &event );
-    void                LibraryReloadControls( wxCommandEvent &event );
-    void                OnQuit( wxCommandEvent &WXUNUSED(event) );
-    void                UpdatePodcasts( void );
+                                    guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
+                                    ~guMainFrame();
+    void                            DoLibraryClean( wxCommandEvent &event );
+    void                            LibraryUpdated( wxCommandEvent &event );
+    void                            OnJamendoUpdated( wxCommandEvent &event );
+    void                            OnMagnatuneUpdated( wxCommandEvent &event );
+    void                            LibraryCleanFinished( wxCommandEvent &event );
+    void                            LibraryReloadControls( wxCommandEvent &event );
+    void                            OnQuit( wxCommandEvent &WXUNUSED(event) );
+    void                            UpdatePodcasts( void );
 
-    void                RemovePodcastsDownloadThread( void );
-    void                AddPodcastsDownloadItems( guPodcastItemArray * items );
-    void                RemovePodcastDownloadItems( guPodcastItemArray * items );
+    void                            RemovePodcastsDownloadThread( void );
+    void                            AddPodcastsDownloadItems( guPodcastItemArray * items );
+    void                            RemovePodcastDownloadItems( guPodcastItemArray * items );
 
-    void                UpdatedTracks( int updatedby, const guTrackArray * tracks );
-    void                UpdatedTrack( int updatedby, const guTrack * track );
+    void                            UpdatedTracks( int updatedby, const guTrackArray * tracks );
+    void                            UpdatedTrack( int updatedby, const guTrack * track );
 
-    guDBusNotify *      GetNotifyObject( void ) { return m_NotifySrv; };
+    guDBusNotify *                  GetNotifyObject( void ) { return m_NotifySrv; };
 
-    guJamendoPanel *    GetJamendoPanel( void ) { return m_JamendoPanel; }
-    guJamendoLibrary *  GetJamendoDb( void )
+    guJamendoPanel *                GetJamendoPanel( void ) { return m_JamendoPanel; }
+    guJamendoLibrary *              GetJamendoDb( void )
     {
         if( !m_JamendoDb )
             m_JamendoDb = new guJamendoLibrary( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Jamendo.db" ) );
          return m_JamendoDb;
     }
-    guMagnatunePanel *    GetMagnatunePanel( void ) { return m_MagnatunePanel; }
-    guMagnatuneLibrary *  GetMagnatuneDb( void )
+    guMagnatunePanel *              GetMagnatunePanel( void ) { return m_MagnatunePanel; }
+    guMagnatuneLibrary *            GetMagnatuneDb( void )
     {
         if( !m_MagnatuneDb )
             m_MagnatuneDb = new guMagnatuneLibrary( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Magnatune.db" ) );
          return m_MagnatuneDb;
     }
 
-    void                CreateCopyToMenu( wxMenu * menu, const int basecmd );
+    void                            CreateCopyToMenu( wxMenu * menu, const int basecmd );
 
-    void                CopyToThreadFinished( void );
+    void                            CopyToThreadFinished( void );
+    int                             VisiblePanels( void ) { return m_VisiblePanels; }
+
+    wxArrayString                   PortableDeviceVolumeNames( void ) { return m_VolumeMonitor->GetMountNames(); }
+    guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( const int basecmd );
 
 };
 

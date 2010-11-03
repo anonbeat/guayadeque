@@ -146,6 +146,7 @@ class guPortableMediaDevice
     double                  DiskSize( void ) { return m_DiskSize.ToDouble(); }
     double                  DiskFree( void ) { return m_DiskFree.ToDouble(); }
     void                    UpdateDiskFree( void ) { wxGetDiskSpace( m_Mount->GetMountPath(), &m_DiskSize, &m_DiskFree ); }
+    wxString                IconString( void ) { return m_Mount->IconString(); }
 
     wxString                Pattern( void ) { return m_Pattern; }
     void                    SetPattern( const wxString &pattern ) { m_Pattern = pattern; }
@@ -274,7 +275,7 @@ class guPortableMediaLibrary : public guDbLibrary
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibrary *, guPortableMediaLibraryArray );
 
 // -------------------------------------------------------------------------------- //
-class guPortableMediaPanel : public guLibPanel
+class guPortableMediaLibPanel : public guLibPanel
 {
   protected :
     guPortableMediaDevice *     m_PortableMediaDevice;
@@ -289,9 +290,10 @@ class guPortableMediaPanel : public guLibPanel
     virtual bool                OnDropFiles( const wxArrayString &filenames );
 
   public :
-    guPortableMediaPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "PMD" ) );
-    ~guPortableMediaPanel();
+    guPortableMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "PMD" ) );
+    ~guPortableMediaLibPanel();
 
+    wxString                    IconString( void ) { return m_PortableMediaDevice->IconString(); }
     virtual wxString            GetName( void );
     virtual wxArrayString       GetPaths( void );
 
@@ -310,8 +312,47 @@ class guPortableMediaPanel : public guLibPanel
 
     virtual wxArrayString       GetCoverSearchWords( void );
 
+
+
 };
-WX_DEFINE_ARRAY_PTR( guPortableMediaPanel *, guPortableMediaPanelArray );
+WX_DEFINE_ARRAY_PTR( guPortableMediaLibPanel *, guPortableMediaPanelArray );
+
+// -------------------------------------------------------------------------------- //
+class guPortableMediaViewCtrl
+{
+  protected :
+    guMainFrame *                   m_MainFrame;
+
+    guPortableMediaDevice *         m_MediaDevice;
+    guPortableMediaLibrary *        m_Db;
+    guPortableMediaLibPanel *       m_LibPanel;
+    //guPortableMediaPlaylist *     m_PlayListPanel;
+    //guPortableMediaAlbumBrowser *   m_AlbumBrowserPanel;
+    int                             m_BaseCommand;
+    int                             m_VisiblePanels;
+
+  public :
+    guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO_Mount * mount, int basecommand );
+    ~guPortableMediaViewCtrl();
+
+    int                              BaseCommand( void ) { return m_BaseCommand; }
+    int                              VisiblePanels( void ) { return m_VisiblePanels; }
+    guPortableMediaDevice *          MediaDevice( void ) { return m_MediaDevice; }
+    guPortableMediaLibrary *         Db( void ) { return m_Db; }
+    guPortableMediaLibPanel *        LibPanel( void ) { return m_LibPanel; }
+    //guPortableMediaPlayList *       PlayListPanel( void ) { return m_PlayListPanel; }
+    //guPortableMediaAlbumBrowser *   AlbumBrowserPanel( void ) { return m_AlbumBrowserPanel; }
+
+    guPortableMediaLibPanel *        CreateLibPanel( wxWindow * parent, guPlayerPanel * playerpanel );
+    void                             DestroyLibPanel( void );
+
+    wxString                         DeviceName( void ) { return m_MediaDevice->DeviceName(); }
+    bool                             IsMount( GMount * mount ) { return m_MediaDevice->IsMount( mount ); }
+    wxString                        IconString( void ) { return m_MediaDevice->IconString(); }
+
+};
+WX_DEFINE_ARRAY_PTR( guPortableMediaViewCtrl *, guPortableMediaViewCtrlArray );
+
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -61,6 +61,7 @@ class guTranscodeThread : public wxThread
     int             m_Quality;
     bool            m_Running;
     GstElement *    m_Pipeline;
+    bool            m_HasError;
 
     void            BuildPipeline( void );
     bool            BuildEncoder( GstElement ** enc, GstElement ** mux );
@@ -72,7 +73,8 @@ class guTranscodeThread : public wxThread
     virtual ExitCode    Entry();
     void                Stop( void );
     bool                IsTranscoding( void ) { return m_Running; }
-    bool                IsOk( void ) { return ( m_Pipeline != NULL ); }
+    bool                IsOk( void ) { return !m_HasError; }
+    void                SetError( bool error ) { m_HasError = error; }
 
 };
 

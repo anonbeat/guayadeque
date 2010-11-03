@@ -96,6 +96,15 @@
 #include "./images/pref_jamendo.h"
 #include "./images/pref_magnatune.h"
 //
+#include "./images/loc_library.h"
+#include "./images/loc_portable_device.h"
+#include "./images/loc_net_radio.h"
+#include "./images/loc_podcast.h"
+#include "./images/loc_magnatune.h"
+#include "./images/loc_jamendo.h"
+#include "./images/loc_lastfm.h"
+#include "./images/loc_lyrics.h"
+//
 #include "./images/tiny_close_normal.h"
 #include "./images/tiny_close_highlight.h"
 //
@@ -249,6 +258,15 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_pref_crossfader,		        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_jamendo,		            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_magnatune,		        wxBITMAP_TYPE_PNG ),
+    //
+    GUIMAGE( guImage_loc_library,		            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_portable_device,	        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_net_radio,	                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_podcast,	                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_magnatune,	                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_jamendo,	                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_lastfm,	                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_lyrics,			wxBITMAP_TYPE_PNG ),
     //
     GUIMAGE( guImage_tiny_close_normal,		        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_close_highlight,	        wxBITMAP_TYPE_PNG ),

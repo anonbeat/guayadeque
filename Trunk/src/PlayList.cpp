@@ -251,7 +251,7 @@ void guPlayList::OnDropBegin( void )
 // -------------------------------------------------------------------------------- //
 bool inline guIsJamendoFile( const wxString &filename )
 {
-    return filename.Find( wxT( "/api.jamendo.com/get2/stream/track" ) ) != wxNOT_FOUND;
+    return filename.Find( wxT( "/api.jamendo.com/get2/" ) ) != wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //

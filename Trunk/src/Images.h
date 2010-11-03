@@ -98,6 +98,15 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_pref_jamendo,
     guIMAGE_INDEX_pref_magnatune,
     //
+    guIMAGE_INDEX_loc_library,
+    guIMAGE_INDEX_loc_portable_device,
+    guIMAGE_INDEX_loc_net_radio,
+    guIMAGE_INDEX_loc_podcast,
+    guIMAGE_INDEX_loc_magnatune,
+    guIMAGE_INDEX_loc_jamendo,
+    guIMAGE_INDEX_loc_lastfm,
+    guIMAGE_INDEX_loc_lyrics,
+    //
     guIMAGE_INDEX_tiny_close_normal,
     guIMAGE_INDEX_tiny_close_highlight,
     //
