@@ -380,7 +380,7 @@ msgstr "Éditeur d'étiquettes albums"
 
 #: AlListBox.cpp:112
 msgid "by "
-msgstr "par"
+msgstr "par "
 
 #: AlListBox.cpp:191
 msgid "Play current selected albums"
