@@ -191,12 +191,14 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
                 int IconCount = IconNames.Count();
                 for( IconIndex = 0; IconIndex < IconCount; IconIndex++ )
                 {
+                    guLogMessage( wxT( "Trying to load the icon '%s'" ), IconNames[ IconIndex ].c_str() );
                     if( IconNames[ IconIndex ] == wxT( "." ) || IconNames[ IconIndex ] == wxT( "GThemedIcon" ) )
                         continue;
 
                     wxBitmap IconBitmap = wxArtProvider::GetBitmap( IconNames[ IconIndex ], wxART_OTHER, wxSize( 24, 24 ) );
                     if( IconBitmap.IsOk() )
                     {
+                        guLogMessage( wxT( "The Icon was found...") );
                         int IconPos = m_IconNames.Index( IconNames[ IconIndex ] );
                         if( IconPos == wxNOT_FOUND )
                         {
@@ -214,7 +216,7 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
 
         if( !IconFound )
         {
-            CurrentItem = AppendItem( m_PortableDeviceId, VolumeNames[ Index ], 1, -1, new guLocationItemData( DeviceBaseCmd, PortableMediaViewCtrl ) );
+            CurrentItem = AppendItem( m_PortableDeviceId, VolumeNames[ Index ], -1, -1, new guLocationItemData( DeviceBaseCmd, PortableMediaViewCtrl ) );
         }
 
         if( PortableMediaViewCtrl )
