@@ -713,9 +713,10 @@ bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
 // -------------------------------------------------------------------------------- //
 // guPortableMediaAlbumBrowser
 // -------------------------------------------------------------------------------- //
-guPortableMediaAlbumBrowser::guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel ) :
+guPortableMediaAlbumBrowser::guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel ) :
     guAlbumBrowser( parent, db, playerpanel )
 {
+    m_LibPanel = libpanel;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -723,6 +724,16 @@ guPortableMediaAlbumBrowser::~guPortableMediaAlbumBrowser()
 {
 }
 
+// -------------------------------------------------------------------------------- //
+void guPortableMediaAlbumBrowser::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+{
+    int Index;
+    int Count = tracks->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        tracks->Item( Index ).m_LibPanel = m_LibPanel;
+    }
+}
 
 // -------------------------------------------------------------------------------- //
 // guPortableMediaProperties
@@ -1323,7 +1334,7 @@ guPortableMediaViewCtrl::guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO
     m_LibPanel = NULL;
 
     //m_PlayListPanel = NULL;
-    //m_AlbumBrowserPanel = NULL;
+    m_AlbumBrowserPanel = NULL;
     m_VisiblePanels = 0;
 }
 
@@ -1349,9 +1360,12 @@ guPortableMediaViewCtrl::~guPortableMediaViewCtrl()
 // -------------------------------------------------------------------------------- //
 guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * parent, guPlayerPanel * playerpanel )
 {
-    m_LibPanel = new guPortableMediaLibPanel( parent, m_Db, playerpanel, wxT( "PMD" ) );
-    m_LibPanel->SetPortableMediaDevice( m_MediaDevice );
-    m_LibPanel->SetBaseCommand( m_BaseCommand );
+    if( !m_LibPanel )
+    {
+        m_LibPanel = new guPortableMediaLibPanel( parent, m_Db, playerpanel, wxT( "PMD" ) );
+        m_LibPanel->SetPortableMediaDevice( m_MediaDevice );
+        m_LibPanel->SetBaseCommand( m_BaseCommand );
+    }
     m_VisiblePanels |= guPANEL_MAIN_LIBRARY;
     return m_LibPanel;
 }
@@ -1359,18 +1373,18 @@ guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * pa
 // -------------------------------------------------------------------------------- //
 void guPortableMediaViewCtrl::DestroyLibPanel( void )
 {
-    if( m_LibPanel )
-    {
-        delete m_LibPanel;
-        m_LibPanel = NULL;
+//    if( m_LibPanel )
+//    {
+//        delete m_LibPanel;
+//        m_LibPanel = NULL;
         m_VisiblePanels ^= guPANEL_MAIN_LIBRARY;
-    }
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
 guPortableMediaAlbumBrowser * guPortableMediaViewCtrl::CreateAlbumBrowser( wxWindow * parent, guPlayerPanel * playerpanel )
 {
-    m_AlbumBrowserPanel = new guPortableMediaAlbumBrowser( parent, m_Db, playerpanel );
+    m_AlbumBrowserPanel = new guPortableMediaAlbumBrowser( parent, m_Db, playerpanel, m_LibPanel );
     //m_AlbumBrowserPanel->SetPortableMediaDevice( m_MediaDevice );
     //m_LibPanel->SetBaseCommand( m_BaseCommand );
     m_VisiblePanels |= guPANEL_MAIN_ALBUMBROWSER;
