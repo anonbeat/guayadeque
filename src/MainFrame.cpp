@@ -2919,15 +2919,13 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
     bool IsEnabled = event.IsChecked();
     int CmdId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
     int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
+    int BaseCommand = ID_MENU_VIEW_PORTABLE_DEVICE + ( DeviceNum * guPORTABLEDEVICE_COMMANDS_COUNT );
+    guPortableMediaViewCtrl * PortableMediaViewCtrl = GetPortableMediaViewCtrl( BaseCommand );
     guLogMessage( wxT( "Its the device %i and cmd %i" ), DeviceNum, CmdId );
 
     if( IsEnabled )
     {
-        int BaseCommand = ID_MENU_VIEW_PORTABLE_DEVICE + ( DeviceNum * guPORTABLEDEVICE_COMMANDS_COUNT );
-
-        guPortableMediaViewCtrl * PortableMediaViewCtrl = GetPortableMediaViewCtrl( BaseCommand );
-
-        if( !PortableMediaViewCtrl )
+       if( !PortableMediaViewCtrl )
         {
             guGIO_Mount * DeviceMount = m_VolumeMonitor->GetMount( DeviceNum );
             if( DeviceMount)
@@ -2993,7 +2991,6 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
     }
     else
     {
-        guPortableMediaViewCtrl * PortableMediaViewCtrl = GetPortableMediaViewCtrl( event.GetId() );
         if( PortableMediaViewCtrl )
         {
             if( CmdId == 0 )            // Its the library panel
