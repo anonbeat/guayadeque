@@ -97,18 +97,24 @@ guLocationTreeCtrl::guLocationTreeCtrl( wxWindow * parent, guMainFrame * mainfra
     Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guLocationTreeCtrl::OnContextMenu ), NULL, this );
     Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guLocationTreeCtrl::OnKeyDown ), NULL, this );
 
-    ReloadItems();
+    ReloadItems( true );
 }
 
 // -------------------------------------------------------------------------------- //
 guLocationTreeCtrl::~guLocationTreeCtrl()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->WriteBool( wxT( "MyMusicExpanded" ), IsExpanded( m_MyMusicId ), wxT( "MainSources") );
+    Config->WriteBool( wxT( "RadiosExpanded" ), IsExpanded( m_OnlineRadioId ), wxT( "MainSources") );
+    Config->WriteBool( wxT( "StoresExpanded" ), IsExpanded( m_OnlineStoreId ), wxT( "MainSources") );
+    Config->WriteBool( wxT( "ContextExpanded" ), IsExpanded( m_ContextId ), wxT( "MainSources") );
+
     Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guLocationTreeCtrl::OnContextMenu ), NULL, this );
     Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guLocationTreeCtrl::OnKeyDown ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
-void guLocationTreeCtrl::ReloadItems( void )
+void guLocationTreeCtrl::ReloadItems( const bool loadstate )
 {
     if( m_LockCount )
         return;
@@ -116,6 +122,26 @@ void guLocationTreeCtrl::ReloadItems( void )
     guLogMessage( wxT( "guLocationTreeCtrl::ReloadItems" ) );
     wxTreeItemId CurrentItem;
     int VisiblePanels = m_MainFrame->VisiblePanels();
+
+    bool MyMusicExpanded;
+    bool RadiosExpanded;
+    bool StoresExpanded;
+    bool ContextExpanded;
+    if( loadstate )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        MyMusicExpanded = Config->ReadBool( wxT( "MyMusicExpanded" ), true, wxT( "MainSources") );
+        RadiosExpanded = Config->ReadBool( wxT( "RadiosExpanded" ), true, wxT( "MainSources") );
+        StoresExpanded = Config->ReadBool( wxT( "StoresExpanded" ), true, wxT( "MainSources") );
+        ContextExpanded = Config->ReadBool( wxT( "ContextExpanded" ), true, wxT( "MainSources") );
+    }
+    else
+    {
+        MyMusicExpanded = IsExpanded( m_MyMusicId );
+        RadiosExpanded = IsExpanded( m_OnlineRadioId );
+        StoresExpanded = IsExpanded( m_OnlineStoreId );
+        ContextExpanded = IsExpanded( m_ContextId );
+    }
 
     //
     // My Local Music Locations
@@ -136,6 +162,9 @@ void guLocationTreeCtrl::ReloadItems( void )
     CurrentItem = AppendItem( m_MyMusicId, _( "File Browser" ), -1, -1, new guLocationItemData( ID_MENU_VIEW_FILEBROWSER, ( VisiblePanels & guPANEL_MAIN_FILEBROWSER ) ) );
     if( VisiblePanels & guPANEL_MAIN_FILEBROWSER )
         SetItemFont( CurrentItem, BoldFont );
+
+    if( MyMusicExpanded )
+        Expand( m_MyMusicId );
 
     //
     // Portable Device Locations
@@ -202,12 +231,14 @@ void guLocationTreeCtrl::ReloadItems( void )
             CurrentSubItem = AppendItem( CurrentItem, _( "Album Browser" ), -1, -1, new guLocationItemData( DeviceBaseCmd + 19, ( VisiblePanels & guPANEL_MAIN_ALBUMBROWSER ) ) );
             if( VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
                 SetItemFont( CurrentSubItem, BoldFont );
+            Expand( CurrentItem );
         }
 
         //BaseCmd = ID_MENU_VIEW_PORTABLE_DEVICE + ( Index * guPORTABLEDEVICE_COMMANDS_COUNT );
         //CreatePortableMediaDeviceMenu( menu, VolumeNames[ Index ], BaseCmd );
     }
 
+    Expand( m_PortableDeviceId );
 
     //
     // Online Radio Locations
@@ -216,6 +247,9 @@ void guLocationTreeCtrl::ReloadItems( void )
     CurrentItem = AppendItem( m_OnlineRadioId, _( "Shoutcast" ), 7, -1, new guLocationItemData( ID_MENU_VIEW_RADIO, ( VisiblePanels & guPANEL_MAIN_RADIOS ) ) );
     if( VisiblePanels & guPANEL_MAIN_RADIOS )
         SetItemFont( CurrentItem, BoldFont );
+
+    if( RadiosExpanded )
+        Expand( m_OnlineRadioId );
 
     //
     // Online Stores Locations
@@ -227,7 +261,8 @@ void guLocationTreeCtrl::ReloadItems( void )
     CurrentItem = AppendItem( m_OnlineStoreId, _( "Jamendo" ), 5, -1, new guLocationItemData( ID_MENU_VIEW_JAMENDO, ( VisiblePanels & guPANEL_MAIN_MAGNATUNE ) ) );
     if( VisiblePanels & guPANEL_MAIN_JAMENDO )
         SetItemFont( CurrentItem, BoldFont );
-
+    if( StoresExpanded )
+        Expand( m_OnlineStoreId );
 
     //
     // Podcasts Locations
@@ -249,6 +284,9 @@ void guLocationTreeCtrl::ReloadItems( void )
     CurrentItem = AppendItem( m_ContextId, _( "Lyrics" ), 8, -1, new guLocationItemData( ID_MENU_VIEW_LYRICS, ( VisiblePanels & guPANEL_MAIN_LYRICS ) ) );
     if( VisiblePanels & guPANEL_MAIN_LYRICS )
         SetItemFont( CurrentItem, BoldFont );
+    if( ContextExpanded )
+        Expand( m_ContextId );
+
 }
 
 // -------------------------------------------------------------------------------- //
