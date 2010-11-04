@@ -749,11 +749,13 @@ guMainFrame::~guMainFrame()
     while( m_PortableMediaViewCtrls.Count() )
     {
         guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ 0 ];
-        if( PortableMediaViewCtrl->LibPanel() )
+        int VisiblePanels = PortableMediaViewCtrl->VisiblePanels();
+
+        if( VisiblePanels & guPANEL_MAIN_LIBRARY )
             RemoveTabPanel( PortableMediaViewCtrl->LibPanel() );
-        //if( PortableMediaViewCtrl->PlayListPanel() )
+        //if( VisiblePanels & guPANEL_MAIN_PLAYLISTS )
         //    RemoveTabPanel( PortableMediaViewCtrl->PlayListPanel() );
-        if( PortableMediaViewCtrl->AlbumBrowserPanel() )
+        if( VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
             RemoveTabPanel( PortableMediaViewCtrl->AlbumBrowserPanel() );
 
         delete PortableMediaViewCtrl;
@@ -861,7 +863,8 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
             if( PortableMediaViewCtrl->IsMount( Mount ) )
             {
                 guLogMessage( wxT( "The mount had a view already added ..." ) );
-                if( PortableMediaViewCtrl->LibPanel() )
+                int VisiblePanels = PortableMediaViewCtrl->VisiblePanels();
+                if( VisiblePanels & guPANEL_MAIN_LIBRARY )
                 {
                     guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
                     event.SetClientData( ( void * ) PortableMediaViewCtrl->LibPanel() );
@@ -871,7 +874,17 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
                     OnViewPortableDevice( event );
                 }
 
-                if( PortableMediaViewCtrl->AlbumBrowserPanel() )
+//                if( VisiblePanels & guPANEL_MAIN_PLAYLISTS )
+//                {
+//                    guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
+//                    event.SetClientData( ( void * ) PortableMediaViewCtrl->PlaylistPanel() );
+//                    //int CmdId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
+//                    //int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
+//                    event.SetId( ID_MENU_VIEW_PORTABLE_DEVICE + ( Index * guPORTABLEDEVICE_COMMANDS_COUNT ) + 18 );
+//                    OnViewPortableDevice( event );
+//                }
+
+                if( VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
                 {
                     guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
                     event.SetClientData( ( void * ) PortableMediaViewCtrl->AlbumBrowserPanel() );
@@ -881,12 +894,6 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
                     OnViewPortableDevice( event );
                 }
 
-//                if( PortableMediaPanel->PanelActive() != wxNOT_FOUND )
-//                {
-//                    guLogMessage( wxT( "The mount panel was visible... Need to close it" ) );
-//                    event.SetClientData( ( void * ) PortableMediaPanel );
-//                    OnViewPortableDevice( event );
-//                }
                 break;
             }
         }
