@@ -1335,9 +1335,9 @@ guPortableMediaViewCtrl::~guPortableMediaViewCtrl()
 
 //    if( m_PlayListPanel )
 //        delete m_PlayListPanel;
-//
-//    if( m_AlbumBrowserPanel )
-//        delete m_AlbumBrowserPanel;
+
+    if( m_AlbumBrowserPanel )
+        delete m_AlbumBrowserPanel;
 
     if( m_MediaDevice )
         delete m_MediaDevice;

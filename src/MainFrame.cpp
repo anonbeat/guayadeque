@@ -120,6 +120,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_MagnatunePanel = NULL;
     m_VolumeMonitor = NULL;
     m_ViewPlayerVumeters = NULL;
+    m_LocationPanel = NULL;
 
     //
     wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
@@ -752,8 +753,8 @@ guMainFrame::~guMainFrame()
             RemoveTabPanel( PortableMediaViewCtrl->LibPanel() );
         //if( PortableMediaViewCtrl->PlayListPanel() )
         //    RemoveTabPanel( PortableMediaViewCtrl->PlayListPanel() );
-        //if( PortableMediaViewCtrl->AlbumBrowserPanel() )
-        //    RemoveTabPanel( PortableMediaViewCtrl->AlbumBrowserPanel() );
+        if( PortableMediaViewCtrl->AlbumBrowserPanel() )
+            RemoveTabPanel( PortableMediaViewCtrl->AlbumBrowserPanel() );
 
         delete PortableMediaViewCtrl;
         m_PortableMediaViewCtrls.RemoveAt( 0 );
@@ -869,6 +870,17 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
                     event.SetId( ID_MENU_VIEW_PORTABLE_DEVICE + ( Index * guPORTABLEDEVICE_COMMANDS_COUNT ) );
                     OnViewPortableDevice( event );
                 }
+
+                if( PortableMediaViewCtrl->AlbumBrowserPanel() )
+                {
+                    guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
+                    event.SetClientData( ( void * ) PortableMediaViewCtrl->AlbumBrowserPanel() );
+                    //int CmdId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
+                    //int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
+                    event.SetId( ID_MENU_VIEW_PORTABLE_DEVICE + ( Index * guPORTABLEDEVICE_COMMANDS_COUNT ) + 19 );
+                    OnViewPortableDevice( event );
+                }
+
 //                if( PortableMediaPanel->PanelActive() != wxNOT_FOUND )
 //                {
 //                    guLogMessage( wxT( "The mount panel was visible... Need to close it" ) );
@@ -3704,6 +3716,8 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
         {
             guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ Index ];
             guPortableMediaLibPanel * PortableMediaLibPanel = PortableMediaViewCtrl->LibPanel();
+            //
+            guPortableMediaAlbumBrowser * PortableMediaAlbumBrowser = PortableMediaViewCtrl->AlbumBrowserPanel();
             if( PortableMediaLibPanel == ( guPortableMediaLibPanel * ) CurPage )
             {
                 if( m_LibUpdateThread )
@@ -3737,11 +3751,19 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
                 break;
             }
             //else Check if tis a Playlist
-            //else Check if its an AlbumBrowser
+            else if( PortableMediaAlbumBrowser == ( guPortableMediaAlbumBrowser * ) CurPage )
+            {
+                PortableMediaViewCtrl->DestroyAlbumBrowser();
 
-
+                if( !PortableMediaViewCtrl->VisiblePanels() )
+                {
+                    delete m_PortableMediaViewCtrls[ Index ];
+                    m_PortableMediaViewCtrls.RemoveAt( Index );
+                }
+                break;
+            }
         }
-
+        //
         CreatePortablePlayersMenu( m_PortableDevicesMenu );
     }
 

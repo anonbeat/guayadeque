@@ -571,6 +571,7 @@ void guAlbumBrowserItemPanel::OnBeginDrag( wxMouseEvent &event )
     m_AlbumBrowser->GetAlbumTracks( m_AlbumBrowserItem->m_AlbumId, &Tracks );
     if( ( Count = Tracks.Count() ) )
     {
+        m_AlbumBrowser->NormalizeTracks( &Tracks, true );
         wxFileDataObject Files;
         for( Index = 0; Index < Count; Index++ )
         {
@@ -852,6 +853,7 @@ void guAlbumBrowser::OnSearchSelected( wxCommandEvent& event )
 
     if( m_Db->GetAlbumsSongs( Selections, &Tracks ) && Tracks.Count() )
     {
+        NormalizeTracks( &Tracks );
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
@@ -979,6 +981,7 @@ void guAlbumBrowser::SelectAlbum( const int albumid, const bool append, const bo
     Selections.Add( albumid );
     if( m_Db->GetAlbumsSongs( Selections, &Tracks ) )
     {
+        NormalizeTracks( &Tracks );
         if( append )
             m_PlayerPanel->AddToPlayList( Tracks, true, asnext );
         else
@@ -1111,6 +1114,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
                 wxString SongList = wxEmptyString;
                 if( m_Db->GetAlbumsSongs( Selection, &Songs ) )
                 {
+                    NormalizeTracks( &Songs );
                     count = Songs.Count();
                     for( index = 0; index < count; index++ )
                     {
@@ -1264,6 +1268,7 @@ void guAlbumBrowser::OnAlbumEmbedCoverClicked( const int albumid )
     wxArrayInt Albums;
     Albums.Add( albumid );
     m_Db->GetAlbumsSongs( Albums, &AlbumTracks );
+    NormalizeTracks( &AlbumTracks );
 
     int TrackIndex;
     int TrackCount;
@@ -1288,6 +1293,7 @@ void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid, const int commandi
     Albums.Add( albumid );
 
     m_Db->GetAlbumsSongs( Albums, Tracks );
+    NormalizeTracks( Tracks );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTO );
     int Index = commandid - ID_ALBUMBROWSER_COPYTO;
@@ -1344,6 +1350,7 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
     m_Db->GetAlbumsSongs( Albums, &Songs, true );
     if( !Songs.Count() )
         return;
+    NormalizeTracks( &Songs );
     guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
     if( TrackEditor )
     {

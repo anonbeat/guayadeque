@@ -176,6 +176,8 @@ class guAlbumBrowser : public wxPanel
     void                            OnSearchSelected( wxCommandEvent &event );
     void                            OnTextChangedTimer( wxTimerEvent &event );
 
+    virtual void                    NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
+
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guAlbumBrowser();
@@ -244,6 +246,7 @@ class guAlbumBrowser : public wxPanel
 
 
     friend class guUpdateAlbumDetails;
+    friend class guAlbumBrowserItemPanel;
 };
 
 // -------------------------------------------------------------------------------- //
