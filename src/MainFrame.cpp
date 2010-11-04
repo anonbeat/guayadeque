@@ -1595,15 +1595,33 @@ void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
 void guMainFrame::LibraryReloadControls( wxCommandEvent &event )
 {
     guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+    guAlbumBrowser * AlbumBrowser = NULL;
 
     if( !LibPanel )
+    {
         LibPanel = m_LibPanel;
+        AlbumBrowser = m_AlbumBrowserPanel;
+    }
+    else
+    {
+        int Index;
+        int Count = m_PortableMediaViewCtrls.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ Index ];
+            if( PortableMediaViewCtrl->LibPanel() == LibPanel )
+            {
+                AlbumBrowser = PortableMediaViewCtrl->AlbumBrowserPanel();
+                break;
+            }
+        }
+    }
 
     if( LibPanel )
         LibPanel->ReloadControls();
 
-    if( m_AlbumBrowserPanel )
-        m_AlbumBrowserPanel->LibraryUpdated();
+    if( AlbumBrowser )
+        AlbumBrowser->LibraryUpdated();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3019,28 +3037,27 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
                 {
                     RemoveTabPanel( PortableMediaLibPanel );
                     PortableMediaViewCtrl->DestroyLibPanel();
-                }
 
-                if( m_LibUpdateThread )
-                {
-                    if( m_LibUpdateThread->LibPanel() == ( guLibPanel * ) PortableMediaLibPanel )
+                    if( m_LibUpdateThread )
                     {
-                        m_LibUpdateThread->Pause();
-                        m_LibUpdateThread->Delete();
-                        m_LibUpdateThread = NULL;
+                        if( m_LibUpdateThread->LibPanel() == ( guLibPanel * ) PortableMediaLibPanel )
+                        {
+                            m_LibUpdateThread->Pause();
+                            m_LibUpdateThread->Delete();
+                            m_LibUpdateThread = NULL;
+                        }
+                    }
+
+                    if( m_LibCleanThread )
+                    {
+                        if( m_LibCleanThread->LibPanel() == ( guLibPanel * ) PortableMediaLibPanel )
+                        {
+                            m_LibCleanThread->Pause();
+                            m_LibCleanThread->Delete();
+                            m_LibCleanThread = NULL;
+                        }
                     }
                 }
-
-                if( m_LibCleanThread )
-                {
-                    if( m_LibCleanThread->LibPanel() == ( guLibPanel * ) PortableMediaLibPanel )
-                    {
-                        m_LibCleanThread->Pause();
-                        m_LibCleanThread->Delete();
-                        m_LibCleanThread = NULL;
-                    }
-                }
-
             }
             else if( CmdId == 18 )  // Its the Playlists panel
             {
@@ -3509,8 +3526,8 @@ void guMainFrame::OnSelectLocation( wxCommandEvent &event )
                 PanelIndex = m_CatNotebook->GetPageIndex( PortableMediaViewCtrl->LibPanel() );
 //            else if( CmdId == 18 ) // PlayList
 //                PortableIndex = m_CatNotebook->GetPageIndex( PortableMediaViewCtrl->LibPanel() );
-//            else if( CmdId == 19 ) // AlbumBrowser
-//                PortableIndex = m_CatNotebook->GetPageIndex( PortableMediaViewCtrl->LibPanel() );
+            else if( CmdId == 19 ) // AlbumBrowser
+                PanelIndex = m_CatNotebook->GetPageIndex( PortableMediaViewCtrl->AlbumBrowserPanel() );
 
             break;
 

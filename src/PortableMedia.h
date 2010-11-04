@@ -322,9 +322,12 @@ WX_DEFINE_ARRAY_PTR( guPortableMediaLibPanel *, guPortableMediaPanelArray );
 class guPortableMediaAlbumBrowser : public guAlbumBrowser
 {
   protected :
+    guPortableMediaLibPanel * m_LibPanel;
+
+    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
 
   public :
-    guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel );
+    guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
     ~guPortableMediaAlbumBrowser();
 
 };
