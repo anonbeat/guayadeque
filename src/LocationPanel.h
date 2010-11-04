@@ -90,7 +90,7 @@ class guLocationTreeCtrl : public wxTreeCtrl
     guLocationTreeCtrl( wxWindow * parent, guMainFrame * mainframe );
     ~guLocationTreeCtrl();
 
-    void            ReloadItems( void );
+    void            ReloadItems( const bool loadstate = false );
 
     wxTreeItemId    MyMusicId( void ) { return m_MyMusicId; }
     wxTreeItemId    PortableDeviceId( void ) { return m_PortableDeviceId; }
