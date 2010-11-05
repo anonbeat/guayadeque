@@ -227,16 +227,16 @@ class guAlbumBrowser : public wxPanel
         m_NavLabel->SetLabel( _( "Page" ) + wxString::Format( wxT( " %i / %i" ), page + 1, m_PagesCount ) );
     }
 
-    void                            SelectAlbum( const int albumid, const bool append, const bool asnext = false );
-    int                             GetAlbumTracks( const int albumid, guTrackArray * tracks );
-    void                            OnCommandClicked( const int commandid, const int albumid );
-    void                            OnAlbumDownloadCoverClicked( const int albumid );
-    void                            OnAlbumSelectCoverClicked( const int albumid );
-    void                            OnAlbumDeleteCoverClicked( const int albumid );
-    void                            OnAlbumEmbedCoverClicked( const int albumid );
-    void                            OnAlbumCopyToClicked( const int albumid, const int commandid );
-    void                            OnAlbumEditLabelsClicked( const guAlbumBrowserItem * albumitem );
-    void                            OnAlbumEditTracksClicked( const int albumid );
+    virtual void                    SelectAlbum( const int albumid, const bool append, const bool asnext = false );
+    virtual int                     GetAlbumTracks( const int albumid, guTrackArray * tracks );
+    virtual void                    OnCommandClicked( const int commandid, const int albumid );
+    virtual void                    OnAlbumDownloadCoverClicked( const int albumid );
+    virtual void                    OnAlbumSelectCoverClicked( const int albumid );
+    virtual void                    OnAlbumDeleteCoverClicked( const int albumid );
+    virtual void                    OnAlbumEmbedCoverClicked( const int albumid );
+    virtual void                    OnAlbumCopyToClicked( const int albumid, const int commandid );
+    virtual void                    OnAlbumEditLabelsClicked( const guAlbumBrowserItem * albumitem );
+    virtual void                    OnAlbumEditTracksClicked( const int albumid );
 
     void                            LibraryUpdated( void );
 

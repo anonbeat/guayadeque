@@ -20,8 +20,10 @@
 // -------------------------------------------------------------------------------- //
 #include "PortableMedia.h"
 
+#include "CoverEdit.h"
 #include "MainFrame.h"
 #include "MD5.h"
+#include "SelCoverFile.h"
 #include "TagInfo.h"
 #include "Transcode.h"
 #include "Utils.h"
@@ -708,6 +710,51 @@ bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
     return true;
 }
 
+// -------------------------------------------------------------------------------- //
+wxString guPortableMediaLibPanel::GetCoverName( void )
+{
+    wxString CoverName = m_PortableMediaDevice->CoverName();
+    if( CoverName.IsEmpty() )
+    {
+        CoverName = wxT( "cover" );
+    }
+
+    int DevCoverFormats = m_PortableMediaDevice->CoverFormats();
+
+    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
+    {
+        CoverName += wxT( ".jpg" );
+    }
+    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
+    {
+        CoverName += wxT( ".png" );
+    }
+    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
+    {
+        CoverName += wxT( ".gif" );
+    }
+    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
+    {
+        CoverName += wxT( ".bmp" );
+    }
+    else
+    {
+        CoverName += wxT( ".jpg" );
+    }
+
+    return CoverName;
+}
+
+// -------------------------------------------------------------------------------- //
+int guPortableMediaLibPanel::GetCoverMaxSize( void )
+{
+    int CoverSize = m_PortableMediaDevice->CoverSize();
+    if( !CoverSize )
+        CoverSize = wxNOT_FOUND;
+    return CoverSize;
+}
+
+
 
 
 // -------------------------------------------------------------------------------- //
@@ -734,6 +781,65 @@ void guPortableMediaAlbumBrowser::NormalizeTracks( guTrackArray * tracks, const 
         tracks->Item( Index ).m_LibPanel = m_LibPanel;
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
+{
+    wxString AlbumName;
+    wxString ArtistName;
+    wxString AlbumPath;
+    if( !m_Db->GetAlbumInfo( albumid, &AlbumName, &ArtistName, &AlbumPath ) )
+    {
+        wxMessageBox( _( "Could not find the Album in the songs library.\n"\
+                         "You should update the library." ), _( "Error" ), wxICON_ERROR | wxOK );
+        return;
+    }
+
+    AlbumName = RemoveSearchFilters( AlbumName );
+
+    guCoverEditor * CoverEditor = new guCoverEditor( this, ArtistName, AlbumName );
+    if( CoverEditor )
+    {
+        if( CoverEditor->ShowModal() == wxID_OK )
+        {
+            //guLogMessage( wxT( "About to download cover from selected url" ) );
+            wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
+            if( CoverImage )
+            {
+                m_LibPanel->SetAlbumCover( albumid, AlbumPath, CoverImage );
+
+                ReloadItems();
+                RefreshAll();
+            }
+        }
+        CoverEditor->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
+{
+    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
+    if( SelCoverFile )
+    {
+        if( SelCoverFile->ShowModal() == wxID_OK )
+        {
+            wxString CoverFile = SelCoverFile->GetSelFile();
+            if( !CoverFile.IsEmpty() )
+            {
+                if( m_LibPanel->SetAlbumCover( albumid, SelCoverFile->GetAlbumPath(), CoverFile ) )
+                {
+                    ReloadItems();
+                    RefreshAll();
+                }
+            }
+        }
+        delete SelCoverFile;
+    }
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guPortableMediaProperties

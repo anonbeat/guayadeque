@@ -430,7 +430,8 @@ class guDbLibrary : public guDb
 
     void                SetLibPath( const wxArrayString &NewPaths );
     int                 ReadFileTags( const char * filename );
-    void                UpdateImageFile( const char * filename, const char * saveto );
+    void                UpdateImageFile( const char * filename, const char * saveto,
+                                         const int type = wxBITMAP_TYPE_JPEG, const int maxsize = wxNOT_FOUND );
 
     int                 GetFiltersCount() const;
     void                SetTeFilters( const wxArrayString &tefilters, const bool locked );

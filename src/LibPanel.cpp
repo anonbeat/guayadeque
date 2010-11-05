@@ -1193,6 +1193,76 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+wxString guLibPanel::GetCoverName( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+    return ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg )
+{
+    wxString CoverName = albumpath + GetCoverName();
+
+    int MaxSize = GetCoverMaxSize();
+    if( MaxSize != wxNOT_FOUND )
+    {
+        coverimg->Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
+    }
+
+    if( coverimg->SaveFile( CoverName, GetCoverType() ) )
+    {
+        m_Db->SetAlbumCover( albumid, CoverName );
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath )
+{
+    wxString CoverName = albumpath + GetCoverName();
+    int MaxSize = GetCoverMaxSize();
+
+    wxURI Uri( coverpath );
+    if( Uri.IsReference() )
+    {
+        wxImage CoverImage( coverpath );
+        if( CoverImage.IsOk() )
+        {
+            if( MaxSize != wxNOT_FOUND )
+            {
+                CoverImage.Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
+            }
+
+            if( ( coverpath == CoverName ) || CoverImage.SaveFile( CoverName, GetCoverType() ) )
+            {
+                m_Db->SetAlbumCover( albumid, CoverName );
+                return true;
+            }
+        }
+        else
+        {
+            guLogError( wxT( "Could not load the imate '%s'" ), coverpath.c_str() );
+        }
+    }
+    else
+    {
+        if( DownloadImage( coverpath, CoverName, GetCoverType(), MaxSize, MaxSize ) )
+        {
+            m_Db->SetAlbumCover( albumid, CoverName );
+            return true;
+        }
+        else
+        {
+            guLogError( wxT( "Failed to download file '%s'" ), coverpath.c_str() );
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
 {
     wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
@@ -1219,11 +1289,7 @@ void guLibPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
                 wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
                 if( CoverImage )
                 {
-                    guConfig * Config = ( guConfig * ) guConfig::Get();
-                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-                    wxString CoverName = AlbumPath + ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
-                    CoverImage->SaveFile( CoverName, wxBITMAP_TYPE_JPEG );
-                    m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
+                    SetAlbumCover( Albums[ 0 ], AlbumPath, CoverImage );
                     //AlbumListCtrl->ClearSelection();
                     //Db->SetAlFilters( wxArrayInt() );
                     ReloadAlbums( false );
@@ -1253,47 +1319,13 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                 wxString CoverFile = SelCoverFile->GetSelFile();
                 if( !CoverFile.IsEmpty() )
                 {
-                    guConfig * Config = ( guConfig * ) guConfig::Get();
-                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-                    wxString CoverName = SelCoverFile->GetAlbumPath() + ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
-
-                    wxURI Uri( CoverFile );
-                    if( Uri.IsReference() )
+                    if( SetAlbumCover( Albums[ 0 ], SelCoverFile->GetAlbumPath(), CoverFile ) )
                     {
-                        wxImage CoverImage( CoverFile );
-                        if( CoverImage.IsOk() )
-                        {
-                            if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
-                            {
-                                m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
-                                ReloadAlbums( false );
+                        ReloadAlbums( false );
 
-                                if( SelCoverFile->EmbedToFiles() )
-                                {
-                                    OnAlbumEmbedCoverClicked( event );
-                                }
-                            }
-                        }
-                        else
+                        if( SelCoverFile->EmbedToFiles() )
                         {
-                            guLogError( wxT( "Could not load the imate '%s'" ), CoverFile.c_str() );
-                        }
-                    }
-                    else
-                    {
-                        if( DownloadImage( CoverFile, CoverName ) )
-                        {
-                            m_Db->SetAlbumCover( Albums[ 0 ], CoverName );
-                            ReloadAlbums( false );
-
-                            if( SelCoverFile->EmbedToFiles() )
-                            {
-                                OnAlbumEmbedCoverClicked( event );
-                            }
-                        }
-                        else
-                        {
-                            guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
+                            OnAlbumEmbedCoverClicked( event );
                         }
                     }
                 }

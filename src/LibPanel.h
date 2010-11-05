@@ -321,6 +321,13 @@ class guLibPanel : public wxPanel
 
     int                     VisiblePanels( void ) { return m_VisiblePanels; }
 
+    virtual wxString        GetCoverName( void );
+    virtual int             GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }
+    virtual int             GetCoverMaxSize( void ) { return wxNOT_FOUND; }
+
+    virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg );
+    virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath );
+
     friend class guLibPanelDropTarget;
 };
 
