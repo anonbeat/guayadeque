@@ -313,7 +313,8 @@ class guPortableMediaLibPanel : public guLibPanel
 
     virtual wxArrayString       GetCoverSearchWords( void );
 
-
+    virtual wxString            GetCoverName( void );
+    virtual int                 GetCoverMaxSize( void );
 
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibPanel *, guPortableMediaPanelArray );
@@ -329,6 +330,10 @@ class guPortableMediaAlbumBrowser : public guAlbumBrowser
   public :
     guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
     ~guPortableMediaAlbumBrowser();
+
+
+    virtual void                    OnAlbumDownloadCoverClicked( const int albumid );
+    virtual void                    OnAlbumSelectCoverClicked( const int albumid );
 
 };
 

@@ -1969,7 +1969,7 @@ int guDbLibrary::UpdateSong( const bool allowrating )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto )
+void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto, const int type, const int maxsize )
 {
   wxString              query;
   wxSQLite3ResultSet    dbRes;
@@ -1990,8 +1990,19 @@ void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto )
     wxImage * Image = guTagGetPicture( FileName );
     if( Image )
     {
+        if( !Image->IsOk() )
+        {
+            delete Image;
+            return;
+        }
+
+        if( maxsize != wxNOT_FOUND )
+        {
+            Image->Rescale( maxsize, maxsize, wxIMAGE_QUALITY_HIGH );
+        }
+
         CoverFile = wxPathOnly( FileName ) + wxT( '/' ) + SaveTo;
-        if( !Image->SaveFile( CoverFile, wxBITMAP_TYPE_JPEG ) )
+        if( !Image->SaveFile( CoverFile, type ) )
         {
             delete Image;
             return;

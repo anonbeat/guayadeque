@@ -289,6 +289,7 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
     if( ContextExpanded )
         Expand( m_ContextId );
 
+
 }
 
 // -------------------------------------------------------------------------------- //

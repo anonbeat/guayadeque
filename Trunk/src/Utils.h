@@ -70,6 +70,7 @@ wxString LenToString( unsigned int len );
 wxString SizeToString( wxFileOffset size );
 wxArrayString guSplitWords( const wxString &InputStr );
 wxImage * guGetRemoteImage( const wxString &url, int &imgtype );
+bool DownloadImage( const wxString &source, const wxString &target, const int imagetype, int maxwidth, int maxheight );
 bool DownloadImage( const wxString &source, const wxString &taget, int maxwidth = -1, int maxheight = -1 );
 int DownloadFile( const wxString &Source, const wxString &Target );
 wxString RemoveSearchFilters( const wxString &Album );

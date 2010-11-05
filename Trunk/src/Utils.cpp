@@ -237,7 +237,7 @@ wxImage * guGetRemoteImage( const wxString &url, int &imgtype )
 }
 
 // -------------------------------------------------------------------------------- //
-bool DownloadImage( const wxString &source, const wxString &target, int maxwidth, int maxheight )
+bool DownloadImage( const wxString &source, const wxString &target, const int imagetype, int maxwidth, int maxheight )
 {
     bool        RetVal = false;
     int         ImageType;
@@ -252,11 +252,17 @@ bool DownloadImage( const wxString &source, const wxString &target, int maxwidth
             else
                 Image->Rescale( maxwidth, maxwidth, wxIMAGE_QUALITY_HIGH );
         }
-        RetVal = Image->SaveFile( target, wxBITMAP_TYPE_JPEG );
+        RetVal = Image->SaveFile( target, imagetype );
 
         delete Image;
     }
     return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool DownloadImage( const wxString &source, const wxString &target, int maxwidth, int maxheight )
+{
+    return DownloadImage( source, target, wxBITMAP_TYPE_JPEG, maxwidth, maxheight );
 }
 
 // -------------------------------------------------------------------------------- //
