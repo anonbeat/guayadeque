@@ -701,6 +701,11 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_id' on radiosetlabels (radiosetlabel_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_labelid' on radiosetlabels (radiosetlabel_labelid ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_stationidid' on radiosetlabels (radiosetlabel_stationid ASC);" ) );
+
+      query.Add( wxT( "CREATE TABLE IF NOT EXISTS deleted( delete_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "delete_path VARCHAR, delete_date INTEGER );" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_path on deleted(delete_path ASC);" ) );
+      query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_date on deleted(delete_date ASC);" ) );
     }
 
     case 5 :
@@ -920,11 +925,12 @@ bool guDbLibrary::CheckDbVersion( void )
           query.Add( wxT( "DROP INDEX song_addedtime;" ) );
           query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime ON songs( song_addedtime,song_album,song_disk,song_albumid,song_number )" ) );
           query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime_desc ON songs( song_addedtime DESC,song_album,song_disk,song_albumid,song_number )" ) );
-        }
-        query.Add( wxT( "CREATE TABLE IF NOT EXISTS deleted( delete_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+
+          query.Add( wxT( "CREATE TABLE IF NOT EXISTS deleted( delete_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                           "delete_path VARCHAR, delete_date INTEGER );" ) );
-        query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_path on deleted(delete_path ASC);" ) );
-        query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_date on deleted(delete_date ASC);" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_path on deleted(delete_path ASC);" ) );
+          query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_date on deleted(delete_date ASC);" ) );
+        }
 
     }
 
@@ -944,11 +950,11 @@ bool guDbLibrary::CheckDbVersion( void )
       {
         query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_albumsku VARCHAR" ) );
         query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_coverlink VARCHAR" ) );
-
-        guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
-        query.Add( wxT( "DELETE FROM Version;" ) );
-        query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
       }
+
+      guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
+      query.Add( wxT( "DELETE FROM Version;" ) );
+      query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
     }
 
     default:
