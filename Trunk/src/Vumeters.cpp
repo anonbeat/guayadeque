@@ -28,6 +28,8 @@ BEGIN_EVENT_TABLE( guVumeter, wxControl )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
+// guVumter
+// -------------------------------------------------------------------------------- //
 guVumeter::guVumeter( wxWindow * parent, wxWindowID id, const int style ) : wxControl( parent, id )
 {
     m_Style         = style;
@@ -39,6 +41,31 @@ guVumeter::guVumeter( wxWindow * parent, wxWindowID id, const int style ) : wxCo
 	m_OrangeOn      = wxColour( 255, 128,   0 );
 	m_RedOff        = wxColour( 128,   0,   0 );
 	m_RedOn         = wxColour( 255,   0,   0 );
+	m_OffBitmap     = NULL;
+	m_OnBitmap      = NULL;
+	m_LastHeight    = wxNOT_FOUND;
+	m_LastWidth     = wxNOT_FOUND;
+
+    Connect( wxEVT_SIZE, wxSizeEventHandler( guVumeter::OnChangedSize ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guVumeter::~guVumeter()
+{
+    wxMutexLocker Locker( m_BitmapMutex );
+    if( m_OffBitmap )
+    {
+        delete m_OffBitmap;
+        m_OffBitmap = NULL;
+    }
+
+    if( m_OnBitmap )
+    {
+        delete m_OnBitmap;
+        m_OnBitmap = NULL;
+    }
+
+    Disconnect( wxEVT_SIZE, wxSizeEventHandler( guVumeter::OnChangedSize ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -73,34 +100,33 @@ static inline float IEC_Scale( float db )
 	return fScale;
 }
 
-// -------------------------------------------------------------------------------- //
-double TestValues[] = {
-        -60.0,
-        -55.0,
-        -50.0,
-        -45.0,
-        -40.0,
-        -35.0,
-        -30.0,
-        -25.0,
-        -20.0,
-        -15.0,
-        -10.0,
-         -8.0,
-         -6.0,
-         -5.0,
-         -4.0,
-         -3.0,
-         -2.0,
-         -1.0,
-         -0.0
-};
+//// -------------------------------------------------------------------------------- //
+//double TestValues[] = {
+//        -60.0,
+//        -55.0,
+//        -50.0,
+//        -45.0,
+//        -40.0,
+//        -35.0,
+//        -30.0,
+//        -25.0,
+//        -20.0,
+//        -15.0,
+//        -10.0,
+//         -8.0,
+//         -6.0,
+//         -5.0,
+//         -4.0,
+//         -3.0,
+//         -2.0,
+//         -1.0,
+//         -0.0
+//};
 
 // -------------------------------------------------------------------------------- //
 void guVumeter::PaintHoriz( void )
 {
 	wxPaintDC dc( this );
-    wxRect Rect;
 	wxCoord Width;
 	wxCoord Height;
 	GetClientSize( &Width, &Height );
@@ -112,114 +138,34 @@ void guVumeter::PaintHoriz( void )
 
     dc.SetPen( * wxTRANSPARENT_PEN );
 
-    Rect.x = 0;
-    Rect.y = 0;
-    Rect.width = ( 84 * Width ) / 100;
-    Rect.height = Height;
+    dc.DrawBitmap( * m_OffBitmap, 0, 0, false );
 
-    if( !PeakLevel )
-    {
-        dc.SetBrush( m_GreenOff );
-        dc.DrawRectangle( 0, 0, Rect.width, Height );
-    }
-    else if( PeakLevel > 84 )
-    {
-        dc.SetBrush( m_GreenOn );
-        dc.DrawRectangle( 0, 0, Rect.width, Height );
-    }
-    else
-    {
-        dc.SetBrush( m_GreenOn );
-        int LevelWidth = PeakLevel * Width / 100;
-        dc.DrawRectangle( 0, 0, LevelWidth, Height );
-        dc.SetBrush( m_GreenOff );
-        dc.DrawRectangle( LevelWidth, 0, Rect.width - LevelWidth, Height );
-    }
+    wxRect ClipRect;
+    ClipRect.y = 0;
+    ClipRect.height = Height;
+    ClipRect.x = 0;
+    ClipRect.width = ( PeakLevel * Width ) / 100;
+    dc.SetClippingRegion( ClipRect );
+    dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
+    dc.DestroyClippingRegion();
 
-    Rect.x = Rect.width;
-    Rect.width = ( 8 * Width ) / 100;
-
-    if( PeakLevel < 84 )
-    {
-        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff );
-    }
-    else if( PeakLevel > 92 )
-    {
-        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
-    }
-    else
-    {
-        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff );
-        wxRect ClipRect = Rect;
-        ClipRect.width = ( PeakLevel - 84 ) * Rect.width / 7;
-        dc.SetClippingRegion( ClipRect );
-        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
-        dc.DestroyClippingRegion();
-    }
-
-    Rect.x += Rect.width;
-    Rect.width = Width - Rect.x;
-
-    if( PeakLevel < 92 )
-    {
-        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff );
-    }
-    else if( PeakLevel > 99 )
-    {
-        dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
-    }
-    else
-    {
-        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff );
-        wxRect ClipRect = Rect;
-        ClipRect.width = ( PeakLevel - 92 ) * Rect.width / 8;
-        dc.SetClippingRegion( ClipRect );
-        dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
-        dc.DestroyClippingRegion();
-    }
-
-    //
-    // Draw the decay level
     if( DecayLevel && ( DecayLevel > PeakLevel ) && ( DecayLevel < 100 ) )
     {
-        wxRect ClipRect = Rect;
+        ClipRect.x = ( DecayLevel * Width ) / 100;;
         ClipRect.width = 2;
-        ClipRect.x = ( DecayLevel * Width ) / 100;
         dc.SetClippingRegion( ClipRect );
-        Rect.width = ( 84 * Width ) / 100;
-        Rect.x = 0;
-
-        if( DecayLevel < 84 )       // at Solid green
-        {
-            dc.SetBrush( m_GreenOn );
-            dc.DrawRectangle( 0, 0, Rect.width, Height );
-        }
-        else if( DecayLevel < 92 )  // at green to orange
-        {
-            Rect.x += Rect.width;
-            Rect.width = ( 8 * Width ) / 100;
-            dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn );
-        }
-        else                        // at solid red
-        {
-            Rect.x += ( 92 * Width ) / 100;
-            Rect.width = Width - Rect.x;
-            dc.SetBrush( m_RedOn );
-            dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn );
-        }
+        dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
         dc.DestroyClippingRegion();
     }
 
     dc.SetPen( * wxBLACK_PEN );
     dc.DrawText( wxString::Format( wxT( "%02.1f" ), m_PeakLevel ), 2,  ( Height / 2 ) - 8 );
-    //guLogMessage( wxT( "%f" ), m_PeakLevel );
 }
 
 // -------------------------------------------------------------------------------- //
 void guVumeter::PaintVert( void )
 {
 	wxPaintDC dc( this );
-    wxRect Rect;
 	wxCoord Width;
 	wxCoord Height;
 	GetClientSize( &Width, &Height );
@@ -232,128 +178,162 @@ void guVumeter::PaintVert( void )
 
     dc.SetPen( * wxTRANSPARENT_PEN );
 
-    Rect.x = 0;
-    Rect.width = Width;
-    Rect.y = ( Height * 16 ) / 100;
-    Rect.height = Height - Rect.y;
+    dc.DrawBitmap( * m_OffBitmap, 0, 0, false );
 
-    if( !PeakLevel )
-    {
-        dc.SetBrush( m_GreenOff );
-        dc.DrawRectangle( 0, Rect.y, Width, Rect.height );
-    }
-    else if( PeakLevel > 84 )
-    {
-        dc.SetBrush( m_GreenOn );
-        dc.DrawRectangle( 0, Rect.y, Width, Rect.height );
-    }
-    else
-    {
-        int LevelHeight = ( PeakLevel * Height ) / 100;
-        dc.SetBrush( m_GreenOff );
-        dc.DrawRectangle( 0, Rect.y, Width, Rect.height - LevelHeight );
-        dc.SetBrush( m_GreenOn );
-        dc.DrawRectangle( 0, Height - LevelHeight, Width, LevelHeight );
-    }
+    wxRect ClipRect;
+    ClipRect.x = 0;
+    ClipRect.width = Width;
+    ClipRect.height = ( PeakLevel * Height ) / 100;
+    ClipRect.y = Height - ClipRect.height;
+    dc.SetClippingRegion( ClipRect );
+    dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
+    dc.DestroyClippingRegion();
 
-    Rect.height = ( 8 * Height ) / 100;
-    Rect.y -= Rect.height;
-
-    if( PeakLevel < 84 )
+    if( DecayLevel && ( DecayLevel > PeakLevel ) && ( DecayLevel < 100 ) )
     {
-        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff, wxNORTH );
-    }
-    else if( PeakLevel > 92 )
-    {
-        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn, wxNORTH );
-    }
-    else
-    {
-        dc.GradientFillLinear( Rect, m_GreenOff, m_OrangeOff, wxNORTH );
-        wxRect ClipRect = Rect;
-        int Increment = ( ( 92 - PeakLevel ) * Height ) / 100;
-        ClipRect.y += Increment;
-        ClipRect.height = ( Rect.y + Rect.height ) - Increment;
-        dc.SetClippingRegion( ClipRect );
-        dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn, wxNORTH );
-        dc.DestroyClippingRegion();
-    }
-
-
-    Rect.height = Rect.y;
-    Rect.y = 0;
-
-    if( PeakLevel < 92 )
-    {
-        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff, wxNORTH );
-    }
-    else if( PeakLevel > 99 )
-    {
-        dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn, wxNORTH );
-    }
-    else
-    {
-        dc.GradientFillLinear( Rect, m_OrangeOff, m_RedOff, wxNORTH );
-        wxRect ClipRect = Rect;
-        int Increment = ( ( 100 - PeakLevel ) * Height ) / 100;
-        ClipRect.y += Increment;
-        ClipRect.height -= Increment;
-        dc.SetClippingRegion( ClipRect );
-        dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn, wxNORTH );
-        dc.DestroyClippingRegion();
-    }
-
-    // Draw the decay level
-    if( DecayLevel && ( DecayLevel > PeakLevel ) && ( DecayLevel < 99 ) )
-    {
-        Rect.y = ( Height * 16 ) / 100;
-        Rect.height = Height - Rect.y;
-
-        wxRect ClipRect = Rect;
         ClipRect.height = 2;
-        ClipRect.y = Height - ( ( DecayLevel * Height ) / 100 );
+        ClipRect.y = Height - ( DecayLevel * Height ) / 100;
         dc.SetClippingRegion( ClipRect );
-
-        if( DecayLevel < 84 )       // at Solid green
-        {
-            dc.SetBrush( m_GreenOn );
-            dc.DrawRectangle( 0, Rect.y, Width, Rect.height );
-        }
-        else if( DecayLevel < 92 )  // at green to orange
-        {
-            Rect.height = ( 8 * Height ) / 100;
-            Rect.y -= Rect.height;
-            dc.GradientFillLinear( Rect, m_GreenOn, m_OrangeOn, wxNORTH );
-        }
-        else                       // at orange to red
-        {
-            Rect.height = Rect.y - ( 8 * Height ) / 100;
-            Rect.y = 0;
-            dc.GradientFillLinear( Rect, m_OrangeOn, m_RedOn, wxNORTH );
-        }
+        dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
         dc.DestroyClippingRegion();
     }
 
     dc.SetPen( * wxBLACK_PEN );
     dc.DrawRotatedText( wxString::Format( wxT( "%02.1f" ), m_PeakLevel ), ( Width / 2 ) - 7,  Height - 2, 90 );
-    //guLogMessage( wxT( "%f" ), m_PeakLevel );
 }
 
 
 // -------------------------------------------------------------------------------- //
+void guVumeter::DrawHVumeter( wxBitmap * bitmap, int width, int height, wxColour &green, wxColour &orange, wxColour &red )
+{
+    if( bitmap && bitmap->IsOk() )
+    {
+        wxRect Rect;
+        wxMemoryDC MemDC;
+        MemDC.SelectObject( * bitmap );
+
+        MemDC.SetPen( * wxTRANSPARENT_PEN );
+
+        Rect.x = 0;
+        Rect.y = 0;
+        Rect.width = ( 84 * width ) / 100;
+        Rect.height = height;
+
+        MemDC.SetBrush( green );
+        MemDC.DrawRectangle( 0, 0, Rect.width, height );
+
+        Rect.x = Rect.width;
+        Rect.width = ( 8 * width ) / 100;
+
+        MemDC.GradientFillLinear( Rect, green, orange );
+
+        Rect.x += Rect.width;
+        Rect.width = width - Rect.x;
+
+        MemDC.GradientFillLinear( Rect, orange, red );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guVumeter::DrawVVumeter( wxBitmap * bitmap, int width, int height, wxColour &green, wxColour &orange, wxColour &red )
+{
+    if( bitmap && bitmap->IsOk() )
+    {
+        wxRect Rect;
+        wxMemoryDC MemDC;
+        MemDC.SelectObject( * bitmap );
+
+        MemDC.SetPen( * wxTRANSPARENT_PEN );
+
+        Rect.x = 0;
+        Rect.width = width;
+        Rect.y = ( height * 16 ) / 100;
+        Rect.height = height - Rect.y;
+
+        MemDC.SetBrush( green );
+        MemDC.DrawRectangle( 0, Rect.y, width, Rect.height );
+
+        Rect.height = ( 8 * height ) / 100;
+        Rect.y -= Rect.height;
+
+        MemDC.GradientFillLinear( Rect, green, orange, wxNORTH );
+
+        Rect.height = Rect.y;
+        Rect.y = 0;
+
+        MemDC.GradientFillLinear( Rect, orange, red, wxNORTH );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guVumeter::RefreshBitmaps( void )
+{
+    wxMutexLocker Locker( m_BitmapMutex );
+    if( m_OnBitmap )
+        delete m_OnBitmap;
+
+    if( m_OffBitmap )
+        delete m_OffBitmap;
+
+	wxCoord Width;
+	wxCoord Height;
+	GetClientSize( &Width, &Height );
+
+	guLogMessage( wxT( "RefreshBitmaps %i  %i " ), Width, Height );
+
+    if( m_Style == guVU_HORIZONTAL )
+    {
+        m_OffBitmap = new wxBitmap( Width, Height, -1 );
+        DrawHVumeter( m_OffBitmap, Width, Height, m_GreenOff, m_OrangeOff, m_RedOff );
+        m_OnBitmap = new wxBitmap( Width, Height, -1 );
+        DrawHVumeter( m_OnBitmap, Width, Height, m_GreenOn, m_OrangeOn, m_RedOn );
+    }
+    else
+    {
+        m_OffBitmap = new wxBitmap( Width, Height, -1 );
+        DrawVVumeter( m_OffBitmap, Width, Height, m_GreenOff, m_OrangeOff, m_RedOff );
+        m_OnBitmap = new wxBitmap( Width, Height, -1 );
+        DrawVVumeter( m_OnBitmap, Width, Height, m_GreenOn, m_OrangeOn, m_RedOn );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guVumeter::OnPaint( wxPaintEvent &WXUNUSED(event) )
 {
+    wxMutexLocker Locker( m_BitmapMutex );
     if( m_Style == guVU_HORIZONTAL )
         PaintHoriz();
     else
         PaintVert();
 }
 
+// -------------------------------------------------------------------------------- //
+void guVumeter::OnChangedSize( wxSizeEvent &event )
+{
+    wxSize Size = event.GetSize();
 
+    if( ( Size.GetWidth() != m_LastWidth ) || ( Size.GetHeight() != m_LastHeight ) )
+    {
+        m_LastWidth = Size.GetWidth();
+        m_LastHeight = Size.GetHeight();
+
+        RefreshBitmaps();
+    }
+    event.Skip();
+}
+
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guPlayerVumeters
 // -------------------------------------------------------------------------------- //
 guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
 {
+    m_LastWidth = wxNOT_FOUND;
+    m_LastHeight = wxNOT_FOUND;
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
 	this->SetMinSize( wxSize( -1, 40 ) );
@@ -564,33 +544,40 @@ guPlayerVumeters::~guPlayerVumeters()
 // -------------------------------------------------------------------------------- //
 void guPlayerVumeters::OnChangedSize( wxSizeEvent &event )
 {
-    bool Changed = false;
     wxSize Size = event.GetSize();
-    //guLogMessage( wxT( "%i, %i" ), Size.GetWidth(), Size.GetHeight() );
-    if( Size.GetWidth() >= Size.GetHeight() )
-    {
-        if( m_VumMainSizer->IsShown( m_VVumFlexSizer ) )
-        {
-            m_VumMainSizer->Hide( m_VVumFlexSizer );
-            m_VumMainSizer->Show( m_HVumFlexSizer );
-            m_VumLeft = m_HVumLeft;
-            m_VumRight = m_HVumRight;
-            Changed = true;
-        }
-    }
-    else if( m_VumMainSizer->IsShown( m_HVumFlexSizer ) )
-    {
-        m_VumMainSizer->Hide( m_HVumFlexSizer );
-        m_VumMainSizer->Show( m_VVumFlexSizer );
-        m_VumLeft = m_VVumLeft;
-        m_VumRight = m_VVumRight;
-        Changed = true;
-    }
 
-    if( Changed )
+    if( ( Size.GetWidth() != m_LastWidth ) || ( Size.GetHeight() != m_LastHeight ) )
     {
-        m_VumMainSizer->Layout();
-        //m_VumMainSizer->FitInside( this );
+        bool ChangedOrientation = false;
+
+        m_LastWidth = Size.GetWidth();
+        m_LastHeight = Size.GetHeight();
+
+        //guLogMessage( wxT( "%i, %i" ), Size.GetWidth(), Size.GetHeight() );
+        if( m_LastWidth >= m_LastHeight )
+        {
+            if( m_VumMainSizer->IsShown( m_VVumFlexSizer ) )
+            {
+                m_VumMainSizer->Hide( m_VVumFlexSizer );
+                m_VumMainSizer->Show( m_HVumFlexSizer );
+                m_VumLeft = m_HVumLeft;
+                m_VumRight = m_HVumRight;
+                ChangedOrientation = true;
+            }
+        }
+        else if( m_VumMainSizer->IsShown( m_HVumFlexSizer ) )
+        {
+            m_VumMainSizer->Hide( m_HVumFlexSizer );
+            m_VumMainSizer->Show( m_VVumFlexSizer );
+            m_VumLeft = m_VVumLeft;
+            m_VumRight = m_VVumRight;
+            ChangedOrientation = true;
+        }
+
+        if( ChangedOrientation )
+        {
+            m_VumMainSizer->Layout();
+        }
     }
     event.Skip();
 }
