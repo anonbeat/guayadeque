@@ -842,6 +842,34 @@ void guPortableMediaAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
 
 
 // -------------------------------------------------------------------------------- //
+// guPortableMediaPlayListPanel
+// -------------------------------------------------------------------------------- //
+guPortableMediaPlayListPanel::guPortableMediaPlayListPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel ) :
+    guPlayListPanel( parent, db, playerpanel )
+{
+    m_LibPanel = libpanel;
+}
+
+// -------------------------------------------------------------------------------- //
+guPortableMediaPlayListPanel::~guPortableMediaPlayListPanel()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+{
+    int Index;
+    int Count = tracks->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        tracks->Item( Index ).m_LibPanel = m_LibPanel;
+    }
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
 // guPortableMediaProperties
 // -------------------------------------------------------------------------------- //
 guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPortableMediaDevice * mediadevice )
@@ -1439,7 +1467,7 @@ guPortableMediaViewCtrl::guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO
 
     m_LibPanel = NULL;
 
-    //m_PlayListPanel = NULL;
+    m_PlayListPanel = NULL;
     m_AlbumBrowserPanel = NULL;
     m_VisiblePanels = 0;
 }
@@ -1450,8 +1478,8 @@ guPortableMediaViewCtrl::~guPortableMediaViewCtrl()
     if( m_LibPanel )
         delete m_LibPanel;
 
-//    if( m_PlayListPanel )
-//        delete m_PlayListPanel;
+    if( m_PlayListPanel )
+        delete m_PlayListPanel;
 
     if( m_AlbumBrowserPanel )
         delete m_AlbumBrowserPanel;
@@ -1505,6 +1533,25 @@ void guPortableMediaViewCtrl::DestroyAlbumBrowser( void )
         delete m_AlbumBrowserPanel;
         m_AlbumBrowserPanel = NULL;
         m_VisiblePanels ^= guPANEL_MAIN_ALBUMBROWSER;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guPortableMediaPlayListPanel * guPortableMediaViewCtrl::CreatePlayListPanel( wxWindow * parent, guPlayerPanel * playerpanel )
+{
+    m_PlayListPanel = new guPortableMediaPlayListPanel( parent, m_Db, playerpanel, m_LibPanel );
+    m_VisiblePanels |= guPANEL_MAIN_PLAYLISTS;
+    return m_PlayListPanel;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaViewCtrl::DestroyPlayListPanel( void )
+{
+    if( m_PlayListPanel )
+    {
+        delete m_PlayListPanel;
+        m_PlayListPanel = NULL;
+        m_VisiblePanels ^= guPANEL_MAIN_PLAYLISTS;
     }
 }
 

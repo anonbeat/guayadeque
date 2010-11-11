@@ -26,6 +26,7 @@
 #include "DbLibrary.h"
 #include "GIO_Volume.h"
 #include "LibPanel.h"
+#include "PlayListPanel.h"
 #include "Preferences.h"
 
 #include <wx/window.h>
@@ -338,6 +339,21 @@ class guPortableMediaAlbumBrowser : public guAlbumBrowser
 };
 
 // -------------------------------------------------------------------------------- //
+class guPortableMediaPlayListPanel : public guPlayListPanel
+{
+  protected :
+    guPortableMediaLibPanel * m_LibPanel;
+
+    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+
+  public :
+    guPortableMediaPlayListPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
+    ~guPortableMediaPlayListPanel();
+
+
+};
+
+// -------------------------------------------------------------------------------- //
 class guPortableMediaViewCtrl
 {
   protected :
@@ -346,7 +362,7 @@ class guPortableMediaViewCtrl
     guPortableMediaDevice *         m_MediaDevice;
     guPortableMediaLibrary *        m_Db;
     guPortableMediaLibPanel *       m_LibPanel;
-    //guPortableMediaPlaylist *     m_PlayListPanel;
+    guPortableMediaPlayListPanel *  m_PlayListPanel;
     guPortableMediaAlbumBrowser *   m_AlbumBrowserPanel;
     int                             m_BaseCommand;
     int                             m_VisiblePanels;
@@ -360,15 +376,15 @@ class guPortableMediaViewCtrl
     guPortableMediaDevice *          MediaDevice( void ) { return m_MediaDevice; }
     guPortableMediaLibrary *         Db( void ) { return m_Db; }
     guPortableMediaLibPanel *        LibPanel( void ) { return m_LibPanel; }
-    //guPortableMediaPlayList *       PlayListPanel( void ) { return m_PlayListPanel; }
+    guPortableMediaPlayListPanel *   PlayListPanel( void ) { return m_PlayListPanel; }
     guPortableMediaAlbumBrowser *    AlbumBrowserPanel( void ) { return m_AlbumBrowserPanel; }
 
     guPortableMediaLibPanel *        CreateLibPanel( wxWindow * parent, guPlayerPanel * playerpanel );
     void                             DestroyLibPanel( void );
     guPortableMediaAlbumBrowser *    CreateAlbumBrowser( wxWindow * parent, guPlayerPanel * playerpanel );
     void                             DestroyAlbumBrowser( void );
-//    guPortableMediaLibPanel *        CreateLibPanel( wxWindow * parent, guPlayerPanel * playerpanel );
-//    void                             DestroyLibPanel( void );
+    guPortableMediaPlayListPanel *   CreatePlayListPanel( wxWindow * parent, guPlayerPanel * playerpanel );
+    void                             DestroyPlayListPanel( void );
 
     wxString                         DeviceName( void ) { return m_MediaDevice->DeviceName(); }
     bool                             IsMount( GMount * mount ) { return m_MediaDevice->IsMount( mount ); }

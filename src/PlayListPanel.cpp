@@ -766,6 +766,7 @@ void guPlayListPanel::OnPLNamesActivated( wxTreeEvent& event )
         m_PLTracksListBox->GetAllSongs( &Tracks );
         if( Tracks.Count() )
         {
+            NormalizeTracks( &Tracks );
             guConfig * Config = ( guConfig * ) guConfig::Get();
             if( Config )
             {
@@ -791,6 +792,7 @@ void guPlayListPanel::OnPLNamesPlay( wxCommandEvent &event )
     {
         guTrackArray Tracks;
         m_PLTracksListBox->GetAllSongs( &Tracks );
+        NormalizeTracks( &Tracks );
         m_PlayerPanel->SetPlayList( Tracks );
     }
 }
@@ -803,6 +805,7 @@ void guPlayListPanel::OnPLNamesEnqueue( wxCommandEvent &event )
     {
         guTrackArray Tracks;
         m_PLTracksListBox->GetAllSongs( &Tracks );
+        NormalizeTracks( &Tracks );
         m_PlayerPanel->AddToPlayList( Tracks );
     }
 }
@@ -815,6 +818,7 @@ void guPlayListPanel::OnPLNamesEnqueueAsNext( wxCommandEvent &event )
     {
         guTrackArray Tracks;
         m_PLTracksListBox->GetAllSongs( &Tracks );
+        NormalizeTracks( &Tracks );
         m_PlayerPanel->AddToPlayList( Tracks, true, true );
     }
 }
@@ -923,6 +927,7 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
     {
         guTrackArray * Tracks = new guTrackArray();
         m_PLTracksListBox->GetAllSongs( Tracks );
+        NormalizeTracks( Tracks );
 
         int Index = event.GetId() - ID_PLAYLIST_COPYTO;
         if( Index > 99 )
@@ -1038,6 +1043,7 @@ void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
                 m_PLTracksListBox->GetAllSongs( &Tracks );
                 if( ( Count = Tracks.Count() ) )
                 {
+                    NormalizeTracks( &Tracks );
                     for( Index = 0; Index < Count; Index++ )
                     {
                         PlayListFile.AddItem( Tracks[ Index ].m_FileName,

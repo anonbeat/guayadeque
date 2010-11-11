@@ -197,6 +197,8 @@ class guPlayListPanel : public wxPanel
     void                OnPLTracksDeleteLibrary( wxCommandEvent &event );
     void                OnPLTracksDeleteDrive( wxCommandEvent &event );
 
+    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
+
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();
