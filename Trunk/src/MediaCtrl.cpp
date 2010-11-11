@@ -285,16 +285,16 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
                     gint channels;
                     const GValue * list;
                     const GValue * value;
-                    if( !gst_structure_get_clock_time( s, "endtime", &LevelInfo->m_EndTime ) )
-                        guLogWarning( wxT( "Could not parse endtime" ) );
-
-                    LevelInfo->m_EndTime /= GST_MSECOND;
-
-                    GstFormat format = GST_FORMAT_TIME;
-                    if( gst_element_query_position( ctrl->OutputSink(), &format, ( gint64 * ) &LevelInfo->m_OutTime ) )
-                    {
-                        LevelInfo->m_OutTime /= GST_MSECOND;
-                    }
+//                    if( !gst_structure_get_clock_time( s, "endtime", &LevelInfo->m_EndTime ) )
+//                        guLogWarning( wxT( "Could not parse endtime" ) );
+//
+//                    LevelInfo->m_EndTime /= GST_MSECOND;
+//
+//                    GstFormat format = GST_FORMAT_TIME;
+//                    if( gst_element_query_position( ctrl->OutputSink(), &format, ( gint64 * ) &LevelInfo->m_OutTime ) )
+//                    {
+//                        LevelInfo->m_OutTime /= GST_MSECOND;
+//                    }
 
                     ////guLogDebug( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
 
