@@ -127,6 +127,7 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
     bool RadiosExpanded;
     bool StoresExpanded;
     bool ContextExpanded;
+
     if( loadstate )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -134,15 +135,6 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
         RadiosExpanded = Config->ReadBool( wxT( "RadiosExpanded" ), true, wxT( "MainSources") );
         StoresExpanded = Config->ReadBool( wxT( "StoresExpanded" ), true, wxT( "MainSources") );
         ContextExpanded = Config->ReadBool( wxT( "ContextExpanded" ), true, wxT( "MainSources") );
-    {
-        MyMusicExpanded = IsExpanded( m_MyMusicId );
-        RadiosExpanded = IsExpanded( m_OnlineRadioId );
-        StoresExpanded = IsExpanded( m_OnlineStoreId );
-        ContextExpanded = IsExpanded( m_ContextId );
-    }
-
-    //
-    // My Local Music Locations
     }
     else
     {
