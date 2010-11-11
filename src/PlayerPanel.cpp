@@ -1275,8 +1275,6 @@ void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
 }
 
 
-guLevelInfoArray LevelInfoArray;
-
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
 {
@@ -1320,51 +1318,14 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
     if( m_PlayerVumeters )
     {
         //guLogMessage( wxT( "%lli %lli   (%lli)" ), LevelInfo->m_EndTime, LevelInfo->m_OutTime, LevelInfo->m_OutTime - LevelInfo->m_EndTime );
-
-        LevelInfoArray.Add( LevelInfo );
-
-        wxFileOffset CurTime = LevelInfo->m_OutTime;
-        int Index = 0;
-        int Count = LevelInfoArray.Count();
-        //guLogMessage( wxT( "=== LevelInfos ========" ) );
-        while( Index < Count )
-        {
-            //guLogMessage( wxT( "%i .- %lli %lli   (%lli)" ), Index, LevelInfoArray[ Index ]->m_EndTime, CurTime, CurTime - LevelInfoArray[ Index ]->m_EndTime );
-            if( ( wxFileOffset ) LevelInfoArray[ Index++ ]->m_EndTime <= CurTime )
-            {
-                while( Index < Count )
-                {
-                    if( ( wxFileOffset ) LevelInfoArray[ Index ]->m_EndTime > CurTime )
-                        break;
-                    //guLogMessage( wxT( "Dropped level event %i .- %lli %lli   (%lli)" ), Index, LevelInfoArray[ Index ]->m_EndTime, CurTime, CurTime - LevelInfoArray[ Index ]->m_EndTime );
-                    Index++;
-                };
-                break;
-            }
-        }
-
-        //guLogMessage( wxT( "Levels... (%i) %i" ), Count, Index );
-
-        if( Index < Count )
-        {
-            //guLogMessage( wxT( "%lli %lli   (%lli)" ), LevelInfoArray[ Index - 1 ]->m_EndTime, CurTime, CurTime - LevelInfoArray[ Index - 1 ]->m_EndTime );
-            m_PlayerVumeters->SetLevels( * LevelInfoArray[ Index - 1 ] );
-            while( Index )
-            {
-                delete LevelInfoArray[ 0 ];
-                LevelInfoArray.RemoveAt( 0 );
-                Index--;
-            }
-        }
+        m_PlayerVumeters->SetLevels( * LevelInfo );
 
 //        guLogMessage( wxT( "L:%02.02f  R:%02.02f" ),
 //            event.m_LevelInfo.m_Peak_L,
 //            event.m_LevelInfo.m_Peak_R );
     }
-    else
-    {
-        delete LevelInfo;
-    }
+
+    delete LevelInfo;
 }
 
 // -------------------------------------------------------------------------------- //

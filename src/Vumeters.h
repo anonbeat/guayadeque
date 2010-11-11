@@ -44,26 +44,41 @@
 class guVumeter : public wxControl
 {
   protected :
-    int         m_Style;
-    double      m_PeakLevel;
-    double      m_DecayLevel;
-    wxColour    m_RedOn;
-    wxColour    m_RedOff;
-    wxColour    m_GreenOn;
-    wxColour    m_GreenOff;
-    wxColour    m_OrangeOn;
-    wxColour    m_OrangeOff;
+    int                 m_Style;
+    double              m_PeakLevel;
+    double              m_DecayLevel;
+    wxColour            m_RedOn;
+    wxColour            m_RedOff;
+    wxColour            m_GreenOn;
+    wxColour            m_GreenOff;
+    wxColour            m_OrangeOn;
+    wxColour            m_OrangeOff;
 
-    void        PaintHoriz( void );
-    void        PaintVert( void );
+    wxBitmap *          m_OnBitmap;
+    wxBitmap *          m_OffBitmap;
+    wxMutex             m_BitmapMutex;
+
+	int                 m_LastWidth;
+	int                 m_LastHeight;
+
+    void                PaintHoriz( void );
+    void                PaintVert( void );
+
+    void                DrawHVumeter( wxBitmap * bitmap, int width, int height, wxColour &green, wxColour &orange, wxColour &red );
+    void                DrawVVumeter( wxBitmap * bitmap, int width, int height, wxColour &green, wxColour &orange, wxColour &red );
+	void                RefreshBitmaps( void );
+
+	void                OnChangedSize( wxSizeEvent &event );
 
   public:
 	guVumeter() {}
 	guVumeter( wxWindow * parent, wxWindowID id, const int style = guVU_HORIZONTAL );
+	~guVumeter();
 
-	wxSize DoGetBestSize() const;
-	void OnPaint(wxPaintEvent& event);
-    void SetLevel( const double peak, const double decay )
+	wxSize              DoGetBestSize() const;
+	void                OnPaint( wxPaintEvent& event );
+
+    void                SetLevel( const double peak, const double decay )
     {
         if( ( m_PeakLevel != peak ) || ( m_DecayLevel != decay ) )
         {
@@ -74,6 +89,8 @@ class guVumeter : public wxControl
     }
 
 	DECLARE_EVENT_TABLE();
+
+    friend class guPlayerVumeters;
 };
 
 
@@ -81,24 +98,27 @@ class guVumeter : public wxControl
 class guPlayerVumeters : public wxPanel
 {
   protected:
-	guVumeter *       m_VumLeft;
-	guVumeter *       m_VumRight;
+	guVumeter *         m_VumLeft;
+	guVumeter *         m_VumRight;
 
-    wxBoxSizer *      m_VumMainSizer;
-    wxFlexGridSizer * m_HVumFlexSizer;
-    wxFlexGridSizer * m_VVumFlexSizer;
-	guVumeter *       m_HVumLeft;
-	guVumeter *       m_HVumRight;
-	guVumeter *       m_VVumLeft;
-	guVumeter *       m_VVumRight;
+    wxBoxSizer *        m_VumMainSizer;
+    wxFlexGridSizer *   m_HVumFlexSizer;
+    wxFlexGridSizer *   m_VVumFlexSizer;
+	guVumeter *         m_HVumLeft;
+	guVumeter *         m_HVumRight;
+	guVumeter *         m_VVumLeft;
+	guVumeter *         m_VVumRight;
 
-	void OnChangedSize( wxSizeEvent &event );
+	int                 m_LastWidth;
+	int                 m_LastHeight;
+
+	void                OnChangedSize( wxSizeEvent &event );
 
   public:
 	guPlayerVumeters( wxWindow * parent );
 	~guPlayerVumeters();
 
-	void SetLevels( const guLevelInfo &level );
+	void                SetLevels( const guLevelInfo &level );
 
 };
 
