@@ -460,7 +460,7 @@ bool guPlayListFile::WritePlsFile( const wxString &filename )
     }
     else
     {
-        guLogError( wxT( "Could not open the m3ufile '%s'" ), filename.c_str() );
+        guLogError( wxT( "Could not open the plsfile '%s'" ), filename.c_str() );
     }
     return false;
 }

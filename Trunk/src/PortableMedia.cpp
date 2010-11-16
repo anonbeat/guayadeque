@@ -335,7 +335,7 @@ guPortableMediaDevice::guPortableMediaDevice( guGIO_Mount * mount )
 {
     m_Mount = mount;
 
-    guConfig * Config = new guConfig( m_Mount->GetMountPath() + wxT( "/.is_audio_player" ) );
+    guConfig * Config = new guConfig( m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
     guMD5 MD5;
     m_Id = Config->ReadStr( wxT( "audio_player_id" ), MD5.MD5( wxString::Format( wxT( "%i" ), wxGetLocalTime() ) ).Right( 6 ) );
     m_Pattern = Config->ReadStr( wxT( "audio_file_pattern" ), wxT( "{a} - {b}/{n} - {a} - {t}" ) );
@@ -366,7 +366,7 @@ guPortableMediaDevice::~guPortableMediaDevice()
 // -------------------------------------------------------------------------------- //
 void guPortableMediaDevice::WriteConfig( void )
 {
-    guConfig * Config = new guConfig( m_Mount->GetMountPath() + wxT( "/.is_audio_player" ) );
+    guConfig * Config = new guConfig( m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
     Config->WriteStr( wxT( "audio_file_pattern" ), m_Pattern );
     Config->WriteStr( wxT( "output_formats" ), AudioFormatsToMimeStr( m_AudioFormats ) );
     Config->WriteNum( wxT( "transcode_format" ), m_TranscodeFormat );
@@ -501,9 +501,10 @@ wxString guPortableMediaDevice::CoverFormatsStr( const int formats )
 // -------------------------------------------------------------------------------- //
 // guPortableMediaLibrary
 // -------------------------------------------------------------------------------- //
-guPortableMediaLibrary::guPortableMediaLibrary( const wxString &dbname ) :
+guPortableMediaLibrary::guPortableMediaLibrary( const wxString &dbname, guPortableMediaDevice * portablemediadevice ) :
     guDbLibrary( dbname )
 {
+    m_PortableMediaDevice = portablemediadevice;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -512,10 +513,90 @@ guPortableMediaLibrary::~guPortableMediaLibrary()
 }
 
 // -------------------------------------------------------------------------------- //
-void guPortableMediaLibrary::CreateNewSong( guTrack * track )
+void guPortableMediaLibrary::UpdatePlayListFie( const int plid )
 {
+    int PlayListFormats = m_PortableMediaDevice->PlaylistFormats();
+    if( PlayListFormats )
+    {
+        wxString PlayListName = GetPlayListName( plid );
+
+        wxString PlayListFile = m_PortableMediaDevice->MountPath() + m_PortableMediaDevice->PlaylistFolder();
+        PlayListFile += wxT( "/" ) + PlayListName;
+        if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_M3U )
+        {
+            PlayListFile += wxT( ".m3u" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_PLS )
+        {
+            PlayListFile += wxT( ".pls" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_XSPF )
+        {
+            PlayListFile += wxT( ".xspf" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_ASX )
+        {
+            PlayListFile += wxT( ".asx" );
+        }
+        else
+        {
+            PlayListFile += wxT( ".m3u" );
+        }
+
+        wxFileName FileName( PlayListFile );
+        if( FileName.Normalize() )
+        {
+            guTrackArray Tracks;
+            GetPlayListSongs( plid, GUPLAYLIST_STATIC, &Tracks, NULL, NULL );
+            guPlayListFile PlayListFile;
+            PlayListFile.SetName( FileName.GetFullPath() );
+            int Index;
+            int Count = Tracks.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                PlayListFile.AddItem( Tracks[ Index ].m_FileName,
+                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+            }
+
+            PlayListFile.Save( FileName.GetFullPath() );
+        }
+    }
 }
 
+// -------------------------------------------------------------------------------- //
+int guPortableMediaLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks )
+{
+    int PLId = guDbLibrary::CreateStaticPlayList( name, tracks );
+
+    UpdatePlayListFie( PLId );
+
+    return PLId;
+}
+
+// -------------------------------------------------------------------------------- //
+int guPortableMediaLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &tracks )
+{
+    int Result = guDbLibrary::UpdateStaticPlayList( plid, tracks );
+
+    UpdatePlayListFie( plid );
+
+    return Result;
+}
+
+// -------------------------------------------------------------------------------- //
+int guPortableMediaLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks )
+{
+    int Result = guDbLibrary::AppendStaticPlayList( plid, tracks );
+    UpdatePlayListFie( plid );
+
+    return Result;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaLibrary::DeletePlayList( const int plid )
+{
+    guDbLibrary::DeletePlayList( plid );
+}
 
 // -------------------------------------------------------------------------------- //
 // guPortableMediaLibPanel
@@ -584,7 +665,7 @@ wxString guPortableMediaLibPanel::GetName( void )
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guPortableMediaLibPanel::GetPaths( void )
+wxArrayString guPortableMediaLibPanel::GetLibraryPaths( void )
 {
     wxArrayString Paths = wxStringTokenize( m_PortableMediaDevice->AudioFolders(), wxT( "," ) );
     int Index;
@@ -598,6 +679,12 @@ wxArrayString guPortableMediaLibPanel::GetPaths( void )
         }
     }
     return Paths;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guPortableMediaLibPanel::GetPlaylistPath( void )
+{
+    return m_PortableMediaDevice->MountPath() + m_PortableMediaDevice->PlaylistFolder();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -752,6 +839,14 @@ int guPortableMediaLibPanel::GetCoverMaxSize( void )
     if( !CoverSize )
         CoverSize = wxNOT_FOUND;
     return CoverSize;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaLibPanel::UpdatePlaylists( void )
+{
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+    evt.SetClientData( this );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 
@@ -1275,16 +1370,9 @@ void guPortableMediaProperties::OnPlaylistFolderBtnClick( wxCommandEvent &event 
             {
                 NewFolder = NewFolder.Mid( MountPath.Length() );
 
-                wxString PlaylistFolders = m_PlaylistFolderText->GetValue();
-
-                if( PlaylistFolders.Find( NewFolder ) == wxNOT_FOUND )
+                if( m_PlaylistFolderText->GetValue() != NewFolder )
                 {
-                    if( !PlaylistFolders.IsEmpty() )
-                        PlaylistFolders.Append( wxT( ", " ) );
-
-                    PlaylistFolders.Append( NewFolder );
-
-                    m_PlaylistFolderText->SetValue( PlaylistFolders );
+                    m_PlaylistFolderText->SetValue( NewFolder );
                 }
             }
         }
@@ -1462,7 +1550,7 @@ guPortableMediaViewCtrl::guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO
     wxString DeviceDbPath = wxGetHomeDir() + wxT( "/.guayadeque/Devices/" ) + m_MediaDevice->DevicePath() + wxT( "/guayadeque.db" );
     wxFileName::Mkdir( wxPathOnly( DeviceDbPath ), 0775, wxPATH_MKDIR_FULL );
 
-    m_Db = new guPortableMediaLibrary( DeviceDbPath );
+    m_Db = new guPortableMediaLibrary( DeviceDbPath, m_MediaDevice );
     m_Db->SetLibPath( wxStringTokenize( m_MediaDevice->AudioFolders(), wxT( "," ) ) );
 
     m_LibPanel = NULL;

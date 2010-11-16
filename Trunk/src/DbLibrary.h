@@ -407,9 +407,9 @@ class guDbLibrary : public guDb
     wxArrayInt          GetLabels( void );
 
     int                 GetStaticPlayList( const wxString &name );
-    int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
-    int                 UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
-    int                 AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
+    virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
+    virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
+    virtual int         AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
     int                 DelPlaylistSetIds( const int plid, const wxArrayInt &setids );
     int                 GetPlayListFiles( const int plid, wxFileDataObject * Files );
     void                GetPlayLists( guListItems * PlayLists, const int type, const wxArrayString * textfilters = NULL );
@@ -420,8 +420,9 @@ class guDbLibrary : public guDb
                             wxLongLong * len, wxLongLong * size );
     int                 GetPlayListSetIds( const int plid, wxArrayInt * setids );
     int                 GetPlayListSetIds( const wxArrayInt &plid, wxArrayInt * setids );
-    void                DeletePlayList( const int plid );
+    virtual void        DeletePlayList( const int plid );
     void                SetPlayListName( const int plid, const wxString &plname );
+    wxString            GetPlayListName( const int plid );
     void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
     int                 CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist );
     void                UpdateDynPlayList( const int plid, const guDynPlayList * playlist );

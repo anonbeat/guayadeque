@@ -59,7 +59,10 @@ guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const 
 
     if( scanpath.IsEmpty() )
     {
-        m_LibPaths = libpanel->GetPaths();
+        m_LibPaths = libpanel->GetLibraryPaths();
+        wxString PlaylistPath = libpanel->GetPlaylistPath();
+        if( !PlaylistPath.IsEmpty() )
+            m_LibPaths.Add( PlaylistPath );
 
         CheckSymLinks( m_LibPaths );
     }
@@ -212,7 +215,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         index = 0;
         while( !TestDestroy() && ( index < count ) )
         {
-            //guLogMessage( wxT( "Doing Library Update in %s" ), m_LibPaths[ index ].c_str() );
+            guLogMessage( wxT( "Doing Library Update in %s" ), m_LibPaths[ index ].c_str() );
             ScanDirectory( m_LibPaths[ index ] );
             index++;
         }
@@ -362,7 +365,7 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
     wxSQLite3ResultSet dbRes;
     wxString FileName;
 
-    wxArrayString LibPaths = m_LibPanel->GetPaths();
+    wxArrayString LibPaths = m_LibPanel->GetLibraryPaths();
 
     if( !TestDestroy() )
     {

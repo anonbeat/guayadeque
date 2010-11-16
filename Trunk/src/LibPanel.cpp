@@ -1663,11 +1663,17 @@ void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
                     m_Db->AppendStaticPlayList( PLId, NewSongs );
                 }
             }
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            UpdatePlaylists();
         }
         PlayListAppendDlg->Destroy();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::UpdatePlaylists( void )
+{
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3137,7 +3143,7 @@ void guLibPanel::DeleteTracks( guTrackArray * tracks )
 
     if( ( Count = DeletePaths.Count() ) )
     {
-        wxArrayString LibPaths = GetPaths();
+        wxArrayString LibPaths = GetLibraryPaths();
         for( Index = 0; Index < ( int ) LibPaths.Count(); Index++ )
         {
             guLogMessage( wxT( "Libath: %s"), LibPaths[ Index ].c_str() );
@@ -3204,7 +3210,7 @@ wxString guLibPanel::GetName( void )
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guLibPanel::GetPaths( void )
+wxArrayString guLibPanel::GetLibraryPaths( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     return Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
