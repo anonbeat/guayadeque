@@ -199,6 +199,8 @@ class guPlayListPanel : public wxPanel
 
     virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
 
+    virtual void        SendPlayListUpdatedEvent( void );
+
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();

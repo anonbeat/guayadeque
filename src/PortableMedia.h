@@ -358,6 +358,8 @@ class guPortableMediaPlayListPanel : public guPlayListPanel
 
     virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
 
+    virtual void        SendPlayListUpdatedEvent( void );
+
   public :
     guPortableMediaPlayListPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
     ~guPortableMediaPlayListPanel();

@@ -595,6 +595,47 @@ int guPortableMediaLibrary::AppendStaticPlayList( const int plid, const wxArrayI
 // -------------------------------------------------------------------------------- //
 void guPortableMediaLibrary::DeletePlayList( const int plid )
 {
+    int PlayListFormats = m_PortableMediaDevice->PlaylistFormats();
+    if( PlayListFormats )
+    {
+        wxString PlayListName = GetPlayListName( plid );
+
+        wxString PlayListFile = m_PortableMediaDevice->MountPath() + m_PortableMediaDevice->PlaylistFolder();
+        PlayListFile += wxT( "/" ) + PlayListName;
+        if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_M3U )
+        {
+            PlayListFile += wxT( ".m3u" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_PLS )
+        {
+            PlayListFile += wxT( ".pls" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_XSPF )
+        {
+            PlayListFile += wxT( ".xspf" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_ASX )
+        {
+            PlayListFile += wxT( ".asx" );
+        }
+        else
+        {
+            PlayListFile += wxT( ".m3u" );
+        }
+
+        wxFileName FileName( PlayListFile );
+        if( FileName.Normalize() )
+        {
+            if( FileName.FileExists() )
+            {
+                if( !wxRemoveFile( FileName.GetFullPath() ) )
+                {
+                    guLogError( wxT( "Could not delete the playlist file '%s'" ), FileName.GetFullPath().c_str() );
+                }
+            }
+        }
+    }
+
     guDbLibrary::DeletePlayList( plid );
 }
 
@@ -959,6 +1000,14 @@ void guPortableMediaPlayListPanel::NormalizeTracks( guTrackArray * tracks, const
     {
         tracks->Item( Index ).m_LibPanel = m_LibPanel;
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaPlayListPanel::SendPlayListUpdatedEvent( void )
+{
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+    evt.SetClientData( m_LibPanel );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 
