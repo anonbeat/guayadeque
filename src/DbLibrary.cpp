@@ -606,7 +606,7 @@ bool guDbLibrary::CheckDbVersion( void )
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name VARCHAR COLLATE NOCASE, "
                       "playlist_type INTEGER(2), playlist_limited BOOLEAN, playlist_limitvalue INTEGER, playlist_limittype INTEGER(2), "
-                      "playlist_sorted BOOLEAN, playlist_sorttype INTEGER(2), playlist_sortdesc BOOLEAN, playlist_anyoption BOOLEAN);" ) );
+                      "playlist_sorted BOOLEAN, playlist_sorttype INTEGER(2), playlist_sortdesc BOOLEAN, playlist_anyoption BOOLEAN );" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'playlist_id' on playlists (playlist_id ASC);" ) );
 
       wxString querystr = wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
@@ -951,7 +951,6 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_albumsku VARCHAR" ) );
         query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_coverlink VARCHAR" ) );
       }
-
       guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
@@ -3858,6 +3857,25 @@ void guDbLibrary::DeletePlayList( const int plid )
     query = wxString::Format( wxT( "DELETE FROM playlists WHERE playlist_id = %u;" ), plid );
     ExecuteUpdate( query );
   }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guDbLibrary::GetPlayListName( const int plid )
+{
+  wxString RetVal;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT playlist_name FROM playlists WHERE playlist_id = %u LIMIT 1;" ), plid );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      RetVal = dbRes.GetString( 0 );
+  }
+  dbRes.Finalize();
+  return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //

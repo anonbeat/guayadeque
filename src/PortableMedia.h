@@ -268,11 +268,20 @@ class guPortableMediaProperties : public wxDialog
 // -------------------------------------------------------------------------------- //
 class guPortableMediaLibrary : public guDbLibrary
 {
+  protected :
+    guPortableMediaDevice *     m_PortableMediaDevice;
+
+    void                        UpdatePlayListFie( const int plid );
+
   public :
-    guPortableMediaLibrary( const wxString &libpath );
+    guPortableMediaLibrary( const wxString &libpath, guPortableMediaDevice * portablemediadevice );
     ~guPortableMediaLibrary();
 
-    void                CreateNewSong( guTrack * track );
+    virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
+    virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
+    virtual int         AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
+    virtual void        DeletePlayList( const int plid );
+
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibrary *, guPortableMediaLibraryArray );
 
@@ -291,13 +300,16 @@ class guPortableMediaLibPanel : public guLibPanel
 
     virtual bool                OnDropFiles( const wxArrayString &filenames );
 
+    virtual void                UpdatePlaylists( void );
+
   public :
     guPortableMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "PMD" ) );
     ~guPortableMediaLibPanel();
 
     wxString                    IconString( void ) { return m_PortableMediaDevice->IconString(); }
     virtual wxString            GetName( void );
-    virtual wxArrayString       GetPaths( void );
+    virtual wxArrayString       GetLibraryPaths( void );
+    virtual wxString            GetPlaylistPath( void );
 
     guPortableMediaDevice *     PortableMediaDevice( void ) { return m_PortableMediaDevice; }
     void                        SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice ) { m_PortableMediaDevice = portablemediadevice; }
@@ -373,6 +385,7 @@ class guPortableMediaViewCtrl
 
     int                              BaseCommand( void ) { return m_BaseCommand; }
     int                              VisiblePanels( void ) { return m_VisiblePanels; }
+
     guPortableMediaDevice *          MediaDevice( void ) { return m_MediaDevice; }
     guPortableMediaLibrary *         Db( void ) { return m_Db; }
     guPortableMediaLibPanel *        LibPanel( void ) { return m_LibPanel; }

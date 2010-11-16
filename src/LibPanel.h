@@ -269,6 +269,8 @@ class guLibPanel : public wxPanel
 
     virtual bool OnDropFiles( const wxArrayString &filenames );
 
+    virtual void UpdatePlaylists( void );
+
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
     ~guLibPanel();
@@ -276,7 +278,8 @@ class guLibPanel : public wxPanel
     virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
     virtual wxString        GetName( void );
     virtual guDbLibrary *   GetDb( void ) { return m_Db; };
-    virtual wxArrayString   GetPaths( void );
+    virtual wxArrayString   GetLibraryPaths( void );
+    virtual wxString        GetPlaylistPath( void ) { return wxEmptyString; }
     void                    SetBaseCommand( int basecmd ) { m_BaseCommand = basecmd; }
 
     void                    ReloadControls( void );

@@ -46,9 +46,10 @@ bool guIsValidAudioFile( const wxString &filename )
         FileName.EndsWith( wxT( ".ape"  ) ) ||
         FileName.EndsWith( wxT( ".wav"  ) ) ||
         FileName.EndsWith( wxT( ".aif"  ) ) ||
-        FileName.EndsWith( wxT( ".wv"  ) ) ||
+        FileName.EndsWith( wxT( ".wv"   ) ) ||
         FileName.EndsWith( wxT( ".tta"  ) ) ||
-        FileName.EndsWith( wxT( ".mpc"  ) ) )
+        FileName.EndsWith( wxT( ".mpc"  ) ) ||
+        FileName.EndsWith( wxT( ".rmj"  ) ) )
     {
         return true;
     }
@@ -1252,9 +1253,9 @@ bool guMp4TagInfo::Read( void )
     {
         if( m_Mp4Tag )
         {
-            if( m_Mp4Tag->itemListMap().contains( "aArt" ) )
+            if( m_Mp4Tag->itemListMap().contains( "aART" ) )
             {
-                m_AlbumArtist = TStringTowxString( m_Mp4Tag->itemListMap()["aArt"].toStringList().front() );
+                m_AlbumArtist = TStringTowxString( m_Mp4Tag->itemListMap()["aART"].toStringList().front() );
             }
 
             if( m_Mp4Tag->itemListMap().contains( "\xA9wrt" ) )
@@ -1312,7 +1313,7 @@ bool guMp4TagInfo::Write( void )
 {
     if( m_Mp4Tag )
     {
-        m_Mp4Tag->itemListMap()["aArt"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
+        m_Mp4Tag->itemListMap()["aART"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
         m_Mp4Tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
         int first;
         int second;

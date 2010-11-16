@@ -376,6 +376,7 @@ class guMainFrame : public wxFrame
     void                            OnVolumeMonitorUpdated( wxCommandEvent &event );
     void                            CreatePortableMediaDeviceMenu( wxMenu * menu, const wxString &devicename, const int basecmd );
 
+
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                                     ~guMainFrame();
@@ -418,7 +419,9 @@ class guMainFrame : public wxFrame
     int                             VisiblePanels( void ) { return m_VisiblePanels; }
 
     wxArrayString                   PortableDeviceVolumeNames( void ) { return m_VolumeMonitor->GetMountNames(); }
+
     guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( const int basecmd );
+    guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( guLibPanel * libpanel );
 
 };
 

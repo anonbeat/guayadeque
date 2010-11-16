@@ -925,6 +925,22 @@ guPortableMediaViewCtrl * guMainFrame::GetPortableMediaViewCtrl( const int basec
 }
 
 // -------------------------------------------------------------------------------- //
+guPortableMediaViewCtrl * guMainFrame::GetPortableMediaViewCtrl( guLibPanel * libpanel )
+{
+    int Index;
+    int Count = m_PortableMediaViewCtrls.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ Index ];
+        if( PortableMediaViewCtrl->LibPanel() == libpanel )
+        {
+            return PortableMediaViewCtrl;
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::CreatePortableMediaDeviceMenu( wxMenu * menu, const wxString &devicename, const int basecmd )
 {
     wxMenu *                    SubMenu;
@@ -1604,16 +1620,10 @@ void guMainFrame::LibraryReloadControls( wxCommandEvent &event )
     }
     else
     {
-        int Index;
-        int Count = m_PortableMediaViewCtrls.Count();
-        for( Index = 0; Index < Count; Index++ )
+        guPortableMediaViewCtrl * PortableMediaViewCtrl = GetPortableMediaViewCtrl( LibPanel );
+        if( PortableMediaViewCtrl )
         {
-            guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ Index ];
-            if( PortableMediaViewCtrl->LibPanel() == LibPanel )
-            {
-                AlbumBrowser = PortableMediaViewCtrl->AlbumBrowserPanel();
-                break;
-            }
+            AlbumBrowser = PortableMediaViewCtrl->AlbumBrowserPanel();
         }
     }
 
@@ -3607,11 +3617,26 @@ void guMainFrame::OnAlbumSetSelection( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPlayListUpdated( wxCommandEvent &event )
 {
-    if( m_PlayListPanel )
-        m_PlayListPanel->PlayListUpdated();
+    guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+    if( !LibPanel )
+    {
+        if( m_PlayListPanel )
+            m_PlayListPanel->PlayListUpdated();
 
-    if( m_PlayerFilters )
-        m_PlayerFilters->UpdateFilters();
+        if( m_PlayerFilters )
+            m_PlayerFilters->UpdateFilters();
+
+    }
+    else
+    {
+        guPortableMediaViewCtrl * PortableMediaViewCtrl = GetPortableMediaViewCtrl( LibPanel );
+        if( PortableMediaViewCtrl )
+        {
+            guPlayListPanel * PlayListPanel = PortableMediaViewCtrl->PlayListPanel();
+            if( PlayListPanel )
+                PlayListPanel->PlayListUpdated();
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

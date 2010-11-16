@@ -43,6 +43,7 @@ DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_FINISHED )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_FADEIN_STARTED )
 
 #define guFADERPLAYBIN_FAST_FADER_TIME          (1000)
+#define guFADERPLAYBIN_SHORT_FADER_TIME         (200)
 
 #define GST_AUDIO_TEST_SRC_WAVE_SILENCE         4
 
@@ -413,6 +414,13 @@ static bool tick_timeout( guMediaCtrl * mediactrl )
 {
     mediactrl->UpdatePosition();
 	return true;
+}
+
+// -------------------------------------------------------------------------------- //
+static bool pause_timeout( GstElement * playbin )
+{
+    gst_element_set_state( playbin, GST_STATE_PAUSED );
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -828,7 +836,7 @@ bool guMediaCtrl::Play( void )
                 m_CurrentPlayBin = FaderPlaybin;
             }
             Unlock();
-            FaderPlaybin->StartFade( 0.0, 1.0, m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : 200 );
+            FaderPlaybin->StartFade( 0.0, 1.0, m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME );
             FaderPlaybin->m_State = guFADERPLAYBIN_STATE_FADEIN;
             FaderPlaybin->Play();
 
@@ -915,7 +923,7 @@ bool guMediaCtrl::Pause( void )
 	for( Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = ( guFaderPlayBin * ) ToFade[ Index ];
-        FadeOutTime = m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : 200;
+        FadeOutTime = m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
 		switch( FaderPlayBin->m_State )
 		{
             case guFADERPLAYBIN_STATE_FADEOUT :
@@ -1021,7 +1029,7 @@ bool guMediaCtrl::Stop( void )
 	for( Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = ( guFaderPlayBin * ) ToFade[ Index ];
-        FadeOutTime = m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : 200;
+        FadeOutTime = m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
 		switch( FaderPlayBin->m_State )
 		{
             case guFADERPLAYBIN_STATE_FADEOUT :
@@ -1174,7 +1182,7 @@ void guMediaCtrl::FadeOutDone( guFaderPlayBin * faderplaybin )
             gst_element_query_position( faderplaybin->OutputSink(), &Format, &Pos );
             if( Pos != -1 )
             {
-                faderplaybin->m_PausePosition = Pos > guFADERPLAYBIN_FAST_FADER_TIME ? Pos - guFADERPLAYBIN_FAST_FADER_TIME : 200;
+                faderplaybin->m_PausePosition = Pos > guFADERPLAYBIN_FAST_FADER_TIME ? Pos - guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
                 //guLogDebug( wxT( "got fade-out-done for stream %s -> SEEKING_PAUSED [%" G_GINT64_FORMAT "]" ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
             }
             else
@@ -2121,7 +2129,9 @@ bool guFaderPlayBin::StartFade( double volstart, double volend, int timeout )
 bool guFaderPlayBin::Pause( void )
 {
     guLogDebug( wxT( "guFaderPlayBin::Pause (%i)" ), m_Id );
-    return ( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE );
+//    return ( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE );
+    g_timeout_add( 200, GSourceFunc( pause_timeout ), m_Playbin );
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
