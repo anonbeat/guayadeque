@@ -839,8 +839,7 @@ void guPlayListPanel::OnPLNamesNewPlaylist( wxCommandEvent &event )
         {
             m_Db->CreateDynamicPlayList( EntryDialog->GetValue(), &DynPlayList );
             //m_NamesTreeCtrl->ReloadItems();
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            SendPlayListUpdatedEvent();
         }
         EntryDialog->Destroy();
     }
@@ -881,8 +880,7 @@ void guPlayListPanel::OnPLNamesRenamePlaylist( wxCommandEvent &event )
             wxASSERT( ItemData );
             m_Db->SetPlayListName( ItemData->GetData(), EntryDialog->GetValue() );
             //m_NamesTreeCtrl->SetItemText( ItemId, EntryDialog->GetValue() );
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            SendPlayListUpdatedEvent();
         }
         EntryDialog->Destroy();
     }
@@ -904,8 +902,7 @@ void guPlayListPanel::DeleteCurrentPlayList( void )
                 m_Db->DeletePlayList( ItemData->GetData() );
             }
         }
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        SendPlayListUpdatedEvent();
     }
 }
 
@@ -1007,8 +1004,7 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
                 }
 
                 //m_NamesTreeCtrl->ReloadItems();
-                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-                wxPostEvent( wxTheApp->GetTopWindow(), evt );
+                SendPlayListUpdatedEvent();
             }
         }
         FileDialog->Destroy();
@@ -1290,8 +1286,7 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
                     m_Db->AppendStaticPlayList( PLId, NewSongs );
                 }
             }
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            SendPlayListUpdatedEvent();
         }
         PlayListAppendDlg->Destroy();
     }
@@ -1716,6 +1711,13 @@ void guPlayListPanel::OnPLTracksDeleteDrive( wxCommandEvent &event )
             m_PLTracksListBox->ReloadItems();
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::SendPlayListUpdatedEvent( void )
+{
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
