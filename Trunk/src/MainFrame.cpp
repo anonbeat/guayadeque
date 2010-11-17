@@ -4902,7 +4902,7 @@ guUpdateCoversThread::guUpdateCoversThread( guDbLibrary * db, int gaugeid ) : wx
 // -------------------------------------------------------------------------------- //
 guUpdateCoversThread::~guUpdateCoversThread()
 {
-//    printf( "guUpdateCoversThread Object destroyed\n" );
+    guLogMessage( wxT( "guUpdateCoversThread Object destroyed" ) );
 };
 
 
@@ -4964,6 +4964,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
 {
     guCoverInfos CoverInfos = m_Db->GetEmptyCovers();
 
+    guLogMessage( wxT( "Trying to get the covers for %i items" ), CoverInfos.Count() );
     //
     int Count = CoverInfos.Count();
 
@@ -4976,7 +4977,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
     {
         guCoverInfo * CoverInfo = &CoverInfos[ Index ];
         Sleep( 500 ); // Dont hammer LastFM
-        //guLogMessage( wxT( "Downloading cover for %s - %s" ), CoverInfo->m_ArtistName.c_str(), CoverInfo->m_AlbumName.c_str() );
+        guLogMessage( wxT( "Downloading cover for %s - %s" ), CoverInfo->m_ArtistName.c_str(), CoverInfo->m_AlbumName.c_str() );
         FindCoverLink( m_Db, CoverInfo->m_AlbumId, CoverInfo->m_AlbumName, CoverInfo->m_ArtistName, CoverInfo->m_PathName );
 
         //wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
@@ -4986,7 +4987,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
         wxPostEvent( wxTheApp->GetTopWindow(), event );
 
     }
-    //guLogMessage( wxT( "Finalized Cover Update Thread" ) );
+    guLogMessage( wxT( "Finalized Cover Update Thread" ) );
 
     //event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
     event.SetId( ID_GAUGE_REMOVE );

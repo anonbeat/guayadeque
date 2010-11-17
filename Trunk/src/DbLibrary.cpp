@@ -5610,7 +5610,7 @@ guCoverInfos guDbLibrary::GetEmptyCovers( void )
     guCoverInfos RetVal;
 
     query = wxT( "SELECT DISTINCT song_albumid, song_album, song_artist, song_path "
-                 "FROM songs WHERE song_coverid ISNULL OR song_coverid = 0 GROUP BY song_albumid" );
+                 "FROM songs WHERE song_coverid ISNULL OR song_coverid < 1 GROUP BY song_albumid" );
 
     dbRes = ExecuteQuery( query );
 
