@@ -24,6 +24,7 @@
 #include "AlbumBrowser.h"
 #include "AuiNotebook.h"
 #include "Config.h"
+#include "CoverPanel.h"
 #include "curl/http.h"
 #include "dbus/gudbus.h"
 #include "dbus/mpris.h"
@@ -73,6 +74,7 @@
 #define     guPANEL_MAIN_JAMENDO            ( 1 << 11 )
 #define     guPANEL_MAIN_MAGNATUNE          ( 1 << 12 )
 #define     guPANEL_MAIN_LOCATIONS          ( 1 << 13 )
+#define     guPANEL_MAIN_SHOWCOVER          ( 1 << 14 )
 
 #define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | \
                                               guPANEL_MAIN_LASTFM | guPANEL_MAIN_LYRICS  | \
@@ -124,6 +126,7 @@ class guMainFrame : public wxFrame
     guJamendoPanel *                m_JamendoPanel;
     guMagnatunePanel *              m_MagnatunePanel;
     guLocationPanel *               m_LocationPanel;
+    guCoverPanel *                  m_CoverPanel;
 
     guTaskBarIcon *                 m_TaskBarIcon;
     guStatusBar *                   m_MainStatusBar;
@@ -141,6 +144,7 @@ class guMainFrame : public wxFrame
     wxMenuItem *                    m_ViewPlayerSelector;
     wxMenuItem *                    m_ViewPlayerVumeters;
     wxMenuItem *                    m_ViewMainLocations;
+    wxMenuItem *                    m_ViewMainShowCover;
     wxMenuItem *                    m_ViewLibrary;
     wxMenuItem *                    m_ViewLibTextSearch;
     wxMenuItem *                    m_ViewLibLabels;

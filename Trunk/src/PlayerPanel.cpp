@@ -1827,6 +1827,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     else if( ( CoverImage = guTagGetPicture( m_MediaSong.m_FileName ) ) )
     {
         m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
+        m_MediaSong.m_CoverPath = m_MediaSong.m_FileName;
     }
     else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
     {
@@ -2644,10 +2645,10 @@ void guPlayerPanel::OnPlayerCoverBitmapMouseOver( wxCommandEvent &event )
     guCoverFrame * BigCover = new guCoverFrame( this, wxID_ANY, wxEmptyString, Pos );
     if( BigCover )
     {
-        if( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG )
-            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_FileName );
-        else
-            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
+//        if( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG )
+//            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_FileName );
+//        else
+        BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
         BigCover->Show();
     }
 }
