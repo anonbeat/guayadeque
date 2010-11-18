@@ -4589,6 +4589,10 @@ void guMainFrame::OnMainPaneClose( wxAuiManagerEvent &event )
     {
         CmdId = ID_MENU_VIEW_MAIN_LOCATIONS;
     }
+    else if( PaneName == wxT( "MainShowCover" ) )
+    {
+        CmdId = ID_MENU_VIEW_MAIN_SHOWCOVER;
+    }
 
     guLogMessage( wxT( "OnMainPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
     if( CmdId )
