@@ -121,6 +121,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_VolumeMonitor = NULL;
     m_ViewPlayerVumeters = NULL;
     m_LocationPanel = NULL;
+    m_CoverPanel = NULL;
 
     //
     wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
@@ -221,6 +222,11 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         CaptionVisible( false ).
         CenterPane().Layer( 0 ).Row( 0 ).Position( 0 ) );
 
+
+    if( m_VisiblePanels & guPANEL_MAIN_SHOWCOVER )
+    {
+        ShowMainPanel( guPANEL_MAIN_SHOWCOVER, true );
+    }
 
     CreateMenu();
 
@@ -344,7 +350,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         m_VisiblePanels = m_VisiblePanels & ( guPANEL_MAIN_PLAYERPLAYLIST |
                                               guPANEL_MAIN_PLAYERFILTERS |
                                               guPANEL_MAIN_PLAYERVUMETERS |
-                                              guPANEL_MAIN_LOCATIONS );
+                                              guPANEL_MAIN_LOCATIONS |
+                                              guPANEL_MAIN_SHOWCOVER );
 
         // Reset the Menu entry for all elements
         m_ViewLibrary->Check( false );
@@ -523,6 +530,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_VIEW_PLAYER_VUMETERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_PLAYER_SELECTOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_MAIN_LOCATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
+    Connect( ID_MENU_VIEW_MAIN_SHOWCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
 
     Connect( ID_MENU_VIEW_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLibrary ), NULL, this );
     Connect( ID_MENU_VIEW_LIB_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryShowPanel ), NULL, this );
@@ -646,6 +654,7 @@ guMainFrame::~guMainFrame()
 	Disconnect( ID_MAINFRAME_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectYear ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectGenre ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_LOCATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectLocation ), NULL, this );
+    Disconnect( ID_MENU_VIEW_MAIN_SHOWCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
 
 	Disconnect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
 	Disconnect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
@@ -1166,6 +1175,10 @@ void guMainFrame::CreateMenu()
     m_ViewMainLocations = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_MAIN_LOCATIONS, _( "Sources" ), _( "Show/Hide the locatons" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewMainLocations );
     m_ViewMainLocations->Check( m_VisiblePanels & guPANEL_MAIN_LOCATIONS );
+
+    m_ViewMainShowCover = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_MAIN_SHOWCOVER, _( "Cover" ), _( "Show/Hide the cover" ), wxITEM_CHECK );
+    m_MainMenu->Append( m_ViewMainShowCover );
+    m_ViewMainShowCover->Check( m_VisiblePanels & guPANEL_MAIN_SHOWCOVER );
 
     SubMenu = new wxMenu();
 
@@ -1708,6 +1721,10 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
         }
     }
 
+    if( m_CoverPanel )
+    {
+        m_CoverPanel->OnUpdatedTrack( event );
+    }
 
     if( m_LastFMPanel )
     {
@@ -4332,7 +4349,8 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
         m_VisiblePanels = m_VisiblePanels & ( guPANEL_MAIN_PLAYERPLAYLIST |
                                               guPANEL_MAIN_PLAYERFILTERS |
                                               guPANEL_MAIN_PLAYERVUMETERS |
-                                              guPANEL_MAIN_LOCATIONS );
+                                              guPANEL_MAIN_LOCATIONS |
+                                              guPANEL_MAIN_SHOWCOVER );
 
         // Reset the Menu entry for all elements
         m_ViewLibrary->Check( false );
@@ -4426,7 +4444,8 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     m_VisiblePanels = m_VisiblePanels & ( guPANEL_MAIN_PLAYERPLAYLIST |
                                           guPANEL_MAIN_PLAYERFILTERS |
                                           guPANEL_MAIN_PLAYERVUMETERS |
-                                          guPANEL_MAIN_LOCATIONS );
+                                          guPANEL_MAIN_LOCATIONS |
+                                          guPANEL_MAIN_SHOWCOVER );
 
     // Reset the Menu entry for all elements
     m_ViewLibrary->Check( false );
@@ -4647,6 +4666,12 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
             break;
         }
 
+        case ID_MENU_VIEW_MAIN_SHOWCOVER :
+        {
+            PanelId = guPANEL_MAIN_SHOWCOVER;
+            break;
+        }
+
         default :
             return;
     }
@@ -4701,6 +4726,22 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
             PaneName = wxT( "MainSources" );
             if( m_ViewMainLocations )
                 m_ViewMainLocations->Check( show );
+            break;
+
+        case guPANEL_MAIN_SHOWCOVER :
+            if( !m_CoverPanel )
+            {
+                guConfig * Config = ( guConfig * ) guConfig::Get();
+                m_CoverPanel = new guCoverPanel( this, m_PlayerPanel );
+
+                m_AuiManager.AddPane( m_CoverPanel, wxAuiPaneInfo().Name( wxT( "MainShowCover" ) ).Caption( _( "Cover" ) ).
+                    DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
+                    CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+                    Left().Layer( 3 ).Row( 0 ).Position( 0 ).Hide() );
+            }
+            PaneName = wxT( "MainShowCover" );
+            if( m_ViewMainShowCover )
+                m_ViewMainShowCover->Check( show );
             break;
 
         default :
@@ -4902,7 +4943,7 @@ guUpdateCoversThread::guUpdateCoversThread( guDbLibrary * db, int gaugeid ) : wx
 // -------------------------------------------------------------------------------- //
 guUpdateCoversThread::~guUpdateCoversThread()
 {
-    guLogMessage( wxT( "guUpdateCoversThread Object destroyed" ) );
+    //guLogMessage( wxT( "guUpdateCoversThread Object destroyed" ) );
 };
 
 
@@ -4964,7 +5005,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
 {
     guCoverInfos CoverInfos = m_Db->GetEmptyCovers();
 
-    guLogMessage( wxT( "Trying to get the covers for %i items" ), CoverInfos.Count() );
+    //guLogMessage( wxT( "Trying to get the covers for %i items" ), CoverInfos.Count() );
     //
     int Count = CoverInfos.Count();
 
@@ -4977,7 +5018,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
     {
         guCoverInfo * CoverInfo = &CoverInfos[ Index ];
         Sleep( 500 ); // Dont hammer LastFM
-        guLogMessage( wxT( "Downloading cover for %s - %s" ), CoverInfo->m_ArtistName.c_str(), CoverInfo->m_AlbumName.c_str() );
+        //guLogMessage( wxT( "Downloading cover for %s - %s" ), CoverInfo->m_ArtistName.c_str(), CoverInfo->m_AlbumName.c_str() );
         FindCoverLink( m_Db, CoverInfo->m_AlbumId, CoverInfo->m_AlbumName, CoverInfo->m_ArtistName, CoverInfo->m_PathName );
 
         //wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
@@ -4987,7 +5028,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
         wxPostEvent( wxTheApp->GetTopWindow(), event );
 
     }
-    guLogMessage( wxT( "Finalized Cover Update Thread" ) );
+    //guLogMessage( wxT( "Finalized Cover Update Thread" ) );
 
     //event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
     event.SetId( ID_GAUGE_REMOVE );

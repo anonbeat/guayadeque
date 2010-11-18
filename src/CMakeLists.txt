@@ -246,6 +246,8 @@ ADD_EXECUTABLE( guayadeque
 	CopyTo.h
 	LocationPanel.cpp
 	LocationPanel.h
+	CoverPanel.cpp
+	CoverPanel.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
