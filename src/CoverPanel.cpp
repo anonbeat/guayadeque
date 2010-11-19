@@ -33,12 +33,13 @@ guCoverPanel::guCoverPanel( wxWindow * parent, guPlayerPanel * playerpanel ) :
 {
     m_PlayerPanel = playerpanel;
     m_LastSize = 100;
-    m_CoverImage = wxBitmap( guImage( guIMAGE_INDEX_no_cover ) );
-    m_CoverType = GU_SONGCOVER_NONE;
 
 	Connect( wxEVT_SIZE, wxSizeEventHandler( guCoverPanel::OnSize ) );
 	Connect( wxEVT_PAINT, wxPaintEventHandler( guCoverPanel::OnPaint ) );
 	Connect( guCOVERPANEL_RESIZE_TIMER_ID, wxEVT_TIMER, wxTimerEventHandler( guCoverPanel::OnResizeTimer ), NULL, this );
+
+    wxCommandEvent Event;
+    OnUpdatedTrack( Event );
 }
 
 // -------------------------------------------------------------------------------- //
