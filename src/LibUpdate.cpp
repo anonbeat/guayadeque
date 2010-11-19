@@ -81,21 +81,63 @@ guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const 
 }
 
 // -------------------------------------------------------------------------------- //
+guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath )
+{
+    m_LibPanel = NULL;
+    m_Db = db;
+    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    m_GaugeId = gaugeid;
+    m_ScanPath = scanpath;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+
+    if( scanpath.IsEmpty() )
+    {
+        m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+
+        CheckSymLinks( m_LibPaths );
+    }
+
+    m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
+    //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
+    m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
+    m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) );
+    m_ScanSymlinks = Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "General" ) );
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 guLibUpdateThread::~guLibUpdateThread()
 {
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
     if( !TestDestroy() )
     {
-        m_LibPanel->SetLastUpdate();
+        if( m_LibPanel )
+        {
+            m_LibPanel->SetLastUpdate();
+        }
+        else
+        {
+            guConfig * Config = ( guConfig * ) guConfig::Get();
+            wxDateTime Now = wxDateTime::Now();
+            Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "General" ) );
+            Config->Flush();
+        }
 
         event.SetEventObject( ( wxObject * ) this );
         event.SetClientData( ( void * ) m_LibPanel );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( m_MainFrame, event );
     }
     //
     event.SetId( ID_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -247,9 +289,28 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         }
     }
 
-    wxString CoverName = m_LibPanel->GetCoverName();
-    int CoverType = m_LibPanel->GetCoverType();
-    int CoverMaxSize = m_LibPanel->GetCoverMaxSize();
+
+    wxString CoverName;
+    if( m_LibPanel )
+    {
+        CoverName = m_LibPanel->GetCoverName();
+    }
+    else
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+        CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+    }
+    int CoverType = wxBITMAP_TYPE_JPEG;
+    if( m_LibPanel )
+    {
+        CoverType = m_LibPanel->GetCoverType();
+    }
+    int CoverMaxSize = wxNOT_FOUND;
+    if( m_LibPanel )
+    {
+        CoverMaxSize = m_LibPanel->GetCoverMaxSize();
+    }
 
     count = m_ImageFiles.Count();
     if( count )
@@ -345,6 +406,20 @@ guLibCleanThread::guLibCleanThread( guLibPanel * libpanel )
 }
 
 // -------------------------------------------------------------------------------- //
+guLibCleanThread::guLibCleanThread( guDbLibrary * db )
+{
+    m_LibPanel = NULL;
+    m_Db = db;
+    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 guLibCleanThread::~guLibCleanThread()
 {
     if( !TestDestroy() )
@@ -365,7 +440,16 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
     wxSQLite3ResultSet dbRes;
     wxString FileName;
 
-    wxArrayString LibPaths = m_LibPanel->GetLibraryPaths();
+    wxArrayString LibPaths;
+    if( m_LibPanel )
+    {
+        LibPaths = m_LibPanel->GetLibraryPaths();
+    }
+    else
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+    }
 
     if( !TestDestroy() )
     {

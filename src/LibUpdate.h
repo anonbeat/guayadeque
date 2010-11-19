@@ -51,6 +51,7 @@ class guLibUpdateThread : public wxThread
 
   public :
     guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath = wxEmptyString );
+    guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath = wxEmptyString );
     ~guLibUpdateThread();
 
     ExitCode Entry();
@@ -71,6 +72,7 @@ class guLibCleanThread : public wxThread
 
   public :
     guLibCleanThread( guLibPanel * libpanel );
+    guLibCleanThread( guDbLibrary * db );
     ~guLibCleanThread();
 
     ExitCode            Entry();

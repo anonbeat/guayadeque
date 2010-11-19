@@ -1660,7 +1660,14 @@ void guMainFrame::DoLibraryClean( wxCommandEvent &event )
     guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
     if( !LibPanel )
         LibPanel = m_LibPanel;
-    m_LibCleanThread = new guLibCleanThread( LibPanel );
+    if( LibPanel )
+    {
+        m_LibCleanThread = new guLibCleanThread( LibPanel );
+    }
+    else
+    {
+        m_LibCleanThread = new guLibCleanThread( m_Db );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1828,7 +1835,14 @@ void guMainFrame::OnUpdateLibrary( wxCommandEvent &event )
     else
     {
         gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
-        m_LibUpdateThread = new guLibUpdateThread( m_LibPanel, gaugeid );
+        if( m_LibPanel )
+        {
+            m_LibUpdateThread = new guLibUpdateThread( m_LibPanel, gaugeid );
+        }
+        else
+        {
+            m_LibUpdateThread = new guLibUpdateThread( m_Db, gaugeid );
+        }
     }
 }
 
@@ -1838,20 +1852,26 @@ void guMainFrame::OnForceUpdateLibrary( wxCommandEvent &event )
     guLogMessage( wxT( "The forced update started..." ) );
     if( m_LibUpdateThread )
         return;
-    int gaugeid;
     guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
     if( LibPanel )
     {
         LibPanel->SetLastUpdate( 0 );
-        gaugeid = m_MainStatusBar->AddGauge( LibPanel->GetName(), false );
-        m_LibUpdateThread = new guLibUpdateThread( LibPanel, gaugeid );
     }
     else
     {
-        m_LibPanel->SetLastUpdate( 0 );
-        gaugeid = m_MainStatusBar->AddGauge( _( "Library" ), false );
-        m_LibUpdateThread = new guLibUpdateThread( m_LibPanel, gaugeid );
+        if( m_LibPanel )
+        {
+            m_LibPanel->SetLastUpdate( 0 );
+        }
+        else
+        {
+            guConfig * Config = ( guConfig * ) guConfig::Get();
+            wxDateTime Now = wxDateTime::Now();
+            Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "General" ) );
+            Config->Flush();
+        }
     }
+    OnUpdateLibrary( event );
 }
 
 // -------------------------------------------------------------------------------- //
