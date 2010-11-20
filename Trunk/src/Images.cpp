@@ -266,7 +266,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_loc_magnatune,	                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_loc_jamendo,	                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_loc_lastfm,	                wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_loc_lyrics,			wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_lyrics,			        wxBITMAP_TYPE_PNG ),
     //
     GUIMAGE( guImage_tiny_close_normal,		        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_close_highlight,	        wxBITMAP_TYPE_PNG ),

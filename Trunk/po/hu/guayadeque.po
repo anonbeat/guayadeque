@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque Music Player SVN 0.2.8-1325\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-27 21:15+0100\n"
-"PO-Revision-Date: 2010-11-02 08:12+0100\n"
+"PO-Revision-Date: 2010-11-13 13:11+0100\n"
 "Last-Translator: Andrássy László <andrassy.laszlo@gmail.com>\n"
 "Language-Team: Hungarian\n"
 "Language: \n"
@@ -322,7 +322,7 @@ msgstr "Év"
 
 #: AlbumBrowser.cpp:672
 msgid "Year Desc."
-msgstr "Év csökk."
+msgstr "Év csökkenő"
 
 #: AlbumBrowser.cpp:672
 #: AlListBox.cpp:264
@@ -336,7 +336,7 @@ msgstr "Előadó, Év"
 
 #: AlbumBrowser.cpp:672
 msgid "Artist, Year Desc."
-msgstr "Előadó, Év csökk."
+msgstr "Előadó, Év csökkenő"
 
 #: AlbumBrowser.cpp:672
 msgid "Added time"
@@ -434,7 +434,7 @@ msgstr "Albumok rendezése előadó és év szerint"
 
 #: AlListBox.cpp:266
 msgid "Artist, Year descending"
-msgstr "Előadó, év csökkenő"
+msgstr "Előadó, Év csökkenő"
 
 #: AlListBox.cpp:266
 msgid "Albums are sorted by artist and year descending"
@@ -703,13 +703,13 @@ msgstr "nem tartalmazza"
 #: DynamicPlayList.cpp:75
 #: DynamicPlayList.cpp:84
 msgid "is"
-msgstr "van"
+msgstr "pontosan"
 
 #: DynamicPlayList.cpp:66
 #: DynamicPlayList.cpp:76
 #: DynamicPlayList.cpp:85
 msgid "is not"
-msgstr "nincs"
+msgstr "nem"
 
 #: DynamicPlayList.cpp:67
 #: DynamicPlayList.cpp:77
@@ -735,27 +735,27 @@ msgstr "legfeljebb"
 
 #: DynamicPlayList.cpp:92
 msgid "in"
-msgstr "bent"
+msgstr "pontosan"
 
 #: DynamicPlayList.cpp:93
 msgid "not in"
-msgstr "nincs bent"
+msgstr "nem"
 
 #: DynamicPlayList.cpp:94
 msgid "after"
-msgstr "utána"
+msgstr "utáni"
 
 #: DynamicPlayList.cpp:95
 msgid "before"
-msgstr "előtte"
+msgstr "előtti"
 
 #: DynamicPlayList.cpp:100
 msgid "in the last"
-msgstr "az utolsóban"
+msgstr "az utolsó"
 
 #: DynamicPlayList.cpp:101
 msgid "before the last"
-msgstr "utolsó előtti"
+msgstr "az utolsó előtti"
 
 #: DynamicPlayList.cpp:107
 msgid "Minutes"
@@ -772,23 +772,23 @@ msgstr "Véletlenszerű"
 #: DynamicPlayList.cpp:132
 #: Preferences.cpp:496
 msgid "minutes"
-msgstr "perc"
+msgstr "percben"
 
 #: DynamicPlayList.cpp:133
 msgid "hours"
-msgstr "óra"
+msgstr "órában"
 
 #: DynamicPlayList.cpp:134
 msgid "days"
-msgstr "nap"
+msgstr "napban"
 
 #: DynamicPlayList.cpp:135
 msgid "weeks"
-msgstr "hét"
+msgstr "hétben"
 
 #: DynamicPlayList.cpp:136
 msgid "months"
-msgstr "hónap"
+msgstr "hónapban"
 
 #: DynamicPlayList.cpp:416
 msgid "Filter Album Browser"
