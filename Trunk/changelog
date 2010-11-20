@@ -1,4 +1,7 @@
 
+  * Added the possibility to show the current track cover in a window
+  * Fixed a bug in default podcast directory creation
+  * Added usb mass storage devices support
   * Added support for trueaudio files
   * Added support for wavpack files
   * Added option to embed album cover to all album tracks
