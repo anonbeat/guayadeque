@@ -198,6 +198,12 @@ guGIO_VolumeMonitor::~guGIO_VolumeMonitor( void )
     guLogMessage( wxT( "Destroying the volume monitor object..." ) );
     if( m_VolumeMonitor )
     {
+		g_signal_handler_disconnect( m_VolumeMonitor, m_VolumeAddedId );
+		g_signal_handler_disconnect( m_VolumeMonitor, m_VolumeRemovedId );
+		g_signal_handler_disconnect( m_VolumeMonitor, m_MountRemovedId );
+		g_signal_handler_disconnect( m_VolumeMonitor, m_MountPreUnmountId );
+		g_signal_handler_disconnect( m_VolumeMonitor, m_MountAddedId );
+
         while( m_MountedVolumes->Count() )
         {
             delete ( * m_MountedVolumes )[ 0 ];
@@ -207,12 +213,6 @@ guGIO_VolumeMonitor::~guGIO_VolumeMonitor( void )
         {
             delete m_MountedVolumes;
         }
-
-		g_signal_handler_disconnect( m_VolumeMonitor, m_VolumeAddedId );
-		g_signal_handler_disconnect( m_VolumeMonitor, m_VolumeRemovedId );
-		g_signal_handler_disconnect( m_VolumeMonitor, m_MountRemovedId );
-		g_signal_handler_disconnect( m_VolumeMonitor, m_MountPreUnmountId );
-		g_signal_handler_disconnect( m_VolumeMonitor, m_MountAddedId );
 
         g_object_unref( m_VolumeMonitor );
     }

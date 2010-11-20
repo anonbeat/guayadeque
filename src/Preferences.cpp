@@ -1556,7 +1556,7 @@ void guPrefDialog::BuildMagnatunePage( void )
 
 	FormatSizer->Add( m_MagFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
-	wxStaticText * MagDownLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, wxT("Download as :"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * MagDownLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _("Download as :"), wxDefaultPosition, wxDefaultSize, 0 );
 	MagDownLabel->Wrap( -1 );
 	FormatSizer->Add( MagDownLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
