@@ -62,8 +62,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
     wxPanel *           SongListPanel;
     wxPanel *           MainDetailPanel;
-    wxNotebook *        MainNoteBook;
-    wxPanel *           DetailPanel;
     wxStaticText *      ArStaticText;
     wxStaticText *      AlStaticText;
     wxStaticText *      TiStaticText;
@@ -132,12 +130,12 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	wxBoxSizer* DetailSizer;
 	DetailSizer = new wxBoxSizer( wxVERTICAL );
 
-	MainNoteBook = new wxNotebook( MainDetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_MainNotebook = new wxNotebook( MainDetailPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 
     //
     // Details
     //
-	DetailPanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxPanel * DetailPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxSizer * MainDetailSizer = new wxBoxSizer( wxVERTICAL );
 	wxFlexGridSizer* DataFlexSizer;
 	DataFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
@@ -297,12 +295,12 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	DetailPanel->SetSizer( MainDetailSizer );
 	DetailPanel->Layout();
 	DataFlexSizer->Fit( DetailPanel );
-	MainNoteBook->AddPage( DetailPanel, _( "Details" ), true );
+	m_MainNotebook->AddPage( DetailPanel, _( "Details" ), true );
 
 	//
 	// Comment
 	//
-	CommentPanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	CommentPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* CommentSizer;
 	CommentSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -316,12 +314,12 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	CommentPanel->SetSizer( CommentSizer );
 	CommentPanel->Layout();
 	CommentSizer->Fit( CommentPanel );
-	MainNoteBook->AddPage( CommentPanel, _("Comments"), false );
+	m_MainNotebook->AddPage( CommentPanel, _("Comments"), false );
 
 	//
 	// Pictures
 	//
-	PicturePanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	PicturePanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* PictureSizer;
 	PictureSizer = new wxBoxSizer( wxVERTICAL );
 
@@ -367,12 +365,12 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	PicturePanel->SetSizer( PictureSizer );
 	PicturePanel->Layout();
 	PictureSizer->Fit( PicturePanel );
-	MainNoteBook->AddPage( PicturePanel, _( "Pictures" ), false );
+	m_MainNotebook->AddPage( PicturePanel, _( "Pictures" ), false );
 
     //
     // Lyrics
     //
-	wxPanel * LyricsPanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxPanel * LyricsPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer * LyricsSizer;
 	LyricsSizer = new wxBoxSizer( wxVERTICAL );
 
@@ -432,13 +430,13 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	LyricsPanel->SetSizer( LyricsSizer );
 	LyricsPanel->Layout();
 	LyricsSizer->Fit( LyricsPanel );
-	MainNoteBook->AddPage( LyricsPanel, _( "Lyrics" ), false );
+	m_MainNotebook->AddPage( LyricsPanel, _( "Lyrics" ), false );
 
 
     //
     // MusicBrainz
     //
-	MBrainzPanel = new wxPanel( MainNoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	MBrainzPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* MBrainzSizer;
 	MBrainzSizer = new wxBoxSizer( wxVERTICAL );
 
@@ -591,10 +589,10 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	MBrainzPanel->SetSizer( MBrainzSizer );
 	MBrainzPanel->Layout();
 	MBrainzSizer->Fit( MBrainzPanel );
-	MainNoteBook->AddPage( MBrainzPanel, wxT( "MusicBrainz" ), false );
+	m_MainNotebook->AddPage( MBrainzPanel, wxT( "MusicBrainz" ), false );
 
 
-	DetailSizer->Add( MainNoteBook, 1, wxEXPAND | wxALL, 5 );
+	DetailSizer->Add( m_MainNotebook, 1, wxEXPAND | wxALL, 5 );
 
 	MainDetailPanel->SetSizer( DetailSizer );
 	MainDetailPanel->Layout();
@@ -647,6 +645,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 	// Connect Events
 	Connect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnOKButton ) );
+	m_MainNotebook->Connect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( guTrackEditor::OnPageChanged ), NULL, this );
 
 	m_SongListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTrackEditor::OnSongListBoxSelected ), NULL, this );
 	m_MoveUpButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveUpBtnClick ), NULL, this );
@@ -722,6 +721,9 @@ guTrackEditor::~guTrackEditor()
     Config->WriteNum( wxT( "TrackEditSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
 
     // Disconnect all events
+	Disconnect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnOKButton ) );
+	m_MainNotebook->Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( guTrackEditor::OnPageChanged ), NULL, this );
+
 	m_SongListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTrackEditor::OnSongListBoxSelected ), NULL, this );
 	m_MoveUpButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveUpBtnClick ), NULL, this );
 	m_MoveDownButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMoveDownBtnClick ), NULL, this );
@@ -777,6 +779,18 @@ guTrackEditor::~guTrackEditor()
         delete m_MBrainzReleases;
     if( m_MBrainzAlbums )
         delete m_MBrainzAlbums;
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnPageChanged( wxNotebookEvent &event )
+{
+    WriteItemData();
+
+    wxCommandEvent CmdEvent;
+    CmdEvent.SetInt( m_CurItem );
+    OnSongListBoxSelected( CmdEvent );
+
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
