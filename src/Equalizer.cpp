@@ -53,25 +53,34 @@ bool ReadEQPresets( const wxString &value, wxArrayInt &preset )
 }
 
 // -------------------------------------------------------------------------------- //
-guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
-                wxDialog( parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 400,250 ), wxDEFAULT_DIALOG_STYLE )
+guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog( parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 400,250 ), wxDEFAULT_DIALOG_STYLE )
 {
     m_MediaCtrl = mediactrl;
     m_BandChanged = false;
 
-    guConfig * Config = new guConfig( wxT( ".guayadeque/equalizers.conf" ) );
-    if( Config )
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxPoint WindowPos;
+    WindowPos.x = Config->ReadNum( wxT( "EqualizerPosX" ), -1, wxT( "Positions" ) );
+    WindowPos.y = Config->ReadNum( wxT( "EqualizerPosY" ), -1, wxT( "Positions" ) );
+    wxSize WindowSize;
+    WindowSize.x = Config->ReadNum( wxT( "EqualizerSizeWidth" ), 400, wxT( "Positions" ) );
+    WindowSize.y = Config->ReadNum( wxT( "EqualizerSizeHeight" ), 250, wxT( "Positions" ) );
+
+    Create( parent, wxID_ANY, _( "Equalizer" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+
+    guConfig * EqConfig = new guConfig( wxT( ".guayadeque/equalizers.conf" ) );
+    if( EqConfig )
     {
-        Config->SetPath( wxT( "Equalizers" ) );
+        EqConfig->SetPath( wxT( "Equalizers" ) );
 
         wxString    EntryName;
         wxString    EntryValue;
         wxArrayInt  Presets;
         long index;
-        if( Config->GetFirstEntry( EntryName, index ) )
+        if( EqConfig->GetFirstEntry( EntryName, index ) )
         {
             do {
-                Config->Read( EntryName, &EntryValue, wxEmptyString );
+                EqConfig->Read( EntryName, &EntryValue, wxEmptyString );
                 if( !EntryValue.IsEmpty() )
                 {
                     //guLogMessage( wxT( "Entry%02u ) %s=%s" ), index, EntryName.c_str(), EntryValue.c_str() );
@@ -81,10 +90,10 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
                         m_EQPresets.Add( new guEQPreset( EntryName, Presets ) );
                     }
                 }
-            } while( Config->GetNextEntry( EntryName, index ) );
+            } while( EqConfig->GetNextEntry( EntryName, index ) );
         }
 
-        delete Config;
+        delete EqConfig;
     }
 
     //
@@ -104,11 +113,15 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	TopSizer->Add( PresetLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_PresetComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
+	wxString LastPreset = Config->ReadStr( wxT( "LastEqPreset" ), wxEmptyString, wxT( "General" ) );
+	int LastPresetIndex = wxNOT_FOUND;
 	int index;
 	int count = m_EQPresets.Count();
 	for( index = 0; index < count; index++ )
 	{
         m_PresetComboBox->Append( m_EQPresets[ index ].m_Name );
+        if( m_EQPresets[ index ].m_Name == LastPreset )
+            LastPresetIndex = index;
 	}
 	TopSizer->Add( m_PresetComboBox, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
@@ -289,21 +302,36 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) :
 	m_Band7->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guEq10Band::OnBandChanged ), NULL, this );
 	m_Band8->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guEq10Band::OnBandChanged ), NULL, this );
 	m_Band9->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guEq10Band::OnBandChanged ), NULL, this );
+
+    if( LastPresetIndex != wxNOT_FOUND )
+    {
+        m_PresetComboBox->SetSelection( LastPresetIndex );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 guEq10Band::~guEq10Band()
 {
-    guConfig * Config = new guConfig( wxT( ".guayadeque/equalizers.conf" ) );
-    if( Config )
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxPoint WindowPos = GetPosition();
+    Config->WriteNum( wxT( "EqualizerPosX" ), WindowPos.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "EqualizerPosY" ), WindowPos.y, wxT( "Positions" ) );
+    wxSize WindowSize = GetSize();
+    Config->WriteNum( wxT( "EqualizerSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "EqualizerSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
+
+    Config->WriteStr( wxT( "LastEqPreset" ), m_BandChanged ? wxT( "" ) : m_PresetComboBox->GetValue(), wxT( "General" ) );
+
+    guConfig * EqConfig = new guConfig( wxT( ".guayadeque/equalizers.conf" ) );
+    if( EqConfig )
     {
-        Config->DeleteGroup( wxT( "Equalizers" ) );
-        Config->SetPath( wxT( "Equalizers" ) );
+        EqConfig->DeleteGroup( wxT( "Equalizers" ) );
+        EqConfig->SetPath( wxT( "Equalizers" ) );
         int index;
         int count = m_EQPresets.Count();
         for( index = 0; index < count; index++ )
         {
-            if( !Config->Write( m_EQPresets[ index ].m_Name, wxString::Format( wxT( "%i,%i,%i,%i,%i,%i,%i,%i,%i,%i" ),
+            if( !EqConfig->Write( m_EQPresets[ index ].m_Name, wxString::Format( wxT( "%i,%i,%i,%i,%i,%i,%i,%i,%i,%i" ),
               m_EQPresets[ index ].m_Sets[ 0 ],
               m_EQPresets[ index ].m_Sets[ 1 ],
               m_EQPresets[ index ].m_Sets[ 2 ],
@@ -316,7 +344,7 @@ guEq10Band::~guEq10Band()
               m_EQPresets[ index ].m_Sets[ 9 ] ) ) )
               guLogError( wxT( "Error writing key %s" ), m_EQPresets[ index ].m_Name.c_str() );
         }
-        delete Config;
+        delete EqConfig;
     }
     //
 	m_PresetComboBox->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( guEq10Band::OnPresetSelected ), NULL, this );
