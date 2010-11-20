@@ -51,6 +51,8 @@
 #include <wx/statbox.h>
 #include <wx/dialog.h>
 
+#include <gpod/itdb.h>
+
 #define guPORTABLEMEDIA_AUDIO_FORMAT_MP3        ( 1 << 0 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_OGG        ( 1 << 1 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_FLAC       ( 1 << 2 )
@@ -294,9 +296,9 @@ class guPortableMediaLibPanel : public guLibPanel
     virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
     virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
 
-    void                        OnPortableLibraryUpdate( wxCommandEvent &event );
-    void                        OnPortableUnmount( wxCommandEvent &event );
-    void                        OnPortableProperties( wxCommandEvent &event );
+    virtual void                OnPortableLibraryUpdate( wxCommandEvent &event );
+    virtual void                OnPortableUnmount( wxCommandEvent &event );
+    virtual void                OnPortableProperties( wxCommandEvent &event );
 
     virtual bool                OnDropFiles( const wxArrayString &filenames );
 
@@ -408,6 +410,18 @@ class guPortableMediaViewCtrl
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaViewCtrl *, guPortableMediaViewCtrlArray );
 
+// -------------------------------------------------------------------------------- //
+class guIpodMediaLibPanel : public guPortableMediaLibPanel
+{
+  protected :
+     Itdb_iTunesDB * m_iPodDb;
+
+  public :
+    guIpodMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, Itdb_iTunesDB * ipoddb );
+    ~guIpodMediaLibPanel();
+
+    Itdb_iTunesDB * IpodDb( void ) { return m_iPodDb; }
+};
 
 #endif
 // -------------------------------------------------------------------------------- //

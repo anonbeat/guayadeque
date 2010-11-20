@@ -78,6 +78,7 @@ class guTrackEditor : public wxDialog
 
 
   protected:
+    wxNotebook *            m_MainNotebook;
     wxSplitterWindow *      m_SongListSplitter;
     wxListBox *             m_SongListBox;
     wxBitmapButton *        m_MoveUpButton;
@@ -216,6 +217,8 @@ class guTrackEditor : public wxDialog
     void OnDownloadedLyric( wxCommandEvent &event );
 
     void MBCheckCountAndLengths( void );
+
+    void OnPageChanged( wxNotebookEvent &event );
 
 public:
     guTrackEditor( wxWindow * parent, guDbLibrary * db,
