@@ -1,0 +1,1170 @@
+# Swedish translation for guayadeque.
+# Daniel Nylander <po@danielnylander.se>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: guayadeque\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-04-13 21:39+0100\n"
+"PO-Revision-Date: 2010-06-03 20:35+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid ""
+"\n"
+"Continue deleting?"
+msgstr ""
+"\n"
+"Fortsätt borttagning?"
+
+msgid " Behaviour "
+msgstr " Beteende "
+
+msgid " Columns "
+msgstr " Kolumner "
+
+msgid " Commands "
+msgstr " Kommandon "
+
+msgid " Current Filters "
+msgstr " Aktuella filter "
+
+msgid " Details "
+msgstr " Detaljer "
+
+msgid " Example "
+msgstr " Exempel "
+
+msgid " Filters "
+msgstr " Filter "
+
+msgid " Help "
+msgstr " Hjälp "
+
+msgid " Language "
+msgstr " Språk "
+
+msgid " Links "
+msgstr " Länkar "
+
+msgid " Notifications "
+msgstr " Notifieringar "
+
+msgid " On Start "
+msgstr " Vid uppstart "
+
+msgid " Paths "
+msgstr " Sökvägar "
+
+msgid " Properties "
+msgstr " Egenskaper "
+
+msgid " Record "
+msgstr " Spela in "
+
+msgid " Result "
+msgstr " Resultat "
+
+msgid " Save "
+msgstr " Spara "
+
+msgid " Songs "
+msgstr " Låtar "
+
+msgid " Text Align "
+msgstr " Textjustering "
+
+msgid "%u Categories, %u Channels"
+msgstr "%u kategorier, %u kanaler"
+
+msgid "%u Channels"
+msgstr "%u kanaler"
+
+msgid "&About"
+msgstr "&Om"
+
+msgid "&Add Directory"
+msgstr "&Lägg till katalog"
+
+msgid "&Control"
+msgstr "&Kontroll"
+
+msgid "&Help"
+msgstr "&Hjälp"
+
+msgid "&Library"
+msgstr "&Bibliotek"
+
+msgid "&Next Track"
+msgstr "&Nästa spår"
+
+msgid "&Play"
+msgstr "Spe&la upp"
+
+msgid "&PlayLists"
+msgstr "S&pellistor"
+
+msgid "&Podcasts"
+msgstr "&Poddsändningar"
+
+msgid "&Preferences"
+msgstr "&Inställningar"
+
+msgid "&Prev. Track"
+msgstr "&Föreg. spår"
+
+msgid "&Quit"
+msgstr "A&vsluta"
+
+msgid "&Radio"
+msgstr "&Radio"
+
+msgid "&Repeat Playlist"
+msgstr "Upprep&a spellista"
+
+msgid "&Repeat Track"
+msgstr "Upprep&a spår"
+
+msgid "&Rescan Library"
+msgstr "Sök igenom b&ibliotek igen"
+
+msgid "&Smart Mode"
+msgstr "&Smart läge"
+
+msgid "&Stop"
+msgstr "&Stoppa"
+
+msgid "&Update Library"
+msgstr "&Uppdatera bibliotek"
+
+msgid "&View"
+msgstr "&Visa"
+
+msgid "00:00 of 00:00"
+msgstr "00:00 av 00:00"
+
+msgid "Add Directory"
+msgstr "Lägg till katalog"
+
+msgid "Add Genre"
+msgstr "Lägg till genre"
+
+msgid "Add Label"
+msgstr "Lägg till etikett"
+
+msgid "Add Radio"
+msgstr "Lägg till radio"
+
+msgid "Add a new label"
+msgstr "Lägg till en ny etikett"
+
+msgid "Add a radio"
+msgstr "Lägg till en radio"
+
+msgid "Add commands in preferences"
+msgstr "Lägg till kommandon i inställningar"
+
+msgid "Add current selected songs to the playlist"
+msgstr "Lägg till markerade låtar till spellistan"
+
+msgid "Add the selected folder to playlist"
+msgstr "Lägg till markerad mapp till spellista"
+
+msgid "Add tracks on any criteria"
+msgstr "Lägg till spår med något kriteria"
+
+msgid "Added Date"
+msgstr "Lades till"
+
+msgid "Added Time"
+msgstr "Lades till"
+
+msgid "Album"
+msgstr "Album"
+
+msgid "Album:"
+msgstr "Album:"
+
+msgid "Albums"
+msgstr "Album"
+
+msgid "All"
+msgstr "Alla"
+
+msgid "Allow delete old items"
+msgstr "Tillåt borttagning av gamla objekt"
+
+msgid "Allow:"
+msgstr "Tillåt:"
+
+msgid "Are you sure to delete the selected Playlist?"
+msgstr "Är du säker på att du vill ta bort markerade spellistan?"
+
+msgid "Are you sure to delete the selected path ?"
+msgstr "Är du säker på att du vill ta bort markerad sökväg?"
+
+msgid "Are you sure you want to exit the application?"
+msgstr "Är du säker på att du vill avsluta programmet?"
+
+msgid "Artist"
+msgstr "Artist"
+
+msgid "Artist, Name"
+msgstr "Artist, Namn"
+
+msgid "Artist, Year"
+msgstr "Artist, År"
+
+msgid "Artist, Year Desc."
+msgstr "Artist, År Beskr."
+
+msgid "Artist:"
+msgstr "Artist:"
+
+msgid "Artists"
+msgstr "Artister"
+
+msgid "Ask confirmation on exit"
+msgstr "Fråga efter bekräftelse vid avslut"
+
+msgid "Author"
+msgstr "Upphovsman"
+
+msgid "Author:"
+msgstr "Upphovsman:"
+
+msgid "Begin"
+msgstr "Början"
+
+msgid "Begins with"
+msgstr "Börjar med"
+
+msgid "Browser"
+msgstr "Bläddrare"
+
+msgid "Buffering..."
+msgstr "Buffrar..."
+
+msgid "Category"
+msgstr "Kategori"
+
+msgid "Center"
+msgstr "Center"
+
+msgid "Channel"
+msgstr "Kanal"
+
+msgid "Channels"
+msgstr "Kanaler"
+
+msgid "Clear PlayList"
+msgstr "Töm spellista"
+
+msgid "Command:"
+msgstr "Kommando:"
+
+msgid "Commands"
+msgstr "Kommandon"
+
+msgid "Comment"
+msgstr "Kommentar"
+
+msgid "Composer"
+msgstr "Kompositör"
+
+msgid "Confirm"
+msgstr "Bekräfta"
+
+msgid "Contains"
+msgstr "Innehåller"
+
+msgid "Continue"
+msgstr "Fortsätt"
+
+msgid "Copy"
+msgstr "Kopiera"
+
+msgid "Copy To"
+msgstr "Kopiera till"
+
+msgid "Copy To..."
+msgstr "Kopiera till..."
+
+msgid "Copy the album info to clipboard"
+msgstr "Kopiera albuminformation till urklipp"
+
+msgid "Copy the current album to a directory or device"
+msgstr "Kopiera aktuellt album till en katalog eller enhet"
+
+msgid "Copy the selected folder to a folder or device"
+msgstr "Kopiera markerad mapp till en mapp eller enhet"
+
+msgid "Copy the selected folder to clipboard"
+msgstr "Kopiera markerad mapp till urklipp"
+
+msgid "Copy to clipboard"
+msgstr "Kopiera till urklipp"
+
+msgid "Copy to..."
+msgstr "Kopiera till..."
+
+msgid "Cover Editor"
+msgstr "Omslagsredigerare"
+
+msgid "Cover:"
+msgstr "Omslag:"
+
+msgid "Covers"
+msgstr "Omslagsbilder"
+
+msgid "Create a new dynamic playlist"
+msgstr "Skapa en ny dynamisk spellista"
+
+msgid "Create a new folder"
+msgstr "Skapa en ny mapp"
+
+msgid "Create a new genre"
+msgstr "Skapa en ny genre"
+
+msgid "Create a new radio"
+msgstr "Skapa en ny radio"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Date:"
+msgstr "Datum:"
+
+msgid "Day"
+msgstr "Dag"
+
+msgid "Days"
+msgstr "Dagar"
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Delete"
+msgstr "Ta bort"
+
+msgid "Delete Album cover"
+msgstr "Ta bort albumomslag"
+
+msgid "Delete Layout"
+msgstr "Ta bort layout"
+
+msgid "Delete Playlist"
+msgstr "Ta bort spellista"
+
+msgid "Delete Radio"
+msgstr "Ta bort radio"
+
+msgid "Delete after"
+msgstr "Ta bort efter"
+
+msgid "Delete genre"
+msgstr "Ta bort genre"
+
+msgid "Delete label"
+msgstr "Ta bort etikett"
+
+msgid "Delete the cover for the selected album"
+msgstr "Ta bort omslagsbilden för markerat album"
+
+msgid "Delete the current selected tracks"
+msgstr "Ta bort markerade spår"
+
+msgid "Delete the selected files"
+msgstr "Ta bort markerade filer"
+
+msgid "Delete the selected playlist"
+msgstr "Ta bort markerad spellista"
+
+msgid "Delete:"
+msgstr "Ta bort:"
+
+msgid "Deny:"
+msgstr "Neka:"
+
+msgid "Descending"
+msgstr "Fallande"
+
+msgid "Description:"
+msgstr "Beskrivning:"
+
+msgid "Details"
+msgstr "Detaljer"
+
+msgid "Directories"
+msgstr "Kataloger"
+
+msgid "Disk"
+msgstr "Disk"
+
+msgid "Disk:"
+msgstr "Disk:"
+
+msgid "Does not contain"
+msgstr "Innehåller inte"
+
+msgid "Does not contains"
+msgstr "Innehåller inte"
+
+msgid "Don't ask again"
+msgstr "Fråga inte igen"
+
+msgid "Download"
+msgstr "Hämta"
+
+msgid "Download Album cover"
+msgstr "Hämta albumomslag"
+
+msgid "Download cover for the current selected album"
+msgstr "Hämta omslagsbild för det markerade albumet"
+
+msgid "Download:"
+msgstr "Hämta:"
+
+msgid "Dynamic playlists"
+msgstr "Dynamiska spellistor"
+
+msgid "Edit Album songs"
+msgstr "Redigera albumlåtar"
+
+msgid "Edit Label"
+msgstr "Redigera etikett"
+
+msgid "Edit Labels"
+msgstr "Redigera etiketter"
+
+msgid "Edit Playlist"
+msgstr "Redigera spellista"
+
+msgid "Edit Radio"
+msgstr "Redigera radio"
+
+msgid "Edit Songs"
+msgstr "Redigera låtar"
+
+msgid "Edit Tracks"
+msgstr "Redigera spår"
+
+msgid "Edit genre"
+msgstr "Redigera genre"
+
+msgid "Edit the labels assigned to the selected albums"
+msgstr "Redigera etiketterna tilldelade till de markerade albumen"
+
+msgid "Edit the selected albums songs"
+msgstr "Redigera markerade albumens låtar"
+
+msgid "Edit the selected playlist"
+msgstr "Redigera markerad spellista"
+
+msgid "Edit the selected tracks"
+msgstr "Redigera markerade spår"
+
+msgid "Edit the tracks in the selected folder"
+msgstr "Redigera spåren i markerad mapp"
+
+msgid "Edit tracks"
+msgstr "Redigera spår"
+
+msgid "Enable recording"
+msgstr "Aktivera inspelning"
+
+msgid "Enabled"
+msgstr "Aktiverad"
+
+msgid "End"
+msgstr "Slutet"
+
+msgid "Ends with"
+msgstr "Slutar med"
+
+msgid "English"
+msgstr "Engelska"
+
+msgid "Enqueue"
+msgstr "Kölägg"
+
+msgid "Enqueue All"
+msgstr "Kölägg alla"
+
+msgid "Enqueue as default action"
+msgstr "Kölägg som standardåtgärd"
+
+msgid "Enqueue the album tracks to the playlist"
+msgstr "Kölägg albumspåren till spellistan"
+
+msgid "Enter the new playlist name"
+msgstr "Ange namn för ny spellista"
+
+msgid "Equals"
+msgstr "Lika med"
+
+msgid "Error"
+msgstr "Fel"
+
+msgid "Events"
+msgstr "Händelser"
+
+msgid "Everything"
+msgstr "Allting"
+
+msgid "Exit"
+msgstr "Avsluta"
+
+msgid "Exit this program"
+msgstr "Avsluta programmet"
+
+msgid "Exits the application"
+msgstr "Avslutar programmet"
+
+msgid "Export"
+msgstr "Exportera"
+
+msgid "Export all the radio stations"
+msgstr "Exportera alla radiostationer"
+
+msgid "Export the playlist"
+msgstr "Exportera spellistan"
+
+msgid "Files"
+msgstr "Filer"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Filter Text: "
+msgstr "Filtrera text: "
+
+msgid "Filters"
+msgstr "Filter"
+
+msgid "Format:"
+msgstr "Format:"
+
+msgid "French"
+msgstr "Franska"
+
+msgid "From:"
+msgstr "Från:"
+
+msgid "General"
+msgstr "Allmänt"
+
+msgid "Genre"
+msgstr "Genre"
+
+msgid "Genre:"
+msgstr "Genre:"
+
+msgid "Genres"
+msgstr "Genrer"
+
+msgid "German"
+msgstr "Tyska"
+
+msgid "Go to Next Track in Playlist"
+msgstr "Gå till nästa spår i spellistan"
+
+msgid "Go to Previous Track in Playlist"
+msgstr "Gå till föregående spår i spellistan"
+
+msgid "High"
+msgstr "Hög"
+
+msgid "Hour"
+msgstr "Timme"
+
+msgid "Import"
+msgstr "Importera"
+
+msgid "Import a playlist"
+msgstr "Importera en spellista"
+
+msgid "Import the radio stations"
+msgstr "Importera radiostationerna"
+
+msgid "Italian"
+msgstr "Italienska"
+
+msgid "L&yrics"
+msgstr "Lått&exter"
+
+msgid "Label"
+msgstr "Etikett"
+
+msgid "Label Name: "
+msgstr "Etikettnamn: "
+
+msgid "Labels"
+msgstr "Etiketter"
+
+msgid "Language:"
+msgstr "Språk:"
+
+msgid "Last Play Time"
+msgstr "Senast spelad"
+
+msgid "Last.&fm"
+msgstr "Last.&fm"
+
+msgid "Last.fm"
+msgstr "Last.fm"
+
+msgid "Layout %u"
+msgstr "Layout %u"
+
+msgid "Left"
+msgstr "Vänster"
+
+msgid "Length"
+msgstr "Speltid"
+
+msgid "Length:"
+msgstr "Speltid:"
+
+msgid "Less..."
+msgstr "Mindre..."
+
+msgid "Level(db):"
+msgstr "Nivå(db):"
+
+msgid "Library"
+msgstr "Bibliotek"
+
+msgid "Limit To"
+msgstr "Begränsa till"
+
+msgid "Link:"
+msgstr "Länk:"
+
+msgid "Links"
+msgstr "Länkar"
+
+msgid "Load Layout"
+msgstr "Läs in layout"
+
+msgid "Load default layouts"
+msgstr "Läs in standardlayouter"
+
+msgid "Low"
+msgstr "Låg"
+
+msgid "Lyrics"
+msgstr "Låttexter"
+
+msgid "Manually"
+msgstr "Manuellt"
+
+msgid "Minutes"
+msgstr "Minuter"
+
+msgid "Modified"
+msgstr "Ändrad"
+
+msgid "Month"
+msgstr "Månad"
+
+msgid "Months"
+msgstr "Månader"
+
+msgid "More..."
+msgstr "Mer..."
+
+msgid "Name"
+msgstr "Namn"
+
+msgid "Name:"
+msgstr "Namn:"
+
+msgid "Never"
+msgstr "Aldrig"
+
+msgid "New Channel"
+msgstr "Ny kanal"
+
+msgid "New Dynamic Playlist"
+msgstr "Ny dynamisk spellista"
+
+msgid "New Folder"
+msgstr "Ny mapp"
+
+msgid "New Layout"
+msgstr "Ny layout"
+
+msgid "New PlayList"
+msgstr "Ny spellista"
+
+msgid "Next Track"
+msgstr "Nästa spår"
+
+msgid "No commands defined"
+msgstr "Inga kommandon har definierats"
+
+msgid "No layouts defined"
+msgstr "Inga layouter har definierats"
+
+msgid "None"
+msgstr "Ingen"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Now Playing"
+msgstr "Spelar nu"
+
+msgid "Off"
+msgstr "Av"
+
+msgid "On"
+msgstr "På"
+
+msgid "Only if contains"
+msgstr "Endast om den innehåller"
+
+msgid "Order By"
+msgstr "Sortera efter"
+
+msgid "Ordered by"
+msgstr "Sortera efter"
+
+msgid "Owner:"
+msgstr "Ägare:"
+
+msgid "P&odcasts"
+msgstr "P&oddsändningar"
+
+msgid "Password:"
+msgstr "Lösenord:"
+
+msgid "Paste"
+msgstr "Klistra in"
+
+msgid "Paste to the selected folder"
+msgstr "Klistra in i markerad mapp"
+
+msgid "Path"
+msgstr "Sökväg"
+
+msgid "Pattern:"
+msgstr "Mönster:"
+
+msgid "Pause"
+msgstr "Paus"
+
+msgid "Pictures"
+msgstr "Bilder"
+
+msgid "Play"
+msgstr "Spela upp"
+
+msgid "Play All"
+msgstr "Spela upp alla"
+
+msgid "Play Count"
+msgstr "Antal spelningar"
+
+msgid "Play Lists"
+msgstr "Spellistor"
+
+msgid "Play all songs"
+msgstr "Spela upp alla låtar"
+
+msgid "Play current selected songs"
+msgstr "Spela upp markerade låtar"
+
+msgid "Play current selected tracks"
+msgstr "Spela upp markerade spår"
+
+msgid "Play or pause current track in Playlist"
+msgstr "Spela upp eller pausa aktuellt spår i spellistan"
+
+msgid "Play the album tracks"
+msgstr "Spela upp albumspåren"
+
+msgid "Play the selected folder"
+msgstr "Spela upp markerad mapp"
+
+msgid "PlayLists"
+msgstr "Spellistor"
+
+msgid "Playback"
+msgstr "Uppspelning"
+
+msgid "Playlist"
+msgstr "Spellista"
+
+msgid "Playlist:"
+msgstr "Spellista:"
+
+msgid "Please confirm"
+msgstr "Bekräfta"
+
+msgid "Please enter the label name"
+msgstr "Ange etikettens namn"
+
+msgid "Please enter the search term"
+msgstr "Ange söktermen"
+
+msgid "Podcasts"
+msgstr "Poddsändningar"
+
+msgid "Portuguese"
+msgstr "Portugisiska"
+
+msgid "Preferences"
+msgstr "Inställningar"
+
+msgid "Preset:"
+msgstr "Förval:"
+
+msgid "Prev Track"
+msgstr "Föreg spår"
+
+msgid "Print"
+msgstr "Skriv ut"
+
+msgid "Properties"
+msgstr "Egenskaper"
+
+msgid "Quality:"
+msgstr "Kvalitet:"
+
+msgid "R&andomize"
+msgstr "Slu&mpmässigt"
+
+msgid "Radio"
+msgstr "Radio"
+
+msgid "Random"
+msgstr "Slumpmässigt"
+
+msgid "Rating"
+msgstr "Betyg"
+
+msgid "Rating:"
+msgstr "Betyg:"
+
+msgid "Ratings"
+msgstr "Betyg"
+
+msgid "Record"
+msgstr "Spela in"
+
+msgid "Remove"
+msgstr "Ta bort"
+
+msgid "Remove all songs from PlayList"
+msgstr "Ta bort alla låtar från spellistan"
+
+msgid "Remove selected songs"
+msgstr "Ta bort markerade låtar"
+
+msgid "Remove selected songs from PlayList"
+msgstr "Ta bort markerade låtar från spellista"
+
+msgid "Remove the selected folder"
+msgstr "Ta bort markerad mapp"
+
+msgid "Rename"
+msgstr "Byt namn"
+
+msgid "Rename Playlist"
+msgstr "Byt namn på spellista"
+
+msgid "Rename files"
+msgstr "Byt namn på filer"
+
+msgid "Rename the selected folder"
+msgstr "Byt namn på markerad mapp"
+
+msgid "Repeat Mode: "
+msgstr "Upprepningsläge: "
+
+msgid "Right"
+msgstr "Höger"
+
+msgid "Save Layout"
+msgstr "Spara layout"
+
+msgid "Save Playlist"
+msgstr "Spara spellista"
+
+msgid "Save playlist on close"
+msgstr "Spara spellista vid stängning"
+
+msgid "Save the selected tracks to PlayList"
+msgstr "Spara markerade spår till spellista"
+
+msgid "Save to PlayList"
+msgstr "Spara till spellista"
+
+msgid "Save to Playlist"
+msgstr "Spara till spellista"
+
+msgid "Save to:"
+msgstr "Spara till:"
+
+msgid "Search"
+msgstr "Sök"
+
+msgid "Search Album"
+msgstr "Sök efter album"
+
+msgid "Search Artist"
+msgstr "Sök efter artist"
+
+msgid "Search Track"
+msgstr "Sök efter spår"
+
+msgid "Search in the library"
+msgstr "Sök i biblioteket"
+
+msgid "Search the album in the library"
+msgstr "Sök efter albumet i biblioteket"
+
+msgid "Search the artist in the library"
+msgstr "Sök efter artisten i biblioteket"
+
+msgid "Search:"
+msgstr "Sök:"
+
+msgid "Search: "
+msgstr "Sök: "
+
+msgid "Select"
+msgstr "Välj"
+
+msgid "Select Columns"
+msgstr "Välj kolumner"
+
+msgid "Select a folder"
+msgstr "Välj en mapp"
+
+msgid "Select cover location"
+msgstr "Välj plats för omslagsbild"
+
+msgid "Select destination directory"
+msgstr "Välj målkatalog"
+
+msgid "Select the cover image file from disk"
+msgstr "Välj omslagsbild från disk"
+
+msgid "Shoutcast"
+msgstr "Shoutcast"
+
+msgid "Show Notifications"
+msgstr "Visa notifieringar"
+
+msgid "Show splash screen"
+msgstr "Visa startskärm"
+
+msgid "Show the equalizer"
+msgstr "Visa equalizern"
+
+msgid "Similar Artists"
+msgstr "Liknande artister"
+
+msgid "Similar Tracks"
+msgstr "Liknande spår"
+
+msgid "Size"
+msgstr "Storlek"
+
+msgid "Smart Mode: "
+msgstr "Smart läge: "
+
+msgid "Songs Editor"
+msgstr "Låtredigerare"
+
+msgid "Sort By"
+msgstr "Sortera efter"
+
+msgid "Spanish"
+msgstr "Spanska"
+
+msgid "Split tracks"
+msgstr "Dela spår"
+
+msgid "Start minimized"
+msgstr "Starta minimerad"
+
+msgid "Static playlists"
+msgstr "Statiska spellistor"
+
+msgid "Stations"
+msgstr "Stationer"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Stop"
+msgstr "Stoppa"
+
+msgid "Stop playing"
+msgstr "Stoppa uppspelning"
+
+msgid "Sumary:"
+msgstr "Sammandrag:"
+
+msgid "Text Search"
+msgstr "Textsökning"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Title:"
+msgstr "Titel:"
+
+msgid "Track"
+msgstr "Spår"
+
+msgid "Track:"
+msgstr "Spår:"
+
+msgid "Tracks"
+msgstr "Spår"
+
+msgid "Tracks:"
+msgstr "Spår:"
+
+msgid "UnNamed"
+msgstr "Namnlös"
+
+msgid "Unknown"
+msgstr "Okänd"
+
+msgid "Update"
+msgstr "Uppdatera"
+
+msgid "Update Covers"
+msgstr "Uppdatera omslagsbilder"
+
+msgid "Update P&odcasts"
+msgstr "Uppdatera p&oddsändningar"
+
+msgid "Update library on application start"
+msgstr "Uppdatera biblioteket vid programstart"
+
+msgid "Url:"
+msgstr "Url:"
+
+msgid "User Defined"
+msgstr "Användardefinierad"
+
+msgid "Username:"
+msgstr "Användarnamn:"
+
+msgid "Very High"
+msgstr "Mycket hög"
+
+msgid "Very Low"
+msgstr "Mycket låg"
+
+msgid "Volume"
+msgstr "Volym"
+
+msgid "Vumeters"
+msgstr "Vu-mätare"
+
+msgid "Week"
+msgstr "Vecka"
+
+msgid "Weeks"
+msgstr "Veckor"
+
+msgid "Welcome to guayadeque "
+msgstr "Välkommen till guayadeque "
+
+msgid "Where:"
+msgstr "Var:"
+
+msgid "Word: "
+msgstr "Ord: "
+
+msgid "Year"
+msgstr "År"
+
+msgid "Year Desc."
+msgstr "År Beskr."
+
+msgid "Year:"
+msgstr "År:"
+
+msgid "Years"
+msgstr "År"
+
+msgid "after"
+msgstr "efter"
+
+msgid "album"
+msgstr "album"
+
+msgid "at least"
+msgstr "som minst"
+
+msgid "at most"
+msgstr "som mest"
+
+msgid "before"
+msgstr "före"
+
+msgid "days"
+msgstr "dygn"
+
+msgid "dir"
+msgstr "katalog"
+
+msgid "dirs"
+msgstr "kataloger"
+
+msgid "equals"
+msgstr "lika med"
+
+msgid "file"
+msgstr "fil"
+
+msgid "files"
+msgstr "filer"
+
+msgid "hours"
+msgstr "timmar"
+
+msgid "minutes"
+msgstr "minuter"
+
+msgid "months"
+msgstr "månader"
+
+msgid "podcast"
+msgstr "poddsändning"
+
+msgid "podcasts"
+msgstr "poddsändningar"
+
+msgid "seconds"
+msgstr "sekunder"
+
+msgid "station"
+msgstr "station"
+
+msgid "stations"
+msgstr "stationer"
+
+msgid "track"
+msgstr "spår"
+
+msgid "tracks"
+msgstr "spår"
+
+msgid "weeks"
+msgstr "veckor"
+
+msgid "when playlist is empty"
+msgstr "när spellistan är tom"
