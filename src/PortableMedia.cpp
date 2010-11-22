@@ -731,9 +731,7 @@ wxString guPortableMediaLibPanel::GetPlaylistPath( void )
 // -------------------------------------------------------------------------------- //
 void guPortableMediaLibPanel::OnPortableLibraryUpdate( wxCommandEvent &event )
 {
-    event.SetId( ID_MENU_UPDATE_LIBRARY );
-    event.SetClientData( ( void * ) this );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    DoUpdate();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -890,7 +888,13 @@ void guPortableMediaLibPanel::UpdatePlaylists( void )
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
-
+// -------------------------------------------------------------------------------- //
+void guPortableMediaLibPanel::DoUpdate( const bool forced )
+{
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, forced ? ID_MENU_UPDATE_LIBRARYFORCED : ID_MENU_UPDATE_LIBRARY );
+    event.SetClientData( this );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
 
 
 // -------------------------------------------------------------------------------- //

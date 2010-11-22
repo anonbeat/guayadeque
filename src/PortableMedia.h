@@ -331,8 +331,25 @@ class guPortableMediaLibPanel : public guLibPanel
     virtual wxString            GetCoverName( void );
     virtual int                 GetCoverMaxSize( void );
 
+    virtual void                DoUpdate( const bool forced = false );
+
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibPanel *, guPortableMediaPanelArray );
+
+#ifdef WITH_LIBGPOD_SUPPORT
+// -------------------------------------------------------------------------------- //
+class guIpodMediaLibPanel : public guPortableMediaLibPanel
+{
+  protected :
+     Itdb_iTunesDB * m_iPodDb;
+
+  public :
+    guIpodMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, Itdb_iTunesDB * ipoddb );
+    ~guIpodMediaLibPanel();
+
+    Itdb_iTunesDB * IpodDb( void ) { return m_iPodDb; }
+};
+#endif
 
 // -------------------------------------------------------------------------------- //
 class guPortableMediaAlbumBrowser : public guAlbumBrowser
@@ -409,19 +426,6 @@ class guPortableMediaViewCtrl
 
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaViewCtrl *, guPortableMediaViewCtrlArray );
-
-// -------------------------------------------------------------------------------- //
-class guIpodMediaLibPanel : public guPortableMediaLibPanel
-{
-  protected :
-     Itdb_iTunesDB * m_iPodDb;
-
-  public :
-    guIpodMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, Itdb_iTunesDB * ipoddb );
-    ~guIpodMediaLibPanel();
-
-    Itdb_iTunesDB * IpodDb( void ) { return m_iPodDb; }
-};
 
 #endif
 // -------------------------------------------------------------------------------- //

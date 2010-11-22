@@ -3024,9 +3024,7 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
 
                 CreatePortablePlayersMenu( m_PortableDevicesMenu );
 
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARYFORCED );
-                event.SetClientData( ( void * ) PortableMediaLibPanel );
-                AddPendingEvent( event );
+                PortableMediaLibPanel->DoUpdate( true );
 
             }
             else
@@ -3050,9 +3048,7 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
 
                     CreatePortablePlayersMenu( m_PortableDevicesMenu );
 
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_LIBRARYFORCED );
-                    event.SetClientData( ( void * ) PortableMediaLibPanel );
-                    AddPendingEvent( event );
+                    PortableMediaLibPanel->DoUpdate( true );
                 }
             }
             else if( CmdId == 18 )      // Its the Playlists panel
