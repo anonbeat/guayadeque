@@ -122,6 +122,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_ViewPlayerVumeters = NULL;
     m_LocationPanel = NULL;
     m_CoverPanel = NULL;
+    m_ViewMainShowCover = NULL;
 
     //
     wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );

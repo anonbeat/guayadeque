@@ -341,13 +341,16 @@ WX_DEFINE_ARRAY_PTR( guPortableMediaLibPanel *, guPortableMediaPanelArray );
 class guIpodMediaLibPanel : public guPortableMediaLibPanel
 {
   protected :
-     Itdb_iTunesDB * m_iPodDb;
+     Itdb_iTunesDB *            m_iPodDb;
 
   public :
     guIpodMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, Itdb_iTunesDB * ipoddb );
     ~guIpodMediaLibPanel();
 
-    Itdb_iTunesDB * IpodDb( void ) { return m_iPodDb; }
+    Itdb_iTunesDB *             iPodDb( void ) { return m_iPodDb; }
+
+    virtual void                DoUpdate( const bool forced = false );
+
 };
 #endif
 

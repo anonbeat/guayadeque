@@ -1589,7 +1589,32 @@ int guListCheckOptionsDialog::GetSelectedItems( wxArrayInt &selection )
 }
 
 
+#ifdef WITH_LIBGPOD_SUPPORT
 
+// -------------------------------------------------------------------------------- //
+// guIpodMediaLibPanel
+// -------------------------------------------------------------------------------- //
+guIpodMediaLibPanel::guIpodMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, Itdb_iTunesDB * ipoddb ) :
+    guPortableMediaLibPanel( parent, db, playerpanel )
+{
+    m_iPodDb = ipoddb;
+}
+
+// -------------------------------------------------------------------------------- //
+guIpodMediaLibPanel::~guIpodMediaLibPanel()
+{
+    if( m_iPodDb )
+    {
+        itdb_free( m_iPodDb );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodMediaLibPanel::DoUpdate( const bool forced )
+{
+}
+
+#endif
 
 // -------------------------------------------------------------------------------- //
 // guPortableMediaViewCtrl
@@ -1637,9 +1662,40 @@ guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * pa
 {
     if( !m_LibPanel )
     {
-        m_LibPanel = new guPortableMediaLibPanel( parent, m_Db, playerpanel, wxT( "PMD" ) );
+#ifdef WITH_LIBGPOD_SUPPORT
+        GError * Error = NULL;
+        Itdb_iTunesDB * iPodDb = itdb_parse( m_MediaDevice->MountPath().mb_str( wxConvFile ), &Error );
+        if( iPodDb )
+        {
+            guLogMessage( wxT( "Detected an Ipod with %i tracks and %i playlists" ),  itdb_tracks_number( iPodDb ), itdb_playlists_number( iPodDb ) );
+            Itdb_Device * iPodDevice = iPodDb->device;
+            if( iPodDevice )
+            {
+                //guLogMessage( wxT( "Artwork support : %i" ), itdb_device_supports_artwork( iPodDevice ) );
+                const Itdb_IpodInfo * iPodInfo = itdb_device_get_ipod_info( iPodDevice );
+                if( iPodInfo )
+                {
+                    guLogMessage( wxT( "Model Number    : %s" ), wxString( iPodInfo->model_number, wxConvUTF8 ).c_str() );
+                    guLogMessage( wxT( "Capacity        : %.0f" ), iPodInfo->capacity );
+                    guLogMessage( wxT( "Model Name      : %s" ), wxString( itdb_info_get_ipod_model_name_string( iPodInfo->ipod_model ), wxConvUTF8 ).c_str() );
+                    guLogMessage( wxT( "Generation      : %s" ), wxString( itdb_info_get_ipod_generation_string( iPodInfo->ipod_generation ), wxConvUTF8 ).c_str() );
+                }
+
+            }
+            m_LibPanel = new guIpodMediaLibPanel( parent, m_Db, playerpanel, iPodDb );
+        }
+        else
+#endif
+        {
+            m_LibPanel = new guPortableMediaLibPanel( parent, m_Db, playerpanel, wxT( "PMD" ) );
+        }
         m_LibPanel->SetPortableMediaDevice( m_MediaDevice );
         m_LibPanel->SetBaseCommand( m_BaseCommand );
+
+        if( Error )
+        {
+            g_error_free( Error );
+        }
     }
     m_VisiblePanels |= guPANEL_MAIN_LIBRARY;
     return m_LibPanel;
