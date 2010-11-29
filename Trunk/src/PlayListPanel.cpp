@@ -1193,8 +1193,8 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
+            guUpdateImages( Tracks, Images );
+            guUpdateLyrics( Tracks, Lyrics );
             m_PLTracksListBox->ReloadItems();
 
             // Update the track in database, playlist, etc

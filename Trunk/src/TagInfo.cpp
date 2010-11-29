@@ -1849,6 +1849,17 @@ bool guTagSetPicture( const wxString &filename, wxImage * picture )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guTagSetPicture( const wxString &filename, const wxString &imagefile )
+{
+    wxImage Image( imagefile );
+    if( Image.IsOk() )
+    {
+        return guTagSetPicture( filename, &Image );
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 wxString guTagGetLyrics( const wxString &filename )
 {
     wxString RetVal = wxEmptyString;
@@ -1881,7 +1892,7 @@ bool guTagSetLyrics( const wxString &filename, wxString &lyrics )
 }
 
 // -------------------------------------------------------------------------------- //
-void UpdateImages( const guTrackArray &songs, const guImagePtrArray &images )
+void guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images )
 {
     int Index;
     int Count = images.Count();
@@ -1892,7 +1903,7 @@ void UpdateImages( const guTrackArray &songs, const guImagePtrArray &images )
 }
 
 // -------------------------------------------------------------------------------- //
-void UpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics )
+void guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics )
 {
     int Index;
     int Count = lyrics.Count();

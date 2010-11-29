@@ -334,10 +334,12 @@ class guDbLibrary : public guDb
     const wxString      GetArtistName( const int ArtistId );
     int                 GetArtistId( wxString &ArtistName, bool Create = true );
     int                 GetAlbumArtistId( wxString &albumartist, bool create = true );
+    int                 AddCoverImage( const wxImage &image );
     int                 AddCoverFile( const wxString &coverfile, const wxString &coverhash = wxEmptyString );
     void                UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash );
     int                 FindCoverFile( const wxString &DirName );
     int                 SetAlbumCover( const int AlbumId, const wxString & CoverPath, const wxString &coverhash = wxEmptyString );
+    int                 SetAlbumCover( const int AlbumId, const wxImage &image );
     bool                GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath );
     int                 GetAlbumCoverId( const int AlbumId );
 
@@ -350,7 +352,8 @@ class guDbLibrary : public guDb
     int                 GetLabelId( int * LabelId, wxString &LabelName );
     int                 PathExists( const wxString &path );
     int                 GetPathId( wxString &PathValue );
-    int                 UpdateSong( const bool allowrating = false );
+    int                 UpdateSong( const guTrack &track, const bool allowrating = false );
+    int                 UpdateSong( const bool allowrating = false ) { return UpdateSong( m_CurSong, allowrating ); }
     int                 AddFiles( const wxArrayString &files );
 
     void                GetGenres( guListItems * Genres, const bool FullList = false );
@@ -386,7 +389,7 @@ class guDbLibrary : public guDb
     void                SetSongsOrder( const guTRACKS_ORDER order );
     guTRACKS_ORDER      GetSongsOrder( void ) const;
     bool                GetSongsOrderDesc( void ) const;
-    void                UpdateSongs( guTrackArray * Songs );
+    void                UpdateSongs( const guTrackArray * Songs );
     void                UpdateTracksWithValue( guTrackArray * tracks, const int fieldid, void * value );
     void                UpdateTrackLength( const int trackid, const int length );
     void                UpdateTrackBitRate( const int trackid, const int bitrate );

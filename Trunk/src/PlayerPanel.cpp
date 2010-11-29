@@ -1824,21 +1824,18 @@ void guPlayerPanel::OnMediaPlayStarted( void )
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_RADIO;
     }
-    else if( ( CoverImage = guTagGetPicture( m_MediaSong.m_FileName ) ) )
-    {
-        m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
-        m_MediaSong.m_CoverPath = m_MediaSong.m_FileName;
-    }
     else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
     {
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_PODCAST;
     }
+    else if( ( CoverImage = guTagGetPicture( m_MediaSong.m_FileName ) ) )
+    {
+        m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
+        m_MediaSong.m_CoverPath = m_MediaSong.m_FileName;
+    }
     else if( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO )
     {
-        // TODO
-        // From MainFrame get the Jamendo Db And search for the cover
-        // If not there download it and ask for a message once its downloaded...
         guJamendoPanel * JamendoPanel = m_MainFrame->GetJamendoPanel();
         if( JamendoPanel )
         {
@@ -1849,9 +1846,6 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     }
     else if( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE )
     {
-        // TODO
-        // From MainFrame get the Jamendo Db And search for the cover
-        // If not there download it and ask for a message once its downloaded...
         guMagnatunePanel * MagnatunePanel = m_MainFrame->GetMagnatunePanel();
         if( MagnatunePanel )
         {
@@ -1860,6 +1854,9 @@ void guPlayerPanel::OnMediaPlayStarted( void )
                                                         m_MediaSong.m_AlbumName, m_MediaSong.m_CoverPath );
             m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
         }
+    }
+    else if( m_MediaSong.m_Type == guTRACK_TYPE_IPOD )
+    {
     }
     else if( m_MediaSong.m_CoverId )
     {

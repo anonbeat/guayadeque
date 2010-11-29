@@ -284,10 +284,11 @@ class guImagePtrArray;
 // -------------------------------------------------------------------------------- //
 wxImage *   guTagGetPicture( const wxString &filename );
 bool        guTagSetPicture( const wxString &filename, wxImage * picture );
+bool        guTagSetPicture( const wxString &filename, const wxString &imagefile );
 wxString    guTagGetLyrics( const wxString &filename );
-bool        guTagSetPicture( const wxString &filename, wxString &lyrics );
-void        UpdateImages( const guTrackArray &songs, const guImagePtrArray &images );
-void        UpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics );
-
+bool        guTagSetLyrics( const wxString &filename, wxString &lyrics );
+void        guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images );
+void        guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics );
+bool        guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal );
 #endif
 // -------------------------------------------------------------------------------- //

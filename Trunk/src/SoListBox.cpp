@@ -537,9 +537,12 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         {
             Menu->AppendSeparator();
 
-            MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
-            Menu->Append( MenuItem );
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY )
+            {
+                MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
+                MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+                Menu->Append( MenuItem );
+            }
 
             MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_DRIVE, _( "Delete from Drive" ), _( "Remove the current selected tracks from drive" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );

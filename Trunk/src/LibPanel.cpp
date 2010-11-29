@@ -1032,6 +1032,44 @@ void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::DoEditTracks( guTrackArray &tracks, guImagePtrArray &images, wxArrayString &lyrics )
+{
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &tracks, &images, &lyrics );
+    if( TrackEditor )
+    {
+        if( TrackEditor->ShowModal() == wxID_OK )
+        {
+            UpdateTracks( tracks );
+            UpdateTracksImages( tracks, images );
+            UpdateTracksLyrics( tracks, lyrics );
+
+            // Update the track in database, playlist, etc
+            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &tracks );
+        }
+        guImagePtrArrayClean( &images );
+        TrackEditor->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::UpdateTracks( const guTrackArray &tracks )
+{
+    m_Db->UpdateSongs( &tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images )
+{
+    guUpdateImages( tracks, images );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics )
+{
+    guUpdateLyrics( tracks, lyrics );
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
@@ -1041,21 +1079,7 @@ void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-    if( TrackEditor )
-    {
-        if( TrackEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-        }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
-    }
+    DoEditTracks( Tracks, Images, Lyrics );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1175,21 +1199,7 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-    if( TrackEditor )
-    {
-        if( TrackEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-        }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
-    }
+    DoEditTracks( Tracks, Images, Lyrics );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1289,14 +1299,16 @@ void guLibPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
                 wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
                 if( CoverImage )
                 {
-                    SetAlbumCover( Albums[ 0 ], AlbumPath, CoverImage );
-                    //AlbumListCtrl->ClearSelection();
-                    //Db->SetAlFilters( wxArrayInt() );
-                    ReloadAlbums( false );
-                    //guLogMessage( wxT( "Cover downloaded ok\n" ) );
-                    if( CoverEditor->EmbedToFiles() )
+                    if( SetAlbumCover( Albums[ 0 ], AlbumPath, CoverImage ) )
                     {
-                        OnAlbumEmbedCoverClicked( event );
+                        //AlbumListCtrl->ClearSelection();
+                        //Db->SetAlFilters( wxArrayInt() );
+                        ReloadAlbums( false );
+                        //guLogMessage( wxT( "Cover downloaded ok\n" ) );
+                        if( CoverEditor->EmbedToFiles() )
+                        {
+                            OnAlbumEmbedCoverClicked( event );
+                        }
                     }
                 }
             }
@@ -1330,11 +1342,29 @@ void guLibPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
                     }
                 }
             }
-            delete SelCoverFile;
+            SelCoverFile->Destroy();
         }
     }
 }
 
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::DoDeleteAlbumCover( const int albumid )
+{
+    int CoverId = m_Db->GetAlbumCoverId( albumid );
+    if( CoverId > 0 )
+    {
+        wxString CoverPath = m_Db->GetCoverPath( CoverId );
+        if( !CoverPath.IsEmpty() )
+        {
+            if( !wxRemoveFile( CoverPath ) )
+            {
+                guLogError( wxT( "Could not remove the cover file '%s'" ), CoverPath.c_str() );
+            }
+        }
+    }
+    m_Db->SetAlbumCover( albumid, wxEmptyString );
+}
 
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumDeleteCoverClicked( wxCommandEvent &event )
@@ -1346,19 +1376,9 @@ void guLibPanel::OnAlbumDeleteCoverClicked( wxCommandEvent &event )
                           _( "Confirm" ),
                           wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
         {
-            int CoverId = m_Db->GetAlbumCoverId( Albums[ 0 ] );
-            if( CoverId > 0 )
-            {
-                wxString CoverPath = m_Db->GetCoverPath( CoverId );
-                wxASSERT( !CoverPath.IsEmpty() );
-                if( !wxRemoveFile( CoverPath ) )
-                {
-                    guLogError( wxT( "Could not remove the cover file '%s'" ), CoverPath.c_str() );
-                }
-            }
-            m_Db->SetAlbumCover( Albums[ 0 ], wxEmptyString );
+            DoDeleteAlbumCover( Albums[ 0 ] );
+
             ReloadAlbums( false );
-            //bool guDbLibrary::GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath )
         }
     }
 }
@@ -1559,21 +1579,7 @@ void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-    if( TrackEditor )
-    {
-        if( TrackEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-        }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
-    }
+    DoEditTracks( Tracks, Images, Lyrics );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1758,7 +1764,8 @@ void guLibPanel::OnSongSetField( wxCommandEvent &event )
         }
     }
 
-    m_Db->UpdateSongs( &Tracks );
+    UpdateTracks( Tracks );
+
     ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
 }
 
@@ -1881,7 +1888,8 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
                 }
             }
 
-            m_Db->UpdateSongs( &Tracks );
+            UpdateTracks( Tracks );
+
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         FieldEditor->Destroy();
@@ -2223,21 +2231,7 @@ void guLibPanel::OnYearListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-    if( TrackEditor )
-    {
-        if( TrackEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-        }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
-    }
+    DoEditTracks( Tracks, Images, Lyrics );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2337,21 +2331,7 @@ void guLibPanel::OnRatingListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-    if( TrackEditor )
-    {
-        if( TrackEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-        }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
-    }
+    DoEditTracks( Tracks, Images, Lyrics );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2451,21 +2431,7 @@ void guLibPanel::OnPlayCountListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-    if( TrackEditor )
-    {
-        if( TrackEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-        }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
-    }
+    DoEditTracks( Tracks, Images, Lyrics );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2568,21 +2534,7 @@ void guLibPanel::OnComposerListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-    if( TrackEditor )
-    {
-        if( TrackEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-        }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
-    }
+    DoEditTracks( Tracks, Images, Lyrics );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2678,21 +2630,7 @@ void guLibPanel::OnAlbumArtistListEditTracksClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
-    if( TrackEditor )
-    {
-        if( TrackEditor->ShowModal() == wxID_OK )
-        {
-            m_Db->UpdateSongs( &Tracks );
-            UpdateImages( Tracks, Images );
-            UpdateLyrics( Tracks, Lyrics );
-
-            // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-        }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
-    }
+    DoEditTracks( Tracks, Images, Lyrics );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -1191,6 +1191,55 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::AddCoverImage( const wxImage &image )
+{
+  guLogMessage( wxT( "guDbLibrary::AddCoverImage" ) );
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  int CoverId = 0;
+  wxString CoverFile;
+
+  wxImage MidImg = image;
+  MidImg.Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
+  if( MidImg.IsOk() )
+  {
+    wxImage TinyImg = image;
+    TinyImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
+    if( TinyImg.IsOk() )
+    {
+      wxSQLite3Statement stmt = m_Db->PrepareStatement( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_midsize, cover_hash ) "
+                             "VALUES( NULL, '', ?, ?, '' );" ) );
+      try {
+        stmt.Bind( 1, TinyImg.GetData(), TinyImg.GetWidth() * TinyImg.GetHeight() * 3 );
+        stmt.Bind( 2, MidImg.GetData(), MidImg.GetWidth() * MidImg.GetHeight() * 3 );
+
+        guLogMessage( wxT( "AddCoverFile: %s" ), stmt.GetSQL().c_str() );
+        stmt.ExecuteQuery();
+      }
+      catch( wxSQLite3Exception& e )
+      {
+        guLogError( wxT( "%u: %s" ),  e.GetErrorCode(), e.GetMessage().c_str() );
+      }
+      catch( ... )
+      {
+        guLogError( wxT( "Error inserting the image" ) );
+      }
+
+      CoverId = GetLastRowId();
+    }
+    else
+    {
+      guLogError( wxT( "Error resizing to 38" ) );
+    }
+  }
+  else
+  {
+    guLogError( wxT( "Error resizing to 100" ) );
+  }
+  return CoverId;
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash )
 {
   wxString query;
@@ -1341,12 +1390,15 @@ wxString guDbLibrary::GetCoverPath( const int CoverId )
     if( dbRes.NextRow() )
     {
       RetVal = dbRes.GetString( 0 );
-      // Check if the cover have been updated
-      guMD5 md5;
-      wxString CoverHash = md5.MD5File( RetVal );
-      if( CoverHash != dbRes.GetString( 1 ) )
+      if( !RetVal.IsEmpty() )
       {
-          UpdateCoverFile( CoverId, RetVal, CoverHash );
+          // Check if the cover have been updated
+          guMD5 md5;
+          wxString CoverHash = md5.MD5File( RetVal );
+          if( CoverHash != dbRes.GetString( 1 ) )
+          {
+              UpdateCoverFile( CoverId, RetVal, CoverHash );
+          }
       }
     }
     LastCoverId = CoverId;
@@ -1356,6 +1408,39 @@ wxString guDbLibrary::GetCoverPath( const int CoverId )
   }
   else
     RetVal = LastCoverPath;
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::SetAlbumCover( const int AlbumId, const wxImage &image )
+{
+  long CoverId = 0;
+  wxSQLite3ResultSet dbRes;
+  wxString query;
+  wxString FileName;
+  int RetVal = 0;
+
+  CoverId = GetAlbumCoverId( AlbumId );
+
+  if( CoverId > 0 )
+  {
+    query = wxString::Format( wxT( "DELETE FROM covers WHERE cover_id = %i;" ), CoverId );
+    ExecuteUpdate( query );
+  }
+
+  if( image.IsOk() )
+  {
+    CoverId = AddCoverImage( image );
+    query = wxString::Format( wxT( "UPDATE songs SET song_coverid = %i WHERE song_albumid = %i;" ), CoverId, AlbumId );
+    RetVal = ExecuteUpdate( query );
+  }
+  else
+  {
+    query = wxString::Format( wxT( "UPDATE songs SET song_coverid = 0 WHERE song_albumid = %i;" ), AlbumId );
+    ExecuteUpdate( query );
+    CoverId = 0;
+  }
+
   return RetVal;
 }
 
@@ -1381,6 +1466,7 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, co
 
   if( !CoverPath.IsEmpty() )
   {
+    guLogMessage( wxT( "Setting new cover '%s'" ), CoverPath.c_str() );
     CoverId = AddCoverFile( CoverPath, coverhash );
 
     query = wxString::Format( wxT( "UPDATE songs SET song_coverid = %i WHERE song_albumid = %i;" ), CoverId, AlbumId );
@@ -1747,7 +1833,7 @@ void guDbLibrary::UpdateTrackBitRate( const int trackid, const int bitrate )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateSongs( guTrackArray * Songs )
+void guDbLibrary::UpdateSongs( const guTrackArray * Songs )
 {
   guTrack * Song;
   int index;
@@ -1882,7 +1968,7 @@ void guDbLibrary::UpdateSongs( guTrackArray * Songs )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::UpdateSong( const bool allowrating )
+int guDbLibrary::UpdateSong( const guTrack &track, const bool allowrating )
 {
   wxString query;
 //  printf( "UpdateSong\n" );
@@ -1902,32 +1988,32 @@ int guDbLibrary::UpdateSong( const bool allowrating )
                                  "song_length = %u, song_offset = %u, song_bitrate = %u, "
                                  "song_rating = %i, "
                                  "song_filesize = %u WHERE song_id = %u;" ),
-            escape_query_str( m_CurSong.m_SongName ).c_str(),
-            m_CurSong.m_GenreId,
-            escape_query_str( m_CurSong.m_GenreName ).c_str(),
-            m_CurSong.m_ArtistId,
-            escape_query_str( m_CurSong.m_ArtistName ).c_str(),
-            m_CurSong.m_AlbumArtistId,
-            escape_query_str( m_CurSong.m_AlbumArtist ).c_str(),
-            m_CurSong.m_AlbumId,
-            escape_query_str( m_CurSong.m_AlbumName ).c_str(),
-            m_CurSong.m_PathId,
-            escape_query_str( m_CurSong.m_Path ).c_str(),
-            escape_query_str( m_CurSong.m_FileName ).c_str(),
-            escape_query_str( m_CurSong.m_FileName.AfterLast( '.' ) ).c_str(),
-            m_CurSong.m_Number,
-            m_CurSong.m_Year,
-            m_CurSong.m_ComposerId, //escape_query_str( m_CurSong.m_Composer ).c_str(),
-            escape_query_str( m_CurSong.m_Composer ).c_str(),
-            escape_query_str( m_CurSong.m_Comments ).c_str(),
-            m_CurSong.m_CoverId,
-            escape_query_str( m_CurSong.m_Disk ).c_str(),
-            m_CurSong.m_Length,
-            0, //m_CurSong.m_Offset,
-            m_CurSong.m_Bitrate,
-            m_CurSong.m_Rating,
-            m_CurSong.m_FileSize,
-            m_CurSong.m_SongId );
+            escape_query_str( track.m_SongName ).c_str(),
+            track.m_GenreId,
+            escape_query_str( track.m_GenreName ).c_str(),
+            track.m_ArtistId,
+            escape_query_str( track.m_ArtistName ).c_str(),
+            track.m_AlbumArtistId,
+            escape_query_str( track.m_AlbumArtist ).c_str(),
+            track.m_AlbumId,
+            escape_query_str( track.m_AlbumName ).c_str(),
+            track.m_PathId,
+            escape_query_str( track.m_Path ).c_str(),
+            escape_query_str( track.m_FileName ).c_str(),
+            escape_query_str( track.m_FileName.AfterLast( '.' ) ).c_str(),
+            track.m_Number,
+            track.m_Year,
+            track.m_ComposerId, //escape_query_str( track.m_Composer ).c_str(),
+            escape_query_str( track.m_Composer ).c_str(),
+            escape_query_str( track.m_Comments ).c_str(),
+            track.m_CoverId,
+            escape_query_str( track.m_Disk ).c_str(),
+            track.m_Length,
+            0, //track.m_Offset,
+            track.m_Bitrate,
+            track.m_Rating,
+            track.m_FileSize,
+            track.m_SongId );
   }
   else
   {
@@ -1943,33 +2029,33 @@ int guDbLibrary::UpdateSong( const bool allowrating )
                                  "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
                                  "song_length = %u, song_offset = %u, song_bitrate = %u, "
                                  "song_filesize = %u WHERE song_id = %u;" ),
-            escape_query_str( m_CurSong.m_SongName ).c_str(),
-            m_CurSong.m_GenreId,
-            escape_query_str( m_CurSong.m_GenreName ).c_str(),
-            m_CurSong.m_ArtistId,
-            escape_query_str( m_CurSong.m_ArtistName ).c_str(),
-            m_CurSong.m_AlbumArtistId,
-            escape_query_str( m_CurSong.m_AlbumArtist ).c_str(),
-            m_CurSong.m_AlbumId,
-            escape_query_str( m_CurSong.m_AlbumName ).c_str(),
-            m_CurSong.m_PathId,
-            escape_query_str( m_CurSong.m_Path ).c_str(),
-            escape_query_str( m_CurSong.m_FileName ).c_str(),
-            escape_query_str( m_CurSong.m_FileName.AfterLast( '.' ) ).c_str(),
-            m_CurSong.m_Number,
-            m_CurSong.m_Year,
-            m_CurSong.m_ComposerId, //escape_query_str( m_CurSong.m_Composer ).c_str(),
-            escape_query_str( m_CurSong.m_Composer ).c_str(),
-            escape_query_str( m_CurSong.m_Comments ).c_str(),
-            m_CurSong.m_CoverId,
-            escape_query_str( m_CurSong.m_Disk ).c_str(),
-            m_CurSong.m_Length,
-            0, //m_CurSong.m_Offset,
-            m_CurSong.m_Bitrate,
-            m_CurSong.m_FileSize,
-            m_CurSong.m_SongId );
+            escape_query_str( track.m_SongName ).c_str(),
+            track.m_GenreId,
+            escape_query_str( track.m_GenreName ).c_str(),
+            track.m_ArtistId,
+            escape_query_str( track.m_ArtistName ).c_str(),
+            track.m_AlbumArtistId,
+            escape_query_str( track.m_AlbumArtist ).c_str(),
+            track.m_AlbumId,
+            escape_query_str( track.m_AlbumName ).c_str(),
+            track.m_PathId,
+            escape_query_str( track.m_Path ).c_str(),
+            escape_query_str( track.m_FileName ).c_str(),
+            escape_query_str( track.m_FileName.AfterLast( '.' ) ).c_str(),
+            track.m_Number,
+            track.m_Year,
+            track.m_ComposerId, //escape_query_str( track.m_Composer ).c_str(),
+            escape_query_str( track.m_Composer ).c_str(),
+            escape_query_str( track.m_Comments ).c_str(),
+            track.m_CoverId,
+            escape_query_str( track.m_Disk ).c_str(),
+            track.m_Length,
+            0, //track.m_Offset,
+            track.m_Bitrate,
+            track.m_FileSize,
+            track.m_SongId );
   }
-
+  //guLogMessage( wxT( "%s" ), query.c_str() );
   return ExecuteUpdate( query );
 }
 
