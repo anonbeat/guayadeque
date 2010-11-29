@@ -129,38 +129,6 @@ guTranscodeThread::~guTranscodeThread()
         gst_element_set_state( m_Pipeline, GST_STATE_NULL );
         gst_object_unref( GST_OBJECT( m_Pipeline ) );
     }
-
-    guTagInfo * InTagInfo = guGetTagInfoHandler( m_Source );
-    if( InTagInfo )
-    {
-        InTagInfo->Read();
-        guTagInfo * OutTagInfo = guGetTagInfoHandler( m_Target );
-        if( OutTagInfo )
-        {
-            OutTagInfo->m_TrackName = InTagInfo->m_TrackName;
-            OutTagInfo->m_GenreName = InTagInfo->m_GenreName;
-            OutTagInfo->m_ArtistName = InTagInfo->m_ArtistName;
-            OutTagInfo->m_AlbumArtist = InTagInfo->m_AlbumArtist;
-            OutTagInfo->m_AlbumName = InTagInfo->m_AlbumName;
-            OutTagInfo->m_Composer = InTagInfo->m_Composer;
-            OutTagInfo->m_Comments = InTagInfo->m_Comments;
-            OutTagInfo->m_Track = InTagInfo->m_Track;
-            OutTagInfo->m_Year = InTagInfo->m_Year;
-            OutTagInfo->m_Disk = InTagInfo->m_Disk;
-            OutTagInfo->m_TrackLabels = InTagInfo->m_TrackLabels;
-            OutTagInfo->m_TrackLabelsStr = InTagInfo->m_TrackLabelsStr;
-            OutTagInfo->m_ArtistLabels = InTagInfo->m_ArtistLabels;
-            OutTagInfo->m_ArtistLabelsStr = InTagInfo->m_ArtistLabelsStr;
-            OutTagInfo->m_AlbumLabels = InTagInfo->m_AlbumLabels;
-            OutTagInfo->m_AlbumLabelsStr = InTagInfo->m_AlbumLabelsStr;
-            OutTagInfo->m_Compilation = InTagInfo->m_Compilation;
-            OutTagInfo->Write();
-
-            delete OutTagInfo;
-        }
-
-        delete InTagInfo;
-    }
 }
 
 int guTranscodeMp3Bitrates[] = {
@@ -481,6 +449,39 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
 // -------------------------------------------------------------------------------- //
 void guTranscodeThread::Stop( void )
 {
+
+    guTagInfo * InTagInfo = guGetTagInfoHandler( m_Source );
+    if( InTagInfo )
+    {
+        InTagInfo->Read();
+        guTagInfo * OutTagInfo = guGetTagInfoHandler( m_Target );
+        if( OutTagInfo )
+        {
+            OutTagInfo->m_TrackName = InTagInfo->m_TrackName;
+            OutTagInfo->m_GenreName = InTagInfo->m_GenreName;
+            OutTagInfo->m_ArtistName = InTagInfo->m_ArtistName;
+            OutTagInfo->m_AlbumArtist = InTagInfo->m_AlbumArtist;
+            OutTagInfo->m_AlbumName = InTagInfo->m_AlbumName;
+            OutTagInfo->m_Composer = InTagInfo->m_Composer;
+            OutTagInfo->m_Comments = InTagInfo->m_Comments;
+            OutTagInfo->m_Track = InTagInfo->m_Track;
+            OutTagInfo->m_Year = InTagInfo->m_Year;
+            OutTagInfo->m_Disk = InTagInfo->m_Disk;
+            OutTagInfo->m_TrackLabels = InTagInfo->m_TrackLabels;
+            OutTagInfo->m_TrackLabelsStr = InTagInfo->m_TrackLabelsStr;
+            OutTagInfo->m_ArtistLabels = InTagInfo->m_ArtistLabels;
+            OutTagInfo->m_ArtistLabelsStr = InTagInfo->m_ArtistLabelsStr;
+            OutTagInfo->m_AlbumLabels = InTagInfo->m_AlbumLabels;
+            OutTagInfo->m_AlbumLabelsStr = InTagInfo->m_AlbumLabelsStr;
+            OutTagInfo->m_Compilation = InTagInfo->m_Compilation;
+            OutTagInfo->Write();
+
+            delete OutTagInfo;
+        }
+
+        delete InTagInfo;
+    }
+
     m_Running = false;
 }
 

@@ -1357,8 +1357,8 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Songs );
-            UpdateImages( Songs, Images );
-            UpdateLyrics( Songs, Lyrics );
+            guUpdateImages( Songs, Images );
+            guUpdateLyrics( Songs, Lyrics );
 
             m_PlayerPanel->UpdatedTracks( &Songs );
         }

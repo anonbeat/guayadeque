@@ -1718,8 +1718,8 @@ void guFileBrowser::OnFolderEditTracks( wxCommandEvent &event )
             if( TrackEditor->ShowModal() == wxID_OK )
             {
                 m_Db->UpdateSongs( &Tracks );
-                UpdateImages( Tracks, Images );
-                UpdateLyrics( Tracks, Lyrics );
+                guUpdateImages( Tracks, Images );
+                guUpdateLyrics( Tracks, Lyrics );
 
                 // Update the track in database, playlist, etc
                 ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
@@ -1861,8 +1861,8 @@ void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
             if( TrackEditor->ShowModal() == wxID_OK )
             {
                 m_Db->UpdateSongs( &Tracks );
-                UpdateImages( Tracks, Images );
-                UpdateLyrics( Tracks, Lyrics );
+                guUpdateImages( Tracks, Images );
+                guUpdateLyrics( Tracks, Lyrics );
 
                 // Update the track in database, playlist, etc
                 ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );

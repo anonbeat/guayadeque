@@ -172,11 +172,11 @@ guPlayList::~guPlayList()
 
         if( Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) )
         {
-
             Count = m_Items.Count();
             for( Index = 0; Index < Count; Index++ )
             {
-                Songs.Add( m_Items[ Index ].m_FileName );
+                if( m_Items[ Index ].m_Type < guTRACK_TYPE_IPOD )
+                    Songs.Add( m_Items[ Index ].m_FileName );
             }
             Config->WriteNum( wxT( "PlayerCurItem" ), m_CurItem, wxT( "General" ) );
         }
@@ -1662,8 +1662,8 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Songs );
-            UpdateImages( Songs, Images );
-            UpdateLyrics( Songs, Lyrics );
+            guUpdateImages( Songs, Images );
+            guUpdateLyrics( Songs, Lyrics );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Songs );

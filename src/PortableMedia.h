@@ -51,7 +51,11 @@
 #include <wx/statbox.h>
 #include <wx/dialog.h>
 
+#ifdef WITH_LIBGPOD_SUPPORT
+
 #include <gpod/itdb.h>
+
+#endif
 
 #define guPORTABLEMEDIA_AUDIO_FORMAT_MP3        ( 1 << 0 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_OGG        ( 1 << 1 )
@@ -75,6 +79,11 @@
 enum guPortableMediaTranscodeScope {
     guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED,
     guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS
+};
+
+enum guPortableMediaType {
+    guPORTABLEMEDIA_TYPE_OTHER,
+    guPORTABLEMEDIA_TYPE_IPOD
 };
 
 
@@ -122,6 +131,7 @@ class guPortableMediaDevice
     //
     wxString        m_Id;
 
+    int             m_Type;
     wxString        m_Pattern;
     int             m_AudioFormats;
     int             m_TranscodeFormat;
@@ -145,6 +155,8 @@ class guPortableMediaDevice
 
     wxString                MountPath( void ) { return m_Mount->GetMountPath(); }
     wxString                Id( void ) { return m_Id; }
+    int                     Type( void ) { return m_Type; }
+    void                    SetType( const int type ) { m_Type = type; }
     wxString                DevicePath( void ) { return m_Mount->GetName() + wxT( "-" ) + m_Id; }
     wxString                DeviceName( void ) { return m_Mount->GetName(); }
     double                  DiskSize( void ) { return m_DiskSize.ToDouble(); }
@@ -314,7 +326,7 @@ class guPortableMediaLibPanel : public guLibPanel
     virtual wxString            GetPlaylistPath( void );
 
     guPortableMediaDevice *     PortableMediaDevice( void ) { return m_PortableMediaDevice; }
-    void                        SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice ) { m_PortableMediaDevice = portablemediadevice; }
+    virtual void                SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice ) { m_PortableMediaDevice = portablemediadevice; }
 
     int                         BaseCommand( void ) { return m_BaseCommand; }
 
@@ -333,23 +345,89 @@ class guPortableMediaLibPanel : public guLibPanel
 
     virtual void                DoUpdate( const bool forced = false );
 
+    virtual int                 CopyTo( const guTrack * track ) { return wxNOT_FOUND; }
+
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibPanel *, guPortableMediaPanelArray );
 
 #ifdef WITH_LIBGPOD_SUPPORT
+
+class guIpodMediaLibPanel;
+
+// -------------------------------------------------------------------------------- //
+class guIpodLibrary : public guPortableMediaLibrary
+{
+  protected :
+//    void                        UpdatePlayListFie( const int plid );
+
+  public :
+    guIpodLibrary( const wxString &libpath, guPortableMediaDevice * portablemediadevice );
+    ~guIpodLibrary();
+
+//    virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
+//    virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
+//    virtual int         AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
+//    virtual void        DeletePlayList( const int plid );
+
+    int GetAlbumId( const wxString &albumname, const wxString &artist, const wxString &albumartist, const wxString &disk );
+
+};
+
+// -------------------------------------------------------------------------------- //
+class guIpodLibraryUpdate : public wxThread
+{
+  protected :
+    guIpodMediaLibPanel * m_iPodPanel;
+
+  public :
+    guIpodLibraryUpdate( guIpodMediaLibPanel * libpanel );
+    ~guIpodLibraryUpdate();
+
+    ExitCode Entry();
+
+    guIpodMediaLibPanel *   LibPanel( void ) { return m_iPodPanel; }
+};
+
+
 // -------------------------------------------------------------------------------- //
 class guIpodMediaLibPanel : public guPortableMediaLibPanel
 {
   protected :
      Itdb_iTunesDB *            m_iPodDb;
+     guIpodLibraryUpdate *      m_UpdateThread;
+
+    virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+
+    virtual void                UpdateTracks( const guTrackArray &tracks );
+
+    virtual void                DoDeleteAlbumCover( const int albumid );
+
+    virtual bool                SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg );
+    virtual bool                SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath );
+
+    virtual void                DeleteTracks( guTrackArray * tracks );
 
   public :
-    guIpodMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, Itdb_iTunesDB * ipoddb );
+    guIpodMediaLibPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, Itdb_iTunesDB * ipoddb );
     ~guIpodMediaLibPanel();
 
     Itdb_iTunesDB *             iPodDb( void ) { return m_iPodDb; }
 
     virtual void                DoUpdate( const bool forced = false );
+    virtual void                UpdateFinished( void );
+
+    virtual void                SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice );
+
+    virtual wxArrayString       GetLibraryPaths( void );
+
+    virtual int                 CopyTo( const guTrack * track );
+
+    Itdb_Track *                iPodFindTrack( const wxString &filename );
+    Itdb_Track *                iPodFindTrack( const wxString &artist, const wxString &albumartist, const wxString &album, const wxString &title );
+
+    void                        iPodRemoveTrack( const wxString &filename );
+    void                        iPodRemoveTrack( Itdb_Track * track );
+    bool                        iPodFlush( void ) { return itdb_write( m_iPodDb, NULL ); }
 
 };
 #endif
@@ -426,6 +504,8 @@ class guPortableMediaViewCtrl
     wxString                         DeviceName( void ) { return m_MediaDevice->DeviceName(); }
     bool                             IsMount( GMount * mount ) { return m_MediaDevice->IsMount( mount ); }
     wxString                         IconString( void ) { return m_MediaDevice->IconString(); }
+
+    int                              CopyTo( const guTrack * track ) { return m_LibPanel ? m_LibPanel->CopyTo( track ) : wxNOT_FOUND; }
 
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaViewCtrl *, guPortableMediaViewCtrlArray );

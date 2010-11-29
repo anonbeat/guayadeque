@@ -79,12 +79,15 @@ enum guLibraryElement {
 #define     guLIBRARY_CONTEXTMENU_COPY_TO           ( 1 << 3 )
 #define     guLIBRARY_CONTEXTMENU_LINKS             ( 1 << 4 )
 #define     guLIBRARY_CONTEXTMENU_COMMANDS          ( 1 << 5 )
+#define     guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY ( 1 << 6 )
 
 #define     guLIBRARY_CONTEXTMENU_DEFAULT           ( guLIBRARY_CONTEXTMENU_EDIT_TRACKS | guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS |\
                                                     guLIBRARY_CONTEXTMENU_EMBED_COVERS | guLIBRARY_CONTEXTMENU_COPY_TO |\
-                                                    guLIBRARY_CONTEXTMENU_LINKS | guLIBRARY_CONTEXTMENU_COMMANDS )
+                                                    guLIBRARY_CONTEXTMENU_LINKS | guLIBRARY_CONTEXTMENU_COMMANDS |\
+                                                    guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY )
 
 class guLibPanel;
+class guImagePtrArray;
 
 // -------------------------------------------------------------------------------- //
 class guLibPanelDropTarget : public wxFileDropTarget
@@ -179,6 +182,8 @@ class guLibPanel : public wxPanel
     virtual void OnAlbumEmbedCoverClicked( wxCommandEvent &event );
     virtual void OnAlbumCopyToClicked( wxCommandEvent &event );
 
+    virtual void DoDeleteAlbumCover( const int albumid );
+
     // YearsListBoxEvents
     virtual void OnYearListSelected( wxListEvent &event );
     virtual void OnYearListActivated( wxListEvent &event );
@@ -270,6 +275,12 @@ class guLibPanel : public wxPanel
     virtual bool OnDropFiles( const wxArrayString &filenames );
 
     virtual void UpdatePlaylists( void );
+
+    virtual void DoEditTracks( guTrackArray &tracks, guImagePtrArray &images, wxArrayString &lyrics );
+
+    virtual void UpdateTracks( const guTrackArray &tracks );
+    virtual void UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images );
+    virtual void UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics );
 
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );

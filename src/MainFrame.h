@@ -384,6 +384,7 @@ class guMainFrame : public wxFrame
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                                     ~guMainFrame();
+    guDbLibrary *                   GetDb( void ) { return m_Db; }
     void                            DoLibraryClean( wxCommandEvent &event );
     void                            LibraryUpdated( wxCommandEvent &event );
     void                            OnJamendoUpdated( wxCommandEvent &event );
