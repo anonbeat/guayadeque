@@ -1426,10 +1426,19 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
       GstElement * converter = gst_element_factory_make( "audioconvert", "pb_audioconvert" );
       if( IsValidElement( converter ) )
       {
-        m_ReplayGain = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
-        if( IsValidElement( m_ReplayGain ) )
+        if( m_Player->m_ReplayGainMode )
         {
-          g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode, NULL );
+            m_ReplayGain = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
+        }
+        else
+            m_ReplayGain = NULL;
+
+        if( !m_Player->m_ReplayGainMode || IsValidElement( m_ReplayGain ) )
+        {
+            if( m_ReplayGain )
+            {
+                g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode - 1, NULL );
+            }
           //g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", gdouble( 6 ), NULL );
 
           m_FaderVolume = gst_element_factory_make( "volume", "fader_volume" );
@@ -1470,8 +1479,16 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
                                         //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
                                         //g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
-                                        gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
-                                        gst_element_link_many( m_Tee, queue, converter, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
+                                        if( m_ReplayGain )
+                                        {
+                                            gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
+                                            gst_element_link_many( m_Tee, queue, converter, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
+                                        }
+                                        else
+                                        {
+                                            gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
+                                            gst_element_link_many( m_Tee, queue, converter, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
+                                        }
 
                                         GstPad * pad = gst_element_get_pad( m_Tee, "sink" );
                                         if( GST_IS_PAD( pad ) )

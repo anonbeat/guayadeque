@@ -694,7 +694,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	PlayReplayLabel->Wrap( -1 );
 	PlayReplaySizer->Add( PlayReplayLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	wxString m_PlayReplayModeChoiceChoices[] = { _("Track"), _("Album") };
+	wxString m_PlayReplayModeChoiceChoices[] = { _( "Disabled" ), _("Track"), _("Album") };
 	int m_PlayReplayModeChoiceNChoices = sizeof( m_PlayReplayModeChoiceChoices ) / sizeof( wxString );
 	m_PlayReplayModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PlayReplayModeChoiceNChoices, m_PlayReplayModeChoiceChoices, 0 );
 	m_PlayReplayModeChoice->SetSelection( m_Config->ReadNum( wxT( "ReplayGainMode"), 0, wxT( "General" ) ) );

@@ -1,4 +1,5 @@
 
+  * Added the option to disable replay gain in preferences
   * Added the possibility to show the current track cover in a window
   * Fixed a bug in default podcast directory creation
   * Added usb mass storage devices support
