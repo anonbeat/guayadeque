@@ -1761,10 +1761,6 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                 {
                     if( CoverAlbumIds.Index( Track.m_AlbumId ) == wxNOT_FOUND )
                     {
-                        guLogMessage( wxT( "Adding Cover : %s - %s - %s" ),
-                            wxString( iPodTrack->artist, wxConvUTF8 ).c_str(),
-                            wxString( iPodTrack->album, wxConvUTF8 ).c_str(),
-                            wxString( iPodTrack->title, wxConvUTF8 ).c_str() );
                         CoveriPodTracks.Add( iPodTrack );
                         CoverAlbumIds.Add( Track.m_AlbumId );
                     }
@@ -1843,7 +1839,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
         while( !TestDestroy() && Playlists )
         {
             Itdb_Playlist * Playlist = ( Itdb_Playlist * ) Playlists->data;
-            if( Playlist && !Playlist->podcastflag )
+            if( Playlist && !Playlist->podcastflag && !Playlist->type )
             {
                 wxString PlaylistName = wxString( Playlist->name, wxConvUTF8 );
 

@@ -1193,7 +1193,7 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::AddCoverImage( const wxImage &image )
 {
-  guLogMessage( wxT( "guDbLibrary::AddCoverImage" ) );
+  //guLogMessage( wxT( "guDbLibrary::AddCoverImage" ) );
   wxString query;
   wxSQLite3ResultSet dbRes;
   int CoverId = 0;
@@ -1213,7 +1213,7 @@ int guDbLibrary::AddCoverImage( const wxImage &image )
         stmt.Bind( 1, TinyImg.GetData(), TinyImg.GetWidth() * TinyImg.GetHeight() * 3 );
         stmt.Bind( 2, MidImg.GetData(), MidImg.GetWidth() * MidImg.GetHeight() * 3 );
 
-        guLogMessage( wxT( "AddCoverFile: %s" ), stmt.GetSQL().c_str() );
+        //guLogMessage( wxT( "AddCoverFile: %s" ), stmt.GetSQL().c_str() );
         stmt.ExecuteQuery();
       }
       catch( wxSQLite3Exception& e )
@@ -3518,22 +3518,15 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         }
         else
         {
-            if( dbNames.Find( wxT( "tags" ) ) == wxNOT_FOUND )
-                dbNames += wxT( ", tags " );
-            if( dbNames.Find( wxT( "settags" ) ) == wxNOT_FOUND )
-                dbNames += wxT( ", settags " );
-            if( !dbSets.IsEmpty() )
-            {
-                dbSets += wxT( "AND " );
-            }
-            dbSets  += wxT( "( ( song_id = settag_songid OR "
-                                "song_artistid = settag_artistid OR "
-                                "song_albumid = settag_albumid ) AND "
-                                "settag_tagid = tag_id ) " );
-
-            query += wxT( "( tag_name " ) +
-                     DynPLStringOption( playlist->m_Filters[ index ].m_Option,
-                                        playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+            wxString TagNameFilter = wxT( "SELECT tag_id FROM tags WHERE tag_name " ) +
+                                        DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                            playlist->m_Filters[ index ].m_Text );
+            query += wxT( "(song_artistid IN (SELECT settag_artistid FROM settags WHERE settag_tagid IN (" );
+            query += TagNameFilter + wxT( ") and settag_artistid > 0 )) OR " );
+            query += wxT( "(song_albumid IN (SELECT settag_albumid FROM settags WHERE settag_tagid IN (" );
+            query += TagNameFilter + wxT( ") and settag_albumid > 0 )) OR " );
+            query += wxT( "(song_id IN (SELECT settag_songid FROM settags WHERE settag_tagid IN (" );
+            query += TagNameFilter + wxT( ") and settag_songid > 0 ))" );
         }
         break;
 
