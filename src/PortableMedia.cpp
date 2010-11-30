@@ -2485,10 +2485,12 @@ guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * pa
         m_LibPanel->SetPortableMediaDevice( m_MediaDevice );
         m_LibPanel->SetBaseCommand( m_BaseCommand );
 
+#ifdef WITH_LIBGPOD_SUPPORT
         if( Error )
         {
             g_error_free( Error );
         }
+#endif
     }
     m_VisiblePanels |= guPANEL_MAIN_LIBRARY;
     return m_LibPanel;
