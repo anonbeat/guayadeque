@@ -3521,12 +3521,12 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
             wxString TagNameFilter = wxT( "SELECT tag_id FROM tags WHERE tag_name " ) +
                                         DynPLStringOption( playlist->m_Filters[ index ].m_Option,
                                             playlist->m_Filters[ index ].m_Text );
-            query += wxT( "(song_artistid IN (SELECT settag_artistid FROM settags WHERE settag_tagid IN (" );
+            query += wxT( "((song_artistid IN (SELECT settag_artistid FROM settags WHERE settag_tagid IN (" );
             query += TagNameFilter + wxT( ") and settag_artistid > 0 )) OR " );
             query += wxT( "(song_albumid IN (SELECT settag_albumid FROM settags WHERE settag_tagid IN (" );
             query += TagNameFilter + wxT( ") and settag_albumid > 0 )) OR " );
             query += wxT( "(song_id IN (SELECT settag_songid FROM settags WHERE settag_tagid IN (" );
-            query += TagNameFilter + wxT( ") and settag_songid > 0 ))" );
+            query += TagNameFilter + wxT( ") and settag_songid > 0 )))" );
         }
         break;
 
