@@ -3389,6 +3389,32 @@ const wxString DynPLStringOption( int option, const wxString &text )
 }
 
 // -------------------------------------------------------------------------------- //
+const wxString DynPLLabelOption( int option, const wxString &text )
+{
+  wxString TextParam = text;
+  escape_query_str( &TextParam );
+  wxString FmtStr;
+  switch( option )
+  {
+    case guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS : // not contains
+    case guDYNAMIC_FILTER_OPTION_STRING_CONTAINS : // contains
+      FmtStr = wxT( "LIKE '%%%s%%'" );
+      break;
+    case guDYNAMIC_FILTER_OPTION_STRING_IS : // IS
+    case guDYNAMIC_FILTER_OPTION_STRING_ISNOT : // IS NOT
+      FmtStr = wxT( "= '%s'" );
+      break;
+    case guDYNAMIC_FILTER_OPTION_STRING_START_WITH : // START WITH
+      FmtStr = wxT( "LIKE '%s%%'" );
+      break;
+    case guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH : // ENDS WITH
+      FmtStr = wxT( "LIKE '%%%s'" );
+      break;
+  }
+  return wxString::Format( FmtStr, TextParam.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //
 const wxString DynPLYearOption( const int option, const int year )
 {
   wxString FmtStr;
@@ -3519,13 +3545,31 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         else
         {
             wxString TagNameFilter = wxT( "SELECT tag_id FROM tags WHERE tag_name " ) +
-                                        DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                        DynPLLabelOption( playlist->m_Filters[ index ].m_Option,
                                             playlist->m_Filters[ index ].m_Text );
-            query += wxT( "((song_artistid IN (SELECT settag_artistid FROM settags WHERE settag_tagid IN (" );
-            query += TagNameFilter + wxT( ") and settag_artistid > 0 )) OR " );
-            query += wxT( "(song_albumid IN (SELECT settag_albumid FROM settags WHERE settag_tagid IN (" );
-            query += TagNameFilter + wxT( ") and settag_albumid > 0 )) OR " );
-            query += wxT( "(song_id IN (SELECT settag_songid FROM settags WHERE settag_tagid IN (" );
+            wxString Option;
+            wxString Condition;
+            switch( playlist->m_Filters[ index ].m_Option )
+            {
+                case guDYNAMIC_FILTER_OPTION_STRING_CONTAINS : // contains
+                case guDYNAMIC_FILTER_OPTION_STRING_IS : // IS
+                case guDYNAMIC_FILTER_OPTION_STRING_START_WITH : // START WITH
+                case guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH : // ENDS WITH
+                  Option = wxT( "IN " );
+                  Condition = wxT( "OR " );
+                  break;
+
+                case guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS : // not contains
+                case guDYNAMIC_FILTER_OPTION_STRING_ISNOT : // IS NOT
+                  Option = wxT( "NOT IN " );
+                  Condition = wxT( "AND " );
+                  break;
+            }
+            query += wxT( "((song_artistid " ) + Option + wxT( "(SELECT settag_artistid FROM settags WHERE settag_tagid IN (" );
+            query += TagNameFilter + wxT( ") and settag_artistid > 0 )) " ) + Condition;
+            query += wxT( "(song_albumid " ) + Option + wxT( "(SELECT settag_albumid FROM settags WHERE settag_tagid IN (" );
+            query += TagNameFilter + wxT( ") and settag_albumid > 0 )) " ) + Condition;
+            query += wxT( "(song_id ") + Option + wxT( "(SELECT settag_songid FROM settags WHERE settag_tagid IN (" );
             query += TagNameFilter + wxT( ") and settag_songid > 0 )))" );
         }
         break;
