@@ -146,6 +146,7 @@ class guAlbumBrowser : public wxPanel
     wxTimer                         m_RefreshTimer;
     wxArrayString                   m_DynFilterArray;
     guDynPlayList                   m_DynFilter;
+    int                             m_ContextMenuFlags;
 
 
     // GUI
@@ -188,6 +189,11 @@ class guAlbumBrowser : public wxPanel
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guAlbumBrowser();
+
+    int                             GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
+    void                            SetContextMenuFlags( const int flags ) { m_ContextMenuFlags = flags; }
+
+    virtual void                    CreateContextMenu( wxMenu * Menu ) {};
 
     void RefreshCount( void )
     {
