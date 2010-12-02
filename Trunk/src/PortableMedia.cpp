@@ -519,7 +519,7 @@ guPortableMediaLibrary::~guPortableMediaLibrary()
 }
 
 // -------------------------------------------------------------------------------- //
-void guPortableMediaLibrary::UpdatePlayListFie( const int plid )
+void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
 {
     int PlayListFormats = m_PortableMediaDevice->PlaylistFormats();
     if( PlayListFormats )
@@ -553,7 +553,7 @@ void guPortableMediaLibrary::UpdatePlayListFie( const int plid )
         if( FileName.Normalize() )
         {
             guTrackArray Tracks;
-            GetPlayListSongs( plid, GUPLAYLIST_STATIC, &Tracks, NULL, NULL );
+            GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
             guPlayListFile PlayListFile;
             PlayListFile.SetName( FileName.GetFullPath() );
             int Index;
@@ -567,35 +567,6 @@ void guPortableMediaLibrary::UpdatePlayListFie( const int plid )
             PlayListFile.Save( FileName.GetFullPath() );
         }
     }
-}
-
-// -------------------------------------------------------------------------------- //
-int guPortableMediaLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks )
-{
-    int PLId = guDbLibrary::CreateStaticPlayList( name, tracks );
-
-    UpdatePlayListFie( PLId );
-
-    return PLId;
-}
-
-// -------------------------------------------------------------------------------- //
-int guPortableMediaLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &tracks )
-{
-    int Result = guDbLibrary::UpdateStaticPlayList( plid, tracks );
-
-    UpdatePlayListFie( plid );
-
-    return Result;
-}
-
-// -------------------------------------------------------------------------------- //
-int guPortableMediaLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks )
-{
-    int Result = guDbLibrary::AppendStaticPlayList( plid, tracks );
-    UpdatePlayListFie( plid );
-
-    return Result;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1083,26 +1054,26 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	NameLabel = new wxStaticText( this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	NameLabel->Wrap( -1 );
 	NameLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
-	PMFlexSizer->Add( NameLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	PMFlexSizer->Add( NameLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 );
 
 	m_NameText = new wxStaticText( this, wxID_ANY, mediadevice->DeviceName(), wxDefaultPosition, wxDefaultSize, 0 );
 	m_NameText->Wrap( -1 );
-	PMFlexSizer->Add( m_NameText, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxTOP, 5 );
+	PMFlexSizer->Add( m_NameText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxTOP, 5 );
 
 	MountPathLabel = new wxStaticText( this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	MountPathLabel->Wrap( -1 );
 	MountPathLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
-	PMFlexSizer->Add( MountPathLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxBOTTOM, 5 );
+	PMFlexSizer->Add( MountPathLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5 );
 
 	m_MountPathText = new wxStaticText( this, wxID_ANY, mediadevice->MountPath(), wxDefaultPosition, wxDefaultSize, 0 );
 	m_MountPathText->Wrap( -1 );
-	PMFlexSizer->Add( m_MountPathText, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	PMFlexSizer->Add( m_MountPathText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
 
 	UsedLabel = new wxStaticText( this, wxID_ANY, _("Used:"), wxDefaultPosition, wxDefaultSize, 0 );
 	UsedLabel->Wrap( -1 );
 	PMFlexSizer->Add( UsedLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxRIGHT|wxBOTTOM, 5 );
 
-	m_UsedGauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL );
+	m_UsedGauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1, 17 ), wxGA_HORIZONTAL );
 	m_UsedGauge->SetValue( ( m_PortableMediaDevice->DiskSize() - m_PortableMediaDevice->DiskFree() ) * double( 100 ) / m_PortableMediaDevice->DiskSize() );
 	PMFlexSizer->Add( m_UsedGauge, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 	//guLogMessage( wxT( "Disk %.0f free of %.0f" ), m_PortableMediaDevice->DiskFree(), m_PortableMediaDevice->DiskSize() );
@@ -1266,7 +1237,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMFlexSizer->Fit( PMCoversPanel );
 	PMNotebook->AddPage( PMCoversPanel, _("Covers"), false );
 
-	PMBoxSizer->Add( PMNotebook, 1, wxEXPAND | wxALL, 5 );
+	PMBoxSizer->Add( PMNotebook, 1, wxEXPAND | wxLEFT|wxRIGHT|wxBOTTOM, 5 );
 
 	MainSizer->Add( PMBoxSizer, 1, wxEXPAND|wxALL, 5 );
 

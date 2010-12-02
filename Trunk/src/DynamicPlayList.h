@@ -170,6 +170,7 @@ class guDynPlayList
     wxString ToString( void );
     void     FromString( const wxString &playlist );
 };
+WX_DECLARE_OBJARRAY(guDynPlayList, guDynPlayListArray);
 
 // -------------------------------------------------------------------------------- //
 class guDynPlayListEditor : public wxDialog

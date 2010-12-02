@@ -58,7 +58,7 @@ WX_DEFINE_OBJARRAY(guAlbumItems);
 WX_DEFINE_OBJARRAY(guCoverInfos);
 WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 
-#define GU_CURRENT_DBVERSION    "20"
+#define GU_CURRENT_DBVERSION    "21"
 
 // -------------------------------------------------------------------------------- //
 // Various functions
@@ -595,7 +595,7 @@ bool guDbLibrary::CheckDbVersion( void )
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS song_addedtime_desc ON songs( song_addedtime DESC,song_album,song_disk,song_albumid,song_number )" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS tags( tag_id INTEGER PRIMARY KEY AUTOINCREMENT, tag_name VARCHAR COLLATE NOCASE );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_id' on tags (tag_id ASC);" ) );
+      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_id' on tags (tag_id ASC);" ) );
       query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'tag_name' on tags (tag_name ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS settags( settag_tagid INTEGER, settag_artistid INTEGER, settag_albumid INTEGER, settag_songid INTEGER );" ) );
@@ -606,8 +606,9 @@ bool guDbLibrary::CheckDbVersion( void )
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name VARCHAR COLLATE NOCASE, "
                       "playlist_type INTEGER(2), playlist_limited BOOLEAN, playlist_limitvalue INTEGER, playlist_limittype INTEGER(2), "
-                      "playlist_sorted BOOLEAN, playlist_sorttype INTEGER(2), playlist_sortdesc BOOLEAN, playlist_anyoption BOOLEAN );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'playlist_id' on playlists (playlist_id ASC);" ) );
+                      "playlist_sorted BOOLEAN, playlist_sorttype INTEGER(2), playlist_sortdesc BOOLEAN, playlist_anyoption BOOLEAN, "
+                      "playlist_path VARCHAR );" ) );
+      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'playlist_id' on playlists (playlist_id ASC);" ) );
 
       wxString querystr = wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
@@ -634,7 +635,7 @@ bool guDbLibrary::CheckDbVersion( void )
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS plsets( plset_id INTEGER PRIMARY KEY AUTOINCREMENT, plset_plid INTEGER, plset_songid INTEGER, "
                       "plset_type INTEGER(2), plset_option INTEGER(2), plset_text TEXT(255), plset_number INTEGER, plset_option2 INTEGER );" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'plset_id' on plsets (plset_id ASC);" ) );
+      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'plset_id' on plsets (plset_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'plset_plid' on plsets (plset_plid ASC);" ) );
       query.Add( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, "
                       "plset_type, plset_option, plset_text, plset_number, plset_option2 ) "
@@ -647,15 +648,15 @@ bool guDbLibrary::CheckDbVersion( void )
                       "VALUES( NULL, 3, 0, 10, 2, '', 4, 0 );" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR, cover_thumb BLOB, cover_midsize BLOB, cover_hash VARCHAR );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
+      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS audioscs( audiosc_id INTEGER PRIMARY KEY AUTOINCREMENT, audiosc_artist VARCHAR(255), audiosc_album varchar(255), audiosc_track varchar(255), audiosc_playedtime INTEGER, audiosc_source char(1), audiosc_ratting char(1), audiosc_len INTEGER, audiosc_tracknum INTEGER, audiosc_mbtrackid INTEGER );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'audiosc_id' on audioscs (audiosc_id ASC);" ) );
+      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'audiosc_id' on audioscs (audiosc_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'audiosc_playedtime' on audioscs (audiosc_playedtime ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiogenres( radiogenre_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "radiogenre_name VARCHAR COLLATE NOCASE, radiogenre_source INTEGER, radiogenre_flags INTEGER );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'radiogenre_id' on radiogenres (radiogenre_id ASC);" ) );
+      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'radiogenre_id' on radiogenres (radiogenre_id ASC);" ) );
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '60s', 0, 0 );" ) );
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '80s', 0, 0 );" ) );
       query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '90s', 0, 0 );" ) );
@@ -688,17 +689,17 @@ bool guDbLibrary::CheckDbVersion( void )
                       "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
                       "radiostation_name VARCHAR COLLATE NOCASE, radiostation_link VARCHAR, radiostation_type VARCHAR, "
                       "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
+      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_ct' on radiostations (radiostation_ct ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiolabels( radiolabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiolabel_name VARCHAR COLLATE NOCASE);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiolabel_id' on radiolabels (radiolabel_id ASC);" ) );
+      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiolabel_id' on radiolabels (radiolabel_id ASC);" ) );
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiosetlabels( radiosetlabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiosetlabel_labelid INTEGER, radiosetlabel_stationid INTEGER);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_id' on radiosetlabels (radiosetlabel_id ASC);" ) );
+      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_id' on radiosetlabels (radiosetlabel_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_labelid' on radiosetlabels (radiosetlabel_labelid ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_stationidid' on radiosetlabels (radiosetlabel_stationid ASC);" ) );
 
@@ -716,7 +717,7 @@ bool guDbLibrary::CheckDbVersion( void )
                       "podcastch_author VARCHAR, podcastch_ownername VARCHAR, podcastch_owneremail VARCHAR, "
                       "podcastch_category VARCHAR, podcastch_image VARCHAR, podcastch_downtype INTEGER, "
                       "podcastch_downtext VARCHAR, podcastch_allowdel BOOLEAN );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
+      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_title' on podcastchs(podcastch_title ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_url' on podcastchs(podcastch_url ASC);" ) );
 
@@ -726,7 +727,7 @@ bool guDbLibrary::CheckDbVersion( void )
                       "podcastitem_file VARCHAR, podcastitem_filesize INTEGER, podcastitem_length INTEGER, "
                       "podcastitem_addeddate INTEGER, podcastitem_playcount INTEGER, "
                       "podcastitem_lastplay INTEGER, podcastitem_status INTEGER );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
+      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_title' on podcastitems(podcastitem_title ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_file' on podcastitems(podcastitem_file ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_chid' on podcastitems(podcastitem_chid ASC);" ) );
@@ -747,7 +748,7 @@ bool guDbLibrary::CheckDbVersion( void )
                           "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
                           "radiostation_name VARCHAR, radiostation_link VARCHAR, radiostation_type VARCHAR, "
                           "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
-          query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
+          //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
           query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
           query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
           query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
@@ -759,7 +760,7 @@ bool guDbLibrary::CheckDbVersion( void )
     {
       query.Add( wxT( "DROP TABLE 'covers';" ) );
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS covers( cover_id INTEGER PRIMARY KEY AUTOINCREMENT, cover_path VARCHAR(1024), cover_thumb BLOB, cover_midsize BLOB, cover_hash VARCHAR( 32 ) );" ) );
-      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
+      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cover_id' on covers (cover_id ASC);" ) );
     }
 
     case 8 :
@@ -951,6 +952,27 @@ bool guDbLibrary::CheckDbVersion( void )
         query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_albumsku VARCHAR" ) );
         query.Add( wxT( "ALTER TABLE songs ADD COLUMN song_coverlink VARCHAR" ) );
       }
+    }
+
+    case 20 :
+    {
+      if( dbVer > 4 )
+      {
+        query.Add( wxT( "ALTER TABLE playlists ADD COLUMN playlist_path VARCHAR" ) );
+
+        query.Add( wxT( "DROP INDEX IF EXISTS 'tag_id' on tags (tag_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'playlist_id' on playlists (playlist_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'plset_id' on plsets (plset_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'cover_id' on covers (cover_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'audiosc_id' on audioscs (audiosc_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'radiogenre_id' on radiogenres (radiogenre_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'radiolabel_id' on radiolabels (radiolabel_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'radiosetlabel_id' on radiosetlabels (radiosetlabel_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
+      }
+
       guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
       query.Add( wxT( "DELETE FROM Version;" ) );
       query.Add( wxT( "INSERT INTO Version( version ) VALUES( " GU_CURRENT_DBVERSION " );" ) );
@@ -3150,15 +3172,14 @@ wxArrayString guDbLibrary::GetAlbumsPaths( const wxArrayInt &AlbumIds )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetStaticPlayList( const wxString &name )
+int guDbLibrary::GetStaticPlayList( const wxString &path )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
   int PLId = wxNOT_FOUND;
 
-  query = wxString::Format( wxT( "SELECT playlist_id FROM playlists WHERE playlist_name = '%s' AND playlist_type = %u LIMIT 1" ),
-          escape_query_str( name ).c_str(),
-          GUPLAYLIST_STATIC );
+  query = wxString::Format( wxT( "SELECT playlist_id FROM playlists WHERE playlist_path = '%s' AND playlist_type = 0 LIMIT 1" ),
+          escape_query_str( path ).c_str() );
 
   dbRes = ExecuteQuery( query );
 
@@ -3171,17 +3192,17 @@ int guDbLibrary::GetStaticPlayList( const wxString &name )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &songs )
+int guDbLibrary::CreateStaticPlayList( const wxString &path, const wxArrayInt &songs )
 {
   int PlayListId = 0;
   wxString query;
-  wxSQLite3ResultSet dbRes;
+//  wxSQLite3ResultSet dbRes;
 
-  query = wxString::Format( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type ) VALUES( NULL, '%s', %u );" ),
-          escape_query_str( name ).c_str(),
-          GUPLAYLIST_STATIC );
+  query = wxString::Format( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, playlist_path ) VALUES( NULL, '%s', 0, '%s' );" ),
+          escape_query_str( wxFileNameFromPath( path ).BeforeLast( wxT( '.' ) ) ).c_str(),
+          escape_query_str( path ).c_str() );
 
-  if( ExecuteUpdate( query ) == 1 )
+  if( ExecuteUpdate( query ) )
   {
       PlayListId = GetLastRowId();
   }
@@ -3204,8 +3225,35 @@ int guDbLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &s
       ExecuteUpdate( query );
       //dbRes.Finalize();
     }
+    UpdateStaticPlayListFile( PlayListId );
   }
   return PlayListId;
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::UpdateStaticPlayListFile( const int plid )
+{
+    wxString PlaylistPath = GetPlayListPath( plid );
+    if( !PlaylistPath.IsEmpty() )
+    {
+        wxFileName FileName( PlaylistPath );
+        if( FileName.Normalize() )
+        {
+            guTrackArray Tracks;
+            GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
+            guPlayListFile PlayListFile;
+            PlayListFile.SetName( FileName.GetFullPath() );
+            int Index;
+            int Count = Tracks.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                PlayListFile.AddItem( Tracks[ Index ].m_FileName,
+                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+            }
+
+            PlayListFile.Save( FileName.GetFullPath() );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3234,6 +3282,7 @@ int guDbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks 
                   tracks[ index ] );
     ExecuteUpdate( query );
   }
+  UpdateStaticPlayListFile( plid );
   return tracks.Count();
 }
 
@@ -3246,7 +3295,9 @@ int guDbLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &setids )
 
     //guLogMessage( wxT( "DelPlayListSetIds:\n%s" ), query.c_str() );
 
-    return ExecuteUpdate( query );
+    int RetVal = ExecuteUpdate( query );
+    UpdateStaticPlayListFile( plid );
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3291,7 +3342,7 @@ int guDbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * pl
                "playlist_anyoption ) " );
   query += wxString::Format( wxT( "VALUES( NULL, '%s', %u, %u, %u, %u, %u, %u, %u, %u );" ),
           escape_query_str( name ).c_str(),
-          GUPLAYLIST_DYNAMIC,
+          guPLAYLIST_TYPE_DYNAMIC,
           playlist->m_Limited, playlist->m_LimitValue, playlist->m_LimitType,
           playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc,
           playlist->m_AnyOption );
@@ -3714,11 +3765,11 @@ wxString guDbLibrary::GetPlayListQuery( const int plid )
     wxString RetVal = wxEmptyString;
     int PlType = GetPlayListType( plid );
 
-    if( PlType == GUPLAYLIST_STATIC )
+    if( PlType == guPLAYLIST_TYPE_STATIC )
     {
         RetVal = wxString::Format( wxT( "SELECT plset_songid FROM plsets WHERE plset_plid = %u" ), plid );
     }
-    else if( PlType == GUPLAYLIST_DYNAMIC )
+    else if( PlType == guPLAYLIST_TYPE_DYNAMIC )
     {
       guDynPlayList PlayList;
       GetDynamicPlayList( plid, &PlayList );
@@ -3741,7 +3792,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 
   if( plid )
   {
-    if( pltype == GUPLAYLIST_STATIC )
+    if( pltype == guPLAYLIST_TYPE_STATIC )
     {
       query = GU_TRACKS_QUERYSTR;
       query += wxString::Format( wxT( ", plsets WHERE plset_songid = song_id AND plset_plid = %u" ), plid );
@@ -3758,7 +3809,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
       }
       dbRes.Finalize();
     }
-    else //GUPLAYLIST_DYNAMIC
+    else //guPLAYLIST_TYPE_DYNAMIC
     {
       guDynPlayList PlayList;
       GetDynamicPlayList( plid, &PlayList );
@@ -3990,6 +4041,25 @@ wxString guDbLibrary::GetPlayListName( const int plid )
   wxSQLite3ResultSet dbRes;
 
   query = wxString::Format( wxT( "SELECT playlist_name FROM playlists WHERE playlist_id = %u LIMIT 1;" ), plid );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      RetVal = dbRes.GetString( 0 );
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guDbLibrary::GetPlayListPath( const int plid )
+{
+  wxString RetVal;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT playlist_path FROM playlists WHERE playlist_id = %u LIMIT 1;" ), plid );
 
   dbRes = ExecuteQuery( query );
 

@@ -271,6 +271,8 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
     count = m_TrackFiles.Count();
     if( count )
     {
+        m_Db->ExecuteUpdate( wxT( "BEGIN TRANSACTION;" ) );
+
         index = 0;
         evtmax.SetExtraLong( count );
         wxPostEvent( m_MainFrame, evtmax );
@@ -287,6 +289,8 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             evtup.SetExtraLong( index );
             wxPostEvent( m_MainFrame, evtup );
         }
+
+        m_Db->ExecuteUpdate( wxT( "COMMIT TRANSACTION;" ) );
     }
 
 
@@ -315,6 +319,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
     count = m_ImageFiles.Count();
     if( count )
     {
+        m_Db->ExecuteUpdate( wxT( "BEGIN TRANSACTION;" ) );
         index = 0;
         evtmax.SetExtraLong( count );
         wxPostEvent( m_MainFrame, evtmax );
@@ -329,11 +334,15 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             evtup.SetExtraLong( index );
             wxPostEvent( m_MainFrame, evtup );
         }
+
+        m_Db->ExecuteUpdate( wxT( "COMMIT TRANSACTION;" ) );
     }
 
     count = m_PlayListFiles.Count();
     if( count )
     {
+        m_Db->ExecuteUpdate( wxT( "BEGIN TRANSACTION;" ) );
+
         index = 0;
         evtmax.SetExtraLong( count );
         wxPostEvent( m_MainFrame, evtmax );
@@ -360,10 +369,9 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                 }
                 if( PlayListIds.Count() )
                 {
-                    if( m_Db->GetStaticPlayList( wxFileNameFromPath( m_PlayListFiles[ index ] ).BeforeLast( wxT( '.' ) ) ) == wxNOT_FOUND )
+                    if( m_Db->GetStaticPlayList( m_PlayListFiles[ index ] ) == wxNOT_FOUND )
                     {
-                        m_Db->CreateStaticPlayList( wxFileNameFromPath( m_PlayListFiles[ index ] ).BeforeLast( wxT( '.' ) ),
-                                    PlayListIds );
+                        m_Db->CreateStaticPlayList( m_PlayListFiles[ index ], PlayListIds );
 
                         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
                         evt.SetClientData( ( void * ) m_LibPanel );
@@ -376,6 +384,8 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             evtup.SetExtraLong( index );
             wxPostEvent( m_MainFrame, evtup );
         }
+
+        m_Db->ExecuteUpdate( wxT( "COMMIT TRANSACTION;" ) );
     }
 
     //

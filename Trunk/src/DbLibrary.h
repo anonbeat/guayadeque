@@ -44,8 +44,8 @@
                "FROM songs " )
 
 // PLAYLISTS
-#define GUPLAYLIST_STATIC       0
-#define GUPLAYLIST_DYNAMIC      1
+#define guPLAYLIST_TYPE_STATIC       0
+#define guPLAYLIST_TYPE_DYNAMIC      1
 
 enum guTrackType {
     guTRACK_TYPE_DB,
@@ -413,6 +413,8 @@ class guDbLibrary : public guDb
     virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
     virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
     virtual int         AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
+    virtual void        UpdateStaticPlayListFile( const int plid );
+
     int                 DelPlaylistSetIds( const int plid, const wxArrayInt &setids );
     int                 GetPlayListFiles( const int plid, wxFileDataObject * Files );
     void                GetPlayLists( guListItems * PlayLists, const int type, const wxArrayString * textfilters = NULL );
@@ -426,6 +428,7 @@ class guDbLibrary : public guDb
     virtual void        DeletePlayList( const int plid );
     void                SetPlayListName( const int plid, const wxString &plname );
     wxString            GetPlayListName( const int plid );
+    wxString            GetPlayListPath( const int plid );
     void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
     int                 CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist );
     void                UpdateDynPlayList( const int plid, const guDynPlayList * playlist );

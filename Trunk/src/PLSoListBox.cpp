@@ -95,7 +95,7 @@ void guPLSoListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         guSoListBox::CreateContextMenu( Menu );
 
-        if( m_PLTypes.Count() == 1 && m_PLTypes[ 0 ] == GUPLAYLIST_STATIC )
+        if( m_PLTypes.Count() == 1 && m_PLTypes[ 0 ] == guPLAYLIST_TYPE_STATIC )
         {
             MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE, _( "Remove from PlayList" ), _( "Delete the current selected tracks" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
@@ -121,7 +121,7 @@ void guPLSoListBox::OnKeyDown( wxKeyEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::OnDropFile( const wxString &filename )
 {
-    if( ( m_PLIds.Count() == 1 ) && m_PLTypes[ 0 ] == GUPLAYLIST_STATIC )
+    if( ( m_PLIds.Count() == 1 ) && m_PLTypes[ 0 ] == guPLAYLIST_TYPE_STATIC )
     {
         //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
         if( guIsValidAudioFile( filename ) )
@@ -145,7 +145,7 @@ void guPLSoListBox::OnDropEnd( void )
     int count;
     wxArrayInt ItemIds;
 
-    if( ( m_PLIds.Count() == 1 ) && ( m_PLTypes[ 0 ] == GUPLAYLIST_STATIC ) )
+    if( ( m_PLIds.Count() == 1 ) && ( m_PLTypes[ 0 ] == guPLAYLIST_TYPE_STATIC ) )
     {
         if( m_DropIds.Count() )
         {
@@ -183,7 +183,7 @@ void guPLSoListBox::MoveSelection( void )
     wxArrayInt   MoveIndex;
     wxArrayInt   ItemIds;
 
-    if( ( m_PLIds.Count() != 1 ) || ( m_PLTypes[ 0 ] != GUPLAYLIST_STATIC ) )
+    if( ( m_PLIds.Count() != 1 ) || ( m_PLTypes[ 0 ] != guPLAYLIST_TYPE_STATIC ) )
         return;
 
     // Copy the elements we are going to move

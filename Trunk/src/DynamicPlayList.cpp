@@ -25,6 +25,7 @@
 #include "Utils.h"
 
 WX_DEFINE_OBJARRAY(guFilterItemArray);
+WX_DEFINE_OBJARRAY(guDynPlayListArray);
 
 wxArrayString m_FilterFieldChoices;
 wxArrayString m_FilterTextOptionChoices;
@@ -329,6 +330,7 @@ void guDynPlayList::FromString( const wxString &playlist )
 {
     wxString Fields = playlist;
     int Field = 0;
+    m_Filters.Empty();
 
     while( Fields.Length() )
     {
