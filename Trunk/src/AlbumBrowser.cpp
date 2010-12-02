@@ -25,6 +25,7 @@
 #include "CoverEdit.h"
 #include "Images.h"
 #include "LabelEditor.h"
+#include "LibPanel.h"
 #include "MainApp.h"
 #include "MainFrame.h"
 #include "OnlineLinks.h"
@@ -313,6 +314,8 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
 
     if( m_AlbumBrowserItem->m_AlbumId != ( size_t ) wxNOT_FOUND )
     {
+        int ContextMenuFlags = m_AlbumBrowser->GetContextMenuFlags();
+
         MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_PLAY, _( "Play" ), _( "Play the album tracks" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu.Append( MenuItem );
@@ -330,8 +333,11 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected albums" ) );
         Menu.Append( MenuItem );
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EDITTRACKS, _( "Edit Album songs" ), _( "Edit the selected albums songs" ) );
-        Menu.Append( MenuItem );
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        {
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EDITTRACKS, _( "Edit Album songs" ), _( "Edit the selected albums songs" ) );
+            Menu.Append( MenuItem );
+        }
 
         Menu.AppendSeparator();
 
@@ -343,23 +349,29 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
         Menu.Append( MenuItem );
 
-        Menu.AppendSeparator();
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS )
+        {
+            Menu.AppendSeparator();
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_SEARCHCOVER, _( "Download Album cover" ), _( "Download cover for the current selected album" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
-        Menu.Append( MenuItem );
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_SEARCHCOVER, _( "Download Album cover" ), _( "Download cover for the current selected album" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            Menu.Append( MenuItem );
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_SELECTCOVER, _( "Select cover location" ), _( "Select the cover image file from disk" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
-        Menu.Append( MenuItem );
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_SELECTCOVER, _( "Select cover location" ), _( "Select the cover image file from disk" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            Menu.Append( MenuItem );
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_DELETECOVER, _( "Delete Album cover" ), _( "Delete the cover for the selected album" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
-        Menu.Append( MenuItem );
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_DELETECOVER, _( "Delete Album cover" ), _( "Delete the cover for the selected album" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
+            Menu.Append( MenuItem );
+        }
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EMBEDCOVER, _( "Embed Album cover" ), _( "Embed the cover to the selected album tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-        Menu.Append( MenuItem );
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EMBED_COVERS )
+        {
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EMBEDCOVER, _( "Embed Album cover" ), _( "Embed the cover to the selected album tracks" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+            Menu.Append( MenuItem );
+        }
 
         Menu.AppendSeparator();
 
@@ -367,17 +379,32 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
         Menu.Append( MenuItem );
 
-        Menu.AppendSeparator();
 
         //MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_COPYTO, _( "Copy to..." ), _( "Copy the current album to a directory or device" ) );
         //Menu.Append( MenuItem );
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-        MainFrame->CreateCopyToMenu( &Menu, ID_ALBUMBROWSER_COPYTO );
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+        {
+            Menu.AppendSeparator();
+            guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+            MainFrame->CreateCopyToMenu( &Menu, ID_ALBUMBROWSER_COPYTO );
+        }
 
-        Menu.AppendSeparator();
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
+        {
+            Menu.AppendSeparator();
 
-        AddAlbumCommands( &Menu, 1 );
-        AddOnlineLinksMenu( &Menu );
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+            {
+                AddAlbumCommands( &Menu, 1 );
+            }
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS )
+            {
+                AddOnlineLinksMenu( &Menu );
+            }
+        }
+        m_AlbumBrowser->CreateContextMenu( &Menu );
     }
 
     // Add Links and Commands
@@ -634,6 +661,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
     m_LastItemStart = wxNOT_FOUND;
     m_ItemCount = 1;
     m_BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_no_cover ) );
+    m_ContextMenuFlags = guLIBRARY_CONTEXTMENU_DEFAULT;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
