@@ -105,8 +105,8 @@ void guPlayerFilters::UpdateFilters( void )
     m_FilterPlayLists.Empty();
 
     m_FilterPlayLists.Add( new guListItem( wxNOT_FOUND, _( "All" ) ) );
-    m_Db->GetPlayLists( &m_FilterPlayLists, GUPLAYLIST_STATIC );
-    m_Db->GetPlayLists( &m_FilterPlayLists, GUPLAYLIST_DYNAMIC );
+    m_Db->GetPlayLists( &m_FilterPlayLists, guPLAYLIST_TYPE_STATIC );
+    m_Db->GetPlayLists( &m_FilterPlayLists, guPLAYLIST_TYPE_DYNAMIC );
 
     wxArrayString ChoiceItems;
     int Index;

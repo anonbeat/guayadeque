@@ -144,12 +144,16 @@ class guAlbumBrowser : public wxPanel
     unsigned int                    m_PagesCount;       // The number of pages to scroll
     wxBitmap *                      m_BlankCD;
     wxTimer                         m_RefreshTimer;
+    wxArrayString                   m_DynFilterArray;
     guDynPlayList                   m_DynFilter;
 
 
     // GUI
-    wxToggleButton *                m_FilterBtn;
-    wxBitmapButton *                m_EditFilterBtn;
+    wxBoxSizer *                    m_FilterSizer;
+    wxChoice *                      m_FilterChoice;
+    wxBitmapButton *                m_AddFilterButton;
+    wxBitmapButton *                m_DelFilterButton;
+    wxBitmapButton *                m_EditFilterButton;
     wxChoice *                      m_OrderChoice;
 	wxGridSizer *                   m_AlbumsSizer;
 	wxStaticText *                  m_NavLabel;
@@ -164,7 +168,10 @@ class guAlbumBrowser : public wxPanel
     void                            OnRefreshTimer( wxTimerEvent &event );
 
     void                            OnFilterSelected( wxCommandEvent &event );
+    void                            OnAddFilterClicked( wxCommandEvent &event );
+    void                            OnDelFilterClicked( wxCommandEvent &event );
     void                            OnEditFilterClicked( wxCommandEvent &event );
+
     void                            OnOrderSelected( wxCommandEvent &event );
     void                            OnUpdateDetails( wxCommandEvent &event );
 
@@ -184,7 +191,7 @@ class guAlbumBrowser : public wxPanel
 
     void RefreshCount( void )
     {
-        m_AlbumsCount = m_Db->GetAlbumsCount( m_FilterBtn->GetValue() ? &m_DynFilter : NULL, m_TextSearchFilter );
+        m_AlbumsCount = m_Db->GetAlbumsCount( m_FilterChoice->GetSelection() ? &m_DynFilter : NULL, m_TextSearchFilter );
         m_ItemStart = 0;
         RefreshPageCount();
     }

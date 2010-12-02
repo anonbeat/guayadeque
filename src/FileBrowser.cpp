@@ -1747,7 +1747,7 @@ void guFileBrowser::OnFolderSaveToPlayList( wxCommandEvent &event )
     if( Tracks.Count() )
     {
         guListItems PlayLists;
-        m_Db->GetPlayLists( &PlayLists,GUPLAYLIST_STATIC );
+        m_Db->GetPlayLists( &PlayLists,guPLAYLIST_TYPE_STATIC );
         guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &TrackIds, &PlayLists );
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
@@ -1890,7 +1890,7 @@ void guFileBrowser::OnItemsSaveToPlayList( wxCommandEvent &event )
     if( Tracks.Count() )
     {
         guListItems PlayLists;
-        m_Db->GetPlayLists( &PlayLists,GUPLAYLIST_STATIC );
+        m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
         guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &TrackIds, &PlayLists );
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {

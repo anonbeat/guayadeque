@@ -636,7 +636,15 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
     m_BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_no_cover ) );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_DynFilter.FromString( Config->ReadStr( wxT( "Filter" ), wxEmptyString, wxT( "AlbumBrowser" ) ) );
+
+    int FilterSelected = Config->ReadNum( wxT( "Filter" ), 0, wxT( "AlbumBrowser" ) );
+    m_DynFilterArray = Config->ReadAStr( wxT( "Filter"), wxEmptyString, wxT( "AlbumBrowserFilters") );
+
+    if( FilterSelected > ( int ) m_DynFilterArray.Count() )
+        FilterSelected = 0;
+
+    if( FilterSelected )
+        m_DynFilter.FromString( m_DynFilterArray[ FilterSelected - 1 ].AfterFirst( wxT( ':' ) ) );
 
     // GUI
 	SetMinSize( wxSize( 120, 150 ) );
@@ -644,39 +652,44 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer * FilterSizer;
-	FilterSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_FilterSizer = new wxBoxSizer( wxHORIZONTAL );
 
-//	wxString m_FilterChoiceChoices[] = { _( "Filter By" ), _("Label"), _( "Genre" ), _("Artist"), _("Year"), _("Ratting") };
-//	int m_FilterChoiceNChoices = sizeof( m_FilterChoiceChoices ) / sizeof( wxString );
-//	m_FilterChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterChoiceNChoices, m_FilterChoiceChoices, 0 );
-//	m_FilterChoice->SetSelection( 0 );
-//	FilterSizer->Add( m_FilterChoice, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
-	m_EditFilterBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_filter ), wxDefaultPosition, wxSize( 28, 28 ), wxBU_AUTODRAW );
-	m_EditFilterBtn->SetToolTip( _( "Edit filter" ) );
-	FilterSizer->Add( m_EditFilterBtn, 0, wxTOP|wxLEFT, 5 );
+	wxArrayString m_FilterNames;
+	m_FilterNames.Add( _( "All" ) );
 
-	m_FilterBtn = new wxToggleButton( this, wxID_ANY, _( "Filter" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_FilterBtn->SetValue( Config->ReadBool( wxT( "Enable" ), false, wxT( "AlbumBrowser" ) ) );
+	int Index;
+	int Count = m_DynFilterArray.Count();
+	for( Index = 0; Index < Count; Index++ )
+	{
+	    m_FilterNames.Add( unescape_configlist_str( m_DynFilterArray[ Index ].BeforeFirst( wxT( ':' ) ) ) );
+	}
 
-	m_FilterBtn->SetToolTip( _( "Toggle filter on/off" ) );
-	m_FilterBtn->Enable( m_DynFilter.m_Filters.Count() );
-	FilterSizer->Add( m_FilterBtn, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_FilterChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterNames, 0 );
+	m_FilterChoice->SetSelection( FilterSelected );
+	//m_FilterChoice->SetMinSize( wxSize( 100, -1 ) );
+	m_FilterSizer->Add( m_FilterChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
-//	wxStaticText * SearchLabel = new wxStaticText( this, wxID_ANY, _( "Search:" ), wxDefaultPosition, wxDefaultSize, 0 );
-//	SearchLabel->Wrap( -1 );
-//	FilterSizer->Add( SearchLabel, 0, wxTOP|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	m_AddFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_FilterSizer->Add( m_AddFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+
+	m_DelFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelFilterButton->Enable( FilterSelected );
+	m_FilterSizer->Add( m_DelFilterButton, 0, wxTOP|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_EditFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_EditFilterButton->Enable( FilterSelected );
+	m_FilterSizer->Add( m_EditFilterButton, 0, wxTOP|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_SearchTextCtrl = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-	FilterSizer->Add( m_SearchTextCtrl, 1, wxTOP|wxLEFT| wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+	m_FilterSizer->Add( m_SearchTextCtrl, 1, wxTOP|wxLEFT| wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxString m_OrderChoiceChoices[] = { _("Order By"), _("Name"), _("Year"), _("Year Desc."), _("Artist, Name"), _("Artist, Year"), _("Artist, Year Desc."), _( "Added time" ) };
 	int m_OrderChoiceNChoices = sizeof( m_OrderChoiceChoices ) / sizeof( wxString );
 	m_OrderChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_OrderChoiceNChoices, m_OrderChoiceChoices, 0 );
 	m_OrderChoice->SetSelection( Config->ReadNum( wxT( "Sort" ), 0, wxT( "AlbumBrowser" ) ) );
-	FilterSizer->Add( m_OrderChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_FilterSizer->Add( m_OrderChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	MainSizer->Add( FilterSizer, 0, wxEXPAND, 5 );
+	MainSizer->Add( m_FilterSizer, 0, wxEXPAND, 5 );
 
 
 	m_AlbumsSizer = new wxGridSizer( 1, 1, 0, 0 );
@@ -705,8 +718,10 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guAlbumBrowser::OnChangedSize ), NULL, this );
 
-	m_FilterBtn->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnFilterSelected ), NULL, this );
-	m_EditFilterBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnEditFilterClicked ), NULL, this );
+	m_FilterChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnFilterSelected ), NULL, this );
+	m_AddFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnAddFilterClicked ), NULL, this );
+	m_DelFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnDelFilterClicked ), NULL, this );
+	m_EditFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnEditFilterClicked ), NULL, this );
 	m_OrderChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnOrderSelected ), NULL, this );
 
 	m_NavSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
@@ -740,8 +755,8 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 guAlbumBrowser::~guAlbumBrowser()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteStr( wxT( "Filter" ), m_DynFilter.ToString(), wxT( "AlbumBrowser" ) );
-    Config->WriteBool( wxT( "Enable" ), m_FilterBtn->GetValue(), wxT( "AlbumBrowser" ) );
+    Config->WriteNum( wxT( "Filter" ), m_FilterChoice->GetSelection(), wxT( "AlbumBrowser" ) );
+    Config->WriteAStr( wxT( "Filter"), m_DynFilterArray, wxT( "AlbumBrowserFilters") );
     Config->WriteNum( wxT( "Sort" ), m_OrderChoice->GetSelection(), wxT( "AlbumBrowser" ) );
 
     if( m_BlankCD )
@@ -749,7 +764,10 @@ guAlbumBrowser::~guAlbumBrowser()
 
     Disconnect( wxEVT_SIZE, wxSizeEventHandler( guAlbumBrowser::OnChangedSize ), NULL, this );
 
-	m_FilterBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnFilterSelected ), NULL, this );
+	m_FilterChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnFilterSelected ), NULL, this );
+	m_AddFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnAddFilterClicked ), NULL, this );
+	m_DelFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnDelFilterClicked ), NULL, this );
+	m_EditFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnEditFilterClicked ), NULL, this );
 	m_OrderChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnOrderSelected ), NULL, this );
 
 	m_NavSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
@@ -909,7 +927,7 @@ void guAlbumBrowser::ReloadItems( void )
 {
     m_AlbumItemsMutex.Lock();
     m_AlbumItems.Empty();
-    m_Db->GetAlbums( &m_AlbumItems, m_FilterBtn->GetValue() ? &m_DynFilter : NULL,
+    m_Db->GetAlbums( &m_AlbumItems, m_FilterChoice->GetSelection() ? &m_DynFilter : NULL,
             m_TextSearchFilter, m_ItemStart, m_ItemCount, m_OrderChoice->GetSelection() - 1 );
     m_AlbumItemsMutex.Unlock();
 //    guLogMessage( wxT( "Read %i items from %i (%i)" ), m_AlbumItems.Count(), m_ItemStart, m_ItemCount );
@@ -998,8 +1016,51 @@ int guAlbumBrowser::GetAlbumTracks( const int albumid, guTrackArray * tracks )
 }
 
 // -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnAddFilterClicked( wxCommandEvent &event )
+{
+    guDynPlayList NewPlayList;
+
+    guDynPlayListEditor * PlayListEditor = new guDynPlayListEditor( this, &NewPlayList, true );
+    if( PlayListEditor->ShowModal() == wxID_OK )
+    {
+        PlayListEditor->FillPlayListEditData();
+
+        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Filter Name: " ),
+          _( "Enter the new filter name" ), _( "New Filter" ) );
+        if( EntryDialog->ShowModal() == wxID_OK )
+        {
+            m_DynFilterArray.Add( escape_configlist_str( EntryDialog->GetValue() ) + wxT( ":" ) + NewPlayList.ToString() );
+            m_FilterChoice->Append( EntryDialog->GetValue() );
+            m_FilterSizer->Layout();
+        }
+        EntryDialog->Destroy();
+    }
+
+    PlayListEditor->Destroy();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnDelFilterClicked( wxCommandEvent &event )
+{
+    int Selected = m_FilterChoice->GetSelection();
+    if( Selected )
+    {
+        m_DynFilterArray.RemoveAt( Selected  - 1 );
+        m_FilterChoice->SetSelection( 0 );
+        m_FilterChoice->Delete( Selected );
+        m_FilterSizer->Layout();
+
+        event.SetInt( 0 );
+        OnFilterSelected( event );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
 {
+    int Selected = m_FilterChoice->GetSelection();
+    wxString CurFilterStr = m_DynFilterArray[ Selected - 1 ];
+
     guDynPlayList EditPlayList = m_DynFilter;
 
     guDynPlayListEditor * PlayListEditor = new guDynPlayListEditor( this, &EditPlayList, true );
@@ -1011,17 +1072,25 @@ void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
 
         if( m_DynFilter.m_Filters.Count() )
         {
-            m_FilterBtn->Enable( true );
-            m_FilterBtn->SetValue( true );
-            RefreshCount();
-            ReloadItems();
-            m_LastItemStart = wxNOT_FOUND;
-            m_NavSlider->SetValue( 0 );
-            RefreshAll();
+            wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Filter Name: " ),
+              _( "Enter the new filter name" ), unescape_configlist_str( CurFilterStr.BeforeFirst( wxT( ':' ) ) ) );
+            if( EntryDialog->ShowModal() == wxID_OK )
+            {
+                m_DynFilterArray[ Selected - 1 ] = escape_configlist_str( EntryDialog->GetValue() ) + wxT( ":" ) + EditPlayList.ToString();
+                m_FilterChoice->SetString( Selected, EntryDialog->GetValue() );
+
+                RefreshCount();
+                ReloadItems();
+                m_LastItemStart = wxNOT_FOUND;
+                m_NavSlider->SetValue( 0 );
+                RefreshAll();
+
+            }
+            EntryDialog->Destroy();
         }
-        else
+        else    // This should never happen
         {
-            m_FilterBtn->SetValue( false );
+            guLogError( wxT( "Empty dynamic playlit?" ) );
         }
     }
 
@@ -1031,6 +1100,18 @@ void guAlbumBrowser::OnEditFilterClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnFilterSelected( wxCommandEvent &event )
 {
+    int Selected = event.GetInt();
+    if( Selected )
+    {
+        m_DynFilter.FromString( m_DynFilterArray[ Selected - 1 ].AfterFirst( wxT( ':' ) ) );
+        m_DelFilterButton->Enable( true );
+        m_EditFilterButton->Enable( true );
+    }
+    else
+    {
+        m_DelFilterButton->Enable( false );
+        m_EditFilterButton->Enable( false );
+    }
 //    // If its enabled
 //    if( event.GetInt() && !m_DynFilter.m_Filters.Count() )
 //    {
@@ -1329,7 +1410,7 @@ void guAlbumBrowser::OnAlbumEditLabelsClicked( const guAlbumBrowserItem * albumi
 
             LabelEditor->Destroy();
 
-            if( m_FilterBtn->GetValue() ) // If its filtered we may need to refresh as the filter can contains the label condition
+//            if( m_FilterBtn->GetValue() ) // If its filtered we may need to refresh as the filter can contains the label condition
             {
                 ReloadItems();
                 RefreshAll();
@@ -1449,6 +1530,9 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
         RefreshAll();
     }
 }
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guAlbumBrowserDropTarget

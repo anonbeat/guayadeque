@@ -1638,7 +1638,7 @@ void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
     if( NewSongs.Count() );
     {
         guListItems PlayLists;
-        m_Db->GetPlayLists( &PlayLists,GUPLAYLIST_STATIC );
+        m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
 
         guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &NewSongs, &PlayLists );
 

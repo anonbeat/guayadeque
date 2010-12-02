@@ -1105,18 +1105,18 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
 
     wxURI Uri( FileName );
 
-    guLogMessage( wxT( "Loading %s" ), FileName.c_str() );
+    //guLogMessage( wxT( "Loading %i %i %s" ), addpath, pos, FileName.c_str() );
 
     // If its a playlist
     if( guPlayListFile::IsValidPlayList( Uri.GetPath() ) )
     {
-        int InsertPos = pos;
+        int InsertPos = wxMax( pos, 0 );
         guPlayListFile PlayList( FileName );
         if( ( Count = PlayList.Count() ) )
         {
             for( Index = 0; Index < Count; Index++ )
             {
-                AddPlayListItem( PlayList.GetItem( Index ).m_Location, InsertPos++ );
+                AddPlayListItem( PlayList.GetItem( Index ).m_Location, addpath, InsertPos++ );
             }
         }
     }
@@ -1479,7 +1479,7 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
     if( NewSongs.Count() )
     {
         guListItems PlayLists;
-        m_Db->GetPlayLists( &PlayLists,GUPLAYLIST_STATIC );
+        m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
         guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &NewSongs, &PlayLists );
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {

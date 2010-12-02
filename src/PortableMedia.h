@@ -285,16 +285,12 @@ class guPortableMediaLibrary : public guDbLibrary
   protected :
     guPortableMediaDevice *     m_PortableMediaDevice;
 
-    void                        UpdatePlayListFie( const int plid );
-
   public :
     guPortableMediaLibrary( const wxString &libpath, guPortableMediaDevice * portablemediadevice );
     ~guPortableMediaLibrary();
 
-    virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
-    virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
-    virtual int         AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
-    virtual void        DeletePlayList( const int plid );
+    virtual void                UpdateStaticPlayListFile( const int plid );
+    virtual void                DeletePlayList( const int plid );
 
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibrary *, guPortableMediaLibraryArray );
