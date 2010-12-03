@@ -190,8 +190,8 @@ class guAlbumBrowser : public wxPanel
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guAlbumBrowser();
 
-    int                             GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
-    void                            SetContextMenuFlags( const int flags ) { m_ContextMenuFlags = flags; }
+    virtual int                     GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
+    virtual void                    SetContextMenuFlags( const int flags ) { m_ContextMenuFlags = flags; }
 
     virtual void                    CreateContextMenu( wxMenu * Menu ) {};
 
