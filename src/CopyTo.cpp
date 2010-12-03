@@ -52,6 +52,7 @@ guCopyToAction::guCopyToAction( guTrackArray * tracks, guLibPanel * libpanel, co
     m_Tracks = tracks;
     m_LibPanel = libpanel;
     m_Db = libpanel->GetDb();
+    m_PlayListFile = NULL;
     m_DestDir = destdir;
     m_Pattern = pattern;
     m_Format = format;
@@ -70,6 +71,7 @@ guCopyToAction::guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPorta
     m_Tracks = tracks;
     m_MoveFiles = false;
     m_Db = db;
+    m_PlayListFile = NULL;
     m_PortableMediaViewCtrl = portablemediaviewctrl;
     guPortableMediaDevice * PortableMediaDevice = m_PortableMediaViewCtrl->MediaDevice();
     if( PortableMediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
@@ -87,6 +89,33 @@ guCopyToAction::guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPorta
 }
 
 // -------------------------------------------------------------------------------- //
+guCopyToAction::guCopyToAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
+{
+    m_Type = guCOPYTO_ACTION_COPYTODEVICE;
+    m_Tracks = NULL;
+    m_MoveFiles = false;
+    m_Db = db;
+    m_PortableMediaViewCtrl = portablemediaviewctrl;
+    m_PlayListFile = new guPlayListFile( * playlistpath );
+    guPortableMediaDevice * PortableMediaDevice = m_PortableMediaViewCtrl->MediaDevice();
+    if( PortableMediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
+        m_Type = guCOPYTO_ACTION_COPYTOIPOD;
+    m_Format = PortableMediaDevice->TranscodeFormat();
+    m_Quality = PortableMediaDevice->TranscodeQuality();
+    m_Pattern = PortableMediaDevice->Pattern();
+    m_DestDir = PortableMediaDevice->MountPath();
+    wxArrayString AudioFolders = wxStringTokenize( PortableMediaDevice->AudioFolders(), wxT( "," ) );
+    m_DestDir += AudioFolders[ 0 ].Trim( true ).Trim( false );
+    if( m_DestDir.EndsWith( wxT( "//" ) ) )
+        m_DestDir.RemoveLast();
+    else if( !m_DestDir.EndsWith( wxT( "/" ) ) )
+        m_DestDir.Append( wxT( "/" ) );
+
+    //
+    delete playlistpath;
+}
+
+// -------------------------------------------------------------------------------- //
 guCopyToAction::~guCopyToAction()
 {
     if( m_Tracks )
@@ -95,7 +124,18 @@ guCopyToAction::~guCopyToAction()
     }
 }
 
+// -------------------------------------------------------------------------------- //
+size_t guCopyToAction::Count( void )
+{
+    if( m_Tracks )
+        return m_Tracks->Count();
+    if( m_PlayListFile )
+    {
+        return m_PlayListFile->Count();
+    }
 
+    return 0;
+}
 
 
 // -------------------------------------------------------------------------------- //
@@ -156,6 +196,24 @@ void guCopyToThread::AddAction( guTrackArray * tracks, guLibPanel * libpanel, co
 void guCopyToThread::AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
 {
     guCopyToAction * CopyToAction = new guCopyToAction( tracks, db, portablemediaviewctrl );
+    if( CopyToAction )
+    {
+        m_CopyToActionsMutex.Lock();
+        m_CopyToActions->Add( CopyToAction );
+        m_FileCount += CopyToAction->Count();
+        m_CopyToActionsMutex.Unlock();
+
+        if( !IsRunning() )
+        {
+            Run();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guCopyToThread::AddAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
+{
+    guCopyToAction * CopyToAction = new guCopyToAction( playlistpath, db, portablemediaviewctrl );
     if( CopyToAction )
     {
         m_CopyToActionsMutex.Lock();

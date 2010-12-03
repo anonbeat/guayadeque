@@ -805,7 +805,7 @@ void guLibPanel::OnGenreCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -907,7 +907,7 @@ void guLibPanel::OnLabelCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -1092,7 +1092,7 @@ void guLibPanel::OnArtistCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -1447,7 +1447,7 @@ void guLibPanel::OnAlbumCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -1597,7 +1597,7 @@ void guLibPanel::OnSongCopyToClicked( wxCommandEvent &event )
         if( Index > 99 )
         {
             Index -= 100;
-            event.SetId( ID_MAINFRAME_COPYTODEVICE );
+            event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
         }
         else
         {
@@ -2244,7 +2244,7 @@ void guLibPanel::OnYearListCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -2344,7 +2344,7 @@ void guLibPanel::OnRatingListCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -2444,7 +2444,7 @@ void guLibPanel::OnPlayCountListCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -2547,7 +2547,7 @@ void guLibPanel::OnComposerListCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -2643,7 +2643,7 @@ void guLibPanel::OnAlbumArtistListCopyToClicked( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {

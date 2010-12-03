@@ -275,6 +275,7 @@ class guMainFrame : public wxFrame
     void                            OnCommunity( wxCommandEvent &event );
     void                            OnCopyTracksTo( wxCommandEvent &event );
     void                            OnCopyTracksToDevice( wxCommandEvent &event );
+    void                            OnCopyPlayListToDevice( wxCommandEvent &event );
     void                            OnUpdateLabels( wxCommandEvent &event );
     void                            OnPlayerPlayListUpdateTitle( wxCommandEvent &event );
 

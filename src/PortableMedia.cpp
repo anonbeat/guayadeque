@@ -766,7 +766,15 @@ bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
     for( Index = 0; Index < Count; Index++ )
     {
         wxString CurFile = filenames[ Index ];
-        if( guIsValidAudioFile( CurFile ) )
+
+        if( guPlayListFile::IsValidPlayList( CurFile ) )
+        {
+            wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
+            Event.SetClientData( new wxString( CurFile ) );
+            Event.SetInt( PanelActive() );
+            wxPostEvent( wxTheApp->GetTopWindow(), Event );
+        }
+        else if( guIsValidAudioFile( CurFile ) )
         {
             guTagInfo * TagInfo = guGetTagInfoHandler( CurFile );
             if( TagInfo )
@@ -805,10 +813,17 @@ bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
         }
     }
 
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE );
-    Event.SetClientData( CopyTracks );
-    Event.SetInt( PanelActive() );
-    wxPostEvent( wxTheApp->GetTopWindow(), Event );
+    if( CopyTracks->Count() )
+    {
+        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_TRACKS );
+        Event.SetClientData( CopyTracks );
+        Event.SetInt( PanelActive() );
+        wxPostEvent( wxTheApp->GetTopWindow(), Event );
+    }
+    else
+    {
+        delete CopyTracks;
+    }
 
     return true;
 }
@@ -2251,27 +2266,26 @@ bool guIpodMediaLibPanel::SetAlbumCover( const int albumid, const wxString &albu
                 {
                     if( itdb_track_has_thumbnails( iPodTrack ) )
                     {
-                        itdb_track_remove_thumbnails( iPodTrack );
+                        itdb_artwork_remove_thumbnails( iPodTrack->artwork );
                     }
 
 
                     if( !itdb_track_set_thumbnails( iPodTrack, TmpFile.mb_str( wxConvFile ) ) )
-                        guLogMessage( wxT( "Couldnt set the cover image %s" ) );
+                        guLogMessage( wxT( "Couldnt set the cover image %s" ), TmpFile.c_str() );
                 }
 
                 guTagSetPicture( Tracks[ Index ].m_FileName, coverimg );
             }
+            iPodFlush();
             wxRemoveFile( TmpFile );
+
+            m_Db->SetAlbumCover( albumid, * coverimg );
         }
         else
         {
             guLogMessage( wxT( "Couldnt save the temporary image file" ) );
         }
-
-        iPodFlush();
     }
-
-    m_Db->SetAlbumCover( albumid, * coverimg );
 
     return true;
 }
@@ -2329,7 +2343,7 @@ void guIpodMediaLibPanel::DoDeleteAlbumCover( const int albumid )
             if( iPodTrack )
             {
                 guLogMessage( wxT( "Deleting cover for track '%s'" ), wxString( iPodTrack->ipod_path, wxConvUTF8 ).c_str() );
-                itdb_track_remove_thumbnails( iPodTrack );
+                itdb_artwork_remove_thumbnails( iPodTrack->artwork );
             }
         }
         iPodFlush();

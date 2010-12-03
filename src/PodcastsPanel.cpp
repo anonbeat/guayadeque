@@ -532,7 +532,7 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -874,7 +874,7 @@ void guPodcastPanel::OnPodcastItemCopyTo( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {

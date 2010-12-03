@@ -518,7 +518,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_COMMUNITY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCommunity ), NULL, this );
 
     Connect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
-    Connect( ID_MAINFRAME_COPYTODEVICE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
+    Connect( ID_MAINFRAME_COPYTODEVICE_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
+    Connect( ID_MAINFRAME_COPYTODEVICE_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyPlayListToDevice ), NULL, this );
 
     Connect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ), NULL, this );
 
@@ -678,7 +679,8 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_COMMUNITY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCommunity ), NULL, this );
 
     Disconnect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
-    Disconnect( ID_MAINFRAME_COPYTODEVICE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
+    Disconnect( ID_MAINFRAME_COPYTODEVICE_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
+    Disconnect( ID_MAINFRAME_COPYTODEVICE_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyPlayListToDevice ), NULL, this );
 
     Disconnect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ), NULL, this );
 
@@ -2143,12 +2145,44 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
             }
             else
             {
-                guLogMessage( wxT( "Wrong portable device index in copy to device command" ) );
+                guLogMessage( wxT( "Wrong portable device index in copy tracks to device command" ) );
             }
         }
         else
         {
             delete Tracks;
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnCopyPlayListToDevice( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "guMainFrame::OnCopyPlayListToDevice" ) );
+    wxString * PlayListPath = ( wxString * ) event.GetClientData();
+    if( PlayListPath )
+    {
+        int PortableIndex = event.GetInt();
+        if( PortableIndex >= 0 && PortableIndex < ( int ) m_PortableMediaViewCtrls.Count() )
+        {
+            guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ PortableIndex ];
+
+            m_CopyToThreadMutex.Lock();
+
+            if( !m_CopyToThread )
+            {
+                int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ), false );
+                m_CopyToThread = new guCopyToThread( this, GaugeId );
+            }
+
+            m_CopyToThread->AddAction( PlayListPath, m_Db, PortableMediaViewCtrl );
+
+            m_CopyToThreadMutex.Unlock();
+
+        }
+        else
+        {
+            guLogMessage( wxT( "Wrong portable device index in copy playlist to device command" ) );
         }
     }
 }

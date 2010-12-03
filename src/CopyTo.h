@@ -23,6 +23,7 @@
 
 #include "DbLibrary.h"
 #include "MainFrame.h"
+#include "PlayListFile.h"
 #include "PortableMedia.h"
 
 
@@ -45,6 +46,7 @@ class guCopyToAction
     guTrackArray *              m_Tracks;
     wxString                    m_DestDir;
     wxString                    m_Pattern;
+    guPlayListFile *            m_PlayListFile;
     int                         m_Format;
     int                         m_Quality;
     bool                        m_MoveFiles;
@@ -57,6 +59,7 @@ class guCopyToAction
     guCopyToAction( guTrackArray * tracks, guLibPanel * libpanel, const wxString &destdir,
             const wxString &pattern, int format, int quality, bool movefiles );
     guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
+    guCopyToAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
     ~guCopyToAction();
 
     int                         Type( void ) { return m_Type; }
@@ -67,7 +70,7 @@ class guCopyToAction
     int                         Quality( void ) { return m_Quality; };
     bool                        MoveFiles( void ) { return m_MoveFiles; }
 
-    size_t                      Count( void  ) { return m_Tracks ? m_Tracks->Count() : 0; }
+    size_t                      Count( void  );
     guTrack *                   Track( const int index ) { return &m_Tracks->Item( index ); }
 
     guPortableMediaViewCtrl *   PortableMediaViewCtrl( void ) { return m_PortableMediaViewCtrl; }
@@ -107,6 +110,7 @@ class guCopyToThread : public wxThread
     void    AddAction( guTrackArray * tracks, guLibPanel * libpanel, const wxString &destdir,
                     const wxString &pattern, int format, int quality, bool movefiles );
     void    AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
+    void    AddAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
 
     virtual ExitCode Entry();
 
