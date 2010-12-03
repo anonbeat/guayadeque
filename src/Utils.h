@@ -51,7 +51,7 @@ inline const T &guBound( const T &min, const T &val, const T &max ) { return guM
 #define guDEFAULT_BROWSER_USER_AGENT    wxT( "Mozilla/5.0 (X11; U; Linux i686; es-ES; rv:1.9.1.8) Gecko/20100214 Ubuntu/9.10 (karmic) Firefox/3.5.8" )
 
 // -------------------------------------------------------------------------------- //
-void inline guImageResize( wxImage * image, int maxsize )
+void inline guImageResize( wxImage * image, int maxsize, bool forceresize = false )
 {
     int w = image->GetWidth();
     int h = image->GetHeight();
@@ -59,7 +59,7 @@ void inline guImageResize( wxImage * image, int maxsize )
     double ratio = wxMin( static_cast<double>( maxsize ) / h,
                           static_cast<double>( maxsize ) / w );
 
-    if( ratio < 1 )
+    if( forceresize || ( ratio < 1 ) )
     {
         image->Rescale( ( w * ratio ) + .5, ( h * ratio ) + .5, wxIMAGE_QUALITY_HIGH );
     }

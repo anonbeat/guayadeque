@@ -30,6 +30,8 @@
 #include "MainFrame.h"
 #include "OnlineLinks.h"
 #include "SelCoverFile.h"
+#include "StaticBitmap.h"
+#include "ShowImage.h"
 #include "TagInfo.h"
 #include "TrackEdit.h"
 #include "Utils.h"
@@ -137,7 +139,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     // GUI
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 100, 100 ), 0 );
+	m_Bitmap = new guStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 100, 100 ), 0 );
 	m_MainSizer->Add( m_Bitmap, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
@@ -192,6 +194,9 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 
     Connect( ID_ALBUMBROWSER_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowserItemPanel::OnBeginDrag ), NULL, this );
     Connect( ID_ALBUMBROWSER_COVER_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowserItemPanel::OnCoverBeginDrag ), NULL, this );
+
+    Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guAlbumBrowserItemPanel::OnBitmapMouseOver ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -643,6 +648,34 @@ void guAlbumBrowserItemPanel::SetAlbumCover( const wxString &cover )
     if( m_AlbumBrowserItem )
         m_AlbumBrowser->SetAlbumCover( m_AlbumBrowserItem->m_AlbumId, cover );
 }
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowserItemPanel::OnBitmapMouseOver( wxCommandEvent &event )
+{
+    wxString CoverFile = m_AlbumBrowser->GetAlbumCoverFile( m_AlbumBrowserItem->m_CoverId );
+    if( !CoverFile.IsEmpty() )
+    {
+        wxImage * Image = new wxImage( CoverFile, wxBITMAP_TYPE_ANY );
+        if( Image )
+        {
+            if( Image->IsOk() )
+            {
+                guImageResize( Image, 200, true );
+
+                guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
+                if( ShowImage )
+                {
+                    ShowImage->Show();
+                }
+            }
+            else
+            {
+                delete Image;
+            }
+        }
+    }
+}
+
 
 
 
