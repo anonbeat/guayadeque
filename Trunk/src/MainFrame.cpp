@@ -2084,7 +2084,7 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
 
                     if( !m_CopyToThread )
                     {
-                        int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ) );
+                        int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ), false );
                         m_CopyToThread = new guCopyToThread( this, GaugeId );
                     }
 
@@ -2132,7 +2132,7 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
 
                 if( !m_CopyToThread )
                 {
-                    int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ) );
+                    int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ), false );
                     m_CopyToThread = new guCopyToThread( this, GaugeId );
                 }
 

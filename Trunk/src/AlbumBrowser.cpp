@@ -394,14 +394,14 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         {
             Menu.AppendSeparator();
 
-            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
-            {
-                AddAlbumCommands( &Menu, 1 );
-            }
-
             if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS )
             {
                 AddOnlineLinksMenu( &Menu );
+            }
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+            {
+                AddAlbumCommands( &Menu, 1 );
             }
         }
         m_AlbumBrowser->CreateContextMenu( &Menu );
@@ -1144,23 +1144,6 @@ void guAlbumBrowser::OnFilterSelected( wxCommandEvent &event )
         m_DelFilterButton->Enable( false );
         m_EditFilterButton->Enable( false );
     }
-//    // If its enabled
-//    if( event.GetInt() && !m_DynFilter.m_Filters.Count() )
-//    {
-//        OnEditFilterClicked( event );
-//        if( !m_DynFilter.m_Filters.Count() )
-//        {
-//            m_FilterBtn->SetValue( false );
-//        }
-//    }
-//    else
-//    {
-//        RefreshCount();
-//        ReloadItems();
-//        m_LastItemStart = wxNOT_FOUND;
-//        m_NavSlider->SetValue( 0 );
-//        RefreshAll();
-//    }
     RefreshCount();
     ReloadItems();
     m_LastItemStart = wxNOT_FOUND;
