@@ -1795,7 +1795,7 @@ void guFileBrowser::OnFolderCopyTo( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
@@ -1938,7 +1938,7 @@ void guFileBrowser::OnItemsCopyTo( wxCommandEvent &event )
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {

@@ -1396,7 +1396,7 @@ void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid, const int commandi
     if( Index > 99 )
     {
         Index -= 100;
-        event.SetId( ID_MAINFRAME_COPYTODEVICE );
+        event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
