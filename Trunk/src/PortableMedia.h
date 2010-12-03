@@ -444,6 +444,8 @@ class guPortableMediaAlbumBrowser : public guAlbumBrowser
     virtual void                    OnAlbumDownloadCoverClicked( const int albumid );
     virtual void                    OnAlbumSelectCoverClicked( const int albumid );
 
+    virtual int                     GetContextMenuFlags( void ) { return m_LibPanel->GetContextMenuFlags(); }
+
 };
 
 // -------------------------------------------------------------------------------- //
