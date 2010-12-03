@@ -56,7 +56,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     guPlayList * playlist, guPlayerFilters * filters )
        : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 310, 170 ), wxTAB_TRAVERSAL )
 {
-    double SavedVol = 50.0;
+    double SavedVol;
 
     m_Db = db;
     m_MainFrame = ( guMainFrame * ) parent;
@@ -372,7 +372,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     // The SetVolume call dont get set if the volume is the last one
     // so we do it two calls
 
-    m_CurVolume = ( m_MediaCtrl->GetVolume() * 100.0 );
+    m_CurVolume = wxNOT_FOUND;
     SetVolume( SavedVol );
     //guLogMessage( wxT( "CurVol: %i SavedVol: %i" ), int( m_MediaCtrl->GetVolume() * 100.0 ), ( int ) m_CurVolume );
 

@@ -683,7 +683,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 	m_FilterSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	wxArrayString m_FilterNames;
-	m_FilterNames.Add( _( "All" ) );
+	m_FilterNames.Add( _( "All Albums" ) );
 
 	int Index;
 	int Count = m_DynFilterArray.Count();
@@ -1060,6 +1060,10 @@ void guAlbumBrowser::OnAddFilterClicked( wxCommandEvent &event )
             m_DynFilterArray.Add( escape_configlist_str( EntryDialog->GetValue() ) + wxT( ":" ) + NewPlayList.ToString() );
             m_FilterChoice->Append( EntryDialog->GetValue() );
             m_FilterSizer->Layout();
+
+            m_FilterChoice->SetSelection( m_FilterChoice->GetCount() - 1 );
+            event.SetInt( m_FilterChoice->GetCount() - 1 );
+            OnFilterSelected( event );
         }
         EntryDialog->Destroy();
     }
@@ -1074,10 +1078,10 @@ void guAlbumBrowser::OnDelFilterClicked( wxCommandEvent &event )
     if( Selected )
     {
         m_DynFilterArray.RemoveAt( Selected  - 1 );
-        m_FilterChoice->SetSelection( 0 );
         m_FilterChoice->Delete( Selected );
         m_FilterSizer->Layout();
 
+        m_FilterChoice->SetSelection( 0 );
         event.SetInt( 0 );
         OnFilterSelected( event );
     }
