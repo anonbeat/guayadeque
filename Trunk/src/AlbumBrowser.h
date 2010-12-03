@@ -112,6 +112,8 @@ class guAlbumBrowserItemPanel : public wxPanel
     void                    OnBeginDrag( wxMouseEvent &event );
     void                    OnCoverBeginDrag( wxMouseEvent &event );
 
+    void                    OnBitmapMouseOver( wxCommandEvent &event );
+
   public :
     guAlbumBrowserItemPanel( wxWindow * parent, const int index, guAlbumBrowserItem * albumitem = NULL );
     ~guAlbumBrowserItemPanel();
