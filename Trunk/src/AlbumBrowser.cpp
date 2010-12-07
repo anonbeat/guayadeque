@@ -301,6 +301,8 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
     if( !m_AlbumBrowserItem )
         return;
 
+    m_Bitmap->StopTimer();
+
     wxMenu Menu;
     wxMenuItem * MenuItem;
     wxPoint Point = event.GetPosition();
@@ -652,28 +654,8 @@ void guAlbumBrowserItemPanel::SetAlbumCover( const wxString &cover )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnBitmapMouseOver( wxCommandEvent &event )
 {
-    wxString CoverFile = m_AlbumBrowser->GetAlbumCoverFile( m_AlbumBrowserItem->m_CoverId );
-    if( !CoverFile.IsEmpty() )
-    {
-        wxImage * Image = new wxImage( CoverFile, wxBITMAP_TYPE_ANY );
-        if( Image )
-        {
-            if( Image->IsOk() )
-            {
-                guImageResize( Image, 200, true );
-
-                guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
-                if( ShowImage )
-                {
-                    ShowImage->Show();
-                }
-            }
-            else
-            {
-                delete Image;
-            }
-        }
-    }
+    if( m_AlbumBrowserItem )
+        m_AlbumBrowser->OnBitmapMouseOver( m_AlbumBrowserItem->m_CoverId, ClientToScreen( m_Bitmap->GetPosition() ) );
 }
 
 
@@ -1576,6 +1558,33 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
         }
         ReloadItems();
         RefreshAll();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBitmapMouseOver( const int coverid, const wxPoint &position )
+{
+    wxString CoverFile = GetAlbumCoverFile( coverid );
+    if( !CoverFile.IsEmpty() )
+    {
+        wxImage * Image = new wxImage( CoverFile, wxBITMAP_TYPE_ANY );
+        if( Image )
+        {
+            if( Image->IsOk() )
+            {
+                guImageResize( Image, 300, true );
+
+                guShowImage * ShowImage = new guShowImage( this, Image, position );
+                if( ShowImage )
+                {
+                    ShowImage->Show();
+                }
+            }
+            else
+            {
+                delete Image;
+            }
+        }
     }
 }
 

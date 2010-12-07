@@ -84,7 +84,7 @@ class guAlbumBrowserItemPanel : public wxPanel
 
     // GUI
     wxBoxSizer *            m_MainSizer;
-    wxStaticBitmap *        m_Bitmap;
+    guStaticBitmap *        m_Bitmap;
     wxStaticText *          m_ArtistLabel;
     wxStaticText *          m_AlbumLabel;
     wxStaticText *          m_TracksLabel;
@@ -187,6 +187,8 @@ class guAlbumBrowser : public wxPanel
     void                            OnTextChangedTimer( wxTimerEvent &event );
 
     virtual void                    NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
+
+    virtual void                    OnBitmapMouseOver( const int coverid, const wxPoint &position );
 
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );

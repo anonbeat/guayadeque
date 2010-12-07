@@ -69,8 +69,9 @@ class guCopyToAction
     int                         Format( void ) { return m_Format; }
     int                         Quality( void ) { return m_Quality; };
     bool                        MoveFiles( void ) { return m_MoveFiles; }
+    guPlayListFile *            PlayListFile( void ) { return m_PlayListFile; }
 
-    size_t                      Count( void  );
+    size_t                      Count( void  ) { return m_Tracks->Count(); }
     guTrack *                   Track( const int index ) { return &m_Tracks->Item( index ); }
 
     guPortableMediaViewCtrl *   PortableMediaViewCtrl( void ) { return m_PortableMediaViewCtrl; }

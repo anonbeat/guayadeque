@@ -927,10 +927,11 @@ void guDynPlayListEditor::OnFilterOptionSelected( wxCommandEvent &event )
     bool IsNotSetLabel = m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LENGTH ||
                           ( ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LABEL ) &&
                           ( m_FilterLabelOptionChoice->GetSelection() == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET ) );
+    guLogMessage( wxT( "IsNotSetLabel: %i" ), IsNotSetLabel );
     m_FilterText->Enable( !IsNotSetLabel );
     if( IsNotSetLabel )
         m_FilterText->SetValue( wxEmptyString );
-    m_FilterAdd->Enable( IsNotSetLabel );
+    m_FilterAdd->Enable( IsNotSetLabel || !m_FilterText->IsEmpty() );
 
     if( m_CurFilter != wxNOT_FOUND )
     {
