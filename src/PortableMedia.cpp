@@ -2098,6 +2098,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                         {
                             guLogMessage( wxT( "Error in image from ipod..." ) );
                         }
+                        g_free( Buffer );
                     }
                     else
                     {
@@ -2226,6 +2227,24 @@ guIpodMediaLibPanel::~guIpodMediaLibPanel()
         m_UpdateThread->Pause();
         m_UpdateThread->Delete();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodMediaLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
+{
+    wxMenu *     SubMenu = new wxMenu();
+
+    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UPDATE, _( "Update" ), _( "Update the device library" ) );
+    SubMenu->Append( MenuItem );
+
+//    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_PROPERTIES, _( "Properties" ), _( "Set the device properties" ) );
+//    SubMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UNMOUNT, _( "Unmount" ), _( "Unmount the device" ) );
+    SubMenu->Append( MenuItem );
+
+    menu->AppendSeparator();
+    menu->AppendSubMenu( SubMenu, _( "Portable Device" ), _( "Global Jamendo options" ) );
 }
 
 // -------------------------------------------------------------------------------- //

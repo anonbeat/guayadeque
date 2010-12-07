@@ -443,6 +443,8 @@ class guIpodMediaLibPanel : public guPortableMediaLibPanel
   protected :
      guIpodLibraryUpdate *      m_UpdateThread;
 
+    virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
+
     virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
 
     virtual void                UpdateTracks( const guTrackArray &tracks );
