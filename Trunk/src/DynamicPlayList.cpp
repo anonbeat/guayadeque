@@ -57,6 +57,11 @@ void inline InitArrayStrings( void )
         m_FilterFieldChoices.Add( _( "Play Count" ) );
         m_FilterFieldChoices.Add( _( "Last Play Time" ) );
         m_FilterFieldChoices.Add( _( "Added Date" ) );
+        m_FilterFieldChoices.Add( _( "Track Number" ) );
+        m_FilterFieldChoices.Add( _( "Bitrate" ) );
+        m_FilterFieldChoices.Add( _( "Size" ) );
+        m_FilterFieldChoices.Add( _( "Disk" ) );
+        m_FilterFieldChoices.Add( _( "With Cover" ) );
 //    }
 //
 //    if( !m_FilterTextOptionChoices.Count() )
