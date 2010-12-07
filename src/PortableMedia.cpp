@@ -2741,11 +2741,13 @@ void guPortableMediaViewCtrl::DestroyAlbumBrowser( void )
 // -------------------------------------------------------------------------------- //
 guPortableMediaPlayListPanel * guPortableMediaViewCtrl::CreatePlayListPanel( wxWindow * parent, guPlayerPanel * playerpanel )
 {
+#ifdef WITH_LIBGPOD_SUPPORT
     if( m_MediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
     {
         m_PlayListPanel = new guIpodPlayListPanel( parent, ( guIpodLibrary * ) m_Db, playerpanel, ( guIpodMediaLibPanel * ) m_LibPanel );
     }
     else
+#endif
     {
         m_PlayListPanel = new guPortableMediaPlayListPanel( parent, m_Db, playerpanel, m_LibPanel );
     }
