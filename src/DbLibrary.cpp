@@ -3198,9 +3198,21 @@ int guDbLibrary::CreateStaticPlayList( const wxString &path, const wxArrayInt &s
   wxString query;
 //  wxSQLite3ResultSet dbRes;
 
+  wxString Name;
+  wxString Path = path;
+  if( guPlayListFile::IsValidPlayList( path ) )
+  {
+    Name = wxFileNameFromPath( path ).BeforeLast( wxT( '.' ) );
+  }
+  else
+  {
+    Name = path;
+    Path = wxEmptyString;
+  }
+
   query = wxString::Format( wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, playlist_path ) VALUES( NULL, '%s', 0, '%s' );" ),
-          escape_query_str( wxFileNameFromPath( path ).BeforeLast( wxT( '.' ) ) ).c_str(),
-          escape_query_str( path ).c_str() );
+          escape_query_str( Name ).c_str(),
+          escape_query_str( Path ).c_str() );
 
   if( ExecuteUpdate( query ) )
   {
@@ -3225,35 +3237,8 @@ int guDbLibrary::CreateStaticPlayList( const wxString &path, const wxArrayInt &s
       ExecuteUpdate( query );
       //dbRes.Finalize();
     }
-    UpdateStaticPlayListFile( PlayListId );
   }
   return PlayListId;
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateStaticPlayListFile( const int plid )
-{
-    wxString PlaylistPath = GetPlayListPath( plid );
-    if( !PlaylistPath.IsEmpty() )
-    {
-        wxFileName FileName( PlaylistPath );
-        if( FileName.Normalize() )
-        {
-            guTrackArray Tracks;
-            GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
-            guPlayListFile PlayListFile;
-            PlayListFile.SetName( FileName.GetFullPath() );
-            int Index;
-            int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
-            {
-                PlayListFile.AddItem( Tracks[ Index ].m_FileName,
-                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
-            }
-
-            PlayListFile.Save( FileName.GetFullPath() );
-        }
-    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3282,7 +3267,6 @@ int guDbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks 
                   tracks[ index ] );
     ExecuteUpdate( query );
   }
-  UpdateStaticPlayListFile( plid );
   return tracks.Count();
 }
 
@@ -3296,7 +3280,6 @@ int guDbLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &setids )
     //guLogMessage( wxT( "DelPlayListSetIds:\n%s" ), query.c_str() );
 
     int RetVal = ExecuteUpdate( query );
-    UpdateStaticPlayListFile( plid );
     return RetVal;
 }
 
@@ -3324,7 +3307,33 @@ int guDbLibrary::GetPlayListFiles( const int plid, wxFileDataObject * files )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::CreateDynamicPlayList( const wxString &name, guDynPlayList * playlist )
+void guDbLibrary::UpdateStaticPlayListFile( const int plid )
+{
+//    wxString PlaylistPath = GetPlayListPath( plid );
+//    if( !PlaylistPath.IsEmpty() )
+//    {
+//        wxFileName FileName( PlaylistPath );
+//        if( FileName.Normalize() )
+//        {
+//            guTrackArray Tracks;
+//            m_Db->GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
+//            guPlayListFile PlayListFile;
+//            PlayListFile.SetName( FileName.GetFullPath() );
+//            int Index;
+//            int Count = Tracks.Count();
+//            for( Index = 0; Index < Count; Index++ )
+//            {
+//                PlayListFile.AddItem( Tracks[ Index ].m_FileName,
+//                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+//            }
+//
+//            PlayListFile.Save( FileName.GetFullPath() );
+//        }
+//    }
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist )
 {
   wxASSERT( playlist );
 
@@ -3977,7 +3986,7 @@ void guDbLibrary::GetDynamicPlayList( const int plid, guDynPlayList * playlist )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateDynPlayList( const int plid, const guDynPlayList * playlist )
+void guDbLibrary::UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist )
 {
   wxASSERT( playlist );
 

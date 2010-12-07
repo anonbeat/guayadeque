@@ -521,6 +521,7 @@ guPortableMediaLibrary::~guPortableMediaLibrary()
 // -------------------------------------------------------------------------------- //
 void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
 {
+    guLogMessage( wxT( "guPortableMediaLibrary::UpdateStaticPlayListFile" ) );
     int PlayListFormats = m_PortableMediaDevice->PlaylistFormats();
     if( PlayListFormats )
     {
@@ -1007,7 +1008,6 @@ void guPortableMediaPlayListPanel::SendPlayListUpdatedEvent( void )
     evt.SetClientData( m_LibPanel );
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
-
 
 
 
@@ -1586,16 +1586,31 @@ int guListCheckOptionsDialog::GetSelectedItems( wxArrayInt &selection )
 #ifdef WITH_LIBGPOD_SUPPORT
 
 // -------------------------------------------------------------------------------- //
+void inline CheckUpdateField( gchar ** fieldptr, const wxString &newval )
+{
+    if( wxString( * fieldptr, wxConvUTF8 ) != newval )
+    {
+        free( * fieldptr );
+        * fieldptr = strdup( newval.ToUTF8() );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guIpodLibrary
 // -------------------------------------------------------------------------------- //
-guIpodLibrary::guIpodLibrary( const wxString &dbpath, guPortableMediaDevice * portablemediadevice )
+guIpodLibrary::guIpodLibrary( const wxString &dbpath, guPortableMediaDevice * portablemediadevice, Itdb_iTunesDB * ipoddb )
     : guPortableMediaLibrary( dbpath, portablemediadevice )
 {
+    m_iPodDb = ipoddb;
 }
 
 // -------------------------------------------------------------------------------- //
 guIpodLibrary::~guIpodLibrary()
 {
+    if( m_iPodDb )
+    {
+        itdb_free( m_iPodDb );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1652,6 +1667,286 @@ int guIpodLibrary::GetAlbumId( const wxString &album, const wxString &artist, co
     return RetVal;
 }
 
+// -------------------------------------------------------------------------------- //
+int guIpodLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &trackids )
+{
+    guLogMessage( wxT( "guIpodMediaLibPanel::CreateStaticPlayList( '%s' )" ), name.c_str() );
+
+    wxString PlayListName = name;
+    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
+    if( OldPlayList )
+    {
+        guLogMessage( wxT( "Playlist with same name exists so delete it" ) );
+        itdb_playlist_remove( OldPlayList );
+    }
+
+    Itdb_Playlist * iPodPlayList = itdb_playlist_new( name.mb_str( wxConvFile ), false );
+    if( iPodPlayList )
+    {
+        guLogMessage( wxT( "Created the playlist" ) );
+        itdb_playlist_add( m_iPodDb, iPodPlayList, wxNOT_FOUND );
+        guLogMessage( wxT( "Attached to the database" ) );
+        int Index;
+        int Count = trackids.Count();
+        guTrackArray Tracks;
+        GetSongs( trackids, &Tracks );
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guLogMessage( wxT( "Searching for track %s" ), Tracks[ Index ].m_FileName.c_str() );
+            Itdb_Track * iPodTrack = iPodFindTrack( Tracks[ Index ].m_FileName );
+            if( iPodTrack )
+            {
+                guLogMessage( wxT( "Adding track %s" ), Tracks[ Index ].m_FileName.c_str() );
+                itdb_playlist_add_track( iPodPlayList, iPodTrack, wxNOT_FOUND );
+            }
+        }
+        guLogMessage( wxT( "Savint the database" ) );
+        iPodFlush();
+    }
+    else
+    {
+        guLogMessage( wxT( "Could not create the playlist " ) );
+    }
+    return guDbLibrary::CreateStaticPlayList( name, trackids );
+}
+
+// -------------------------------------------------------------------------------- //
+int guIpodLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &trackids )
+{
+    guLogMessage( wxT( "guIpodLibrary::UpdateStaticPlayList" ) );
+    wxString PlayListName = GetPlayListName( plid );
+    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
+    if( OldPlayList )
+    {
+        GList * Tracks = OldPlayList->members;
+        while( Tracks )
+        {
+            Itdb_Track * CurTrack = ( Itdb_Track * ) Tracks->data;
+            if( CurTrack )
+                itdb_playlist_remove_track( OldPlayList, CurTrack );
+
+            Tracks = Tracks->next;
+        }
+
+        int Index;
+        int Count = trackids.Count();
+        guTrackArray PlayListTracks;
+        GetSongs( trackids, &PlayListTracks );
+        for( Index = 0; Index < Count; Index++ )
+        {
+            Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
+            if( iPodTrack )
+            {
+                itdb_playlist_add_track( OldPlayList, iPodTrack, wxNOT_FOUND );
+            }
+        }
+        iPodFlush();
+    }
+
+    return guDbLibrary::UpdateStaticPlayList( plid, trackids );
+}
+
+// -------------------------------------------------------------------------------- //
+int guIpodLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &trackids )
+{
+    guLogMessage( wxT( "guIpodLibrary::AppendStaticPlayList" ) );
+    wxString PlayListName = GetPlayListName( plid );
+    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
+    if( OldPlayList )
+    {
+        int Index;
+        int Count = trackids.Count();
+        guTrackArray PlayListTracks;
+        GetSongs( trackids, &PlayListTracks );
+        for( Index = 0; Index < Count; Index++ )
+        {
+            Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
+            if( iPodTrack )
+            {
+                itdb_playlist_add_track( OldPlayList, iPodTrack, wxNOT_FOUND );
+            }
+        }
+        iPodFlush();
+    }
+    return guDbLibrary::AppendStaticPlayList( plid, trackids );
+}
+
+// -------------------------------------------------------------------------------- //
+int guIpodLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &trackids )
+{
+    guLogMessage( wxT( "guIpodLibrary::DelPlaylistSetIds" ) );
+    wxString PlayListName = GetPlayListName( plid );
+    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
+    if( OldPlayList )
+    {
+        int Index;
+        int Count = trackids.Count();
+        guTrackArray PlayListTracks;
+        GetSongs( trackids, &PlayListTracks );
+        for( Index = 0; Index < Count; Index++ )
+        {
+            Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
+            if( iPodTrack )
+            {
+                itdb_playlist_remove_track( OldPlayList, iPodTrack );
+            }
+        }
+        iPodFlush();
+    }
+    return guDbLibrary::DelPlaylistSetIds( plid, trackids );
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodLibrary::SetPlayListName( const int plid, const wxString &newname )
+{
+    guLogMessage( wxT( "guIpodLibrary::SetPlayListName" ) );
+    wxString PlayListName = GetPlayListName( plid );
+    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
+    if( OldPlayList )
+    {
+        CheckUpdateField( &OldPlayList->name, newname );
+        iPodFlush();
+    }
+    else
+    {
+        guLogMessage( wxT( "Could not find the playlist '%s'" ), PlayListName.c_str() );
+    }
+
+    guDbLibrary::SetPlayListName( plid, newname );
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodLibrary::DeletePlayList( const int plid )
+{
+    guLogMessage( wxT( "guIpodLibrary::DeletePlayList" ) );
+    wxString PlayListName = GetPlayListName( plid );
+    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
+    if( OldPlayList )
+    {
+        itdb_playlist_remove( OldPlayList );
+        iPodFlush();
+    }
+
+    guDbLibrary::DeletePlayList( plid );
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodLibrary::UpdateStaticPlayListFile( const int plid )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+Itdb_Playlist * guIpodLibrary::CreateiPodPlayList( const wxString &path, const wxArrayString &filenames )
+{
+    guLogMessage( wxT( "guIpodLibrary::CreateiPodPlayList( '%s' )" ), wxFileNameFromPath( path ).BeforeLast( wxT( '.' ) ).c_str() );
+
+    Itdb_Playlist * iPodPlayList = itdb_playlist_new( wxFileNameFromPath( path ).BeforeLast( wxT( '.' ) ).mb_str( wxConvFile ), false );
+    if( iPodPlayList )
+    {
+        itdb_playlist_add( m_iPodDb, iPodPlayList, wxNOT_FOUND );
+        int Index;
+        int Count = filenames.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guLogMessage( wxT( "Trying to search for: '%s'" ), filenames[ Index ].c_str() );
+            Itdb_Track * iPodTrack = iPodFindTrack( filenames[ Index ] );
+            if( iPodTrack )
+            {
+                guLogMessage( wxT( "Found the track" ) );
+                itdb_playlist_add_track( iPodPlayList, iPodTrack, wxNOT_FOUND );
+            }
+        }
+        guLogMessage( wxT( "Playlist: '%s' with %i tracks" ), wxString( iPodPlayList->name, wxConvUTF8 ).c_str(), iPodPlayList->num );
+        iPodFlush();
+    }
+    else
+    {
+        guLogMessage( wxT( "Could not create the playlist " ) );
+    }
+    return iPodPlayList;
+}
+
+// -------------------------------------------------------------------------------- //
+Itdb_Track * guIpodLibrary::iPodFindTrack( const wxString &filename )
+{
+    Itdb_Track * Track = NULL;
+    wxString FileName = filename;
+
+    if( FileName.StartsWith( m_PortableMediaDevice->MountPath() ) )
+    {
+        FileName = FileName.Mid( m_PortableMediaDevice->MountPath().Length() - 1 );
+    }
+    FileName.Replace( wxT( "/" ), wxT( ":" ) );
+    //guLogMessage( wxT( "Trying to find %s" ), FileName.c_str() );
+
+    GList * Tracks = m_iPodDb->tracks;
+    while( Tracks )
+    {
+        Itdb_Track * CurTrack = ( Itdb_Track * ) Tracks->data;
+        //guLogMessage( wxT( "Checking: '%s" ), wxString( CurTrack->ipod_path, wxConvUTF8 ).c_str() );
+        if( wxString( CurTrack->ipod_path, wxConvUTF8 ) == FileName )
+        {
+            Track = CurTrack;
+            break;
+        }
+        Tracks = Tracks->next;
+    }
+    return Track;
+}
+
+// -------------------------------------------------------------------------------- //
+Itdb_Track * guIpodLibrary::iPodFindTrack( const wxString &artist, const wxString &albumartist, const wxString &album, const wxString &title )
+{
+    Itdb_Track * Track = NULL;
+    GList * Tracks = m_iPodDb->tracks;
+    while( Tracks )
+    {
+        Itdb_Track * CurTrack = ( Itdb_Track * ) Tracks->data;
+        if( ( albumartist.IsEmpty() ? ( wxString( CurTrack->artist, wxConvUTF8 ) == artist ) :
+                                    ( wxString( CurTrack->albumartist, wxConvUTF8 ) == albumartist ) ) &&
+            ( wxString( CurTrack->album, wxConvUTF8 ) == album ) &&
+            ( wxString( CurTrack->title, wxConvUTF8 ) == title ) )
+        {
+            Track = CurTrack;
+            break;
+        }
+        Tracks = Tracks->next;
+    }
+    return Track;
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodLibrary::iPodRemoveTrack( Itdb_Track * track )
+{
+    if( track )
+    {
+        GList * Playlists = m_iPodDb->playlists;
+        while( Playlists )
+        {
+            Itdb_Playlist * CurPlaylist = ( Itdb_Playlist * ) Playlists->data;
+            if( itdb_playlist_contains_track( CurPlaylist, track ) )
+            {
+                itdb_playlist_remove_track( CurPlaylist, track );
+            }
+            Playlists = Playlists->next;
+        }
+
+        itdb_track_remove_thumbnails( track );
+
+        itdb_track_remove( track );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodLibrary::iPodRemoveTrack( const wxString &filename )
+{
+    Itdb_Track * Track = iPodFindTrack( filename );
+
+    iPodRemoveTrack( Track );
+
+    if( !wxRemoveFile( filename ) )
+        guLogMessage( wxT( "Couldnt remove the file '%s'" ), filename.c_str() );
+}
 
 
 
@@ -1692,10 +1987,10 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
 {
     wxArrayPtrVoid CoveriPodTracks;
     wxArrayInt     CoverAlbumIds;
-    Itdb_iTunesDB * iPodDb = m_iPodPanel->iPodDb();
+    guIpodLibrary * Db = ( guIpodLibrary * ) m_iPodPanel->GetDb();
+    Itdb_iTunesDB * iPodDb = Db->IpodDb();
     if( iPodDb )
     {
-        guIpodLibrary * Db = ( guIpodLibrary * ) m_iPodPanel->GetDb();
         //Db->ExecuteUpdate( wxT( "DELETE FROM songs" ) );
         guPortableMediaDevice * PortableMediaDevice = m_iPodPanel->PortableMediaDevice();
 
@@ -1828,6 +2123,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
             if( Playlist && !Playlist->podcastflag && !Playlist->type )
             {
                 wxString PlaylistName = wxString( Playlist->name, wxConvUTF8 );
+                guLogMessage( wxT( "Playlist: '%s'" ), PlaylistName.c_str() );
 
                 if( !Playlist->is_spl ) // Its not a smart playlist
                 {
@@ -1854,7 +2150,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                         Tracks = Tracks->next;
                     }
 
-                    Db->CreateStaticPlayList( PlaylistName, PlaylistTrackIds );
+                    Db->CreateStaticPlayList( PlaylistName, PlaylistTrackIds, true );
                 }
                 else                // Its a dynamic playlist
                 {
@@ -1862,9 +2158,17 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
 
                 }
             }
+            else
+            {
+                guLogMessage( wxT( "Playlist was podcast or master" ) );
+            }
 
             Playlists = Playlists->next;
         }
+
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+        evt.SetClientData( ( void * ) m_iPodPanel );
+        wxPostEvent( wxTheApp->GetTopWindow(), evt );
 
         // Clean all the deleted items
         if( !TestDestroy() )
@@ -1902,10 +2206,9 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
 // -------------------------------------------------------------------------------- //
 // guIpodMediaLibPanel
 // -------------------------------------------------------------------------------- //
-guIpodMediaLibPanel::guIpodMediaLibPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, Itdb_iTunesDB * ipoddb ) :
+guIpodMediaLibPanel::guIpodMediaLibPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel ) :
     guPortableMediaLibPanel( parent, db, playerpanel )
 {
-    m_iPodDb = ipoddb;
     m_UpdateThread = NULL;
     m_PortableMediaDevice = NULL;
 
@@ -1922,11 +2225,6 @@ guIpodMediaLibPanel::~guIpodMediaLibPanel()
     {
         m_UpdateThread->Pause();
         m_UpdateThread->Delete();
-    }
-
-    if( m_iPodDb )
-    {
-        itdb_free( m_iPodDb );
     }
 }
 
@@ -1957,16 +2255,6 @@ wxArrayString guIpodMediaLibPanel::GetLibraryPaths( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void inline CheckUpdateField( gchar ** fieldptr, const wxString &newval )
-{
-    if( wxString( * fieldptr, wxConvUTF8 ) != newval )
-    {
-        free( * fieldptr );
-        * fieldptr = strdup( newval.ToUTF8() );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 void guIpodMediaLibPanel::SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice )
 {
     m_PortableMediaDevice = portablemediadevice;
@@ -1992,7 +2280,7 @@ void guIpodMediaLibPanel::UpdateTracks( const guTrackArray &tracks )
     for( Index = 0; Index < Count; Index++ )
     {
         guTrack &Track = tracks[ Index ];
-        Itdb_Track * iPodTrack = iPodFindTrack( Track.m_FileName );
+        Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Track.m_FileName );
         if( iPodTrack )
         {
             CheckUpdateField( &iPodTrack->title, Track.m_SongName );
@@ -2013,13 +2301,13 @@ void guIpodMediaLibPanel::UpdateTracks( const guTrackArray &tracks )
             iPodTrack->type2 = Track.m_Format == wxT( "mp3" ) ? 1 : 0;
         }
     }
-    iPodFlush();
+    ( ( guIpodLibrary * ) m_Db )->iPodFlush();
 
     guPortableMediaLibPanel::UpdateTracks( tracks );
 }
 
 // -------------------------------------------------------------------------------- //
-int guIpodMediaLibPanel::CopyTo( const guTrack * track )
+int guIpodMediaLibPanel::CopyTo( const guTrack * track, wxString &filename )
 {
     if( !track )
         return false;
@@ -2071,10 +2359,11 @@ int guIpodMediaLibPanel::CopyTo( const guTrack * track )
         }
     }
 
+    Itdb_iTunesDB * iPodDb = ( ( guIpodLibrary * ) m_Db )->IpodDb();
     // Add the track to the iPod Database
-    itdb_track_add( m_iPodDb, iPodTrack, wxNOT_FOUND );
+    itdb_track_add( iPodDb, iPodTrack, wxNOT_FOUND );
     // Add th etrack to the master playlist
-    Itdb_Playlist * MasterPlaylist = itdb_playlist_mpl( m_iPodDb );
+    Itdb_Playlist * MasterPlaylist = itdb_playlist_mpl( iPodDb );
     itdb_playlist_add_track( MasterPlaylist, iPodTrack, wxNOT_FOUND );
 
     int FileFormat = guGetTranscodeFileFormat( track->m_FileName.Lower().AfterLast( wxT( '.' ) ) );
@@ -2139,89 +2428,8 @@ int guIpodMediaLibPanel::CopyTo( const guTrack * track )
 
     wxRemoveFile( TmpFile );
 
+    filename = wxString( iPodTrack->ipod_path, wxConvUTF8 );
     return iPodTrack->size;
-}
-
-// -------------------------------------------------------------------------------- //
-Itdb_Track * guIpodMediaLibPanel::iPodFindTrack( const wxString &filename )
-{
-    Itdb_Track * Track = NULL;
-    wxString FileName = filename;
-
-    if( FileName.StartsWith( m_PortableMediaDevice->MountPath() ) )
-    {
-        FileName = FileName.Mid( m_PortableMediaDevice->MountPath().Length() - 1 );
-        FileName.Replace( wxT( "/" ), wxT( ":" ) );
-        //guLogMessage( wxT( "Trying to find %s" ), FileName.c_str() );
-
-        GList * Tracks = m_iPodDb->tracks;
-        while( Tracks )
-        {
-            Itdb_Track * CurTrack = ( Itdb_Track * ) Tracks->data;
-            //guLogMessage( wxT( "Checking: '%s" ), wxString( CurTrack->ipod_path, wxConvUTF8 ).c_str() );
-            if( wxString( CurTrack->ipod_path, wxConvUTF8 ) == FileName )
-            {
-                Track = CurTrack;
-                break;
-            }
-            Tracks = Tracks->next;
-        }
-    }
-    return Track;
-}
-
-// -------------------------------------------------------------------------------- //
-Itdb_Track * guIpodMediaLibPanel::iPodFindTrack( const wxString &artist, const wxString &albumartist, const wxString &album, const wxString &title )
-{
-    Itdb_Track * Track = NULL;
-    GList * Tracks = m_iPodDb->tracks;
-    while( Tracks )
-    {
-        Itdb_Track * CurTrack = ( Itdb_Track * ) Tracks->data;
-        if( ( albumartist.IsEmpty() ? ( wxString( CurTrack->artist, wxConvUTF8 ) == artist ) :
-                                    ( wxString( CurTrack->albumartist, wxConvUTF8 ) == albumartist ) ) &&
-            ( wxString( CurTrack->album, wxConvUTF8 ) == album ) &&
-            ( wxString( CurTrack->title, wxConvUTF8 ) == title ) )
-        {
-            Track = CurTrack;
-            break;
-        }
-        Tracks = Tracks->next;
-    }
-    return Track;
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::iPodRemoveTrack( Itdb_Track * track )
-{
-    if( track )
-    {
-        GList * Playlists = m_iPodDb->playlists;
-        while( Playlists )
-        {
-            Itdb_Playlist * CurPlaylist = ( Itdb_Playlist * ) Playlists->data;
-            if( itdb_playlist_contains_track( CurPlaylist, track ) )
-            {
-                itdb_playlist_remove_track( CurPlaylist, track );
-            }
-            Playlists = Playlists->next;
-        }
-
-        itdb_track_remove_thumbnails( track );
-
-        itdb_track_remove( track );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::iPodRemoveTrack( const wxString &filename )
-{
-    Itdb_Track * Track = iPodFindTrack( filename );
-
-    iPodRemoveTrack( Track );
-
-    if( !wxRemoveFile( filename ) )
-        guLogMessage( wxT( "Couldnt remove the file '%s'" ), filename.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2261,7 +2469,7 @@ bool guIpodMediaLibPanel::SetAlbumCover( const int albumid, const wxString &albu
         {
             for( Index = 0; Index < Count; Index++ )
             {
-                Itdb_Track * iPodTrack = iPodFindTrack( Tracks[ Index ].m_FileName );
+                Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Tracks[ Index ].m_FileName );
                 if( iPodTrack )
                 {
                     if( itdb_track_has_thumbnails( iPodTrack ) )
@@ -2276,7 +2484,7 @@ bool guIpodMediaLibPanel::SetAlbumCover( const int albumid, const wxString &albu
 
                 guTagSetPicture( Tracks[ Index ].m_FileName, coverimg );
             }
-            iPodFlush();
+            ( ( guIpodLibrary * ) m_Db )->iPodFlush();
             wxRemoveFile( TmpFile );
 
             m_Db->SetAlbumCover( albumid, * coverimg );
@@ -2339,14 +2547,14 @@ void guIpodMediaLibPanel::DoDeleteAlbumCover( const int albumid )
     {
         for( Index = 0; Index < Count; Index++ )
         {
-            Itdb_Track * iPodTrack = iPodFindTrack( Tracks[ Index ].m_FileName );
+            Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Tracks[ Index ].m_FileName );
             if( iPodTrack )
             {
                 guLogMessage( wxT( "Deleting cover for track '%s'" ), wxString( iPodTrack->ipod_path, wxConvUTF8 ).c_str() );
                 itdb_artwork_remove_thumbnails( iPodTrack->artwork );
             }
         }
-        iPodFlush();
+        ( ( guIpodLibrary * ) m_Db )->iPodFlush();
     }
 
     guPortableMediaLibPanel::DoDeleteAlbumCover( albumid );
@@ -2360,21 +2568,47 @@ void guIpodMediaLibPanel::DeleteTracks( guTrackArray * tracks )
     if( ( Count = tracks->Count() ) )
     {
         m_Db->DeleteLibraryTracks( tracks, false );
+        Itdb_iTunesDB * iPodDb = ( ( guIpodLibrary * ) m_Db )->IpodDb();
 
-        Itdb_Playlist * MasterPlaylist = itdb_playlist_mpl( m_iPodDb );
+        Itdb_Playlist * MasterPlaylist = itdb_playlist_mpl( iPodDb );
 
         for( Index = 0; Index < Count; Index++ )
         {
-            Itdb_Track * iPodTrack = iPodFindTrack( tracks->Item( Index ).m_FileName );
+            Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( tracks->Item( Index ).m_FileName );
             if( iPodTrack )
             {
                 itdb_playlist_remove_track( MasterPlaylist, iPodTrack );
                 itdb_track_remove( iPodTrack );
             }
         }
-        iPodFlush();
+        ( ( guIpodLibrary * ) m_Db )->iPodFlush();
     }
 }
+
+// -------------------------------------------------------------------------------- //
+// guIpodPlayListPanel
+// -------------------------------------------------------------------------------- //
+guIpodPlayListPanel::guIpodPlayListPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel ) :
+    guPortableMediaPlayListPanel( parent, db, playerpanel, libpanel )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guIpodPlayListPanel::~guIpodPlayListPanel()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+{
+    int Index;
+    int Count = tracks->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        tracks->Item( Index ).m_LibPanel = m_LibPanel;
+    }
+}
+
 
 
 
@@ -2400,8 +2634,22 @@ guPortableMediaViewCtrl::guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO
     if( iPodDb )
     {
         m_MediaDevice->SetType( guPORTABLEMEDIA_TYPE_IPOD );
-        m_Db = ( guPortableMediaLibrary * ) new guIpodLibrary( DeviceDbPath, m_MediaDevice );
-        itdb_free( iPodDb );
+        m_Db = ( guPortableMediaLibrary * ) new guIpodLibrary( DeviceDbPath, m_MediaDevice, iPodDb );
+
+        guLogMessage( wxT( "Detected an Ipod with %i tracks and %i playlists" ),  itdb_tracks_number( iPodDb ), itdb_playlists_number( iPodDb ) );
+        Itdb_Device * iPodDevice = iPodDb->device;
+        if( iPodDevice )
+        {
+            //guLogMessage( wxT( "Artwork support : %i" ), itdb_device_supports_artwork( iPodDevice ) );
+            const Itdb_IpodInfo * iPodInfo = itdb_device_get_ipod_info( iPodDevice );
+            if( iPodInfo )
+            {
+                guLogMessage( wxT( "Model Number    : %s" ), wxString( iPodInfo->model_number, wxConvUTF8 ).c_str() );
+                guLogMessage( wxT( "Capacity        : %.0f" ), iPodInfo->capacity );
+                guLogMessage( wxT( "Model Name      : %s" ), wxString( itdb_info_get_ipod_model_name_string( iPodInfo->ipod_model ), wxConvUTF8 ).c_str() );
+                guLogMessage( wxT( "Generation      : %s" ), wxString( itdb_info_get_ipod_generation_string( iPodInfo->ipod_generation ), wxConvUTF8 ).c_str() );
+            }
+        }
     }
     else
 #endif
@@ -2442,25 +2690,9 @@ guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * pa
     if( !m_LibPanel )
     {
 #ifdef WITH_LIBGPOD_SUPPORT
-        GError * Error = NULL;
-        Itdb_iTunesDB * iPodDb = itdb_parse( m_MediaDevice->MountPath().mb_str( wxConvFile ), &Error );
-        if( iPodDb )
+        if( m_MediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
         {
-            guLogMessage( wxT( "Detected an Ipod with %i tracks and %i playlists" ),  itdb_tracks_number( iPodDb ), itdb_playlists_number( iPodDb ) );
-            Itdb_Device * iPodDevice = iPodDb->device;
-            if( iPodDevice )
-            {
-                //guLogMessage( wxT( "Artwork support : %i" ), itdb_device_supports_artwork( iPodDevice ) );
-                const Itdb_IpodInfo * iPodInfo = itdb_device_get_ipod_info( iPodDevice );
-                if( iPodInfo )
-                {
-                    guLogMessage( wxT( "Model Number    : %s" ), wxString( iPodInfo->model_number, wxConvUTF8 ).c_str() );
-                    guLogMessage( wxT( "Capacity        : %.0f" ), iPodInfo->capacity );
-                    guLogMessage( wxT( "Model Name      : %s" ), wxString( itdb_info_get_ipod_model_name_string( iPodInfo->ipod_model ), wxConvUTF8 ).c_str() );
-                    guLogMessage( wxT( "Generation      : %s" ), wxString( itdb_info_get_ipod_generation_string( iPodInfo->ipod_generation ), wxConvUTF8 ).c_str() );
-                }
-            }
-            m_LibPanel = new guIpodMediaLibPanel( parent, ( guIpodLibrary * ) m_Db, playerpanel, iPodDb );
+            m_LibPanel = new guIpodMediaLibPanel( parent, ( guIpodLibrary * ) m_Db, playerpanel );
         }
         else
 #endif
@@ -2469,13 +2701,6 @@ guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * pa
         }
         m_LibPanel->SetPortableMediaDevice( m_MediaDevice );
         m_LibPanel->SetBaseCommand( m_BaseCommand );
-
-#ifdef WITH_LIBGPOD_SUPPORT
-        if( Error )
-        {
-            g_error_free( Error );
-        }
-#endif
     }
     m_VisiblePanels |= guPANEL_MAIN_LIBRARY;
     return m_LibPanel;
@@ -2516,7 +2741,14 @@ void guPortableMediaViewCtrl::DestroyAlbumBrowser( void )
 // -------------------------------------------------------------------------------- //
 guPortableMediaPlayListPanel * guPortableMediaViewCtrl::CreatePlayListPanel( wxWindow * parent, guPlayerPanel * playerpanel )
 {
-    m_PlayListPanel = new guPortableMediaPlayListPanel( parent, m_Db, playerpanel, m_LibPanel );
+    if( m_MediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
+    {
+        m_PlayListPanel = new guIpodPlayListPanel( parent, ( guIpodLibrary * ) m_Db, playerpanel, ( guIpodMediaLibPanel * ) m_LibPanel );
+    }
+    else
+    {
+        m_PlayListPanel = new guPortableMediaPlayListPanel( parent, m_Db, playerpanel, m_LibPanel );
+    }
     m_VisiblePanels |= guPANEL_MAIN_PLAYLISTS;
     return m_PlayListPanel;
 }

@@ -92,11 +92,12 @@ guCopyToAction::guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPorta
 guCopyToAction::guCopyToAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
 {
     m_Type = guCOPYTO_ACTION_COPYTODEVICE;
-    m_Tracks = NULL;
+    m_Tracks = new guTrackArray();
     m_MoveFiles = false;
     m_Db = db;
     m_PortableMediaViewCtrl = portablemediaviewctrl;
     m_PlayListFile = new guPlayListFile( * playlistpath );
+    m_PlayListFile->SetName( * playlistpath );
     guPortableMediaDevice * PortableMediaDevice = m_PortableMediaViewCtrl->MediaDevice();
     if( PortableMediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
         m_Type = guCOPYTO_ACTION_COPYTOIPOD;
@@ -111,6 +112,21 @@ guCopyToAction::guCopyToAction( wxString * playlistpath, guDbLibrary * db, guPor
     else if( !m_DestDir.EndsWith( wxT( "/" ) ) )
         m_DestDir.Append( wxT( "/" ) );
 
+    int Index;
+    int Count = m_PlayListFile->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * CurTrack = new guTrack();
+        if( m_Db->FindTrackFile( m_PlayListFile->GetItem( Index ).m_Location, CurTrack ) )
+        {
+            m_Tracks->Add( CurTrack );
+        }
+        else
+        {
+            delete CurTrack;
+        }
+    }
+
     //
     delete playlistpath;
 }
@@ -122,21 +138,12 @@ guCopyToAction::~guCopyToAction()
     {
         delete m_Tracks;
     }
-}
 
-// -------------------------------------------------------------------------------- //
-size_t guCopyToAction::Count( void )
-{
-    if( m_Tracks )
-        return m_Tracks->Count();
     if( m_PlayListFile )
     {
-        return m_PlayListFile->Count();
+        delete m_PlayListFile;
     }
-
-    return 0;
 }
-
 
 // -------------------------------------------------------------------------------- //
 // guCopyToThread
@@ -315,11 +322,12 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             continue;
 
         bool Result;
+        FileName = wxEmptyString;
 
 #ifdef WITH_LIBGPOD_SUPPORT
         if( copytoaction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
         {
-            int FileSize = copytoaction.PortableMediaViewCtrl()->CopyTo( CurTrack );
+            int FileSize = copytoaction.PortableMediaViewCtrl()->CopyTo( CurTrack, FileName );
 
             if( FileSize == wxNOT_FOUND )
                 Result = false;
@@ -327,6 +335,9 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             {
                 Result = true;
                 m_SizeCounter += FileSize;
+
+                // Add the file to the files to add list so the library update it when this job is done
+                m_FilesToAdd.Add( FileName );
             }
         }
         else
@@ -676,15 +687,49 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
 #ifdef WITH_LIBGPOD_SUPPORT
             if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
             {
-                ( ( guIpodMediaLibPanel * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() )->iPodFlush();
+                guPlayListFile * PlayListFile = CopyToAction.PlayListFile();
+                guIpodLibrary * IpodDb = ( guIpodLibrary *  ) ( ( guIpodMediaLibPanel * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() )->GetDb();
+                if( PlayListFile )
+                {
+                    guLogMessage( wxT( "It was a playlist...") );
+                    IpodDb->CreateiPodPlayList( PlayListFile->GetName(), m_FilesToAdd );
+                }
+                IpodDb->iPodFlush();
                 ( ( guIpodMediaLibPanel * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() )->DoUpdate( true );
             }
             else
 #endif
             if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTODEVICE )
             {
+                int Index;
+                int Count;
                 // Update the files
-                CopyToAction.PortableMediaViewCtrl()->Db()->AddFiles( m_FilesToAdd );
+                guPortableMediaLibrary * PortableMediaDb = CopyToAction.PortableMediaViewCtrl()->Db();
+                PortableMediaDb->AddFiles( m_FilesToAdd );
+
+                guPlayListFile * PlayListFile = CopyToAction.PlayListFile();
+                if( PlayListFile )
+                {
+                    guLogMessage( wxT( "Normal device and is from a playlist..." ) );
+                    wxArrayInt TrackIds;
+                    // The tracks just copied was part of a playlist we need to create too
+                    Count = m_FilesToAdd.Count();
+                    for( Index = 0; Index < Count; Index++ )
+                    {
+                        int TrackId = PortableMediaDb->FindTrackFile( m_FilesToAdd[ Index ], NULL );
+                        if( TrackId )
+                            TrackIds.Add( TrackId );
+                    }
+                    if( TrackIds.Count() )
+                    {
+                        int PLId = PortableMediaDb->CreateStaticPlayList( PlayListFile->GetName(), TrackIds );
+                        PortableMediaDb->UpdateStaticPlayListFile( PLId );
+
+                        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+                        evt.SetClientData( ( void * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() );
+                        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+                    }
+                }
 
                 // Update the covers
                 wxString DevCoverName = CopyToAction.PortableMediaDevice()->CoverName();
@@ -693,8 +738,7 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
                     DevCoverName = wxT( "cover" );
                 }
                 DevCoverName += wxT( ".jpg" );
-                int Index;
-                int Count = m_CoversToAdd.Count();
+                Count = m_CoversToAdd.Count();
                 for( Index = 0; Index < Count; Index++ )
                 {
                     CopyToAction.PortableMediaViewCtrl()->Db()->UpdateImageFile( m_CoversToAdd[ Index ].ToUTF8(), DevCoverName.ToUTF8() );

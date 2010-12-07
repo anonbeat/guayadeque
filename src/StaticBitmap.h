@@ -26,21 +26,7 @@
 extern const wxEventType guStaticBitmapMouseOverEvent;
 #define guEVT_STATICBITMAP_MOUSE_OVER           1000
 
-class guStaticBitmapTimer;
-
-// -------------------------------------------------------------------------------- //
-class guStaticBitmap : public wxStaticBitmap
-{
-  public :
-    guStaticBitmap( wxWindow * parent, wxWindowID id, const wxBitmap &label, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0 );
-    ~guStaticBitmap();
-
-  protected :
-    guStaticBitmapTimer *   m_MouseOverTimer;
-
-    void OnMouse( wxMouseEvent &event );
-
-};
+class guStaticBitmap;
 
 // -------------------------------------------------------------------------------- //
 class guStaticBitmapTimer : public wxTimer
@@ -52,6 +38,22 @@ class guStaticBitmapTimer : public wxTimer
     guStaticBitmapTimer( guStaticBitmap * bitmap ) { m_Bitmap = bitmap; };
 
     void Notify();
+};
+
+// -------------------------------------------------------------------------------- //
+class guStaticBitmap : public wxStaticBitmap
+{
+  protected :
+    guStaticBitmapTimer *   m_MouseOverTimer;
+
+    void OnMouse( wxMouseEvent &event );
+
+  public :
+    guStaticBitmap( wxWindow * parent, wxWindowID id, const wxBitmap &label, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0 );
+    ~guStaticBitmap();
+
+    void StopTimer( void ) { if( m_MouseOverTimer->IsRunning() ) m_MouseOverTimer->Stop(); }
+
 };
 
 #endif

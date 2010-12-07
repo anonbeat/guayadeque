@@ -60,11 +60,12 @@ BEGIN_EVENT_TABLE( guPLNamesTreeCtrl, wxTreeCtrl )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
-guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db ) :
+guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db, guPlayListPanel * playlistpanel ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_MULTIPLE )
 {
     m_Db = db;
+    m_PlayListPanel = playlistpanel;
     m_ImageList = new wxImageList();
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_track ) ) );
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_system_run ) ) );
@@ -322,6 +323,7 @@ void guPLNamesTreeCtrl::OnDropEnd( void )
             if( ItemData && ItemData->GetType() == guPLAYLIST_TYPE_STATIC )
             {
                 m_Db->AppendStaticPlayList( ItemData->GetData(), m_DropIds );
+                m_Db->UpdateStaticPlayListFile( ItemData->GetData() );
             }
 
             SelectItem( m_StaticId );
@@ -558,7 +560,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 //    wxStaticText * m_NameStaticText;
 //    m_NameStaticText = new wxStaticText( NamesPanel, wxID_ANY, _( "Play lists:" ) );
 //    NameSizer->Add( m_NameStaticText, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5 );
-	m_NamesTreeCtrl = new guPLNamesTreeCtrl( NamesPanel, m_Db );
+	m_NamesTreeCtrl = new guPLNamesTreeCtrl( NamesPanel, m_Db, this );
 	m_NamesTreeCtrl->ExpandAll();
 	NameSizer->Add( m_NamesTreeCtrl, 1, wxEXPAND, 5 );
 
@@ -880,7 +882,7 @@ void guPlayListPanel::OnPLNamesEditPlaylist( wxCommandEvent &event )
         if( PlayListEditor->ShowModal() == wxID_OK )
         {
             PlayListEditor->FillPlayListEditData();
-            m_Db->UpdateDynPlayList( ItemData->GetData(), &DynPlayList );
+            m_Db->UpdateDynamicPlayList( ItemData->GetData(), &DynPlayList );
             m_NamesTreeCtrl->ReloadItems();
         }
         PlayListEditor->Destroy();
@@ -900,6 +902,8 @@ void guPlayListPanel::OnPLNamesRenamePlaylist( wxCommandEvent &event )
             guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
             wxASSERT( ItemData );
             m_Db->SetPlayListName( ItemData->GetData(), EntryDialog->GetValue() );
+            if( ItemData->GetType() == guPLAYLIST_TYPE_STATIC )
+                m_Db->UpdateStaticPlayListFile( ItemData->GetData() );
             //m_NamesTreeCtrl->SetItemText( ItemId, EntryDialog->GetValue() );
             SendPlayListUpdatedEvent();
         }
@@ -921,6 +925,8 @@ void guPlayListPanel::DeleteCurrentPlayList( void )
             if( ItemData )
             {
                 m_Db->DeletePlayList( ItemData->GetData() );
+                if( ItemData->GetType() == guPLAYLIST_TYPE_STATIC )
+                    m_Db->UpdateStaticPlayListFile( ItemData->GetData() );
             }
         }
         SendPlayListUpdatedEvent();
@@ -944,23 +950,45 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
     wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
     if( ItemId.IsOk() )
     {
-        guTrackArray * Tracks = new guTrackArray();
-        m_PLTracksListBox->GetAllSongs( Tracks );
-        NormalizeTracks( Tracks );
-
         int Index = event.GetId() - ID_PLAYLIST_COPYTO;
         if( Index > 99 )
         {
             Index -= 100;
-            event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
+            event.SetInt( Index );
+
+            guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
+            if( ItemData )
+            {
+                wxString PlayListPath = m_Db->GetPlayListPath( ItemData->GetData() );
+                if( !PlayListPath.IsEmpty() )
+                {
+                    event.SetId( ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
+                    event.SetClientData( new wxString( PlayListPath ) );
+                }
+                else
+                {
+                    event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
+                    guTrackArray * Tracks = new guTrackArray();
+                    m_PLTracksListBox->GetAllSongs( Tracks );
+                    NormalizeTracks( Tracks );
+
+                    event.SetClientData( ( void * ) Tracks );
+                }
+                wxPostEvent( wxTheApp->GetTopWindow(), event );
+            }
         }
         else
         {
             event.SetId( ID_MAINFRAME_COPYTO );
+
+            guTrackArray * Tracks = new guTrackArray();
+            m_PLTracksListBox->GetAllSongs( Tracks );
+            NormalizeTracks( Tracks );
+
+            event.SetInt( Index );
+            event.SetClientData( ( void * ) Tracks );
+            wxPostEvent( wxTheApp->GetTopWindow(), event );
         }
-        event.SetInt( Index );
-        event.SetClientData( ( void * ) Tracks );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
     }
 }
 
@@ -1021,7 +1049,8 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
 
                 if( Songs.Count() )
                 {
-                    m_Db->CreateStaticPlayList( PlayListFile.GetName(), Songs );
+                    int PLId = m_Db->CreateStaticPlayList( PlayListFile.GetName(), Songs );
+                    m_Db->UpdateStaticPlayListFile( PLId );
                 }
 
                 //m_NamesTreeCtrl->ReloadItems();
@@ -1114,6 +1143,7 @@ void guPlayListPanel::OnPLTracksDeleteClicked( wxCommandEvent &event )
             if( ItemData && ItemData->GetType() == guPLAYLIST_TYPE_STATIC )
             {
                 m_Db->DelPlaylistSetIds( ItemData->GetData(), DelTracks );
+                m_Db->UpdateStaticPlayListFile( ItemData->GetData() );
                 m_PLTracksListBox->ReloadItems();
             }
         }
@@ -1290,7 +1320,8 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
                 {
                     PLName = _( "UnNamed" );
                 }
-                m_Db->CreateStaticPlayList( PLName, NewSongs );
+                int PLId = m_Db->CreateStaticPlayList( PLName, NewSongs );
+                m_Db->UpdateStaticPlayListFile( PLId );
             }
             else
             {
@@ -1306,6 +1337,7 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
                 {
                     m_Db->AppendStaticPlayList( PLId, NewSongs );
                 }
+                m_Db->UpdateStaticPlayListFile( PLId );
             }
             SendPlayListUpdatedEvent();
         }
@@ -1523,6 +1555,7 @@ void guPlayListPanel::OnPLTracksEditField( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::PlayListUpdated( void )
 {
+    guLogMessage( wxT( "guPLayListPanel::PlayListUpdated" ) );
     m_NamesTreeCtrl->ReloadItems();
 }
 

@@ -54,6 +54,7 @@
 #define     guPANEL_PLAYLIST_VISIBLE_DEFAULT   ( 0 )
 
 class guPLNamesDropTarget;
+class guPlayListPanel;
 
 // -------------------------------------------------------------------------------- //
 // guPLNamesTreeCtrl
@@ -61,12 +62,13 @@ class guPLNamesDropTarget;
 class guPLNamesTreeCtrl : public wxTreeCtrl
 {
   protected :
-    wxArrayString   m_TextSearchFilter;
-    guDbLibrary *   m_Db;
-    wxImageList *   m_ImageList;
-    wxTreeItemId    m_RootId;
-    wxTreeItemId    m_StaticId;
-    wxTreeItemId    m_DynamicId;
+    guDbLibrary *       m_Db;
+    guPlayListPanel *   m_PlayListPanel;
+    wxArrayString       m_TextSearchFilter;
+    wxImageList *       m_ImageList;
+    wxTreeItemId        m_RootId;
+    wxTreeItemId        m_StaticId;
+    wxTreeItemId        m_DynamicId;
 
     wxTreeItemId    m_DragOverItem;
     wxArrayInt      m_DropIds;
@@ -80,7 +82,7 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     void            OnKeyDown( wxKeyEvent &event );
 
   public :
-    guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db );
+    guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db, guPlayListPanel * playlistpanel );
     ~guPLNamesTreeCtrl();
 
     void            ReloadItems( void );
@@ -154,6 +156,7 @@ class guPlayListPanel : public wxPanel
     void                OnPLNamesPlay( wxCommandEvent &event );
     void                OnPLNamesEnqueue( wxCommandEvent &event );
     void                OnPLNamesEnqueueAsNext( wxCommandEvent &event );
+
     void                OnPLNamesNewPlaylist( wxCommandEvent &event );
     void                OnPLNamesEditPlaylist( wxCommandEvent &event );
     void                OnPLNamesRenamePlaylist( wxCommandEvent &event );
@@ -163,14 +166,14 @@ class guPlayListPanel : public wxPanel
     void                OnPLNamesImport( wxCommandEvent &event );
     void                OnPLNamesExport( wxCommandEvent &event );
 
-    void                OnPLTracksActivated( wxListEvent &event );
-    void                OnPLTracksDeleteClicked( wxCommandEvent &event );
+    virtual void        OnPLTracksActivated( wxListEvent &event );
     void                OnPLTracksPlayClicked( wxCommandEvent &event );
     void                OnPLTracksPlayAllClicked( wxCommandEvent &event );
     void                OnPLTracksQueueClicked( wxCommandEvent &event );
     void                OnPLTracksQueueAsNextClicked( wxCommandEvent &event );
     void                OnPLTracksQueueAllClicked( wxCommandEvent &event );
     void                OnPLTracksQueueAllAsNextClicked( wxCommandEvent &event );
+    void                OnPLTracksDeleteClicked( wxCommandEvent &event );
     void                OnPLTracksEditLabelsClicked( wxCommandEvent &event );
     void                OnPLTracksEditTracksClicked( wxCommandEvent &event );
     void                OnPLTracksCopyToClicked( wxCommandEvent &event );
@@ -197,9 +200,23 @@ class guPlayListPanel : public wxPanel
     void                OnPLTracksDeleteLibrary( wxCommandEvent &event );
     void                OnPLTracksDeleteDrive( wxCommandEvent &event );
 
-    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
+    //virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks ) { return m_Db->CreateStaticPlayList( name, tracks ); }
+    //virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks ) { return m_Db->UpdateStaticPlayList( plid, tracks ); }
+    //virtual int         AppendStaticPlayList( const int plid, const wxArrayInt &tracks ) { return m_Db->AppendStaticPlayList( plid, tracks ); }
+    //virtual int         DeleteStaticPlayList( const int plid, const wxArrayInt &tracks ) { return m_Db->DelPlaylistSetIds( plid, tracks ); }
+    //virtual void        SetPlayListName( const int plid, const wxString &newname ) { m_Db->SetPlayListName( plid, newname ); }
+    //virtual void        DeletePlayList( const int plid ) { m_Db->DeletePlayList( plid ); }
 
+    //virtual int         CreateDynamicPlayList( const wxString &name, const guDynPlayList * dynplaylist ) { return m_Db->CreateDynamicPlayList( name, dynplaylist ); }
+    //virtual void        GetDynamicPlayList( const int plid, guDynPlayList * dynplaylist ) { m_Db->GetDynamicPlayList( plid, dynplaylist ); }
+    //virtual void        UpdateDynamicPlayList( const int plid, const guDynPlayList * dynplaylist ) { m_Db->UpdateDynamicPlayList( plid, dynplaylist ); }
+
+    //virtual void        UpdateStaticPlayListFile( const int plid );
+
+
+    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
     virtual void        SendPlayListUpdatedEvent( void );
+
 
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
@@ -215,6 +232,7 @@ class guPlayListPanel : public wxPanel
     bool                IsPanelShown( const int panelid ) const;
     void                ShowPanel( const int panelid, bool show );
 
+    friend class guPLNamesTreeCtrl;
 };
 
 #endif

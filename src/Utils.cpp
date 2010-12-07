@@ -463,17 +463,15 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
 //            Ins.Read( Outs );
             if( Buffer.GetLength() )
             {
-                RetVal = wxString( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), wxConvLibc );
+                size_t Count = Buffer.GetLength();
+                const char * pData = ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart();
+                RetVal = wxString( pData, wxConvUTF8, Count );
                 if( RetVal.IsEmpty() )
                 {
-                    RetVal = wxString::FromUTF8( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
+                    RetVal = wxString( pData, wxConvISO8859_1, Count );
                     if( RetVal.IsEmpty() )
                     {
-                        RetVal = wxString::From8BitData( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), Buffer.GetLength() );
-                        if( RetVal.IsEmpty() )
-                        {
-                            RetVal = wxString( ( const char * ) Buffer.GetOutputStreamBuffer()->GetBufferStart(), wxConvISO8859_1 );
-                        }
+                        RetVal = wxString( pData, wxConvLibc, Count );
                     }
                 }
             }
@@ -484,7 +482,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     {
         guLogError( wxT( "Could not get '%s'" ), url.c_str() );
     }
-    //guLogMessage( wxT( "Response:\n%s" ), RetVal.c_str() );
+    //guLogMessage( wxT( "Response:\n%s\n###############" ), RetVal.c_str() );
     return RetVal;
 }
 
