@@ -31,6 +31,7 @@
 #include <id3v2framefactory.h>
 #include <textidentificationframe.h>
 #include <unsynchronizedlyricsframe.h>
+#include <asffile.h>
 #include <mpegfile.h>
 #include <flacfile.h>
 #include <mp4file.h>
@@ -45,6 +46,7 @@
 #include <mp4tag.h>
 #include <apetag.h>
 #include <id3v2tag.h>
+#include <asftag.h>
 
 // FLAC Dev files
 #include <FLAC/metadata.h>
@@ -266,6 +268,27 @@ class guTrueAudioTagInfo : public guTagInfo
   public :
     guTrueAudioTagInfo( const wxString &filename = wxEmptyString );
     ~guTrueAudioTagInfo();
+
+    virtual bool        Read( void );
+    virtual bool        Write( void );
+
+    virtual bool        CanHandleImages( void );
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image );
+    virtual bool        CanHandleLyrics( void );
+    virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics );
+};
+
+// -------------------------------------------------------------------------------- //
+class guASFTagInfo : public guTagInfo
+{
+  protected :
+    ASF::Tag *        m_ASFTag;
+
+  public :
+    guASFTagInfo( const wxString &filename = wxEmptyString );
+    ~guASFTagInfo();
 
     virtual bool        Read( void );
     virtual bool        Write( void );
