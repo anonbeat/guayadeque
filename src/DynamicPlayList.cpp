@@ -33,6 +33,7 @@ wxArrayString m_FilterLabelOptionChoices;
 wxArrayString m_FilterNumberOptionChoices;
 wxArrayString m_FilterYearOptionChoices;
 wxArrayString m_FilterDateOptionChoices;
+wxArrayString m_FilterBoolOptionChoices;
 wxArrayString m_LimitChoices;
 wxArrayString m_SortChoices;
 wxArrayString m_FilterDateOption2Choices;
@@ -107,6 +108,11 @@ void inline InitArrayStrings( void )
         m_FilterDateOptionChoices.Add( _( "before the last" ) );
 //    }
 //
+//    if( !m_FilterBoolOptionChoices.Count() )
+//    {
+        m_FilterBoolOptionChoices.Add( _( "false" ) );
+        m_FilterBoolOptionChoices.Add( _( "true" ) );
+//    }
 //    if( !m_LimitChoices.Count() )
 //    {
         m_LimitChoices.Add( _( "Tracks" ) );
@@ -181,6 +187,7 @@ void guFilterItem::SetFilterLabel( void )
         case guDYNAMIC_FILTER_TYPE_COMPOSER :
         case guDYNAMIC_FILTER_TYPE_COMMENT :
         case guDYNAMIC_FILTER_TYPE_PATH :
+        case guDYNAMIC_FILTER_TYPE_DISK :
         {
             m_Label += m_FilterTextOptionChoices[ m_Option ] + wxT( " " );
             m_Label += m_Text;
@@ -203,6 +210,9 @@ void guFilterItem::SetFilterLabel( void )
 
         case guDYNAMIC_FILTER_TYPE_RATING : // Numbers
         case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :
+        case guDYNAMIC_FILTER_TYPE_TRACKNUMBER :
+        case guDYNAMIC_FILTER_TYPE_BITRATE :
+        case guDYNAMIC_FILTER_TYPE_SIZE :
         {
             m_Label += m_FilterNumberOptionChoices[ m_Option ];
             m_Label += wxString::Format( wxT( " %u" ), m_Number );
@@ -222,6 +232,12 @@ void guFilterItem::SetFilterLabel( void )
             m_Label += m_FilterDateOptionChoices[ m_Option ];
             m_Label += wxString::Format( wxT( " %u " ), m_Number );
             m_Label += m_FilterDateOption2Choices[ m_Option2 ];
+            break;
+        }
+
+        case guDYNAMIC_FILTER_TYPE_HASARTWORK :
+        {
+            m_Label += m_FilterBoolOptionChoices[ m_Option ];
         }
     }
 }
@@ -680,7 +696,8 @@ guFilterItem guDynPlayListEditor::GetFilterItem( void )
                     m_FilterLabelOptionChoice->GetSelection(),
                     FilterItem.m_Text = m_FilterText->GetValue() );
     }
-    else if( FilterType < guDYNAMIC_FILTER_TYPE_YEAR )
+    else if( ( FilterType < guDYNAMIC_FILTER_TYPE_YEAR ) ||
+             ( FilterType == guDYNAMIC_FILTER_TYPE_DISK ) )
     {
         FilterItem.Set( FilterType,
                     m_FilterTextOptionChoice->GetSelection(),
@@ -704,7 +721,8 @@ guFilterItem guDynPlayListEditor::GetFilterItem( void )
                         0 );
 
     }
-    else if( FilterType > guDYNAMIC_FILTER_TYPE_PLAYCOUNT )
+    else if( ( FilterType == guDYNAMIC_FILTER_TYPE_LASTPLAY ) ||
+             ( FilterType == guDYNAMIC_FILTER_TYPE_ADDEDDATE ) )
     {
         unsigned long value = 0;
         m_FilterText->GetValue().ToULong( &value );
@@ -713,7 +731,7 @@ guFilterItem guDynPlayListEditor::GetFilterItem( void )
                         value,
                         m_FilterDateOption2Choice->GetSelection() );
     }
-    else
+    else // FilterType == guDYNAMIC_FILTER_TYPE_YEAR
     {
         unsigned long value = 0;
         m_FilterText->GetValue().ToULong( &value );
@@ -734,10 +752,8 @@ bool guDynPlayListEditor::FilterHasChanged( void )
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::UpdateEditor( int FilterType )
 {
-    int index;
-    int count;
-
-    if( FilterType == guDYNAMIC_FILTER_TYPE_LENGTH )
+    if( ( FilterType == guDYNAMIC_FILTER_TYPE_LENGTH ) ||
+        ( FilterType == guDYNAMIC_FILTER_TYPE_HASARTWORK ) )
     {
         //
         m_FilterAdd->Enable( true );
@@ -747,6 +763,8 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
         //
         m_FilterAdd->Enable( false );
     }
+
+    m_FilterText->Enable( FilterType != guDYNAMIC_FILTER_TYPE_HASARTWORK );
 
     if( FilterType == guDYNAMIC_FILTER_TYPE_RATING )
     {
@@ -775,7 +793,8 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
         m_LengthSeconds->Show( true );
 
     }
-    else if( FilterType > guDYNAMIC_FILTER_TYPE_PLAYCOUNT )
+    else if( ( FilterType == guDYNAMIC_FILTER_TYPE_LASTPLAY ) ||
+             ( FilterType == guDYNAMIC_FILTER_TYPE_ADDEDDATE ) )
     {
         m_FilterText->Show( true );
         m_FilterTextOptionChoice->Show( true );
@@ -793,6 +812,19 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
         m_FilterText->Show( true );
         m_FilterTextOptionChoice->Show( false );
         m_FilterLabelOptionChoice->Show( true );
+        m_FilterRating->Show( false );
+        m_FilterDateOption2Choice->Show( false );
+        m_LengthHours->Show( false );
+        m_LengthSeparator1->Show( false );
+        m_LengthMinutes->Show( false );
+        m_LengthSeparator2->Show( false );
+        m_LengthSeconds->Show( false );
+    }
+    else if( FilterType == guDYNAMIC_FILTER_TYPE_HASARTWORK )
+    {
+        m_FilterText->Show( true );
+        m_FilterTextOptionChoice->Show( true );
+        m_FilterLabelOptionChoice->Show( false );
         m_FilterRating->Show( false );
         m_FilterDateOption2Choice->Show( false );
         m_LengthHours->Show( false );
@@ -819,35 +851,24 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
 
     if( FilterType < guDYNAMIC_FILTER_TYPE_YEAR )
     {
-        count = m_FilterTextOptionChoices.Count();
-        for( index = 0; index < count; index++ )
-        {
-            m_FilterTextOptionChoice->Append( m_FilterTextOptionChoices[ index ] );
-        }
+          m_FilterTextOptionChoice->Append( m_FilterTextOptionChoices );
     }
     else if( FilterType == guDYNAMIC_FILTER_TYPE_YEAR )
     {
-        count = m_FilterYearOptionChoices.Count();
-        for( index = 0; index < count; index++ )
-        {
-            m_FilterTextOptionChoice->Append( m_FilterYearOptionChoices[ index ] );
-        }
+        m_FilterTextOptionChoice->Append( m_FilterYearOptionChoices );
     }
-    else if( FilterType < guDYNAMIC_FILTER_TYPE_LASTPLAY )
+    else if( ( FilterType == guDYNAMIC_FILTER_TYPE_LASTPLAY ) ||
+             ( FilterType == guDYNAMIC_FILTER_TYPE_ADDEDDATE ) )
     {
-        count = m_FilterNumberOptionChoices.Count();
-        for( index = 0; index < count; index++ )
-        {
-            m_FilterTextOptionChoice->Append( m_FilterNumberOptionChoices[ index ] );
-        }
+        m_FilterTextOptionChoice->Append( m_FilterDateOptionChoices );
     }
-    else if( FilterType > guDYNAMIC_FILTER_TYPE_PLAYCOUNT )
+    else if( FilterType == guDYNAMIC_FILTER_TYPE_HASARTWORK )
     {
-        count = m_FilterDateOptionChoices.Count();
-        for( index = 0; index < count; index++ )
-        {
-            m_FilterTextOptionChoice->Append( m_FilterDateOptionChoices[ index ] );
-        }
+        m_FilterTextOptionChoice->Append( m_FilterBoolOptionChoices );
+    }
+    else //if( FilterType < guDYNAMIC_FILTER_TYPE_LASTPLAY )
+    {
+        m_FilterTextOptionChoice->Append( m_FilterNumberOptionChoices );
     }
     m_FilterTextOptionChoice->SetSelection( 0 );
     m_FilterLabelOptionChoice->SetSelection( 0 );
@@ -929,10 +950,11 @@ void guDynPlayListEditor::OnFilterFieldSelected( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::OnFilterOptionSelected( wxCommandEvent &event )
 {
-    bool IsNotSetLabel = m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LENGTH ||
+    bool IsNotSetLabel = ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LENGTH ) ||
+                         ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_HASARTWORK ) ||
                           ( ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LABEL ) &&
                           ( m_FilterLabelOptionChoice->GetSelection() == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET ) );
-    guLogMessage( wxT( "IsNotSetLabel: %i" ), IsNotSetLabel );
+    //guLogMessage( wxT( "IsNotSetLabel: %i" ), IsNotSetLabel );
     m_FilterText->Enable( !IsNotSetLabel );
     if( IsNotSetLabel )
         m_FilterText->SetValue( wxEmptyString );
