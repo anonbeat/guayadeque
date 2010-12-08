@@ -149,6 +149,7 @@ class guLibPanel : public wxPanel
     virtual void OnLabelQueueAsNextClicked( wxCommandEvent &event );
 //    void OnLabelClearSelectClicked( wxCommandEvent &event );
     virtual void OnLabelCopyToClicked( wxCommandEvent &event );
+    virtual void OnLabelSavePlayListClicked( wxCommandEvent &event );
 
     // GenreListBox Events
     virtual void OnGenreListActivated( wxListEvent &event );
@@ -157,6 +158,7 @@ class guLibPanel : public wxPanel
     virtual void OnGenreQueueClicked( wxCommandEvent &event );
     virtual void OnGenreQueueAsNextClicked( wxCommandEvent &event );
     virtual void OnGenreCopyToClicked( wxCommandEvent &event );
+    virtual void OnGenreSavePlayListClicked( wxCommandEvent &event );
 
     // ArtistsListBox Events
     virtual void OnArtistListActivated( wxListEvent &event );
@@ -167,6 +169,7 @@ class guLibPanel : public wxPanel
     virtual void OnArtistEditLabelsClicked( wxCommandEvent &event );
     virtual void OnArtistEditTracksClicked( wxCommandEvent &event );
     virtual void OnArtistCopyToClicked( wxCommandEvent &event );
+    virtual void OnArtistSavePlayListClicked( wxCommandEvent &event );
 
     // AlbumsListBoxEvents
     virtual void OnAlbumListActivated( wxListEvent &event );
@@ -181,6 +184,7 @@ class guLibPanel : public wxPanel
     virtual void OnAlbumDeleteCoverClicked( wxCommandEvent &event );
     virtual void OnAlbumEmbedCoverClicked( wxCommandEvent &event );
     virtual void OnAlbumCopyToClicked( wxCommandEvent &event );
+    virtual void OnAlbumSavePlayListClicked( wxCommandEvent &event );
 
     virtual void DoDeleteAlbumCover( const int albumid );
 
@@ -192,6 +196,7 @@ class guLibPanel : public wxPanel
     virtual void OnYearListQueueAsNextClicked( wxCommandEvent &event );
     virtual void OnYearListEditTracksClicked( wxCommandEvent &event );
     virtual void OnYearListCopyToClicked( wxCommandEvent &event );
+    virtual void OnYearSavePlayListClicked( wxCommandEvent &event );
 
     // RatingsListBoxEvents
     virtual void OnRatingListSelected( wxListEvent &event );
@@ -201,6 +206,7 @@ class guLibPanel : public wxPanel
     virtual void OnRatingListQueueAsNextClicked( wxCommandEvent &event );
     virtual void OnRatingListEditTracksClicked( wxCommandEvent &event );
     virtual void OnRatingListCopyToClicked( wxCommandEvent &event );
+    virtual void OnRatingSavePlayListClicked( wxCommandEvent &event );
 
     // PlayCountListBoxEvents
     virtual void OnPlayCountListSelected( wxListEvent &event );
@@ -210,6 +216,7 @@ class guLibPanel : public wxPanel
     virtual void OnPlayCountListQueueAsNextClicked( wxCommandEvent &event );
     virtual void OnPlayCountListEditTracksClicked( wxCommandEvent &event );
     virtual void OnPlayCountListCopyToClicked( wxCommandEvent &event );
+    virtual void OnPlayCountSavePlayListClicked( wxCommandEvent &event );
 
     // ComposersListBoxEvents
     virtual void OnComposerListSelected( wxListEvent &event );
@@ -219,6 +226,7 @@ class guLibPanel : public wxPanel
     virtual void OnComposerListQueueAsNextClicked( wxCommandEvent &event );
     virtual void OnComposerListEditTracksClicked( wxCommandEvent &event );
     virtual void OnComposerListCopyToClicked( wxCommandEvent &event );
+    virtual void OnComposerSavePlayListClicked( wxCommandEvent &event );
 
     // AlbumArtistsListBoxEvents
     virtual void OnAlbumArtistListSelected( wxListEvent &event );
@@ -228,6 +236,7 @@ class guLibPanel : public wxPanel
     virtual void OnAlbumArtistListQueueAsNextClicked( wxCommandEvent &event );
     virtual void OnAlbumArtistListEditTracksClicked( wxCommandEvent &event );
     virtual void OnAlbumArtistListCopyToClicked( wxCommandEvent &event );
+    virtual void OnAlbumArtistSavePlayListClicked( wxCommandEvent &event );
 
     // SongsListBox Events
     virtual void OnSongListActivated( wxListEvent &event );
@@ -281,6 +290,8 @@ class guLibPanel : public wxPanel
     virtual void UpdateTracks( const guTrackArray &tracks );
     virtual void UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images );
     virtual void UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics );
+
+    virtual void SaveToPlayList( const wxArrayInt &tracks );
 
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );

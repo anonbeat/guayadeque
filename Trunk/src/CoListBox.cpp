@@ -86,6 +86,12 @@ void guCoListBox::CreateContextMenu( wxMenu * Menu ) const
             Menu->Append( MenuItem );
         }
 
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_COMPOSER_SAVETOPLAYLIST, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        Menu->Append( MenuItem );
+
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
         {
             m_LibPanel->CreateCopyToMenu( Menu, ID_COMPOSER_COPYTO );

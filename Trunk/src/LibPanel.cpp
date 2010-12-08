@@ -372,12 +372,14 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
     Connect( ID_GENRE_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenreQueueClicked ), NULL, this );
     Connect( ID_GENRE_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenreQueueAsNextClicked ), NULL, this );
     Connect( ID_GENRE_COPYTO, ID_GENRE_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenreCopyToClicked ), NULL, this );
+    Connect( ID_GENRE_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGenreSavePlayListClicked ), NULL, this );
 
     Connect( ID_LABEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnLabelPlayClicked ), NULL, this );
     Connect( ID_LABEL_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnLabelQueueClicked ), NULL, this );
     Connect( ID_LABEL_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnLabelQueueAsNextClicked ), NULL, this );
     //Connect( ID_LABEL_CLEARSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnLabelClearSelectClicked ) );
     Connect( ID_LABEL_COPYTO, ID_LABEL_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnLabelCopyToClicked ), NULL, this );
+    Connect( ID_LABEL_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnLabelSavePlayListClicked ), NULL, this );
 
     Connect( ID_ARTIST_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnArtistPlayClicked ), NULL, this );
     Connect( ID_ARTIST_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnArtistQueueClicked ), NULL, this );
@@ -385,6 +387,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
     Connect( ID_ARTIST_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnArtistEditLabelsClicked ), NULL, this );
     Connect( ID_ARTIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnArtistEditTracksClicked ), NULL, this );
     Connect( ID_ARTIST_COPYTO, ID_ARTIST_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnArtistCopyToClicked ), NULL, this );
+    Connect( ID_ARTIST_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnArtistSavePlayListClicked ), NULL, this );
 
     Connect( ID_ALBUM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumPlayClicked ), NULL, this );
     Connect( ID_ALBUM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumQueueClicked ), NULL, this );
@@ -396,36 +399,42 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
     Connect( ID_ALBUM_COVER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumDeleteCoverClicked ), NULL, this );
     Connect( ID_ALBUM_COVER_EMBED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumEmbedCoverClicked ), NULL, this );
     Connect( ID_ALBUM_COPYTO, ID_ALBUM_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumCopyToClicked ), NULL, this );
+    Connect( ID_ALBUM_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumSavePlayListClicked ), NULL, this );
 
     Connect( ID_YEAR_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnYearListPlayClicked ), NULL, this );
     Connect( ID_YEAR_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnYearListQueueClicked ), NULL, this );
     Connect( ID_YEAR_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnYearListQueueAsNextClicked ), NULL, this );
     Connect( ID_YEAR_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnYearListEditTracksClicked ), NULL, this );
     Connect( ID_YEAR_COPYTO, ID_YEAR_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnYearListCopyToClicked ), NULL, this );
+    Connect( ID_YEAR_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnYearSavePlayListClicked ), NULL, this );
 
     Connect( ID_RATING_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListPlayClicked ), NULL, this );
     Connect( ID_RATING_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListQueueClicked ), NULL, this );
     Connect( ID_RATING_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListQueueAsNextClicked ), NULL, this );
     Connect( ID_RATING_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListEditTracksClicked ), NULL, this );
     Connect( ID_RATING_COPYTO, ID_RATING_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnRatingListCopyToClicked ), NULL, this );
+    Connect( ID_RATING_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnArtistSavePlayListClicked ), NULL, this );
 
     Connect( ID_PLAYCOUNT_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListPlayClicked ), NULL, this );
     Connect( ID_PLAYCOUNT_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListQueueClicked ), NULL, this );
     Connect( ID_PLAYCOUNT_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListQueueAsNextClicked ), NULL, this );
     Connect( ID_PLAYCOUNT_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListEditTracksClicked ), NULL, this );
     Connect( ID_PLAYCOUNT_COPYTO, ID_PLAYCOUNT_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountListCopyToClicked ), NULL, this );
+    Connect( ID_PLAYCOUNT_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnPlayCountSavePlayListClicked ), NULL, this );
 
     Connect( ID_COMPOSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListPlayClicked ), NULL, this );
     Connect( ID_COMPOSER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListQueueClicked ), NULL, this );
     Connect( ID_COMPOSER_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListQueueAsNextClicked ), NULL, this );
     Connect( ID_COMPOSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListEditTracksClicked ), NULL, this );
     Connect( ID_COMPOSER_COPYTO, ID_COMPOSER_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerListCopyToClicked ), NULL, this );
+    Connect( ID_COMPOSER_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnComposerSavePlayListClicked ), NULL, this );
 
     Connect( ID_ALBUMARTIST_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumArtistListPlayClicked ), NULL, this );
     Connect( ID_ALBUMARTIST_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumArtistListQueueClicked ), NULL, this );
     Connect( ID_ALBUMARTIST_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumArtistListQueueAsNextClicked ), NULL, this );
     Connect( ID_ALBUMARTIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumArtistListEditTracksClicked ), NULL, this );
     Connect( ID_ALBUMARTIST_COPYTO, ID_ALBUMARTIST_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumArtistListCopyToClicked ), NULL, this );
+    Connect( ID_ALBUMARTIST_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnAlbumArtistSavePlayListClicked ), NULL, this );
 
     Connect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayClicked ), NULL, this );
     Connect( ID_SONG_PLAYALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongPlayAllClicked ), NULL, this );
@@ -817,6 +826,24 @@ void guLibPanel::OnGenreCopyToClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::OnGenreSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_GenreListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
+}
+
+// -------------------------------------------------------------------------------- //
 // LabelsListBox Events
 // -------------------------------------------------------------------------------- //
 
@@ -933,6 +960,24 @@ void guLibPanel::UpdateLabels( void )
     ReloadPlayCounts( false );
     ReloadSongs( false );
     m_UpdateLock = false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnLabelSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_LabelsListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1101,6 +1146,24 @@ void guLibPanel::OnArtistCopyToClicked( wxCommandEvent &event )
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnArtistSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_ArtistListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
 }
 
 // -------------------------------------------------------------s------------------- //
@@ -1459,6 +1522,24 @@ void guLibPanel::OnAlbumCopyToClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::OnAlbumSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_AlbumListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
+}
+
+// -------------------------------------------------------------------------------- //
 // SongListBox Events
 // -------------------------------------------------------------------------------- //
 
@@ -1610,6 +1691,49 @@ void guLibPanel::OnSongCopyToClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::SaveToPlayList( const wxArrayInt &tracks )
+{
+    if( tracks.Count() );
+    {
+        guListItems PlayLists;
+        m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
+
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &tracks, &PlayLists );
+
+        if( PlayListAppendDlg->ShowModal() == wxID_OK )
+        {
+            int Selected = PlayListAppendDlg->GetSelectedPlayList();
+            if( Selected == -1 )
+            {
+                wxString PLName = PlayListAppendDlg->GetPlaylistName();
+                if( PLName.IsEmpty() )
+                {
+                    PLName = _( "UnNamed" );
+                }
+                m_Db->CreateStaticPlayList( PLName, tracks );
+            }
+            else
+            {
+                int PLId = PlayLists[ Selected ].m_Id;
+                wxArrayInt OldSongs;
+                m_Db->GetPlayListSongIds( PLId, &OldSongs );
+                if( PlayListAppendDlg->GetSelectedPosition() == 0 ) // BEGIN
+                {
+                    m_Db->UpdateStaticPlayList( PLId, tracks );
+                    m_Db->AppendStaticPlayList( PLId, OldSongs );
+                }
+                else                                                // END
+                {
+                    m_Db->AppendStaticPlayList( PLId, tracks );
+                }
+            }
+            UpdatePlaylists();
+        }
+        PlayListAppendDlg->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
 {
     int index;
@@ -1635,44 +1759,7 @@ void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
         }
     }
 
-    if( NewSongs.Count() );
-    {
-        guListItems PlayLists;
-        m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
-
-        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &NewSongs, &PlayLists );
-
-        if( PlayListAppendDlg->ShowModal() == wxID_OK )
-        {
-            int Selected = PlayListAppendDlg->GetSelectedPlayList();
-            if( Selected == -1 )
-            {
-                wxString PLName = PlayListAppendDlg->GetPlaylistName();
-                if( PLName.IsEmpty() )
-                {
-                    PLName = _( "UnNamed" );
-                }
-                m_Db->CreateStaticPlayList( PLName, NewSongs );
-            }
-            else
-            {
-                int PLId = PlayLists[ Selected ].m_Id;
-                wxArrayInt OldSongs;
-                m_Db->GetPlayListSongIds( PLId, &OldSongs );
-                if( PlayListAppendDlg->GetSelectedPosition() == 0 ) // BEGIN
-                {
-                    m_Db->UpdateStaticPlayList( PLId, NewSongs );
-                    m_Db->AppendStaticPlayList( PLId, OldSongs );
-                }
-                else                                                // END
-                {
-                    m_Db->AppendStaticPlayList( PLId, NewSongs );
-                }
-            }
-            UpdatePlaylists();
-        }
-        PlayListAppendDlg->Destroy();
-    }
+    SaveToPlayList( NewSongs );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2255,7 +2342,25 @@ void guLibPanel::OnYearListCopyToClicked( wxCommandEvent &event )
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
-//
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnYearSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_YearListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
+}
+
+// -------------------------------------------------------------------------------- //
 // Rating List Box
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnRatingListSelected( wxListEvent &event )
@@ -2355,7 +2460,25 @@ void guLibPanel::OnRatingListCopyToClicked( wxCommandEvent &event )
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
-//
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnRatingSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_RatingListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
+}
+
+// -------------------------------------------------------------------------------- //
 // PlayCount List Box
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnPlayCountListSelected( wxListEvent &event )
@@ -2455,7 +2578,25 @@ void guLibPanel::OnPlayCountListCopyToClicked( wxCommandEvent &event )
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
-//
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnPlayCountSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_PlayCountListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
+}
+
+// -------------------------------------------------------------------------------- //
 // Composers List Box
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnComposerListSelected( wxListEvent &event )
@@ -2558,7 +2699,25 @@ void guLibPanel::OnComposerListCopyToClicked( wxCommandEvent &event )
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
 
-//
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnComposerSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_ComposerListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
+}
+
+// -------------------------------------------------------------------------------- //
 // Album Artists List Box
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumArtistListSelected( wxListEvent &event )
@@ -2653,6 +2812,25 @@ void guLibPanel::OnAlbumArtistListCopyToClicked( wxCommandEvent &event )
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnAlbumArtistSavePlayListClicked( wxCommandEvent &event )
+{
+    int index;
+    int count;
+    wxArrayInt NewSongs;
+    guTrackArray Tracks;
+    m_AlbumArtistListCtrl->GetSelectedSongs( &Tracks );
+
+    count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        NewSongs.Add( Tracks[ index ].m_SongId );
+    }
+
+    SaveToPlayList( NewSongs );
+}
+
 
 //
 //
