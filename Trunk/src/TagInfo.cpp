@@ -29,6 +29,8 @@
 #include <wx/wfstream.h>
 #include <wx/tokenzr.h>
 
+#include <asfattribute.h>
+
 // -------------------------------------------------------------------------------- //
 bool guIsValidAudioFile( const wxString &filename )
 {
@@ -97,8 +99,11 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
         return new guTrueAudioTagInfo( filename );
     }
     else if( filename.Lower().EndsWith( wxT( ".wma" ) ) ||
-             filename.Lower().EndsWith( wxT( ".asf" ) ) ||
-             filename.Lower().EndsWith( wxT( ".wav" ) ) )
+             filename.Lower().EndsWith( wxT( ".asf" ) ) )
+    {
+        return new guASFTagInfo( filename );
+    }
+    else if( filename.Lower().EndsWith( wxT( ".wav" ) ) )
     {
         return new guTagInfo( filename );
     }
@@ -1806,6 +1811,138 @@ bool guTrueAudioTagInfo::SetLyrics( const wxString &lyrics )
 	if( m_TagId3v2 )
     {
         SetID3v2Lyrics( m_TagId3v2, lyrics );
+        return m_TagFile->save();
+    }
+    return false;
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guASFTagInfo
+// -------------------------------------------------------------------------------- //
+guASFTagInfo::guASFTagInfo( const wxString &filename ) : guTagInfo( filename )
+{
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_ASFTag = ( ( TagLib::ASF::File * ) m_TagFile->file() )->tag();
+    }
+    else
+    {
+        m_ASFTag = NULL;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guASFTagInfo::~guASFTagInfo()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guASFTagInfo::Read( void )
+{
+    if( guTagInfo::Read() )
+    {
+        if( m_ASFTag )
+        {
+            if( m_ASFTag->attributeListMap().contains( "WM/PartOfSet" ) )
+            {
+                m_Disk = TStringTowxString( m_ASFTag->attributeListMap()[ "WM/PartOfSet" ].front().toString() );
+            }
+
+            if( m_ASFTag->attributeListMap().contains( "WM/Composer" ) )
+            {
+                m_Composer = TStringTowxString( m_ASFTag->attributeListMap()[ "WM/Composer" ].front().toString() );
+            }
+
+            if( m_ASFTag->attributeListMap().contains( "WM/AlbumArtist" ) )
+            {
+                m_AlbumArtist = TStringTowxString( m_ASFTag->attributeListMap()[ "WM/AlbumArtist" ].front().toString() );
+            }
+        }
+    }
+    else
+    {
+      guLogError( wxT( "Could not read tags from file '%s'" ), m_FileName.c_str() );
+    }
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guASFTagInfo::Write( void )
+{
+    if( m_ASFTag )
+    {
+        m_ASFTag->removeItem( "WM/PartOfSet" );
+        m_ASFTag->setAttribute( "WM/PartOfSet", wxStringToTString( m_Disk ) );
+
+        m_ASFTag->removeItem( "WM/Composer" );
+        m_ASFTag->setAttribute( "WM/Composer", wxStringToTString( m_Composer ) );
+
+        m_ASFTag->removeItem( "WM/AlbumArtist" );
+        m_ASFTag->setAttribute( "WM/AlbumArtist", wxStringToTString( m_AlbumArtist ) );
+    }
+
+    return guTagInfo::Write();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guASFTagInfo::CanHandleImages( void )
+{
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guASFTagInfo::GetImage( void )
+{
+//    if( m_ASFTag )
+//    {
+////        return GetASFImage( m_ASFTag );
+//    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guASFTagInfo::SetImage( const wxImage * image )
+{
+//    if( m_ASFTag )
+//    {
+////        SetID3v2Image( m_ASFTag, image );
+//    }
+//    else
+        return false;
+
+    return m_TagFile->save();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guASFTagInfo::CanHandleLyrics( void )
+{
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guASFTagInfo::GetLyrics( void )
+{
+    if( m_ASFTag )
+    {
+        if( m_ASFTag->attributeListMap().contains( "WM/Lyrics" ) )
+        {
+            return TStringTowxString( m_ASFTag->attributeListMap()[ "WM/Lyrics" ].front().toString() );
+        }
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guASFTagInfo::SetLyrics( const wxString &lyrics )
+{
+	if( m_ASFTag )
+    {
+        m_ASFTag->removeItem( "WM/Lyrics" );
+        m_ASFTag->setAttribute( "WM/Lyrics", wxStringToTString( lyrics ) );
         return m_TagFile->save();
     }
     return false;
