@@ -39,16 +39,16 @@
 class guPlayListAppend : public wxDialog
 {
   protected:
-    wxChoice *      m_PosChoice;
-    wxComboBox *    m_PlayListComboBox;
-    wxStaticText *  m_TracksStaticText;
+    wxChoice *              m_PosChoice;
+    wxComboBox *            m_PlayListComboBox;
+    wxStaticText *          m_TracksStaticText;
 
-    guDbLibrary *   m_Db;
-    wxArrayInt *    m_Tracks;
-    guListItems *   m_PlayListItems;
+    guDbLibrary *           m_Db;
+    const wxArrayInt *      m_Tracks;
+    guListItems *           m_PlayListItems;
 
   public:
-    guPlayListAppend( wxWindow * parent, guDbLibrary * db, wxArrayInt * songs, guListItems * items );
+    guPlayListAppend( wxWindow * parent, guDbLibrary * db, const wxArrayInt * songs, guListItems * items );
     ~guPlayListAppend();
 
     int         GetSelectedPosition( void );

@@ -274,8 +274,8 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_ALBUM_MANUALCOVER, _( "Download Album cover" ), _( "Download cover for the current selected album" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+        MenuItem = new wxMenuItem( Menu, ID_ALBUM_SAVETOPLAYLIST, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
         Menu->Append( MenuItem );
 
         if( ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
