@@ -849,7 +849,8 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
 
     m_FilterTextOptionChoice->Clear();
 
-    if( FilterType < guDYNAMIC_FILTER_TYPE_YEAR )
+    if( ( FilterType < guDYNAMIC_FILTER_TYPE_YEAR ) ||
+        ( FilterType == guDYNAMIC_FILTER_TYPE_DISK ) )
     {
           m_FilterTextOptionChoice->Append( m_FilterTextOptionChoices );
     }
@@ -890,7 +891,9 @@ void guDynPlayListEditor::OnFiltersSelected( wxCommandEvent &event )
             m_FilterLabelOptionChoice->SetSelection( FilterItem->m_Option );
         else
             m_FilterTextOptionChoice->SetSelection( FilterItem->m_Option );
-        if( FilterItem->m_Type < guDYNAMIC_FILTER_TYPE_YEAR )
+
+        if( ( FilterItem->m_Type < guDYNAMIC_FILTER_TYPE_YEAR ) ||
+            ( FilterItem->m_Type == guDYNAMIC_FILTER_TYPE_DISK ) )
         {
             m_FilterText->SetValue( FilterItem->m_Text );
         }
@@ -981,7 +984,8 @@ void guDynPlayListEditor::OnFilterDateOption2Selected( wxCommandEvent &event )
 void guDynPlayListEditor::OnFilterTextChanged( wxCommandEvent& event )
 {
     int FilterType = m_FilterFieldChoice->GetSelection();
-    if( FilterType > guDYNAMIC_FILTER_TYPE_PATH )
+    if( ( FilterType > guDYNAMIC_FILTER_TYPE_PATH ) &&
+        ( FilterType != guDYNAMIC_FILTER_TYPE_DISK ) )
     {
         unsigned long value = 0;
         if( !m_FilterText->GetValue().IsEmpty() && !m_FilterText->GetValue().ToULong( &value ) )
