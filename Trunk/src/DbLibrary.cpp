@@ -3699,6 +3699,45 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         break;
       }
 
+      case guDYNAMIC_FILTER_TYPE_TRACKNUMBER :  // TRACK NUMBER
+      {
+        query += wxT( "( song_number " ) +
+                 DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
+                                  playlist->m_Filters[ index ].m_Number ) + wxT( ")" );
+        break;
+      }
+
+      case guDYNAMIC_FILTER_TYPE_BITRATE :  // BITRATE
+      {
+        query += wxT( "( song_bitrate " ) +
+                 DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
+                                  playlist->m_Filters[ index ].m_Number ) + wxT( ")" );
+        break;
+      }
+
+      case guDYNAMIC_FILTER_TYPE_SIZE :  // SIZE
+      {
+        query += wxT( "( song_filesize " ) +
+                 DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
+                                  playlist->m_Filters[ index ].m_Number ) + wxT( ")" );
+        break;
+      }
+
+      case guDYNAMIC_FILTER_TYPE_DISK :  // DISK
+      {
+        query += wxT( "( song_disk " ) +
+                 DynPLStringOption( playlist->m_Filters[ index ].m_Option,
+                                  playlist->m_Filters[ index ].m_Text ) + wxT( ")" );
+        break;
+      }
+
+      case guDYNAMIC_FILTER_TYPE_HASARTWORK :  // HAS ARTWORK
+      {
+        query += wxT( "( song_coverid " );
+        query += ( playlist->m_Filters[ index ].m_Option ? wxT( "> 0 )" ) : wxT( "< 1 )" ) );
+        break;
+      }
+
     }
   }
   // SORTING Options
