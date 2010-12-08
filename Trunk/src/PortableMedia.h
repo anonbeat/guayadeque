@@ -398,6 +398,8 @@ class guIpodLibrary : public guPortableMediaLibrary
 
     Itdb_iTunesDB *     IpodDb( void ) { return m_iPodDb; }
 
+    virtual int         UpdateSong( const guTrack &track, const bool allowrating );
+
     virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
     int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks, const bool indbonly ) { return guDbLibrary::CreateStaticPlayList( name, tracks ); }
     virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );

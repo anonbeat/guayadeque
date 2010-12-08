@@ -352,8 +352,8 @@ class guDbLibrary : public guDb
     int                 GetLabelId( int * LabelId, wxString &LabelName );
     int                 PathExists( const wxString &path );
     int                 GetPathId( wxString &PathValue );
-    int                 UpdateSong( const guTrack &track, const bool allowrating = false );
-    int                 UpdateSong( const bool allowrating = false ) { return UpdateSong( m_CurSong, allowrating ); }
+    virtual int         UpdateSong( const guTrack &track, const bool allowrating = false );
+    virtual int         UpdateSong( const bool allowrating = false ) { return UpdateSong( m_CurSong, allowrating ); }
     int                 AddFiles( const wxArrayString &files );
 
     void                GetGenres( guListItems * Genres, const bool FullList = false );

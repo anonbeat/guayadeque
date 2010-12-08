@@ -1948,6 +1948,57 @@ void guIpodLibrary::iPodRemoveTrack( const wxString &filename )
         guLogMessage( wxT( "Couldnt remove the file '%s'" ), filename.c_str() );
 }
 
+// -------------------------------------------------------------------------------- //
+int guIpodLibrary::UpdateSong( const guTrack &track, const bool allowrating )
+{
+    wxString query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
+            "song_genreid = %u, song_genre = '%s', "
+            "song_artistid = %u, song_artist = '%s', "
+            "song_albumartistid = %u, song_albumartist = '%s', "
+            "song_albumid = %u, song_album = '%s', "
+            "song_pathid = %u, song_path = '%s', "
+            "song_filename = '%s', song_format = '%s', "
+            "song_number = %u, song_year = %u, "
+            "song_composerid = %u, song_composer = '%s', "
+            "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
+            "song_length = %u, song_offset = %u, song_bitrate = %u, "
+            "song_rating = %i, song_filesize = %u, "
+            "song_lastplay = %u, song_addedtime = %u, "
+            "song_playcount = %u "
+            "WHERE song_id = %u;" ),
+            escape_query_str( track.m_SongName ).c_str(),
+            track.m_GenreId,
+            escape_query_str( track.m_GenreName ).c_str(),
+            track.m_ArtistId,
+            escape_query_str( track.m_ArtistName ).c_str(),
+            track.m_AlbumArtistId,
+            escape_query_str( track.m_AlbumArtist ).c_str(),
+            track.m_AlbumId,
+            escape_query_str( track.m_AlbumName ).c_str(),
+            track.m_PathId,
+            escape_query_str( track.m_Path ).c_str(),
+            escape_query_str( track.m_FileName ).c_str(),
+            escape_query_str( track.m_FileName.AfterLast( '.' ) ).c_str(),
+            track.m_Number,
+            track.m_Year,
+            track.m_ComposerId, //escape_query_str( track.m_Composer ).c_str(),
+            escape_query_str( track.m_Composer ).c_str(),
+            escape_query_str( track.m_Comments ).c_str(),
+            track.m_CoverId,
+            escape_query_str( track.m_Disk ).c_str(),
+            track.m_Length,
+            0, //track.m_Offset,
+            track.m_Bitrate,
+            track.m_Rating,
+            track.m_FileSize,
+            track.m_LastPlay,
+            track.m_AddedTime,
+            track.m_PlayCount,
+            track.m_SongId );
+
+  //guLogMessage( wxT( "%s" ), query.c_str() );
+  return ExecuteUpdate( query );
+}
 
 
 // -------------------------------------------------------------------------------- //
@@ -2024,6 +2075,8 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                 Track.m_Year = iPodTrack->year;
                 Track.m_Rating = iPodTrack->rating / ITDB_RATING_STEP;
                 Track.m_PlayCount = iPodTrack->playcount;
+                Track.m_AddedTime = iPodTrack->time_added;
+                Track.m_LastPlay = iPodTrack->time_played;
 
                 Track.m_Path = PortableMediaDevice->MountPath() + wxString( iPodTrack->ipod_path, wxConvUTF8 ).Mid( 1 );
                 Track.m_Path.Replace( wxT( ":" ), wxT( "/" ) );
