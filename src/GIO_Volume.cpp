@@ -130,7 +130,9 @@ guGIO_Mount::~guGIO_Mount()
 {
     if( m_Mount )
     {
+        guLogMessage( wxT( ">> ~guGIO_Mount()" ) );
         g_object_unref( m_Mount );
+        guLogMessage( wxT( "<< ~guGIO_Mount()" ) );
     }
 }
 
@@ -214,7 +216,9 @@ guGIO_VolumeMonitor::~guGIO_VolumeMonitor( void )
             delete m_MountedVolumes;
         }
 
+        guLogMessage( wxT( ">> ~guGIO_VolumeMonitor()" ) );
         g_object_unref( m_VolumeMonitor );
+        guLogMessage( wxT( "<< ~guGIO_VolumeMonitor()" ) );
     }
 }
 

@@ -487,6 +487,19 @@ class guIpodPlayListPanel : public guPortableMediaPlayListPanel
 
 };
 
+// -------------------------------------------------------------------------------- //
+class guIpodAlbumBrowser : public guPortableMediaAlbumBrowser
+{
+  protected :
+
+    virtual void OnBitmapMouseOver( const int coverid, const wxPoint &position );
+
+  public :
+    guIpodAlbumBrowser( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel );
+    ~guIpodAlbumBrowser();
+
+};
+
 
 #endif
 

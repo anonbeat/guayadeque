@@ -26,6 +26,7 @@
 #include "SelCoverFile.h"
 #include "TagInfo.h"
 #include "Transcode.h"
+#include "ShowImage.h"
 #include "Utils.h"
 
 
@@ -2155,7 +2156,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                     }
                     else
                     {
-                        guLogMessage( wxT( "Couldnt save to a buffer the pixbuf for album" ), AlbumId );
+                        guLogMessage( wxT( "Couldnt save to a buffer the pixbuf for album %i" ), AlbumId );
                     }
                     g_object_unref( Pixbuf );
                 }
@@ -2682,6 +2683,88 @@ void guIpodPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isd
 }
 
 
+// -------------------------------------------------------------------------------- //
+// guIpodAlbumBrowser
+// -------------------------------------------------------------------------------- //
+guIpodAlbumBrowser::guIpodAlbumBrowser( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel ) :
+    guPortableMediaAlbumBrowser( parent, db, playerpanel, libpanel )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guIpodAlbumBrowser::~guIpodAlbumBrowser()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodAlbumBrowser::OnBitmapMouseOver( const int coverid, const wxPoint &position )
+{
+    //guLogMessage( wxT( "guIpodAlbumBrowser::OnBitmapMouseOver" ) );
+
+    guIpodLibrary * Db = ( guIpodLibrary * ) m_Db;
+    Itdb_iTunesDB * iPodDb = ( ( guIpodLibrary * ) m_Db )->IpodDb();
+
+    if( iPodDb )
+    {
+        wxString SongPath;
+        wxString query = wxString::Format( wxT( "SELECT song_path, song_filename FROM songs WHERE song_coverid = %i LIMIT 1;" ), coverid );
+        wxSQLite3ResultSet dbRes;
+
+        dbRes = Db->ExecuteQuery( query );
+
+        if( dbRes.NextRow() )
+        {
+            SongPath = dbRes.GetString( 0 ) + dbRes.GetString( 1 );
+        }
+        dbRes.Finalize();
+
+        Itdb_Track * iPodTrack = Db->iPodFindTrack( SongPath );
+        if( iPodTrack )
+        {
+            GdkPixbuf * Pixbuf = ( GdkPixbuf * ) itdb_track_get_thumbnail( iPodTrack, -1, -1 );
+            if( Pixbuf )
+            {
+                void * Buffer = NULL;
+                gsize BufferSize = 0;
+                if( gdk_pixbuf_save_to_buffer( Pixbuf, ( gchar ** ) &Buffer, &BufferSize, "jpeg", NULL, "quality", "100", NULL ) )
+                {
+                    wxMemoryInputStream ImageStream( Buffer, BufferSize );
+                    wxImage * CoverImage = new wxImage( ImageStream, wxBITMAP_TYPE_JPEG );
+                    if( CoverImage )
+                    {
+                        if( CoverImage->IsOk() )
+                        {
+                            guImageResize( CoverImage, 300, true );
+
+                            guShowImage * ShowImage = new guShowImage( this, CoverImage, position );
+                            if( ShowImage )
+                            {
+                                ShowImage->Show();
+                            }
+                        }
+                        else
+                        {
+                            delete CoverImage;
+                            guLogMessage( wxT( "Error in image from ipod..." ) );
+                        }
+                    }
+                    g_free( Buffer );
+                }
+                else
+                {
+                    guLogMessage( wxT( "Couldnt save to a buffer the pixbuf for cover %i" ), coverid );
+                }
+                g_object_unref( Pixbuf );
+            }
+            else
+            {
+                guLogMessage( wxT( "Couldnt get the pixbuf for cover %i" ), coverid );
+            }
+        }
+    }
+}
+
+
 
 
 #endif
@@ -2792,7 +2875,16 @@ void guPortableMediaViewCtrl::DestroyLibPanel( void )
 // -------------------------------------------------------------------------------- //
 guPortableMediaAlbumBrowser * guPortableMediaViewCtrl::CreateAlbumBrowser( wxWindow * parent, guPlayerPanel * playerpanel )
 {
-    m_AlbumBrowserPanel = new guPortableMediaAlbumBrowser( parent, m_Db, playerpanel, m_LibPanel );
+#ifdef WITH_LIBGPOD_SUPPORT
+    if( m_MediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
+    {
+        m_AlbumBrowserPanel = new guIpodAlbumBrowser( parent, ( guIpodLibrary * ) m_Db, playerpanel, ( guIpodMediaLibPanel * ) m_LibPanel );
+    }
+    else
+#endif
+    {
+        m_AlbumBrowserPanel = new guPortableMediaAlbumBrowser( parent, m_Db, playerpanel, m_LibPanel );
+    }
     //m_AlbumBrowserPanel->SetPortableMediaDevice( m_MediaDevice );
     //m_LibPanel->SetBaseCommand( m_BaseCommand );
     m_VisiblePanels |= guPANEL_MAIN_ALBUMBROWSER;
