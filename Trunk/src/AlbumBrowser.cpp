@@ -26,6 +26,7 @@
 #include "Images.h"
 #include "LabelEditor.h"
 #include "LibPanel.h"
+#include "LibUpdate.h"
 #include "MainApp.h"
 #include "MainFrame.h"
 #include "OnlineLinks.h"
@@ -1608,11 +1609,7 @@ bool guAlbumBrowserDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayS
         wxString CoverFile = files[ 0 ];
         if( !CoverFile.IsEmpty() && wxFileExists( CoverFile ) )
         {
-            if( CoverFile.Lower().EndsWith( wxT( ".jpg" ) ) ||
-                CoverFile.Lower().EndsWith( wxT( ".jpeg" ) ) ||
-                CoverFile.Lower().EndsWith( wxT( ".png" ) ) ||
-                CoverFile.Lower().EndsWith( wxT( ".gif" ) ) ||
-                CoverFile.Lower().EndsWith( wxT( ".bmp" ) ) )
+            if( guIsValidImageFile( CoverFile.Lower() ) )
             {
                 m_AlbumBrowserItemPanel->SetAlbumCover( CoverFile );
                 return true;
