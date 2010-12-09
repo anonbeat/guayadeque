@@ -836,6 +836,8 @@ void wxCurlBase::SetCurlHandleToDefaults(const wxString& relativeURL)
             SetOpt(CURLOPT_DEBUGFUNCTION, wxcurl_verbose_stream_write);
             SetOpt(CURLOPT_DEBUGDATA, (void*) &m_mosVerbose);
         }
+
+        SetOpt( CURLOPT_NOSIGNAL, true );
     }
 }
 

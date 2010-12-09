@@ -237,7 +237,32 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
                     }
                     else
                     {
-                        m_Db->GetPlayListFiles( ItemData->GetData(), &Files );
+                        //m_Db->GetPlayListFiles( ItemData->GetData(), &Files );
+                        int Index;
+                        int Count;
+                        guTrackArray Tracks;
+                        m_Db->GetPlayListSongs( ItemData->GetData(), guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
+                        //m_PLTracksListBox->GetAllSongs( &Tracks );
+                        if( ( Count = Tracks.Count() ) )
+                        {
+                            guPlayListFile PlayListFile;
+
+                            for( Index = 0; Index < Count; Index++ )
+                            {
+                                PlayListFile.AddItem( Tracks[ Index ].m_FileName,
+                                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+                            }
+
+                            wxString PlayListName = m_Db->GetPlayListName( ItemData->GetData() );
+                            PlayListFile.SetName( PlayListName );
+
+                            PlayListPath = wxGetHomeDir() + wxT( "/.guayadeque/PlayLists/") + PlayListName + wxT( ".m3u" );
+                            wxFileName::Mkdir( wxPathOnly( PlayListPath ), 0777, wxPATH_MKDIR_FULL );
+                            PlayListFile.Save( PlayListPath );
+                            m_Db->SetPlayListPath( ItemData->GetData(), PlayListPath );
+
+                            Files.AddFile( PlayListPath );
+                        }
                     }
                 }
                 else
@@ -964,17 +989,39 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
                 {
                     event.SetId( ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
                     event.SetClientData( new wxString( PlayListPath ) );
+                    wxPostEvent( wxTheApp->GetTopWindow(), event );
                 }
                 else
                 {
-                    event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
-                    guTrackArray * Tracks = new guTrackArray();
-                    m_PLTracksListBox->GetAllSongs( Tracks );
-                    NormalizeTracks( Tracks );
+                    int Index;
+                    int Count;
+                    guTrackArray Tracks;
+                    m_PLTracksListBox->GetAllSongs( &Tracks );
+                    if( ( Count = Tracks.Count() ) )
+                    {
+                        guPlayListFile PlayListFile;
 
-                    event.SetClientData( ( void * ) Tracks );
+                        NormalizeTracks( &Tracks );
+
+                        for( Index = 0; Index < Count; Index++ )
+                        {
+                            PlayListFile.AddItem( Tracks[ Index ].m_FileName,
+                                Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+                        }
+
+                        wxString PlayListName = m_NamesTreeCtrl->GetItemText( ItemId );
+                        PlayListFile.SetName( PlayListName );
+
+                        PlayListPath = wxGetHomeDir() + wxT( "/.guayadeque/PlayLists/") + PlayListName + wxT( ".m3u" );
+                        wxFileName::Mkdir( wxPathOnly( PlayListPath ), 0777, wxPATH_MKDIR_FULL );
+                        PlayListFile.Save( PlayListPath );
+                        m_Db->SetPlayListPath( ItemData->GetData(), PlayListPath );
+
+                        event.SetId( ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
+                        event.SetClientData( new wxString( PlayListPath ) );
+                        wxPostEvent( wxTheApp->GetTopWindow(), event );
+                    }
                 }
-                wxPostEvent( wxTheApp->GetTopWindow(), event );
             }
         }
         else
@@ -1036,15 +1083,15 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
                     wxString FileName = Uri.BuildUnescapedURI();
                     if( FileName.StartsWith( wxT( "file:" ) ) )
                         FileName = FileName.Mid( 5 );
-                    guLogMessage( wxT( "Trying to add file '%s'" ), FileName.c_str() );
+                    //guLogMessage( wxT( "Trying to add file '%s'" ), FileName.c_str() );
                     int SongId = m_Db->FindTrackFile( FileName, NULL );
                     if( SongId )
                     {
                         Songs.Add( SongId );
-                        guLogMessage( wxT( "Found it!" ) );
+                        //guLogMessage( wxT( "Found it!" ) );
                     }
-                    else
-                        guLogMessage( wxT( "Not Found it!" ) );
+                    //else
+                    //    guLogMessage( wxT( "Not Found it!" ) );
                 }
 
                 if( Songs.Count() )
