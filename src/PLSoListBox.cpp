@@ -169,6 +169,7 @@ void guPLSoListBox::OnDropEnd( void )
 
             // Save it to the database
             m_Db->UpdateStaticPlayList( m_PLIds[ 0 ], ItemIds );
+            m_Db->UpdateStaticPlayListFile( m_PLIds[ 0 ] );
 
             m_DropIds.Clear();
         }
@@ -228,6 +229,7 @@ void guPLSoListBox::MoveSelection( void )
 
     // Save it to the database
     m_Db->UpdateStaticPlayList( m_PLIds[ 0 ], ItemIds );
+    m_Db->UpdateStaticPlayListFile( m_PLIds[ 0 ] );
 
     ReloadItems();
 }

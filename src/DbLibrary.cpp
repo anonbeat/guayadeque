@@ -3309,27 +3309,27 @@ int guDbLibrary::GetPlayListFiles( const int plid, wxFileDataObject * files )
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdateStaticPlayListFile( const int plid )
 {
-//    wxString PlaylistPath = GetPlayListPath( plid );
-//    if( !PlaylistPath.IsEmpty() )
-//    {
-//        wxFileName FileName( PlaylistPath );
-//        if( FileName.Normalize() )
-//        {
-//            guTrackArray Tracks;
-//            m_Db->GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
-//            guPlayListFile PlayListFile;
-//            PlayListFile.SetName( FileName.GetFullPath() );
-//            int Index;
-//            int Count = Tracks.Count();
-//            for( Index = 0; Index < Count; Index++ )
-//            {
-//                PlayListFile.AddItem( Tracks[ Index ].m_FileName,
-//                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
-//            }
-//
-//            PlayListFile.Save( FileName.GetFullPath() );
-//        }
-//    }
+    wxString PlaylistPath = GetPlayListPath( plid );
+    if( !PlaylistPath.IsEmpty() )
+    {
+        wxFileName FileName( PlaylistPath );
+        if( FileName.Normalize() )
+        {
+            guTrackArray Tracks;
+            GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
+            guPlayListFile PlayListFile;
+            PlayListFile.SetName( FileName.GetFullPath() );
+            int Index;
+            int Count = Tracks.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                PlayListFile.AddItem( Tracks[ Index ].m_FileName,
+                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+            }
+
+            PlayListFile.Save( FileName.GetFullPath() );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4117,6 +4117,19 @@ wxString guDbLibrary::GetPlayListPath( const int plid )
   }
   dbRes.Finalize();
   return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::SetPlayListPath( const int plid, const wxString &path )
+{
+  wxString query;
+
+  if( plid )
+  {
+    query = wxString::Format( wxT( "UPDATE playlists SET playlist_path = '%s' WHERE playlist_id = %u;" ),
+          escape_query_str( path ).c_str(), plid );
+    ExecuteUpdate( query );
+  }
 }
 
 // -------------------------------------------------------------------------------- //
