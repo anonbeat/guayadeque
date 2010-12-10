@@ -768,7 +768,7 @@ guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
 {
     //
     guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( MainFrame, event );
 
@@ -998,10 +998,10 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
 {
     wxString query;
 
-    wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
+    wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
 
-    wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+    wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
     if( m_Action == guMAGNATUNE_ACTION_UPGRADE &&

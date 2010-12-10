@@ -599,10 +599,11 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_VOLUMEMANAGER_MOUNT_CHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnVolumeMonitorUpdated ), NULL, this );
     //Connect( ID_MENU_VIEW_PORTABLE_DEVICES, ID_MENU_VIEW_PORTABLE_DEVICES + 100, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnVolumeMonitorUpdated ), NULL, this );
 
-    Connect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
-    Connect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
-    Connect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
-    Connect( ID_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ), NULL, this );
+    Connect( ID_STATUSBAR_GAUGE_CREATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeCreate ), NULL, this );
+    Connect( ID_STATUSBAR_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
+    Connect( ID_STATUSBAR_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
+    Connect( ID_STATUSBAR_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
+    Connect( ID_STATUSBAR_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ), NULL, this );
 
     Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ), NULL, this );
 
@@ -728,10 +729,11 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
     Disconnect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
 
-    Disconnect( ID_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
-    Disconnect( ID_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
-    Disconnect( ID_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
-    Disconnect( ID_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ), NULL, this );
+    Disconnect( ID_STATUSBAR_GAUGE_CREATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeCreate ), NULL, this );
+    Disconnect( ID_STATUSBAR_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
+    Disconnect( ID_STATUSBAR_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
+    Disconnect( ID_STATUSBAR_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
+    Disconnect( ID_STATUSBAR_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ), NULL, this );
 
     Disconnect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ), NULL, this );
 
@@ -3708,6 +3710,23 @@ void guMainFrame::OnPlayListUpdated( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnGaugeCreate( wxCommandEvent &event )
+{
+    wxString * Label = ( wxString * ) event.GetClientData();
+    if( Label )
+    {
+        int NewGauge = m_MainStatusBar->AddGauge( * Label, event.GetInt() );
+        wxEvtHandler * SourceCtrl = ( wxEvtHandler * ) event.GetEventObject();
+        event.SetId( ID_STATUSBAR_GAUGE_CREATED );
+        event.SetInt( NewGauge );
+        event.SetEventObject( this );
+        wxPostEvent( SourceCtrl, event );
+
+        delete Label;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnGaugePulse( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "Pulse message for gauge %u" ), event.GetInt() );
@@ -5064,7 +5083,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
     //
     int Count = CoverInfos.Count();
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
     event.SetInt( m_GaugeId );
     event.SetExtraLong( Count );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
@@ -5076,8 +5095,8 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
         //guLogMessage( wxT( "Downloading cover for %s - %s" ), CoverInfo->m_ArtistName.c_str(), CoverInfo->m_AlbumName.c_str() );
         FindCoverLink( m_Db, CoverInfo->m_AlbumId, CoverInfo->m_AlbumName, CoverInfo->m_ArtistName, CoverInfo->m_PathName );
 
-        //wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
-        event.SetId( ID_GAUGE_UPDATE );
+        //wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
+        event.SetId( ID_STATUSBAR_GAUGE_UPDATE );
         event.SetInt( m_GaugeId );
         event.SetExtraLong( Index );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
@@ -5085,8 +5104,8 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
     }
     //guLogMessage( wxT( "Finalized Cover Update Thread" ) );
 
-    //event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
-    event.SetId( ID_GAUGE_REMOVE );
+    //event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    event.SetId( ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 
@@ -5131,7 +5150,7 @@ guUpdatePodcastsThread::guUpdatePodcastsThread( guDbLibrary * db, guMainFrame * 
 // -------------------------------------------------------------------------------- //
 guUpdatePodcastsThread::~guUpdatePodcastsThread()
 {
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, event );
 }
@@ -5142,7 +5161,7 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
     guPodcastChannelArray PodcastChannels;
     if( m_Db->GetPodcastChannels( &PodcastChannels ) )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
         event.SetInt( m_GaugeId );
         event.SetExtraLong( PodcastChannels.Count() );
         wxPostEvent( m_MainFrame, event );
@@ -5150,7 +5169,7 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
         unsigned int Index = 0;
         while( !TestDestroy() && Index < PodcastChannels.Count() )
         {
-            event.SetId( ID_GAUGE_UPDATE );
+            event.SetId( ID_STATUSBAR_GAUGE_UPDATE );
             event.SetInt( m_GaugeId );
             event.SetExtraLong( Index + 1 );
             wxPostEvent( m_MainFrame, event );
