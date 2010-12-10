@@ -5900,20 +5900,27 @@ bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
   wxString Album = Song.m_AlbumName;
   char Source;
 
-  switch( Song.m_TrackMode )
+  if( Song.m_Type == guTRACK_TYPE_RADIOSTATION )
   {
-    case guTRACK_MODE_USER :
-      Source = 'P';
-      break;
-    case guTRACK_MODE_SMART :
-      Source = 'L';
-      break;
-    case guTRACK_MODE_RANDOM :
-      Source = 'S';
-      break;
-    default :
-      Source = 'U';
-      break;
+    Source = 'R';
+  }
+  else
+  {
+    switch( Song.m_TrackMode )
+    {
+      case guTRACK_MODE_USER :
+        Source = 'P';
+        break;
+      case guTRACK_MODE_SMART :
+        Source = 'L';
+        break;
+      case guTRACK_MODE_RANDOM :
+        Source = 'S';
+        break;
+      default :
+        Source = 'U';
+        break;
+    }
   }
 
   char Rating;
