@@ -543,6 +543,53 @@ bool SetApeLyrics( APE::Tag * apetag, const wxString &lyrics )
 }
 
 // -------------------------------------------------------------------------------- //
+wxImage * GetASFImage( ASF::Tag * asftag )
+{
+    if( asftag )
+    {
+        if( asftag->attributeListMap().contains( "WM/Picture" ) )
+        {
+            ByteVector PictureData = asftag->attributeListMap()[ "WM/Picture" ].front().toByteVector();
+
+            TagLib::ID3v2::AttachedPictureFrame * PicFrame;
+
+            PicFrame = ( TagLib::ID3v2::AttachedPictureFrame * ) PictureData.data();
+
+            int ImgDataSize = PicFrame->picture().size();
+
+            if( ImgDataSize > 0 )
+            {
+                //guLogMessage( wxT( "ASF header contains APIC frame with %u bytes." ), ImgDataSize );
+                wxMemoryOutputStream ImgOutStream;
+                ImgOutStream.Write( PicFrame->picture().data(), ImgDataSize );
+                wxMemoryInputStream ImgInputStream( ImgOutStream );
+                wxString ImgHandler = wxString( PicFrame->mimeType().toCString( true ), wxConvUTF8 );
+                ImgHandler.Replace( wxT( "/jpg" ), wxT( "/jpeg" ) );
+                wxImage * CoverImage = new wxImage( ImgInputStream, ImgHandler );
+                if( CoverImage )
+                {
+                    if( CoverImage->IsOk() )
+                    {
+                        return CoverImage;
+                    }
+                    else
+                    {
+                        delete CoverImage;
+                    }
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+bool SetASFImage( ASF::Tag * asftag, const wxImage * image )
+{
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 // guTagInfo
 // -------------------------------------------------------------------------------- //
 guTagInfo::guTagInfo( const wxString &filename )
@@ -1897,21 +1944,21 @@ bool guASFTagInfo::CanHandleImages( void )
 // -------------------------------------------------------------------------------- //
 wxImage * guASFTagInfo::GetImage( void )
 {
-//    if( m_ASFTag )
-//    {
-////        return GetASFImage( m_ASFTag );
-//    }
+    if( m_ASFTag )
+    {
+        return GetASFImage( m_ASFTag );
+    }
     return NULL;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guASFTagInfo::SetImage( const wxImage * image )
 {
-//    if( m_ASFTag )
-//    {
-////        SetID3v2Image( m_ASFTag, image );
-//    }
-//    else
+    if( m_ASFTag )
+    {
+        SetASFImage( m_ASFTag, image );
+    }
+    else
         return false;
 
     return m_TagFile->save();
