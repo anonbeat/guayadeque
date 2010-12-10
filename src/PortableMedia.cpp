@@ -2869,6 +2869,7 @@ void guPortableMediaViewCtrl::DestroyLibPanel( void )
 //        delete m_LibPanel;
 //        m_LibPanel = NULL;
         m_VisiblePanels ^= guPANEL_MAIN_LIBRARY;
+        m_LibPanel->SetPanelActive( wxNOT_FOUND );
 //    }
 }
 
