@@ -282,6 +282,7 @@ class guMainFrame : public wxFrame
     void                            CheckShowNotebook( void );
     void                            CheckHideNotebook( void );
 
+    void                            OnGaugeCreate( wxCommandEvent &event );
     void                            OnGaugePulse( wxCommandEvent &event );
     void                            OnGaugeSetMax( wxCommandEvent &event );
     void                            OnGaugeUpdate( wxCommandEvent &event );

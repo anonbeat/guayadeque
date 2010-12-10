@@ -2005,9 +2005,10 @@ int guIpodLibrary::UpdateSong( const guTrack &track, const bool allowrating )
 // -------------------------------------------------------------------------------- //
 // guIpodLibraryUpdate
 // -------------------------------------------------------------------------------- //
-guIpodLibraryUpdate::guIpodLibraryUpdate( guIpodMediaLibPanel * ipodpanel )
+guIpodLibraryUpdate::guIpodLibraryUpdate( guIpodMediaLibPanel * ipodpanel, const int gaugeid )
 {
     m_iPodPanel = ipodpanel;
+    m_GaugeId = gaugeid;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -2023,6 +2024,10 @@ guIpodLibraryUpdate::~guIpodLibraryUpdate()
     {
         m_iPodPanel->UpdateFinished();
     }
+
+    wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    GaugeEvent.SetInt( m_GaugeId );
+    wxPostEvent( wxTheApp->GetTopWindow(), GaugeEvent );
 }
 
 extern "C" {
@@ -2045,6 +2050,17 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
     {
         //Db->ExecuteUpdate( wxT( "DELETE FROM songs" ) );
         guPortableMediaDevice * PortableMediaDevice = m_iPodPanel->PortableMediaDevice();
+
+        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+
+        wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+        GaugeEvent.SetInt( m_GaugeId );
+        GaugeEvent.SetExtraLong( itdb_tracks_number( iPodDb ) );
+        wxPostEvent( MainFrame, GaugeEvent );
+
+        GaugeEvent.SetId( ID_STATUSBAR_GAUGE_UPDATE );
+
+        int TrackIndex = 0;
 
         // Add any missing track to the database or update the existing ones
         GList * Tracks = iPodDb->tracks;
@@ -2102,6 +2118,11 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                 }
             }
             Tracks = Tracks->next;
+
+            //
+            TrackIndex++;
+            GaugeEvent.SetExtraLong( TrackIndex );
+            wxPostEvent( MainFrame, GaugeEvent );
         }
 
         // Find all tracks that have been removed
@@ -2271,6 +2292,8 @@ guIpodMediaLibPanel::guIpodMediaLibPanel( wxWindow * parent, guIpodLibrary * db,
                            guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS |
                            guLIBRARY_CONTEXTMENU_COPY_TO |
                            guLIBRARY_CONTEXTMENU_LINKS );
+
+    Connect( ID_STATUSBAR_GAUGE_CREATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guIpodMediaLibPanel::OnGaugeCreated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2281,6 +2304,8 @@ guIpodMediaLibPanel::~guIpodMediaLibPanel()
         m_UpdateThread->Pause();
         m_UpdateThread->Delete();
     }
+
+    Disconnect( ID_STATUSBAR_GAUGE_CREATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guIpodMediaLibPanel::OnGaugeCreated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2302,11 +2327,22 @@ void guIpodMediaLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
 }
 
 // -------------------------------------------------------------------------------- //
+void guIpodMediaLibPanel::OnGaugeCreated( wxCommandEvent &event )
+{
+    m_UpdateThread = new guIpodLibraryUpdate( this, event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
 void guIpodMediaLibPanel::DoUpdate( const bool forced )
 {
     if( m_UpdateThread )
         return;
-    m_UpdateThread = new guIpodLibraryUpdate( this );
+//    m_UpdateThread = new guIpodLibraryUpdate( this );
+    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_CREATE );
+    Event.SetClientData( new wxString( m_PortableMediaDevice->DeviceName() ) );
+    Event.SetEventObject( this );
+    Event.SetInt( 0 );
+    wxPostEvent( wxTheApp->GetTopWindow(), Event );
 }
 
 // -------------------------------------------------------------------------------- //

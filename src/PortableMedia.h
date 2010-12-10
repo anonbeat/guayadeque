@@ -428,9 +428,10 @@ class guIpodLibraryUpdate : public wxThread
 {
   protected :
     guIpodMediaLibPanel * m_iPodPanel;
+    int                   m_GaugeId;
 
   public :
-    guIpodLibraryUpdate( guIpodMediaLibPanel * libpanel );
+    guIpodLibraryUpdate( guIpodMediaLibPanel * libpanel, const int gaugeid );
     ~guIpodLibraryUpdate();
 
     ExitCode Entry();
@@ -457,6 +458,8 @@ class guIpodMediaLibPanel : public guPortableMediaLibPanel
     virtual bool                SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath );
 
     virtual void                DeleteTracks( guTrackArray * tracks );
+
+    void                        OnGaugeCreated( wxCommandEvent &event );
 
   public :
     guIpodMediaLibPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel );

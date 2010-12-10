@@ -1240,14 +1240,14 @@ void guPlayerPanel::LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
 {
-    wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+    wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
     int Percent = event.GetInt();
 //    printf( "Buffering: %d%%\n", Percent );
     if( Percent == 100 )
     {
         if( m_BufferGaugeId != wxNOT_FOUND )
         {
-            GaugeEvent.SetId( ID_GAUGE_REMOVE );
+            GaugeEvent.SetId( ID_STATUSBAR_GAUGE_REMOVE );
             GaugeEvent.SetInt( m_BufferGaugeId );
             wxPostEvent( m_MainFrame, GaugeEvent );
             m_BufferGaugeId = wxNOT_FOUND;
@@ -1258,7 +1258,7 @@ void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
         if( m_BufferGaugeId == wxNOT_FOUND )
         {
               m_BufferGaugeId = ( ( guStatusBar * ) m_MainFrame->GetStatusBar() )->AddGauge( _( "Buffering..." ) );
-              GaugeEvent.SetId( ID_GAUGE_SETMAX );
+              GaugeEvent.SetId( ID_STATUSBAR_GAUGE_SETMAX );
               GaugeEvent.SetInt( m_BufferGaugeId );
               GaugeEvent.SetExtraLong( 100 );
               wxPostEvent( m_MainFrame, GaugeEvent );
@@ -1266,7 +1266,7 @@ void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
 
         if( m_BufferGaugeId != wxNOT_FOUND )
         {
-            GaugeEvent.SetId( ID_GAUGE_UPDATE );
+            GaugeEvent.SetId( ID_STATUSBAR_GAUGE_UPDATE );
             GaugeEvent.SetInt( m_BufferGaugeId );
             GaugeEvent.SetExtraLong( Percent );
             wxPostEvent( m_MainFrame, GaugeEvent );

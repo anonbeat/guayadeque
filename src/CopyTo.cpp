@@ -166,7 +166,7 @@ guCopyToThread::guCopyToThread( guMainFrame * mainframe, int gaugeid )
 // -------------------------------------------------------------------------------- //
 guCopyToThread::~guCopyToThread()
 {
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
+    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
     Event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, Event );
 
@@ -307,13 +307,13 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
         //
         m_CurrentFile++;
 
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
         event.SetInt( m_GaugeId );
         event.SetExtraLong( m_FileCount );
         wxPostEvent( m_MainFrame, event );
 
 
-        event.SetId( ID_GAUGE_UPDATE );
+        event.SetId( ID_STATUSBAR_GAUGE_UPDATE );
         event.SetInt( m_GaugeId );
         event.SetExtraLong( m_CurrentFile );
         wxPostEvent( m_MainFrame, event );

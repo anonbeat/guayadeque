@@ -1927,7 +1927,7 @@ guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
 //    guListItems Genres;
     int index;
     int count;
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
     guShoutCast * ShoutCast = new guShoutCast();
     guRadioStations RadioStations;
     if( ShoutCast )
@@ -1971,8 +1971,8 @@ guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
             wxPostEvent( m_RadioPanel, event );
             Sleep( 30 ); // Its wxThread::Sleep
 
-//            wxCommandEvent event2( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
-            event.SetId( ID_GAUGE_UPDATE );
+//            wxCommandEvent event2( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
+            event.SetId( ID_STATUSBAR_GAUGE_UPDATE );
             event.SetInt( m_GaugeId );
             event.SetExtraLong( index );
             wxPostEvent( wxTheApp->GetTopWindow(), event );
@@ -1985,8 +1985,8 @@ guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
     wxPostEvent( m_RadioPanel, event );
 //    wxMilliSleep( 1 );
 
-//    wxCommandEvent event2( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_REMOVE );
-    event.SetId( ID_GAUGE_REMOVE );
+//    wxCommandEvent event2( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    event.SetId( ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
     //

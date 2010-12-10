@@ -135,7 +135,7 @@ guLibUpdateThread::~guLibUpdateThread()
         wxPostEvent( m_MainFrame, event );
     }
     //
-    event.SetId( ID_GAUGE_REMOVE );
+    event.SetId( ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, event );
 }
@@ -182,7 +182,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           //guLogMessage( wxT( "Scanning dir '%s' : FileDate: %u  -> %u\n%u Tracks found" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate, m_TrackFiles.Count() );
           ScanDirectory( dirname + FileName, includedir || ( FileDate > m_LastUpdate ) );
 
-          wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+          wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
           event.SetInt( m_GaugeId );
           event.SetExtraLong( m_TrackFiles.Count() );
           wxPostEvent( m_MainFrame, event );
@@ -238,10 +238,10 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 {
     int index;
     int count;
-    wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_UPDATE );
+    wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
 
-    wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_GAUGE_SETMAX );
+    wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
     if( m_ScanPath.IsEmpty() )
