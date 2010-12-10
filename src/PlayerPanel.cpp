@@ -1757,8 +1757,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 {
     guLogMessage( wxT( "OnMediaPlayStarted  %li" ), m_NextTrackId );
 
-    if( !m_SavedPlayedTrack )
-        SavePlayedTrack();
+    SavePlayedTrack();
 
     // Enable or disables the record button. Only enabled for radio stations
     m_RecordButton->Enable( ( m_NextSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
@@ -1936,8 +1935,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 //        m_PendingScrob = true;
 //    }
 
-    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
-        ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
+    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() && //( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
+        ( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST ) )
     {
         m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
         //m_PendingScrob = false;
@@ -1978,7 +1977,8 @@ void guPlayerPanel::SavePlayedTrack( void )
 
     // Check if the Current Song have played more than the half and if so add it to
     // The CachedPlayedSong database to be submitted to LastFM AudioScrobbling
-    if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ) // If its not a radiostation
+    //if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ) // If its not a radiostation
+    if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST ) ) // If its not a podcast
     {
         //guLogMessage( wxT( "PlayTime: %u Length: %u" ), m_MediaSong.m_PlayTime, m_MediaSong.m_Length );
         if( ( ( m_MediaSong.m_PlayTime > guAS_MIN_PLAYTIME ) || // If have played more than the min amount of time
