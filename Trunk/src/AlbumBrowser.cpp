@@ -503,19 +503,13 @@ void guAlbumBrowserItemPanel::OnCopyToClipboard( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnAlbumSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
-    evt.SetInt( m_AlbumBrowserItem->m_AlbumId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    m_AlbumBrowser->OnAlbumSelectName( m_AlbumBrowserItem->m_AlbumId );
 }
 
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
-    evt.SetInt( m_AlbumBrowserItem->m_ArtistId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    m_AlbumBrowser->OnArtistSelectName( m_AlbumBrowserItem->m_ArtistId );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1588,6 +1582,25 @@ void guAlbumBrowser::OnBitmapMouseOver( const int coverid, const wxPoint &positi
         }
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnAlbumSelectName( const int albumid )
+{
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+    evt.SetInt( albumid );
+    evt.SetExtraLong( guTRACK_TYPE_DB );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnArtistSelectName( const int artistid )
+{
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+    evt.SetInt( artistid );
+    evt.SetExtraLong( guTRACK_TYPE_DB );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+}
+
 
 
 

@@ -974,6 +974,26 @@ void guPortableMediaAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guPortableMediaAlbumBrowser::OnAlbumSelectName( const int albumid )
+{
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+    evt.SetInt( albumid );
+    evt.SetExtraLong( guTRACK_TYPE_DB );
+    evt.SetClientData( m_LibPanel );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPortableMediaAlbumBrowser::OnArtistSelectName( const int artistid )
+{
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+    evt.SetInt( artistid );
+    evt.SetExtraLong( guTRACK_TYPE_DB );
+    evt.SetClientData( m_LibPanel );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+}
+
 
 
 

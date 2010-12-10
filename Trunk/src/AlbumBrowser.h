@@ -190,6 +190,9 @@ class guAlbumBrowser : public wxPanel
 
     virtual void                    OnBitmapMouseOver( const int coverid, const wxPoint &position );
 
+    virtual void                    OnAlbumSelectName( const int albumid );
+    virtual void                    OnArtistSelectName( const int artistid );
+
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guAlbumBrowser();

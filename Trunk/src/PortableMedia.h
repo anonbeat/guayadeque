@@ -352,17 +352,20 @@ class guPortableMediaAlbumBrowser : public guAlbumBrowser
   protected :
     guPortableMediaLibPanel * m_LibPanel;
 
-    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+
+    virtual void            OnAlbumSelectName( const int albumid );
+    virtual void            OnArtistSelectName( const int artistid );
 
   public :
     guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
     ~guPortableMediaAlbumBrowser();
 
 
-    virtual void                    OnAlbumDownloadCoverClicked( const int albumid );
-    virtual void                    OnAlbumSelectCoverClicked( const int albumid );
+    virtual void            OnAlbumDownloadCoverClicked( const int albumid );
+    virtual void            OnAlbumSelectCoverClicked( const int albumid );
 
-    virtual int                     GetContextMenuFlags( void ) { return m_LibPanel->GetContextMenuFlags(); }
+    virtual int             GetContextMenuFlags( void ) { return m_LibPanel->GetContextMenuFlags(); }
 
 };
 
