@@ -141,8 +141,10 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     SetStatusWidths( 4, FieldWidths );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
+
     int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
-    m_ForceGapless = FadeOutTime && Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) );
+    m_ForceGapless = ( !FadeOutTime || Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) ) );
 
     m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
     m_ASBitmap->SetToolTip( _( "Shows the status of the LastFM connection." ) );
@@ -156,11 +158,16 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     Connect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
 	m_ASBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnAudioScrobbleClicked ), NULL, this );
 	m_PlayMode->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnPlayModeClicked ), NULL, this );
+
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guStatusBar::OnConfigUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guStatusBar::~guStatusBar()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     if( m_ASBitmap )
         delete m_ASBitmap;
 
@@ -170,6 +177,19 @@ guStatusBar::~guStatusBar()
     Disconnect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
 	m_ASBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnAudioScrobbleClicked ), NULL, this );
 	m_PlayMode->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnPlayModeClicked ), NULL, this );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guStatusBar::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::OnConfigUpdated( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "guSTatusBar::OnConfigUPdated..." ) );
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
+
+    int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+    SetPlayMode( !FadeOutTime || m_ForceGapless );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -217,6 +237,7 @@ void guStatusBar::SetAudioScrobbleService( bool Enabled )
 // -------------------------------------------------------------------------------- //
 void guStatusBar::SetPlayMode( const bool forcegapless )
 {
+    guLogMessage( wxT( "guStatusBar::SetPlayMode( %i )" ), forcegapless );
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_ForceGapless = forcegapless;
     Config->WriteBool( wxT( "ForceGapless" ), m_ForceGapless, wxT( "Crossfader" ) );
