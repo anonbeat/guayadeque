@@ -246,6 +246,7 @@ class guPlayerPanel : public wxPanel
     int                     m_SilenceDetectorLevel;
     int                     m_SilenceDetectorTime;
 
+    bool                    m_ForceGapless;
     int                     m_FadeOutTime;
 
     bool                    m_PendingScrob;
@@ -386,6 +387,7 @@ class guPlayerPanel : public wxPanel
     void                SetNotifySrv( guDBusNotify * notify ) { m_NotifySrv = notify; };
     void                SendNotifyInfo( wxImage * image );
 
+    void                SetForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; m_MediaCtrl->ForceGapless( forcegapless ); }
 
     friend class guSmartAddTracksThread;
 };

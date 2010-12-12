@@ -63,12 +63,16 @@ class guStatusBar : public wxStatusBar
   private:
     guGaugeArray        m_Gauges;
     wxStaticBitmap *    m_ASBitmap;
+    wxStaticBitmap *    m_PlayMode;
     wxStaticText *      m_SelInfo;
+    bool                m_ForceGapless;
 
     void                OnSize( wxSizeEvent &event );
     void                SetSizes( int fieldcnt );
     void                UpdateGauges( void );
+
     void                OnAudioScrobbleClicked( wxMouseEvent &event );
+    void                OnPlayModeClicked( wxMouseEvent &event );
 
   public:
                         guStatusBar( wxWindow * parent );
@@ -82,6 +86,8 @@ class guStatusBar : public wxStatusBar
     void                SetValue( int id, int value ) { m_Gauges[ id ]->SetValue( value ); };
 
     void                SetSelInfo( const wxString &label );
+
+    void                SetPlayMode( const bool forcegapless );
 
 };
 

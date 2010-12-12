@@ -173,7 +173,9 @@
 #include "./images/star_highlight_tiny.h"
 #include "./images/star_highlight_mid.h"
 #include "./images/star_highlight_big.h"
-
+//
+#include "./images/tiny_crossfade.h"
+#include "./images/tiny_gapless.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -335,7 +337,10 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_star_normal_big,               wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_star_highlight_tiny,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_star_highlight_mid,            wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_star_highlight_big,            wxBITMAP_TYPE_PNG )
+    GUIMAGE( guImage_star_highlight_big,            wxBITMAP_TYPE_PNG ),
+    //
+    GUIMAGE( guImage_tiny_crossfade,                wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_gapless,                  wxBITMAP_TYPE_PNG )
 };
 
 

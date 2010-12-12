@@ -173,7 +173,10 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_star_normal_big,
     guIMAGE_INDEX_star_highlight_tiny,
     guIMAGE_INDEX_star_highlight_mid,
-    guIMAGE_INDEX_star_highlight_big
+    guIMAGE_INDEX_star_highlight_big,
+    //
+    guIMAGE_INDEX_tiny_crossfade,
+    guIMAGE_INDEX_tiny_gapless
 };
 
 
