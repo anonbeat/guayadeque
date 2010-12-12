@@ -74,6 +74,8 @@ class guStatusBar : public wxStatusBar
     void                OnAudioScrobbleClicked( wxMouseEvent &event );
     void                OnPlayModeClicked( wxMouseEvent &event );
 
+    void                OnConfigUpdated( wxCommandEvent &event );
+
   public:
                         guStatusBar( wxWindow * parent );
     virtual             ~guStatusBar();
