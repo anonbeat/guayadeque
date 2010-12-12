@@ -88,7 +88,6 @@ void guListBox::ReloadItems( bool reset )
       ScrollToLine( FirstVisible );
     }
     RefreshAll();
-
 }
 
 // -------------------------------------------------------------------------------- //

@@ -382,6 +382,7 @@ class guMainFrame : public wxFrame
     void                            OnVolumeMonitorUpdated( wxCommandEvent &event );
     void                            CreatePortableMediaDeviceMenu( wxMenu * menu, const wxString &devicename, const int basecmd );
 
+    void                            OnSetForceGapless( wxCommandEvent &event );
 
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );

@@ -322,6 +322,7 @@ class guMediaCtrl : public wxEvtHandler
     guFaderPlayBinArray     m_FaderPlayBins;
     guFaderPlayBin *        m_CurrentPlayBin;
 
+    bool                    m_ForceGapless;
     int                     m_FadeOutTime;
     int                     m_FadeInTime;
     double                  m_FadeInVolStart;
@@ -370,6 +371,9 @@ class guMediaCtrl : public wxEvtHandler
     bool            IsBuffering( void ) { return ( m_CurrentPlayBin && m_CurrentPlayBin->IsBuffering() ); }
     int             BufferSize( void ) { return m_BufferSize; }
     bool            IsRecording( void ) { return m_IsRecording; }
+
+    bool            ForceGapless( void ) { return m_ForceGapless; }
+    void            ForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; }
 
     double          GetVolume( void ) { return m_Volume; }
     bool            SetVolume( double volume );

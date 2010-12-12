@@ -143,7 +143,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
 
-    m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+    m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "Crossfader" ) );
+    m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
 //        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
 
     m_SliderIsDragged = false;
@@ -611,7 +612,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
         }
 
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+        m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "Crossfader" ) );
+        m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
 
         if( !m_PlaySmart )
             CheckFiltersEnable();
@@ -770,7 +772,7 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
     SetNextTrack( m_PlayListCtrl->GetCurrent() );
 
     LoadMedia( m_NextSong.m_FileName,
-        m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
+        ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
     TrackListChanged();
 
     if( m_PlaySmart )
@@ -819,7 +821,7 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
         SetNextTrack( m_PlayListCtrl->GetCurrent() );
 
         LoadMedia( m_NextSong.m_FileName,
-            m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
+            ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
 
         TrackListChanged();
 
@@ -1188,7 +1190,7 @@ void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
     //wxLogMessage( wxT( "Selected %i : %s - %s" ), m_MediaSong.SongId, m_MediaSong.ArtistName.c_str(), m_MediaSong.SongName.c_str() );
 
     LoadMedia( m_NextSong.m_FileName,
-        m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
+        ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2040,7 +2042,7 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
         //m_MediaSong = * NextItem;
         SetNextTrack( NextItem );
         LoadMedia( m_NextSong.m_FileName,
-            m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
+            ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
     }
     else
@@ -2217,7 +2219,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
             {
                 m_IsSkipping = true;
                 LoadMedia( m_NextSong.m_FileName,
-                ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
+                ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
             }
         }
@@ -2286,7 +2288,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
             m_IsSkipping = true;
             LoadMedia( m_NextSong.m_FileName,
                 ( event.GetInt() ? ( guFADERPLAYBIN_PLAYTYPE ) event.GetInt() :
-                ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
+                ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                     ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ) );
         }
         else
@@ -2371,7 +2373,7 @@ void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
         {
             m_IsSkipping = true;
             LoadMedia( m_NextSong.m_FileName,
-                ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ) );
+                ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ) );
         }
         //else
         //{
@@ -2424,7 +2426,7 @@ void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
         {
             m_IsSkipping = true;
             LoadMedia( m_NextSong.m_FileName,
-                ( m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ) );
+                ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ) );
         }
         //else
         //{
@@ -2457,7 +2459,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
         SetNextTrack( m_PlayListCtrl->GetCurrent() );
 
         LoadMedia( m_NextSong.m_FileName,
-            m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
+            ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
         return;
     }
 
@@ -2486,7 +2488,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
             m_SavedPlayedTrack = false;
             //guLogMessage( wxT( "Loading '%s'" ), m_NextSong.m_FileName.c_str() );
             LoadMedia( m_NextSong.m_FileName,
-                m_FadeOutTime ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
+                ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
             return;
         }
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );

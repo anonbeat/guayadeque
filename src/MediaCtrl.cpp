@@ -488,6 +488,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     if( Init() )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_ForceGapless      = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) );
         m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
         m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
         m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
@@ -836,7 +837,7 @@ bool guMediaCtrl::Play( void )
                 m_CurrentPlayBin = FaderPlaybin;
             }
             Unlock();
-            FaderPlaybin->StartFade( 0.0, 1.0, m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME );
+            FaderPlaybin->StartFade( 0.0, 1.0, ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME );
             FaderPlaybin->m_State = guFADERPLAYBIN_STATE_FADEIN;
             FaderPlaybin->Play();
 
@@ -923,7 +924,7 @@ bool guMediaCtrl::Pause( void )
 	for( Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = ( guFaderPlayBin * ) ToFade[ Index ];
-        FadeOutTime = m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
+        FadeOutTime = ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
 		switch( FaderPlayBin->m_State )
 		{
             case guFADERPLAYBIN_STATE_FADEOUT :
@@ -1029,7 +1030,7 @@ bool guMediaCtrl::Stop( void )
 	for( Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = ( guFaderPlayBin * ) ToFade[ Index ];
-        FadeOutTime = m_FadeOutTime ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
+        FadeOutTime = ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
 		switch( FaderPlayBin->m_State )
 		{
             case guFADERPLAYBIN_STATE_FADEOUT :
@@ -1102,6 +1103,7 @@ bool guMediaCtrl::Seek( wxFileOffset where )
 void guMediaCtrl::UpdatedConfig( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_ForceGapless      = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) );
     m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
     m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
     m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
@@ -1929,7 +1931,7 @@ bool guFaderPlayBin::StartPlay( void )
             for( Index = 0; Index < Count; Index++ )
             {
                 double FadeOutStart = 1.0;
-                int    FadeOutTime = m_Player->m_FadeOutTime;
+                int    FadeOutTime = m_Player->m_ForceGapless ? 0 : m_Player->m_FadeOutTime;
 
                 guFaderPlayBin * FaderPlaybin = ToFade[ Index ];
 
