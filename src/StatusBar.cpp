@@ -24,7 +24,9 @@
 #include "Commands.h"
 #include "Preferences.h"
 
-#define guTRACKCOUNT_SIZE   300
+#define guTRACKCOUNT_PANEL_SIZE         300
+#define guAUDIOSCROBBLE_PANEL_SIZE      40
+#define guFORCEGAPLESS_PANEL_SIZE       24
 
 // -------------------------------------------------------------------------------- //
 // guGauge
@@ -136,7 +138,7 @@ void guGauge::SetRange( int range )
 // -------------------------------------------------------------------------------- //
 guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
 {
-    int FieldWidths[] = { -1, guTRACKCOUNT_SIZE, 24, 50 };
+    int FieldWidths[] = { -1, guTRACKCOUNT_PANEL_SIZE, guFORCEGAPLESS_PANEL_SIZE, guAUDIOSCROBBLE_PANEL_SIZE };
     SetFieldsCount( 4 );
     SetStatusWidths( 4, FieldWidths );
 
@@ -204,7 +206,7 @@ void guStatusBar::OnSize( wxSizeEvent &event )
         //size = ASBitmap->GetSize();
         GetFieldRect( GetFieldsCount() - 1, rect );
         m_ASBitmap->Move( rect.x + 3,
-                        rect.y + 3 );
+                        rect.y + 2 );
     }
 
     if( m_PlayMode )
@@ -212,7 +214,7 @@ void guStatusBar::OnSize( wxSizeEvent &event )
         //size = ASBitmap->GetSize();
         GetFieldRect( GetFieldsCount() - 2, rect );
         m_PlayMode->Move( rect.x + 3,
-                        rect.y + 5 );
+                        rect.y + 4 );
     }
 
     if( m_SelInfo )
@@ -237,7 +239,6 @@ void guStatusBar::SetAudioScrobbleService( bool Enabled )
 // -------------------------------------------------------------------------------- //
 void guStatusBar::SetPlayMode( const bool forcegapless )
 {
-    guLogMessage( wxT( "guStatusBar::SetPlayMode( %i )" ), forcegapless );
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_ForceGapless = forcegapless;
     Config->WriteBool( wxT( "ForceGapless" ), m_ForceGapless, wxT( "Crossfader" ) );
@@ -285,11 +286,11 @@ void guStatusBar::SetSizes( int FieldCnt )
             if( index == 0 )
                 FieldWidths[ index ] = -1;
             else if( index == ( FieldCnt - 1 ) )
-                FieldWidths[ index ] = 50;
+                FieldWidths[ index ] = guAUDIOSCROBBLE_PANEL_SIZE;
             else if( index == ( FieldCnt - 2 ) )
-                FieldWidths[ index ] = 24;
+                FieldWidths[ index ] = guFORCEGAPLESS_PANEL_SIZE;
             else if( index == ( FieldCnt - 3 ) )
-                FieldWidths[ index ] = guTRACKCOUNT_SIZE;
+                FieldWidths[ index ] = guTRACKCOUNT_PANEL_SIZE;
             else
                 FieldWidths[ index ] = 200;
             //printf( "Width: %i\n", FieldWidths[ index ] );
