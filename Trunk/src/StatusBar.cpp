@@ -168,17 +168,17 @@ guStatusBar::~guStatusBar()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    if( m_ASBitmap )
-        delete m_ASBitmap;
-
-    if( m_PlayMode )
-        delete m_PlayMode;
-
     Disconnect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
 	m_ASBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnAudioScrobbleClicked ), NULL, this );
 	m_PlayMode->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnPlayModeClicked ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guStatusBar::OnConfigUpdated ), NULL, this );
+
+    if( m_ASBitmap )
+        delete m_ASBitmap;
+
+    if( m_PlayMode )
+        delete m_PlayMode;
 }
 
 // -------------------------------------------------------------------------------- //
