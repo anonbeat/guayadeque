@@ -4790,6 +4790,8 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
                     DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 20, 20 ).
                     CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
                     Bottom().Layer( 0 ).Row( 3 ).Position( 0 ).Hide() );
+                if( m_PlayerPanel )
+                    m_PlayerPanel->SetPlayerVumeters( m_PlayerVumeters );
             }
             PaneName = wxT( "PlayerVumeters" );
             if( m_ViewPlayerVumeters )
