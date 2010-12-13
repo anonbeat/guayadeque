@@ -429,7 +429,7 @@ class guMainFrame : public wxFrame
     wxArrayString                   PortableDeviceVolumeNames( void ) { return m_VolumeMonitor->GetMountNames(); }
 
     guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( const int basecmd );
-    guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( guLibPanel * libpanel );
+    guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( wxWindow * libpanel, const int windowtype = guPANEL_MAIN_LIBRARY );
 
 };
 

@@ -949,16 +949,35 @@ guPortableMediaViewCtrl * guMainFrame::GetPortableMediaViewCtrl( const int basec
 }
 
 // -------------------------------------------------------------------------------- //
-guPortableMediaViewCtrl * guMainFrame::GetPortableMediaViewCtrl( guLibPanel * libpanel )
+guPortableMediaViewCtrl * guMainFrame::GetPortableMediaViewCtrl( wxWindow * windowptr, const int windowtype )
 {
     int Index;
     int Count = m_PortableMediaViewCtrls.Count();
     for( Index = 0; Index < Count; Index++ )
     {
         guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ Index ];
-        if( PortableMediaViewCtrl->LibPanel() == libpanel )
+        switch( windowtype )
         {
-            return PortableMediaViewCtrl;
+            case guPANEL_MAIN_LIBRARY :
+                if( PortableMediaViewCtrl->LibPanel() == ( guLibPanel * ) windowptr )
+                {
+                    return PortableMediaViewCtrl;
+                }
+                break;
+
+            case guPANEL_MAIN_ALBUMBROWSER :
+                if( PortableMediaViewCtrl->AlbumBrowserPanel() == ( guAlbumBrowser * ) windowptr )
+                {
+                    return PortableMediaViewCtrl;
+                }
+                break;
+
+            case guPANEL_MAIN_PLAYLISTS :
+                if( PortableMediaViewCtrl->PlayListPanel() == ( guPlayListPanel * ) windowptr )
+                {
+                    return PortableMediaViewCtrl;
+                }
+                break;
         }
     }
     return NULL;
@@ -4039,10 +4058,45 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     }
     else
     {
-        //m_SelCount = wxNOT_FOUND;
-        //m_SelLength = wxNOT_FOUND;
-        //m_SelSize = wxNOT_FOUND;
-        m_MainStatusBar->SetSelInfo( wxEmptyString );
+        guPortableMediaViewCtrl * PortableMediaViewCtrl = GetPortableMediaViewCtrl( ( guLibPanel * ) m_CurrentPage );
+        if( PortableMediaViewCtrl )
+        {
+            PortableMediaViewCtrl->Db()->GetTracksCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+
+            wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+            SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
+            SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
+                LenToString( m_SelLength.GetLo() ).c_str(),
+                SizeToString( m_SelSize.GetValue() ).c_str() );
+            m_MainStatusBar->SetSelInfo( SelInfo );
+        }
+        else
+        {
+            PortableMediaViewCtrl = GetPortableMediaViewCtrl( m_CurrentPage, guPANEL_MAIN_PLAYLISTS );
+            if( PortableMediaViewCtrl )
+            {
+                if( PortableMediaViewCtrl->PlayListPanel()->GetPlayListCounters( &m_SelCount, &m_SelLength, &m_SelSize ) )
+                {
+                    wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+                    SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
+                    SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
+                        LenToString( m_SelLength.GetLo() ).c_str(),
+                        SizeToString( m_SelSize.GetValue() ).c_str() );
+                    m_MainStatusBar->SetSelInfo( SelInfo );
+                }
+                else
+                {
+                    m_MainStatusBar->SetSelInfo( wxEmptyString );
+                }
+            }
+            else
+            {
+                //m_SelCount = wxNOT_FOUND;
+                //m_SelLength = wxNOT_FOUND;
+                //m_SelSize = wxNOT_FOUND;
+                m_MainStatusBar->SetSelInfo( wxEmptyString );
+            }
+        }
     }
 }
 
