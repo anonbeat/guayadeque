@@ -261,7 +261,7 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
     CurrentItem = AppendItem( m_OnlineStoreId, _( "Magnatune" ), 4, -1, new guLocationItemData( ID_MENU_VIEW_MAGNATUNE, ( VisiblePanels & guPANEL_MAIN_MAGNATUNE ) ) );
     if( VisiblePanels & guPANEL_MAIN_MAGNATUNE )
         SetItemFont( CurrentItem, BoldFont );
-    CurrentItem = AppendItem( m_OnlineStoreId, _( "Jamendo" ), 5, -1, new guLocationItemData( ID_MENU_VIEW_JAMENDO, ( VisiblePanels & guPANEL_MAIN_MAGNATUNE ) ) );
+    CurrentItem = AppendItem( m_OnlineStoreId, _( "Jamendo" ), 5, -1, new guLocationItemData( ID_MENU_VIEW_JAMENDO, ( VisiblePanels & guPANEL_MAIN_JAMENDO ) ) );
     if( VisiblePanels & guPANEL_MAIN_JAMENDO )
         SetItemFont( CurrentItem, BoldFont );
     if( StoresExpanded )
