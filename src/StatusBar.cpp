@@ -158,8 +158,12 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     m_SelInfo->SetToolTip( _( "Shows information about the selected items." ) );
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
-	m_ASBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnAudioScrobbleClicked ), NULL, this );
-	m_PlayMode->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnPlayModeClicked ), NULL, this );
+
+	m_ASBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleLClicked ), NULL, this );
+	m_ASBitmap->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleRClicked ), NULL, this );
+
+	m_PlayMode->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeLClicked ), NULL, this );
+	m_PlayMode->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeRClicked ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guStatusBar::OnConfigUpdated ), NULL, this );
 }
@@ -171,8 +175,11 @@ guStatusBar::~guStatusBar()
     Config->UnRegisterObject( this );
 
     Disconnect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
-	m_ASBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnAudioScrobbleClicked ), NULL, this );
-	m_PlayMode->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnPlayModeClicked ), NULL, this );
+	m_ASBitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleLClicked ), NULL, this );
+	m_ASBitmap->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleRClicked ), NULL, this );
+
+	m_PlayMode->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeLClicked ), NULL, this );
+	m_PlayMode->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeRClicked ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guStatusBar::OnConfigUpdated ), NULL, this );
 
@@ -250,7 +257,20 @@ void guStatusBar::SetPlayMode( const bool forcegapless )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::OnAudioScrobbleClicked( wxMouseEvent &event )
+void guStatusBar::OnAudioScrobbleLClicked( wxMouseEvent &event )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    bool AudioScrobbleEnabled = !Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
+    Config->WriteBool( wxT( "SubmitEnabled"), AudioScrobbleEnabled, wxT( "LastFM" ) );
+    Config->WriteBool( wxT( "SubmitEnabled"), AudioScrobbleEnabled, wxT( "LibreFM" ) );
+    Config->Flush();
+
+    Config->SendConfigChangedEvent( guPREFERENCE_PAGE_AUDIOSCROBBLE );
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::OnAudioScrobbleRClicked( wxMouseEvent &event )
 {
     //guLogMessage( wxT( "AUdioScrobble clicked..." ) );
     wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
@@ -259,7 +279,7 @@ void guStatusBar::OnAudioScrobbleClicked( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::OnPlayModeClicked( wxMouseEvent &event )
+void guStatusBar::OnPlayModeLClicked( wxMouseEvent &event )
 {
     //guLogMessage( wxT( "StatusBar::OnPlayModeClicked..." ) );
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -272,6 +292,14 @@ void guStatusBar::OnPlayModeClicked( wxMouseEvent &event )
         CmdEvent.SetInt( m_ForceGapless );
         wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::OnPlayModeRClicked( wxMouseEvent &event )
+{
+    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    CmdEvent.SetInt( guPREFERENCE_PAGE_CROSSFADER );
+    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
