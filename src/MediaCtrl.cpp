@@ -749,6 +749,7 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
                 }
                 else
                 {
+                    m_CurrentPlayBin->m_PlayType = guFADERPLAYBIN_PLAYTYPE_REPLACE;
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_WAITING;
                     m_CurrentPlayBin->Load( uri, true );
                     m_CurrentPlayBin->SetBuffering( false );
