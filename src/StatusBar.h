@@ -67,14 +67,21 @@ class guStatusBar : public wxStatusBar
     wxStaticText *      m_SelInfo;
     bool                m_ForceGapless;
 
+    int                 m_LastClickAction;
+    wxTimer             m_ClickTimer;
+
     void                OnSize( wxSizeEvent &event );
     void                SetSizes( int fieldcnt );
     void                UpdateGauges( void );
 
-    void                OnAudioScrobbleLClicked( wxMouseEvent &event );
-    void                OnAudioScrobbleRClicked( wxMouseEvent &event );
-    void                OnPlayModeLClicked( wxMouseEvent &event );
-    void                OnPlayModeRClicked( wxMouseEvent &event );
+    void                OnAudioScrobbleClicked( void );
+    void                OnAudioScrobbleDClicked( void );
+    void                OnPlayModeClicked( void );
+    void                OnPlayModeDClicked( void );
+
+    void                OnButtonClick( wxMouseEvent &event );
+    void                OnButtonDClick( wxMouseEvent &event );
+    void                OnTimerEvent( wxTimerEvent &event );
 
     void                OnConfigUpdated( wxCommandEvent &event );
 

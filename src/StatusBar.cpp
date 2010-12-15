@@ -28,6 +28,14 @@
 #define guAUDIOSCROBBLE_PANEL_SIZE      40
 #define guFORCEGAPLESS_PANEL_SIZE       24
 
+enum guStatusBarClickAction {
+    guSTATUSBAR_CLICK_ACTION_NONE = -1,
+    guSTATUSBAR_CLICK_ACTION_AUDIOSCROBBLE,
+    guSTATUSBAR_CLICK_ACTION_FORCEGAPLESS
+};
+
+#define guSTATUSBAR_CLICK_TIMEOUT   250
+
 // -------------------------------------------------------------------------------- //
 // guGauge
 // -------------------------------------------------------------------------------- //
@@ -138,6 +146,8 @@ void guGauge::SetRange( int range )
 // -------------------------------------------------------------------------------- //
 guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
 {
+    m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
+
     int FieldWidths[] = { -1, guTRACKCOUNT_PANEL_SIZE, guFORCEGAPLESS_PANEL_SIZE, guAUDIOSCROBBLE_PANEL_SIZE };
     SetFieldsCount( 4 );
     SetStatusWidths( 4, FieldWidths );
@@ -157,15 +167,23 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     m_SelInfo = new wxStaticText( this, wxID_ANY, wxEmptyString );
     m_SelInfo->SetToolTip( _( "Shows information about the selected items" ) );
 
+    m_ClickTimer.SetOwner( this );
+
     Connect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
 
-	m_ASBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleLClicked ), NULL, this );
-	m_ASBitmap->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleRClicked ), NULL, this );
-
-	m_PlayMode->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeLClicked ), NULL, this );
-	m_PlayMode->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeRClicked ), NULL, this );
+//	m_ASBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleLClicked ), NULL, this );
+//	m_ASBitmap->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleRClicked ), NULL, this );
+//
+//	m_PlayMode->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeLClicked ), NULL, this );
+//	m_PlayMode->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeRClicked ), NULL, this );
+	m_ASBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnButtonClick ), NULL, this );
+	m_ASBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnButtonDClick ), NULL, this );
+	m_PlayMode->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnButtonClick ), NULL, this );
+	m_PlayMode->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guStatusBar::OnButtonDClick ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guStatusBar::OnConfigUpdated ), NULL, this );
+
+    Connect( wxEVT_TIMER, wxTimerEventHandler( guStatusBar::OnTimerEvent ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -175,11 +193,11 @@ guStatusBar::~guStatusBar()
     Config->UnRegisterObject( this );
 
     Disconnect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
-	m_ASBitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleLClicked ), NULL, this );
-	m_ASBitmap->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleRClicked ), NULL, this );
-
-	m_PlayMode->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeLClicked ), NULL, this );
-	m_PlayMode->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeRClicked ), NULL, this );
+//	m_ASBitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleLClicked ), NULL, this );
+//	m_ASBitmap->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnAudioScrobbleRClicked ), NULL, this );
+//
+//	m_PlayMode->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeLClicked ), NULL, this );
+//	m_PlayMode->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guStatusBar::OnPlayModeRClicked ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guStatusBar::OnConfigUpdated ), NULL, this );
 
@@ -193,7 +211,7 @@ guStatusBar::~guStatusBar()
 // -------------------------------------------------------------------------------- //
 void guStatusBar::OnConfigUpdated( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "guSTatusBar::OnConfigUPdated..." ) );
+    //guLogMessage( wxT( "guSTatusBar::OnConfigUPdated..." ) );
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
@@ -260,7 +278,55 @@ void guStatusBar::SetPlayMode( const bool forcegapless )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::OnAudioScrobbleLClicked( wxMouseEvent &event )
+void guStatusBar::OnButtonClick( wxMouseEvent &event )
+{
+    //guLogMessage( wxT( "OnButtonClick") );
+    m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
+    if( event.GetEventObject() == m_ASBitmap )
+    {
+        m_LastClickAction = guSTATUSBAR_CLICK_ACTION_AUDIOSCROBBLE;
+    }
+    else if( event.GetEventObject() == m_PlayMode )
+    {
+        m_LastClickAction = guSTATUSBAR_CLICK_ACTION_FORCEGAPLESS;
+    }
+
+    if( m_ClickTimer.IsRunning() )
+        m_ClickTimer.Stop();
+
+    m_ClickTimer.Start( guSTATUSBAR_CLICK_TIMEOUT, wxTIMER_ONE_SHOT );
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::OnButtonDClick( wxMouseEvent &event )
+{
+    if( m_ClickTimer.IsRunning() )
+        m_ClickTimer.Stop();
+
+    if( event.GetEventObject() == m_ASBitmap )
+    {
+        OnAudioScrobbleDClicked();
+    }
+    else if( event.GetEventObject() == m_PlayMode )
+    {
+        OnPlayModeDClicked();
+    }
+
+    m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::OnTimerEvent( wxTimerEvent &event )
+{
+    if( m_LastClickAction == guSTATUSBAR_CLICK_ACTION_AUDIOSCROBBLE )
+        OnAudioScrobbleClicked();
+    else if( m_LastClickAction == guSTATUSBAR_CLICK_ACTION_FORCEGAPLESS )
+        OnPlayModeClicked();
+    m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::OnAudioScrobbleClicked( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -293,7 +359,7 @@ void guStatusBar::OnAudioScrobbleLClicked( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::OnAudioScrobbleRClicked( wxMouseEvent &event )
+void guStatusBar::OnAudioScrobbleDClicked( void )
 {
     //guLogMessage( wxT( "AUdioScrobble clicked..." ) );
     wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
@@ -302,7 +368,7 @@ void guStatusBar::OnAudioScrobbleRClicked( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::OnPlayModeLClicked( wxMouseEvent &event )
+void guStatusBar::OnPlayModeClicked( void )
 {
     //guLogMessage( wxT( "StatusBar::OnPlayModeClicked..." ) );
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -318,7 +384,7 @@ void guStatusBar::OnPlayModeLClicked( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::OnPlayModeRClicked( wxMouseEvent &event )
+void guStatusBar::OnPlayModeDClicked( void )
 {
     wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_CROSSFADER );
