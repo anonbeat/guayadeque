@@ -249,6 +249,7 @@ void guStatusBar::SetPlayMode( const bool forcegapless )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_ForceGapless = forcegapless;
     Config->WriteBool( wxT( "ForceGapless" ), m_ForceGapless, wxT( "Crossfader" ) );
+    Config->Flush();
     if( m_PlayMode )
     {
         m_PlayMode->SetBitmap( guImage( forcegapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
