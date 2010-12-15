@@ -221,7 +221,7 @@ void guStatusBar::OnSize( wxSizeEvent &event )
         //size = ASBitmap->GetSize();
         GetFieldRect( GetFieldsCount() - 2, rect );
         m_PlayMode->Move( rect.x + 3,
-                        rect.y + 4 );
+                        rect.y + 3 );
     }
 
     if( m_SelInfo )
