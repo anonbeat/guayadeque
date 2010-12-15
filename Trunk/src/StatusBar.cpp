@@ -149,13 +149,13 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     m_ForceGapless = ( !FadeOutTime || Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) ) );
 
     m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
-    m_ASBitmap->SetToolTip( _( "Shows the status of the LastFM connection." ) );
+    m_ASBitmap->SetToolTip( _( "Enable audioscrobbling" ) );
 
     m_PlayMode = new wxStaticBitmap( this, wxID_ANY, guImage( m_ForceGapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
-    m_PlayMode->SetToolTip( _( "Set the current play mode" ) );
+    m_PlayMode->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
 
     m_SelInfo = new wxStaticText( this, wxID_ANY, wxEmptyString );
-    m_SelInfo->SetToolTip( _( "Shows information about the selected items." ) );
+    m_SelInfo->SetToolTip( _( "Shows information about the selected items" ) );
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guStatusBar::OnSize ), NULL, this );
 
@@ -239,6 +239,7 @@ void guStatusBar::SetAudioScrobbleService( bool Enabled )
     if( m_ASBitmap )
     {
         m_ASBitmap->SetBitmap( guImage( Enabled ? guIMAGE_INDEX_lastfm_as_on : guIMAGE_INDEX_lastfm_as_off ) );
+        m_ASBitmap->SetToolTip( Enabled ? _( "Disable audioscrobbling" ) : _( "Enable audioscrobbling" ) );
         m_ASBitmap->Refresh();
     }
 }
@@ -253,6 +254,7 @@ void guStatusBar::SetPlayMode( const bool forcegapless )
     if( m_PlayMode )
     {
         m_PlayMode->SetBitmap( guImage( forcegapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
+        m_PlayMode->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
         m_PlayMode->Refresh();
     }
 }
@@ -285,6 +287,8 @@ void guStatusBar::OnAudioScrobbleLClicked( wxMouseEvent &event )
     {
         Config->Flush();
         Config->SendConfigChangedEvent( guPREFERENCE_PAGE_AUDIOSCROBBLE );
+
+        SetAudioScrobbleService( ( ( LastFMEnabled != wxNOT_FOUND ) && LastFMEnabled ) || LibreFMEnabled );
     }
 }
 
