@@ -261,12 +261,30 @@ void guStatusBar::OnAudioScrobbleLClicked( wxMouseEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    bool AudioScrobbleEnabled = !Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
-    Config->WriteBool( wxT( "SubmitEnabled"), AudioScrobbleEnabled, wxT( "LastFM" ) );
-    Config->WriteBool( wxT( "SubmitEnabled"), AudioScrobbleEnabled, wxT( "LibreFM" ) );
-    Config->Flush();
+    bool ConfigUpdated = false;
+    int  LastFMEnabled = wxNOT_FOUND;
+    int  LibreFMEnabled = wxNOT_FOUND;
+    if( !Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) ).IsEmpty() &&
+        !Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) ).IsEmpty() )
+    {
+        LastFMEnabled = !Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
+        Config->WriteBool( wxT( "SubmitEnabled"), LastFMEnabled, wxT( "LastFM" ) );
+        ConfigUpdated = true;
+    }
 
-    Config->SendConfigChangedEvent( guPREFERENCE_PAGE_AUDIOSCROBBLE );
+    if( ( ( LastFMEnabled == ( LibreFMEnabled = !Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) ) ) ) ||
+          ( LastFMEnabled == wxNOT_FOUND ) ) &&
+       !Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LibreFM" ) ).IsEmpty() &&
+        !Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LibreFM" ) ).IsEmpty() )
+    {
+        Config->WriteBool( wxT( "SubmitEnabled"), LibreFMEnabled, wxT( "LibreFM" ) );
+    }
+
+    if( ConfigUpdated )
+    {
+        Config->Flush();
+        Config->SendConfigChangedEvent( guPREFERENCE_PAGE_AUDIOSCROBBLE );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
