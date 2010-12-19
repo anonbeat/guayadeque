@@ -29,6 +29,7 @@ INCLUDE_DIRECTORIES(
         ${LIBDBUS_INCLUDE_DIRS} 
         ${LIBGIO_INCLUDE_DIRS} 
 	${LIBGPOD_INCLUDE_DIRS}
+	${LIBINDICATE_INCLUDE_DIRS}
 )
 
 SET( WXSQLITE3_SOURCES
@@ -51,6 +52,8 @@ SET( DBUS_SOURCES
 	dbus/gsession.h
 	dbus/notify.cpp
 	dbus/notify.h
+	dbus/mpris2.cpp
+	dbus/mpris2.h
 )
 
 SET( HMAC_SHA2_SOURCES
@@ -267,6 +270,7 @@ TARGET_LINK_LIBRARIES( guayadeque
         ${LIBDBUS_LIBRARIES}
 	${LIBGIO_LIBRARIES}
 	${LIBGPOD_LIBRARIES}
+	${LIBINDICATE_LIBRARIES}
 	)
 
 INSTALL( TARGETS guayadeque

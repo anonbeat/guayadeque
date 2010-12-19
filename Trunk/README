@@ -2,15 +2,17 @@ Guayadeque Music Player 0.0.4 Beta
 J.Rios anonbeat@gmail.com
 see LICENSE
 
-Need installed taglib, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1, libflac, libgio
+Need installed taglib, sqlite3, libcurl, gstreamer0.10, wxWidgets 2.8, libdbus-1, libflac, libgio, libindicate
 
-Its been developed in Ubuntu 9.10 32 and 64 bits
+Its been developed in Ubuntu 10.4, 10.10 32 and 64 bits
 
 To build run 
 ./build 
 sudo make install
 
 Please email with bugs, suggestions, requests, translations to anonbeat@gmail.com
+or post them in our forums http://guayadeque.org
 
 Special Thanks to Mrmotinjo (Stefan Bogdanovic http://evilsun.carbonmade.com)
 for the icon and splash designed for guayadeque.
+
