@@ -43,6 +43,18 @@
 #include <wx/datetime.h>
 #include <wx/tokenzr.h>
 
+
+#ifdef WITH_LIBINDICATE_SUPPORT
+
+#define GUAYADEQUE_INDICATOR_NAME               "music.guayadeque"
+#define GUAYADEQUE_DESKTOP_PATH                 "/usr/share/applications/guayadeque.desktop"
+
+#include "libindicate/server.h"
+#include "libindicate/indicator.h"
+//#include "libindicate-gtk/indicator.h"
+
+#endif
+
 // The default update podcasts timeout is 15 minutes
 #define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
 
@@ -419,10 +431,18 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     //
     m_TaskBarIcon = NULL;
+
+#ifdef WITH_LIBINDICATE_SUPPORT
+	IndicateServer * IndServer = indicate_server_ref_default();
+	indicate_server_set_type( IndServer, GUAYADEQUE_INDICATOR_NAME );
+	indicate_server_set_desktop_file( IndServer, GUAYADEQUE_DESKTOP_PATH );
+	indicate_server_show( IndServer );
+#else
     if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
     {
         CreateTaskBarIcon();
     }
+#endif
 
 
     m_DBusServer = new guDBusServer( NULL );
@@ -433,10 +453,17 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     }
 
     // Init the MPRIS object
-    m_MPRIS = new guMPRIS( m_DBusServer, m_PlayerPanel );
+    m_MPRIS = NULL;
+    //m_MPRIS = new guMPRIS( m_DBusServer, m_PlayerPanel );
     if( !m_MPRIS )
     {
         guLogError( wxT( "Could not create the mpris dbus object" ) );
+    }
+
+    m_MPRIS2 = new guMPRIS2( m_DBusServer, m_PlayerPanel );
+    if( !m_MPRIS2 )
+    {
+        guLogError( wxT( "Could not create the mpris2 dbus object" ) );
     }
 
     // Init the MMKeys object
@@ -460,7 +487,6 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     m_PlayerPanel->SetNotifySrv( m_NotifySrv );
     //m_DBusServer->Run();
-
 
     //
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
@@ -488,6 +514,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ), NULL, this );
     Connect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
     Connect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
+    Connect( ID_PLAYERPANEL_VOLUMECHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerVolumeChanged ), NULL, this );
 
 
 	Connect( ID_MAINFRAME_SELECT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectTrack ), NULL, this );
@@ -652,6 +679,7 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ), NULL, this );
     Disconnect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
     Disconnect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
+    Disconnect( ID_PLAYERPANEL_VOLUMECHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerVolumeChanged ), NULL, this );
 
 	Disconnect( ID_MAINFRAME_SELECT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectTrack ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbum ), NULL, this );
@@ -809,6 +837,11 @@ guMainFrame::~guMainFrame()
     if( m_MPRIS )
     {
         delete m_MPRIS;
+    }
+
+    if( m_MPRIS2 )
+    {
+        delete m_MPRIS2;
     }
 
     if( m_GSession )
@@ -1565,6 +1598,7 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
             PrefDialog->SaveSettings();
 
             guConfig * Config = ( guConfig * ) guConfig::Get();
+#ifndef WITH_LIBINDICATE_SUPPORT
             if( !m_TaskBarIcon && Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
             {
                 CreateTaskBarIcon();
@@ -1575,6 +1609,7 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
                 delete m_TaskBarIcon;
                 m_TaskBarIcon = NULL;
             }
+#endif
 
             Config->SendConfigChangedEvent( PrefDialog->GetVisiblePanels() );
             m_Db->ConfigChanged();
@@ -1586,37 +1621,47 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
-    {
-        // If the icon
-        if( m_TaskBarIcon &&
-            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
-            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
-        {
-            if( event.CanVeto() )
-            {
-                Show( false );
-                return;
-            }
-        }
-        else if( Config->ReadBool( wxT( "ShowCloseConfirm" ), true, wxT( "General" ) ) )
-        {
-            guExitConfirmDlg * ExitConfirmDlg = new guExitConfirmDlg( this );
-            if( ExitConfirmDlg )
-            {
-                int Result = ExitConfirmDlg->ShowModal();
-                if( ExitConfirmDlg->GetConfirmChecked() )
-                {
-                    Config->WriteBool( wxT( "ShowCloseConfirm" ), false, wxT( "General" ) );
-                }
-                ExitConfirmDlg->Destroy();
 
-                if( Result != wxID_OK )
-                    return;
-            }
+#ifdef WITH_LIBINDICATE_SUPPORT
+    guMediaState State = m_PlayerPanel->GetState();
+    if( State == guMEDIASTATE_PLAYING )
+    {
+        if( event.CanVeto() )
+        {
+            Show( false );
+            return;
         }
     }
+#else
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    // If the icon
+    if( m_TaskBarIcon &&
+        Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
+        Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
+    {
+        if( event.CanVeto() )
+        {
+            Show( false );
+            return;
+        }
+    }
+    else if( Config->ReadBool( wxT( "ShowCloseConfirm" ), true, wxT( "General" ) ) )
+    {
+        guExitConfirmDlg * ExitConfirmDlg = new guExitConfirmDlg( this );
+        if( ExitConfirmDlg )
+        {
+            int Result = ExitConfirmDlg->ShowModal();
+            if( ExitConfirmDlg->GetConfirmChecked() )
+            {
+                Config->WriteBool( wxT( "ShowCloseConfirm" ), false, wxT( "General" ) );
+            }
+            ExitConfirmDlg->Destroy();
+
+            if( Result != wxID_OK )
+                return;
+        }
+    }
+#endif
     event.Skip();
 }
 
@@ -1775,9 +1820,15 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
     {
         m_LyricsPanel->OnUpdatedTrack( event );
     }
+
     if( m_MPRIS )
     {
         m_MPRIS->OnPlayerTrackChange();
+    }
+
+    if( m_MPRIS2 )
+    {
+        m_MPRIS2->OnPlayerTrackChange();
     }
 
     if( event.GetClientData() )
@@ -1789,10 +1840,14 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPlayerStatusChanged( wxCommandEvent &event )
 {
-    //guLogError( wxT( "Player Status Change Fired" ) );
     if( m_MPRIS )
     {
         m_MPRIS->OnPlayerStatusChange();
+    }
+
+    if( m_MPRIS2 )
+    {
+        m_MPRIS2->OnPlayerStatusChange();
     }
 
     if( m_PlayerPanel )
@@ -1806,20 +1861,37 @@ void guMainFrame::OnPlayerStatusChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPlayerTrackListChanged( wxCommandEvent &event )
 {
-    //guLogError( wxT( "Player TrackList Change Fired" ) );
     if( m_MPRIS )
     {
         m_MPRIS->OnTrackListChange();
+    }
+
+    if( m_MPRIS2 )
+    {
+        m_MPRIS2->OnTrackListChange();
     }
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPlayerCapsChanged( wxCommandEvent &event )
 {
-    //guLogError( wxT( "Player TrackList Change Fired" ) );
     if( m_MPRIS )
     {
         m_MPRIS->OnPlayerCapsChange();
+    }
+
+    if( m_MPRIS2 )
+    {
+        m_MPRIS2->OnPlayerCapsChange();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPlayerVolumeChanged( wxCommandEvent &event )
+{
+    if( m_MPRIS2 )
+    {
+        m_MPRIS2->OnPlayerVolumeChange();
     }
 }
 

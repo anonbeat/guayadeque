@@ -28,6 +28,7 @@
 #include "curl/http.h"
 #include "dbus/gudbus.h"
 #include "dbus/mpris.h"
+#include "dbus/mpris2.h"
 #include "dbus/mmkeys.h"
 #include "dbus/gsession.h"
 #include "dbus/notify.h"
@@ -222,6 +223,7 @@ class guMainFrame : public wxFrame
 
     guDBusServer *                  m_DBusServer;
     guMPRIS *                       m_MPRIS;
+    guMPRIS2 *                      m_MPRIS2;
     guMMKeys *                      m_MMKeys;
     guGSession *                    m_GSession;
     guDBusNotify *                  m_NotifySrv;
@@ -253,6 +255,7 @@ class guMainFrame : public wxFrame
     void                            OnPlayerStatusChanged( wxCommandEvent &event );
     void                            OnPlayerTrackListChanged( wxCommandEvent &event );
     void                            OnPlayerCapsChanged( wxCommandEvent &event );
+    void                            OnPlayerVolumeChanged( wxCommandEvent &event );
     void                            OnAudioScrobbleUpdate( wxCommandEvent &event );
     void                            CreatePortablePlayersMenu( wxMenu * menu );
     void                            CreateMenu();

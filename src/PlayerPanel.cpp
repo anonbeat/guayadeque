@@ -2752,6 +2752,7 @@ void guPlayerPanel::SetVolume( double volume )
 
     m_MediaCtrl->SetVolume(  volume / ( double ) 100.0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %u%%" ), ( int ) volume ) );
+
 }
 
 // -------------------------------------------------------------------------------- //

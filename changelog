@@ -1,4 +1,6 @@
 
+  * Added partial mpris2 support
+  * Added SoundMenu support
   * Added support for wma files extended attributes
   * Added the option to disable replay gain in preferences
   * Added the possibility to show the current track cover in a window
