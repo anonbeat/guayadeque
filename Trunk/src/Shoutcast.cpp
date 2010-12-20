@@ -138,7 +138,8 @@ void guShoutCast::GetStations( const int source, const int flags, const wxString
     //            SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ).c_str() );
 
     Content = GetUrlContent( wxString::Format( source == guRADIO_SOURCE_GENRE ?
-                SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ) );
+                SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ),
+                            wxEmptyString, true );
     //
     if( Content.Length() )
     {

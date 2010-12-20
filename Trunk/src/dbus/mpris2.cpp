@@ -601,15 +601,15 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
     int             Serial = msg->GetSerial();
     int             RSerial = msg->GetReplySerial();
 
-    // Show the details of the msg
-    guLogMessage( wxT( "==MPRIS2========================" ) );
-    guLogMessage( wxT( "Type   : %i" ), Type );
-    guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
-    guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
-    guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
-    guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
-    guLogMessage( wxT( "Serial : %i" ), Serial );
-    guLogMessage( wxT( "RSerial: %i" ), RSerial );
+//    // Show the details of the msg
+//    guLogMessage( wxT( "==MPRIS2========================" ) );
+//    guLogMessage( wxT( "Type   : %i" ), Type );
+//    guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
+//    guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
+//    guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
+//    guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
+//    guLogMessage( wxT( "Serial : %i" ), Serial );
+//    guLogMessage( wxT( "RSerial: %i" ), RSerial );
 
     // If its a method call
     if( Type == DBUS_MESSAGE_TYPE_METHOD_CALL )
