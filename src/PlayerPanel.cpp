@@ -1801,21 +1801,24 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
     wxPostEvent( m_MainFrame, TitleEvent );
 
-    if( ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ||
-        ( m_MediaSong.m_Type > guTRACK_TYPE_PODCAST ) )
-    {
-        // Send an event so the LastFMPanel update its content.
-        //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-        event.SetClientData( new guTrack( m_MediaSong ) );
-        wxPostEvent( m_MainFrame, event );
-    }
-    else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
-    {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-        event.SetClientData( NULL );
-        wxPostEvent( m_MainFrame, event );
-    }
+//    if( ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ||
+//        ( m_MediaSong.m_Type > guTRACK_TYPE_PODCAST ) )
+//    {
+//        // Send an event so the LastFMPanel update its content.
+//        //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
+//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+//        event.SetClientData( new guTrack( m_MediaSong ) );
+//        wxPostEvent( m_MainFrame, event );
+//    }
+//    else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
+//    {
+//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+//        event.SetClientData( NULL );
+//        wxPostEvent( m_MainFrame, event );
+//    }
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+    event.SetClientData( new guTrack( m_MediaSong ) );
+    wxPostEvent( m_MainFrame, event );
 
     wxImage * CoverImage;
     //guLogWarning( wxT( "SetNextTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
@@ -1840,7 +1843,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
         guJamendoPanel * JamendoPanel = m_MainFrame->GetJamendoPanel();
         if( JamendoPanel )
         {
-            guLogMessage( wxT( "Tried to get the CoverImage for the jamendo album %i" ), m_MediaSong.m_AlbumId );
+            //guLogMessage( wxT( "Tried to get the CoverImage for the jamendo album %i" ), m_MediaSong.m_AlbumId );
             CoverImage = JamendoPanel->GetAlbumCover( m_MediaSong.m_AlbumId, m_MediaSong.m_CoverPath );
             m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
         }
@@ -1850,7 +1853,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
         guMagnatunePanel * MagnatunePanel = m_MainFrame->GetMagnatunePanel();
         if( MagnatunePanel )
         {
-            guLogMessage( wxT( "Tried to get the CoverImage for the magnatune album %i" ), m_MediaSong.m_AlbumId );
+            //guLogMessage( wxT( "Tried to get the CoverImage for the magnatune album %i" ), m_MediaSong.m_AlbumId );
             CoverImage = MagnatunePanel->GetAlbumCover( m_MediaSong.m_AlbumId, m_MediaSong.m_ArtistName,
                                                         m_MediaSong.m_AlbumName, m_MediaSong.m_CoverPath );
             m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
@@ -1898,6 +1901,28 @@ void guPlayerPanel::OnMediaPlayStarted( void )
         }
     }
 
+    if( ( ( m_MediaSong.m_CoverType != GU_SONGCOVER_NONE ) && m_MediaSong.m_CoverPath.IsEmpty() ) ||
+        ( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG ) )
+    {
+        if( CoverImage )
+        {
+            if( !m_LastTmpCoverFile.IsEmpty() )
+                wxRemoveFile( m_LastTmpCoverFile );
+
+            if( m_LastTmpCoverFile.EndsWith( wxT( "1.jpg" ) ) )
+                m_LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "2.jpg");
+            else
+                m_LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "1.jpg");
+
+            guLogMessage( wxT( "Saving temp cover file to '%s'" ), m_LastTmpCoverFile.c_str() );
+            if( CoverImage->SaveFile( m_LastTmpCoverFile, wxBITMAP_TYPE_JPEG ) )
+            {
+                if( m_MediaSong.m_CoverPath.IsEmpty() )
+                    m_MediaSong.m_CoverPath = m_LastTmpCoverFile;
+            }
+        }
+    }
+
     // Cover
     SetCurrentCoverImage( CoverImage, m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
 
@@ -1920,7 +1945,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     }
 
     // Send the CapsChanged Event
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
+    //wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
+    event.SetId( ID_PLAYERPANEL_CAPSCHANGED );
     wxPostEvent( m_MainFrame, event );
 
 //    if( m_MediaCtrl->GetState() == guMEDIASTATE_PLAYING )
@@ -1937,8 +1963,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 //        m_PendingScrob = true;
 //    }
 
-    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() && //( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
-        ( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST ) )
+    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() //( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
+      )
     {
         m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
         //m_PendingScrob = false;

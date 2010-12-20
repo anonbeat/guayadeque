@@ -40,6 +40,8 @@
 //#include <wx/mediactrl.h>
 #include <wx/tglbtn.h>
 
+#define guTEMPORARY_COVER_FILENAME      wxT( "guayadeque-tmp-cover" )
+
 // -------------------------------------------------------------------------------- //
 enum guSongCoverType {
     GU_SONGCOVER_NONE = 0,
@@ -269,6 +271,8 @@ class guPlayerPanel : public wxPanel
     bool                    m_ErrorFound;
 
     int                     m_SavedPlayedTrack;
+
+    wxString                m_LastTmpCoverFile;
 
 	void                OnVolumenButtonClick( wxCommandEvent &event );
 	void                OnVolumenMouseWheel( wxMouseEvent &event );

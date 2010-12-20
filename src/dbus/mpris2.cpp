@@ -319,8 +319,21 @@ static void FillMetadataIter( DBusMessageIter * iter, const guCurrentTrack * cur
     //        FillMetadataDetails( &dict, "year", ( const int ) curtrack->m_Year );
         FillMetadataDetails( &dict, "xesam:useCount", ( const int ) curtrack->m_PlayCount );
 
-        if( !curtrack->m_CoverPath.IsEmpty() )
+        if( curtrack->m_CoverType == GU_SONGCOVER_ID3TAG )
+        {
+            wxString TempFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "1.jpg" );
+            if( !wxFileExists( TempFile ) )
+            {
+                TempFile.RemoveLast( 5 );
+                TempFile.Append( wxT( "2.jpg" ) );
+            }
+            if( wxFileExists( TempFile ) )
+                FillMetadataDetails( &dict, "mpris:artUrl", ( const char * ) ( wxT( "file://" ) + TempFile ).mb_str( wxConvUTF8 ) );
+        }
+        else if( !curtrack->m_CoverPath.IsEmpty() )
+        {
             FillMetadataDetails( &dict, "mpris:artUrl", ( const char * ) ( wxT( "file://" ) + curtrack->m_CoverPath ).mb_str( wxConvUTF8 ) );
+        }
 
         if( curtrack->m_Bitrate )
             FillMetadataDetails( &dict, "xesam:audioBitrate", ( const int ) curtrack->m_Bitrate * 1000 );
@@ -598,8 +611,8 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
     const char *    Member = msg->GetMember();
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();
-    int             Serial = msg->GetSerial();
-    int             RSerial = msg->GetReplySerial();
+//    int             Serial = msg->GetSerial();
+//    int             RSerial = msg->GetReplySerial();
 
 //    // Show the details of the msg
 //    guLogMessage( wxT( "==MPRIS2========================" ) );
@@ -647,7 +660,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                   DBUS_TYPE_STRING, &QueryProperty,
                   DBUS_TYPE_INVALID );
 
-            guLogMessage( wxT( "Asking for '%s' -> '%s' parameter" ), wxString( QueryIface, wxConvUTF8 ).c_str(), wxString( QueryProperty, wxConvUTF8 ).c_str() );
+            //guLogMessage( wxT( "Asking for '%s' -> '%s' parameter" ), wxString( QueryIface, wxConvUTF8 ).c_str(), wxString( QueryProperty, wxConvUTF8 ).c_str() );
 
             if( !strcmp( Path, "/org/mpris/MediaPlayer2" ) )
             {

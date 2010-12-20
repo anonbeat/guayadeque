@@ -453,8 +453,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     }
 
     // Init the MPRIS object
-    m_MPRIS = NULL;
-    //m_MPRIS = new guMPRIS( m_DBusServer, m_PlayerPanel );
+    //m_MPRIS = NULL;
+    m_MPRIS = new guMPRIS( m_DBusServer, m_PlayerPanel );
     if( !m_MPRIS )
     {
         guLogError( wxT( "Could not create the mpris dbus object" ) );
@@ -1816,6 +1816,7 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
     {
         m_LastFMPanel->OnUpdatedTrack( event );
     }
+
     if( m_LyricsPanel )
     {
         m_LyricsPanel->OnUpdatedTrack( event );
@@ -1831,9 +1832,9 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
         m_MPRIS2->OnPlayerTrackChange();
     }
 
-    if( event.GetClientData() )
+    if( Track )
     {
-        delete ( guTrack * ) event.GetClientData();
+        delete Track;
     }
 }
 
