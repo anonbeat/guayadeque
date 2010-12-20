@@ -227,8 +227,8 @@ void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
     if( CurTrack->m_Year )
         FillMetadataDetails( &dict, metadata_names[ 9 ], ( const int ) CurTrack->m_Year );
 
-//    if( !CurTrack->m_CoverPath.IsEmpty() )
-//        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_CoverPath ).mb_str( wxConvUTF8 ) );
+    //if( !CurTrack->m_CoverPath.IsEmpty() )
+    //    FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_CoverPath ).mb_str( wxConvUTF8 ) );
 
     if( CurTrack->m_Rating )
         FillMetadataDetails( &dict, metadata_names[ 11 ], ( const int ) CurTrack->m_Bitrate );
