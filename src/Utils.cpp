@@ -410,10 +410,10 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     wxString RetVal = wxEmptyString;
 
     http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: */*" ) );
+    http.AddHeader( wxT( "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" ) );
     if( gzipped )
     {
-        http.AddHeader( wxT( "Accept Encoding: gzip" ) );
+        http.AddHeader( wxT( "Accept Encoding: gzip,deflate" ) );
     }
     http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
     if( !referer.IsEmpty() )
