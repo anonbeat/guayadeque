@@ -315,8 +315,10 @@ static void FillMetadataIter( DBusMessageIter * iter, const guCurrentTrack * cur
         if( curtrack->m_Rating >= 0 )
             FillMetadataDetails( &dict, "xesam:userRating", ( const double ) double( curtrack->m_Rating * 0.2 ) );
 
-    //    if( curtrack->m_Year )
-    //        FillMetadataDetails( &dict, "year", ( const int ) curtrack->m_Year );
+        if( curtrack->m_Year )
+        {
+            FillMetadataDetails( &dict, "xesam:contentCreated", ( const char * ) wxString::Format( wxT( "%4d-%02d-%02dT%02d:%02d:%02dZ" ), curtrack->m_Year, 1, 1, 0, 0, 0 ).mb_str( wxConvUTF8 ) );
+        }
         FillMetadataDetails( &dict, "xesam:useCount", ( const int ) curtrack->m_PlayCount );
 
         if( curtrack->m_CoverType == GU_SONGCOVER_ID3TAG )
@@ -370,6 +372,25 @@ static bool AddVariant( DBusMessage * msg, const int type, const void * data )
 	return dbus_message_iter_open_container( &iter, DBUS_TYPE_VARIANT, Types, &sub ) &&
            dbus_message_iter_append_basic( &sub, type, data ) &&
            dbus_message_iter_close_container( &iter, &sub );
+}
+
+// -------------------------------------------------------------------------------- //
+static bool GetVariant( DBusMessage * msg, const int type, const void * data )
+{
+	DBusMessageIter iter, variant;
+
+	if( !dbus_message_iter_init( msg, &iter ) )
+	{
+        guLogMessage( wxT( "GetVariant called without arguments" ) );
+        return false;
+	}
+	dbus_message_iter_recurse( &iter, &variant );
+	if( dbus_message_iter_get_arg_type( &variant ) == type )
+	{
+        dbus_message_iter_get_basic( &variant, &data );
+        return true;
+	}
+	return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -662,16 +683,16 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 
             //guLogMessage( wxT( "Asking for '%s' -> '%s' parameter" ), wxString( QueryIface, wxConvUTF8 ).c_str(), wxString( QueryProperty, wxConvUTF8 ).c_str() );
 
-            if( !strcmp( Path, "/org/mpris/MediaPlayer2" ) )
+            if( dbus_error_is_set( &error ) )
             {
-                if( !strcmp( Member, "Get" ) )
+                guLogMessage( wxT( "Could not read the '"GUAYADEQUE_PROPERTIES_INTERFACE "' parameter : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+                dbus_error_free( &error );
+            }
+            else
+            {
+                if( !strcmp( Path, "/org/mpris/MediaPlayer2" ) )
                 {
-                    if( dbus_error_is_set( &error ) )
-                    {
-                        guLogMessage( wxT( "Could not read the '"GUAYADEQUE_PROPERTIES_INTERFACE "' parameter : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
-                        dbus_error_free( &error );
-                    }
-                    else
+                    if( !strcmp( Member, "Get" ) )
                     {
                         if( !strcmp( QueryIface, "org.mpris.MediaPlayer2" ) )
                         {
@@ -718,27 +739,20 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             else if( !strcmp( QueryProperty, "DesktopEntry" ) )
                             {
                                 const char * DesktopPath = "/usr/share/applications/guayadeque.desktop";
-                                if( wxFileExists( wxString( DesktopPath, wxConvUTF8 ) ) )
-                                {
-                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_STRING, &DesktopPath ) )
-                                    {
-                                        Send( reply );
-                                        Flush();
-                                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
-                                    }
-                                }
-                                else
+                                if( !wxFileExists( wxString( DesktopPath, wxConvUTF8 ) ) )
                                 {
                                     const char * DesktopPath = "/usr/local/share/applications/guayadeque.desktop";
-                                    if( wxFileExists( wxString( DesktopPath, wxConvUTF8 ) ) )
+                                    if( !wxFileExists( wxString( DesktopPath, wxConvUTF8 ) ) )
                                     {
-                                        if( AddVariant( reply->GetMessage(), DBUS_TYPE_STRING, &DesktopPath ) )
-                                        {
-                                            Send( reply );
-                                            Flush();
-                                            RetVal = DBUS_HANDLER_RESULT_HANDLED;
-                                        }
+                                        DesktopPath = NULL;
                                     }
+                                }
+
+                                if( DesktopPath && AddVariant( reply->GetMessage(), DBUS_TYPE_STRING, &DesktopPath ) )
+                                {
+                                    Send( reply );
+                                    Flush();
+                                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
                                 }
                             }
                             else if( !strcmp( QueryProperty, "SupportedUriSchemes" ) )
@@ -969,10 +983,63 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             }
                         }
                     }
-                }
-                else if( !strcmp( Member, "Set" ) )
-                {
+                    else if( !strcmp( Member, "Set" ) )
+                    {
+                        if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Player" ) )
+                        {
+                            if( !strcmp( QueryProperty, "LoopStatus" ) )
+                            {
+                                const char * LoopStatus;
+                                if( GetVariant( msg->GetMessage(), DBUS_TYPE_STRING, &LoopStatus ) )
+                                {
+                                    int PlayLoop;
+                                    if( !strcmp( LoopStatus, "None" ) )
+                                    {
+                                        PlayLoop = guPLAYER_PLAYLOOP_NONE;
+                                    }
+                                    else if( !strcmp( LoopStatus, "Track" ) )
+                                    {
+                                        PlayLoop = guPLAYER_PLAYLOOP_TRACK;
+                                    }
+                                    else //if( !strcmp( LoopStatus, "Playlist" ) )
+                                    {
+                                        PlayLoop = guPLAYER_PLAYLOOP_PLAYLIST;
+                                    }
+                                    m_PlayerPanel->SetPlayLoop( PlayLoop );
+                                    Send( reply );
+                                    Flush();
+                                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                                }
+                            }
+                            else if( !strcmp( QueryProperty, "Rate" ) )
+                            {
+                                // We are not going to support rate
+                                Send( reply );
+                                Flush();
+                                RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                            }
+                            else if( !strcmp( QueryProperty, "Shuffle" ) )
+                            {
+                                wxCommandEvent event;
+                                m_PlayerPanel->OnRandomPlayButtonClick( event );
+                                Send( reply );
+                                Flush();
+                                RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                            }
+                            else if( !strcmp( QueryProperty, "Volume" ) )
+                            {
+                                double Volume;
+                                if( GetVariant( msg->GetMessage(), DBUS_TYPE_DOUBLE, &Volume ) )
+                                {
+                                    m_PlayerPanel->SetVolume( Volume * 100 );
+                                    Send( reply );
+                                    Flush();
+                                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                                }
+                            }
+                        }
 
+                    }
                 }
             }
         }
