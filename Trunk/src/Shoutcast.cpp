@@ -83,9 +83,17 @@
 #include <wx/fileconf.h>
 
 
-#define SHOUTCAST_GET_GENRE_URL         wxT( "http://yp.shoutcast.com/sbin/newxml.phtml" )
-#define SHOUTCAST_GET_STATIONS_URL      wxT( "http://yp.shoutcast.com/sbin/newxml.phtml?genre=%s" )
-#define SHOUTCAST_SEARCH_STATIONS_URL   wxT( "http://yp.shoutcast.com/sbin/newxml.phtml?search=%s" )
+//#define SHOUTCAST_GET_GENRE_URL         wxT( "http://yp.shoutcast.com/sbin/newxml.phtml" )
+//s o 1 N 1 5 v h C B 7  8 Z 6 k 4 _ s h 1  i q r P H n h  j F m X i T _ f a 1 _  B m i c Y Q P D b b K m
+#define SHOUTCAST_DEV_KEY0   "sh1iqrPH"
+#define SHOUTCAST_DEV_KEY1   "nhjFmXiT"
+#define SHOUTCAST_DEV_KEY    SHOUTCAST_DEV_KEY0 SHOUTCAST_DEV_KEY1
+#define SHOUTCAST_GET_GENRE_URL         wxT( "http://api.shoutcast.com/legacy/genrelist?k=" SHOUTCAST_DEV_KEY )
+//#define SHOUTCAST_GET_STATIONS_URL      wxT( "http://yp.shoutcast.com/sbin/newxml.phtml?genre=%s" )
+#define SHOUTCAST_GET_STATIONS_URL      wxT( "http://api.shoutcast.com/legacy/genresearch?k=" SHOUTCAST_DEV_KEY "&genre=%s" )
+//#define SHOUTCAST_SEARCH_STATIONS_URL   wxT( "http://yp.shoutcast.com/sbin/newxml.phtml?search=%s" )
+#define SHOUTCAST_SEARCH_STATIONS_URL   wxT( "http://api.shoutcast.com/legacy/stationsearch?k=" SHOUTCAST_DEV_KEY "&search=%s" )
+//#define SHOUTCAST_GET_STATION_PLAYLIST  wxT( "http://yp.shoutcast.com/sbin/tunein-station.pls?id=%u" )
 #define SHOUTCAST_GET_STATION_PLAYLIST  wxT( "http://yp.shoutcast.com/sbin/tunein-station.pls?id=%u" )
 
 
@@ -160,6 +168,7 @@ void guShoutCast::GetStations( const int source, const int flags, const wxString
                     {
                         XmlNode->GetPropVal( wxT( "name" ), &StationName );
                         StationName.Replace( wxT( " - [SHOUTcast.com]" ), wxT( "" ) );
+                        StationName.Replace( wxT( " - a SHOUTcast.com member station" ), wxT( "" ) );
                         XmlNode->GetPropVal( wxT( "mt" ), &StationType );
                         XmlNode->GetPropVal( wxT( "genre" ), &StationGenre );
                         XmlNode->GetPropVal( wxT( "ct" ), &StationCurrent );
@@ -210,59 +219,7 @@ wxString guShoutCast::GetStationUrl( const int id ) const
 // -------------------------------------------------------------------------------- //
 guStationPlayList guShoutCast::GetStationPlayList( const int StationId ) const
 {
-    wxString                Content;
-    guStationPlayList       RetVal;
-    guStationPlayListItem * NewStation;
-    wxFileConfig *          Config;
-    Content = GetUrlContent( wxString::Format( SHOUTCAST_GET_STATION_PLAYLIST, StationId ) );
-    if( Content.Length() )
-    {
-        //guLogMessage( Content );
-        wxStringInputStream ConfigData( Content );
-        Config = new wxFileConfig( ConfigData );
-        if( Config )
-        {
-            if( Config->HasGroup( wxT( "playlist" ) ) )
-            {
-                Config->SetPath( wxT( "playlist" ) );
-                int count;
-                if( Config->Read( wxT( "numberofentries" ), &count ) )
-                {
-                    if( !count )
-                    {
-                        guLogMessage( wxT( "This station playlist is empty" ) );
-                    }
-                    else
-                    {
-                        for( int index = 1; index <= count; index++ )
-                        {
-                            NewStation = new guStationPlayListItem();
-
-                            wxASSERT( NewStation );
-
-                            Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
-                            Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
-                            if( NewStation->m_Name.IsEmpty() )
-                                NewStation->m_Name = NewStation->m_Location;
-                            RetVal.Add( NewStation );
-                        }
-                    }
-                }
-            }
-            else
-            {
-                guLogError( wxT( "ee: Station Playlist without 'playlist' group" ) );
-            }
-            delete Config;
-        }
-        else
-          guLogError( wxT( "ee: Station Playlist empty" ) );
-    }
-    else
-    {
-        guLogError( wxT( "Retrieving station playlist empty response" ) );
-    }
-    return RetVal;
+    return GetStationPlayList( wxString::Format( SHOUTCAST_GET_STATION_PLAYLIST, StationId ) );
 }
 
 // -------------------------------------------------------------------------------- //
