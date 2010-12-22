@@ -87,18 +87,44 @@ class guShoutcastSearch : public wxDialog
 
 };
 
+class guRadioPanel;
+
+// -------------------------------------------------------------------------------- //
+// Class guRadioPlayListLoadThread
+// -------------------------------------------------------------------------------- //
+class guRadioPlayListLoadThread : public wxThread
+{
+  protected :
+    guRadioPanel *  m_RadioPanel;
+    wxString        m_StationUrl;
+    guTrackArray *  m_Tracks;
+    bool            m_Enqueue;
+    bool            m_AsNext;
+
+  public :
+    guRadioPlayListLoadThread( guRadioPanel * radiopanel, const wxString &stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext );
+    ~guRadioPlayListLoadThread();
+
+    virtual ExitCode Entry();
+
+};
+
 // -------------------------------------------------------------------------------- //
 // Class guRadioPanel
 // -------------------------------------------------------------------------------- //
 class guRadioPanel : public wxPanel
 {
   private:
-    wxAuiManager        m_AuiManager;
-	guDbRadios *        m_Db;
-	guPlayerPanel *     m_PlayerPanel;
+    wxAuiManager                    m_AuiManager;
+	guDbRadios *                    m_Db;
+	guPlayerPanel *                 m_PlayerPanel;
+	guTrackArray                    m_StationPlayListTracks;
 
-    wxTimer             m_TextChangedTimer;
-    unsigned int        m_VisiblePanels;
+    wxTimer                         m_TextChangedTimer;
+    unsigned int                    m_VisiblePanels;
+
+    guRadioPlayListLoadThread *     m_RadioPlayListLoadThread;
+    wxMutex                         m_RadioPlayListLoadThreadMutex;
 
     void OnRadioUpdateEnd( wxCommandEvent &event );
 	void OnRadioUpdate( wxCommandEvent &Event );
@@ -132,6 +158,9 @@ class guRadioPanel : public wxPanel
 
     void OnTextChangedTimer( wxTimerEvent &event );
 
+    void LoadStationUrl( const wxString &stationurl, const bool enqueue, const bool asnext );
+    void OnStationPlayListLoaded( wxCommandEvent &event );
+
   protected:
     wxSearchCtrl *          m_InputTextCtrl;
 	guRadioGenreTreeCtrl *  m_GenresTreeCtrl;
@@ -146,6 +175,11 @@ class guRadioPanel : public wxPanel
     void ShowPanel( const int panelid, bool show );
 
     void GetRadioCounter( wxLongLong * count );
+
+    void EndStationPlayListLoaded( void ) { m_RadioPlayListLoadThreadMutex.Lock();
+                                            m_RadioPlayListLoadThread = NULL;
+                                            m_RadioPlayListLoadThreadMutex.Unlock(); }
+
 };
 
 #endif

@@ -1909,13 +1909,13 @@ void guPlayerPanel::OnMediaPlayStarted( void )
             if( !m_LastTmpCoverFile.IsEmpty() )
                 wxRemoveFile( m_LastTmpCoverFile );
 
-            if( m_LastTmpCoverFile.EndsWith( wxT( "1.jpg" ) ) )
-                m_LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "2.jpg");
+            if( m_LastTmpCoverFile.EndsWith( wxT( "1.png" ) ) )
+                m_LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "2.png");
             else
-                m_LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "1.jpg");
+                m_LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "1.png");
 
             guLogMessage( wxT( "Saving temp cover file to '%s'" ), m_LastTmpCoverFile.c_str() );
-            if( CoverImage->SaveFile( m_LastTmpCoverFile, wxBITMAP_TYPE_JPEG ) )
+            if( CoverImage->SaveFile( m_LastTmpCoverFile, wxBITMAP_TYPE_PNG ) )
             {
                 if( m_MediaSong.m_CoverPath.IsEmpty() )
                     m_MediaSong.m_CoverPath = m_LastTmpCoverFile;
@@ -2779,6 +2779,8 @@ void guPlayerPanel::SetVolume( double volume )
     m_MediaCtrl->SetVolume(  volume / ( double ) 100.0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %u%%" ), ( int ) volume ) );
 
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_VOLUMECHANGED );
+    wxPostEvent( m_MainFrame, evt );
 }
 
 // -------------------------------------------------------------------------------- //

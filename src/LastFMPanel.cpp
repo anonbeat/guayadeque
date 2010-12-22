@@ -1893,9 +1893,9 @@ void guLastFMPanel::ShowCurrentTrack( void )
         }
         m_ArtistTextCtrl->SetValue( m_ArtistName );
 
-        m_ArtistsUpdateThreadMutex.Unlock();
-        m_AlbumsUpdateThreadMutex.Unlock();
         m_TopTracksUpdateThreadMutex.Unlock();
+        m_AlbumsUpdateThreadMutex.Unlock();
+        m_ArtistsUpdateThreadMutex.Unlock();
     }
 
     if( m_LastTrackName != m_TrackName )
@@ -2381,7 +2381,10 @@ guDownloadImageThread::~guDownloadImageThread()
     if( !TestDestroy() )
     {
         m_MainThread->m_DownloadThreadsMutex.Lock();
-        m_MainThread->m_DownloadThreads.Remove( this );
+        if( !TestDestroy() )
+        {
+            m_MainThread->m_DownloadThreads.Remove( this );
+        }
         m_MainThread->m_DownloadThreadsMutex.Unlock();
     }
 }
@@ -2528,12 +2531,12 @@ guFetchAlbumInfoThread::guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel,
 // -------------------------------------------------------------------------------- //
 guFetchAlbumInfoThread::~guFetchAlbumInfoThread()
 {
+    m_LastFMPanel->m_AlbumsUpdateThreadMutex.Lock();
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_AlbumsUpdateThreadMutex.Lock();
         m_LastFMPanel->m_AlbumsUpdateThread = NULL;
-        m_LastFMPanel->m_AlbumsUpdateThreadMutex.Unlock();
     }
+    m_LastFMPanel->m_AlbumsUpdateThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2614,12 +2617,12 @@ guFetchTopTracksInfoThread::guFetchTopTracksInfoThread( guLastFMPanel * lastfmpa
 // -------------------------------------------------------------------------------- //
 guFetchTopTracksInfoThread::~guFetchTopTracksInfoThread()
 {
+    m_LastFMPanel->m_TopTracksUpdateThreadMutex.Lock();
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_TopTracksUpdateThreadMutex.Lock();
         m_LastFMPanel->m_TopTracksUpdateThread = NULL;
-        m_LastFMPanel->m_TopTracksUpdateThreadMutex.Unlock();
     }
+    m_LastFMPanel->m_TopTracksUpdateThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2701,12 +2704,12 @@ guFetchSimilarArtistInfoThread::guFetchSimilarArtistInfoThread( guLastFMPanel * 
 // -------------------------------------------------------------------------------- //
 guFetchSimilarArtistInfoThread::~guFetchSimilarArtistInfoThread()
 {
+    m_LastFMPanel->m_ArtistsUpdateThreadMutex.Lock();
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_ArtistsUpdateThreadMutex.Lock();
         m_LastFMPanel->m_ArtistsUpdateThread = NULL;
-        m_LastFMPanel->m_ArtistsUpdateThreadMutex.Unlock();
     }
+    m_LastFMPanel->m_ArtistsUpdateThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2859,12 +2862,12 @@ guFetchTrackInfoThread::guFetchTrackInfoThread( guLastFMPanel * lastfmpanel,
 // -------------------------------------------------------------------------------- //
 guFetchTrackInfoThread::~guFetchTrackInfoThread()
 {
+    m_LastFMPanel->m_TracksUpdateThreadMutex.Lock();
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_TracksUpdateThreadMutex.Lock();
         m_LastFMPanel->m_TracksUpdateThread = NULL;
-        m_LastFMPanel->m_TracksUpdateThreadMutex.Unlock();
     }
+    m_LastFMPanel->m_TracksUpdateThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //

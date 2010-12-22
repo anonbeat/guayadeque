@@ -232,18 +232,9 @@ class guUpdateRadiosThread : public wxThread
 
   public:
     guUpdateRadiosThread( guDbRadios * db, guRadioPanel * radiopanel,
-                                const wxArrayInt &ids, const int source, int gaugeid = wxNOT_FOUND )
-    {
-        m_Db = db;
-        m_RadioPanel = radiopanel;
-        m_Ids = ids;
-        m_Source = source;
-        m_GaugeId = gaugeid;
-    };
+                                const wxArrayInt &ids, const int source, int gaugeid = wxNOT_FOUND );
 
-    ~guUpdateRadiosThread()
-    {
-    };
+    ~guUpdateRadiosThread(){};
 
     virtual ExitCode Entry();
 };
@@ -940,6 +931,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 {
     m_Db = new guDbRadios( db );
     m_PlayerPanel = playerpanel;
+    m_RadioPlayListLoadThread = NULL;
 
     guConfig *  Config = ( guConfig * ) guConfig::Get();
 
@@ -1105,6 +1097,8 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     Connect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
     Connect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ), NULL, this );
 
+    Connect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
+
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 }
 
@@ -1117,6 +1111,14 @@ guRadioPanel::~guRadioPanel()
         Config->WriteNum( wxT( "RadVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
         Config->WriteStr( wxT( "Radio" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
     }
+
+    m_RadioPlayListLoadThreadMutex.Lock();
+    if( m_RadioPlayListLoadThread )
+    {
+        m_RadioPlayListLoadThread->Pause();
+        m_RadioPlayListLoadThread->Delete();
+    }
+    m_RadioPlayListLoadThreadMutex.Unlock();
 
     //
 	Disconnect( guRADIO_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnTextChangedTimer ), NULL, this );
@@ -1155,6 +1157,8 @@ guRadioPanel::~guRadioPanel()
     Disconnect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ), NULL, this );
     Disconnect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
     Disconnect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ), NULL, this );
+
+    Disconnect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
 
     m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 
@@ -1316,11 +1320,9 @@ void guRadioPanel::OnRadioGenreListActivated( wxTreeEvent &event )
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
         int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Radios" ) );
         guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, RadioGenres, ItemData->GetSource(), GaugeId );
-        if( UpdateRadiosThread )
+        if( !UpdateRadiosThread )
         {
-            UpdateRadiosThread->Create();
-            UpdateRadiosThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-            UpdateRadiosThread->Run();
+            guLogError( wxT( "Could not create the radio update thread" ) );
         }
     }
     event.Skip();
@@ -1384,11 +1386,9 @@ void guRadioPanel::OnRadioUpdate( wxCommandEvent &event )
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
         int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Radios" ) );
         guUpdateRadiosThread * UpdateRadiosThread = new guUpdateRadiosThread( m_Db, this, GenresIds, Source, GaugeId );
-        if( UpdateRadiosThread )
+        if( !UpdateRadiosThread )
         {
-            UpdateRadiosThread->Create();
-            UpdateRadiosThread->SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-            UpdateRadiosThread->Run();
+            guLogError( wxT( "Could not create the radio update thread" ) );
         }
     }
     else
@@ -1430,72 +1430,67 @@ void guRadioPanel::OnRadioStationsEnqueueAsNext( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnSelectStations( bool enqueue, const bool asnext )
 {
-    guTrackArray   Tracks;
-    guTrack *  NewSong;
-    int Index;
-    int Count;
-
+    wxString StationUrl;
     guRadioStation RadioStation;
-    guStationPlayList PlayList;
 
     if( m_StationsListBox->GetSelected( &RadioStation ) )
     {
-        guPlayListFile PlayListFile;
         if( RadioStation.m_SCId != wxNOT_FOUND )
         {
             guShoutCast ShoutCast;
-            wxString StationUrl = ShoutCast.GetStationUrl( RadioStation.m_SCId );
-            if( !StationUrl.IsEmpty() )
-            {
-                PlayListFile.Load( StationUrl );
-            }
+            StationUrl = ShoutCast.GetStationUrl( RadioStation.m_SCId );
         }
         else
         {
-            //guLogMessage( wxT( "Trying to load the link %s" ), RadioStation.m_Link.c_str() );
-            PlayListFile.Load( RadioStation.m_Link );
+            StationUrl = RadioStation.m_Link;
         }
 
-        if( ( Count = PlayListFile.Count() ) )
+        if( !StationUrl.IsEmpty() )
         {
-            for( Index = 0; Index < Count; Index++ )
-            {
-                NewSong = new guTrack();
-                if( NewSong )
-                {
-                    guStationPlayListItem PlayListItem = PlayListFile.GetItem( Index );
-                    NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
-                    NewSong->m_FileName = PlayListItem.m_Location;
-                    //NewSong->m_SongName = PlayList[ index ].m_Name;
-                    NewSong->m_SongName = PlayListItem.m_Name.IsEmpty() ?
-                                             RadioStation.m_Name : PlayListItem.m_Name;
-                    //NewSong->m_AlbumName = RadioStation.m_Name;
-                    NewSong->m_Length = 0;
-                    NewSong->m_Rating = -1;
-                    NewSong->m_Bitrate = 0;
-                    //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
-                    NewSong->m_CoverId = 0;
-                    NewSong->m_Year = 0;
-                    Tracks.Add( NewSong );
-                }
-            }
+            LoadStationUrl( StationUrl, enqueue, asnext );
+        }
+    }
+}
 
-            if( Tracks.Count() )
-            {
-                if( enqueue )
-                {
-                    m_PlayerPanel->AddToPlayList( Tracks, true, asnext );
-                }
-                else
-                {
-                    m_PlayerPanel->SetPlayList( Tracks );
-                }
-            }
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::LoadStationUrl( const wxString &stationurl, const bool enqueue, const bool asnext )
+{
+    m_RadioPlayListLoadThreadMutex.Lock();
+    if( m_RadioPlayListLoadThread )
+    {
+        m_RadioPlayListLoadThread->Pause();
+        m_RadioPlayListLoadThread->Delete();
+    }
+
+    m_StationPlayListTracks.Empty();
+    m_RadioPlayListLoadThread = new guRadioPlayListLoadThread( this, stationurl, &m_StationPlayListTracks, enqueue, asnext );
+    if( !m_RadioPlayListLoadThread )
+    {
+        guLogError( wxT( "Could not create the download radio playlist thread" ) );
+    }
+    m_RadioPlayListLoadThreadMutex.Unlock();
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnStationPlayListLoaded( wxCommandEvent &event )
+{
+    bool Enqueue = event.GetInt();
+    bool AsNext = event.GetExtraLong();
+
+    if( m_StationPlayListTracks.Count() )
+    {
+        if( Enqueue )
+        {
+            m_PlayerPanel->AddToPlayList( m_StationPlayListTracks, true, AsNext );
         }
         else
         {
-            wxMessageBox( _( "There are not entries for this Radio Station" ) );
+            m_PlayerPanel->SetPlayList( m_StationPlayListTracks );
         }
+    }
+    else
+    {
+        wxMessageBox( _( "There are not entries for this Radio Station" ) );
     }
 }
 
@@ -1852,6 +1847,81 @@ void guRadioPanel::GetRadioCounter( wxLongLong * count )
 
 
 
+// -------------------------------------------------------------------------------- //
+guRadioPlayListLoadThread::guRadioPlayListLoadThread( guRadioPanel * radiopanel,
+        const wxString &stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext )
+{
+    m_RadioPanel = radiopanel;
+    m_StationUrl = stationurl;
+    m_Tracks = tracks;
+    m_Enqueue = enqueue;
+    m_AsNext = asnext;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
+
+// -------------------------------------------------------------------------------- //
+guRadioPlayListLoadThread::~guRadioPlayListLoadThread()
+{
+    if( !TestDestroy() )
+    {
+        m_RadioPanel->EndStationPlayListLoaded();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
+{
+    guTrack * NewSong;
+
+    guPlayListFile PlayListFile;
+
+    PlayListFile.Load( m_StationUrl );
+
+    int Index;
+    int Count;
+    Count = PlayListFile.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( TestDestroy() )
+            break;
+
+        NewSong = new guTrack();
+        if( NewSong )
+        {
+            guStationPlayListItem PlayListItem = PlayListFile.GetItem( Index );
+            NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
+            NewSong->m_FileName = PlayListItem.m_Location;
+            //NewSong->m_SongName = PlayList[ index ].m_Name;
+            NewSong->m_SongName = PlayListItem.m_Name;
+            //NewSong->m_AlbumName = RadioStation.m_Name;
+            NewSong->m_Length = 0;
+            NewSong->m_Rating = -1;
+            NewSong->m_Bitrate = 0;
+            //NewSong->CoverId = guPLAYLIST_RADIOSTATION;
+            NewSong->m_CoverId = 0;
+            NewSong->m_Year = 0;
+            m_Tracks->Add( NewSong );
+        }
+    }
+
+
+    if( !TestDestroy() )
+    {
+        //m_RadioPanel->StationUrlLoaded( Tracks, m_Enqueue, m_AsNext );
+        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_PLAYLIST_LOADED );
+        Event.SetInt( m_Enqueue );
+        Event.SetExtraLong( m_AsNext );
+        wxPostEvent( m_RadioPanel, Event );
+    }
+
+    return 0;
+}
 
 // -------------------------------------------------------------------------------- //
 // guUpdateRadiosThread
@@ -1869,6 +1939,24 @@ bool inline guListItemsSearchName( guListItems &items, const wxString &name )
     }
     return false;
 }
+
+// -------------------------------------------------------------------------------- //
+guUpdateRadiosThread::guUpdateRadiosThread( guDbRadios * db, guRadioPanel * radiopanel,
+                                const wxArrayInt &ids, const int source, int gaugeid )
+{
+    m_Db = db;
+    m_RadioPanel = radiopanel;
+    m_Ids = ids;
+    m_Source = source;
+    m_GaugeId = gaugeid;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
 
 // -------------------------------------------------------------------------------- //
 void guUpdateRadiosThread::CheckRadioStationsFilters( const int flags, const wxString &text, guRadioStations &stations )

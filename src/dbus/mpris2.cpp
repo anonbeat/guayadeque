@@ -323,11 +323,11 @@ static void FillMetadataIter( DBusMessageIter * iter, const guCurrentTrack * cur
 
         if( curtrack->m_CoverType == GU_SONGCOVER_ID3TAG )
         {
-            wxString TempFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "1.jpg" );
+            wxString TempFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "1.png" );
             if( !wxFileExists( TempFile ) )
             {
                 TempFile.RemoveLast( 5 );
-                TempFile.Append( wxT( "2.jpg" ) );
+                TempFile.Append( wxT( "2.png" ) );
             }
             if( wxFileExists( TempFile ) )
                 FillMetadataDetails( &dict, "mpris:artUrl", ( const char * ) ( wxT( "file://" ) + TempFile ).mb_str( wxConvUTF8 ) );
