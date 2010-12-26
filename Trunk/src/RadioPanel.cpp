@@ -518,7 +518,6 @@ void guRadioGenreTreeCtrl::OnRadioGenreDelete( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 wxTreeItemId guRadioGenreTreeCtrl::GetItemId( wxTreeItemId * itemid, const int id )
 {
-    guLogMessage( wxT( "Searching for Id: %i" ), id );
     wxTreeItemIdValue Cookie;
     wxTreeItemId CurItem = GetFirstChild( * itemid, Cookie );
     while( CurItem.IsOk() )
@@ -1312,8 +1311,6 @@ void guRadioPanel::OnRadioGenreListActivated( wxTreeEvent &event )
     guShoutcastItemData * ItemData = ( guShoutcastItemData * ) m_GenresTreeCtrl->GetItemData( ItemId );
     if( ItemData )
     {
-        guLogMessage( wxT( "Selected %i %s" ), ItemData->GetSource(), ItemData->GetName().c_str() );
-
         wxArrayInt RadioGenres;
         RadioGenres.Add( ItemData->GetId() );
 
@@ -1878,8 +1875,10 @@ guRadioPlayListLoadThread::~guRadioPlayListLoadThread()
 guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
 {
     guTrack * NewSong;
-
     guPlayListFile PlayListFile;
+
+    if( TestDestroy() )
+        return 0;
 
     PlayListFile.Load( m_StationUrl );
 
@@ -1914,6 +1913,7 @@ guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
     if( !TestDestroy() )
     {
         //m_RadioPanel->StationUrlLoaded( Tracks, m_Enqueue, m_AsNext );
+        //guLogMessage( wxT( "Send Event for station '%s'" ), m_StationUrl.c_str() );
         wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_PLAYLIST_LOADED );
         Event.SetInt( m_Enqueue );
         Event.SetExtraLong( m_AsNext );

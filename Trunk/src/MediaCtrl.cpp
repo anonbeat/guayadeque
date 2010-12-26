@@ -1419,6 +1419,7 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
   m_Playbin = gst_element_factory_make( "playbin2", "play" );
   if( IsValidElement( m_Playbin ) )
   {
+    //m_Uri =
     g_object_set( m_Playbin, "uri", ( const char * ) m_Uri.mb_str( wxConvFile ), NULL );
     g_object_set( m_Playbin, "buffer-size", m_Player->BufferSize() * 1024, NULL );
     //g_object_set( m_Playbin, "volume", 1.0, NULL );
