@@ -1846,8 +1846,8 @@ void guLastFMPanel::ShowCurrentTrack( void )
     int index;
 
     m_ArtistName = m_TrackChangeItems[ m_CurrentTrackInfo ].m_ArtistName;
-    m_TrackName  = m_TrackChangeItems[ m_CurrentTrackInfo ].m_TrackName;
-    //guLogMessage( wxT( "LastFMPanel:ShowCurrentTrack( '%s', '%s' )" ), artistname.c_str(), trackname.c_str() );
+    m_ArtistName  = m_TrackChangeItems[ m_CurrentTrackInfo ].m_TrackName;
+    //guLogMessage( wxT( ">> LastFMPanel:ShowCurrentTrack( '%s', '%s' )" ), m_ArtistName.c_str(), m_ArtistName.c_str() );
 
     if( m_LastArtistName != m_ArtistName )
     {
@@ -1922,6 +1922,8 @@ void guLastFMPanel::ShowCurrentTrack( void )
 
         m_TracksUpdateThreadMutex.Unlock();
     }
+
+    //guLogMessage( wxT( "<< LastFMPanel:ShowCurrentTrack( '%s', '%s' )" ), m_ArtistName.c_str(), m_ArtistName.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
