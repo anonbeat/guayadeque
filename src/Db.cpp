@@ -44,6 +44,8 @@ guDb::~guDb()
     if( m_Db )
     {
         Close();
+
+        delete m_Db;
     }
 }
 

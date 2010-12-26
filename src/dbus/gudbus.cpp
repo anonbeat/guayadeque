@@ -25,14 +25,21 @@
 DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, void * udata )
 {
 	guDBusServer * DBusObj = ( guDBusServer * ) udata;
-	guDBusMessage * Msg = new guDBusMessage( msg );
+	//guDBusMessage * Msg = new guDBusMessage( msg );
+	guDBusMessage Msg( msg );
 	guDBusMethodReturn * Reply = NULL;
-	if( Msg->NeedReply() )
+	if( Msg.NeedReply() )
 	{
 	    Reply = new guDBusMethodReturn( msg );
 	}
-	DBusHandlerResult RetVal = DBusObj->HandleMessages( Msg, Reply );
+	DBusHandlerResult RetVal = DBusObj->HandleMessages( &Msg, Reply );
 	//printf( "*** End of handle_messages ***\n" );
+
+	//delete Msg;
+
+	if( Reply )
+        delete Reply;
+
  	return RetVal;
 }
 
@@ -47,8 +54,6 @@ void Handle_Response( DBusPendingCall * PCall, void * udata )
     DBusObj->HandleMessages( Msg, NULL );
 
     delete Msg;
-
-    //delete Msg;
 	dbus_message_unref( reply );
 	dbus_pending_call_unref( PCall );
 }
@@ -144,16 +149,17 @@ DBusHandlerResult guDBusServer::HandleMessages( guDBusMessage * msg, guDBusMessa
         if( m_Clients[ index ]->HandleMessages( msg, reply ) == DBUS_HANDLER_RESULT_HANDLED )
         {
             RetVal = DBUS_HANDLER_RESULT_HANDLED;
-            m_ClientsMutex.Unlock();
-            break;
         }
         m_ClientsMutex.Unlock();
+
+        if( RetVal == DBUS_HANDLER_RESULT_HANDLED )
+            break;
     }
 
-    delete msg;
-
-    if( reply )
-        delete reply;
+//    delete msg;
+//
+//    if( reply )
+//        delete reply;
 
     return RetVal;
 }
@@ -361,23 +367,22 @@ guDBusMessage::guDBusMessage( int type )
 // -------------------------------------------------------------------------------- //
 guDBusMessage::guDBusMessage( guDBusMessage * msg )
 {
-    wxASSERT( msg );
     m_DBusMsg = dbus_message_copy( msg->GetMessage() );
 }
 
 // -------------------------------------------------------------------------------- //
 guDBusMessage::guDBusMessage( DBusMessage * msg )
 {
-    wxASSERT( msg );
     m_DBusMsg = dbus_message_copy( msg );
-    //m_DBusMsg = msg;
 }
 
 // -------------------------------------------------------------------------------- //
 guDBusMessage::~guDBusMessage()
 {
     if( m_DBusMsg )
+    {
         dbus_message_unref( m_DBusMsg );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -535,12 +540,6 @@ guDBusMethodReturn::guDBusMethodReturn( DBusMessage * msg )
 guDBusSignal::guDBusSignal( const char * path, const char * iface, const char * name )
 {
     m_DBusMsg = dbus_message_new_signal( path, iface, name );
-}
-
-// -------------------------------------------------------------------------------- //
-guDBusSignal::~guDBusSignal()
-{
-    //m_DBusMsg = NULL;
 }
 
 // -------------------------------------------------------------------------------- //

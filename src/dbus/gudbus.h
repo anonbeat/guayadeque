@@ -38,10 +38,11 @@ class guDBusMessage
     DBusMessage * m_DBusMsg;
 
   public :
-    guDBusMessage( int type = DBUS_MESSAGE_TYPE_METHOD_CALL );
+    guDBusMessage( void ) { m_DBusMsg = NULL; }
+    guDBusMessage( int type );
     guDBusMessage( DBusMessage * msg );
     guDBusMessage( guDBusMessage * msg );
-    ~guDBusMessage();
+    virtual ~guDBusMessage();
 
      DBusMessage *   GetMessage();
      int             GetType();
@@ -87,7 +88,7 @@ class guDBusSignal : public guDBusMessage
 {
   public:
     guDBusSignal( const char * path, const char * iface, const char * name );
-    ~guDBusSignal();
+    //~guDBusSignal();
 };
 
 class guDBusServer;

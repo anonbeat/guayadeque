@@ -43,6 +43,10 @@ guRaListBox::guRaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 // -------------------------------------------------------------------------------- //
 guRaListBox::~guRaListBox()
 {
+    if( m_NormalStar )
+        delete m_NormalStar;
+    if( m_SelectStar )
+        delete m_SelectStar;
 }
 
 // -------------------------------------------------------------------------------- //
