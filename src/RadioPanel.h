@@ -102,7 +102,7 @@ class guRadioPlayListLoadThread : public wxThread
     bool            m_AsNext;
 
   public :
-    guRadioPlayListLoadThread( guRadioPanel * radiopanel, const wxString &stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext );
+    guRadioPlayListLoadThread( guRadioPanel * radiopanel, const wxChar * stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext );
     ~guRadioPlayListLoadThread();
 
     virtual ExitCode Entry();

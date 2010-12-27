@@ -1460,7 +1460,7 @@ void guRadioPanel::LoadStationUrl( const wxString &stationurl, const bool enqueu
     }
 
     m_StationPlayListTracks.Empty();
-    m_RadioPlayListLoadThread = new guRadioPlayListLoadThread( this, stationurl, &m_StationPlayListTracks, enqueue, asnext );
+    m_RadioPlayListLoadThread = new guRadioPlayListLoadThread( this, stationurl.c_str(), &m_StationPlayListTracks, enqueue, asnext );
     if( !m_RadioPlayListLoadThread )
     {
         guLogError( wxT( "Could not create the download radio playlist thread" ) );
@@ -1846,17 +1846,18 @@ void guRadioPanel::GetRadioCounter( wxLongLong * count )
 
 // -------------------------------------------------------------------------------- //
 guRadioPlayListLoadThread::guRadioPlayListLoadThread( guRadioPanel * radiopanel,
-        const wxString &stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext )
+        const wxChar * stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext ) :
+        m_StationUrl( stationurl )
 {
     m_RadioPanel = radiopanel;
-    m_StationUrl = stationurl;
+    //m_StationUrl = stationurl;
     m_Tracks = tracks;
     m_Enqueue = enqueue;
     m_AsNext = asnext;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 10 );
         Run();
     }
 }
