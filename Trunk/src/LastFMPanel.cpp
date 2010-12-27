@@ -1797,6 +1797,7 @@ guLastFMPanel::~guLastFMPanel()
     {
         m_ArtistsUpdateThread->Pause();
         m_ArtistsUpdateThread->Delete();
+        m_ArtistsUpdateThread = NULL;
     }
     m_ArtistsUpdateThreadMutex.Unlock();
 
@@ -1805,6 +1806,7 @@ guLastFMPanel::~guLastFMPanel()
     {
         m_TracksUpdateThread->Pause();
         m_TracksUpdateThread->Delete();
+        m_TracksUpdateThread = NULL;
     }
     m_TracksUpdateThreadMutex.Unlock();
 
@@ -1847,7 +1849,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
 
     m_ArtistName = m_TrackChangeItems[ m_CurrentTrackInfo ].m_ArtistName;
     m_TrackName = m_TrackChangeItems[ m_CurrentTrackInfo ].m_TrackName;
-    //guLogMessage( wxT( ">> LastFMPanel:ShowCurrentTrack( '%s', '%s' )" ), m_ArtistName.c_str(), m_ArtistName.c_str() );
+    //guLogMessage( wxT( ">> LastFMPanel:ShowCurrentTrack( '%s', '%s' )" ), m_ArtistName.c_str(), m_TrackName.c_str() );
 
     if( m_LastArtistName != m_ArtistName )
     {
@@ -1856,6 +1858,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
         {
             m_ArtistsUpdateThread->Pause();
             m_ArtistsUpdateThread->Delete();
+            m_ArtistsUpdateThread = NULL;
         }
 
         m_AlbumsUpdateThreadMutex.Lock();
@@ -1863,6 +1866,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
         {
             m_AlbumsUpdateThread->Pause();
             m_AlbumsUpdateThread->Delete();
+            m_AlbumsUpdateThread = NULL;
         }
 
         m_TopTracksUpdateThreadMutex.Lock();
@@ -1870,6 +1874,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
         {
             m_TopTracksUpdateThread->Pause();
             m_TopTracksUpdateThread->Delete();
+            m_TopTracksUpdateThread = NULL;
         }
 
         // Clear the LastFM controls to default values
@@ -1905,6 +1910,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
         {
             m_TracksUpdateThread->Pause();
             m_TracksUpdateThread->Delete();
+            m_TracksUpdateThread = NULL;
         }
 
         for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
@@ -1922,8 +1928,6 @@ void guLastFMPanel::ShowCurrentTrack( void )
 
         m_TracksUpdateThreadMutex.Unlock();
     }
-
-    //guLogMessage( wxT( "<< LastFMPanel:ShowCurrentTrack( '%s', '%s' )" ), m_ArtistName.c_str(), m_ArtistName.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2533,12 +2537,15 @@ guFetchAlbumInfoThread::guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel,
 // -------------------------------------------------------------------------------- //
 guFetchAlbumInfoThread::~guFetchAlbumInfoThread()
 {
-    m_LastFMPanel->m_AlbumsUpdateThreadMutex.Lock();
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_AlbumsUpdateThread = NULL;
+        m_LastFMPanel->m_AlbumsUpdateThreadMutex.Lock();
+        if( !TestDestroy() )
+        {
+            m_LastFMPanel->m_AlbumsUpdateThread = NULL;
+        }
+        m_LastFMPanel->m_AlbumsUpdateThreadMutex.Unlock();
     }
-    m_LastFMPanel->m_AlbumsUpdateThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2619,12 +2626,15 @@ guFetchTopTracksInfoThread::guFetchTopTracksInfoThread( guLastFMPanel * lastfmpa
 // -------------------------------------------------------------------------------- //
 guFetchTopTracksInfoThread::~guFetchTopTracksInfoThread()
 {
-    m_LastFMPanel->m_TopTracksUpdateThreadMutex.Lock();
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_TopTracksUpdateThread = NULL;
+        m_LastFMPanel->m_TopTracksUpdateThreadMutex.Lock();
+        if( !TestDestroy() )
+        {
+            m_LastFMPanel->m_TopTracksUpdateThread = NULL;
+        }
+        m_LastFMPanel->m_TopTracksUpdateThreadMutex.Unlock();
     }
-    m_LastFMPanel->m_TopTracksUpdateThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2706,12 +2716,15 @@ guFetchSimilarArtistInfoThread::guFetchSimilarArtistInfoThread( guLastFMPanel * 
 // -------------------------------------------------------------------------------- //
 guFetchSimilarArtistInfoThread::~guFetchSimilarArtistInfoThread()
 {
-    m_LastFMPanel->m_ArtistsUpdateThreadMutex.Lock();
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_ArtistsUpdateThread = NULL;
+        m_LastFMPanel->m_ArtistsUpdateThreadMutex.Lock();
+        if( !TestDestroy() )
+        {
+            m_LastFMPanel->m_ArtistsUpdateThread = NULL;
+        }
+        m_LastFMPanel->m_ArtistsUpdateThreadMutex.Unlock();
     }
-    m_LastFMPanel->m_ArtistsUpdateThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2864,12 +2877,15 @@ guFetchTrackInfoThread::guFetchTrackInfoThread( guLastFMPanel * lastfmpanel,
 // -------------------------------------------------------------------------------- //
 guFetchTrackInfoThread::~guFetchTrackInfoThread()
 {
-    m_LastFMPanel->m_TracksUpdateThreadMutex.Lock();
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_TracksUpdateThread = NULL;
+        m_LastFMPanel->m_TracksUpdateThreadMutex.Lock();
+        if( !TestDestroy() )
+        {
+            m_LastFMPanel->m_TracksUpdateThread = NULL;
+        }
+        m_LastFMPanel->m_TracksUpdateThreadMutex.Unlock();
     }
-    m_LastFMPanel->m_TracksUpdateThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
