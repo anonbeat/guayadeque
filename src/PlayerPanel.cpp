@@ -1211,10 +1211,11 @@ void guPlayerPanel::LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE
     wxString Uri;
     try {
         if( !UriPath.HasScheme() )
-            Uri = wxT( "file://" ) + FileName;
+            Uri = wxT( "file://" ) + UriPath.BuildUnescapedURI();
         else
-            Uri = FileName;
+            Uri = UriPath.BuildUnescapedURI();
 
+        //guLogMessage( wxT( "'%s'\n'%s'" ), FileName.c_str(), FileNameEncode( Uri ).c_str() );
         m_NextTrackId = m_MediaCtrl->Load( FileNameEncode( Uri ), playtype );
         if( !m_NextTrackId )
         {
