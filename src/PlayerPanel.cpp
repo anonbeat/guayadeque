@@ -1203,11 +1203,11 @@ wxString inline FileNameEncode( const wxString filename )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE playtype )
+void guPlayerPanel::LoadMedia( const wxString &filename, guFADERPLAYBIN_PLAYTYPE playtype )
 {
     //guLogMessage( wxT( "LoadMedia Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), playtype );
     //m_MediaCtrl->Load( NextItem->FileName );
-    wxURI UriPath( FileName );
+    wxURI UriPath( filename );
     wxString Uri;
     try {
         if( !UriPath.HasScheme() )
@@ -1236,7 +1236,7 @@ void guPlayerPanel::LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE
     }
     catch(...)
     {
-        guLogError( wxT( "Error loading '%s'" ), FileName.c_str() );
+        guLogError( wxT( "Error loading '%s'" ), filename.c_str() );
     }
 }
 
@@ -2213,6 +2213,11 @@ int guPlayerPanel::GetPlayLoop()
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 {
+    if( wxGetKeyState( WXK_SHIFT ) )
+    {
+        OnPrevAlbumButtonClick( event );
+        return;
+    }
     guMediaState State;
 //    wxFileOffset CurPos;
     guTrack * PrevItem;
@@ -2292,6 +2297,11 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 {
+    if( wxGetKeyState( WXK_SHIFT ) )
+    {
+        OnNextAlbumButtonClick( event );
+        return;
+    }
     //guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt() );
     guMediaState State;
     guTrack * NextItem;
@@ -3018,9 +3028,9 @@ void guPlayerPanel::SendNotifyInfo( wxImage * image )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
 {
-    int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
+    int Rotation = ( event.GetWheelRotation() / event.GetWheelDelta() ) * ( event.ShiftDown() ? 1 : 4 );
     //guLogMessage( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
-    SetVolume( m_CurVolume + ( Rotation * 4 ) );
+    SetVolume( m_CurVolume + Rotation );
 }
 
 // -------------------------------------------------------------------------------- //
