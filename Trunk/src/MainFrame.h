@@ -61,6 +61,18 @@
 #include <wx/xml/xml.h>
 #include <wx/zstream.h>
 
+#ifdef WITH_LIBINDICATE_SUPPORT
+
+#define GUAYADEQUE_INDICATOR_NAME               "music.guayadeque"
+#define GUAYADEQUE_DESKTOP_PATH                 "/usr/share/applications/guayadeque.desktop"
+
+#include "libindicate/server.h"
+#include "libindicate/indicator.h"
+//#include "libindicate-gtk/indicator.h"
+
+#endif
+
+
 #define     guPANEL_MAIN_PLAYERPLAYLIST     ( 1 << 0 )
 #define     guPANEL_MAIN_PLAYERFILTERS      ( 1 << 1 )
 #define     guPANEL_MAIN_PLAYERVUMETERS     ( 1 << 2 )
@@ -130,6 +142,9 @@ class guMainFrame : public wxFrame
     guCoverPanel *                  m_CoverPanel;
 
     guTaskBarIcon *                 m_TaskBarIcon;
+#ifdef WITH_LIBINDICATE_SUPPORT
+    IndicateServer *                m_IndicateServer;
+#endif
     guStatusBar *                   m_MainStatusBar;
 
     wxMenuItem *                    m_PlaySmartMenuItem;
