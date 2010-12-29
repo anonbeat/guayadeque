@@ -327,12 +327,13 @@ guPrefDialog::~guPrefDialog()
 	m_MainNotebook->Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxCommandEventHandler( guPrefDialog::OnPageChanged ), NULL, this );
 
 
-#ifndef WITH_LIBINDICATE_SUPPORT
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
         m_TaskIconChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
-    }
+#ifdef WITH_LIBINDICATE_SUPPORT
+        m_SoundMenuChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateSoundMenuIntegration ), NULL, this );
 #endif
+    }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LIBRARY )
     {
@@ -510,10 +511,16 @@ void guPrefDialog::BuildGeneralPage( void )
 
 	wxStaticBoxSizer * BehaviSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" Behaviour ") ), wxVERTICAL );
 
-#ifndef WITH_LIBINDICATE_SUPPORT
 	m_TaskIconChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Activate task bar icon"), wxDefaultPosition, wxDefaultSize, 0 );
     m_TaskIconChkBox->SetValue( m_Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) );
 	BehaviSizer->Add( m_TaskIconChkBox, 0, wxALL, 5 );
+
+    m_SoundMenuChkBox = NULL;
+#ifdef WITH_LIBINDICATE_SUPPORT
+	m_SoundMenuChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Integrate into SoundMenu"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_SoundMenuChkBox->SetValue( m_Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) );
+    m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );
+	BehaviSizer->Add( m_SoundMenuChkBox, 0, wxALL, 5 );
 #endif
 
 	m_EnqueueChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Enqueue as default action"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -532,12 +539,10 @@ void guPrefDialog::BuildGeneralPage( void )
     m_SavePlayListChkBox->SetValue( m_Config->ReadBool( wxT( "SavePlayListOnClose" ), true, wxT( "General" ) ) );
 	OnCloseSizer->Add( m_SavePlayListChkBox, 0, wxALL, 5 );
 
-#ifndef WITH_LIBINDICATE_SUPPORT
 	m_CloseTaskBarChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Close to task bar icon"), wxDefaultPosition, wxDefaultSize, 0 );
     m_CloseTaskBarChkBox->SetValue( m_Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) );
-    m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() );
+    m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() && ( !m_SoundMenuChkBox || !m_SoundMenuChkBox->IsChecked() ) );
 	OnCloseSizer->Add( m_CloseTaskBarChkBox, 0, wxALL, 5 );
-#endif
 
 	m_ExitConfirmChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Ask confirmation on exit"), wxDefaultPosition, wxDefaultSize, 0 );
     m_ExitConfirmChkBox->SetValue( m_Config->ReadBool( wxT( "ShowCloseConfirm" ), true, wxT( "General" ) ) );
@@ -548,8 +553,9 @@ void guPrefDialog::BuildGeneralPage( void )
 	m_GenPanel->SetSizer( GenMainSizer );
 	m_GenPanel->Layout();
 
-#ifndef WITH_LIBINDICATE_SUPPORT
 	m_TaskIconChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
+#ifdef WITH_LIBINDICATE_SUPPORT
+	m_SoundMenuChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateSoundMenuIntegration ), NULL, this );
 #endif
 
 }
@@ -2016,9 +2022,10 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "LoadDefaultLayouts" ), m_IgnoreLayoutsChkBox->GetValue(), wxT( "General" ) );
-#ifndef WITH_LIBINDICATE_SUPPORT
         m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_TaskIconChkBox->IsChecked() && m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
+#ifdef WITH_LIBINDICATE_SUPPORT
+        m_Config->WriteBool( wxT( "SoundMenuIntegration" ), m_SoundMenuChkBox->GetValue(), wxT( "General" ) );
 #endif
         m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
@@ -2273,7 +2280,15 @@ void guPrefDialog::SaveSettings( void )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnActivateTaskBarIcon( wxCommandEvent& event )
 {
-    m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() );
+    if( m_SoundMenuChkBox )
+        m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );
+    m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() && ( !m_SoundMenuChkBox || !m_SoundMenuChkBox->IsChecked() ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnActivateSoundMenuIntegration( wxCommandEvent& event )
+{
+    m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() && !m_SoundMenuChkBox->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //

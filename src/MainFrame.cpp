@@ -44,17 +44,6 @@
 #include <wx/tokenzr.h>
 
 
-#ifdef WITH_LIBINDICATE_SUPPORT
-
-#define GUAYADEQUE_INDICATOR_NAME               "music.guayadeque"
-#define GUAYADEQUE_DESKTOP_PATH                 "/usr/share/applications/guayadeque.desktop"
-
-#include "libindicate/server.h"
-#include "libindicate/indicator.h"
-//#include "libindicate-gtk/indicator.h"
-
-#endif
-
 // The default update podcasts timeout is 15 minutes
 #define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
 
@@ -431,19 +420,26 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     //
     m_TaskBarIcon = NULL;
-
 #ifdef WITH_LIBINDICATE_SUPPORT
-	IndicateServer * IndServer = indicate_server_ref_default();
-	indicate_server_set_type( IndServer, GUAYADEQUE_INDICATOR_NAME );
-	indicate_server_set_desktop_file( IndServer, GUAYADEQUE_DESKTOP_PATH );
-	indicate_server_show( IndServer );
-#else
-    if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
-    {
-        CreateTaskBarIcon();
-    }
+    m_IndicateServer = NULL;
 #endif
 
+    if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
+    {
+#ifdef WITH_LIBINDICATE_SUPPORT
+        if( Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) )
+        {
+            m_IndicateServer = indicate_server_ref_default();
+            indicate_server_set_type( m_IndicateServer, GUAYADEQUE_INDICATOR_NAME );
+            indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
+            indicate_server_show( m_IndicateServer );
+        }
+        else
+#endif
+        {
+            CreateTaskBarIcon();
+        }
+    }
 
     m_DBusServer = new guDBusServer( NULL );
     guDBusServer::Set( m_DBusServer );
@@ -832,6 +828,14 @@ guMainFrame::~guMainFrame()
 
     if( m_TaskBarIcon )
         delete m_TaskBarIcon;
+
+#ifdef WITH_LIBINDICATE_SUPPORT
+    if( m_IndicateServer )
+    {
+        indicate_server_hide( m_IndicateServer );
+        g_object_unref( m_IndicateServer );
+    }
+#endif
 
     // destroy the mpris object
     if( m_MPRIS )
@@ -1598,10 +1602,33 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
             PrefDialog->SaveSettings();
 
             guConfig * Config = ( guConfig * ) guConfig::Get();
-#ifndef WITH_LIBINDICATE_SUPPORT
+
             if( !m_TaskBarIcon && Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
             {
-                CreateTaskBarIcon();
+#ifdef WITH_LIBINDICATE_SUPPORT
+                if( Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) )
+                {
+                    if( !m_IndicateServer )
+                    {
+                        m_IndicateServer = indicate_server_ref_default();
+                        indicate_server_set_type( m_IndicateServer, GUAYADEQUE_INDICATOR_NAME );
+                        indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
+                        indicate_server_show( m_IndicateServer );
+                    }
+                }
+                else if( m_IndicateServer )     // SoundMenuIntegration == false
+                {
+                    indicate_server_hide( m_IndicateServer );
+                    g_object_unref( m_IndicateServer );
+                    m_IndicateServer = NULL;
+
+                    CreateTaskBarIcon();
+                }
+                else                           // SoundMenuIntegration == false && !m_IndicateServer
+#endif
+                {
+                    CreateTaskBarIcon();
+                }
             }
             else if( m_TaskBarIcon && !Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
             {
@@ -1609,7 +1636,6 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
                 delete m_TaskBarIcon;
                 m_TaskBarIcon = NULL;
             }
-#endif
 
             Config->SendConfigChangedEvent( PrefDialog->GetVisiblePanels() );
             m_Db->ConfigChanged();
@@ -1623,45 +1649,51 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 {
 
 #ifdef WITH_LIBINDICATE_SUPPORT
-    guMediaState State = m_PlayerPanel->GetState();
-    if( State == guMEDIASTATE_PLAYING )
+    if( m_IndicateServer )
     {
-        if( event.CanVeto() )
+        guMediaState State = m_PlayerPanel->GetState();
+        if( State == guMEDIASTATE_PLAYING )
         {
-            Show( false );
-            return;
-        }
-    }
-#else
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    // If the icon
-    if( m_TaskBarIcon &&
-        Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
-        Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
-    {
-        if( event.CanVeto() )
-        {
-            Show( false );
-            return;
-        }
-    }
-    else if( Config->ReadBool( wxT( "ShowCloseConfirm" ), true, wxT( "General" ) ) )
-    {
-        guExitConfirmDlg * ExitConfirmDlg = new guExitConfirmDlg( this );
-        if( ExitConfirmDlg )
-        {
-            int Result = ExitConfirmDlg->ShowModal();
-            if( ExitConfirmDlg->GetConfirmChecked() )
+            if( event.CanVeto() )
             {
-                Config->WriteBool( wxT( "ShowCloseConfirm" ), false, wxT( "General" ) );
-            }
-            ExitConfirmDlg->Destroy();
-
-            if( Result != wxID_OK )
+                Show( false );
                 return;
+            }
         }
     }
+    else
 #endif
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        // If the icon
+        if( m_TaskBarIcon &&
+            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
+            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
+        {
+            if( event.CanVeto() )
+            {
+                Show( false );
+                return;
+            }
+        }
+        else if( Config->ReadBool( wxT( "ShowCloseConfirm" ), true, wxT( "General" ) ) )
+        {
+            guExitConfirmDlg * ExitConfirmDlg = new guExitConfirmDlg( this );
+            if( ExitConfirmDlg )
+            {
+                int Result = ExitConfirmDlg->ShowModal();
+                if( ExitConfirmDlg->GetConfirmChecked() )
+                {
+                    Config->WriteBool( wxT( "ShowCloseConfirm" ), false, wxT( "General" ) );
+                }
+                ExitConfirmDlg->Destroy();
+
+                if( Result != wxID_OK )
+                    return;
+            }
+        }
+    }
+
     event.Skip();
 }
 
