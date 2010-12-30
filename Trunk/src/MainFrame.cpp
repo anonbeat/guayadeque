@@ -5084,6 +5084,11 @@ void guMainFrame::OnJamendoCoverDownloaded( wxCommandEvent &event )
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
                 delete CoverImage;
 
+                if( m_CoverPanel )
+                {
+                    m_CoverPanel->OnUpdatedTrack( event );
+                }
+
                 if( m_MPRIS2 )
                 {
                     m_MPRIS2->OnPlayerTrackChange();
@@ -5109,6 +5114,11 @@ void guMainFrame::OnMagnatuneCoverDownloaded( wxCommandEvent &event )
             {
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
                 delete CoverImage;
+
+                if( m_CoverPanel )
+                {
+                    m_CoverPanel->OnUpdatedTrack( event );
+                }
 
                 if( m_MPRIS2 )
                 {

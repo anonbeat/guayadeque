@@ -96,7 +96,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     m_ShowRevTime = false;
     m_PlayRandom = false;
-    m_PlayRandomMode = 0;
+    m_PlayRandomMode = guRANDOM_MODE_TRACK;
     m_DelTracksPlayed = false;
     m_PendingScrob = false;
     m_IsSkipping = false;
@@ -118,7 +118,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
     m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
     m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
-    m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) );
+    m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "General" ) );
     m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
     m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
 
@@ -592,7 +592,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
     {
         //guLogMessage( wxT( "Reading PlayerPanel Config Updated" ) );
         m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
-        m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "General" ) );
+        m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "General" ) );
         m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
         m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
 

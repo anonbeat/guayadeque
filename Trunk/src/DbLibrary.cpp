@@ -4568,7 +4568,8 @@ int guDbLibrary::GetRandomTracks( guTrackArray * tracks, const int count, const 
       }
       dbRes.Finalize();
       query = GU_TRACKS_QUERYSTR + wxString::Format( wxT( "WHERE song_albumid = %i" ), AlbumId );
-      query += wxT( " ORDER BY song_number" );
+      //query += wxT( " ORDER BY song_number" );
+      query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
   }
 
   //guLogMessage( wxT( "GetRandomTracks:\n%s" ), query.c_str() );
