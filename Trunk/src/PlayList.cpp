@@ -2015,6 +2015,12 @@ void guPlayList::OnDeleteFromLibrary( wxCommandEvent &event )
                 {
                     PodcastsIds.Add( Track.m_SongId );
                 }
+
+                if( Selected[ Index ] == m_CurItem )
+                {
+                    event.SetId( ID_PLAYERPANEL_NEXTTRACK );
+                    m_PlayerPanel->OnNextTrackButtonClick( event );
+                }
                 RemoveItem( Selected[ Index ] );
             }
 
@@ -2067,12 +2073,20 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
                     PodcastsIds.Add( Track.m_SongId );
                 }
 
-                if( Track.m_Type != guTRACK_TYPE_RADIOSTATION )
+                if( Track.m_Type != guTRACK_TYPE_RADIOSTATION &&
+                    Track.m_Type != guTRACK_TYPE_JAMENDO &&
+                    Track.m_Type != guTRACK_TYPE_MAGNATUNE )
                 {
                     if( !wxRemoveFile( Track.m_FileName ) )
                     {
                         guLogMessage( wxT( "Error deleting '%s'" ), Track.m_FileName.c_str() );
                     }
+                }
+
+                if( Selected[ Index ] == m_CurItem )
+                {
+                    event.SetId( ID_PLAYERPANEL_NEXTTRACK );
+                    m_PlayerPanel->OnNextTrackButtonClick( event );
                 }
                 RemoveItem( Selected[ Index ] );
             }

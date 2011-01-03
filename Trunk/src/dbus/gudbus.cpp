@@ -49,11 +49,10 @@ void Handle_Response( DBusPendingCall * PCall, void * udata )
 	guDBusClient * DBusObj = ( guDBusClient * ) udata;
 	DBusMessage * reply;
 	reply = dbus_pending_call_steal_reply( PCall );
-    guDBusMessage * Msg = new guDBusMessage( reply );
+    guDBusMessage Msg( reply );
 
-    DBusObj->HandleMessages( Msg, NULL );
+    DBusObj->HandleMessages( &Msg, NULL );
 
-    delete Msg;
 	dbus_message_unref( reply );
 	dbus_pending_call_unref( PCall );
 }

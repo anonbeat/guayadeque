@@ -1196,8 +1196,16 @@ void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 wxString inline FileNameEncode( const wxString filename )
 {
+    static const wxChar NumChars[] = wxT( "0123456789" );
+
     wxString RetVal = filename;
-    RetVal.Replace( wxT( "%" ), wxT( "%25" ) );
+    int Pos;
+    while( ( Pos = RetVal.Find( wxT( "%" ) ) ) != wxNOT_FOUND &&
+            !( wxStrchr( NumChars, RetVal[ Pos + 1 ] ) &&
+               wxStrchr( NumChars, RetVal[ Pos + 2 ] ) ) )
+    {
+        RetVal = RetVal.Mid( 0, Pos ) + wxT( "%25" ) + RetVal.Mid( Pos + 1 );
+    }
     RetVal.Replace( wxT( "#" ), wxT( "%23" ) );
     return RetVal;
 }
@@ -1211,9 +1219,9 @@ void guPlayerPanel::LoadMedia( const wxString &filename, guFADERPLAYBIN_PLAYTYPE
     wxString Uri;
     try {
         if( !UriPath.HasScheme() )
-            Uri = wxT( "file://" ) + UriPath.BuildUnescapedURI();
+            Uri = wxT( "file://" ) + filename;
         else
-            Uri = UriPath.BuildUnescapedURI();
+            Uri = filename;
 
         //guLogMessage( wxT( "'%s'\n'%s'" ), FileName.c_str(), FileNameEncode( Uri ).c_str() );
         m_NextTrackId = m_MediaCtrl->Load( FileNameEncode( Uri ), playtype );
