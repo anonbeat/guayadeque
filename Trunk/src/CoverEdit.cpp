@@ -167,6 +167,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
 	m_CoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
 	m_CoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnCoverLeftClick ), NULL, this );
+	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guCoverEditor::OnMouseWheel ), NULL, this );
 
 	m_PrevButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
 	m_NextButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
@@ -292,6 +293,27 @@ void guCoverEditor::OnNextButtonClick( wxCommandEvent& event )
             m_NextButton->Disable();
         if( !m_PrevButton->IsEnabled() )
             m_PrevButton->Enable();
+
+        UpdateCoverBitmap();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guCoverEditor::OnMouseWheel( wxMouseEvent &event )
+{
+    int Rotation = event.GetWheelRotation() / event.GetWheelDelta() * -1;
+    int NewPos = m_CurrentImage + Rotation;
+
+    //guLogMessage( wxT( "MouseWheel %i => %i" ), m_CurrentImage, NewPos );
+
+    NewPos = wxMax( 0, wxMin( NewPos, ( int ) m_AlbumCovers.Count() - 1 ) );
+
+    if( NewPos != m_CurrentImage )
+    {
+        m_CurrentImage = NewPos;
+
+        m_NextButton->Enable( m_CurrentImage < ( int ) m_AlbumCovers.Count() );
+        m_PrevButton->Enable( m_CurrentImage );
 
         UpdateCoverBitmap();
     }
