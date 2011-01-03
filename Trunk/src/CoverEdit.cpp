@@ -312,7 +312,7 @@ void guCoverEditor::OnMouseWheel( wxMouseEvent &event )
     {
         m_CurrentImage = NewPos;
 
-        m_NextButton->Enable( m_CurrentImage < ( int ) m_AlbumCovers.Count() );
+        m_NextButton->Enable( m_CurrentImage < ( int ) m_AlbumCovers.Count() - 1 );
         m_PrevButton->Enable( m_CurrentImage );
 
         UpdateCoverBitmap();
