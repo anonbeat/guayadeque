@@ -2018,8 +2018,9 @@ void guPlayList::OnDeleteFromLibrary( wxCommandEvent &event )
 
                 if( Selected[ Index ] == m_CurItem )
                 {
+                    m_CurItem--;
                     event.SetId( ID_PLAYERPANEL_NEXTTRACK );
-                    m_PlayerPanel->OnNextTrackButtonClick( event );
+                    wxPostEvent( m_PlayerPanel, event );
                 }
                 RemoveItem( Selected[ Index ] );
             }
@@ -2042,6 +2043,7 @@ void guPlayList::OnDeleteFromLibrary( wxCommandEvent &event )
                 }
             }
 
+            ClearSelectedItems();
             ReloadItems();
         }
     }
@@ -2085,8 +2087,9 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
 
                 if( Selected[ Index ] == m_CurItem )
                 {
+                    m_CurItem--;
                     event.SetId( ID_PLAYERPANEL_NEXTTRACK );
-                    m_PlayerPanel->OnNextTrackButtonClick( event );
+                    wxPostEvent( m_PlayerPanel, event );
                 }
                 RemoveItem( Selected[ Index ] );
             }
@@ -2109,6 +2112,7 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
                 }
             }
 
+            ClearSelectedItems();
             ReloadItems();
         }
     }
