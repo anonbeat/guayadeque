@@ -242,10 +242,7 @@ class guAlbumBrowser : public wxPanel
     void                            ReloadItems( void );
     void                            RefreshAll( void );
 
-    void UpdateNavLabel( const int page )
-    {
-        m_NavLabel->SetLabel( _( "Page" ) + wxString::Format( wxT( " %i / %i" ), page + 1, m_PagesCount ) );
-    }
+    void                            UpdateNavLabel( const int page );
 
     virtual void                    SelectAlbum( const int albumid, const bool append, const bool asnext = false );
     virtual int                     GetAlbumTracks( const int albumid, guTrackArray * tracks );

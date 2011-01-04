@@ -1601,6 +1601,11 @@ void guAlbumBrowser::OnArtistSelectName( const int artistid )
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::UpdateNavLabel( const int page )
+{
+    m_NavLabel->SetLabel( _( "Page" ) + wxString::Format( wxT( " %i / %i" ), page + 1, m_PagesCount ) );
+}
 
 
 
