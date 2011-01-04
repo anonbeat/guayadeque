@@ -237,16 +237,13 @@ void guDbCache::ClearExpired( void )
     // last.fm queries are kept only 7 days
     wxString query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
         wxDateTime::Now().GetTicks() - 604800, guDBCACHE_TYPE_TEXT );
-
     ExecuteUpdate( query );
 
     // Images are kept 30 days
-    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
-        wxDateTime::Now().GetTicks() - 2592000, guDBCACHE_TYPE_TEXT );
-
+    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u" ), wxDateTime::Now().GetTicks() - 2592000 );
     ExecuteUpdate( query );
 
-    //guLogMessage( wxT( "Delete expired Cache elements done" ) );
+    guLogMessage( wxT( "Delete expired Cache elements done" ) );
 }
 
 // -------------------------------------------------------------------------------- //
