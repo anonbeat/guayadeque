@@ -2250,7 +2250,29 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                 }
                 else                // Its a dynamic playlist
                 {
-                    guLogMessage( wxT( "Found a dynamic playlist '%s'" ), PlaylistName.c_str() );
+                    guLogMessage( wxT( "Found a dynamic playlist '%s' with %i tracks" ), PlaylistName.c_str(), Playlist->num );
+//                    guLogMessage( wxT( "id          : %i" ), Playlist->id );
+//                    guLogMessage( wxT( "sortorder   : %i" ), Playlist->sortorder );
+//                    Itdb_SPLPref * PlaylistPref = &Playlist->splpref;
+//                    guLogMessage( wxT( "liveupdate  : %i" ), PlaylistPref->liveupdate );
+//                    guLogMessage( wxT( "checkrules  : %i" ), PlaylistPref->checkrules );
+//                    guLogMessage( wxT( "checklimits : %i" ), PlaylistPref->checklimits );
+//                    guLogMessage( wxT( "limittype   : %i" ), PlaylistPref->limittype );
+//                    Itdb_SPLRules * PlaylistRules = &Playlist->splrules;
+//                    guLogMessage( wxT( "operator    : %i" ), PlaylistRules->match_operator );
+//                    GList * Rules = PlaylistRules->rules;
+//                    while( Rules )
+//                    {
+//                        guLogMessage( wxT( "###===---Rule---===###" ) );
+//                        Itdb_SPLRule * PlaylistRule = ( Itdb_SPLRule * ) Rules->data;
+//                        if( PlaylistRule )
+//                        {
+//                            guLogMessage( wxT( "field       : %i" ), PlaylistRule->field );
+//                            guLogMessage( wxT( "action      : %08X" ), PlaylistRule->action );
+//                        }
+//
+//                        Rules = Rules->next;
+//                    }
 
                 }
             }
