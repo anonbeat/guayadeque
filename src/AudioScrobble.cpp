@@ -166,31 +166,46 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
     wxString    Track;
     wxCurlHTTP  http;
 
-    /* Info from MediaPortal as seems more complete than the LastFM/api v1.2.1 protocol info
-        s=<sessionID>            The Session ID string as returned by the handshake. Required.
-        a[0]=<artist>            The artist name. Required.
-        t[0]=<track>             The track title. Required.
-        i[0]=<time>              The time the track started playing, in UNIX timestamp format (integer number of seconds since 00:00:00, January 1st 1970 UTC). This must be in the UTC time zone, and is required.
-        o[0]=<source>            The source of the track. Required, must be one of the following codes:
+    /*
+        s=<sessionID>
+            The Session ID string returned by the handshake request. Required.
+        a[0]=<artist>
+            The artist name. Required.
+        t[0]=<track>
+            The track title. Required.
+        i[0]=<time>
+            The time the track started playing, in UNIX timestamp format (integer number of seconds since 00:00:00, January 1st 1970 UTC). This must be in the UTC time zone, and is required.
+        o[0]=<source>
+            The source of the track. Required, must be one of the following codes:
 
-            P = Chosen by the user, no shuffle
-            S = Chosen by the user, shuffle enabled
-            T = Chosen by the user, unknown shuffle status (e.g. iPod)
-            R = Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1)
-            E = Personalised recommendation except Last.fm (e.g. Pandora, Launchcast)
-            L = Last.fm (any mode)
-            U = Source unknown
+            P
+                Chosen by the user (the most common value, unless you have a reason for choosing otherwise, use this).
+            R
+                Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1).
+            E
+                Personalised recommendation except Last.fm (e.g. Pandora, Launchcast).
+            L
+                Last.fm (any mode). In this case, the 5-digit Last.fm recommendation key must be appended to this source ID to prove the validity of the submission (for example, "o[0]=L1b48a").
 
         r[0]=<rating>
+            A single character denoting the rating of the track. Empty if not applicable.
 
-            L = Love
-            B = Ban
-            S = Skip (only if source=L)
+            L
+                Love (on any mode if the user has manually loved the track). This implies a listen.
+            B
+                Ban (only if source=L). This implies a skip, and the client should skip to the next track when a ban happens.
+            S
+                Skip (only if source=L)
 
-        b[0]=<album>             The album title, or empty if not known.
-        l[0]=<secs>              The length of the track in seconds, or empty if not known.
-        n[0]=<tracknumber>       The position of the track on the album, or empty if not known.
-        m[0]=<mb-trackid>        The MusicBrainz Track ID, or empty if not known.
+            Note: Currently a Last.fm web service must also be called to set love (track.love) or ban (track.ban) status. We anticipate that the next version of the scrobble protocol will no longer perform love and ban and this will instead be handled by the web services only.
+        l[0]=<secs>
+            The length of the track in seconds. Required when the source is P, optional otherwise.
+        b[0]=<album>
+            The album title, or an empty string if not known.
+        n[0]=<tracknumber>
+            The position of the track on the album, or an empty string if not known.
+        m[0]=<mb-trackid>
+            The MusicBrainz Track ID, or an empty string if not known.
     */
 
 
@@ -221,7 +236,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
         }
         PostData.RemoveLast( 1 ); // we remove the last & added
 
-        //guLogMessage( wxT( "AudioScrobble::Played : " ) + PostData );
+        //guLogMessage( wxT( "AudioScrobble::Played : %s" ), PostData.c_str() );
         http.AddHeader( wxT( "Content-Type: application/x-www-form-urlencoded" ) );
         http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
         if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_SubmitUrl ) )
@@ -229,7 +244,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
             Content = http.GetResponseBody();
             if( !Content.IsEmpty() )
             {
-                //guLogMessage( wxT( "AudioScrobble::Response : " ) + Content );
+                //guLogMessage( wxT( "AudioScrobble::Response :\n%s" ), Content.c_str() );
                 if( Content.Contains( wxT( "OK" ) ) )
                 {
                     m_ErrorCode = guAS_ERROR_NOERROR;
@@ -393,6 +408,12 @@ guAudioScrobble::~guAudioScrobble()
         m_PlayedThread->Pause();
         m_PlayedThread->Delete();
     }
+
+    if( m_LastFMAudioScrobble )
+        delete m_LastFMAudioScrobble;
+
+    if( m_LibreFMAudioScrobble )
+        delete m_LibreFMAudioScrobble;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -448,6 +469,7 @@ bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtrack
 // -------------------------------------------------------------------------------- //
 void guAudioScrobble::SendPlayedTrack( const guCurrentTrack &track )
 {
+    //guLogMessage( wxT( "guAudioScrobble::SendPlayedTrack" ) );
     if( !m_Db->AddCachedPlayedSong( track ) )
         guLogError( wxT( "Could not add Song to CachedSongs Database" ) );
 
@@ -462,6 +484,7 @@ void guAudioScrobble::SendPlayedTrack( const guCurrentTrack &track )
 // -------------------------------------------------------------------------------- //
 void guAudioScrobble::SendNowPlayingTrack( const guCurrentTrack &track )
 {
+    //guLogMessage( wxT( "guAudioScrobble::SendNowPlayingTrack" ) );
     wxMutexLocker Lock( m_NowPlayingInfoMutex );
 
     if( m_NowPlayingInfo )
