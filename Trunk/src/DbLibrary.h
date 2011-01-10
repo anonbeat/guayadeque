@@ -433,8 +433,8 @@ class guDbLibrary : public guDb
     wxString            GetPlayListPath( const int plid );
     void                SetPlayListPath( const int plid, const wxString &path );
     void                GetDynamicPlayList( const int plid, guDynPlayList * playlist );
-    int                 CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist );
-    void                UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist );
+    virtual int         CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist );
+    virtual void        UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist );
     wxString            GetPlayListQuery( const int plid );
     int                 GetPlayListType( const int plid );
 
