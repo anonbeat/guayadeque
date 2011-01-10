@@ -1890,6 +1890,298 @@ Itdb_Playlist * guIpodLibrary::CreateiPodPlayList( const wxString &path, const w
 // -------------------------------------------------------------------------------- //
 int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist )
 {
+    Itdb_Playlist * DynPlayList = itdb_playlist_new( name.mb_str( wxConvFile ), true );
+    if( DynPlayList )
+    {
+        itdb_playlist_add( m_iPodDb, DynPlayList, wxNOT_FOUND );
+
+        if( !playlist->m_Sorted )
+        {
+            DynPlayList->sortorder = ITDB_PSO_MANUAL;
+        }
+        else
+        {
+            switch( playlist->m_SortType )
+            {
+                case guDYNAMIC_FILTER_ORDER_TITLE :
+                    DynPlayList->sortorder = ITDB_PSO_TITLE;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_ARTIST :
+                    DynPlayList->sortorder = ITDB_PSO_ARTIST;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_ALBUMARTIST :
+                    DynPlayList->sortorder = ITDB_PSO_MANUAL;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_ALBUM :
+                    DynPlayList->sortorder = ITDB_PSO_ALBUM;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_GENRE :
+                    DynPlayList->sortorder = ITDB_PSO_GENRE;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_LABEL :
+                    DynPlayList->sortorder = ITDB_PSO_GROUPING;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_COMPOSER :
+                    DynPlayList->sortorder = ITDB_PSO_COMPOSER;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_YEAR :
+                    DynPlayList->sortorder = ITDB_PSO_YEAR;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_RATING :
+                    DynPlayList->sortorder = ITDB_PSO_RATING;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_LENGTH :
+                    DynPlayList->sortorder = ITDB_PSO_TIME;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_PLAYCOUNT :
+                    DynPlayList->sortorder = ITDB_PSO_PLAYCOUNT;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_LASTPLAY :
+                    DynPlayList->sortorder = ITDB_PSO_TIME_PLAYED;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_ADDEDDATE :
+                    DynPlayList->sortorder = ITDB_PSO_TIME_ADDED;
+                    break;
+
+                case guDYNAMIC_FILTER_ORDER_RANDOM :
+                    DynPlayList->sortorder = ITDB_PSO_MANUAL;
+                    break;
+            }
+        }
+
+        Itdb_SPLPref * PlaylistPref = &DynPlayList->splpref;
+        PlaylistPref->liveupdate = true;
+        PlaylistPref->checkrules = playlist->m_Filters.Count();
+        PlaylistPref->checklimits = playlist->m_Limited;
+        if( playlist->m_Limited )
+        {
+            PlaylistPref->limitvalue = playlist->m_LimitValue;
+
+            switch( playlist->m_LimitType )
+            {
+                case guDYNAMIC_FILTER_LIMIT_TRACKS :
+                    PlaylistPref->limittype = ITDB_LIMITTYPE_SONGS;
+                    break;
+
+                case guDYNAMIC_FILTER_LIMIT_MINUTES :
+                    PlaylistPref->limittype = ITDB_LIMITTYPE_MINUTES;
+                    break;
+
+                case guDYNAMIC_FILTER_LIMIT_MEGABYTES :
+                    PlaylistPref->limittype = ITDB_LIMITTYPE_MB;
+                    break;
+
+                case guDYNAMIC_FILTER_LIMIT_GIGABYTES :
+                    PlaylistPref->limittype = ITDB_LIMITTYPE_GB;
+                    break;
+            }
+        }
+
+        Itdb_SPLRules * PlaylistRules = &DynPlayList->splrules;
+
+        PlaylistRules->match_operator = playlist->m_AnyOption ? ITDB_SPLMATCH_OR : ITDB_SPLMATCH_AND;
+
+        int Index;
+        int Count = playlist->m_Filters.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            Itdb_SPLRule * PlaylistRule = itdb_splr_add_new( DynPlayList, wxNOT_FOUND );
+            if( PlaylistRule )
+            {
+                guFilterItem * FilterItem = &playlist->m_Filters[ Index ];
+
+                switch( FilterItem->m_Type )
+                {
+                    case guDYNAMIC_FILTER_TYPE_TITLE :
+                        PlaylistRule->field = ITDB_SPLFIELD_SONG_NAME;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_ARTIST :
+                        PlaylistRule->field = ITDB_SPLFIELD_ARTIST;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_ALBUMARTIST :
+                        PlaylistRule->field = ITDB_SPLFIELD_ALBUMARTIST;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_ALBUM :
+                        PlaylistRule->field = ITDB_SPLFIELD_ALBUM;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_GENRE :
+                        PlaylistRule->field = ITDB_SPLFIELD_GENRE;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_LABEL :
+                        PlaylistRule->field = ITDB_SPLFIELD_GROUPING;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_COMPOSER :
+                        PlaylistRule->field = ITDB_SPLFIELD_COMPOSER;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_COMMENT :
+                        PlaylistRule->field = ITDB_SPLFIELD_COMMENT;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_PATH :
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_YEAR :
+                        PlaylistRule->field = ITDB_SPLFIELD_YEAR;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_RATING :
+                        PlaylistRule->field = ITDB_SPLFIELD_RATING;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_LENGTH :
+                        PlaylistRule->field = ITDB_SPLFIELD_TIME;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :
+                        PlaylistRule->field = ITDB_SPLFIELD_PLAYCOUNT;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_LASTPLAY :
+                        PlaylistRule->field = ITDB_SPLFIELD_LAST_PLAYED;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
+                        PlaylistRule->field = ITDB_SPLFIELD_DATE_ADDED;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_TRACKNUMBER :
+                        PlaylistRule->field = ITDB_SPLFIELD_TRACKNUMBER;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_BITRATE :
+                        PlaylistRule->field = ITDB_SPLFIELD_BITRATE;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_SIZE :
+                        PlaylistRule->field = ITDB_SPLFIELD_SIZE;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_DISK :
+                        PlaylistRule->field = ITDB_SPLFIELD_DISC_NUMBER;
+                        break;
+
+                    case guDYNAMIC_FILTER_TYPE_HASARTWORK :
+                        break;
+                }
+
+                switch( FilterItem->m_Type )
+                {
+                    case guDYNAMIC_FILTER_TYPE_TITLE : // String
+                    case guDYNAMIC_FILTER_TYPE_ARTIST :
+                    case guDYNAMIC_FILTER_TYPE_ALBUMARTIST :
+                    case guDYNAMIC_FILTER_TYPE_ALBUM :
+                    case guDYNAMIC_FILTER_TYPE_GENRE :
+                    case guDYNAMIC_FILTER_TYPE_COMPOSER :
+                    case guDYNAMIC_FILTER_TYPE_COMMENT :
+                    case guDYNAMIC_FILTER_TYPE_PATH :
+                    case guDYNAMIC_FILTER_TYPE_DISK :
+                    case guDYNAMIC_FILTER_TYPE_LABEL :
+                    {
+                        switch( FilterItem->m_Option )
+                        {
+                            case guDYNAMIC_FILTER_OPTION_STRING_CONTAINS :
+                                PlaylistRule->action = ITDB_SPLACTION_CONTAINS;
+                                break;
+
+                            case guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS :
+                                PlaylistRule->action = ITDB_SPLACTION_DOES_NOT_CONTAIN;
+                                break;
+
+                            case guDYNAMIC_FILTER_OPTION_STRING_IS :
+                                PlaylistRule->action = ITDB_SPLACTION_IS_STRING;
+                                break;
+
+                            case guDYNAMIC_FILTER_OPTION_STRING_ISNOT :
+                                PlaylistRule->action = ITDB_SPLACTION_IS_NOT;
+                                break;
+
+                            case guDYNAMIC_FILTER_OPTION_STRING_START_WITH :
+                                PlaylistRule->action = ITDB_SPLACTION_STARTS_WITH;
+                                break;
+
+                            case guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH :
+                                PlaylistRule->action = ITDB_SPLACTION_ENDS_WITH;
+                                break;
+                        }
+                        break;
+                    }
+
+                    case guDYNAMIC_FILTER_TYPE_YEAR : // Year
+                    case guDYNAMIC_FILTER_TYPE_RATING : // Numbers
+                    case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :
+                    case guDYNAMIC_FILTER_TYPE_TRACKNUMBER :
+                    case guDYNAMIC_FILTER_TYPE_BITRATE :
+                    case guDYNAMIC_FILTER_TYPE_SIZE :
+                    case guDYNAMIC_FILTER_TYPE_LENGTH : // Time
+                    {
+                        switch( FilterItem->m_Option )
+                        {
+                            case guDYNAMIC_FILTER_OPTION_NUMERIC_IS :
+                                PlaylistRule->action = ITDB_SPLACTION_IS_INT;
+                                break;
+
+                            case guDYNAMIC_FILTER_OPTION_NUMERIC_ISNOT :
+                                PlaylistRule->action = ITDB_SPLACTION_IS_NOT_INT;
+                                break;
+
+                            case guDYNAMIC_FILTER_OPTION_NUMERIC_AT_LEAST :
+                                PlaylistRule->action = ITDB_SPLACTION_IS_GREATER_THAN;
+                                break;
+
+                            case guDYNAMIC_FILTER_OPTION_NUMERIC_AT_MOST :
+                                PlaylistRule->action = ITDB_SPLACTION_IS_LESS_THAN;
+                                break;
+                        }
+                        break;
+                    }
+
+                    case guDYNAMIC_FILTER_TYPE_LASTPLAY :
+                    case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
+                    {
+                        switch( FilterItem->m_Option )
+                        {
+                            case guDYNAMIC_FILTER_OPTION_DATE_IN_THE_LAST :
+                                break;
+                            case guDYNAMIC_FILTER_OPTION_DATE_BEFORE_THE_LAST :
+                                break;
+                                // TO BE CONTINUE...
+                        }
+                        break;
+                    }
+
+                    //case guDYNAMIC_FILTER_TYPE_HASARTWORK :
+                }
+
+
+            }
+        }
+
+
+        iPodFlush();
+    }
+    else
+    {
+        guLogMessage( wxT( "Could not create the playlist " ) );
+    }
 
     return guDbLibrary::CreateDynamicPlayList( name, playlist );
 }
@@ -2287,7 +2579,10 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
 //                        case ITDB_PSO_EQUALIZER :
 //                        case ITDB_PSO_CD_NR :
 //                        case ITDB_PSO_BPM :
-//                        case ITDB_PSO_GROUPING :
+                        case ITDB_PSO_GROUPING :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_LABEL;
+                            break;
+
 //                        case ITDB_PSO_CATEGORY :
 //                        case ITDB_PSO_DESCRIPTION :
 //                            break;
@@ -2358,7 +2653,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                     if( PlaylistPref->checklimits )
                     {
                         NewPlayList.m_Limited = true;
-                        NewPlayList.m_LimitValue = PlaylistPref->checklimits;
+                        NewPlayList.m_LimitValue = PlaylistPref->limitvalue;
 
                         switch( PlaylistPref->limittype )
                         {
