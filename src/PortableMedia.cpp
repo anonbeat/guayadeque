@@ -1888,6 +1888,19 @@ Itdb_Playlist * guIpodLibrary::CreateiPodPlayList( const wxString &path, const w
 }
 
 // -------------------------------------------------------------------------------- //
+int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist )
+{
+
+    return guDbLibrary::CreateDynamicPlayList( name, playlist );
+}
+
+// -------------------------------------------------------------------------------- //
+void guIpodLibrary::UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist )
+{
+    guDbLibrary::UpdateDynamicPlayList( plid, playlist );
+}
+
+// -------------------------------------------------------------------------------- //
 Itdb_Track * guIpodLibrary::iPodFindTrack( const wxString &filename )
 {
     Itdb_Track * Track = NULL;
@@ -2250,29 +2263,323 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                 }
                 else                // Its a dynamic playlist
                 {
+                    guDynPlayList NewPlayList;
+                    bool ErrorInPlaylist = false;
+
                     guLogMessage( wxT( "Found a dynamic playlist '%s' with %i tracks" ), PlaylistName.c_str(), Playlist->num );
-//                    guLogMessage( wxT( "id          : %i" ), Playlist->id );
-//                    guLogMessage( wxT( "sortorder   : %i" ), Playlist->sortorder );
-//                    Itdb_SPLPref * PlaylistPref = &Playlist->splpref;
-//                    guLogMessage( wxT( "liveupdate  : %i" ), PlaylistPref->liveupdate );
-//                    guLogMessage( wxT( "checkrules  : %i" ), PlaylistPref->checkrules );
-//                    guLogMessage( wxT( "checklimits : %i" ), PlaylistPref->checklimits );
-//                    guLogMessage( wxT( "limittype   : %i" ), PlaylistPref->limittype );
-//                    Itdb_SPLRules * PlaylistRules = &Playlist->splrules;
-//                    guLogMessage( wxT( "operator    : %i" ), PlaylistRules->match_operator );
-//                    GList * Rules = PlaylistRules->rules;
-//                    while( Rules )
-//                    {
-//                        guLogMessage( wxT( "###===---Rule---===###" ) );
-//                        Itdb_SPLRule * PlaylistRule = ( Itdb_SPLRule * ) Rules->data;
-//                        if( PlaylistRule )
-//                        {
-//                            guLogMessage( wxT( "field       : %i" ), PlaylistRule->field );
-//                            guLogMessage( wxT( "action      : %08X" ), PlaylistRule->action );
-//                        }
-//
-//                        Rules = Rules->next;
-//                    }
+                    guLogMessage( wxT( "id          : %i" ), Playlist->id );
+                    guLogMessage( wxT( "sortorder   : %i" ), Playlist->sortorder );
+
+                    NewPlayList.m_Sorted = ( Playlist->sortorder != ITDB_PSO_MANUAL );
+
+
+                    switch( Playlist->sortorder )
+                    {
+                        case ITDB_PSO_MANUAL :
+                            break;
+
+//                        case ITDB_PSO_BIRATE :
+//                        case ITDB_PSO_FILETYPE :
+//                        case ITDB_PSO_TRACK_NR :
+//                        case ITDB_PSO_SIZE :
+//                        case ITDB_PSO_SAMPLERATE :
+//                        case ITDB_PSO_COMMENT :
+//                        case ITDB_PSO_EQUALIZER :
+//                        case ITDB_PSO_CD_NR :
+//                        case ITDB_PSO_BPM :
+//                        case ITDB_PSO_GROUPING :
+//                        case ITDB_PSO_CATEGORY :
+//                        case ITDB_PSO_DESCRIPTION :
+//                            break;
+
+                        case ITDB_PSO_TITLE :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_TITLE;
+                            break;
+
+                        case ITDB_PSO_ALBUM :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_ALBUM;
+                            break;
+
+                        case ITDB_PSO_ARTIST :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_ARTIST;
+                            break;
+
+                        case ITDB_PSO_GENRE :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_GENRE;
+                            break;
+
+                        case ITDB_PSO_TIME_MODIFIED :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_GENRE;
+                            break;
+
+                        case ITDB_PSO_TIME :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_LENGTH;
+                            break;
+
+                        case ITDB_PSO_YEAR :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_YEAR;
+                            break;
+
+                        case ITDB_PSO_TIME_ADDED :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_ADDEDDATE;
+                            break;
+
+                        case ITDB_PSO_COMPOSER :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_COMPOSER;
+                            break;
+
+                        case ITDB_PSO_PLAYCOUNT :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_PLAYCOUNT;
+                            break;
+
+                        case ITDB_PSO_TIME_PLAYED :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_LASTPLAY;
+                            break;
+
+                        case ITDB_PSO_RATING :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_RATING;
+                            break;
+
+                        case ITDB_PSO_RELEASE_DATE :
+                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_YEAR;
+                            break;
+
+                        default :
+                            ErrorInPlaylist = true;
+                            guLogMessage( wxT( "Sorting not supported %i" ), Playlist->sortorder );
+                            break;
+                    }
+
+                    Itdb_SPLPref * PlaylistPref = &Playlist->splpref;
+                    guLogMessage( wxT( "liveupdate  : %i" ), PlaylistPref->liveupdate );
+                    guLogMessage( wxT( "checkrules  : %i" ), PlaylistPref->checkrules );
+                    guLogMessage( wxT( "checklimits : %i" ), PlaylistPref->checklimits );
+                    guLogMessage( wxT( "limittype   : %i" ), PlaylistPref->limittype );
+                    if( PlaylistPref->checklimits )
+                    {
+                        NewPlayList.m_Limited = true;
+                        NewPlayList.m_LimitValue = PlaylistPref->checklimits;
+
+                        switch( PlaylistPref->limittype )
+                        {
+                            case ITDB_LIMITTYPE_MINUTES :
+                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_MINUTES;
+                                break;
+
+                            case ITDB_LIMITTYPE_MB      :
+                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_MEGABYTES;
+                                break;
+
+                            case ITDB_LIMITTYPE_SONGS   :
+                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_TRACKS;
+                                break;
+
+                            case ITDB_LIMITTYPE_HOURS   :
+                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_MINUTES;
+                                NewPlayList.m_LimitValue *= 60;
+                                break;
+
+                            case ITDB_LIMITTYPE_GB      :
+                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_GIGABYTES;
+                                break;
+                        }
+                    }
+
+                    Itdb_SPLRules * PlaylistRules = &Playlist->splrules;
+                    guLogMessage( wxT( "operator    : %i" ), PlaylistRules->match_operator );
+                    if( PlaylistRules->match_operator == ITDB_SPLMATCH_OR )
+                        NewPlayList.m_AnyOption = true;
+
+                    GList * Rules = PlaylistRules->rules;
+                    int RuleCount = 0;
+                    while( !ErrorInPlaylist && Rules && ( RuleCount < PlaylistPref->checkrules ) )
+                    {
+                        guLogMessage( wxT( "###===---Rule---===###" ) );
+                        Itdb_SPLRule * PlaylistRule = ( Itdb_SPLRule * ) Rules->data;
+                        if( PlaylistRule )
+                        {
+                            guFilterItem * FilterItem = new guFilterItem();
+                            guLogMessage( wxT( "field       : %i" ), PlaylistRule->field );
+                            guLogMessage( wxT( "action      : %08X" ), PlaylistRule->action );
+
+                            switch( PlaylistRule->field )
+                            {
+                                case ITDB_SPLFIELD_SONG_NAME :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_TITLE;
+                                    break;
+
+                                case ITDB_SPLFIELD_ALBUM :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_ALBUM;
+                                    break;
+
+                                case ITDB_SPLFIELD_ARTIST :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_ARTIST;
+                                    break;
+
+                                case ITDB_SPLFIELD_BITRATE :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_BITRATE;
+                                    break;
+
+                                case ITDB_SPLFIELD_YEAR :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_YEAR;
+                                    break;
+
+                                case ITDB_SPLFIELD_GENRE :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_GENRE;
+                                    break;
+
+                                case ITDB_SPLFIELD_TRACKNUMBER :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_TRACKNUMBER;
+                                    break;
+
+                                case ITDB_SPLFIELD_SIZE :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_SIZE;
+                                    break;
+
+                                case ITDB_SPLFIELD_TIME :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_LENGTH;
+                                    break;
+
+                                case ITDB_SPLFIELD_COMMENT :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_COMMENT;
+                                    break;
+
+                                case ITDB_SPLFIELD_DATE_ADDED :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_ADDEDDATE;
+                                    break;
+
+                                case ITDB_SPLFIELD_COMPOSER :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_COMPOSER;
+                                    break;
+
+                                case ITDB_SPLFIELD_PLAYCOUNT :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_PLAYCOUNT;
+                                    break;
+
+                                case ITDB_SPLFIELD_LAST_PLAYED :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_LASTPLAY;
+                                    break;
+
+                                case ITDB_SPLFIELD_DISC_NUMBER :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_DISK;
+                                    break;
+
+                                case ITDB_SPLFIELD_RATING :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_RATING;
+                                    break;
+
+                                case ITDB_SPLFIELD_ALBUMARTIST :
+                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_ALBUMARTIST;
+                                    break;
+
+                                default :
+                                    ErrorInPlaylist = true;
+                                    break;
+                            }
+
+                            switch( PlaylistRule->action )
+                            {
+                                case ITDB_SPLACTION_IS_INT :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_IS;
+                                    FilterItem->m_Number = PlaylistRule->fromvalue;
+                                    break;
+
+                                case ITDB_SPLACTION_IS_GREATER_THAN :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_AT_LEAST;
+                                    FilterItem->m_Number = PlaylistRule->fromvalue;
+                                    break;
+
+                                case ITDB_SPLACTION_IS_LESS_THAN :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_AT_MOST;
+                                    FilterItem->m_Number = PlaylistRule->fromvalue;
+                                    break;
+
+                                //case ITDB_SPLACTION_IS_IN_THE_RANGE :
+
+                                //case ITDB_SPLACTION_IS_IN_THE_LAST :
+                                //    break;
+
+                                //case ITDB_SPLACTION_BINARY_AND :
+
+                                case ITDB_SPLACTION_IS_STRING :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_IS;
+                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
+                                    break;
+
+                                case ITDB_SPLACTION_CONTAINS :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_CONTAINS;
+                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
+                                    break;
+
+                                case ITDB_SPLACTION_STARTS_WITH :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_START_WITH;
+                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
+                                    break;
+
+                                case ITDB_SPLACTION_ENDS_WITH :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH;
+                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
+                                    break;
+
+                                case ITDB_SPLACTION_IS_NOT_INT :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_ISNOT;
+                                    FilterItem->m_Number = PlaylistRule->fromvalue;
+                                    break;
+
+                                case ITDB_SPLACTION_IS_NOT_GREATER_THAN :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_AT_MOST;
+                                    FilterItem->m_Number = PlaylistRule->fromvalue;
+                                    break;
+
+                                case ITDB_SPLACTION_IS_NOT_LESS_THAN :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_AT_LEAST;
+                                    FilterItem->m_Number = PlaylistRule->fromvalue;
+                                    break;
+
+                                //case ITDB_SPLACTION_IS_NOT_IN_THE_RANGE :
+                                //case ITDB_SPLACTION_IS_NOT_IN_THE_LAST :
+
+                                case ITDB_SPLACTION_IS_NOT :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_ISNOT;
+                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
+                                    break;
+
+                                case ITDB_SPLACTION_DOES_NOT_CONTAIN :
+                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS;
+                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
+                                    break;
+
+                                //case ITDB_SPLACTION_DOES_NOT_START_WITH :
+                                //case ITDB_SPLACTION_DOES_NOT_END_WITH :
+
+                                default :
+                                    ErrorInPlaylist = true;
+                                    break;
+                            }
+
+                            if( !ErrorInPlaylist )
+                            {
+                                NewPlayList.m_Filters.Add( FilterItem );
+                            }
+                            else
+                            {
+                                guLogMessage( wxT( "The playlist have been discarded by rule %08X %08X" ), PlaylistRule->field, PlaylistRule->action );
+                                guLogMessage( wxT( "Value: %016llX %016llX" ), PlaylistRule->fromvalue, PlaylistRule->tovalue );
+                                guLogMessage( wxT( "Dates: %016llX %016llX" ), PlaylistRule->fromdate, PlaylistRule->todate);
+                                guLogMessage( wxT( "Units: %016llX %016llX" ), PlaylistRule->fromunits, PlaylistRule->tounits);
+                                delete FilterItem;
+                            }
+                        }
+
+                        Rules = Rules->next;
+                        RuleCount++;
+                    }
+
+                    if( !ErrorInPlaylist )
+                    {
+                        // Save the dynamic playlist now
+                        Db->CreateDynamicPlayList( PlaylistName, &NewPlayList );
+                    }
 
                 }
             }

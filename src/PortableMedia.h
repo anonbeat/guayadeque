@@ -413,6 +413,10 @@ class guIpodLibrary : public guPortableMediaLibrary
 
     virtual void        UpdateStaticPlayListFile( const int plid );
 
+    virtual int         CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist );
+    int                 CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist, const bool indbonly ) { return guDbLibrary::CreateDynamicPlayList( name, playlist ); }
+    virtual void        UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist );
+
     int GetAlbumId( const wxString &albumname, const wxString &artist, const wxString &albumartist, const wxString &disk );
 
     Itdb_Playlist *     CreateiPodPlayList( const wxString &path, const wxArrayString &filenames );
