@@ -1890,6 +1890,7 @@ Itdb_Playlist * guIpodLibrary::CreateiPodPlayList( const wxString &path, const w
 // -------------------------------------------------------------------------------- //
 int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist )
 {
+    guLogMessage( wxT( "CreateDynamicPlaylist..." ) );
     Itdb_Playlist * DynPlayList = itdb_playlist_new( name.mb_str( wxConvFile ), true );
     if( DynPlayList )
     {
@@ -1993,11 +1994,21 @@ int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayL
 
         PlaylistRules->match_operator = playlist->m_AnyOption ? ITDB_SPLMATCH_OR : ITDB_SPLMATCH_AND;
 
+        guLogMessage( wxT( "*** Creating new Playlist : '%s'" ), name.c_str() );
+        guLogMessage( wxT( "liveupdate  : %i" ), PlaylistPref->liveupdate );
+        guLogMessage( wxT( "checkrules  : %i" ), PlaylistPref->checkrules );
+        guLogMessage( wxT( "checklimits : %i" ), PlaylistPref->checklimits );
+        guLogMessage( wxT( "limittype   : %i" ), PlaylistPref->limittype );
+
         int Index;
         int Count = playlist->m_Filters.Count();
         for( Index = 0; Index < Count; Index++ )
         {
-            Itdb_SPLRule * PlaylistRule = itdb_splr_add_new( DynPlayList, wxNOT_FOUND );
+            Itdb_SPLRule * PlaylistRule;
+            if( Index > 0 )
+                PlaylistRule = itdb_splr_add_new( DynPlayList, wxNOT_FOUND );
+            else
+                PlaylistRule = ( Itdb_SPLRule * ) PlaylistRules->rules->data;
             if( PlaylistRule )
             {
                 guFilterItem * FilterItem = &playlist->m_Filters[ Index ];
@@ -2192,9 +2203,20 @@ int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayL
                     //case guDYNAMIC_FILTER_TYPE_HASARTWORK :
                 }
 
+                guLogMessage( wxT( "field   : %i" ), PlaylistRule->field );
+                guLogMessage( wxT( "action  : %08X" ), PlaylistRule->action );
+                if( PlaylistRule->string )
+                    guLogMessage( wxT( "String  : '%s'" ), wxString( PlaylistRule->string, wxConvUTF8 ).c_str() );
+                guLogMessage( wxT( "Values  : %016llX %016llX" ), PlaylistRule->fromvalue, PlaylistRule->tovalue );
+                guLogMessage( wxT( "Dates   : %016llX %016llX" ), PlaylistRule->fromdate, PlaylistRule->todate);
+                guLogMessage( wxT( "Units   : %016llX %016llX" ), PlaylistRule->fromunits, PlaylistRule->tounits);
+
+                itdb_splr_validate( PlaylistRule );
+                guLogMessage( wxT( "Validated the Rule" ) );
             }
         }
 
+        itdb_spl_update( DynPlayList );
 
         iPodFlush();
     }
@@ -2719,6 +2741,11 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                             guFilterItem * FilterItem = new guFilterItem();
                             guLogMessage( wxT( "field       : %i" ), PlaylistRule->field );
                             guLogMessage( wxT( "action      : %08X" ), PlaylistRule->action );
+                            if( PlaylistRule->string )
+                                guLogMessage( wxT( "String  : '%s'" ), wxString( PlaylistRule->string, wxConvUTF8 ).c_str() );
+                            guLogMessage( wxT( "Values  : %016llX %016llX" ), PlaylistRule->fromvalue, PlaylistRule->tovalue );
+                            guLogMessage( wxT( "Dates   : %016llX %016llX" ), PlaylistRule->fromdate, PlaylistRule->todate);
+                            guLogMessage( wxT( "Units   : %016llX %016llX" ), PlaylistRule->fromunits, PlaylistRule->tounits);
 
                             switch( PlaylistRule->field )
                             {
