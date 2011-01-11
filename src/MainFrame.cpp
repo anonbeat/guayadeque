@@ -3259,9 +3259,6 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
                 guPortableMediaLibPanel * PortableMediaLibPanel = PortableMediaViewCtrl->LibPanel();
                 if( PortableMediaLibPanel )
                 {
-                    RemoveTabPanel( PortableMediaLibPanel );
-                    PortableMediaViewCtrl->DestroyLibPanel();
-
                     if( m_LibUpdateThread )
                     {
                         if( m_LibUpdateThread->LibPanel() == ( guLibPanel * ) PortableMediaLibPanel )
@@ -3281,6 +3278,9 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
                             m_LibCleanThread = NULL;
                         }
                     }
+
+                    RemoveTabPanel( PortableMediaLibPanel );
+                    PortableMediaViewCtrl->DestroyLibPanel();
                 }
             }
             else if( CmdId == 18 )  // Its the Playlists panel
