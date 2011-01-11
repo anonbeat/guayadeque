@@ -2122,6 +2122,13 @@ int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayL
                                 PlaylistRule->action = ITDB_SPLACTION_ENDS_WITH;
                                 break;
                         }
+                        PlaylistRule->string = strdup( FilterItem->m_Text.ToUTF8() );
+                        PlaylistRule->fromvalue = 0;
+                        PlaylistRule->tovalue = 0;
+                        PlaylistRule->fromdate = 0;
+                        PlaylistRule->todate = 0;
+                        PlaylistRule->fromunits = 0;
+                        PlaylistRule->tounits = 0;
                         break;
                     }
 
@@ -2151,6 +2158,12 @@ int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayL
                                 PlaylistRule->action = ITDB_SPLACTION_IS_LESS_THAN;
                                 break;
                         }
+                        PlaylistRule->fromvalue = FilterItem->m_Number;
+                        PlaylistRule->tovalue = FilterItem->m_Number;
+                        PlaylistRule->fromdate = 0;
+                        PlaylistRule->todate = 0;
+                        PlaylistRule->fromunits = 1;
+                        PlaylistRule->tounits = 1;
                         break;
                     }
 
@@ -2160,17 +2173,24 @@ int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayL
                         switch( FilterItem->m_Option )
                         {
                             case guDYNAMIC_FILTER_OPTION_DATE_IN_THE_LAST :
+                                PlaylistRule->action = ITDB_SPLACTION_IS_IN_THE_LAST;
                                 break;
+
                             case guDYNAMIC_FILTER_OPTION_DATE_BEFORE_THE_LAST :
+                                PlaylistRule->action = ITDB_SPLACTION_IS_NOT_IN_THE_LAST;
                                 break;
-                                // TO BE CONTINUE...
                         }
+                        PlaylistRule->fromvalue = ITDB_SPL_DATE_IDENTIFIER;
+                        PlaylistRule->tovalue   = ITDB_SPL_DATE_IDENTIFIER;
+                        PlaylistRule->fromdate  = FilterItem->m_Number * -1;
+                        PlaylistRule->todate    = 0;
+                        PlaylistRule->fromunits = DynPLDateOption2[ FilterItem->m_Option2 ];
+                        PlaylistRule->tounits   = 1;
                         break;
                     }
 
                     //case guDYNAMIC_FILTER_TYPE_HASARTWORK :
                 }
-
 
             }
         }
@@ -2189,7 +2209,10 @@ int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayL
 // -------------------------------------------------------------------------------- //
 void guIpodLibrary::UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist )
 {
-    guDbLibrary::UpdateDynamicPlayList( plid, playlist );
+    wxString PlayListName = GetPlayListName( plid );
+    DeletePlayList( plid );
+
+    CreateDynamicPlayList( PlayListName, playlist );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2873,7 +2896,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                     if( !ErrorInPlaylist )
                     {
                         // Save the dynamic playlist now
-                        Db->CreateDynamicPlayList( PlaylistName, &NewPlayList );
+                        Db->CreateDynamicPlayList( PlaylistName, &NewPlayList, true );
                     }
 
                 }

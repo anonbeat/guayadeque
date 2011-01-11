@@ -47,6 +47,8 @@
 #define guPLAYLIST_TYPE_STATIC       0
 #define guPLAYLIST_TYPE_DYNAMIC      1
 
+extern unsigned long DynPLDateOption2[];
+
 enum guTrackType {
     guTRACK_TYPE_DB,
     guTRACK_TYPE_NOTDB,
