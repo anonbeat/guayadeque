@@ -1635,7 +1635,8 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
                     CreateTaskBarIcon();
                 }
             }
-            else if( m_TaskBarIcon && !Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
+            else if( m_TaskBarIcon && ( !Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) ||
+                                         Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) ) )
             {
                 m_TaskBarIcon->RemoveIcon();
                 delete m_TaskBarIcon;
