@@ -1975,8 +1975,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 //        m_PendingScrob = true;
 //    }
 
-    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() //( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
-      )
+    if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() )
     {
         m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
         //m_PendingScrob = false;

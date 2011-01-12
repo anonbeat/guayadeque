@@ -935,6 +935,7 @@ void guTrackEditor::WriteItemData( void )
     //guLogMessage( wxT( "WriteItemData: %i" ), m_CurItem );
     if( m_CurItem >= 0 )
     {
+        long LongValue;
         if( m_AlbumArtistTextCtrl->IsModified() )
           ( * m_Items )[ m_CurItem ].m_AlbumArtist = m_AlbumArtistTextCtrl->GetLineText( 0 );
         if( m_ArtistTextCtrl->IsModified() )
@@ -946,13 +947,19 @@ void guTrackEditor::WriteItemData( void )
         if( m_CompTextCtrl->IsModified() )
           ( * m_Items )[ m_CurItem ].m_Composer = m_CompTextCtrl->GetLineText( 0 );
         if( m_NumberTextCtrl->IsModified() )
-          m_NumberTextCtrl->GetLineText( 0 ).ToLong( ( long int * ) &( * m_Items )[ m_CurItem ].m_Number );
+        {
+          m_NumberTextCtrl->GetLineText( 0 ).ToLong( &LongValue );
+          ( * m_Items )[ m_CurItem ].m_Number = LongValue;
+        }
         if( m_DiskTextCtrl->IsModified() )
           ( * m_Items )[ m_CurItem ].m_Disk = m_DiskTextCtrl->GetLineText( 0 );
         //if( m_GenreComboBox->IsModified() )
           ( * m_Items )[ m_CurItem ].m_GenreName = m_GenreComboBox->GetValue();
         if( m_YearTextCtrl->IsModified() )
-           m_YearTextCtrl->GetLineText( 0 ).ToLong( ( long * ) &( * m_Items )[ m_CurItem ].m_Year );
+        {
+           m_YearTextCtrl->GetLineText( 0 ).ToLong( &LongValue );
+           ( * m_Items )[ m_CurItem ].m_Year = LongValue;
+        }
         if( m_RatingChanged )
             ( * m_Items )[ m_CurItem ].m_Rating = m_Rating->GetRating();
         if( m_CommentText->IsModified() )
