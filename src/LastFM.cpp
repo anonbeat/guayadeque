@@ -272,7 +272,7 @@ wxString guLastFM::AuthGetToken()
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -335,7 +335,7 @@ wxString guLastFM::AuthGetSession()
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -402,7 +402,7 @@ bool guLastFM::AlbumAddTags( const wxString &Artist, const wxString &Album, cons
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -507,7 +507,7 @@ guAlbumInfo guLastFM::AlbumGetInfo( const wxString &Artist, const wxString &Albu
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -575,7 +575,7 @@ wxArrayString guLastFM::AlbumGetTags( const wxString &Artist, const wxString &Al
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -622,7 +622,7 @@ bool guLastFM::AlbumRemoveTag( const wxString &Artist, const wxString &Album, co
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -668,7 +668,7 @@ bool guLastFM::ArtistAddTags( const wxString &Artist, const wxString &Tags )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -777,7 +777,7 @@ guArtistInfo guLastFM::ArtistGetInfo( const wxString &Artist )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -879,7 +879,7 @@ guSimilarArtistInfoArray guLastFM::ArtistGetSimilar( const wxString &Artist )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -937,7 +937,7 @@ wxArrayString guLastFM::ArtistGetTags( const wxString &Artist )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1030,7 +1030,7 @@ guAlbumInfoArray guLastFM::ArtistGetTopAlbums( const wxString &Artist )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1093,7 +1093,7 @@ wxArrayString guLastFM::ArtistGetTopTags( const wxString &Artist )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1251,7 +1251,7 @@ guTopTrackInfoArray guLastFM::ArtistGetTopTracks( const wxString &Artist )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1449,7 +1449,7 @@ guEventInfoArray guLastFM::ArtistGetEvents( const wxString &Artist )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1551,7 +1551,7 @@ guTrackInfo guLastFM::TrackGetInfo( const wxString &Artist, const wxString &Trac
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1656,7 +1656,7 @@ guSimilarTrackInfoArray guLastFM::TrackGetSimilar( const wxString &Artist, const
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1721,7 +1721,7 @@ wxArrayString guLastFM::TrackGetTags( const wxString &Artist, const wxString &Al
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1785,7 +1785,7 @@ wxArrayString guLastFM::TrackGetTopTags( const wxString &Artist, const wxString 
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1832,7 +1832,7 @@ bool guLastFM::TrackRemoveTag( const wxString &Artist, const wxString &Track, co
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1876,7 +1876,7 @@ bool guLastFM::TrackLove( const wxString &artist, const wxString &title )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
@@ -1920,7 +1920,7 @@ bool guLastFM::TrackBan( const wxString &artist, const wxString &title )
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
                         XmlNode->GetPropVal( wxT( "code" ), &Status );
-                        Status.ToLong( ( long * ) &m_ErrorCode );
+                        Status.ToLong( &m_ErrorCode );
                     }
                 }
             }
