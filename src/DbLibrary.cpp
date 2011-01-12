@@ -3683,7 +3683,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 
       case guDYNAMIC_FILTER_TYPE_LASTPLAY :
       {
-        query += wxT( "( song_lastplay " ) +
+        query += wxT( "( IFNULL( song_lastplay, 0 ) " ) +
                  DynPLDateOption( playlist->m_Filters[ index ].m_Option,
                  playlist->m_Filters[ index ].m_Number,
                  playlist->m_Filters[ index ].m_Option2 ) + wxT( ")" );
