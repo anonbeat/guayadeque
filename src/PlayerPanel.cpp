@@ -1305,23 +1305,26 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
         if( LevelInfo->m_Decay_L < double( m_SilenceDetectorLevel ) )
         {
             unsigned long EventTime = m_LastCurPos; //LevelInfo->m_EndTime;
-            unsigned long TrackLength = m_MediaSong.m_Length * 1000;
-            //guLogMessage( wxT( "The level is now lower than triger level" ) );
-            //guLogMessage( wxT( "(%f) %02i : %li , %i, %i" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
-            //guLogMessage( wxT( "(%li) %f %02i : %li , %i, %i" ), event.GetExtraLong(), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
-
-
-            // We only skip to next track if the level is lower than the triger one and also if
-            // we are at the end time period (if configured this way) and the time left is more than 500msecs
-            if( !m_TrackChanged && !m_NextTrackId && ( m_CurTrackId == event.GetExtraLong() ) &&
-                ( !m_SilenceDetectorTime || ( ( ( unsigned int ) m_SilenceDetectorTime > ( TrackLength - EventTime ) ) &&
-                  ( ( EventTime + 500 ) < TrackLength ) ) ) )
+            if( EventTime > 10000 )
             {
-                m_SilenceDetected = true;
-                //guLogMessage( wxT( "Silence detected. Changed to next track %i" ), m_PlayListCtrl->GetCurItem() );
-                wxCommandEvent evt;
-                evt.SetId( ID_PLAYERPANEL_NEXTTRACK );
-                OnNextTrackButtonClick( evt );
+                unsigned long TrackLength = m_MediaSong.m_Length * 1000;
+                //guLogMessage( wxT( "The level is now lower than triger level" ) );
+                //guLogMessage( wxT( "(%f) %02i : %li , %i, %i" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
+                //guLogMessage( wxT( "(%li) %f %02i : %li , %i, %i" ), event.GetExtraLong(), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
+
+
+                // We only skip to next track if the level is lower than the triger one and also if
+                // we are at the end time period (if configured this way) and the time left is more than 500msecs
+                if( !m_TrackChanged && !m_NextTrackId && ( m_CurTrackId == event.GetExtraLong() ) &&
+                    ( !m_SilenceDetectorTime || ( ( ( unsigned int ) m_SilenceDetectorTime > ( TrackLength - EventTime ) ) &&
+                      ( ( EventTime + 500 ) < TrackLength ) ) ) )
+                {
+                    m_SilenceDetected = true;
+                    //guLogMessage( wxT( "Silence detected. Changed to next track %i" ), m_PlayListCtrl->GetCurItem() );
+                    wxCommandEvent evt;
+                    evt.SetId( ID_PLAYERPANEL_NEXTTRACK );
+                    OnNextTrackButtonClick( evt );
+                }
             }
         }
     }
