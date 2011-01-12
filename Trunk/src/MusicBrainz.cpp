@@ -101,9 +101,9 @@ int GetXmlTrackLength( wxXmlNode * XmlNode )
     {
         if( XmlNode->GetName() == wxT( "duration" ) )
         {
-            int RetVal;
-            XmlNode->GetNodeContent().ToLong( ( long int * ) &RetVal );
-            return RetVal;
+            long RetVal;
+            XmlNode->GetNodeContent().ToLong( &RetVal );
+            return ( int ) RetVal;
         }
         XmlNode = XmlNode->GetNext();
     }
@@ -121,7 +121,9 @@ void ReadXmlTrack( wxXmlNode * XmlNode, guMBTrack * track )
         }
         else if( XmlNode->GetName() == wxT( "duration" ) )
         {
-            XmlNode->GetNodeContent().ToLong( ( long int * ) &track->m_Length );
+            long LongValue;
+            XmlNode->GetNodeContent().ToLong( &LongValue );
+            track->m_Length = LongValue;
         }
         else if( XmlNode->GetName() == wxT( "artist" ) )
         {

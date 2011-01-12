@@ -40,12 +40,12 @@ int StrLengthToInt( const wxString &length )
     {
         // 1:02:03:04
         wxString Rest = length.Strip( wxString::both );
-        int element;
+        long element;
         int FactorIndex = 0;
         int RetVal = 0;
         int Factor[] = { 1, 60, 3600, 86400 };
         do {
-            Rest.AfterLast( wxT( ':' ) ).ToLong( ( long * ) &element );
+            Rest.AfterLast( wxT( ':' ) ).ToLong( &element );
             if( !element )
                 break;
             RetVal += ( Factor[ FactorIndex ] * element );

@@ -110,8 +110,9 @@ void GetRelease( wxXmlNode * XmlNode, guDiscogsRelease * release )
         }
         else if( XmlNode->GetName() == wxT( "year" ) )
         {
-            wxString Value = XmlNode->GetNodeContent();
-            Value.ToLong( ( long * ) &release->m_Year );
+            long LongValue;
+            XmlNode->GetNodeContent().ToLong( &LongValue );
+            release->m_Year = LongValue;
         }
         XmlNode = XmlNode->GetNext();
     }
@@ -131,9 +132,11 @@ void GetReleases( wxXmlNode * XmlNode, guDiscogsReleaseArray * releases )
             //guLogMessage( wxT( "reading release..." ) );
             guDiscogsRelease * Release = new guDiscogsRelease();
             wxString Value;
+            long LongValue;
 
-            XmlNode->GetPropVal( wxT( "id" ),&Value );
-            Value.ToLong( ( long * ) &Release->m_Id );
+            XmlNode->GetPropVal( wxT( "id" ), &Value );
+            Value.ToLong( &LongValue );
+            Release->m_Id = LongValue;
 
             XmlNode->GetPropVal( wxT( "type" ), &Release->m_Type );
             GetRelease( XmlNode->GetChildren(), Release );
@@ -158,8 +161,9 @@ void GetTrack( wxXmlNode * XmlNode, guDiscogsTrack * track )
         wxString Value;
         if( XmlNode->GetName() == wxT( "position" ) )
         {
-            Value = XmlNode->GetNodeContent();
-            Value.ToLong( ( long * ) &track->m_Position );
+            long LongValue;
+            XmlNode->GetNodeContent().ToLong( &LongValue );
+            track->m_Position = LongValue;
         }
         else if( XmlNode->GetName() == wxT( "title" ) )
         {

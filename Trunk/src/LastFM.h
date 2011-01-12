@@ -175,7 +175,7 @@ class guLastFM
     wxString        m_AuthSession;
     wxString        m_AuthKey;
     wxString        m_Language;
-    int             m_ErrorCode;
+    long            m_ErrorCode;
 
   public:
     guLastFM();
