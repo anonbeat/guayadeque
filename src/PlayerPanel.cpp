@@ -2000,6 +2000,14 @@ void guPlayerPanel::SetCurrentCoverImage( wxImage * coverimage, const guSongCove
             m_MediaSong.m_CoverPath = coverpath;
         }
     }
+    else if( covertype == GU_SONGCOVER_NONE )
+    {
+        m_PlayerCoverBitmap->SetBitmap( guImage( guIMAGE_INDEX_no_cover ) );
+        m_PlayerCoverBitmap->Refresh();
+
+        m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
+        m_MediaSong.m_CoverPath = wxEmptyString;
+    }
 }
 
 // -------------------------------------------------------------------------------- //

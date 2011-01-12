@@ -106,192 +106,192 @@ class guLibPanelDropTarget : public wxFileDropTarget
 class guLibPanel : public wxPanel
 {
   protected :
-    wxAuiManager        m_AuiManager;
-    unsigned int        m_VisiblePanels;
+    wxAuiManager            m_AuiManager;
+    unsigned int            m_VisiblePanels;
 
-    wxSearchCtrl *      m_InputTextCtrl;
-    guGeListBox *       m_GenreListCtrl;
-    guTaListBox *       m_LabelsListCtrl;
-    guArListBox *       m_ArtistListCtrl;
-    guAlListBox *       m_AlbumListCtrl;
-    guSoListBox *       m_SongListCtrl;
-    guYeListBox *       m_YearListCtrl;
-    guRaListBox *       m_RatingListCtrl;
-    guPcListBox *       m_PlayCountListCtrl;
-    guCoListBox *       m_ComposerListCtrl;
-    guAAListBox *       m_AlbumArtistListCtrl;
+    wxSearchCtrl *          m_InputTextCtrl;
+    guGeListBox *           m_GenreListCtrl;
+    guTaListBox *           m_LabelsListCtrl;
+    guArListBox *           m_ArtistListCtrl;
+    guAlListBox *           m_AlbumListCtrl;
+    guSoListBox *           m_SongListCtrl;
+    guYeListBox *           m_YearListCtrl;
+    guRaListBox *           m_RatingListCtrl;
+    guPcListBox *           m_PlayCountListCtrl;
+    guCoListBox *           m_ComposerListCtrl;
+    guAAListBox *           m_AlbumArtistListCtrl;
 
     //
-    guDbLibrary *       m_Db;
-    bool                m_UpdateLock;
-    guPlayerPanel *     m_PlayerPanel;
-    wxTimer             m_SelChangedTimer;
-    wxTimer             m_TextChangedTimer;
-    int                 m_SelChangedObject;
-    bool                m_DoneClearSearchText;
+    guDbLibrary *           m_Db;
+    bool                    m_UpdateLock;
+    guPlayerPanel *         m_PlayerPanel;
+    wxTimer                 m_SelChangedTimer;
+    wxTimer                 m_TextChangedTimer;
+    int                     m_SelChangedObject;
+    bool                    m_DoneClearSearchText;
 
-    int                 m_BaseCommand;
-    wxString            m_ConfigPrefixVarName;
-    int                 m_ContextMenuFlags;
+    int                     m_BaseCommand;
+    wxString                m_ConfigPrefixVarName;
+    int                     m_ContextMenuFlags;
 
     // Search Str events
-    virtual void OnSearchActivated( wxCommandEvent &event );
-    virtual void OnSearchCancelled( wxCommandEvent &event );
-    virtual void OnSearchSelected( wxCommandEvent &event );
-    virtual void ClearSearchText( void );
-    bool         DoTextSearch( void );
+    virtual void            OnSearchActivated( wxCommandEvent &event );
+    virtual void            OnSearchCancelled( wxCommandEvent &event );
+    virtual void            OnSearchSelected( wxCommandEvent &event );
+    virtual void            ClearSearchText( void );
+    bool                    DoTextSearch( void );
 
     // LabelsListBox Events
-    virtual void OnLabelListActivated( wxListEvent &event );
-    virtual void OnLabelListSelected( wxListEvent &event );
-    virtual void OnLabelPlayClicked( wxCommandEvent &event );
-    virtual void OnLabelQueueClicked( wxCommandEvent &event );
-    virtual void OnLabelQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnLabelListActivated( wxListEvent &event );
+    virtual void            OnLabelListSelected( wxListEvent &event );
+    virtual void            OnLabelPlayClicked( wxCommandEvent &event );
+    virtual void            OnLabelQueueClicked( wxCommandEvent &event );
+    virtual void            OnLabelQueueAsNextClicked( wxCommandEvent &event );
 //    void OnLabelClearSelectClicked( wxCommandEvent &event );
-    virtual void OnLabelCopyToClicked( wxCommandEvent &event );
-    virtual void OnLabelSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnLabelCopyToClicked( wxCommandEvent &event );
+    virtual void            OnLabelSavePlayListClicked( wxCommandEvent &event );
 
     // GenreListBox Events
-    virtual void OnGenreListActivated( wxListEvent &event );
-    virtual void OnGenreListSelected( wxListEvent &event );
-    virtual void OnGenrePlayClicked( wxCommandEvent &event );
-    virtual void OnGenreQueueClicked( wxCommandEvent &event );
-    virtual void OnGenreQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnGenreCopyToClicked( wxCommandEvent &event );
-    virtual void OnGenreSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnGenreListActivated( wxListEvent &event );
+    virtual void            OnGenreListSelected( wxListEvent &event );
+    virtual void            OnGenrePlayClicked( wxCommandEvent &event );
+    virtual void            OnGenreQueueClicked( wxCommandEvent &event );
+    virtual void            OnGenreQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnGenreCopyToClicked( wxCommandEvent &event );
+    virtual void            OnGenreSavePlayListClicked( wxCommandEvent &event );
 
     // ArtistsListBox Events
-    virtual void OnArtistListActivated( wxListEvent &event );
-    virtual void OnArtistListSelected( wxListEvent &event );
-    virtual void OnArtistPlayClicked( wxCommandEvent &event );
-    virtual void OnArtistQueueClicked( wxCommandEvent &event );
-    virtual void OnArtistQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnArtistEditLabelsClicked( wxCommandEvent &event );
-    virtual void OnArtistEditTracksClicked( wxCommandEvent &event );
-    virtual void OnArtistCopyToClicked( wxCommandEvent &event );
-    virtual void OnArtistSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnArtistListActivated( wxListEvent &event );
+    virtual void            OnArtistListSelected( wxListEvent &event );
+    virtual void            OnArtistPlayClicked( wxCommandEvent &event );
+    virtual void            OnArtistQueueClicked( wxCommandEvent &event );
+    virtual void            OnArtistQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnArtistEditLabelsClicked( wxCommandEvent &event );
+    virtual void            OnArtistEditTracksClicked( wxCommandEvent &event );
+    virtual void            OnArtistCopyToClicked( wxCommandEvent &event );
+    virtual void            OnArtistSavePlayListClicked( wxCommandEvent &event );
 
     // AlbumsListBoxEvents
-    virtual void OnAlbumListActivated( wxListEvent &event );
-    virtual void OnAlbumListSelected( wxListEvent &event );
-    virtual void OnAlbumPlayClicked( wxCommandEvent &event );
-    virtual void OnAlbumQueueClicked( wxCommandEvent &event );
-    virtual void OnAlbumQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnAlbumEditLabelsClicked( wxCommandEvent &event );
-    virtual void OnAlbumEditTracksClicked( wxCommandEvent &event );
-    virtual void OnAlbumDownloadCoverClicked( wxCommandEvent &event );
-    virtual void OnAlbumSelectCoverClicked( wxCommandEvent &event );
-    virtual void OnAlbumDeleteCoverClicked( wxCommandEvent &event );
-    virtual void OnAlbumEmbedCoverClicked( wxCommandEvent &event );
-    virtual void OnAlbumCopyToClicked( wxCommandEvent &event );
-    virtual void OnAlbumSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnAlbumListActivated( wxListEvent &event );
+    virtual void            OnAlbumListSelected( wxListEvent &event );
+    virtual void            OnAlbumPlayClicked( wxCommandEvent &event );
+    virtual void            OnAlbumQueueClicked( wxCommandEvent &event );
+    virtual void            OnAlbumQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnAlbumEditLabelsClicked( wxCommandEvent &event );
+    virtual void            OnAlbumEditTracksClicked( wxCommandEvent &event );
+    virtual void            OnAlbumDownloadCoverClicked( wxCommandEvent &event );
+    virtual void            OnAlbumSelectCoverClicked( wxCommandEvent &event );
+    virtual void            OnAlbumDeleteCoverClicked( wxCommandEvent &event );
+    virtual void            OnAlbumEmbedCoverClicked( wxCommandEvent &event );
+    virtual void            OnAlbumCopyToClicked( wxCommandEvent &event );
+    virtual void            OnAlbumSavePlayListClicked( wxCommandEvent &event );
 
-    virtual void DoDeleteAlbumCover( const int albumid );
+    virtual void            DoDeleteAlbumCover( const int albumid );
 
     // YearsListBoxEvents
-    virtual void OnYearListSelected( wxListEvent &event );
-    virtual void OnYearListActivated( wxListEvent &event );
-    virtual void OnYearListPlayClicked( wxCommandEvent &event );
-    virtual void OnYearListQueueClicked( wxCommandEvent &event );
-    virtual void OnYearListQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnYearListEditTracksClicked( wxCommandEvent &event );
-    virtual void OnYearListCopyToClicked( wxCommandEvent &event );
-    virtual void OnYearSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnYearListSelected( wxListEvent &event );
+    virtual void            OnYearListActivated( wxListEvent &event );
+    virtual void            OnYearListPlayClicked( wxCommandEvent &event );
+    virtual void            OnYearListQueueClicked( wxCommandEvent &event );
+    virtual void            OnYearListQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnYearListEditTracksClicked( wxCommandEvent &event );
+    virtual void            OnYearListCopyToClicked( wxCommandEvent &event );
+    virtual void            OnYearSavePlayListClicked( wxCommandEvent &event );
 
     // RatingsListBoxEvents
-    virtual void OnRatingListSelected( wxListEvent &event );
-    virtual void OnRatingListActivated( wxListEvent &event );
-    virtual void OnRatingListPlayClicked( wxCommandEvent &event );
-    virtual void OnRatingListQueueClicked( wxCommandEvent &event );
-    virtual void OnRatingListQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnRatingListEditTracksClicked( wxCommandEvent &event );
-    virtual void OnRatingListCopyToClicked( wxCommandEvent &event );
-    virtual void OnRatingSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnRatingListSelected( wxListEvent &event );
+    virtual void            OnRatingListActivated( wxListEvent &event );
+    virtual void            OnRatingListPlayClicked( wxCommandEvent &event );
+    virtual void            OnRatingListQueueClicked( wxCommandEvent &event );
+    virtual void            OnRatingListQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnRatingListEditTracksClicked( wxCommandEvent &event );
+    virtual void            OnRatingListCopyToClicked( wxCommandEvent &event );
+    virtual void            OnRatingSavePlayListClicked( wxCommandEvent &event );
 
     // PlayCountListBoxEvents
-    virtual void OnPlayCountListSelected( wxListEvent &event );
-    virtual void OnPlayCountListActivated( wxListEvent &event );
-    virtual void OnPlayCountListPlayClicked( wxCommandEvent &event );
-    virtual void OnPlayCountListQueueClicked( wxCommandEvent &event );
-    virtual void OnPlayCountListQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnPlayCountListEditTracksClicked( wxCommandEvent &event );
-    virtual void OnPlayCountListCopyToClicked( wxCommandEvent &event );
-    virtual void OnPlayCountSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnPlayCountListSelected( wxListEvent &event );
+    virtual void            OnPlayCountListActivated( wxListEvent &event );
+    virtual void            OnPlayCountListPlayClicked( wxCommandEvent &event );
+    virtual void            OnPlayCountListQueueClicked( wxCommandEvent &event );
+    virtual void            OnPlayCountListQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnPlayCountListEditTracksClicked( wxCommandEvent &event );
+    virtual void            OnPlayCountListCopyToClicked( wxCommandEvent &event );
+    virtual void            OnPlayCountSavePlayListClicked( wxCommandEvent &event );
 
     // ComposersListBoxEvents
-    virtual void OnComposerListSelected( wxListEvent &event );
-    virtual void OnComposerListActivated( wxListEvent &event );
-    virtual void OnComposerListPlayClicked( wxCommandEvent &event );
-    virtual void OnComposerListQueueClicked( wxCommandEvent &event );
-    virtual void OnComposerListQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnComposerListEditTracksClicked( wxCommandEvent &event );
-    virtual void OnComposerListCopyToClicked( wxCommandEvent &event );
-    virtual void OnComposerSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnComposerListSelected( wxListEvent &event );
+    virtual void            OnComposerListActivated( wxListEvent &event );
+    virtual void            OnComposerListPlayClicked( wxCommandEvent &event );
+    virtual void            OnComposerListQueueClicked( wxCommandEvent &event );
+    virtual void            OnComposerListQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnComposerListEditTracksClicked( wxCommandEvent &event );
+    virtual void            OnComposerListCopyToClicked( wxCommandEvent &event );
+    virtual void            OnComposerSavePlayListClicked( wxCommandEvent &event );
 
     // AlbumArtistsListBoxEvents
-    virtual void OnAlbumArtistListSelected( wxListEvent &event );
-    virtual void OnAlbumArtistListActivated( wxListEvent &event );
-    virtual void OnAlbumArtistListPlayClicked( wxCommandEvent &event );
-    virtual void OnAlbumArtistListQueueClicked( wxCommandEvent &event );
-    virtual void OnAlbumArtistListQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnAlbumArtistListEditTracksClicked( wxCommandEvent &event );
-    virtual void OnAlbumArtistListCopyToClicked( wxCommandEvent &event );
-    virtual void OnAlbumArtistSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnAlbumArtistListSelected( wxListEvent &event );
+    virtual void            OnAlbumArtistListActivated( wxListEvent &event );
+    virtual void            OnAlbumArtistListPlayClicked( wxCommandEvent &event );
+    virtual void            OnAlbumArtistListQueueClicked( wxCommandEvent &event );
+    virtual void            OnAlbumArtistListQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnAlbumArtistListEditTracksClicked( wxCommandEvent &event );
+    virtual void            OnAlbumArtistListCopyToClicked( wxCommandEvent &event );
+    virtual void            OnAlbumArtistSavePlayListClicked( wxCommandEvent &event );
 
     // SongsListBox Events
-    virtual void OnSongListActivated( wxListEvent &event );
-    virtual void OnSongPlayClicked( wxCommandEvent &event );
-    virtual void OnSongPlayAllClicked( wxCommandEvent &event );
-    virtual void OnSongQueueClicked( wxCommandEvent &event );
-    virtual void OnSongQueueAsNextClicked( wxCommandEvent &event );
-    virtual void OnSongQueueAllClicked( wxCommandEvent &event );
-    virtual void OnSongQueueAllAsNextClicked( wxCommandEvent &event );
-    virtual void OnSongsEditLabelsClicked( wxCommandEvent &event );
-    virtual void OnSongsEditTracksClicked( wxCommandEvent &event );
-    virtual void OnSongSavePlayListClicked( wxCommandEvent &event );
-    virtual void OnSongListColClicked( wxListEvent &event );
-    virtual void OnSongSelectGenre( wxCommandEvent &event );
-    virtual void OnSongSelectAlbumArtist( wxCommandEvent &event );
-    virtual void OnSongSelectArtist( wxCommandEvent &event );
-    virtual void OnSongSelectAlbum( wxCommandEvent &event );
-    virtual void OnSongDeleteLibrary( wxCommandEvent &event );
-    virtual void OnSongDeleteDrive( wxCommandEvent &event );
-    virtual void OnSongSetRating( wxCommandEvent &event );
-    virtual void OnSongSetField( wxCommandEvent &event );
-    virtual void OnSongEditField( wxCommandEvent &event );
-    virtual void OnSongCopyToClicked( wxCommandEvent &event );
+    virtual void            OnSongListActivated( wxListEvent &event );
+    virtual void            OnSongPlayClicked( wxCommandEvent &event );
+    virtual void            OnSongPlayAllClicked( wxCommandEvent &event );
+    virtual void            OnSongQueueClicked( wxCommandEvent &event );
+    virtual void            OnSongQueueAsNextClicked( wxCommandEvent &event );
+    virtual void            OnSongQueueAllClicked( wxCommandEvent &event );
+    virtual void            OnSongQueueAllAsNextClicked( wxCommandEvent &event );
+    virtual void            OnSongsEditLabelsClicked( wxCommandEvent &event );
+    virtual void            OnSongsEditTracksClicked( wxCommandEvent &event );
+    virtual void            OnSongSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnSongListColClicked( wxListEvent &event );
+    virtual void            OnSongSelectGenre( wxCommandEvent &event );
+    virtual void            OnSongSelectAlbumArtist( wxCommandEvent &event );
+    virtual void            OnSongSelectArtist( wxCommandEvent &event );
+    virtual void            OnSongSelectAlbum( wxCommandEvent &event );
+    virtual void            OnSongDeleteLibrary( wxCommandEvent &event );
+    virtual void            OnSongDeleteDrive( wxCommandEvent &event );
+    virtual void            OnSongSetRating( wxCommandEvent &event );
+    virtual void            OnSongSetField( wxCommandEvent &event );
+    virtual void            OnSongEditField( wxCommandEvent &event );
+    virtual void            OnSongCopyToClicked( wxCommandEvent &event );
 
     //
-    void OnPaneClose( wxAuiManagerEvent &event );
+    void                    OnPaneClose( wxAuiManagerEvent &event );
 
     //
-    void OnSelChangedTimer( wxTimerEvent &event );
-    void OnTextChangedTimer( wxTimerEvent &event );
-    void DoSelectionChanged( void );
+    void                    OnSelChangedTimer( wxTimerEvent &event );
+    void                    OnTextChangedTimer( wxTimerEvent &event );
+    void                    DoSelectionChanged( void );
 
 
-    void ReloadLabels( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_LABELS ) m_LabelsListCtrl->ReloadItems( reset ); }
-    void ReloadGenres( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_GENRES ) m_GenreListCtrl->ReloadItems( reset ); }
-    void ReloadAlbumArtists( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ALBUMARTISTS ) m_AlbumArtistListCtrl->ReloadItems( reset ); }
-    void ReloadArtists( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ARTISTS ) m_ArtistListCtrl->ReloadItems( reset ); }
-    void ReloadComposers( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_COMPOSERS ) m_ComposerListCtrl->ReloadItems( reset ); }
-    void ReloadAlbums( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ALBUMS ) m_AlbumListCtrl->ReloadItems( reset ); }
-    void ReloadYears( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_YEARS ) m_YearListCtrl->ReloadItems( reset ); }
-    void ReloadRatings( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_RATINGS ) m_RatingListCtrl->ReloadItems( reset ); }
-    void ReloadPlayCounts( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_PLAYCOUNT ) m_PlayCountListCtrl->ReloadItems( reset ); }
-    void ReloadSongs( bool reset = true ) { m_SongListCtrl->ReloadItems( reset ); }
+    void                    ReloadLabels( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_LABELS ) m_LabelsListCtrl->ReloadItems( reset ); }
+    void                    ReloadGenres( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_GENRES ) m_GenreListCtrl->ReloadItems( reset ); }
+    void                    ReloadAlbumArtists( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ALBUMARTISTS ) m_AlbumArtistListCtrl->ReloadItems( reset ); }
+    void                    ReloadArtists( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ARTISTS ) m_ArtistListCtrl->ReloadItems( reset ); }
+    void                    ReloadComposers( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_COMPOSERS ) m_ComposerListCtrl->ReloadItems( reset ); }
+    void                    ReloadAlbums( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_ALBUMS ) m_AlbumListCtrl->ReloadItems( reset ); }
+    void                    ReloadYears( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_YEARS ) m_YearListCtrl->ReloadItems( reset ); }
+    void                    ReloadRatings( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_RATINGS ) m_RatingListCtrl->ReloadItems( reset ); }
+    void                    ReloadPlayCounts( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_PLAYCOUNT ) m_PlayCountListCtrl->ReloadItems( reset ); }
+    void                    ReloadSongs( bool reset = true ) { m_SongListCtrl->ReloadItems( reset ); }
 
-    virtual bool OnDropFiles( const wxArrayString &filenames );
+    virtual bool            OnDropFiles( const wxArrayString &filenames );
 
-    virtual void UpdatePlaylists( void );
+    virtual void            UpdatePlaylists( void );
 
-    virtual void DoEditTracks( guTrackArray &tracks, guImagePtrArray &images, wxArrayString &lyrics );
+    virtual void            DoEditTracks( guTrackArray &tracks, guImagePtrArray &images, wxArrayString &lyrics );
 
-    virtual void UpdateTracks( const guTrackArray &tracks );
-    virtual void UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images );
-    virtual void UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics );
+    virtual void            UpdateTracks( const guTrackArray &tracks );
+    virtual void            UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images );
+    virtual void            UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics );
 
-    virtual void SaveToPlayList( const wxArrayInt &tracks );
+    virtual void            SaveToPlayList( const wxArrayInt &tracks );
 
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
@@ -321,17 +321,8 @@ class guLibPanel : public wxPanel
     bool                    IsPanelShown( const int panelid ) const;
     void                    ShowPanel( const int panelid, bool show );
 
-    void UpdatedTracks( const guTrackArray * tracks )
-    {
-        if( m_SongListCtrl )
-            m_SongListCtrl->UpdatedTracks( tracks );
-    }
-
-    void UpdatedTrack( const guTrack * track )
-    {
-        if( m_SongListCtrl )
-            m_SongListCtrl->UpdatedTrack( track );
-    }
+    void                    UpdatedTracks( const guTrackArray * tracks ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTracks( tracks ); }
+    void                    UpdatedTrack( const guTrack * track ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTrack( track ); }
 
     int                     GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
     virtual void            CreateContextMenu( wxMenu * menu, const int windowid = 0 );
@@ -352,6 +343,8 @@ class guLibPanel : public wxPanel
 
     virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg );
     virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath );
+
+    virtual wxImage *       GetAlbumCover( const int albumid, wxString &coverpath );
 
     friend class guLibPanelDropTarget;
 };

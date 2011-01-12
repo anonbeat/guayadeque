@@ -612,6 +612,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_VIEW_MAGNATUNE_RATINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
     Connect( ID_MENU_VIEW_MAGNATUNE_PLAYCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneShowPanel ), NULL, this );
 
+    Connect( ID_ALBUM_COVER_DOWNLOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryCoverDownloaded ), NULL, this );
     Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoCoverDownloaded ), NULL, this );
     Connect( ID_MAGNATUNE_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneCoverDownloaded ), NULL, this );
 
@@ -751,6 +752,10 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MENU_VIEW_ALBUMBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewAlbumBrowser ), NULL, this );
 
     Disconnect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
+
+    Disconnect( ID_ALBUM_COVER_DOWNLOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryCoverDownloaded ), NULL, this );
+    Disconnect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoCoverDownloaded ), NULL, this );
+    Disconnect( ID_MAGNATUNE_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneCoverDownloaded ), NULL, this );
 
     Disconnect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
     Disconnect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
@@ -5067,6 +5072,42 @@ void guMainFrame::UpdatedTrack( int updatedby, const guTrack * track )
     }
 }
 
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLibraryCoverDownloaded( wxCommandEvent &event )
+{
+    guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+    if( m_PlayerPanel && LibPanel )
+    {
+        const guCurrentTrack * CurrentTrack = m_PlayerPanel->GetCurrentTrack();
+        if( ( CurrentTrack->m_LibPanel ? ( CurrentTrack->m_LibPanel == LibPanel ) : ( m_LibPanel == LibPanel ) ) &&
+            CurrentTrack->m_Type == guTRACK_TYPE_DB &&
+            CurrentTrack->m_AlbumId == event.GetInt() )
+        {
+            wxString CoverPath;
+            wxImage * CoverImage = LibPanel->GetAlbumCover( event.GetInt(), CoverPath );
+            if( CoverImage )
+            {
+                m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
+                delete CoverImage;
+            }
+            else
+            {
+                m_PlayerPanel->SetCurrentCoverImage( NULL, GU_SONGCOVER_NONE, CoverPath );
+            }
+
+            if( m_CoverPanel )
+            {
+                m_CoverPanel->OnUpdatedTrack( event );
+            }
+
+            if( m_MPRIS2 )
+            {
+                m_MPRIS2->OnPlayerTrackChange();
+            }
+        }
+    }
+}
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnJamendoCoverDownloaded( wxCommandEvent &event )
