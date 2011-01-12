@@ -394,6 +394,7 @@ class guMainFrame : public wxFrame
     void                            RemoveTabPanel( wxPanel * panel );
     void                            InsertTabPanel( wxPanel * panel, const int index, const wxString &label );
 
+    void                            OnLibraryCoverDownloaded( wxCommandEvent &event );
     void                            OnJamendoCoverDownloaded( wxCommandEvent &event );
     void                            OnMagnatuneCoverDownloaded( wxCommandEvent &event );
 

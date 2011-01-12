@@ -1287,6 +1287,11 @@ bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wx
     if( coverimg->SaveFile( CoverName, GetCoverType() ) )
     {
         m_Db->SetAlbumCover( albumid, CoverName );
+
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+        evt.SetInt( albumid );
+        evt.SetClientData( this );
+        wxPostEvent( wxTheApp->GetTopWindow(), evt );
         return true;
     }
     return false;
@@ -1333,6 +1338,29 @@ bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wx
         }
     }
     return false;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guLibPanel::GetAlbumCover( const int albumid, wxString &coverpath )
+{
+    int CoverId = m_Db->GetAlbumCoverId( albumid );
+    if( CoverId != wxNOT_FOUND )
+    {
+        coverpath = m_Db->GetCoverPath( CoverId );
+        if( !coverpath.IsEmpty() )
+        {
+            wxImage * CoverImage = new wxImage( coverpath, wxBITMAP_TYPE_ANY );
+            if( CoverImage )
+            {
+                if( CoverImage->IsOk() )
+                {
+                    return CoverImage;
+                }
+                delete CoverImage;
+            }
+        }
+    }
+    return NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1427,6 +1455,11 @@ void guLibPanel::DoDeleteAlbumCover( const int albumid )
         }
     }
     m_Db->SetAlbumCover( albumid, wxEmptyString );
+
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+    evt.SetInt( albumid );
+    evt.SetClientData( this );
+    wxPostEvent( wxTheApp->GetTopWindow(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
