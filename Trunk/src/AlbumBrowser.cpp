@@ -1272,6 +1272,11 @@ void guAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
 
                     ReloadItems();
                     RefreshAll();
+
+                    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+                    evt.SetInt( albumid );
+                    evt.SetClientData( NULL );
+                    wxPostEvent( wxTheApp->GetTopWindow(), evt );
                 }
             }
             CoverEditor->Destroy();
@@ -1306,6 +1311,11 @@ void guAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
                         m_Db->SetAlbumCover( albumid, CoverName );
                         ReloadItems();
                         RefreshAll();
+
+                        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+                        evt.SetInt( albumid );
+                        evt.SetClientData( NULL );
+                        wxPostEvent( wxTheApp->GetTopWindow(), evt );
                     }
                     else
                     {
@@ -1342,6 +1352,11 @@ void guAlbumBrowser::OnAlbumDeleteCoverClicked( const int albumid )
             m_Db->SetAlbumCover( Albums[ 0 ], wxEmptyString );
             ReloadItems();
             RefreshAll();
+
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+            evt.SetInt( albumid );
+            evt.SetClientData( NULL );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
         }
     }
 }
@@ -1553,6 +1568,12 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
         }
         ReloadItems();
         RefreshAll();
+
+        //
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+        evt.SetInt( albumid );
+        evt.SetClientData( NULL );
+        wxPostEvent( wxTheApp->GetTopWindow(), evt );
     }
 }
 

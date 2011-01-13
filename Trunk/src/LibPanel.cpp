@@ -1317,6 +1317,11 @@ bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wx
             if( ( coverpath == CoverName ) || CoverImage.SaveFile( CoverName, GetCoverType() ) )
             {
                 m_Db->SetAlbumCover( albumid, CoverName );
+
+                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+                evt.SetInt( albumid );
+                evt.SetClientData( this );
+                wxPostEvent( wxTheApp->GetTopWindow(), evt );
                 return true;
             }
         }
@@ -1330,6 +1335,11 @@ bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wx
         if( DownloadImage( coverpath, CoverName, GetCoverType(), MaxSize, MaxSize ) )
         {
             m_Db->SetAlbumCover( albumid, CoverName );
+
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+            evt.SetInt( albumid );
+            evt.SetClientData( this );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
             return true;
         }
         else
