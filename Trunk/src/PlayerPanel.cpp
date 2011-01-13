@@ -22,6 +22,7 @@
 
 #include "Commands.h"
 #include "CoverFrame.h"
+#include "CoverPanel.h"
 #include "Config.h"
 #include "DbLibrary.h"
 #include "Equalizer.h"
@@ -151,6 +152,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_SmartSearchEnabled = false;
     m_SmartAddTracksThread = NULL;
     m_UpdateCoverThread = NULL;
+    m_CoverPanel = NULL;
 
     // ---------------------------------------------------------------------------- //
     // The player controls
@@ -1897,6 +1899,9 @@ void guPlayerPanel::UpdateCoverImage( void )
     m_PlayerCoverBitmap->Refresh();
 
     SendNotifyInfo( m_MediaSong.m_CoverImage );
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_COVERUPDATED );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //

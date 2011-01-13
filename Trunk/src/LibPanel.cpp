@@ -1288,7 +1288,7 @@ bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wx
     {
         m_Db->SetAlbumCover( albumid, CoverName );
 
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
         evt.SetInt( albumid );
         evt.SetClientData( this );
         wxPostEvent( wxTheApp->GetTopWindow(), evt );
@@ -1318,7 +1318,7 @@ bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wx
             {
                 m_Db->SetAlbumCover( albumid, CoverName );
 
-                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
                 evt.SetInt( albumid );
                 evt.SetClientData( this );
                 wxPostEvent( wxTheApp->GetTopWindow(), evt );
@@ -1336,7 +1336,7 @@ bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wx
         {
             m_Db->SetAlbumCover( albumid, CoverName );
 
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
             evt.SetInt( albumid );
             evt.SetClientData( this );
             wxPostEvent( wxTheApp->GetTopWindow(), evt );
@@ -1466,7 +1466,7 @@ void guLibPanel::DoDeleteAlbumCover( const int albumid )
     }
     m_Db->SetAlbumCover( albumid, wxEmptyString );
 
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
     evt.SetInt( albumid );
     evt.SetClientData( this );
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
