@@ -150,6 +150,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
     m_SmartAddTracksThread = NULL;
+    m_UpdateCoverThread = NULL;
 
     // ---------------------------------------------------------------------------- //
     // The player controls
@@ -469,6 +470,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
 
+    Connect( ID_PLAYERPANEL_COVERUPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnCoverUpdated ), NULL, this );
+
     //
     m_AudioScrobble = NULL;
     if( m_AudioScrobbleEnabled )
@@ -484,6 +487,12 @@ guPlayerPanel::~guPlayerPanel()
     {
         m_SmartAddTracksThread->Pause();
         m_SmartAddTracksThread->Delete();
+    }
+
+    if( m_UpdateCoverThread )
+    {
+        m_UpdateCoverThread->Pause();
+        m_UpdateCoverThread->Delete();
     }
 
     if( m_AudioScrobble )
@@ -528,13 +537,14 @@ guPlayerPanel::~guPlayerPanel()
         Config->WriteBool( wxT( "ShowRevTime" ), m_ShowRevTime, wxT( "General" ) );
     }
 
-	// Connect Events
+	// Disconnect Events
 	m_PrevTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
 	m_NextTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
 	m_PlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
-	m_StopButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
+ 	m_StopButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
     m_RecordButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRecordButtonClick ), NULL, this );
 	m_VolumeButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
+	m_VolumeButton->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnVolumenMouseWheel ), NULL, this );
 	m_SmartPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
 	m_RandomPlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
 	m_RepeatPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
@@ -542,11 +552,12 @@ guPlayerPanel::~guPlayerPanel()
 
     Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
 
-	m_TitleLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTitleNameDClicked ), NULL, this );
+    m_TitleLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTitleNameDClicked ), NULL, this );
 	m_AlbumLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
 	m_ArtistLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
 	m_YearLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnYearDClicked ), NULL, this );
-	m_PositionLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
+
+	m_PositionLabel->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
 	m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
 //	m_LoveBanButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
 
@@ -556,6 +567,7 @@ guPlayerPanel::~guPlayerPanel()
 
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
+	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_CHANGED	, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderChanged ), NULL, this );
 //	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
 //	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
 //	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
@@ -564,21 +576,28 @@ guPlayerPanel::~guPlayerPanel()
 //	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
     m_PlayerPositionSlider->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnPlayerPositionSliderMouseWheel ), NULL, this );
 
-    //m_PlayListCtrl->Disconnect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
-    //m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
+    m_PlayListCtrl->Disconnect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
+    m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
+
+    Disconnect( guEVT_MEDIA_LOADED, guMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
+    Disconnect( guEVT_MEDIA_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
+    Disconnect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
+    Disconnect( guEVT_MEDIA_FADEIN_STARTED, guMediaEventHandler( guPlayerPanel::OnMediaFadeInStarted ), NULL, this );
+    Disconnect( guEVT_MEDIA_TAGINFO, guMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
+    Disconnect( guEVT_MEDIA_CHANGED_BITRATE, guMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
+    Disconnect( guEVT_MEDIA_BUFFERING, guMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
+    Disconnect( guEVT_MEDIA_LEVELINFO, guMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
+    Disconnect( guEVT_MEDIA_ERROR, guMediaEventHandler( guPlayerPanel::OnMediaError ), NULL, this );
+    Disconnect( guEVT_MEDIA_CHANGED_STATE, guMediaEventHandler( guPlayerPanel::OnMediaState ), NULL, this );
+    Disconnect( guEVT_MEDIA_CHANGED_POSITION, guMediaEventHandler( guPlayerPanel::OnMediaPosition ), NULL, this );
+    Disconnect( guEVT_MEDIA_CHANGED_LENGTH, guMediaEventHandler( guPlayerPanel::OnMediaLength ), NULL, this );
+
+    Disconnect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
+
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
 
-//    Disconnect( wxEVT_MEDIA_LOADED, wxMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
-//    Disconnect( wxEVT_MEDIA_FINISHED, wxMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
-//    Disconnect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
-//    Disconnect( guEVT_MEDIA_FADEIN_STARTED, guMediaEventHandler( guPlayerPanel::OnMediaFadeInStarted ), NULL, this );
-//    Disconnect( wxEVT_MEDIA_TAG, wxMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
-//    Disconnect( wxEVT_MEDIA_BITRATE, wxMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
-//    Disconnect( wxEVT_MEDIA_BUFFERING, wxMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
-//    Disconnect( wxEVT_MEDIA_LEVEL, wxMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
-//    Disconnect( wxEVT_MEDIA_ERROR, wxMediaEventHandler( guPlayerPanel::OnMediaError ), NULL, this );
+    Disconnect( ID_PLAYERPANEL_COVERUPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnCoverUpdated ), NULL, this );
 
-    Disconnect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ) );
 
     if( m_MediaCtrl )
         delete m_MediaCtrl;
@@ -1290,6 +1309,7 @@ void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
 void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
 {
     guLevelInfo * LevelInfo = ( guLevelInfo * ) event.GetClientObject();
+
     // We only enable to check if :
     // * Already not detected
     // * Its enabled in preferences
@@ -1813,130 +1833,13 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
     wxPostEvent( m_MainFrame, TitleEvent );
 
-//    if( ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ||
-//        ( m_MediaSong.m_Type > guTRACK_TYPE_PODCAST ) )
-//    {
-//        // Send an event so the LastFMPanel update its content.
-//        //guLogMessage( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-//        event.SetClientData( new guTrack( m_MediaSong ) );
-//        wxPostEvent( m_MainFrame, event );
-//    }
-//    else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
-//    {
-//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-//        event.SetClientData( NULL );
-//        wxPostEvent( m_MainFrame, event );
-//    }
+
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
     event.SetClientData( new guTrack( m_MediaSong ) );
     wxPostEvent( m_MainFrame, event );
 
-    wxImage * CoverImage;
-    //guLogWarning( wxT( "SetNextTrack : CoverId = %u - %u" ), LastCoverId, m_MediaSong.CoverId );
-    CoverImage = NULL;
-    if( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION )
-    {
-        CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
-        m_MediaSong.m_CoverType = GU_SONGCOVER_RADIO;
-    }
-    else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
-    {
-        CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
-        m_MediaSong.m_CoverType = GU_SONGCOVER_PODCAST;
-    }
-    else if( ( CoverImage = guTagGetPicture( m_MediaSong.m_FileName ) ) )
-    {
-        m_MediaSong.m_CoverType = GU_SONGCOVER_ID3TAG;
-        m_MediaSong.m_CoverPath = m_MediaSong.m_FileName;
-    }
-    else if( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO )
-    {
-        guJamendoPanel * JamendoPanel = m_MainFrame->GetJamendoPanel();
-        if( JamendoPanel )
-        {
-            //guLogMessage( wxT( "Tried to get the CoverImage for the jamendo album %i" ), m_MediaSong.m_AlbumId );
-            CoverImage = JamendoPanel->GetAlbumCover( m_MediaSong.m_AlbumId, m_MediaSong.m_CoverPath );
-            m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
-        }
-    }
-    else if( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE )
-    {
-        guMagnatunePanel * MagnatunePanel = m_MainFrame->GetMagnatunePanel();
-        if( MagnatunePanel )
-        {
-            //guLogMessage( wxT( "Tried to get the CoverImage for the magnatune album %i" ), m_MediaSong.m_AlbumId );
-            CoverImage = MagnatunePanel->GetAlbumCover( m_MediaSong.m_AlbumId, m_MediaSong.m_ArtistName,
-                                                        m_MediaSong.m_AlbumName, m_MediaSong.m_CoverPath );
-            m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
-        }
-    }
-    else if( m_MediaSong.m_Type == guTRACK_TYPE_IPOD )
-    {
-    }
-    else if( m_MediaSong.m_CoverId )
-    {
-        //guLogMessage( wxT( "CoverId %i" ), m_MediaSong.m_CoverId );
-        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
-        m_MediaSong.m_CoverPath = Db->GetCoverPath( m_MediaSong.m_CoverId );
-        m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
-    }
-    else
-    {
-        //guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_MediaSong.m_FileName ).c_str() );
-        m_MediaSong.m_CoverPath = m_PlayListCtrl->FindCoverFile( wxPathOnly( m_MediaSong.m_FileName ) );
-    }
-
-//    guLogMessage( wxT( "   File : %s" ), m_MediaSong.m_FileName.c_str() );
-//    guLogMessage( wxT( " Loaded : %i" ), m_MediaSong.m_Loaded );
-//    guLogMessage( wxT( "   Type : %i" ), m_MediaSong.m_Type );
-//    guLogMessage( wxT( " SongId : %i" ), m_MediaSong.m_SongId );
-//    guLogMessage( wxT( "CoverId : %i" ), m_MediaSong.m_CoverId );
-//    guLogMessage( wxT( "Co.Type : %i" ), m_MediaSong.m_CoverType );
-//    guLogMessage( wxT( "  Cover : '%s'" ), m_MediaSong.m_CoverPath.c_str() );
-//    guLogMessage( wxT( "===========================================" ) );
-
-    if( !CoverImage )
-    {
-        if( m_MediaSong.m_CoverPath.IsEmpty() || !wxFileExists( m_MediaSong.m_CoverPath ) )
-        {
-            //printf( "No coverpath set\n" );
-            CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
-            m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
-            m_MediaSong.m_CoverPath = wxEmptyString;
-        }
-        else
-        {
-            CoverImage = new wxImage( m_MediaSong.m_CoverPath );
-            m_MediaSong.m_CoverType = GU_SONGCOVER_FILE;
-            //m_MediaSong.CoverPath = CoverPath;
-        }
-    }
-
-    if( ( ( m_MediaSong.m_CoverType != GU_SONGCOVER_NONE ) && m_MediaSong.m_CoverPath.IsEmpty() ) ||
-        ( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG ) )
-    {
-        if( CoverImage )
-        {
-            if( !m_LastTmpCoverFile.IsEmpty() )
-                wxRemoveFile( m_LastTmpCoverFile );
-
-            if( m_LastTmpCoverFile.EndsWith( wxT( "1.png" ) ) )
-                m_LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "2.png");
-            else
-                m_LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "1.png");
-
-            guLogMessage( wxT( "Saving temp cover file to '%s'" ), m_LastTmpCoverFile.c_str() );
-            if( CoverImage->SaveFile( m_LastTmpCoverFile, wxBITMAP_TYPE_PNG ) )
-            {
-                if( m_MediaSong.m_CoverPath.IsEmpty() )
-                    m_MediaSong.m_CoverPath = m_LastTmpCoverFile;
-            }
-        }
-    }
-
-    // Cover
-    SetCurrentCoverImage( CoverImage, m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
+    // Update the cover
+    UpdateCover();
 
     // Check if Smart is enabled
     if( ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) && m_PlaySmart &&
@@ -1961,55 +1864,59 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     event.SetId( ID_PLAYERPANEL_CAPSCHANGED );
     wxPostEvent( m_MainFrame, event );
 
-//    if( m_MediaCtrl->GetState() == guMEDIASTATE_PLAYING )
-//    {
-//        // If Enabled LastFM->Submit and no error then send Now Playing Information
-//        if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() &&
-//            ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) )
-//        {
-//            m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
-//        }
-//    }
-//    else
-//    {
-//        m_PendingScrob = true;
-//    }
 
     if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() )
     {
         m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
         //m_PendingScrob = false;
     }
-
-    SendNotifyInfo( CoverImage );
-
-    if( CoverImage )
-        delete CoverImage;
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetCurrentCoverImage( wxImage * coverimage, const guSongCoverType covertype, const wxString &coverpath )
 {
-    if( coverimage )
+    if( coverimage && coverimage->IsOk() )
     {
-        if( coverimage->IsOk() )
-        {
-            coverimage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
-            m_PlayerCoverBitmap->SetBitmap( wxBitmap( * coverimage ) );
-            m_PlayerCoverBitmap->Refresh();
-
-            m_MediaSong.m_CoverType = covertype;
-            m_MediaSong.m_CoverPath = coverpath;
-        }
+        m_MediaSong.SetCoverImage( coverimage );
+        m_MediaSong.m_CoverType = covertype;
+        m_MediaSong.m_CoverPath = coverpath;
     }
-    else if( covertype == GU_SONGCOVER_NONE )
+    else //if( covertype == GU_SONGCOVER_NONE )
     {
-        m_PlayerCoverBitmap->SetBitmap( guImage( guIMAGE_INDEX_no_cover ) );
-        m_PlayerCoverBitmap->Refresh();
-
+        m_MediaSong.SetCoverImage( new wxImage( guImage( guIMAGE_INDEX_no_cover ) ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
         m_MediaSong.m_CoverPath = wxEmptyString;
     }
+    UpdateCoverImage();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::UpdateCoverImage( void )
+{
+    m_PlayerCoverBitmap->SetBitmap( wxBitmap( * m_MediaSong.m_CoverImage ) );
+    m_PlayerCoverBitmap->Refresh();
+
+    SendNotifyInfo( m_MediaSong.m_CoverImage );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::UpdateCover( void )
+{
+    if( m_UpdateCoverThread )
+    {
+        m_UpdateCoverThread->Pause();
+        m_UpdateCoverThread->Delete();
+    }
+
+    m_UpdateCoverThread = new guUpdatePlayerCoverThread( m_Db, m_MainFrame, this, &m_MediaSong );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnCoverUpdated( wxCommandEvent &event )
+{
+    m_UpdateCoverThread = NULL;
+
+    UpdateCoverImage();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3253,6 +3160,162 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
         }
         delete LastFM;
     }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+// guUpdatePlayerCoverThread
+// -------------------------------------------------------------------------------- //
+guUpdatePlayerCoverThread::guUpdatePlayerCoverThread( guDbLibrary * db,
+    guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack ) : wxThread()
+{
+    m_Db = db;
+    m_MainFrame = mainframe;
+    m_PlayerPanel = playerpanel;
+    m_CurrentTrack = currenttrack;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guUpdatePlayerCoverThread::~guUpdatePlayerCoverThread()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
+{
+    if( TestDestroy() )
+        return 0;
+
+    wxImage * CoverImage = NULL;
+
+    if( m_CurrentTrack->m_Type == guTRACK_TYPE_RADIOSTATION )
+    {
+        CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
+        m_CurrentTrack->m_CoverType = GU_SONGCOVER_RADIO;
+    }
+    else if( m_CurrentTrack->m_Type == guTRACK_TYPE_PODCAST )
+    {
+        CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
+        m_CurrentTrack->m_CoverType = GU_SONGCOVER_PODCAST;
+    }
+    else if( m_CurrentTrack->m_Type == guTRACK_TYPE_JAMENDO )
+    {
+        guJamendoPanel * JamendoPanel = m_MainFrame->GetJamendoPanel();
+        if( JamendoPanel )
+        {
+            //guLogMessage( wxT( "Tried to get the CoverImage for the jamendo album %i" ), m_CurrentTrack->m_AlbumId );
+            CoverImage = JamendoPanel->GetAlbumCover( m_CurrentTrack->m_AlbumId, m_CurrentTrack->m_CoverPath );
+            m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
+        }
+    }
+    else if( m_CurrentTrack->m_Type == guTRACK_TYPE_MAGNATUNE )
+    {
+        guMagnatunePanel * MagnatunePanel = m_MainFrame->GetMagnatunePanel();
+        if( MagnatunePanel )
+        {
+            //guLogMessage( wxT( "Tried to get the CoverImage for the magnatune album %i" ), m_CurrentTrack->m_AlbumId );
+            CoverImage = MagnatunePanel->GetAlbumCover( m_CurrentTrack->m_AlbumId, m_CurrentTrack->m_ArtistName,
+                                                        m_CurrentTrack->m_AlbumName, m_CurrentTrack->m_CoverPath );
+            m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
+        }
+    }
+    else if( ( CoverImage = guTagGetPicture( m_CurrentTrack->m_FileName ) ) )
+    {
+        m_CurrentTrack->m_CoverType = GU_SONGCOVER_ID3TAG;
+        m_CurrentTrack->m_CoverPath = m_CurrentTrack->m_FileName;
+    }
+    else if( m_CurrentTrack->m_Type == guTRACK_TYPE_IPOD )
+    {
+    }
+    else if( m_CurrentTrack->m_CoverId )
+    {
+        //guLogMessage( wxT( "CoverId %i" ), m_CurrentTrack->m_CoverId );
+        guDbLibrary * Db = m_CurrentTrack->m_LibPanel ? m_CurrentTrack->m_LibPanel->GetDb() : m_Db;
+        m_CurrentTrack->m_CoverPath = Db->GetCoverPath( m_CurrentTrack->m_CoverId );
+        m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
+    }
+    else
+    {
+        //guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_CurrentTrack->m_FileName ).c_str() );
+        m_CurrentTrack->m_CoverPath = m_PlayerPanel->PlayListCtrl()->FindCoverFile( wxPathOnly( m_CurrentTrack->m_FileName ) );
+    }
+
+//    guLogMessage( wxT( "   File : %s" ), m_CurrentTrack->m_FileName.c_str() );
+//    guLogMessage( wxT( " Loaded : %i" ), m_CurrentTrack->m_Loaded );
+//    guLogMessage( wxT( "   Type : %i" ), m_CurrentTrack->m_Type );
+//    guLogMessage( wxT( " SongId : %i" ), m_CurrentTrack->m_SongId );
+//    guLogMessage( wxT( "CoverId : %i" ), m_CurrentTrack->m_CoverId );
+//    guLogMessage( wxT( "Co.Type : %i" ), m_CurrentTrack->m_CoverType );
+//    guLogMessage( wxT( "  Cover : '%s'" ), m_CurrentTrack->m_CoverPath.c_str() );
+//    guLogMessage( wxT( "===========================================" ) );
+    if( TestDestroy() )
+        return 0;
+
+
+    if( !CoverImage )
+    {
+        if( m_CurrentTrack->m_CoverPath.IsEmpty() || !wxFileExists( m_CurrentTrack->m_CoverPath ) )
+        {
+            //printf( "No coverpath set\n" );
+            CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+            m_CurrentTrack->m_CoverType = GU_SONGCOVER_NONE;
+            m_CurrentTrack->m_CoverPath = wxEmptyString;
+        }
+        else
+        {
+            CoverImage = new wxImage( m_CurrentTrack->m_CoverPath );
+            m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
+            //m_CurrentTrack->CoverPath = CoverPath;
+        }
+    }
+
+    if( CoverImage )
+        CoverImage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
+
+    if( TestDestroy() )
+        return 0;
+
+    if( ( ( m_CurrentTrack->m_CoverType != GU_SONGCOVER_NONE ) && m_CurrentTrack->m_CoverPath.IsEmpty() ) ||
+        ( m_CurrentTrack->m_CoverType == GU_SONGCOVER_ID3TAG ) )
+    {
+        if( CoverImage )
+        {
+            wxString LastTmpCoverFile = m_PlayerPanel->LastTmpCoverFile();
+            if( !LastTmpCoverFile.IsEmpty() )
+                wxRemoveFile( LastTmpCoverFile );
+
+            if( LastTmpCoverFile.EndsWith( wxT( "1.png" ) ) )
+                LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "2.png");
+            else
+                LastTmpCoverFile = wxFileName::GetTempDir() + wxT( "/" ) + guTEMPORARY_COVER_FILENAME + wxT( "1.png");
+
+            //guLogMessage( wxT( "Saving temp cover file to '%s'" ), LastTmpCoverFile.c_str() );
+            if( CoverImage->SaveFile( LastTmpCoverFile, wxBITMAP_TYPE_PNG ) )
+            {
+                if( m_CurrentTrack->m_CoverPath.IsEmpty() )
+                    m_CurrentTrack->m_CoverPath = LastTmpCoverFile;
+
+                m_PlayerPanel->SetLastTmpCoverFile( LastTmpCoverFile );
+            }
+        }
+    }
+
+    if( TestDestroy() )
+        return 0;
+
+    if( m_CurrentTrack->m_CoverImage )
+        delete m_CurrentTrack->m_CoverImage;
+    m_CurrentTrack->m_CoverImage = CoverImage;
+
+    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_COVERUPDATED );
+    wxPostEvent( m_PlayerPanel, Event );
+
     return 0;
 }
 
