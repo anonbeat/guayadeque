@@ -152,7 +152,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_SmartSearchEnabled = false;
     m_SmartAddTracksThread = NULL;
     m_UpdateCoverThread = NULL;
-    m_CoverPanel = NULL;
 
     // ---------------------------------------------------------------------------- //
     // The player controls
