@@ -5078,8 +5078,10 @@ void guMainFrame::UpdatedTrack( int updatedby, const guTrack * track )
 void guMainFrame::OnLibraryCoverDownloaded( wxCommandEvent &event )
 {
     guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
-    if( m_PlayerPanel && LibPanel )
+    if( m_PlayerPanel )
     {
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
         const guCurrentTrack * CurrentTrack = m_PlayerPanel->GetCurrentTrack();
         if( ( CurrentTrack->m_LibPanel ? ( CurrentTrack->m_LibPanel == LibPanel ) : ( m_LibPanel == LibPanel ) ) &&
             CurrentTrack->m_Type == guTRACK_TYPE_DB &&
@@ -5089,8 +5091,9 @@ void guMainFrame::OnLibraryCoverDownloaded( wxCommandEvent &event )
             wxImage * CoverImage = LibPanel->GetAlbumCover( event.GetInt(), CoverPath );
             if( CoverImage )
             {
+                CoverImage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
-                delete CoverImage;
+                //delete CoverImage;
             }
             else
             {
@@ -5124,7 +5127,7 @@ void guMainFrame::OnJamendoCoverDownloaded( wxCommandEvent &event )
             if( CoverImage )
             {
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
-                delete CoverImage;
+                //delete CoverImage;
 
                 if( m_CoverPanel )
                 {
@@ -5155,7 +5158,7 @@ void guMainFrame::OnMagnatuneCoverDownloaded( wxCommandEvent &event )
             if( CoverImage )
             {
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
-                delete CoverImage;
+                //delete CoverImage;
 
                 if( m_CoverPanel )
                 {
