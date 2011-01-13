@@ -168,230 +168,248 @@ class guCurrentTrack : public guTrack
             m_CoverImage = NULL;
         }
     }
+
+    void SetCoverImage( wxImage * image )
+    {
+        if( m_CoverImage )
+        {
+            delete m_CoverImage;
+        }
+        m_CoverImage = image;
+    }
 };
 
 class guSmartAddTracksThread;
+class guUpdatePlayerCoverThread;
 
 // -------------------------------------------------------------------------------- //
 class guPlayerPanel : public wxPanel
 {
   private:
-	guRoundButton *         m_PrevTrackButton;
-	guRoundButton *         m_NextTrackButton;
-	guRoundButton *         m_PlayButton;
-	guRoundButton *         m_StopButton;
-	guToggleRoundButton *   m_RecordButton;
-	guRoundButton *         m_VolumeButton;
+	guRoundButton *             m_PrevTrackButton;
+	guRoundButton *             m_NextTrackButton;
+	guRoundButton *             m_PlayButton;
+	guRoundButton *             m_StopButton;
+	guToggleRoundButton *       m_RecordButton;
+	guRoundButton *             m_VolumeButton;
 	//
-	guToggleRoundButton *   m_SmartPlayButton;
-	guRoundButton *         m_RandomPlayButton;
-	guToggleRoundButton *   m_RepeatPlayButton;
-	guRoundButton *         m_EqualizerButton;
+	guToggleRoundButton *       m_SmartPlayButton;
+	guRoundButton *             m_RandomPlayButton;
+	guToggleRoundButton *       m_RepeatPlayButton;
+	guRoundButton *             m_EqualizerButton;
 	//
-	guStaticBitmap *        m_PlayerCoverBitmap;
-	//wxStaticText *          m_TitleLabel;
-	guAutoScrollText *      m_TitleLabel;
-	//wxStaticText *          m_AlbumLabel;
-	guAutoScrollText *      m_AlbumLabel;
-	//wxStaticText *          m_ArtistLabel;
-	guAutoScrollText *      m_ArtistLabel;
-	wxStaticText *          m_YearLabel;
-    guRating *              m_Rating;
-    guToggleRoundButton *   m_LoveBanButton;
-    wxBoxSizer *            m_BitRateSizer;
-	wxStaticText *          m_BitRateLabel;
-	wxBoxSizer *            m_PosLabelSizer;
-	wxStaticText *          m_PositionLabel;
-	wxSlider *              m_PlayerPositionSlider;
+	guStaticBitmap *            m_PlayerCoverBitmap;
+	guAutoScrollText *          m_TitleLabel;
+	guAutoScrollText *          m_AlbumLabel;
+	guAutoScrollText *          m_ArtistLabel;
+	wxStaticText *              m_YearLabel;
+    guRating *                  m_Rating;
+    guToggleRoundButton *       m_LoveBanButton;
+    wxBoxSizer *                m_BitRateSizer;
+	wxStaticText *              m_BitRateLabel;
+	wxBoxSizer *                m_PosLabelSizer;
+	wxStaticText *              m_PositionLabel;
+	wxSlider *                  m_PlayerPositionSlider;
 
-    guDbLibrary *           m_Db;
-    guMainFrame *           m_MainFrame;
-	guPlayList *            m_PlayListCtrl;
-	guDBusNotify *          m_NotifySrv;
-	guPlayerFilters *       m_PlayerFilters;
-	guPlayerVumeters *      m_PlayerVumeters;
-	guMediaCtrl *           m_MediaCtrl;
-	guMediaRecordCtrl *     m_MediaRecordCtrl;
-    guCurrentTrack          m_MediaSong;
-    guTrack                 m_NextSong;
-	int                     m_LastPlayState;
-	double                  m_LastVolume;
-	wxFileOffset            m_LastCurPos;
-	wxFileOffset            m_LastLength;
-	bool                    m_IsSkipping;
-	bool                    m_ShowNotifications;
-	int                     m_ShowNotificationsTime;
+    guDbLibrary *               m_Db;
+    guMainFrame *               m_MainFrame;
+	guPlayList *                m_PlayListCtrl;
+	guDBusNotify *              m_NotifySrv;
+	guPlayerFilters *           m_PlayerFilters;
+	guPlayerVumeters *          m_PlayerVumeters;
+	guMediaCtrl *               m_MediaCtrl;
+	guMediaRecordCtrl *         m_MediaRecordCtrl;
+    guCurrentTrack              m_MediaSong;
+    guTrack                     m_NextSong;
+	int                         m_LastPlayState;
+	double                      m_LastVolume;
+	wxFileOffset                m_LastCurPos;
+	wxFileOffset                m_LastLength;
+	bool                        m_IsSkipping;
+	bool                        m_ShowNotifications;
+	int                         m_ShowNotificationsTime;
 
-	double                  m_CurVolume;
-	int                     m_PlayLoop;
-	bool                    m_PlaySmart;
-	bool                    m_PlayRandom;
-	int                     m_PlayRandomMode;
-	bool                    m_SliderIsDragged;
-	long                    m_LastTotalLen;
+	double                      m_CurVolume;
+	int                         m_PlayLoop;
+	bool                        m_PlaySmart;
+	bool                        m_PlayRandom;
+	int                         m_PlayRandomMode;
+	bool                        m_SliderIsDragged;
+	long                        m_LastTotalLen;
 
-	bool                    m_SilenceDetected;
-	bool                    m_AboutToEndDetected;
-	bool                    m_FadeInStarted;
+	bool                        m_SilenceDetected;
+	bool                        m_AboutToEndDetected;
+	bool                        m_FadeInStarted;
 
-	wxArrayInt              m_SmartAddedTracks;
-	wxArrayString           m_SmartAddedArtists;
-	bool                    m_SmartSearchEnabled;
-    int                     m_SmartPlayAddTracks;
-    int                     m_SmartPlayMinTracksToPlay;
+	wxArrayInt                  m_SmartAddedTracks;
+	wxArrayString               m_SmartAddedArtists;
+	bool                        m_SmartSearchEnabled;
+    int                         m_SmartPlayAddTracks;
+    int                         m_SmartPlayMinTracksToPlay;
 
-    bool                    m_DelTracksPlayed;
+    bool                        m_DelTracksPlayed;
 
-    unsigned int            m_TrackStartPos;
+    unsigned int                m_TrackStartPos;
 
-    bool                    m_SilenceDetector;
-    int                     m_SilenceDetectorLevel;
-    int                     m_SilenceDetectorTime;
+    bool                        m_SilenceDetector;
+    int                         m_SilenceDetectorLevel;
+    int                         m_SilenceDetectorTime;
 
-    bool                    m_ForceGapless;
-    int                     m_FadeOutTime;
+    bool                        m_ForceGapless;
+    int                         m_FadeOutTime;
 
-    bool                    m_PendingScrob;
+    bool                        m_PendingScrob;
 
     // AudioScrobble
-    guAudioScrobble *       m_AudioScrobble;
-    bool                    m_AudioScrobbleEnabled;
-    guSmartAddTracksThread * m_SmartAddTracksThread;
+    guAudioScrobble *           m_AudioScrobble;
+    bool                        m_AudioScrobbleEnabled;
+    guSmartAddTracksThread *    m_SmartAddTracksThread;
 
-    int                     m_BufferGaugeId;
+    int                         m_BufferGaugeId;
 
-    long                    m_NextTrackId;
-    long                    m_CurTrackId;
-    bool                    m_TrackChanged;
+    long                        m_NextTrackId;
+    long                        m_CurTrackId;
+    bool                        m_TrackChanged;
 
-    bool                    m_ShowRevTime;
+    bool                        m_ShowRevTime;
 
-    bool                    m_PendingNewRecordName;
+    bool                        m_PendingNewRecordName;
 
-    bool                    m_ErrorFound;
+    bool                        m_ErrorFound;
 
-    int                     m_SavedPlayedTrack;
+    int                         m_SavedPlayedTrack;
 
-    wxString                m_LastTmpCoverFile;
+    wxString                    m_LastTmpCoverFile;
+    guUpdatePlayerCoverThread * m_UpdateCoverThread;
 
-	void                OnVolumenButtonClick( wxCommandEvent &event );
-	void                OnVolumenMouseWheel( wxMouseEvent &event );
-    void                OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
-    void                OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
-    void                OnPlayerPositionSliderEndSeek( wxScrollEvent &event );
-    void                OnPlayerPositionSliderChanged( wxScrollEvent &event );
-    void                OnPlayerPositionSliderMouseWheel( wxMouseEvent &event );
+	void                        OnVolumenButtonClick( wxCommandEvent &event );
+	void                        OnVolumenMouseWheel( wxMouseEvent &event );
+    void                        OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
+    void                        OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
+    void                        OnPlayerPositionSliderEndSeek( wxScrollEvent &event );
+    void                        OnPlayerPositionSliderChanged( wxScrollEvent &event );
+    void                        OnPlayerPositionSliderMouseWheel( wxMouseEvent &event );
     //
-    void                OnPlayListUpdated( wxCommandEvent &event );
-    void                OnPlayListDClick( wxCommandEvent &event );
+    void                        OnPlayListUpdated( wxCommandEvent &event );
+    void                        OnPlayListDClick( wxCommandEvent &event );
 
-    void                LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE playtype );
-    void                OnMediaLoaded( guMediaEvent &event );
-    void                OnMediaPlayStarted( void );
-    void                SavePlayedTrack( void );
-    void                OnMediaFinished( guMediaEvent &event );
-    void                OnMediaFadeOutFinished( guMediaEvent &event );
-    void                OnMediaFadeInStarted( guMediaEvent &event );
-    void                OnMediaTags( guMediaEvent &event );
-    void                OnMediaBitrate( guMediaEvent &event );
-    void                OnMediaBuffering( guMediaEvent &event );
-    void                OnMediaLevel( guMediaEvent &event );
-    void                OnMediaError( guMediaEvent &event );
-    void                OnMediaState( guMediaEvent &event );
-    void                OnMediaPosition( guMediaEvent &event );
-    void                OnMediaLength( guMediaEvent &event );
+    void                        LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE playtype );
+    void                        OnMediaLoaded( guMediaEvent &event );
+    void                        OnMediaPlayStarted( void );
+    void                        SavePlayedTrack( void );
+    void                        OnMediaFinished( guMediaEvent &event );
+    void                        OnMediaFadeOutFinished( guMediaEvent &event );
+    void                        OnMediaFadeInStarted( guMediaEvent &event );
+    void                        OnMediaTags( guMediaEvent &event );
+    void                        OnMediaBitrate( guMediaEvent &event );
+    void                        OnMediaBuffering( guMediaEvent &event );
+    void                        OnMediaLevel( guMediaEvent &event );
+    void                        OnMediaError( guMediaEvent &event );
+    void                        OnMediaState( guMediaEvent &event );
+    void                        OnMediaPosition( guMediaEvent &event );
+    void                        OnMediaLength( guMediaEvent &event );
 
-    void                SetNextTrack( const guTrack * Song );
+    void                        SetNextTrack( const guTrack * Song );
 
     // SmartPlay Events
-    void                SmartAddTracks( const guTrack &CurSong );
-    void                OnSmartAddTracks( wxCommandEvent &event );
-    void                OnUpdatedRadioTrack( wxCommandEvent &event );
+    void                        SmartAddTracks( const guTrack &CurSong );
+    void                        OnSmartAddTracks( wxCommandEvent &event );
+    void                        OnUpdatedRadioTrack( wxCommandEvent &event );
 
-    void                OnTitleNameDClicked( wxMouseEvent &event );
-    void                OnAlbumNameDClicked( wxMouseEvent &event );
-    void                OnArtistNameDClicked( wxMouseEvent &event );
-    void                OnYearDClicked( wxMouseEvent &event );
-    void                OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime;
+    void                        OnTitleNameDClicked( wxMouseEvent &event );
+    void                        OnAlbumNameDClicked( wxMouseEvent &event );
+    void                        OnArtistNameDClicked( wxMouseEvent &event );
+    void                        OnYearDClicked( wxMouseEvent &event );
+    void                        OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime;
                                                                 UpdatePositionLabel( GetPosition() / 1000 ); };
-    void                OnRatingChanged( guRatingEvent &event );
-    void                CheckFiltersEnable( void );
+    void                        OnRatingChanged( guRatingEvent &event );
+    void                        CheckFiltersEnable( void );
 
-    void                OnConfigUpdated( wxCommandEvent &event );
+    void                        OnConfigUpdated( wxCommandEvent &event );
 
-    void                SendRecordSplitEvent( void );
+    void                        SendRecordSplitEvent( void );
+
+    void                        OnCoverUpdated( wxCommandEvent &event ); // Once the cover have been found shows it
 
   public:
-                        guPlayerPanel( wxWindow* parent, guDbLibrary * db,
-                                       guPlayList * playlist, guPlayerFilters * filters );
-                        ~guPlayerPanel();
-    //void                UpdateStatus();
-    guMainFrame *       MainFrame( void ) { return m_MainFrame; }
+    guPlayerPanel( wxWindow * parent, guDbLibrary * db,
+                   guPlayList * playlist, guPlayerFilters * filters );
+    ~guPlayerPanel();
 
-    void                SetPlayList( const guTrackArray &SongList );
-    void                AddToPlayList( const guTrackArray &SongList, const bool allowplay = true, const bool aftercurrent = false );
-    void                AddToPlayList( const wxString &FileName, const bool aftercurrent = false );
-    void                AddToPlayList( const wxArrayString &files, const bool aftercurrent = false );
-    void                ClearPlayList( void ) { m_PlayListCtrl->ClearItems(); };
-    void                SetPlayList( const wxArrayString &files );
+    guMainFrame *               MainFrame( void ) { return m_MainFrame; }
 
-    double              GetVolume() { return m_CurVolume; }
-    void                SetVolume( double volume );
-    bool                SetPosition( int pos );
-    int                 GetPosition();
-    void                TrackListChanged( void );
-    const guCurrentTrack * GetCurrentTrack() { return &m_MediaSong; }
-    int                 GetCurrentItem();
-    int                 GetItemCount();
-    const guTrack *     GetTrack( int index );
-    void                RemoveItem( int itemnum );
+    void                        SetPlayList( const guTrackArray &SongList );
+    void                        AddToPlayList( const guTrackArray &SongList, const bool allowplay = true, const bool aftercurrent = false );
+    void                        AddToPlayList( const wxString &FileName, const bool aftercurrent = false );
+    void                        AddToPlayList( const wxArrayString &files, const bool aftercurrent = false );
+    void                        ClearPlayList( void ) { m_PlayListCtrl->ClearItems(); };
+    void                        SetPlayList( const wxArrayString &files );
+    guPlayList *                PlayListCtrl( void ) { return m_PlayListCtrl; }
 
-    int                 GetPlayLoop();
-    void                SetPlayLoop( int playloop );
-    bool                GetPlaySmart();
-    void                SetPlaySmart( bool playsmart );
-    void                UpdatePlayListFilters( void );
+    double                      GetVolume() { return m_CurVolume; }
+    void                        SetVolume( double volume );
+    bool                        SetPosition( int pos );
+    int                         GetPosition();
+    void                        TrackListChanged( void );
+    const guCurrentTrack *      GetCurrentTrack() { return &m_MediaSong; }
+    int                         GetCurrentItem();
+    int                         GetItemCount();
+    const guTrack *             GetTrack( int index );
+    void                        RemoveItem( int itemnum );
 
-    void                SetCurrentCoverImage( wxImage * coverimage, const guSongCoverType CoverType, const wxString &CoverPath = wxEmptyString );
+    int                         GetPlayLoop();
+    void                        SetPlayLoop( int playloop );
+    bool                        GetPlaySmart();
+    void                        SetPlaySmart( bool playsmart );
+    void                        UpdatePlayListFilters( void );
 
-    int                 GetCaps();
+    void                        SetCurrentCoverImage( wxImage * coverimage, const guSongCoverType CoverType, const wxString &CoverPath = wxEmptyString );
+    void                        UpdateCoverImage( void );
 
-    const guMediaState  GetState( void );
-    void                OnPrevTrackButtonClick( wxCommandEvent &event );
-    void                OnNextTrackButtonClick( wxCommandEvent &event );
-    void                OnPrevAlbumButtonClick( wxCommandEvent &event );
-    void                OnNextAlbumButtonClick( wxCommandEvent &event );
-    void                OnPlayButtonClick( wxCommandEvent &event );
-    void                OnStopButtonClick( wxCommandEvent &event );
-    void                OnRecordButtonClick( wxCommandEvent &event );
-	void                OnSmartPlayButtonClick( wxCommandEvent &event );
-	void                OnRandomPlayButtonClick( wxCommandEvent &event );
-	void                OnRepeatPlayButtonClick( wxCommandEvent &event );
-	void                OnLoveBanButtonClick( wxCommandEvent &event );
-	void                OnEqualizerButtonClicked( wxCommandEvent &event );
+    int                         GetCaps();
 
-    void                SetArtistLabel( const wxString &artistname );
-    void                SetAlbumLabel( const wxString &albumname );
-    void                SetTitleLabel( const wxString &trackname );
-    void                SetRatingLabel( const int Rating );
-    int                 GetRating( void ) { return m_MediaSong.m_Rating; }
-    void                SetRating( const int rating );
-    void                UpdatePositionLabel( const unsigned int curpos );
-    void                SetBitRateLabel( const int bitrate );
-    void                SetBitRate( int bitrate );
+    const guMediaState          GetState( void );
 
-    void                UpdatedTracks( const guTrackArray * tracks );
-    void                UpdatedTrack( const guTrack * track );
+    void                        OnPrevTrackButtonClick( wxCommandEvent &event );
+    void                        OnNextTrackButtonClick( wxCommandEvent &event );
+    void                        OnPrevAlbumButtonClick( wxCommandEvent &event );
+    void                        OnNextAlbumButtonClick( wxCommandEvent &event );
+    void                        OnPlayButtonClick( wxCommandEvent &event );
+    void                        OnStopButtonClick( wxCommandEvent &event );
+    void                        OnRecordButtonClick( wxCommandEvent &event );
+	void                        OnSmartPlayButtonClick( wxCommandEvent &event );
+	void                        OnRandomPlayButtonClick( wxCommandEvent &event );
+	void                        OnRepeatPlayButtonClick( wxCommandEvent &event );
+	void                        OnLoveBanButtonClick( wxCommandEvent &event );
+	void                        OnEqualizerButtonClicked( wxCommandEvent &event );
 
-    void                UpdateLabels( void );
+    void                        SetArtistLabel( const wxString &artistname );
+    void                        SetAlbumLabel( const wxString &albumname );
+    void                        SetTitleLabel( const wxString &trackname );
+    void                        SetRatingLabel( const int Rating );
+    int                         GetRating( void ) { return m_MediaSong.m_Rating; }
+    void                        SetRating( const int rating );
+    void                        UpdatePositionLabel( const unsigned int curpos );
+    void                        SetBitRateLabel( const int bitrate );
+    void                        SetBitRate( int bitrate );
 
-    void                SetPlayerVumeters( guPlayerVumeters * vumeters ) { m_PlayerVumeters = vumeters; };
-    void                ResetVumeterLevel( void );
+    void                        UpdatedTracks( const guTrackArray * tracks );
+    void                        UpdatedTrack( const guTrack * track );
 
-    void                SetNotifySrv( guDBusNotify * notify ) { m_NotifySrv = notify; };
-    void                SendNotifyInfo( wxImage * image );
+    void                        UpdateLabels( void );
 
-    void                SetForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; m_MediaCtrl->ForceGapless( forcegapless ); }
+    void                        SetPlayerVumeters( guPlayerVumeters * vumeters ) { m_PlayerVumeters = vumeters; };
+    void                        ResetVumeterLevel( void );
+
+    void                        SetNotifySrv( guDBusNotify * notify ) { m_NotifySrv = notify; };
+    void                        SendNotifyInfo( wxImage * image );
+
+    void                        SetForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; m_MediaCtrl->ForceGapless( forcegapless ); }
+
+    void                        UpdateCover( void );    // Start the thread that search for the cover
+
+    wxString                    LastTmpCoverFile( void ) { return m_LastTmpCoverFile; }
+    void                        SetLastTmpCoverFile( const wxString &lastcoverfile ) { m_LastTmpCoverFile = lastcoverfile; }
 
     friend class guSmartAddTracksThread;
 };
@@ -416,6 +434,22 @@ class guSmartAddTracksThread : public wxThread
              wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
              const int trackcount, const int filterallow, const int filterdeny );
     ~guSmartAddTracksThread();
+
+    virtual ExitCode Entry();
+};
+
+// -------------------------------------------------------------------------------- //
+class guUpdatePlayerCoverThread : public wxThread
+{
+  protected :
+    guDbLibrary *       m_Db;
+    guPlayerPanel *     m_PlayerPanel;
+    guCurrentTrack *    m_CurrentTrack;
+    guMainFrame *       m_MainFrame;
+
+  public:
+    guUpdatePlayerCoverThread( guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack );
+    ~guUpdatePlayerCoverThread();
 
     virtual ExitCode Entry();
 };
