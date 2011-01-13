@@ -4985,8 +4985,6 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
                     DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
                     CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
                     Left().Layer( 3 ).Row( 0 ).Position( 0 ).Hide() );
-
-                m_PlayerPanel->SetCoverPanel( m_CoverPanel );
             }
             PaneName = wxT( "MainShowCover" );
             if( m_ViewMainShowCover )
