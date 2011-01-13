@@ -1273,7 +1273,7 @@ void guAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
                     ReloadItems();
                     RefreshAll();
 
-                    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+                    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
                     evt.SetInt( albumid );
                     evt.SetClientData( NULL );
                     wxPostEvent( wxTheApp->GetTopWindow(), evt );
@@ -1312,7 +1312,7 @@ void guAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
                         ReloadItems();
                         RefreshAll();
 
-                        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+                        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
                         evt.SetInt( albumid );
                         evt.SetClientData( NULL );
                         wxPostEvent( wxTheApp->GetTopWindow(), evt );
@@ -1353,7 +1353,7 @@ void guAlbumBrowser::OnAlbumDeleteCoverClicked( const int albumid )
             ReloadItems();
             RefreshAll();
 
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
             evt.SetInt( albumid );
             evt.SetClientData( NULL );
             wxPostEvent( wxTheApp->GetTopWindow(), evt );
@@ -1570,7 +1570,7 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
         RefreshAll();
 
         //
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_DOWNLOADED );
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
         evt.SetInt( albumid );
         evt.SetClientData( NULL );
         wxPostEvent( wxTheApp->GetTopWindow(), evt );

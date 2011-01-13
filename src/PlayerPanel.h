@@ -181,6 +181,7 @@ class guCurrentTrack : public guTrack
 
 class guSmartAddTracksThread;
 class guUpdatePlayerCoverThread;
+class guCoverPanel;
 
 // -------------------------------------------------------------------------------- //
 class guPlayerPanel : public wxPanel
@@ -281,6 +282,9 @@ class guPlayerPanel : public wxPanel
 
     wxString                    m_LastTmpCoverFile;
     guUpdatePlayerCoverThread * m_UpdateCoverThread;
+
+    guCoverPanel *              m_CoverPanel;
+    wxMutex                     m_CoverPanelMutex;
 
 	void                        OnVolumenButtonClick( wxCommandEvent &event );
 	void                        OnVolumenMouseWheel( wxMouseEvent &event );
@@ -410,6 +414,8 @@ class guPlayerPanel : public wxPanel
 
     wxString                    LastTmpCoverFile( void ) { return m_LastTmpCoverFile; }
     void                        SetLastTmpCoverFile( const wxString &lastcoverfile ) { m_LastTmpCoverFile = lastcoverfile; }
+
+    void                        SetCoverPanel( guCoverPanel * coverpanel ) { wxMutexLocker Lock( m_CoverPanelMutex ); m_CoverPanel = coverpanel; }
 
     friend class guSmartAddTracksThread;
 };
