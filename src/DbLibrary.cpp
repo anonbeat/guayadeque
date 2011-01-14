@@ -3752,7 +3752,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
         case guDYNAMIC_FILTER_ORDER_ARTIST :        sort += wxT( "song_artist" ); break;
         case guDYNAMIC_FILTER_ORDER_ALBUMARTIST :   sort += wxT( "song_albumartist" ); break;
         case guDYNAMIC_FILTER_ORDER_ALBUM :         sort += wxT( "song_album" ); break;
-        case guDYNAMIC_FILTER_ORDER_GENRE :         sort += wxT( "genre_name" ); break;
+        case guDYNAMIC_FILTER_ORDER_GENRE :         sort += wxT( "song_genre" ); break;
         case guDYNAMIC_FILTER_ORDER_COMPOSER :      sort += wxT( "song_composer" ); break;
         case guDYNAMIC_FILTER_ORDER_YEAR :          sort += wxT( "song_year" ); break;
         case guDYNAMIC_FILTER_ORDER_RATING :        sort += wxT( "song_rating" ); break;
