@@ -1567,7 +1567,9 @@ void guTrackEditor::OnMBrainzCopyButtonClicked( wxCommandEvent &event )
             wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_ADVANCED );
             if( RegEx.IsValid() && RegEx.Matches( m_MBrainzDateChoice->GetStringSelection() ) && RegEx.GetMatchCount() == 1 )
             {
-                RegEx.GetMatch( m_MBrainzDateChoice->GetStringSelection(), 0 ).ToLong( ( long * ) &Track->m_Year );
+                long LongValue;
+                RegEx.GetMatch( m_MBrainzDateChoice->GetStringSelection(), 0 ).ToLong( &LongValue );
+                Track->m_Year = LongValue;
             }
         }
     }
@@ -1628,7 +1630,9 @@ void guTrackEditor::OnMBrainzDateCopyButtonClicked( wxCommandEvent& event )
             wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_ADVANCED );
             if( RegEx.IsValid() && RegEx.Matches( m_MBrainzDateChoice->GetStringSelection() ) && RegEx.GetMatchCount() == 1 )
             {
-                RegEx.GetMatch( m_MBrainzDateChoice->GetStringSelection(), 0 ).ToLong( ( long * ) &Track->m_Year );
+                long LongValue;
+                RegEx.GetMatch( m_MBrainzDateChoice->GetStringSelection(), 0 ).ToLong( &LongValue );
+                Track->m_Year = LongValue;
             }
         }
     }
