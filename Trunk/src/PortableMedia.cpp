@@ -3383,6 +3383,11 @@ void guIpodMediaLibPanel::DeleteTracks( guTrackArray * tracks )
                 itdb_playlist_remove_track( MasterPlaylist, iPodTrack );
                 itdb_track_remove( iPodTrack );
             }
+            //
+            if( !wxRemoveFile( tracks->Item( Index ).m_FileName ) )
+            {
+                guLogMessage( wxT( "Couldnt remove file %s" ), tracks->Item( Index ).m_FileName.c_str() );
+            }
         }
         ( ( guIpodLibrary * ) m_Db )->iPodFlush();
     }

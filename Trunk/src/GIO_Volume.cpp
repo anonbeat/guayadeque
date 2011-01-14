@@ -128,12 +128,12 @@ guGIO_Mount::guGIO_Mount( GMount * mount, wxString &mountpath )
 // -------------------------------------------------------------------------------- //
 guGIO_Mount::~guGIO_Mount()
 {
-    if( m_Mount )
-    {
-        guLogMessage( wxT( ">> ~guGIO_Mount()" ) );
-        g_object_unref( m_Mount );
-        guLogMessage( wxT( "<< ~guGIO_Mount()" ) );
-    }
+//    if( m_Mount )
+//    {
+//        guLogMessage( wxT( ">> ~guGIO_Mount()" ) );
+//        //g_object_unref( m_Mount );
+//        guLogMessage( wxT( "<< ~guGIO_Mount()" ) );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //

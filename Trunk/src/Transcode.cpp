@@ -276,9 +276,10 @@ bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
 
         case guTRANSCODE_FORMAT_AAC :
         {
-            * enc = gst_element_factory_make( "ffenc_aac", "guTransAAC" );
+            * enc = gst_element_factory_make( "faac", "guTransAAC" );
             if( GST_IS_ELEMENT( * enc ) )
             {
+                g_object_set( * enc, "profile", 2, NULL );
                 g_object_set( * enc, "bitrate", guTranscodeWmaBitrates[ m_Quality ], NULL );
 
                 * mux = gst_element_factory_make( "ffmux_mp4", "guTransAACMux" );
