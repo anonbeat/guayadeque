@@ -482,7 +482,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 	// to avoid polling, but duration queries on the sink are better
 	// as they account for internal buffering etc.  maybe there's a way
 	// to account for that in a pad probe callback on the sink's sink pad?
-    gint ms_period = 1000 / 5;
+    gint ms_period = 1000 / 4;
     m_TickTimeoutId = g_timeout_add( ms_period, GSourceFunc( tick_timeout ), this );
 
     if( Init() )
@@ -2119,7 +2119,7 @@ void guFaderPlayBin::AudioChanged( void )
         event.SetInt( GST_STATE_PLAYING );
         SendEvent( event );
         //m_AboutToFinishPending = false;
-        m_AboutToFinishPendingId = g_timeout_add( 2000, GSourceFunc( reset_about_to_finish ), this );
+        m_AboutToFinishPendingId = g_timeout_add( 3000, GSourceFunc( reset_about_to_finish ), this );
     }
 }
 
