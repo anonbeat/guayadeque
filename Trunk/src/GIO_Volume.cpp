@@ -230,7 +230,7 @@ void guGIO_VolumeMonitor::OnMountAdded( GMount * mount )
     {
         if( g_mount_is_shadowed( mount ) )
         {
-            g_object_unref( mount );
+            //g_object_unref( mount );
             guLogMessage( wxT( "ignored shadowed mount" ) );
             return;
         }
@@ -239,7 +239,7 @@ void guGIO_VolumeMonitor::OnMountAdded( GMount * mount )
         if( !Volume )
         {
             guLogMessage( wxT( "mount without volume?" ) );
-            g_object_unref( mount );
+            //g_object_unref( mount );
             return;
         }
         g_object_unref( Volume );
