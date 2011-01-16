@@ -38,6 +38,9 @@ IMPLEMENT_APP(guMainApp);
 // -------------------------------------------------------------------------------- //
 guMainApp::guMainApp() : wxApp()
 {
+    m_Db = NULL;
+    m_DbCache = NULL;
+
     if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque" ) ) )
     {
         wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque" ), 0770 );
@@ -142,6 +145,7 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
     DBusConnection * dbconn;
     DBusMessage * dbmsg, * dbreply;
     DBusMessageIter dbiter;
+    DBusMessageIter dbitertracks;
 
     dbus_error_init( &dberr );
     dbconn = dbus_bus_get( DBUS_BUS_SESSION, &dberr );
@@ -153,65 +157,50 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
          return false;
     }
 
+
     dbmsg = dbus_message_new_method_call( GUAYADEQUE_MPRIS_SERVICENAME,
                                           GUAYADEQUE_MPRIS_TRACKLIST_PATH,
                                           GUAYADEQUE_MPRIS_INTERFACE,
-                                          "AddTrack" );
+                                          "AddTracks" );
     if( dbmsg == NULL )
     {
          guLogError( wxT( "Couldn’t create a DBusMessage" ) );
          return false;
     }
 
+    dbus_message_iter_init_append( dbmsg, &dbiter );
+    dbus_message_iter_open_container( &dbiter, DBUS_TYPE_ARRAY, "s", &dbitertracks );
+
     wxString FilePath;
-    bool PlayTrack;
     int index;
     for( index = 1; index < argc; index++ )
     {
-        PlayTrack = ( index == 1 );
         FilePath = argv[ index ];
         //guLogMessage( wxT( "Trying to add file '%s'" ), argv[ index ] );
 
-        dbus_message_iter_init_append( dbmsg, &dbiter );
-
-        //dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_STRING, &FilePath.char_str() );
-        Append_String( &dbiter, FilePath.char_str() );
-        dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_BOOLEAN, &PlayTrack );
-
-        dbus_error_init( &dberr );
-
-        dbreply = dbus_connection_send_with_reply_and_block( dbconn, dbmsg, 5000, &dberr );
-        if( dbus_error_is_set( &dberr ) )
-        {
-              guLogMessage( wxT( "Error adding file %s" ), FilePath.c_str() );
-              printf( "Error getting a reply: %s\n", dberr.message );
-              dbus_message_unref( dbmsg );
-              dbus_error_free( &dberr );
-              return false;
-        }
-
-        dbus_message_unref( dbreply );
-
-        /* Don’t need this anymore */
-        dbus_message_unref( dbmsg );
+        Append_String( &dbitertracks, FilePath.char_str() );
     }
 
-    // Send the Play
-    dbmsg = dbus_message_new_method_call( GUAYADEQUE_MPRIS_SERVICENAME,
-                                          GUAYADEQUE_MPRIS_TRACKLIST_PATH,
-                                          GUAYADEQUE_MPRIS_INTERFACE,
-                                          "Play" );
+    dbus_message_iter_close_container( &dbiter, &dbitertracks );
+
+    dbus_bool_t PlayTrack = true;
+    dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_BOOLEAN, &PlayTrack );
+
     dbreply = dbus_connection_send_with_reply_and_block( dbconn, dbmsg, 5000, &dberr );
     if( dbus_error_is_set( &dberr ) )
     {
-          guLogMessage( wxT( "Error sending Play" ) );
-          printf( "Error getting a reply: %s\n", dberr.message );
+          guLogMessage( wxT( "Error adding files: '%s'" ), wxString( dberr.message, wxConvUTF8 ).c_str() );
+          dbus_message_unref( dbmsg );
           dbus_error_free( &dberr );
+          return false;
     }
-    dbus_message_unref( dbreply );
+
+    if( dbreply )
+        dbus_message_unref( dbreply );
+
+    /* Don’t need this anymore */
     dbus_message_unref( dbmsg );
 
-    dbus_connection_close( dbconn );
     dbus_connection_unref( dbconn );
 
     return true;
@@ -225,6 +214,7 @@ bool guMainApp::OnInit()
     wxLog::SetActiveTarget( new wxLogStderr( stdout ) );
 
     const wxString AppName = wxString::Format( wxT( ".guayadeque/.guayadeque-%s" ), wxGetUserId().c_str() );
+    guLogMessage( wxT( "Init: %s" ), AppName.c_str() );
     m_SingleInstanceChecker = new wxSingleInstanceChecker( AppName );
     if( m_SingleInstanceChecker->IsAnotherRunning() )
     {

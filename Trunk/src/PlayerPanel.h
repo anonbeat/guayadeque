@@ -331,6 +331,13 @@ class guPlayerPanel : public wxPanel
 
     void                        OnCoverUpdated( wxCommandEvent &event ); // Once the cover have been found shows it
 
+    void                        OnAddTracks( wxCommandEvent &event );
+    void                        OnRemoveTrack( wxCommandEvent &event );
+    void                        OnRepeat( wxCommandEvent &event );
+    void                        OnLoop( wxCommandEvent &event );
+    void                        OnRandom( wxCommandEvent &event );
+    void                        OnSetVolume( wxCommandEvent &event );
+
   public:
     guPlayerPanel( wxWindow * parent, guDbLibrary * db,
                    guPlayList * playlist, guPlayerFilters * filters );

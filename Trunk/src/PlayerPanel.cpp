@@ -473,6 +473,13 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     Connect( ID_PLAYERPANEL_COVERUPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnCoverUpdated ), NULL, this );
 
+    Connect( ID_PLAYERPANEL_ADDTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnAddTracks ), NULL, this );
+    Connect( ID_PLAYERPANEL_REMOVETRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRemoveTrack ), NULL, this );
+    Connect( ID_PLAYERPANEL_SETREPEAT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRepeat ), NULL, this );
+    Connect( ID_PLAYERPANEL_SETLOOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnLoop ), NULL, this );
+    Connect( ID_PLAYERPANEL_SETRANDOM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandom ), NULL, this );
+    Connect( ID_PLAYERPANEL_SETVOLUME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSetVolume ), NULL, this );
+
     //
     m_AudioScrobble = NULL;
     if( m_AudioScrobbleEnabled )
@@ -2962,6 +2969,67 @@ void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
     int Rotation = ( event.GetWheelRotation() / event.GetWheelDelta() ) * ( event.ShiftDown() ? 1 : 4 );
     //guLogMessage( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
     SetVolume( m_CurVolume + Rotation );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnAddTracks( wxCommandEvent &event )
+{
+    bool PlayTracks = event.GetInt();
+    wxArrayString * TrackList = ( wxArrayString * ) event.GetClientData();
+
+    if( PlayTracks )
+    {
+        if( GetState() != guMEDIASTATE_STOPPED )
+        {
+            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+            OnStopButtonClick( event );
+        }
+        ClearPlayList();
+    }
+
+    SetPlayList( * TrackList );
+
+//    if( PlayTracks )
+//    {
+//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+//        OnNextTrackButtonClick( event );
+//        OnPlayButtonClick( event );
+//    }
+
+    if( TrackList )
+    {
+        delete TrackList;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnRemoveTrack( wxCommandEvent &event )
+{
+    RemoveItem( event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnRepeat( wxCommandEvent &event )
+{
+    OnRepeatPlayButtonClick( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnLoop( wxCommandEvent &event )
+{
+    SetPlayLoop( event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnRandom( wxCommandEvent &event )
+{
+    OnRandomPlayButtonClick( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnSetVolume( wxCommandEvent &event )
+{
+    SetVolume( event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //

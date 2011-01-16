@@ -26,16 +26,16 @@ DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, voi
 {
 	guDBusServer * DBusObj = ( guDBusServer * ) udata;
 	//guDBusMessage * Msg = new guDBusMessage( msg );
-	guDBusMessage Msg( msg );
+	guDBusMessage * Msg = new guDBusMessage( msg );
 	guDBusMethodReturn * Reply = NULL;
-	if( Msg.NeedReply() )
+	if( Msg->NeedReply() )
 	{
 	    Reply = new guDBusMethodReturn( msg );
 	}
-	DBusHandlerResult RetVal = DBusObj->HandleMessages( &Msg, Reply );
+	DBusHandlerResult RetVal = DBusObj->HandleMessages( Msg, Reply );
 	//printf( "*** End of handle_messages ***\n" );
 
-	//delete Msg;
+	delete Msg;
 
 	if( Reply )
         delete Reply;
@@ -49,10 +49,11 @@ void Handle_Response( DBusPendingCall * PCall, void * udata )
 	guDBusClient * DBusObj = ( guDBusClient * ) udata;
 	DBusMessage * reply;
 	reply = dbus_pending_call_steal_reply( PCall );
-    guDBusMessage Msg( reply );
+    guDBusMessage * Msg = new guDBusMessage( reply );
 
-    DBusObj->HandleMessages( &Msg, NULL );
+    DBusObj->HandleMessages( Msg, NULL );
 
+    delete Msg;
 	dbus_message_unref( reply );
 	dbus_pending_call_unref( PCall );
 }
