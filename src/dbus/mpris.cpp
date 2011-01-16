@@ -138,6 +138,11 @@ const char * Introspection_XML_Data_Tracklist =
 "    <method name=\"SetRandom\">\n"
 "      <arg type=\"b\" direction=\"in\" />\n"
 "    </method>\n"
+"    <method name=\"AddTracks\">\n"
+"      <arg type=\"as\" direction=\"in\" />\n"
+"      <arg type=\"b\" direction=\"in\" />\n"
+"      <arg type=\"i\" direction=\"out\" />\n"
+"    </method>\n"
 "    <signal name=\"TrackListChange\">\n"
 "      <arg type=\"i\" />\n"
 "    </signal>\n"
@@ -462,8 +467,9 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 }
                 else if( !strcmp( Member, "Repeat" ) )
                 {
-                    wxCommandEvent event;
-                    m_PlayerPanel->OnRepeatPlayButtonClick( event );
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETREPEAT );
+                    wxPostEvent( m_PlayerPanel, event );
+
                     Send( reply );
                     Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
@@ -537,7 +543,9 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     }
                     else
                     {
-                        m_PlayerPanel->SetVolume( Volume );
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETVOLUME );
+                        event.SetInt( Volume );
+                        wxPostEvent( m_PlayerPanel, event );
 
                         Send( reply );
                         Flush();
@@ -675,6 +683,8 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                           DBUS_TYPE_BOOLEAN, &PlayTrack,
                           DBUS_TYPE_INVALID );
 
+                    //guLogMessage( wxT( "MPRIS: AddTrack\n%s\n%i" ), wxString( TrackPath, wxConvUTF8 ).c_str(), PlayTrack );
+
                     if( dbus_error_is_set( &error ) )
                     {
                         printf( "Could not read the AddTrack parameters : %s\n", error.message );
@@ -686,27 +696,63 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                         DBusMessageIter args;
                         dbus_message_iter_init_append( reply->GetMessage(), &args );
 
-                        //printf( "AddTrack: %s\n", TrackPath );
+                        wxArrayString * TrackList = new wxArrayString();
+                        TrackList->Add( wxString( TrackPath, wxConvUTF8 ) );
 
-                        if( PlayTrack )
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_ADDTRACKS );
+                        event.SetInt( PlayTrack );
+                        event.SetClientData( TrackList );
+                        wxPostEvent( m_PlayerPanel, event );
+
+                        int TrackAdded = 1;
+                        if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &TrackAdded ) )
                         {
-                            m_PlayerPanel->ClearPlayList();
-
-                            if( m_PlayerPanel->GetState() != guMEDIASTATE_STOPPED )
-                            {
-                                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
-                                wxPostEvent( m_PlayerPanel, event );
-                            }
+                            guLogError( wxT( "Failed to attach the AddTrack return code" ) );
                         }
 
-                        m_PlayerPanel->AddToPlayList( wxString( TrackPath, wxConvUTF8 ) );
+                        Send( reply );
+                        Flush();
+                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                    }
+                }
+                else if( !strcmp( Member, "AddTracks" ) )
+                {
+                    DBusError error;
+                    dbus_error_init( &error );
 
-                        if( PlayTrack )
+                    char **         Tracks;
+                    dbus_int32_t    TracksCount;
+                    dbus_bool_t     PlayTrack;
+
+                    dbus_message_get_args( msg->GetMessage(), &error,
+                          DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &Tracks, &TracksCount,
+                          DBUS_TYPE_BOOLEAN, &PlayTrack,
+                          DBUS_TYPE_INVALID );
+//
+//                    //guLogMessage( wxT( "MPRIS: AddTrack\n%s\n%i" ), wxString( TrackPath, wxConvUTF8 ).c_str(), PlayTrack );
+//
+                    if( dbus_error_is_set( &error ) )
+                    {
+                        guLogMessage( wxT( "Could not read the AddTracks parameters : '%s'" ), wxString( error.message, wxConvUTF8 ).c_str() );
+                        dbus_error_free( &error );
+                        RetVal =  DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+                    }
+                    else
+                    {
+                        DBusMessageIter args;
+                        dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                        wxArrayString * TrackList = new wxArrayString();
+                        int Index;
+                        for( Index = 0; Index < TracksCount; Index++ )
                         {
-                            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
-                            m_PlayerPanel->OnNextTrackButtonClick( event );
-                            m_PlayerPanel->OnPlayButtonClick( event );
+                            TrackList->Add( wxString( Tracks[ Index ], wxConvUTF8 ) );
                         }
+
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_ADDTRACKS );
+                        event.SetInt( PlayTrack );
+                        event.SetClientData( TrackList );
+                        wxPostEvent( m_PlayerPanel, event );
 
                         int TrackAdded = 1;
                         if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_INT32, &TrackAdded ) )
@@ -736,7 +782,10 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     }
                     else
                     {
-                        m_PlayerPanel->RemoveItem( TrackNum );
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_REMOVETRACK );
+                        event.SetInt( TrackNum );
+                        wxPostEvent( m_PlayerPanel, event );
+
                         //Send( reply );
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
@@ -761,7 +810,9 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     }
                     else
                     {
-                        m_PlayerPanel->SetPlayLoop( PlayLoop );
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETLOOP );
+                        event.SetInt( PlayLoop );
+                        wxPostEvent( m_PlayerPanel, event );
 
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
@@ -786,8 +837,8 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                     }
                     else
                     {
-                        wxCommandEvent event;
-                        m_PlayerPanel->OnRandomPlayButtonClick( event );
+                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETRANDOM );
+                        wxPostEvent( m_PlayerPanel, event );
 
                         Flush();
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
