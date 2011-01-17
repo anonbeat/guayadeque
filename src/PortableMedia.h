@@ -264,6 +264,8 @@ class guPortableMediaProperties : public wxDialog
     int                         m_PlaylistFormats;
     int                         m_CoverFormats;
 
+    bool                        m_IsIpod;
+
     void                        OnAudioFolderBtnClick( wxCommandEvent& event );
     void                        OnAudioFormatBtnClick( wxCommandEvent& event );
     void                        OnTransFormatChanged( wxCommandEvent& event );

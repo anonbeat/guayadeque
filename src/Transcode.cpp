@@ -108,6 +108,7 @@ guTranscodeThread::guTranscodeThread( const wxChar * source, const wxChar * targ
     m_Target = wxString( target );
     m_Format = format;
     m_Quality = quality;
+    guLogMessage( wxT( "Transcode %i - %i '%s' => '%s'" ), format, quality, source, target );
 
     m_Running = false;
     m_HasError = false;
@@ -177,11 +178,22 @@ unsigned long guTranscodeWmaBitrates[] = {
 
 // -------------------------------------------------------------------------------- //
 wxArrayString TranscodeFormatStrings;
+wxArrayString IpodTranscodeFormatStrings;
 wxArrayString TranscodeQualityStrings;
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guTranscodeFormatStrings( void )
+wxArrayString guTranscodeFormatStrings( const bool isipod )
 {
+    if( isipod )
+    {
+        if( !IpodTranscodeFormatStrings.Count() )
+        {
+            IpodTranscodeFormatStrings.Add( wxT( "mp3" ) );
+            IpodTranscodeFormatStrings.Add( wxT( "m4a" ) );
+        }
+        return IpodTranscodeFormatStrings;
+    }
+
     if( !TranscodeFormatStrings.Count() )
     {
         TranscodeFormatStrings.Add( _( "Keep Format" ) );

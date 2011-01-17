@@ -1131,26 +1131,30 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMFlexSizer->SetFlexibleDirection( wxBOTH );
 	PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	NamePatternLabel = new wxStaticText( PMAudioPanel, wxID_ANY, _("Name Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
-	NamePatternLabel->Wrap( -1 );
-	PMFlexSizer->Add( NamePatternLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+    m_IsIpod = ( m_PortableMediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD );
 
-	m_NamePatternText = new wxTextCtrl( PMAudioPanel, wxID_ANY, mediadevice->Pattern(), wxDefaultPosition, wxDefaultSize, 0 );
-	m_NamePatternText->SetToolTip( _("{a}\t: Artist\t\t\t{aa} : Album Artist\n{b}\t: Album\t\t\t{d}\t : Disk\n{f}\t: Filename\t\t{g}\t : Genre\n{n}\t: Number\t\t\t{t}\t : Title\n{y}\t: Year") );
-	PMFlexSizer->Add( m_NamePatternText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+    if( !m_IsIpod )
+    {
+        NamePatternLabel = new wxStaticText( PMAudioPanel, wxID_ANY, _("Name Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+        NamePatternLabel->Wrap( -1 );
+        PMFlexSizer->Add( NamePatternLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
+        m_NamePatternText = new wxTextCtrl( PMAudioPanel, wxID_ANY, mediadevice->Pattern(), wxDefaultPosition, wxDefaultSize, 0 );
+        m_NamePatternText->SetToolTip( _("{a}\t: Artist\t\t\t{aa} : Album Artist\n{b}\t: Album\t\t\t{d}\t : Disk\n{f}\t: Filename\t\t{g}\t : Genre\n{n}\t: Number\t\t\t{t}\t : Title\n{y}\t: Year") );
+        PMFlexSizer->Add( m_NamePatternText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-	PMFlexSizer->Add( 0, 0, 0, wxEXPAND, 5 );
+        PMFlexSizer->Add( 0, 0, 0, wxEXPAND, 5 );
 
-	AudioFolderLabel = new wxStaticText( PMAudioPanel, wxID_ANY, _("Audio Folders:"), wxDefaultPosition, wxDefaultSize, 0 );
-	AudioFolderLabel->Wrap( -1 );
-	PMFlexSizer->Add( AudioFolderLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
+        AudioFolderLabel = new wxStaticText( PMAudioPanel, wxID_ANY, _("Audio Folders:"), wxDefaultPosition, wxDefaultSize, 0 );
+        AudioFolderLabel->Wrap( -1 );
+        PMFlexSizer->Add( AudioFolderLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
 
-	m_AudioFolderText = new wxTextCtrl( PMAudioPanel, wxID_ANY, mediadevice->AudioFolders(), wxDefaultPosition, wxDefaultSize, 0 );
-	PMFlexSizer->Add( m_AudioFolderText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+        m_AudioFolderText = new wxTextCtrl( PMAudioPanel, wxID_ANY, mediadevice->AudioFolders(), wxDefaultPosition, wxDefaultSize, 0 );
+        PMFlexSizer->Add( m_AudioFolderText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-	m_AudioFolderBtn = new wxButton( PMAudioPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
-	PMFlexSizer->Add( m_AudioFolderBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+        m_AudioFolderBtn = new wxButton( PMAudioPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
+        PMFlexSizer->Add( m_AudioFolderBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    }
 
 	AudioFormatLabel = new wxStaticText( PMAudioPanel, wxID_ANY, _("Audio Formats:"), wxDefaultPosition, wxDefaultSize, 0 );
 	AudioFormatLabel->Wrap( -1 );
@@ -1170,15 +1174,26 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	wxBoxSizer* TranscodeSizer;
 	TranscodeSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_TransFormatChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeFormatStrings(), 0 );
-	m_TransFormatChoice->SetSelection( mediadevice->TranscodeFormat() );
+	m_TransFormatChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeFormatStrings( m_IsIpod ), 0 );
+
+	if( m_IsIpod )
+	{
+	    guLogMessage( wxT( "Transcode Format : %i" ), mediadevice->TranscodeFormat() );
+        m_TransFormatChoice->SetSelection( mediadevice->TranscodeFormat() == guTRANSCODE_FORMAT_AAC );
+	}
+	else
+	{
+        m_TransFormatChoice->SetSelection( mediadevice->TranscodeFormat() );
+	}
+
 	TranscodeSizer->Add( m_TransFormatChoice, 1, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxString m_TransScopeChoiceChoices[] = { _( "Unsupported formats only" ), _( "always" ) };
 	int m_TransScopeChoiceNChoices = sizeof( m_TransScopeChoiceChoices ) / sizeof( wxString );
 	m_TransScopeChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_TransScopeChoiceNChoices, m_TransScopeChoiceChoices, 0 );
 	m_TransScopeChoice->SetSelection( mediadevice->TranscodeScope() );
-	m_TransScopeChoice->Enable( mediadevice->TranscodeFormat() != guTRANSCODE_FORMAT_KEEP );
+	if( !m_IsIpod )
+        m_TransScopeChoice->Enable( mediadevice->TranscodeFormat() != guTRANSCODE_FORMAT_KEEP );
 	TranscodeSizer->Add( m_TransScopeChoice, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	PMFlexSizer->Add( TranscodeSizer, 1, wxEXPAND, 5 );
@@ -1192,8 +1207,11 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
 	m_TransQualityChoice = new wxChoice( PMAudioPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, guTranscodeQualityStrings(), 0 );
 	m_TransQualityChoice->SetSelection( mediadevice->TranscodeQuality() );
-    m_TransQualityChoice->Enable( ( m_PortableMediaDevice->TranscodeFormat() != guTRANSCODE_FORMAT_KEEP ) &&
-                                  ( m_PortableMediaDevice->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP ) );
+	if( !m_IsIpod )
+	{
+        m_TransQualityChoice->Enable( ( m_PortableMediaDevice->TranscodeFormat() != guTRANSCODE_FORMAT_KEEP ) &&
+                                      ( m_PortableMediaDevice->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP ) );
+	}
 	PMFlexSizer->Add( m_TransQualityChoice, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
 
@@ -1203,37 +1221,43 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMAudioPanel->Layout();
 	PMFlexSizer->Fit( PMAudioPanel );
 	PMNotebook->AddPage( PMAudioPanel, _("Audio"), true );
-	PMPlaylistPanel = new wxPanel( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	PMFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
-	PMFlexSizer->AddGrowableCol( 1 );
-	PMFlexSizer->SetFlexibleDirection( wxBOTH );
-	PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	PlaylistFolderLabel = new wxStaticText( PMPlaylistPanel, wxID_ANY, _("PlayList Folders:"), wxDefaultPosition, wxDefaultSize, 0 );
-	PlaylistFolderLabel->Wrap( -1 );
-	PMFlexSizer->Add( PlaylistFolderLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxALIGN_RIGHT, 5 );
 
-	m_PlaylistFolderText = new wxTextCtrl( PMPlaylistPanel, wxID_ANY, mediadevice->PlaylistFolder(), wxDefaultPosition, wxDefaultSize, 0 );
-	PMFlexSizer->Add( m_PlaylistFolderText, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
+    if( !m_IsIpod )
+    {
+        PMPlaylistPanel = new wxPanel( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+        PMFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
+        PMFlexSizer->AddGrowableCol( 1 );
+        PMFlexSizer->SetFlexibleDirection( wxBOTH );
+        PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_PlaylistFolderBtn = new wxButton( PMPlaylistPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
-	PMFlexSizer->Add( m_PlaylistFolderBtn, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+        PlaylistFolderLabel = new wxStaticText( PMPlaylistPanel, wxID_ANY, _("PlayList Folders:"), wxDefaultPosition, wxDefaultSize, 0 );
+        PlaylistFolderLabel->Wrap( -1 );
+        PMFlexSizer->Add( PlaylistFolderLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxALIGN_RIGHT, 5 );
 
-	PlaylistFormatLabel = new wxStaticText( PMPlaylistPanel, wxID_ANY, _("PlayList Format:"), wxDefaultPosition, wxDefaultSize, 0 );
-	PlaylistFormatLabel->Wrap( -1 );
-	PMFlexSizer->Add( PlaylistFormatLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+        m_PlaylistFolderText = new wxTextCtrl( PMPlaylistPanel, wxID_ANY, mediadevice->PlaylistFolder(), wxDefaultPosition, wxDefaultSize, 0 );
+        PMFlexSizer->Add( m_PlaylistFolderText, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
-    m_PlaylistFormats = mediadevice->PlaylistFormats();
-	m_PlaylistFormatText = new wxTextCtrl( PMPlaylistPanel, wxID_ANY, mediadevice->PlaylistFormatsStr(), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	PMFlexSizer->Add( m_PlaylistFormatText, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
+        m_PlaylistFolderBtn = new wxButton( PMPlaylistPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
+        PMFlexSizer->Add( m_PlaylistFolderBtn, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	m_PlaylistFormatBtn = new wxButton( PMPlaylistPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
-	PMFlexSizer->Add( m_PlaylistFormatBtn, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+        PlaylistFormatLabel = new wxStaticText( PMPlaylistPanel, wxID_ANY, _("PlayList Format:"), wxDefaultPosition, wxDefaultSize, 0 );
+        PlaylistFormatLabel->Wrap( -1 );
+        PMFlexSizer->Add( PlaylistFormatLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	PMPlaylistPanel->SetSizer( PMFlexSizer );
-	PMPlaylistPanel->Layout();
-	PMFlexSizer->Fit( PMPlaylistPanel );
-	PMNotebook->AddPage( PMPlaylistPanel, _("Playlists"), false );
+        m_PlaylistFormats = mediadevice->PlaylistFormats();
+        m_PlaylistFormatText = new wxTextCtrl( PMPlaylistPanel, wxID_ANY, mediadevice->PlaylistFormatsStr(), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+        PMFlexSizer->Add( m_PlaylistFormatText, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
+
+        m_PlaylistFormatBtn = new wxButton( PMPlaylistPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
+        PMFlexSizer->Add( m_PlaylistFormatBtn, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
+        PMPlaylistPanel->SetSizer( PMFlexSizer );
+        PMPlaylistPanel->Layout();
+        PMFlexSizer->Fit( PMPlaylistPanel );
+        PMNotebook->AddPage( PMPlaylistPanel, _("Playlists"), false );
+    }
+
 	PMCoversPanel = new wxPanel( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	PMFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
 	PMFlexSizer->AddGrowableCol( 1 );
@@ -1251,15 +1275,18 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	m_CoverFormatBtn = new wxButton( PMCoversPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
 	PMFlexSizer->Add( m_CoverFormatBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	CoverNameLabel = new wxStaticText( PMCoversPanel, wxID_ANY, _("Cover Name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	CoverNameLabel->Wrap( -1 );
-	PMFlexSizer->Add( CoverNameLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+    if( !m_IsIpod )
+    {
+        CoverNameLabel = new wxStaticText( PMCoversPanel, wxID_ANY, _("Cover Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+        CoverNameLabel->Wrap( -1 );
+        PMFlexSizer->Add( CoverNameLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_CoverNameText = new wxTextCtrl( PMCoversPanel, wxID_ANY, mediadevice->CoverName(), wxDefaultPosition, wxDefaultSize, 0 );
-	PMFlexSizer->Add( m_CoverNameText, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
+        m_CoverNameText = new wxTextCtrl( PMCoversPanel, wxID_ANY, mediadevice->CoverName(), wxDefaultPosition, wxDefaultSize, 0 );
+        PMFlexSizer->Add( m_CoverNameText, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
 
-	PMFlexSizer->Add( 0, 0, 0, wxEXPAND, 5 );
+        PMFlexSizer->Add( 0, 0, 0, wxEXPAND, 5 );
+    }
 
 	CoverSizeLabel = new wxStaticText( PMCoversPanel, wxID_ANY, _("Covers Size (pixels):"), wxDefaultPosition, wxDefaultSize, 0 );
 	CoverSizeLabel->Wrap( -1 );
@@ -1288,13 +1315,17 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	this->SetSizer( MainSizer );
 	this->Layout();
 
-	m_AudioFolderBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnAudioFolderBtnClick ), NULL, this );
+	if( !m_IsIpod )
+        m_AudioFolderBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnAudioFolderBtnClick ), NULL, this );
 	m_AudioFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnAudioFormatBtnClick ), NULL, this );
 
 	m_TransFormatChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPortableMediaProperties::OnTransFormatChanged ), NULL, this );
 
-	m_PlaylistFolderBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnPlaylistFolderBtnClick ), NULL, this );
-	m_PlaylistFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnPlaylistFormatBtnClick ), NULL, this );
+    if( !m_IsIpod )
+    {
+        m_PlaylistFolderBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnPlaylistFolderBtnClick ), NULL, this );
+        m_PlaylistFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnPlaylistFormatBtnClick ), NULL, this );
+    }
 
 
 	m_CoverFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnCoverFormatBtnClick ), NULL, this );
@@ -1318,16 +1349,32 @@ guPortableMediaProperties::~guPortableMediaProperties()
 // -------------------------------------------------------------------------------- //
 void guPortableMediaProperties::WriteConfig( void )
 {
-    m_PortableMediaDevice->SetPattern( m_NamePatternText->GetValue() );
+    if( !m_IsIpod )
+    {
+        m_PortableMediaDevice->SetPattern( m_NamePatternText->GetValue() );
+        m_PortableMediaDevice->SetAudioFolders( m_AudioFolderText->GetValue() );
+    }
     m_PortableMediaDevice->SetAudioFormats( m_AudioFormats );
-    m_PortableMediaDevice->SetTranscodeFormat( m_TransFormatChoice->GetSelection() );
+    if( !m_IsIpod )
+    {
+        m_PortableMediaDevice->SetTranscodeFormat( m_TransFormatChoice->GetSelection() );
+    }
+    else
+    {
+        m_PortableMediaDevice->SetTranscodeFormat( m_TransFormatChoice->GetSelection() ? guTRANSCODE_FORMAT_AAC : guTRANSCODE_FORMAT_MP3 );
+    }
     m_PortableMediaDevice->SetTranscodeScope( m_TransScopeChoice->GetSelection() );
     m_PortableMediaDevice->SetTranscodeQuality( m_TransQualityChoice->GetSelection() );
-    m_PortableMediaDevice->SetAudioFolders( m_AudioFolderText->GetValue() );
-    m_PortableMediaDevice->SetPlaylistFormats( m_PlaylistFormats );
-    m_PortableMediaDevice->SetPlaylistFolder( m_PlaylistFolderText->GetValue() );
+    if( !m_IsIpod )
+    {
+        m_PortableMediaDevice->SetPlaylistFormats( m_PlaylistFormats );
+        m_PortableMediaDevice->SetPlaylistFolder( m_PlaylistFolderText->GetValue() );
+    }
     m_PortableMediaDevice->SetCoverFormats( m_CoverFormats );
-    m_PortableMediaDevice->SetCoverName( m_CoverNameText->GetValue() );
+    if( !m_IsIpod )
+    {
+        m_PortableMediaDevice->SetCoverName( m_CoverNameText->GetValue() );
+    }
     long CoverSize;
     m_CoverSizeText->GetValue().ToLong( &CoverSize );
     m_PortableMediaDevice->SetCoverSize( CoverSize );
@@ -1377,17 +1424,30 @@ void guPortableMediaProperties::OnAudioFormatBtnClick( wxCommandEvent &event )
     wxArrayInt Selection;
     wxArrayString Items;
     Items.Add( guTranscodeFormatString( 1 ) );
-    Items.Add( guTranscodeFormatString( 2 ) );
-    Items.Add( guTranscodeFormatString( 3 ) );
+    if( !m_IsIpod )
+    {
+        Items.Add( guTranscodeFormatString( 2 ) );
+        Items.Add( guTranscodeFormatString( 3 ) );
+    }
     Items.Add( guTranscodeFormatString( 4 ) );
-    Items.Add( guTranscodeFormatString( 5 ) );
+
+    if( !m_IsIpod )
+    {
+        Items.Add( guTranscodeFormatString( 5 ) );
+    }
 
     wxArrayInt ItemFlags;
     ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_MP3 );
-    ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_OGG );
-    ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_FLAC );
+    if( !m_IsIpod )
+    {
+        ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_OGG );
+        ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_FLAC );
+    }
     ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_AAC );
-    ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_WMA );
+    if( !m_IsIpod )
+    {
+        ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_WMA );
+    }
 
     int Index;
     int Count = ItemFlags.Count();
@@ -1498,17 +1558,23 @@ void guPortableMediaProperties::OnCoverFormatBtnClick( wxCommandEvent &event )
     wxArrayInt Selection;
     wxArrayString Items;
     Items.Add( _( "embedded" ) );
-    Items.Add( guPortableCoverFormatString[ 1 ] );
-    Items.Add( guPortableCoverFormatString[ 2 ] );
-    Items.Add( guPortableCoverFormatString[ 3 ] );
-    Items.Add( guPortableCoverFormatString[ 4 ] );
+    if( !m_IsIpod )
+    {
+        Items.Add( guPortableCoverFormatString[ 1 ] );
+        Items.Add( guPortableCoverFormatString[ 2 ] );
+        Items.Add( guPortableCoverFormatString[ 3 ] );
+        Items.Add( guPortableCoverFormatString[ 4 ] );
+    }
 
     wxArrayInt ItemFlags;
     ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED );
-    ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_JPEG );
-    ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_PNG );
-    ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_BMP );
-    ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_GIF );
+    if( !m_IsIpod )
+    {
+        ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_JPEG );
+        ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_PNG );
+        ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_BMP );
+        ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_GIF );
+    }
 
     int Index;
     int Count = ItemFlags.Count();
@@ -1541,7 +1607,7 @@ void guPortableMediaProperties::OnCoverFormatBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPortableMediaProperties::OnTransFormatChanged( wxCommandEvent& event )
 {
-    bool IsEnabled = event.GetInt() != guTRANSCODE_FORMAT_KEEP;
+    bool IsEnabled = ( event.GetInt() != guTRANSCODE_FORMAT_KEEP ) || m_IsIpod;
 
     m_TransScopeChoice->Enable( IsEnabled );
     m_TransQualityChoice->Enable( IsEnabled );
@@ -3010,8 +3076,8 @@ void guIpodMediaLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
     wxMenuItem * MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UPDATE, _( "Update" ), _( "Update the device library" ) );
     SubMenu->Append( MenuItem );
 
-//    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_PROPERTIES, _( "Properties" ), _( "Set the device properties" ) );
-//    SubMenu->Append( MenuItem );
+    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_PROPERTIES, _( "Properties" ), _( "Set the device properties" ) );
+    SubMenu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UNMOUNT, _( "Unmount" ), _( "Unmount the device" ) );
     SubMenu->Append( MenuItem );
@@ -3062,17 +3128,17 @@ void guIpodMediaLibPanel::SetPortableMediaDevice( guPortableMediaDevice * portab
 {
     m_PortableMediaDevice = portablemediadevice;
 
-    m_PortableMediaDevice->SetPattern( wxEmptyString );
-    m_PortableMediaDevice->SetAudioFormats( guPORTABLEMEDIA_AUDIO_FORMAT_MP3 | guPORTABLEMEDIA_AUDIO_FORMAT_AAC );
-    m_PortableMediaDevice->SetTranscodeFormat( guTRANSCODE_FORMAT_MP3 );
-    m_PortableMediaDevice->SetTranscodeScope( guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
-    m_PortableMediaDevice->SetTranscodeQuality( guTRANSCODE_QUALITY_KEEP );
-    m_PortableMediaDevice->SetAudioFolders( wxT( "/" ) );
-    m_PortableMediaDevice->SetPlaylistFormats( 0 );
-    m_PortableMediaDevice->SetPlaylistFolder( wxEmptyString );
-    m_PortableMediaDevice->SetCoverFormats( 0 );
-    m_PortableMediaDevice->SetCoverName( wxEmptyString );
-    m_PortableMediaDevice->SetCoverSize( 0 );
+//    m_PortableMediaDevice->SetPattern( wxEmptyString );
+//    m_PortableMediaDevice->SetAudioFormats( guPORTABLEMEDIA_AUDIO_FORMAT_MP3 | guPORTABLEMEDIA_AUDIO_FORMAT_AAC );
+//    m_PortableMediaDevice->SetTranscodeFormat( guTRANSCODE_FORMAT_MP3 );
+//    m_PortableMediaDevice->SetTranscodeScope( guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
+//    m_PortableMediaDevice->SetTranscodeQuality( guTRANSCODE_QUALITY_KEEP );
+//    m_PortableMediaDevice->SetAudioFolders( wxT( "/" ) );
+//    m_PortableMediaDevice->SetPlaylistFormats( 0 );
+//    m_PortableMediaDevice->SetPlaylistFolder( wxEmptyString );
+//    m_PortableMediaDevice->SetCoverFormats( 0 );
+//    m_PortableMediaDevice->SetCoverName( wxEmptyString );
+//    m_PortableMediaDevice->SetCoverSize( 0 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3174,15 +3240,16 @@ int guIpodMediaLibPanel::CopyTo( const guTrack * track, wxString &filename )
     wxString TmpFile;
 
     // Copy the track file
-    if( !( m_PortableMediaDevice->AudioFormats() & FileFormat ) )
+    if( !( m_PortableMediaDevice->AudioFormats() & FileFormat ) ||
+         ( m_PortableMediaDevice->TranscodeScope() == guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS ) )
     {
         // We need to transcode the file to a temporary file and then copy it
         guLogMessage( wxT( "guIpodMediaLibPanel Transcode File start" ) );
         TmpFile = wxFileName::CreateTempFileName( wxT( "guTrcde_" ) );
         wxRemoveFile( TmpFile );
-        TmpFile += wxT( ".mp3" );
+        TmpFile += wxT( "." ) + guTranscodeFormatString( m_PortableMediaDevice->TranscodeFormat() );
 
-        guTranscodeThread * TranscodeThread = new guTranscodeThread( track->m_FileName, TmpFile, guTRANSCODE_FORMAT_MP3, guTRANSCODE_QUALITY_NORMAL );
+        guTranscodeThread * TranscodeThread = new guTranscodeThread( track->m_FileName, TmpFile, m_PortableMediaDevice->TranscodeFormat(), m_PortableMediaDevice->TranscodeQuality() );
         if( TranscodeThread && TranscodeThread->IsOk() )
         {
                 // TODO : Make a better aproach to be sure its running
@@ -3201,7 +3268,7 @@ int guIpodMediaLibPanel::CopyTo( const guTrack * track, wxString &filename )
             return wxNOT_FOUND;
         }
 
-        iPodTrack->bitrate = 128000;
+        iPodTrack->bitrate = guGetMp3QualityBitRate( m_PortableMediaDevice->TranscodeQuality() );
         iPodTrack->size = guGetFileSize( TmpFile );
     }
     else    // The file is supported
@@ -3217,7 +3284,8 @@ int guIpodMediaLibPanel::CopyTo( const guTrack * track, wxString &filename )
         }
     }
 
-    if( !CoverPath.IsEmpty() )
+    //if( !CoverPath.IsEmpty() )
+    if( m_PortableMediaDevice->CoverFormats() & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
     {
         guTagSetPicture( TmpFile, CoverPath );
     }

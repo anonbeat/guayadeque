@@ -214,7 +214,7 @@ bool guMainApp::OnInit()
     wxLog::SetActiveTarget( new wxLogStderr( stdout ) );
 
     const wxString AppName = wxString::Format( wxT( ".guayadeque/.guayadeque-%s" ), wxGetUserId().c_str() );
-    guLogMessage( wxT( "Init: %s" ), AppName.c_str() );
+    //guLogMessage( wxT( "Init: %s" ), AppName.c_str() );
     m_SingleInstanceChecker = new wxSingleInstanceChecker( AppName );
     if( m_SingleInstanceChecker->IsAnotherRunning() )
     {
@@ -231,7 +231,7 @@ bool guMainApp::OnInit()
             }
         }
 
-        guLogError( wxT( "Another program instance is already running, aborting." ) );
+        guLogMessage( wxT( "Another program instance is already running, aborting." ) );
         return false;
     }
 
