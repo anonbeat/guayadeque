@@ -25,6 +25,7 @@
 #include "TagInfo.h"
 #include "Transcode.h"
 #include "Utils.h"
+#include "MediaCtrl.h"
 
 #include <wx/statline.h>
 #include <wx/tokenzr.h>
@@ -355,7 +356,9 @@ guPrefDialog::~guPrefDialog()
         m_RndPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
         m_DelPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
         m_PlayLevelEnabled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
+        m_PlayLevelSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnPlayLevelValueChanged ), NULL, this );
         m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
+        m_PlayOutDevChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnPlayOutDevChanged ), NULL, this );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_RECORD )
@@ -766,7 +769,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	PlayLevelSizer->Add( m_PlayLevelEnabled, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
     int PlayLevelValue = m_Config->ReadNum( wxT( "SilenceLevel" ), -500, wxT( "Playback" ) );
-	m_PlayLevelVal = new wxStaticText( m_PlayPanel, wxID_ANY, wxString::Format( wxT("%idb"), PlayLevelValue ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PlayLevelVal = new wxStaticText( m_PlayPanel, wxID_ANY, wxString::Format( wxT("%02idb"), PlayLevelValue ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PlayLevelVal->Wrap( -1 );
 	m_PlayLevelVal->Enable( IsPlayLevelEnabled );
 	PlayLevelSizer->Add( m_PlayLevelVal, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT, 5 );
@@ -798,6 +801,25 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	PlayMainSizer->Add( PlaySilenceSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
+	wxStaticBoxSizer* PlayOutDeviceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _(" Output Device ") ), wxHORIZONTAL );
+
+    wxArrayString OutputDeviceOptions;
+    OutputDeviceOptions.Add( _( "Automatic" ) );
+    OutputDeviceOptions.Add( _( "GConf defined" ) );
+    OutputDeviceOptions.Add( wxT( "Alsa" ) );
+    OutputDeviceOptions.Add( wxT( "PulseAudio" ) );
+    OutputDeviceOptions.Add( wxT( "OSS" ) );
+
+	m_PlayOutDevChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, OutputDeviceOptions, 0 );
+	int OutDevice = m_Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "Playback" ) );
+	m_PlayOutDevChoice->SetSelection( OutDevice );
+	PlayOutDeviceSizer->Add( m_PlayOutDevChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	m_PlayOutDevName = new wxTextCtrl( m_PlayPanel, wxID_ANY, m_Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "Playback" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PlayOutDevName->Enable( OutDevice > guOUTPUT_DEVICE_GCONF );
+	PlayOutDeviceSizer->Add( m_PlayOutDevName, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	PlayMainSizer->Add( PlayOutDeviceSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 
 	m_PlayPanel->SetSizer( PlayMainSizer );
@@ -811,6 +833,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
     m_PlayLevelSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnPlayLevelValueChanged ), NULL, this );
 	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
+	m_PlayOutDevChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnPlayOutDevChanged ), NULL, this );
 
 }
 
@@ -2067,6 +2090,9 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteNum( wxT( "MinTracksToPlay" ), m_MinTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
         m_Config->WriteNum( wxT( "NumTracksToAdd" ), m_NumTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
         m_Config->WriteNum( wxT( "MaxTracksPlayed" ), m_MaxTracksPlayed->GetValue(), wxT( "Playback" ) );
+
+        m_Config->WriteNum( wxT( "OutputDevice" ), m_PlayOutDevChoice->GetSelection(), wxT( "Playback" ) );
+        m_Config->WriteStr( wxT( "OutputDeviceName" ), m_PlayOutDevName->GetValue(), wxT( "Playback" ) );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_CROSSFADER )
@@ -2500,7 +2526,7 @@ void guPrefDialog::OnPlayLevelEnabled( wxCommandEvent& event )
 void guPrefDialog::OnPlayLevelValueChanged( wxScrollEvent &event )
 {
     int Value = m_PlayLevelSlider->GetValue();
-    m_PlayLevelVal->SetLabel( wxString::Format( wxT( "%idb" ), Value ) );
+    m_PlayLevelVal->SetLabel( wxString::Format( wxT( "%02idb" ), Value ) );
     m_PlayLevelVal->GetParent()->GetSizer()->Layout();
 }
 
@@ -2508,6 +2534,12 @@ void guPrefDialog::OnPlayLevelValueChanged( wxScrollEvent &event )
 void guPrefDialog::OnPlayEndTimeEnabled( wxCommandEvent& event )
 {
 	m_PlayEndTimeSpinCtrl->Enable( event.IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnPlayOutDevChanged( wxCommandEvent& event )
+{
+    m_PlayOutDevName->Enable( event.GetInt() > guOUTPUT_DEVICE_GCONF );
 }
 
 // -------------------------------------------------------------------------------- //

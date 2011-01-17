@@ -495,6 +495,8 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
         m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
         m_BufferSize        = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
         m_ReplayGainMode    = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
+        m_OutputDevice      = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "Playback" ) );
+        m_OutputDeviceName  = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "Playback" ) );
    }
 }
 
@@ -1111,6 +1113,8 @@ void guMediaCtrl::UpdatedConfig( void )
     m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
     m_BufferSize        = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
     m_ReplayGainMode    = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
+    m_OutputDevice      = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "Playback" ) );
+    m_OutputDeviceName  = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "Playback" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1388,13 +1392,31 @@ bool guFaderPlayBin::BuildOutputBin( void )
     GstElement * outputsink;
 
     const char * ElementNames[] = {
-        "gconfaudiosink",
         "autoaudiosink",
+        "gconfaudiosink",
         "alsasink",
         "pulsesink",
         "osssink",
         NULL
     };
+
+    int OutputDevice = m_Player->OutputDevice();
+    outputsink = gst_element_factory_make( ElementNames[ OutputDevice ], "OutputSink" );
+    if( IsValidElement( outputsink ) )
+    {
+        if( OutputDevice > guOUTPUT_DEVICE_GCONF )
+        {
+            wxString OutputDeviceName = m_Player->OutputDeviceName();
+            if( !OutputDeviceName.IsEmpty() )
+            {
+                g_object_set( outputsink, "device", ( const char * ) OutputDeviceName.mb_str( wxConvFile ), NULL );
+            }
+        }
+        m_OutputSink = outputsink;
+        return true;
+    }
+
+    guLogError( wxT( "The configured audio output sink is not valid. Autoconfiguring..." ) );
 
     int Index = 0;
     while( ElementNames[ Index ] )
@@ -1408,7 +1430,6 @@ bool guFaderPlayBin::BuildOutputBin( void )
         Index++;
     }
 
-    guLogError( wxT( "Could not find a valid audiosink" ) );
     m_OutputSink = NULL;
     return false;
 }

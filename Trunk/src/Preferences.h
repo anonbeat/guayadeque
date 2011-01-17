@@ -154,6 +154,8 @@ class guPrefDialog : public wxDialog
     wxSlider *                  m_PlayLevelSlider;
     wxCheckBox *                m_PlayEndTimeCheckBox;
     wxSpinCtrl *                m_PlayEndTimeSpinCtrl;
+    wxChoice *                  m_PlayOutDevChoice;
+    wxTextCtrl *                m_PlayOutDevName;
     wxCheckBox *                m_NotifyChkBox;
     wxChoice *                  m_PlayReplayModeChoice;
 
@@ -330,6 +332,7 @@ class guPrefDialog : public wxDialog
     void OnPlayLevelEnabled( wxCommandEvent& event );
     void OnPlayLevelValueChanged( wxScrollEvent &event );
     void OnPlayEndTimeEnabled( wxCommandEvent& event );
+    void OnPlayOutDevChanged( wxCommandEvent& event );
     void OnCrossFadeChanged( wxScrollEvent& event );
     void OnRecEnableClicked( wxCommandEvent& event );
     void OnRecDelTracksClicked( wxCommandEvent& event );
