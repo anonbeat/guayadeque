@@ -266,7 +266,11 @@ int MimeStrToCoverFormat( const wxString &mimestr )
         for( Index = 0; Index < Count; Index++ )
         {
             CoverFormats[ Index ].Trim( true ).Trim( false );
-            if( CoverFormats[ Index ] == wxT( "image/jpeg" ) )
+            if( CoverFormats[ Index ] == wxT( "embedded" ) )
+            {
+                Formats |= guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED;
+            }
+            else if( CoverFormats[ Index ] == wxT( "image/jpeg" ) )
             {
                 Formats |= guPORTABLEMEDIA_COVER_FORMAT_JPEG;
             }
@@ -296,8 +300,17 @@ wxString CoverFormatsToMimeStr( const int formats )
 {
     wxString MimeStr;
 
+    if( formats & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
+    {
+        MimeStr += wxT( "embedded" );
+    }
+
     if( formats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
     {
+        if( !MimeStr.IsEmpty() )
+        {
+            MimeStr += wxT( ", " );
+        }
         MimeStr += wxT( "image/jpeg" );
     }
 
