@@ -2974,30 +2974,12 @@ void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnAddTracks( wxCommandEvent &event )
 {
-    bool PlayTracks = event.GetInt();
+    //bool PlayTracks = event.GetInt();
     wxArrayString * TrackList = ( wxArrayString * ) event.GetClientData();
-
-    if( PlayTracks )
-    {
-        if( GetState() != guMEDIASTATE_STOPPED )
-        {
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
-            OnStopButtonClick( event );
-        }
-        ClearPlayList();
-    }
-
-    SetPlayList( * TrackList );
-
-//    if( PlayTracks )
-//    {
-//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
-//        OnNextTrackButtonClick( event );
-//        OnPlayButtonClick( event );
-//    }
 
     if( TrackList )
     {
+        SetPlayList( * TrackList );
         delete TrackList;
     }
 }
