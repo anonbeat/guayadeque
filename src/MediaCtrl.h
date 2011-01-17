@@ -57,6 +57,14 @@ enum guRecordQuality {
     guRECORD_QUALITY_VERY_LOW
 };
 
+enum guOutputDeviceSink {
+    guOUTPUT_DEVICE_AUTOMATIC,
+    guOUTPUT_DEVICE_GCONF,
+    guOUTPUT_DEVICE_ALSA,
+    guOUTPUT_DEVICE_PULSEAUDIO,
+    guOUTPUT_DEVICE_OSS
+};
+
 // -------------------------------------------------------------------------------- //
 class guLevelInfo
 {
@@ -322,6 +330,8 @@ class guMediaCtrl : public wxEvtHandler
     guFaderPlayBinArray     m_FaderPlayBins;
     guFaderPlayBin *        m_CurrentPlayBin;
 
+    int                     m_OutputDevice;
+    wxString                m_OutputDeviceName;
     bool                    m_ForceGapless;
     int                     m_FadeOutTime;
     int                     m_FadeInTime;
@@ -404,6 +414,9 @@ class guMediaCtrl : public wxEvtHandler
     bool            EnableRecord( const wxString &path, const int format, const int quality );
     void            DisableRecord( void );
     bool            SetRecordFileName( const wxString &filename );
+
+    int             OutputDevice( void ) { return m_OutputDevice; }
+    wxString        OutputDeviceName( void ) { return m_OutputDeviceName; }
 
     friend class guFaderPlayBin;
 };
