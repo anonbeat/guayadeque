@@ -46,7 +46,7 @@ enum guPortableMediaTranscodeQuality {      // mp3  ogg flac aac wma
     guTRANSCODE_QUALITY_VERY_LOW            // 64   70
 };
 
-wxArrayString       guTranscodeFormatStrings( void );
+wxArrayString       guTranscodeFormatStrings( const bool isipod = false );
 wxString            guTranscodeFormatString( const int format );
 wxArrayString       guTranscodeQualityStrings( void );
 wxString            guTranscodeQualityString( const int quality );
