@@ -700,6 +700,10 @@ void guPrefDialog::BuildPlaybackPage( void )
     m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) ) );
 	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
+	m_NotifyChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Show Notifications" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_NotifyChkBox->SetValue( m_Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) ) );
+	PlayGenSizer->Add( m_NotifyChkBox, 0, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
+
 	wxBoxSizer * PlayReplaySizer = new wxBoxSizer( wxHORIZONTAL );
 
 	wxStaticText * PlayReplayLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("Replaygain Mode :"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -752,34 +756,36 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	PlayMainSizer->Add( SmartPlayListSizer, 0, wxALL|wxEXPAND, 5 );
 
-
-	wxStaticBoxSizer * PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Silence detector " ) ), wxVERTICAL );
-
-	m_PlayLevelEnabled = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enabled" ), wxDefaultPosition, wxDefaultSize, 0 );
-	bool IsPlayLevelEnabled = m_Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
-    m_PlayLevelEnabled->SetValue( IsPlayLevelEnabled );
-	PlaySilenceSizer->Add( m_PlayLevelEnabled, 0, wxALL|wxEXPAND, 5 );
+	wxStaticBoxSizer * PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _(" Silence detector ") ), wxVERTICAL );
 
 	wxBoxSizer * PlayLevelSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxStaticText * LevelStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _( "Level(db):" ), wxDefaultPosition, wxDefaultSize, 0 );
-	LevelStaticText->Wrap( -1 );
-	PlayLevelSizer->Add( LevelStaticText, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_BOTTOM, 5 );
+	bool IsPlayLevelEnabled = m_Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
+	m_PlayLevelEnabled = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Skip at"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PlayLevelEnabled->SetValue( IsPlayLevelEnabled );
+	PlayLevelSizer->Add( m_PlayLevelEnabled, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_PlayLevelSlider = new wxSlider( m_PlayPanel, wxID_ANY, m_Config->ReadNum( wxT( "SilenceLevel" ), -50, wxT( "Playback" ) ), -65, 0, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+    int PlayLevelValue = m_Config->ReadNum( wxT( "SilenceLevel" ), -500, wxT( "Playback" ) );
+	m_PlayLevelVal = new wxStaticText( m_PlayPanel, wxID_ANY, wxString::Format( wxT("%idb"), PlayLevelValue ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PlayLevelVal->Wrap( -1 );
+	m_PlayLevelVal->Enable( IsPlayLevelEnabled );
+	PlayLevelSizer->Add( m_PlayLevelVal, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT, 5 );
+
+	m_PlayLevelSlider = new wxSlider( m_PlayPanel, wxID_ANY, PlayLevelValue, -65, 0, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
 	m_PlayLevelSlider->Enable( IsPlayLevelEnabled );
-	PlayLevelSizer->Add( m_PlayLevelSlider, 1, wxEXPAND|wxALIGN_BOTTOM|wxBOTTOM, 5 );
+	PlayLevelSizer->Add( m_PlayLevelSlider, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	PlaySilenceSizer->Add( PlayLevelSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer * PlayEndTimeSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* PlayEndTimeSizer;
+	PlayEndTimeSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PlayEndTimeCheckBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Only in the last" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PlayEndTimeCheckBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("In the last"), wxDefaultPosition, wxDefaultSize, 0 );
     m_PlayEndTimeCheckBox->SetValue( m_Config->ReadBool( wxT( "SilenceAtEnd" ), true, wxT( "Playback" ) ) );
 	m_PlayEndTimeCheckBox->Enable( IsPlayLevelEnabled );
-	PlayEndTimeSizer->Add( m_PlayEndTimeCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxBOTTOM, 5 );
+	PlayEndTimeSizer->Add( m_PlayEndTimeCheckBox, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_PlayEndTimeSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 360,
+	m_PlayEndTimeSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 5, 360,
 	    m_Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) );
 	m_PlayEndTimeSpinCtrl->Enable( IsPlayLevelEnabled && m_PlayEndTimeCheckBox->IsChecked() );
 	PlayEndTimeSizer->Add( m_PlayEndTimeSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
@@ -790,16 +796,9 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	PlaySilenceSizer->Add( PlayEndTimeSizer, 0, wxEXPAND, 5 );
 
+	PlayMainSizer->Add( PlaySilenceSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	PlayMainSizer->Add( PlaySilenceSizer, 0, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer * NotifySizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _(" Notifications ") ), wxHORIZONTAL );
-
-	m_NotifyChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Show Notifications" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_NotifyChkBox->SetValue( m_Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) ) );
-	NotifySizer->Add( m_NotifyChkBox, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
-	PlayMainSizer->Add( NotifySizer, 0, wxEXPAND|wxALL, 5 );
 
 	m_PlayPanel->SetSizer( PlayMainSizer );
 	m_PlayPanel->Layout();
@@ -810,6 +809,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	m_RndPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
 	m_DelPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
 	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
+    m_PlayLevelSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnPlayLevelValueChanged ), NULL, this );
 	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 
 }
@@ -2491,8 +2491,17 @@ void guPrefDialog::OnFiltersListBoxSelected( wxCommandEvent &event )
 void guPrefDialog::OnPlayLevelEnabled( wxCommandEvent& event )
 {
 	m_PlayLevelSlider->Enable( event.IsChecked() );
+	m_PlayLevelVal->Enable( event.IsChecked() );
 	m_PlayEndTimeCheckBox->Enable( event.IsChecked() );
 	m_PlayEndTimeSpinCtrl->Enable( event.IsChecked() && m_PlayEndTimeCheckBox->IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnPlayLevelValueChanged( wxScrollEvent &event )
+{
+    int Value = m_PlayLevelSlider->GetValue();
+    m_PlayLevelVal->SetLabel( wxString::Format( wxT( "%idb" ), Value ) );
+    m_PlayLevelVal->GetParent()->GetSizer()->Layout();
 }
 
 // -------------------------------------------------------------------------------- //
