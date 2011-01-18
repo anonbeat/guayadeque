@@ -1889,45 +1889,40 @@ guTrackEditorGetComboDataThread::~guTrackEditorGetComboDataThread()
 }
 
 // -------------------------------------------------------------------------------- //
+void guTrackEditorGetComboDataThread::FillArrayStrings( wxSortedArrayString &array, const guListItems &items )
+{
+    int Index;
+    int Count;
+    Count = items.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        wxString CurText = items[ Index ].m_Name;
+        if( !CurText.IsEmpty() && array.Index( CurText ) == wxNOT_FOUND )
+            array.Add( CurText );
+        if( TestDestroy() )
+            break;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 guTrackEditorGetComboDataThread::ExitCode guTrackEditorGetComboDataThread::Entry()
 {
     if( TestDestroy() )
         return 0;
 
-    //
-    //
-    int index;
-    int count;
     guListItems Artists;
     m_Db->GetArtists( &Artists, true );
-    if( TestDestroy() )
-        return 0;
-    count = Artists.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !Artists[ index ].m_Name.IsEmpty() )
-            m_TrackEditor->m_Artists.Add( Artists[ index ].m_Name );
-        if( TestDestroy() )
-            break;
-    }
+    FillArrayStrings( m_TrackEditor->m_Artists, Artists );
     if( TestDestroy() )
         return 0;
     m_TrackEditor->UpdateArtists();
 
     //
-    //
     guListItems AlbumArtists;
     m_Db->GetAlbumArtists( &AlbumArtists, true );
     if( TestDestroy() )
         return 0;
-    count = AlbumArtists.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !AlbumArtists[ index ].m_Name.IsEmpty() )
-            m_TrackEditor->m_AlbumArtists.Add( AlbumArtists[ index ].m_Name );
-        if( TestDestroy() )
-            break;
-    }
+    FillArrayStrings( m_TrackEditor->m_AlbumArtists, AlbumArtists );
     if( TestDestroy() )
         return 0;
     m_TrackEditor->UpdateAlbumArtists();
@@ -1938,14 +1933,7 @@ guTrackEditorGetComboDataThread::ExitCode guTrackEditorGetComboDataThread::Entry
     m_Db->GetAlbums( &Albums, true );
     if( TestDestroy() )
         return 0;
-    count = Albums.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !Albums[ index ].m_Name.IsEmpty() )
-            m_TrackEditor->m_Albums.Add( Albums[ index ].m_Name );
-        if( TestDestroy() )
-            break;
-    }
+    FillArrayStrings( m_TrackEditor->m_Albums, Albums );
     if( TestDestroy() )
         return 0;
     m_TrackEditor->UpdateAlbums();
@@ -1956,14 +1944,7 @@ guTrackEditorGetComboDataThread::ExitCode guTrackEditorGetComboDataThread::Entry
     m_Db->GetComposers( &Composers, true );
     if( TestDestroy() )
         return 0;
-    count = Composers.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !Composers[ index ].m_Name.IsEmpty() )
-            m_TrackEditor->m_Composers.Add( Composers[ index ].m_Name );
-        if( TestDestroy() )
-            break;
-    }
+    FillArrayStrings( m_TrackEditor->m_Composers, Composers );
     if( TestDestroy() )
         return 0;
     m_TrackEditor->UpdateComposers();
@@ -1974,14 +1955,7 @@ guTrackEditorGetComboDataThread::ExitCode guTrackEditorGetComboDataThread::Entry
     m_Db->GetGenres( &Genres, true );
     if( TestDestroy() )
         return 0;
-    count = Genres.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !Genres[ index ].m_Name.IsEmpty() )
-            m_TrackEditor->m_Genres.Add( Genres[ index ].m_Name );
-        if( TestDestroy() )
-            break;
-    }
+    FillArrayStrings( m_TrackEditor->m_Genres, Genres );
     if( TestDestroy() )
         return 0;
     m_TrackEditor->UpdateGenres();

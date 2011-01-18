@@ -258,6 +258,8 @@ class guTrackEditorGetComboDataThread : public wxThread
     guTrackEditor *     m_TrackEditor;
     guDbLibrary *       m_Db;
 
+    void                FillArrayStrings( wxSortedArrayString &array, const guListItems &items );
+
   public :
     guTrackEditorGetComboDataThread( guTrackEditor * trackedit, guDbLibrary * db );
     ~guTrackEditorGetComboDataThread();
