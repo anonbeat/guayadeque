@@ -63,6 +63,10 @@ class guTrackEditor : public wxDialog
 {
   private:
     guTrackArray *          m_Items;
+    wxSortedArrayString     m_Artists;
+    wxSortedArrayString     m_AlbumArtists;
+    wxSortedArrayString     m_Albums;
+    wxSortedArrayString     m_Composers;
     wxSortedArrayString     m_Genres;
     guImagePtrArray *       m_Images;
     wxArrayString *         m_Lyrics;
@@ -84,22 +88,26 @@ class guTrackEditor : public wxDialog
     wxBitmapButton *        m_MoveUpButton;
 	wxBitmapButton *        m_MoveDownButton;
     wxBitmapButton *        m_AACopyButton;
-    wxTextCtrl *            m_AlbumArtistTextCtrl;
+    wxComboBox *            m_AlbumArtistComboBox;
+    bool                    m_AlbumArtistChanged;
     wxBitmapButton *        m_ArCopyButton;
-    wxTextCtrl *            m_ArtistTextCtrl;
+    wxComboBox *            m_ArtistComboBox;
+    bool                    m_ArtistChanged;
     wxBitmapButton *        m_AlCopyButton;
-    wxTextCtrl *            m_AlbumTextCtrl;
+    wxComboBox *            m_AlbumComboBox;
+    bool                    m_AlbumChanged;
     wxBitmapButton *        m_TiCopyButton;
     wxTextCtrl *            m_TitleTextCtrl;
     wxBitmapButton *        m_CoCopyButton;
-    wxTextCtrl *            m_CompTextCtrl;
+    wxComboBox *            m_CompComboBox;
+    bool                    m_CompChanged;
     wxBitmapButton *        m_NuCopyButton;
     wxTextCtrl *            m_NumberTextCtrl;
     wxBitmapButton *        m_DiCopyButton;
     wxTextCtrl *            m_DiskTextCtrl;
     wxBitmapButton *        m_GeCopyButton;
-    //wxTextCtrl *            m_GenreTextCtrl;
     wxComboBox *            m_GenreComboBox;
+    bool                    m_GenreChanged;
     wxBitmapButton *        m_YeCopyButton;
     wxTextCtrl *            m_YearTextCtrl;
     wxBitmapButton *        m_RaCopyButton;
@@ -171,7 +179,13 @@ class guTrackEditor : public wxDialog
     void OnGeCopyButtonClicked( wxCommandEvent &event );
     void OnYeCopyButtonClicked( wxCommandEvent &event );
     void OnRaCopyButtonClicked( wxCommandEvent &event );
+
+    void OnArtistTextChanged( wxCommandEvent& event );
+    void OnAlbumArtistTextChanged( wxCommandEvent& event );
+    void OnAlbumTextChanged( wxCommandEvent& event );
+    void OnComposerTextChanged( wxCommandEvent& event );
     void OnGenreTextChanged( wxCommandEvent& event );
+
     void OnCommentCopyButtonClicked( wxCommandEvent &event );
 
 

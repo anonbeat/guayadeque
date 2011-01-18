@@ -151,8 +151,20 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	ArStaticText->Wrap( -1 );
 	DataFlexSizer->Add( ArStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-	m_ArtistTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+    //
+    //
+    //
+    guListItems Artists;
+    m_Db->GetArtists( &Artists, true );
+    count = Artists.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !Artists[ index ].m_Name.IsEmpty() )
+            m_Artists.Add( Artists[ index ].m_Name );
+    }
+
+	m_ArtistComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Artists, wxCB_DROPDOWN );
+	DataFlexSizer->Add( m_ArtistComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_AACopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_AACopyButton->SetToolTip( _( "Copy the Album Artist name to all the tracks you are editing" ) );
@@ -163,8 +175,20 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	AAStaticText->Wrap( -1 );
 	DataFlexSizer->Add( AAStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-	m_AlbumArtistTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_AlbumArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+    //
+    //
+    //
+    guListItems AlbumArtists;
+    m_Db->GetAlbumArtists( &AlbumArtists, true );
+    count = AlbumArtists.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !AlbumArtists[ index ].m_Name.IsEmpty() )
+            m_AlbumArtists.Add( AlbumArtists[ index ].m_Name );
+    }
+
+	m_AlbumArtistComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_AlbumArtists, wxCB_DROPDOWN );
+	DataFlexSizer->Add( m_AlbumArtistComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_AlCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_AlCopyButton->SetToolTip( _( "Copy the Album name to all the tracks you are editing" ) );
@@ -174,8 +198,19 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	AlStaticText->Wrap( -1 );
 	DataFlexSizer->Add( AlStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-	m_AlbumTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_AlbumTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+	//m_AlbumTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	//DataFlexSizer->Add( m_AlbumTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+    guAlbumItems Albums;
+    m_Db->GetAlbums( &Albums, true );
+    count = Albums.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !Albums[ index ].m_Name.IsEmpty() )
+            m_Albums.Add( Albums[ index ].m_Name );
+    }
+
+	m_AlbumComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Albums, wxCB_DROPDOWN );
+	DataFlexSizer->Add( m_AlbumComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_TiCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_TiCopyButton->SetToolTip( _( "Copy the Title name to all the tracks you are editing" ) );
@@ -197,8 +232,19 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	CoStaticText->Wrap( -1 );
 	DataFlexSizer->Add( CoStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_CompTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	DataFlexSizer->Add( m_CompTextCtrl, 0, wxEXPAND|wxTOP|wxRIGHT, 5 );
+	//m_CompTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	//DataFlexSizer->Add( m_CompTextCtrl, 0, wxEXPAND|wxTOP|wxRIGHT, 5 );
+    guListItems Composers;
+    m_Db->GetComposers( &Composers, true );
+    count = Composers.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !Composers[ index ].m_Name.IsEmpty() )
+            m_Composers.Add( Composers[ index ].m_Name );
+    }
+
+	m_CompComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Composers, wxCB_DROPDOWN );
+	DataFlexSizer->Add( m_CompComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_NuCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_numerate ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_NuCopyButton->SetToolTip( _( "Enumerate the tracks in the order they were added for editing" ) );
@@ -243,8 +289,9 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	GeStaticText->Wrap( -1 );
 	DataFlexSizer->Add( GeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-//	m_GenreTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-//	DataFlexSizer->Add( m_GenreTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+    //
+    //
+    //
     guListItems Genres;
     m_Db->GetGenres( &Genres, true );
     count = Genres.Count();
@@ -631,6 +678,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_LyricThread = NULL;
 	m_CurrentRating = -1;
 	m_RatingChanged = false;
+	m_GenreChanged = false;
 	wxArrayString ItemsText;
 	count = m_Items->Count();
 	for( index = 0; index < count; index++ )
@@ -662,6 +710,11 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_RaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
     m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guTrackEditor::OnRatingChanged ), NULL, this );
 	m_CommentCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCommentCopyButtonClicked ), NULL, this );
+
+	m_ArtistComboBox->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnArtistTextChanged ), NULL, this );
+	m_AlbumArtistComboBox->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnAlbumArtistTextChanged ), NULL, this );
+	m_AlbumComboBox->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnAlbumTextChanged ), NULL, this );
+	m_CompComboBox->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnComposerTextChanged ), NULL, this );
 	m_GenreComboBox->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnGenreTextChanged ), NULL, this );
 
 	m_AddPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
@@ -720,7 +773,6 @@ guTrackEditor::~guTrackEditor()
     Config->WriteNum( wxT( "TrackEditSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
     Config->WriteNum( wxT( "TrackEditSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
 
-    // Disconnect all events
 	Disconnect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnOKButton ) );
 	m_MainNotebook->Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler( guTrackEditor::OnPageChanged ), NULL, this );
 
@@ -738,8 +790,13 @@ guTrackEditor::~guTrackEditor()
 	m_YeCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnYeCopyButtonClicked ), NULL, this );
 	m_RaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnRaCopyButtonClicked ), NULL, this );
     m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guTrackEditor::OnRatingChanged ), NULL, this );
-	m_GenreComboBox->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnGenreTextChanged ), NULL, this );
 	m_CommentCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCommentCopyButtonClicked ), NULL, this );
+
+	m_ArtistComboBox->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnArtistTextChanged ), NULL, this );
+	m_AlbumArtistComboBox->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnAlbumArtistTextChanged ), NULL, this );
+	m_AlbumComboBox->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnAlbumTextChanged ), NULL, this );
+	m_CompComboBox->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnComposerTextChanged ), NULL, this );
+	m_GenreComboBox->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnGenreTextChanged ), NULL, this );
 
 	m_AddPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnAddImageClicked ), NULL, this );
 	m_DelPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnDelImageClicked ), NULL, this );
@@ -749,6 +806,8 @@ guTrackEditor::~guTrackEditor()
 
 	m_LyricSrvChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guTrackEditor::OnSearchLyrics ), NULL, this );
 	m_LyricReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSearchLyrics ), NULL, this );
+	m_LyricArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnTextUpdated ), NULL, this );
+	m_LyricTrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnTextUpdated ), NULL, this );
 
 	m_MBQueryArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnMBQueryTextCtrlChanged ), NULL, this );
 	m_MBQueryTitleTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnMBQueryTextCtrlChanged ), NULL, this );
@@ -766,6 +825,9 @@ guTrackEditor::~guTrackEditor()
 	m_MBrainzNuCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzNumberCopyButtonClicked ), NULL, this );
 
     Disconnect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackEditor::OnDownloadedLyric ), NULL, this );
+
+    // Idle Events
+	m_SongListSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
 
     m_MBrainzThreadMutex.Lock();
     if( m_MBrainzThread )
@@ -863,11 +925,11 @@ void guTrackEditor::ReadItemData( void )
     if( m_CurItem >= 0 )
     {
         guTrack * Track = &( * m_Items )[ m_CurItem ];
-        m_AlbumArtistTextCtrl->SetValue( Track->m_AlbumArtist );
-        m_ArtistTextCtrl->SetValue( Track->m_ArtistName );
-        m_AlbumTextCtrl->SetValue( Track->m_AlbumName );
+        m_AlbumArtistComboBox->SetValue( Track->m_AlbumArtist );
+        m_ArtistComboBox->SetValue( Track->m_ArtistName );
+        m_AlbumComboBox->SetValue( Track->m_AlbumName );
         m_TitleTextCtrl->SetValue( Track->m_SongName );
-        m_CompTextCtrl->SetValue( Track->m_Composer );
+        m_CompComboBox->SetValue( Track->m_Composer );
         if( Track->m_Number )
             m_NumberTextCtrl->SetValue( wxString::Format( wxT( "%u" ), Track->m_Number ) );
         else
@@ -903,11 +965,11 @@ void guTrackEditor::ReadItemData( void )
     }
     else
     {
-        m_AlbumArtistTextCtrl->SetValue( wxEmptyString );
-        m_ArtistTextCtrl->SetValue( wxEmptyString );
-        m_AlbumTextCtrl->SetValue( wxEmptyString );
+        m_AlbumArtistComboBox->SetValue( wxEmptyString );
+        m_ArtistComboBox->SetValue( wxEmptyString );
+        m_AlbumComboBox->SetValue( wxEmptyString );
         m_TitleTextCtrl->SetValue( wxEmptyString );
-        m_CompTextCtrl->SetValue( wxEmptyString );
+        m_CompComboBox->SetValue( wxEmptyString );
         m_NumberTextCtrl->SetValue( wxEmptyString );
         m_DiskTextCtrl->SetValue( wxEmptyString );
         m_GenreComboBox->SetValue( wxEmptyString );
@@ -925,6 +987,12 @@ void guTrackEditor::ReadItemData( void )
         m_LyricTrackTextCtrl->SetValue( wxEmptyString );
         m_LyricsTextCtrl->SetValue( wxEmptyString );
     }
+    m_ArtistChanged = false;
+    m_AlbumArtistChanged = false;
+    m_AlbumChanged = false;
+    m_CompChanged = false;
+    m_GenreChanged = false;
+    m_RatingChanged = false;
     RefreshImage();
     UpdateMBrainzTrackInfo();
 }
@@ -936,16 +1004,17 @@ void guTrackEditor::WriteItemData( void )
     if( m_CurItem >= 0 )
     {
         long LongValue;
-        if( m_AlbumArtistTextCtrl->IsModified() )
-          ( * m_Items )[ m_CurItem ].m_AlbumArtist = m_AlbumArtistTextCtrl->GetLineText( 0 );
-        if( m_ArtistTextCtrl->IsModified() )
-          ( * m_Items )[ m_CurItem ].m_ArtistName = m_ArtistTextCtrl->GetLineText( 0 );
-        if( m_AlbumTextCtrl->IsModified() )
-          ( * m_Items )[ m_CurItem ].m_AlbumName = m_AlbumTextCtrl->GetLineText( 0 );
+        if( m_AlbumArtistChanged )
+          ( * m_Items )[ m_CurItem ].m_AlbumArtist = m_AlbumArtistComboBox->GetValue();
+        //if( m_ArtistTextCtrl->IsModified() )
+        if( m_ArtistChanged )
+          ( * m_Items )[ m_CurItem ].m_ArtistName = m_ArtistComboBox->GetValue();
+        if( m_AlbumChanged )
+          ( * m_Items )[ m_CurItem ].m_AlbumName = m_AlbumComboBox->GetValue();
         if( m_TitleTextCtrl->IsModified() )
           ( * m_Items )[ m_CurItem ].m_SongName = m_TitleTextCtrl->GetLineText( 0 );
-        if( m_CompTextCtrl->IsModified() )
-          ( * m_Items )[ m_CurItem ].m_Composer = m_CompTextCtrl->GetLineText( 0 );
+        if( m_CompChanged )
+          ( * m_Items )[ m_CurItem ].m_Composer = m_CompComboBox->GetValue();
         if( m_NumberTextCtrl->IsModified() )
         {
           m_NumberTextCtrl->GetLineText( 0 ).ToLong( &LongValue );
@@ -953,7 +1022,7 @@ void guTrackEditor::WriteItemData( void )
         }
         if( m_DiskTextCtrl->IsModified() )
           ( * m_Items )[ m_CurItem ].m_Disk = m_DiskTextCtrl->GetLineText( 0 );
-        //if( m_GenreComboBox->IsModified() )
+        if( m_GenreChanged )
           ( * m_Items )[ m_CurItem ].m_GenreName = m_GenreComboBox->GetValue();
         if( m_YearTextCtrl->IsModified() )
         {
@@ -974,7 +1043,7 @@ void guTrackEditor::WriteItemData( void )
 void guTrackEditor::OnAACopyButtonClicked( wxCommandEvent& event )
 {
     int index;
-    wxString CurData = m_AlbumArtistTextCtrl->GetLineText( 0 );
+    wxString CurData = m_AlbumArtistComboBox->GetValue();
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_AlbumArtist = CurData;
@@ -984,7 +1053,7 @@ void guTrackEditor::OnAACopyButtonClicked( wxCommandEvent& event )
 void guTrackEditor::OnArCopyButtonClicked( wxCommandEvent& event )
 {
     int index;
-    wxString CurData = m_ArtistTextCtrl->GetLineText( 0 );
+    wxString CurData = m_ArtistComboBox->GetValue();
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_ArtistName = CurData;
@@ -994,7 +1063,7 @@ void guTrackEditor::OnArCopyButtonClicked( wxCommandEvent& event )
 void guTrackEditor::OnAlCopyButtonClicked( wxCommandEvent& event )
 {
     int index;
-    wxString CurData = m_AlbumTextCtrl->GetLineText( 0 );
+    wxString CurData = m_AlbumComboBox->GetValue();
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_AlbumName = CurData;
@@ -1014,7 +1083,7 @@ void guTrackEditor::OnTiCopyButtonClicked( wxCommandEvent& event )
 void guTrackEditor::OnCoCopyButtonClicked( wxCommandEvent& event )
 {
     int index;
-    wxString CurData = m_CompTextCtrl->GetLineText( 0 );
+    wxString CurData = m_CompComboBox->GetValue();
     int count = m_Items->Count();
     for( index = 0; index < count; index++ )
         ( * m_Items )[ index ].m_Composer = CurData;
@@ -1750,21 +1819,56 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guTrackEditor::OnGenreTextChanged( wxCommandEvent &event )
+void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist )
 {
-    wxString GenreText = m_GenreComboBox->GetValue().Lower();
+    wxString FilterText = combobox->GetValue().Lower();
     int index;
-    int count = m_Genres.Count();
-    wxArrayString SetGenres;
+    int count = itemlist.Count();
+    wxArrayString SetItems;
     for( index = 0; index < count; index++ )
     {
-        if( m_Genres[ index ].Lower().Find( GenreText ) != wxNOT_FOUND )
+        if( itemlist[ index ].Lower().Find( FilterText ) != wxNOT_FOUND )
         {
-            SetGenres.Add( m_Genres[ index ] );
+            SetItems.Add( itemlist[ index ] );
         }
     }
-    m_GenreComboBox->Clear();
-    m_GenreComboBox->Append( SetGenres );
+    combobox->Clear();
+    combobox->Append( SetItems );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnArtistTextChanged( wxCommandEvent &event )
+{
+    m_ArtistChanged = true;
+    guUpdateComboBoxEntries( m_ArtistComboBox, m_Artists );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnAlbumArtistTextChanged( wxCommandEvent &event )
+{
+    m_AlbumArtistChanged = true;
+    guUpdateComboBoxEntries( m_AlbumArtistComboBox, m_AlbumArtists );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnAlbumTextChanged( wxCommandEvent &event )
+{
+    m_AlbumChanged = true;
+    guUpdateComboBoxEntries( m_AlbumComboBox, m_Albums );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnComposerTextChanged( wxCommandEvent &event )
+{
+    m_CompChanged = true;
+    guUpdateComboBoxEntries( m_CompComboBox, m_Composers );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnGenreTextChanged( wxCommandEvent &event )
+{
+    m_GenreChanged = true;
+    guUpdateComboBoxEntries( m_GenreComboBox, m_Genres );
 }
 
 // -------------------------------------------------------------------------------- //
