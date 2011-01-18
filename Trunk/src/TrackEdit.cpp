@@ -927,6 +927,11 @@ void guTrackEditor::ReadItemData( void )
         m_LyricTrackTextCtrl->SetValue( wxEmptyString );
         m_LyricsTextCtrl->SetValue( wxEmptyString );
     }
+    UpdateArtists();
+    UpdateAlbumArtists();
+    UpdateAlbums();
+    UpdateComposers();
+    UpdateGenres();
     m_ArtistChanged = false;
     m_AlbumArtistChanged = false;
     m_AlbumChanged = false;
