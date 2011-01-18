@@ -151,18 +151,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	ArStaticText->Wrap( -1 );
 	DataFlexSizer->Add( ArStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-    //
-    //
-    //
-    guListItems Artists;
-    m_Db->GetArtists( &Artists, true );
-    count = Artists.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !Artists[ index ].m_Name.IsEmpty() )
-            m_Artists.Add( Artists[ index ].m_Name );
-    }
-
 	m_ArtistComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Artists, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_ArtistComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
@@ -175,18 +163,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	AAStaticText->Wrap( -1 );
 	DataFlexSizer->Add( AAStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-    //
-    //
-    //
-    guListItems AlbumArtists;
-    m_Db->GetAlbumArtists( &AlbumArtists, true );
-    count = AlbumArtists.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !AlbumArtists[ index ].m_Name.IsEmpty() )
-            m_AlbumArtists.Add( AlbumArtists[ index ].m_Name );
-    }
-
 	m_AlbumArtistComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_AlbumArtists, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_AlbumArtistComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
@@ -197,17 +173,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	AlStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	AlStaticText->Wrap( -1 );
 	DataFlexSizer->Add( AlStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
-
-	//m_AlbumTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	//DataFlexSizer->Add( m_AlbumTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
-    guAlbumItems Albums;
-    m_Db->GetAlbums( &Albums, true );
-    count = Albums.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !Albums[ index ].m_Name.IsEmpty() )
-            m_Albums.Add( Albums[ index ].m_Name );
-    }
 
 	m_AlbumComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Albums, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_AlbumComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
@@ -231,17 +196,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	CoStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Comp.:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CoStaticText->Wrap( -1 );
 	DataFlexSizer->Add( CoStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-
-	//m_CompTextCtrl = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	//DataFlexSizer->Add( m_CompTextCtrl, 0, wxEXPAND|wxTOP|wxRIGHT, 5 );
-    guListItems Composers;
-    m_Db->GetComposers( &Composers, true );
-    count = Composers.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !Composers[ index ].m_Name.IsEmpty() )
-            m_Composers.Add( Composers[ index ].m_Name );
-    }
 
 	m_CompComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Composers, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_CompComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
@@ -279,8 +233,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 	DataFlexSizer->Add( DiskSizer, 1, wxEXPAND, 5 );
 
-
-
 	m_GeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_GeCopyButton->SetToolTip( _( "Copy the Genre name to all songs you are editing" ) );
 	DataFlexSizer->Add( m_GeCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
@@ -288,18 +240,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	GeStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Genre:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	GeStaticText->Wrap( -1 );
 	DataFlexSizer->Add( GeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
-
-    //
-    //
-    //
-    guListItems Genres;
-    m_Db->GetGenres( &Genres, true );
-    count = Genres.Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( !Genres[ index ].m_Name.IsEmpty() )
-            m_Genres.Add( Genres[ index ].m_Name );
-    }
 
 	m_GenreComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Genres, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_GenreComboBox, 1, wxEXPAND|wxTOP|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
@@ -1767,6 +1707,8 @@ void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_SongListSplitter->SetSashPosition( Config->ReadNum( wxT( "TrackEditSashPos" ), 200, wxT( "Positions" ) ) );
     m_SongListSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
+
+    m_GetComboDataThread = new guTrackEditorGetComboDataThread( this, m_Db );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1821,19 +1763,26 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist )
 {
-    wxString FilterText = combobox->GetValue().Lower();
-    int index;
-    int count = itemlist.Count();
-    wxArrayString SetItems;
-    for( index = 0; index < count; index++ )
-    {
-        if( itemlist[ index ].Lower().Find( FilterText ) != wxNOT_FOUND )
-        {
-            SetItems.Add( itemlist[ index ] );
-        }
-    }
     combobox->Clear();
-    combobox->Append( SetItems );
+    wxString FilterText = combobox->GetValue().Lower();
+    if( FilterText.IsEmpty() )
+    {
+        combobox->Append( itemlist );
+    }
+    else
+    {
+        int index;
+        int count = itemlist.Count();
+        wxArrayString SetItems;
+        for( index = 0; index < count; index++ )
+        {
+            if( itemlist[ index ].Lower().Find( FilterText ) != wxNOT_FOUND )
+            {
+                SetItems.Add( itemlist[ index ] );
+            }
+        }
+        combobox->Append( SetItems );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1916,6 +1865,127 @@ guMusicBrainzMetadataThread::ExitCode guMusicBrainzMetadataThread::Entry()
 
         delete MusicBrainz;
     }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+// guTrackEditorGetComboDataThread
+// -------------------------------------------------------------------------------- //
+guTrackEditorGetComboDataThread::guTrackEditorGetComboDataThread( guTrackEditor * editor, guDbLibrary * db ) : wxThread()
+{
+    m_TrackEditor = editor;
+    m_Db = db;
+
+    if( Create() == wxTHREAD_NO_ERROR )
+    {
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+        Run();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guTrackEditorGetComboDataThread::~guTrackEditorGetComboDataThread()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+guTrackEditorGetComboDataThread::ExitCode guTrackEditorGetComboDataThread::Entry()
+{
+    if( TestDestroy() )
+        return 0;
+
+    //
+    //
+    int index;
+    int count;
+    guListItems Artists;
+    m_Db->GetArtists( &Artists, true );
+    if( TestDestroy() )
+        return 0;
+    count = Artists.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !Artists[ index ].m_Name.IsEmpty() )
+            m_TrackEditor->m_Artists.Add( Artists[ index ].m_Name );
+        if( TestDestroy() )
+            break;
+    }
+    if( TestDestroy() )
+        return 0;
+    m_TrackEditor->UpdateArtists();
+
+    //
+    //
+    guListItems AlbumArtists;
+    m_Db->GetAlbumArtists( &AlbumArtists, true );
+    if( TestDestroy() )
+        return 0;
+    count = AlbumArtists.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !AlbumArtists[ index ].m_Name.IsEmpty() )
+            m_TrackEditor->m_AlbumArtists.Add( AlbumArtists[ index ].m_Name );
+        if( TestDestroy() )
+            break;
+    }
+    if( TestDestroy() )
+        return 0;
+    m_TrackEditor->UpdateAlbumArtists();
+
+    //
+    //
+    guListItems Albums;
+    m_Db->GetAlbums( &Albums, true );
+    if( TestDestroy() )
+        return 0;
+    count = Albums.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !Albums[ index ].m_Name.IsEmpty() )
+            m_TrackEditor->m_Albums.Add( Albums[ index ].m_Name );
+        if( TestDestroy() )
+            break;
+    }
+    if( TestDestroy() )
+        return 0;
+    m_TrackEditor->UpdateAlbums();
+
+    //
+    //
+    guListItems Composers;
+    m_Db->GetComposers( &Composers, true );
+    if( TestDestroy() )
+        return 0;
+    count = Composers.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !Composers[ index ].m_Name.IsEmpty() )
+            m_TrackEditor->m_Composers.Add( Composers[ index ].m_Name );
+        if( TestDestroy() )
+            break;
+    }
+    if( TestDestroy() )
+        return 0;
+    m_TrackEditor->UpdateComposers();
+
+    //
+    //
+    guListItems Genres;
+    m_Db->GetGenres( &Genres, true );
+    if( TestDestroy() )
+        return 0;
+    count = Genres.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( !Genres[ index ].m_Name.IsEmpty() )
+            m_TrackEditor->m_Genres.Add( Genres[ index ].m_Name );
+        if( TestDestroy() )
+            break;
+    }
+    if( TestDestroy() )
+        return 0;
+    m_TrackEditor->UpdateGenres();
+
     return 0;
 }
 

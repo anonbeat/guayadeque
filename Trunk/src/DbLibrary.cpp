@@ -2955,6 +2955,42 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
 //  return RetVal;
 }
 
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetAlbums( guListItems * Albums, bool FullList )
+{
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+
+  //guLogMessage( wxT( "guDbLibrary::GetAlbums" )
+  query = wxT( "SELECT song_albumid, song_album FROM songs " );
+
+  if( FullList )
+  {
+      query += wxT( "GROUP BY song_albumid " );
+  }
+  else
+  {
+    if( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() ||
+        m_AAFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() || m_YeFilters.Count() )
+    {
+      query += wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_ALBUMS );
+    }
+
+    query += wxT( " GROUP BY song_albumid " );
+  }
+
+  //guLogMessage( wxT( "GetAlbums: %s" ), query.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+        guListItem * AlbumItem = new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) );
+        Albums->Add( AlbumItem );
+  }
+  dbRes.Finalize();
+}
+
 const wxString DynPlayListToSQLQuery( guDynPlayList * playlist );
 
 // -------------------------------------------------------------------------------- //
