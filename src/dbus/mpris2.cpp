@@ -1005,7 +1005,11 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                     {
                                         PlayLoop = guPLAYER_PLAYLOOP_PLAYLIST;
                                     }
-                                    m_PlayerPanel->SetPlayLoop( PlayLoop );
+
+                                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETLOOP );
+                                    event.SetInt( PlayLoop );
+                                    wxPostEvent( m_PlayerPanel, event );
+
                                     Send( reply );
                                     Flush();
                                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
@@ -1020,8 +1024,8 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             }
                             else if( !strcmp( QueryProperty, "Shuffle" ) )
                             {
-                                wxCommandEvent event;
-                                m_PlayerPanel->OnRandomPlayButtonClick( event );
+                                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETRANDOM );
+                                wxPostEvent( m_PlayerPanel, event );
                                 Send( reply );
                                 Flush();
                                 RetVal = DBUS_HANDLER_RESULT_HANDLED;
@@ -1031,7 +1035,9 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 double Volume;
                                 if( GetVariant( msg->GetMessage(), DBUS_TYPE_DOUBLE, &Volume ) )
                                 {
-                                    m_PlayerPanel->SetVolume( Volume * 100 );
+                                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETVOLUME );
+                                    event.SetInt( Volume );
+                                    wxPostEvent( m_PlayerPanel, event );
                                     Send( reply );
                                     Flush();
                                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
