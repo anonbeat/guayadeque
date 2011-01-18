@@ -56,183 +56,189 @@ class guMusicBrainzMetadataThread : public wxThread
 
 };
 
+class guTrackEditorGetComboDataThread;
+
 // -------------------------------------------------------------------------------- //
 // Class guTrackEditor
 // -------------------------------------------------------------------------------- //
 class guTrackEditor : public wxDialog
 {
   private:
-    guTrackArray *          m_Items;
-    wxSortedArrayString     m_Artists;
-    wxSortedArrayString     m_AlbumArtists;
-    wxSortedArrayString     m_Albums;
-    wxSortedArrayString     m_Composers;
-    wxSortedArrayString     m_Genres;
-    guImagePtrArray *       m_Images;
-    wxArrayString *         m_Lyrics;
-    guSearchLyricEngine *   m_LyricThread;
-    int                     m_CurItem;
-    guDbLibrary *           m_Db;
-    guMBTrackArray *        m_MBrainzAlbums;
-    guMBReleaseArray *      m_MBrainzReleases;
-    int                     m_MBrainzCurTrack;
-    int                     m_MBrainzCurAlbum;
-	wxColor                 m_NormalColor;
-	wxColor                 m_ErrorColor;
+    guTrackArray *                      m_Items;
+    guImagePtrArray *                   m_Images;
+    wxArrayString *                     m_Lyrics;
+    guSearchLyricEngine *               m_LyricThread;
+    int                                 m_CurItem;
+    guDbLibrary *                       m_Db;
+    guMBTrackArray *                    m_MBrainzAlbums;
+    guMBReleaseArray *                  m_MBrainzReleases;
+    int                                 m_MBrainzCurTrack;
+    int                                 m_MBrainzCurAlbum;
+	wxColor                             m_NormalColor;
+	wxColor                             m_ErrorColor;
 
 
   protected:
-    wxNotebook *            m_MainNotebook;
-    wxSplitterWindow *      m_SongListSplitter;
-    wxListBox *             m_SongListBox;
-    wxBitmapButton *        m_MoveUpButton;
-	wxBitmapButton *        m_MoveDownButton;
-    wxBitmapButton *        m_AACopyButton;
-    wxComboBox *            m_AlbumArtistComboBox;
-    bool                    m_AlbumArtistChanged;
-    wxBitmapButton *        m_ArCopyButton;
-    wxComboBox *            m_ArtistComboBox;
-    bool                    m_ArtistChanged;
-    wxBitmapButton *        m_AlCopyButton;
-    wxComboBox *            m_AlbumComboBox;
-    bool                    m_AlbumChanged;
-    wxBitmapButton *        m_TiCopyButton;
-    wxTextCtrl *            m_TitleTextCtrl;
-    wxBitmapButton *        m_CoCopyButton;
-    wxComboBox *            m_CompComboBox;
-    bool                    m_CompChanged;
-    wxBitmapButton *        m_NuCopyButton;
-    wxTextCtrl *            m_NumberTextCtrl;
-    wxBitmapButton *        m_DiCopyButton;
-    wxTextCtrl *            m_DiskTextCtrl;
-    wxBitmapButton *        m_GeCopyButton;
-    wxComboBox *            m_GenreComboBox;
-    bool                    m_GenreChanged;
-    wxBitmapButton *        m_YeCopyButton;
-    wxTextCtrl *            m_YearTextCtrl;
-    wxBitmapButton *        m_RaCopyButton;
-    guRating *              m_Rating;
-    wxStaticText *          m_DetailInfoStaticText;
+    wxSortedArrayString                 m_Artists;
+    wxSortedArrayString                 m_AlbumArtists;
+    wxSortedArrayString                 m_Albums;
+    wxSortedArrayString                 m_Composers;
+    wxSortedArrayString                 m_Genres;
 
-    wxBitmapButton *        m_CommentCopyButton;
-    wxTextCtrl *            m_CommentText;
+    wxNotebook *                        m_MainNotebook;
+    wxSplitterWindow *                  m_SongListSplitter;
+    wxListBox *                         m_SongListBox;
+    wxBitmapButton *                    m_MoveUpButton;
+	wxBitmapButton *                    m_MoveDownButton;
+    wxBitmapButton *                    m_AACopyButton;
+    wxComboBox *                        m_AlbumArtistComboBox;
+    bool                                m_AlbumArtistChanged;
+    wxBitmapButton *                    m_ArCopyButton;
+    wxComboBox *                        m_ArtistComboBox;
+    bool                                m_ArtistChanged;
+    wxBitmapButton *                    m_AlCopyButton;
+    wxComboBox *                        m_AlbumComboBox;
+    bool                                m_AlbumChanged;
+    wxBitmapButton *                    m_TiCopyButton;
+    wxTextCtrl *                        m_TitleTextCtrl;
+    wxBitmapButton *                    m_CoCopyButton;
+    wxComboBox *                        m_CompComboBox;
+    bool                                m_CompChanged;
+    wxBitmapButton *                    m_NuCopyButton;
+    wxTextCtrl *                        m_NumberTextCtrl;
+    wxBitmapButton *                    m_DiCopyButton;
+    wxTextCtrl *                        m_DiskTextCtrl;
+    wxBitmapButton *                    m_GeCopyButton;
+    wxComboBox *                        m_GenreComboBox;
+    bool                                m_GenreChanged;
+    wxBitmapButton *                    m_YeCopyButton;
+    wxTextCtrl *                        m_YearTextCtrl;
+    wxBitmapButton *                    m_RaCopyButton;
+    guRating *                          m_Rating;
+    wxStaticText *                      m_DetailInfoStaticText;
 
-    wxStaticBitmap *        m_PictureBitmap;
-    wxBitmapButton *        m_AddPicButton;
-    wxBitmapButton *        m_DelPicButton;
-    wxBitmapButton *        m_SavePicButton;
-    wxBitmapButton *        m_SearchPicButton;
-    wxBitmapButton *        m_CopyPicButton;
-    int                     m_CurrentRating;
-    int                     m_RatingStartY;
-    int                     m_RatingStart;
-    bool                    m_RatingChanged;
-    //wxBitmapButton *    m_MusicBrainzButton;
-    wxChoice *              m_LyricSrvChoice;
-    wxBitmapButton *        m_LyricReloadButton;
-    wxTextCtrl *            m_LyricArtistTextCtrl;
-    wxTextCtrl *            m_LyricTrackTextCtrl;
-    wxTextCtrl *            m_LyricsTextCtrl;
+    wxBitmapButton *                    m_CommentCopyButton;
+    wxTextCtrl *                        m_CommentText;
 
-    guMusicBrainzMetadataThread *   m_MBrainzThread;
-    wxMutex                 m_MBrainzThreadMutex;
-    wxChoice *              m_MBrainzAlbumChoice;
-    wxBitmapButton *        m_MBrainzAddButton;
-    wxBitmapButton *        m_MBrainzCopyButton;
+    wxStaticBitmap *                    m_PictureBitmap;
+    wxBitmapButton *                    m_AddPicButton;
+    wxBitmapButton *                    m_DelPicButton;
+    wxBitmapButton *                    m_SavePicButton;
+    wxBitmapButton *                    m_SearchPicButton;
+    wxBitmapButton *                    m_CopyPicButton;
+    int                                 m_CurrentRating;
+    int                                 m_RatingStartY;
+    int                                 m_RatingStart;
+    bool                                m_RatingChanged;
+    wxChoice *                          m_LyricSrvChoice;
+    wxBitmapButton *                    m_LyricReloadButton;
+    wxTextCtrl *                        m_LyricArtistTextCtrl;
+    wxTextCtrl *                        m_LyricTrackTextCtrl;
+    wxTextCtrl *                        m_LyricsTextCtrl;
 
+    guMusicBrainzMetadataThread *       m_MBrainzThread;
+    wxMutex                             m_MBrainzThreadMutex;
+    wxChoice *                          m_MBrainzAlbumChoice;
+    wxBitmapButton *                    m_MBrainzAddButton;
+    wxBitmapButton *                    m_MBrainzCopyButton;
 
-	wxTextCtrl *            m_MBQueryArtistTextCtrl;
-    wxTextCtrl *            m_MBQueryTitleTextCtrl;
-    wxBitmapButton *        m_MBQueryClearButton;
-    bool                    m_MBQuerySetArtistEnabled;
+	wxTextCtrl *                        m_MBQueryArtistTextCtrl;
+    wxTextCtrl *                        m_MBQueryTitleTextCtrl;
+    wxBitmapButton *                    m_MBQueryClearButton;
+    bool                                m_MBQuerySetArtistEnabled;
 
-	wxStaticText *          m_MBrainzArtistStaticText;
-    wxTextCtrl *            m_MBrainzArtistTextCtrl;
-    wxBitmapButton *        m_MBrainzArCopyButton;
-    wxStaticText *          m_MBrainzAlbumStaticText;
-    wxTextCtrl *            m_MBrainzAlbumTextCtrl;
-    wxBitmapButton *        m_MBrainzAlCopyButton;
-    wxStaticText *          m_MBrainzDateStaticText;
-    wxChoice *              m_MBrainzDateChoice;
-    wxBitmapButton *        m_MBrainzDaCopyButton;
-    wxStaticText *          m_MBrainzTitleStaticText;
-    wxTextCtrl *            m_MBrainzTitleTextCtrl;
-    wxBitmapButton *        m_MBrainzTiCopyButton;
-    wxStaticText *          m_MBrainzLengthStaticText;
-    wxTextCtrl *            m_MBrainzLengthTextCtrl;
-    wxStaticText *          m_MBrainzNumberStaticText;
-    wxTextCtrl *            m_MBrainzNumberTextCtrl;
-    wxStaticText *          m_MBrainzInfoStaticText;
-    wxBitmapButton *        m_MBrainzNuCopyButton;
+	wxStaticText *                      m_MBrainzArtistStaticText;
+    wxTextCtrl *                        m_MBrainzArtistTextCtrl;
+    wxBitmapButton *                    m_MBrainzArCopyButton;
+    wxStaticText *                      m_MBrainzAlbumStaticText;
+    wxTextCtrl *                        m_MBrainzAlbumTextCtrl;
+    wxBitmapButton *                    m_MBrainzAlCopyButton;
+    wxStaticText *                      m_MBrainzDateStaticText;
+    wxChoice *                          m_MBrainzDateChoice;
+    wxBitmapButton *                    m_MBrainzDaCopyButton;
+    wxStaticText *                      m_MBrainzTitleStaticText;
+    wxTextCtrl *                        m_MBrainzTitleTextCtrl;
+    wxBitmapButton *                    m_MBrainzTiCopyButton;
+    wxStaticText *                      m_MBrainzLengthStaticText;
+    wxTextCtrl *                        m_MBrainzLengthTextCtrl;
+    wxStaticText *                      m_MBrainzNumberStaticText;
+    wxTextCtrl *                        m_MBrainzNumberTextCtrl;
+    wxStaticText *                      m_MBrainzInfoStaticText;
+    wxBitmapButton *                    m_MBrainzNuCopyButton;
+
+    guTrackEditorGetComboDataThread *   m_GetComboDataThread;
 
     // Event handlers, overide them in your derived class
-    void OnSongListBoxSelected( wxCommandEvent &event );
-	void OnMoveUpBtnClick( wxCommandEvent& event );
-	void OnMoveDownBtnClick( wxCommandEvent& event );
-    void OnAACopyButtonClicked( wxCommandEvent &event );
-    void OnArCopyButtonClicked( wxCommandEvent &event );
-    void OnAlCopyButtonClicked( wxCommandEvent &event );
-    void OnTiCopyButtonClicked( wxCommandEvent &event );
-    void OnCoCopyButtonClicked( wxCommandEvent &event );
-    void OnNuCopyButtonClicked( wxCommandEvent &event );
-    void OnDiCopyButtonClicked( wxCommandEvent &event );
-    void OnGeCopyButtonClicked( wxCommandEvent &event );
-    void OnYeCopyButtonClicked( wxCommandEvent &event );
-    void OnRaCopyButtonClicked( wxCommandEvent &event );
+	void                                OnSongListBoxSelected( wxCommandEvent &event );
+	void                                OnMoveUpBtnClick( wxCommandEvent& event );
+	void                                OnMoveDownBtnClick( wxCommandEvent& event );
+	void                                OnAACopyButtonClicked( wxCommandEvent &event );
+	void                                OnArCopyButtonClicked( wxCommandEvent &event );
+	void                                OnAlCopyButtonClicked( wxCommandEvent &event );
+	void                                OnTiCopyButtonClicked( wxCommandEvent &event );
+	void                                OnCoCopyButtonClicked( wxCommandEvent &event );
+	void                                OnNuCopyButtonClicked( wxCommandEvent &event );
+	void                                OnDiCopyButtonClicked( wxCommandEvent &event );
+	void                                OnGeCopyButtonClicked( wxCommandEvent &event );
+	void                                OnYeCopyButtonClicked( wxCommandEvent &event );
+	void                                OnRaCopyButtonClicked( wxCommandEvent &event );
 
-    void OnArtistTextChanged( wxCommandEvent& event );
-    void OnAlbumArtistTextChanged( wxCommandEvent& event );
-    void OnAlbumTextChanged( wxCommandEvent& event );
-    void OnComposerTextChanged( wxCommandEvent& event );
-    void OnGenreTextChanged( wxCommandEvent& event );
+	void                                OnArtistTextChanged( wxCommandEvent& event );
+	void                                OnAlbumArtistTextChanged( wxCommandEvent& event );
+	void                                OnAlbumTextChanged( wxCommandEvent& event );
+	void                                OnComposerTextChanged( wxCommandEvent& event );
+	void                                OnGenreTextChanged( wxCommandEvent& event );
 
-    void OnCommentCopyButtonClicked( wxCommandEvent &event );
-
-
-    void OnMBrainzAddButtonClicked( wxCommandEvent &event );
-    void OnMBrainzAlbumsFound( wxCommandEvent &event );
-    void OnMBrainzAlbumChoiceSelected( wxCommandEvent &event );
-
-    void OnMBrainzCopyButtonClicked( wxCommandEvent &event );
-
-	void OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event );
-	void OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event );
-	void OnMBrainzDateCopyButtonClicked( wxCommandEvent& event );
-	void OnMBrainzTitleCopyButtonClicked( wxCommandEvent& event );
-	void OnMBrainzNumberCopyButtonClicked( wxCommandEvent& event );
+	void                                OnCommentCopyButtonClicked( wxCommandEvent &event );
 
 
-    void OnMBQueryClearButtonClicked( wxCommandEvent &event );
-	void OnMBQueryTextCtrlChanged( wxCommandEvent& event );
+	void                                OnMBrainzAddButtonClicked( wxCommandEvent &event );
+	void                                OnMBrainzAlbumsFound( wxCommandEvent &event );
+	void                                OnMBrainzAlbumChoiceSelected( wxCommandEvent &event );
 
+	void                                OnMBrainzCopyButtonClicked( wxCommandEvent &event );
 
-    void OnOKButton( wxCommandEvent& event );
-    void ReadItemData( void );
-    void WriteItemData( void );
+	void                                OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event );
+	void                                OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event );
+	void                                OnMBrainzDateCopyButtonClicked( wxCommandEvent& event );
+	void                                OnMBrainzTitleCopyButtonClicked( wxCommandEvent& event );
+	void                                OnMBrainzNumberCopyButtonClicked( wxCommandEvent& event );
+	void                                OnMBQueryClearButtonClicked( wxCommandEvent &event );
+	void                                OnMBQueryTextCtrlChanged( wxCommandEvent& event );
 
-    void SongListSplitterOnIdle( wxIdleEvent& );
+	void                                OnOKButton( wxCommandEvent& event );
+	void                                ReadItemData( void );
+	void                                WriteItemData( void );
 
-    void RefreshImage( void );
-    void OnAddImageClicked( wxCommandEvent &event );
-    void OnDelImageClicked( wxCommandEvent &event );
-    void OnSaveImageClicked( wxCommandEvent &event );
-    void OnSearchImageClicked( wxCommandEvent &event );
-    void OnCopyImageClicked( wxCommandEvent &event );
+	void                                SongListSplitterOnIdle( wxIdleEvent& );
 
-    void OnRatingChanged( guRatingEvent &event );
+	void                                RefreshImage( void );
+	void                                OnAddImageClicked( wxCommandEvent &event );
+	void                                OnDelImageClicked( wxCommandEvent &event );
+	void                                OnSaveImageClicked( wxCommandEvent &event );
+	void                                OnSearchImageClicked( wxCommandEvent &event );
+	void                                OnCopyImageClicked( wxCommandEvent &event );
 
-    void FinishedMusicBrainzSearch( void );
-    int  FindMBrainzReleaseId( const wxString releaseid );
-    void UpdateMBrainzTrackInfo( void );
-    int  CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray * tracks );
+	void                                OnRatingChanged( guRatingEvent &event );
 
-    void OnTextUpdated( wxCommandEvent& event );
-    void OnSearchLyrics( wxCommandEvent &event );
-    void OnDownloadedLyric( wxCommandEvent &event );
+	void                                FinishedMusicBrainzSearch( void );
+    int                                 FindMBrainzReleaseId( const wxString releaseid );
+	void                                UpdateMBrainzTrackInfo( void );
+    int                                 CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray * tracks );
 
-    void MBCheckCountAndLengths( void );
+	void                                OnTextUpdated( wxCommandEvent& event );
+	void                                OnSearchLyrics( wxCommandEvent &event );
+	void                                OnDownloadedLyric( wxCommandEvent &event );
 
-    void OnPageChanged( wxNotebookEvent &event );
+	void                                MBCheckCountAndLengths( void );
+
+	void                                OnPageChanged( wxNotebookEvent &event );
+
+	void                                UpdateArtists( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_ArtistComboBox, Event ); }
+	void                                UpdateAlbumArtists( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_AlbumArtistComboBox, Event ); }
+	void                                UpdateAlbums( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_AlbumComboBox, Event ); }
+	void                                UpdateComposers( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_CompComboBox, Event ); }
+	void                                UpdateGenres( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_GenreComboBox, Event ); }
 
 public:
     guTrackEditor( wxWindow * parent, guDbLibrary * db,
@@ -240,6 +246,24 @@ public:
     ~guTrackEditor();
 
     friend class guMusicBrainzMetadataThread;
+    friend class guTrackEditorGetComboDataThread;
+};
+
+// -------------------------------------------------------------------------------- //
+// Class guTrackEditorGetComboDataThread
+// -------------------------------------------------------------------------------- //
+class guTrackEditorGetComboDataThread : public wxThread
+{
+  protected :
+    guTrackEditor *     m_TrackEditor;
+    guDbLibrary *       m_Db;
+
+  public :
+    guTrackEditorGetComboDataThread( guTrackEditor * trackedit, guDbLibrary * db );
+    ~guTrackEditorGetComboDataThread();
+
+    virtual ExitCode Entry();
+
 };
 
 #endif

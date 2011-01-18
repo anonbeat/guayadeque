@@ -370,6 +370,7 @@ class guDbLibrary : public guDb
     void                GetComposers( guListItems * items, const bool FullList = false );
     void                SetAlbumsOrder( const int order );
     int                 GetAlbumsOrder( void ) { return m_AlbumsOrder; };
+    void                GetAlbums( guListItems * Albums, bool FullList = false );
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
     wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );
     int                 GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * filter,
