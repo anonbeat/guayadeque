@@ -5112,6 +5112,7 @@ void guMainFrame::OnJamendoCoverDownloaded( wxCommandEvent &event )
             wxImage * CoverImage = m_JamendoPanel->GetAlbumCover( event.GetInt(), CoverPath );
             if( CoverImage )
             {
+                CoverImage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
                 //delete CoverImage;
             }
@@ -5133,6 +5134,7 @@ void guMainFrame::OnMagnatuneCoverDownloaded( wxCommandEvent &event )
                      CurrentTrack->m_ArtistName, CurrentTrack->m_AlbumName, CoverPath );
             if( CoverImage )
             {
+                CoverImage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
                 m_PlayerPanel->SetCurrentCoverImage( CoverImage, GU_SONGCOVER_FILE, CoverPath );
                 //delete CoverImage;
             }
