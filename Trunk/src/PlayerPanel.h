@@ -75,6 +75,9 @@ class guCurrentTrack : public guTrack
         m_Loaded = false;
         m_CoverImage = NULL;
         m_ASRating = guAS_RATING_NONE;
+        m_Number = 0;
+        m_Rating = 0;
+        m_Year = 0;
     }
 
     guCurrentTrack& operator=(const guTrack &Src)
