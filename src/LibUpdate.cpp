@@ -515,7 +515,7 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
 
                 // Delete all posible orphan entries
                 Queries.Add( wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT song_coverid FROM songs );" ) );
-                Queries.Add( wxT( "DELETE FROM plsets WHERE plset_type = 0 AND plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
+                Queries.Add( wxT( "DELETE FROM plsets WHERE plset_type = 0 AND plset_songid > 0 AND plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
                 Queries.Add( wxT( "DELETE FROM settags WHERE settag_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
 
                 int Index;
