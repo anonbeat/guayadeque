@@ -678,6 +678,25 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
     }
 }
 
+#ifdef WITH_LIBGPOD_SUPPORT
+// -------------------------------------------------------------------------------- //
+bool guMoreCopyToIpodActions( guCopyToActionArray * actions )
+{
+    if( actions->Count() > 1 )
+    {
+        int Index;
+        int Count = actions->Count();
+        for( Index = 1; Index < Count; Index++ )
+        {
+            guCopyToAction &CopyToAction = actions->Item( Index );
+            if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
+                return true;
+        }
+    }
+    return false;
+}
+#endif
+
 // -------------------------------------------------------------------------------- //
 guCopyToThread::ExitCode guCopyToThread::Entry()
 {
@@ -718,8 +737,11 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
                     guLogMessage( wxT( "It was a playlist...") );
                     IpodDb->CreateiPodPlayList( PlayListFile->GetName(), m_FilesToAdd );
                 }
-                IpodDb->iPodFlush();
-                ( ( guIpodMediaLibPanel * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() )->DoUpdate( true );
+                if( !guMoreCopyToIpodActions( m_CopyToActions ) )
+                {
+                    IpodDb->iPodFlush();
+                    ( ( guIpodMediaLibPanel * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() )->DoUpdate( true );
+                }
             }
             else
 #endif
