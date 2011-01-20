@@ -1578,7 +1578,7 @@ void guTrackEditor::OnMBrainzCopyButtonClicked( wxCommandEvent &event )
         Track->m_Number = MBTrack->m_Number;
         if( m_MBrainzDateChoice->GetCount() )
         {
-            wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_ADVANCED );
+            wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_EXTENDED );
             if( RegEx.IsValid() && RegEx.Matches( m_MBrainzDateChoice->GetStringSelection() ) && RegEx.GetMatchCount() == 1 )
             {
                 long LongValue;
@@ -1641,7 +1641,7 @@ void guTrackEditor::OnMBrainzDateCopyButtonClicked( wxCommandEvent& event )
         //guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
         if( m_MBrainzDateChoice->GetCount() )
         {
-            wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_ADVANCED );
+            wxRegEx RegEx( wxT( "[0-9]{4}" ), wxRE_EXTENDED );
             if( RegEx.IsValid() && RegEx.Matches( m_MBrainzDateChoice->GetStringSelection() ) && RegEx.GetMatchCount() == 1 )
             {
                 long LongValue;
