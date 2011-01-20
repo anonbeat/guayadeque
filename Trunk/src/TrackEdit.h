@@ -150,6 +150,9 @@ class guTrackEditor : public wxDialog
 	wxStaticText *                      m_MBrainzArtistStaticText;
     wxTextCtrl *                        m_MBrainzArtistTextCtrl;
     wxBitmapButton *                    m_MBrainzArCopyButton;
+	wxStaticText *                      m_MBrainzAlbumArtistStaticText;
+    wxTextCtrl *                        m_MBrainzAlbumArtistTextCtrl;
+    wxBitmapButton *                    m_MBrainzAlArCopyButton;
     wxStaticText *                      m_MBrainzAlbumStaticText;
     wxTextCtrl *                        m_MBrainzAlbumTextCtrl;
     wxBitmapButton *                    m_MBrainzAlCopyButton;
@@ -199,6 +202,7 @@ class guTrackEditor : public wxDialog
 	void                                OnMBrainzCopyButtonClicked( wxCommandEvent &event );
 
 	void                                OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event );
+	void                                OnMBrainzAlbumArtistCopyButtonClicked( wxCommandEvent& event );
 	void                                OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event );
 	void                                OnMBrainzDateCopyButtonClicked( wxCommandEvent& event );
 	void                                OnMBrainzTitleCopyButtonClicked( wxCommandEvent& event );

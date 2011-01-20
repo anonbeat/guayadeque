@@ -502,6 +502,17 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_MBrainzArCopyButton->SetToolTip( _( "Copy the artist to the edited tracks" ) );
 	MBDetailFlexGridSizer->Add( m_MBrainzArCopyButton, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
+	m_MBrainzAlbumArtistStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _( "A. Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_MBrainzAlbumArtistStaticText->Wrap( -1 );
+	MBDetailFlexGridSizer->Add( m_MBrainzAlbumArtistStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_MBrainzAlbumArtistTextCtrl = new wxTextCtrl( MBrainzPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	MBDetailFlexGridSizer->Add( m_MBrainzAlbumArtistTextCtrl, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	m_MBrainzAlArCopyButton = new wxBitmapButton( MBrainzPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_MBrainzAlArCopyButton->SetToolTip( _( "Copy the album artist to the edited tracks" ) );
+	MBDetailFlexGridSizer->Add( m_MBrainzAlArCopyButton, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+
 	m_MBrainzAlbumStaticText = new wxStaticText( MBrainzPanel, wxID_ANY, _("Album:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_MBrainzAlbumStaticText->Wrap( -1 );
 	MBDetailFlexGridSizer->Add( m_MBrainzAlbumStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
@@ -678,6 +689,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_MBrainzCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzCopyButtonClicked ), NULL, this );
 
 	m_MBrainzArCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzArtistCopyButtonClicked ), NULL, this );
+	m_MBrainzAlArCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzAlbumArtistCopyButtonClicked ), NULL, this );
 	m_MBrainzAlCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzAlbumCopyButtonClicked ), NULL, this );
 	m_MBrainzDaCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzDateCopyButtonClicked ), NULL, this );
 	m_MBrainzTiCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzTitleCopyButtonClicked ), NULL, this );
@@ -759,6 +771,7 @@ guTrackEditor::~guTrackEditor()
 	m_MBrainzCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzCopyButtonClicked ), NULL, this );
 
 	m_MBrainzArCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzArtistCopyButtonClicked ), NULL, this );
+	m_MBrainzAlArCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzAlbumArtistCopyButtonClicked ), NULL, this );
 	m_MBrainzAlCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzAlbumCopyButtonClicked ), NULL, this );
 	m_MBrainzDaCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzDateCopyButtonClicked ), NULL, this );
 	m_MBrainzTiCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzTitleCopyButtonClicked ), NULL, this );
@@ -1458,6 +1471,10 @@ void guTrackEditor::UpdateMBrainzTrackInfo( void )
                 m_MBrainzArtistTextCtrl->SetValue( m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_ArtistName );
             }
 
+            // Album Artist
+            m_MBrainzAlbumArtistStaticText->SetForegroundColour( Track->m_AlbumArtist == m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_ArtistName ?
+                                        m_NormalColor : m_ErrorColor );
+
             // ALbum
             m_MBrainzAlbumStaticText->SetForegroundColour( Track->m_AlbumName == m_MBrainzReleases->Item( m_MBrainzCurAlbum ).m_Title ?
                                         m_NormalColor : m_ErrorColor );
@@ -1544,6 +1561,7 @@ void guTrackEditor::OnMBrainzAlbumChoiceSelected( wxCommandEvent &event )
     {
         guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
         m_MBrainzArtistTextCtrl->SetValue( MBRelease->m_ArtistName );
+        m_MBrainzAlbumArtistTextCtrl->SetValue( MBRelease->m_ArtistName );
         m_MBrainzDateChoice->Clear();
         m_MBrainzDateChoice->Append( MBRelease->m_Events );
         m_MBrainzDateChoice->SetSelection( 0 );
@@ -1573,6 +1591,7 @@ void guTrackEditor::OnMBrainzCopyButtonClicked( wxCommandEvent &event )
         guTrack * Track = &m_Items->Item( Index );
         guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
         Track->m_ArtistName = MBTrack->m_ArtistName.IsEmpty() ? MBRelease->m_ArtistName : MBTrack->m_ArtistName;
+        Track->m_AlbumArtist = MBRelease->m_ArtistName;
         Track->m_AlbumName = MBRelease->m_Title;
         Track->m_SongName = MBTrack->m_Title;
         Track->m_Number = MBTrack->m_Number;
@@ -1604,6 +1623,24 @@ void guTrackEditor::OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event )
         guTrack * Track = &m_Items->Item( Index );
         guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
         Track->m_ArtistName = MBTrack->m_ArtistName.IsEmpty() ? MBRelease->m_ArtistName : MBTrack->m_ArtistName;
+    }
+    // Refresh the Details Window
+    ReadItemData();
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnMBrainzAlbumArtistCopyButtonClicked( wxCommandEvent& event )
+{
+    if( !( m_MBrainzReleases && m_MBrainzReleases->Count() && m_MBrainzCurAlbum >= 0 ) )
+        return;
+    guMBRelease * MBRelease = &m_MBrainzReleases->Item( m_MBrainzCurAlbum );
+    int Index;
+    int Count = wxMin( m_Items->Count(), MBRelease->m_Tracks.Count() );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &m_Items->Item( Index );
+        //guMBTrack * MBTrack = &MBRelease->m_Tracks[ Index ];
+        Track->m_AlbumArtist = MBRelease->m_ArtistName;
     }
     // Refresh the Details Window
     ReadItemData();
