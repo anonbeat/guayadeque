@@ -104,6 +104,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_ShowNotifications = true;
     m_ShowNotificationsTime = 0;
     m_ErrorFound = false;
+    m_SavedPlayedTrack = false;
 
     m_SilenceDetected = false;
     m_AboutToEndDetected = false;
