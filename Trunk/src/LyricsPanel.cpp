@@ -1052,6 +1052,7 @@ wxString GetLyricPluginLyric( wxString &content )
     int         StartPos;
     int         EndPos;
 
+    //guLogMessage( wxT( "Content:\n%s" ), content.c_str() );
     StartPos = content.Find( wxT( "<div id=\"lyrics\">" ) );
 
     if( StartPos != wxNOT_FOUND )
@@ -1130,6 +1131,8 @@ void guLyricPluginEngine::SearchLyric( void )
 {
     wxString    UrlStr = wxString::Format( wxT( "http://www.lyricsplugin.com/winamp03/plugin/?artist=%s&title=%s" ),
                         guURLEncode( m_ArtistName ).c_str(), guURLEncode( m_TrackName ).c_str() );
+
+    //guLogMessage( wxT( "LyricPlugin: %s" ), UrlStr.c_str() );
 
     if( !DoSearchLyric( GetUrlContent( UrlStr ), UrlStr ) && !TestDestroy() )
     {

@@ -54,6 +54,7 @@ guTimeLine::guTimeLine( int duration, wxEvtHandler * parent )
     m_Direction = guTimeLine::Forward;
     m_CurveShape = guTimeLine::EaseInOutCurve;
     m_State = guTimeLine::NotRunning;
+    m_CurrentTime = wxNOT_FOUND;
     SetCurrentTime( 0 );
 }
 

@@ -50,6 +50,7 @@ guGauge::guGauge( wxWindow * parent, const wxString &label, bool showporcent,
 {
     m_LastValue = wxNOT_FOUND;
     m_ShowPorcent = showporcent;
+    m_PaintWidth = 0;
     //m_Value     = 0;
     //m_Range     = max;
     m_Label     = label;
