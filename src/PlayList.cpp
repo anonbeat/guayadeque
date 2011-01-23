@@ -141,6 +141,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     Connect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchClicked ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_COPYTO, ID_PLAYER_PLAYLIST_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_STOP_AFTER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnStopAfterCurrent ), NULL, this );
 
     Connect( ID_PLAYER_PLAYLIST_SELECT_TITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectTrack ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectArtist ), NULL, this );
@@ -206,6 +207,7 @@ guPlayList::~guPlayList()
     Disconnect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchClicked ) );
     Disconnect( ID_PLAYER_PLAYLIST_COPYTO, ID_PLAYER_PLAYLIST_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_STOP_AFTER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnStopAfterCurrent ), NULL, this );
 
     Disconnect( ID_PLAYER_PLAYLIST_SELECT_TITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectTrack ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectArtist ), NULL, this );
@@ -817,6 +819,7 @@ guTrack * guPlayList::GetNext( const int playloop, const bool forceskip )
             }
             else
                 m_CurItem++;
+
             return &m_Items[ m_CurItem ];
 
         }
@@ -1365,6 +1368,10 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     Menu->Append( MenuItem );
 
     Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_STOP_AFTER, _( "Stop after current" ), _( "Stop after current playing or selected track" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_stop ) );
+    Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_CLEAR, _( "Clear PlayList" ), _( "Remove all songs from PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_clear ) );
@@ -2153,6 +2160,16 @@ void guPlayList::StopAfterCurrent( void )
     if( ItemToFlag >= 0 && ItemToFlag < ( int ) m_Items.Count() )
     {
         m_Items[ ItemToFlag ].m_Type = guTrackType( ( int ) m_Items[ ItemToFlag ].m_Type | guTRACK_TYPE_STOP_HERE );
+        RefreshAll();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::ClearStopAfterCurrent( void )
+{
+    if( ( m_CurItem >= 0 ) && ( m_CurItem < ( int ) m_Items.Count() ) )
+    {
+        m_Items[ m_CurItem ].m_Type = guTrackType( ( int ) m_Items[ m_CurItem ].m_Type & 0x7FFFFFFF );
         RefreshAll();
     }
 }

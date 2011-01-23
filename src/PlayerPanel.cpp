@@ -1241,8 +1241,9 @@ void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype )
     if( m_NextSong.m_Type & guTRACK_TYPE_STOP_HERE )
     {
         m_NextSong.m_Type = guTrackType( int( m_NextSong.m_Type ) & 0x7FFFFFFF );
-        m_MediaCtrl->Stop();
-        SavePlayedTrack();
+        m_PlayListCtrl->ClearStopAfterCurrent();
+        //m_MediaCtrl->Stop();
+        //SavePlayedTrack();
         return;
     }
 
