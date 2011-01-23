@@ -296,7 +296,7 @@ class guPlayerPanel : public wxPanel
     void                        OnPlayListUpdated( wxCommandEvent &event );
     void                        OnPlayListDClick( wxCommandEvent &event );
 
-    void                        LoadMedia( const wxString &FileName, guFADERPLAYBIN_PLAYTYPE playtype );
+    void                        LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype );
     void                        OnMediaLoaded( guMediaEvent &event );
     void                        OnMediaPlayStarted( void );
     void                        SavePlayedTrack( void );
@@ -386,6 +386,7 @@ class guPlayerPanel : public wxPanel
     void                        OnNextAlbumButtonClick( wxCommandEvent &event );
     void                        OnPlayButtonClick( wxCommandEvent &event );
     void                        OnStopButtonClick( wxCommandEvent &event );
+    void                        OnStopAfterCurrentTrack( wxCommandEvent &event );
     void                        OnRecordButtonClick( wxCommandEvent &event );
 	void                        OnSmartPlayButtonClick( wxCommandEvent &event );
 	void                        OnRandomPlayButtonClick( wxCommandEvent &event );

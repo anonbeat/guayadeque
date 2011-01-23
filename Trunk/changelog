@@ -1,4 +1,17 @@
 
+  * Implemented stop after current track using shift + click on stop button
+  * Added more options for Copy To patterns
+    {a1}  : first letter of artist
+    {aa1} : first letter of album artist
+    {A}   : album artist if not empty or artist otherwise
+    {A1}  : first letter of {A}
+    {b1}  : first letter of album
+    {c1}  : first letter of composer
+    {g1}  : first letter of genre
+  * Added Album Artist to Music Brainz tagger feature
+  * Added combo boxes to the track editor
+  * Added iPod support with covers and playlist
+  * Added output audio device configuration option in preferences
   * Added partial mpris2 support
   * Added SoundMenu support
   * Added support for wma files extended attributes

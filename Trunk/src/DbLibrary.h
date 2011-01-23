@@ -49,8 +49,10 @@
 
 extern unsigned long DynPLDateOption2[];
 
+#define guTRACK_TYPE_STOP_HERE      0x80000000
+
 enum guTrackType {
-    guTRACK_TYPE_DB,
+    guTRACK_TYPE_DB = 0,
     guTRACK_TYPE_NOTDB,
     guTRACK_TYPE_RADIOSTATION,
     guTRACK_TYPE_PODCAST,

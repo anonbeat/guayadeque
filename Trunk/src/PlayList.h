@@ -57,6 +57,7 @@ class guPlayList : public guListView
     wxString        m_LastSearch;
 
     wxBitmap *      m_PlayBitmap;
+    wxBitmap *      m_StopBitmap;
     wxBitmap *      m_NormalStar;
     wxBitmap *      m_SelectStar;
     wxCoord         m_SecondLineOffset;
@@ -149,6 +150,8 @@ class guPlayList : public guListView
     void                        UpdatedTrack( const guTrack * track );
 
     bool                        StartPlaying( void ) { return m_StartPlaying; }
+
+    void                        StopAfterCurrent( void );
 
 
   friend class guAddDropFilesThread;

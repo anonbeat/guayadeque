@@ -129,6 +129,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
         m_CurItem = wxNOT_FOUND;
 
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+    m_StopBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_light_stop ) );
     m_NormalStar   = new wxBitmap( guImage( guIMAGE_INDEX_star_normal_tiny ) );
     m_SelectStar = new wxBitmap( guImage( guIMAGE_INDEX_star_highlight_tiny ) );
 
@@ -190,6 +191,8 @@ guPlayList::~guPlayList()
 
     if( m_PlayBitmap )
       delete m_PlayBitmap;
+    if( m_StopBitmap )
+      delete m_StopBitmap;
     if( m_NormalStar )
       delete m_NormalStar;
     if( m_SelectStar )
@@ -518,6 +521,12 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
     if( row == m_CurItem && m_PlayBitmap )
     {
         dc.DrawBitmap( * m_PlayBitmap, CutRect.x + 2, CutRect.y + 10, true );
+        CutRect.x += 16;
+        CutRect.width -= 16;
+    }
+    else if( Item.m_Type & guTRACK_TYPE_STOP_HERE )
+    {
+        dc.DrawBitmap( * m_StopBitmap, CutRect.x + 2, CutRect.y + 10, true );
         CutRect.x += 16;
         CutRect.width -= 16;
     }
@@ -2115,6 +2124,36 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
             ClearSelectedItems();
             ReloadItems();
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::StopAfterCurrent( void )
+{
+    int ItemToFlag = wxNOT_FOUND;
+    int Index;
+    int Count;
+    wxArrayInt Selection = GetSelectedItems( false );
+    if( ( Count = Selection.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( Selection[ Index ] > ItemToFlag )
+                ItemToFlag = Selection[ Index ];
+        }
+        if( ( ItemToFlag != wxNOT_FOUND ) && ( ItemToFlag < ( int ) ( m_Items.Count() - 1 ) ) )
+            ItemToFlag++;
+    }
+    else
+    {
+        if( m_CurItem < ( int ) ( m_Items.Count() - 1 ) )
+            ItemToFlag = m_CurItem + 1;
+    }
+
+    if( ItemToFlag >= 0 && ItemToFlag < ( int ) m_Items.Count() )
+    {
+        m_Items[ ItemToFlag ].m_Type = guTrackType( ( int ) m_Items[ ItemToFlag ].m_Type | guTRACK_TYPE_STOP_HERE );
+        RefreshAll();
     }
 }
 
