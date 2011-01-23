@@ -87,6 +87,7 @@ class guPlayList : public guListView
     void                        OnEditLabelsClicked( wxCommandEvent &event );
     void                        OnEditTracksClicked( wxCommandEvent &event );
     void                        OnSearchClicked( wxCommandEvent &event );
+    void                        OnStopAfterCurrent( wxCommandEvent &event ) { StopAfterCurrent(); }
     void                        OnSearchLinkClicked( wxCommandEvent &event );
     void                        OnCommandClicked( wxCommandEvent &event );
     wxString                    GetSearchText( int item ) const;
@@ -152,6 +153,7 @@ class guPlayList : public guListView
     bool                        StartPlaying( void ) { return m_StartPlaying; }
 
     void                        StopAfterCurrent( void );
+    void                        ClearStopAfterCurrent( void );
 
 
   friend class guAddDropFilesThread;
