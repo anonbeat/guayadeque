@@ -2159,7 +2159,7 @@ void guPlayList::StopAfterCurrent( void )
 
     if( ItemToFlag >= 0 && ItemToFlag < ( int ) m_Items.Count() )
     {
-        m_Items[ ItemToFlag ].m_Type = guTrackType( ( int ) m_Items[ ItemToFlag ].m_Type | guTRACK_TYPE_STOP_HERE );
+        m_Items[ ItemToFlag ].m_Type = guTrackType( ( int ) m_Items[ ItemToFlag ].m_Type ^ guTRACK_TYPE_STOP_HERE );
         RefreshAll();
     }
 }
