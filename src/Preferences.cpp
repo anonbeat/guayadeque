@@ -101,6 +101,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
     m_LibPathsChanged = false;
     m_VisiblePanels = 0;
     m_CopyToOptions = NULL;
+    m_LyricSearchEngine = NULL;
+    m_LyricSourceSelected = wxNOT_FOUND;
 
     m_Config = ( guConfig * ) guConfig::Get();
     if( !m_Config )
@@ -369,8 +371,25 @@ guPrefDialog::~guPrefDialog()
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LYRICS )
     {
-        m_LyricsTracksSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
-        m_LyricsDirSaveChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
+        if( m_LyricSearchEngine )
+        {
+            delete m_LyricSearchEngine;
+        }
+
+        m_LyricsSrcListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLyricSourceSelected ), NULL, this );
+        m_LyricsSrcListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSourceDClicked ), NULL, this );
+        m_LyricsSrcListBox->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guPrefDialog::OnLyricSourceToggled ), NULL, this );
+        m_LyricsAddButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricAddBtnClick ), NULL, this );
+        m_LyricsUpButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricUpBtnClick ), NULL, this );
+        m_LyricsDownButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricDownBtnClick ), NULL, this );
+        m_LyricsDelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricDelBtnClick ), NULL, this );
+        m_LyricsSaveListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLyricSaveSelected ), NULL, this );
+        m_LyricsSaveListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDClicked ), NULL, this );
+        m_LyricsSaveListBox->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guPrefDialog::OnLyricSaveToggled ), NULL, this );
+        m_LyricsSaveAddButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveAddBtnClick ), NULL, this );
+        m_LyricsSaveUpButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveUpBtnClick ), NULL, this );
+        m_LyricsSaveDownButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDownBtnClick ), NULL, this );
+        m_LyricsSaveDelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDelBtnClick ), NULL, this );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ONLINE )
@@ -1158,53 +1177,136 @@ void guPrefDialog::BuildLyricsPage( void )
     //
 	wxBoxSizer * LyricsMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxArrayString LyricsAlignSizerChoices;
-	LyricsAlignSizerChoices.Add( _( "Left" ) );
-	LyricsAlignSizerChoices.Add( _( "Center" ) );
-	LyricsAlignSizerChoices.Add( _( "Right" ) );
-	m_LyricsAlignSizer = new wxRadioBox( m_LyricsPanel, wxID_ANY, _( " Text Align " ), wxDefaultPosition, wxDefaultSize, LyricsAlignSizerChoices, 1, wxRA_SPECIFY_ROWS );
-	m_LyricsAlignSizer->SetSelection( m_Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) );
-	LyricsMainSizer->Add( m_LyricsAlignSizer, 0, wxALL|wxEXPAND, 5 );
+	wxStaticBoxSizer * LyricsSrcSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _(" Sources " ) ), wxHORIZONTAL );
 
-	wxStaticBoxSizer * LyricsSaveSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Save " ) ), wxVERTICAL );
+    m_LyricSearchEngine = new guLyricSearchEngine();
 
-	m_LyricsTracksSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Save lyrics to audio files" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LyricsTracksSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToFiles" ), false, wxT( "Lyrics" ) ) );
-    LyricsSaveSizer->Add( m_LyricsTracksSaveChkBox, 0, wxEXPAND|wxALL, 5 );
+    wxArrayString LyricSourcesNames;
+    wxArrayInt    LyricSourcesEnabled;
+    int Index;
+    int Count = m_LyricSearchEngine->SourcesCount();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guLyricSource * LyricSource = m_LyricSearchEngine->GetSource( Index );
+        LyricSourcesNames.Add( LyricSource->Name() );
+        LyricSourcesEnabled.Add( LyricSource->Enabled() );
+    }
 
-	m_LyricsTracksSaveSelectedChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Only for the selected tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LyricsTracksSaveSelectedChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToFilesOnlySelected" ), false, wxT( "Lyrics" ) ) );
-    m_LyricsTracksSaveSelectedChkBox->Enable( m_LyricsTracksSaveChkBox->IsChecked() );
-    LyricsSaveSizer->Add( m_LyricsTracksSaveSelectedChkBox, 0, wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
+	m_LyricsSrcListBox = new wxCheckListBox( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricSourcesNames, 0 );
+	LyricsSrcSizer->Add( m_LyricsSrcListBox, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+	for( Index = 0; Index < Count; Index++ )
+	{
+        m_LyricsSrcListBox->Check( Index, LyricSourcesEnabled[ Index ] );
+	}
 
-    wxStaticLine * LyricsStaticLine = new wxStaticLine( m_LyricsPanel, wxID_ANY );
-	LyricsSaveSizer->Add( LyricsStaticLine, 0, wxEXPAND, 5 );
+	wxBoxSizer * LyricsSrcBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer * LyricsDirSaveSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_LyricsAddButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	//m_LyricsAddButton->Enable( false );
+	LyricsSrcBtnSizer->Add( m_LyricsAddButton, 0, wxTOP, 5 );
 
-	m_LyricsDirSaveChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Save Lyrics to directory" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LyricsDirSaveChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToDir" ), false, wxT( "Lyrics" ) ) );
-	LyricsDirSaveSizer->Add( m_LyricsDirSaveChkBox, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_LyricsUpButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LyricsUpButton->Enable( false );
+	LyricsSrcBtnSizer->Add( m_LyricsUpButton, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP, 5 );
 
-	m_LyricsDirSavePicker = new wxDirPickerCtrl( m_LyricsPanel, wxID_ANY, wxEmptyString, _( "Select lyrics folder" ), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
-	m_LyricsDirSavePicker->SetPath( m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), wxT( "Lyrics" ) ) );
-    m_LyricsDirSavePicker->Enable( m_LyricsDirSaveChkBox->IsChecked() );
-	LyricsDirSaveSizer->Add( m_LyricsDirSavePicker, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_LyricsDownButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LyricsDownButton->Enable( false );
+	LyricsSrcBtnSizer->Add( m_LyricsDownButton, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP, 5 );
 
-	LyricsSaveSizer->Add( LyricsDirSaveSizer, 1, wxEXPAND, 5 );
+	m_LyricsDelButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LyricsDelButton->Enable( false );
+	LyricsSrcBtnSizer->Add( m_LyricsDelButton, 0, wxTOP|wxBOTTOM, 5 );
 
-	m_LyricsDirSaveSelectedChkBox = new wxCheckBox( m_LyricsPanel, wxID_ANY, _( "Only for the selected tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LyricsDirSaveSelectedChkBox->SetValue( m_Config->ReadBool( wxT( "SaveToDirOnlySelected" ), false, wxT( "Lyrics" ) ) );
-    m_LyricsDirSaveSelectedChkBox->Enable( m_LyricsDirSaveChkBox->IsChecked() );
-	LyricsSaveSizer->Add( m_LyricsDirSaveSelectedChkBox, 0, wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
+	LyricsSrcSizer->Add( LyricsSrcBtnSizer, 0, wxEXPAND, 5 );
 
-	LyricsMainSizer->Add( LyricsSaveSizer, 0, wxEXPAND|wxALL, 5 );
+	LyricsMainSizer->Add( LyricsSrcSizer, 1, wxEXPAND|wxALL, 5 );
+
+	wxStaticBoxSizer* LyricsSaveSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Targets " ) ), wxHORIZONTAL );
+
+    wxArrayString LyricTargetsNames;
+    wxArrayInt    LyricTargetsEnabled;
+    Count = m_LyricSearchEngine->TargetsCount();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guLyricSource * LyricTarget = m_LyricSearchEngine->GetTarget( Index );
+        LyricTargetsNames.Add( LyricTarget->Name() );
+        LyricTargetsEnabled.Add( LyricTarget->Enabled() );
+    }
+	m_LyricsSaveListBox = new wxCheckListBox( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricTargetsNames, 0 );
+	for( Index = 0; Index < Count; Index++ )
+	{
+        m_LyricsSaveListBox->Check( Index, LyricTargetsEnabled[ Index ] );
+	}
+	LyricsSaveSizer->Add( m_LyricsSaveListBox, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer * LyricsSaveBtnSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_LyricsSaveAddButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	//m_LyricsSaveAddButton->Enable( false );
+	LyricsSaveBtnSizer->Add( m_LyricsSaveAddButton, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_LyricsSaveUpButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LyricsSaveUpButton->Enable( false );
+	LyricsSaveBtnSizer->Add( m_LyricsSaveUpButton, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP, 5 );
+
+	m_LyricsSaveDownButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LyricsSaveDownButton->Enable( false );
+	LyricsSaveBtnSizer->Add( m_LyricsSaveDownButton, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP, 5 );
+
+	m_LyricsSaveDelButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LyricsSaveDelButton->Enable( false );
+	LyricsSaveBtnSizer->Add( m_LyricsSaveDelButton, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	LyricsSaveSizer->Add( LyricsSaveBtnSizer, 0, wxEXPAND, 5 );
+
+	LyricsMainSizer->Add( LyricsSaveSizer, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	wxStaticBoxSizer * LyricsFontSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _(" Font ") ), wxHORIZONTAL );
+
+	wxStaticText * LyricsFontLabel = new wxStaticText( m_LyricsPanel, wxID_ANY, _( "Font:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	LyricsFontLabel->Wrap( -1 );
+	LyricsFontSizer->Add( LyricsFontLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT|wxLEFT, 5 );
+
+	wxFont LyricFont;
+	LyricFont.SetNativeFontInfo( m_Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "Lyrics" ) ) );
+	if( !LyricFont.IsOk() )
+        LyricFont = GetFont();
+	m_LyricFontPicker = new wxFontPickerCtrl( m_LyricsPanel, wxID_ANY, LyricFont, wxDefaultPosition, wxDefaultSize, wxFNTP_DEFAULT_STYLE );
+	m_LyricFontPicker->SetMaxPointSize( 100 );
+	LyricsFontSizer->Add( m_LyricFontPicker, 2, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
+
+	wxStaticText * LyricsAlignLabel = new wxStaticText( m_LyricsPanel, wxID_ANY, _( "Align:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	LyricsAlignLabel->Wrap( -1 );
+	LyricsFontSizer->Add( LyricsAlignLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT|wxLEFT, 5 );
+
+	wxArrayString LyricsAlignChoices;
+	LyricsAlignChoices.Add( _( "Left" ) );
+	LyricsAlignChoices.Add( _( "Center" ) );
+	LyricsAlignChoices.Add( _( "Right" ) );
+	m_LyricsAlignChoice = new wxChoice( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), LyricsAlignChoices, 0 );
+	m_LyricsAlignChoice->SetSelection( m_Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) );
+	LyricsFontSizer->Add( m_LyricsAlignChoice, 1, wxRIGHT, 5 );
+
+	LyricsMainSizer->Add( LyricsFontSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	m_LyricsPanel->SetSizer( LyricsMainSizer );
 	m_LyricsPanel->Layout();
 
-    m_LyricsTracksSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveTracksClicked ), NULL, this );
-    m_LyricsDirSaveChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricsSaveDirClicked ), NULL, this );
+	m_LyricsSrcListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLyricSourceSelected ), NULL, this );
+	m_LyricsSrcListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSourceDClicked ), NULL, this );
+	m_LyricsSrcListBox->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guPrefDialog::OnLyricSourceToggled ), NULL, this );
+	m_LyricsAddButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricAddBtnClick ), NULL, this );
+	m_LyricsUpButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricUpBtnClick ), NULL, this );
+	m_LyricsDownButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricDownBtnClick ), NULL, this );
+	m_LyricsDelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricDelBtnClick ), NULL, this );
+	m_LyricsSaveListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLyricSaveSelected ), NULL, this );
+	m_LyricsSaveListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDClicked ), NULL, this );
+	m_LyricsSaveListBox->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guPrefDialog::OnLyricSaveToggled ), NULL, this );
+	m_LyricsSaveAddButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveAddBtnClick ), NULL, this );
+	m_LyricsSaveUpButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveUpBtnClick ), NULL, this );
+	m_LyricsSaveDownButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDownBtnClick ), NULL, this );
+	m_LyricsSaveDelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDelBtnClick ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2159,12 +2261,15 @@ void guPrefDialog::SaveSettings( void )
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LYRICS )
     {
-        m_Config->WriteNum( wxT( "TextAlign" ), m_LyricsAlignSizer->GetSelection(), wxT( "Lyrics" ) );
-        m_Config->WriteBool( wxT( "SaveToFiles" ), m_LyricsTracksSaveChkBox->GetValue(), wxT( "Lyrics" ) );
-        m_Config->WriteBool( wxT( "SaveToFilesOnlySelected" ), m_LyricsTracksSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
-        m_Config->WriteBool( wxT( "SaveToDir" ), m_LyricsDirSaveChkBox->GetValue(), wxT( "Lyrics" ) );
-        m_Config->WriteStr( wxT( "Path" ), m_LyricsDirSavePicker->GetPath(), wxT( "Lyrics" ) );
-        m_Config->WriteBool( wxT( "SaveToDirOnlySelected" ), m_LyricsDirSaveSelectedChkBox->GetValue(), wxT( "Lyrics" ) );
+        m_LyricSearchEngine->Save();
+//        m_Config->WriteBool( wxT( "EmbedToFiles" ), m_LyricsEmbedChkBox->GetValue(), wxT( "Lyrics" ) );
+//        m_Config->WriteBool( wxT( "SaveToFiles" ), m_LyricsSaveToFileChkBox->GetValue(), wxT( "Lyrics" ) );
+//        m_Config->WriteStr( wxT( "SaveToFilesPath" ), m_LyricsDirSavePicker->GetPath(), wxT( "Lyrics" ) );
+//        m_Config->WriteStr( wxT( "SaveToFilesPattern" ), m_LyricsPatternTextCtrl->GetValue(), wxT( "Lyrics" ) );
+//        m_Config->WriteBool( wxT( "SaveCommandEnabled" ), m_LyricsEmbedChkBox->GetValue(), wxT( "Lyrics" ) );
+//        m_Config->WriteStr( wxT( "SaveCommandText" ), m_LyricCmdTextCtrl->GetValue(), wxT( "Lyrics" ) );
+        m_Config->WriteStr( wxT( "Font" ), m_LyricFontPicker->GetSelectedFont().GetNativeFontInfoDesc(), wxT( "Lyrics" ) );
+        m_Config->WriteNum( wxT( "TextAlign" ), m_LyricsAlignChoice->GetSelection(), wxT( "Lyrics" ) );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_JAMENDO )
@@ -2487,17 +2592,220 @@ void guPrefDialog::OnCoverListBoxDClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPrefDialog::OnLyricsSaveTracksClicked( wxCommandEvent &event )
+void guPrefDialog::OnLyricSourceSelected( wxCommandEvent &event )
 {
-    m_LyricsTracksSaveSelectedChkBox->Enable( event.IsChecked() );
+    //guLogMessage( wxT( "Selected %i" ), event.GetInt() );
+    m_LyricSourceSelected = event.GetInt();
+    m_LyricsUpButton->Enable( m_LyricSourceSelected > 0 );
+    m_LyricsDownButton->Enable( m_LyricSourceSelected >= 0 && ( m_LyricSourceSelected < ( ( int ) m_LyricSearchEngine->SourcesCount() - 1 ) ) );
+    m_LyricsDelButton->Enable( m_LyricSourceSelected != wxNOT_FOUND );
 }
 
 // -------------------------------------------------------------------------------- //
-void guPrefDialog::OnLyricsSaveDirClicked( wxCommandEvent &event )
+void guPrefDialog::OnLyricSourceDClicked( wxCommandEvent &event )
 {
-    m_LyricsDirSavePicker->Enable( event.IsChecked() );
-    m_LyricsDirSaveSelectedChkBox->Enable( event.IsChecked() );
+    guLyricSource * CurrentLyricSource = m_LyricSearchEngine->GetSource( m_LyricSourceSelected );
+    guLyricSourceEditor * LyricSourceEditor = new guLyricSourceEditor( this, CurrentLyricSource );
+    if( LyricSourceEditor )
+    {
+        if( LyricSourceEditor->ShowModal() == wxID_OK )
+        {
+            LyricSourceEditor->UpdateLyricSource();
+
+            bool WasActive = m_LyricsSrcListBox->IsChecked( m_LyricSourceSelected );
+            m_LyricsSrcListBox->SetString( m_LyricSourceSelected, CurrentLyricSource->Name() );
+            m_LyricsSrcListBox->Check( m_LyricSourceSelected, WasActive );
+        }
+
+        LyricSourceEditor->Destroy();
+    }
 }
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricSourceToggled( wxCommandEvent &event )
+{
+    //guLogMessage( wxT( "Toggled %i %i" ), event.GetInt(), m_LyricsSrcListBox->IsChecked( event.GetInt() ) );
+    m_LyricSourceSelected = event.GetInt();
+    guLyricSource * LyricSource = m_LyricSearchEngine->GetSource( m_LyricSourceSelected );
+    LyricSource->Enabled( m_LyricsSrcListBox->IsChecked( m_LyricSourceSelected ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricAddBtnClick( wxCommandEvent &event )
+{
+    guLyricSource LyricSource;
+    guLyricSourceEditor * LyricSourceEditor = new guLyricSourceEditor( this, &LyricSource );
+    if( LyricSourceEditor )
+    {
+        if( LyricSourceEditor->ShowModal() == wxID_OK )
+        {
+            LyricSourceEditor->UpdateLyricSource();
+
+            m_LyricsSrcListBox->Append( LyricSource.Name() );
+            m_LyricSearchEngine->SourceAdd( new guLyricSource( LyricSource ) );
+        }
+
+        LyricSourceEditor->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricUpBtnClick( wxCommandEvent &event )
+{
+    wxString LyricSource = m_LyricsSrcListBox->GetString( m_LyricSourceSelected );
+    bool     LyricChecked = m_LyricsSrcListBox->IsChecked( m_LyricSourceSelected );
+
+    m_LyricSearchEngine->SourceMoveUp( m_LyricSourceSelected );
+
+    m_LyricsSrcListBox->SetString( m_LyricSourceSelected, m_LyricsSrcListBox->GetString( m_LyricSourceSelected - 1 ) );
+    m_LyricsSrcListBox->Check( m_LyricSourceSelected, m_LyricsSrcListBox->IsChecked( m_LyricSourceSelected - 1 ) );
+    m_LyricSourceSelected--;
+    m_LyricsSrcListBox->SetString( m_LyricSourceSelected, LyricSource );
+    m_LyricsSrcListBox->Check( m_LyricSourceSelected, LyricChecked );
+    m_LyricsSrcListBox->SetSelection( m_LyricSourceSelected );
+
+
+    event.SetInt( m_LyricSourceSelected );
+    OnLyricSourceSelected( event );
+
+}
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricDownBtnClick( wxCommandEvent &event )
+{
+    wxString LyricSource = m_LyricsSrcListBox->GetString( m_LyricSourceSelected );
+    bool     LyricChecked = m_LyricsSrcListBox->IsChecked( m_LyricSourceSelected );
+
+    m_LyricSearchEngine->SourceMoveDown( m_LyricSourceSelected );
+
+    m_LyricsSrcListBox->SetString( m_LyricSourceSelected, m_LyricsSrcListBox->GetString( m_LyricSourceSelected + 1 ) );
+    m_LyricsSrcListBox->Check( m_LyricSourceSelected, m_LyricsSrcListBox->IsChecked( m_LyricSourceSelected + 1 ) );
+    m_LyricSourceSelected++;
+    m_LyricsSrcListBox->SetString( m_LyricSourceSelected, LyricSource );
+    m_LyricsSrcListBox->Check( m_LyricSourceSelected, LyricChecked );
+    m_LyricsSrcListBox->SetSelection( m_LyricSourceSelected );
+
+    event.SetInt( m_LyricSourceSelected );
+    OnLyricSourceSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricDelBtnClick( wxCommandEvent &event )
+{
+    if( m_LyricSourceSelected != wxNOT_FOUND )
+    {
+        m_LyricSearchEngine->SourceRemoveAt( m_LyricSourceSelected );
+        m_LyricsSrcListBox->Delete( m_LyricSourceSelected );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricSaveSelected( wxCommandEvent &event )
+{
+    //guLogMessage( wxT( "Selected %i" ), event.GetInt() );
+    m_LyricTargetSelected = event.GetInt();
+    m_LyricsSaveUpButton->Enable( m_LyricTargetSelected > 0 );
+    m_LyricsSaveDownButton->Enable( m_LyricTargetSelected >= 0 && ( m_LyricTargetSelected < ( ( int ) m_LyricSearchEngine->TargetsCount() - 1 ) ) );
+    m_LyricsSaveDelButton->Enable( m_LyricTargetSelected != wxNOT_FOUND );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricSaveDClicked( wxCommandEvent &event )
+{
+    guLyricSource * CurrentLyricTarget = m_LyricSearchEngine->GetTarget( m_LyricTargetSelected );
+    guLyricSourceEditor * LyricSourceEditor = new guLyricSourceEditor( this, CurrentLyricTarget, true );
+    if( LyricSourceEditor )
+    {
+        if( LyricSourceEditor->ShowModal() == wxID_OK )
+        {
+            LyricSourceEditor->UpdateLyricSource();
+
+            bool WasActive = m_LyricsSaveListBox->IsChecked( m_LyricTargetSelected );
+            m_LyricsSaveListBox->SetString( m_LyricTargetSelected, CurrentLyricTarget->Name() );
+            m_LyricsSaveListBox->Check( m_LyricTargetSelected, WasActive );
+        }
+
+        LyricSourceEditor->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricSaveToggled( wxCommandEvent &event )
+{
+    //guLogMessage( wxT( "Toggled %i %i" ), event.GetInt(), m_LyricsSaveListBox->IsChecked( event.GetInt() ) );
+    m_LyricTargetSelected = event.GetInt();
+    guLyricSource * LyricTarget = m_LyricSearchEngine->GetTarget( m_LyricTargetSelected );
+    LyricTarget->Enabled( m_LyricsSaveListBox->IsChecked( m_LyricTargetSelected ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricSaveAddBtnClick( wxCommandEvent &event )
+{
+    guLyricSource LyricTarget;
+    guLyricSourceEditor * LyricSourceEditor = new guLyricSourceEditor( this, &LyricTarget, true );
+    if( LyricSourceEditor )
+    {
+        if( LyricSourceEditor->ShowModal() == wxID_OK )
+        {
+            LyricSourceEditor->UpdateLyricSource();
+
+            m_LyricsSaveListBox->Append( LyricTarget.Name() );
+            m_LyricSearchEngine->TargetAdd( new guLyricSource( LyricTarget ) );
+        }
+
+        LyricSourceEditor->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricSaveUpBtnClick( wxCommandEvent &event )
+{
+    wxString LyricTarget = m_LyricsSaveListBox->GetString( m_LyricTargetSelected );
+    bool     LyricChecked = m_LyricsSaveListBox->IsChecked( m_LyricTargetSelected );
+
+    m_LyricSearchEngine->TargetMoveUp( m_LyricTargetSelected );
+
+    m_LyricsSaveListBox->SetString( m_LyricTargetSelected, m_LyricsSaveListBox->GetString( m_LyricTargetSelected - 1 ) );
+    m_LyricsSaveListBox->Check( m_LyricTargetSelected, m_LyricsSaveListBox->IsChecked( m_LyricTargetSelected - 1 ) );
+    m_LyricTargetSelected--;
+    m_LyricsSaveListBox->SetString( m_LyricTargetSelected, LyricTarget );
+    m_LyricsSaveListBox->Check( m_LyricTargetSelected, LyricChecked );
+    m_LyricsSaveListBox->SetSelection( m_LyricTargetSelected );
+
+
+    event.SetInt( m_LyricTargetSelected );
+    OnLyricSourceSelected( event );
+
+}
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricSaveDownBtnClick( wxCommandEvent &event )
+{
+    wxString LyricTarget = m_LyricsSaveListBox->GetString( m_LyricTargetSelected );
+    bool     LyricChecked = m_LyricsSaveListBox->IsChecked( m_LyricTargetSelected );
+
+    m_LyricSearchEngine->TargetMoveDown( m_LyricTargetSelected );
+
+    m_LyricsSaveListBox->SetString( m_LyricTargetSelected, m_LyricsSaveListBox->GetString( m_LyricTargetSelected + 1 ) );
+    m_LyricsSaveListBox->Check( m_LyricTargetSelected, m_LyricsSaveListBox->IsChecked( m_LyricTargetSelected + 1 ) );
+    m_LyricTargetSelected++;
+    m_LyricsSaveListBox->SetString( m_LyricTargetSelected, LyricTarget );
+    m_LyricsSaveListBox->Check( m_LyricTargetSelected, LyricChecked );
+    m_LyricsSaveListBox->SetSelection( m_LyricTargetSelected );
+
+    event.SetInt( m_LyricTargetSelected );
+    OnLyricSourceSelected( event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricSaveDelBtnClick( wxCommandEvent &event )
+{
+    if( m_LyricTargetSelected != wxNOT_FOUND )
+    {
+        m_LyricSearchEngine->TargetRemoveAt( m_LyricTargetSelected );
+        m_LyricsSaveListBox->Delete( m_LyricTargetSelected );
+    }
+}
+
+////////////////////////////
 
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnFiltersListBoxSelected( wxCommandEvent &event )

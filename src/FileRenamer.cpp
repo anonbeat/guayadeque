@@ -176,7 +176,7 @@ void guFileRenamer::OnFileSelected( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guFileRenamer::OnPatternChanged( wxCommandEvent& event )
 {
-    bool Enabled = !m_PatTextCtrl->GetValue().IsEmpty();
+    bool Enabled = !m_PatTextCtrl->IsEmpty();
     m_PatApplyBtn->Enable( Enabled );
     m_PatRevertBtn->Enable( Enabled );
 }
@@ -267,14 +267,7 @@ void guFileRenamer::OnPatternApply( wxCommandEvent& event )
                                     wxT( '.' ) + FileName.AfterLast( wxT( '.' ) );
                     }
 
-                    FileName.Replace( wxT( "{a}" ), NormalizeField( Track->m_ArtistName ) );
-                    FileName.Replace( wxT( "{b}" ), NormalizeField( Track->m_AlbumName ) );
-                    FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( Track->m_FileName ) );
-                    FileName.Replace( wxT( "{g}" ), NormalizeField( Track->m_GenreName ) );
-                    FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), Track->m_Number ) );
-                    FileName.Replace( wxT( "{t}" ), NormalizeField( Track->m_SongName ) );
-                    FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), Track->m_Year ) );
-                    FileName.Replace( wxT( "{d}" ), NormalizeField( Track->m_Disk ) );
+                    FileName = guExpandTrackMacros( FileName, Track );
 
                     m_FilesListBox->SetString( Selection[ Index ], FileName );
 

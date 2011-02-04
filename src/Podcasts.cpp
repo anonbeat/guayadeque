@@ -512,7 +512,9 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
             XmlNode->GetPropVal( wxT( "url" ), &m_Enclosure );
             wxString LenStr;
             XmlNode->GetPropVal( wxT( "length" ), &LenStr );
-            LenStr.ToULong( ( unsigned long * ) &m_FileSize );
+            unsigned long ULongVal;
+            LenStr.ToULong( &ULongVal );
+            m_FileSize = ULongVal;
         }
         else if( m_Summary.IsEmpty() && ( ( XmlNode->GetName() == wxT( "itunes:summary" ) ) ||
                  ( XmlNode->GetName() == wxT( "description" ) ) ) )

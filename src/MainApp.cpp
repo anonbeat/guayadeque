@@ -103,6 +103,21 @@ guMainApp::guMainApp() : wxApp()
         guLogMessage( wxT( "Created the default equalizers file" ) );
     }
 
+    if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/lyrics_sources.xml" ) ) )
+    {
+        if( wxFileExists( wxT( "/usr/share/guayadeque/lyrics_sources.xml" ) ) )
+        {
+            wxCopyFile( wxT( "/usr/share/guayadeque/lyrics_sources.xml" ),
+                        wxGetHomeDir() + wxT( "/.guayadeque/lyrics_sources.xml" ), false );
+        }
+        else if( wxFileExists( wxT( "/usr/local/share/guayadeque/lyrics_sources.xml" ) ) )
+        {
+            wxCopyFile( wxT( "/usr/local/share/guayadeque/lyrics_sources.xml" ),
+                        wxGetHomeDir() + wxT( "/.guayadeque/lyrics_sources.xml" ), false );
+        }
+        guLogMessage( wxT( "Created the default lyrics sources file" ) );
+    }
+
     m_Config = new guConfig();
     guConfig::Set( m_Config );
 }

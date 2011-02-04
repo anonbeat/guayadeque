@@ -267,6 +267,8 @@
 		<Unit filename="src/dbus/mmkeys.h" />
 		<Unit filename="src/dbus/mpris.cpp" />
 		<Unit filename="src/dbus/mpris.h" />
+		<Unit filename="src/dbus/mpris2.cpp" />
+		<Unit filename="src/dbus/mpris2.h" />
 		<Unit filename="src/dbus/notify.cpp" />
 		<Unit filename="src/dbus/notify.h" />
 		<Unit filename="src/hmac/hmac_sha2.c">

@@ -1,12 +1,25 @@
 
+  * Added posibility to add more lyrics sources or edit existing ones
   * Implemented stop after current track using shift + click on stop button
   * Added more options for Copy To patterns
+    {al}  : artist in lower case
+    {au}  : artist in upper case
     {a1}  : first letter of artist
+    {aal} : album artist in lower case
+    {aau} : album artist in upper case
     {aa1} : first letter of album artist
     {A}   : album artist if not empty or artist otherwise
+    {Al}  : {A} in lower case
+    {Au}  : {A} in upper case
     {A1}  : first letter of {A}
+    {bl}  : album in lower case
+    {bu}  : album in upper case
     {b1}  : first letter of album
+    {cl}  : composer in lower case
+    {cu}  : composer in upper case
     {c1}  : first letter of composer
+    {gl}  : genre in lower case
+    {gu}  : genre in upper case
     {g1}  : first letter of genre
   * Added Album Artist to Music Brainz tagger feature
   * Added combo boxes to the track editor

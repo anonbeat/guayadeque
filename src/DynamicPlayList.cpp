@@ -988,12 +988,12 @@ void guDynPlayListEditor::OnFilterTextChanged( wxCommandEvent& event )
         ( FilterType != guDYNAMIC_FILTER_TYPE_DISK ) )
     {
         unsigned long value = 0;
-        if( !m_FilterText->GetValue().IsEmpty() && !m_FilterText->GetValue().ToULong( &value ) )
+        if( !m_FilterText->IsEmpty() && !m_FilterText->GetValue().ToULong( &value ) )
             m_FilterText->SetValue( wxEmptyString );
     }
 
 
-    m_FilterAdd->Enable( !m_FilterText->GetValue().IsEmpty() ||
+    m_FilterAdd->Enable( !m_FilterText->IsEmpty() ||
                          ( ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LABEL ) &&
                          ( m_FilterLabelOptionChoice->GetSelection() == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET ) ) );
 

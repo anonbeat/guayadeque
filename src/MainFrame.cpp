@@ -66,6 +66,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         guLogError( wxT( "Could not open the guayadeque configuration object" ) );
         return;
     }
+    Config->RegisterObject( this );
 
 //    //
 //    // Init the Database Object
@@ -126,6 +127,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_CoverPanel = NULL;
     m_ViewMainShowCover = NULL;
     m_ViewMainLocations = NULL;
+    //m_LyricSearchEngine = NULL;
+    m_LyricSearchContext = NULL;
 
     //
     wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
@@ -137,6 +140,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     // Load the preconfigured layouts from config file
     LoadLayouts();
+
+    m_LyricSearchEngine = new guLyricSearchEngine();
 
     //
     // guMainFrame GUI components
@@ -652,6 +657,11 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     //Connect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guMainFrame::OnSysColorChanged ), NULL, this );
 
+    Connect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricFound ), NULL, this );
+    Connect( ID_MAINFRAME_LYRICSSEARCHNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchNext ), NULL, this );
+    Connect( ID_MAINFRAME_LYRICSSAVECHANGES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSaveChanges ), NULL, this );
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -784,6 +794,11 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
     Disconnect( ID_MAINFRAME_REQUEST_CURRENTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRequestCurrentTrack ), NULL, this );
 
+    Disconnect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricFound ), NULL, this );
+    Disconnect( ID_MAINFRAME_LYRICSSEARCHNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchNext ), NULL, this );
+    Disconnect( ID_MAINFRAME_LYRICSSAVECHANGES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSaveChanges ), NULL, this );
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
+
     if( m_LibUpdateThread )
     {
         m_LibUpdateThread->Pause();
@@ -901,6 +916,16 @@ guMainFrame::~guMainFrame()
         m_CopyToThreadMutex.Lock();
         delete m_CopyToThread;
         m_CopyToThreadMutex.Unlock();
+    }
+
+    if( m_LyricSearchContext )
+    {
+        delete m_LyricSearchContext;
+    }
+
+    if( m_LyricSearchEngine )
+    {
+        delete m_LyricSearchEngine;
     }
 }
 
@@ -1856,6 +1881,14 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
     if( m_LyricsPanel )
     {
         m_LyricsPanel->OnUpdatedTrack( event );
+    }
+
+    if( m_LyricSearchEngine )
+    {
+        if( m_LyricSearchContext )
+            delete m_LyricSearchContext;
+        m_LyricSearchContext = m_LyricSearchEngine->CreateContext( this, Track );
+        m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
     }
 
     if( m_MPRIS )
@@ -2857,7 +2890,9 @@ void guMainFrame::OnViewLyrics( wxCommandEvent &event )
     if( event.IsChecked() )
     {
         if( !m_LyricsPanel )
-            m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db );
+        {
+            m_LyricsPanel = new guLyricsPanel( m_CatNotebook, m_Db, m_LyricSearchEngine );
+        }
 
 //        CheckShowNotebook();
 //
@@ -4219,6 +4254,14 @@ void guMainFrame::OnRequestCurrentTrack( wxCommandEvent &event )
     if( event.GetClientData() == m_LyricsPanel )
     {
         m_LyricsPanel->OnUpdatedTrack( UpdateEvent );
+
+        if( m_LyricSearchEngine )
+        {
+            if( m_LyricSearchContext )
+                delete m_LyricSearchContext;
+            m_LyricSearchContext = m_LyricSearchEngine->CreateContext( this, CurTrack );
+            m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
+        }
     }
     else if( event.GetClientData() == m_LastFMPanel )
     {
@@ -5228,6 +5271,51 @@ void guMainFrame::OnSetForceGapless( wxCommandEvent &event )
     m_PlayerPanel->SetForceGapless( event.GetInt() );
 }
 
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLyricFound( wxCommandEvent &event )
+{
+    wxString * LyricText = ( wxString * ) event.GetClientData();
+    if( m_LyricsPanel )
+    {
+        m_LyricsPanel->SetLyricText( LyricText );
+    }
+
+    if( LyricText )
+    {
+        delete LyricText;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLyricSearchNext( wxCommandEvent &event )
+{
+    if( m_LyricSearchEngine && m_LyricSearchContext )
+    {
+        m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLyricSaveChanges( wxCommandEvent &event )
+{
+    if( m_LyricSearchEngine && m_LyricSearchContext )
+    {
+        wxString * LyricText = ( wxString * ) event.GetClientData();
+
+        m_LyricSearchEngine->SetLyricText( m_LyricSearchContext, * LyricText );
+
+        delete LyricText;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnConfigUpdated( wxCommandEvent &event )
+{
+    if( m_LyricSearchEngine )
+    {
+        m_LyricSearchEngine->Load();
+    }
+}
 
 
 // -------------------------------------------------------------------------------- //

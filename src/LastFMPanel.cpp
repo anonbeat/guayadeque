@@ -1954,14 +1954,14 @@ void guLastFMPanel::OnUpdateChkBoxClick( wxCommandEvent &event )
     m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
     m_TrackTextCtrl->Enable( !m_UpdateEnabled );
     m_SearchButton->Enable( !m_UpdateEnabled &&
-                !m_ArtistTextCtrl->GetValue().IsEmpty() );
+                !m_ArtistTextCtrl->IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnTextUpdated( wxCommandEvent& event )
 {
     m_SearchButton->Enable( !m_UpdateEnabled &&
-        !m_ArtistTextCtrl->GetValue().IsEmpty() );
+        !m_ArtistTextCtrl->IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //

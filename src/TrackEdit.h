@@ -67,7 +67,6 @@ class guTrackEditor : public wxDialog
     guTrackArray *                      m_Items;
     guImagePtrArray *                   m_Images;
     wxArrayString *                     m_Lyrics;
-    guSearchLyricEngine *               m_LyricThread;
     int                                 m_CurItem;
     guDbLibrary *                       m_Db;
     guMBTrackArray *                    m_MBrainzAlbums;
@@ -115,7 +114,8 @@ class guTrackEditor : public wxDialog
     wxTextCtrl *                        m_YearTextCtrl;
     wxBitmapButton *                    m_RaCopyButton;
     guRating *                          m_Rating;
-    wxStaticText *                      m_DetailInfoStaticText;
+    wxStaticText *                      m_DetailLeftInfoStaticText;
+    wxStaticText *                      m_DetailRightInfoStaticText;
 
     wxBitmapButton *                    m_CommentCopyButton;
     wxTextCtrl *                        m_CommentText;
@@ -130,7 +130,6 @@ class guTrackEditor : public wxDialog
     int                                 m_RatingStartY;
     int                                 m_RatingStart;
     bool                                m_RatingChanged;
-    wxChoice *                          m_LyricSrvChoice;
     wxBitmapButton *                    m_LyricReloadButton;
     wxTextCtrl *                        m_LyricArtistTextCtrl;
     wxTextCtrl *                        m_LyricTrackTextCtrl;
@@ -170,6 +169,9 @@ class guTrackEditor : public wxDialog
     wxBitmapButton *                    m_MBrainzNuCopyButton;
 
     guTrackEditorGetComboDataThread *   m_GetComboDataThread;
+
+    guLyricSearchEngine *               m_LyricSearchEngine;
+    guLyricSearchContext *              m_LyricSearchContext;
 
     // Event handlers, overide them in your derived class
 	void                                OnSongListBoxSelected( wxCommandEvent &event );

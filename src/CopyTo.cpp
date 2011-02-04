@@ -20,7 +20,6 @@
 // -------------------------------------------------------------------------------- //
 #include "CopyTo.h"
 
-#include "FileRenamer.h"    // NormalizeField
 #include "Images.h"
 #include "TagInfo.h"
 #include "Transcode.h"
@@ -344,43 +343,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 #endif
         {
 
-            FileName = FilePattern;
-            if( FileName.Find( wxT( "{a}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{a}" ), NormalizeField( CurTrack->m_ArtistName ) );
-            if( FileName.Find( wxT( "{a1}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{a1}" ), NormalizeField( CurTrack->m_ArtistName.Trim( false )[ 0 ] ) );
-            if( FileName.Find( wxT( "{aa}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{aa}" ), NormalizeField( CurTrack->m_AlbumArtist ) );
-            if( FileName.Find( wxT( "{aa1}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{aa1}" ), NormalizeField( CurTrack->m_AlbumArtist.Trim( false )[ 0 ] ) );
-            if( FileName.Find( wxT( "{A}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{A}" ), NormalizeField( CurTrack->m_AlbumArtist.IsEmpty() ? CurTrack->m_ArtistName : CurTrack->m_AlbumArtist ) );
-            if( FileName.Find( wxT( "{A1}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{A1}" ), NormalizeField( ( CurTrack->m_AlbumArtist.IsEmpty() ? CurTrack->m_ArtistName : CurTrack->m_AlbumArtist ).Trim( false )[ 0 ] ) );
-            if( FileName.Find( wxT( "{b}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{b}" ), NormalizeField( CurTrack->m_AlbumName ) );
-            if( FileName.Find( wxT( "{b1}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{b1}" ), NormalizeField( CurTrack->m_AlbumName.Trim( false )[ 0 ] ) );
-            if( FileName.Find( wxT( "{c}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{c}" ), NormalizeField( CurTrack->m_Composer ) );
-            if( FileName.Find( wxT( "{c1}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{c1}" ), NormalizeField( CurTrack->m_Composer.Trim( false )[ 0 ] ) );
-            if( FileName.Find( wxT( "{f}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{f}" ), wxFileNameFromPath( CurTrack->m_FileName.BeforeLast( wxT( '.' ) ) ) );
-            if( FileName.Find( wxT( "{g}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{g}" ), NormalizeField( CurTrack->m_GenreName ) );
-            if( FileName.Find( wxT( "{g1}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{g1}" ), NormalizeField( CurTrack->m_GenreName.Trim( false )[ 0 ] ) );
-            if( FileName.Find( wxT( "{n}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), CurTrack->m_Number ) );
-            if( FileName.Find( wxT( "{t}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{t}" ), NormalizeField( CurTrack->m_SongName ) );
-            if( FileName.Find( wxT( "{y}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), CurTrack->m_Year ) );
-            if( FileName.Find( wxT( "{d}" ) ) != wxNOT_FOUND )
-                FileName.Replace( wxT( "{d}" ), NormalizeField( CurTrack->m_Disk ) );
-
-            FileName = DestDir + FileName;
+            FileName = DestDir + guExpandTrackMacros( FilePattern, CurTrack );
 
             // Replace all the special chars < > : " / \ | ? *
             FileName.Replace( wxT( "<" ), wxT( "_" ) );

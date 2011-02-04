@@ -126,7 +126,7 @@ int FindPlayListItem( guListItems * items, const wxString &playlistname )
 int guPlayListAppend::GetSelectedPlayList( void )
 {
     int Selection = m_PlayListComboBox->GetSelection();
-    if( Selection == wxNOT_FOUND && !m_PlayListComboBox->GetValue().IsEmpty() )
+    if( Selection == wxNOT_FOUND && !m_PlayListComboBox->IsEmpty() )
     {
         Selection = FindPlayListItem( m_PlayListItems, m_PlayListComboBox->GetValue().Lower().Trim().Trim( false ) );
     }
