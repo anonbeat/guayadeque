@@ -28,6 +28,7 @@
 #include <wx/checkbox.h>
 #include <wx/colour.h>
 #include <wx/dnd.h>
+#include <wx/event.h>
 #include <wx/font.h>
 #include <wx/gdicmn.h>
 #include <wx/image.h>
@@ -43,40 +44,29 @@
 #include <wx/html/htmlwin.h>
 #include <wx/panel.h>
 
-class guSearchLyricEngine;
-
-enum guLYRIC_ENGINE_ID {
-    guLYRIC_ENGINE_LYRICPLUGIN,
-    guLYRIC_ENGINE_LYRICWIKI,
-//    guLYRIC_ENGINE_LEOSLYRICS,
-//    guLYRIC_ENGINE_LYRC_COM_AR,
-    guLYRIC_ENGINE_CDUNIVERSE,
-    guLYRIC_ENGINE_CHARTLYRICS,
-    guLYRIC_ENGINE_ULTGUITAR
-};
-
-enum guLYRIC_FORMAT {
-    guLYRIC_FORMAT_NORMAL = 0,
-    guLYRIC_FORMAT_GUITAR
-};
+class guLyricSearchEngine;
+class guLyricSearchContext;
 
 // -------------------------------------------------------------------------------- //
 class guLyricsPanel : public wxPanel
 {
   protected :
     guDbLibrary *           m_Db;
+    guLyricSearchEngine *   m_LyricSearchEngine;
+    guLyricSearchContext *  m_LyricSearchContext;
     wxTimer                 m_LyricTextTimer;
 
 	wxBoxSizer *            m_TitleSizer;
     wxStaticText *          m_LyricTitle;
-    //wxHtmlWindow *          m_LyricText;
     wxTextCtrl *            m_LyricText;
-    guSearchLyricEngine *   m_LyricThread;
+
     wxCheckBox *            m_UpdateCheckBox;
+
+	wxBitmapButton *        m_SetupButton;
 	wxBitmapButton *        m_ReloadButton;
 	wxBitmapButton *        m_EditButton;
 	wxBitmapButton *        m_SaveButton;
-	wxChoice *              m_ServerChoice;
+
 	wxTextCtrl *            m_ArtistTextCtrl;
 	wxTextCtrl *            m_TrackTextCtrl;
 	wxBitmapButton *        m_SearchButton;
@@ -85,20 +75,13 @@ class guLyricsPanel : public wxPanel
 
 	bool                    m_UpdateEnabled;
     guTrackChangeInfo       m_CurrentTrackInfo;
-    //wxString                m_LyricsTemplate;
-    int                     m_LyricFormat;
+
     int                     m_LyricAlign;
-	wxString                m_CurrentFileName;
 	wxString                m_CurrentLyricText;
-	bool                    m_WriteToFiles;
-	bool                    m_WriteToFilesOnlySelected;
-	bool                    m_WriteToDir;
-	bool                    m_WriteToDirOnlySelected;
-	wxString                m_WriteToDirPath;
 
     void                    SetTitle( const wxString &title );
     void                    SetText( const wxString &text );
-    void                    OnDownloadedLyric( wxCommandEvent &event );
+
     void                    OnTextTimer( wxTimerEvent &event );
 	void                    OnReloadBtnClick( wxCommandEvent& event );
     void                    OnEditBtnClick( wxCommandEvent& event );
@@ -114,17 +97,22 @@ class guLyricsPanel : public wxPanel
     void                    OnLyricsPrint( wxCommandEvent &event );
 
     void                    OnConfigUpdated( wxCommandEvent &event );
-    void                    SaveLyrics( const bool selected = false );
-    void                    OnServerSelected( wxCommandEvent &event );
+    void                    OnSetupSelected( wxCommandEvent &event );
+
+    void                    OnLyricFound( wxCommandEvent &event );
 
   public :
-    guLyricsPanel( wxWindow * parent, guDbLibrary * db );
+    guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearchEngine * lyricsearchengine );
     ~guLyricsPanel();
 
     void                    OnUpdatedTrack( wxCommandEvent &event );
     void                    SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch = false );
     //void                    ClearLyricThread( void );
     void                    OnDropFiles( const wxArrayString &files );
+
+    void                    SetLyricText( const wxString * lyrictext );
+
+    void                    SetLyricSearchEngine( guLyricSearchEngine * searchengine ) { m_LyricSearchEngine = searchengine; }
 
 };
 
@@ -143,114 +131,335 @@ class guLyricsPanelDropTarget : public wxFileDropTarget
     virtual wxDragResult    OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
 };
 
+enum guLyricSourceType {
+    guLYRIC_SOURCE_TYPE_INVALID = -1,
+    guLYRIC_SOURCE_TYPE_EMBEDDED,
+    guLYRIC_SOURCE_TYPE_FILE,
+    guLYRIC_SOURCE_TYPE_COMMAND,
+    guLYRIC_SOURCE_TYPE_DOWNLOAD
+};
+
+enum guLyricSourceOptionType {
+    guLYRIC_SOURCE_OPTION_TYPE_REPLACE,
+    guLYRIC_SOURCE_OPTION_TYPE_EXTRACT,
+    guLYRIC_SOURCE_OPTION_TYPE_EXCLUDE,
+    guLYRIC_SOURCE_OPTION_TYPE_NOTFOUND
+};
+
 // -------------------------------------------------------------------------------- //
-class guSearchLyricEngine : public wxThread
+class guLyricSourceOption
 {
   protected :
+    wxString        m_Text1;
+    wxString        m_Text2;
+
+  public :
+    guLyricSourceOption() {}
+    guLyricSourceOption( const wxString &string1, const wxString &string2 = wxEmptyString ) { m_Text1 = string1; m_Text2 = string2; };
+    ~guLyricSourceOption() {}
+
+    guLyricSourceOption( wxXmlNode * xmlnode, const wxString &tag1, const wxString &tag2 = wxEmptyString );
+
+    wxString        Text1( void ) { return m_Text1; }
+    void            Text1( const wxString &text1 ) { m_Text1 = text1; }
+    wxString        Text2( void ) { return m_Text2; }
+    void            Text2( const wxString &text2 ) { m_Text2 = text2; }
+
+    wxString        ToStr( void ) { return IsSingleOption() ? m_Text1 : m_Text1 + wxT( " → " ) + m_Text2; }
+
+    bool            IsSingleOption( void ) { return m_Text2.IsEmpty(); }
+};
+
+// -------------------------------------------------------------------------------- //
+class guLyricSourceReplace : public guLyricSourceOption
+{
+  protected :
+  public :
+    guLyricSourceReplace() : guLyricSourceOption() {}
+    guLyricSourceReplace( const wxString &string1, const wxString &string2 ) : guLyricSourceOption( string1, string2 ) {};
+    ~guLyricSourceReplace() {}
+
+    guLyricSourceReplace( wxXmlNode * xmlnode ) : guLyricSourceOption( xmlnode, wxT( "replace" ), wxT( "with" ) ) {}
+
+    wxString    Search( void ) { return m_Text1; }
+    void        Search( const wxString &search ) { m_Text1 = search; }
+    wxString    Replace( void ) { return m_Text2; }
+    void        Replace( const wxString &replace ) { m_Text2 = replace; }
+};
+WX_DECLARE_OBJARRAY(guLyricSourceReplace, guLyricSourceReplaceArray);
+
+// -------------------------------------------------------------------------------- //
+class guLyricSourceExtract : public guLyricSourceOption
+{
+  protected :
+  public :
+    guLyricSourceExtract() : guLyricSourceOption() {}
+    guLyricSourceExtract( const wxString &string1, const wxString &string2 = wxEmptyString ) : guLyricSourceOption( string1, string2 ) {};
+    ~guLyricSourceExtract() {}
+
+    guLyricSourceExtract( wxXmlNode * xmlnode );
+
+    wxString    Begin( void ) { return m_Text1; }
+    void        Begin( const wxString &begin ) { m_Text1 = begin; }
+    wxString    End( void ) { return m_Text2; }
+    void        End( const wxString &end ) { m_Text2 = end; }
+
+    wxString    Tag( void ) { return Begin(); }
+    void        Tag( const wxString &tag ) { Begin( tag ); }
+};
+WX_DECLARE_OBJARRAY(guLyricSourceExtract, guLyricSourceExtractArray);
+
+// -------------------------------------------------------------------------------- //
+class guLyricSourceExclude : public guLyricSourceExtract
+{
+  protected :
+  public :
+    guLyricSourceExclude() : guLyricSourceExtract() {}
+    guLyricSourceExclude( const wxString &string1, const wxString &string2 = wxEmptyString ) : guLyricSourceExtract( string1, string2 ) {};
+    ~guLyricSourceExclude() {}
+
+    guLyricSourceExclude( wxXmlNode * xmlnode ) : guLyricSourceExtract( xmlnode ) {}
+};
+WX_DECLARE_OBJARRAY(guLyricSourceExclude, guLyricSourceExcludeArray);
+
+// -------------------------------------------------------------------------------- //
+class guLyricSource
+{
+  protected :
+    wxString                    m_Name;
+    int                         m_Type;
+    bool                        m_Enabled;
+    wxString                    m_Source;
+    guLyricSourceReplaceArray   m_ReplaceItems;
+    guLyricSourceExtractArray   m_ExtractItems;
+    guLyricSourceExcludeArray   m_ExcludeItems;
+    wxArrayString               m_NotFoundItems;
+
+    void                        ReadReplaceItems( wxXmlNode * xmlnode );
+    void                        ReadExtractItems( wxXmlNode * xmlnode );
+    void                        ReadExcludeItems( wxXmlNode * xmlnode );
+    void                        ReadNotFoundItems( wxXmlNode * xmlnode );
+
+  public :
+    guLyricSource() { m_Type = guLYRIC_SOURCE_TYPE_INVALID; m_Enabled = false; }
+    ~guLyricSource() {}
+
+    guLyricSource( wxXmlNode * xmlnode );
+
+    wxString                    Name( void ) { return m_Name; }
+    void                        Name( const wxString &name ) { m_Name = name; }
+    int                         Type( void ) { return m_Type; }
+    void                        Type( const int type ) { m_Type = type; }
+    bool                        Enabled( void ) { return m_Enabled; }
+    void                        Enabled( const bool enabled ) { m_Enabled = enabled; }
+    wxString                    Source( void ) { return m_Source; }
+    void                        Source( const wxString &source ) { m_Source = source; }
+
+    wxString                    SourceFieldClean( const wxString &field );
+
+    int                         ReplaceCount( void ) { return m_ReplaceItems.Count(); }
+    int                         ExtractCount( void ) { return m_ExtractItems.Count(); }
+    int                         ExcludeCount( void ) { return m_ExcludeItems.Count(); }
+    int                         NotFoundCount( void ) { return m_NotFoundItems.Count(); }
+
+    guLyricSourceReplaceArray   ReplaceItems( void ) { return m_ReplaceItems; }
+    void                        ReplaceItems( guLyricSourceReplaceArray &replaceitems ) { m_ReplaceItems = replaceitems; }
+    guLyricSourceReplace *      ReplaceItem( const int index ) { return &m_ReplaceItems[ index ]; }
+
+    guLyricSourceExtractArray   ExtractItems( void ) { return m_ExtractItems; }
+    void                        ExtractItems( guLyricSourceExtractArray &extractitems ) { m_ExtractItems = extractitems; }
+    guLyricSourceExtract *      ExtractItem( const int index ) { return &m_ExtractItems[ index ]; }
+
+    guLyricSourceExcludeArray   ExcludeItems( void ) { return m_ExcludeItems; }
+    void                        ExcludeItems( guLyricSourceExcludeArray &excludeitems ) { m_ExcludeItems = excludeitems; }
+    guLyricSourceExclude *      ExcludeItem( const int index ) { return &m_ExcludeItems[ index ]; }
+
+    wxArrayString               NotFoundItems( void ) { return m_NotFoundItems; }
+    void                        NotFoundItems( wxArrayString &notfounditems ) { m_NotFoundItems = notfounditems; }
+    wxString                    NotFoundItem( const int index ) { return m_NotFoundItems[ index ]; }
+
+};
+WX_DECLARE_OBJARRAY(guLyricSource, guLyricSourceArray);
+
+class guLyricSearchEngine;
+
+// -------------------------------------------------------------------------------- //
+class guLyricSearchContext
+{
+  protected :
+    guLyricSearchEngine *   m_LyricSearchEngine;
+    guTrack                 m_Track;
+    int                     m_CurrentIndex;
     wxEvtHandler *          m_Owner;
-    guSearchLyricEngine **  m_ThreadPointer;
-    wxString                m_ArtistName;
-    wxString                m_TrackName;
+    bool                    m_DoSaveProcess;
 
-  public:
-    guSearchLyricEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-    ~guSearchLyricEngine();
+  public :
+    guLyricSearchContext( guLyricSearchEngine * searchengine, wxEvtHandler * owner, guTrack * track, const bool dosaveprocess = true ) { m_LyricSearchEngine = searchengine; m_Owner = owner; m_Track = * track; m_CurrentIndex = wxNOT_FOUND; m_DoSaveProcess = dosaveprocess; }
+    ~guLyricSearchContext();
 
-    virtual ExitCode        Entry();
-    virtual void            SearchLyric( void ) = 0;
-    virtual void            SetLyric( wxString * lyrictext );
-    virtual wxString        GetTemplate( void );
-    virtual int             GetFormat( void );
+    bool                    GetNextSource( guLyricSource * lyricsource, const bool allowloop = true );
+    wxEvtHandler *          Owner( void ) { return m_Owner; }
+
+    bool                    DoSaveProcess( void ) { return m_DoSaveProcess; }
+
+    friend class guLyricSearchEngine;
+    friend class guLyricSearchThread;
 };
 
 // -------------------------------------------------------------------------------- //
-class guLyricWikiEngine : public guSearchLyricEngine
-{
-  public:
-    guLyricWikiEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-    ~guLyricWikiEngine();
-
-    virtual void            SearchLyric( void );
-};
-
-//// -------------------------------------------------------------------------------- //
-//class guLeosLyricsEngine : public guSearchLyricEngine
-//{
-//  private:
-//    wxString                GetLyricId( void );
-//    wxString                GetLyricText( const wxString &lyricid );
-//
-//  public:
-//    guLeosLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-//    ~guLeosLyricsEngine();
-//
-//    virtual void            SearchLyric( void );
-//};
-
-// -------------------------------------------------------------------------------- //
-//class guLyrcComArEngine : public guSearchLyricEngine
-//{
-//  protected :
-//    bool    DoSearchLyric( const wxString &content );
-//
-//  public:
-//    guLyrcComArEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-//    ~guLyrcComArEngine();
-//
-//    virtual void            SearchLyric( void );
-//};
-
-// -------------------------------------------------------------------------------- //
-class guLyricPluginEngine : public guSearchLyricEngine
+class guLyricSearchThread : public wxThread
 {
   protected :
-    bool    DoSearchLyric( const wxString &content, const wxString &referer );
+    wxString                    m_LyricText;
+    guLyricSearchContext *      m_LyricSearchContext;
 
-  public:
-    guLyricPluginEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-    ~guLyricPluginEngine();
+    void                        LyricFile( guLyricSource &lyricsource );
+    void                        LyricCommand( guLyricSource &lyricsource );
+    void                        LyricDownload( guLyricSource &lyricsource );
 
-    virtual void            SearchLyric( void );
+    bool                        CheckNotFound( guLyricSource &lyricsource );
+    wxString                    CheckExtract( const wxString &content, guLyricSource &lyricsource );
+    wxString                    CheckExclude( const wxString &content, guLyricSource &lyricsource );
+
+    wxString                    GetSource( guLyricSource &lyricsource );
+    wxString                    DoReplace( const wxString &text, const wxString &search, const wxString &replace );
+    wxString                    DoReplace( const wxString &text, guLyricSource &lyricsource );
+
+    void                        ProcessTags( wxString * text, guLyricSource &lyricsource );
+
+    void                        ProcessSave( guLyricSource &lyricsource );
+
+  public :
+    guLyricSearchThread( guLyricSearchContext * context, const wxString &lyrictext = wxEmptyString );
+    ~guLyricSearchThread();
+
+    ExitCode                    Entry();
+
+    wxString                    LyricText( void ) { return m_LyricText; }
+    guLyricSearchContext *      LyricSearchContext( void ) { return m_LyricSearchContext; }
+
+    friend class guLyricSearchEngine;
 };
+WX_DEFINE_ARRAY_PTR( guLyricSearchThread *, guLyricSearchThreadArray );
 
 // -------------------------------------------------------------------------------- //
-class guChartLyricsEngine : public guSearchLyricEngine
+class guLyricSearchEngine
 {
   protected :
-    wxString                GetLyricText( const wxString &lyricid );
+    guLyricSourceArray          m_LyricSources;
+    guLyricSourceArray          m_LyricTargets;
+    guLyricSearchThreadArray    m_LyricSearchThreads;
+    wxMutex                     m_LyricSearchThreadsMutex;
 
-  public:
-    guChartLyricsEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-    ~guChartLyricsEngine();
+    void                        ReadSources( wxXmlNode * xmlnode );
+    void                        ReadTargets( wxXmlNode * xmlnode );
 
-    virtual void            SearchLyric( void );
+  public :
+    guLyricSearchEngine();
+    ~guLyricSearchEngine();
+
+    guLyricSearchContext *      CreateContext( wxEvtHandler * owner, guTrack * track, const bool dosaveprocess = true );
+
+    bool                        GetNextSource( guLyricSearchContext * context, guLyricSource * lyricsource, const bool allowloop = true );
+    void                        SearchStart( guLyricSearchContext * context );
+    void                        SetLyricText( guLyricSearchContext * context, const wxString &lyrictext );
+    void                        SearchFinished( guLyricSearchThread * searchthread );
+
+    void                        Load( void );
+
+    size_t                      SourcesCount( void ) { return m_LyricSources.Count(); }
+    guLyricSource *             GetSource( const int index ) { return &m_LyricSources[ index ]; }
+
+    size_t                      TargetsCount( void ) { return m_LyricTargets.Count(); }
+    guLyricSource *             GetTarget( const int index ) { return &m_LyricTargets[ index ]; }
+
+    void                        SourceAdd( const guLyricSource * lyricsource ) { m_LyricSources.Add( lyricsource ); }
+    void                        SourceRemoveAt( const int index ) { m_LyricSources.RemoveAt( index ); }
+    void                        SourceMoveUp( const int index );
+    void                        SourceMoveDown( const int index );
+
+    void                        TargetAdd( const guLyricSource * lyricsource ) { m_LyricTargets.Add( lyricsource ); }
+    void                        TargetRemoveAt( const int index ) { m_LyricTargets.RemoveAt( index ); }
+    void                        TargetMoveUp( const int index );
+    void                        TargetMoveDown( const int index );
+
+    bool                        Save( void );
+
+    void                        RemoveContextThread( guLyricSearchContext * searchcontext );
+
 };
 
 // -------------------------------------------------------------------------------- //
-class guCDUEngine : public guSearchLyricEngine
+class guLyricSourceEditor : public wxDialog
 {
-  public:
-    guCDUEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-    ~guCDUEngine();
+  protected:
+    guLyricSource *             m_LyricSource;
+    bool                        m_IsTarget;
 
-    virtual void            SearchLyric( void );
+    guLyricSourceReplaceArray   m_ReplaceItems;
+    guLyricSourceExtractArray   m_ExtractItems;
+    guLyricSourceExcludeArray   m_ExcludeItems;
+    wxArrayString               m_NotFoundItems;
+
+    wxTextCtrl  *       m_NameTextCtrl;
+    wxChoice *          m_TypeChoice;
+    wxTextCtrl *        m_SourceTextCtrl;
+    wxListBox *         m_ReplaceListBox;
+    wxBitmapButton *    m_ReplaceAdd;
+    wxBitmapButton *    m_ReplaceDel;
+    wxListBox *         m_ExtractListBox;
+    wxBitmapButton *    m_ExtractAdd;
+    wxBitmapButton *    m_ExtractDel;
+    wxListBox *         m_ExcludeListBox;
+    wxBitmapButton *    m_ExcludeAdd;
+    wxBitmapButton *    m_ExcludeDel;
+    wxListBox *         m_NotFoundListBox;
+    wxBitmapButton *    m_NotFoundAdd;
+    wxBitmapButton *    m_NotFoundDel;
+
+    void                OnTypeChanged( wxCommandEvent &event );
+    void                OnReplaceSelected( wxCommandEvent &event );
+    void                OnReplaceAddClicked( wxCommandEvent &event );
+    void                OnReplaceDelClicked( wxCommandEvent &event );
+    void                OnReplaceDClicked( wxCommandEvent &event );
+    void                OnExtractSelected( wxCommandEvent &event );
+    void                OnExtractAddClicked( wxCommandEvent &event );
+    void                OnExtractDelClicked( wxCommandEvent &event );
+    void                OnExtractDClicked( wxCommandEvent &event );
+    void                OnExcludeSelected( wxCommandEvent &event );
+    void                OnExcludeAddClicked( wxCommandEvent &event );
+    void                OnExcludeDelClicked( wxCommandEvent &event );
+    void                OnExcludeDClicked( wxCommandEvent &event );
+    void                OnNotFoundSelected( wxCommandEvent &event );
+    void                OnNotFoundAddClicked( wxCommandEvent &event );
+    void                OnNotFoundDelClicked( wxCommandEvent &event );
+    void                OnNotFoundDClicked( wxCommandEvent &event );
+
+  public:
+    guLyricSourceEditor( wxWindow * parent, guLyricSource * lyricsource, const bool istarget = false );
+    ~guLyricSourceEditor();
+
+    void                UpdateLyricSource( void );
+
 };
 
 // -------------------------------------------------------------------------------- //
-class guUltGuitarEngine : public guSearchLyricEngine
+class guLyricSourceOptionEditor : public wxDialog
 {
-  public:
-    guUltGuitarEngine( wxEvtHandler * owner, guSearchLyricEngine ** psearchengine, const wxChar * artistname, const wxChar * trackname );
-    ~guUltGuitarEngine();
+  protected :
+    guLyricSourceOption *   m_SourceOption;
+    wxStaticText *          m_SearchLabel;
+    wxTextCtrl *            m_SearchTextCtrl;
+    wxStaticText *          m_ReplaceLabel;
+    wxTextCtrl *            m_ReplaceTextCtrl;
 
-    virtual void            SearchLyric( void );
-    virtual wxString        GetTemplate( void );
-    virtual int             GetFormat( void );
+  public :
+    guLyricSourceOptionEditor( wxWindow * parent, guLyricSourceOption * lyricsourceoption, const int optiontype );
+    ~guLyricSourceOptionEditor();
+
+    void                    UpdateSourceOption( void );
+
 };
-
-// -------------------------------------------------------------------------------- //
-guSearchLyricEngine * guGetSearchLyricEngine( const int engineid, wxEvtHandler * evthandler,
-    guSearchLyricEngine ** enginevar, const wxChar * artist, const wxChar * trackname );
 
 #endif
 // -------------------------------------------------------------------------------- //

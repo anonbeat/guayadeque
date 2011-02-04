@@ -679,20 +679,22 @@ guMediaState guMediaCtrl::GetState( void )
 
         switch( m_CurrentPlayBin->GetState() )
         {
+            case guFADERPLAYBIN_STATE_FADEOUT_PAUSE :
             case guFADERPLAYBIN_STATE_PAUSED :
                 State = guMEDIASTATE_PAUSED;
                 break;
 
             case guFADERPLAYBIN_STATE_FADEIN :
-            case guFADERPLAYBIN_STATE_FADEOUT :
-            case guFADERPLAYBIN_STATE_FADEOUT_PAUSE :
-            case guFADERPLAYBIN_STATE_FADEOUT_STOP :
             case guFADERPLAYBIN_STATE_PLAYING :
                 State = guMEDIASTATE_PLAYING;
                 break;
 
             case guFADERPLAYBIN_STATE_ERROR :
                 State = guMEDIASTATE_ERROR;
+
+            case guFADERPLAYBIN_STATE_FADEOUT :
+            case guFADERPLAYBIN_STATE_FADEOUT_STOP :
+
 
             default :
                 break;

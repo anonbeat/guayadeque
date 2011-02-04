@@ -23,11 +23,13 @@
 
 #include "Config.h"
 #include "DbLibrary.h"
+#include "LyricsPanel.h"
 
 #include <wx/string.h>
 #include <wx/checkbox.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
+#include <wx/fontpicker.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
@@ -196,12 +198,18 @@ class guPrefDialog : public wxDialog
     wxSpinCtrl *                m_MaxTracksPlayed;
 
     wxPanel *                   m_LyricsPanel;
-    wxRadioBox *                m_LyricsAlignSizer;
-    wxCheckBox *                m_LyricsTracksSaveChkBox;
-    wxCheckBox *                m_LyricsTracksSaveSelectedChkBox;
-    wxCheckBox *                m_LyricsDirSaveChkBox;
-    wxDirPickerCtrl *           m_LyricsDirSavePicker;
-    wxCheckBox *                m_LyricsDirSaveSelectedChkBox;
+    wxCheckListBox *            m_LyricsSrcListBox;
+    wxBitmapButton *            m_LyricsAddButton;
+    wxBitmapButton *            m_LyricsUpButton;
+    wxBitmapButton *            m_LyricsDownButton;
+    wxBitmapButton *            m_LyricsDelButton;
+    wxCheckListBox *            m_LyricsSaveListBox;
+    wxBitmapButton *            m_LyricsSaveAddButton;
+    wxBitmapButton *            m_LyricsSaveUpButton;
+    wxBitmapButton *            m_LyricsSaveDownButton;
+    wxBitmapButton *            m_LyricsSaveDelButton;
+    wxFontPickerCtrl *          m_LyricFontPicker;
+    wxChoice *                  m_LyricsAlignChoice;
 
     wxPanel *                   m_OnlinePanel;
     wxListBox *                 m_OnlineFiltersListBox;
@@ -295,6 +303,9 @@ class guPrefDialog : public wxDialog
     guCopyToPatternArray *      m_CopyToOptions;
     bool                        m_LibPathsChanged;
     int                         m_VisiblePanels;
+    guLyricSearchEngine *       m_LyricSearchEngine;
+    int                         m_LyricSourceSelected;
+    int                         m_LyricTargetSelected;
 
     void                        BuildGeneralPage( void );
     void                        BuildLibraryPage( void );
@@ -322,8 +333,23 @@ class guPrefDialog : public wxDialog
 	void OnDelPathBtnClick( wxCommandEvent& event );
 	void OnPathsListBoxDClicked( wxCommandEvent &event );
 	void OnCoverListBoxDClicked( wxCommandEvent &event );
-	void OnLyricsSaveTracksClicked( wxCommandEvent &event );
-	void OnLyricsSaveDirClicked( wxCommandEvent &event );
+
+    void OnLyricSourceSelected( wxCommandEvent &event );
+    void OnLyricSourceDClicked( wxCommandEvent &event );
+    void OnLyricSourceToggled( wxCommandEvent &event );
+    void OnLyricAddBtnClick( wxCommandEvent &event );
+    void OnLyricUpBtnClick( wxCommandEvent &event );
+    void OnLyricDownBtnClick( wxCommandEvent &event );
+    void OnLyricDelBtnClick( wxCommandEvent &event );
+    void OnLyricSaveSelected( wxCommandEvent &event );
+    void OnLyricSaveDClicked( wxCommandEvent &event );
+    void OnLyricSaveToggled( wxCommandEvent &event );
+    void OnLyricSaveAddBtnClick( wxCommandEvent &event );
+    void OnLyricSaveUpBtnClick( wxCommandEvent &event );
+    void OnLyricSaveDownBtnClick( wxCommandEvent &event );
+    void OnLyricSaveDelBtnClick( wxCommandEvent &event );
+
+
     void OnCoversListBoxSelected( wxCommandEvent& event );
     void OnAddCoverBtnClick( wxCommandEvent& event );
     void OnUpCoverBtnClick( wxCommandEvent& event );

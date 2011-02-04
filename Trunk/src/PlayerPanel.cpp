@@ -2416,7 +2416,7 @@ void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 {
-    //guLogMessage( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogMessage( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     guMediaState State;
 
     if( m_PendingNewRecordName )
@@ -2439,8 +2439,9 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 
     if( m_MediaSong.m_Loaded )
     {
-        State = m_MediaCtrl->GetState();
-        //guLogMessage( wxT( "State: %i" ), State );
+        //State = m_MediaCtrl->GetState();
+        State = GetState();
+        guLogMessage( wxT( ">>>> PlayButtonClick State: %i" ), State );
         if( State == guMEDIASTATE_PLAYING )
         {
             if( m_SilenceDetector )

@@ -26,6 +26,7 @@
 #include "Images.h"
 #include "LastFM.h"
 #include "TagInfo.h"
+#include "MainFrame.h"
 #include "Utils.h"
 
 #include "wx/datetime.h"
@@ -68,12 +69,14 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
     wxStaticText *      NuStaticText;
     wxStaticText *      GeStaticText;
     wxStaticText *      YeStaticText;
-    wxPanel *           CommentPanel;
     wxPanel *           PicturePanel;
     wxPanel *           MBrainzPanel;
     wxStaticText *      MBAlbumStaticText;
     //wxStaticText *      MBAlbumDetailStaticText;
     wxStaticLine *      MBrainzStaticLine;
+
+    m_LyricSearchEngine = NULL;
+    m_LyricSearchContext = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
@@ -193,12 +196,25 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	DataFlexSizer->Add( m_CoCopyButton, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	wxStaticText * CoStaticText;
-	CoStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Comp.:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CoStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Composer:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	CoStaticText->Wrap( -1 );
 	DataFlexSizer->Add( CoStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_CompComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Composers, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_CompComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+
+	m_CommentCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CommentCopyButton->SetToolTip( _( "Copy the comment to all the tracks you are editing" ) );
+	DataFlexSizer->Add( m_CommentCopyButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	wxStaticText * CommentStaticText;
+	CommentStaticText = new wxStaticText( DetailPanel, wxID_ANY, _( "Comment:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	CommentStaticText->Wrap( -1 );
+	DataFlexSizer->Add( CommentStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	m_CommentText = new wxTextCtrl( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1, 54 ), wxTE_MULTILINE );
+	DataFlexSizer->Add( m_CommentText, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
+
 
 	m_NuCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_numerate ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_NuCopyButton->SetToolTip( _( "Enumerate the tracks in the order they were added for editing" ) );
@@ -275,33 +291,23 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
 	MainDetailSizer->Add( DataFlexSizer, 0, wxEXPAND, 5 );
 
-	m_DetailInfoStaticText = new wxStaticText( DetailPanel, wxID_ANY, wxT("Type\t:\nBitRate\t:\nLength\t:\nFileSize\t:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_DetailInfoStaticText->Wrap( -1 );
-	MainDetailSizer->Add( m_DetailInfoStaticText, 1, wxALL|wxEXPAND, 5 );
+	wxBoxSizer* MoreDetailsSizer;
+	MoreDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_DetailLeftInfoStaticText = new wxStaticText( DetailPanel, wxID_ANY, wxT("File Type\t:\nLength\t:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailLeftInfoStaticText->Wrap( -1 );
+	MoreDetailsSizer->Add( m_DetailLeftInfoStaticText, 1, wxALL|wxEXPAND, 5 );
+
+	m_DetailRightInfoStaticText = new wxStaticText( DetailPanel, wxID_ANY, wxT("BitRate\t:\nFileSize\t:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_DetailRightInfoStaticText->Wrap( -1 );
+	MoreDetailsSizer->Add( m_DetailRightInfoStaticText, 1, wxALL|wxEXPAND, 5 );
+
+	MainDetailSizer->Add( MoreDetailsSizer, 1, wxEXPAND, 5 );
 
 	DetailPanel->SetSizer( MainDetailSizer );
 	DetailPanel->Layout();
 	DataFlexSizer->Fit( DetailPanel );
 	m_MainNotebook->AddPage( DetailPanel, _( "Details" ), true );
-
-	//
-	// Comment
-	//
-	CommentPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* CommentSizer;
-	CommentSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	m_CommentCopyButton = new wxBitmapButton( CommentPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_CommentCopyButton->SetToolTip( _( "Copy the comment to all the tracks you are editing" ) );
-	CommentSizer->Add( m_CommentCopyButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_CommentText = new wxTextCtrl( CommentPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-	CommentSizer->Add( m_CommentText, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
-
-	CommentPanel->SetSizer( CommentSizer );
-	CommentPanel->Layout();
-	CommentSizer->Fit( CommentPanel );
-	m_MainNotebook->AddPage( CommentPanel, _("Comments"), false );
 
 	//
 	// Pictures
@@ -364,39 +370,11 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	wxBoxSizer* LyricsTopSizer;
 	LyricsTopSizer = new wxBoxSizer( wxHORIZONTAL );
 
-//	wxStaticText * ServerStaticText = new wxStaticText( LyricsPanel, wxID_ANY, _( "Server:" ), wxDefaultPosition, wxDefaultSize, 0 );
-//	ServerStaticText->Wrap( -1 );
-//	LyricsTopSizer->Add( ServerStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
-
-
-	wxString LyricsChoiceChoices[] = {
-        wxT( "http://lyricsplugin.com" ),
-	    wxT( "http://lyricwiki.org" ),
-//	    wxT( "http://leoslyrics.com" ),
-//	    wxT( "http://lyrc.com.ar" ),
-	    wxT( "http://cduniverse.com" ),
-//	    wxT( "http://lyricsfly.com" ),
-        wxT( "http://chartlyrics.com" ),
-	    wxT( "http://ultimate-guitar.com" )
-	    };
-	int LyricsChoiceNChoices = sizeof( LyricsChoiceChoices ) / sizeof( wxString );
-	m_LyricSrvChoice = new wxChoice( LyricsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricsChoiceNChoices, LyricsChoiceChoices, 0 );
-	int SelectEngine = Config->ReadNum( wxT( "LyricSearchEngine" ), 0, wxT( "General" ) );
-	if( SelectEngine < 0 || SelectEngine > LyricsChoiceNChoices )
-        SelectEngine = 0;
-	m_LyricSrvChoice->SetSelection( SelectEngine );
-	LyricsTopSizer->Add( m_LyricSrvChoice, 1, wxLEFT|wxTOP|wxRIGHT, 5 );
-
-	m_LyricReloadButton = new wxBitmapButton( LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	LyricsTopSizer->Add( m_LyricReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
-
 	wxStaticText * ArtistStaticText = new wxStaticText( LyricsPanel, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	ArtistStaticText->Wrap( -1 );
 	LyricsTopSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
 	m_LyricArtistTextCtrl = new wxTextCtrl( LyricsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	//m_LyricArtistTextCtrl->Enable( false );
-
 	LyricsTopSizer->Add( m_LyricArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	wxStaticText * TrackStaticText = new wxStaticText( LyricsPanel, wxID_ANY, _( "Track:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -404,9 +382,10 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	LyricsTopSizer->Add( TrackStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
 	m_LyricTrackTextCtrl = new wxTextCtrl( LyricsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	//m_LyricTrackTextCtrl->Enable( false );
-
 	LyricsTopSizer->Add( m_LyricTrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+
+	m_LyricReloadButton = new wxBitmapButton( LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_again ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	LyricsTopSizer->Add( m_LyricReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	LyricsSizer->Add( LyricsTopSizer, 0, wxEXPAND, 5 );
 
@@ -626,7 +605,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_Items = songs;
 	m_Images = images;
 	m_Lyrics = lyrics;
-	m_LyricThread = NULL;
 	m_CurrentRating = -1;
 	m_RatingChanged = false;
 	m_GenreChanged = false;
@@ -674,7 +652,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_SearchPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSearchImageClicked ), NULL, this );
 	m_CopyPicButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
 
-	m_LyricSrvChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guTrackEditor::OnSearchLyrics ), NULL, this );
 	m_LyricReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSearchLyrics ), NULL, this );
 	m_LyricArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnTextUpdated ), NULL, this );
 	m_LyricTrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnTextUpdated ), NULL, this );
@@ -695,7 +672,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_MBrainzTiCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzTitleCopyButtonClicked ), NULL, this );
 	m_MBrainzNuCopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzNumberCopyButtonClicked ), NULL, this );
 
-    Connect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackEditor::OnDownloadedLyric ), NULL, this );
+    Connect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackEditor::OnDownloadedLyric ), NULL, this );
 
     // Idle Events
 	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
@@ -756,7 +733,6 @@ guTrackEditor::~guTrackEditor()
 	m_SearchPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSearchImageClicked ), NULL, this );
 	m_CopyPicButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnCopyImageClicked ), NULL, this );
 
-	m_LyricSrvChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guTrackEditor::OnSearchLyrics ), NULL, this );
 	m_LyricReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnSearchLyrics ), NULL, this );
 	m_LyricArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnTextUpdated ), NULL, this );
 	m_LyricTrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTrackEditor::OnTextUpdated ), NULL, this );
@@ -777,7 +753,7 @@ guTrackEditor::~guTrackEditor()
 	m_MBrainzTiCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzTitleCopyButtonClicked ), NULL, this );
 	m_MBrainzNuCopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTrackEditor::OnMBrainzNumberCopyButtonClicked ), NULL, this );
 
-    Disconnect( ID_LYRICS_UPDATE_LYRICINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackEditor::OnDownloadedLyric ), NULL, this );
+    Disconnect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackEditor::OnDownloadedLyric ), NULL, this );
 
     // Idle Events
 	m_SongListSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
@@ -794,6 +770,8 @@ guTrackEditor::~guTrackEditor()
         delete m_MBrainzReleases;
     if( m_MBrainzAlbums )
         delete m_MBrainzAlbums;
+    if( m_LyricSearchContext )
+        delete m_LyricSearchContext;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -820,6 +798,11 @@ void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
 {
     WriteItemData();
     m_CurItem = event.GetInt();
+    if( m_LyricSearchContext )
+    {
+        delete m_LyricSearchContext;
+        m_LyricSearchContext = NULL;
+    }
     ReadItemData();
 }
 
@@ -895,14 +878,15 @@ void guTrackEditor::ReadItemData( void )
             m_YearTextCtrl->SetValue( wxEmptyString );
         m_Rating->SetRating( Track->m_Rating );
         m_CommentText->SetValue( Track->m_Comments );
-        m_DetailInfoStaticText->SetLabel( wxString::Format( _( "File Type\t: %s\n"
-                                               "BitRate\t: %u Kbps\n"
-                                               "Length\t: %s\n"
-                                               "File Size\t: %s" ),
+        m_DetailLeftInfoStaticText->SetLabel( wxString::Format( _( "File Type\t: %s\n"
+                                               "Length\t: %s" ),
                                                Track->m_FileName.AfterLast( wxT( '.' ) ).c_str(),
+                                               LenToString( Track->m_Length ).c_str() ) );
+        m_DetailRightInfoStaticText->SetLabel( wxString::Format( _( "BitRate\t: %u Kbps\n"
+                                               "File Size\t: %s" ),
                                                Track->m_Bitrate,
-                                               LenToString( Track->m_Length ).c_str(),
                                                SizeToString( guGetFileSize( Track->m_FileName ) ).c_str() ) );
+
         if( m_MBQuerySetArtistEnabled )
         {
             m_MBQueryArtistTextCtrl->SetValue( Track->m_ArtistName );
@@ -929,7 +913,8 @@ void guTrackEditor::ReadItemData( void )
         m_YearTextCtrl->SetValue( wxEmptyString );
         m_Rating->SetRating( -1 );
         m_CommentText->SetValue( wxEmptyString );
-        m_DetailInfoStaticText->SetLabel( wxEmptyString );
+        m_DetailLeftInfoStaticText->SetLabel( wxEmptyString );
+        m_DetailRightInfoStaticText->SetLabel( wxEmptyString );
         m_MBQueryArtistTextCtrl->SetValue( wxEmptyString );
         m_MBQueryTitleTextCtrl->SetValue( wxEmptyString );
 
@@ -1301,8 +1286,8 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
     if( m_MBQuerySetArtistEnabled )
         m_MBQuerySetArtistEnabled = false;
 
-    if( !m_MBQueryArtistTextCtrl->GetValue().IsEmpty() ||
-        !m_MBQueryTitleTextCtrl->GetValue().IsEmpty() )
+    if( !m_MBQueryArtistTextCtrl->IsEmpty() ||
+        !m_MBQueryTitleTextCtrl->IsEmpty() )
     {
         guMBReleaseArray * Releases = new guMBReleaseArray();
         guMusicBrainz * MusicBrainz = new guMusicBrainz();
@@ -1499,7 +1484,7 @@ void guTrackEditor::UpdateMBrainzTrackInfo( void )
             m_MBrainzLengthStaticText->SetForegroundColour(
                     GetTrackLengthDiff( Track->m_Length * 1000, MBTrack->m_Length ) > guMBRAINZ_MAX_TIME_DIFF ?
                                         m_ErrorColor : m_NormalColor );
-            m_MBrainzLengthTextCtrl->SetValue( LenToString( MBTrack->m_Length / 1000 ) );
+            m_MBrainzLengthTextCtrl->SetValue( LenToString( ( unsigned int ) MBTrack->m_Length / 1000 ) );
 
             // Number
             m_MBrainzNumberStaticText->SetForegroundColour( Track->m_Number == MBTrack->m_Number ?
@@ -1756,32 +1741,38 @@ void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnTextUpdated( wxCommandEvent& event )
 {
-    bool Enabled = !m_LyricArtistTextCtrl->GetValue().IsEmpty() &&
-        !m_LyricTrackTextCtrl->GetValue().IsEmpty();
+    bool Enabled = !m_LyricArtistTextCtrl->IsEmpty() &&
+        !m_LyricTrackTextCtrl->IsEmpty();
 
-    m_LyricSrvChoice->Enable( Enabled);
     m_LyricReloadButton->Enable( Enabled );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnSearchLyrics( wxCommandEvent &event )
 {
-    if( m_LyricArtistTextCtrl->GetValue().IsEmpty() ||
-        m_LyricTrackTextCtrl->GetValue().IsEmpty() )
+    if( m_LyricArtistTextCtrl->IsEmpty() ||
+        m_LyricTrackTextCtrl->IsEmpty() )
         return;
 
-    m_LyricsTextCtrl->SetValue( wxEmptyString );
-
-    if( m_LyricThread )
+    if( !m_LyricSearchEngine )
     {
-        m_LyricThread->Pause();
-        m_LyricThread->Delete();
+        m_LyricSearchEngine = ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->LyricSearchEngine();
     }
 
-    int Engine = m_LyricSrvChoice->GetSelection();
-
-    m_LyricThread = guGetSearchLyricEngine( Engine, ( wxEvtHandler * ) this, &m_LyricThread,
-        m_LyricArtistTextCtrl->GetValue().c_str(), m_LyricTrackTextCtrl->GetValue().c_str() );
+    if( m_LyricSearchEngine )
+    {
+        if( !m_LyricSearchContext )
+        {
+            guTrack Track = m_Items->Item(  m_CurItem );
+            Track.m_ArtistName = m_LyricArtistTextCtrl->GetValue();
+            Track.m_SongName = m_LyricTrackTextCtrl->GetValue();
+            m_LyricSearchContext = m_LyricSearchEngine->CreateContext( this, &Track, false );
+        }
+        if( m_LyricSearchContext )
+        {
+            m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
+        }
+    }
 
     m_LyricReloadButton->Enable( false );
 }
@@ -1792,11 +1783,8 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
     wxString * Content = ( wxString * ) event.GetClientData();
     if( Content )
     {
-        wxHtmlEntitiesParser EntitiesParser;
-        wxString NewLyric = EntitiesParser.Parse( * Content );
-        NewLyric.Trim().Trim( false );
-        m_LyricsTextCtrl->SetValue( NewLyric );
-        ( * m_Lyrics )[ m_CurItem ] = NewLyric;
+        m_LyricsTextCtrl->SetValue( * Content );
+        ( * m_Lyrics )[ m_CurItem ] = * Content;
         delete Content;
     }
     m_LyricReloadButton->Enable( true );

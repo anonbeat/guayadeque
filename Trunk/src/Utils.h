@@ -65,8 +65,10 @@ void inline guImageResize( wxImage * image, int maxsize, bool forceresize = fals
     }
 }
 
+class guTrack;
+
 // -------------------------------------------------------------------------------- //
-wxString LenToString( unsigned int len );
+wxString LenToString( const unsigned int len );
 wxString SizeToString( wxFileOffset size );
 wxArrayString guSplitWords( const wxString &InputStr );
 wxImage * guGetRemoteImage( const wxString &url, int &imgtype );
@@ -87,6 +89,7 @@ int guGetFileMode( const wxString &filepath );
 bool guSetFileMode( const wxString &filepath, int mode, bool adding = false );
 bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwrite = true );
 wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr );
+wxString guExpandTrackMacros( const wxString &pattern, guTrack * track );
 
 // -------------------------------------------------------------------------------- //
 #endif

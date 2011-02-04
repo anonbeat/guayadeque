@@ -137,7 +137,7 @@ wxString guSelCoverFile::GetSelFile( void )
 // -------------------------------------------------------------------------------- //
 void guSelCoverFile::OnPathChanged( wxCommandEvent &event )
 {
-	m_StdBtnOk->Enable( !m_FileLink->GetValue().IsEmpty() );
+	m_StdBtnOk->Enable( !m_FileLink->IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //

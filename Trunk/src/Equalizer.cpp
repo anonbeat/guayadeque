@@ -427,7 +427,7 @@ void guEq10Band::OnPresetText( wxCommandEvent& event )
 {
     int Sel = m_PresetComboBox->GetSelection();
 
-    m_SaveButton->Enable( !m_PresetComboBox->GetValue().IsEmpty() &&
+    m_SaveButton->Enable( !m_PresetComboBox->IsEmpty() &&
                           ( m_BandChanged || !FindPresetName( m_PresetComboBox->GetValue(), m_EQPresets ) ) );
 
     m_DelButton->Enable( Sel != wxNOT_FOUND );

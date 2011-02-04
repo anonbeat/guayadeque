@@ -262,6 +262,9 @@ class guMainFrame : public wxFrame
     guCopyToThread *                m_CopyToThread;
     wxMutex                         m_CopyToThreadMutex;
 
+    guLyricSearchEngine *           m_LyricSearchEngine;
+    guLyricSearchContext *          m_LyricSearchContext;
+
 
     void                            OnUpdateLibrary( wxCommandEvent &event );
     void                            OnUpdatePodcasts( wxCommandEvent &event );
@@ -404,6 +407,11 @@ class guMainFrame : public wxFrame
 
     void                            OnSetForceGapless( wxCommandEvent &event );
 
+    void                            OnLyricFound( wxCommandEvent &event );
+    void                            OnLyricSearchNext( wxCommandEvent &event );
+    void                            OnLyricSaveChanges( wxCommandEvent &event );
+    void                            OnConfigUpdated( wxCommandEvent &event );
+
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                                     ~guMainFrame();
@@ -450,6 +458,8 @@ class guMainFrame : public wxFrame
 
     guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( const int basecmd );
     guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( wxWindow * libpanel, const int windowtype = guPANEL_MAIN_LIBRARY );
+
+    guLyricSearchEngine *           LyricSearchEngine( void ) { return m_LyricSearchEngine; }
 
 };
 

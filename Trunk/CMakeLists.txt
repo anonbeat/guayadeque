@@ -144,6 +144,7 @@ INSTALL( FILES guayadeque.png DESTINATION share/pixmaps/ )
 #INSTALL( FILES guayadeque.png DESTINATION share/app-install/icons/ )
 INSTALL( FILES guayadeque.default.conf DESTINATION share/guayadeque )
 INSTALL( FILES equalizers.default.conf DESTINATION share/guayadeque )
+INSTALL( FILES lyrics_sources.xml DESTINATION share/guayadeque )
 
 CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
