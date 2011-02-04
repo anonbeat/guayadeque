@@ -1761,7 +1761,7 @@ void guFaderPlayBin::FadeOutDone( void )
 bool guFaderPlayBin::SetFaderVolume( double volume )
 {
 	const char * Message = NULL;
-
+    //guLogMessage( wxT( "Set the VolEnd: %0.2f" ), volume );
 
     if( volume != m_LastFadeVolume )
     {
@@ -2445,19 +2445,23 @@ guFaderTimeLine::~guFaderTimeLine()
 // -------------------------------------------------------------------------------- //
 void guFaderTimeLine::ValueChanged( float value )
 {
-    if( m_Direction == guTimeLine::Backward )
+    if( m_Duration )
     {
-        m_FaderPlayBin->SetFaderVolume( m_VolEnd + ( value * m_VolStep ) );
-    }
-    else
-    {
-        m_FaderPlayBin->SetFaderVolume( m_VolStart + ( value * m_VolStep ) );
+        if( m_Direction == guTimeLine::Backward )
+        {
+            m_FaderPlayBin->SetFaderVolume( m_VolEnd + ( value * m_VolStep ) );
+        }
+        else
+        {
+            m_FaderPlayBin->SetFaderVolume( m_VolStart + ( value * m_VolStep ) );
+        }
     }
 }
 
 // -------------------------------------------------------------------------------- //
 void guFaderTimeLine::Finished( void )
 {
+    m_FaderPlayBin->SetFaderVolume( m_VolEnd );
     m_FaderPlayBin->EndFade();
 }
 
