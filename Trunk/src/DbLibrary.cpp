@@ -960,17 +960,17 @@ bool guDbLibrary::CheckDbVersion( void )
       {
         query.Add( wxT( "ALTER TABLE playlists ADD COLUMN playlist_path VARCHAR" ) );
 
-        query.Add( wxT( "DROP INDEX IF EXISTS 'tag_id' on tags (tag_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'playlist_id' on playlists (playlist_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'plset_id' on plsets (plset_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'cover_id' on covers (cover_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'audiosc_id' on audioscs (audiosc_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'radiogenre_id' on radiogenres (radiogenre_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'radiolabel_id' on radiolabels (radiolabel_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'radiosetlabel_id' on radiosetlabels (radiosetlabel_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
-        query.Add( wxT( "DROP INDEX IF EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'tag_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'playlist_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'plset_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'cover_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'audiosc_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'radiogenre_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'radiostation_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'radiolabel_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'radiosetlabel_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'podcastch_id'" ) );
+        query.Add( wxT( "DROP INDEX IF EXISTS 'podcastitem_id'" ) );
       }
 
       guLogMessage( wxT( "Updating database version to " GU_CURRENT_DBVERSION ) );
