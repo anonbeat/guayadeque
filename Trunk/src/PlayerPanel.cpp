@@ -1940,7 +1940,7 @@ void guPlayerPanel::OnCoverUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SavePlayedTrack( void )
 {
-    //guLogMessage( wxT( "SavePlayedTrack %i     %li" ), m_SavedPlayedTrack, m_NextTrackId );
+    guLogMessage( wxT( "SavePlayedTrack %i     %li" ), m_SavedPlayedTrack, m_NextTrackId );
 
     if( m_SavedPlayedTrack )
         return;
@@ -1998,6 +1998,7 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
     guLogMessage( wxT( "OnMediaFinished (%li) Cur: %i  %li" ), event.GetExtraLong(), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
 
     ResetVumeterLevel();
+    SavePlayedTrack();
 
     if( m_SilenceDetected || m_AboutToEndDetected || m_NextTrackId || ( m_CurTrackId != event.GetExtraLong() ) )
     {
@@ -2037,7 +2038,6 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
                 }
             }
         }
-        SavePlayedTrack();
     }
 }
 
