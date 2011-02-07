@@ -106,24 +106,20 @@ int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
     int ImageIndex = 0;
 
     int StrPos = content.Find( wxT( "dyn.setResults([[" ) );
+    if( StrPos == wxNOT_FOUND )
+        return 0;
+    content = content.Mid( StrPos + 14 );
+    StrPos = content.Find( wxT( "]]);" ) );
+    if( StrPos == wxNOT_FOUND )
+        return 0;
+    content = content.Mid( 0, StrPos );
 
-    if( StrPos != wxNOT_FOUND )
-        StrPos += 14;
+    StrPos = 0;
     //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
     while( ( StrPos != wxNOT_FOUND ) && !m_MainThread->TestDestroy() )
     {
         content = content.Mid( StrPos + 3 );
         StrPos = content.Find( wxT( "],[" ) );
-        int EndPos = content.Find( wxT( "]]);" ) );
-        if( ( StrPos == wxNOT_FOUND ) || ( EndPos == wxNOT_FOUND ) )
-        {
-            if( EndPos != wxNOT_FOUND )
-                StrPos = EndPos;
-            else
-                break;
-        }
-        if( StrPos > EndPos )
-            StrPos = EndPos;
 
         //guLogMessage( wxT( "%s" ), content.Mid( 0, StrPos ).c_str() );
         wxHtmlEntitiesParser EntitiesParser;
