@@ -131,6 +131,8 @@ class guCurrentTrack : public guTrack
             m_CoverType = GU_SONGCOVER_NONE;
         }
         m_CoverPath = wxEmptyString;
+        if( m_CoverImage )
+            delete m_CoverImage;
         m_CoverImage = NULL;
         return *this;
     }
