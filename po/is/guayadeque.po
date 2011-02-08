@@ -4367,7 +4367,7 @@ msgid ""
 "Length\t: %s"
 msgstr ""
 "Skráar Tegund\t: %s\n"
-"Lengd\t: %s\n"
+"Lengd\t: %s"
 
 #: TrackEdit.cpp:885
 #, c-format
