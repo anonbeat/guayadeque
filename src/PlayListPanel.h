@@ -150,6 +150,7 @@ class guPlayListPanel : public wxPanel
 
     wxTimer             m_TextChangedTimer;
     unsigned int        m_VisiblePanels;
+    wxString            m_ExportLastFolder;
 
     void                OnPLNamesSelected( wxTreeEvent &event );
     void                OnPLNamesActivated( wxTreeEvent &event );

@@ -27,6 +27,7 @@
 #include "DbLibrary.h"
 #include "DynamicPlayList.h"
 #include "FieldEditor.h"
+#include "FileRenamer.h"
 #include "Images.h"
 #include "LabelEditor.h"
 #include "MainFrame.h"
@@ -516,6 +517,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 {
     m_Db = db;
     m_PlayerPanel = playerpanel;
+    m_ExportLastFolder = wxGetHomeDir();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -1111,12 +1113,9 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
-
     wxFileDialog * FileDialog = new wxFileDialog( this,
-        wxT( "Select the playlist file" ),
-        wxGetHomeDir(),
+        _( "Select the playlist file" ),
+        m_ExportLastFolder,
         wxEmptyString,
         wxT( "*.m3u;*.pls;*.asx;*.xspf" ),
         wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
@@ -1125,26 +1124,45 @@ void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
     {
         if( FileDialog->ShowModal() == wxID_OK )
         {
-            guPlayListFile PlayListFile;
+            m_ExportLastFolder = wxPathOnly( FileDialog->GetPath() );
+            wxString FormatExt = wxT( "." ) + FileDialog->GetPath().AfterLast( wxT( '.' ) );
 
-            wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
-            if( ItemId.IsOk() )
+            wxArrayTreeItemIds SelectedItems;
+
+            int Index;
+            int Count = m_NamesTreeCtrl->GetSelections( SelectedItems );
+            for( Index = 0; Index < Count; Index++ )
             {
-                PlayListFile.SetName( m_NamesTreeCtrl->GetItemText( ItemId ) );
-
-                guTrackArray Tracks;
-
-                m_PLTracksListBox->GetAllSongs( &Tracks );
-                if( ( Count = Tracks.Count() ) )
+                if( SelectedItems[ Index ].IsOk() )
                 {
-                    NormalizeTracks( &Tracks );
-                    for( Index = 0; Index < Count; Index++ )
-                    {
-                        PlayListFile.AddItem( Tracks[ Index ].m_FileName,
-                            Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
-                    }
+                    guPlayListFile PlayListFile;
 
-                    PlayListFile.Save( FileDialog->GetPath() );
+                    wxString PlayListName = m_NamesTreeCtrl->GetItemText( SelectedItems[ Index ] );
+                    PlayListFile.SetName( PlayListName );
+
+                    guTrackArray Tracks;
+                    guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( SelectedItems[ Index ] );
+                    if( ItemData )
+                    {
+                        m_Db->GetPlayListSongs( ItemData->GetData(), ItemData->GetType(), &Tracks, NULL, NULL );
+                        int TrackIndex;
+                        int TrackCount;
+                        if( ( TrackCount = Tracks.Count() ) )
+                        {
+                            NormalizeTracks( &Tracks );
+                            for( TrackIndex = 0; TrackIndex < TrackCount; TrackIndex++ )
+                            {
+                                PlayListFile.AddItem( Tracks[ TrackIndex ].m_FileName,
+                                    Tracks[ TrackIndex ].m_ArtistName + wxT( " - " ) + Tracks[ TrackIndex ].m_SongName );
+                            }
+
+                            PlayListFile.Save( m_ExportLastFolder + wxT( "/" ) + NormalizeField( PlayListName ) + FormatExt );
+                        }
+                    }
+                    else
+                    {
+                        guLogMessage( wxT( "The playlist itemdata was not found" ) );
+                    }
                 }
             }
         }

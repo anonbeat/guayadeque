@@ -2805,8 +2805,6 @@ void guPrefDialog::OnLyricSaveDelBtnClick( wxCommandEvent &event )
     }
 }
 
-////////////////////////////
-
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnFiltersListBoxSelected( wxCommandEvent &event )
 {
