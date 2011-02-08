@@ -78,6 +78,7 @@ class guLyricsPanel : public wxPanel
 
     int                     m_LyricAlign;
 	wxString                m_CurrentLyricText;
+	guTrack *               m_CurrentTrack;
 
     void                    SetTitle( const wxString &title );
     void                    SetText( const wxString &text );
@@ -110,7 +111,7 @@ class guLyricsPanel : public wxPanel
     //void                    ClearLyricThread( void );
     void                    OnDropFiles( const wxArrayString &files );
 
-    void                    SetLyricText( const wxString * lyrictext );
+    void                    SetLyricText( const wxString * lyrictext, const bool forceupdate = false );
 
     void                    SetLyricSearchEngine( guLyricSearchEngine * searchengine ) { m_LyricSearchEngine = searchengine; }
 
@@ -311,7 +312,9 @@ class guLyricSearchThread : public wxThread
 {
   protected :
     wxString                    m_LyricText;
+    bool                        m_ForceSaveProcess;
     guLyricSearchContext *      m_LyricSearchContext;
+
 
     void                        LyricFile( guLyricSource &lyricsource );
     void                        LyricCommand( guLyricSource &lyricsource );
@@ -330,7 +333,7 @@ class guLyricSearchThread : public wxThread
     void                        ProcessSave( guLyricSource &lyricsource );
 
   public :
-    guLyricSearchThread( guLyricSearchContext * context, const wxString &lyrictext = wxEmptyString );
+    guLyricSearchThread( guLyricSearchContext * context, const wxString &lyrictext = wxEmptyString, const bool forcesaveprocess = false );
     ~guLyricSearchThread();
 
     ExitCode                    Entry();
