@@ -2178,6 +2178,7 @@ void guLyricSourceEditor::OnNotFoundDClicked( wxCommandEvent &event )
             {
                 SourceOptionEditor->UpdateSourceOption();
                 m_NotFoundItems[ Selected ] = LyricSourceNotFound->Text1();
+                m_NotFoundListBox->SetString( Selected, LyricSourceNotFound->Text1() );
                 delete LyricSourceNotFound;
             }
             SourceOptionEditor->Destroy();
