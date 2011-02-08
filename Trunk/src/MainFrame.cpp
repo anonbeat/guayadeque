@@ -5274,6 +5274,7 @@ void guMainFrame::OnSetForceGapless( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnLyricFound( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "guMainFrame::OnLyricFound" ) );
     wxString * LyricText = ( wxString * ) event.GetClientData();
     if( m_LyricsPanel )
     {
