@@ -1048,7 +1048,7 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
     int Count;
 
     wxFileDialog * FileDialog = new wxFileDialog( this,
-        wxT( "Select the playlist file" ),
+        _( "Select the playlist file" ),
         wxGetHomeDir(),
         wxEmptyString,
         wxT( "*.m3u;*.pls;*.asx;*.xspf" ),
@@ -1122,7 +1122,7 @@ void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
         wxString PlayListName = m_NamesTreeCtrl->GetItemText( ItemId );
 
         wxFileDialog * FileDialog = new wxFileDialog( this,
-            wxT( "Select the playlist file" ),
+            _( "Select the playlist file" ),
             m_ExportLastFolder,
             PlayListName + wxT( ".m3u" ),
             wxT( "*.m3u;*.pls;*.asx;*.xspf" ),
