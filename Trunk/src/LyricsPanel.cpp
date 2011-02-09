@@ -133,7 +133,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
 	MainSizer->Add( m_TitleSizer, 0, wxEXPAND, 5 );
 
 	//m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
-	m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_LyricAlign|wxTE_DONTWRAP|wxTE_MULTILINE|wxNO_BORDER );
+	m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_LyricAlign|wxTE_WORDWRAP|wxTE_MULTILINE|wxNO_BORDER );
 	m_EditModeFGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOXTEXT ); //m_LyricText->GetForegroundColour();
 	m_EditModeBGColor = m_LyricText->GetBackgroundColour();
 
