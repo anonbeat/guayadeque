@@ -1238,15 +1238,12 @@ wxString inline FileNameEncode( const wxString filename )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype )
 {
-    if( m_NextSong.m_Type & guTRACK_TYPE_STOP_HERE )
+    if( m_MediaSong.m_Type & guTRACK_TYPE_STOP_HERE )
     {
-        m_NextSong.m_Type = guTrackType( int( m_NextSong.m_Type ) & 0x7FFFFFFF );
+        m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) & 0x7FFFFFFF );
         m_PlayListCtrl->ClearStopAfterCurrent();
-        //m_MediaCtrl->Stop();
-        //SavePlayedTrack();
         return;
     }
-
     //guLogMessage( wxT( "LoadMedia Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), playtype );
     //m_MediaCtrl->Load( NextItem->FileName );
     wxURI UriPath( m_NextSong.m_FileName );
@@ -2518,6 +2515,7 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnStopAfterCurrentTrack( wxCommandEvent &event )
 {
+    m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) ^ guTRACK_TYPE_STOP_HERE );
     m_PlayListCtrl->StopAfterCurrent();
 }
 

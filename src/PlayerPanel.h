@@ -424,6 +424,8 @@ class guPlayerPanel : public wxPanel
     wxString                    LastTmpCoverFile( void ) { return m_LastTmpCoverFile; }
     void                        SetLastTmpCoverFile( const wxString &lastcoverfile ) { m_LastTmpCoverFile = lastcoverfile; }
 
+    void                        StopAfterCurrent( void ) { m_MediaSong.m_Type = guTrackType( ( int ) m_MediaSong.m_Type ^ guTRACK_TYPE_STOP_HERE ); }
+
     friend class guSmartAddTracksThread;
 };
 
