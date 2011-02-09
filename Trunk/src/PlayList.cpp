@@ -526,12 +526,6 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
         CutRect.x += 16;
         CutRect.width -= 16;
     }
-    else if( Item.m_Type & guTRACK_TYPE_STOP_HERE )
-    {
-        dc.DrawBitmap( * m_StopBitmap, CutRect.x + 2, CutRect.y + 10, true );
-        CutRect.x += 16;
-        CutRect.width -= 16;
-    }
 
     // The DB or NODB Tracks
     if( Item.m_Type != guTRACK_TYPE_RADIOSTATION )
@@ -564,14 +558,25 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
         //m_Attr.m_Font->SetStyle( wxFONTSTYLE_NORMAL );
         //dc.SetFont( * m_Attr.m_Font );
 
+        int TimeWidth = 56;
+
+        if( Item.m_Type & guTRACK_TYPE_STOP_HERE )
+        {
+            dc.DrawBitmap( * m_StopBitmap, CutRect.x + 40, CutRect.y + 2, true );
+            TimeWidth -= 16;
+        }
+
         TimeStr = LenToString( Item.m_Length );
         TextSize = dc.GetTextExtent( TimeStr );
-        dc.DrawText( TimeStr, CutRect.x + ( ( 56 - TextSize.GetWidth() ) / 2 ), CutRect.y + 4 );
+        TimeWidth -= TextSize.GetWidth();
+        if( TimeWidth < 0 )
+            TimeWidth = 0;
+        dc.DrawText( TimeStr, CutRect.x + ( TimeWidth / 2 ), CutRect.y + 4 );
         //guLogMessage( wxT( "%i - %i" ), TextSize.GetWidth(), TextSize.GetHeight() );
 
 
-        if( Item.m_Type != guTRACK_TYPE_RADIOSTATION )
-        {
+//        if( Item.m_Type != guTRACK_TYPE_RADIOSTATION )
+//        {
             // Draw the rating
             int index;
             //OffsetSecLine += 2;
@@ -582,7 +587,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
                dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_NormalStar : * m_SelectStar,
                               CutRect.x + ( 11 * index ), CutRect.y + m_SecondLineOffset, true );
             }
-        }
+//        }
     }
     else
     {
@@ -2148,19 +2153,23 @@ void guPlayList::StopAfterCurrent( void )
             if( Selection[ Index ] > ItemToFlag )
                 ItemToFlag = Selection[ Index ];
         }
-        if( ( ItemToFlag != wxNOT_FOUND ) && ( ItemToFlag < ( int ) ( m_Items.Count() - 1 ) ) )
-            ItemToFlag++;
+        //if( ( ItemToFlag != wxNOT_FOUND ) && ( ItemToFlag < ( int ) m_Items.Count() ) ) )
+        //    ItemToFlag;
     }
     else
     {
-        if( m_CurItem < ( int ) ( m_Items.Count() - 1 ) )
-            ItemToFlag = m_CurItem + 1;
+        if( ( m_CurItem >= 0 ) && ( m_CurItem < ( int ) m_Items.Count() ) )
+            ItemToFlag = m_CurItem;
     }
 
-    if( ItemToFlag >= 0 && ItemToFlag < ( int ) m_Items.Count() )
+    if( ( ItemToFlag >= 0 ) && ( ItemToFlag < ( int ) m_Items.Count() ) )
     {
         m_Items[ ItemToFlag ].m_Type = guTrackType( ( int ) m_Items[ ItemToFlag ].m_Type ^ guTRACK_TYPE_STOP_HERE );
         RefreshAll();
+        if( ItemToFlag == m_CurItem )
+        {
+            m_PlayerPanel->StopAfterCurrent();
+        }
     }
 }
 
