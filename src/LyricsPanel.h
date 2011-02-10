@@ -106,7 +106,8 @@ class guLyricsPanel : public wxPanel
     guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearchEngine * lyricsearchengine );
     ~guLyricsPanel();
 
-    void                    OnUpdatedTrack( wxCommandEvent &event );
+    void                    OnSetCurrentTrack( wxCommandEvent &event );
+    void                    SetCurrentTrack( const guTrack * track );
     void                    SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch = false );
     //void                    ClearLyricThread( void );
     void                    OnDropFiles( const wxArrayString &files );
@@ -114,6 +115,9 @@ class guLyricsPanel : public wxPanel
     void                    SetLyricText( const wxString * lyrictext, const bool forceupdate = false );
 
     void                    SetLyricSearchEngine( guLyricSearchEngine * searchengine ) { m_LyricSearchEngine = searchengine; }
+
+    void                    UpdatedTracks( const guTrackArray * tracks );
+    void                    UpdatedTrack( const guTrack * track );
 
 };
 
@@ -302,6 +306,8 @@ class guLyricSearchContext
     wxEvtHandler *          Owner( void ) { return m_Owner; }
 
     bool                    DoSaveProcess( void ) { return m_DoSaveProcess; }
+
+    void                    ResetIndex( void ) { m_CurrentIndex = wxNOT_FOUND; }
 
     friend class guLyricSearchEngine;
     friend class guLyricSearchThread;
