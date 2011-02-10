@@ -1253,6 +1253,12 @@ wxString inline FileNameEncode( const wxString filename )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype )
 {
+    if( m_MediaSong.m_Type & guTRACK_TYPE_STOP_HERE )
+    {
+        m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) ^ guTRACK_TYPE_STOP_HERE );
+        m_PlayListCtrl->ClearStopAfterCurrent();
+        return;
+    }
     //guLogMessage( wxT( "LoadMedia Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), playtype );
     //m_MediaCtrl->Load( NextItem->FileName );
     wxURI UriPath( m_NextSong.m_FileName );
@@ -2259,18 +2265,6 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 
     bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_NEXTTRACK ) ||
                       ( event.GetEventObject() == m_NextTrackButton );
-
-    guLogMessage( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i  %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt(), ForceSkip );
-    if( !ForceSkip )
-    {
-        guLogMessage( wxT( "Type: %08X" ), m_MediaSong.m_Type );
-        if( m_MediaSong.m_Type & guTRACK_TYPE_STOP_HERE )
-        {
-            m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) ^ guTRACK_TYPE_STOP_HERE );
-            m_PlayListCtrl->ClearStopAfterCurrent();
-            return;
-        }
-    }
 
     NextItem = m_PlayListCtrl->GetNext( m_PlayLoop, ForceSkip );
     if( NextItem )

@@ -169,6 +169,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_player_normal_ban,
     guIMAGE_INDEX_player_tiny_light_play,
     guIMAGE_INDEX_player_tiny_light_stop,
+    guIMAGE_INDEX_player_tiny_red_stop,
     guIMAGE_INDEX_star_normal_tiny,
     guIMAGE_INDEX_star_normal_mid,
     guIMAGE_INDEX_star_normal_big,

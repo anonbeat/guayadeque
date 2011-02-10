@@ -167,6 +167,7 @@
 #include "./images/player_normal_ban.h"
 #include "./images/player_tiny_light_play.h"
 #include "./images/player_tiny_light_stop.h"
+#include "./images/player_tiny_red_stop.h"
 //
 #include "./images/star_normal_tiny.h"
 #include "./images/star_normal_mid.h"
@@ -333,6 +334,7 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_normal_ban,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_tiny_light_play,        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_tiny_light_stop,        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_tiny_red_stop,          wxBITMAP_TYPE_PNG ),
     //
     GUIMAGE( guImage_star_normal_tiny,              wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_star_normal_mid,               wxBITMAP_TYPE_PNG ),
