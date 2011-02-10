@@ -305,7 +305,10 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
     {
         if( TreeItemId != m_DragOverItem )
         {
-            SetItemDropHighlight( m_DragOverItem, false );
+            if( m_DragOverItem.IsOk() )
+            {
+                SetItemDropHighlight( m_DragOverItem, false );
+            }
             guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( TreeItemId );
             if( ItemData && ItemData->GetType() == guPLAYLIST_TYPE_STATIC )
             {
@@ -316,8 +319,11 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
     }
     else
     {
-        SetItemDropHighlight( m_DragOverItem, false );
-        m_DragOverItem = wxTreeItemId();
+        if( m_DragOverItem.IsOk() )
+        {
+            SetItemDropHighlight( m_DragOverItem, false );
+            m_DragOverItem = wxTreeItemId();
+        }
     }
 }
 
