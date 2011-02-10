@@ -129,7 +129,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
         m_CurItem = wxNOT_FOUND;
 
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
-    m_StopBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_light_stop ) );
+    m_StopBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_red_stop ) );
     m_NormalStar   = new wxBitmap( guImage( guIMAGE_INDEX_star_normal_tiny ) );
     m_SelectStar = new wxBitmap( guImage( guIMAGE_INDEX_star_highlight_tiny ) );
 
