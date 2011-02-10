@@ -1912,19 +1912,20 @@ void guPlayerPanel::SetCurrentCoverImage( wxImage * coverimage, const guSongCove
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::UpdateCoverImage( void )
+void guPlayerPanel::UpdateCoverImage( const bool shownotify )
 {
     m_PlayerCoverBitmap->SetBitmap( wxBitmap( * m_MediaSong.m_CoverImage ) );
     m_PlayerCoverBitmap->Refresh();
 
-    SendNotifyInfo( m_MediaSong.m_CoverImage );
+    if( shownotify )
+        SendNotifyInfo( m_MediaSong.m_CoverImage );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_COVERUPDATED );
     wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::UpdateCover( void )
+void guPlayerPanel::UpdateCover( const bool shownotify )
 {
     if( m_UpdateCoverThread )
     {
@@ -1932,7 +1933,7 @@ void guPlayerPanel::UpdateCover( void )
         m_UpdateCoverThread->Delete();
     }
 
-    m_UpdateCoverThread = new guUpdatePlayerCoverThread( m_Db, m_MainFrame, this, &m_MediaSong );
+    m_UpdateCoverThread = new guUpdatePlayerCoverThread( m_Db, m_MainFrame, this, &m_MediaSong, shownotify );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1940,7 +1941,7 @@ void guPlayerPanel::OnCoverUpdated( wxCommandEvent &event )
 {
     m_UpdateCoverThread = NULL;
 
-    UpdateCoverImage();
+    UpdateCoverImage( event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2903,7 +2904,7 @@ void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
             m_MediaSong.Update( tracks->Item( index ) );
             // Update the Current Playing Song Info
             UpdateLabels();
-            UpdateCover();
+            UpdateCover( false );
             break;
         }
     }
@@ -3258,12 +3259,13 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
 // guUpdatePlayerCoverThread
 // -------------------------------------------------------------------------------- //
 guUpdatePlayerCoverThread::guUpdatePlayerCoverThread( guDbLibrary * db,
-    guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack ) : wxThread()
+    guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack, const bool shownotify ) : wxThread()
 {
     m_Db = db;
     m_MainFrame = mainframe;
     m_PlayerPanel = playerpanel;
     m_CurrentTrack = currenttrack;
+    m_ShowNotify = shownotify;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -3407,6 +3409,7 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
     m_CurrentTrack->m_CoverImage = CoverImage;
 
     wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_COVERUPDATED );
+    Event.SetInt( m_ShowNotify );
     wxPostEvent( m_PlayerPanel, Event );
 
     return 0;

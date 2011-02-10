@@ -378,7 +378,7 @@ class guPlayerPanel : public wxPanel
     void                        UpdatePlayListFilters( void );
 
     void                        SetCurrentCoverImage( wxImage * coverimage, const guSongCoverType CoverType, const wxString &CoverPath = wxEmptyString );
-    void                        UpdateCoverImage( void );
+    void                        UpdateCoverImage( const bool shownotify = true );
 
     int                         GetCaps();
 
@@ -421,7 +421,7 @@ class guPlayerPanel : public wxPanel
 
     void                        SetForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; m_MediaCtrl->ForceGapless( forcegapless ); }
 
-    void                        UpdateCover( void );    // Start the thread that search for the cover
+    void                        UpdateCover( const bool shownotify = true );    // Start the thread that search for the cover
 
     wxString                    LastTmpCoverFile( void ) { return m_LastTmpCoverFile; }
     void                        SetLastTmpCoverFile( const wxString &lastcoverfile ) { m_LastTmpCoverFile = lastcoverfile; }
@@ -466,9 +466,10 @@ class guUpdatePlayerCoverThread : public wxThread
     guPlayerPanel *     m_PlayerPanel;
     guCurrentTrack *    m_CurrentTrack;
     guMainFrame *       m_MainFrame;
+    bool                m_ShowNotify;
 
   public:
-    guUpdatePlayerCoverThread( guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack );
+    guUpdatePlayerCoverThread( guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack, const bool shownotify );
     ~guUpdatePlayerCoverThread();
 
     virtual ExitCode Entry();
