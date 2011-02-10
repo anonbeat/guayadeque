@@ -127,6 +127,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
     m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
     m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
+	m_SmartMaxArtistsList = Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "Playback" ) );
+	m_SmartMaxTracksList = Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "Playback" ) );
+
     m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
                              Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
     Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
@@ -630,6 +633,16 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
         m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
+        m_SmartMaxArtistsList = Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "Playback" ) );
+        m_SmartMaxTracksList = Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "Playback" ) );
+
+        // We only insert the last CACHEITEMS as the rest should be forgiven
+        while( ( int ) m_SmartAddedTracks.Count() > m_SmartMaxTracksList )
+            m_SmartAddedTracks.RemoveAt( 0 );
+
+        while( ( int ) m_SmartAddedArtists.Count() > m_SmartMaxArtistsList )
+            m_SmartAddedArtists.RemoveAt( 0 );
+
         m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
                                  Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
 
@@ -812,17 +825,18 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
         int Count;
         int Index = 0;
         Count = SongList.Count();
+
         // We only insert the last CACHEITEMS as the rest should be forgiven
-        if( Count > guPLAYER_SMART_CACHEITEMS )
-            Index = Count - guPLAYER_SMART_CACHEITEMS;
+        if( Count > m_SmartMaxTracksList )
+            Index = Count - m_SmartMaxTracksList;
         for( ; Index < Count; Index++ )
         {
             m_SmartAddedTracks.Add( SongList[ Index ].m_SongId );
         }
 
         Index = 0;
-        if( Count > guPLAYER_SMART_CACHEARTISTS )
-            Index = Count - guPLAYER_SMART_CACHEARTISTS;
+        if( Count > m_SmartMaxArtistsList )
+            Index = Count - m_SmartMaxArtistsList;
         for( ; Index < Count; Index++ )
         {
             m_SmartAddedArtists.Add( SongList[ Index ].m_ArtistName.Upper() );
@@ -863,8 +877,8 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
             int Index = 0;
             Count = m_PlayListCtrl->GetItemCount();
             // We only insert the last CACHEITEMS as the rest should be forgiven
-            if( Count > guPLAYER_SMART_CACHEITEMS )
-                Index = Count - guPLAYER_SMART_CACHEITEMS;
+            if( Count > m_SmartMaxTracksList )
+                Index = Count - m_SmartMaxTracksList;
             for( ; Index < Count; Index++ )
             {
                 guTrack * Track = m_PlayListCtrl->GetItem( Index );
@@ -872,8 +886,8 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
             }
 
             Index = 0;
-            if( Count > guPLAYER_SMART_CACHEARTISTS )
-                Index = Count - guPLAYER_SMART_CACHEARTISTS;
+            if( Count > m_SmartMaxArtistsList )
+                Index = Count - m_SmartMaxArtistsList;
             for( ; Index < Count; Index++ )
             {
                 guTrack * Track = m_PlayListCtrl->GetItem( Index );
@@ -912,11 +926,11 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowp
                 }
             }
 
-            if( ( Count = m_SmartAddedTracks.Count() ) > guPLAYER_SMART_CACHEITEMS )
-                m_SmartAddedTracks.RemoveAt( 0, Count - guPLAYER_SMART_CACHEITEMS );
+            if( ( Count = m_SmartAddedTracks.Count() ) > m_SmartMaxTracksList )
+                m_SmartAddedTracks.RemoveAt( 0, Count - m_SmartMaxTracksList );
 
-            if( ( Count = m_SmartAddedArtists.Count() ) > guPLAYER_SMART_CACHEARTISTS )
-                m_SmartAddedArtists.RemoveAt( 0, Count - guPLAYER_SMART_CACHEARTISTS );
+            if( ( Count = m_SmartAddedArtists.Count() ) > m_SmartMaxArtistsList )
+                m_SmartAddedArtists.RemoveAt( 0, Count - m_SmartMaxArtistsList );
         }
 
         if( allowplay && !PrevTrackCount && ( GetState() != guMEDIASTATE_PLAYING ) )
@@ -949,10 +963,10 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName, const bool aftercur
             m_SmartAddedTracks.Add( Track->m_SongId );
             m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
 
-            if( m_SmartAddedTracks.Count() > guPLAYER_SMART_CACHEITEMS )
+            if( ( int ) m_SmartAddedTracks.Count() > m_SmartMaxTracksList )
                 m_SmartAddedTracks.RemoveAt( 0 );
 
-            if( m_SmartAddedArtists.Count() > guPLAYER_SMART_CACHEARTISTS )
+            if( ( int ) m_SmartAddedArtists.Count() > m_SmartMaxArtistsList )
                 m_SmartAddedArtists.RemoveAt( 0 );
         }
     }
@@ -997,11 +1011,11 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool afterc
 
         }
 
-        if( ( Count = m_SmartAddedTracks.Count() ) > guPLAYER_SMART_CACHEITEMS )
-            m_SmartAddedTracks.RemoveAt( 0, Count - guPLAYER_SMART_CACHEITEMS );
+        if( ( Count = m_SmartAddedTracks.Count() ) > m_SmartMaxTracksList )
+            m_SmartAddedTracks.RemoveAt( 0, Count - m_SmartMaxTracksList );
 
-        if( ( Count = m_SmartAddedArtists.Count() ) > guPLAYER_SMART_CACHEARTISTS )
-            m_SmartAddedArtists.RemoveAt( 0, Count - guPLAYER_SMART_CACHEARTISTS );
+        if( ( Count = m_SmartAddedArtists.Count() ) > m_SmartMaxArtistsList )
+            m_SmartAddedArtists.RemoveAt( 0, Count - m_SmartMaxArtistsList );
     }
 
     if( !PrevTrackCount && m_PlayListCtrl->GetItemCount() && ( GetState() != guMEDIASTATE_PLAYING ) )
@@ -1057,8 +1071,8 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
         int Index = 0;
         Count = m_PlayListCtrl->GetCount();
         // We only insert the last CACHEITEMS as the rest should be forgiven
-        if( Count > guPLAYER_SMART_CACHEITEMS )
-            Index = Count - guPLAYER_SMART_CACHEITEMS;
+        if( Count > m_SmartMaxTracksList )
+            Index = Count - m_SmartMaxTracksList;
         for( ; Index < Count; Index++ )
         {
             guTrack * Track = m_PlayListCtrl->GetItem( Index );
@@ -1067,8 +1081,8 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
 
         Index = 0;
         Count = m_PlayListCtrl->GetCount();
-        if( Count > guPLAYER_SMART_CACHEARTISTS )
-            Index = Count - guPLAYER_SMART_CACHEARTISTS;
+        if( Count > m_SmartMaxArtistsList )
+            Index = Count - m_SmartMaxArtistsList;
         for( ; Index < Count; Index++ )
         {
             guTrack * Track = m_PlayListCtrl->GetItem( Index );
@@ -1158,6 +1172,7 @@ void guPlayerPanel::SmartAddTracks( const guTrack &CurSong )
     m_SmartSearchEnabled = true;
     m_SmartAddTracksThread = new guSmartAddTracksThread( m_Db, this, &CurSong,
         &m_SmartAddedTracks, &m_SmartAddedArtists, m_SmartPlayAddTracks,
+        m_SmartMaxTracksList, m_SmartMaxArtistsList,
         m_PlayerFilters->GetAllowFilterId(),
         m_PlayerFilters->GetDenyFilterId() );
 }
@@ -3037,6 +3052,7 @@ void guPlayerPanel::OnSetVolume( wxCommandEvent &event )
 guSmartAddTracksThread::guSmartAddTracksThread( guDbLibrary * db,
         guPlayerPanel * playerpanel, const guTrack * track,
         wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
+        const int maxtracks, const int maxartists,
         const int trackcount, const int filterallow, const int filterdeny ) : wxThread()
 {
     m_Db = db;
@@ -3044,6 +3060,8 @@ guSmartAddTracksThread::guSmartAddTracksThread( guDbLibrary * db,
     m_CurSong = track;
     m_SmartAddedTracks = smartaddedtracks;
     m_SmartAddedArtists = smartaddedartists;
+    m_SmartMaxTracksList = maxtracks;
+    m_SmartMaxArtistsList = maxartists;
     m_TrackCount = trackcount;
     m_FilterAllowPlayList = filterallow;
     m_FilterDenyPlayList = filterdeny;
@@ -3207,11 +3225,11 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
             }
         }
 
-        if( m_SmartAddedTracks->Count() > guPLAYER_SMART_CACHEITEMS )
-            m_SmartAddedTracks->RemoveAt( 0, m_SmartAddedTracks->Count() - guPLAYER_SMART_CACHEITEMS );
+        if( ( int ) m_SmartAddedTracks->Count() > m_SmartMaxTracksList )
+            m_SmartAddedTracks->RemoveAt( 0, m_SmartAddedTracks->Count() - m_SmartMaxTracksList );
 
-        if( m_SmartAddedArtists->Count() > guPLAYER_SMART_CACHEARTISTS )
-            m_SmartAddedArtists->RemoveAt( 0, m_SmartAddedArtists->Count() - guPLAYER_SMART_CACHEARTISTS );
+        if( ( int ) m_SmartAddedArtists->Count() > m_SmartMaxArtistsList )
+            m_SmartAddedArtists->RemoveAt( 0, m_SmartAddedArtists->Count() - m_SmartMaxArtistsList );
 
         //guLogMessage( wxT( "========" ) );
         //for( Index = 0; Index < m_SmartAddedArtists->Count(); Index++ )

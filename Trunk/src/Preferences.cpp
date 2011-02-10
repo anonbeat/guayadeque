@@ -776,6 +776,30 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	SmartPlayListSizer->Add( SmartPlayListFlexGridSizer, 1, wxEXPAND, 5 );
 
+	wxBoxSizer * SmartPlayFilterSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * SmartPlayFilterLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("Don't repeat last"), wxDefaultPosition, wxDefaultSize, 0 );
+	SmartPlayFilterLabel->Wrap( -1 );
+	SmartPlayFilterSizer->Add( SmartPlayFilterLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_SmartPlayArtistsSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 50, 20 );
+    m_SmartPlayArtistsSpinCtrl->SetValue( m_Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "Playback" ) ) );
+	SmartPlayFilterSizer->Add( m_SmartPlayArtistsSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * SmartPlayArtistLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("artists or"), wxDefaultPosition, wxDefaultSize, 0 );
+	SmartPlayArtistLabel->Wrap( -1 );
+	SmartPlayFilterSizer->Add( SmartPlayArtistLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	m_SmartPlayTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 55,-1 ), wxSP_ARROW_KEYS, 0, 200, 100 );
+    m_SmartPlayTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "Playback" ) ) );
+	SmartPlayFilterSizer->Add( m_SmartPlayTracksSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	wxStaticText * SmartPlayTracksLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("tracks"), wxDefaultPosition, wxDefaultSize, 0 );
+	SmartPlayTracksLabel->Wrap( -1 );
+	SmartPlayFilterSizer->Add( SmartPlayTracksLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+
+	SmartPlayListSizer->Add( SmartPlayFilterSizer, 0, wxEXPAND, 5 );
+
 	PlayMainSizer->Add( SmartPlayListSizer, 0, wxALL|wxEXPAND, 5 );
 
 	wxStaticBoxSizer * PlaySilenceSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _(" Silence detector ") ), wxVERTICAL );
@@ -2192,6 +2216,8 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteNum( wxT( "MinTracksToPlay" ), m_MinTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
         m_Config->WriteNum( wxT( "NumTracksToAdd" ), m_NumTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
         m_Config->WriteNum( wxT( "MaxTracksPlayed" ), m_MaxTracksPlayed->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteNum( wxT( "SmartFilterArtists" ), m_SmartPlayArtistsSpinCtrl->GetValue(), wxT( "Playback" ) );
+        m_Config->WriteNum( wxT( "SmartFilterTracks" ), m_SmartPlayTracksSpinCtrl->GetValue(), wxT( "Playback" ) );
 
         m_Config->WriteNum( wxT( "OutputDevice" ), m_PlayOutDevChoice->GetSelection(), wxT( "Playback" ) );
         m_Config->WriteStr( wxT( "OutputDeviceName" ), m_PlayOutDevName->GetValue(), wxT( "Playback" ) );

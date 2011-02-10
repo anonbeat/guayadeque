@@ -248,6 +248,8 @@ class guPlayerPanel : public wxPanel
 
 	wxArrayInt                  m_SmartAddedTracks;
 	wxArrayString               m_SmartAddedArtists;
+	int                         m_SmartMaxTracksList;
+	int                         m_SmartMaxArtistsList;
 	bool                        m_SmartSearchEnabled;
     int                         m_SmartPlayAddTracks;
     int                         m_SmartPlayMinTracksToPlay;
@@ -441,12 +443,15 @@ class guSmartAddTracksThread : public wxThread
     int             m_FilterDenyPlayList;
     wxArrayInt *    m_SmartAddedTracks;
     wxArrayString * m_SmartAddedArtists;
+    int             m_SmartMaxTracksList;
+    int             m_SmartMaxArtistsList;
 
     void           AddSimilarTracks( const wxString &artist, const wxString &track, guTrackArray * songs );
 
   public:
     guSmartAddTracksThread( guDbLibrary * db, guPlayerPanel * playerpanel, const guTrack * track,
              wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
+             const int maxtracks, const int maxartists,
              const int trackcount, const int filterallow, const int filterdeny );
     ~guSmartAddTracksThread();
 

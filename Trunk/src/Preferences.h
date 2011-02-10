@@ -151,6 +151,8 @@ class guPrefDialog : public wxDialog
     wxChoice *                  m_RndModeChoice;
     wxCheckBox *                m_DelPlayChkBox;
     wxCheckBox *                m_PlayDelPlayedTrack;
+    wxSpinCtrl *                m_SmartPlayArtistsSpinCtrl;
+    wxSpinCtrl *                m_SmartPlayTracksSpinCtrl;
     wxCheckBox *                m_PlayLevelEnabled;
     wxStaticText *              m_PlayLevelVal;
     wxSlider *                  m_PlayLevelSlider;
