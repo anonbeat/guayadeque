@@ -297,7 +297,7 @@ void guLyricsPanel::CreateContextMenu( wxMenu * menu )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
+void guLyricsPanel::SetCurrentTrack( const guTrack * track )
 {
     if( m_UpdateEnabled )
     {
@@ -307,14 +307,13 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
             m_CurrentTrack = NULL;
         }
 
-        guTrack * Track = ( guTrack * ) event.GetClientData();
         guTrackChangeInfo ChangeInfo;
-        if( Track )
+        if( track )
         {
-            ChangeInfo.m_ArtistName = Track->m_ArtistName;
-            ChangeInfo.m_TrackName = Track->m_SongName;
+            ChangeInfo.m_ArtistName = track->m_ArtistName;
+            ChangeInfo.m_TrackName = track->m_SongName;
 
-            m_CurrentTrack = new guTrack( * Track );
+            m_CurrentTrack = new guTrack( * track );
         }
 
         m_CurrentTrackInfo = ChangeInfo;
@@ -323,6 +322,12 @@ void guLyricsPanel::OnUpdatedTrack( wxCommandEvent &event )
 
         SetTrack( &ChangeInfo );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnSetCurrentTrack( wxCommandEvent &event )
+{
+    SetCurrentTrack( ( guTrack * ) event.GetClientData() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -725,6 +730,40 @@ void guLyricsPanel::SetLyricText( const wxString * lyrictext, const bool forceup
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::UpdatedTracks( const guTrackArray * tracks )
+{
+    if( !m_CurrentTrack )
+        return;
+
+    int Index;
+    int Count = tracks->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack * Track = &tracks->Item( Index );
+        if( Track->m_FileName == m_CurrentTrack->m_FileName )
+        {
+            SetCurrentTrack( Track );
+
+            wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSSEARCHFIRST );
+            wxPostEvent( wxTheApp->GetTopWindow(), Event );
+
+            return;
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::UpdatedTrack( const guTrack * track )
+{
+    if( track->m_FileName == m_CurrentTrack->m_FileName )
+    {
+        SetCurrentTrack( track );
+
+        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSSEARCHFIRST );
+        wxPostEvent( wxTheApp->GetTopWindow(), Event );
+    }
+}
 
 
 // -------------------------------------------------------------------------------- //

@@ -658,6 +658,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     //Connect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guMainFrame::OnSysColorChanged ), NULL, this );
 
     Connect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricFound ), NULL, this );
+    Connect( ID_MAINFRAME_LYRICSSEARCHFIRST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchFirst ), NULL, this );
     Connect( ID_MAINFRAME_LYRICSSEARCHNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchNext ), NULL, this );
     Connect( ID_MAINFRAME_LYRICSSAVECHANGES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSaveChanges ), NULL, this );
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
@@ -795,6 +796,7 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MAINFRAME_REQUEST_CURRENTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRequestCurrentTrack ), NULL, this );
 
     Disconnect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricFound ), NULL, this );
+    Disconnect( ID_MAINFRAME_LYRICSSEARCHFIRST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchFirst ), NULL, this );
     Disconnect( ID_MAINFRAME_LYRICSSEARCHNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchNext ), NULL, this );
     Disconnect( ID_MAINFRAME_LYRICSSAVECHANGES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSaveChanges ), NULL, this );
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
@@ -1880,7 +1882,7 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
 
     if( m_LyricsPanel )
     {
-        m_LyricsPanel->OnUpdatedTrack( event );
+        m_LyricsPanel->OnSetCurrentTrack( event );
     }
 
     if( m_LyricSearchEngine )
@@ -4253,7 +4255,7 @@ void guMainFrame::OnRequestCurrentTrack( wxCommandEvent &event )
 
     if( event.GetClientData() == m_LyricsPanel )
     {
-        m_LyricsPanel->OnUpdatedTrack( UpdateEvent );
+        m_LyricsPanel->OnSetCurrentTrack( UpdateEvent );
 
         if( m_LyricSearchEngine )
         {
@@ -5088,6 +5090,11 @@ void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
     {
         m_PlayListPanel->UpdatedTracks( tracks );
     }
+
+    if( m_LyricsPanel )
+    {
+        m_LyricsPanel->UpdatedTracks( tracks );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -5284,6 +5291,16 @@ void guMainFrame::OnLyricFound( wxCommandEvent &event )
     if( LyricText )
     {
         delete LyricText;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLyricSearchFirst( wxCommandEvent &event )
+{
+    if( m_LyricSearchEngine && m_LyricSearchContext )
+    {
+        m_LyricSearchContext->ResetIndex();
+        m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
     }
 }
 
