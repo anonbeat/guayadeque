@@ -28,7 +28,6 @@
 #include "Equalizer.h"
 #include "FileRenamer.h" // NormalizeField
 #include "Images.h"
-#include "LastFM.h"
 #include "MainFrame.h"
 #include "TagInfo.h"
 //#include "TrackChangeInfo.h"
@@ -3047,11 +3046,11 @@ void guPlayerPanel::OnSetVolume( wxCommandEvent &event )
 guSmartAddTracksThread::guSmartAddTracksThread( guDbLibrary * db,
         guPlayerPanel * playerpanel, const guTrack * track,
         wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
-        const int maxtracks, const int maxartists,
-        const int trackcount, const int filterallow, const int filterdeny ) : wxThread()
+        const int trackcount, const int maxtracks, const int maxartists, const int filterallow, const int filterdeny ) : wxThread()
 {
     m_Db = db;
     m_PlayerPanel = playerpanel;
+    m_LastFM = new guLastFM();
     m_CurSong = track;
     m_SmartAddedTracks = smartaddedtracks;
     m_SmartAddedArtists = smartaddedartists;
@@ -3074,45 +3073,54 @@ guSmartAddTracksThread::~guSmartAddTracksThread()
 //    printf( "guSmartAddTracksThread Object destroyed\n" );
   if( !TestDestroy() )
     m_PlayerPanel->m_SmartAddTracksThread = NULL;
+
+  if( m_LastFM )
+    delete m_LastFM;
 }
 
 // -------------------------------------------------------------------------------- //
 void guSmartAddTracksThread::AddSimilarTracks( const wxString &artist, const wxString &track, guTrackArray * songs )
 {
-    guLastFM * LastFM = new guLastFM();
-    if( LastFM )
+    guSimilarTrackInfoArray SimilarTracks = m_LastFM->TrackGetSimilar( artist, track );
+    if( SimilarTracks.Count() )
     {
-        guSimilarTrackInfoArray SimilarTracks = LastFM->TrackGetSimilar( artist, track );
-        if( SimilarTracks.Count() )
+        int Index;
+        int Count = SimilarTracks.Count();
+        for( Index = 0; Index < Count; Index++ )
         {
-            int Index;
-            int Count = SimilarTracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            double Match;
+            SimilarTracks[ Index ].m_Match.Replace( wxT( "." ), wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER ) );
+            if( SimilarTracks[ Index ].m_Match.ToDouble( &Match ) )
             {
-              //guLogMessage( wxT( "Similar: '%s' - '%s'" ), SimilarTracks[ index ].ArtistName.c_str(), SimilarTracks[ index ].TrackName.c_str() );
-              guTrack * Song = m_Db->FindSong( SimilarTracks[ Index ].m_ArtistName,
-                                               SimilarTracks[ Index ].m_TrackName,
-                                               m_FilterAllowPlayList,
-                                               m_FilterDenyPlayList );
-              if( Song &&
-                  ( m_SmartAddedTracks->Index( Song->m_SongId ) == wxNOT_FOUND ) &&
-                  ( m_SmartAddedArtists->Index( Song->m_ArtistName.Upper() ) == wxNOT_FOUND ) )
-              {
-                  Song->m_TrackMode = guTRACK_MODE_SMART;
-                  //guLogMessage( wxT( "Found this song in the Songs Library" ) );
-                  songs->Add( Song );
-              }
+                if( Match >= 0.1 )
+                {
+                    //guLogMessage( wxT( "Similar: '%s' - '%s'" ), SimilarTracks[ index ].ArtistName.c_str(), SimilarTracks[ index ].TrackName.c_str() );
+                    guTrack * Song = m_Db->FindSong( SimilarTracks[ Index ].m_ArtistName,
+                                                   SimilarTracks[ Index ].m_TrackName,
+                                                   m_FilterAllowPlayList,
+                                                   m_FilterDenyPlayList );
+                    if( Song &&
+                        ( m_SmartAddedTracks->Index( Song->m_SongId ) == wxNOT_FOUND ) &&
+                        ( m_SmartAddedArtists->Index( Song->m_ArtistName.Upper() ) == wxNOT_FOUND ) )
+                    {
+                        Song->m_TrackMode = guTRACK_MODE_SMART;
+                        //guLogMessage( wxT( "Found this song in the Songs Library" ) );
+                        songs->Add( Song );
+                    }
+                }
+                else
+                    break;
             }
+            if( ( int ) songs->Count() >= m_TrackCount )
+                break;
         }
-        delete LastFM;
     }
 }
 
 // -------------------------------------------------------------------------------- //
 guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
 {
-    guLastFM * LastFM = new guLastFM();
-    if( LastFM )
+    if( m_LastFM )
     {
         guTrackArray FoundTracks;
         guTrackArray * Songs = new guTrackArray();
@@ -3130,14 +3138,14 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
             if( CurAddedTrack )
             {
                 CurAddedTrack--;
-                while( FoundTracks.Count() < 25 && CurAddedTrack )
+                while( FoundTracks.Count() < 20 && CurAddedTrack )
                 {
                     if( m_Db->GetSong( ( * m_SmartAddedTracks )[ CurAddedTrack ], &AddedTrack ) )
                     {
                         AddSimilarTracks( AddedTrack.m_ArtistName, AddedTrack.m_SongName, &FoundTracks );
                     }
                     CurAddedTrack--;
-                    Sleep( 20 );
+                    Sleep( 200 );
                 }
             }
 
@@ -3183,7 +3191,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
 
         if( !TestDestroy() && Songs && ( ( int ) Songs->Count() < m_TrackCount ) )
         {
-            guSimilarArtistInfoArray SimilarArtists = LastFM->ArtistGetSimilar( m_CurSong->m_ArtistName );
+            guSimilarArtistInfoArray SimilarArtists = m_LastFM->ArtistGetSimilar( m_CurSong->m_ArtistName );
             if( SimilarArtists.Count() && !TestDestroy() )
             {
                 int ArtistId;
@@ -3195,14 +3203,24 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                     if( TestDestroy() )
                         break;
 
-                    ArtistId = m_Db->GetArtistId( SimilarArtists[ Index ].m_Name, false );
-                    if( ArtistId != wxNOT_FOUND )
+                    double Match;
+                    SimilarArtists[ Index ].m_Match.Replace( wxT( "." ), wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER ) );
+                    if( SimilarArtists[ Index ].m_Match.ToDouble( &Match ) )
                     {
-                        Artists.Add( ArtistId );
+                        if( Match > 0.1 )
+                        {
+                            ArtistId = m_Db->GetArtistId( SimilarArtists[ Index ].m_Name, false );
+                            if( ArtistId != wxNOT_FOUND )
+                            {
+                                Artists.Add( ArtistId );
+                            }
+                        }
+                        else
+                            break;
                     }
                 }
 
-                m_Db->GetArtistsSongs( Artists, &ArtistsTracks, 25, m_FilterAllowPlayList, m_FilterDenyPlayList );
+                m_Db->GetArtistsSongs( Artists, &ArtistsTracks, 20, m_FilterAllowPlayList, m_FilterDenyPlayList );
 
                 Count = ArtistsTracks.Count();
                 for( Index = 0; Index < Count; Index++ )
@@ -3213,7 +3231,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                         Songs->Add( new guTrack( ArtistsTracks[ Index ] ) );
                         m_SmartAddedTracks->Add( ArtistsTracks[ Index ].m_SongId );
                         m_SmartAddedArtists->Add( ArtistsTracks[ Index ].m_ArtistName.Upper() );
-                        if( ( int ) Songs->Count() == m_TrackCount )
+                        if( ( int ) Songs->Count() >= m_TrackCount )
                             break;
                     }
                 }
@@ -3244,7 +3262,6 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
                 delete Songs;
             }
         }
-        delete LastFM;
     }
     return 0;
 }
