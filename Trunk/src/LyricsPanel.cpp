@@ -433,6 +433,7 @@ void guLyricsPanel::OnLyricFound( wxCommandEvent &event )
     {
         delete LyricText;
     }
+    SetLastSource( event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -728,6 +729,28 @@ void guLyricsPanel::SetLyricText( const wxString * lyrictext, const bool forceup
             m_CurrentLyricText = * lyrictext;
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::SetLastSource( const int sourceindex )
+{
+    guLogMessage( wxT( "Setting the lyrics source index to %i" ), sourceindex );
+
+    if( sourceindex == wxNOT_FOUND )
+    {
+        m_LastSource = wxEmptyString;
+    }
+    else
+    {
+        guLyricSource * LyricSource = m_LyricSearchEngine->GetSource( sourceindex );
+        if( LyricSource )
+        {
+            m_LastSource = LyricSource->Name();
+        }
+    }
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    AddPendingEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1362,6 +1385,7 @@ void guLyricSearchEngine::SearchFinished( guLyricSearchThread * searchthread )
     m_LyricSearchThreadsMutex.Lock();
 
     wxCommandEvent LyricEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_LYRICFOUND );
+    LyricEvent.SetInt( searchthread->LyricSearchContext()->m_CurrentIndex );
     LyricEvent.SetClientData( new wxString( searchthread->LyricText() ) );
     wxPostEvent( searchthread->LyricSearchContext()->Owner(), LyricEvent );
 
