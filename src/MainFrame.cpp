@@ -4165,6 +4165,10 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
             SizeToString( m_SelSize.GetValue() ).c_str() );
         m_MainStatusBar->SetSelInfo( SelInfo );
     }
+    else if( m_CurrentPage == ( wxWindow * ) m_LyricsPanel )
+    {
+        m_MainStatusBar->SetSelInfo( _( "Lyrics from " ) + m_LyricsPanel->LastSource() );
+    }
     else if( m_CurrentPage == ( wxWindow * ) m_FileBrowserPanel )
     {
         if( m_FileBrowserPanel->GetCounters( &m_SelCount, &m_SelLength, &m_SelSize ) )
@@ -5286,6 +5290,7 @@ void guMainFrame::OnLyricFound( wxCommandEvent &event )
     if( m_LyricsPanel )
     {
         m_LyricsPanel->SetLyricText( LyricText );
+        m_LyricsPanel->SetLastSource( event.GetInt() );
     }
 
     if( LyricText )
