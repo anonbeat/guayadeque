@@ -24,6 +24,7 @@
 #include "AudioScrobble.h"
 #include "AutoScrollText.h"
 #include "dbus/notify.h"
+#include "LastFM.h"
 #include "MediaCtrl.h"
 #include "PlayerFilters.h"
 #include "PlayList.h"
@@ -437,6 +438,7 @@ class guSmartAddTracksThread : public wxThread
   protected :
     guDbLibrary *   m_Db;
     guPlayerPanel * m_PlayerPanel;
+    guLastFM *      m_LastFM;
     const guTrack * m_CurSong;
     int             m_TrackCount;
     int             m_FilterAllowPlayList;
