@@ -36,6 +36,7 @@
 #include <wx/print.h>
 #include <wx/printdlg.h>
 #include <wx/settings.h>
+#include <wx/txtstrm.h>
 #include <wx/xml/xml.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
@@ -1425,6 +1426,7 @@ guLyricSearchThread::guLyricSearchThread( guLyricSearchContext * context, const 
     m_LyricSearchContext = context;
     m_LyricText = lyrictext;
     m_ForceSaveProcess = forcesaveprocess;
+    m_CommandIsExecuting = false;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1674,18 +1676,37 @@ void guLyricSearchThread::LyricFile( guLyricSource &lyricsource )
 // -------------------------------------------------------------------------------- //
 void guLyricSearchThread::LyricCommand( guLyricSource &lyricsource )
 {
-    wxString CommandText = GetSource( lyricsource );
-    guLogMessage( wxT( "Trying to execute command: %s" ), CommandText.c_str() );
+    wxString * CommandText = new wxString( GetSource( lyricsource ) );
+    guLogMessage( wxT( "Trying to execute command: %s" ), CommandText->c_str() );
 
-    wxArrayString OutputStr;
-    wxExecute( CommandText, OutputStr, wxEXEC_ASYNC );
+    wxCommandEvent CommandEvent( ID_MAINFRAME_LYRICSEXECCOMMAND );
+    CommandEvent.SetClientData( CommandText );
+    CommandEvent.SetClientObject( ( wxClientData * ) this );
+    CommandEvent.SetInt( false );
+    wxPostEvent( wxTheApp->GetTopWindow(), CommandEvent );
 
-    int Index;
-    int Count = OutputStr.Count();
-    for( Index = 0; Index < Count; Index++ )
+    m_CommandIsExecuting = true;
+
+    long EndLocalTime = wxGetLocalTime() + 90;
+
+    while( !TestDestroy() && m_CommandIsExecuting )
     {
-        //guLogMessage( wxT( "Adding : %s" ), OutputStr[ Index ].c_str() );
-        m_LyricText += OutputStr[ Index ] + wxT( "\n" );
+        Sleep( 20 );
+
+        if( wxGetLocalTime() > EndLocalTime )
+            break;
+    }
+    m_CommandIsExecuting = false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricSearchThread::FinishExecCommand( const wxString &lyrictext )
+{
+    if( m_CommandIsExecuting )
+    {
+        //guLogMessage( wxT( "Finish Executing the Command..." ) );
+        m_LyricText = lyrictext;
+        m_CommandIsExecuting = false;
     }
 }
 
@@ -1764,8 +1785,14 @@ void guLyricSearchThread::ProcessSave( guLyricSource &lyricsource )
                 }
                 else if( LyricTarget->Type() == guLYRIC_SOURCE_TYPE_COMMAND )
                 {
-                    wxString CommandText = GetSource( * LyricTarget );
-                    wxExecute( CommandText, wxEXEC_ASYNC );
+                    wxString * CommandText = new wxString( GetSource( * LyricTarget ) );
+                    guLogMessage( wxT( "Trying to execute save command: %s" ), CommandText->c_str() );
+
+                    wxCommandEvent CommandEvent( ID_MAINFRAME_LYRICSEXECCOMMAND );
+                    CommandEvent.SetClientObject( ( wxClientData * ) this );
+                    CommandEvent.SetClientData( CommandText );
+                    CommandEvent.SetInt( true );
+                    wxPostEvent( wxTheApp->GetTopWindow(), CommandEvent );
                 }
             }
         }
@@ -1854,6 +1881,46 @@ guLyricSearchThread::ExitCode guLyricSearchThread::Entry()
 
 // -------------------------------------------------------------------------------- //
 //
+// -------------------------------------------------------------------------------- //
+guLyricExecCommandTerminate::guLyricExecCommandTerminate( guLyricSearchThread * searchthread, const bool issavecommand ) :
+    wxProcess( wxPROCESS_REDIRECT )
+{
+    //guLogMessage( wxT( "guLyricExecCommandTerminate::guLyricExecCommandTerminate" ) );
+    m_LyricSearchThread = searchthread;
+    m_IsSaveCommand = issavecommand;
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricExecCommandTerminate::OnTerminate( int pid, int status )
+{
+	guLogMessage( wxT( "Command with pid '%d' finished with status '%d'" ), pid, status );
+
+    wxString CommandLyric;
+    if( !m_IsSaveCommand && IsInputAvailable() )
+    {
+        wxInputStream * CmdOutStream = GetInputStream();
+        if( CmdOutStream )
+        {
+            wxTextInputStream TextStream( * CmdOutStream );
+            while( !CmdOutStream->Eof() )
+            {
+                wxString Line = TextStream.ReadLine() + wxT( "\n" );
+                CommandLyric += Line;
+            }
+        }
+        else
+        {
+            guLogMessage( wxT( "Error getting the exec command input stream" ) );
+        }
+    }
+
+    m_LyricSearchThread->FinishExecCommand( CommandLyric );
+
+	delete this;
+}
+
+// -------------------------------------------------------------------------------- //
+// guLyricSourceEditor
 // -------------------------------------------------------------------------------- //
 guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyricsource, const bool istarget ) :
     //wxDialog( parent, wxID_ANY, _( "Lyric Source Editor" ), wxDefaultPosition, wxSize( 500, 425 ), wxDEFAULT_DIALOG_STYLE )

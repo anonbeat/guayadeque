@@ -411,6 +411,8 @@ class guMainFrame : public wxFrame
     void                            OnLyricSearchFirst( wxCommandEvent &event );
     void                            OnLyricSearchNext( wxCommandEvent &event );
     void                            OnLyricSaveChanges( wxCommandEvent &event );
+    void                            OnLyricExecCommand( wxCommandEvent &event );
+
     void                            OnConfigUpdated( wxCommandEvent &event );
 
   public:

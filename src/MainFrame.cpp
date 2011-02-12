@@ -42,7 +42,7 @@
 #include <wx/notebook.h>
 #include <wx/datetime.h>
 #include <wx/tokenzr.h>
-
+#include <wx/txtstrm.h>
 
 // The default update podcasts timeout is 15 minutes
 #define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
@@ -661,6 +661,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MAINFRAME_LYRICSSEARCHFIRST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchFirst ), NULL, this );
     Connect( ID_MAINFRAME_LYRICSSEARCHNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchNext ), NULL, this );
     Connect( ID_MAINFRAME_LYRICSSAVECHANGES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSaveChanges ), NULL, this );
+    Connect( ID_MAINFRAME_LYRICSEXECCOMMAND, wxCommandEventHandler( guMainFrame::OnLyricExecCommand ), NULL, this );
+
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
 
 }
@@ -5329,6 +5331,36 @@ void guMainFrame::OnLyricSaveChanges( wxCommandEvent &event )
 
         delete LyricText;
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLyricExecCommand( wxCommandEvent &event )
+{
+    guLyricSearchThread * LyricSearchThread = ( guLyricSearchThread * ) event.GetClientObject();
+    wxString * CommandText = ( wxString * ) event.GetClientData();
+    guLogMessage( wxT( "OnLyricExecCommand: '%s'" ), CommandText->c_str() );
+
+    if( CommandText && LyricSearchThread )
+    {
+        guLyricExecCommandTerminate * LyricExecCommandTerminate = new guLyricExecCommandTerminate( LyricSearchThread, event.GetInt() );
+        if( LyricExecCommandTerminate )
+        {
+            if( !wxExecute( * CommandText, wxEXEC_ASYNC, LyricExecCommandTerminate ) )
+            {
+                guLogError( wxT( "Could not execute the command '%s'" ), CommandText->c_str() );
+                delete LyricExecCommandTerminate;
+
+                LyricSearchThread->FinishExecCommand( wxEmptyString );
+            }
+            LyricExecCommandTerminate->Redirect();
+        }
+    }
+    else
+    {
+        guLogMessage( wxT( "Error on OnLyricExecCommand..." ) );
+    }
+
+    delete CommandText;
 }
 
 // -------------------------------------------------------------------------------- //
