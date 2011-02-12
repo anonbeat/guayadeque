@@ -39,6 +39,7 @@
 #include <wx/icon.h>
 #include <wx/bmpbuttn.h>
 #include <wx/button.h>
+#include <wx/process.h>
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include <wx/html/htmlwin.h>
@@ -323,6 +324,7 @@ class guLyricSearchThread : public wxThread
   protected :
     wxString                    m_LyricText;
     bool                        m_ForceSaveProcess;
+    bool                        m_CommandIsExecuting;
     guLyricSearchContext *      m_LyricSearchContext;
 
 
@@ -351,9 +353,25 @@ class guLyricSearchThread : public wxThread
     wxString                    LyricText( void ) { return m_LyricText; }
     guLyricSearchContext *      LyricSearchContext( void ) { return m_LyricSearchContext; }
 
+    void                        FinishExecCommand( const wxString &lyrictext );
+
     friend class guLyricSearchEngine;
 };
 WX_DEFINE_ARRAY_PTR( guLyricSearchThread *, guLyricSearchThreadArray );
+
+// -------------------------------------------------------------------------------- //
+class guLyricExecCommandTerminate : public wxProcess
+{
+  protected :
+    guLyricSearchThread *   m_LyricSearchThread;
+    bool                    m_IsSaveCommand;
+
+  public :
+	guLyricExecCommandTerminate( guLyricSearchThread * searchthread, const bool issavecommand = false );
+
+	virtual void OnTerminate( int pid, int status );
+
+};
 
 // -------------------------------------------------------------------------------- //
 class guLyricSearchEngine
