@@ -4169,7 +4169,7 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     }
     else if( m_CurrentPage == ( wxWindow * ) m_LyricsPanel )
     {
-        m_MainStatusBar->SetSelInfo( _( "Lyrics from " ) + m_LyricsPanel->LastSource() );
+        m_MainStatusBar->SetSelInfo( m_LyricsPanel->GetLyricSource() );
     }
     else if( m_CurrentPage == ( wxWindow * ) m_FileBrowserPanel )
     {

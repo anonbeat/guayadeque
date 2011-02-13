@@ -322,6 +322,9 @@ void guLyricsPanel::SetCurrentTrack( const guTrack * track )
         m_CurrentLyricText = wxEmptyString;
 
         SetTrack( &ChangeInfo );
+
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+        AddPendingEvent( event );
     }
 }
 
@@ -342,10 +345,10 @@ void guLyricsPanel::OnTextUpdated( wxCommandEvent& event )
         m_LyricSearchContext = NULL;
     }
 
-    if( m_CurrentLyricText )
-    {
-        SetText( ( m_CurrentLyricText = wxEmptyString ) );
-    }
+//    if( !m_CurrentLyricText.IsEmpty() )
+//    {
+//        SetText( ( m_CurrentLyricText = wxEmptyString ) );
+//    }
 
     SetTitle( m_TrackTextCtrl->GetValue() + wxT( " / " ) + m_ArtistTextCtrl->GetValue() );
 }
@@ -365,11 +368,14 @@ void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
         m_UpdateCheckBox->SetValue( autoupdate );
     }
 
-    if( m_UpdateEnabled )
+    if( m_UpdateEnabled && m_CurrentTrack )
     {
         wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_REQUEST_CURRENTTRACK );
         Event.SetClientData( this );
         wxPostEvent( wxTheApp->GetTopWindow(), Event );
+
+        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+        AddPendingEvent( CmdEvent );
     }
 
     m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
@@ -414,6 +420,7 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
             m_CurrentTrack->m_SongName = m_TrackTextCtrl->GetValue();
 
             SetTitle( m_TrackTextCtrl->GetValue() + wxT( " / " ) + m_ArtistTextCtrl->GetValue() );
+            SetText( _( "Searching..." ) );
 
             if( !m_LyricSearchContext )
             {
@@ -423,6 +430,8 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
             m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
         }
     }
+    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    AddPendingEvent( CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -503,6 +512,7 @@ void guLyricsPanel::SetText( const wxString &text )
     m_LyricText->SetValue( wxEmptyString );
     m_LyricText->WriteText( text );
     m_LyricText->SetInsertionPoint( 0 );
+    guLogMessage( wxT( "SetText: '%s'" ), text.Mid( 0, 16 ).c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -711,7 +721,7 @@ void guLyricsPanel::SetLyricText( const wxString * lyrictext, const bool forceup
     {
         if( lyrictext->IsEmpty() )
         {
-            SetText( _( "No lyrics found for this song." ) );
+            SetText( _( "No lyrics found" ) );
 
             if( !m_CurrentLyricText.IsEmpty() )
             {
@@ -786,6 +796,23 @@ void guLyricsPanel::UpdatedTrack( const guTrack * track )
 
         wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSSEARCHFIRST );
         wxPostEvent( wxTheApp->GetTopWindow(), Event );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guLyricsPanel::GetLyricSource( void )
+{
+    if( !m_CurrentLyricText.IsEmpty() )
+    {
+        return _( "Lyrics from " ) + m_LastSource;
+    }
+    else if( m_LyricText->GetValue() == _( "Searching..." ) )
+    {
+        return _( "Searching..." );
+    }
+    else
+    {
+        return _( "No lyrics found" );
     }
 }
 
