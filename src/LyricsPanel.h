@@ -122,7 +122,8 @@ class guLyricsPanel : public wxPanel
     void                    UpdatedTrack( const guTrack * track );
 
     void                    SetLastSource( const int sourceindex );
-    wxString                LastSource( void ) { return m_LastSource; }
+
+    wxString                GetLyricSource( void );
 
 };
 
