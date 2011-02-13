@@ -1679,7 +1679,7 @@ void guLyricSearchThread::LyricCommand( guLyricSource &lyricsource )
     wxString * CommandText = new wxString( GetSource( lyricsource ) );
     guLogMessage( wxT( "Trying to execute command: %s" ), CommandText->c_str() );
 
-    wxCommandEvent CommandEvent( ID_MAINFRAME_LYRICSEXECCOMMAND );
+    wxCommandEvent CommandEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSEXECCOMMAND );
     CommandEvent.SetClientData( CommandText );
     CommandEvent.SetClientObject( ( wxClientData * ) this );
     CommandEvent.SetInt( false );
@@ -1788,7 +1788,7 @@ void guLyricSearchThread::ProcessSave( guLyricSource &lyricsource )
                     wxString * CommandText = new wxString( GetSource( * LyricTarget ) );
                     guLogMessage( wxT( "Trying to execute save command: %s" ), CommandText->c_str() );
 
-                    wxCommandEvent CommandEvent( ID_MAINFRAME_LYRICSEXECCOMMAND );
+                    wxCommandEvent CommandEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSEXECCOMMAND );
                     CommandEvent.SetClientObject( ( wxClientData * ) this );
                     CommandEvent.SetClientData( CommandText );
                     CommandEvent.SetInt( true );
