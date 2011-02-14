@@ -1236,14 +1236,21 @@ void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
 wxString inline FileNameEncode( const wxString filename )
 {
     static const wxChar NumChars[] = wxT( "0123456789" );
-
     wxString RetVal = filename;
-    int Pos;
-    while( ( Pos = RetVal.Find( wxT( "%" ) ) ) != wxNOT_FOUND &&
-            !( wxStrchr( NumChars, RetVal[ Pos + 1 ] ) &&
-               wxStrchr( NumChars, RetVal[ Pos + 2 ] ) ) )
+
+    if( filename.StartsWith( wxT( "file://" ) ) )
     {
-        RetVal = RetVal.Mid( 0, Pos ) + wxT( "%25" ) + RetVal.Mid( Pos + 1 );
+        RetVal.Replace( wxT( "%" ), wxT( "%25" ) );
+    }
+    else
+    {
+        int Pos;
+        while( ( Pos = RetVal.Find( wxT( "%" ) ) ) != wxNOT_FOUND &&
+                !( wxStrchr( NumChars, RetVal[ Pos + 1 ] ) &&
+                   wxStrchr( NumChars, RetVal[ Pos + 2 ] ) ) )
+        {
+            RetVal = RetVal.Mid( 0, Pos ) + wxT( "%25" ) + RetVal.Mid( Pos + 1 );
+        }
     }
     RetVal.Replace( wxT( "#" ), wxT( "%23" ) );
     return RetVal;
