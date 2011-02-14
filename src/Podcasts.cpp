@@ -27,6 +27,7 @@
 #include "Utils.h"
 
 #include <wx/arrimpl.cpp>
+#include <wx/uri.h>
 
 WX_DEFINE_OBJARRAY(guPodcastChannelArray);
 WX_DEFINE_OBJARRAY(guPodcastItemArray);
@@ -510,6 +511,7 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
         else if( XmlNode->GetName() == wxT( "enclosure" ) )
         {
             XmlNode->GetPropVal( wxT( "url" ), &m_Enclosure );
+
             wxString LenStr;
             XmlNode->GetPropVal( wxT( "length" ), &LenStr );
             unsigned long ULongVal;
