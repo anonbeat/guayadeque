@@ -319,9 +319,10 @@ void guLyricsPanel::SetCurrentTrack( const guTrack * track )
 
         m_CurrentTrackInfo = ChangeInfo;
 
-        m_CurrentLyricText = wxEmptyString;
+        m_LastSourceName = m_LastLyricText = m_CurrentLyricText = wxEmptyString;
 
         SetTrack( &ChangeInfo );
+        m_CurrentLyricText = wxEmptyString;
 
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
         AddPendingEvent( event );
@@ -535,19 +536,21 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     m_ReloadButton->Enable( false );
     m_EditButton->Enable( false );
     m_SaveButton->Enable( false );
-
-    m_CurrentLyricText = wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnTextTimer( wxTimerEvent &event )
 {
-    if( !m_CurrentLyricText.IsEmpty() )
+    if( !m_LastLyricText.IsEmpty() )
     {
-        SetText( m_CurrentLyricText );
+        SetText( m_LastLyricText );
+        m_CurrentSourceName = m_LastSourceName;
 
         m_ReloadButton->Enable( true );
         m_EditButton->Enable( true );
+
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+        AddPendingEvent( event );
     }
 }
 
@@ -722,8 +725,9 @@ void guLyricsPanel::SetLyricText( const wxString * lyrictext, const bool forceup
         if( lyrictext->IsEmpty() )
         {
             SetText( _( "No lyrics found" ) );
+            guLogMessage( wxT( "Current empty : %i" ), m_CurrentLyricText.IsEmpty() );
 
-            if( !m_CurrentLyricText.IsEmpty() )
+            if( !m_LastLyricText.IsEmpty() )
             {
                 if( m_LyricTextTimer.IsRunning() )
                     m_LyricTextTimer.Stop();
@@ -733,13 +737,13 @@ void guLyricsPanel::SetLyricText( const wxString * lyrictext, const bool forceup
         else
         {
             SetText( * lyrictext );
-            m_ReloadButton->Enable( true );
-            m_EditButton->Enable( m_CurrentTrack );
             m_SaveButton->Enable( m_CurrentTrack && !m_UpdateEnabled );
 
-            m_CurrentLyricText = * lyrictext;
+            m_LastLyricText = m_CurrentLyricText = * lyrictext;
         }
     }
+    m_ReloadButton->Enable( true );
+    m_EditButton->Enable( m_CurrentTrack );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -749,14 +753,14 @@ void guLyricsPanel::SetLastSource( const int sourceindex )
 
     if( sourceindex == wxNOT_FOUND )
     {
-        m_LastSource = wxEmptyString;
+        m_CurrentSourceName = wxEmptyString;
     }
     else
     {
         guLyricSource * LyricSource = m_LyricSearchEngine->GetSource( sourceindex );
         if( LyricSource )
         {
-            m_LastSource = LyricSource->Name();
+            m_LastSourceName = m_CurrentSourceName = LyricSource->Name();
         }
     }
 
@@ -804,7 +808,7 @@ wxString guLyricsPanel::GetLyricSource( void )
 {
     if( !m_CurrentLyricText.IsEmpty() )
     {
-        return _( "Lyrics from " ) + m_LastSource;
+        return _( "Lyrics from " ) + m_CurrentSourceName;
     }
     else if( m_LyricText->GetValue() == _( "Searching..." ) )
     {

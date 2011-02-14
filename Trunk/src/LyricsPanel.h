@@ -78,9 +78,11 @@ class guLyricsPanel : public wxPanel
     guTrackChangeInfo       m_CurrentTrackInfo;
 
     int                     m_LyricAlign;
-	wxString                m_CurrentLyricText;
 	guTrack *               m_CurrentTrack;
-	wxString                m_LastSource;
+    wxString                m_CurrentLyricText;
+    wxString                m_CurrentSourceName;
+	wxString                m_LastLyricText;
+	wxString                m_LastSourceName;
 
     void                    SetTitle( const wxString &title );
     void                    SetText( const wxString &text );
