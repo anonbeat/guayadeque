@@ -76,7 +76,7 @@
       </extract>
       <notfound>
         <item tag="Verifique se o nome do seu arquivo e sua"/>
-        <item tag="Não encontramos a música"/>
+        <item tag="Não encontramos"/>
       </notfound>
     </lyricsource>
     <lyricsource type="download" enabled="true" name="loudson.gs" source="http://www.loudson.gs/{a1}/{al}/{bl}/{tl}">
@@ -252,6 +252,21 @@
       </replace>
       <extract>
         <item tag="&lt;div class=&quot;tab_tra_pt&quot;&gt;"/>
+      </extract>
+    </lyricsource>
+    <lyricsource type="download" enabled="true" name="Coveralia" source="http://www.coveralia.com/letras/{tl}-{al}.php">
+      <replace>
+        <item replace="áäå" with="a"/>
+        <item replace="éë" with="e"/>
+        <item replace="í" with="i"/>
+        <item replace="óö" with="o"/>
+        <item replace="úü" with="u"/>
+        <item replace=" /¿?.'" with="-"/>
+        <item replace="ñÑ" with="n"/>
+        <item replace="çÇ" with="c"/>
+      </replace>
+      <extract>
+        <item tag="&lt;p class=&quot;alincentro margen5&quot;&gt;"/>
       </extract>
     </lyricsource>
   </lyricsources>
