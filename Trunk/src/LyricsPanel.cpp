@@ -83,23 +83,28 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
 	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_SetupButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-    m_SetupButton->SetToolTip( _( "Configure lyrics" ) );
+    m_SetupButton->SetToolTip( _( "Configure lyrics preferences" ) );
 	EditorSizer->Add( m_SetupButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_again ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-    m_ReloadButton->SetToolTip( _( "Reload the lyrics" ) );
+    m_ReloadButton->SetToolTip( _( "Search for lyrics" ) );
     m_ReloadButton->Enable( false );
 	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_EditButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_EditButton->SetToolTip( _( "Edit the lyrics for the current track" ) );
+	m_EditButton->SetToolTip( _( "Edit the lyrics" ) );
 	m_EditButton->Enable( false );
 	EditorSizer->Add( m_EditButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SaveButton->Enable( false );
-	m_SaveButton->SetToolTip( _( "Save the lyrics to files or directory" ) );
-	EditorSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+	m_SaveButton->SetToolTip( _( "Save the lyrics" ) );
+	EditorSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+
+	m_WebSearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_WebSearchButton->Enable( false );
+	m_WebSearchButton->SetToolTip( _( "Search the lyrics on the web" ) );
+	EditorSizer->Add( m_WebSearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	wxStaticText * ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	ArtistStaticText->Wrap( -1 );
@@ -160,6 +165,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
 	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
 	m_EditButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnEditBtnClick ), NULL, this );
 	m_SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
+	m_WebSearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnWebSearchBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
     Connect( wxEVT_TIMER, wxTimerEventHandler( guLyricsPanel::OnTextTimer ), NULL, this );
@@ -190,6 +196,7 @@ guLyricsPanel::~guLyricsPanel()
 	m_ReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
 	m_EditButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnEditBtnClick ), NULL, this );
 	m_SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
+	m_WebSearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnWebSearchBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
     Disconnect( wxEVT_TIMER, wxTimerEventHandler( guLyricsPanel::OnTextTimer ), NULL, this );
@@ -326,6 +333,8 @@ void guLyricsPanel::SetCurrentTrack( const guTrack * track )
 
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
         AddPendingEvent( event );
+
+        m_WebSearchButton->Enable( m_CurrentTrack );
     }
 }
 
@@ -338,8 +347,9 @@ void guLyricsPanel::OnSetCurrentTrack( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnTextUpdated( wxCommandEvent& event )
 {
-    m_ReloadButton->Enable( !m_ArtistTextCtrl->IsEmpty() &&
-                            !m_TrackTextCtrl->IsEmpty() );
+    bool IsEnable = !m_ArtistTextCtrl->IsEmpty() && !m_TrackTextCtrl->IsEmpty();
+    m_ReloadButton->Enable( IsEnable );
+    m_WebSearchButton->Enable( IsEnable );
     if( m_LyricSearchContext )
     {
         delete m_LyricSearchContext;
@@ -385,6 +395,7 @@ void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
     m_ReloadButton->Enable( !m_UpdateEnabled &&
                             !m_ArtistTextCtrl->IsEmpty() &&
                             !m_TrackTextCtrl->IsEmpty() );
+    m_WebSearchButton->Enable( m_ReloadButton->IsEnabled() );
     m_EditButton->Enable( !m_CurrentLyricText.IsEmpty() );
 }
 
@@ -496,6 +507,18 @@ void guLyricsPanel::OnSaveBtnClick( wxCommandEvent& event )
 	m_LyricText->SetForegroundColour( m_LyricTitle->GetForegroundColour() );
 
     SetText( m_CurrentLyricText );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnWebSearchBtnClick( wxCommandEvent& event )
+{
+    if( !m_ArtistTextCtrl->IsEmpty() &&
+        !m_TrackTextCtrl->IsEmpty() )
+    {
+        guWebExecute( wxT( "http://www.google.com/search?q=Lyrics+\"" ) +
+                            guURLEncode( m_ArtistTextCtrl->GetValue() ) + wxT( "\"+\"" ) +
+                            guURLEncode( m_TrackTextCtrl->GetValue() ) + wxT( "\"" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -733,6 +756,7 @@ void guLyricsPanel::SetLyricText( const wxString * lyrictext, const bool forceup
                     m_LyricTextTimer.Stop();
                 m_LyricTextTimer.Start( 3000, wxTIMER_ONE_SHOT );
             }
+            m_EditButton->Enable( m_CurrentTrack );
         }
         else
         {
