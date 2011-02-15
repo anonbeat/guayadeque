@@ -1880,7 +1880,7 @@ guLyricSearchThread::ExitCode guLyricSearchThread::Entry()
                     wxRegEx RegExNewLine( wxT( " ?\r? ?\n? ?< ?br ?/? ?> ?\r? ?\n? ?" ), wxRE_EXTENDED );
                     RegExNewLine.ReplaceAll( &m_LyricText, wxT( "\n" ) );
 
-                    wxRegEx RegExHtml( wxT( " ?</?[^>.*]?> ?" ), wxRE_EXTENDED );
+                    wxRegEx RegExHtml( wxT( " ?</?[^>]*> ?" ), wxRE_EXTENDED );
                     RegExHtml.ReplaceAll( &m_LyricText, wxT( "" ) );
 
                     if( !CheckNotFound( LyricSource ) )
