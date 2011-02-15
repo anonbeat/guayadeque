@@ -725,7 +725,7 @@ void guLyricsPanel::SetLyricText( const wxString * lyrictext, const bool forceup
         if( lyrictext->IsEmpty() )
         {
             SetText( _( "No lyrics found" ) );
-            guLogMessage( wxT( "Current empty : %i" ), m_CurrentLyricText.IsEmpty() );
+            //guLogMessage( wxT( "Current empty : %i" ), m_CurrentLyricText.IsEmpty() );
 
             if( !m_LastLyricText.IsEmpty() )
             {
@@ -1955,7 +1955,7 @@ void guLyricExecCommandTerminate::OnTerminate( int pid, int status )
 // -------------------------------------------------------------------------------- //
 guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyricsource, const bool istarget ) :
     //wxDialog( parent, wxID_ANY, _( "Lyric Source Editor" ), wxDefaultPosition, wxSize( 500, 425 ), wxDEFAULT_DIALOG_STYLE )
-    wxDialog( parent, wxID_ANY, istarget ? _( "Lyric Target Editor" ) : _( "Lyric Source Editor" ), wxDefaultPosition, wxSize( 500, 425 - ( istarget * 200 ) ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, istarget ? _( "Lyric Target Editor" ) : _( "Lyric Source Editor" ), wxDefaultPosition, wxSize( 500, 450 - ( istarget * 200 ) ), wxDEFAULT_DIALOG_STYLE )
 {
     m_LyricSource = lyricsource;
     m_IsTarget = istarget;
@@ -1972,9 +1972,10 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
 	wxFlexGridSizer * OptionsSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
 	OptionsSizer->AddGrowableCol( 1 );
-	OptionsSizer->AddGrowableRow( 2 );
-	OptionsSizer->AddGrowableRow( 3 );
-	OptionsSizer->AddGrowableRow( 4 );
+//	OptionsSizer->AddGrowableRow( 2 );
+//	OptionsSizer->AddGrowableRow( 3 );
+//	OptionsSizer->AddGrowableRow( 4 );
+//	OptionsSizer->AddGrowableRow( 5 );
 	OptionsSizer->SetFlexibleDirection( wxBOTH );
 	OptionsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -2025,7 +2026,7 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
         guLyricSourceReplace * ReplaceItem = &m_ReplaceItems[ Index ];
         ListBoxOptions.Add( ReplaceItem->ToStr() );
     }
-	m_ReplaceListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
+	m_ReplaceListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxSize( -1, 70 ), 0, NULL, wxLB_SINGLE );
 	m_ReplaceListBox->Append( ListBoxOptions );
 	m_ReplaceListBox->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
 	ReplaceListBoxSizer->Add( m_ReplaceListBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -2059,7 +2060,7 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
             guLyricSourceExtract * ExtractItem = &m_ExtractItems[ Index ];
             ListBoxOptions.Add( ExtractItem->ToStr() );
         }
-        m_ExtractListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
+        m_ExtractListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxSize( -1, 70 ), 0, NULL, wxLB_SINGLE );
         m_ExtractListBox->Append( ListBoxOptions );
         ExtractListBoxSizer->Add( m_ExtractListBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -2089,7 +2090,7 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
             guLyricSourceExclude * ExcludeItem = &m_ExcludeItems[ Index ];
             ListBoxOptions.Add( ExcludeItem->ToStr() );
         }
-        m_ExcludeListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
+        m_ExcludeListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxSize( -1, 70 ), 0, NULL, wxLB_SINGLE );
         m_ExcludeListBox->Append( ListBoxOptions );
         ExcludeListBoxSizer->Add( m_ExcludeListBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -2112,7 +2113,7 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
         wxBoxSizer * NotFoundListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
-        m_NotFoundListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
+        m_NotFoundListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxSize( -1, 70 ), 0, NULL, wxLB_SINGLE );
         m_NotFoundListBox->Append( m_NotFoundItems );
         NotFoundListBoxSizer->Add( m_NotFoundListBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -2141,8 +2142,8 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALL, 5 );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+	SetSizer( MainSizer );
+	Layout();
 
 	// Connect Events
 	m_TypeChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guLyricSourceEditor::OnTypeChanged ), NULL, this );
