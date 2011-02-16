@@ -64,17 +64,24 @@ int guDbRadios::GetRadioFiltersCount( void ) const
 }
 
 // -------------------------------------------------------------------------------- //
-wxString inline RadioTextFilterToSQL( const wxArrayString &TeFilters )
+wxString inline RadioTextFilterToSQL( const wxArrayString &textfilters, const int source )
 {
   long count;
   long index;
   wxString RetVal = wxEmptyString;
-  if( ( count = TeFilters.Count() ) )
+  if( ( count = textfilters.Count() ) )
   {
     for( index = 0; index < count; index++ )
     {
-        RetVal += wxT( "( radiogenre_name LIKE '%" ) + escape_query_str( TeFilters[ index ] ) + wxT( "%' OR " );
-        RetVal += wxT( " radiostation_name LIKE '%" ) + escape_query_str( TeFilters[ index ] ) + wxT( "%' ) AND " );
+        if( source == guRADIO_SOURCE_USER )
+        {
+            RetVal += wxT( "radiostation_name LIKE '%" ) + escape_query_str( textfilters[ index ] ) + wxT( "%' AND " );
+        }
+        else
+        {
+            RetVal += wxT( "( radiogenre_name LIKE '%" ) + escape_query_str( textfilters[ index ] ) + wxT( "%' OR " );
+            RetVal += wxT( " radiostation_name LIKE '%" ) + escape_query_str( textfilters[ index ] ) + wxT( "%' ) AND " );
+        }
     }
     RetVal = RetVal.RemoveLast( 4 );
   }
@@ -89,7 +96,7 @@ wxString guDbRadios::RadioFiltersSQL( void )
 
   if( m_RaTeFilters.Count() )
   {
-    RetVal += RadioTextFilterToSQL( m_RaTeFilters );
+    RetVal += RadioTextFilterToSQL( m_RaTeFilters, m_RadioSource );
   }
 
   return RetVal;
@@ -350,8 +357,8 @@ int guDbRadios::GetRadioStations( guRadioStations * Stations )
 
         if( m_RaTeFilters.Count() )
         {
-            querydb += wxT( ", radiogenres " );
-            subquery += wxT( "AND radiostation_genreid = radiogenre_id " );
+            //querydb += wxT( ", radiogenres " );
+            //subquery += wxT( "AND radiostation_genreid = radiogenre_id " );
             subquery += wxT( "AND " ) + RadioFiltersSQL();
         }
 

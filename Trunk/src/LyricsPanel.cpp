@@ -1709,6 +1709,7 @@ void guLyricSearchThread::LyricDownload( guLyricSource &lyricsource )
     guLogMessage( wxT( "Trying to get url: %s" ), Url.c_str() );
 
     m_LyricText = GetUrlContent( Url, wxEmptyString, true );
+    //guLogMessage( wxT( "COntent: '%s'" ), m_LyricText.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
