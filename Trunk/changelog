@@ -1,3 +1,4 @@
+2011-02-17 0.2.9
 
   * Added posibility to add more lyrics sources or edit existing ones
   * Implemented stop after current track using shift + click on stop button
@@ -26,7 +27,7 @@
   * Added iPod support with covers and playlist
   * Added output audio device configuration option in preferences
   * Added partial mpris2 support
-  * Added SoundMenu support
+  * Added SoundMenu integration support
   * Added support for wma files extended attributes
   * Added the option to disable replay gain in preferences
   * Added the possibility to show the current track cover in a window

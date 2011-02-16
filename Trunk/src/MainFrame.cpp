@@ -3238,8 +3238,9 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
 
                 CreatePortablePlayersMenu( m_PortableDevicesMenu );
 
-                PortableMediaLibPanel->DoUpdate( true );
-
+                guConfig * Config = ( guConfig * ) guConfig::Get();
+                if( Config->ReadBool( wxT( "UpdateOnStart" ), true, wxT( "PortableDevice" ) ) )
+                    PortableMediaLibPanel->DoUpdate( true );
             }
             else
             {
@@ -3262,7 +3263,9 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
 
                     CreatePortablePlayersMenu( m_PortableDevicesMenu );
 
-                    PortableMediaLibPanel->DoUpdate( true );
+                    guConfig * Config = ( guConfig * ) guConfig::Get();
+                    if( Config->ReadBool( wxT( "UpdateDeviceOnStart" ), true, wxT( "PortableDevice" ) ) )
+                        PortableMediaLibPanel->DoUpdate( true );
                 }
             }
             else if( CmdId == 18 )      // Its the Playlists panel

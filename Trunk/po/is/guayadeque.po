@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-14 13:11+0000\n"
-"PO-Revision-Date: 2011-02-14 13:14-0000\n"
+"POT-Creation-Date: 2011-02-16 08:45+0000\n"
+"PO-Revision-Date: 2011-02-16 08:47-0000\n"
 "Last-Translator: Hreinn Jónsson <hreinsijons@gmail.com>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "Language: \n"
@@ -35,7 +35,7 @@ msgstr "Engar skipanir fundust"
 #: PlayList.cpp:1341
 #: SoListBox.cpp:412
 msgid "Add commands in preferences"
-msgstr "Bæta  skipunum við stillingar"
+msgstr "Bæta skipunum við stillingar"
 
 #: AAListBox.cpp:93
 #: AlListBox.cpp:181
@@ -302,7 +302,7 @@ msgstr "Byggja plötualbúm við valin lög plötu"
 #: LastFMPanel.cpp:1147
 #: LastFMPanel.cpp:1310
 #: LastFMPanel.cpp:1430
-#: LyricsPanel.cpp:274
+#: LyricsPanel.cpp:281
 msgid "Copy to clipboard"
 msgstr "Afrita við klippispjald"
 
@@ -594,7 +594,7 @@ msgstr "Breyta plötualbúmi"
 
 #: CoverEdit.cpp:68
 #: LastFMPanel.cpp:1523
-#: LyricsPanel.cpp:104
+#: LyricsPanel.cpp:109
 #: TrackEdit.cpp:153
 #: TrackEdit.cpp:373
 #: TrackEdit.cpp:414
@@ -957,7 +957,7 @@ msgstr "Afrita valda möppu á klippispjald"
 
 #: FileBrowser.cpp:306
 #: FileBrowser.cpp:954
-#: LyricsPanel.cpp:286
+#: LyricsPanel.cpp:293
 msgid "Paste"
 msgstr "Líma"
 
@@ -1090,7 +1090,7 @@ msgid " Names Preview "
 msgstr " Forskoða nöfn "
 
 #: FileRenamer.cpp:66
-#: LyricsPanel.cpp:1981
+#: LyricsPanel.cpp:2007
 #: PortableMedia.cpp:1103
 #: Preferences.cpp:1826
 #: Preferences.cpp:1942
@@ -1347,7 +1347,7 @@ msgid "Follow player"
 msgstr "Elta spilara"
 
 #: LastFMPanel.cpp:1533
-#: LyricsPanel.cpp:114
+#: LyricsPanel.cpp:119
 #: TrackEdit.cpp:380
 msgid "Track:"
 msgstr "Lag:"
@@ -1583,136 +1583,140 @@ msgid "Search the lyrics for the current playing track"
 msgstr "Breyta texta við spilað lag"
 
 #: LyricsPanel.cpp:86
-msgid "Configure lyrics"
-msgstr "Stilla texta"
+msgid "Configure lyrics preferences"
+msgstr "Breyta stillingum texta"
 
 #: LyricsPanel.cpp:90
-msgid "Reload the lyrics"
-msgstr "Endurhlaða texta"
+msgid "Search for lyrics"
+msgstr "Leita að  Textum"
 
 #: LyricsPanel.cpp:95
-msgid "Edit the lyrics for the current track"
-msgstr "Breyta texta við valið lag"
+msgid "Edit the lyrics"
+msgstr "Breyta textum"
 
 #: LyricsPanel.cpp:101
-msgid "Save the lyrics to files or directory"
-msgstr "Vista texta við valda skrá eða möppu"
+msgid "Save the lyrics"
+msgstr "Vista texta"
 
-#: LyricsPanel.cpp:274
+#: LyricsPanel.cpp:106
+msgid "Search the lyrics on the web"
+msgstr "Leita að textum á netinu"
+
+#: LyricsPanel.cpp:281
 msgid "Copy the content of the lyric to clipboard"
 msgstr "Afrita innihald texta á klippispjald"
 
-#: LyricsPanel.cpp:286
+#: LyricsPanel.cpp:293
 msgid "Paste the content of the lyric from clipboard"
 msgstr "Líma innihald texta á klippispjald"
 
-#: LyricsPanel.cpp:295
+#: LyricsPanel.cpp:302
 msgid "Print"
 msgstr "Prenta"
 
-#: LyricsPanel.cpp:295
+#: LyricsPanel.cpp:302
 msgid "Print the content of the lyrics"
 msgstr "Prenta innihald texta"
 
-#: LyricsPanel.cpp:424
-#: LyricsPanel.cpp:531
-#: LyricsPanel.cpp:813
-#: LyricsPanel.cpp:815
+#: LyricsPanel.cpp:435
+#: LyricsPanel.cpp:554
+#: LyricsPanel.cpp:837
+#: LyricsPanel.cpp:839
 msgid "Searching..."
 msgstr "Leitar..."
 
-#: LyricsPanel.cpp:727
-#: LyricsPanel.cpp:819
+#: LyricsPanel.cpp:750
+#: LyricsPanel.cpp:843
 msgid "No lyrics found"
 msgstr "Eingir textar funndust"
 
-#: LyricsPanel.cpp:811
+#: LyricsPanel.cpp:835
 msgid "Lyrics from "
 msgstr "Textar frá"
 
-#: LyricsPanel.cpp:1958
+#: LyricsPanel.cpp:1983
 msgid "Lyric Target Editor"
 msgstr "Breyta Uppruni Texta"
 
-#: LyricsPanel.cpp:1958
+#: LyricsPanel.cpp:1983
 msgid "Lyric Source Editor"
 msgstr "Breyta Texta uppruna"
 
-#: LyricsPanel.cpp:1990
+#: LyricsPanel.cpp:2016
 msgid "Type:"
 msgstr "Tegund:"
 
-#: LyricsPanel.cpp:1995
+#: LyricsPanel.cpp:2021
 msgid "Embedded"
 msgstr "Innbyggt"
 
-#: LyricsPanel.cpp:1996
+#: LyricsPanel.cpp:2022
 msgid "File"
 msgstr "Skrá"
 
-#: LyricsPanel.cpp:1997
+#: LyricsPanel.cpp:2023
 msgid "Command"
 msgstr "Skipun"
 
-#: LyricsPanel.cpp:1999
+#: LyricsPanel.cpp:2025
 #: PodcastsPanel.cpp:1305
 msgid "Download"
 msgstr "Niðurhal"
 
-#: LyricsPanel.cpp:2006
+#: LyricsPanel.cpp:2032
 msgid "Source:"
 msgstr "Uppruni:"
 
-#: LyricsPanel.cpp:2014
-#: LyricsPanel.cpp:2414
+#: LyricsPanel.cpp:2040
+#: LyricsPanel.cpp:2440
 msgid "Replace:"
 msgstr "Endursetja:"
 
-#: LyricsPanel.cpp:2049
+#: LyricsPanel.cpp:2075
 msgid "Extract:"
 msgstr "Afþjappa:"
 
-#: LyricsPanel.cpp:2079
+#: LyricsPanel.cpp:2105
 msgid "Exclude:"
 msgstr "Útiloka:"
 
-#: LyricsPanel.cpp:2109
+#: LyricsPanel.cpp:2135
 msgid "Not Found:"
 msgstr "Ekkert Fannst:"
 
-#: LyricsPanel.cpp:2412
+#: LyricsPanel.cpp:2438
 msgid "Replace option editor"
 msgstr "Endursetja  breytt"
 
-#: LyricsPanel.cpp:2413
+#: LyricsPanel.cpp:2439
 #: RadioPanel.cpp:91
 msgid "Search:"
 msgstr "Leit:"
 
-#: LyricsPanel.cpp:2418
+#: LyricsPanel.cpp:2444
 msgid "Extract option editor"
 msgstr "Afþjappa Breytt"
 
-#: LyricsPanel.cpp:2419
-#: LyricsPanel.cpp:2425
+#: LyricsPanel.cpp:2445
+#: LyricsPanel.cpp:2451
 msgid "Begin:"
 msgstr "Byrja:"
 
-#: LyricsPanel.cpp:2420
-#: LyricsPanel.cpp:2426
+#: LyricsPanel.cpp:2446
+#: LyricsPanel.cpp:2452
 msgid "End:"
 msgstr "Endir:"
 
-#: LyricsPanel.cpp:2424
+#: LyricsPanel.cpp:2450
 msgid "Exclude option editor"
 msgstr "Útiloka breytt"
 
-#: LyricsPanel.cpp:2430
+#: LyricsPanel.cpp:2456
 msgid "Not Found option editor"
 msgstr "Ekkert fannst Breytt"
 
-#: LyricsPanel.cpp:2431
-#: LyricsPanel.cpp:2432
+#: LyricsPanel.cpp:2457
+#: LyricsPanel.cpp:2458
 msgid "Tag:"
 msgstr "Merkja:"
 
@@ -4429,6 +4433,10 @@ msgstr "Mjög Gott"
 msgid "Good"
 msgstr "Gott"
 
+#~ msgid "Edit the lyrics for the current track"
+#~ msgstr "Breyta texta við valið lag"
+#~ msgid "Save the lyrics to files or directory"
+#~ msgstr "Vista texta við valda skrá eða möppu"
 #~ msgid "No lyrics found for this song."
 #~ msgstr "Engir textar fundust við þetta lag."
 #~ msgid "Server:"
@@ -4550,8 +4558,6 @@ msgstr "Gott"
 #~ msgstr "Reproducción inteligente"
 #~ msgid "Lyrics Provider:"
 #~ msgstr "Proveedor de Letras:"
-#~ msgid "Save the PlayList"
-#~ msgstr "Guardar"
 #~ msgid "iD3Tags Save failed"
 #~ msgstr "Ha fallado al guardar las etiquetas ID3"
 #~ msgid " of "

@@ -536,7 +536,7 @@ void guLyricsPanel::SetText( const wxString &text )
     m_LyricText->SetValue( wxEmptyString );
     m_LyricText->WriteText( text );
     m_LyricText->SetInsertionPoint( 0 );
-    guLogMessage( wxT( "SetText: '%s'" ), text.Mid( 0, 16 ).c_str() );
+    //guLogMessage( wxT( "SetText: '%s'" ), text.Mid( 0, 16 ).c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -685,59 +685,68 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
 //        SaveLyrics();
 //    }
 //
-//    if( m_Db->FindTrackFile( files[ 0 ], &Track ) )
-//    {
-//        guTrackChangeInfo ChangeInfo;
-//
-//        ChangeInfo.m_ArtistName = Track.m_ArtistName;
-//        ChangeInfo.m_TrackName = Track.m_SongName;
-//
-//        m_CurrentFileName = files[ 0 ];
-//        m_CurrentLyricText = wxEmptyString;
-//
-//        SetAutoUpdate( false );
-//
-//        m_CurrentTrackInfo = ChangeInfo;
-//        SetTrack( &ChangeInfo );
-//    }
-//    else
-//    {
-//        guTagInfo * TagInfo;
-//        TagInfo = guGetTagInfoHandler( files[ 0 ] );
-//
-//        if( TagInfo )
-//        {
-//            //guLogMessage( wxT( "Reading tags from the file..." ) );
-//            if( TagInfo->Read() )
-//            {
-//                Track.m_FileName = files[ 0 ];
-//                //Track.m_Type = guTRACK_TYPE_NOTDB;
-//                Track.m_ArtistName = TagInfo->m_ArtistName;
-//                //Track.m_AlbumName = TagInfo->m_AlbumName;
-//                Track.m_SongName = TagInfo->m_TrackName;
-//                //Track.m_Number = TagInfo->m_Track;
-//                //Track.m_GenreName = TagInfo->m_GenreName;
-//                //Track.m_Length = TagInfo->m_Length;
-//                //Track.m_Year = TagInfo->m_Year;
-//                //Track.m_Rating = wxNOT_FOUND;
-//
-//                guTrackChangeInfo ChangeInfo;
-//
-//                ChangeInfo.m_ArtistName = Track.m_ArtistName;
-//                ChangeInfo.m_TrackName = Track.m_SongName;
-//
-//                m_CurrentFileName = files[ 0 ];
-//                m_CurrentLyricText = wxEmptyString;
-//
-//                SetAutoUpdate( false );
-//
-//                m_CurrentTrackInfo = ChangeInfo;
-//                SetTrack( &ChangeInfo );
-//            }
-//
-//            delete TagInfo;
-//        }
-//    }
+    if( m_Db->FindTrackFile( files[ 0 ], &Track ) )
+    {
+        if( m_UpdateEnabled )
+        {
+            SetCurrentTrack( &Track );
+
+            SetAutoUpdate( false );
+        }
+        else
+        {
+            m_ArtistTextCtrl->SetValue( Track.m_ArtistName );
+            m_TrackTextCtrl->SetValue( Track.m_SongName );
+            if( m_CurrentTrack )
+            {
+                delete m_CurrentTrack;
+                m_CurrentTrack = NULL;
+            }
+        }
+        m_CurrentLyricText = wxEmptyString;
+
+        wxCommandEvent DummyEvent;
+        OnReloadBtnClick( DummyEvent );
+    }
+    else
+    {
+        guTagInfo * TagInfo;
+        TagInfo = guGetTagInfoHandler( files[ 0 ] );
+
+        if( TagInfo )
+        {
+            //guLogMessage( wxT( "Reading tags from the file..." ) );
+            if( TagInfo->Read() )
+            {
+                Track.m_FileName = files[ 0 ];
+                Track.m_ArtistName = TagInfo->m_ArtistName;
+                Track.m_SongName = TagInfo->m_TrackName;
+
+                if( m_UpdateEnabled )
+                {
+                    SetCurrentTrack( &Track );
+
+                    SetAutoUpdate( false );
+                }
+                else
+                {
+                    m_ArtistTextCtrl->SetValue( Track.m_ArtistName );
+                    m_TrackTextCtrl->SetValue( Track.m_SongName );
+                    if( m_CurrentTrack )
+                    {
+                        delete m_CurrentTrack;
+                        m_CurrentTrack = NULL;
+                    }
+                }
+                m_CurrentLyricText = wxEmptyString;
+
+                wxCommandEvent DummyEvent;
+                OnReloadBtnClick( DummyEvent );
+            }
+
+            delete TagInfo;
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -773,7 +782,7 @@ void guLyricsPanel::SetLyricText( const wxString * lyrictext, const bool forceup
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::SetLastSource( const int sourceindex )
 {
-    guLogMessage( wxT( "Setting the lyrics source index to %i" ), sourceindex );
+    //guLogMessage( wxT( "Setting the lyrics source index to %i" ), sourceindex );
 
     if( sourceindex == wxNOT_FOUND )
     {
@@ -1794,7 +1803,7 @@ void guLyricSearchThread::ProcessSave( guLyricSource &lyricsource )
                 else if( LyricTarget->Type() == guLYRIC_SOURCE_TYPE_FILE )
                 {
                     wxString TargetFileName = GetSource( * LyricTarget );
-                    guLogMessage( wxT( "Lyrics Save to File %i : '%s'" ), Index, TargetFileName.c_str() );
+                    //guLogMessage( wxT( "Lyrics Save to File %i : '%s'" ), Index, TargetFileName.c_str() );
                     if( lyricsource.Type() == guLYRIC_SOURCE_TYPE_FILE )
                     {
                         wxString SourceFileName = GetSource( lyricsource );

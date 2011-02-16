@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-0.0.1-Beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-14 09:55+0000\n"
-"PO-Revision-Date: 2011-02-14 10:40+0100\n"
+"POT-Creation-Date: 2011-02-16 11:37+0000\n"
+"PO-Revision-Date: 2011-02-16 11:45+0100\n"
 "Last-Translator: Jorge Ortega <jorge.ortega111@gmail.com>\n"
 "Language-Team: J.Rios & company <anonbeat@gmail.com>\n"
 "Language: \n"
@@ -219,7 +219,7 @@ msgstr "Editar etiquetas"
 #: AlbumBrowser.cpp:341
 #: AlListBox.cpp:208
 msgid "Edit the labels assigned to the selected albums"
-msgstr "Edita las etiquetas asignadas a los albumes seleccionados"
+msgstr "Edita las etiquetas asignadas a los álbumes seleccionados"
 
 #: AlbumBrowser.cpp:346
 #: AlListBox.cpp:214
@@ -229,7 +229,7 @@ msgstr "Editar pistas del álbum"
 #: AlbumBrowser.cpp:346
 #: AlListBox.cpp:214
 msgid "Edit the selected albums songs"
-msgstr "Edita las canciones de los albumes seleccionados"
+msgstr "Edita las canciones de los álbumes seleccionados"
 
 #: AlbumBrowser.cpp:352
 #: LastFMPanel.cpp:808
@@ -275,7 +275,7 @@ msgstr "Seleccionar carátula"
 #: AlbumBrowser.cpp:368
 #: AlListBox.cpp:227
 msgid "Select the cover image file from disk"
-msgstr "Seleccione la caratula desde el disco"
+msgstr "Seleccione la carátula desde el disco"
 
 #: AlbumBrowser.cpp:372
 #: AlListBox.cpp:231
@@ -302,7 +302,7 @@ msgstr "Incrustar la carátula en los archivos seleccionados"
 #: LastFMPanel.cpp:1147
 #: LastFMPanel.cpp:1310
 #: LastFMPanel.cpp:1430
-#: LyricsPanel.cpp:274
+#: LyricsPanel.cpp:281
 msgid "Copy to clipboard"
 msgstr "Copiar al portapapeles"
 
@@ -313,7 +313,7 @@ msgstr "Copiar el álbum al portapapeles"
 
 #: AlbumBrowser.cpp:696
 msgid "All Albums"
-msgstr "Todos los álbunes"
+msgstr "Todos los álbumes"
 
 #: AlbumBrowser.cpp:724
 msgid "Order By"
@@ -378,9 +378,7 @@ msgstr "Nuevo filtro"
 msgid ""
 "Could not find the Album in the songs library.\n"
 "You should update the library."
-msgstr ""
-"El álbum no se encuentra en la fonoteca.\n"
-"Tiene que actualizar la fonoteca."
+msgstr "El álbum no se encuentra en la fonoteca. Tiene que actualizar la fonoteca."
 
 #: AlbumBrowser.cpp:1252
 #: FileBrowser.cpp:463
@@ -413,7 +411,7 @@ msgstr "Confirmar"
 #: AlbumBrowser.cpp:1442
 #: LibPanel.cpp:1239
 msgid "Albums Labels Editor"
-msgstr "Editor Etiquetas de Albumes"
+msgstr "Editor de etiquetas de álbumes"
 
 #: AlbumBrowser.cpp:1628
 msgid "Page"
@@ -425,15 +423,15 @@ msgstr "por  "
 
 #: AlListBox.cpp:191
 msgid "Play current selected albums"
-msgstr "Reproducir los albumes selccionados"
+msgstr "Reproducir los álbumes selccionados"
 
 #: AlListBox.cpp:195
 msgid "Add current selected albums to the Playlist"
-msgstr "Añadir los albumes seleccionados al final de la lista de reproducción"
+msgstr "Añadir los álbumes seleccionados al final de la lista de reproducción"
 
 #: AlListBox.cpp:199
 msgid "Add current selected albums to the Playlist as Next Tracks"
-msgstr "Añadir los albumes seleccionados a la lista de reproducción como las siguientes pistas"
+msgstr "Añadir los álbumes seleccionados a la lista de reproducción como las siguientes pistas"
 
 #: AlListBox.cpp:238
 msgid "Embed cover"
@@ -445,11 +443,11 @@ msgstr "Incrustar carátula en de los archivos"
 
 #: AlListBox.cpp:261
 msgid "Albums are sorted by name"
-msgstr "Albums ordenador por nombre"
+msgstr "Albumes ordenados por nombre"
 
 #: AlListBox.cpp:262
 msgid "Albums are sorted by year"
-msgstr "Albums ordenados por año"
+msgstr "Albumes ordenados por año"
 
 #: AlListBox.cpp:263
 msgid "Year descending"
@@ -457,15 +455,15 @@ msgstr "Año descendiente"
 
 #: AlListBox.cpp:263
 msgid "Albums are sorted by year descending"
-msgstr "Albums ordenados por año descendiente"
+msgstr "Albumes ordenados por año descendiente"
 
 #: AlListBox.cpp:264
 msgid "Albums are sorted by artist and album name"
-msgstr "Albums ordenados por artista y nombre"
+msgstr "Albumes ordenados por artista y nombre"
 
 #: AlListBox.cpp:265
 msgid "Albums are sorted by artist and year"
-msgstr "Albums ordenados por artsta y año"
+msgstr "Albumes ordenados por artista y año"
 
 #: AlListBox.cpp:266
 msgid "Artist, Year descending"
@@ -473,7 +471,7 @@ msgstr "Artista, Año descendiente"
 
 #: AlListBox.cpp:266
 msgid "Albums are sorted by artist and year descending"
-msgstr "Albums ordenados por artista y año descendiente"
+msgstr "Albumes ordenados por artista y año descendente"
 
 #: AlListBox.cpp:271
 msgid "Ordered by"
@@ -481,7 +479,7 @@ msgstr "Ordenar por"
 
 #: AlListBox.cpp:271
 msgid "Sets the albums order"
-msgstr "Selecciona el orden de los álbunes"
+msgstr "Selecciona el orden de los álbumes"
 
 #: AlListBox.cpp:440
 #: ItemListBox.cpp:82
@@ -594,7 +592,7 @@ msgstr "Editor de Carátuas"
 
 #: CoverEdit.cpp:68
 #: LastFMPanel.cpp:1523
-#: LyricsPanel.cpp:104
+#: LyricsPanel.cpp:109
 #: TrackEdit.cpp:153
 #: TrackEdit.cpp:373
 #: TrackEdit.cpp:414
@@ -900,7 +898,7 @@ msgstr "Configuración"
 #: FieldEditor.cpp:25
 #, fuzzy
 msgid "Field Editor"
-msgstr "Editor de Carátuas"
+msgstr "Editor"
 
 #: FileBrowser.cpp:191
 msgid "Switch between see all filesystem and only recording locations"
@@ -958,7 +956,7 @@ msgstr "Copiar la carpeta seleccionada al portapapeles"
 
 #: FileBrowser.cpp:306
 #: FileBrowser.cpp:954
-#: LyricsPanel.cpp:286
+#: LyricsPanel.cpp:293
 msgid "Paste"
 msgstr "Pegar"
 
@@ -1088,10 +1086,10 @@ msgstr "Renombrar archivos"
 
 #: FileRenamer.cpp:54
 msgid " Names Preview "
-msgstr " Vista perliminar de Nombres "
+msgstr "Vista perliminar de Nombres "
 
 #: FileRenamer.cpp:66
-#: LyricsPanel.cpp:1981
+#: LyricsPanel.cpp:2007
 #: PortableMedia.cpp:1103
 #: Preferences.cpp:1826
 #: Preferences.cpp:1942
@@ -1142,7 +1140,7 @@ msgstr "Añade los géneros seleccionados a la lista de reproducción como las s
 #: Magnatune.cpp:336
 #: Magnatune.cpp:343
 msgid "Download Albums"
-msgstr "Descargar carátula"
+msgstr "Descargar álbumes"
 
 #: Jamendo.cpp:293
 #: Jamendo.cpp:296
@@ -1156,7 +1154,7 @@ msgstr "Descarga el álbum seleccionado"
 #: Jamendo.cpp:296
 #: Jamendo.cpp:306
 msgid "Download Albums torrents"
-msgstr "Descargar álbunes via torrentes"
+msgstr "Descargar álbumes via torrentes"
 
 #: Jamendo.cpp:312
 #: Magnatune.cpp:350
@@ -1348,7 +1346,7 @@ msgid "Follow player"
 msgstr "Seguir reproductor"
 
 #: LastFMPanel.cpp:1533
-#: LyricsPanel.cpp:114
+#: LyricsPanel.cpp:119
 #: TrackEdit.cpp:380
 msgid "Track:"
 msgstr "Pista: "
@@ -1359,7 +1357,7 @@ msgstr "Información sobre el artista"
 
 #: LastFMPanel.cpp:1597
 msgid "Top Albums"
-msgstr "Albunes principales"
+msgstr "Albumes principales"
 
 #: LastFMPanel.cpp:1630
 msgid "Top Tracks"
@@ -1581,139 +1579,143 @@ msgstr "Letras"
 
 #: LyricsPanel.cpp:80
 msgid "Search the lyrics for the current playing track"
-msgstr "buscar la letra de la pista actual"
+msgstr "Buscar la letra de la pista actual"
 
 #: LyricsPanel.cpp:86
-msgid "Configure lyrics"
-msgstr "Configurar letras"
+msgid "Configure lyrics preferences"
+msgstr "Configurar editor de letras"
 
 #: LyricsPanel.cpp:90
-msgid "Reload the lyrics"
-msgstr "Volver a buscar"
+msgid "Search for lyrics"
+msgstr "Buscar letras"
 
 #: LyricsPanel.cpp:95
-msgid "Edit the lyrics for the current track"
-msgstr "Editar la letra"
+msgid "Edit the lyrics"
+msgstr "Editar letras"
 
 #: LyricsPanel.cpp:101
-msgid "Save the lyrics to files or directory"
-msgstr "Guardar letras en archivos de audio"
+msgid "Save the lyrics"
+msgstr "Guardar letras"
 
-#: LyricsPanel.cpp:274
+#: LyricsPanel.cpp:106
+msgid "Search the lyrics on the web"
+msgstr "Buscar letras en la Web"
+
+#: LyricsPanel.cpp:281
 msgid "Copy the content of the lyric to clipboard"
 msgstr "Copiar la letra al portapapeles"
 
-#: LyricsPanel.cpp:286
+#: LyricsPanel.cpp:293
 msgid "Paste the content of the lyric from clipboard"
 msgstr "Pegue el contenido de la letra desde el portapapeles"
 
-#: LyricsPanel.cpp:295
+#: LyricsPanel.cpp:302
 msgid "Print"
 msgstr "Imprimir"
 
-#: LyricsPanel.cpp:295
+#: LyricsPanel.cpp:302
 msgid "Print the content of the lyrics"
 msgstr "Imprimir el contenido de la letra"
 
-#: LyricsPanel.cpp:424
-#: LyricsPanel.cpp:531
-#: LyricsPanel.cpp:813
-#: LyricsPanel.cpp:815
+#: LyricsPanel.cpp:435
+#: LyricsPanel.cpp:554
+#: LyricsPanel.cpp:837
+#: LyricsPanel.cpp:839
 msgid "Searching..."
 msgstr "Buscando..."
 
-#: LyricsPanel.cpp:727
-#: LyricsPanel.cpp:819
+#: LyricsPanel.cpp:750
+#: LyricsPanel.cpp:843
 msgid "No lyrics found"
 msgstr "No se ha encontrado ninguna letra"
 
-#: LyricsPanel.cpp:811
+#: LyricsPanel.cpp:835
 msgid "Lyrics from "
 msgstr "Letra proporcionada por "
 
-#: LyricsPanel.cpp:1958
+#: LyricsPanel.cpp:1983
 msgid "Lyric Target Editor"
 msgstr "Donde salvar las letras"
 
-#: LyricsPanel.cpp:1958
+#: LyricsPanel.cpp:1983
 msgid "Lyric Source Editor"
 msgstr "Editor de proveedores de letras"
 
-#: LyricsPanel.cpp:1990
+#: LyricsPanel.cpp:2016
 msgid "Type:"
 msgstr "Tipo:"
 
-#: LyricsPanel.cpp:1995
+#: LyricsPanel.cpp:2021
 msgid "Embedded"
 msgstr "Encrustado"
 
-#: LyricsPanel.cpp:1996
+#: LyricsPanel.cpp:2022
 msgid "File"
 msgstr "Archivo"
 
-#: LyricsPanel.cpp:1997
+#: LyricsPanel.cpp:2023
 msgid "Command"
 msgstr "Comando"
 
-#: LyricsPanel.cpp:1999
+#: LyricsPanel.cpp:2025
 #: PodcastsPanel.cpp:1305
 msgid "Download"
 msgstr "Descargado"
 
-#: LyricsPanel.cpp:2006
+#: LyricsPanel.cpp:2032
 msgid "Source:"
 msgstr "Fuente:"
 
-#: LyricsPanel.cpp:2014
-#: LyricsPanel.cpp:2414
+#: LyricsPanel.cpp:2040
+#: LyricsPanel.cpp:2440
 msgid "Replace:"
 msgstr "Substituir:"
 
-#: LyricsPanel.cpp:2049
+#: LyricsPanel.cpp:2075
 msgid "Extract:"
 msgstr "Extraer"
 
-#: LyricsPanel.cpp:2079
+#: LyricsPanel.cpp:2105
 msgid "Exclude:"
 msgstr "Excluir:"
 
-#: LyricsPanel.cpp:2109
+#: LyricsPanel.cpp:2135
 msgid "Not Found:"
 msgstr "No se ha encontrado"
 
-#: LyricsPanel.cpp:2412
+#: LyricsPanel.cpp:2438
 msgid "Replace option editor"
 msgstr "Editor de substitución"
 
-#: LyricsPanel.cpp:2413
+#: LyricsPanel.cpp:2439
 #: RadioPanel.cpp:91
 msgid "Search:"
 msgstr "Buscar:"
 
-#: LyricsPanel.cpp:2418
+#: LyricsPanel.cpp:2444
 msgid "Extract option editor"
 msgstr "Editor de letras"
 
-#: LyricsPanel.cpp:2419
-#: LyricsPanel.cpp:2425
+#: LyricsPanel.cpp:2445
+#: LyricsPanel.cpp:2451
 msgid "Begin:"
 msgstr "Comienzo:"
 
-#: LyricsPanel.cpp:2420
-#: LyricsPanel.cpp:2426
+#: LyricsPanel.cpp:2446
+#: LyricsPanel.cpp:2452
 msgid "End:"
 msgstr "Acaba:"
 
-#: LyricsPanel.cpp:2424
+#: LyricsPanel.cpp:2450
 msgid "Exclude option editor"
 msgstr "Editor de exclusión de opciones"
 
-#: LyricsPanel.cpp:2430
+#: LyricsPanel.cpp:2456
 msgid "Not Found option editor"
 msgstr "Editor de letras no encontradas"
 
-#: LyricsPanel.cpp:2431
-#: LyricsPanel.cpp:2432
+#: LyricsPanel.cpp:2457
+#: LyricsPanel.cpp:2458
 msgid "Tag:"
 msgstr "EtiquetaEtiqueta:"
 
@@ -1794,7 +1796,7 @@ msgstr "Mostrar/Ocultar el panel de artista principal"
 
 #: MainFrame.cpp:1113
 msgid "Show/Hide the Portable Media Device albums"
-msgstr "Mostrar/Ocultar el panel de albums"
+msgstr "Mostrar/Ocultar el panel de álbumes"
 
 #: MainFrame.cpp:1117
 msgid "Show/Hide the Portable Media Device years"
@@ -2004,7 +2006,7 @@ msgstr "Mostrar/Ocultar el artista principal"
 
 #: MainFrame.cpp:1329
 msgid "Show/Hide the library albums"
-msgstr "Mostrar/Ocultar el panel de álbunes"
+msgstr "Mostrar/Ocultar el panel de álbumes"
 
 #: MainFrame.cpp:1334
 msgid "Show/Hide the library years"
@@ -2082,7 +2084,7 @@ msgstr "Configura los paneles visibles de listas de reproducción"
 
 #: MainFrame.cpp:1402
 msgid "P&odcasts"
-msgstr "P&odcasts"
+msgstr "Podcasts"
 
 #: MainFrame.cpp:1402
 msgid "Show/Hide the podcasts panel"
@@ -2165,7 +2167,7 @@ msgstr "Mostrar/Ocultar los artistas principales en Jamendo"
 
 #: MainFrame.cpp:1467
 msgid "Show/Hide the Jamendo albums"
-msgstr "Mostrar/Ocultar los albunes"
+msgstr "Mostrar/Ocultar los álbumes"
 
 #: MainFrame.cpp:1472
 msgid "Show/Hide the Jamendo years"
@@ -2213,7 +2215,7 @@ msgstr "Mostrar/Ocultar artistas principales en Magnatune"
 
 #: MainFrame.cpp:1527
 msgid "Show/Hide the Magnatune albums"
-msgstr "Mostrar/Ocultar el panel de albunes"
+msgstr "Mostrar/Ocultar el panel de álbumes"
 
 #: MainFrame.cpp:1532
 msgid "Show/Hide the Magnatune years"
@@ -2321,7 +2323,7 @@ msgstr "Añadir canciones a la lista de reproduccíon basada en estadísticas de
 #: MainFrame.cpp:1598
 #: TaskBar.cpp:178
 msgid "R&andomize"
-msgstr "&Aleatorio"
+msgstr "Aleatorio"
 
 #: MainFrame.cpp:1598
 #: TaskBar.cpp:178
@@ -2331,7 +2333,7 @@ msgstr "Lista de reproducción Aleatoria"
 #: MainFrame.cpp:1601
 #: TaskBar.cpp:170
 msgid "&Repeat Playlist"
-msgstr "&Repetir lista de reproducción"
+msgstr "Repetir lista de reproducción"
 
 #: MainFrame.cpp:1601
 #: TaskBar.cpp:170
@@ -2341,7 +2343,7 @@ msgstr "repetir canciones de la lista de reproducción"
 #: MainFrame.cpp:1606
 #: TaskBar.cpp:174
 msgid "&Repeat Track"
-msgstr "&Repetir pista"
+msgstr "Repetir pista"
 
 #: MainFrame.cpp:1606
 #: TaskBar.cpp:174
@@ -2371,7 +2373,7 @@ msgstr "Obtener suporte de guayadeque desde guayadeque.org"
 
 #: MainFrame.cpp:1622
 msgid "&About"
-msgstr "&Acerca de..."
+msgstr "Acerca de..."
 
 #: MainFrame.cpp:1622
 msgid "Show information about guayadeque music player"
@@ -2581,7 +2583,7 @@ msgid "Record to a file"
 msgstr "Graba en un archivo"
 
 #: PlayerPanel.cpp:199
-#: PlayerPanel.cpp:2753
+#: PlayerPanel.cpp:2760
 msgid "Volume"
 msgstr "Volumen"
 
@@ -2590,36 +2592,36 @@ msgid "Show the equalizer"
 msgstr "Ver el equalizador"
 
 #: PlayerPanel.cpp:212
-#: PlayerPanel.cpp:2093
+#: PlayerPanel.cpp:2100
 msgid "Smart Mode: "
 msgstr "Modo Inteligente:"
 
 #: PlayerPanel.cpp:215
 #: PlayerPanel.cpp:231
-#: PlayerPanel.cpp:2096
-#: PlayerPanel.cpp:2144
+#: PlayerPanel.cpp:2103
+#: PlayerPanel.cpp:2151
 msgid "Off"
 msgstr "Desabilitado"
 
 #: PlayerPanel.cpp:219
-#: PlayerPanel.cpp:2100
+#: PlayerPanel.cpp:2107
 msgid "On"
 msgstr "Habilitado"
 
 #: PlayerPanel.cpp:228
-#: PlayerPanel.cpp:2141
+#: PlayerPanel.cpp:2148
 msgid "Repeat Mode: "
 msgstr "Modo Repetición:"
 
 #: PlayerPanel.cpp:235
-#: PlayerPanel.cpp:2148
+#: PlayerPanel.cpp:2155
 #: PlayList.cpp:1423
 #: Preferences.cpp:735
 msgid "Track"
 msgstr "Pista"
 
 #: PlayerPanel.cpp:239
-#: PlayerPanel.cpp:2152
+#: PlayerPanel.cpp:2159
 msgid "Playlist"
 msgstr "Lista de Reproducción"
 
@@ -2655,11 +2657,11 @@ msgstr "Muestra la posición de reproducción y la duracion del track ctual"
 msgid "Show the bitrate of the current track"
 msgstr "Muestra el ratio de bits de la pista actual"
 
-#: PlayerPanel.cpp:1316
+#: PlayerPanel.cpp:1323
 msgid "Buffering..."
 msgstr "Almacenando..."
 
-#: PlayerPanel.cpp:1404
+#: PlayerPanel.cpp:1411
 #: TagInfo.cpp:652
 #: TagInfo.cpp:658
 #: TagInfo.cpp:1638
@@ -3186,7 +3188,7 @@ msgstr "Formato de Audio"
 
 #: PortableMedia.cpp:1550
 msgid "Playlist format"
-msgstr "á"
+msgstr "Tipo de formato de la lista"
 
 #: PortableMedia.cpp:1602
 msgid "Cover format"
@@ -3266,7 +3268,7 @@ msgstr "Restaura la posición para pistas con longitud superior a"
 
 #: Preferences.cpp:518
 msgid "set the minimun length in minutes to save track position"
-msgstr "adjusta la longitud mínima en minutos para salvar la posición en la pista"
+msgstr "Adjusta la longitud mínima en minutos para salvar la posición en la pista"
 
 #: Preferences.cpp:528
 msgid "Load default layouts"
@@ -3310,7 +3312,7 @@ msgstr "Pedir confirmación para salir"
 
 #: Preferences.cpp:598
 msgid " Paths "
-msgstr " Directorios "
+msgstr "Directorios "
 
 #: Preferences.cpp:617
 msgid " Words to detect covers "
@@ -3415,7 +3417,7 @@ msgstr "Definido desde"
 
 #: Preferences.cpp:896
 msgid " Crossfader "
-msgstr " Solapamiento "
+msgstr "Solapamiento "
 
 #: Preferences.cpp:903
 msgid "Out length:"
@@ -3451,7 +3453,7 @@ msgstr "Selecciona a que volumen del desvanecimiento la siguiente pista comienza
 
 #: Preferences.cpp:991
 msgid " Record "
-msgstr " Grabar "
+msgstr "Grabar "
 
 #: Preferences.cpp:993
 msgid "Enable recording"
@@ -3524,7 +3526,7 @@ msgstr "Contraseña:"
 
 #: Preferences.cpp:1134
 msgid " Libre.fm Audioscrobble "
-msgstr " Libre.fm Audioscrobble "
+msgstr "Libre.fm Audioscrobble "
 
 #: Preferences.cpp:1173
 msgid "Join the Guayadeque Last.fm users group"
@@ -3588,7 +3590,7 @@ msgstr "Tamaño de descarga en reserva"
 
 #: Preferences.cpp:1438
 msgid " Podcasts "
-msgstr " Podcasts "
+msgstr "Podcasts "
 
 #: Preferences.cpp:1442
 msgid "Destination directory:"
@@ -3730,7 +3732,7 @@ msgid ""
 msgstr ""
 "Añadir comandos usando :\n"
 "{bp}\t: Directorio del album\n"
-"{bc}\t: Fichero de caratula del album\n"
+"{bc}\t: Fichero de carátula del album\n"
 "{tp}\t: Fichero de audio"
 
 #: Preferences.cpp:1998
@@ -4012,7 +4014,7 @@ msgstr "Carátula:"
 
 #: SelCoverFile.cpp:108
 msgid "Select the cover filename"
-msgstr "Seleccione la caratula desde archivo"
+msgstr "Seleccione la carátula desde archivo"
 
 #: SoListBox.cpp:374
 msgid "Last Play"
@@ -4084,7 +4086,7 @@ msgstr "Muestra el número de elementos seleccionados"
 
 #: SoListBox.cpp:511
 msgid "Play All"
-msgstr "Reproducir Todo"
+msgstr "Reproducir todo"
 
 #: SoListBox.cpp:511
 msgid "Play all songs"
@@ -4354,7 +4356,7 @@ msgstr "Seleccione el álbum encontrado en Musicbrainz"
 
 #: TrackEdit.cpp:451
 msgid "Search albums in musicbrainz"
-msgstr "Buscar albums in Musicbrainz"
+msgstr "Buscar álbumes in Musicbrainz"
 
 #: TrackEdit.cpp:457
 msgid "Copy the content of the album to the edited tracks"
@@ -4385,18 +4387,22 @@ msgid "Copy the number to the edited tracks"
 msgstr "Copiar los números a todas las pistas editadas"
 
 #: TrackEdit.cpp:881
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "File Type\t: %s\n"
 "Length\t: %s"
-msgstr "bu"
+msgstr ""
+"Tipo de archivo\t: %s\n"
+"Duración\t: %s"
 
 #: TrackEdit.cpp:885
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "BitRate\t: %u Kbps\n"
 "File Size\t: %s"
-msgstr "bu"
+msgstr ""
+"BitRate\t: %u Kbps\n"
+"Tamaño de archivo\t: %s"
 
 #: TrackEdit.cpp:1528
 #, c-format
@@ -4427,6 +4433,10 @@ msgstr "Muy buena"
 msgid "Good"
 msgstr "Buena"
 
+#~ msgid "Edit the lyrics for the current track"
+#~ msgstr "Editar la letra"
+#~ msgid "Save the lyrics to files or directory"
+#~ msgstr "Guardar letras en archivos de audio"
 #~ msgid "No lyrics found for this song."
 #~ msgstr "No encontré letra para esta canción"
 #~ msgid "Server:"
@@ -4529,8 +4539,6 @@ msgstr "Buena"
 #~ msgstr "Reproducción inteligente"
 #~ msgid "Lyrics Provider:"
 #~ msgstr "Proveedor de Letras:"
-#~ msgid "Save the PlayList"
-#~ msgstr "Guardar"
 #~ msgid "iD3Tags Save failed"
 #~ msgstr "Ha fallado al guardar las etiquetas ID3"
 #~ msgid " of "
