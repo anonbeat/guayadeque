@@ -120,6 +120,8 @@
 		<Unit filename="src/DbLibrary.h" />
 		<Unit filename="src/DbListBox.cpp" />
 		<Unit filename="src/DbListBox.h" />
+		<Unit filename="src/DbRadios.cpp" />
+		<Unit filename="src/DbRadios.h" />
 		<Unit filename="src/Discogs.cpp" />
 		<Unit filename="src/Discogs.h" />
 		<Unit filename="src/DynamicPlayList.cpp" />
