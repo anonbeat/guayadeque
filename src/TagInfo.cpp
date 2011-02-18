@@ -31,86 +31,87 @@
 
 #include <asfattribute.h>
 
+wxArrayString guSupportedFormats;
+
+
 // -------------------------------------------------------------------------------- //
 bool guIsValidAudioFile( const wxString &filename )
 {
-    wxString FileName = filename.Lower();
-    if( FileName.EndsWith( wxT( ".mp3"  ) ) ||
-        FileName.EndsWith( wxT( ".flac" ) ) ||
-        FileName.EndsWith( wxT( ".ogg"  ) ) ||
-        FileName.EndsWith( wxT( ".oga"  ) ) ||
-        FileName.EndsWith( wxT( ".mp4"  ) ) ||  // MP4 files
-        FileName.EndsWith( wxT( ".m4a"  ) ) ||
-        FileName.EndsWith( wxT( ".m4b"  ) ) ||
-        FileName.EndsWith( wxT( ".m4p"  ) ) ||
-        FileName.EndsWith( wxT( ".wma"  ) ) ||
-        FileName.EndsWith( wxT( ".aac"  ) ) ||
-        FileName.EndsWith( wxT( ".ape"  ) ) ||
-        FileName.EndsWith( wxT( ".wav"  ) ) ||
-        FileName.EndsWith( wxT( ".aif"  ) ) ||
-        FileName.EndsWith( wxT( ".wv"   ) ) ||
-        FileName.EndsWith( wxT( ".tta"  ) ) ||
-        FileName.EndsWith( wxT( ".mpc"  ) ) ||
-        FileName.EndsWith( wxT( ".rmj"  ) ) )
+    if( !guSupportedFormats.Count() )
     {
-        return true;
+        guSupportedFormats.Add( wxT( "mp3"  ) );
+        //
+        guSupportedFormats.Add( wxT( "flac" ) );
+        //
+        guSupportedFormats.Add( wxT( "ogg"  ) );
+        guSupportedFormats.Add( wxT( "oga"  ) );
+        //
+        guSupportedFormats.Add( wxT( "mp4"  ) );  // MP4 files
+        guSupportedFormats.Add( wxT( "m4a"  ) );
+        guSupportedFormats.Add( wxT( "m4b"  ) );
+        guSupportedFormats.Add( wxT( "m4p"  ) );
+        guSupportedFormats.Add( wxT( "aac"  ) );
+        //
+        guSupportedFormats.Add( wxT( "wma"  ) );
+        guSupportedFormats.Add( wxT( "asf"  ) );
+        //
+        guSupportedFormats.Add( wxT( "ape"  ) );
+        //
+        guSupportedFormats.Add( wxT( "wav"  ) );
+        guSupportedFormats.Add( wxT( "aif"  ) );
+        //
+        guSupportedFormats.Add( wxT( "wv"   ) );
+        //
+        guSupportedFormats.Add( wxT( "tta"  ) );
+        //
+        guSupportedFormats.Add( wxT( "mpc"  ) );
+        //
+        //guSupportedFormats.Add( wxT( "rmj"  ) );
     }
-    return false;
+
+    return ( guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) ) != wxNOT_FOUND );
 }
 
 // -------------------------------------------------------------------------------- //
 guTagInfo * guGetTagInfoHandler( const wxString &filename )
 {
-    if( filename.Lower().EndsWith( wxT( ".mp3" ) ) )
+    int FormatIndex = guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) );
+    switch( FormatIndex )
     {
-        return new guMp3TagInfo( filename );
+        case  0 : return new guMp3TagInfo( filename );
+
+        case  1 : return new guFlacTagInfo( filename );
+
+        case  2 :
+        case  3 : return new guOggTagInfo( filename );
+
+        case  4 :
+        case  5 :
+        case  6 :
+        case  7 :
+        case  8 : return new guMp4TagInfo( filename );
+
+        case  9 :
+        case 10 : return new guASFTagInfo( filename );
+
+        case 11 : return new guApeTagInfo( filename );
+
+        case 12 :
+        case 13 : return new guTagInfo( filename );
+
+        case 14 : return new guWavPackTagInfo( filename );
+
+        case 15 : return new guTrueAudioTagInfo( filename );
+
+        case 16 : return new guMpcTagInfo( filename );
+
+        //case 17 :
+
+        default :
+            break;
     }
-    else if( filename.Lower().EndsWith( wxT( ".flac" ) ) )
-    {
-        return new guFlacTagInfo( filename );
-    }
-    else if( filename.Lower().EndsWith( wxT( ".ogg" ) ) ||
-             filename.Lower().EndsWith( wxT( ".oga" ) ) )
-    {
-        return new guOggTagInfo( filename );
-    }
-    else if( filename.Lower().EndsWith( wxT( ".mpc" ) ) )
-    {
-        return new guMpcTagInfo( filename );
-    }
-    else if( filename.Lower().EndsWith( wxT( ".ape" ) ) )
-    {
-        return new guApeTagInfo( filename );
-    }
-    else if( filename.Lower().EndsWith( wxT( ".mp4" ) ) ||
-            filename.Lower().EndsWith( wxT( ".m4a" ) ) ||
-            filename.Lower().EndsWith( wxT( ".m4b" ) ) ||
-            filename.Lower().EndsWith( wxT( ".m4p" ) ) ||
-            filename.Lower().EndsWith( wxT( ".aac" ) ) )
-    {
-        return new guMp4TagInfo( filename );
-    }
-    else if( filename.Lower().EndsWith( wxT( ".wv" ) ) )
-    {
-        return new guWavPackTagInfo( filename );
-    }
-    else if( filename.Lower().EndsWith( wxT( ".tta" ) ) )
-    {
-        return new guTrueAudioTagInfo( filename );
-    }
-    else if( filename.Lower().EndsWith( wxT( ".wma" ) ) ||
-             filename.Lower().EndsWith( wxT( ".asf" ) ) )
-    {
-        return new guASFTagInfo( filename );
-    }
-    else if( filename.Lower().EndsWith( wxT( ".wav" ) ) )
-    {
-        return new guTagInfo( filename );
-    }
-    else
-    {
-        return NULL;
-    }
+
+    return NULL;
 }
 
 

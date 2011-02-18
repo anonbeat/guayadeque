@@ -56,6 +56,12 @@ guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     //m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
     m_CoverSearchWords = libpanel->GetCoverSearchWords();
+    int Index;
+    int Count = m_CoverSearchWords.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_CoverSearchWords[ Index ].MakeLower();
+    }
 
     if( scanpath.IsEmpty() )
     {
@@ -107,7 +113,7 @@ guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxStr
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY + 10 );
         Run();
     }
 }
@@ -216,6 +222,10 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
               FoundCover = true;
               m_PlayListFiles.Add( dirname + FileName );
             }
+            //else
+            //{
+            //    guLogMessage( wxT( "Unknown file: '%s'"), ( dirname + FileName ).c_str() );
+            //}
           }
         }
       } while( !TestDestroy() && Dir.GetNext( &FileName ) );
@@ -283,7 +293,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                 break;
 
             //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ index ].c_str() );
-            m_Db->ReadFileTags( m_TrackFiles[ index ].char_str() );
+            m_Db->ReadFileTags( m_TrackFiles[ index ] );
             //Sleep( 1 );
             index++;
             evtup.SetExtraLong( index );

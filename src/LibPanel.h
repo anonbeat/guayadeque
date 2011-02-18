@@ -285,7 +285,7 @@ class guLibPanel : public wxPanel
 
     virtual void            UpdatePlaylists( void );
 
-    virtual void            DoEditTracks( guTrackArray &tracks, guImagePtrArray &images, wxArrayString &lyrics );
+    virtual void            DoEditTracks( guTrackArray &tracks );
 
     virtual void            UpdateTracks( const guTrackArray &tracks );
     virtual void            UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images );

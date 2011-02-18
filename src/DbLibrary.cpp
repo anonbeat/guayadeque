@@ -1488,7 +1488,7 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, co
 
   if( !CoverPath.IsEmpty() )
   {
-    guLogMessage( wxT( "Setting new cover '%s'" ), CoverPath.c_str() );
+    //guLogMessage( wxT( "Setting new cover '%s'" ), CoverPath.c_str() );
     CoverId = AddCoverFile( CoverPath, coverhash );
 
     query = wxString::Format( wxT( "UPDATE songs SET song_coverid = %i WHERE song_albumid = %i;" ), CoverId, AlbumId );
@@ -1733,13 +1733,11 @@ int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::ReadFileTags( const char * filename )
+int guDbLibrary::ReadFileTags( const wxString &filename )
 {
   guTagInfo * TagInfo;
 
-  wxString FileName( filename, wxConvUTF8 );
-
-  TagInfo = guGetTagInfoHandler( FileName );
+  TagInfo = guGetTagInfoHandler( filename );
 
   if( TagInfo )
   {
@@ -1749,7 +1747,7 @@ int guDbLibrary::ReadFileTags( const char * filename )
           //wxString PathName = wxGetCwd();
           //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
 
-          m_CurSong.m_Path = wxPathOnly( FileName );
+          m_CurSong.m_Path = wxPathOnly( filename );
           if( !m_CurSong.m_Path.EndsWith( wxT( "/" ) ) )
             m_CurSong.m_Path += '/';
 
@@ -1773,9 +1771,9 @@ int guDbLibrary::ReadFileTags( const char * filename )
           m_CurSong.m_GenreId = GetGenreId( TagInfo->m_GenreName );
           m_CurSong.m_GenreName = TagInfo->m_GenreName;
 
-          m_CurSong.m_FileName = FileName.AfterLast( '/' );
+          m_CurSong.m_FileName = filename.AfterLast( '/' );
           m_CurSong.m_SongName = TagInfo->m_TrackName;
-          m_CurSong.m_FileSize = guGetFileSize( FileName );
+          m_CurSong.m_FileSize = guGetFileSize( filename );
 
           m_CurSong.m_SongId = GetSongId( m_CurSong.m_FileName, m_CurSong.m_PathId );
 
@@ -1819,6 +1817,10 @@ int guDbLibrary::ReadFileTags( const char * filename )
 
           return 1;
       }
+      else
+      {
+          guLogError( wxT( "Cant read tags from '%s'" ), filename.c_str() );
+      }
 
       delete TagInfo;
   }
@@ -1833,7 +1835,7 @@ int guDbLibrary::AddFiles( const wxArrayString &files )
     int Count = files.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        ReadFileTags( files[ Index ].mb_str( wxConvFile ) );
+        ReadFileTags( files[ Index ] );
     }
     return Count;
 }

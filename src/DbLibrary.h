@@ -444,7 +444,7 @@ class guDbLibrary : public guDb
     int                 GetPlayListType( const int plid );
 
     void                SetLibPath( const wxArrayString &NewPaths );
-    int                 ReadFileTags( const char * filename );
+    int                 ReadFileTags( const wxString &filename );
     void                UpdateImageFile( const char * filename, const char * saveto,
                                          const int type = wxBITMAP_TYPE_JPEG, const int maxsize = wxNOT_FOUND );
 

@@ -1559,7 +1559,7 @@ wxString DoExtractTag( const wxString &content, const wxString &tag )
 // -------------------------------------------------------------------------------- //
 wxString guLyricSearchThread::CheckExtract( const wxString &content, guLyricSource &lyricsource )
 {
-    wxString RetVal = content;
+    wxString RetVal = wxEmptyString;
     int Index;
     int Count = lyricsource.ExtractCount();
     for( Index = 0; Index < Count; Index++ )
@@ -1567,13 +1567,15 @@ wxString guLyricSearchThread::CheckExtract( const wxString &content, guLyricSour
         guLyricSourceExtract * LyricSourceExtract = lyricsource.ExtractItem( Index );
         if( LyricSourceExtract->IsSingleOption() )
         {
-            RetVal = DoExtractTag( RetVal, LyricSourceExtract->Tag() );
+            RetVal = DoExtractTag( content, LyricSourceExtract->Tag() );
         }
         else
         {
-            RetVal = DoExtractTags( RetVal, LyricSourceExtract->Begin(), LyricSourceExtract->End() );
+            RetVal = DoExtractTags( content, LyricSourceExtract->Begin(), LyricSourceExtract->End() );
         }
         if( TestDestroy() )
+            break;
+        if( !RetVal.IsEmpty() )
             break;
     }
     return RetVal.Trim( true ).Trim( false );
@@ -1888,8 +1890,8 @@ guLyricSearchThread::ExitCode guLyricSearchThread::Entry()
         else if( LyricSource.Type() == guLYRIC_SOURCE_TYPE_EMBEDDED )
         {
             m_LyricText = guTagGetLyrics( m_LyricSearchContext->m_Track.m_FileName );
-//            if( !m_LyricText.IsEmpty() )
-//                return 0;
+            if( !m_LyricText.IsEmpty() )
+                break;
         }
         else if( LyricSource.Type() == guLYRIC_SOURCE_TYPE_FILE )
         {

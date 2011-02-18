@@ -43,6 +43,7 @@ class guMainApp : public wxApp
     ~guMainApp();
     virtual bool OnInit();
     virtual int  OnExit();
+    void OnFatalException();
     wxLocale * GetLocale() { return &m_Locale; };
 
 };
