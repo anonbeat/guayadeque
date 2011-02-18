@@ -260,6 +260,7 @@ void guSoListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 void guSoListBox::ReloadItems( bool reset )
 {
+    //guLogMessage( wxT( "guSoListBox::ReloadItems( %i )"), reset );
     //
     wxArrayInt Selection;
     int FirstVisible = GetFirstVisibleLine();
@@ -847,6 +848,7 @@ void guSoListBox::UpdatedTracks( const guTrackArray * tracks )
 {
     int ItemIndex;
     int ItemCount = m_Items.Count();
+    bool ClearSelection = false;
 
     if( !ItemCount )
         return;
@@ -865,9 +867,13 @@ void guSoListBox::UpdatedTracks( const guTrackArray * tracks )
             {
                 m_Items[ ItemIndex ] = CurTrack;
                 RefreshLine( ItemIndex + m_ItemsFirst );
+                if( !ClearSelection )
+                    ClearSelection = true;
             }
         }
     }
+    if( ClearSelection )
+        ClearSelectedItems();
 }
 
 // -------------------------------------------------------------------------------- //

@@ -119,7 +119,6 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
     if( m_LockCount )
         return;
 
-    guLogMessage( wxT( "guLocationTreeCtrl::ReloadItems" ) );
     wxTreeItemId CurrentItem;
     int VisiblePanels = m_MainFrame->VisiblePanels();
 
@@ -353,7 +352,6 @@ void guLocationPanel::OnLocationItemActivated( wxTreeEvent &event )
     guLocationItemData * ItemData = ( guLocationItemData * ) m_LocationTreeCtrl->GetItemData( ItemId );
     if( ItemData )
     {
-        guLogMessage( wxT( "Sending the event %i" ), ItemData->GetId() );
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ItemData->GetId() );
         event.SetInt( !ItemData->GetOpen() );
         wxPostEvent( m_MainFrame, event );
