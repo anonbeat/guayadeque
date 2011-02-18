@@ -1077,21 +1077,23 @@ void guLibPanel::OnArtistEditLabelsClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::DoEditTracks( guTrackArray &tracks, guImagePtrArray &images, wxArrayString &lyrics )
+void guLibPanel::DoEditTracks( guTrackArray &tracks )
 {
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &tracks, &images, &lyrics );
+    guImagePtrArray Images;
+    wxArrayString Lyrics;
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &tracks, &Images, &Lyrics );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             UpdateTracks( tracks );
-            UpdateTracksImages( tracks, images );
-            UpdateTracksLyrics( tracks, lyrics );
+            UpdateTracksImages( tracks, Images );
+            UpdateTracksLyrics( tracks, Lyrics );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &tracks );
         }
-        guImagePtrArrayClean( &images );
+        guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
     }
 }
@@ -1118,13 +1120,11 @@ void guLibPanel::UpdateTracksLyrics( const guTrackArray &tracks, const wxArraySt
 void guLibPanel::OnArtistEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
-    guImagePtrArray Images;
-    wxArrayString Lyrics;
     m_ArtistListCtrl->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         return;
 
-    DoEditTracks( Tracks, Images, Lyrics );
+    DoEditTracks( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1255,14 +1255,12 @@ void guLibPanel::OnAlbumEditLabelsClicked( wxCommandEvent &event )
 void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
-    guImagePtrArray Images;
-    wxArrayString Lyrics;
     //m_AlbumListCtrl->GetSelectedSongs( &Songs );
     m_Db->GetAlbumsSongs( m_AlbumListCtrl->GetSelectedItems(), &Tracks, true );
     if( !Tracks.Count() )
         return;
 
-    DoEditTracks( Tracks, Images, Lyrics );
+    DoEditTracks( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1698,12 +1696,10 @@ void guLibPanel::OnSongsEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-    guImagePtrArray Images;
-    wxArrayString Lyrics;
     if( !Tracks.Count() )
         return;
 
-    DoEditTracks( Tracks, Images, Lyrics );
+    DoEditTracks( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2355,13 +2351,11 @@ void guLibPanel::OnYearListQueueAsNextClicked( wxCommandEvent &event )
 void guLibPanel::OnYearListEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
-    guImagePtrArray Images;
-    wxArrayString Lyrics;
     m_YearListCtrl->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         return;
 
-    DoEditTracks( Tracks, Images, Lyrics );
+    DoEditTracks( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2473,13 +2467,11 @@ void guLibPanel::OnRatingListQueueAsNextClicked( wxCommandEvent &event )
 void guLibPanel::OnRatingListEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
-    guImagePtrArray Images;
-    wxArrayString Lyrics;
     m_RatingListCtrl->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         return;
 
-    DoEditTracks( Tracks, Images, Lyrics );
+    DoEditTracks( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2591,13 +2583,11 @@ void guLibPanel::OnPlayCountListQueueAsNextClicked( wxCommandEvent &event )
 void guLibPanel::OnPlayCountListEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
-    guImagePtrArray Images;
-    wxArrayString Lyrics;
     m_PlayCountListCtrl->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         return;
 
-    DoEditTracks( Tracks, Images, Lyrics );
+    DoEditTracks( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2712,13 +2702,11 @@ void guLibPanel::OnComposerListQueueAsNextClicked( wxCommandEvent &event )
 void guLibPanel::OnComposerListEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
-    guImagePtrArray Images;
-    wxArrayString Lyrics;
     m_ComposerListCtrl->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         return;
 
-    DoEditTracks( Tracks, Images, Lyrics );
+    DoEditTracks( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2826,13 +2814,11 @@ void guLibPanel::OnAlbumArtistListQueueAsNextClicked( wxCommandEvent &event )
 void guLibPanel::OnAlbumArtistListEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Tracks;
-    guImagePtrArray Images;
-    wxArrayString Lyrics;
     m_AlbumArtistListCtrl->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         return;
 
-    DoEditTracks( Tracks, Images, Lyrics );
+    DoEditTracks( Tracks );
 }
 
 // -------------------------------------------------------------------------------- //

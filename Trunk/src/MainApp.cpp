@@ -33,6 +33,8 @@
 #include <wx/tooltip.h>
 #include <wx/stdpaths.h>
 
+#include <wx/debugrpt.h>
+
 IMPLEMENT_APP(guMainApp);
 
 // -------------------------------------------------------------------------------- //
@@ -353,6 +355,18 @@ int guMainApp::OnExit()
     wxCurlBase::Shutdown();
 
     return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainApp::OnFatalException()
+{
+    wxDebugReport Report;
+    wxDebugReportPreviewStd Preview;
+
+    Report.AddAll();
+
+    if( Preview.Show( Report ) )
+        Report.Process();
 }
 
 // -------------------------------------------------------------------------------- //

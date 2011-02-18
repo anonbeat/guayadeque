@@ -279,7 +279,7 @@ void guVumeter::RefreshBitmaps( void )
 	wxCoord Height;
 	GetClientSize( &Width, &Height );
 
-	guLogMessage( wxT( "RefreshBitmaps %i  %i " ), Width, Height );
+	//guLogMessage( wxT( "RefreshBitmaps %i  %i " ), Width, Height );
 
     if( m_Style == guVU_HORIZONTAL )
     {

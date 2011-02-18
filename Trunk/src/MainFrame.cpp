@@ -491,6 +491,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_PlayerPanel->SetNotifySrv( m_NotifySrv );
     //m_DBusServer->Run();
 
+    // Fill the Format extensions array
+    guIsValidAudioFile( wxEmptyString );
+
     //
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
 
@@ -5290,7 +5293,7 @@ void guMainFrame::OnSetForceGapless( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnLyricFound( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "guMainFrame::OnLyricFound" ) );
+    //guLogMessage( wxT( "guMainFrame::OnLyricFound" ) );
     wxString * LyricText = ( wxString * ) event.GetClientData();
     if( m_LyricsPanel )
     {
