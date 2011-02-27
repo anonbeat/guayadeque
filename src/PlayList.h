@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -87,7 +87,7 @@ class guPlayList : public guListView
     void                        OnEditLabelsClicked( wxCommandEvent &event );
     void                        OnEditTracksClicked( wxCommandEvent &event );
     void                        OnSearchClicked( wxCommandEvent &event );
-    void                        OnStopAfterCurrent( wxCommandEvent &event ) { StopAfterCurrent(); }
+    void                        OnStopAtEnd( wxCommandEvent &event ) { StopAtEnd(); }
     void                        OnSearchLinkClicked( wxCommandEvent &event );
     void                        OnCommandClicked( wxCommandEvent &event );
     wxString                    GetSearchText( int item ) const;
@@ -97,6 +97,8 @@ class guPlayList : public guListView
     void                        OnSelectAlbum( wxCommandEvent &event );
     void                        OnSelectYear( wxCommandEvent &event );
     void                        OnSelectGenre( wxCommandEvent &event );
+
+    void                        CreateAcceleratorTable( void );
 
   protected:
     virtual void                OnKeyDown( wxKeyEvent &event );
@@ -111,6 +113,8 @@ class guPlayList : public guListView
 
     void                        OnDeleteFromLibrary( wxCommandEvent &event );
     void                        OnDeleteFromDrive( wxCommandEvent &event );
+
+    void                        OnSetRating( wxCommandEvent &event );
 
   public :
     guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL, guMainFrame * mainframe = NULL );
@@ -152,8 +156,8 @@ class guPlayList : public guListView
 
     bool                        StartPlaying( void ) { return m_StartPlaying; }
 
-    void                        StopAfterCurrent( void );
-    void                        ClearStopAfterCurrent( void );
+    void                        StopAtEnd( void );
+    void                        ClearStopAtEnd( void );
 
 
   friend class guAddDropFilesThread;

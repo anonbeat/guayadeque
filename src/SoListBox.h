@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -51,19 +51,19 @@ class guLibPanel;
 class guSoListBox : public guListView
 {
   protected :
-    guLibPanel *        m_LibPanel;
+    guLibPanel *                m_LibPanel;
 
-    guDbLibrary *       m_Db;
-    guTrackArray        m_Items;
-    wxMutex             m_ItemsMutex;
-    int                 m_ItemsFirst;
-    int                 m_ItemsLast;
-    wxString            m_ConfName;
-    int                 m_LastColumnRightClicked;
-    int                 m_LastRowRightClicked;
+    guDbLibrary *               m_Db;
+    guTrackArray                m_Items;
+    wxMutex                     m_ItemsMutex;
+    int                         m_ItemsFirst;
+    int                         m_ItemsLast;
+    wxString                    m_ConfName;
+    int                         m_LastColumnRightClicked;
+    int                         m_LastRowRightClicked;
 
-    wxBitmap *          m_NormalStar;
-    wxBitmap *          m_SelectStar;
+    wxBitmap *                  m_NormalStar;
+    wxBitmap *                  m_SelectStar;
 
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
@@ -84,6 +84,9 @@ class guSoListBox : public guListView
     virtual void                ItemsCheckRange( const int start, const int end );
 
     virtual void                AppendFastEditMenu( wxMenu * menu, const int selcount ) const;
+
+    void                        OnConfigUpdated( wxCommandEvent &event );
+    void                        CreateAcceleratorTable();
 
   public :
     guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * NewDb, wxString confname, long style = 0 );

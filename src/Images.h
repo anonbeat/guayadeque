@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -97,6 +97,7 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_pref_crossfader,
     guIMAGE_INDEX_pref_jamendo,
     guIMAGE_INDEX_pref_magnatune,
+    guIMAGE_INDEX_pref_accelerators,
     //
     guIMAGE_INDEX_loc_library,
     guIMAGE_INDEX_loc_portable_device,

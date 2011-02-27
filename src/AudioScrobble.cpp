@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -132,14 +132,14 @@ bool guAudioScrobbleSender::GetSessionId( void )
                     //guLogMessage( wxT( "NowPlayUrl : " ) + NowPlayUrl );
                     //guLogMessage( wxT( "SubmitUrl  : " ) + SubmitUrl );
                     m_ErrorCode = guAS_ERROR_NOERROR;
-                    guLogMessage( wxT( "Loged in to AudioScrobble service." ) );
+                    guLogMessage( wxT( "Loged in to : " ) + m_ServerUrl );
                     //return !SessionId.IsEmpty() && !SubmitUrl.IsEmpty() && !NowPlayUrl.IsEmpty();
 
                 }
                 else
                 {
                     ProcessError( Content );
-                    guLogError( wxT( "Could not get a LastFM:AudioScrobble SessionId" ) );
+                    guLogError( wxT( "Could not get the SessionId from: " ) + m_ServerUrl );
                 }
             }
         }

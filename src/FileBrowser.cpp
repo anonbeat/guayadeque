@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "FileBrowser.h"
 
+#include "Accelerators.h"
 #include "AuiDockArt.h"
 #include "Config.h"
 #include "FileRenamer.h"
@@ -77,11 +78,15 @@ guGenericDirCtrl::~guGenericDirCtrl()
 // -------------------------------------------------------------------------------- //
 void guGenericDirCtrl::OnConfigUpdated( wxCommandEvent &event )
 {
-    if( m_ShowPaths > guFILEBROWSER_SHOWPATH_SYSTEM )
+    int Flags = event.GetInt();
+    if( Flags & ( guPREFERENCE_PAGE_FLAG_LIBRARY | guPREFERENCE_PAGE_FLAG_RECORD | guPREFERENCE_PAGE_FLAG_PODCASTS ) )
     {
-        wxString CurPath = GetPath();
-        ReCreateTree();
-        SetPath( CurPath );
+        if( m_ShowPaths > guFILEBROWSER_SHOWPATH_SYSTEM )
+        {
+            wxString CurPath = GetPath();
+            ReCreateTree();
+            SetPath( CurPath );
+        }
     }
 }
 
@@ -170,6 +175,7 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db,
     m_AddingFolder = false;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
@@ -212,17 +218,59 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db,
 	m_ShowPodPathsBtn->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 	m_ShowLibPathsBtn->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFileBrowserDirCtrl::OnConfigUpdated ), NULL, this );
+
+    CreateAcceleratorTable();
 }
 
 // -------------------------------------------------------------------------------- //
 guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     Config->WriteBool( wxT( "ShowLibPaths" ), m_ShowLibPathsBtn->GetValue(), wxT( "FileBrowser" ) );
     m_DirCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
 	m_ShowRecPathsBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 	m_ShowPodPathsBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 	m_ShowLibPathsBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFileBrowserDirCtrl::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowserDirCtrl::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        CreateAcceleratorTable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowserDirCtrl::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
+    AliasAccelCmds.Add( ID_SONG_PLAY );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST );
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_EDITTRACKS );
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_PLAY );
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_ENQUEUE );
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_ENQUEUE_ASNEXT );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -254,7 +302,6 @@ void AppendFolderCommands( wxMenu * menu )
         MenuItem = new wxMenuItem( menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
         SubMenu->Append( MenuItem );
     }
-    menu->AppendSeparator();
     menu->AppendSubMenu( SubMenu, _( "Commands" ) );
 }
 
@@ -266,44 +313,52 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
 
     wxPoint Point = event.GetPoint();
 
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_PLAY, _( "Play" ), _( "Play the selected folder" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_PLAY,
+                            wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                            _( "Play the selected folder" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE, _( "Enqueue" ), _( "Add the selected folder to playlist" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+                            _( "Add the selected folder to playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add the selected folder to playlist as Next Tracks" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE_ASNEXT,
+                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
+                            _( "Add the selected folder to playlist as Next Tracks" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_EDITTRACKS, _( "Edit Tracks" ), _( "Edit the tracks in the selected folder" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_EDITTRACKS,
+                            wxString( _( "Edit Tracks" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
+                            _( "Edit the tracks in the selected folder" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Add the tracks in the selected folder to a playlist" ) );
+    Menu.AppendSeparator();
+
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_SAVEPLAYLIST,
+                            wxString( _( "Save to Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                            _( "Add the tracks in the selected folder to a playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
-//    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_COPYTO, _( "Copy to..." ), _( "Copy the selected folder to a folder or device" ) );
-//    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
-//    Menu.Append( MenuItem );
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-    MainFrame->CreateCopyToMenu( &Menu, ID_FILESYSTEM_FOLDER_COPYTO );
-
-    Menu.AppendSeparator();
-
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_COPY, _( "Copy" ), _( "Copy the selected folder to clipboard" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_COPY,
+                            _( "Copy" ),
+                            _( "Copy the selected folder to clipboard" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
     Menu.Append( MenuItem );
     //MenuItem->Enable( false );
 
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_PASTE, _( "Paste" ), _( "Paste to the selected folder" ) );
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_PASTE,
+                            _( "Paste" ),
+                            _( "Paste to the selected folder" ) );
     Menu.Append( MenuItem );
     wxTheClipboard->UsePrimarySelection( false );
     if( wxTheClipboard->Open() )
@@ -326,7 +381,13 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_DELETE, _( "Remove" ), _( "Remove the selected folder" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
     Menu.Append( MenuItem );
+
+    Menu.AppendSeparator();
+
+    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    MainFrame->CreateCopyToMenu( &Menu, ID_FILESYSTEM_FOLDER_COPYTO );
 
     AppendFolderCommands( &Menu );
 
@@ -530,6 +591,7 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
     m_Db = db;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
     m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "FileBrowser" ) );
     m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "FileBrowser" ) );
@@ -556,6 +618,10 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
         InsertColumn( Column );
     }
 
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFilesListBox::OnConfigUpdated ), NULL, this );
+
+    CreateAcceleratorTable();
+
     ReloadItems();
 }
 
@@ -564,6 +630,8 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
 guFilesListBox::~guFilesListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     wxArrayString ColumnNames = GetColumnNames();
     int index;
     int count = ColumnNames.Count();
@@ -579,6 +647,43 @@ guFilesListBox::~guFilesListBox()
 
     Config->WriteNum( wxT( "Order" ), m_Order, wxT( "FileBrowser" ) );
     Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "FileBrowser" ) );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFilesListBox::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guFilesListBox::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        CreateAcceleratorTable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFilesListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
+    AliasAccelCmds.Add( ID_SONG_PLAY );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_SAVEPLAYLIST );
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_EDITTRACKS );
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_PLAY );
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_ENQUEUE );
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_ENQUEUE_ASNEXT );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -919,7 +1024,6 @@ void AppendItemsCommands( wxMenu * menu, int selcount, int seltype )
         MenuItem = new wxMenuItem( menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
         SubMenu->Append( MenuItem );
     }
-    menu->AppendSeparator();
     menu->AppendSubMenu( SubMenu, _( "Commands" ) );
 }
 
@@ -931,25 +1035,50 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
     int SelCount;
     if( ( SelCount = Selection.Count() ) )
     {
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_PLAY, _( "Play" ), _( "Play current selected files" ) );
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_PLAY,
+                            wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                            _( "Play current selected files" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE, _( "Enqueue" ), _( "Add current selected files to playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+                            _( "Add current selected files to playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected files to playlist as Next Tracks" ) );
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE_ASNEXT,
+                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
+                            _( "Add current selected files to playlist as Next Tracks" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu->Append( MenuItem );
+
+    }
+
+    if( SelCount )
+    {
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_EDITTRACKS,
+                            wxString( _( "Edit Tracks" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
+                            _( "Edit the current selected files" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_SAVEPLAYLIST,
+                            wxString( _( "Save to Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                            _( "Add the current selected tracks to a playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        Menu->Append( MenuItem );
     }
+
+    Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_COPY, _( "Copy" ), _( "Copy the selected folder to clipboard" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
     Menu->Append( MenuItem );
-    //MenuItem->Enable( false );
 
     MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_PASTE, _( "Paste" ), _( "Paste to the selected dir" ) );
     Menu->Append( MenuItem );
@@ -968,30 +1097,18 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_EDITTRACKS, _( "Edit tracks" ), _( "Edit the current selected files" ) );
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_RENAME, _( "Rename files" ), _( "Rename the current selected file" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_SAVEPLAYLIST, _( "Save to Playlist" ), _( "Add the current selected tracks to a playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_DELETE, _( "Remove" ), _( "Delete the selected files" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
-//        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_COPYTO, _( "Copy to..." ), _( "Copy the selected files to a folder or device" ) );
-//        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
-//        Menu->Append( MenuItem );
+
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
         MainFrame->CreateCopyToMenu( Menu, ID_FILESYSTEM_ITEMS_COPYTO );
-
-        Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_RENAME, _( "Rename files" ), _( "Rename the current selected file" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
-        Menu->Append( MenuItem );
-
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_DELETE, _( "Delete" ), _( "Delete the selected files" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_ ) );
-        Menu->Append( MenuItem );
 
         AppendItemsCommands( Menu, SelCount, SelCount ? GetType( Selection[ 0 ] ) : guFILEITEM_TYPE_FILE );
     }

@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -21,12 +21,12 @@
 #ifndef TALISTBOX_H
 #define TALISTBOX_H
 
-#include "ItemListBox.h"
+#include "AccelListBox.h"
 
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
-class guTaListBox : public guListBox
+class guTaListBox : public guAccelListBox
 {
   protected :
     guLibPanel *    m_LibPanel;
@@ -38,6 +38,8 @@ class guTaListBox : public guListBox
     void            EditLabel( wxCommandEvent &event );
 
     virtual int     GetDragFiles( wxFileDataObject * files );
+
+    virtual void    CreateAcceleratorTable( void );
 
   public :
 

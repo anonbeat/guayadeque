@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -225,31 +225,35 @@ guLyricsPanel::~guLyricsPanel()
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_LYRICS )
     {
-        wxFont CurrentFont;
-        CurrentFont.SetNativeFontInfo( Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "Lyrics" ) ) );
-        if( !CurrentFont.IsOk() )
-            CurrentFont = GetFont();
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config )
+        {
+            wxFont CurrentFont;
+            CurrentFont.SetNativeFontInfo( Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "Lyrics" ) ) );
+            if( !CurrentFont.IsOk() )
+                CurrentFont = GetFont();
 
-        m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() ^ m_LyricAlign );
-        m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) ];
-        m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() | m_LyricAlign );
+            m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() ^ m_LyricAlign );
+            m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) ];
+            m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() | m_LyricAlign );
 
-        m_LyricText->SetDefaultStyle( wxTextAttr( m_LyricTitle->GetForegroundColour(),
-                                                  m_LyricTitle->GetBackgroundColour(),
-                                                  CurrentFont ) );
+            m_LyricText->SetDefaultStyle( wxTextAttr( m_LyricTitle->GetForegroundColour(),
+                                                      m_LyricTitle->GetBackgroundColour(),
+                                                      CurrentFont ) );
 
-        SetText( m_LyricText->GetValue() );
+            SetText( m_LyricText->GetValue() );
 
-        CurrentFont.SetPointSize( CurrentFont.GetPointSize() + 2 );
-        CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
-        m_LyricTitle->SetFont( CurrentFont );
+            CurrentFont.SetPointSize( CurrentFont.GetPointSize() + 2 );
+            CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
+            m_LyricTitle->SetFont( CurrentFont );
 
-        m_TitleSizer->Detach( m_LyricTitle );
-        m_TitleSizer->Add( m_LyricTitle, 0, wxALL|m_LyricAlign, 5 );
-        Layout();
+            m_TitleSizer->Detach( m_LyricTitle );
+            m_TitleSizer->Add( m_LyricTitle, 0, wxALL|m_LyricAlign, 5 );
+            Layout();
+        }
     }
 }
 
@@ -468,7 +472,7 @@ void guLyricsPanel::OnEditBtnClick( wxCommandEvent& event )
     m_LyricText->SetBackgroundColour( m_EditModeBGColor );
     m_LyricText->SetForegroundColour( m_EditModeFGColor );
 
-    SetText( m_LyricText->GetValue() );
+    SetText( m_CurrentLyricText );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1111,6 +1115,11 @@ void guLyricSearchEngine::ReadTargets( wxXmlNode * xmlnode )
     {
         guLyricSource * LyricTarget = new guLyricSource( xmlnode );
         m_LyricTargets.Add( LyricTarget );
+        if( !m_TargetsEnabled )
+        {
+            if( LyricTarget->Enabled() )
+                m_TargetsEnabled = true;
+        }
         xmlnode = xmlnode->GetNext();
     }
 }
@@ -1120,6 +1129,7 @@ void guLyricSearchEngine::Load( void )
 {
     m_LyricSources.Empty();
     m_LyricTargets.Empty();
+    m_TargetsEnabled = false;
     wxString LyricsConfFile = wxGetHomeDir() + wxT( "/.guayadeque/lyrics_sources.xml" );
     if( wxFileExists( LyricsConfFile ) )
     {
@@ -1602,7 +1612,11 @@ wxString DoExcludeTag( const wxString &content, const wxString &tag )
 {
     if( content.Find( tag ) != wxNOT_FOUND )
     {
-        wxString TagEnd = tag.BeforeFirst( wxT( ' ' ) ) + wxT( ">" );
+        wxString TagEnd;
+        if( tag.Find( wxT( " " ) ) != wxNOT_FOUND )
+            TagEnd = tag.BeforeFirst( wxT( ' ' ) ) + wxT( ">" );
+        else
+            TagEnd = tag;
         TagEnd.Replace( wxT( "<" ), wxT( "</" ) );
         return DoExcludeTags( content, tag, TagEnd );
     }
@@ -1626,7 +1640,7 @@ wxString guLyricSearchThread::CheckExclude( const wxString &content, guLyricSour
         {
             RetVal = DoExcludeTags( RetVal, LyricSourceExclude->Begin(), LyricSourceExclude->End() );
         }
-        if( TestDestroy() || !RetVal.IsEmpty() )
+        if( TestDestroy() || RetVal.IsEmpty() )
             break;
     }
     return RetVal;
@@ -1666,6 +1680,22 @@ wxString guLyricSearchThread::DoReplace( const wxString &text, guLyricSource &ly
 }
 
 // -------------------------------------------------------------------------------- //
+wxString SpecialCase( const wxString &text )
+{
+    wxString RetVal;
+    wxArrayString Words = wxStringTokenize( text, wxT( " " ) );
+    int Index;
+    int Count = Words.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        Words[ Index ][ 0 ] = wxToupper( Words[ Index ][ 0 ] );
+        RetVal += Words[ Index ] + wxT( " " );
+    }
+    RetVal.Trim( 1 );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 void guLyricSearchThread::ProcessTags( wxString * text, guLyricSource &lyricsource )
 {
     guTrack * Track = &m_LyricSearchContext->m_Track;
@@ -1678,6 +1708,10 @@ void guLyricSearchThread::ProcessTags( wxString * text, guLyricSource &lyricsour
         text->Replace( wxT( "{au}" ), DoReplace( Track->m_ArtistName.Upper(), lyricsource ) );
     if( text->Find( wxT( "{a1}" ) ) != wxNOT_FOUND )
         text->Replace( wxT( "{a1}" ), DoReplace( Track->m_ArtistName.Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( wxT( "{as}" ) ) )
+    {
+        text->Replace( wxT( "{as}" ), DoReplace( SpecialCase( Track->m_ArtistName.Lower() ), lyricsource ) );
+    }
 
     if( text->Find( wxT( "{b}" ) ) != wxNOT_FOUND )
         text->Replace( wxT( "{b}" ), DoReplace( Track->m_AlbumName, lyricsource ) );
@@ -1687,6 +1721,10 @@ void guLyricSearchThread::ProcessTags( wxString * text, guLyricSource &lyricsour
         text->Replace( wxT( "{bu}" ), DoReplace( Track->m_AlbumName.Upper(), lyricsource ) );
     if( text->Find( wxT( "{b1}" ) ) != wxNOT_FOUND )
         text->Replace( wxT( "{b1}" ), DoReplace( Track->m_AlbumName.Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( wxT( "{bs}" ) ) )
+    {
+        text->Replace( wxT( "{bs}" ), DoReplace( SpecialCase( Track->m_AlbumName.Lower() ), lyricsource ) );
+    }
 
     if( text->Find( wxT( "{t}" ) ) != wxNOT_FOUND )
         text->Replace( wxT( "{t}" ), DoReplace( Track->m_SongName, lyricsource ) );
@@ -1694,6 +1732,10 @@ void guLyricSearchThread::ProcessTags( wxString * text, guLyricSource &lyricsour
         text->Replace( wxT( "{tl}" ), DoReplace( Track->m_SongName.Lower(), lyricsource ) );
     if( text->Find( wxT( "{tu}" ) ) != wxNOT_FOUND )
         text->Replace( wxT( "{tu}" ), DoReplace( Track->m_SongName.Upper(), lyricsource ) );
+    if( text->Find( wxT( "{ts}" ) ) )
+    {
+        text->Replace( wxT( "{ts}" ), DoReplace( SpecialCase( Track->m_SongName.Lower() ), lyricsource ) );
+    }
 
     if( text->Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
         text->Replace( wxT( "{bp}" ), Track->m_FileName.BeforeLast( wxT( '/' ) ) );
@@ -1991,7 +2033,7 @@ void guLyricExecCommandTerminate::OnTerminate( int pid, int status )
 // -------------------------------------------------------------------------------- //
 guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyricsource, const bool istarget ) :
     //wxDialog( parent, wxID_ANY, _( "Lyric Source Editor" ), wxDefaultPosition, wxSize( 500, 425 ), wxDEFAULT_DIALOG_STYLE )
-    wxDialog( parent, wxID_ANY, istarget ? _( "Lyric Target Editor" ) : _( "Lyric Source Editor" ), wxDefaultPosition, wxSize( 500, 450 - ( istarget * 200 ) ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, istarget ? _( "Lyrics Target Editor" ) : _( "Lyrics Source Editor" ), wxDefaultPosition, wxSize( 500, 450 - ( istarget * 200 ) ), wxDEFAULT_DIALOG_STYLE )
 {
     m_LyricSource = lyricsource;
     m_IsTarget = istarget;
@@ -2202,6 +2244,8 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
         m_NotFoundAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnNotFoundAddClicked ), NULL, this );
         m_NotFoundDel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnNotFoundDelClicked ), NULL, this );
 	}
+
+	m_NameTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2512,6 +2556,8 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
 
 	SetSizer( MainSizer );
 	Layout();
+
+	m_SearchTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //

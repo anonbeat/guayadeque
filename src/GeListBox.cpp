@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -19,11 +19,47 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "GeListBox.h"
+
+#include "Accelerators.h"
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
 #include "Utils.h"
 #include "LibPanel.h"
+
+// -------------------------------------------------------------------------------- //
+guGeListBox::guGeListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
+     guAccelListBox( parent, db, label )
+{
+    m_LibPanel = libpanel;
+
+    CreateAcceleratorTable();
+
+    ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guGeListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
+    AliasAccelCmds.Add( ID_SONG_PLAY );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+
+    RealAccelCmds.Add( ID_GENRE_SAVETOPLAYLIST );
+    RealAccelCmds.Add( ID_GENRE_PLAY );
+    RealAccelCmds.Add( ID_GENRE_ENQUEUE );
+    RealAccelCmds.Add( ID_GENRE_ENQUEUE_ASNEXT );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
+}
 
 // -------------------------------------------------------------------------------- //
 void guGeListBox::GetItemsList( void )
@@ -45,26 +81,35 @@ void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
     int SelCount = GetSelectedCount();
 
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_PLAY, _( "Play" ), _( "Play current selected genres" ) );
+    MenuItem = new wxMenuItem( Menu, ID_GENRE_PLAY,
+                        wxString( _( "Play" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                        _( "Play current selected genres" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE, _( "Enqueue" ), _( "Add current selected genres to playlist" ) );
+    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE,
+                        wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+                        _( "Add current selected genres to playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected genres to playlist as Next Tracks" ) );
+    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE_ASNEXT,
+                        wxString( _( "Enqueue Next" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
+                        _( "Add current selected genres to playlist as Next Tracks" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
 
     Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_SAVETOPLAYLIST, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
+    MenuItem = new wxMenuItem( Menu, ID_GENRE_SAVETOPLAYLIST,
+                        wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                        _( "Save the selected tracks to PlayList" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
     Menu->Append( MenuItem );
 
     if( SelCount && ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
     {
+        Menu->AppendSeparator();
         m_LibPanel->CreateCopyToMenu( Menu, ID_GENRE_COPYTO );
     }
 

@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -591,8 +591,8 @@ guPlayerPanel::~guPlayerPanel()
 //	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
     m_PlayerPositionSlider->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnPlayerPositionSliderMouseWheel ), NULL, this );
 
-    m_PlayListCtrl->Disconnect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
-    m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
+//    m_PlayListCtrl->Disconnect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
+//    m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
 
     Disconnect( guEVT_MEDIA_LOADED, guMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
     Disconnect( guEVT_MEDIA_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
@@ -621,17 +621,19 @@ guPlayerPanel::~guPlayerPanel()
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
+    int Flags = event.GetInt();
+    guConfig * Config = NULL;
+    bool MediaCtrlNeedUpdated = false;
+
+    if( Flags & guPREFERENCE_PAGE_FLAG_PLAYBACK )
     {
+        Config = ( guConfig * ) guConfig::Get();
+
         //guLogDebug( wxT( "Reading PlayerPanel Config Updated" ) );
         m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
         m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "General" ) );
         m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
         m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
-
-        m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "Record" ) ) );
-        Layout();
 
         m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
         m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
@@ -646,9 +648,6 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         while( ( int ) m_SmartAddedArtists.Count() > m_SmartMaxArtistsList )
             m_SmartAddedArtists.RemoveAt( 0 );
 
-        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
-                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
-
         m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
         m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
         if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "Playback" ) ) )
@@ -656,11 +655,41 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
         }
 
+        MediaCtrlNeedUpdated = true;
+    }
+
+    if( Flags & guPREFERENCE_PAGE_FLAG_RECORD )
+    {
+        if( !Config )
+            Config = ( guConfig * ) guConfig::Get();
+
+        m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "Record" ) ) );
+        Layout();
+
+        if( m_MediaRecordCtrl )
+        {
+            m_MediaRecordCtrl->UpdatedConfig();
+        }
+    }
+
+    if( Flags & guPREFERENCE_PAGE_FLAG_CROSSFADER )
+    {
+        if( !Config )
+            Config = ( guConfig * ) guConfig::Get();
+
         m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "Crossfader" ) );
         m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
 
-        if( !m_PlaySmart )
-            CheckFiltersEnable();
+        MediaCtrlNeedUpdated = true;
+    }
+
+    if( Flags & guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE )
+    {
+        if( !Config )
+            Config = ( guConfig * ) guConfig::Get();
+
+        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
+                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
 
         if( m_AudioScrobbleEnabled )
         {
@@ -675,16 +704,11 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             event.SetInt( 1 );
             m_MainFrame->AddPendingEvent( event );
         }
+    }
 
-        if( m_MediaCtrl )
-        {
-            m_MediaCtrl->UpdatedConfig();
-        }
-
-        if( m_MediaRecordCtrl )
-        {
-            m_MediaRecordCtrl->UpdatedConfig();
-        }
+    if( m_MediaCtrl && MediaCtrlNeedUpdated )
+    {
+        m_MediaCtrl->UpdatedConfig();
     }
 }
 
@@ -1266,7 +1290,7 @@ void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype )
     if( m_MediaSong.m_Type & guTRACK_TYPE_STOP_HERE )
     {
         m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) ^ guTRACK_TYPE_STOP_HERE );
-        m_PlayListCtrl->ClearStopAfterCurrent();
+        m_PlayListCtrl->ClearStopAtEnd();
         return;
     }
     //guLogDebug( wxT( "LoadMedia Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), playtype );
@@ -2520,7 +2544,7 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
     //guLogDebug( wxT( "OnStopButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
     if( wxGetKeyState( WXK_SHIFT ) )
     {
-        OnStopAfterCurrentTrack( event );
+        OnStopAtEnd( event );
         return;
     }
 
@@ -2539,10 +2563,10 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnStopAfterCurrentTrack( wxCommandEvent &event )
+void guPlayerPanel::OnStopAtEnd( wxCommandEvent &event )
 {
     //m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) ^ guTRACK_TYPE_STOP_HERE );
-    m_PlayListCtrl->StopAfterCurrent();
+    m_PlayListCtrl->StopAtEnd();
 }
 
 // -------------------------------------------------------------------------------- //

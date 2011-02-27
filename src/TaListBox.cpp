@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "TaListBox.h"
+
+#include "Accelerators.h"
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
@@ -27,13 +29,16 @@
 
 // -------------------------------------------------------------------------------- //
 guTaListBox::guTaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
-     guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
+     guAccelListBox( parent, db, label )
 {
     m_LibPanel = libpanel;
 
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::AddLabel ) );
     Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::DelLabel ) );
     Connect( ID_LABEL_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::EditLabel ) );
+
+    CreateAcceleratorTable();
+
     ReloadItems();
 }
 
@@ -43,6 +48,29 @@ guTaListBox::~guTaListBox()
     Disconnect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::AddLabel ) );
     Disconnect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::DelLabel ) );
     Disconnect( ID_LABEL_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::EditLabel ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTaListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
+    AliasAccelCmds.Add( ID_SONG_PLAY );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+
+    RealAccelCmds.Add( ID_LABEL_SAVETOPLAYLIST );
+    RealAccelCmds.Add( ID_LABEL_PLAY );
+    RealAccelCmds.Add( ID_LABEL_ENQUEUE );
+    RealAccelCmds.Add( ID_LABEL_ENQUEUE_ASNEXT );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -67,48 +95,51 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_ADD, _( "Add Label" ), _( "Create a new label" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
     Menu->Append( MenuItem );
 
     if( GetSelectedCount() )
     {
         MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Edit Label" ), _( "Change selected label" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LABEL_DELETE, _( "Delete label" ), _( "Delete selected labels" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
     }
 
-//    Menu->AppendSeparator();
-//
-//    MenuItem = new wxMenuItem( Menu, ID_LABEL_CLEARSELECTION, _( "Clear selection" ), _( "Unselect all selected labels" ) );
-//    //MenuItem->SetBitmap( wxBitmap( GU_CONFIG_IMAGES_DIR + wxT("/images/media-playback-start.png"), wxBITMAP_TYPE_ANY ) );
-//    Menu->Append( MenuItem );
-
     Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_PLAY, _( "Play" ), _( "Play current selected labels" ) );
+    MenuItem = new wxMenuItem( Menu, ID_LABEL_PLAY,
+                            wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                            _( "Play current selected labels" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_ENQUEUE, _( "Enqueue" ), _( "Add current selected labels to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    MenuItem = new wxMenuItem( Menu, ID_LABEL_ENQUEUE,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+                            _( "Add current selected labels to playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected labels to playlist as Next Tracks" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    MenuItem = new wxMenuItem( Menu, ID_LABEL_ENQUEUE_ASNEXT,
+                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
+                            _( "Add current selected labels to playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
     Menu->AppendSeparator();
 
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_SAVETOPLAYLIST, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+    MenuItem = new wxMenuItem( Menu, ID_LABEL_SAVETOPLAYLIST,
+                            wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                            _( "Save the selected tracks to PlayList" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
     Menu->Append( MenuItem );
 
     if( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO )
     {
+        Menu->AppendSeparator();
         m_LibPanel->CreateCopyToMenu( Menu, ID_LABEL_COPYTO );
     }
 
@@ -156,16 +187,20 @@ void guTaListBox::EditLabel( wxCommandEvent &event )
     if( Selection.Count() )
     {
         // Get the Index of the First Selected Item
-        unsigned long cookie;
-        int item = GetFirstSelected( cookie );
-        wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ), _( "Enter the new label name" ), ( * m_Items )[ item ].m_Name );
-        if( EntryDialog->ShowModal() == wxID_OK &&
-            ( * m_Items )[ item ].m_Name != EntryDialog->GetValue() )
+        if( Selection[ 0 ] )
         {
-            m_Db->SetLabelName( Selection[ 0 ], ( * m_Items )[ item ].m_Name, EntryDialog->GetValue() );
-            ReloadItems();
+            unsigned long cookie;
+            int Item = GetFirstSelected( cookie );
+            wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ),
+                                                    _( "Enter the new label name" ), ( * m_Items )[ Item ] .m_Name );
+            if( EntryDialog->ShowModal() == wxID_OK &&
+                ( * m_Items )[ Selection[ Item ] ].m_Name != EntryDialog->GetValue() )
+            {
+                m_Db->SetLabelName( Selection[ 0 ], ( * m_Items )[ Item ].m_Name, EntryDialog->GetValue() );
+                ReloadItems();
+            }
+            EntryDialog->Destroy();
         }
-        EntryDialog->Destroy();
     }
 }
 

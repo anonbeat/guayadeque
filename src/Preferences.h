@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -68,6 +68,7 @@
 #define  guPREFERENCE_PAGE_FLAG_LINKS            ( 1 << 11 )
 #define  guPREFERENCE_PAGE_FLAG_COMMANDS         ( 1 << 12 )
 #define  guPREFERENCE_PAGE_FLAG_COPYTO           ( 1 << 13 )
+#define  guPREFERENCE_PAGE_FLAG_ACCELERATORS     ( 1 << 14 )
 
 enum guPreference_Page {
     guPREFERENCE_PAGE_GENERAL,
@@ -84,6 +85,7 @@ enum guPreference_Page {
     guPREFERENCE_PAGE_LINKS,
     guPREFERENCE_PAGE_COMMANDS,
     guPREFERENCE_PAGE_COPYTO,
+    guPREFERENCE_PAGE_ACCELERATORS,
     guPREFERENCE_PAGE_LASTUSED = -1
 };
 
@@ -292,8 +294,19 @@ class guPrefDialog : public wxDialog
     wxChoice *                  m_MagDownFormatChoice;
     wxArrayString               m_LastMagnatuneGenres;
 
+    wxPanel *                   m_AccelPanel;
+    wxListCtrl *                m_AccelListCtrl;
+    bool                        m_AccelItemNeedClear;
+    //wxTextCtrl *                m_AccelKeyTextCtrl;
+    //wxBitmapButton *            m_AccelDelBtn;
+    //wxBitmapButton *            m_AccelSetBtn;
 
-    wxChoice *                  m_LyricsChoice;
+	wxArrayString               m_AccelActionNames;
+	wxArrayString               m_AccelKeyNames;
+    wxArrayInt                  m_AccelKeys;
+    int                         m_AccelCurIndex;
+    int                         m_AccelLastKey;
+
 
     guConfig *                  m_Config;
     int                         m_PathSelected;
@@ -323,6 +336,7 @@ class guPrefDialog : public wxDialog
     void                        BuildLinksPage( void );
     void                        BuildCommandsPage( void );
     void                        BuildCopyToPage( void );
+    void                        BuildAcceleratorsPage( void );
 
     // Event Handlers
     void OnPageChanged( wxCommandEvent &event );
@@ -406,6 +420,9 @@ class guPrefDialog : public wxDialog
 	void OnCopyToQualityChanged( wxCommandEvent &event );
 	void OnCopyToMoveFilesChanged( wxCommandEvent &event );
 	void OnCopyToSaveBtnClick( wxCommandEvent &event );
+
+	void OnAccelSelected( wxListEvent &event );
+    void OnAccelKeyDown( wxKeyEvent &event );
 
   public:
     guPrefDialog( wxWindow * parent, guDbLibrary * db, int pagenum = guPREFERENCE_PAGE_LASTUSED );

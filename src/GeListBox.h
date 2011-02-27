@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -21,12 +21,12 @@
 #ifndef GUGELISTBOX_H
 #define GUGELISTBOX_H
 
-#include "ItemListBox.h"
+#include "AccelListBox.h"
 
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
-class guGeListBox : public guListBox
+class guGeListBox : public guAccelListBox
 {
   protected :
     guLibPanel *    m_LibPanel;
@@ -36,15 +36,10 @@ class guGeListBox : public guListBox
 
     virtual int     GetDragFiles( wxFileDataObject * files );
 
+    virtual void    CreateAcceleratorTable( void );
+
   public :
-
-    guGeListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
-         guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
-    {
-        m_LibPanel = libpanel;
-
-        ReloadItems();
-    };
+    guGeListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
 
     virtual int GetSelectedSongs( guTrackArray * Songs ) const;
 

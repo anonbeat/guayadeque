@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -3393,6 +3393,9 @@ bool guLibPanel::OnDropFiles( const wxArrayString &filenames )
 {
     return false;
 }
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guLibPanelDropTarget

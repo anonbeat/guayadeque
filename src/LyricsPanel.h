@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -386,9 +386,12 @@ class guLyricSearchEngine
     guLyricSourceArray          m_LyricTargets;
     guLyricSearchThreadArray    m_LyricSearchThreads;
     wxMutex                     m_LyricSearchThreadsMutex;
+    bool                        m_TargetsEnabled;
 
     void                        ReadSources( wxXmlNode * xmlnode );
     void                        ReadTargets( wxXmlNode * xmlnode );
+
+    void                        UpdateTargetsEnabled( void );
 
   public :
     guLyricSearchEngine();
@@ -408,6 +411,7 @@ class guLyricSearchEngine
 
     size_t                      TargetsCount( void ) { return m_LyricTargets.Count(); }
     guLyricSource *             GetTarget( const int index ) { return &m_LyricTargets[ index ]; }
+    bool                        TargetsEnabled( void ) { return m_TargetsEnabled; }
 
     void                        SourceAdd( const guLyricSource * lyricsource ) { m_LyricSources.Add( lyricsource ); }
     void                        SourceRemoveAt( const int index ) { m_LyricSources.RemoveAt( index ); }

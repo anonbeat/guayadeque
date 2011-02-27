@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -212,12 +212,16 @@ guStatusBar::~guStatusBar()
 // -------------------------------------------------------------------------------- //
 void guStatusBar::OnConfigUpdated( wxCommandEvent &event )
 {
-    //guLogMessage( wxT( "guSTatusBar::OnConfigUPdated..." ) );
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->RegisterObject( this );
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_CROSSFADER )
+    {
+        //guLogMessage( wxT( "guSTatusBar::OnConfigUPdated..." ) );
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        Config->RegisterObject( this );
 
-    int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
-    SetPlayMode( !FadeOutTime || m_ForceGapless );
+        int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+        SetPlayMode( !FadeOutTime || m_ForceGapless );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -253,7 +257,7 @@ void guStatusBar::OnSize( wxSizeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::SetAudioScrobbleService( bool Enabled )
+void guStatusBar::UpdateAudioScrobbleIcon( bool Enabled )
 {
     if( m_ASBitmap )
     {
@@ -266,16 +270,25 @@ void guStatusBar::SetAudioScrobbleService( bool Enabled )
 // -------------------------------------------------------------------------------- //
 void guStatusBar::SetPlayMode( const bool forcegapless )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_ForceGapless = forcegapless;
-    Config->WriteBool( wxT( "ForceGapless" ), m_ForceGapless, wxT( "Crossfader" ) );
-    Config->Flush();
-    if( m_PlayMode )
+    if( m_ForceGapless != forcegapless )
     {
-        m_PlayMode->SetBitmap( guImage( forcegapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
-        m_PlayMode->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
-        m_PlayMode->Refresh();
+        m_ForceGapless = forcegapless;
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        Config->WriteBool( wxT( "ForceGapless" ), m_ForceGapless, wxT( "Crossfader" ) );
+        Config->Flush();
+        if( m_PlayMode )
+        {
+            m_PlayMode->SetBitmap( guImage( forcegapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
+            m_PlayMode->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
+            m_PlayMode->Refresh();
+        }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::SetAudioScrobble( const bool audioscrobble )
+{
+    OnAudioScrobbleClicked();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -355,7 +368,7 @@ void guStatusBar::OnAudioScrobbleClicked( void )
         Config->Flush();
         Config->SendConfigChangedEvent( guPREFERENCE_PAGE_AUDIOSCROBBLE );
 
-        SetAudioScrobbleService( ( ( LastFMEnabled != wxNOT_FOUND ) && LastFMEnabled ) || LibreFMEnabled );
+        UpdateAudioScrobbleIcon( ( ( LastFMEnabled != wxNOT_FOUND ) && LastFMEnabled ) || LibreFMEnabled );
     }
 }
 

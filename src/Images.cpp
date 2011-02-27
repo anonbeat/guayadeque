@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -95,6 +95,7 @@
 #include "./images/pref_crossfader.h"
 #include "./images/pref_jamendo.h"
 #include "./images/pref_magnatune.h"
+#include "./images/pref_accelerators.h"
 //
 #include "./images/loc_library.h"
 #include "./images/loc_portable_device.h"
@@ -259,11 +260,12 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_pref_playback,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_podcasts,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_record,                   wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_pref_crossfader,		        wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_pref_jamendo,		            wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_pref_magnatune,		        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_crossfader,		    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_jamendo,		    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_magnatune,		    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_accelerators,		    wxBITMAP_TYPE_PNG ),
     //
-    GUIMAGE( guImage_loc_library,		            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_library,		    wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_loc_portable_device,	        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_loc_net_radio,	                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_loc_podcast,	                wxBITMAP_TYPE_PNG ),

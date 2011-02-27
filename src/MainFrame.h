@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -219,6 +219,9 @@ class guMainFrame : public wxFrame
     wxMenuItem *                    m_ViewFullScreen;
     wxMenuItem *                    m_ViewStatusBar;
 
+    wxMenuItem *                    m_ForceGaplessMenuItem;
+    wxMenuItem *                    m_AudioScrobbleMenuItem;
+
     wxMenu *                        m_PortableDevicesMenu;
 
 
@@ -284,6 +287,8 @@ class guMainFrame : public wxFrame
 
     void                            OnPlay( wxCommandEvent &event );
     void                            OnStop( wxCommandEvent &event );
+    void                            OnStopAtEnd( wxCommandEvent &event );
+    void                            OnClearPlaylist( wxCommandEvent &event );
     void                            OnNextTrack( wxCommandEvent &event );
     void                            OnPrevTrack( wxCommandEvent &event );
     void                            OnNextAlbum( wxCommandEvent &event );
@@ -330,6 +335,7 @@ class guMainFrame : public wxFrame
     void                            OnIdle( wxIdleEvent &event );
     void                            OnPageChanged( wxAuiNotebookEvent& event );
     void                            OnPageClosed( wxAuiNotebookEvent& event );
+    void                            DoPageClose( wxPanel * panel );
 
 //    void                            SetLibTracks( wxCommandEvent &event );
 //    void                            SetRadioStations( wxCommandEvent &event );
@@ -383,6 +389,7 @@ class guMainFrame : public wxFrame
 
     void                            OnForceUpdateLibrary( wxCommandEvent &event );
     void                            OnAddLibraryPath( wxCommandEvent &event );
+    void                            OnPlayStream( wxCommandEvent &event );
 
     void                            OnViewFullScreen( wxCommandEvent &event );
     void                            OnViewStatusBar( wxCommandEvent &event );
@@ -406,6 +413,7 @@ class guMainFrame : public wxFrame
     void                            CreatePortableMediaDeviceMenu( wxMenu * menu, const wxString &devicename, const int basecmd );
 
     void                            OnSetForceGapless( wxCommandEvent &event );
+    void                            OnSetAudioScrobble( wxCommandEvent &event );
 
     void                            OnLyricFound( wxCommandEvent &event );
     void                            OnLyricSearchFirst( wxCommandEvent &event );
@@ -425,7 +433,8 @@ class guMainFrame : public wxFrame
     void                            OnMagnatuneUpdated( wxCommandEvent &event );
     void                            LibraryCleanFinished( wxCommandEvent &event );
     void                            LibraryReloadControls( wxCommandEvent &event );
-    void                            OnQuit( wxCommandEvent &WXUNUSED(event) );
+    void                            OnQuit( wxCommandEvent &event );
+    void                            OnCloseTab( wxCommandEvent &event );
     void                            UpdatePodcasts( void );
 
     void                            RemovePodcastsDownloadThread( void );
