@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -443,12 +443,23 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
         //guLogMessage( wxT( "ResponseCode: %i" ), ResponseCode );
         if( ResponseCode >= 300  && ResponseCode < 400 )
         {
+            //guLogMessage( wxT( "Response %u:\n%s\n%s" ), http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
             wxString Location = http.GetResponseHeader();
             int Pos = Location.Lower().Find( wxT( "location: " ) );
             if( Pos != wxNOT_FOUND )
             {
                 Location = Location.Mid( Pos + 10 );
                 Location.Truncate( Location.Find( wxT( "\r\n" ) ) );
+                if( Location.StartsWith( wxT( "/" ) ) )
+                {
+                    wxURI Uri( url );
+                    wxString NewURL;
+                    if( Uri.HasScheme() )
+                        NewURL = Uri.GetScheme() + wxT( "://" );
+                    NewURL += Uri.GetServer();
+                    NewURL += Location;
+                    Location = NewURL;
+                }
                 return GetUrlContent( Location, referer, gzipped );
             }
         }

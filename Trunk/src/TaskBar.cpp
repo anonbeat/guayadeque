@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -43,6 +43,8 @@ guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPla
     Connect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
     Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
     Connect( ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SetRatingEvent ) );
+    Connect( ID_MAINFRAME_SETFORCEGAPLESS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Connect( ID_MAINFRAME_SETAUDIOSCROBBLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
 
     Connect( wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler( guTaskBarIcon::OnClick ), NULL, this );
 }
@@ -61,6 +63,8 @@ guTaskBarIcon::~guTaskBarIcon()
     Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
     Disconnect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
     Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_MAINFRAME_SETFORCEGAPLESS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Disconnect( ID_MAINFRAME_SETAUDIOSCROBBLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
 
     Disconnect( wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler( guTaskBarIcon::OnClick ), NULL, this );
 }
@@ -110,30 +114,29 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
     {
         bool IsPaused = ( m_PlayerPanel->GetState() == guMEDIASTATE_PLAYING );
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PLAY, IsPaused ? _( "Pause" ) : _( "Play" ), _( "Play current playlist" ) );
-        MenuItem->SetBitmap( guImage( IsPaused ? guIMAGE_INDEX_player_normal_pause :
-                                                 guIMAGE_INDEX_player_normal_play ) );
+        //MenuItem->SetBitmap( guImage( IsPaused ? guIMAGE_INDEX_player_normal_pause : guIMAGE_INDEX_player_normal_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_STOP, _( "Stop" ), _( "Play current playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_stop ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_stop ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_NEXTTRACK, _( "Next Track" ), _( "Skip to next track in current playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_next ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_next ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_NEXTALBUM, _( "Next Album" ), _( "Skip to next album track in current playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_next ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_next ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVTRACK, _( "Prev Track" ), _( "Skip to previous track in current playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVTRACK, _( "Prev Album" ), _( "Skip to previous album track in current playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
+        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -180,6 +183,16 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
 
         Menu->AppendSeparator();
     }
+
+    MenuItem = new wxMenuItem( Menu, ID_MAINFRAME_SETFORCEGAPLESS, _( "Force Gapless Mode" ), _( "Set playback in gapless mode" ), wxITEM_CHECK );
+    Menu->Append( MenuItem );
+    MenuItem->Check( m_PlayerPanel->GetForceGapless() );
+
+    MenuItem = new wxMenuItem( Menu, ID_MAINFRAME_SETAUDIOSCROBBLE, _( "Audioscrobbling" ), _( "Send played tracks information" ), wxITEM_CHECK );
+    Menu->Append( MenuItem );
+    MenuItem->Check( m_PlayerPanel->GetAudioScrobbleEnabled() );
+
+    Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_QUIT, _( "Exit" ), _( "Exit this program" ) );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );

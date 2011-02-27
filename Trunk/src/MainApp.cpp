@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -42,6 +42,8 @@ guMainApp::guMainApp() : wxApp()
 {
     m_Db = NULL;
     m_DbCache = NULL;
+
+    wxHandleFatalExceptions();
 
     if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque" ) ) )
     {
@@ -122,6 +124,7 @@ guMainApp::guMainApp() : wxApp()
 
     m_Config = new guConfig();
     guConfig::Set( m_Config );
+
 }
 
 // -------------------------------------------------------------------------------- //

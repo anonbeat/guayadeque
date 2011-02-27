@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "SoListBox.h"
 
+#include "Accelerators.h"
 #include "Config.h" // Configuration
 #include "Commands.h"
 #include "Images.h"
@@ -38,6 +39,7 @@ guSoListBox::guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
     m_LibPanel = libpanel;
     m_Db = NewDb;
@@ -81,9 +83,9 @@ guSoListBox::guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
     Connect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
     Connect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
 
-//    Connect( ID_SONG_EDIT_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnColumEdit ), NULL, this );
-//    Connect( ID_SONG_SET_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnColumSet ), NULL, this );
-//    Connect( ID_SONG_SET_RATING_0, ID_SONG_SET_RATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnColumnSetRating ), NULL, this );
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guSoListBox::OnConfigUpdated ), NULL, this );
+
+    CreateAcceleratorTable();
 
     ReloadItems();
 }
@@ -93,6 +95,8 @@ guSoListBox::guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 guSoListBox::~guSoListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     //int ColId;
     int index;
     int count = guSONGS_COLUMN_COUNT;
@@ -118,6 +122,59 @@ guSoListBox::~guSoListBox()
     Disconnect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
     Disconnect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
     Disconnect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guSoListBox::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        CreateAcceleratorTable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
+    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_0 );
+    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_1 );
+    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_2 );
+    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_3 );
+    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_4 );
+    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_5 );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUEALL );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUEALL_ASNEXT );
+
+    RealAccelCmds.Add( ID_SONG_SAVETOPLAYLIST );
+    RealAccelCmds.Add( ID_SONG_EDITLABELS );
+    RealAccelCmds.Add( ID_SONG_EDITTRACKS );
+    RealAccelCmds.Add( ID_SONG_SET_RATING_0 );
+    RealAccelCmds.Add( ID_SONG_SET_RATING_1 );
+    RealAccelCmds.Add( ID_SONG_SET_RATING_2 );
+    RealAccelCmds.Add( ID_SONG_SET_RATING_3 );
+    RealAccelCmds.Add( ID_SONG_SET_RATING_4 );
+    RealAccelCmds.Add( ID_SONG_SET_RATING_5 );
+    RealAccelCmds.Add( ID_SONG_ENQUEUE );
+    RealAccelCmds.Add( ID_SONG_ENQUEUEALL );
+    RealAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_SONG_ENQUEUEALL_ASNEXT );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -456,22 +513,34 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
 
             int Rating = m_Items[ m_LastRowRightClicked - m_ItemsFirst ].m_Rating;
 
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_0, wxT( "☆☆☆☆☆" ), _( "Set the rating to 0" ), wxITEM_CHECK );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_0,
+                                    wxT( "☆☆☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_0 ),
+                                    _( "Set the rating to 0" ), wxITEM_CHECK );
             RatingMenu->Append( MenuItem );
             MenuItem->Check( Rating <= 0 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_1, wxT( "★☆☆☆☆" ), _( "Set the rating to 1" ), wxITEM_CHECK );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_1,
+                                    wxT( "★☆☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_1 ),
+                                    _( "Set the rating to 1" ), wxITEM_CHECK );
             RatingMenu->Append( MenuItem );
             MenuItem->Check( Rating == 1 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_2, wxT( "★★☆☆☆" ), _( "Set the rating to 2" ), wxITEM_CHECK );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_2,
+                                    wxT( "★★☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_2 ),
+                                    _( "Set the rating to 2" ), wxITEM_CHECK );
             RatingMenu->Append( MenuItem );
             MenuItem->Check( Rating == 2 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_3, wxT( "★★★☆☆" ), _( "Set the rating to 3" ), wxITEM_CHECK );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_3,
+                                    wxT( "★★★☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_3 ),
+                                    _( "Set the rating to 3" ), wxITEM_CHECK );
             RatingMenu->Append( MenuItem );
             MenuItem->Check( Rating == 3 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_4, wxT( "★★★★☆" ), _( "Set the rating to 4" ), wxITEM_CHECK );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_4,
+                                    wxT( "★★★★☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_4 ),
+                                    _( "Set the rating to 4" ), wxITEM_CHECK );
             RatingMenu->Append( MenuItem );
             MenuItem->Check( Rating == 4 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_5, wxT( "★★★★★" ), _( "Set the rating to 5" ), wxITEM_CHECK );
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_5,
+                                    wxT( "★★★★★" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_5 ),
+                                    _( "Set the rating to 5" ), wxITEM_CHECK );
             RatingMenu->Append( MenuItem );
             MenuItem->Check( Rating == 5 );
 
@@ -491,9 +560,8 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
             menu->Append( MenuItem );
         }
     }
-
-    menu->AppendSeparator();
 }
+
 
 // -------------------------------------------------------------------------------- //
 void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
@@ -504,87 +572,91 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
     if( SelCount )
     {
-        MenuItem = new wxMenuItem( Menu, ID_SONG_PLAY, _( "Play" ), _( "Play current selected songs" ) );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_PLAY,
+                                wxString( _( "Play" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                                _( "Play current selected songs" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
     }
 
-    MenuItem = new wxMenuItem( Menu, ID_SONG_PLAYALL, _( "Play All" ), _( "Play all songs" ) );
+    MenuItem = new wxMenuItem( Menu, ID_SONG_PLAYALL,
+                                wxString( _( "Play All" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_PLAYALL ),
+                                _( "Play all songs" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
     if( SelCount )
     {
-        MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE,
+                                wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+                                _( "Add current selected songs to the playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected songs to the playlist as Next Tracks" ) );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE_ASNEXT,
+                                wxString( _( "Enqueue Next" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
+                                _( "Add current selected songs to the playlist as Next Tracks" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
     }
 
-    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL, _( "Enqueue All" ), _( "Add all songs to the playlist" ) );
+    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL,
+                                wxString( _( "Enqueue All" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUEALL ),
+                                _( "Add all songs to the playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL_ASNEXT, _( "Enqueue All Next" ), _( "Add all songs to the playlist as Next Tracks" ) );
+    MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUEALL_ASNEXT,
+                                wxString( _( "Enqueue All Next" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUEALL_ASNEXT ),
+                              _( "Add all songs to the playlist as Next Tracks" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
     if( SelCount )
     {
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
-        {
-            Menu->AppendSeparator();
-
-            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY )
-            {
-                MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
-                MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
-                Menu->Append( MenuItem );
-            }
-
-            MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_DRIVE, _( "Delete from Drive" ), _( "Remove the current selected tracks from drive" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
-            Menu->Append( MenuItem );
-        }
-
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_SAVETOPLAYLIST, _( "Save to Playlist" ), _( "Save all selected tracks as a playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-        Menu->Append( MenuItem );
-
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
-        {
-            if( m_LibPanel )
-            {
-                m_LibPanel->CreateCopyToMenu( Menu, ID_SONG_COPYTO );
-            }
-            else
-            {
-                guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-                MainFrame->CreateCopyToMenu( Menu, ID_SONG_COPYTO );
-            }
-        }
-
-        Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_SONG_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected songs" ) );
+        MenuItem = new wxMenuItem( Menu, ID_SONG_EDITLABELS,
+                                wxString( _( "Edit Labels" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITLABELS ),
+                                _( "Edit the labels assigned to the selected songs" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
         {
-            MenuItem = new wxMenuItem( Menu, ID_SONG_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs selected" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            MenuItem = new wxMenuItem( Menu, ID_SONG_EDITTRACKS,
+                                wxString( _( "Edit Songs" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
+                                _( "Edit the songs selected" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
 
             Menu->AppendSeparator();
 
             AppendFastEditMenu( Menu, SelCount );
         }
+
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_SONG_SAVETOPLAYLIST,
+                                wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                                _( "Save all selected tracks as a playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+            Menu->Append( MenuItem );
+        }
+
+        MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_DRIVE, _( "Delete from Drive" ), _( "Remove the current selected tracks from drive" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
 
         wxMenu *     SubMenu;
         SubMenu = new wxMenu();
@@ -603,10 +675,24 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSubMenu( SubMenu, _( "Select" ), _( "Search in the library" ) );
 
-        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
             ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
         {
             Menu->AppendSeparator();
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+            {
+                if( m_LibPanel )
+                {
+                    m_LibPanel->CreateCopyToMenu( Menu, ID_SONG_COPYTO );
+                }
+                else
+                {
+                    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+                    MainFrame->CreateCopyToMenu( Menu, ID_SONG_COPYTO );
+                }
+            }
 
             if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
             {

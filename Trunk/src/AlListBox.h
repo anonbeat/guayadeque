@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -47,6 +47,9 @@ class guAlListBox : public  guListView
     wxString            GetSearchText( int item ) const;
 
     virtual int         GetDragFiles( wxFileDataObject * files );
+
+    void                OnConfigUpdated( wxCommandEvent &event );
+    void                CreateAcceleratorTable();
 
   public :
                         guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );

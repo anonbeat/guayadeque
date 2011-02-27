@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "RadioPanel.h"
 
+#include "Accelerators.h"
 #include "AuiDockArt.h"
 #include "Commands.h"
 #include "Config.h"
@@ -27,6 +28,7 @@
 #include "LabelEditor.h"
 #include "MainFrame.h"
 #include "PlayListFile.h"
+#include "Preferences.h"
 #include "RadioGenreEditor.h"
 #include "RadioEditor.h"
 #include "StatusBar.h"
@@ -255,16 +257,19 @@ class guUpdateRadiosThread : public wxThread
 class guRadioStationListBox : public guListView
 {
   protected :
-    guDbRadios *      m_Db;
-    guRadioStations   m_Radios;
-    int               m_StationsOrder;
-    bool              m_StationsOrderDesc;
+    guDbRadios *                m_Db;
+    guRadioStations             m_Radios;
+    int                         m_StationsOrder;
+    bool                        m_StationsOrderDesc;
 
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
 
     virtual wxArrayString       GetColumnNames( void );
+
+    void                        OnConfigUpdated( wxCommandEvent &event );
+    void                        CreateAcceleratorTable();
 
   public :
     guRadioStationListBox( wxWindow * parent, guDbRadios * NewDb );
@@ -378,7 +383,7 @@ void guRadioGenreTreeCtrl::OnContextMenu( wxTreeEvent &event )
             Menu.Append( MenuItem );
 
             MenuItem = new wxMenuItem( &Menu, ID_RADIO_GENRE_DELETE, _( "Delete genre" ), _( "Delete the selected search" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
             Menu.Append( MenuItem );
         }
 
@@ -401,7 +406,7 @@ void guRadioGenreTreeCtrl::OnContextMenu( wxTreeEvent &event )
             Menu.Append( MenuItem );
 
             MenuItem = new wxMenuItem( &Menu, ID_RADIO_SEARCH_DELETE, _( "Delete search" ), _( "Delete the selected search" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
             Menu.Append( MenuItem );
         }
 
@@ -564,6 +569,7 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbRadios * db
     m_Db = db;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
     m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
     m_StationsOrderDesc = Config->ReadNum( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );;
@@ -591,6 +597,10 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbRadios * db
         InsertColumn( Column );
     }
 
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioStationListBox::OnConfigUpdated ), NULL, this );
+
+    CreateAcceleratorTable();
+
     ReloadItems();
 }
 
@@ -599,6 +609,8 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbRadios * db
 guRadioStationListBox::~guRadioStationListBox()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     //int ColId;
     int index;
     int count = guRADIOSTATIONS_COLUMN_COUNT;
@@ -611,6 +623,43 @@ guRadioStationListBox::~guRadioStationListBox()
 
     Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "General" ) );
     Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "General" ) );;
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioStationListBox::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioStationListBox::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        CreateAcceleratorTable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioStationListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
+    AliasAccelCmds.Add( ID_SONG_PLAY );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+
+    RealAccelCmds.Add( ID_RADIO_USER_EDIT );
+    RealAccelCmds.Add( ID_RADIO_EDIT_LABELS );
+    RealAccelCmds.Add( ID_RADIO_PLAY );
+    RealAccelCmds.Add( ID_RADIO_ENQUEUE );
+    RealAccelCmds.Add( ID_RADIO_ENQUEUE_ASNEXT );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -696,48 +745,56 @@ void guRadioStationListBox::ReloadItems( bool reset )
 void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
-    wxArrayInt Selection = GetSelectedItems();
-
-    if( Selection.Count() )
-    {
-        MenuItem = new wxMenuItem( Menu, ID_RADIO_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
-        Menu->Append( MenuItem );
-
-        MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE, _( "Enqueue" ), _( "Add current selected songs to playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-        Menu->Append( MenuItem );
-
-        MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected songs to playlist as Next Tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-        Menu->Append( MenuItem );
-
-        Menu->AppendSeparator();
-    }
+    int SelCount = GetSelectedCount();
 
     MenuItem = new wxMenuItem( Menu, ID_RADIO_USER_ADD, _( "Add Radio" ), _( "Add a radio" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_net_radio ) );
     Menu->Append( MenuItem );
 
-    if( Selection.Count() )
+    if( SelCount )
     {
         guRadioStation RadioStation;
         GetSelected( &RadioStation );
+
         if( RadioStation.m_Source == 1 )
         {
-            MenuItem = new wxMenuItem( Menu, ID_RADIO_USER_EDIT, _( "Edit Radio" ), _( "Change the selected radio" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            MenuItem = new wxMenuItem( Menu, ID_RADIO_USER_EDIT,
+                            wxString( _( "Edit Radio" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
+                            _( "Change the selected radio" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
 
             MenuItem = new wxMenuItem( Menu, ID_RADIO_USER_DEL, _( "Delete Radio" ), _( "Delete the selected radio" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
             Menu->Append( MenuItem );
-
-            Menu->AppendSeparator();
         }
 
-        MenuItem = new wxMenuItem( Menu, ID_RADIO_EDIT_LABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected stations" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_RADIO_PLAY,
+                            wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                            _( "Play current selected songs" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+                            _( "Add current selected songs to playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE_ASNEXT,
+                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
+                            _( "Add current selected songs to playlist as Next Tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_RADIO_EDIT_LABELS,
+                            wxString( _( "Edit Labels" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITLABELS ),
+                            _( "Edit the labels assigned to the selected stations" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
     }
 }

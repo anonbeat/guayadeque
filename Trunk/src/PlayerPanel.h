@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -391,7 +391,7 @@ class guPlayerPanel : public wxPanel
     void                        OnNextAlbumButtonClick( wxCommandEvent &event );
     void                        OnPlayButtonClick( wxCommandEvent &event );
     void                        OnStopButtonClick( wxCommandEvent &event );
-    void                        OnStopAfterCurrentTrack( wxCommandEvent &event );
+    void                        OnStopAtEnd( wxCommandEvent &event );
     void                        OnRecordButtonClick( wxCommandEvent &event );
 	void                        OnSmartPlayButtonClick( wxCommandEvent &event );
 	void                        OnRandomPlayButtonClick( wxCommandEvent &event );
@@ -421,13 +421,16 @@ class guPlayerPanel : public wxPanel
     void                        SendNotifyInfo( wxImage * image );
 
     void                        SetForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; m_MediaCtrl->ForceGapless( forcegapless ); }
+    bool                        GetForceGapless( void ) { return m_ForceGapless; }
+
+    bool                        GetAudioScrobbleEnabled( void ) { return m_AudioScrobbleEnabled; }
 
     void                        UpdateCover( const bool shownotify = true );    // Start the thread that search for the cover
 
     wxString                    LastTmpCoverFile( void ) { return m_LastTmpCoverFile; }
     void                        SetLastTmpCoverFile( const wxString &lastcoverfile ) { m_LastTmpCoverFile = lastcoverfile; }
 
-    void                        StopAfterCurrent( void ) { m_MediaSong.m_Type = guTrackType( ( int ) m_MediaSong.m_Type ^ guTRACK_TYPE_STOP_HERE ); }
+    void                        StopAtEnd( void ) { m_MediaSong.m_Type = guTrackType( ( int ) m_MediaSong.m_Type ^ guTRACK_TYPE_STOP_HERE ); }
 
     friend class guSmartAddTracksThread;
 };

@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -23,12 +23,12 @@
 
 #include <wx/wx.h>
 
-#include "ItemListBox.h"
+#include "AccelListBox.h"
 
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
-class guArListBox : public guListBox
+class guArListBox : public guAccelListBox
 {
   protected :
     guLibPanel *    m_LibPanel;
@@ -40,6 +40,8 @@ class guArListBox : public guListBox
     wxString        GetSearchText( int Item ) const;
 
     virtual int     GetDragFiles( wxFileDataObject * files );
+
+    virtual void    CreateAcceleratorTable();
 
   public :
                     guArListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );

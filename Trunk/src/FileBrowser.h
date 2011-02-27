@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -124,6 +124,9 @@ class guFileBrowserDirCtrl : public wxPanel
 
     void                OnContextMenu( wxTreeEvent &event );
 
+    void                OnConfigUpdated( wxCommandEvent &event );
+    void                CreateAcceleratorTable();
+
   public :
     guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db, const wxString &dirpath );
     ~guFileBrowserDirCtrl();
@@ -153,12 +156,12 @@ class guFileBrowserDirCtrl : public wxPanel
 class guFilesListBox : public guListView
 {
   protected :
-    guDbLibrary *       m_Db;
-    wxString            m_CurDir;
-    guFileItemArray     m_Files;
-    wxImageList *       m_TreeImageList;
-    int                 m_Order;
-    bool                m_OrderDesc;
+    guDbLibrary *               m_Db;
+    wxString                    m_CurDir;
+    guFileItemArray             m_Files;
+    wxImageList *               m_TreeImageList;
+    int                         m_Order;
+    bool                        m_OrderDesc;
 
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
@@ -175,6 +178,9 @@ class guFilesListBox : public guListView
     int                         GetPathSordedItems( const wxString &path, guFileItemArray * items,
                                                     const int order, const bool orderdesc,
                                                     const bool recursive = false ) const;
+
+    void                        OnConfigUpdated( wxCommandEvent &event );
+    void                        CreateAcceleratorTable();
 
   public :
     guFilesListBox( wxWindow * parent, guDbLibrary * db );

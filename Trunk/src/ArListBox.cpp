@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "ArListBox.h"
+
+#include "Accelerators.h"
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
@@ -29,12 +31,15 @@
 
 // -------------------------------------------------------------------------------- //
 guArListBox::guArListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
-             guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )
+             guAccelListBox( parent, db, label )
 {
     m_LibPanel = libpanel;
 
     Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );
     Connect( ID_ARTIST_COMMANDS, ID_ARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnCommandClicked ) );
+
+    CreateAcceleratorTable();
+
     ReloadItems();
 };
 
@@ -43,6 +48,33 @@ guArListBox::~guArListBox()
 {
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );
     Disconnect( ID_ARTIST_COMMANDS, ID_ARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnCommandClicked ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guArListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
+    AliasAccelCmds.Add( ID_SONG_PLAY );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+
+    RealAccelCmds.Add( ID_ARTIST_SAVETOPLAYLIST );
+    RealAccelCmds.Add( ID_ARTIST_EDITLABELS );
+    RealAccelCmds.Add( ID_ARTIST_EDITTRACKS );
+    RealAccelCmds.Add( ID_ARTIST_PLAY );
+    RealAccelCmds.Add( ID_ARTIST_ENQUEUE );
+    RealAccelCmds.Add( ID_ARTIST_ENQUEUE_ASNEXT );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -102,48 +134,61 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
     int SelCount = GetSelectedCount();
     int ContextMenuFlags = m_LibPanel->GetContextMenuFlags();
 
-    MenuItem = new wxMenuItem( Menu, ID_ARTIST_PLAY, _( "Play" ), _( "Play current selected artists" ) );
+    MenuItem = new wxMenuItem( Menu, ID_ARTIST_PLAY,
+                            wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                            _( "Play current selected artists" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_ARTIST_ENQUEUE, _( "Enqueue" ), _( "Add current selected artists to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    MenuItem = new wxMenuItem( Menu, ID_ARTIST_ENQUEUE,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+                            _( "Add current selected artists to playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_ARTIST_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected artists to playlist as Next Tracks" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    MenuItem = new wxMenuItem( Menu, ID_ARTIST_ENQUEUE_ASNEXT,
+                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
+                            _( "Add current selected artists to playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
     if( SelCount )
     {
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected artists" ) );
+        MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITLABELS,
+                            wxString( _( "Edit Labels" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITLABELS ),
+                            _( "Edit the labels assigned to the selected artists" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
         {
-            MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITTRACKS, _( "Edit Songs" ), _( "Edit the songs from the selected artists" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITTRACKS,
+                            wxString( _( "Edit Songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
+                            _( "Edit the songs from the selected artists" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
         }
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SAVETOPLAYLIST, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SAVETOPLAYLIST,
+                            wxString( _( "Save to PlayList" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                            _( "Save the selected tracks to PlayList" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
-        {
-            m_LibPanel->CreateCopyToMenu( Menu, ID_ARTIST_COPYTO );
-        }
-
-        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
             ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
         {
             Menu->AppendSeparator();
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+            {
+                m_LibPanel->CreateCopyToMenu( Menu, ID_ARTIST_COPYTO );
+            }
 
             if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
             {

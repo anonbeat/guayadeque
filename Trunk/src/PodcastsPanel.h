@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -77,13 +77,13 @@ class guPodcastPanel;
 class guPodcastListBox : public guListView
 {
   protected :
-    guDbLibrary *       m_Db;
-    guPodcastItemArray  m_PodItems;
-    wxArrayInt          m_PodChFilters;
-    int                 m_Order;
-    bool                m_OrderDesc;
-    wxImage *           m_Images[ guPODCAST_STATUS_ERROR + 1 ];
-    wxArrayString       m_ColumnNames;
+    guDbLibrary *               m_Db;
+    guPodcastItemArray          m_PodItems;
+    wxArrayInt                  m_PodChFilters;
+    int                         m_Order;
+    bool                        m_OrderDesc;
+    wxImage *                   m_Images[ guPODCAST_STATUS_ERROR + 1 ];
+    wxArrayString               m_ColumnNames;
 
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
@@ -93,6 +93,9 @@ class guPodcastListBox : public guListView
 
     virtual int                 GetDragFiles( wxFileDataObject * files );
     virtual void                OnKeyDown( wxKeyEvent &event );
+
+    void                        OnConfigUpdated( wxCommandEvent &event );
+    void                        CreateAcceleratorTable();
 
   public :
     guPodcastListBox( wxWindow * parent, guDbLibrary * NewDb );

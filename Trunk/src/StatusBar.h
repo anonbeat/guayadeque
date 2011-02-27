@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -89,7 +89,7 @@ class guStatusBar : public wxStatusBar
                         guStatusBar( wxWindow * parent );
     virtual             ~guStatusBar();
 
-    void                SetAudioScrobbleService( bool Enabled = false );
+    void                UpdateAudioScrobbleIcon( bool Enabled = false );
     int                 AddGauge( const wxString &text = wxEmptyString, bool showporcent = true );
     int                 RemoveGauge( int gaugeid );
     void                Pulse( int id ) { /*m_Gauges[ id ]->Pulse(); */ };
@@ -99,6 +99,7 @@ class guStatusBar : public wxStatusBar
     void                SetSelInfo( const wxString &label );
 
     void                SetPlayMode( const bool forcegapless );
+    void                SetAudioScrobble( const bool audioscrobble );
 
 };
 

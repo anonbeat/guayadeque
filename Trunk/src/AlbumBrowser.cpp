@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -339,11 +339,13 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected albums" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu.Append( MenuItem );
 
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
         {
             MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EDITTRACKS, _( "Edit Album songs" ), _( "Edit the selected albums songs" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu.Append( MenuItem );
         }
 
@@ -388,19 +390,17 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         Menu.Append( MenuItem );
 
 
-        //MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_COPYTO, _( "Copy to..." ), _( "Copy the current album to a directory or device" ) );
-        //Menu.Append( MenuItem );
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
-        {
-            Menu.AppendSeparator();
-            guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-            MainFrame->CreateCopyToMenu( &Menu, ID_ALBUMBROWSER_COPYTO );
-        }
-
-        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
             ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
         {
             Menu.AppendSeparator();
+
+            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+            {
+                guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+                MainFrame->CreateCopyToMenu( &Menu, ID_ALBUMBROWSER_COPYTO );
+            }
 
             if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS )
             {

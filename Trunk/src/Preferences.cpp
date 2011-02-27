@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "Preferences.h"
 
+#include "Accelerators.h"
 #include "Images.h"
 #include "MD5.h"
 #include "TagInfo.h"
@@ -161,6 +162,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_links ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_commands ) );
     m_ImageList->Add( guImage( guIMAGE_INDEX_pref_copy_to ) );
+    m_ImageList->Add( guImage( guIMAGE_INDEX_pref_accelerators ) );
     m_MainNotebook->AssignImageList( m_ImageList );
 
 
@@ -218,6 +220,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
 	m_CopyPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
 	m_MainNotebook->SetPageImage( 13, 13 );
+
+	m_AccelPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_MainNotebook->AddPage( m_AccelPanel, _( "Accelerators" ), false );
+	m_MainNotebook->SetPageImage( 14, 14 );
 
     if( pagenum == guPREFERENCE_PAGE_LASTUSED )
     {
@@ -281,6 +287,10 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
         case guPREFERENCE_PAGE_COPYTO :
             BuildCopyToPage();
             break;
+
+        case guPREFERENCE_PAGE_ACCELERATORS :
+            BuildAcceleratorsPage();
+            break;
     }
 
     m_MainNotebook->SetSelection( pagenum );
@@ -293,9 +303,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum ) //
     wxButton *                  ButtonsSizerCancel;
 
 	ButtonsSizer = new wxStdDialogButtonSizer();
-	ButtonsSizerOK = new wxButton( this, wxID_OK );
+	ButtonsSizerOK = new wxButton( this, wxID_OK, _( " Accept " ) );
 	ButtonsSizer->AddButton( ButtonsSizerOK );
-	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
+	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL, _( " Cancel " ) );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT, 5 );
@@ -459,6 +469,11 @@ guPrefDialog::~guPrefDialog()
             delete m_CopyToOptions;
         }
     }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_ACCELERATORS )
+    {
+    }
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -480,6 +495,7 @@ void guPrefDialog::OnPageChanged( wxCommandEvent &event )
         case guPREFERENCE_PAGE_LINKS            : BuildLinksPage();         break;
         case guPREFERENCE_PAGE_COMMANDS         : BuildCommandsPage();      break;
         case guPREFERENCE_PAGE_COPYTO           : BuildCopyToPage();        break;
+        case guPREFERENCE_PAGE_ACCELERATORS     : BuildAcceleratorsPage();  break;
     }
     event.Skip();
 }
@@ -2158,6 +2174,78 @@ void guPrefDialog::BuildCopyToPage( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPrefDialog::BuildAcceleratorsPage( void )
+{
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+        return;
+
+    m_VisiblePanels |= guPREFERENCE_PAGE_FLAG_ACCELERATORS;
+
+    guAccelGetActionNames( m_AccelActionNames );
+
+	m_AccelKeys = m_Config->ReadANum( wxT( "AccelKey"), 0, wxT( "Accelerators" ) );
+	if( !m_AccelKeys.Count() )
+	{
+	    guAccelGetDefaultKeys( m_AccelKeys );
+	}
+
+	while( m_AccelKeys.Count() < m_AccelActionNames.Count() )
+        m_AccelKeys.Add( 0 );
+
+    int Index;
+    int Count = m_AccelActionNames.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_AccelKeyNames.Add( guAccelGetKeyCodeString( m_AccelKeys[ Index ] ) );
+    }
+
+    //
+    // Accelerators Panel
+    //
+	wxBoxSizer * AccelMainSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer * AccelActionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_AccelPanel, wxID_ANY, _(" Accelerators ") ), wxVERTICAL );
+
+	m_AccelListCtrl = new wxListCtrl( m_AccelPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxLC_SINGLE_SEL | wxLC_REPORT | wxLC_VRULES );
+
+    wxListItem AccelColumn;
+    AccelColumn.SetText( _( "Action" ) );
+    AccelColumn.SetImage( wxNOT_FOUND );
+    m_AccelListCtrl->InsertColumn( 0, AccelColumn );
+
+    AccelColumn.SetText( _( "Key" ) );
+    AccelColumn.SetAlign( wxLIST_FORMAT_RIGHT );
+    m_AccelListCtrl->InsertColumn( 1, AccelColumn );
+
+    m_AccelListCtrl->Hide();
+
+    for( Index = 0; Index < Count; Index++ )
+    {
+        long NewItem = m_AccelListCtrl->InsertItem( Index, m_AccelActionNames[ Index ], 0 );
+        m_AccelListCtrl->SetItemData( NewItem, m_AccelKeys[ Index ] );
+        m_AccelListCtrl->SetItem( NewItem, 1, m_AccelKeyNames[ Index ] );
+    }
+
+    m_AccelListCtrl->Show();
+
+    m_AccelListCtrl->SetColumnWidth( 0, wxLIST_AUTOSIZE );
+    m_AccelListCtrl->SetColumnWidth( 1, 200 );
+
+	AccelActionsSizer->Add( m_AccelListCtrl, 1, wxEXPAND|wxALL, 5 );
+
+	AccelMainSizer->Add( AccelActionsSizer, 1, wxEXPAND|wxALL, 5 );
+
+	m_AccelPanel->SetSizer( AccelMainSizer );
+	m_AccelPanel->Layout();
+
+	m_AccelCurIndex = wxNOT_FOUND;
+	m_AccelItemNeedClear = false;
+
+	m_AccelListCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( guPrefDialog::OnAccelSelected ), NULL, this );
+	m_AccelListCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPrefDialog::OnAccelKeyDown ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
 void guPrefDialog::SaveSettings( void )
 {
     m_Config = ( guConfig * ) guConfig::Get();
@@ -2429,6 +2517,11 @@ void guPrefDialog::SaveSettings( void )
         }
 
         m_Config->WriteAStr( wxT( "Option" ), Options, wxT( "CopyTo" ) );
+    }
+
+    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        m_Config->WriteANum( wxT( "AccelKey" ), m_AccelKeys, wxT( "Accelerators" ) );
     }
 
     m_Config->Flush();
@@ -3517,6 +3610,105 @@ void guPrefDialog::OnCopyToSaveBtnClick( wxCommandEvent &event )
         m_CopyToNameTextCtrl->SetValue( CopyToPattern.m_Pattern );
     }
     m_CopyToAcceptBtn->Disable();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnAccelSelected( wxListEvent &event )
+{
+    if( m_AccelItemNeedClear )
+    {
+        m_AccelItemNeedClear = false;
+        m_AccelListCtrl->SetItem( m_AccelCurIndex, 1, wxEmptyString );
+    }
+
+    m_AccelCurIndex = event.GetIndex();
+    //guLogMessage( wxT( "Selected Accel %i" ), m_AccelCurIndex );
+    if( m_AccelCurIndex != wxNOT_FOUND )
+    {
+        m_AccelLastKey = m_AccelKeys[ m_AccelCurIndex ];
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnAccelKeyDown( wxKeyEvent &event )
+{
+    if( m_AccelCurIndex != wxNOT_FOUND )
+    {
+        //guLogMessage( wxT( "Mod : %08X Key: %08X %i %c" ), event.GetModifiers(), event.GetKeyCode(), event.GetKeyCode(), event.GetKeyCode() );
+        int Modifiers = event.GetModifiers();
+        int KeyCode = event.GetKeyCode();
+
+        switch( KeyCode )
+        {
+            case WXK_SHIFT :
+            case WXK_ALT :
+            case WXK_CONTROL :
+            case WXK_MENU :
+            case WXK_PAUSE :
+            case WXK_CAPITAL :
+                event.Skip();
+                return;
+
+            default :
+                break;
+        }
+
+        if( Modifiers == 0 )
+        {
+            switch( KeyCode )
+            {
+                case WXK_HOME :
+                case WXK_END :
+                case WXK_PAGEUP :
+                case WXK_PAGEDOWN :
+                case WXK_UP :
+                case WXK_DOWN :
+                    event.Skip();
+                    return;
+
+                case WXK_ESCAPE :
+                    if( m_AccelLastKey != m_AccelKeys[ m_AccelCurIndex ] )
+                    {
+                        m_AccelKeys[ m_AccelCurIndex ] = m_AccelLastKey;
+                        m_AccelListCtrl->SetItem( m_AccelCurIndex, 1, guAccelGetKeyCodeString( m_AccelLastKey ) );
+                    }
+                    return;
+
+                case WXK_DELETE :
+                    m_AccelListCtrl->SetItem( m_AccelCurIndex, 1, wxEmptyString );
+                    m_AccelKeys[ m_AccelCurIndex ] = 0;
+                    return;
+
+                default :
+                    break;
+            }
+
+            if( wxIsalnum( KeyCode ) || wxIsprint( KeyCode ) )
+            {
+                return;
+            }
+        }
+
+        int AccelCurKey = ( Modifiers << 16 ) | KeyCode;
+        int KeyIndex = m_AccelKeys.Index( AccelCurKey );
+        if( ( KeyIndex == wxNOT_FOUND ) || ( KeyIndex == m_AccelCurIndex ) )
+        {
+            if( m_AccelItemNeedClear )
+            {
+                m_AccelItemNeedClear = false;
+            }
+            m_AccelKeys[ m_AccelCurIndex ] = AccelCurKey;
+            m_AccelListCtrl->SetItem( m_AccelCurIndex, 1, guAccelGetKeyCodeString( AccelCurKey ) );
+        }
+        else
+        {
+            if( !m_AccelItemNeedClear )
+            {
+                m_AccelItemNeedClear = true;
+                m_AccelListCtrl->SetItem( m_AccelCurIndex, 1, wxString( _( "Key used by '" ) ) + m_AccelActionNames[ KeyIndex ] + wxT( "'") );
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

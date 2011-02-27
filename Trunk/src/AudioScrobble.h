@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -112,8 +112,6 @@ class guAudioScrobbleSender
 class guLastFMAudioScrobble : public guAudioScrobbleSender
 {
   protected :
-    guDbLibrary *               m_Db;
-
     virtual void                ReadUserConfig( void );
 
   public :

@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -385,6 +385,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	LyricsTopSizer->Add( m_LyricTrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	m_LyricReloadButton = new wxBitmapButton( LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_again ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_LyricReloadButton->SetToolTip( _( "Search for lyrics" ) );
 	LyricsTopSizer->Add( m_LyricReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	LyricsSizer->Add( LyricsTopSizer, 0, wxEXPAND, 5 );

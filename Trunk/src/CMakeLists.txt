@@ -247,6 +247,10 @@ ADD_EXECUTABLE( guayadeque
 	LocationPanel.h
 	CoverPanel.cpp
 	CoverPanel.h
+	Accelerators.cpp
+	Accelerators.h
+	AccelListBox.cpp
+	AccelListBox.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2010 J.Rios
+//	Copyright (C) 2008-2011 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "AlListBox.h"
 
+#include "Accelerators.h"
 #include "Commands.h"
 #include "Config.h"
 #include "Images.h"
@@ -43,6 +44,9 @@ guAlListBox::guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
     m_Items = new guAlbumItems();
     m_LibPanel = libpanel;
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
+
     guListViewColumn * Column = new guListViewColumn( label, 0 );
     InsertColumn( Column );
 
@@ -50,17 +54,64 @@ guAlListBox::guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
     Connect( ID_ALBUM_COMMANDS, ID_ALBUM_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
     Connect( ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnOrderSelected ) );
 
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlListBox::OnConfigUpdated ), NULL, this );
+
+    CreateAcceleratorTable();
+
     ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
 guAlListBox::~guAlListBox()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     if( m_Items )
         delete m_Items;
 
     Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
     Disconnect( ID_ALBUM_COMMANDS, ID_ALBUM_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
+    Disconnect( ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnOrderSelected ) );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlListBox::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlListBox::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        CreateAcceleratorTable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
+    AliasAccelCmds.Add( ID_SONG_PLAY );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+
+    RealAccelCmds.Add( ID_ALBUM_SAVETOPLAYLIST );
+    RealAccelCmds.Add( ID_ALBUM_EDITLABELS );
+    RealAccelCmds.Add( ID_ALBUM_EDITTRACKS );
+    RealAccelCmds.Add( ID_ALBUM_PLAY );
+    RealAccelCmds.Add( ID_ALBUM_ENQUEUE );
+    RealAccelCmds.Add( ID_ALBUM_ENQUEUE_ASNEXT );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -188,16 +239,22 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
     int ContextMenuFlags = m_LibPanel->GetContextMenuFlags();
 
-    MenuItem = new wxMenuItem( Menu, ID_ALBUM_PLAY, _( "Play" ), _( "Play current selected albums" ) );
+    MenuItem = new wxMenuItem( Menu, ID_ALBUM_PLAY,
+                            wxString( _( "Play" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                            _( "Play current selected albums" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE, _( "Enqueue" ), _( "Add current selected albums to the Playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE,
+                            wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+                            _( "Add current selected albums to the Playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
-    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Add current selected albums to the Playlist as Next Tracks" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE_ASNEXT,
+                            wxString( _( "Enqueue Next" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
+                            _( "Add current selected albums to the Playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
     int SelCount = GetSelectedCount();
@@ -205,38 +262,18 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected albums" ) );
+        MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITLABELS,
+                                wxString( _( "Edit Labels" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITLABELS ),
+                                _( "Edit the labels assigned to the selected albums" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
         if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
         {
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITTRACKS, _( "Edit Album songs" ), _( "Edit the selected albums songs" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
-            Menu->Append( MenuItem );
-        }
-
-        if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS ) )
-        {
-            Menu->AppendSeparator();
-
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_MANUALCOVER, _( "Download Album cover" ), _( "Download cover for the current selected album" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
-            Menu->Append( MenuItem );
-
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECT_COVER, _( "Select cover location" ), _( "Select the cover image file from disk" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
-            Menu->Append( MenuItem );
-
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_DELETE, _( "Delete Album cover" ), _( "Delete the cover for the selected album" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
-            Menu->Append( MenuItem );
-        }
-
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EMBED_COVERS )
-        {
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_EMBED, _( "Embed cover" ), _( "Embed the current cover to the album files" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITTRACKS,
+                                wxString( _( "Edit Album songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
+                                _( "Edit the selected albums songs" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
         }
     }
@@ -244,19 +281,6 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
     Menu->AppendSeparator();
 
     wxMenu * SubMenu = new wxMenu();
-
-//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_NAME, _( "Name" ), _( "Albums are sorted by name" ) );
-//    SubMenu->Append( MenuItem );
-//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_YEAR, _( "Year" ), _( "Albums are sorted by year" ) );
-//    SubMenu->Append( MenuItem );
-//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_YEAR_REVERSE, _( "Year descending" ), _( "Albums are sorted by year descending" ) );
-//    SubMenu->Append( MenuItem );
-//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_ARTIST_NAME, _( "Artist, Name" ), _( "Albums are sorted by artist and album name" ) );
-//    SubMenu->Append( MenuItem );
-//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_ARTIST_YEAR, _( "Artist, Year" ), _( "Albums are sorted by artist and year" ) );
-//    SubMenu->Append( MenuItem );
-//    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, _( "Artist, Year descending" ), _( "Albums are sorted by artist and year descending" ) );
-//    SubMenu->Append( MenuItem );
 
     SubMenu->AppendRadioItem( ID_ALBUM_ORDER_NAME, _( "Name" ), _( "Albums are sorted by name" ) );
     SubMenu->AppendRadioItem( ID_ALBUM_ORDER_YEAR, _( "Year" ), _( "Albums are sorted by year" ) );
@@ -270,23 +294,50 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
 
     Menu->Append( wxID_ANY, _( "Ordered by" ), SubMenu, _( "Sets the albums order" ) );
 
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, ID_ALBUM_SAVETOPLAYLIST,
+                            wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                            _( "Save the selected tracks to PlayList" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+    Menu->Append( MenuItem );
+
     if( SelCount )
     {
-        Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_ALBUM_SAVETOPLAYLIST, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-        Menu->Append( MenuItem );
-
-        if( ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
+        if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS ) )
         {
-            m_LibPanel->CreateCopyToMenu( Menu, ID_ALBUM_COPYTO );
+            Menu->AppendSeparator();
+
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_MANUALCOVER, _( "Download Album cover" ), _( "Download cover for the current selected album" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            Menu->Append( MenuItem );
+
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECT_COVER, _( "Select cover location" ), _( "Select the cover image file from disk" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            Menu->Append( MenuItem );
+
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_DELETE, _( "Delete Album cover" ), _( "Delete the cover for the selected album" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+            Menu->Append( MenuItem );
         }
 
-        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
+        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EMBED_COVERS )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_EMBED, _( "Embed cover" ), _( "Embed the current cover to the album files" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+            Menu->Append( MenuItem );
+        }
+
+        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO ) ||
+            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
             ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
         {
             Menu->AppendSeparator();
+
+            if( ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
+            {
+                m_LibPanel->CreateCopyToMenu( Menu, ID_ALBUM_COPYTO );
+            }
 
             if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
             {
