@@ -3217,7 +3217,7 @@ int guIpodMediaLibPanel::CopyTo( const guTrack * track, wxString &filename )
     iPodTrack->playcount = 0;
     iPodTrack->type1 = 0;
     iPodTrack->type2 = track->m_Format == wxT( "mp3" ) ? 1 : 0;
-    iPodTrack->compilation = 0;
+    iPodTrack->compilation = !track->m_AlbumArtist.IsEmpty();
     iPodTrack->mediatype = ITDB_MEDIATYPE_AUDIO;
 
     wxString CoverPath;
