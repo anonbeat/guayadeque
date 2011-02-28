@@ -511,6 +511,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_VIEW_CLOSEWINDOW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCloseTab ), NULL, this );
     Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
 
+    Connect( ID_MENU_VOLUME_DOWN, ID_MENU_VOLUME_UP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnChangeVolume ), NULL, this );
+
     Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
     Connect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoUpdated ), NULL, this );
     Connect( ID_MAGNATUNE_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneUpdated ), NULL, this );
@@ -1722,6 +1724,18 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSeparator();
 
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_VOLUME_UP,
+                                wxString( _( "Volume Up" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VOLUME_UP ),
+                                _( "Increment the volume level" ), wxITEM_NORMAL );
+    m_MainMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_VOLUME_DOWN,
+                                wxString( _( "Volume Down" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VOLUME_DOWN ),
+                                _( "Decrement the volume level" ), wxITEM_NORMAL );
+    m_MainMenu->Append( MenuItem );
+
+    m_MainMenu->AppendSeparator();
+
     m_ForceGaplessMenuItem = new wxMenuItem( m_MainMenu, ID_MAINFRAME_SETFORCEGAPLESS,
                                 wxString( _( "Force Gapless Mode" ) ) + guAccelGetCommandKeyCodeString( ID_MAINFRAME_SETFORCEGAPLESS ),
                                 _( "Set playback in gapless mode" ), wxITEM_CHECK );
@@ -2129,6 +2143,16 @@ void guMainFrame::OnCloseTab( wxCommandEvent &event )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnChangeVolume( wxCommandEvent &event )
+{
+    if( m_PlayerPanel )
+    {
+        double CurVolume = m_PlayerPanel->GetVolume();
+        //guLogMessage( wxT( "CurVolume: %.2f" ), CurVolume );
+        m_PlayerPanel->SetVolume( ( event.GetId() == ID_MENU_VOLUME_UP ) ? CurVolume + 4 : CurVolume - 4 );
+    }
+}
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateCovers( wxCommandEvent &WXUNUSED( event ) )
