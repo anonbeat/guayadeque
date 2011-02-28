@@ -423,6 +423,8 @@ class guMainFrame : public wxFrame
 
     void                            OnConfigUpdated( wxCommandEvent &event );
 
+    void                            OnChangeVolume( wxCommandEvent &event );
+
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                                     ~guMainFrame();

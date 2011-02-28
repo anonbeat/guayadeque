@@ -92,6 +92,8 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_MENU_UPDATE_LIBRARY );
         guAccelCmdIds.Add( ID_MENU_UPDATE_LIBRARYFORCED );
         guAccelCmdIds.Add( ID_MENU_UPDATE_PODCASTS );
+        guAccelCmdIds.Add( ID_MENU_VOLUME_DOWN );
+        guAccelCmdIds.Add( ID_MENU_VOLUME_UP );
     }
 
     guAccelOnConfigUpdated();
@@ -159,6 +161,8 @@ int guAccelGetActionNames( wxArrayString &actionnames )
 	actionnames.Add( _( "Update Library" ) );
 	actionnames.Add( _( "Update Library (Forced)" ) );
 	actionnames.Add( _( "Update Podcasts" ) );
+	actionnames.Add( _( "Volume Down" ) );
+	actionnames.Add( _( "Volume Up" ) );
 
 	return actionnames.Count();
 }
@@ -225,6 +229,8 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 131157 );
     accelkeys.Add( 393301 );
     accelkeys.Add( 131152 );
+    accelkeys.Add( 131389 );
+    accelkeys.Add( 131387 );
 
     return accelkeys.Count();
 }
