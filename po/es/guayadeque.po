@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-0.0.1-Beta\n"
-"Report-Msgid-Bugs-To:  Jorge Ortega <jorge.ortega111@gmail.com>\n"
+"Report-Msgid-Bugs-To: Jorge Ortega <jorge.ortega111@gmail.com>\n"
 "POT-Creation-Date: 2011-02-28 08:43+0000\n"
 "PO-Revision-Date: 2011-02-28 09:41+0100\n"
 "Last-Translator: Jorge Ortega <jorge.ortega111@gmail.com>\n"
