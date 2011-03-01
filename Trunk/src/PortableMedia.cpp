@@ -3144,17 +3144,20 @@ void guIpodMediaLibPanel::SetPortableMediaDevice( guPortableMediaDevice * portab
 {
     m_PortableMediaDevice = portablemediadevice;
 
-//    m_PortableMediaDevice->SetPattern( wxEmptyString );
-//    m_PortableMediaDevice->SetAudioFormats( guPORTABLEMEDIA_AUDIO_FORMAT_MP3 | guPORTABLEMEDIA_AUDIO_FORMAT_AAC );
-//    m_PortableMediaDevice->SetTranscodeFormat( guTRANSCODE_FORMAT_MP3 );
-//    m_PortableMediaDevice->SetTranscodeScope( guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
-//    m_PortableMediaDevice->SetTranscodeQuality( guTRANSCODE_QUALITY_KEEP );
-//    m_PortableMediaDevice->SetAudioFolders( wxT( "/" ) );
-//    m_PortableMediaDevice->SetPlaylistFormats( 0 );
-//    m_PortableMediaDevice->SetPlaylistFolder( wxEmptyString );
-//    m_PortableMediaDevice->SetCoverFormats( 0 );
-//    m_PortableMediaDevice->SetCoverName( wxEmptyString );
-//    m_PortableMediaDevice->SetCoverSize( 0 );
+    m_PortableMediaDevice->SetPattern( wxEmptyString );
+    if( !m_PortableMediaDevice->AudioFormats() )
+    {
+        m_PortableMediaDevice->SetAudioFormats( guPORTABLEMEDIA_AUDIO_FORMAT_MP3 | guPORTABLEMEDIA_AUDIO_FORMAT_AAC );
+        m_PortableMediaDevice->SetTranscodeFormat( guTRANSCODE_FORMAT_MP3 );
+        m_PortableMediaDevice->SetTranscodeScope( guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
+        m_PortableMediaDevice->SetTranscodeQuality( guTRANSCODE_QUALITY_KEEP );
+        //m_PortableMediaDevice->SetAudioFolders( wxT( "/" ) );
+        //m_PortableMediaDevice->SetPlaylistFormats( 0 );
+        //m_PortableMediaDevice->SetPlaylistFolder( wxEmptyString );
+        m_PortableMediaDevice->SetCoverFormats( guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED );
+        //m_PortableMediaDevice->SetCoverName( wxEmptyString );
+        m_PortableMediaDevice->SetCoverSize( 0 );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
