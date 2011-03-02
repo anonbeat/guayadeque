@@ -32,6 +32,7 @@
 #include <wx/image.h>
 #include <wx/tooltip.h>
 #include <wx/stdpaths.h>
+#include <wx/utils.h>
 
 #include <wx/debugrpt.h>
 
