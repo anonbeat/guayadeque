@@ -184,6 +184,7 @@ class guAuiNotebook : public wxAuiNotebook
 {
   protected :
 //    guAuiTabArt     m_AuiTabArt;
+    wxString    GetPageId( wxAuiNotebookPage &page );
 
   public:
 
