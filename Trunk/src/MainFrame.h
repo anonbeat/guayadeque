@@ -385,6 +385,7 @@ class guMainFrame : public wxFrame
 
     void                            OnMainPaneClose( wxAuiManagerEvent &event );
 
+    void                            LoadPerspective( const wxString &layout );
     void                            LoadTabsPerspective( const wxString &layout );
 
     void                            OnForceUpdateLibrary( wxCommandEvent &event );
@@ -424,6 +425,8 @@ class guMainFrame : public wxFrame
     void                            OnConfigUpdated( wxCommandEvent &event );
 
     void                            OnChangeVolume( wxCommandEvent &event );
+
+    void                            ResetViewMenuState( void );
 
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );

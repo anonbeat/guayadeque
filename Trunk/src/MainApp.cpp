@@ -44,7 +44,9 @@ guMainApp::guMainApp() : wxApp()
     m_Db = NULL;
     m_DbCache = NULL;
 
-    wxHandleFatalExceptions();
+#if wxUSE_ON_FATAL_EXCEPTION    // Thanks TheBigRed
+//        wxHandleFatalExceptions();
+#endif
 
     if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque" ) ) )
     {

@@ -2219,10 +2219,21 @@ void guPrefDialog::BuildAcceleratorsPage( void )
 
     m_AccelListCtrl->Hide();
 
+    wxColour EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
+    wxColour OddBgColor;
+    if( EveBgColor.Red() > 0x0A && EveBgColor.Green() > 0x0A && EveBgColor.Blue() > 0x0A )
+    {
+        OddBgColor.Set( EveBgColor.Red() - 0xA, EveBgColor.Green() - 0x0A, EveBgColor.Blue() - 0x0A );
+    }
+    else
+    {
+        OddBgColor.Set( EveBgColor.Red() + 0xA, EveBgColor.Green() + 0x0A, EveBgColor.Blue() + 0x0A );
+    }
     for( Index = 0; Index < Count; Index++ )
     {
         long NewItem = m_AccelListCtrl->InsertItem( Index, m_AccelActionNames[ Index ], 0 );
         m_AccelListCtrl->SetItemData( NewItem, m_AccelKeys[ Index ] );
+        m_AccelListCtrl->SetItemBackgroundColour( NewItem, Index & 1 ? OddBgColor : EveBgColor );
         m_AccelListCtrl->SetItem( NewItem, 1, m_AccelKeyNames[ Index ] );
     }
 

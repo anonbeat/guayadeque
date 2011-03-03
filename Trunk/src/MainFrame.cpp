@@ -194,7 +194,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_VisiblePanels = Config->ReadNum( wxT( "MainVisiblePanels" ), guPANEL_MAIN_VISIBLE_DEFAULT, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() )
         m_VisiblePanels = guPANEL_MAIN_VISIBLE_DEFAULT;
-    guLogMessage( wxT( "%08X" ), m_VisiblePanels );
+    //guLogMessage( wxT( "%08X" ), m_VisiblePanels );
 
 	m_MainStatusBar = new guStatusBar( this );
 	SetStatusBar(  m_MainStatusBar );
@@ -335,7 +335,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "Positions" ) );
     if( !Config->GetIgnoreLayouts() && !Perspective.IsEmpty() )
     {
-        m_AuiManager.LoadPerspective( Perspective, true );
+        //m_AuiManager.LoadPerspective( Perspective, true );
+        LoadPerspective( Perspective );
     }
     else
     {
@@ -368,61 +369,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
                                               guPANEL_MAIN_SHOWCOVER );
 
         // Reset the Menu entry for all elements
-        m_ViewLibrary->Check( false );
-        m_ViewLibTextSearch->Enable( false );
-        m_ViewLibLabels->Enable( false );
-        m_ViewLibGenres->Enable( false );
-        m_ViewLibArtists->Enable( false );
-        m_ViewLibAlbums->Enable( false );
-        m_ViewLibYears->Enable( false );
-        m_ViewLibRatings->Enable( false );
-        m_ViewLibPlayCounts->Enable( false );
-        m_ViewLibComposers->Enable( false );
-        m_ViewLibAlbumArtists->Enable( false );
-
-        m_ViewRadios->Check( false );
-        m_ViewRadTextSearch->Enable( false );
-        m_ViewRadLabels->Enable( false );
-        m_ViewRadGenres->Enable( false );
-
-        m_ViewLastFM->Check( false );
-
-        m_ViewLyrics->Check( false );
-
-        m_ViewPlayLists->Check( false );
-        m_ViewPLTextSearch->Check( false );
-
-        m_ViewPodcasts->Check( false );
-        m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
-        m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
-
-        m_ViewAlbumBrowser->Check( false );
-
-        m_ViewFileBrowser->Check( false );
-
-        m_ViewJamendo->Check( false );
-        m_ViewJamTextSearch->Enable( false );
-        m_ViewJamLabels->Enable( false );
-        m_ViewJamGenres->Enable( false );
-        m_ViewJamArtists->Enable( false );
-        m_ViewJamAlbums->Enable( false );
-        m_ViewJamYears->Enable( false );
-        m_ViewJamRatings->Enable( false );
-        m_ViewJamPlayCounts->Enable( false );
-        m_ViewJamComposers->Enable( false );
-        m_ViewJamAlbumArtists->Enable( false );
-
-        m_ViewMagnatune->Check( false );
-        m_ViewMagTextSearch->Enable( false );
-        m_ViewMagLabels->Enable( false );
-        m_ViewMagGenres->Enable( false );
-        m_ViewMagArtists->Enable( false );
-        m_ViewMagAlbums->Enable( false );
-        m_ViewMagYears->Enable( false );
-        m_ViewMagRatings->Enable( false );
-        m_ViewMagPlayCounts->Enable( false );
-        m_ViewMagComposers->Enable( false );
-        m_ViewMagAlbumArtists->Enable( false );
+        ResetViewMenuState();
     }
 
     m_CurrentPage = m_CatNotebook->GetPage( m_CatNotebook->GetSelection() );
@@ -865,7 +812,7 @@ guMainFrame::~guMainFrame()
 
         Config->WriteBool( wxT( "ShowFullScreen" ), IsFullScreen() , wxT( "General" ) );
         Config->WriteBool( wxT( "ShowStatusBar" ), m_MainStatusBar->IsShown() , wxT( "General" ) );
-        guLogMessage( wxT( "VisiblePanels: %08X" ), m_VisiblePanels );
+        //guLogMessage( wxT( "VisiblePanels: %08X" ), m_VisiblePanels );
     }
 
     if( m_TaskBarIcon )
@@ -961,25 +908,25 @@ extern void wxClearGtkSystemObjects();
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "guMainFrame::OnVolumeMonitorUpdated" ) );
+    //guLogMessage( wxT( "guMainFrame::OnVolumeMonitorUpdated" ) );
     // a mount point have been removed
     if( !event.GetInt() )
     {
-        guLogMessage( wxT( "It was unmounted..." ) );
+        //guLogMessage( wxT( "It was unmounted..." ) );
         GMount * Mount = ( GMount * ) event.GetClientData();
         int Index;
         int Count = m_PortableMediaViewCtrls.Count();
         for( Index = 0; Index < Count; Index++ )
         {
             guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ Index ];
-            guLogMessage( wxT( "Checking device %i" ), Index );
+            //guLogMessage( wxT( "Checking device %i" ), Index );
             if( PortableMediaViewCtrl->IsMount( Mount ) )
             {
-                guLogMessage( wxT( "The mount had a view already added ..." ) );
+                //guLogMessage( wxT( "The mount had a view already added ..." ) );
                 int VisiblePanels = PortableMediaViewCtrl->VisiblePanels();
                 if( VisiblePanels & guPANEL_MAIN_LIBRARY )
                 {
-                    guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
+                    //guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
                     event.SetClientData( ( void * ) PortableMediaViewCtrl->LibPanel() );
                     //int CmdId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
                     //int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
@@ -989,7 +936,7 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
 
                 if( VisiblePanels & guPANEL_MAIN_PLAYLISTS )
                 {
-                    guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
+                    //guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
                     event.SetClientData( ( void * ) PortableMediaViewCtrl->PlayListPanel() );
 //                    //int CmdId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
 //                    //int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
@@ -999,7 +946,7 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
 
                 if( VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
                 {
-                    guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
+                    //guLogMessage( wxT( "The MediaViewCtrl had a library pane visible... Need to close it" ) );
                     event.SetClientData( ( void * ) PortableMediaViewCtrl->AlbumBrowserPanel() );
                     //int CmdId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
                     //int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
@@ -1024,13 +971,13 @@ guPortableMediaViewCtrl * guMainFrame::GetPortableMediaViewCtrl( const int basec
 {
     int Index;
     int Count = m_PortableMediaViewCtrls.Count();
-    guLogMessage( wxT( "Searching for basecmd %u" ), basecmd );
+    //guLogMessage( wxT( "Searching for basecmd %u" ), basecmd );
     for( Index = 0; Index < Count; Index++ )
     {
-        guLogMessage( wxT( "Current basecmd %u" ), m_PortableMediaViewCtrls[ Index ]->BaseCommand() );
+        //guLogMessage( wxT( "Current basecmd %u" ), m_PortableMediaViewCtrls[ Index ]->BaseCommand() );
         if( m_PortableMediaViewCtrls[ Index ]->BaseCommand() == basecmd )
         {
-            guLogMessage( wxT( "found the basecmd %u" ), basecmd );
+            //guLogMessage( wxT( "found the basecmd %u" ), basecmd );
             return m_PortableMediaViewCtrls[ Index ];
         }
     }
@@ -1881,32 +1828,6 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
     event.Skip();
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guMainFrame::OnIconizeWindow( wxIconizeEvent &event )
-//{
-////    guConfig * Config = ( guConfig * ) guConfig::Get();
-////    if( Config )
-////    {
-////        // If the icon
-////        if( m_TaskBarIcon &&
-////            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
-////            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
-////        {
-////            if( event.IsIconized() )
-////            {
-////                if( IsShown() )
-////                    Show( false );
-////            }
-////            else
-////            {
-////                if( !IsShown() )
-////                    Show( true );
-////            }
-////        }
-////    }
-//    event.Skip();
-//}
-
 // -------------------------------------------------------------------------------- //
 void guMainFrame::LibraryCleanFinished( wxCommandEvent &event )
 {
@@ -1945,7 +1866,7 @@ void guMainFrame::LibraryReloadControls( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::DoLibraryClean( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "guMainFrame::DoLibraryClean" ) );
+    //guLogMessage( wxT( "guMainFrame::DoLibraryClean" ) );
     if( m_LibCleanThread )
     {
         m_LibCleanThread->Pause();
@@ -1968,15 +1889,6 @@ void guMainFrame::DoLibraryClean( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::LibraryUpdated( wxCommandEvent &event )
 {
-//    guLogMessage( wxT( "Library Updated Event fired" ) );
-    //m_Db->DoCleanUp();
-
-//    if( m_LibPanel )
-//        m_LibPanel->ReloadControls();
-//
-//    if( m_AlbumBrowserPanel )
-//        m_AlbumBrowserPanel->LibraryUpdated();
-
     m_LibUpdateThread = NULL;
 
     DoLibraryClean( event );
@@ -2496,7 +2408,7 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "guMainFrame::OnCopyTracksToDevice" ) );
+    //guLogMessage( wxT( "guMainFrame::OnCopyTracksToDevice" ) );
     guTrackArray * Tracks = ( guTrackArray * ) event.GetClientData();
     if( Tracks )
     {
@@ -2535,7 +2447,7 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCopyPlayListToDevice( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "guMainFrame::OnCopyPlayListToDevice" ) );
+    //guLogMessage( wxT( "guMainFrame::OnCopyPlayListToDevice" ) );
     wxString * PlayListPath = ( wxString * ) event.GetClientData();
     if( PlayListPath )
     {
@@ -2644,7 +2556,8 @@ void guMainFrame::InsertTabPanel( wxPanel * panel, const int index, const wxStri
     if( !PaneInfo.IsShown() )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_AuiManager.LoadPerspective( Config->ReadStr( wxT( "LastTabsSize" ), wxEmptyString, wxT( "Positions" ) ) );
+        //m_AuiManager.LoadPerspective( Config->ReadStr( wxT( "LastTabsSize" ), wxEmptyString, wxT( "Positions" ) ) );
+        LoadPerspective( Config->ReadStr( wxT( "LastTabsSize" ), wxEmptyString, wxT( "Positions" ) ) );
         wxWindow * OldPage = m_CatNotebook->GetPage( 0 );
         // Was hidden
         if( PageIndex == wxNOT_FOUND )
@@ -3419,7 +3332,7 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
     int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
     int BaseCommand = ID_MENU_VIEW_PORTABLE_DEVICE + ( DeviceNum * guPORTABLEDEVICE_COMMANDS_COUNT );
     guPortableMediaViewCtrl * PortableMediaViewCtrl = GetPortableMediaViewCtrl( BaseCommand );
-    guLogMessage( wxT( "Its the device %i and cmd %i" ), DeviceNum, CmdId );
+    //guLogMessage( wxT( "Its the device %i and cmd %i" ), DeviceNum, CmdId );
 
     if( IsEnabled )
     {
@@ -3572,7 +3485,7 @@ void guMainFrame::OnViewPortableDevicePanel( wxCommandEvent &event )
 {
     int PanelId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
     int DeviceNum = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) / 20;
-    guLogMessage( wxT( "Its the device %i pane %i" ), DeviceNum, PanelId );
+    //guLogMessage( wxT( "Its the device %i pane %i" ), DeviceNum, PanelId );
 
     guPortableMediaViewCtrl * PortableMediaViewCtrl = m_PortableMediaViewCtrls[ DeviceNum ];
 
@@ -3652,8 +3565,9 @@ void guMainFrame::OnViewFullScreen( wxCommandEvent &event )
 //            LoadTabsPerspective( NBLayout );
 
         wxString Perspective = Config->ReadStr( wxT( "LastLayoutFull" ), wxEmptyString, wxT( "Positions" ) );
-        if( !Perspective.IsEmpty() )
-            m_AuiManager.LoadPerspective( Perspective, true );
+        //if( !Perspective.IsEmpty() )
+        //    m_AuiManager.LoadPerspective( Perspective, true );
+        LoadPerspective( Perspective );
     }
     else
     {
@@ -3674,8 +3588,9 @@ void guMainFrame::OnViewFullScreen( wxCommandEvent &event )
 //            LoadTabsPerspective( NBLayout );
 
         wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "Positions" ) );
-        if( !Perspective.IsEmpty() )
-            m_AuiManager.LoadPerspective( Perspective, true );
+        //if( !Perspective.IsEmpty() )
+        //    m_AuiManager.LoadPerspective( Perspective, true );
+        LoadPerspective( Perspective );
     }
 
 //    m_AuiManager.Update();
@@ -4525,17 +4440,6 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     m_DBusServer->Run();
 
     CreatePortablePlayersMenu( m_PortableDevicesMenu );
-
-//    // If enabled Show the Splash Screen on Startup
-//    guSplashFrame * SplashFrame = NULL;
-//    if( Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "General" ) ) )
-//    {
-//        SplashFrame = new guSplashFrame( 0 );
-//        if( !SplashFrame )
-//            guLogError( wxT( "Could not create splash object" ) );
-//        SplashFrame->Show( true );
-//        //wxYield();
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4714,7 +4618,7 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
 {
     wxTextEntryDialog EntryDialog( this, _( "Enter the layout name:"), _( "New Layout" ) );
 
-    EntryDialog.SetValue( wxString::Format( _( "Layout %u" ), unsigned( m_LayoutName.GetCount() + 1 ) ) );
+    EntryDialog.SetValue( wxString::Format( _( "Layout %u" ), m_LayoutName.GetCount() + 1 ) );
 
     if( EntryDialog.ShowModal() == wxID_OK )
     {
@@ -4737,7 +4641,27 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
             wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
             wxString PLCaption = PaneInfo.caption;
             PaneInfo.Caption( _( "Now Playing" ) );
-            m_LayoutData.Add( m_AuiManager.SavePerspective() );
+            wxString LayoutString;
+            // Save Size
+            int Width;
+            int Height;
+            GetSize( &Width, &Height );
+            LayoutString += wxString::Format( wxT( "Size:%i,%i;" ), Width, Height );
+            // Size Pos
+            int PosX;
+            int PosY;
+            GetPosition( &PosX, &PosY );
+            LayoutString += wxString::Format( wxT( "Position:%i,%i;" ), PosX, PosY );
+            // Save State
+            int State = 0;
+            if( IsFullScreen() )
+                State = 1;
+            else if( IsMaximized() )
+                State = 2;
+            LayoutString += wxString::Format( wxT( "State:%i;" ), State );
+            LayoutString += wxString::Format( wxT( "Flags:%i;" ), m_VisiblePanels );
+            LayoutString += m_AuiManager.SavePerspective();
+            m_LayoutData.Add( LayoutString );
             PaneInfo.Caption( PLCaption );
             m_LayoutTabs.Add( m_CatNotebook->SavePerspective() );
 
@@ -4800,53 +4724,89 @@ void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnLoadLayout( wxCommandEvent &event )
+void GetLayoutParams( const wxString &paramstr, int * param1, int * param2 )
 {
-    int Layout = event.GetId() - ID_MENU_LAYOUT_LOAD;
-    bool IsShown;
-
-    Hide();
-//    bool NBIsShown = PaneInfo.IsShown();
-    //guLogMessage( wxT( "Loading Layout %i" ), Layout );
-    LoadTabsPerspective( m_LayoutTabs[ Layout ] );
-
-    m_AuiManager.LoadPerspective( m_LayoutData[ Layout ] );
-
-    wxAuiPaneInfo &PlayListPaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
-    //guLogMessage( wxT( "PlayerPlayList: %i   %i" ), PlayListPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) );
-    if( ( IsShown = PlayListPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) )
+    //Size:1445,987
+    long Num;
+    wxString Str1 = paramstr.AfterFirst( wxT( ':' ) ).BeforeFirst( wxT( ',' ) );
+    if( Str1.ToLong( &Num ) )
     {
-        if( IsShown )
-            m_VisiblePanels |= guPANEL_MAIN_PLAYERPLAYLIST;
-        else
-            m_VisiblePanels ^= guPANEL_MAIN_PLAYERPLAYLIST;
-
-        m_ViewPlayerPlayList->Check( IsShown );
+        * param1 = Num;
     }
 
-    wxAuiPaneInfo &FiltersPaneInfo = m_AuiManager.GetPane( wxT( "PlayerFilters" ) );
-    //guLogMessage( wxT( "PlayerFilters: %i   %i" ), FiltersPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
-    if( ( IsShown = FiltersPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) )
+    if( param2 )
     {
-        if( IsShown )
-            m_VisiblePanels |= guPANEL_MAIN_PLAYERFILTERS;
-        else
-            m_VisiblePanels ^= guPANEL_MAIN_PLAYERFILTERS;
-
-        m_ViewPlayerFilters->Check( IsShown );
+        wxString Str2 = paramstr.AfterFirst( wxT( ',' ) );
+        if( Str2.ToLong( &Num ) )
+        {
+            * param2 = Num;
+        }
     }
+}
 
-    wxAuiPaneInfo &VumetersPaneInfo = m_AuiManager.GetPane( wxT( "PlayerVumeters" ) );
-    //guLogMessage( wxT( "PlayerFilters: %i   %i" ), FiltersPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
-    if( ( IsShown = VumetersPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) )
-    {
-        if( IsShown )
-            m_VisiblePanels |= guPANEL_MAIN_PLAYERVUMETERS;
-        else
-            m_VisiblePanels ^= guPANEL_MAIN_PLAYERVUMETERS;
+// -------------------------------------------------------------------------------- //
+void guMainFrame::LoadPerspective( const wxString &layout )
+{
+    m_AuiManager.LoadPerspective( layout, true );
 
-        m_ViewPlayerVumeters->Check( IsShown );
-    }
+//    bool IsShown;
+//    wxAuiPaneInfo &PlayListPaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
+//    //guLogMessage( wxT( "PlayerPlayList: %i   %i" ), PlayListPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) );
+//    if( ( IsShown = PlayListPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) )
+//    {
+//        if( IsShown )
+//            m_VisiblePanels |= guPANEL_MAIN_PLAYERPLAYLIST;
+//        else
+//            m_VisiblePanels ^= guPANEL_MAIN_PLAYERPLAYLIST;
+//
+//        m_ViewPlayerPlayList->Check( IsShown );
+//    }
+//
+//    wxAuiPaneInfo &FiltersPaneInfo = m_AuiManager.GetPane( wxT( "PlayerFilters" ) );
+//    //guLogMessage( wxT( "PlayerFilters: %i   %i" ), FiltersPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
+//    if( ( IsShown = FiltersPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) )
+//    {
+//        if( IsShown )
+//            m_VisiblePanels |= guPANEL_MAIN_PLAYERFILTERS;
+//        else
+//            m_VisiblePanels ^= guPANEL_MAIN_PLAYERFILTERS;
+//
+//        m_ViewPlayerFilters->Check( IsShown );
+//    }
+//
+//    wxAuiPaneInfo &VumetersPaneInfo = m_AuiManager.GetPane( wxT( "PlayerVumeters" ) );
+//    //guLogMessage( wxT( "PlayerFilters: %i   %i" ), FiltersPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
+//    if( ( IsShown = VumetersPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) )
+//    {
+//        if( IsShown )
+//            m_VisiblePanels |= guPANEL_MAIN_PLAYERVUMETERS;
+//        else
+//            m_VisiblePanels ^= guPANEL_MAIN_PLAYERVUMETERS;
+//
+//        m_ViewPlayerVumeters->Check( IsShown );
+//    }
+//
+//    wxAuiPaneInfo &LocationsPaneInfo = m_AuiManager.GetPane( wxT( "MainSources" ) );
+//    if( ( IsShown = LocationsPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_LOCATIONS ) )
+//    {
+//        if( IsShown )
+//            m_VisiblePanels |= guPANEL_MAIN_LOCATIONS;
+//        else
+//            m_VisiblePanels ^= guPANEL_MAIN_LOCATIONS;
+//
+//        m_ViewMainLocations->Check( IsShown );
+//    }
+//
+//    wxAuiPaneInfo &ShowCoverPaneInfo = m_AuiManager.GetPane( wxT( "MainShowCover" ) );
+//    if( ( IsShown = ShowCoverPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_SHOWCOVER ) )
+//    {
+//        if( IsShown )
+//            m_VisiblePanels |= guPANEL_MAIN_SHOWCOVER;
+//        else
+//            m_VisiblePanels ^= guPANEL_MAIN_SHOWCOVER;
+//
+//        m_ViewMainShowCover->Check( IsShown );
+//    }
 
     wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
     if( !PaneInfo.IsShown() )
@@ -4858,63 +4818,93 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                               guPANEL_MAIN_SHOWCOVER );
 
         // Reset the Menu entry for all elements
-        m_ViewLibrary->Check( false );
-        m_ViewLibTextSearch->Enable( false );
-        m_ViewLibLabels->Enable( false );
-        m_ViewLibGenres->Enable( false );
-        m_ViewLibArtists->Enable( false );
-        m_ViewLibAlbums->Enable( false );
-        m_ViewLibYears->Enable( false );
-        m_ViewLibRatings->Enable( false );
-        m_ViewLibPlayCounts->Enable( false );
-        m_ViewLibComposers->Enable( false );
-        m_ViewLibAlbumArtists->Enable( false );
-
-        m_ViewRadios->Check( false );
-        m_ViewRadTextSearch->Enable( false );
-        m_ViewRadLabels->Enable( false );
-        m_ViewRadGenres->Enable( false );
-
-        m_ViewLastFM->Check( false );
-
-        m_ViewLyrics->Check( false );
-
-        m_ViewPlayLists->Check( false );
-
-        m_ViewPodcasts->Check( false );
-        m_ViewPodChannels->Enable( false );
-        m_ViewPodDetails->Enable( false );
-
-        m_ViewAlbumBrowser->Check( false );
-
-        m_ViewFileBrowser->Check( false );
-
-        m_ViewJamendo->Check( false );
-        m_ViewJamTextSearch->Enable( false );
-        m_ViewJamLabels->Enable( false );
-        m_ViewJamGenres->Enable( false );
-        m_ViewJamArtists->Enable( false );
-        m_ViewJamAlbums->Enable( false );
-        m_ViewJamYears->Enable( false );
-        m_ViewJamRatings->Enable( false );
-        m_ViewJamPlayCounts->Enable( false );
-        m_ViewJamComposers->Enable( false );
-        m_ViewJamAlbumArtists->Enable( false );
-
-        m_ViewMagnatune->Check( false );
-        m_ViewMagTextSearch->Enable( false );
-        m_ViewMagLabels->Enable( false );
-        m_ViewMagGenres->Enable( false );
-        m_ViewMagArtists->Enable( false );
-        m_ViewMagAlbums->Enable( false );
-        m_ViewMagYears->Enable( false );
-        m_ViewMagRatings->Enable( false );
-        m_ViewMagPlayCounts->Enable( false );
-        m_ViewMagComposers->Enable( false );
-        m_ViewMagAlbumArtists->Enable( false );
+        ResetViewMenuState();
     }
 
-    m_AuiManager.Update();
+    //m_AuiManager.Update();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLoadLayout( wxCommandEvent &event )
+{
+    int Layout = event.GetId() - ID_MENU_LAYOUT_LOAD;
+
+    Hide();
+    //guLogMessage( wxT( "Loading Layout %i" ), Layout );
+
+    wxString LayoutStr = m_LayoutData[ Layout ];
+    int Width;
+    int Height;
+    GetLayoutParams( LayoutStr.BeforeFirst( wxT( ';' ) ), &Width, &Height );
+
+    LayoutStr = LayoutStr.AfterFirst( wxT( ';' ) );
+
+    int PosX;
+    int PosY;
+    GetLayoutParams( LayoutStr.BeforeFirst( wxT( ';' ) ), &PosX, &PosY );
+
+    LayoutStr = LayoutStr.AfterFirst( wxT( ';' ) );
+
+    int State;
+    GetLayoutParams( LayoutStr.BeforeFirst( wxT( ';' ) ), &State, NULL );
+
+    LayoutStr = LayoutStr.AfterFirst( wxT( ';' ) );
+
+    unsigned int NewVisiblePanels;
+    GetLayoutParams( LayoutStr.BeforeFirst( wxT( ';' ) ), ( int * ) &NewVisiblePanels, NULL );
+
+    if( IsFullScreen() != ( State == 1 ) )
+    {
+        ShowFullScreen( State == 1, wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
+        Refresh();
+        Update();
+    }
+
+    if( IsMaximized() != ( State == 2 ) )
+    {
+        Maximize( State == 2 );
+        Refresh();
+        Update();
+    }
+
+    SetSize( PosX, PosY, Width, Height );
+
+    LayoutStr = LayoutStr.AfterFirst( wxT( ';' ) );
+
+    LoadTabsPerspective( m_LayoutTabs[ Layout ] );
+
+    if( ( NewVisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) != ( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) )
+    {
+        ShowMainPanel( guPANEL_MAIN_PLAYERPLAYLIST, ( NewVisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) );
+    }
+
+    if( ( NewVisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) != ( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) )
+    {
+        ShowMainPanel( guPANEL_MAIN_PLAYERFILTERS, ( NewVisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
+    }
+
+    if( ( NewVisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) != ( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) )
+    {
+        ShowMainPanel( guPANEL_MAIN_PLAYERVUMETERS, ( NewVisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) );
+    }
+
+    if( ( NewVisiblePanels & guPANEL_MAIN_LOCATIONS ) != ( m_VisiblePanels & guPANEL_MAIN_LOCATIONS ) )
+    {
+        ShowMainPanel( guPANEL_MAIN_LOCATIONS, ( NewVisiblePanels & guPANEL_MAIN_LOCATIONS ) );
+    }
+
+    if( ( NewVisiblePanels & guPANEL_MAIN_SHOWCOVER ) != ( m_VisiblePanels & guPANEL_MAIN_SHOWCOVER ) )
+    {
+        ShowMainPanel( guPANEL_MAIN_SHOWCOVER, ( NewVisiblePanels & guPANEL_MAIN_SHOWCOVER ) );
+    }
+
+//    ShowMainPanel( guPANEL_MAIN_PLAYERPLAYLIST, m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST );
+//    ShowMainPanel( guPANEL_MAIN_PLAYERFILTERS, m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS );
+//    ShowMainPanel( guPANEL_MAIN_PLAYERVUMETERS, m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS );
+//    ShowMainPanel( guPANEL_MAIN_LOCATIONS, m_VisiblePanels & guPANEL_MAIN_LOCATIONS );
+//    ShowMainPanel( guPANEL_MAIN_SHOWCOVER, m_VisiblePanels & guPANEL_MAIN_SHOWCOVER );
+
+    LoadPerspective( LayoutStr );
 
     OnPlayerPlayListUpdateTitle( event );
 
@@ -4923,36 +4913,8 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::LoadTabsPerspective( const wxString &layout )
+void guMainFrame::ResetViewMenuState( void )
 {
-    wxCommandEvent event;
-
-    if( m_LocationPanel )
-        m_LocationPanel->Lock();
-
-    // Empty the tabs
-    int Index = 0;
-    int Count = m_CatNotebook->GetPageCount();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        RemoveTabPanel( ( wxPanel * ) m_CatNotebook->GetPage( 0 ) );
-    }
-
-    // Add the tabs in the proper ordering
-    wxString TabsLayout = layout.AfterFirst( wxT( '=' ) );
-    TabsLayout = TabsLayout.BeforeFirst( wxT( '@' ) );
-    event.SetInt( 1 );
-
-    //02dbb6304b6f3a2b000e09c000000002=
-    //+00[Librería],01[Radio],03[Letras],04[Listas],05[Podcasts]|02fc2e004b6f433c007e30b000000003=*02[Last.fm]
-    //@
-    m_VisiblePanels = m_VisiblePanels & ( guPANEL_MAIN_PLAYERPLAYLIST |
-                                          guPANEL_MAIN_PLAYERFILTERS |
-                                          guPANEL_MAIN_PLAYERVUMETERS |
-                                          guPANEL_MAIN_LOCATIONS |
-                                          guPANEL_MAIN_SHOWCOVER );
-
-    // Reset the Menu entry for all elements
     m_ViewLibrary->Check( false );
     m_ViewLibTextSearch->Enable( false );
     m_ViewLibLabels->Enable( false );
@@ -5007,6 +4969,40 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
     m_ViewMagPlayCounts->Enable( false );
     m_ViewMagComposers->Enable( false );
     m_ViewMagAlbumArtists->Enable( false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::LoadTabsPerspective( const wxString &layout )
+{
+    wxCommandEvent event;
+
+    if( m_LocationPanel )
+        m_LocationPanel->Lock();
+
+    // Empty the tabs
+    int Index = 0;
+    int Count = m_CatNotebook->GetPageCount();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        RemoveTabPanel( ( wxPanel * ) m_CatNotebook->GetPage( 0 ) );
+    }
+
+    // Add the tabs in the proper ordering
+    wxString TabsLayout = layout.AfterFirst( wxT( '=' ) );
+    TabsLayout = TabsLayout.BeforeFirst( wxT( '@' ) );
+    event.SetInt( 1 );
+
+    //02dbb6304b6f3a2b000e09c000000002=
+    //+00[Librería],01[Radio],03[Letras],04[Listas],05[Podcasts]|02fc2e004b6f433c007e30b000000003=*02[Last.fm]
+    //@
+    m_VisiblePanels = m_VisiblePanels & ( guPANEL_MAIN_PLAYERPLAYLIST |
+                                          guPANEL_MAIN_PLAYERFILTERS |
+                                          guPANEL_MAIN_PLAYERVUMETERS |
+                                          guPANEL_MAIN_LOCATIONS |
+                                          guPANEL_MAIN_SHOWCOVER );
+
+    // Reset the Menu entry for all elements
+    ResetViewMenuState();
 
     Index = 0;
     while( true )
@@ -5018,35 +5014,35 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
 
         //guLogMessage( wxT( "Creating tab %i '%s'" ), Index, TabName.c_str() );
 
-        if( TabName == _( "Library" ) )
+        if( TabName == wxT( "Library" ) )
         {
             OnViewLibrary( event );
         }
-        else if( TabName == _( "Radio" ) )
+        else if( TabName == wxT( "Radio" ) )
         {
             OnViewRadio( event );
         }
-        else if( TabName == _( "Last.fm" ) )
+        else if( TabName == wxT( "Last.fm" ) )
         {
             OnViewLastFM( event );
         }
-        else if( TabName == _( "Lyrics" ) )
+        else if( TabName == wxT( "Lyrics" ) )
         {
             OnViewLyrics( event );
         }
-        else if( TabName == _( "PlayLists" ) )
+        else if( TabName == wxT( "PlayLists" ) )
         {
             OnViewPlayLists( event );
         }
-        else if( TabName == _( "Podcasts" ) )
+        else if( TabName == wxT( "Podcasts" ) )
         {
             OnViewPodcasts( event );
         }
-        else if( TabName == _( "Browser" ) )
+        else if( TabName == wxT( "Browser" ) )
         {
             OnViewAlbumBrowser( event );
         }
-        else if( TabName == _( "Files" ) )
+        else if( TabName == wxT( "Files" ) )
         {
             OnViewFileBrowser( event );
         }
@@ -5099,7 +5095,7 @@ void guMainFrame::OnMainPaneClose( wxAuiManagerEvent &event )
         CmdId = ID_MENU_VIEW_MAIN_SHOWCOVER;
     }
 
-    guLogMessage( wxT( "OnMainPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
+    //guLogMessage( wxT( "OnMainPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
     if( CmdId )
     {
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, CmdId );
@@ -5192,6 +5188,8 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::ShowMainPanel( const int panelid, const bool show )
 {
+    //guLogMessage( wxT( "ShowMainPanel( %08X, %i )" ), panelid, show );
+
     wxString PaneName;
 
     switch( panelid )
@@ -5276,7 +5274,7 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
     else
         m_VisiblePanels ^= panelid;
 
-    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
+    //guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
 }
 
 // -------------------------------------------------------------------------------- //

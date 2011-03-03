@@ -366,6 +366,49 @@ void guAuiNotebook::UpdateTabCtrlHeight()
 }
 
 // -------------------------------------------------------------------------------- //
+wxString guAuiNotebook::GetPageId( wxAuiNotebookPage &page )
+{
+    static wxArrayString Names;
+    static wxArrayString Ids;
+
+    if( !Names.Count() )
+    {
+        Names.Add( _( "Library" ) );
+        Names.Add( _( "Radio" ) );
+        Names.Add( _( "Last.fm" ) );
+        Names.Add( _( "Lyrics" ) );
+        Names.Add( _( "PlayLists" ) );
+        Names.Add( _( "Podcasts" ) );
+        Names.Add( _( "Browser" ) );
+        Names.Add( _( "Files" ) );
+        Names.Add( wxT( "Jamendo" ) );
+        Names.Add( wxT( "Magnatune" ) );
+    }
+
+    if( !Ids.Count() )
+    {
+        Ids.Add( wxT( "Library" ) );
+        Ids.Add( wxT( "Radio" ) );
+        Ids.Add( wxT( "Last.fm" ) );
+        Ids.Add( wxT( "Lyrics" ) );
+        Ids.Add( wxT( "PlayLists" ) );
+        Ids.Add( wxT( "Podcasts" ) );
+        Ids.Add( wxT( "Browser" ) );
+        Ids.Add( wxT( "Files" ) );
+        Ids.Add( wxT( "Jamendo" ) );
+        Ids.Add( wxT( "Magnatune" ) );
+    }
+
+    int Index = Names.Index( page.caption );
+    if( Index != wxNOT_FOUND )
+    {
+        return Ids[ Index ];
+    }
+
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
 wxString guAuiNotebook::SavePerspective( void )
 {
     // Build list of panes/tabs
@@ -400,7 +443,8 @@ wxString guAuiNotebook::SavePerspective( void )
                 tabs += wxT( "*" );
             else if( ( int ) p == tabframe->m_tabs->GetActivePage() )
                 tabs += wxT( "+" );
-            tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, page.caption.c_str() );
+            //tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, page.caption.c_str() );
+            tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, GetPageId( page ).c_str() );
         }
     }
     tabs += wxT( "@" );
