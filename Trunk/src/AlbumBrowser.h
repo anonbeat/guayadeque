@@ -21,6 +21,7 @@
 #ifndef ALBUMBROWSER_H
 #define ALBUMBROWSER_H
 
+#include "AutoScrollText.h"
 #include "DbLibrary.h"
 #include "DynamicPlayList.h"
 #include "PlayerPanel.h"
@@ -85,9 +86,12 @@ class guAlbumBrowserItemPanel : public wxPanel
     // GUI
     wxBoxSizer *            m_MainSizer;
     guStaticBitmap *        m_Bitmap;
-    wxStaticText *          m_ArtistLabel;
-    wxStaticText *          m_AlbumLabel;
-    wxStaticText *          m_TracksLabel;
+    //wxStaticText *          m_ArtistLabel;
+    guAutoScrollText *      m_ArtistLabel;
+    //wxStaticText *          m_AlbumLabel;
+    guAutoScrollText *      m_AlbumLabel;
+    //wxStaticText *          m_TracksLabel;
+    guAutoScrollText *      m_TracksLabel;
 
     void                    OnContextMenu( wxContextMenuEvent &event );
 
