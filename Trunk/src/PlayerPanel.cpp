@@ -38,7 +38,7 @@
 #include <wx/regex.h>
 #include <wx/utils.h>
 
-//#define guLogDebug(...)  guLogDebug(__VA_ARGS__)
+//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
 #define guLogDebug(...)
 
 
@@ -1600,8 +1600,12 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
         m_MediaSong.m_PlayTime = CurPos / 1000;
 
-        if( !m_AboutToEndDetected && !m_NextTrackId && ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
-            ( CurPos > 0 ) && ( m_LastLength > 0 ) && ( CurPos + m_FadeOutTime + 5000 >= m_LastLength ) )
+        if( !m_AboutToEndDetected &&
+            !m_NextTrackId &&
+            ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
+            ( CurPos > 0 ) && ( m_LastLength > 0 ) &&
+            ( CurPos + 5000 + ( !m_ForceGapless ? m_FadeOutTime : 0 ) >= m_LastLength )
+          )
         {
             if( GetState() == guMEDIASTATE_PLAYING )
             {
@@ -1821,8 +1825,8 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 {
     guLogDebug( wxT( "OnMediaLoaded Cur: %i %i   %li" ), m_PlayListCtrl->GetCurItem(), event.GetInt(), m_NextTrackId );
 
-    if( m_IsSkipping )
-        m_IsSkipping = false;
+//    if( m_IsSkipping )
+//        m_IsSkipping = false;
 
     try {
 
@@ -1931,6 +1935,9 @@ void guPlayerPanel::OnMediaPlayStarted( void )
         m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
         //m_PendingScrob = false;
     }
+
+    if( m_IsSkipping )
+        m_IsSkipping = false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2290,7 +2297,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         OnNextAlbumButtonClick( event );
         return;
     }
-    //guLogDebug( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt() );
+    guLogDebug( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt() );
     guMediaState State;
     guTrack * NextItem;
 
@@ -2304,7 +2311,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     if( NextItem )
     {
         State = m_MediaCtrl->GetState();
-        //guLogDebug( wxT( "OnNextTrackButtonClick : State = %i" ), State );
+        guLogDebug( wxT( "OnNextTrackButtonClick : State = %i" ), State );
 
         SetNextTrack( NextItem );
 

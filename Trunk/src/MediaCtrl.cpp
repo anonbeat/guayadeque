@@ -1864,13 +1864,17 @@ bool guFaderPlayBin::Load( const wxString &uri, const bool restart )
     {
         if( gst_element_set_state( m_Playbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
         {
+            guLogDebug( wxT( "guFaderPlayBin::Load => Could not set state to ready..." ) );
             return false;
         }
         gst_element_set_state( m_Playbin, GST_STATE_NULL );
     }
 
     if( !gst_uri_is_valid( ( const char * ) uri.mb_str( wxConvFile ) ) )
+    {
+        guLogDebug( wxT( "guFaderPlayBin::Load => Invalid uri: '%s'" ), uri.c_str() );
         return false;
+    }
 
     g_object_set( G_OBJECT( m_Playbin ), "uri", ( const char * ) uri.mb_str( wxConvFile ), NULL );
 
@@ -1878,6 +1882,7 @@ bool guFaderPlayBin::Load( const wxString &uri, const bool restart )
     {
         if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
         {
+            guLogDebug( wxT( "guFaderPlayBin::Load => Could not restore state to paused..." ) );
             return false;
         }
     }
@@ -1885,7 +1890,7 @@ bool guFaderPlayBin::Load( const wxString &uri, const bool restart )
     guMediaEvent event( guEVT_MEDIA_LOADED );
     event.SetInt( restart );
     SendEvent( event );
-    guLogDebug( wxT( "Sent the loaded event..." ) );
+    guLogDebug( wxT( "guFaderPlayBin::Load => Sent the loaded event..." ) );
 
     return true;
 }
@@ -2135,8 +2140,11 @@ void guFaderPlayBin::AudioChanged( void )
     guLogDebug( wxT( "guFaderPlayBin::AudioChanged (%i)" ), m_Id );
     if( m_AboutToFinishPending )
     {
-        m_Id = m_NextId;
-        m_NextId = 0;
+        if( m_NextId )
+        {
+            m_Id = m_NextId;
+            m_NextId = 0;
+        }
 
         guMediaEvent event( guEVT_MEDIA_CHANGED_STATE );
         event.SetInt( GST_STATE_PLAYING );
