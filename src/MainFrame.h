@@ -428,6 +428,8 @@ class guMainFrame : public wxFrame
 
     void                            ResetViewMenuState( void );
 
+    void                            OnSongSetRating( wxCommandEvent &event );
+
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                                     ~guMainFrame();

@@ -36,7 +36,7 @@ class guTaskBarIcon : public wxTaskBarIcon
 
     void SendEventToMainFrame( wxCommandEvent &event );
     void OnClick( wxTaskBarIconEvent &event );
-    void SetRatingEvent( wxCommandEvent &event );
+    //void SetRatingEvent( wxCommandEvent &event );
 
   public :
     guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPlayerPanel );

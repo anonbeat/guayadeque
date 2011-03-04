@@ -1811,23 +1811,29 @@ void guLibPanel::UpdatePlaylists( void )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongSetRating( wxCommandEvent &event )
 {
-    //guLogMessage( wxT( "guLibPanel::OnSongSetRating %i" ), event.GetId() - ID_SONG_SET_RATING_0 );
-
     int Rating = event.GetId() - ID_SONG_SET_RATING_0;
+    //guLogMessage( wxT( "guLibPanel::OnSongSetRating %i" ), Rating );
 
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-
-    m_Db->SetTracksRating( &Tracks, Rating );
-    int Index;
-    int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    if( Tracks.Count() )
     {
-        Tracks[ Index ].m_Rating = Rating;
-    }
+        m_Db->SetTracksRating( &Tracks, Rating );
+        int Index;
+        int Count = Tracks.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            Tracks[ Index ].m_Rating = Rating;
+        }
 
-    UpdatedTracks( &Tracks );
-    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+        UpdatedTracks( &Tracks );
+        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
+    }
+    else
+    {
+        event.SetId( ID_PLAYERPANEL_SETRATING_0 + Rating );
+        event.Skip();
+    }
 }
 
 // -------------------------------------------------------------------------------- //

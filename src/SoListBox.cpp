@@ -146,12 +146,12 @@ void guSoListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
-    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_0 );
-    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_1 );
-    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_2 );
-    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_3 );
-    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_4 );
-    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_5 );
+//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_0 );
+//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_1 );
+//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_2 );
+//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_3 );
+//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_4 );
+//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_5 );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE );
     AliasAccelCmds.Add( ID_SONG_ENQUEUEALL );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
@@ -160,12 +160,12 @@ void guSoListBox::CreateAcceleratorTable( void )
     RealAccelCmds.Add( ID_SONG_SAVETOPLAYLIST );
     RealAccelCmds.Add( ID_SONG_EDITLABELS );
     RealAccelCmds.Add( ID_SONG_EDITTRACKS );
-    RealAccelCmds.Add( ID_SONG_SET_RATING_0 );
-    RealAccelCmds.Add( ID_SONG_SET_RATING_1 );
-    RealAccelCmds.Add( ID_SONG_SET_RATING_2 );
-    RealAccelCmds.Add( ID_SONG_SET_RATING_3 );
-    RealAccelCmds.Add( ID_SONG_SET_RATING_4 );
-    RealAccelCmds.Add( ID_SONG_SET_RATING_5 );
+//    RealAccelCmds.Add( ID_SONG_SET_RATING_0 );
+//    RealAccelCmds.Add( ID_SONG_SET_RATING_1 );
+//    RealAccelCmds.Add( ID_SONG_SET_RATING_2 );
+//    RealAccelCmds.Add( ID_SONG_SET_RATING_3 );
+//    RealAccelCmds.Add( ID_SONG_SET_RATING_4 );
+//    RealAccelCmds.Add( ID_SONG_SET_RATING_5 );
     RealAccelCmds.Add( ID_SONG_ENQUEUE );
     RealAccelCmds.Add( ID_SONG_ENQUEUEALL );
     RealAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
@@ -509,42 +509,43 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
     {
         if( ColumnId == guSONGS_COLUMN_RATING )
         {
-            wxMenu * RatingMenu = new wxMenu();
-
-            int Rating = m_Items[ m_LastRowRightClicked - m_ItemsFirst ].m_Rating;
-
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_0,
-                                    wxT( "☆☆☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_0 ),
-                                    _( "Set the rating to 0" ), wxITEM_CHECK );
-            RatingMenu->Append( MenuItem );
-            MenuItem->Check( Rating <= 0 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_1,
-                                    wxT( "★☆☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_1 ),
-                                    _( "Set the rating to 1" ), wxITEM_CHECK );
-            RatingMenu->Append( MenuItem );
-            MenuItem->Check( Rating == 1 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_2,
-                                    wxT( "★★☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_2 ),
-                                    _( "Set the rating to 2" ), wxITEM_CHECK );
-            RatingMenu->Append( MenuItem );
-            MenuItem->Check( Rating == 2 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_3,
-                                    wxT( "★★★☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_3 ),
-                                    _( "Set the rating to 3" ), wxITEM_CHECK );
-            RatingMenu->Append( MenuItem );
-            MenuItem->Check( Rating == 3 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_4,
-                                    wxT( "★★★★☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_4 ),
-                                    _( "Set the rating to 4" ), wxITEM_CHECK );
-            RatingMenu->Append( MenuItem );
-            MenuItem->Check( Rating == 4 );
-            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_5,
-                                    wxT( "★★★★★" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_5 ),
-                                    _( "Set the rating to 5" ), wxITEM_CHECK );
-            RatingMenu->Append( MenuItem );
-            MenuItem->Check( Rating == 5 );
-
-            menu->AppendSubMenu( RatingMenu, _( "Set Rating" ), _( "Set the current track rating" ) );
+//            wxMenu * RatingMenu = new wxMenu();
+//
+//            int Rating = m_Items[ m_LastRowRightClicked - m_ItemsFirst ].m_Rating;
+//
+//            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_0,
+//                                    wxT( "☆☆☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_0 ),
+//                                    _( "Set the rating to 0" ), wxITEM_CHECK );
+//            RatingMenu->Append( MenuItem );
+//            MenuItem->Check( Rating <= 0 );
+//            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_1,
+//                                    wxT( "★☆☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_1 ),
+//                                    _( "Set the rating to 1" ), wxITEM_CHECK );
+//            RatingMenu->Append( MenuItem );
+//            MenuItem->Check( Rating == 1 );
+//            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_2,
+//                                    wxT( "★★☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_2 ),
+//                                    _( "Set the rating to 2" ), wxITEM_CHECK );
+//            RatingMenu->Append( MenuItem );
+//            MenuItem->Check( Rating == 2 );
+//            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_3,
+//                                    wxT( "★★★☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_3 ),
+//                                    _( "Set the rating to 3" ), wxITEM_CHECK );
+//            RatingMenu->Append( MenuItem );
+//            MenuItem->Check( Rating == 3 );
+//            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_4,
+//                                    wxT( "★★★★☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_4 ),
+//                                    _( "Set the rating to 4" ), wxITEM_CHECK );
+//            RatingMenu->Append( MenuItem );
+//            MenuItem->Check( Rating == 4 );
+//            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_5,
+//                                    wxT( "★★★★★" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_5 ),
+//                                    _( "Set the rating to 5" ), wxITEM_CHECK );
+//            RatingMenu->Append( MenuItem );
+//            MenuItem->Check( Rating == 5 );
+//
+//            menu->AppendSubMenu( RatingMenu, _( "Set Rating" ), _( "Set the current track rating" ) );
+            return;
         }
         else
         {
@@ -633,6 +634,42 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
             Menu->AppendSeparator();
 
             AppendFastEditMenu( Menu, SelCount );
+
+
+
+            wxMenu * RatingMenu = new wxMenu();
+
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_0,
+                                    wxT( "☆☆☆☆☆" ),
+                                    _( "Set the rating to 0" ), wxITEM_NORMAL );
+            RatingMenu->Append( MenuItem );
+
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_1,
+                                    wxT( "★☆☆☆☆" ),
+                                    _( "Set the rating to 1" ), wxITEM_NORMAL );
+            RatingMenu->Append( MenuItem );
+
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_2,
+                                    wxT( "★★☆☆☆" ),
+                                    _( "Set the rating to 2" ), wxITEM_NORMAL );
+            RatingMenu->Append( MenuItem );
+
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_3,
+                                    wxT( "★★★☆☆" ),
+                                    _( "Set the rating to 3" ), wxITEM_NORMAL );
+            RatingMenu->Append( MenuItem );
+
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_4,
+                                    wxT( "★★★★☆" ),
+                                    _( "Set the rating to 4" ), wxITEM_NORMAL );
+            RatingMenu->Append( MenuItem );
+
+            MenuItem = new wxMenuItem( RatingMenu, ID_SONG_SET_RATING_5,
+                                    wxT( "★★★★★" ),
+                                    _( "Set the rating to 5" ), wxITEM_NORMAL );
+            RatingMenu->Append( MenuItem );
+
+            Menu->AppendSubMenu( RatingMenu, _( "Set Rating" ), _( "Set the current track rating" ) );
         }
 
         Menu->AppendSeparator();

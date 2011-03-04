@@ -626,6 +626,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MAINFRAME_LYRICSEXECCOMMAND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricExecCommand ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
+
+    Connect( ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSongSetRating ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1639,7 +1641,46 @@ void guMainFrame::CreateMenu()
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_CLEAR,
                                 wxString( _( "Clear Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_CLEAR ),
                                 _( "Clear the now playing playlist" ), wxITEM_NORMAL );
+
     m_MainMenu->Append( MenuItem );
+
+
+
+    wxMenu * RatingMenu = new wxMenu();
+
+    MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_0,
+                            wxT( "☆☆☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_0 ),
+                            _( "Set the rating to 0" ), wxITEM_NORMAL );
+    RatingMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_1,
+                            wxT( "★☆☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_1 ),
+                            _( "Set the rating to 1" ), wxITEM_NORMAL );
+    RatingMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_2,
+                            wxT( "★★☆☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_2 ),
+                            _( "Set the rating to 2" ), wxITEM_NORMAL );
+    RatingMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_3,
+                            wxT( "★★★☆☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_3 ),
+                            _( "Set the rating to 3" ), wxITEM_NORMAL );
+    RatingMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_4,
+                            wxT( "★★★★☆" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_4 ),
+                            _( "Set the rating to 4" ), wxITEM_NORMAL );
+    RatingMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_5,
+                            wxT( "★★★★★" ) + guAccelGetCommandKeyCodeString( ID_PLAYERPANEL_SETRATING_5 ),
+                            _( "Set the rating to 5" ), wxITEM_NORMAL );
+    RatingMenu->Append( MenuItem );
+
+    m_MainMenu->AppendSubMenu( RatingMenu, _( "Set Rating" ), _( "Set the rating of the current track" ) );
+
+
 
     m_MainMenu->AppendSeparator();
 
@@ -5609,6 +5650,17 @@ void guMainFrame::OnConfigUpdated( wxCommandEvent &event )
     if( ( Flags & guPREFERENCE_PAGE_FLAG_LYRICS ) && m_LyricSearchEngine )
     {
         m_LyricSearchEngine->Load();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnSongSetRating( wxCommandEvent &event )
+{
+    int Rating = event.GetId() - ID_PLAYERPANEL_SETRATING_0;
+    //guLogMessage( wxT( "Set rating to %i" ), Rating );
+    if( m_PlayerPanel )
+    {
+        m_PlayerPanel->SetRating( Rating );
     }
 }
 
