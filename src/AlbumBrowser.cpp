@@ -44,13 +44,14 @@
 
 WX_DEFINE_OBJARRAY( guAlbumBrowserItemArray );
 
-#define guALBUMBROWSER_REFRESH_DELAY    60
-#define guALBUMBROWSER_GRID_SIZE        180
+#define guALBUMBROWSER_REFRESH_DELAY            60
+#define guALBUMBROWSER_GRID_SIZE_WIDTH          150
+#define guALBUMBROWSER_GRID_SIZE_HEIGHT         180
 
-#define guALBUMBROWSER_TIMER_ID_REFRESH    3
-#define guALBUMBROWSER_TIMER_ID_TEXTSEARCH 4
+#define guALBUMBROWSER_TIMER_ID_REFRESH         3
+#define guALBUMBROWSER_TIMER_ID_TEXTSEARCH      4
 
-#define guALBUMBROWSER_TIMER_TEXTSEARCH_DELAY 500
+#define guALBUMBROWSER_TIMER_TEXTSEARCH_DELAY   500
 
 void AddAlbumCommands( wxMenu * Menu, int SelCount );
 
@@ -143,21 +144,24 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 	m_Bitmap = new guStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 100, 100 ), 0 );
 	m_MainSizer->Add( m_Bitmap, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	m_AlbumLabel->Wrap( 120 );
+	//m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	//m_AlbumLabel->Wrap( 120 );
+	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 1 );
 	m_AlbumLabel->SetFont( CurrentFont );
 	m_MainSizer->Add( m_AlbumLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
-	m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	m_ArtistLabel->Wrap( 120 );
+//	m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+//	m_ArtistLabel->Wrap( 120 );
+	m_ArtistLabel = new guAutoScrollText( this, wxEmptyString );
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
 	m_ArtistLabel->SetFont( CurrentFont );
 	m_MainSizer->Add( m_ArtistLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
-	m_TracksLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	m_TracksLabel->Wrap( 120 );
+//	m_TracksLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+//	m_TracksLabel->Wrap( 120 );
+	m_TracksLabel = new guAutoScrollText( this, wxEmptyString );
 	m_TracksLabel->SetFont( CurrentFont );
 	m_MainSizer->Add( m_TracksLabel, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxEXPAND, 5 );
 
@@ -832,8 +836,8 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
     wxSize Size = event.GetSize();
     if( Size != m_LastSize )
     {
-        size_t ColItems = Size.GetWidth() / guALBUMBROWSER_GRID_SIZE;
-        size_t RowItems = Size.GetHeight() / guALBUMBROWSER_GRID_SIZE;
+        size_t ColItems = Size.GetWidth() / guALBUMBROWSER_GRID_SIZE_WIDTH;
+        size_t RowItems = Size.GetHeight() / guALBUMBROWSER_GRID_SIZE_HEIGHT;
         //guLogMessage( wxT( "Row: %i  Col:%i" ), RowItems, ColItems );
         if( ColItems * RowItems != m_ItemPanels.Count() )
         {
