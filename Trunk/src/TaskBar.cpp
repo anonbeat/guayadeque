@@ -42,7 +42,7 @@ guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPla
     Connect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
     Connect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
     Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SetRatingEvent ) );
+    Connect( ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
     Connect( ID_MAINFRAME_SETFORCEGAPLESS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
     Connect( ID_MAINFRAME_SETAUDIOSCROBBLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
 
@@ -75,11 +75,11 @@ void guTaskBarIcon::SendEventToMainFrame( wxCommandEvent &event )
     wxPostEvent( m_MainFrame, event );
 }
 
-// ---------------------------------------------------------------------- //
-void guTaskBarIcon::SetRatingEvent( wxCommandEvent &event )
-{
-    m_PlayerPanel->SetRating( event.GetId() - ID_PLAYERPANEL_SETRATING_0 );
-}
+//// ---------------------------------------------------------------------- //
+//void guTaskBarIcon::SetRatingEvent( wxCommandEvent &event )
+//{
+//    m_PlayerPanel->SetRating( event.GetId() - ID_PLAYERPANEL_SETRATING_0 );
+//}
 
 // ---------------------------------------------------------------------- //
 void guTaskBarIcon::OnClick( wxTaskBarIconEvent &event )
