@@ -1631,7 +1631,7 @@ void guMainFrame::CreateMenu()
     m_MainMenu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( m_MainMenu, ID_PLAYER_PLAYLIST_STOP_ATEND,
-                            wxString( _( "Stop at end" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_STOP_ATEND ),
+                            wxString( _( "Stop at End" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_STOP_ATEND ),
                             _( "Stop after current playing or selected track" ) );
     //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_stop ) );
     m_MainMenu->Append( MenuItem );

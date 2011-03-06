@@ -138,6 +138,14 @@ class guCurrentTrack : public guTrack
         return *this;
     }
 
+    ~guCurrentTrack()
+    {
+        if( m_CoverImage )
+        {
+            delete m_CoverImage;
+        }
+    }
+
     void Update( const guTrack &track )
     {
         m_Loaded = true;

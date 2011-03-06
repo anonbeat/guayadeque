@@ -151,7 +151,7 @@ int guAccelGetActionNames( wxArrayString &actionnames )
 	actionnames.Add( _( "Show Status Bar" ) );
 	actionnames.Add( _( "Show VU Meters" ) );
 	actionnames.Add( _( "Skip Next" ) );
-	actionnames.Add( _( "Skip Mext Album" ) );
+	actionnames.Add( _( "Skip Next Album" ) );
 	actionnames.Add( _( "Skip Previous" ) );
 	actionnames.Add( _( "Skip Previous Album" ) );
 	actionnames.Add( _( "Smart Mode" ) );
