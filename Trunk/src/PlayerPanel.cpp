@@ -3141,13 +3141,19 @@ void guSmartAddTracksThread::AddSimilarTracks( const wxString &artist, const wxS
                                                    SimilarTracks[ Index ].m_TrackName,
                                                    m_FilterAllowPlayList,
                                                    m_FilterDenyPlayList );
-                    if( Song &&
-                        ( m_SmartAddedTracks->Index( Song->m_SongId ) == wxNOT_FOUND ) &&
-                        ( m_SmartAddedArtists->Index( Song->m_ArtistName.Upper() ) == wxNOT_FOUND ) )
+                    if( Song )
                     {
-                        Song->m_TrackMode = guTRACK_MODE_SMART;
-                        //guLogDebug( wxT( "Found this song in the Songs Library" ) );
-                        songs->Add( Song );
+                        if( ( m_SmartAddedTracks->Index( Song->m_SongId ) == wxNOT_FOUND ) &&
+                            ( m_SmartAddedArtists->Index( Song->m_ArtistName.Upper() ) == wxNOT_FOUND ) )
+                        {
+                            Song->m_TrackMode = guTRACK_MODE_SMART;
+                            //guLogDebug( wxT( "Found this song in the Songs Library" ) );
+                            songs->Add( Song );
+                        }
+                        else
+                        {
+                            delete Song;
+                        }
                     }
                 }
                 else
@@ -3393,7 +3399,11 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
     }
 
     if( TestDestroy() )
+    {
+        if( CoverImage )
+            delete CoverImage;
         return 0;
+    }
 
 
     if( !CoverImage )
@@ -3414,7 +3424,11 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
     }
 
     if( TestDestroy() )
+    {
+        if( CoverImage )
+            delete CoverImage;
         return 0;
+    }
 
     CoverImage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
 
@@ -3455,7 +3469,11 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
     }
 
     if( TestDestroy() )
+    {
+        if( CoverImage )
+            delete CoverImage;
         return 0;
+    }
 
     if( m_CurrentTrack->m_CoverImage )
         delete m_CurrentTrack->m_CoverImage;

@@ -367,13 +367,17 @@ guDBusMessage::guDBusMessage( int type )
 // -------------------------------------------------------------------------------- //
 guDBusMessage::guDBusMessage( guDBusMessage * msg )
 {
-    m_DBusMsg = dbus_message_copy( msg->GetMessage() );
+    //m_DBusMsg = dbus_message_copy( msg->GetMessage() );
+    m_DBusMsg = msg->GetMessage();
+    dbus_message_ref( m_DBusMsg );
 }
 
 // -------------------------------------------------------------------------------- //
 guDBusMessage::guDBusMessage( DBusMessage * msg )
 {
-    m_DBusMsg = dbus_message_copy( msg );
+    //m_DBusMsg = dbus_message_copy( msg );
+    m_DBusMsg = msg;
+    dbus_message_ref( msg );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -517,9 +521,9 @@ const char * guDBusMessage::GetObjectPath()
 // -------------------------------------------------------------------------------- //
 // guDBusMethodCall
 // -------------------------------------------------------------------------------- //
-guDBusMethodCall::guDBusMethodCall( const char * dest, const char * path, const char *iface, const char * method ) :
-  guDBusMessage( dbus_message_new_method_call( dest, path, iface, method ) )
+guDBusMethodCall::guDBusMethodCall( const char * dest, const char * path, const char *iface, const char * method )
 {
+    m_DBusMsg = dbus_message_new_method_call( dest, path, iface, method );
 }
 
 // -------------------------------------------------------------------------------- //
