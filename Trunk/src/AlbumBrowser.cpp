@@ -238,7 +238,7 @@ guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guCheckLabelString( const wxString &label )
+wxString inline guCheckLabelString( const wxString &label )
 {
     wxString Label = label;
     Label.Replace( wxT( "&" ), wxT( "&&" ) );
