@@ -1588,7 +1588,7 @@ wxString guLyricSearchThread::CheckExtract( const wxString &content, guLyricSour
         if( !RetVal.IsEmpty() )
             break;
     }
-    return RetVal.Trim( true ).Trim( false );
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1676,7 +1676,7 @@ wxString guLyricSearchThread::DoReplace( const wxString &text, guLyricSource &ly
         guLyricSourceReplace * LyricSourceReplace = lyricsource.ReplaceItem( Index );
         RetVal = DoReplace( RetVal, LyricSourceReplace->Search(), LyricSourceReplace->Replace() );
     }
-    return RetVal;
+    return guURLEncode( RetVal );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1762,7 +1762,7 @@ void guLyricSearchThread::LyricDownload( guLyricSource &lyricsource )
     guLogMessage( wxT( "Trying to get url: %s" ), Url.c_str() );
 
     m_LyricText = GetUrlContent( Url, wxEmptyString, true );
-    //guLogMessage( wxT( "COntent: '%s'" ), m_LyricText.c_str() );
+    //guLogMessage( wxT( "Content: '%s'" ), m_LyricText.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1963,6 +1963,7 @@ guLyricSearchThread::ExitCode guLyricSearchThread::Entry()
 
                     if( !CheckNotFound( LyricSource ) )
                     {
+                        m_LyricText = m_LyricText.Trim( true ).Trim( false );
                         //guLogMessage( wxT( "LyricText:\n%s" ), m_LyricText.c_str() );
                         guLogMessage( wxT( "Found the lyrics from source: %s" ), LyricSource.Name().c_str() );
 

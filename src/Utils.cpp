@@ -437,6 +437,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     wxMemoryOutputStream Buffer;
     http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     http.Get( Buffer, url );
+
     if( Buffer.IsOk() )
     {
         int ResponseCode = http.GetResponseCode();

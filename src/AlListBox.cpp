@@ -167,10 +167,10 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
     {
         dc.DrawBitmap( * Item->m_Thumb, rect.x + 1, rect.y + 1, false );
     }
-    else if( Item->m_Thumb )
-    {
-        guLogError( wxT( "Thumb image corrupt or not correctly loaded" ) );
-    }
+//    else if( Item->m_Thumb )
+//    {
+//        guLogError( wxT( "Thumb image corrupt or not correctly loaded" ) );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
