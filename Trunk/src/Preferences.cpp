@@ -2764,6 +2764,7 @@ void guPrefDialog::OnLyricSourceToggled( wxCommandEvent &event )
 void guPrefDialog::OnLyricAddBtnClick( wxCommandEvent &event )
 {
     guLyricSource LyricSource;
+    LyricSource.Type( guLYRIC_SOURCE_TYPE_DOWNLOAD );
     guLyricSourceEditor * LyricSourceEditor = new guLyricSourceEditor( this, &LyricSource );
     if( LyricSourceEditor )
     {
