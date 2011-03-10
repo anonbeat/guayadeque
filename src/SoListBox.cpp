@@ -146,30 +146,20 @@ void guSoListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
-//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_0 );
-//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_1 );
-//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_2 );
-//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_3 );
-//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_4 );
-//    AliasAccelCmds.Add( ID_PLAYERPANEL_SETRATING_5 );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE );
     AliasAccelCmds.Add( ID_SONG_ENQUEUEALL );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
     AliasAccelCmds.Add( ID_SONG_ENQUEUEALL_ASNEXT );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_SONG_SAVETOPLAYLIST );
     RealAccelCmds.Add( ID_SONG_EDITLABELS );
     RealAccelCmds.Add( ID_SONG_EDITTRACKS );
-//    RealAccelCmds.Add( ID_SONG_SET_RATING_0 );
-//    RealAccelCmds.Add( ID_SONG_SET_RATING_1 );
-//    RealAccelCmds.Add( ID_SONG_SET_RATING_2 );
-//    RealAccelCmds.Add( ID_SONG_SET_RATING_3 );
-//    RealAccelCmds.Add( ID_SONG_SET_RATING_4 );
-//    RealAccelCmds.Add( ID_SONG_SET_RATING_5 );
     RealAccelCmds.Add( ID_SONG_ENQUEUE );
     RealAccelCmds.Add( ID_SONG_ENQUEUEALL );
     RealAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
     RealAccelCmds.Add( ID_SONG_ENQUEUEALL_ASNEXT );
+    RealAccelCmds.Add( ID_LIBRARY_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
     {

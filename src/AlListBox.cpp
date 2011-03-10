@@ -100,6 +100,7 @@ void guAlListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_SONG_PLAY );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_ALBUM_SAVETOPLAYLIST );
     RealAccelCmds.Add( ID_ALBUM_EDITLABELS );
@@ -107,6 +108,7 @@ void guAlListBox::CreateAcceleratorTable( void )
     RealAccelCmds.Add( ID_ALBUM_PLAY );
     RealAccelCmds.Add( ID_ALBUM_ENQUEUE );
     RealAccelCmds.Add( ID_ALBUM_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_LIBRARY_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
     {

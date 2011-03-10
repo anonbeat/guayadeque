@@ -45,6 +45,8 @@ class guPLSoListBox : public guSoListBox
 
     virtual void        ItemsCheckRange( const int start, const int end ) { m_ItemsFirst = 0; m_ItemsLast = 0; }
 
+    virtual void        CreateAcceleratorTable();
+
   public :
     guPLSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, int style = 0 );
     ~guPLSoListBox();

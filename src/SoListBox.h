@@ -85,8 +85,8 @@ class guSoListBox : public guListView
 
     virtual void                AppendFastEditMenu( wxMenu * menu, const int selcount ) const;
 
-    void                        OnConfigUpdated( wxCommandEvent &event );
-    void                        CreateAcceleratorTable();
+    virtual void                OnConfigUpdated( wxCommandEvent &event );
+    virtual void                CreateAcceleratorTable();
 
   public :
     guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * NewDb, wxString confname, long style = 0 );

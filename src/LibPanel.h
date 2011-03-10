@@ -293,6 +293,8 @@ class guLibPanel : public wxPanel
 
     virtual void            SaveToPlayList( const wxArrayInt &tracks );
 
+    virtual void            OnGoToSearch( wxCommandEvent &event );
+
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
     ~guLibPanel();

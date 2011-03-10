@@ -197,6 +197,10 @@ class guAlbumBrowser : public wxPanel
     virtual void                    OnAlbumSelectName( const int albumid );
     virtual void                    OnArtistSelectName( const int artistid );
 
+    void                            OnGoToSearch( wxCommandEvent &event );
+    void                            OnConfigUpdated( wxCommandEvent &event );
+    void                            CreateAcceleratorTable( void );
+
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guAlbumBrowser();

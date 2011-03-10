@@ -457,6 +457,8 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
     Connect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteLibrary ), NULL, this );
     Connect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteDrive ), NULL, this );
 
+    Connect( ID_LIBRARY_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGoToSearch ), NULL, this );
+
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guLibPanel::OnPaneClose ), NULL, this );
 }
 
@@ -3400,6 +3402,17 @@ bool guLibPanel::OnDropFiles( const wxArrayString &filenames )
     return false;
 }
 
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnGoToSearch( wxCommandEvent &event )
+{
+    if( !( m_VisiblePanels & guPANEL_LIBRARY_TEXTSEARCH ) )
+    {
+        ShowPanel( guPANEL_LIBRARY_TEXTSEARCH, true );
+    }
+
+    if( FindFocus() != m_InputTextCtrl )
+        m_InputTextCtrl->SetFocus();
+}
 
 
 
