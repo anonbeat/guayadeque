@@ -57,12 +57,14 @@ void guYeListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_SONG_PLAY );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_YEAR_SAVETOPLAYLIST );
     RealAccelCmds.Add( ID_YEAR_EDITTRACKS );
     RealAccelCmds.Add( ID_YEAR_PLAY );
     RealAccelCmds.Add( ID_YEAR_ENQUEUE );
     RealAccelCmds.Add( ID_YEAR_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_LIBRARY_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
     {

@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "PlayListPanel.h"
 
+#include "Accelerators.h"
 #include "AuiNotebook.h"
 #include "AuiDockArt.h"
 #include "Commands.h"
@@ -66,6 +67,10 @@ guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db, guPla
         wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_MULTIPLE )
 {
     m_Db = db;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
+
     m_PlayListPanel = playlistpanel;
     m_ImageList = new wxImageList();
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_track ) ) );
@@ -84,14 +89,50 @@ guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db, guPla
     Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guPLNamesTreeCtrl::OnContextMenu ), NULL, this );
     Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPLNamesTreeCtrl::OnKeyDown ), NULL, this );
 
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPLNamesTreeCtrl::OnConfigUpdated ), NULL, this );
+
+    CreateAcceleratorTable();
+
     ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
 guPLNamesTreeCtrl::~guPLNamesTreeCtrl()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guPLNamesTreeCtrl::OnContextMenu ), NULL, this );
     Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPLNamesTreeCtrl::OnKeyDown ), NULL, this );
+
+    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPLNamesTreeCtrl::OnConfigUpdated ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        CreateAcceleratorTable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
+
+    RealAccelCmds.Add( ID_PLAYLIST_SEARCH );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -682,6 +723,8 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guPlayListPanel::OnSearchCancelled ), NULL, this );
 
 	Connect( guPLAYLIST_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guPlayListPanel::OnTextChangedTimer ), NULL, this );
+
+    Connect( ID_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnGoToSearch ) );
 
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPlayListPanel::OnPaneClose ), NULL, this );
 }
@@ -1830,6 +1873,19 @@ void guPlayListPanel::SendPlayListUpdatedEvent( void )
 {
     wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
     wxPostEvent( wxTheApp->GetTopWindow(), evt );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnGoToSearch( wxCommandEvent &event )
+{
+    if( !( m_VisiblePanels & guPANEL_PLAYLIST_TEXTSEARCH ) )
+    {
+        ShowPanel( guPANEL_PLAYLIST_TEXTSEARCH, true );
+    }
+
+    if( FindFocus() != m_InputTextCtrl )
+        m_InputTextCtrl->SetFocus();
+
 }
 
 // -------------------------------------------------------------------------------- //

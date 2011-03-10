@@ -161,6 +161,8 @@ class guRadioPanel : public wxPanel
     void LoadStationUrl( const wxString &stationurl, const bool enqueue, const bool asnext );
     void OnStationPlayListLoaded( wxCommandEvent &event );
 
+    void OnGoToSearch( wxCommandEvent &event );
+
   protected:
     wxSearchCtrl *          m_InputTextCtrl;
 	guRadioGenreTreeCtrl *  m_GenresTreeCtrl;

@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "AlbumBrowser.h"
 
+#include "Accelerators.h"
 #include "Commands.h"
 #include "Config.h"
 #include "CoverEdit.h"
@@ -684,6 +685,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
     m_ContextMenuFlags = guLIBRARY_CONTEXTMENU_DEFAULT;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
     int FilterSelected = Config->ReadNum( wxT( "Filter" ), 0, wxT( "AlbumBrowser" ) );
     m_DynFilterArray = Config->ReadAStr( wxT( "Filter"), wxEmptyString, wxT( "AlbumBrowserFilters") );
@@ -794,6 +796,11 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 
 	Connect( guALBUMBROWSER_TIMER_ID_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowser::OnTextChangedTimer ), NULL, this );
 
+	Connect( ID_ALBUMBROWSER_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnGoToSearch ), NULL, this );
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlbumBrowser::OnConfigUpdated ), NULL, this );
+
+    CreateAcceleratorTable();
+
     RefreshCount();
     //ReloadItems();
     //m_RefreshTimer.SetOwner( this );
@@ -803,6 +810,8 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
 guAlbumBrowser::~guAlbumBrowser()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     Config->WriteNum( wxT( "Filter" ), m_FilterChoice->GetSelection(), wxT( "AlbumBrowser" ) );
     Config->WriteAStr( wxT( "Filter"), m_DynFilterArray, wxT( "AlbumBrowserFilters") );
     Config->WriteNum( wxT( "Sort" ), m_OrderChoice->GetSelection(), wxT( "AlbumBrowser" ) );
@@ -834,6 +843,40 @@ guAlbumBrowser::~guAlbumBrowser()
 
 	Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guAlbumBrowser::OnMouseWheel ) );
 
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        CreateAcceleratorTable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
+
+    RealAccelCmds.Add( ID_ALBUMBROWSER_SEARCH );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnGoToSearch( wxCommandEvent &event )
+{
+    if( FindFocus() != m_SearchTextCtrl )
+        m_SearchTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //

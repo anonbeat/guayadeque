@@ -77,6 +77,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
     m_LyricSearchEngine = NULL;
     m_LyricSearchContext = NULL;
+    m_GetComboDataThread = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
@@ -766,6 +767,12 @@ guTrackEditor::~guTrackEditor()
         m_MBrainzThread->Delete();
     }
     m_MBrainzThreadMutex.Unlock();
+
+    if( m_GetComboDataThread )
+    {
+        m_GetComboDataThread->Pause();
+        m_GetComboDataThread->Delete();
+    }
 
     if( m_MBrainzReleases )
         delete m_MBrainzReleases;
@@ -1917,6 +1924,10 @@ guTrackEditorGetComboDataThread::guTrackEditorGetComboDataThread( guTrackEditor 
 // -------------------------------------------------------------------------------- //
 guTrackEditorGetComboDataThread::~guTrackEditorGetComboDataThread()
 {
+    if( !TestDestroy() && m_TrackEditor )
+    {
+        m_TrackEditor->m_GetComboDataThread = NULL;
+    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "PLSoListBox.h"
 
+#include "Accelerators.h"
 #include "Config.h" // Configuration
 #include "Commands.h"
 #include "Images.h"
@@ -38,12 +39,45 @@ guPLSoListBox::guPLSoListBox( wxWindow * parent, guDbLibrary * db, wxString conf
     //m_PLType = wxNOT_FOUND;
     m_LibPanel = NULL;
 
+    CreateAcceleratorTable();
+
     ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
 guPLSoListBox::~guPLSoListBox()
 {
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUEALL );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUEALL_ASNEXT );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
+
+    RealAccelCmds.Add( ID_SONG_SAVETOPLAYLIST );
+    RealAccelCmds.Add( ID_SONG_EDITLABELS );
+    RealAccelCmds.Add( ID_SONG_EDITTRACKS );
+    RealAccelCmds.Add( ID_SONG_ENQUEUE );
+    RealAccelCmds.Add( ID_SONG_ENQUEUEALL );
+    RealAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_SONG_ENQUEUEALL_ASNEXT );
+    RealAccelCmds.Add( ID_PLAYLIST_SEARCH );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

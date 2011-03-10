@@ -185,6 +185,9 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
     void            OnRadioGenreDelete( wxCommandEvent &event );
     void            OnKeyDown( wxKeyEvent &event );
 
+    void            OnConfigUpdated( wxCommandEvent &event );
+    void            CreateAcceleratorTable( void );
+
   public :
     guRadioGenreTreeCtrl( wxWindow * parent, guDbRadios * db );
     ~guRadioGenreTreeCtrl();
@@ -201,15 +204,17 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
 // -------------------------------------------------------------------------------- //
 // guRadioLabelListBox
 // -------------------------------------------------------------------------------- //
-class guRadioLabelListBox : public guListBox
+class guRadioLabelListBox : public guAccelListBox
 {
-    protected :
+  protected :
 
-      virtual void  GetItemsList( void );
-      virtual void  CreateContextMenu( wxMenu * Menu ) const;
-      void          AddLabel( wxCommandEvent &event );
-      void          DelLabel( wxCommandEvent &event );
-      void          EditLabel( wxCommandEvent &event );
+    virtual void    GetItemsList( void );
+    virtual void    CreateContextMenu( wxMenu * Menu ) const;
+    void            AddLabel( wxCommandEvent &event );
+    void            DelLabel( wxCommandEvent &event );
+    void            EditLabel( wxCommandEvent &event );
+
+    virtual void    CreateAcceleratorTable( void );
 
     public :
 
@@ -295,6 +300,10 @@ guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbRadios * db )
         wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT )
 {
     m_Db = db;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
+
     m_ImageList = new wxImageList();
     m_ImageList->Add( guImage( guIMAGE_INDEX_tiny_shoutcast ) );
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_tiny_net_radio ) ) );
@@ -316,18 +325,52 @@ guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guDbRadios * db )
     Connect( ID_RADIO_GENRE_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreDelete ) );
     Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guRadioGenreTreeCtrl::OnKeyDown ), NULL, this );
 
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioGenreTreeCtrl::OnConfigUpdated ), NULL, this );
+
+    CreateAcceleratorTable();
+
     ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //
 guRadioGenreTreeCtrl::~guRadioGenreTreeCtrl()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
+
     Disconnect( ID_RADIO_GENRE_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreAdd ) );
     Disconnect( ID_RADIO_GENRE_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreEdit ) );
     Disconnect( ID_RADIO_GENRE_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioGenreTreeCtrl::OnRadioGenreDelete ) );
     Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guRadioGenreTreeCtrl::OnContextMenu ), NULL, this );
 
     Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guRadioGenreTreeCtrl::OnKeyDown ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioGenreTreeCtrl::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
+    {
+        CreateAcceleratorTable();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioGenreTreeCtrl::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
+
+    RealAccelCmds.Add( ID_RADIO_SEARCH );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -649,12 +692,14 @@ void guRadioStationListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_SONG_PLAY );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE );
     AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_RADIO_USER_EDIT );
     RealAccelCmds.Add( ID_RADIO_EDIT_LABELS );
     RealAccelCmds.Add( ID_RADIO_PLAY );
     RealAccelCmds.Add( ID_RADIO_ENQUEUE );
     RealAccelCmds.Add( ID_RADIO_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_RADIO_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
     {
@@ -879,11 +924,14 @@ bool guRadioStationListBox::GetSelected( guRadioStation * radiostation ) const
 // guRadioLabelListBox
 // -------------------------------------------------------------------------------- //
 guRadioLabelListBox::guRadioLabelListBox( wxWindow * parent, guDbRadios * db, wxString label ) :
-    guListBox( parent, ( guDbLibrary * ) db, label, wxLB_MULTIPLE | guLISTVIEW_HIDE_HEADER )
+    guAccelListBox( parent, ( guDbLibrary * ) db, label )
 {
     Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::AddLabel ) );
     Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::DelLabel ) );
     Connect( ID_LABEL_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioLabelListBox::EditLabel ) );
+
+    CreateAcceleratorTable();
+
     ReloadItems();
 }
 
@@ -975,6 +1023,22 @@ void guRadioLabelListBox::EditLabel( wxCommandEvent &event )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guRadioLabelListBox::CreateAcceleratorTable( void )
+{
+    wxAcceleratorTable AccelTable;
+    wxArrayInt AliasAccelCmds;
+    wxArrayInt RealAccelCmds;
+
+    AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
+
+    RealAccelCmds.Add( ID_RADIO_SEARCH );
+
+    if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
+    {
+        SetAcceleratorTable( AccelTable );
+    }
+}
 
 
 
@@ -1154,6 +1218,8 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     Connect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ), NULL, this );
 
     Connect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
+
+    Connect( ID_RADIO_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnGoToSearch ), NULL, this );
 
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 }
@@ -1899,8 +1965,23 @@ void guRadioPanel::GetRadioCounter( wxLongLong * count )
     * count = m_StationsListBox->GetItemCount();
 }
 
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnGoToSearch( wxCommandEvent &event )
+{
+    if( !( m_VisiblePanels & guPANEL_RADIO_TEXTSEARCH ) )
+    {
+        ShowPanel( guPANEL_RADIO_TEXTSEARCH, true );
+    }
+
+    if( FindFocus() != m_InputTextCtrl )
+        m_InputTextCtrl->SetFocus();
+}
 
 
+
+
+// -------------------------------------------------------------------------------- //
+// guRadioPlayListLoadThread
 // -------------------------------------------------------------------------------- //
 guRadioPlayListLoadThread::guRadioPlayListLoadThread( guRadioPanel * radiopanel,
         const wxChar * stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext ) :

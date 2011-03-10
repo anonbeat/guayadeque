@@ -81,6 +81,9 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     void            OnDropEnd( void );
     void            OnKeyDown( wxKeyEvent &event );
 
+    void            OnConfigUpdated( wxCommandEvent &event );
+    void            CreateAcceleratorTable( void );
+
   public :
     guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db, guPlayListPanel * playlistpanel );
     ~guPLNamesTreeCtrl();
@@ -218,6 +221,7 @@ class guPlayListPanel : public wxPanel
     virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
     virtual void        SendPlayListUpdatedEvent( void );
 
+    void                OnGoToSearch( wxCommandEvent &event );
 
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
