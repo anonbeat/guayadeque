@@ -78,6 +78,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
     m_LyricSearchEngine = NULL;
     m_LyricSearchContext = NULL;
     m_GetComboDataThread = NULL;
+    m_SelectedTimer.SetOwner( this );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
@@ -604,6 +605,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	m_MBrainzCurAlbum = wxNOT_FOUND;
 	m_MBQuerySetArtistEnabled = true;
 	m_CurItem = 0;
+	m_NextItem = wxNOT_FOUND;
 	m_Items = songs;
 	m_Images = images;
 	m_Lyrics = lyrics;
@@ -678,6 +680,8 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
     // Idle Events
 	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
+
+	Connect( wxEVT_TIMER, wxTimerEventHandler( guTrackEditor::OnSelectTimeout ), NULL, this );
 
 	//
     // Force the 1st listbox item to be selected
@@ -785,7 +789,7 @@ guTrackEditor::~guTrackEditor()
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnPageChanged( wxNotebookEvent &event )
 {
-    WriteItemData();
+    //WriteItemData();
 
     wxCommandEvent CmdEvent;
     CmdEvent.SetInt( m_CurItem );
@@ -804,8 +808,19 @@ void guTrackEditor::OnOKButton( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
 {
+    m_NextItem = event.GetInt();
+
+    if( m_SelectedTimer.IsRunning() )
+        m_SelectedTimer.Stop();
+
+    m_SelectedTimer.Start( 50, wxTIMER_ONE_SHOT );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnSelectTimeout( wxTimerEvent &event )
+{
     WriteItemData();
-    m_CurItem = event.GetInt();
+    m_CurItem = m_NextItem;
     if( m_LyricSearchContext )
     {
         delete m_LyricSearchContext;
@@ -1799,9 +1814,13 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist )
+void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist, int curitem )
 {
     combobox->Clear();
+
+    if( curitem == wxNOT_FOUND )
+        return;
+
     wxString FilterText = combobox->GetValue().Lower();
     if( FilterText.IsEmpty() )
     {
@@ -1827,35 +1846,35 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
 void guTrackEditor::OnArtistTextChanged( wxCommandEvent &event )
 {
     m_ArtistChanged = true;
-    guUpdateComboBoxEntries( m_ArtistComboBox, m_Artists );
+    guUpdateComboBoxEntries( m_ArtistComboBox, m_Artists, m_CurItem );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlbumArtistTextChanged( wxCommandEvent &event )
 {
     m_AlbumArtistChanged = true;
-    guUpdateComboBoxEntries( m_AlbumArtistComboBox, m_AlbumArtists );
+    guUpdateComboBoxEntries( m_AlbumArtistComboBox, m_AlbumArtists, m_CurItem );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlbumTextChanged( wxCommandEvent &event )
 {
     m_AlbumChanged = true;
-    guUpdateComboBoxEntries( m_AlbumComboBox, m_Albums );
+    guUpdateComboBoxEntries( m_AlbumComboBox, m_Albums, m_CurItem );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnComposerTextChanged( wxCommandEvent &event )
 {
     m_CompChanged = true;
-    guUpdateComboBoxEntries( m_CompComboBox, m_Composers );
+    guUpdateComboBoxEntries( m_CompComboBox, m_Composers, m_CurItem );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnGenreTextChanged( wxCommandEvent &event )
 {
     m_GenreChanged = true;
-    guUpdateComboBoxEntries( m_GenreComboBox, m_Genres );
+    guUpdateComboBoxEntries( m_GenreComboBox, m_Genres, m_CurItem );
 }
 
 // -------------------------------------------------------------------------------- //
