@@ -68,6 +68,7 @@ class guTrackEditor : public wxDialog
     guImagePtrArray *                   m_Images;
     wxArrayString *                     m_Lyrics;
     int                                 m_CurItem;
+    int                                 m_NextItem;
     guDbLibrary *                       m_Db;
     guMBTrackArray *                    m_MBrainzAlbums;
     guMBReleaseArray *                  m_MBrainzReleases;
@@ -75,7 +76,7 @@ class guTrackEditor : public wxDialog
     int                                 m_MBrainzCurAlbum;
 	wxColor                             m_NormalColor;
 	wxColor                             m_ErrorColor;
-
+    wxTimer                             m_SelectedTimer;
 
   protected:
     wxSortedArrayString                 m_Artists;
@@ -245,6 +246,8 @@ class guTrackEditor : public wxDialog
 	void                                UpdateAlbums( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_AlbumComboBox, Event ); }
 	void                                UpdateComposers( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_CompComboBox, Event ); }
 	void                                UpdateGenres( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_GenreComboBox, Event ); }
+
+	void                                OnSelectTimeout( wxTimerEvent &event );
 
 public:
     guTrackEditor( wxWindow * parent, guDbLibrary * db,
