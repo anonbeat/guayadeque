@@ -1030,26 +1030,29 @@ wxImage * guFlacTagInfo::GetImage( void )
     {
         if( FLAC__metadata_simple_iterator_init( iter, m_FileName.mb_str( wxConvFile ), true, false ) )
         {
-            while( FLAC__metadata_simple_iterator_next( iter ) )
+            while( !CoverImage && FLAC__metadata_simple_iterator_next( iter ) )
             {
                 if( FLAC__metadata_simple_iterator_get_block_type( iter ) == FLAC__METADATA_TYPE_PICTURE )
                 {
                     FLAC__StreamMetadata * block = FLAC__metadata_simple_iterator_get_block( iter );
 
-                    wxMemoryOutputStream ImgOutStream;
-
-                    FLAC__StreamMetadata_Picture * PicInfo = &block->data.picture;
-
-                    ImgOutStream.Write( PicInfo->data, PicInfo->data_length );
-                    wxMemoryInputStream ImgInputStream( ImgOutStream );
-                    CoverImage = new wxImage( ImgInputStream, wxString( PicInfo->mime_type, wxConvUTF8 ) );
-
-                    if( CoverImage )
+                    if( block->data.picture.type == FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER )
                     {
-                        if( !CoverImage->IsOk() )
+                        wxMemoryOutputStream ImgOutStream;
+
+                        FLAC__StreamMetadata_Picture * PicInfo = &block->data.picture;
+
+                        ImgOutStream.Write( PicInfo->data, PicInfo->data_length );
+                        wxMemoryInputStream ImgInputStream( ImgOutStream );
+                        CoverImage = new wxImage( ImgInputStream, wxString( PicInfo->mime_type, wxConvUTF8 ) );
+
+                        if( CoverImage )
                         {
-                            delete CoverImage;
-                            CoverImage = NULL;
+                            if( !CoverImage->IsOk() )
+                            {
+                                delete CoverImage;
+                                CoverImage = NULL;
+                            }
                         }
                     }
 
@@ -1067,6 +1070,7 @@ wxImage * guFlacTagInfo::GetImage( void )
 // -------------------------------------------------------------------------------- //
 bool guFlacTagInfo::SetImage( const wxImage * image )
 {
+    bool RetVal = false;
     FLAC__Metadata_Chain * Chain;
     FLAC__Metadata_Iterator * Iter;
 
@@ -1119,21 +1123,22 @@ bool guFlacTagInfo::SetImage( const wxImage * image )
                         if( FLAC__metadata_object_picture_is_legal( Picture, &PicErrStr ) )
                         {
                             FLAC__metadata_iterator_insert_block_after( Iter, Picture );
-                            FLAC__metadata_chain_sort_padding( Chain );
-
-                            if( !FLAC__metadata_chain_write( Chain, TRUE, TRUE ) )
-                            {
-                                guLogError( wxT( "Could not save the FLAC file" ) );
-                            }
-
-                            FLAC__metadata_chain_delete( Chain );
                         }
                         else
                         {
-                            guLogError( wxT( "The FLAC picture is invalid: %s" ), PicErrStr );
                             FLAC__metadata_object_delete( Picture );
                         }
                     }
+                }
+
+                FLAC__metadata_chain_sort_padding( Chain );
+                if( !FLAC__metadata_chain_write( Chain, TRUE, TRUE ) )
+                {
+                    guLogError( wxT( "Could not save the FLAC file" ) );
+                }
+                else
+                {
+                    RetVal = true;
                 }
             }
             else
@@ -1145,12 +1150,14 @@ bool guFlacTagInfo::SetImage( const wxImage * image )
         {
             guLogError( wxT( "Could not read the FLAC metadata." ) );
         }
+
+        FLAC__metadata_chain_delete( Chain );
     }
     else
     {
         guLogError( wxT( "Could not create a FLAC chain." ) );
     }
-    return false;
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
